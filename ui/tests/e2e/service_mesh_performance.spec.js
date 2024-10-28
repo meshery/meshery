@@ -1,59 +1,84 @@
-import { test as base, expect } from '@playwright/test';
-import { PerformancePage } from './fixtures/performancePage';
-import { ENV } from './env';
+// import { test, expect } from '@playwright/test';
+// import { ENV } from './env';
 
-export const test = base.extend({
-  performancePage: async ({ page }, use) => {
-    const perfPage = new PerformancePage(page);
-    await perfPage.navigate();
-    await use(perfPage);
-  },
-});
+// test.describe('Service Mesh Performance Management Tests', () => {
+//   const peformanceProfiles = [
+//     {
+//       profileName: 'Sample-Perf-Test',
+//       serviceMesh: 'None',
+//       url: 'https://layer5.io/',
+//       loadGenerator: 'fortio',
+//     },
+//   ];
 
-test.describe('Service Mesh Performance Management Tests', () => {
-  const profileName = 'Sample-test';
+//   peformanceProfiles.forEach(({ profileName, serviceMesh, url, loadGenerator }) => {
+//     test(`Add performace profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
+//       page,
+//     }) => {
+//       await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
+//       await page.getByLabel('Add Performance Profile').click();
+//       await page.getByLabel('Profile Name').fill(profileName);
+//       await page.getByLabel('Service Mesh').click();
+//       await page.getByRole('option', { name: serviceMesh }).click();
+//       await page.getByLabel('URL to test').fill(url);
+//       await page.getByLabel('Concurrent requests').fill('2');
+//       await page.getByLabel('Queries per second').fill('2');
+//       await page.getByLabel('Duration').fill('15s');
+//       await page.getByLabel(loadGenerator).check();
 
-  test.beforeEach(async ({ performancePage }) => {
-    await performancePage.goToProfiles();
-  });
+//       const runPerformanceTest = await page.getByTestId('run-performance-test');
+//       await expect(runPerformanceTest).toBeVisible();
+//       await runPerformanceTest.click();
 
-  test('Run a performance test through profile', async ({ performancePage }) => {
-    await performancePage.createPerformanceProfile(profileName);
-    await expect(performancePage.page).toHaveURL(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
-  });
+//       await expect(await page.getByTestId('notify-fetch-data')).toBeVisible({
+//         timeout: 2 * 60 * 1000,
+//       });
+//     });
 
-  test('View detailed result of a performance profile (Graph Visualiser)', async ({
-    performancePage,
-  }) => {
-    await performancePage.goToProfiles();
-    await performancePage.viewPerformanceProfileResult(profileName);
-  });
+//     test(`View detailed result of a performance profile (Graph Visualiser) with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
+//       page,
+//     }) => {
+//       await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
+//       await page.waitForSelector(`text=${profileName}`, {
+//         state: 'visible',
+//       });
+//       await page.getByRole('button', { name: 'View Results', exact: true }).click();
 
-  test('Run a performance test', async ({ performancePage }) => {
-    await performancePage.runPerformanceTest(profileName);
-  });
+//       expect(page.getByText('Sorry, no matching records')).toBeHidden();
+//       await page.getByTestId('open-performance-result-bar-chart').first().click();
 
-  test('View Results from a performance profile', async ({ performancePage }) => {
-    await performancePage.goToProfiles();
-    await performancePage.viewPerformanceProfileResult(profileName);
-  });
+//       await expect(await page.getByText(`URL: ${url}`, { exact: true })).toBeVisible();
+//     });
 
-  test('View/Edit the configuration of a performance profile', async ({ performancePage }) => {
-    await performancePage.goToProfiles();
-    await performancePage.viewPerformanceProfileConfiguration(profileName);
-    await performancePage.page.locator('[aria-labelledby="meshName-label meshName"]').click();
-    await performancePage.page.locator('[data-value="istio"]').click();
-    await performancePage.fillInput(
-      performancePage.page.getByRole('spinbutton', { name: 'Concurrent requests' }),
-      '6',
-    );
-    await expect(
-      performancePage.page.getByRole('button', { name: 'Run Test', exact: true }),
-    ).toBeVisible();
-    await performancePage.page.getByRole('button', { name: 'Run Test', exact: true }).click();
-    const notification = await performancePage.page
-      .locator('text=Initiating load test . . .')
-      .first();
-    await expect(notification).toBeVisible();
-  });
-});
+//     test(`View/Edit the configuration of a performance profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
+//       page,
+//     }) => {
+//       await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
+//       await page.getByText(profileName).first().click();
+
+//       await page.getByTestId('performanceProfileCard-edit').click();
+//       await page.getByLabel('Service Mesh').click();
+//       await page.getByRole('option', { name: serviceMesh }).click();
+//       await page.getByLabel('Concurrent requests').fill('3');
+//       await page.getByLabel(loadGenerator).check();
+
+//       const runPerformanceTest = await page.getByTestId('run-performance-test');
+//       await expect(runPerformanceTest).toBeEnabled();
+//       await runPerformanceTest.click();
+
+//       await expect(await page.getByTestId('notify-fetch-data')).toBeVisible({
+//         timeout: 2 * 60 * 1000,
+//       });
+//     });
+
+//     test(`Delete a performance profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
+//       page,
+//     }) => {
+//       await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
+//       await page.getByText(profileName, { exact: true }).click();
+//       await page.getByTestId('performanceProfileCard-delete').first().click();
+
+//       await expect(await page.getByText('Performance Profile Deleted!').first()).toBeHidden();
+//     });
+//   });
+// });

@@ -42,7 +42,7 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 </div>
 </pre> 
 
-Updating models in the meshery/meshery repo based on flag 
+Updating models in the meshery/meshery repo based on flag
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED --model "[model-name]"

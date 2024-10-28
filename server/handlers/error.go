@@ -143,8 +143,11 @@ const (
 	ErrReadSessionPersistorCode            = "meshery-server-1329"
 	ErrFailToGetK8SContextCode             = "meshery-server-1330"
 	ErrFailToLoadK8sContextCode            = "meshery-server-1331"
+	ErrNoTarInsideOCiCode                  = "meshery-server-1365"
 	ErrEmptyOCIImageCode                   = "meshery-server-1360"
 	ErrGetComponentDefinitionCode          = "meshery-server-1362"
+	ErrGetCapabilitiesCode                 = "meshery-server-1363"
+	ErrExportPatternInFormatCode           = "meshery-server-1364"
 )
 
 var (
@@ -629,7 +632,17 @@ func ErrInvalidUUID(err error) error {
 func ErrPersistEventToRemoteProvider(err error) error {
 	return errors.New(ErrPersistEventToRemoteProviderCode, errors.Alert, []string{"failed to persist event to remote provider"}, []string{err.Error()}, []string{"token is expired/revoked", "Remote Provider is not reachable or unavailable"}, []string{"Try re-authenticating with the remote provider", "Verify remote provider for its reachability or availability."})
 }
-
+func ErrNoTarInsideOCi() error {
+	return errors.New(ErrNoTarInsideOCiCode, errors.Alert, []string{"No tar file found inside OCI image"}, []string{"Unable to locate the compressed file(.tar.gz) inside the OCI image."}, []string{"The OCI image does not contain a ziped file."}, []string{"Verify that the OCI image contains a ziped file."})
+}
 func ErrEmptyOCIImage(err error) error {
 	return errors.New(ErrEmptyOCIImageCode, errors.Alert, []string{}, []string{}, []string{}, []string{})
+}
+
+func ErrGetCapabilities(err error, userId string) error {
+	return errors.New(ErrGetCapabilitiesCode, errors.Alert, []string{fmt.Sprintf("failed to get capabilities for the user with id: \"%s\"", userId)}, []string{err.Error()}, []string{"Remote provider server may be down or not accepting requests."}, []string{"Make sure remote provider server is healthy and accepting requests."})
+}
+
+func ErrExportPatternInFormat(err error, format, designName string) error {
+	return errors.New(ErrExportPatternInFormatCode, errors.Alert, []string{fmt.Sprintf("Failed to export design file \"%s\" as \"%s\"", designName, format)}, []string{err.Error()}, []string{fmt.Sprintf("Current version of Meshery does not support exporting in \"%s\" format", format)}, []string{"Export design in one of the supported format."})
 }

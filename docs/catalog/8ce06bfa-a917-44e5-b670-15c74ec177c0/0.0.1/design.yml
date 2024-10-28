@@ -1,0 +1,641 @@
+name: marblerun
+version: 0.0.5
+services:
+  NodeGroupInventoryWallet:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn:
+    - marblerun-coordinator-vkspw
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: NodeGroupInventoryWallet
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: cf0b8885-8228-42ad-9049-5ee06ec62850
+        label: NodeGroupInventoryWallet
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: null
+          description: ""
+          displayName: Meshery Core
+          hostID: 26e64aa8-2d86-57bd-92b3-2a73160d27b4
+          id: 3e2db384-d3af-5fac-8af2-684fc3c29446
+          metadata:
+            isAnnotation: false
+            subCategory: App Definition and Development
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          model:
+            version: 0.7.1
+          name: meshery-core
+          registrant:
+            hostname: artifacthub
+          relationships: null
+          schemaVersion: core.meshery.io/v1beta1
+          status: enabled
+          subCategory: App Definition and Development
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: |-
+            {
+              "designer": {
+                "pass-events-to": "parent",
+                "edit": {
+                  "config": false,
+                  "copy": false,
+                  "delete": false,
+                  "duplicate": false,
+                  "reset-styles": false,
+                  "resolve": false,
+                  "lock": false,
+                  "shape": {
+                    "convert-shape": false
+                  },
+                  "style": false
+                },
+                "label": {
+                  "edit": false,
+                  "show": false,
+                  "sync-with-config-property": "none"
+                }
+              }
+            }
+          defaultData: '{"label":""}'
+          genealogy: parent
+          hasInvalidSchema: true
+          isAnnotation: true
+          primaryColor: '#00B39F'
+          secondaryColor: '#00D3A9'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.1
+            border-style: dashed
+            border-width: 0
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 8
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":0,"border-style":"dashed","background-opacity":0.1}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/anchornode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/anchornode-white.svg
+        parent: d983e1db-310c-47b3-8152-05bd310ff254
+        position:
+          posX: 30
+          posY: 90
+        whiteboardData: {}
+    type: NodeGroupInventoryWallet
+    version: 0.7.1
+  coordinator-client-api:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/component: client-api
+      app.kubernetes.io/created-by: Helm
+      app.kubernetes.io/name: coordinator-client-api
+      app.kubernetes.io/part-of: marblerun
+      app.kubernetes.io/version: v1.4.1
+    model: kubernetes
+    name: coordinator-client-api
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - name: http
+          port: 4433
+          target Port: 4433
+        selector:
+          edgeless.systems/control-plane-component: coordinator
+          edgeless.systems/control-plane-ns: default
+        type: ClusterIP
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 6b4cdc0e-369e-4380-ad98-c4d588b4491e
+            metadata:
+              port: 4433
+              protocol: TCP
+            source: 7e3a48fe-546c-4afd-9d57-ccec9257586e
+            subType: Network
+            target: d983e1db-310c-47b3-8152-05bd310ff254
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 7e3a48fe-546c-4afd-9d57-ccec9257586e
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-position-y: 4.5
+            height: 20
+            padding: 12
+            width: 20
+            x: 10px
+            "y": 12px
+            z-index: 5
+          styles: '{"height":20,"width":20,"padding":12,"background-position-y":4.5,"x":"10px","y":"12px"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/service-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/service-white.svg
+        position:
+          posX: 50
+          posY: -10
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  coordinator-dcap-config:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/component: dcap-config
+      app.kubernetes.io/created-by: Helm
+      app.kubernetes.io/name: coordinator-dcap-config
+      app.kubernetes.io/part-of: marblerun
+      app.kubernetes.io/version: v1.4.1
+      edgeless.systems/control-plane-component: dcap-config
+      edgeless.systems/control-plane-ns: default
+    model: kubernetes
+    name: coordinator-dcap-config
+    namespace: default
+    settings:
+      data:
+        sgx_default_qcnl.conf: |
+          PCCS_URL=https://global.acccache.azure.net/sgx/certification/v4/
+          USE_SECURE_CERT=TRUE
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: ae0e5278-8164-4219-9238-9678c31a2887
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: bottom-round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 4
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg
+        position:
+          posX: -10
+          posY: 90
+        whiteboardData:
+          style: {}
+    type: ConfigMap
+    version: ""
+  coordinator-mesh-api:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/component: mesh-api
+      app.kubernetes.io/created-by: Helm
+      app.kubernetes.io/name: coordinator-mesh-api
+      app.kubernetes.io/part-of: marblerun
+      app.kubernetes.io/version: v1.4.1
+    model: kubernetes
+    name: coordinator-mesh-api
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - app Protocol: tcp
+          name: grcp
+          port: 2001
+          target Port: 2001
+        selector:
+          edgeless.systems/control-plane-component: coordinator
+          edgeless.systems/control-plane-ns: default
+        type: ClusterIP
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 3d608005-7ad9-4f9f-9b97-ba6397c935e4
+            metadata:
+              port: 2001
+              protocol: TCP
+            source: 4e7c01b1-bd07-4c07-b579-c8b915b850d1
+            subType: Network
+            target: d983e1db-310c-47b3-8152-05bd310ff254
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 4e7c01b1-bd07-4c07-b579-c8b915b850d1
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides: '{"height":20,"width":20,"padding":12,"background-position-y":4.5,"x":"10px","y":"12px"}'
+          styles: '{"height":20,"width":20,"padding":12,"background-position-y":4.5,"x":"10px","y":"12px"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/service-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/service-white.svg
+        position:
+          posX: 10
+          posY: -10
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  coordinator-pv-claim:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/component: persistent-storage
+      app.kubernetes.io/created-by: Helm
+      app.kubernetes.io/name: coordinator-pv-claim
+      app.kubernetes.io/part-of: marblerun
+      app.kubernetes.io/version: v1.4.1
+    model: kubernetes
+    name: coordinator-pv-claim
+    namespace: default
+    settings:
+      spec:
+        access Modes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 10Mi
+        storage Class Name: null
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 5dc41b33-40ac-4e2f-bd82-194a9ede2c05
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 6
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/persistentvolumeclaim-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/persistentvolumeclaim-white.svg
+        position:
+          posX: 50
+          posY: 50
+        whiteboardData:
+          style: {}
+    type: PersistentVolumeClaim
+    version: ""
+  marblerun-coordinator-ihwuv:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/component: controller
+      app.kubernetes.io/created-by: Helm
+      app.kubernetes.io/name: marblerun-coordinator
+      app.kubernetes.io/part-of: marblerun
+      app.kubernetes.io/version: v1.4.1
+      edgeless.systems/control-plane-component: controller
+      edgeless.systems/control-plane-ns: default
+    model: kubernetes
+    name: marblerun-coordinator
+    namespace: default
+    settings:
+      image Pull Secrets: []
+      secrets: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: f3440ec0-e1e8-4385-9097-0ba05f8f6d36
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: bottom-round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 7
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg
+        position:
+          posX: 90
+          posY: 50
+        whiteboardData:
+          style: {}
+    type: ServiceAccount
+    version: ""
+  marblerun-coordinator-vkspw:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/component: coordinator
+      app.kubernetes.io/created-by: Helm
+      app.kubernetes.io/name: coordinator
+      app.kubernetes.io/part-of: marblerun
+      app.kubernetes.io/version: v1.4.1
+      edgeless.systems/control-plane-component: coordinator
+      edgeless.systems/control-plane-ns: default
+    model: kubernetes
+    name: marblerun-coordinator
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            edgeless.systems/control-plane-component: coordinator
+            edgeless.systems/control-plane-ns: default
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/component: coordinator
+              app.kubernetes.io/created-by: Helm
+              app.kubernetes.io/name: coordinator
+              app.kubernetes.io/part-of: marblerun
+              app.kubernetes.io/version: v1.4.1
+              edgeless.systems/control-plane-component: coordinator
+              edgeless.systems/control-plane-ns: default
+          spec:
+            containers:
+            - env:
+              - name: EDG_COORDINATOR_MESH_ADDR
+                value: 0.0.0.0:2001
+              - name: EDG_COORDINATOR_CLIENT_ADDR
+                value: 0.0.0.0:4433
+              - name: EDG_COORDINATOR_DNS_NAMES
+                value: localhost,coordinator-mesh-api,coordinator-client-api,coordinator-mesh-api.default,coordinator-client-api.default,coordinator-mesh-api.default.svc.cluster.local,coordinator-client-api.default.svc.cluster.local
+              - name: EDG_COORDINATOR_SEAL_DIR
+                value: /coordinator/data/
+              - name: OE_SIMULATION
+                value: "0"
+              image: ghcr.io/edgelesssys/marblerun/coordinator:v1.4.1
+              image Pull Policy: IfNotPresent
+              liveness Probe:
+                failure Threshold: 3
+                http Get:
+                  path: /status
+                  port: 4433
+                  scheme: HTTPS
+                period Seconds: 60
+                timeout Seconds: 15
+              name: coordinator
+              ports:
+              - container Port: 4433
+                name: http
+              - container Port: 2001
+                name: grcp
+              readiness Probe:
+                failure Threshold: 7
+                http Get:
+                  path: /status
+                  port: 4433
+                  scheme: HTTPS
+                period Seconds: 60
+                timeout Seconds: 15
+              resources:
+                limits:
+                  sgx.intel.com/enclave: 1
+                  sgx.intel.com/epc: 10Mi
+                  sgx.intel.com/provision: 1
+              startup Probe:
+                failure Threshold: 3
+                http Get:
+                  path: /status
+                  port: 4433
+                  scheme: HTTPS
+                initial Delay Seconds: 15
+                period Seconds: 2
+                timeout Seconds: 15
+              volume Mounts:
+              - mount Path: /coordinator/data
+                name: coordinator-pv-storage
+              - mount Path: /etc/sgx_default_qcnl.conf
+                name: dcap-conf
+                sub Path: sgx_default_qcnl.conf
+            node Selector:
+              kubernetes.io/os: linux
+            service Account Name: marblerun-coordinator
+            tolerations:
+            - effect: NoSchedule
+              key: sgx.intel.com/epc
+              operator: Exists
+            volumes:
+            - name: coordinator-pv-storage
+              persistent Volume Claim:
+                claim Name: coordinator-pv-claim
+            - config Map:
+                name: coordinator-dcap-config
+              name: dcap-conf
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 6b4cdc0e-369e-4380-ad98-c4d588b4491e
+            metadata:
+              port: 4433
+              protocol: TCP
+            source: 7e3a48fe-546c-4afd-9d57-ccec9257586e
+            subType: Network
+            target: d983e1db-310c-47b3-8152-05bd310ff254
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        - data:
+            id: 3d608005-7ad9-4f9f-9b97-ba6397c935e4
+            metadata:
+              port: 2001
+              protocol: TCP
+            source: 4e7c01b1-bd07-4c07-b579-c8b915b850d1
+            subType: Network
+            target: d983e1db-310c-47b3-8152-05bd310ff254
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: d983e1db-310c-47b3-8152-05bd310ff254
+        meshmodel-metadata:
+          capabilities: |2-
+             {
+              "designer": {
+                "edit": {
+                  "shape": {
+                    "convert-shape": false
+                  }
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 3
+          styles: '{"border-width":2,"background-opacity":0.5}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg
+        position:
+          posX: 30
+          posY: 90
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""

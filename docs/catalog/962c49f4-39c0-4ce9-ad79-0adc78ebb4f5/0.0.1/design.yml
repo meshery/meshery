@@ -1,0 +1,377 @@
+name: Dapr OAuth Authorization to External Service
+version: 0.0.5
+services:
+  NodeGroupInventoryWallet:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn:
+    - msgraphapp
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: NodeGroupInventoryWallet
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 0520a4db-d533-4cdc-a9c2-a33abe4d660f
+        label: NodeGroupInventoryWallet
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: null
+          description: ""
+          displayName: Meshery Core
+          hostID: 26e64aa8-2d86-57bd-92b3-2a73160d27b4
+          id: 3e2db384-d3af-5fac-8af2-684fc3c29446
+          metadata:
+            isAnnotation: false
+            subCategory: App Definition and Development
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          model:
+            version: 0.7.1
+          name: meshery-core
+          registrant:
+            hostname: artifacthub
+          relationships: null
+          schemaVersion: core.meshery.io/v1beta1
+          status: enabled
+          subCategory: App Definition and Development
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: |-
+            {
+              "designer": {
+                "pass-events-to": "parent",
+                "edit": {
+                  "config": false,
+                  "copy": false,
+                  "delete": false,
+                  "duplicate": false,
+                  "reset-styles": false,
+                  "resolve": false,
+                  "lock": false,
+                  "shape": {
+                    "convert-shape": false
+                  },
+                  "style": false
+                },
+                "label": {
+                  "edit": false,
+                  "show": false,
+                  "sync-with-config-property": "none"
+                }
+              }
+            }
+          defaultData: '{"label":""}'
+          genealogy: parent
+          hasInvalidSchema: true
+          isAnnotation: true
+          primaryColor: '#00B39F'
+          secondaryColor: '#00D3A9'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.1
+            border-style: dashed
+            border-width: 0
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 6
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":0,"border-style":"dashed","background-opacity":0.1}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/anchornode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/anchornode-white.svg
+        parent: a1cd711e-85be-49cb-8926-f332639839c3
+        position:
+          posX: 190
+          posY: 130
+        whiteboardData: {}
+    type: NodeGroupInventoryWallet
+    version: 0.7.1
+  msgraphapp:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: msgraph
+    model: kubernetes
+    name: msgraphapp
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app: msgraph
+        template:
+          metadata:
+            annotations:
+              dapr.io/config: msgraphpipeline
+              dapr.io/enabled: "true"
+              dapr.io/id: msgraphapp
+              dapr.io/port: "3000"
+            labels:
+              app: msgraph
+          spec:
+            containers:
+            - image: docker.io/h2floh/middleware-msgraphapp:edge
+              image Pull Policy: Always
+              name: msgraph
+              ports:
+              - container Port: 3000
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: a1cd711e-85be-49cb-8926-f332639839c3
+        meshmodel-metadata:
+          capabilities: |2-
+             {
+              "designer": {
+                "edit": {
+                  "shape": {
+                    "convert-shape": false
+                  }
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-pentagon
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 3
+          styles: '{"border-width":2,"background-opacity":0.5}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg
+        position:
+          posX: 190
+          posY: 130
+        whiteboardData:
+          style: {}
+    type: Deployment
+    version: ""
+  msgraphapp-dapr:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app: msgraph
+    model: kubernetes
+    name: msgraphapp-dapr
+    namespace: default
+    settings:
+      spec:
+        cluster IP: None
+        selector:
+          app: msgraph
+        type: ClusterIP
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 602f1625-45e1-4171-a1c8-52fa8a3729f8
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides: '{"height":20,"width":20,"padding":12,"background-position-y":4.5,"x":"10px","y":"12px"}'
+          styles: '{"height":20,"width":20,"padding":12,"background-position-y":4.5,"x":"10px","y":"12px"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/service-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/service-white.svg
+        position:
+          posX: 30
+          posY: 30
+        whiteboardData:
+          style: {}
+    type: Service
+    version: ""
+  msgraphpipeline:
+    annotations: {}
+    apiVersion: dapr.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: dapr
+    name: msgraphpipeline
+    namespace: default
+    settings:
+      spec:
+        access Control:
+          policies: []
+        api:
+          allowed: []
+          denied: []
+        app Http Pipeline:
+          handlers: []
+        components:
+          deny: []
+        features: []
+        http Pipeline:
+          handlers:
+          - name: msgraphsp
+            selector:
+              fields: []
+            type: middleware.http.oauth2clientcredentials
+        mTLS:
+          enabled: true
+          token Validators: []
+        metric:
+          enabled: true
+          rules: []
+        metrics:
+          enabled: true
+          rules: []
+        secrets:
+          scopes: []
+        tracing:
+          enabled: true
+          expand Params: true
+          include Body: true
+          sampling Rate: "1"
+          stdout: false
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: c9d45a40-ceb9-4557-bc08-7420cf52949b
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/examples/incubating.md#dapr-logos
+          model: dapr
+          modelDisplayName: Dapr
+          primaryColor: '#0d2192'
+          secondaryColor: '#5266D7'
+          shape: circle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 4
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/dapr/color/component-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/dapr/white/component-white.svg
+        position:
+          posX: 30
+          posY: 110
+        whiteboardData:
+          style: {}
+    type: Configuration
+    version: ""
+  msgraphsp:
+    annotations: {}
+    apiVersion: dapr.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: dapr
+    name: msgraphsp
+    namespace: default
+    settings:
+      auth:
+        secret Store: secretstores.kubernetes
+      scopes: []
+      spec:
+        metadata:
+        - name: clientId
+          value: <Application (client) Id>
+        - name: clientSecret
+          value: <Client secret>
+        - name: scopes
+          value: https://graph.microsoft.com/.default
+        - name: tokenURL
+          value: https://login.microsoftonline.com/<Directory (tenant) ID>/oauth2/v2.0/token
+        - name: headerName
+          value: msgraph-token
+        - name: endpointParamsQuery
+          value: ""
+        - name: authStyle
+          value: "1"
+        type: middleware.http.oauth2clientcredentials
+        version: v1
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 2dcc5273-f392-4caf-8e63-133d52ec4632
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/examples/incubating.md#dapr-logos
+          model: dapr
+          modelDisplayName: Dapr
+          primaryColor: '#0d2192'
+          secondaryColor: '#5266D7'
+          shape: circle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 5
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/dapr/color/component-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/dapr/white/component-white.svg
+        position:
+          posX: 70
+          posY: 110
+        whiteboardData:
+          style: {}
+    type: Component
+    version: ""

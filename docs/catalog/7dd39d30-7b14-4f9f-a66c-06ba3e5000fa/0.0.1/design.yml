@@ -1,0 +1,251 @@
+name: Example Edge-Permission Relationship
+version: 0.0.4
+services:
+  cluster-role-binding-tq:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: cluster-role-binding-tq
+    namespace: ""
+    settings:
+      role Ref:
+        api Group: rbac.authorization.k8s.io/v1
+        kind: ClusterRole
+        name: cluster-role-vb
+      subjects:
+      - kind: ServiceAccount
+        name: service-account-im
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 4ad2e953-a8e6-4443-9106-08dea5fce1a9
+        label: Cluster Role Binding
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Kubernetes
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: d247c4d8-3c7f-5e48-8158-2fba74f1c41c
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+          name: kubernetes
+          relationships: []
+          status: registered
+          version: v1.25.2
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides: '{"height":"25px","width":"25px","x":"7", "y":"7"}'
+          styles: '{"height":"25px","width":"25px","x":"7", "y":"7"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg
+        position:
+          posX: 370.10625
+          posY: 170
+        whiteboardData:
+          style:
+            height: 10.5
+            width: 10.5
+            z-index: 1000
+    type: ClusterRoleBinding
+    version: v1.25.2
+  cluster-role-vb:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: cluster-role-vb
+    namespace: default
+    settings:
+      rules:
+      - resources:
+        - ServiceAccount
+        verbs:
+        - get
+    traits:
+      meshmap:
+        edges:
+        - data:
+            bindingComponent: ClusterRoleBinding
+            id: afb0ad4f-f0aa-466d-b8b0-1cb94e8898d8
+            metadata:
+              binded_by: 4ad2e953-a8e6-4443-9106-08dea5fce1a9
+            source: 9d21e73e-9a37-4c94-b899-76c5bd4b379c
+            subType: Permission
+            target: 1b357035-2f74-4dd4-8c1f-a4bb94546fb0
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 9d21e73e-9a37-4c94-b899-76c5bd4b379c
+        label: Cluster Role
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          id: bf0328dc-09bf-532e-952e-4d20b81ab5b0
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+          name: kubernetes
+          relationships: []
+          version: v1.25.2
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          styleOverrides: '{"height":"22px", "width":"22px", "x":"8.5", "y":"7.5"}'
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrole-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrole-white.svg
+        position:
+          posX: 290
+          posY: 170
+        whiteboardData:
+          style:
+            z-index: 3
+    type: ClusterRole
+    version: v1.25.2
+  service-account-im:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: service-account-im
+    namespace: default
+    settings:
+      image Pull Secrets: []
+      secrets: []
+    traits:
+      meshmap:
+        edges:
+        - data:
+            bindingComponent: ClusterRoleBinding
+            id: afb0ad4f-f0aa-466d-b8b0-1cb94e8898d8
+            metadata:
+              binded_by: 4ad2e953-a8e6-4443-9106-08dea5fce1a9
+            source: 9d21e73e-9a37-4c94-b899-76c5bd4b379c
+            subType: Permission
+            target: 1b357035-2f74-4dd4-8c1f-a4bb94546fb0
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 1b357035-2f74-4dd4-8c1f-a4bb94546fb0
+        label: Service Account
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: []
+          displayName: Kubernetes
+          hostID: 00000000-0000-0000-0000-000000000000
+          id: d247c4d8-3c7f-5e48-8158-2fba74f1c41c
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+          name: kubernetes
+          relationships: []
+          status: registered
+          version: v1.25.2
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: bottom-round-rectangle
+          shapePolygonPoints: ""
+          styleOverrides:
+            z-index: 1002
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg
+        position:
+          posX: 450
+          posY: 170
+        whiteboardData: {}
+    type: ServiceAccount
+    version: v1.25.2
