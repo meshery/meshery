@@ -89,7 +89,7 @@ function MesheryPatternCard_({
   const formatPatternFile = (file) => {
     try {
       const jsonData = JSON.parse(file);
-      return JSON.stringify(jsonData, null, 2);
+      return JSON.stringify(jsonData, null, 1);
     } catch (err) {
       return file;
     }
