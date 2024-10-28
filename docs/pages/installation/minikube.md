@@ -123,25 +123,31 @@ This will spin up meshery docker containers. To verify that Meshery  is running,
 {% include code.html code=code_content %}
 Meshery UI will be accessible on your local machine on port 9081. Open your browser and access Meshery at http://localhost:9081.
 
-By default, Meshery auto-detects your Minikube cluster and establishes a connection. However, if this doesn’t happen, you can connect by running the following command:
+Configure Meshery to connect with your minikube cluster by running the command:
 {% capture code_content %}$ mesheryctl system config minikube {% endcapture %}
 {% include code.html code=code_content %}
 
 ### Minikube Docker Driver Users
 
-If you are using Minikube with the Docker driver, you need to ensure that the Meshery container is connected to the same network as the minikube container. To place both containers in the same network, run the following commands:
+For users running minikube with the Docker driver, specific steps are needed to ensure that Meshery can connect properly to your minikube cluster.
 
- <pre class="codeblock-pre"><div class="codeblock">
+If you set up your minikube cluster using the [Docker driver](https://minikube.sigs.k8s.io/docs/drivers/docker/), both minikube and Meshery will be running in Docker containers. So, you need to ensure that the Meshery and minikube containers can communicate with each other by placing them in the same Docker network.
+
+To configure this, run the following commands:
+
+<pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">$ docker network connect bridge meshery-meshery-1</div></div>
- </pre>
+</pre>
 
 <br/>
 
 <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">$ docker network connect minikube meshery-meshery-1</div></div>
- </pre>
+</pre>
 
-#### Docker Driver: Update the Kubernetes API Server Address for Meshery Access
+Next, update the Kubernetes API server address in your kubeconfig file before running the `mesheryctl system config minikube` command. The steps to do this are outlined below.
+
+#### Next Step: Update the Kubernetes API Server Address for Meshery Access
 
 To allow the Meshery container to access your Minikube cluster (since both are running in containers), you need to update the Kubernetes API server address in your `kubeconfig file` to the `external minikube IP address`. This is necessary because Docker typically forwards ports to a localhost address, which isn’t accessible between containers.
 
