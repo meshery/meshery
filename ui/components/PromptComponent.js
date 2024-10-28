@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState, useCallback } from 'react';
+import React, { useState, useRef, forwardRef, useImperativeHandle } from 'react';
 import {
   withStyles,
   Typography,
@@ -76,55 +75,51 @@ export const PROMPT_VARIANTS = {
   CONFIRMATION: 'confirmation',
 };
 
-const PromptComponent = ({ classes, variant: initialVariant }) => {
-  const [state, setState] = useState({
-    show: false,
-    title: '',
-    subtitle: '',
-    options: [],
-    isChecked: false,
-    showCheckbox: false,
-    showInfoIcon: null,
-  });
-
+const PromptComponent = forwardRef(({ classes, variant: initialVariant }, ref) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [title, setTitle] = useState('');
+  const [subtitle, setSubtitle] = useState('');
+  const [options, setOptions] = useState([]);
+  const [isChecked, setIsChecked] = useState(false);
+  const [showCheckbox, setShowCheckbox] = useState(false);
+  const [showInfoIcon, setShowInfoIcon] = useState(null);
   const [variant, setVariant] = useState(initialVariant);
-  const promiseRef = React.useRef({});
+  const promiseInfo = useRef({});
 
-  const show = useCallback(async (passed) => {
+  PromptComponent.displayName = 'PromptComponent';
+
+  const show = async (passed) => {
     return new Promise((resolve, reject) => {
-      promiseRef.current = { resolve, reject };
+      promiseInfo.current = { resolve, reject };
       setVariant(passed.variant);
-      setState(prev => ({
-        ...prev,
-        title: passed.title,
-        subtitle: passed.subtitle,
-        options: passed.options,
-        showCheckbox: !!passed.showCheckbox,
-        show: true,
-        showInfoIcon: passed.showInfoIcon || null,
-      }));
+      setTitle(passed.title);
+      setSubtitle(passed.subtitle);
+      setOptions(passed.options);
+      setShowCheckbox(!!passed.showCheckbox);
+      setShowInfoIcon(passed.showInfoIcon || null);
+      setIsOpen(true);
     });
-  }, []);
-
-  const hide = useCallback(() => {
-    setState(prev => ({ ...prev, show: false }));
-  }, []);
-
-  const handleCheckboxChange = useCallback(() => {
-    setState(prev => ({ ...prev, isChecked: !prev.isChecked }));
-  }, []);
-
-  const getCheckboxState = () => {
-    return state.isChecked;
   };
 
-  const { show: showModal, options, title, subtitle, isChecked, showCheckbox, showInfoIcon } = state;
-  const { resolve } = promiseRef.current;
+  useImperativeHandle(ref, () => ({
+    show,
+    getCheckboxState: () => isChecked,
+  }));
+
+  const hide = () => {
+    setIsOpen(false);
+  };
+
+  const handleCheckboxChange = () => {
+    setIsChecked((prev) => !prev);
+  };
+
+  const { resolve } = promiseInfo.current;
 
   return (
     <div className={classes.root}>
       <UsesSistent>
-        <Modal open={showModal} closeModal={hide} title={title}>
+        <Modal open={isOpen} closeModal={hide} title={title}>
           {subtitle !== '' && (
             <ModalBody>
               <DialogContentText id="alert-dialog-description" className={classes.subtitle}>
@@ -155,9 +150,7 @@ const PromptComponent = ({ classes, variant: initialVariant }) => {
                   }}
                   key={options[1]}
                 >
-                  <Typography variant="body2">
-                    {options[1]}
-                  </Typography>
+                  <Typography variant="body2">{options[1]}</Typography>
                 </ModalButtonSecondary>
               )}
               <ModalButtonPrimary
@@ -172,9 +165,7 @@ const PromptComponent = ({ classes, variant: initialVariant }) => {
                 type="submit"
                 variant="contained"
               >
-                <Typography variant="body2">
-                  {options[0]}
-                </Typography>
+                <Typography variant="body2">{options[0]}</Typography>
               </ModalButtonPrimary>
             </Box>
           </ModalFooter>
@@ -182,29 +173,6 @@ const PromptComponent = ({ classes, variant: initialVariant }) => {
       </UsesSistent>
     </div>
   );
-};
-
-const PromptComponentWithStatic = withStyles(styles)((props) => {
-  const componentRef = React.useRef();
-  const WrappedComponent = React.forwardRef((props, ref) => {
-    const promptRef = React.useRef();
-
-    React.useEffect(() => {
-      if (promptRef.current) {
-        componentRef.current = promptRef.current;
-      }
-    }, []);
-
-    return <PromptComponent {...props} ref={promptRef} />;
-  });
-
-  WrappedComponent.show = (...args) => {
-    if (componentRef.current && componentRef.current.show) {
-      return componentRef.current.show(...args);
-    }
-  };
-
-  return <WrappedComponent {...props} />;
 });
 
-export default PromptComponentWithStatic;
+export default withStyles(styles)(PromptComponent);
