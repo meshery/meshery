@@ -76,8 +76,11 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
 // Generate a specific Model from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred --model "[model-name]"
-// Easily generate Meshery models and components from CSV files in a local directory using the following command
-mesheryctl registry generate --directory https://github.com/meshery/meshery/tree/master/docs/assets/model-and-component-csv-templates
+// Easily generate Meshery models and components from CSV files in a local directory using the following command.
+// To test, download each CSV file individually from GitHub. First, navigate to the [model and component CSV templates](https://github.com/meshery/meshery/tree/master/docs/assets/model-and-component-csv-templates), click on each file (model.csv and component.csv), and download them. Create a folder on your local machine, store both CSV files there, and use the command above with your local folder path.
+mesheryctl registry generate --directory "[local-path-to-directory]"
+
+
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
