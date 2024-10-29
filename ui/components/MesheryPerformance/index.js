@@ -235,6 +235,7 @@ const MesheryPerformanceComponent = (props) => {
     reqBody,
     contentType,
     metadata,
+    closeModal,
   } = props;
   const isJsonString = (str) => {
     try {
@@ -429,14 +430,17 @@ const MesheryPerformanceComponent = (props) => {
       tNum <= 0
     ) {
       setTError('error-autocomplete-value');
+      closeModal();
       return;
     }
 
     if (!performanceProfileIDState) {
       submitProfile(({ id }) => submitLoadTest(id));
+      closeModal();
       return;
     }
     submitLoadTest(performanceProfileIDState);
+    closeModal();
   };
 
   const submitProfile = (cb) => {
