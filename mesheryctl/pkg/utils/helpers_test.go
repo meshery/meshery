@@ -1,16 +1,21 @@
 package utils
 
 import (
+	"bytes"
+	"fmt"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/test"
+	"github.com/spf13/cobra"
 )
 
 type mockCloser struct {
@@ -244,15 +249,128 @@ func TestValidateURL(t *testing.T) {
 	}
 }
 
-// func TestReadToken(t *testing.T) {
-// }
-
 func TestTruncateID(t *testing.T) {
 	id := "1234567890"
 	want := "12345678"
 	got := TruncateID(id)
 	if got != want {
 		t.Errorf("TruncateID got = %v want = %v", got, want)
+	}
+}
+
+func TestPrintToTable(t *testing.T) {
+	tests := []struct {
+		name   string
+		header []string
+		data   [][]string
+		want   string
+	}{
+		{
+			name:   "Single row table",
+			header: []string{"Header1", "Header2"},
+			data:   [][]string{{"Data1", "Data2"}},
+			want:   "HEADER1\tHEADER2 \nData1  \tData2  \t\n",
+		},
+		{
+			name:   "Multiple rows table",
+			header: []string{"Header1", "Header2"},
+			data:   [][]string{{"Data1", "Data2"}, {"Data3", "Data4"}},
+			want:   "HEADER1\tHEADER2 \nData1  \tData2  \t\nData3  \tData4  \t\n",
+		},
+		{
+			name:   "Empty table",
+			header: []string{"Header1", "Header2"},
+			data:   [][]string{},
+			want:   "HEADER1\tHEADER2 \n",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			old := os.Stdout
+			r, w, _ := os.Pipe()
+			os.Stdout = w
+
+			PrintToTable(tt.header, tt.data)
+
+			w.Close()
+			os.Stdout = old
+
+			var buf bytes.Buffer
+			_, err := io.Copy(&buf, r)
+			if err != nil {
+				t.Fatal("failed to read from buffer")
+			}
+
+			got := buf.String()
+			if got != tt.want {
+				t.Errorf("\nPrintToTable() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestPrintToTableWithFooter(t *testing.T) {
+	tests := []struct {
+		name     string
+		header   []string
+		data     [][]string
+		footer   []string
+		expected string
+	}{
+		{
+			name:   "Basic table with footer",
+			header: []string{"HEADER1", "HEADER2"},
+			data: [][]string{
+				{"Data1", "Data2"},
+				{"Data3", "Data4"},
+			},
+			footer: []string{"FOOTER1", "FOOTER2"},
+			expected: "HEADER1\tHEADER2 \n" +
+				"Data1  \tData2  \t\n" +
+				"Data3  \tData4  \t\n" +
+				"\n" +
+				"  FOOTER1  FOOTER2  \n\n",
+		},
+		{
+			name:   "Empty data with footer",
+			header: []string{"HEADER1", "HEADER2"},
+			data:   [][]string{},
+			footer: []string{"FOOTER1", "FOOTER2"},
+			expected: "HEADER1\tHEADER2 \n" +
+				"\n" +
+				"  FOOTER1  FOOTER2  \n\n",
+		},
+		{
+			name:   "No footer",
+			header: []string{"HEADER1", "HEADER2"},
+			data: [][]string{
+				{"Data1", "Data2"},
+				{"Data3", "Data4"},
+			},
+			footer: []string{},
+			expected: "HEADER1\tHEADER2 \n" +
+				"Data1  \tData2  \t\n" +
+				"Data3  \tData4  \t\n",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			old := os.Stdout
+			r, w, _ := os.Pipe()
+			os.Stdout = w
+
+			PrintToTableWithFooter(tt.header, tt.data, tt.footer)
+
+			w.Close()
+			out, _ := io.ReadAll(r)
+			os.Stdout = old
+
+			if got := string(out); got != tt.expected {
+				t.Errorf("PrintToTableWithFooter() = %v, want %v", got, tt.expected)
+			}
+		})
 	}
 }
 
@@ -389,13 +507,41 @@ func TestParseURLGithub(t *testing.T) {
 	}
 }
 
-// func TestPrintToTableInStringFormat(t *testing.T) {
-// 	want := NewGoldenFile(t, "PrintToTableInStringFormat.golden", fixturesDir).Load()
-// 	got := PrintToTableInStringFormat([]string{"firstheader", "secondheader"}, [][]string{{"data1", "data2"}, {"data3", "data4"}})
-// 	if got != want {
-// 		t.Errorf("PrintToTableInStringFormat got = %v want = %v", got, want)
-// 	}
-// }
+func TestPrintToTableInStringFormat(t *testing.T) {
+	tests := []struct {
+		name     string
+		header   []string
+		data     [][]string
+		expected string
+	}{
+		{
+			name:   "Normal case with multiple rows and columns",
+			header: []string{"Header1", "Header2"},
+			data: [][]string{
+				{"Row1Col1", "Row1Col2"},
+				{"Row2Col1", "Row2Col2"},
+			},
+			expected: "HEADER1 \tHEADER2  \n" +
+				"Row1Col1\tRow1Col2\t\n" +
+				"Row2Col1\tRow2Col2\t\n",
+		},
+		{
+			name:     "Empty data",
+			header:   []string{"Header1", "Header2"},
+			data:     [][]string{},
+			expected: "HEADER1\tHEADER2 \n",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := PrintToTableInStringFormat(tt.header, tt.data)
+			if got != tt.expected {
+				t.Errorf("PrintToTableInStringFormat() = %v, want %v", got, tt.expected)
+			}
+		})
+	}
+}
 
 func TestCreateDefaultSpinner(t *testing.T) {
 	// only checking for Suffix and FinalMSG
@@ -440,6 +586,317 @@ func TestContainsStringPrefix(t *testing.T) {
 			got := ContainsStringPrefix(tt.slice, tt.str)
 			if got != tt.want {
 				t.Errorf("ContainsStringPrefix got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestTransformYAML(t *testing.T) {
+	tests := []struct {
+		name          string
+		yamlData      []byte
+		transform     func(interface{}) (interface{}, error)
+		keys          []string
+		expectedData  []byte
+		expectedError bool
+	}{
+		{
+			name: "valid transformation with nested keys",
+			yamlData: []byte(`
+parent:
+  child: value
+`),
+			transform: func(val interface{}) (interface{}, error) {
+				return "new_value", nil
+			},
+			keys: []string{"parent", "child"},
+			expectedData: []byte(`
+parent:
+  child: new_value
+`),
+			expectedError: false,
+		},
+		{
+			name: "invalid path in keys",
+			yamlData: []byte(`
+parent:
+  child: value
+`),
+			transform: func(val interface{}) (interface{}, error) {
+				return "new_value", nil
+			},
+			keys:          []string{"parent", "nonexistent"},
+			expectedData:  nil,
+			expectedError: true,
+		},
+		{
+			name: "error during transformation",
+			yamlData: []byte(`
+parent:
+  child: value
+`),
+			transform: func(val interface{}) (interface{}, error) {
+				return nil, fmt.Errorf("transformation error")
+			},
+			keys:          []string{"parent", "child"},
+			expectedData:  nil,
+			expectedError: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotData, err := TransformYAML(tt.yamlData, tt.transform, tt.keys...)
+			if (err != nil) != tt.expectedError {
+				t.Errorf("TransformYAML() error = %v, expectedError %v", err, tt.expectedError)
+				return
+			}
+			if !tt.expectedError && strings.TrimSpace(string(gotData)) != strings.TrimSpace(string(tt.expectedData)) {
+				t.Errorf("TransformYAML() got = %s, want %s", gotData, tt.expectedData)
+			}
+		})
+	}
+}
+
+func TestMapGet(t *testing.T) {
+	tests := []struct {
+		name     string
+		mp       map[string]interface{}
+		key      []string
+		expected interface{}
+		ok       bool
+	}{
+		{
+			name:     "Nil Map",
+			mp:       nil,
+			key:      []string{"key"},
+			expected: nil,
+			ok:       false,
+		},
+		{
+			name:     "Empty Key",
+			mp:       map[string]interface{}{"key": "value"},
+			key:      []string{},
+			expected: map[string]interface{}{"key": "value"},
+			ok:       true,
+		},
+		{
+			name:     "Single Level Key",
+			mp:       map[string]interface{}{"key": "value"},
+			key:      []string{"key"},
+			expected: "value",
+			ok:       true,
+		},
+		{
+			name: "Nested Map",
+			mp: map[string]interface{}{
+				"key": map[string]interface{}{
+					"nestedKey": "nestedValue",
+				},
+			},
+			key:      []string{"key", "nestedKey"},
+			expected: "nestedValue",
+			ok:       true,
+		},
+		{
+			name: "Array in Map",
+			mp: map[string]interface{}{
+				"key": []interface{}{
+					map[string]interface{}{"nestedKey": "nestedValue"},
+				},
+			},
+			key:      []string{"key", "0", "nestedKey"},
+			expected: "nestedValue",
+			ok:       true,
+		},
+		{
+			name:     "Invalid Key",
+			mp:       map[string]interface{}{},
+			key:      []string{"key1"},
+			expected: nil,
+			ok:       false,
+		},
+		{
+			name: "Array in Map with Nested Map",
+			mp: map[string]interface{}{
+				"key1": []map[string]interface{}{
+					{"nestedKey1": "nestedValue1"},
+					{"nestedKey2": "nestedValue2"},
+				},
+			},
+			key:      []string{"key1", "1", "nestedKey2"},
+			expected: "nestedValue2",
+			ok:       true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, ok := MapGet(tt.mp, tt.key...)
+			if !reflect.DeepEqual(got, tt.expected) || ok != tt.ok {
+				t.Errorf("MapGet() = %v, %v; want %v, %v", got, ok, tt.expected, tt.ok)
+			}
+		})
+	}
+}
+func TestMapSet(t *testing.T) {
+	tests := []struct {
+		name     string
+		mp       map[string]interface{}
+		value    interface{}
+		keys     []string
+		expected map[string]interface{}
+	}{
+		{
+			name:  "Basic Key-Value Pair",
+			mp:    map[string]interface{}{},
+			value: "value1",
+			keys:  []string{"key1"},
+			expected: map[string]interface{}{
+				"key1": "value1",
+			},
+		},
+		{
+			name: "Nested Map",
+			mp: map[string]interface{}{
+				"key1": map[string]interface{}{
+					"key2": "value2",
+				},
+			},
+			value: "newValue",
+			keys:  []string{"key1", "key2"},
+			expected: map[string]interface{}{
+				"key1": map[string]interface{}{
+					"key2": "newValue",
+				},
+			},
+		},
+		{
+			name: "Array in Map",
+			mp: map[string]interface{}{
+				"key1": []interface{}{
+					map[string]interface{}{
+						"key2": "value2",
+					},
+				},
+			},
+			value: "newValue",
+			keys:  []string{"key1", "0", "key2"},
+			expected: map[string]interface{}{
+				"key1": []interface{}{
+					map[string]interface{}{
+						"key2": "newValue",
+					},
+				},
+			},
+		},
+		{
+			name:     "Invalid Key",
+			mp:       map[string]interface{}{},
+			value:    "value1",
+			keys:     []string{},
+			expected: map[string]interface{}{},
+		},
+		{
+			name: "Array in Map with Nested Map",
+			mp: map[string]interface{}{
+				"key1": []map[string]interface{}{
+					{"nestedKey1": "nestedValue1"},
+					{"nestedKey2": "nestedValue2"},
+				},
+			},
+			value: "newValue",
+			keys:  []string{"key1", "1", "nestedKey2"},
+
+			expected: map[string]interface{}{
+				"key1": []map[string]interface{}{
+					{"nestedKey1": "nestedValue1"},
+					{"nestedKey2": "newValue"},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			MapSet(tt.mp, tt.value, tt.keys...)
+			if !reflect.DeepEqual(tt.mp, tt.expected) {
+				t.Errorf("MapSet() = %v, want %v", tt.mp, tt.expected)
+			}
+		})
+	}
+}
+
+func TestRecursiveCastMapStringInterfaceToMapStringInterface(t *testing.T) {
+	input := map[string]interface{}{
+		"key1": "value1",
+		"key2": 2,
+	}
+	expected := map[string]interface{}{
+		"key1": "value1",
+		"key2": 2,
+	}
+
+	got := RecursiveCastMapStringInterfaceToMapStringInterface(input)
+	if !reflect.DeepEqual(got, expected) {
+		t.Errorf("RecursiveCastMapStringInterfaceToMapStringInterface() = %v, want %v", got, expected)
+	}
+}
+
+func TestConvertMapInterfaceMapString(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    interface{}
+		expected interface{}
+	}{
+		{
+			name: "Convert map[interface{}]interface{} to map[string]interface{}",
+			input: map[interface{}]interface{}{
+				"key1": "value1",
+				2:      "value2",
+				"key3": map[interface{}]interface{}{
+					"nestedKey1": "nestedValue1",
+					3:            "nestedValue2",
+				},
+			},
+			expected: map[string]interface{}{
+				"key1": "value1",
+				"2":    "value2",
+				"key3": map[string]interface{}{
+					"nestedKey1": "nestedValue1",
+					"3":          "nestedValue2",
+				},
+			},
+		},
+		{
+			name:     "Convert []interface{} to []string",
+			input:    []interface{}{"value1", "value2", "value3"},
+			expected: []interface{}{"value1", "value2", "value3"},
+		},
+		{
+			name: "Nested map[string]interface{} with map[interface{}]interface{}",
+			input: map[string]interface{}{
+				"key1": "value1",
+				"key2": map[interface{}]interface{}{
+					"nestedKey1": "nestedValue1",
+					3:            "nestedValue2",
+				},
+			},
+			expected: map[string]interface{}{
+				"key1": "value1",
+				"key2": map[string]interface{}{
+					"nestedKey1": "nestedValue1",
+					"3":          "nestedValue2",
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := ConvertMapInterfaceMapString(tt.input)
+			if !reflect.DeepEqual(result, tt.expected) {
+				t.Errorf("ConvertMapInterfaceMapString() = %v, want %v", result, tt.expected)
 			}
 		})
 	}
@@ -583,5 +1040,149 @@ func TestSetOverrideValues(t *testing.T) {
 		if !eq {
 			t.Errorf("SetOverrideValues %s got = %v want = %v", tt.name, got, tt.want)
 		}
+	}
+}
+
+func TestCheckFileExists(t *testing.T) {
+	t.Run("File exists", func(t *testing.T) {
+		tmpFile, err := os.CreateTemp("", "testfile")
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer os.Remove(tmpFile.Name())
+
+		exists, err := CheckFileExists(tmpFile.Name())
+		if err != nil {
+			t.Fatalf("unexpected error: %v", err)
+		}
+		if !exists {
+			t.Errorf("expected file to exist, but it does not")
+		}
+	})
+
+	t.Run("Other error", func(t *testing.T) {
+		// Simulate an error by using an invalid file path
+		invalidFilePath := string([]byte{0x00})
+
+		exists, err := CheckFileExists(invalidFilePath)
+		if err == nil {
+			t.Fatalf("expected error, got nil")
+		}
+		if exists {
+			t.Errorf("expected file to not exist, but it does")
+		}
+		if !strings.Contains(err.Error(), "Failed to read/fetch the file") {
+			t.Errorf("expected wrapped error, got %v", err)
+		}
+	})
+}
+
+func TestContains(t *testing.T) {
+	tests := []struct {
+		name     string
+		key      string
+		col      []string
+		expected int
+	}{
+		{
+			name:     "Key present in slice",
+			key:      "test",
+			col:      []string{"foo", "bar", "test"},
+			expected: 2,
+		},
+		{
+			name:     "Key not present in slice",
+			key:      "missing",
+			col:      []string{"foo", "bar", "test"},
+			expected: -1,
+		},
+		{
+			name:     "Empty slice",
+			key:      "test",
+			col:      []string{},
+			expected: -1,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Contains(tt.key, tt.col); got != tt.expected {
+				t.Errorf("Contains() = %v, want %v", got, tt.expected)
+			}
+		})
+	}
+}
+
+func TestFindInSlice(t *testing.T) {
+	tests := []struct {
+		name          string
+		key           string
+		items         []string
+		expectedIndex int
+		expectedFound bool
+	}{
+		{
+			name:          "key found at index 0",
+			key:           "apple",
+			items:         []string{"apple", "banana", "cherry"},
+			expectedIndex: 0,
+			expectedFound: true,
+		},
+		{
+			name:          "key not found",
+			key:           "date",
+			items:         []string{"apple", "banana", "cherry"},
+			expectedIndex: -1,
+			expectedFound: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			index, found := FindInSlice(tt.key, tt.items)
+			if index != tt.expectedIndex || found != tt.expectedFound {
+				t.Errorf("FindInSlice(%v, %v) = (%v, %v), want (%v, %v)", tt.key, tt.items, index, found, tt.expectedIndex, tt.expectedFound)
+			}
+		})
+	}
+}
+
+func TestGetPageQueryParameter(t *testing.T) {
+	tests := []struct {
+		name     string
+		page     int
+		setFlag  bool
+		expected string
+	}{
+		{
+			name:     "Page flag not set",
+			page:     1,
+			setFlag:  false,
+			expected: "pagesize=all",
+		},
+		{
+			name:     "Page flag set to 2",
+			page:     2,
+			setFlag:  true,
+			expected: "page=2",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cmd := &cobra.Command{}
+			if tt.setFlag {
+				cmd.Flags().Int("page", tt.page, "page number")
+				err := cmd.Flags().Set("page", fmt.Sprintf("%d", tt.page))
+				if err != nil {
+					t.Fatalf("failed to set flag: %v", err)
+				}
+			}
+
+			result := GetPageQueryParameter(cmd, tt.page)
+			if result != tt.expected {
+				t.Errorf("GetPageQueryParameter() = %v, want %v", result, tt.expected)
+			}
+		})
 	}
 }
