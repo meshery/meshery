@@ -496,7 +496,7 @@ const MesheryPerformanceComponent = (props) => {
           if (generateNotif) {
             const notify = props.notify;
             notify({
-              message: 'Performance Profile Created!',
+              message: `Performance profile ${result.name} has been created`,
               event_type: EVENT_TYPES.SUCCESS,
             });
           }
