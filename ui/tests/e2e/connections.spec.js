@@ -229,3 +229,39 @@ transitionTests.forEach((t) => {
     await expect(firstRow.locator('span', { hasText: 'connected' })).toBeVisible();
   });
 });
+
+test('Delete Kubernetes cluster connections', { tag: '@unstable' }, async ({ page }) => {
+  // Navigate to 'Connections' tab
+  await page.getByRole('tab', { name: 'Connections' }).click();
+  // Find the row with the connection to be deleted
+  const row = page.locator('tr').filter({ hasText: 'connected' }).first();
+
+  // Fail the test if the connection is not found
+  if ((await row.count()) === 0) {
+    throw new Error(
+      'No connected Kubernetes cluster found to delete. Ensure a connection exists before running this test.',
+    );
+  }
+
+  //find the checkbox in the row
+  const checkbox = row.locator('input[type="checkbox"]').first();
+  await checkbox.check();
+
+  // Click "Delete" button in the table
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+  // Verify that Confirmation modal opened and delete
+  await expect(page.getByText('Delete Connections')).toBeVisible();
+
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+
+  const statusReq = await page.waitForResponse(
+    (response) =>
+      response
+        .url()
+        .startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections/meshery/status`) &&
+      response.status() === 202,
+  );
+
+  // Verify that the status of the connection is deleted
+  expect(statusReq.ok()).toBe(true);
+});
