@@ -1103,7 +1103,7 @@ const MesheryPerformanceComponent = (props) => {
                                   accept={'.json'}
                                   name="upload-button"
                                   hidden
-                                  data-cy="additional-options-upload-button"
+                                  data-testid="additional-options-upload-button"
                                 />
                                 Browse
                               </Button>
@@ -1147,7 +1147,7 @@ const MesheryPerformanceComponent = (props) => {
                                   accept={'.crt'}
                                   name="upload-button"
                                   hidden
-                                  data-cy="cacertificate-upload-button"
+                                  data-testid="cacertificate-upload-button"
                                   onChange={handleCertificateUpload}
                                 />
                                 Browse

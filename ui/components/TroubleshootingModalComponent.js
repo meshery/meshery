@@ -170,7 +170,7 @@ const TroubleshootingModal = (props) => {
               Meshmap Troubleshooting Guide
             </Typography>
             <IconButton
-              data-cy="modal-close-btn"
+              data-testid="modal-close-btn"
               className={classes.iconContainer}
               onClick={handleClose}
             >

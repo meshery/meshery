@@ -211,7 +211,7 @@ function MesheryPatternCard_({
                 onClick={handleDownload}
                 className={classes.testsButton}
               >
-                <GetAppIcon data-cy="download-button" />
+                <GetAppIcon data-testid="download-button" />
                 <span className={classes.btnText}> Download </span>
               </TooltipButton>
               {visibility === VISIBILITY.PRIVATE ? (
