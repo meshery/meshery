@@ -12,16 +12,20 @@ import MesheryChart from './MesheryChart';
 import { clearResultsSelection } from '../lib/store';
 import { UsesSistent } from './SistentWrapper';
 
-const StyledIconButton = styled(IconButton)({
-  marginRight: '24px',
+const StyledIconButton = styled(IconButton)(({ theme }) => ({
+  marginRight: theme.spacing(3),
   top: '50%',
   display: 'inline-block',
   position: 'relative',
-});
+}));
 
 const StyledIcon = styled('span')(({ theme }) => ({
   color: theme.palette.text.primary,
 }));
+
+// const StyledInverseIcon = styled('span')({
+//   transform: 'rotate(90deg)',
+// });
 
 function CustomToolbarSelect({ results_selection, setSelectedRows, clearResultsSelection }) {
   const [dialogOpen, setDialogOpen] = useState(false);
