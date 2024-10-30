@@ -126,8 +126,8 @@ const NavbarNotificationIcon = withErrorBoundary(() => {
     getSeverityCount(count_by_severity_level, SEVERITY.ERROR) > 0
       ? SEVERITY.ERROR
       : getSeverityCount(count_by_severity_level, SEVERITY.WARNING) > 0
-      ? SEVERITY.WARNING
-      : null;
+        ? SEVERITY.WARNING
+        : null;
   const currentSeverityStyle = currentTopSeverity ? SEVERITY_STYLE[currentTopSeverity] : null;
   const topSeverityCount = getSeverityCount(count_by_severity_level, currentTopSeverity);
   const classes = useNavNotificationIconStyles({

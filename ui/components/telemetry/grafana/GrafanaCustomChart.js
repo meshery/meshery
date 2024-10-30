@@ -650,8 +650,8 @@ class GrafanaCustomChart extends Component {
     const linked = this.state.sparkline
       ? false
       : !inDialog
-      ? { name: board && board.title ? board.title : '' }
-      : false;
+        ? { name: board && board.title ? board.title : '' }
+        : false;
 
     let shouldDisplayLegend = Object.keys(this.datasetIndex).length <= 10;
     if (panel.type !== 'graph') {

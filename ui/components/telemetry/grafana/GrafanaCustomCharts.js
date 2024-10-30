@@ -220,8 +220,8 @@ class GrafanaCustomCharts extends Component {
                       {config.board && config.board.title
                         ? config.board.title
                         : config.title
-                        ? config.title
-                        : ''}
+                          ? config.title
+                          : ''}
                     </Typography>
                   </div>
                   {config.templateVars && config.templateVars.length > 0 && (
