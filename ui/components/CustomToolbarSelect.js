@@ -10,6 +10,7 @@ import GetAppIcon from '@mui/icons-material/GetApp';
 import MesheryChartDialog from './MesheryChartDialog';
 import MesheryChart from './MesheryChart';
 import { clearResultsSelection } from '../lib/store';
+import { UsesSistent } from './SistentWrapper';
 
 const StyledIconButton = styled(IconButton)({
   marginRight: '24px',
@@ -20,7 +21,6 @@ const StyledIconButton = styled(IconButton)({
 
 const StyledIcon = styled('span')(({ theme }) => ({
   color: theme.palette.text.primary,
-  display: 'flex',
 }));
 
 function CustomToolbarSelect({ results_selection, setSelectedRows, clearResultsSelection }) {
@@ -89,48 +89,50 @@ function CustomToolbarSelect({ results_selection, setSelectedRows, clearResultsS
   });
 
   return (
-    <NoSsr>
-      <div className="custom-toolbar-select">
-        <Tooltip title="Deselect ALL">
-          <StyledIconButton onClick={handleClickDeselectAll}>
-            <StyledIcon>
-              <IndeterminateCheckBoxIcon />
-            </StyledIcon>
-          </StyledIconButton>
-        </Tooltip>
-        {fullData.length === 1 && (
-          <Tooltip title="Download">
-            <StyledIconButton
-              key="download"
-              aria-label="download"
-              color="inherit"
-              href={`/api/perf/profile/result/${encodeURIComponent(fullData[0].meshery_id)}`}
-              download={`${fullData[0].name}_test_result.json`}
-            >
+    <UsesSistent>
+      <NoSsr>
+        <div className="custom-toolbar-select">
+          <Tooltip title="Deselect ALL">
+            <StyledIconButton onClick={handleClickDeselectAll}>
               <StyledIcon>
-                <GetAppIcon />
+                <IndeterminateCheckBoxIcon />
               </StyledIcon>
             </StyledIconButton>
           </Tooltip>
-        )}
-        <Tooltip title="Compare selected">
-          <StyledIconButton onClick={handleCompareSelected}>
-            <StyledIcon>
-              <CompareArrowsIcon />
-            </StyledIcon>
-          </StyledIconButton>
-        </Tooltip>
-      </div>
-      <MesheryChartDialog
-        handleClose={handleDialogClose}
-        open={dialogOpen}
-        content={
-          <div>
-            <MesheryChart data={data} />
-          </div>
-        }
-      />
-    </NoSsr>
+          {fullData.length === 1 && (
+            <Tooltip title="Download">
+              <StyledIconButton
+                key="download"
+                aria-label="download"
+                color="inherit"
+                href={`/api/perf/profile/result/${encodeURIComponent(fullData[0].meshery_id)}`}
+                download={`${fullData[0].name}_test_result.json`}
+              >
+                <StyledIcon>
+                  <GetAppIcon />
+                </StyledIcon>
+              </StyledIconButton>
+            </Tooltip>
+          )}
+          <Tooltip title="Compare selected">
+            <StyledIconButton onClick={handleCompareSelected}>
+              <StyledIcon>
+                <CompareArrowsIcon />
+              </StyledIcon>
+            </StyledIconButton>
+          </Tooltip>
+        </div>
+        <MesheryChartDialog
+          handleClose={handleDialogClose}
+          open={dialogOpen}
+          content={
+            <div>
+              <MesheryChart data={data} />
+            </div>
+          }
+        />
+      </NoSsr>
+    </UsesSistent>
   );
 }
 
