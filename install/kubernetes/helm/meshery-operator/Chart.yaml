@@ -21,7 +21,7 @@ type: application
 
 # This is the chart version. This version number should be incremented each time you make changes
 # to the chart and its templates, including the app version.
-version: 0.6.0
+version: 0.7.0
 
 # This is the version number of the application being deployed. This version number should be
 # incremented each time you make changes to the application.
@@ -37,8 +37,8 @@ dependencies:
     condition: meshery-meshsync.enabled
 
 maintainers:
-  - name: Layer5 Authors
-    email: community@layer5.io
+  - name: Meshery Authors
+    email: developers@meshery.io
   - name: aisuko
     email: urakiny@gmail.com
   - name: leecalcote

@@ -52,6 +52,7 @@ export const useNotification = () => {
   const notify = ({
     id = null,
     message,
+    dataTestID = 'notify',
     details = null,
     event_type,
     timestamp = null,
@@ -67,7 +68,7 @@ export const useNotification = () => {
       variant: typeof event_type === 'string' ? event_type : event_type?.type,
       action: function Action(key) {
         return (
-          <ToggleButtonGroup>
+          <ToggleButtonGroup data-testid={dataTestID}>
             {showInNotificationCenter && (
               <AddClassRecursively className={NOTIFICATION_CENTER_TOGGLE_CLASS}>
                 <IconButton

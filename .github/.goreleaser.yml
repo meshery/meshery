@@ -1,0 +1,136 @@
+project_name: mesheryctl
+version: 2
+before:
+  hooks:
+    # you may remove this if you don't use vgo
+    - go mod tidy
+    # you may remove this if you don't need go generate
+    # - go generate ./...
+builds:
+- main: ./mesheryctl/cmd/mesheryctl/main.go
+
+  env:
+    - CGO_ENABLED=0
+
+  ldflags:
+    - -s -w -X github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants.version={{.Tag}}
+    - -s -w -X github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants.commitsha={{.ShortCommit}}
+    - -s -w -X github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants.releasechannel={{.Env.RELEASE_CHANNEL}}
+  # GOOS list to build for.
+  # For more info refer to: https://golang.org/doc/install/source#environment
+  # Defaults are darwin and linux.
+  goos:
+    - darwin
+    - linux
+    - windows
+
+  # # GOARCH to build for.
+  # # For more info refer to: https://golang.org/doc/install/source#environment
+  # # Defaults are 386 and amd64.
+  goarch:
+    - 386
+    - amd64
+    - arm
+    - arm64
+
+  # List of combinations of GOOS + GOARCH + GOARM to ignore.
+  ignore:
+      - goos: windows
+        goarch: arm
+      - goos: windows
+        goarch: arm64
+
+archives:
+  - id: stable
+    name_template: >-
+      {{ .ProjectName }}_{{.Version}}_
+      {{- title .Os }}_
+      {{- if eq .Arch "amd64" }}x86_64
+      {{- else if eq .Arch "386" }}i386
+      {{- else }}{{ .Arch }}{{ end }}
+    # darwin: Darwin
+    # linux: Linux
+    # windows: Windows
+    # 386: i386
+    # amd64: x86_64
+    format: tar.gz
+    format_overrides:
+      - goos: windows
+        format: zip
+  # files:
+  #   - setup_scripts/*
+
+checksum:
+  name_template: 'checksums.txt'
+snapshot:
+  version_template: "{{ .Tag }}-next"
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
+
+release:
+  # Repo in which the release will be created.
+  # Default is extracted from the origin remote URL.
+  # Note: it can only be one: either github or gitlab or gitea
+  # github:
+  #   owner: user
+  #   name: repo
+
+  # IDs of the archives to use.
+  # Defaults to all.
+  # ids:
+  #   - foo
+  #   - bar
+
+  # If set to true, will not auto-publish the release.
+  # Default is false.
+  # draft: true
+
+  # If set to auto, will mark the release as not ready for production
+  # in case there is an indicator for this in the tag e.g. v1.0.0-rc1
+  # If set to true, will mark the release as not ready for production.
+  # Default is false.
+  # prerelease: auto
+
+  # You can change the name of the GitHub release.
+  # Default is `{{.Tag}}`
+  name_template: "Meshery {{.Tag}}"
+
+# Extending the GoRelease to publish app manifest to scoop-bucket repository for Meshery
+scoops: 
+  # Template for the url which is determined by the given Token (github or gitlab)
+  # Default for github is "https://github.com/<repo_owner>/<repo_name>/releases/download/{{ .Tag }}/{{ .ArtifactName }}"
+  # Default for gitlab is "https://gitlab.com/<repo_owner>/<repo_name>/uploads/{{ .ArtifactUploadHash }}/{{ .ArtifactName }}"
+  # Gitea is not supported yet, but the support coming
+  # url_template: "http://github.mycompany.com/foo/bar/releases/{{ .Tag }}/{{ .ArtifactName }}"
+
+  # Repository to push the app manifest to.
+  - repository:
+     owner: meshery
+     name: scoop-bucket
+
+  # Git author used to commit to the repository.
+  # Defaults are shown.
+    commit_author:
+      name: mesheryctl releaser
+      email: community@meshery.io
+
+    # Your app's homepage.
+    # Default is empty.
+    homepage: "https://meshery.io"
+
+    # Your app's description.
+    # Default is empty.
+    description: "The Cloud Native Management Plane."
+
+    # Your app's license
+    # Default is empty.
+    license: Apache 2.0
+
+    # Persist data between application updates
+    # persist:
+    # - "data"
+    # - "config.toml"

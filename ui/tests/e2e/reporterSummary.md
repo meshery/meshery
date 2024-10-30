@@ -1,25 +1,26 @@
-Test run results
+### END-TO-END TESTS
 
----
+<%- introMessage %>
 
-## <%- introMessage %>
+**📦 Test Result Summary**
 
-Summary:
+- ✅ <%- passed %> passed
+- ❌ <%- failed %> failed
+- ⚠️ <%- flaky %> flaked
+- ⏩ <%- skipped %> skipped
 
-- ⌛ Duration of test run: <%- minutes %> minutes and <%- seconds %> seconds
-- 📦 Tests results:
-  - ✅ <%- passed %>
-  - ❌ <%- failed %>
-  - ⏩ <%- skipped %>
+⌛ _Duration: <%- minutes %> minutes and <%- seconds %> seconds_
 
-<%- failed > 0 ? "👎 Some tests failed!" : "👍 All tests passed successfully!" %>
+<%- failed > 0 ? "**Overall Result**: 👎 Some tests failed." : "**Overall Result**: 👍 All tests passed." %>
 
-<% if (failsMessage) { %>
+<% if (testTable) { %>
 
 <details>
-    <summary>Click Here for more details</summary>
-    <%- failsMessage %>
+    <summary>[Show/Hide] Test Result Details</summary>
+
+<%- testTable %>
+
 </details>
 <% } %>
 
-To see the full report, please visit our CI/CD pipeline with reporter.`;
+<!-- To see the full report, please visit our CI/CD pipeline with reporter. -->

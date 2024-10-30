@@ -7,7 +7,7 @@
   "metadata": {
    "capabilities": null,
    "isAnnotation": true,
-   "primaryColor": "#396679",
+   "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
    "styleOverrides": "",
@@ -38,5 +38,7 @@
   "subCategory": "App Definition and Development",
   "version": "v1.0.0",
   "components": null,
-  "relationships": null
+  "relationships": null,
+  "components_count": 0,
+  "relationships_count": 0
  }

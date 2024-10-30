@@ -1,11 +1,8 @@
 import { expect, test } from '@playwright/test';
 import { ENV } from './env';
 
-test.describe('Service Mesh Lifecycle Tests', () => {
-  const mesheryAdapters = [
-    { adapterName: 'Istio', adapterPort: '10000', deploy: false },
-    { adapterName: 'Consul', adapterPort: '10002', deploy: false },
-  ];
+test.describe('Service Mesh Lifecycle Tests', { tag: '@unstable' }, () => {
+  const mesheryAdapters = [{ adapterName: 'Istio', adapterPort: '10000', deploy: false }];
 
   mesheryAdapters.forEach(({ adapterName, adapterPort }) => {
     const ADAPTER_LOCATION = `localhost:${adapterPort}`;

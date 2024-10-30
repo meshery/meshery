@@ -246,6 +246,7 @@ function generateColumnsForDisplay(
           return (
             <IconButton
               aria-label="more"
+              data-testid="open-performance-result-bar-chart"
               color="inherit"
               onClick={() => setSelectedProfileIdxForChart(tableMeta.rowIndex)}
             >

@@ -1,0 +1,603 @@
+name: ElasticSearch
+version: 0.0.11
+services:
+  comment-dw:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: comment-dw
+    namespace: default
+    settings:
+      lastUpdated: "2023-12-07T10:09:48.428Z"
+      status: false
+      usersMessages:
+      - avatarUrl: https://avatars.githubusercontent.com/u/71271069?v=4
+        firstName: Yash
+        lastName: Sharma
+        message: This seems to be working
+        timestamp: "2023-12-07T10:09:48.428Z"
+        userid: 551dcb82-7643-4709-8500-9a60e60030b9
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 2cdc72c4-3e0e-4d34-9bd4-9edd27d9a89d
+        label: Comment
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Meshery Core
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/amd-gpu/white/nodefeature-white.svg
+          name: meshery-core
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities:
+            designer:
+              edit:
+                config: true
+                lock: true
+                shape:
+                  convert-shape: true
+                style: false
+              label:
+                edit: true
+                show: true
+                sync-with-config-property: name
+          genealogy: ""
+          isAnnotation: true
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#FFDE00'
+          published: true
+          secondaryColor: '#FFDE00'
+          shape: tag
+          styleOverrides: '{"height":"22px","width":"22px","x":"3.5px","y":"7.5px"}'
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg
+        position:
+          posX: 590
+          posY: 210
+        whiteboardData:
+          style:
+            z-index: 18
+    type: Comment
+    version: v1.0.0
+  comment-xt:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: comment-xt
+    namespace: default
+    settings:
+      lastUpdated: "2023-12-07T10:09:11.675Z"
+      status: false
+      usersMessages:
+      - avatarUrl: https://avatars.githubusercontent.com/u/71271069?v=4
+        firstName: Yash
+        lastName: Sharma
+        message: Thankyou for making this, can you change the elastic search image
+          version
+        timestamp: "2023-12-07T10:08:46.974Z"
+        userid: 551dcb82-7643-4709-8500-9a60e60030b9
+      - avatarUrl: https://avatars.githubusercontent.com/u/71271069?v=4
+        firstName: Yash
+        lastName: Sharma
+        message: // @[Yash Sharma](551dcb82-7643-4709-8500-9a60e60030b9)
+        timestamp: "2023-12-07T10:09:11.675Z"
+        userid: 551dcb82-7643-4709-8500-9a60e60030b9
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: bbd7d1d7-89fb-4087-95a5-c24f70d9c0ab
+        label: Comment
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Meshery Core
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            isAnnotation: false
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgWhite: ui/public/static/img/meshmodels/amd-gpu/white/nodefeature-white.svg
+          name: meshery-core
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities:
+            designer:
+              edit:
+                config: true
+                lock: true
+                shape:
+                  convert-shape: true
+                style: false
+              label:
+                edit: true
+                show: true
+                sync-with-config-property: name
+          genealogy: ""
+          isAnnotation: true
+          isNamespaced: false
+          logoURL: ""
+          model: meshery-core
+          modelDisplayName: Meshery Core
+          primaryColor: '#FFDE00'
+          published: true
+          secondaryColor: '#FFDE00'
+          shape: tag
+          styleOverrides:
+            height: 22px
+            width: 22px
+            x: 3.5px
+            "y": 7.5px
+            z-index: 5
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg
+        position:
+          posX: 510
+          posY: 230
+        whiteboardData:
+          style:
+            z-index: 17
+    type: Comment
+    version: v1.0.0
+  default:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: default
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: a5a3d40c-c5b7-4648-850c-f452f59bd8d3
+        label: default
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: false
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: rectangle
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-style: dashed
+            border-width: 2
+            z-index: 6
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
+        position:
+          posX: 468
+          posY: 320.75
+        whiteboardData:
+          style:
+            z-index: 19
+    type: Namespace
+    version: v1.25.2
+  elasticsearch:
+    annotations:
+      name: elasticsearch
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: elasticsearch
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 053f1d4b-ebdc-4e5d-9351-711bf1aa3075
+        label: elasticsearch
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: bottom-round-rectangle
+          styleOverrides:
+            z-index: 7
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+        position:
+          posX: 650
+          posY: 190
+        whiteboardData:
+          style:
+            z-index: 11
+    type: ServiceAccount
+    version: v1.25.2
+  elasticsearch-rc:
+    annotations: {}
+    apiVersion: v1
+    dependsOn:
+    - default
+    id: null
+    isAnnotation: null
+    labels:
+      component: elasticsearch
+    model: kubernetes
+    name: elasticsearch-rc
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        template:
+          metadata:
+            labels:
+              component: elasticsearch
+          spec:
+            containers:
+            - env:
+              - name: KUBERNETES_CA_CERTIFICATE_FILE
+                value: /var/run/secrets/kubernetes.io/serviceaccount/ca.crt
+              - name: NAMESPACE
+                value From:
+                  field Ref:
+                    field Path: metadata.namespace
+              - name: CLUSTER_NAME
+                value: myesdb
+              - name: DISCOVERY_SERVICE
+                value: elasticsearch
+              - name: NODE_MASTER
+                value: "true"
+              - name: NODE_DATA
+                value: "true"
+              - name: ""
+              - name: HTTP_ENABLE
+                value: "true"
+              image: quay.io/pires/docker-elasticsearch-kubernetes:5.6.2
+              name: es
+              ports:
+              - container Port: 9200
+                name: http
+                protocol: TCP
+              - container Port: 9300
+                name: transport
+                protocol: TCP
+              security Context:
+                capabilities:
+                  add:
+                  - IPC_LOCK
+              volume Mounts:
+              - mount Path: /data
+                name: storage
+            init Containers:
+            - command:
+              - '["sysctl", "-w", "vm.max_map_count=262144"]'
+              image: busybox
+              image Pull Policy: IfNotPresent
+              name: init-sysctl
+              security Context:
+                privileged: true
+            service Account: elasticsearch
+            volumes:
+            - name: storage
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: dc3f0f2f-88be-4dbf-a9f7-c93719e6d4f5
+        label: elasticsearch-rc
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: cut-rectangle
+          styleOverrides:
+            z-index: 9
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        parent: a5a3d40c-c5b7-4648-850c-f452f59bd8d3
+        position:
+          posX: 430
+          posY: 270
+        whiteboardData:
+          style:
+            z-index: 6
+    type: ReplicationController
+    version: v1.25.2
+  elasticsearch-svc:
+    annotations: {}
+    apiVersion: v1
+    dependsOn:
+    - default
+    id: null
+    isAnnotation: null
+    labels:
+      component: elasticsearch
+    model: kubernetes
+    name: elasticsearch-svc
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - name: http
+          port: 9200
+          protocol: TCP
+        - name: transport
+          port: 9300
+          protocol: TCP
+        selector:
+          component: elasticsearch
+        type: LoadBalancer
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 48bf8d87-19e8-4bef-bc19-8ceee94ecdaf
+        label: elasticsearch-svc
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides:
+            background-fit: none
+            background-position-y: 4.5
+            height: 20
+            padding: 12
+            width: 20
+            x: 10px
+            "y": 12px
+            z-index: 10
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        parent: a5a3d40c-c5b7-4648-850c-f452f59bd8d3
+        position:
+          posX: 430
+          posY: 350
+        whiteboardData:
+          style:
+            z-index: 7
+    type: Service
+    version: v1.25.2
+  role-binding-es:
+    annotations:
+      name: elasticsearch
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn:
+    - default
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: role-binding-es
+    namespace: default
+    settings:
+      role Ref:
+        api Group: rbac.authorization.k8s.io
+        kind: Role
+        name: elasticsearch
+      subjects:
+      - kind: ServiceAccount
+        name: elasticsearch
+        namespace: default
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 46cb9cbb-6fd6-4cb7-9b7d-d9dc1f6cf7fe
+        label: role-binding-es
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          styleOverrides: '{"height":"25px","width":"25px","x":"7", "y":"7","z-index":4}'
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg
+        parent: a5a3d40c-c5b7-4648-850c-f452f59bd8d3
+        position:
+          posX: 510
+          posY: 270
+        whiteboardData:
+          style:
+            z-index: 9
+    type: RoleBinding
+    version: v1.25.2
+  role-es:
+    annotations:
+      name: elasticsearch
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn:
+    - default
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: role-es
+    namespace: default
+    settings:
+      rules:
+      - api Groups:
+        - '""'
+        resources:
+        - endpoints
+        verbs:
+        - get
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 774de9ac-4f86-4030-a253-2481a7f3b272
+        label: role-es
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          styleOverrides:
+            height: 22px
+            width: 22px
+            x: "8.5"
+            "y": "7.5"
+            z-index: 8
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrole-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrole-white.svg
+        parent: a5a3d40c-c5b7-4648-850c-f452f59bd8d3
+        position:
+          posX: 510
+          posY: 350
+        whiteboardData:
+          style:
+            z-index: 8
+    type: Role
+    version: v1.25.2

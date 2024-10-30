@@ -78,7 +78,7 @@ export const LogoutButton = styled('div')(({ theme }) => ({
   width: "fit-content",
 }));
 
-export const StyledButton = styled(ButtonBase)(() => ({
+export const StyledButton = styled(ButtonBase)(({style}) => ({
   marginTop: '1rem',
   whiteSpace: 'nowrap',
   backgroundColor: "#00B39F",
@@ -88,6 +88,7 @@ export const StyledButton = styled(ButtonBase)(() => ({
   "&:hover": {
     boxShadow: "0 1px 2px 0 rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.19)",
   },
+  ...style
 }));
 
 export const LinkButton = styled(ButtonBase)(() => ({

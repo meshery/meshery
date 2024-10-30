@@ -156,7 +156,11 @@ func TestProfileCmd(t *testing.T) {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()
-			utils.Equals(t, expectedResponse, actualResponse)
+
+			cleanedActualResponse := utils.CleanStringFromHandlePagination(actualResponse)
+			cleanedexpectedResponse := utils.CleanStringFromHandlePagination(expectedResponse)
+
+			utils.Equals(t, cleanedexpectedResponse, cleanedActualResponse)
 			resetVariables()
 		})
 	}
