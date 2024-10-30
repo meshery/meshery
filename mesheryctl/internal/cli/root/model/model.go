@@ -23,11 +23,11 @@ import (
 	"path/filepath"
 
 	"github.com/fatih/color"
+
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/handlers"
+
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/oci"
 	"github.com/manifoldco/promptui"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/pkg/errors"
@@ -50,6 +50,8 @@ var (
 	discardComponentsFlag bool
 	// flag used to specify whether to discard relationships in the model
 	discardRelationshipsFlag bool
+	// flag used to specify the version of the model
+	versionFlag string
 
 	// Maximum number of rows to be displayed in a page
 	maxRowsPerPage = 25
@@ -125,10 +127,12 @@ func init() {
 	listModelCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
 	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 
+	exportModal.Flags().StringVarP(&outFormatFlag, "output-format", "t", "yaml", "(optional) format to display in [json|yaml] (default = yaml)")
 	exportModal.Flags().StringVarP(&outLocationFlag, "output-location", "l", "./", "(optional) output location (default = current directory)")
-	exportModal.Flags().StringVarP(&outTypeFlag, "output-type", "o", "oci", "(optional) format to display in [oci|json|yaml] (default = oci)")
+	exportModal.Flags().StringVarP(&outTypeFlag, "output-type", "o", "oci", "(optional) format to display in [oci|tar] (default = oci)")
 	exportModal.Flags().BoolVarP(&discardComponentsFlag, "discard-components", "c", false, "(optional) whether to discard components in the exported model definition (default = false)")
 	exportModal.Flags().BoolVarP(&discardRelationshipsFlag, "discard-relationships", "r", false, "(optional) whether to discard relationships in the exported model definition (default = false)")
+	exportModal.Flags().StringVarP(&versionFlag, "version", "", "", "(optional) model version to export (default = \"\")")
 
 	ModelCmd.AddCommand(availableSubcommands...)
 	ModelCmd.Flags().BoolVarP(&countFlag, "count", "", false, "(optional) Get the number of models in total")
@@ -193,13 +197,13 @@ func listModel(cmd *cobra.Command, url string, displayCountOnly bool) error {
 	req, err := utils.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		utils.Log.Error(err)
-		return err
+		return nil
 	}
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
 		utils.Log.Error(err)
-		return err
+		return nil
 	}
 
 	// defers the closing of the response body after its use, ensuring that the resources are properly released.
@@ -208,14 +212,14 @@ func listModel(cmd *cobra.Command, url string, displayCountOnly bool) error {
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		utils.Log.Error(err)
-		return err
+		return nil
 	}
 
 	modelsResponse := &models.MeshmodelsAPIResponse{}
 	err = json.Unmarshal(data, modelsResponse)
 	if err != nil {
 		utils.Log.Error(err)
-		return err
+		return nil
 	}
 
 	header := []string{"Model", "Category", "Version"}
@@ -253,18 +257,18 @@ func listModel(cmd *cobra.Command, url string, displayCountOnly bool) error {
 	return nil
 }
 
-func exportModel(modelName string, cmd *cobra.Command, url string, displayCountOnly bool) error {
+func exportModel(modelName string, _ *cobra.Command, url string, _ bool) error {
 	// Find the entity with the model name
 	req, err := utils.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		utils.Log.Error(err)
-		return err
+		return nil
 	}
 
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
 		utils.Log.Error(err)
-		return err
+		return nil
 	}
 
 	// ensure proper cleaning of resources
@@ -273,50 +277,21 @@ func exportModel(modelName string, cmd *cobra.Command, url string, displayCountO
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		utils.Log.Error(err)
-		return err
+		return nil
 	}
 
-	modelsResponse := &models.MeshmodelsAPIResponse{}
-	err = json.Unmarshal(data, modelsResponse)
-	if err != nil {
-		utils.Log.Error(err)
-		return err
-	}
-	if len(modelsResponse.Models) < 1 {
-		return ErrExportModel(fmt.Errorf("Model with the given name could not be found in the registry"), modelName)
-	}
-	model := modelsResponse.Models[0]
 	var exportedModelPath string
-	// Convert it to the required output type and write it
-	if outTypeFlag == "yaml" {
-		exportedModelPath = filepath.Join(outLocationFlag, modelName, "model.yaml")
-		err = model.WriteModelDefinition(exportedModelPath, "yaml")
-	}
-	if outTypeFlag == "json" {
-		exportedModelPath = filepath.Join(outLocationFlag, modelName, "model.json")
-		err = model.WriteModelDefinition(exportedModelPath, "json")
-	}
-	if outTypeFlag == "oci" {
-		// write model as yaml temporarily
-		modelDir := filepath.Join(outLocationFlag, modelName)
-		err = model.WriteModelDefinition(filepath.Join(modelDir, "model.json"), "json")
-		// build oci image for the model
-		img, err := oci.BuildImage(modelDir)
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
+	if outTypeFlag != "oci" {
+		exportedModelPath = filepath.Join(outLocationFlag, modelName+"."+"tar.gz")
+	} else {
 		exportedModelPath = outLocationFlag + modelName + ".tar"
-		err = oci.SaveOCIArtifact(img, outLocationFlag+modelName+".tar", modelName)
-		if err != nil {
-			utils.Log.Error(handlers.ErrSaveOCIArtifact(err))
-		}
-		os.RemoveAll(modelDir)
 	}
+	err = os.WriteFile(exportedModelPath, data, 0644)
 	if err != nil {
 		utils.Log.Error(err)
-		return err
+		return nil
 	}
+
 	utils.Log.Infof("Exported model to %s", exportedModelPath)
 	return nil
 }

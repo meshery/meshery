@@ -73,18 +73,18 @@ const styles = makeStyles((theme) => ({
   },
 }));
 
-const isMeshMapRegisteredUser = (capabilitiesRegistry) => {
+const isMesheryExtensionRegisteredUser = (capabilitiesRegistry) => {
   if (!capabilitiesRegistry) {
     return false;
   }
 
   return (
     capabilitiesRegistry.extensions?.navigator?.length > 0 &&
-    capabilitiesRegistry.extensions.navigator.find((ext) => ext.title === 'MeshMap')
+    capabilitiesRegistry.extensions.navigator.find((ext) => ext.title === 'Kanvas')
   );
 };
 
-function MeshMapEarlyAccessCardPopup({ capabilitiesRegistry }) {
+export function MesheryExtensionEarlyAccessCardPopup({ capabilitiesRegistry }) {
   const [isOpen, setIsOpen] = useState(false);
   const cookies = new Cookies('registered');
 
@@ -109,7 +109,7 @@ function MeshMapEarlyAccessCardPopup({ capabilitiesRegistry }) {
 
   if (isOpen) {
     return (
-      <MeshMapEarlyAccessCard
+      <MesheryExtensionEarlyAccessCard
         closeForm={() => {
           setIsOpen(false);
           closeCallback();
@@ -122,13 +122,13 @@ function MeshMapEarlyAccessCardPopup({ capabilitiesRegistry }) {
   }
 }
 
-export function MeshMapEarlyAccessCard({
+export function MesheryExtensionEarlyAccessCard({
   rootStyle = {},
   closeForm = () => {},
   capabilitiesRegistry,
 }) {
   const signUpText = 'Sign up';
-  const signupHeader = 'Get early access to MeshMap!';
+  const signupHeader = 'Get early access to Kanvas!';
   const classes = styles();
   const [buttonText, setButtonText] = useState(signUpText);
   const [title, setTitle] = useState(signupHeader);
@@ -139,7 +139,7 @@ export function MeshMapEarlyAccessCard({
 
   const handleButtonClick = (e) => {
     if (buttonText === signUpText) {
-      window.open('https://layer5.io/meshmap', '_blank');
+      window.open('https://layer5.io/cloud-native-management/kanvas', '_blank');
     } else {
       push(mesheryExtensionRoute);
     }
@@ -147,10 +147,10 @@ export function MeshMapEarlyAccessCard({
   };
 
   useState(() => {
-    const isMeshMapUser = isMeshMapRegisteredUser(capabilitiesRegistry);
-    if (isMeshMapUser) {
+    const isMesheryExtensionUser = isMesheryExtensionRegisteredUser(capabilitiesRegistry);
+    if (isMesheryExtensionUser) {
       setTitle('Collaborative management enabled');
-      setButtonText('Open MeshMap');
+      setButtonText('Open Kanvas');
     } else {
       setTitle(signupHeader);
       setButtonText(signUpText);
@@ -207,4 +207,4 @@ const mapStateToProps = (state) => ({
   capabilitiesRegistry: state.get('capabilitiesRegistry'),
 });
 
-export default connect(mapStateToProps)(MeshMapEarlyAccessCardPopup);
+export default connect(mapStateToProps)(MesheryExtensionEarlyAccessCardPopup);

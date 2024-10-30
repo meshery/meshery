@@ -1,6 +1,0 @@
-rules:
-  style:
-    line-length:
-      # custom rule configuration
-      max-line-length: 200
-      max-rule-length: 130

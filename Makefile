@@ -122,7 +122,15 @@ build-server: dep-check
 
 ## Running the meshery server using binary.
 server-binary:
-	cd server/cmd; BUILD="$(GIT_VERSION)" PROVIDER_BASE_URLS=$(MESHERY_CLOUD_STAGING) ../../main; cd ../../
+	cd server/cmd; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	KEYS_PATH=$(KEYS_PATH) \
+	../../main; cd ../../
 
 ## Build and run Meshery Server on your local machine
 ## and point to Remote Provider in staging environment
@@ -139,6 +147,17 @@ server-stg: dep-check
 
 ## Build and run Meshery Server on your local machine.
 server: dep-check
+	cd server; cd cmd; go mod tidy; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=$(PORT) \
+	DEBUG=true \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	KEYS_PATH=$(KEYS_PATH) \
+	go run main.go error.go;
+
+## Build and run Meshery Server with some Meshery Adapters on your local machine.
+server-with-adapters: dep-check
 	cd server; cd cmd; go mod tidy; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
@@ -288,6 +307,11 @@ ui-setup:
 	cd ui; npm i; cd ..
 	cd provider-ui; npm i; cd ..
 
+## Clean Install dependencies for building Meshery UI.
+ui-setup-ci:
+	cd ui && npm ci && cd ..
+	cd provider-ui && npm ci && cd ..
+
 ## Run Meshery UI on your local machine. Listen for changes.
 ui:
 	cd ui; npm run dev; cd ..;
@@ -321,7 +345,7 @@ ui-meshery-build:
 ui-provider-build:
 	cd provider-ui; npm run build && npm run export; cd ..
 
-## Run Meshery Cypress Integration Tests against your local Meshery UI (cypress runs in non-interactive mode).
+## Run Meshery End-to-End Integration Tests against your local Meshery UI (runs in non-interactive mode).
 ui-integration-tests: ui-setup
 	cd ui; npm run ci-test-integration; cd ..
 
@@ -415,10 +439,20 @@ graphql-build: dep-check
 
 ## testing
 test-setup-ui:
-	cd ui; npm ci; npx playwright install --with-deps; cd ..
+	cd ui; npx playwright install --with-deps; cd ..
 
 test-ui:
 	cd ui; npm run test:e2e; cd ..
+
+test-e2e-ci:
+	cd ui; npm run test:e2e:ci; cd ..
+
+#-----------------------------------------------------------------------------
+# Rego Policies
+#-----------------------------------------------------------------------------
+rego-eval:	
+	opa eval -i policies/test/design_all_relationships.yaml -d relationships:policies/test/all_relationships.json -d server/meshmodel/meshery-core/0.7.2/v1.0.0/policies/ \
+	'data.relationship_evaluation_policy.evaluate' --format=pretty
 
 #-----------------------------------------------------------------------------
 # Dependencies

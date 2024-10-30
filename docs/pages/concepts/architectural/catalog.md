@@ -9,7 +9,7 @@ language: en
 list: include
 ---
 
-[Meshery Catalog](https://meshery.io/catalog) functions much like a cloud marketplace, providing a user-friendly interface for browsing, discovering, and sharing configurations and patterns for cloud native infrastructure. With Meshery Catalog, you can easily find and deploy Kubernetes-based infrastructure and tools, making it easy to streamline your cloud native development and operations processes. A Catolog is based on the Meshery's [Catalog Schema](https://github.com/meshery/schemas/blob/master/openapi/schemas/catalog.yml) with defined attributes.
+[Meshery Catalog](https://meshery.io/catalog) functions much like a cloud marketplace, providing a user-friendly interface for browsing, discovering, and sharing configurations and patterns for cloud native infrastructure. With Meshery Catalog, you can easily find and deploy Kubernetes-based infrastructure and tools, making it easy to streamline your cloud native development and operations processes. A Catolog is based on the Meshery's [Catalog Schema](https://github.com/meshery/schemas/blob/98560345814e4be036d9f0020759faf3202ec2e4/schemas/constructs/v1alpha1/catalog_data.json) with defined attributes.
 
 ### Simplify Your Cloud Native Infrastructure Deployment and Management
 
@@ -20,12 +20,11 @@ It also supports a collaborative environment, where DevOps engineers can share t
 
 ### To create a design pattern using Meshery UI
 
-1. Open the [Meshery UI](https://docs.meshery.io/installation/quick-start) in your web browser.
+1. Navigate to the Meshery UI in your web browser.
 2. Navigate to the configuration section, usually located in the main navigation menu.
 3. Head over to Designs and click on import or create design.
 4. Select the category and Model as per your need and configure the application.
 5. Voilà, You can publish or deploy you design.
-
 
 ### To create design pattern using Meshery CLI
 
@@ -39,6 +38,25 @@ It also supports a collaborative environment, where DevOps engineers can share t
 * List all designs: `mesheryctl design list`
 5. [Importing](https://docs.meshery.io/reference/mesheryctl#cloud-native-pattern-configuration-and-management) a design. `mesheryctl design import -f [file-path] -s [manifest | compose | helm]`
 6. Applying [WASM Filter](https://docs.meshery.io/guides/configuration-management#wasm-filters). `mesheryctl filter import [file | URL] --wasm-config [filepath|string]`
+
+
+### Publishing a Design to Meshery Catalog
+
+1. **Request to Publish**: The author submits a request to publish their design to the Meshery Catalog, including a description and any relevant considerations.
+2. **Review by Admin**: The workspace owner or admin reviews the design. They have the option to approve, deny, or request changes by commenting on the design.
+3. **Approval Process**:
+    - If the admin or workspace admin **approves** the design, a validation is performed to ensure the design data is accurate. Once validated, the design is published to the catalog.
+    - If the admin **denies** the design, feedback is provided for necessary changes. After the changes are made, the design is automatically published with appropriate versioning.
+4. **Ongoing Management**:
+    - The author or workspace owner retains permission to edit, delete, or unpublish their designs from the catalog at any time.
+5. **Notification for Changes**: If the design no longer adds value to the Meshery Catalog, a prior notification is sent to the author, and the design may be unpublished.
+6. **GitHub Workflow Integration**: Once approved, a GitHub workflow is triggered to publish the design to the Meshery.io Catalog.
+
+<a href="{{ site.baseurl }}/assets/img/architecture/Catalog-Publishing-Workflow.svg" class="lightbox-image">
+<img src="{{ site.baseurl }}/assets/img/architecture/Catalog-Publishing-Workflow.svg" width="70%" /></a>
+<figure>
+  <figcaption>Figure: Workflow to publish a design in catalog</figcaption>
+</figure>
 
 ### FAQ
 <details>

@@ -1,6 +1,6 @@
 FROM golang:1.21-alpine AS builder
 ENV CGO_ENABLED=0
-RUN apk add --update make
+RUN apk update && apk add --no-cache gcc libc-dev make
 WORKDIR /backend
 COPY go.* .
 ARG TARGETARCH
@@ -15,11 +15,9 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 FROM node:14.17-alpine3.13 AS client-builder
 WORKDIR /ui
 # cache packages in layer
-COPY ui/package.json /ui/package.json
-COPY ui/package-lock.json /ui/package-lock.json
+COPY ui/package.json ui/package-lock.json ./
 ARG TARGETARCH
-RUN --mount=type=cache,target=/usr/src/app/.npm-${TARGETARCH} \
-  npm set cache /usr/src/app/.npm-${TARGETARCH} && \
+RUN --mount=type=cache,target=/root/.npm \
   npm ci
 # install
 COPY ui /ui

@@ -19,6 +19,7 @@ import CustomTextAreaWidget from './RJSFCustomComponents/CustomTextAreaWidget';
 import CustomFileWidget from './RJSFCustomComponents/CustomFileWidget';
 import CustomURLWidget from './RJSFCustomComponents/CustomURLWidget';
 import ErrorBoundary from '../../ErrorBoundary';
+import CustomColorWidget from './RJSFCustomComponents/CustomColorWidget';
 
 const MuiRJSFForm = withTheme(MaterialUITheme);
 
@@ -37,6 +38,7 @@ function RJSFForm({
   data,
   onChange,
   isLoading,
+  children,
   ArrayFieldTemplate = MesheryArrayFieldTemplate,
   ObjectFieldTemplate = MesheryCustomObjFieldTemplate,
   BaseInputTemplate,
@@ -52,11 +54,13 @@ function RJSFForm({
   validator,
   fieldTemplates = {},
   extraErrors,
+  isExtensionTooltipPortal = true,
   ...restProps
 }) {
   const globalTheme = useTheme();
   useEffect(() => {
-    const extensionTooltipPortal = document.getElementById('extension-tooltip-portal');
+    const extensionTooltipPortal =
+      isExtensionTooltipPortal && document.getElementById('extension-tooltip-portal');
     if (extensionTooltipPortal) {
       rjsfTheme.props.MuiMenu.container = extensionTooltipPortal;
     }
@@ -95,6 +99,7 @@ function RJSFForm({
             TextWidget: CustomTextWidget,
             DateTimeWidget: CustomDateTimeWidget,
             SelectWidget,
+            ColorWidget: CustomColorWidget,
             CheckboxWidget: CustomCheckboxWidget,
             TextareaWidget: CustomTextAreaWidget,
             FileWidget: CustomFileWidget,
@@ -106,6 +111,7 @@ function RJSFForm({
           transformErrors={transformErrors}
           {...restProps}
         >
+          {children}
           <div></div>
         </MuiRJSFForm>
       </MuiThemeProvider>

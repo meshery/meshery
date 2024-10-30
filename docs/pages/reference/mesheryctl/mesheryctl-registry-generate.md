@@ -54,6 +54,14 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 </div>
 </pre> 
 
+Generate Meshery Models and Component from csv files in a local directory.
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl registry generate -directory <DIRECTORY_PATH>
+
+</div>
+</pre> 
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
     
@@ -65,6 +73,7 @@ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tu
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+  -d, --directory string          Directory containing the Model and Component CSV files
   -h, --help                      help for generate
   -m, --model string              specific model name to be generated
   -o, --output string             location to output generated models, defaults to ../server/meshmodels (default "../server/meshmodel")

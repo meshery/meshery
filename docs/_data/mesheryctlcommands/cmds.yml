@@ -612,150 +612,150 @@ adapter:
           usage: mesheryctl adapter deploy --tokenPath [path to token for authentication]
           example: mesheryctl adapter deploy --tokenPath "~/Downloads/auth.json"
 
-pattern:
-  name: pattern
-  description: Manage cloud native infrastructure using predefined patterns
-  usage: mesheryctl pattern [flags] or mesheryctl pattern [command]
-  example: mesheryctl pattern list
+design:
+  name: design
+  description: Manage cloud native infrastructure using predefined design patterns
+  usage: mesheryctl design [flags] or mesheryctl design [command]
+  example: mesheryctl design list
   flags:
     file:
       name: --file, -f
-      description: (required) path to pattern file.
+      description: (required) path to design file.
       usage: |
-        mesheryctl pattern apply --file [pattern path]
-        mesheryctl pattern delete --file [pattern path]
+        mesheryctl design apply --file [design path]
+        mesheryctl design delete --file [design path]
       example: |
-        mesheryctl pattern apply --file "bookInfo.yaml"
-          mesheryctl pattern delete --file "bookInfo.yaml"
+        mesheryctl design apply --file "bookInfo.yaml"
+          mesheryctl design delete --file "bookInfo.yaml"
 
   subcommands:
     apply:
       name: apply
-      description: apply pattern file will trigger deploy of the pattern file
-      usage: mesheryctl pattern apply [flags]
+      description: apply design file will trigger deploy of the design file
+      usage: mesheryctl design apply [flags]
       flags:
         file:
           name: --file, -f
-          description: apply pattern file will trigger deploy of the pattern file and also supports file retrieval from GitHub
-          usage: mesheryctl pattern apply --file [path to pattern file]
-          example: mesheryctl pattern apply -f "bookInfo.yaml"
+          description: apply design file will trigger deploy of the design file and also supports file retrieval from GitHub
+          usage: mesheryctl design apply --file [path to design file]
+          example: mesheryctl design apply -f "bookInfo.yaml"
 
     delete:
       name: delete
-      description: Deprovision cloud native infrastructure using a design /pattern file
-      usage: mesheryctl pattern delete [flags]
+      description: Deprovision cloud native infrastructure using a design /design file
+      usage: mesheryctl design delete [flags]
       flags:
         file:
           name: --file, -f
-          description: Deletes the resources that were created, using pattern file
-          usage: mesheryctl pattern delete -f [path to pattern file]
-          example: mesheryctl pattern delete -f "bookInfo.yaml"
+          description: Deletes the resources that were created, using design file
+          usage: mesheryctl design delete -f [path to design file]
+          example: mesheryctl design delete -f "bookInfo.yaml"
 
     list:
       name: list
-      description: displays a list of available pattern files
-      usage: mesheryctl pattern list
+      description: displays a list of available design files
+      usage: mesheryctl design list
       flags:
         page:
           name: --page, -p
-          description: list patterns by specific page number (25 patterns per page)
+          description: list designs by specific page number (25 designs per page)
         verbose:
           name: --verbose, -v
-          description: show all pattern file metadata
-          usage: mesheryctl pattern list --verbose
-          example: mesheryctl pattern list -v
+          description: show all design file metadata
+          usage: mesheryctl design list --verbose
+          example: mesheryctl design list -v
 
     view:
       name: view
-      description: displays the contents of a specific pattern file
-      usage: mesheryctl pattern view [pattern-name|pattern-id]
+      description: displays the contents of a specific design file
+      usage: mesheryctl design view [design-name|design-id]
       flags:
         all:
           name: --all, -a
-          description: show all pattern file content
-          usage: mesheryctl pattern view [pattern-name|pattern-id] --all
-          example: mesheryctl pattern view bookInfo --all
+          description: show all design file content
+          usage: mesheryctl design view [design-name|design-id] --all
+          example: mesheryctl design view bookInfo --all
         json:
           name: -o json
-          description: display the content of a pattern in json format
-          usage: mesheryctl pattern view [pattern-name|pattern-id] -o json
-          example: mesheryctl pattern view bookInfo -o json
+          description: display the content of a design in json format
+          usage: mesheryctl design view [design-name|design-id] -o json
+          example: mesheryctl design view bookInfo -o json
 
     import:
       name: import
       description: Import app manifests
-      usage: mesheryctl pattern import -f [file/URL]
-      example: mesheryctl pattern import -f "bookInfo.yaml"
+      usage: mesheryctl design import -f [file/URL]
+      example: mesheryctl design import -f "bookInfo.yaml"
       flags:
         file:
           name: --file, -f
           description: Path/URL to app file
-          usage: mesheryctl pattern import -f [file/URL]
-          example: mesheryctl pattern import -f "bookInfo.yaml"
+          usage: mesheryctl design import -f [file/URL]
+          example: mesheryctl design import -f "bookInfo.yaml"
         source-type:
           name: --source-type, -s
           description: Type of source file (ex. manifest / compose / helm)
-          usage: mesheryctl pattern import -f [file/URL] --source-type [manifest/compose/helm]
-          example: mesheryctl pattern import -f "bookInfo.yaml" --source-type manifest
+          usage: mesheryctl design import -f [file/URL] --source-type [manifest/compose/helm]
+          example: mesheryctl design import -f "bookInfo.yaml" --source-type manifest
     export:
       name: export
       description: Export a design from Meshery
-      usage: mesheryctl pattern export [pattern-name | ID]
+      usage: mesheryctl design export [design-name | ID]
       example: |
         # Export a design with a specific ID
-        mesheryctl pattern export [pattern-name | ID]
+        mesheryctl design export [design-name | ID]
 
         # Export a design with a specific ID and type
-        mesheryctl pattern export -[pattern-name | ID] --type [design-type]
+        mesheryctl design export -[design-name | ID] --type [design-type]
 
         # Export a design and save it to a specific directory
-        mesheryctl pattern export -[pattern-name | ID] --output ./designs
+        mesheryctl design export -[design-name | ID] --output ./designs
 
         # Export a design with a specific type and save it to a directory
-        mesheryctl pattern export [pattern-name | ID] --type [design-type] --output ./exports
+        mesheryctl design export [design-name | ID] --type [design-type] --output ./exports
       flags:
         type:
           name: --type
           description: Specify the design type to export (default current). Supported types are oci,current,original.
-          usage: mesheryctl pattern export --type [design-type]
-          example: mesheryctl pattern export --type oci
+          usage: mesheryctl design export --type [design-type]
+          example: mesheryctl design export --type oci
         output:
           name: --output, -o
           description: Specify the output directory to save the design
-          usage: mesheryctl pattern export --output [directory-path]
-          example: mesheryctl pattern export --output ./exports
+          usage: mesheryctl design export --output [directory-path]
+          example: mesheryctl design export --output ./exports
 
     offboard:
       name: offboard
       description: Offboard application
-      usage: mesheryctl pattern offboard [app-name] [flags]
+      usage: mesheryctl design offboard [app-name] [flags]
       flags:
         file:
           name: --file, -f
           description: Offboard application with an application file
-          usage: mesheryctl pattern offboard -f [filepath]
-          example: mesheryctl pattern offboard -f "bookInfo.yaml"
+          usage: mesheryctl design offboard -f [filepath]
+          example: mesheryctl design offboard -f "bookInfo.yaml"
 
     onboard:
       name: onboard
       description: Onboard application
-      usage: mesheryctl pattern onboard [app name] [flags]
+      usage: mesheryctl design onboard [app name] [flags]
       flags:
         file:
           name: --file, -f
           description: Onboard application with application file
-          usage: mesheryctl pattern onboard --file [filepath]
-          example: mesheryctl pattern onboard -f "bookInfo.yaml"
+          usage: mesheryctl design onboard --file [filepath]
+          example: mesheryctl design onboard -f "bookInfo.yaml"
         skip-save:
           name: --skip-save
           description: Skip saving an application
-          usage: mesheryctl pattern onboard --file [filepath] --skip-save
-          example: mesheryctl pattern onboard -f "bookInfo.yaml" --skip-save
+          usage: mesheryctl design onboard --file [filepath] --skip-save
+          example: mesheryctl design onboard -f "bookInfo.yaml" --skip-save
         source-type:
           name: --source-type, -s
           description: Type of source file (ex. manifest / compose / helm)
-          usage: mesheryctl pattern onboard mesheryctl pattern onboard --file [filepath] --source-type manifest
-          example: mesheryctl mesheryctl pattern onboard -f "bookInfo.yaml" --source-type manifest
+          usage: mesheryctl design onboard mesheryctl design onboard --file [filepath] --source-type manifest
+          example: mesheryctl mesheryctl design onboard -f "bookInfo.yaml" --source-type manifest
 
 filter:
   name: filter
@@ -911,16 +911,17 @@ model:
       description: Import models using a file or filepath directly to the meshery registry
       usage: mesheryctl model import [ file | filepath ]
       examples:
-         - import model /path/to/[file.yaml|file.json]
-         - import model /path/to/models
+         - mesheryctl import model /path/to/[file.yaml|file.json]
+         - mesheryctl import model /path/to/models
     export:
       name: export
       description: Export a model by name to the given output type (default is oci).
-      usage: mesheryctl model export [ model-name ]
+      usage: mesheryctl model export [model-name]
       examples:
-         - model export [model-name] -l /home/meshery
-         - model export [model-name] --discard-components
-         - model export [model-name] -o yaml
+         - mesheryctl model export [model-name] -l /home/meshery
+         - mesheryctl model export [model-name] --discard-components
+         - mesheryctl model export [model-name] -o yaml
+         - mesheryctl model export [model-name] --version v0.7.3
 
 components:
   name: components
@@ -965,7 +966,7 @@ components:
 exp:
   connections:
     name: connections
-    description: Manage connections
+    description: Manage Meshery connections
     usage: mesheryctl exp connections [command] [flags]
     flags:
       help:

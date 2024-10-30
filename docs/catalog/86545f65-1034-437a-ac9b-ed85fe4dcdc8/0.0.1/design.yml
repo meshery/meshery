@@ -1,0 +1,63 @@
+name: Pod Life Cycle
+version: 0.0.10
+services:
+  lifecycle-pod:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: lifecycle-pod
+    namespace: default
+    settings:
+      spec:
+        containers:
+        - image: nginx
+          lifecycle:
+            post Start:
+              exec:
+                command:
+                - /bin/sh
+                - -c
+                - echo Hello from the postStart handler > /usr/share/message
+            pre Stop:
+              exec:
+                command:
+                - /bin/sh
+                - -c
+                - nginx -s quit; while killall -0 nginx; do sleep 1; done
+          name: lifecycle-container
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 3f237690-0009-4b32-bdd7-8de4d87c5912
+        meshmodel-metadata:
+          capabilities: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          styleOverrides: ""
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        position:
+          posX: 270
+          posY: 270
+        whiteboardData:
+          style:
+            z-index: 3
+    type: Pod
+    version: ""

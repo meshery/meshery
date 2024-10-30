@@ -56,10 +56,12 @@
    "subCategory": "Orchestration \u0026 Management",
    "version": "v1.0.0",
    "components": null,
-   "relationships": null
+   "relationships": null,
+   "components_count": 0,
+   "relationships_count": 0
   },
   "schemaVersion": "components.meshery.io/v1beta1",
-  "status": "ignored",
+  "status": "enabled",
   "styles": {
    "primaryColor": "#DA1A32",
    "shape": "round-rectangle",

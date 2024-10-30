@@ -115,20 +115,7 @@ mesheryctl system start --provider Meshery
 		return nil
 	},
 	PersistentPreRun: func(cmd *cobra.Command, args []string) {
-		latestVersions, err := meshkitutils.GetLatestReleaseTagsSorted(pkgconstants.GetMesheryGitHubOrg(), pkgconstants.GetMesheryGitHubRepo())
-		version := constants.GetMesheryctlVersion()
-		if err == nil {
-			if len(latestVersions) == 0 {
-				log.Warn("no versions found for Meshery")
-				return
-			}
-			latest := latestVersions[len(latestVersions)-1]
-			if latest != version {
-				log.Printf("A new release of mesheryctl is available: %s → %s", version, latest)
-				log.Printf("https://github.com/meshery/meshery/releases/tag/%s", latest)
-				log.Print("Check https://docs.meshery.io/installation/upgrades#upgrading-meshery-cli for instructions on how to update mesheryctl\n")
-			}
-		}
+		utils.CheckMesheryctlClientVersion(constants.GetMesheryctlVersion())
 	},
 }
 

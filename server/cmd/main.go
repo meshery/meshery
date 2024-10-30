@@ -48,7 +48,6 @@ var (
 const (
 	// DefaultProviderURL is the provider url for the "none" provider
 	DefaultProviderURL = "https://meshery.layer5.io"
-	PoliciesPath       = "../meshmodel/kubernetes/v1.25.2/v1.0.0/policies"
 	RelationshipsPath  = "../meshmodel/kubernetes/"
 )
 
@@ -202,6 +201,7 @@ func main() {
 		&models.PatternResource{},
 		&models.MesheryApplication{},
 		&models.UserPreference{},
+		&models.UserCapabilities{},
 		&models.PerformanceTestConfig{},
 		&models.SmiResultWithID{},
 		models.K8sContext{},
@@ -223,6 +223,7 @@ func main() {
 	lProv := &models.DefaultLocalProvider{
 		ProviderBaseURL:                 DefaultProviderURL,
 		MapPreferencePersister:          preferencePersister,
+		UserCapabilitiesPersister:       &models.UserCapabilitiesPersister{DB: dbHandler},
 		ResultPersister:                 &models.MesheryResultsPersister{DB: dbHandler},
 		SmiResultPersister:              &models.SMIResultsPersister{DB: dbHandler},
 		TestProfilesPersister:           &models.TestProfilesPersister{DB: dbHandler},
@@ -277,13 +278,13 @@ func main() {
 	rego := policies.Rego{}
 	go func() {
 		models.SeedComponents(log, hc, regManager)
-		r, err := policies.NewRegoInstance(PoliciesPath, regManager)
+		r, err := policies.NewRegoInstance(models.PoliciesPath, regManager)
 		if err != nil {
 			log.Warn(ErrCreatingOPAInstance(err))
 		} else {
 			rego = *r
 		}
-		
+
 		krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		hc.MeshModelSummaryChannel.Publish()
 	}()
@@ -306,6 +307,7 @@ func main() {
 			TokenStore:                 make(map[string]string),
 			LoginCookieDuration:        1 * time.Hour,
 			SessionPreferencePersister: &models.SessionPreferencePersister{DB: dbHandler},
+			UserCapabilitiesPersister:  &models.UserCapabilitiesPersister{DB: dbHandler},
 			ProviderVersion:            version,
 			SmiResultPersister:         &models.SMIResultsPersister{DB: dbHandler},
 			GenericPersister:           dbHandler,

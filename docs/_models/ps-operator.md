@@ -23,7 +23,7 @@ components:
   whiteIcon: assets/img/integrations/ps-operator/components/percona-server-my-sql/icons/white/percona-server-my-sql-white.svg
   description: 
 featureList: [
-  "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
+  "High-performance MySQL database",
   "Manages backups, restores, and upgrades",
   "Provides high availability and failover"
 ]
