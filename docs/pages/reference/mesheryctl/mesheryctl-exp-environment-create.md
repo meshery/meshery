@@ -29,7 +29,7 @@ mesheryctl exp environment create [flags]
 Create a new environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp environment create --orgID [orgID] --name [name] --description [description] 
+mesheryctl exp environment create --orgId [orgId] --name [name] --description [description] 
 
 </div>
 </pre> 

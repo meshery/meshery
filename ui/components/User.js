@@ -33,7 +33,7 @@ const User = (props) => {
   const { capabilitiesRegistry } = props;
 
   const getProfileUrl = () => {
-    return (account || [])?.find((item) => item.title === 'Profile')?.href;
+    return (account || [])?.find((item) => item.title === 'Cloud Account')?.href;
   };
 
   const goToProfile = () => {

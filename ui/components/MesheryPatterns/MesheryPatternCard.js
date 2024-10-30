@@ -32,7 +32,6 @@ import DryRunIcon from '@/assets/icons/DryRunIcon';
 import CheckIcon from '@/assets/icons/CheckIcon';
 import PatternIcon from '@/assets/icons/Pattern';
 import { iconLarge } from 'css/icons.styles';
-
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
 function MesheryPatternCard_({
@@ -87,6 +86,16 @@ function MesheryPatternCard_({
   const userCanEdit =
     CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject) || user?.user_id == pattern?.user_id; // allow if owner
 
+  const formatPatternFile = (file) => {
+    try {
+      const jsonData = JSON.parse(file);
+      return JSON.stringify(jsonData, null, 1);
+    } catch (err) {
+      return file;
+    }
+  };
+
+  const formatted_pattern_file = formatPatternFile(pattern_file);
   return (
     <>
       {fullScreen && (
@@ -94,7 +103,7 @@ function MesheryPatternCard_({
           fullScreen={fullScreen}
           name={name}
           toggleFullScreen={toggleFullScreen}
-          config_file={pattern_file}
+          config_file={formatted_pattern_file}
           setYaml={setYaml}
           updateHandler={updateHandler}
           deleteHandler={deleteHandler}
@@ -299,7 +308,7 @@ function MesheryPatternCard_({
               <Divider variant="fullWidth" light />
               {catalogContentKeys.length === 0 ? (
                 <CodeMirror
-                  value={showCode && pattern_file}
+                  value={showCode && formatted_pattern_file}
                   className={fullScreen ? classes.fullScreenCodeMirror : ''}
                   options={{
                     theme: 'material',
