@@ -430,17 +430,17 @@ const MesheryPerformanceComponent = (props) => {
       tNum <= 0
     ) {
       setTError('error-autocomplete-value');
-      closeModal();
+      closeModal && closeModal();
       return;
     }
 
     if (!performanceProfileIDState) {
       submitProfile(({ id }) => submitLoadTest(id));
-      closeModal();
+      closeModal && closeModal();
       return;
     }
     submitLoadTest(performanceProfileIDState);
-    closeModal();
+    closeModal && closeModal();
   };
 
   const submitProfile = (cb) => {
