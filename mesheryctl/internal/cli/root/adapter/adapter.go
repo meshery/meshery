@@ -87,6 +87,7 @@ var (
 			// ensure the mesh's adapter is available and update adapterURL if so
 			if err = validateAdapter(mctlCfg, meshName); err != nil {
 				utils.Log.Error(err)
+				return err
 			}
 			return nil
 		},
