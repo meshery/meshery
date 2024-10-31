@@ -6,11 +6,7 @@ function handleError(error) {
 }
 
 function ErrorBoundary({ children }) {
-  return (
-    <SistentErrorBoundary onError={handleError}>
-      {children}
-    </SistentErrorBoundary>
-  );
+  return <SistentErrorBoundary onError={handleError}>{children}</SistentErrorBoundary>;
 }
 
 export default ErrorBoundary;
