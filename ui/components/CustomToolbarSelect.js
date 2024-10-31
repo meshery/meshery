@@ -23,10 +23,6 @@ const StyledIcon = styled('span')(({ theme }) => ({
   color: theme.palette.text.primary,
 }));
 
-// const StyledInverseIcon = styled('span')({
-//   transform: 'rotate(90deg)',
-// });
-
 function CustomToolbarSelect({ results_selection, setSelectedRows, clearResultsSelection }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [data, setData] = useState([]);
