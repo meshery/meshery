@@ -362,7 +362,7 @@ const RegistrantContent = withSuppressedErrorBoundary(({ registrant }) => {
   };
 
   const metaDataLeft = {
-    models: registrant?.models?.length.toString(),
+    models: registrant?.summary?.models?.toString(),
     components: registrant.summary?.components?.toString(),
   };
 
