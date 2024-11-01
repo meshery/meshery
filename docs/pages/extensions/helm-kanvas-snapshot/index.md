@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Kanvas Snapshot
-permalink: extensions/snapshot
+permalink: extensions/helm-kanvas-snapshot
 language: en
 abstract: Screenshot service provided via Kanvas to capture a snapshot of your infrastructure at any given time.
 display-title: "false"
