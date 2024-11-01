@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { IconButton, Tooltip } from '@layer5/sistent';
-import { styled } from '@mui/material/styles';
+import { IconButton, Tooltip, styled } from '@layer5/sistent';
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
 import { NoSsr } from '@mui/material';
@@ -20,7 +19,10 @@ const StyledIconButton = styled(IconButton)(({ theme }) => ({
 }));
 
 const StyledIcon = styled('span')(({ theme }) => ({
-  color: theme.palette.text.primary,
+  color:
+    theme.palette.mode === 'dark'
+      ? theme.palette.background.brand.pressed
+      : theme.palette.text.default,
 }));
 
 function CustomToolbarSelect({ results_selection, setSelectedRows, clearResultsSelection }) {
