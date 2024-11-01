@@ -2295,6 +2295,10 @@ components:
                 - ports:
                     - port: 0
                 - ports:
+                    - port: 0
+                - ports:
+                    - port: 0
+                - ports:
                     - container Port: 3306
                 - ports:
                     - container Port: 3306
@@ -7240,6 +7244,8 @@ components:
             - name: Service Account
             - name: Service Account
             - name: Service Account
+            - name: Service Account
+            - name: Service Account
       description: ""
       displayName: cluster-role-binding-sv
       format: JSON
@@ -7423,6 +7429,8 @@ components:
             kind: Role
             name: Role
         subjects:
+            - name: Service Account
+            - name: Service Account
             - name: Service Account
             - name: Service Account
             - name: Service Account
@@ -55441,4 +55449,4 @@ relationships:
       type: parent
       version: v1.0.0
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.364
+version: 0.0.366

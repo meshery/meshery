@@ -1091,6 +1091,7 @@ components:
             name: keda-operator
         subjects:
             - name: keda-operator
+            - name: keda-operator
             - kind: ServiceAccount
               name: keda-operator
               namespace: default
@@ -3068,6 +3069,7 @@ components:
             kind: ClusterRole
             name: keda-operator-webhook
         subjects:
+            - name: keda-webhook
             - name: keda-webhook
             - kind: ServiceAccount
               name: keda-webhook
@@ -5752,6 +5754,7 @@ components:
             name: keda-operator-certs
         subjects:
             - name: keda-operator
+            - name: keda-operator
             - kind: ServiceAccount
               name: keda-operator
               namespace: default
@@ -6688,6 +6691,7 @@ components:
             kind: ClusterRole
             name: keda-operator-minimal-cluster-role
         subjects:
+            - name: keda-operator
             - name: keda-operator
             - kind: ServiceAccount
               name: keda-operator
@@ -15056,6 +15060,7 @@ components:
         svgColor: ui/public/static/img/meshmodels/kubernetes/color/pod-color.svg
         svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/pod-complete.svg
         svgWhite: ui/public/static/img/meshmodels/kubernetes/white/pod-white.svg
+        z-index: 34
       version: v1.0.0
     - capabilities:
         - description: Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.
@@ -15299,6 +15304,7 @@ components:
         svgColor: ui/public/static/img/meshmodels/kubernetes/color/pod-color.svg
         svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/pod-complete.svg
         svgWhite: ui/public/static/img/meshmodels/kubernetes/white/pod-white.svg
+        z-index: 35
       version: v1.0.0
     - capabilities:
         - description: Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.
@@ -15552,6 +15558,7 @@ components:
         svgColor: ui/public/static/img/meshmodels/kubernetes/color/pod-color.svg
         svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/pod-complete.svg
         svgWhite: ui/public/static/img/meshmodels/kubernetes/white/pod-white.svg
+        z-index: 36
       version: v1.0.0
     - capabilities:
         - description: Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.
@@ -15718,6 +15725,7 @@ components:
         svgColor: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
         svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg
         svgWhite: ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg
+        z-index: 37
       version: v1.0.0
     - capabilities:
         - description: Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.
@@ -15884,6 +15892,7 @@ components:
         svgColor: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
         svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg
         svgWhite: ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg
+        z-index: 38
       version: v1.0.0
 id: e958fd44-4a43-4096-9cd5-ef1e9204996f
 name: KEDA Setup
@@ -23853,4 +23862,4 @@ relationships:
       type: parent
       version: v1.0.0
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.19
+version: 0.0.20

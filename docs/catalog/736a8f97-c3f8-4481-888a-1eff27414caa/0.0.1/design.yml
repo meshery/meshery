@@ -312,6 +312,7 @@ components:
             name: node-feature-discovery-worker
         subjects:
             - name: node-feature-discovery-worker
+            - name: node-feature-discovery-worker
             - kind: ServiceAccount
               name: node-feature-discovery-worker
               namespace: default
@@ -1205,6 +1206,7 @@ components:
             kind: ClusterRole
             name: node-feature-discovery
         subjects:
+            - name: node-feature-discovery
             - name: node-feature-discovery
             - kind: ServiceAccount
               name: node-feature-discovery
@@ -2601,6 +2603,7 @@ components:
             kind: ClusterRole
             name: node-feature-discovery-gc
         subjects:
+            - name: node-feature-discovery-gc
             - name: node-feature-discovery-gc
             - kind: ServiceAccount
               name: node-feature-discovery-gc
@@ -26082,4 +26085,4 @@ relationships:
       type: binding
       version: v1.0.0
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.12
+version: 0.0.13

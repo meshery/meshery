@@ -4519,4 +4519,4 @@ relationships:
       type: parent
       version: ""
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.7
+version: 0.0.8

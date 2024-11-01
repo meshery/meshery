@@ -1268,9 +1268,9 @@ relationships:
                     status: ""
                     version: ""
                   patch: null
-      status: pending
+      status: approved
       subType: inventory
       type: parent
       version: ""
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.12
+version: 0.0.13

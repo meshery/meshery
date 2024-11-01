@@ -713,6 +713,7 @@ components:
             kind: Role
             name: vc-vcluster
         subjects:
+            - name: vc-vcluster
             - kind: ServiceAccount
               name: vc-vcluster
               namespace: default
@@ -2178,6 +2179,7 @@ components:
         svgColor: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
         svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg
         svgWhite: ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg
+        z-index: 12
       version: v1.0.0
     - capabilities:
         - description: Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.
@@ -2491,6 +2493,7 @@ components:
         shape: round-rectangle
         svgColor: ui/public/static/img/meshmodels/kubernetes/color/podtemplate-color.svg
         svgWhite: ui/public/static/img/meshmodels/kubernetes/white/podtemplate-white.svg
+        z-index: 13
       version: v1.0.0
 id: f176d529-767d-485b-a68d-79db3f6e8dd2
 name: 'Multi tenancy Virtual Cluster   '
@@ -11285,9 +11288,9 @@ relationships:
                     status: ""
                     version: ""
                   patch: null
-      status: pending
+      status: approved
       subType: inventory
       type: parent
       version: ""
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.30
+version: 0.0.31
