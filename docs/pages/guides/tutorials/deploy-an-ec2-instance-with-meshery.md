@@ -9,16 +9,15 @@ type: guides
 category: tutorials
 language: en
 list: include
-abstract: "Learn how to deploy and manage an EC2 instance through Kubernetes with Meshery, utilizing AWS Controllers for Kubernetes (ACK) to enhance cloud resource management"
 ---
 
 ### Introduction
 
-Meshery is a powerful multi-cloud management platform that can allow you deploy and manage AWS resources, such as EC2 instances, within a Kubernetes environment. It does this by leveraging [AWS Controllers for Kubernetes (ACK)](https://aws.amazon.com/blogs/containers/aws-controllers-for-kubernetes-ack/). ACK provides a bridge between Kubernetes and AWS services, enabling developers to manage AWS resources directly from within their Kubernetes clusters using the Kubectl CLI. Meshery takes this functionality further by providing **Kanvas**, an intuitive, visual interface that simplifies the deployment process.
+Meshery is a powerful multi-cloud management platform that enables you to configure, deploy, and manage AWS resources, such as EC2 instances. In order to manage AWS resources, Meshery uses [AWS Controllers for Kubernetes (ACK)](https://aws.amazon.com/blogs/containers/aws-controllers-for-kubernetes-ack/). ACK facilitates the bridge between Kubernetes and AWS services, enabling Meshery to manage AWS resources and Meshery enabling you to benefit from the enhanced experience that Meshery and its extensions offer. 
 
-With **Kanvas**, Meshery provides an alternative to command-line tools like kubectl by offering a more visual approach. Once you connect your Kubernetes cluster to Meshery, you can configure, deploy, and manage AWS resources directly from the Kanvas interface, making deployments more intuitive and providing a collaborative environment for team-based deployments.
+Meshery has a number of extensions, adapters, and plugins. In this tutorial, we will use the [Kanvas]({{site.baseurl}}/extensions/kanvas) extension to provide an intuitive, visual experience for configuring and deploying an AWS EC2 instance. Among other aspects, Kanvas provides an alternative to command-line tools like `kubectl` by offering infrastructure as design. Once you connect your Kubernetes cluster to Meshery, you can configure, deploy, and manage AWS resources directly from the Kanvas interface, making deployments more intuitive and collaborative 
 
-In this guide, you’ll explore how to deploy AWS resources using Kanvas, including setup and architecture details. This guide also covers how to access pre-configured designs from Meshery’s catalog and demonstrates how to visualize deployed resources using Meshery’s operator mode, offering a comprehensive understanding of AWS resource management within **Kanvas**
+In this guide, you’ll explore how to deploy AWS resources, including setup and architecture details. This guide also covers how to access pre-configured designs from [Meshery Catalog](https://meshery.io/catalog) and demonstrates how to visualize deployed resources using Kanvas' operator mode, offering a comprehensive understanding of AWS resource management.
 
 ### Prerequisites
 
@@ -26,7 +25,7 @@ In this guide, you’ll explore how to deploy AWS resources using Kanvas, includ
 1. **AWS Account**: An active AWS account is required for accessing AWS resources.
 1. **Kubernetes Cluster**: A running Kubernetes cluster, such as Minikube or EKS.
 
-### Table of Content
+### Table of Contents
 
 - [Overview of Deployment Steps](#overview-of-deployment-steps)
 - [Connect your Kubernetes Cluster to Meshery](#1-connect-your-kubernetes-cluster-to-meshery)
