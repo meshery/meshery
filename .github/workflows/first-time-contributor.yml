@@ -8,7 +8,7 @@ on:
 jobs:
   welcome:
     runs-on: ubuntu-latest  # Specify the environment for the job
-    if: >
+    if: ${{ 
       github.repository == 'meshery/meshery' &&
       github.event.action == 'opened' &&
       github.event.pull_request.author_association == 'FIRST_TIME_CONTRIBUTOR' &&
@@ -16,7 +16,8 @@ jobs:
       github.event.pull_request.author_association != 'CONTRIBUTOR' &&
       github.event.pull_request.author_association != 'MANNEQUIN' &&
       github.event.pull_request.author_association != 'MEMBER' &&
-      github.event.pull_request.author_association != 'OWNER'
+      github.event.pull_request.author_association != 'OWNER' 
+    }}
     steps:
       - name: Leave Welcome Comment
         uses: actions/github-script@v6
@@ -29,8 +30,8 @@ jobs:
             </p>
             Be sure to double-check that you have signed your commits. 
             Here are instructions for [making signing an implicit activity while performing a commit](https://docs.meshery.io/project/contributing#general-contribution-flow).`;
-            await github.rest.pulls.createReviewComment({
-              pull_number: context.issue.number,
+            await github.rest.issues.createComment({
+              issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: message
@@ -41,10 +42,9 @@ jobs:
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }} 
           script: |
-            await github.rest.issues.addLabels({
-              issue_number: context.issue.number,
+            await github.rest.pulls.createReviewComment({
+              pull_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               labels: ['first-time-contributor'] 
             });
-
