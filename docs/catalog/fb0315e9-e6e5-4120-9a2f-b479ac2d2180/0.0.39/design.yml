@@ -1,0 +1,204 @@
+name: senthil-app-new
+services:
+    NodeGroupInventoryWallet:
+        annotations: {}
+        apiVersion: core.meshery.io/v1alpha1
+        dependsOn:
+            - pod-ss
+        id: null
+        isAnnotation: false
+        labels: {}
+        model: meshery-core
+        name: NodeGroupInventoryWallet
+        namespace: ""
+        settings: {}
+        traits:
+            meshmap:
+                edges: []
+                fieldRefData: {}
+                id: b35b2b68-3b57-4b43-8a17-8cc32fd609ca
+                label: NodeGroupInventoryWallet
+                meshmodel-data:
+                    category:
+                        metadata: null
+                        name: Orchestration & Management
+                    components: null
+                    description: ""
+                    displayName: Meshery Core
+                    hostID: 26e64aa8-2d86-57bd-92b3-2a73160d27b4
+                    id: c1af66fb-1c38-54bf-92d1-9d9808251e00
+                    metadata:
+                        isAnnotation: false
+                        subCategory: App Definition and Development
+                        svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+                        svgComplete: ""
+                        svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+                    model:
+                        version: 0.7.1
+                    name: meshery-core
+                    registrant:
+                        hostname: artifacthub
+                    relationships: null
+                    schemaVersion: models.meshery.io/v1beta1
+                    status: enabled
+                    subCategory: App Definition and Development
+                    version: v1.0.0
+                meshmodel-metadata:
+                    capabilities: |-
+                        {
+                          "designer": {
+                            "pass-events-to": "parent", "supportsCompoundDragAndDrop":false,
+                            "edit": {
+                              "config": false,
+                              "copy": false,
+                              "delete": false,
+                              "duplicate": false,
+                              "reset-styles": false,
+                              "resolve": false,
+                              "lock": false,
+                              "shape": {
+                                "convert-shape": false
+                              },
+                              "style": false
+                            },
+                            "label": {
+                              "edit": false,
+                              "show": false,
+                              "sync-with-config-property": "none"
+                            }
+                          }
+                        }
+                    defaultData: '{"label":""}'
+                    genealogy: parent
+                    hasInvalidSchema: true
+                    isAnnotation: true
+                    primaryColor: '#00B39F'
+                    secondaryColor: '#00D3A9'
+                    shape: round-rectangle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides: '{"height":"30px","width":"30px", "background-image":"none","border-width":0,"border-style":"dashed","background-opacity":0,"data":{"label":""}}'
+                    styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":0,"border-style":"dashed","background-opacity":0}'
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/meshery-core/color/anchornode-color.svg
+                    svgComplete: ""
+                    svgWhite: ui/public/static/img/meshmodels/meshery-core/white/anchornode-white.svg
+                parent: c64d0489-e1c8-4ae9-a8de-f696b01cd8b1
+                position:
+                    posX: 353.7745179001448
+                    posY: 119.38240948664075
+                whiteboardData: {}
+        type: NodeGroupInventoryWallet
+        version: 0.7.1
+    pod-ss:
+        annotations: {}
+        apiVersion: v1
+        dependsOn: []
+        id: null
+        isAnnotation: false
+        labels:
+            app: "9870"
+        model: kubernetes
+        name: pod-ss
+        namespace: default
+        settings:
+            spec:
+                containers:
+                    - args: []
+                      command: []
+                      env: []
+                      env From: []
+                      image: ngnix:latest
+                      name: container-ss
+                      ports: []
+                      volume Devices: []
+                      volume Mounts: []
+        traits:
+            meshmap:
+                edges: []
+                fieldRefData: {}
+                id: c64d0489-e1c8-4ae9-a8de-f696b01cd8b1
+                label: Pod
+                meshmodel-data:
+                    category:
+                        metadata: null
+                        name: Orchestration & Management
+                    components: null
+                    description: ""
+                    displayName: Kubernetes
+                    hostID: 26e64aa8-2d86-57bd-92b3-2a73160d27b4
+                    id: 45d9a4de-8590-575e-9838-9fdb32058bdd
+                    metadata:
+                        isAnnotation: false
+                        svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+                        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+                    model:
+                        version: v1.25.2
+                    name: kubernetes
+                    registrant:
+                        hostname: artifacthub
+                    relationships: null
+                    schemaVersion: models.meshery.io/v1beta1
+                    status: enabled
+                    subCategory: ""
+                    version: v1.0.0
+                meshmodel-metadata:
+                    capabilities: |4-
+                         {  "fieldRefs": [
+                            {
+                              "fieldPath": "spec.template.spec.containers",
+                              "jsonSchemaPath": "properties.spec.allOf[0].properties.template.allOf[0].properties.spec.allOf[0].properties.containers.items.allOf[0]",
+                              "component": {
+                                "kind": "Container",
+                                "model": "meshery-core"
+                              },
+                              "renderChildren": true
+                            },
+                            {
+                              "fieldPath": "spec.template.spec.init Containers",
+                              "jsonSchemaPath": "properties.spec.allOf[0].properties.template.allOf[0].properties.spec.allOf[0].properties.init Containers.items.allOf[0]",
+                              "component": {
+                                "kind": "Container",
+                                "model": "meshery-core"
+                              },
+                              "renderChildren": true
+                            }
+                          ],
+                          "designer": {
+                            "edit": {
+                              "shape": {
+                                "convert-shape": false
+                              }
+                            }
+                          }
+                        }
+                    defaultData: ""
+                    genealogy: parent
+                    isAnnotation: false
+                    isCustomResource: false
+                    isModelAnnotation: "FALSE"
+                    isNamespaced: true
+                    logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: round-rectangle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        background-opacity: 0.5
+                        border-width: 2
+                        z-index: 3
+                    styles: '{"border-width":2,"background-opacity":0.5}'
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/pod-color.svg
+                    svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/pod-complete.svg
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/pod-white.svg
+                position:
+                    posX: 353.7745179001448
+                    posY: 119.38240948664077
+                whiteboardData: {}
+        type: Pod
+        version: v1.25.2
+version: 0.0.39
