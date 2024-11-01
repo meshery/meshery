@@ -1,23 +1,24 @@
 import { test, expect } from '@playwright/test';
 import { ENV } from './env';
+import { v4 as uuidv4 } from 'uuid';
 
-test.describe('Service Mesh Performance Management Tests', () => {
+test.describe('Service Mesh Performance Management Tests', { tag: '@unstable' }, () => {
   const peformanceProfiles = [
     {
-      profileName: 'Sample-Perf-Test',
+      profileWithUUID: `Sample-Perf-Test-${uuidv4()}`,
       serviceMesh: 'None',
       url: 'https://layer5.io/',
       loadGenerator: 'fortio',
     },
   ];
 
-  peformanceProfiles.forEach(({ profileName, serviceMesh, url, loadGenerator }) => {
-    test(`Add performace profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
+  peformanceProfiles.forEach(({ profileWithUUID, serviceMesh, url, loadGenerator }) => {
+    test(`Add performance profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
       page,
     }) => {
       await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
       await page.getByLabel('Add Performance Profile').click();
-      await page.getByLabel('Profile Name').fill(profileName);
+      await page.getByLabel('Profile Name').fill(profileWithUUID);
       await page.getByLabel('Service Mesh').click();
       await page.getByRole('option', { name: serviceMesh }).click();
       await page.getByLabel('URL to test').fill(url);
@@ -36,13 +37,10 @@ test.describe('Service Mesh Performance Management Tests', () => {
       page,
     }) => {
       await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
-      await page.waitForSelector(`text=${profileName}`, {
-        state: 'visible',
-      });
+      await expect(await page.getByText(`${profileWithUUID}`)).toBeVisible();
       await page.getByRole('button', { name: 'View Results', exact: true }).first().click();
-
       await page.getByTestId('open-performance-result-bar-chart').first().click();
-      await expect(page.locator('[data-test="sentinelStart"]')).toBeHidden();
+      await expect(page.getByTestId('sentinelStart')).toBeHidden();
       await expect(await page.getByText(`URL: ${url}`, { exact: true })).toBeVisible();
     });
 
@@ -50,7 +48,7 @@ test.describe('Service Mesh Performance Management Tests', () => {
       page,
     }) => {
       await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
-      await page.getByText(profileName, { exact: true }).first().click();
+      await page.getByText(profileWithUUID, { exact: true }).first().click();
 
       await page.getByTestId('performanceProfileCard-edit').click();
       await page.getByLabel('Service Mesh').click();
@@ -68,12 +66,12 @@ test.describe('Service Mesh Performance Management Tests', () => {
       page,
     }) => {
       await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
-      await page.getByText(profileName, { exact: true }).first().click();
+      await page.getByText(profileWithUUID, { exact: true }).first().click();
       await page.getByRole('button', { name: 'View Results', exact: true }).first().click();
-      await page.locator('[data-testid="MUIDataTableBodyRow-0"] input[type="checkbox"]').check();
+      await page.getByTestId('MUIDataTableBodyRow-0').locator('input[type="checkbox"]').check();
 
-      await page.locator('[title="Compare selected"]').click();
-      await expect(page.locator('[id="chart-dialog-title"]')).toBeVisible();
+      await page.getByTestId('compare-selected').click();
+      await expect(page.getByTestId('chart-dialog-title')).toBeVisible();
       await expect(page.getByRole('heading', { name: 'Comparison' })).toBeVisible();
     });
 
@@ -81,7 +79,7 @@ test.describe('Service Mesh Performance Management Tests', () => {
       page,
     }) => {
       await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
-      await page.getByText(profileName, { exact: true }).first().click();
+      await page.getByText(profileWithUUID, { exact: true }).first().click();
       await page.getByTestId('performanceProfileCard-delete').first().click();
 
       await expect(await page.getByText('Performance Profile Deleted!')).toBeVisible();
