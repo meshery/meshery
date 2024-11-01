@@ -136,6 +136,7 @@ components:
         category:
             name: Serverless
         components: null
+        components_count: 0
         connection_id: 1f58c6bc-71fe-e32f-4dae-8837746c307d
         displayName: Knative Serving
         id: b7fd158e-84d8-efe7-49a7-3b8ebe20552f
@@ -180,6 +181,7 @@ components:
             updated_at: "2024-10-02T16:48:37.144109313Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         subCategory: Installable Platform
@@ -270,6 +272,7 @@ components:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: 56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f
         displayName: Meshery Core
         id: 06c870d4-66d2-755b-d107-b2d5aed0996c
@@ -297,6 +300,7 @@ components:
             updated_at: "2024-10-02T16:44:38.738251867Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         subCategory: App Definition and Development
@@ -452,6 +456,7 @@ components:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: 1f58c6bc-71fe-e32f-4dae-8837746c307d
         displayName: Kubernetes
         id: 2a32dea5-f41d-7973-72b0-37f098974b3e
@@ -492,6 +497,7 @@ components:
             updated_at: "2024-10-02T16:48:37.144109313Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -624,7 +630,7 @@ components:
             replicas: 1
             selector:
                 match Labels:
-                    newKey: New Value
+                    new Key: New Value
             template:
                 spec:
                     containers:
@@ -645,6 +651,7 @@ components:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: 1f58c6bc-71fe-e32f-4dae-8837746c307d
         displayName: Kubernetes
         id: 2a32dea5-f41d-7973-72b0-37f098974b3e
@@ -685,6 +692,7 @@ components:
             updated_at: "2024-10-02T16:48:37.144109313Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -704,8 +712,1112 @@ components:
         svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
         svgWhite: ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg
       version: v1.0.0
+    - capabilities:
+        - description: Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.
+          displayName: Performance Test
+          entityState:
+            - instance
+          key: ""
+          kind: action
+          metadata: null
+          schemaVersion: capability.meshery.io/v1alpha1
+          status: enabled
+          subType: perf-test
+          type: operator
+          version: 0.7.0
+        - description: Configure the workload specific setting of a component
+          displayName: Workload Configuration
+          entityState:
+            - declaration
+          key: ""
+          kind: mutate
+          metadata: null
+          schemaVersion: capability.meshery.io/v1alpha1
+          status: enabled
+          subType: config
+          type: configuration
+          version: 0.7.0
+        - description: 'Configure Labels And Annotations for  the component '
+          displayName: Labels and Annotations Configuration
+          entityState:
+            - declaration
+          key: ""
+          kind: mutate
+          metadata: null
+          schemaVersion: capability.meshery.io/v1alpha1
+          status: enabled
+          subType: labels-and-annotations
+          type: configuration
+          version: 0.7.0
+        - description: View relationships for the component
+          displayName: Relationships
+          entityState:
+            - declaration
+            - instance
+          key: ""
+          kind: view
+          metadata: null
+          schemaVersion: capability.meshery.io/v1alpha1
+          status: enabled
+          subType: relationship
+          type: configuration
+          version: 0.7.0
+        - description: 'View Component Definition '
+          displayName: Json Schema
+          entityState:
+            - declaration
+            - instance
+          key: ""
+          kind: view
+          metadata: null
+          schemaVersion: capability.meshery.io/v1alpha1
+          status: enabled
+          subType: definition
+          type: configuration
+          version: 0.7.0
+        - description: Configure the visual styles for the component
+          displayName: Styling
+          entityState:
+            - declaration
+          key: ""
+          kind: mutate
+          metadata: null
+          schemaVersion: capability.meshery.io/v1alpha1
+          status: enabled
+          subType: ""
+          type: style
+          version: 0.7.0
+        - description: Change the shape of the component
+          displayName: Change Shape
+          entityState:
+            - declaration
+          key: ""
+          kind: mutate
+          metadata: null
+          schemaVersion: capability.meshery.io/v1alpha1
+          status: enabled
+          subType: shape
+          type: style
+          version: 0.7.0
+        - description: Drag and Drop a component into a parent component in graph view
+          displayName: Compound Drag And Drop
+          entityState:
+            - declaration
+          key: ""
+          kind: interaction
+          metadata: null
+          schemaVersion: capability.meshery.io/v1alpha1
+          status: enabled
+          subType: compoundDnd
+          type: graph
+          version: 0.7.0
+      component:
+        kind: Pod
+        schema: ""
+        version: v1
+      configuration:
+        spec:
+            containers:
+                - name: ""
+      description: ""
+      displayName: pod-hyn
+      format: JSON
+      id: 86858099-0bec-4d38-a3f2-23ef23ea557c
+      metadata:
+        genealogy: parent
+        isAnnotation: false
+        isNamespaced: true
+        published: false
+        source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
+      model:
+        category:
+            name: Orchestration & Management
+        components: null
+        components_count: 0
+        connection_id: 9e04779c-94b6-6a03-575c-66f4c57541eb
+        displayName: Kubernetes
+        id: bba54c44-a440-773a-a524-0114ebde5397
+        metadata:
+            isAnnotation: false
+            primaryColor: '#326CE5'
+            secondaryColor: '#7aa1f0'
+            shape: circle
+            styleOverrides: ""
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        model:
+            version: v1.32.0-alpha.3
+        name: kubernetes
+        registrant:
+            created_at: "2024-10-31T17:33:38.219202993Z"
+            credential_id: 00000000-0000-0000-0000-000000000000
+            deleted_at: "0001-01-01T00:00:00Z"
+            id: 9e04779c-94b6-6a03-575c-66f4c57541eb
+            kind: github
+            name: Github
+            status: registered
+            sub_type: ""
+            type: registry
+            updated_at: "2024-10-31T17:33:38.219202993Z"
+            user_id: 00000000-0000-0000-0000-000000000000
+        relationships: null
+        relationships_count: 0
+        schemaVersion: models.meshery.io/v1beta1
+        status: enabled
+        subCategory: Scheduling & Orchestration
+        version: v1.0.0
+      schemaVersion: components.meshery.io/v1beta1
+      status: enabled
+      styles:
+        background-image: none
+        background-opacity: 0.5
+        border-width: 2
+        primaryColor: '#326CE5'
+        secondaryColor: '#7aa1f0'
+        shape: round-rectangle
+        svgColor: ui/public/static/img/meshmodels/kubernetes/color/pod-color.svg
+        svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/pod-complete.svg
+        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/pod-white.svg
+      version: v1.0.0
+    - capabilities:
+        - description: Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.
+          displayName: Performance Test
+          entityState:
+            - instance
+          key: ""
+          kind: action
+          metadata: null
+          schemaVersion: capability.meshery.io/v1alpha1
+          status: enabled
+          subType: perf-test
+          type: operator
+          version: 0.7.0
+        - description: Configure the workload specific setting of a component
+          displayName: Workload Configuration
+          entityState:
+            - declaration
+          key: ""
+          kind: mutate
+          metadata: null
+          schemaVersion: capability.meshery.io/v1alpha1
+          status: enabled
+          subType: config
+          type: configuration
+          version: 0.7.0
+        - description: 'Configure Labels And Annotations for  the component '
+          displayName: Labels and Annotations Configuration
+          entityState:
+            - declaration
+          key: ""
+          kind: mutate
+          metadata: null
+          schemaVersion: capability.meshery.io/v1alpha1
+          status: enabled
+          subType: labels-and-annotations
+          type: configuration
+          version: 0.7.0
+        - description: View relationships for the component
+          displayName: Relationships
+          entityState:
+            - declaration
+            - instance
+          key: ""
+          kind: view
+          metadata: null
+          schemaVersion: capability.meshery.io/v1alpha1
+          status: enabled
+          subType: relationship
+          type: configuration
+          version: 0.7.0
+        - description: 'View Component Definition '
+          displayName: Json Schema
+          entityState:
+            - declaration
+            - instance
+          key: ""
+          kind: view
+          metadata: null
+          schemaVersion: capability.meshery.io/v1alpha1
+          status: enabled
+          subType: definition
+          type: configuration
+          version: 0.7.0
+        - description: Configure the visual styles for the component
+          displayName: Styling
+          entityState:
+            - declaration
+          key: ""
+          kind: mutate
+          metadata: null
+          schemaVersion: capability.meshery.io/v1alpha1
+          status: enabled
+          subType: ""
+          type: style
+          version: 0.7.0
+        - description: Change the shape of the component
+          displayName: Change Shape
+          entityState:
+            - declaration
+          key: ""
+          kind: mutate
+          metadata: null
+          schemaVersion: capability.meshery.io/v1alpha1
+          status: enabled
+          subType: shape
+          type: style
+          version: 0.7.0
+        - description: Drag and Drop a component into a parent component in graph view
+          displayName: Compound Drag And Drop
+          entityState:
+            - declaration
+          key: ""
+          kind: interaction
+          metadata: null
+          schemaVersion: capability.meshery.io/v1alpha1
+          status: enabled
+          subType: compoundDnd
+          type: graph
+          version: 0.7.0
+      component:
+        kind: Namespace
+        schema: ""
+        version: v1
+      configuration: {}
+      description: ""
+      displayName: knative-serving
+      format: JSON
+      id: 079dc5b7-e693-4df5-9edf-7f85a8ec02e4
+      metadata:
+        genealogy: parent
+        isAnnotation: false
+        isNamespaced: true
+        published: false
+        source_uri: git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3
+      model:
+        category:
+            name: Orchestration & Management
+        components: null
+        components_count: 0
+        connection_id: 9e04779c-94b6-6a03-575c-66f4c57541eb
+        displayName: Kubernetes
+        id: bba54c44-a440-773a-a524-0114ebde5397
+        metadata:
+            isAnnotation: false
+            primaryColor: '#326CE5'
+            secondaryColor: '#7aa1f0'
+            shape: circle
+            styleOverrides: ""
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        model:
+            version: v1.32.0-alpha.3
+        name: kubernetes
+        registrant:
+            created_at: "2024-10-31T17:33:38.219202993Z"
+            credential_id: 00000000-0000-0000-0000-000000000000
+            deleted_at: "0001-01-01T00:00:00Z"
+            id: 9e04779c-94b6-6a03-575c-66f4c57541eb
+            kind: github
+            name: Github
+            status: registered
+            sub_type: ""
+            type: registry
+            updated_at: "2024-10-31T17:33:38.219202993Z"
+            user_id: 00000000-0000-0000-0000-000000000000
+        relationships: null
+        relationships_count: 0
+        schemaVersion: models.meshery.io/v1beta1
+        status: enabled
+        subCategory: Scheduling & Orchestration
+        version: v1.0.0
+      schemaVersion: components.meshery.io/v1beta1
+      status: enabled
+      styles:
+        background-image: none
+        background-opacity: 0.5
+        border-style: dashed
+        border-width: 2
+        primaryColor: '#326CE5'
+        secondaryColor: '#7aa1f0'
+        shape: rectangle
+        svgColor: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
+        svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg
+        svgWhite: ui/public/static/img/meshmodels/kubernetes/white/namespace-white.svg
+      version: v1.0.0
 id: e5c65f06-4616-4ce7-9fe9-cb528128d242
 name: knative-service
-relationships: []
+relationships:
+    - evaluationQuery: ""
+      id: 0989d275-519a-4ac4-8349-e0434c3a49f7
+      kind: hierarchical
+      metadata:
+        description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        styles:
+            primaryColor: ""
+            svgColor: ""
+            svgWhite: ""
+      model:
+        category:
+            name: Orchestration & Management
+        components: null
+        components_count: 0
+        connection_id: 9e04779c-94b6-6a03-575c-66f4c57541eb
+        displayName: Kubernetes
+        id: bba54c44-a440-773a-a524-0114ebde5397
+        metadata:
+            isAnnotation: false
+            primaryColor: '#326CE5'
+            secondaryColor: '#7aa1f0'
+            shape: circle
+            styleOverrides: ""
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        model:
+            version: v1.32.0-alpha.3
+        name: kubernetes
+        registrant:
+            created_at: "0001-01-01T00:00:00Z"
+            credential_id: 00000000-0000-0000-0000-000000000000
+            deleted_at: "0001-01-01T00:00:00Z"
+            id: 00000000-0000-0000-0000-000000000000
+            kind: ""
+            name: ""
+            status: ""
+            sub_type: ""
+            type: ""
+            updated_at: "0001-01-01T00:00:00Z"
+            user_id: 00000000-0000-0000-0000-000000000000
+        relationships: null
+        relationships_count: 0
+        schemaVersion: models.meshery.io/v1beta1
+        status: enabled
+        subCategory: Scheduling & Orchestration
+        version: v1.0.0
+      schemaVersion: relationships.meshery.io/v1alpha3
+      selectors:
+        - allow:
+            from:
+                - id: ad72fab1-e361-4118-bf80-ad1ab3200c41
+                  kind: '*'
+                  match: {}
+                  model:
+                    category:
+                        name: ""
+                    components: null
+                    components_count: 0
+                    connection_id: 00000000-0000-0000-0000-000000000000
+                    displayName: ""
+                    id: 00000000-0000-0000-0000-000000000000
+                    model:
+                        version: ""
+                    name: '*'
+                    registrant:
+                        created_at: "0001-01-01T00:00:00Z"
+                        credential_id: 00000000-0000-0000-0000-000000000000
+                        deleted_at: "0001-01-01T00:00:00Z"
+                        id: 00000000-0000-0000-0000-000000000000
+                        kind: ""
+                        name: ""
+                        status: ""
+                        sub_type: ""
+                        type: ""
+                        updated_at: "0001-01-01T00:00:00Z"
+                        user_id: 00000000-0000-0000-0000-000000000000
+                    relationships: null
+                    relationships_count: 0
+                    schemaVersion: ""
+                    status: ""
+                    version: ""
+                  patch:
+                    mutatedRef:
+                        - - configuration
+                          - metadata
+                          - namespace
+                    patchStrategy: replace
+            to:
+                - id: 079dc5b7-e693-4df5-9edf-7f85a8ec02e4
+                  kind: Namespace
+                  match: {}
+                  model:
+                    category:
+                        name: ""
+                    components: null
+                    components_count: 0
+                    connection_id: 00000000-0000-0000-0000-000000000000
+                    displayName: ""
+                    id: 00000000-0000-0000-0000-000000000000
+                    model:
+                        version: ""
+                    name: kubernetes
+                    registrant:
+                        created_at: "0001-01-01T00:00:00Z"
+                        credential_id: 00000000-0000-0000-0000-000000000000
+                        deleted_at: "0001-01-01T00:00:00Z"
+                        id: 00000000-0000-0000-0000-000000000000
+                        kind: github
+                        name: ""
+                        status: ""
+                        sub_type: ""
+                        type: ""
+                        updated_at: "0001-01-01T00:00:00Z"
+                        user_id: 00000000-0000-0000-0000-000000000000
+                    relationships: null
+                    relationships_count: 0
+                    schemaVersion: ""
+                    status: ""
+                    version: ""
+                  patch:
+                    mutatorRef:
+                        - - displayName
+                    patchStrategy: replace
+      status: approved
+      subType: inventory
+      type: parent
+      version: v1.0.0
+    - evaluationQuery: ""
+      id: 2369d93c-a742-4a01-bab6-947a9e401a10
+      kind: hierarchical
+      metadata:
+        description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        styles:
+            primaryColor: ""
+            svgColor: ""
+            svgWhite: ""
+      model:
+        category:
+            name: Orchestration & Management
+        components: null
+        components_count: 0
+        connection_id: 9e04779c-94b6-6a03-575c-66f4c57541eb
+        displayName: Kubernetes
+        id: bba54c44-a440-773a-a524-0114ebde5397
+        metadata:
+            isAnnotation: false
+            primaryColor: '#326CE5'
+            secondaryColor: '#7aa1f0'
+            shape: circle
+            styleOverrides: ""
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        model:
+            version: v1.32.0-alpha.3
+        name: kubernetes
+        registrant:
+            created_at: "0001-01-01T00:00:00Z"
+            credential_id: 00000000-0000-0000-0000-000000000000
+            deleted_at: "0001-01-01T00:00:00Z"
+            id: 00000000-0000-0000-0000-000000000000
+            kind: ""
+            name: ""
+            status: ""
+            sub_type: ""
+            type: ""
+            updated_at: "0001-01-01T00:00:00Z"
+            user_id: 00000000-0000-0000-0000-000000000000
+        relationships: null
+        relationships_count: 0
+        schemaVersion: models.meshery.io/v1beta1
+        status: enabled
+        subCategory: Scheduling & Orchestration
+        version: v1.0.0
+      schemaVersion: relationships.meshery.io/v1alpha3
+      selectors:
+        - allow:
+            from:
+                - id: da423578-f98a-4c81-a09d-4ae57434dc83
+                  kind: '*'
+                  match: {}
+                  model:
+                    category:
+                        name: ""
+                    components: null
+                    components_count: 0
+                    connection_id: 00000000-0000-0000-0000-000000000000
+                    displayName: ""
+                    id: 00000000-0000-0000-0000-000000000000
+                    model:
+                        version: ""
+                    name: '*'
+                    registrant:
+                        created_at: "0001-01-01T00:00:00Z"
+                        credential_id: 00000000-0000-0000-0000-000000000000
+                        deleted_at: "0001-01-01T00:00:00Z"
+                        id: 00000000-0000-0000-0000-000000000000
+                        kind: ""
+                        name: ""
+                        status: ""
+                        sub_type: ""
+                        type: ""
+                        updated_at: "0001-01-01T00:00:00Z"
+                        user_id: 00000000-0000-0000-0000-000000000000
+                    relationships: null
+                    relationships_count: 0
+                    schemaVersion: ""
+                    status: ""
+                    version: ""
+                  patch:
+                    mutatedRef:
+                        - - configuration
+                          - metadata
+                          - namespace
+                    patchStrategy: replace
+            to:
+                - id: 079dc5b7-e693-4df5-9edf-7f85a8ec02e4
+                  kind: Namespace
+                  match: {}
+                  model:
+                    category:
+                        name: ""
+                    components: null
+                    components_count: 0
+                    connection_id: 00000000-0000-0000-0000-000000000000
+                    displayName: ""
+                    id: 00000000-0000-0000-0000-000000000000
+                    model:
+                        version: ""
+                    name: kubernetes
+                    registrant:
+                        created_at: "0001-01-01T00:00:00Z"
+                        credential_id: 00000000-0000-0000-0000-000000000000
+                        deleted_at: "0001-01-01T00:00:00Z"
+                        id: 00000000-0000-0000-0000-000000000000
+                        kind: github
+                        name: ""
+                        status: ""
+                        sub_type: ""
+                        type: ""
+                        updated_at: "0001-01-01T00:00:00Z"
+                        user_id: 00000000-0000-0000-0000-000000000000
+                    relationships: null
+                    relationships_count: 0
+                    schemaVersion: ""
+                    status: ""
+                    version: ""
+                  patch:
+                    mutatorRef:
+                        - - displayName
+                    patchStrategy: replace
+      status: approved
+      subType: inventory
+      type: parent
+      version: v1.0.0
+    - evaluationQuery: ""
+      id: 344cd3fc-2450-4932-96b4-88187258e1c4
+      kind: hierarchical
+      metadata:
+        description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        styles:
+            primaryColor: ""
+            svgColor: ""
+            svgWhite: ""
+      model:
+        category:
+            name: Orchestration & Management
+        components: null
+        components_count: 0
+        connection_id: 9e04779c-94b6-6a03-575c-66f4c57541eb
+        displayName: Kubernetes
+        id: bba54c44-a440-773a-a524-0114ebde5397
+        metadata:
+            isAnnotation: false
+            primaryColor: '#326CE5'
+            secondaryColor: '#7aa1f0'
+            shape: circle
+            styleOverrides: ""
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        model:
+            version: v1.32.0-alpha.3
+        name: kubernetes
+        registrant:
+            created_at: "0001-01-01T00:00:00Z"
+            credential_id: 00000000-0000-0000-0000-000000000000
+            deleted_at: "0001-01-01T00:00:00Z"
+            id: 00000000-0000-0000-0000-000000000000
+            kind: ""
+            name: ""
+            status: ""
+            sub_type: ""
+            type: ""
+            updated_at: "0001-01-01T00:00:00Z"
+            user_id: 00000000-0000-0000-0000-000000000000
+        relationships: null
+        relationships_count: 0
+        schemaVersion: models.meshery.io/v1beta1
+        status: enabled
+        subCategory: Scheduling & Orchestration
+        version: v1.0.0
+      schemaVersion: relationships.meshery.io/v1alpha3
+      selectors:
+        - allow:
+            from:
+                - id: 86858099-0bec-4d38-a3f2-23ef23ea557c
+                  kind: Pod
+                  match: {}
+                  model:
+                    category:
+                        name: ""
+                    components: null
+                    components_count: 0
+                    connection_id: 00000000-0000-0000-0000-000000000000
+                    displayName: ""
+                    id: 00000000-0000-0000-0000-000000000000
+                    model:
+                        version: ""
+                    name: kubernetes
+                    registrant:
+                        created_at: "0001-01-01T00:00:00Z"
+                        credential_id: 00000000-0000-0000-0000-000000000000
+                        deleted_at: "0001-01-01T00:00:00Z"
+                        id: 00000000-0000-0000-0000-000000000000
+                        kind: github
+                        name: ""
+                        status: ""
+                        sub_type: ""
+                        type: ""
+                        updated_at: "0001-01-01T00:00:00Z"
+                        user_id: 00000000-0000-0000-0000-000000000000
+                    relationships: null
+                    relationships_count: 0
+                    schemaVersion: ""
+                    status: ""
+                    version: ""
+                  patch:
+                    mutatorRef:
+                        - - configuration
+                          - spec
+                    patchStrategy: replace
+            to:
+                - id: ad72fab1-e361-4118-bf80-ad1ab3200c41
+                  kind: Deployment
+                  match: {}
+                  model:
+                    category:
+                        name: ""
+                    components: null
+                    components_count: 0
+                    connection_id: 00000000-0000-0000-0000-000000000000
+                    displayName: ""
+                    id: 00000000-0000-0000-0000-000000000000
+                    model:
+                        version: ""
+                    name: kubernetes
+                    registrant:
+                        created_at: "0001-01-01T00:00:00Z"
+                        credential_id: 00000000-0000-0000-0000-000000000000
+                        deleted_at: "0001-01-01T00:00:00Z"
+                        id: 00000000-0000-0000-0000-000000000000
+                        kind: github
+                        name: ""
+                        status: ""
+                        sub_type: ""
+                        type: ""
+                        updated_at: "0001-01-01T00:00:00Z"
+                        user_id: 00000000-0000-0000-0000-000000000000
+                    relationships: null
+                    relationships_count: 0
+                    schemaVersion: ""
+                    status: ""
+                    version: ""
+                  patch:
+                    mutatedRef:
+                        - - configuration
+                          - spec
+                          - template
+                          - spec
+                    patchStrategy: replace
+      status: approved
+      subType: inventory
+      type: parent
+      version: v1.0.0
+    - evaluationQuery: ""
+      id: 825d8979-3e82-43c0-9476-5f6be3f3852d
+      kind: hierarchical
+      metadata:
+        description: A relationship between two objects that are siblings.
+        styles:
+            primaryColor: ""
+            svgColor: ""
+            svgWhite: ""
+      model:
+        category:
+            name: Orchestration & Management
+        components: null
+        components_count: 0
+        connection_id: 9e04779c-94b6-6a03-575c-66f4c57541eb
+        displayName: Kubernetes
+        id: bba54c44-a440-773a-a524-0114ebde5397
+        metadata:
+            isAnnotation: false
+            primaryColor: '#326CE5'
+            secondaryColor: '#7aa1f0'
+            shape: circle
+            styleOverrides: ""
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        model:
+            version: v1.32.0-alpha.3
+        name: kubernetes
+        registrant:
+            created_at: "0001-01-01T00:00:00Z"
+            credential_id: 00000000-0000-0000-0000-000000000000
+            deleted_at: "0001-01-01T00:00:00Z"
+            id: 00000000-0000-0000-0000-000000000000
+            kind: ""
+            name: ""
+            status: ""
+            sub_type: ""
+            type: ""
+            updated_at: "0001-01-01T00:00:00Z"
+            user_id: 00000000-0000-0000-0000-000000000000
+        relationships: null
+        relationships_count: 0
+        schemaVersion: models.meshery.io/v1beta1
+        status: enabled
+        subCategory: Scheduling & Orchestration
+        version: v1.0.0
+      schemaVersion: relationships.meshery.io/v1alpha3
+      selectors:
+        - allow:
+            from:
+                - id: da423578-f98a-4c81-a09d-4ae57434dc83
+                  kind: '*'
+                  match:
+                    refs:
+                        - - configuration
+                          - metadata
+                          - labels
+                  model:
+                    category:
+                        name: ""
+                    components: null
+                    components_count: 0
+                    connection_id: 00000000-0000-0000-0000-000000000000
+                    displayName: ""
+                    id: 00000000-0000-0000-0000-000000000000
+                    model:
+                        version: ""
+                    name: kubernetes
+                    registrant:
+                        created_at: "0001-01-01T00:00:00Z"
+                        credential_id: 00000000-0000-0000-0000-000000000000
+                        deleted_at: "0001-01-01T00:00:00Z"
+                        id: 00000000-0000-0000-0000-000000000000
+                        kind: github
+                        name: ""
+                        status: ""
+                        sub_type: ""
+                        type: ""
+                        updated_at: "0001-01-01T00:00:00Z"
+                        user_id: 00000000-0000-0000-0000-000000000000
+                    relationships: null
+                    relationships_count: 0
+                    schemaVersion: ""
+                    status: ""
+                    version: ""
+                  patch: null
+            to:
+                - id: 53d5958c-22fd-4aa3-9ff6-a61d0fbc3fd3
+                  kind: '*'
+                  match:
+                    refs:
+                        - - configuration
+                          - metadata
+                          - labels
+                  model:
+                    category:
+                        name: ""
+                    components: null
+                    components_count: 0
+                    connection_id: 00000000-0000-0000-0000-000000000000
+                    displayName: ""
+                    id: 00000000-0000-0000-0000-000000000000
+                    model:
+                        version: ""
+                    name: kubernetes
+                    registrant:
+                        created_at: "0001-01-01T00:00:00Z"
+                        credential_id: 00000000-0000-0000-0000-000000000000
+                        deleted_at: "0001-01-01T00:00:00Z"
+                        id: 00000000-0000-0000-0000-000000000000
+                        kind: github
+                        name: ""
+                        status: ""
+                        sub_type: ""
+                        type: ""
+                        updated_at: "0001-01-01T00:00:00Z"
+                        user_id: 00000000-0000-0000-0000-000000000000
+                    relationships: null
+                    relationships_count: 0
+                    schemaVersion: ""
+                    status: ""
+                    version: ""
+                  patch: null
+      status: approved
+      subType: matchlabels
+      type: sibling
+      version: v1.0.0
+    - evaluationQuery: ""
+      id: 9f6de827-0259-4527-b773-2ea1d640a010
+      kind: hierarchical
+      metadata:
+        description: A relationship between two objects that are siblings.
+        styles:
+            primaryColor: ""
+            svgColor: ""
+            svgWhite: ""
+      model:
+        category:
+            name: Orchestration & Management
+        components: null
+        components_count: 0
+        connection_id: 9e04779c-94b6-6a03-575c-66f4c57541eb
+        displayName: Kubernetes
+        id: bba54c44-a440-773a-a524-0114ebde5397
+        metadata:
+            isAnnotation: false
+            primaryColor: '#326CE5'
+            secondaryColor: '#7aa1f0'
+            shape: circle
+            styleOverrides: ""
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        model:
+            version: v1.32.0-alpha.3
+        name: kubernetes
+        registrant:
+            created_at: "0001-01-01T00:00:00Z"
+            credential_id: 00000000-0000-0000-0000-000000000000
+            deleted_at: "0001-01-01T00:00:00Z"
+            id: 00000000-0000-0000-0000-000000000000
+            kind: ""
+            name: ""
+            status: ""
+            sub_type: ""
+            type: ""
+            updated_at: "0001-01-01T00:00:00Z"
+            user_id: 00000000-0000-0000-0000-000000000000
+        relationships: null
+        relationships_count: 0
+        schemaVersion: models.meshery.io/v1beta1
+        status: enabled
+        subCategory: Scheduling & Orchestration
+        version: v1.0.0
+      schemaVersion: relationships.meshery.io/v1alpha3
+      selectors:
+        - allow:
+            from:
+                - id: 53d5958c-22fd-4aa3-9ff6-a61d0fbc3fd3
+                  kind: '*'
+                  match:
+                    refs:
+                        - - configuration
+                          - metadata
+                          - labels
+                  model:
+                    category:
+                        name: ""
+                    components: null
+                    components_count: 0
+                    connection_id: 00000000-0000-0000-0000-000000000000
+                    displayName: ""
+                    id: 00000000-0000-0000-0000-000000000000
+                    model:
+                        version: ""
+                    name: kubernetes
+                    registrant:
+                        created_at: "0001-01-01T00:00:00Z"
+                        credential_id: 00000000-0000-0000-0000-000000000000
+                        deleted_at: "0001-01-01T00:00:00Z"
+                        id: 00000000-0000-0000-0000-000000000000
+                        kind: github
+                        name: ""
+                        status: ""
+                        sub_type: ""
+                        type: ""
+                        updated_at: "0001-01-01T00:00:00Z"
+                        user_id: 00000000-0000-0000-0000-000000000000
+                    relationships: null
+                    relationships_count: 0
+                    schemaVersion: ""
+                    status: ""
+                    version: ""
+                  patch: null
+            to:
+                - id: da423578-f98a-4c81-a09d-4ae57434dc83
+                  kind: '*'
+                  match:
+                    refs:
+                        - - configuration
+                          - metadata
+                          - labels
+                  model:
+                    category:
+                        name: ""
+                    components: null
+                    components_count: 0
+                    connection_id: 00000000-0000-0000-0000-000000000000
+                    displayName: ""
+                    id: 00000000-0000-0000-0000-000000000000
+                    model:
+                        version: ""
+                    name: kubernetes
+                    registrant:
+                        created_at: "0001-01-01T00:00:00Z"
+                        credential_id: 00000000-0000-0000-0000-000000000000
+                        deleted_at: "0001-01-01T00:00:00Z"
+                        id: 00000000-0000-0000-0000-000000000000
+                        kind: github
+                        name: ""
+                        status: ""
+                        sub_type: ""
+                        type: ""
+                        updated_at: "0001-01-01T00:00:00Z"
+                        user_id: 00000000-0000-0000-0000-000000000000
+                    relationships: null
+                    relationships_count: 0
+                    schemaVersion: ""
+                    status: ""
+                    version: ""
+                  patch: null
+      status: approved
+      subType: matchlabels
+      type: sibling
+      version: v1.0.0
+    - evaluationQuery: ""
+      id: ad2b8629-5acb-4e83-8a9e-a541dc3f14a7
+      kind: hierarchical
+      metadata:
+        description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        styles:
+            primaryColor: ""
+            svgColor: ""
+            svgWhite: ""
+      model:
+        category:
+            name: Orchestration & Management
+        components: null
+        components_count: 0
+        connection_id: 9e04779c-94b6-6a03-575c-66f4c57541eb
+        displayName: Kubernetes
+        id: bba54c44-a440-773a-a524-0114ebde5397
+        metadata:
+            isAnnotation: false
+            primaryColor: '#326CE5'
+            secondaryColor: '#7aa1f0'
+            shape: circle
+            styleOverrides: ""
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        model:
+            version: v1.32.0-alpha.3
+        name: kubernetes
+        registrant:
+            created_at: "0001-01-01T00:00:00Z"
+            credential_id: 00000000-0000-0000-0000-000000000000
+            deleted_at: "0001-01-01T00:00:00Z"
+            id: 00000000-0000-0000-0000-000000000000
+            kind: ""
+            name: ""
+            status: ""
+            sub_type: ""
+            type: ""
+            updated_at: "0001-01-01T00:00:00Z"
+            user_id: 00000000-0000-0000-0000-000000000000
+        relationships: null
+        relationships_count: 0
+        schemaVersion: models.meshery.io/v1beta1
+        status: enabled
+        subCategory: Scheduling & Orchestration
+        version: v1.0.0
+      schemaVersion: relationships.meshery.io/v1alpha3
+      selectors:
+        - allow:
+            from:
+                - id: 53d5958c-22fd-4aa3-9ff6-a61d0fbc3fd3
+                  kind: '*'
+                  match: {}
+                  model:
+                    category:
+                        name: ""
+                    components: null
+                    components_count: 0
+                    connection_id: 00000000-0000-0000-0000-000000000000
+                    displayName: ""
+                    id: 00000000-0000-0000-0000-000000000000
+                    model:
+                        version: ""
+                    name: '*'
+                    registrant:
+                        created_at: "0001-01-01T00:00:00Z"
+                        credential_id: 00000000-0000-0000-0000-000000000000
+                        deleted_at: "0001-01-01T00:00:00Z"
+                        id: 00000000-0000-0000-0000-000000000000
+                        kind: ""
+                        name: ""
+                        status: ""
+                        sub_type: ""
+                        type: ""
+                        updated_at: "0001-01-01T00:00:00Z"
+                        user_id: 00000000-0000-0000-0000-000000000000
+                    relationships: null
+                    relationships_count: 0
+                    schemaVersion: ""
+                    status: ""
+                    version: ""
+                  patch:
+                    mutatedRef:
+                        - - configuration
+                          - metadata
+                          - namespace
+                    patchStrategy: replace
+            to:
+                - id: 079dc5b7-e693-4df5-9edf-7f85a8ec02e4
+                  kind: Namespace
+                  match: {}
+                  model:
+                    category:
+                        name: ""
+                    components: null
+                    components_count: 0
+                    connection_id: 00000000-0000-0000-0000-000000000000
+                    displayName: ""
+                    id: 00000000-0000-0000-0000-000000000000
+                    model:
+                        version: ""
+                    name: kubernetes
+                    registrant:
+                        created_at: "0001-01-01T00:00:00Z"
+                        credential_id: 00000000-0000-0000-0000-000000000000
+                        deleted_at: "0001-01-01T00:00:00Z"
+                        id: 00000000-0000-0000-0000-000000000000
+                        kind: github
+                        name: ""
+                        status: ""
+                        sub_type: ""
+                        type: ""
+                        updated_at: "0001-01-01T00:00:00Z"
+                        user_id: 00000000-0000-0000-0000-000000000000
+                    relationships: null
+                    relationships_count: 0
+                    schemaVersion: ""
+                    status: ""
+                    version: ""
+                  patch:
+                    mutatorRef:
+                        - - displayName
+                    patchStrategy: replace
+      status: approved
+      subType: inventory
+      type: parent
+      version: v1.0.0
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.11
+version: 0.0.13

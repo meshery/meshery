@@ -1021,6 +1021,8 @@ components:
             kind: ClusterRole
             name: aws-cloudwatch-metrics
         subjects:
+            - name: aws-cloudwatch-metrics
+            - name: aws-cloudwatch-metrics
             - kind: ServiceAccount
               name: aws-cloudwatch-metrics
               namespace: default
@@ -3571,4 +3573,4 @@ relationships:
       type: sibling
       version: v1.0.0
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.12
+version: 0.0.14

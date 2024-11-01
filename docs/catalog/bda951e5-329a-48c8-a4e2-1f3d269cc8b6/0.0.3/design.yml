@@ -130,6 +130,7 @@ components:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -153,6 +154,7 @@ components:
             updated_at: "2024-09-03T14:53:37.839897817Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -176,4 +178,4 @@ id: bda951e5-329a-48c8-a4e2-1f3d269cc8b6
 name: Argocd metrics
 relationships: []
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.4
+version: 0.0.6

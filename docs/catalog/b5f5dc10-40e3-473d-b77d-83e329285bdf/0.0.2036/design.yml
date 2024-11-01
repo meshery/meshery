@@ -5559,6 +5559,136 @@ components:
         width: 180
         z-index: 48
       version: v1.0.0
+    - capabilities:
+        - description: Configure the visual styles for the component
+          displayName: Styling
+          entityState:
+            - declaration
+          key: ""
+          kind: mutate
+          metadata: null
+          schemaVersion: capability.meshery.io/v1alpha1
+          status: enabled
+          subType: ""
+          type: style
+          version: 0.7.0
+        - description: Change the shape of the component
+          displayName: Change Shape
+          entityState:
+            - declaration
+          key: ""
+          kind: mutate
+          metadata: null
+          schemaVersion: capability.meshery.io/v1alpha1
+          status: enabled
+          subType: shape
+          type: style
+          version: 0.7.0
+        - description: Drag and Drop a component into a parent component in graph view
+          displayName: Compound Drag And Drop
+          entityState:
+            - declaration
+          key: ""
+          kind: interaction
+          metadata: null
+          schemaVersion: capability.meshery.io/v1alpha1
+          status: enabled
+          subType: compoundDnd
+          type: graph
+          version: 0.7.0
+        - description: Add text to nodes body
+          displayName: Body Text
+          entityState:
+            - declaration
+          key: ""
+          kind: mutate
+          metadata: null
+          schemaVersion: capability.meshery.io/v1alpha1
+          status: enabled
+          subType: body-text
+          type: style
+          version: 0.7.0
+      component:
+        kind: TextBox
+        schema: ""
+        version: core.meshery.io/v1alpha1
+      configuration: {}
+      description: ""
+      displayName: ""
+      format: JSON
+      id: 4b36d553-a57e-4c3d-aa99-a42af0140aa1
+      metadata:
+        genealogy: ""
+        hasInvalidSchema: true
+        isAnnotation: true
+        isNamespaced: false
+        published: false
+      model:
+        category:
+            name: Orchestration & Management
+        components: null
+        components_count: 0
+        connection_id: 56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f
+        displayName: Meshery Core
+        id: ca787272-67cc-ecda-9340-974f01e11ad8
+        metadata:
+            isAnnotation: false
+            primaryColor: '#00B39F'
+            secondaryColor: '#00D3A9'
+            shape: circle
+            styleOverrides: ""
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/white/meshery-core-white.svg
+        model:
+            version: 0.7.2
+        name: meshery-core
+        registrant:
+            created_at: "2024-10-31T17:46:31.319942753Z"
+            credential_id: 00000000-0000-0000-0000-000000000000
+            deleted_at: "0001-01-01T00:00:00Z"
+            id: 56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f
+            kind: meshery
+            name: meshery
+            status: registered
+            sub_type: ""
+            type: registry
+            updated_at: "2024-10-31T17:46:31.319942753Z"
+            user_id: 00000000-0000-0000-0000-000000000000
+        relationships: null
+        relationships_count: 0
+        schemaVersion: models.meshery.io/v1beta1
+        status: enabled
+        subCategory: App Definition and Development
+        version: v1.0.0
+      schemaVersion: components.meshery.io/v1beta1
+      status: enabled
+      styles:
+        background-image: none
+        background-opacity: 0
+        body-text: Hello
+        body-text-color: '#808080'
+        body-text-font-size: 12
+        body-text-font-weight: "400"
+        body-text-horizontal-align: center
+        body-text-vertical-align: center
+        border-color: '#808080'
+        border-style: dashed
+        border-width: 1
+        height: 60
+        opacity: 1
+        padding: 6
+        position:
+            x: 337.83230677993043
+            "y": 546.2044486738563
+        primaryColor: '#00B39F'
+        secondaryColor: '#FFDE00'
+        shape: rectangle
+        svgColor: ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg
+        svgWhite: ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg
+        width: 180
+        z-index: 49
+      version: v1.0.0
 id: b5f5dc10-40e3-473d-b77d-83e329285bdf
 name: Brainstorming Template
 relationships:
@@ -12265,4 +12395,4 @@ relationships:
       type: non-binding
       version: ""
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.2043
+version: 0.0.2059

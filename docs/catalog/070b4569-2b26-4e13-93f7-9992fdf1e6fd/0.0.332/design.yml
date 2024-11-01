@@ -67,6 +67,7 @@ components:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: 56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f
         displayName: Meshery Core
         id: 06c870d4-66d2-755b-d107-b2d5aed0996c
@@ -95,6 +96,7 @@ components:
             updated_at: "2024-10-13T15:20:03.226097383Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         subCategory: App Definition and Development
@@ -196,6 +198,7 @@ components:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: 56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f
         displayName: Meshery Core
         id: 06c870d4-66d2-755b-d107-b2d5aed0996c
@@ -224,6 +227,7 @@ components:
             updated_at: "2024-10-13T15:20:03.226097383Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         subCategory: App Definition and Development
@@ -325,6 +329,7 @@ components:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: 56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f
         displayName: Meshery Core
         id: 06c870d4-66d2-755b-d107-b2d5aed0996c
@@ -353,6 +358,7 @@ components:
             updated_at: "2024-10-13T15:20:03.226097383Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         subCategory: App Definition and Development
@@ -454,6 +460,7 @@ components:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: 56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f
         displayName: Meshery Core
         id: 06c870d4-66d2-755b-d107-b2d5aed0996c
@@ -482,6 +489,7 @@ components:
             updated_at: "2024-10-13T15:20:03.226097383Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         subCategory: App Definition and Development
@@ -583,6 +591,7 @@ components:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: 56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f
         displayName: Meshery Core
         id: 06c870d4-66d2-755b-d107-b2d5aed0996c
@@ -611,6 +620,7 @@ components:
             updated_at: "2024-10-13T15:20:03.226097383Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         subCategory: App Definition and Development
@@ -712,6 +722,7 @@ components:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: 56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f
         displayName: Meshery Core
         id: 06c870d4-66d2-755b-d107-b2d5aed0996c
@@ -740,6 +751,7 @@ components:
             updated_at: "2024-10-13T15:20:03.226097383Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         subCategory: App Definition and Development
@@ -793,6 +805,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: 56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f
         displayName: Meshery Shapes
         id: 6950d6ca-00f0-6fab-bb54-db44dd81c398
@@ -821,6 +834,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         subCategory: App Definition and Development
@@ -836,6 +850,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -855,6 +870,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -867,6 +883,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -886,6 +903,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -911,6 +929,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: 56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f
         displayName: Meshery Shapes
         id: 6950d6ca-00f0-6fab-bb54-db44dd81c398
@@ -939,6 +958,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         subCategory: App Definition and Development
@@ -954,6 +974,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -973,6 +994,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -985,6 +1007,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1004,6 +1027,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1029,6 +1053,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: 56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f
         displayName: Meshery Shapes
         id: 6950d6ca-00f0-6fab-bb54-db44dd81c398
@@ -1057,6 +1082,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         subCategory: App Definition and Development
@@ -1072,6 +1098,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1091,6 +1118,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1103,6 +1131,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1122,6 +1151,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1147,6 +1177,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: 56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f
         displayName: Meshery Shapes
         id: 6950d6ca-00f0-6fab-bb54-db44dd81c398
@@ -1175,6 +1206,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         subCategory: App Definition and Development
@@ -1190,6 +1222,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1209,6 +1242,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1221,6 +1255,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1240,6 +1275,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1265,6 +1301,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: 56fc1fd1-f0c1-21ab-983f-9efa8fec5b2f
         displayName: Meshery Shapes
         id: 6950d6ca-00f0-6fab-bb54-db44dd81c398
@@ -1293,6 +1330,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         subCategory: App Definition and Development
@@ -1308,6 +1346,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1327,6 +1366,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1339,6 +1379,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1358,6 +1399,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1367,4 +1409,4 @@ relationships:
       type: non-binding
       version: ""
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.370
+version: 0.0.372

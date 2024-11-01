@@ -27,6 +27,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -50,6 +51,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -64,6 +66,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -83,6 +86,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -100,6 +104,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -119,6 +124,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -135,6 +141,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -154,6 +161,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -166,6 +174,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -185,6 +194,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -203,6 +213,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -226,6 +237,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -244,6 +256,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -263,6 +276,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -279,6 +293,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -298,6 +313,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -316,6 +332,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -339,6 +356,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -357,6 +375,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -376,6 +395,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -392,6 +412,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -411,6 +432,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -429,6 +451,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -452,6 +475,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -470,6 +494,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -489,6 +514,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -505,6 +531,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -524,6 +551,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -542,6 +570,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -565,6 +594,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -583,6 +613,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -602,6 +633,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -618,6 +650,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -637,6 +670,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -655,6 +689,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -678,6 +713,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -696,6 +732,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -715,6 +752,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -731,6 +769,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -750,6 +789,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -768,6 +808,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -791,6 +832,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -809,6 +851,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -828,6 +871,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -844,6 +888,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -863,6 +908,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -881,6 +927,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -904,6 +951,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -922,6 +970,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -941,6 +990,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -957,6 +1007,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -976,6 +1027,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -994,6 +1046,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -1017,6 +1070,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -1035,6 +1089,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1054,6 +1109,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1070,6 +1126,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1089,6 +1146,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1107,6 +1165,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -1130,6 +1189,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -1148,6 +1208,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1167,6 +1228,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1183,6 +1245,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1202,6 +1265,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1220,6 +1284,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -1243,6 +1308,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -1257,6 +1323,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1276,6 +1343,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1293,6 +1361,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1312,6 +1381,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1333,6 +1403,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -1356,6 +1427,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -1374,6 +1446,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1393,6 +1466,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1409,6 +1483,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1428,6 +1503,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1446,6 +1522,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -1469,6 +1546,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -1487,6 +1565,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1506,6 +1585,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1522,6 +1602,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1541,6 +1622,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1559,6 +1641,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -1582,6 +1665,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -1600,6 +1684,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1619,6 +1704,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1635,6 +1721,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1654,6 +1741,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1672,6 +1760,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -1695,6 +1784,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -1713,6 +1803,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1732,6 +1823,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1748,6 +1840,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1767,6 +1860,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1785,6 +1879,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -1808,6 +1903,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -1822,6 +1918,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1841,6 +1938,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1858,6 +1956,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1877,6 +1976,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1898,6 +1998,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -1921,6 +2022,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -1939,6 +2041,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1958,6 +2061,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -1974,6 +2078,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -1993,6 +2098,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -2011,6 +2117,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -2034,6 +2141,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -2048,6 +2156,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -2067,6 +2176,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -2084,6 +2194,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -2103,6 +2214,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -2124,6 +2236,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -2147,6 +2260,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -2165,6 +2279,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -2184,6 +2299,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -2200,6 +2316,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -2219,6 +2336,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -2237,6 +2355,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -2260,6 +2379,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -2278,6 +2398,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -2297,6 +2418,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -2313,6 +2435,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -2332,6 +2455,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -2350,6 +2474,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -2373,6 +2498,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -2391,6 +2517,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -2410,6 +2537,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -2426,6 +2554,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -2445,6 +2574,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -2463,6 +2593,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -2486,6 +2617,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -2500,6 +2632,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -2519,6 +2652,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -2536,6 +2670,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -2555,6 +2690,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -2576,6 +2712,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -2599,6 +2736,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -2617,6 +2755,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -2636,6 +2775,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -2652,6 +2792,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -2671,6 +2812,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -2689,6 +2831,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -2712,6 +2855,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -2730,6 +2874,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -2749,6 +2894,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -2765,6 +2911,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -2784,6 +2931,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -2802,6 +2950,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -2825,6 +2974,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -2843,6 +2993,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -2862,6 +3013,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -2878,6 +3030,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -2897,6 +3050,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -2915,6 +3069,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -2938,6 +3093,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -2956,6 +3112,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -2975,6 +3132,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -2991,6 +3149,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -3010,6 +3169,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -3028,6 +3188,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -3051,6 +3212,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -3069,6 +3231,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -3088,6 +3251,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -3104,6 +3268,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -3123,6 +3288,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -3141,6 +3307,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -3164,6 +3331,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -3182,6 +3350,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -3201,6 +3370,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -3217,6 +3387,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -3236,6 +3407,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -3254,6 +3426,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -3277,6 +3450,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -3295,6 +3469,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -3314,6 +3489,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -3330,6 +3506,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -3349,6 +3526,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -3367,6 +3545,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -3390,6 +3569,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -3408,6 +3588,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -3427,6 +3608,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -3443,6 +3625,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -3462,6 +3645,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -3480,6 +3664,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -3503,6 +3688,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -3521,6 +3707,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -3540,6 +3727,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -3556,6 +3744,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -3575,6 +3764,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -3593,6 +3783,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -3616,6 +3807,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -3634,6 +3826,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -3653,6 +3846,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -3669,6 +3863,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -3688,6 +3883,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -3706,6 +3902,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -3729,6 +3926,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -3747,6 +3945,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -3766,6 +3965,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -3782,6 +3982,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -3801,6 +4002,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -3819,6 +4021,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -3842,6 +4045,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -3860,6 +4064,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -3879,6 +4084,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -3895,6 +4101,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -3914,6 +4121,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -3932,6 +4140,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -3955,6 +4164,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -3973,6 +4183,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -3992,6 +4203,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -4008,6 +4220,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -4027,6 +4240,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -4045,6 +4259,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -4068,6 +4283,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -4082,6 +4298,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -4101,6 +4318,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -4118,6 +4336,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -4137,6 +4356,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -4158,6 +4378,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -4181,6 +4402,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -4199,6 +4421,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -4218,6 +4441,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -4234,6 +4458,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -4253,6 +4478,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -4271,6 +4497,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -4294,6 +4521,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -4312,6 +4540,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -4331,6 +4560,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -4347,6 +4577,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -4366,6 +4597,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -4384,6 +4616,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -4407,6 +4640,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -4425,6 +4659,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -4444,6 +4679,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -4460,6 +4696,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -4479,6 +4716,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -4497,6 +4735,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -4520,6 +4759,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -4538,6 +4778,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -4557,6 +4798,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -4573,6 +4815,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -4592,6 +4835,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -4610,6 +4854,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -4633,6 +4878,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -4651,6 +4897,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -4670,6 +4917,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -4686,6 +4934,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -4705,6 +4954,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -4723,6 +4973,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -4746,6 +4997,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -4764,6 +5016,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -4783,6 +5036,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -4799,6 +5053,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -4818,6 +5073,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -4836,6 +5092,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -4859,6 +5116,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -4877,6 +5135,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -4896,6 +5155,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -4912,6 +5172,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -4931,6 +5192,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -4949,6 +5211,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -4972,6 +5235,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -4990,6 +5254,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -5009,6 +5274,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -5025,6 +5291,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -5044,6 +5311,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -5062,6 +5330,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -5085,6 +5354,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -5103,6 +5373,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -5122,6 +5393,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -5138,6 +5410,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -5157,6 +5430,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -5175,6 +5449,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -5198,6 +5473,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -5216,6 +5492,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -5235,6 +5512,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -5251,6 +5529,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -5270,6 +5549,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -5288,6 +5568,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -5311,6 +5592,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -5329,6 +5611,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -5348,6 +5631,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -5364,6 +5648,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -5383,6 +5668,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -5401,6 +5687,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -5424,6 +5711,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -5438,6 +5726,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -5457,6 +5746,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -5474,6 +5764,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -5493,6 +5784,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -5514,6 +5806,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -5537,6 +5830,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -5555,6 +5849,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -5574,6 +5869,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -5590,6 +5886,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -5609,6 +5906,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -5627,6 +5925,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -5650,6 +5949,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -5664,6 +5964,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -5683,6 +5984,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -5700,6 +6002,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -5719,6 +6022,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -5735,6 +6039,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -5754,6 +6059,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -5766,6 +6072,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -5785,6 +6092,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -5803,6 +6111,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -5826,6 +6135,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -5840,6 +6150,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -5859,6 +6170,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -5876,6 +6188,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -5895,6 +6208,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -5911,6 +6225,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -5930,6 +6245,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -5942,6 +6258,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -5961,6 +6278,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -5979,6 +6297,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -6002,6 +6321,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -6020,6 +6340,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -6039,6 +6360,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -6055,6 +6377,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -6074,6 +6397,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -6092,6 +6416,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -6115,6 +6440,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -6133,6 +6459,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -6152,6 +6479,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -6168,6 +6496,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -6187,6 +6516,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -6205,6 +6535,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -6228,6 +6559,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -6242,6 +6574,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -6261,6 +6594,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -6278,6 +6612,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -6297,6 +6632,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -6318,6 +6654,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -6341,6 +6678,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -6359,6 +6697,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -6378,6 +6717,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -6394,6 +6734,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -6413,6 +6754,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -6431,6 +6773,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -6454,6 +6797,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -6468,6 +6812,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -6487,6 +6832,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -6504,6 +6850,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -6523,6 +6870,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -6544,6 +6892,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -6567,6 +6916,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -6585,6 +6935,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -6604,6 +6955,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -6620,6 +6972,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -6639,6 +6992,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -6657,6 +7011,7 @@ relationships:
         category:
             name: Orchestration & Management
         components: null
+        components_count: 0
         connection_id: cdd66d14-bdd9-1a24-ba16-faec2953d9d5
         displayName: Kubernetes
         id: 4394fd4f-7d35-78e1-2cba-a265d8e33b70
@@ -6680,6 +7035,7 @@ relationships:
             updated_at: "0001-01-01T00:00:00Z"
             user_id: 00000000-0000-0000-0000-000000000000
         relationships: null
+        relationships_count: 0
         schemaVersion: models.meshery.io/v1beta1
         status: enabled
         version: v1.0.0
@@ -6694,6 +7050,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -6713,6 +7070,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -6730,6 +7088,7 @@ relationships:
                     category:
                         name: ""
                     components: null
+                    components_count: 0
                     connection_id: 00000000-0000-0000-0000-000000000000
                     displayName: ""
                     id: 00000000-0000-0000-0000-000000000000
@@ -6749,6 +7108,7 @@ relationships:
                         updated_at: "0001-01-01T00:00:00Z"
                         user_id: 00000000-0000-0000-0000-000000000000
                     relationships: null
+                    relationships_count: 0
                     schemaVersion: ""
                     status: ""
                     version: ""
@@ -6761,4 +7121,4 @@ relationships:
       type: parent
       version: v1.0.0
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.35
+version: 0.0.39
