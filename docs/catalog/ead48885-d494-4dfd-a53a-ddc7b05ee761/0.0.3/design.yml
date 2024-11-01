@@ -1,0 +1,3700 @@
+name: glasskube-operator
+services:
+    giteas.glasskube.eu:
+        annotations: {}
+        apiVersion: apiextensions.k8s.io/v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels: {}
+        model: kubernetes
+        name: giteas.glasskube.eu
+        namespace: ""
+        settings:
+            spec:
+                group: glasskube.eu
+                names:
+                    kind: Gitea
+                    plural: giteas
+                    singular: gitea
+                scope: Namespaced
+                versions:
+                    - name: v1alpha1
+                      schema:
+                        open APIV3Schema:
+                            properties:
+                                spec:
+                                    properties:
+                                        admin Secret:
+                                            description: Secret containing data of the admin user to create on pod initialization. Expected keys are GITEA_ADMIN_USER, GITEA_ADMIN_EMAIL and GITEA_ADMIN_PASSWORD
+                                            properties:
+                                                name:
+                                                    type: string
+                                            type: object
+                                        database:
+                                            nullable: true
+                                            properties:
+                                                backups:
+                                                    properties:
+                                                        retention Policy:
+                                                            type: string
+                                                        s3:
+                                                            properties:
+                                                                access Key Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                                bucket:
+                                                                    type: string
+                                                                endpoint:
+                                                                    type: string
+                                                                region Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                                secret Key Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                            required:
+                                                                - bucket
+                                                                - accessKeySecret
+                                                                - secretKeySecret
+                                                            type: object
+                                                        schedule:
+                                                            type: string
+                                                    required:
+                                                        - s3
+                                                    type: object
+                                                instances:
+                                                    minimum: 1
+                                                    type: integer
+                                                storage:
+                                                    properties:
+                                                        size:
+                                                            type: string
+                                                        storage Class:
+                                                            type: string
+                                                    type: object
+                                            type: object
+                                        host:
+                                            type: string
+                                        registration Enabled:
+                                            type: boolean
+                                        replicas:
+                                            type: integer
+                                        resources:
+                                            properties:
+                                                claims:
+                                                    items:
+                                                        properties:
+                                                            name:
+                                                                type: string
+                                                        type: object
+                                                    type: array
+                                                limits:
+                                                    additionalProperties:
+                                                        any Of:
+                                                            - type: integer
+                                                            - type: string
+                                                        x-kubernetes-int-or-string: true
+                                                    type: object
+                                                requests:
+                                                    additionalProperties:
+                                                        any Of:
+                                                            - type: integer
+                                                            - type: string
+                                                        x-kubernetes-int-or-string: true
+                                                    type: object
+                                            type: object
+                                        smtp:
+                                            nullable: true
+                                            properties:
+                                                auth Secret:
+                                                    properties:
+                                                        name:
+                                                            type: string
+                                                    type: object
+                                                from Address:
+                                                    type: string
+                                                host:
+                                                    type: string
+                                                port:
+                                                    type: integer
+                                                tls Enabled:
+                                                    type: boolean
+                                            required:
+                                                - host
+                                                - fromAddress
+                                                - authSecret
+                                            type: object
+                                        ssh Enabled:
+                                            type: boolean
+                                        ssh Host:
+                                            type: string
+                                        version:
+                                            pattern: \d+\.\d+\.\d+
+                                            type: string
+                                    required:
+                                        - host
+                                    type: object
+                                status:
+                                    properties:
+                                        postgres Ready:
+                                            type: boolean
+                                        ready Replicas:
+                                            type: integer
+                                        redis Ready:
+                                            type: boolean
+                                    type: object
+                            type: object
+                      served: true
+                      storage: true
+                      subresources:
+                        status: {}
+        traits:
+            meshmap:
+                edges: []
+                id: 473131ad-2fbe-40e3-ab82-ad08f6f25363
+                meshmodel-metadata:
+                    capabilities: ""
+                    defaultData: ""
+                    genealogy: ""
+                    isAnnotation: false
+                    isCustomResource: false
+                    isNamespaced: false
+                    logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: circle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        z-index: 3
+                    styles: ""
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/customresourcedefinition-color.svg
+                    svgComplete: ""
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/customresourcedefinition-white.svg
+                position:
+                    posX: 0
+                    posY: 0
+                whiteboardData:
+                    style: {}
+        type: CustomResourceDefinition
+        version: ""
+    gitlabrunners.glasskube.eu:
+        annotations: {}
+        apiVersion: apiextensions.k8s.io/v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels: {}
+        model: kubernetes
+        name: gitlabrunners.glasskube.eu
+        namespace: ""
+        settings:
+            spec:
+                group: glasskube.eu
+                names:
+                    kind: GitlabRunner
+                    plural: gitlabrunners
+                    singular: gitlabrunner
+                scope: Namespaced
+                versions:
+                    - name: v1alpha1
+                      schema:
+                        open APIV3Schema:
+                            properties:
+                                spec:
+                                    properties:
+                                        concurrency:
+                                            type: integer
+                                        gitlab:
+                                            properties:
+                                                name:
+                                                    type: string
+                                            type: object
+                                        token:
+                                            type: string
+                                        version:
+                                            pattern: \d+\.\d+\.\d+
+                                            type: string
+                                    required:
+                                        - token
+                                        - gitlab
+                                    type: object
+                                status:
+                                    properties:
+                                        ready:
+                                            type: boolean
+                                    type: object
+                            type: object
+                      served: true
+                      storage: true
+                      subresources:
+                        status: {}
+        traits:
+            meshmap:
+                edges: []
+                id: 83b85239-0835-4e17-866d-e3306181e6f4
+                meshmodel-metadata:
+                    capabilities: ""
+                    defaultData: ""
+                    genealogy: ""
+                    isAnnotation: false
+                    isCustomResource: false
+                    isNamespaced: false
+                    logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: circle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        z-index: 3
+                    styles: ""
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/customresourcedefinition-color.svg
+                    svgComplete: ""
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/customresourcedefinition-white.svg
+                position:
+                    posX: 0
+                    posY: 0
+                whiteboardData:
+                    style: {}
+        type: CustomResourceDefinition
+        version: ""
+    gitlabs.glasskube.eu:
+        annotations: {}
+        apiVersion: apiextensions.k8s.io/v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels: {}
+        model: kubernetes
+        name: gitlabs.glasskube.eu
+        namespace: ""
+        settings:
+            spec:
+                group: glasskube.eu
+                names:
+                    kind: Gitlab
+                    plural: gitlabs
+                    singular: gitlab
+                scope: Namespaced
+                versions:
+                    - name: v1alpha1
+                      schema:
+                        open APIV3Schema:
+                            properties:
+                                spec:
+                                    properties:
+                                        database:
+                                            nullable: true
+                                            properties:
+                                                backups:
+                                                    properties:
+                                                        retention Policy:
+                                                            type: string
+                                                        s3:
+                                                            properties:
+                                                                access Key Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                                bucket:
+                                                                    type: string
+                                                                endpoint:
+                                                                    type: string
+                                                                region Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                                secret Key Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                            required:
+                                                                - bucket
+                                                                - accessKeySecret
+                                                                - secretKeySecret
+                                                            type: object
+                                                        schedule:
+                                                            type: string
+                                                    required:
+                                                        - s3
+                                                    type: object
+                                                instances:
+                                                    minimum: 1
+                                                    type: integer
+                                                storage:
+                                                    properties:
+                                                        size:
+                                                            type: string
+                                                        storage Class:
+                                                            type: string
+                                                    type: object
+                                            type: object
+                                        host:
+                                            type: string
+                                        initial Root Password Secret:
+                                            properties:
+                                                key:
+                                                    type: string
+                                                name:
+                                                    type: string
+                                                optional:
+                                                    type: boolean
+                                            type: object
+                                        omnibus Config Override:
+                                            nullable: true
+                                            type: string
+                                        registry:
+                                            nullable: true
+                                            properties:
+                                                host:
+                                                    type: string
+                                                storage:
+                                                    nullable: true
+                                                    properties:
+                                                        s3:
+                                                            properties:
+                                                                access Key Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                                bucket:
+                                                                    type: string
+                                                                hostname:
+                                                                    type: string
+                                                                region:
+                                                                    type: string
+                                                                secret Key Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                                use Path Style:
+                                                                    type: boolean
+                                                            required:
+                                                                - bucket
+                                                                - accessKeySecret
+                                                                - secretKeySecret
+                                                                - region
+                                                                - hostname
+                                                                - usePathStyle
+                                                            type: object
+                                                    type: object
+                                            required:
+                                                - host
+                                            type: object
+                                        resources:
+                                            properties:
+                                                claims:
+                                                    items:
+                                                        properties:
+                                                            name:
+                                                                type: string
+                                                        type: object
+                                                    type: array
+                                                limits:
+                                                    additionalProperties:
+                                                        any Of:
+                                                            - type: integer
+                                                            - type: string
+                                                        x-kubernetes-int-or-string: true
+                                                    type: object
+                                                requests:
+                                                    additionalProperties:
+                                                        any Of:
+                                                            - type: integer
+                                                            - type: string
+                                                        x-kubernetes-int-or-string: true
+                                                    type: object
+                                            type: object
+                                        runners:
+                                            items:
+                                                properties:
+                                                    concurrency:
+                                                        type: integer
+                                                    token:
+                                                        type: string
+                                                    version:
+                                                        pattern: \d+\.\d+\.\d+
+                                                        type: string
+                                                required:
+                                                    - token
+                                                type: object
+                                            type: array
+                                        smtp:
+                                            nullable: true
+                                            properties:
+                                                auth Secret:
+                                                    properties:
+                                                        name:
+                                                            type: string
+                                                    type: object
+                                                from Address:
+                                                    type: string
+                                                host:
+                                                    type: string
+                                                port:
+                                                    type: integer
+                                                tls Enabled:
+                                                    type: boolean
+                                            required:
+                                                - host
+                                                - fromAddress
+                                                - authSecret
+                                            type: object
+                                        ssh Enabled:
+                                            type: boolean
+                                        ssh Host:
+                                            type: string
+                                        version:
+                                            pattern: \d+\.\d+\.\d+
+                                            type: string
+                                    required:
+                                        - host
+                                    type: object
+                                status:
+                                    properties:
+                                        postgres Ready:
+                                            type: boolean
+                                        ready Replicas:
+                                            type: integer
+                                        runners:
+                                            additionalProperties:
+                                                properties:
+                                                    ready:
+                                                        type: boolean
+                                                type: object
+                                            type: object
+                                    type: object
+                            type: object
+                      served: true
+                      storage: true
+                      subresources:
+                        status: {}
+        traits:
+            meshmap:
+                edges: []
+                id: 283e1f37-96a8-4345-a63c-9cbd4c865f41
+                meshmodel-metadata:
+                    capabilities: ""
+                    defaultData: ""
+                    genealogy: ""
+                    isAnnotation: false
+                    isCustomResource: false
+                    isNamespaced: false
+                    logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: circle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        z-index: 3
+                    styles: ""
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/customresourcedefinition-color.svg
+                    svgComplete: ""
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/customresourcedefinition-white.svg
+                position:
+                    posX: 0
+                    posY: 0
+                whiteboardData:
+                    style: {}
+        type: CustomResourceDefinition
+        version: ""
+    glasskube-operator-cypcc:
+        annotations: {}
+        apiVersion: v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels: {}
+        model: kubernetes
+        name: glasskube-operator
+        namespace: default
+        settings: {}
+        traits:
+            meshmap:
+                edges:
+                    - data:
+                        id: ba48fc29-21d0-4fa9-bf89-d663af0ccc5b
+                        metadata:
+                            binded_by: 212ee9bd-47f9-4952-9d49-40ca08768199
+                        source: 621c654f-478e-4bc9-bf54-69fd1de9c579
+                        subType: Permission
+                        target: 3513da46-0dec-4563-86fb-b3fba16770d4
+                      style:
+                        control-point-distances: null
+                        control-point-weights: "0.5"
+                        curve-style: bezier
+                        haystack-radius: "0"
+                        line-color: rgb(153,153,153)
+                        line-style: dotted
+                        opacity: "1"
+                        segment-distances: 20px
+                        segment-weights: "0.5"
+                        target-arrow-shape: vee
+                        taxi-direction: auto
+                        taxi-turn: 50%
+                        taxi-turn-min-distance: 10px
+                        width: 1.5px
+                id: 3513da46-0dec-4563-86fb-b3fba16770d4
+                meshmodel-metadata:
+                    capabilities: ""
+                    defaultData: ""
+                    genealogy: ""
+                    isAnnotation: false
+                    isCustomResource: false
+                    isModelAnnotation: "FALSE"
+                    isNamespaced: true
+                    logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: bottom-round-rectangle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        z-index: 3
+                    styles: ""
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+                    svgComplete: ""
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg
+                position:
+                    posX: 0
+                    posY: 0
+                whiteboardData:
+                    style: {}
+        type: ServiceAccount
+        version: ""
+    glasskube-operator-ivsry:
+        annotations: {}
+        apiVersion: rbac.authorization.k8s.io/v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels: {}
+        model: kubernetes
+        name: glasskube-operator
+        namespace: ""
+        settings:
+            role Ref:
+                api Group: rbac.authorization.k8s.io
+                kind: ClusterRole
+                name: glasskube-operator
+            subjects:
+                - kind: ServiceAccount
+                  name: glasskube-operator
+                  namespace: default
+        traits:
+            meshmap:
+                edges: []
+                id: 212ee9bd-47f9-4952-9d49-40ca08768199
+                meshmodel-metadata:
+                    capabilities: ""
+                    defaultData: ""
+                    genealogy: ""
+                    isAnnotation: false
+                    isCustomResource: false
+                    isModelAnnotation: "FALSE"
+                    isNamespaced: false
+                    logoURL: Created by Meshery Authors
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: round-rectangle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        height: 25px
+                        width: 25px
+                        x: "7"
+                        "y": "7"
+                        z-index: 3
+                    styles: '{"height":"25px","width":"25px","x":"7", "y":"7"}'
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg
+                    svgComplete: ""
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg
+                position:
+                    posX: 0
+                    posY: 0
+                whiteboardData:
+                    style:
+                        height: 10.5
+                        width: 10.5
+                        z-index: 1000
+        type: ClusterRoleBinding
+        version: ""
+    glasskube-operator-minio-console:
+        annotations: {}
+        apiVersion: v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels:
+            app: minio
+            chart: minio-5.0.14
+            heritage: Helm
+            release: glasskube-operator
+        model: kubernetes
+        name: glasskube-operator-minio-console
+        namespace: default
+        settings:
+            spec:
+                ports:
+                    - name: http
+                      port: 9001
+                      protocol: TCP
+                      target Port: 9001
+                selector:
+                    app: minio
+                    release: glasskube-operator
+                type: ClusterIP
+        traits:
+            meshmap:
+                edges:
+                    - data:
+                        id: ae0e6360-3e57-43ad-b6ce-67077d915192
+                        metadata:
+                            port: 9001
+                            protocol: TCP
+                        source: 7a088f27-1c01-4b7f-b600-ee38d8ad2e7d
+                        subType: Network
+                        target: b3f00e4a-662d-490a-9c00-86993a895099
+                      style:
+                        control-point-distances: null
+                        control-point-weights: "0.5"
+                        curve-style: bezier
+                        haystack-radius: "0"
+                        line-color: rgb(153,153,153)
+                        line-style: dotted
+                        opacity: "1"
+                        segment-distances: 20px
+                        segment-weights: "0.5"
+                        target-arrow-shape: vee
+                        taxi-direction: auto
+                        taxi-turn: 50%
+                        taxi-turn-min-distance: 10px
+                        width: 1.5px
+                id: 7a088f27-1c01-4b7f-b600-ee38d8ad2e7d
+                meshmodel-metadata:
+                    capabilities: ""
+                    defaultData: ""
+                    genealogy: ""
+                    isAnnotation: false
+                    isCustomResource: false
+                    isModelAnnotation: "FALSE"
+                    isNamespaced: true
+                    logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: round-triangle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        background-position-y: 4.5
+                        height: 20
+                        padding: 12
+                        width: 20
+                        x: 10px
+                        "y": 12px
+                        z-index: 3
+                    styles: '{"height":20,"width":20,"padding":12,"background-position-y":4.5,"x":"10px","y":"12px"}'
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/service-color.svg
+                    svgComplete: ""
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/service-white.svg
+                position:
+                    posX: 0
+                    posY: 0
+                whiteboardData:
+                    style: {}
+        type: Service
+        version: ""
+    glasskube-operator-minio-diagp:
+        annotations: {}
+        apiVersion: v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels:
+            app: minio
+            chart: minio-5.0.14
+            heritage: Helm
+            monitoring: "true"
+            release: glasskube-operator
+        model: kubernetes
+        name: glasskube-operator-minio
+        namespace: default
+        settings:
+            spec:
+                ports:
+                    - name: http
+                      port: 9000
+                      protocol: TCP
+                      target Port: 9000
+                selector:
+                    app: minio
+                    release: glasskube-operator
+                type: ClusterIP
+        traits:
+            meshmap:
+                edges:
+                    - data:
+                        id: 88ec11fd-e6db-4958-8bf7-ac0c72b98219
+                        metadata:
+                            port: 9000
+                            protocol: TCP
+                        source: 7dbb8a9c-d58f-4533-bd35-7eb7c9559cd5
+                        subType: Network
+                        target: b3f00e4a-662d-490a-9c00-86993a895099
+                      style:
+                        control-point-distances: null
+                        control-point-weights: "0.5"
+                        curve-style: bezier
+                        haystack-radius: "0"
+                        line-color: rgb(153,153,153)
+                        line-style: dotted
+                        opacity: "1"
+                        segment-distances: 20px
+                        segment-weights: "0.5"
+                        target-arrow-shape: vee
+                        taxi-direction: auto
+                        taxi-turn: 50%
+                        taxi-turn-min-distance: 10px
+                        width: 1.5px
+                id: 7dbb8a9c-d58f-4533-bd35-7eb7c9559cd5
+                meshmodel-metadata:
+                    capabilities: ""
+                    defaultData: ""
+                    genealogy: ""
+                    isAnnotation: false
+                    isCustomResource: false
+                    isModelAnnotation: "FALSE"
+                    isNamespaced: true
+                    logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: round-triangle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        background-position-y: 4.5
+                        height: 20
+                        padding: 12
+                        width: 20
+                        x: 10px
+                        "y": 12px
+                        z-index: 3
+                    styles: '{"height":20,"width":20,"padding":12,"background-position-y":4.5,"x":"10px","y":"12px"}'
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/service-color.svg
+                    svgComplete: ""
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/service-white.svg
+                position:
+                    posX: 0
+                    posY: 0
+                whiteboardData:
+                    style: {}
+        type: Service
+        version: ""
+    glasskube-operator-minio-pwalu:
+        annotations: {}
+        apiVersion: v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels:
+            app: minio
+            chart: minio-5.0.14
+            heritage: Helm
+            release: glasskube-operator
+        model: kubernetes
+        name: glasskube-operator-minio
+        namespace: default
+        settings:
+            data:
+                add-policy: |-
+                    #!/bin/sh
+                    set -e ; # Have script exit in the event of a failed command.
+                    MC_CONFIG_DIR="/etc/minio/mc/"
+                    MC="/usr/bin/mc --insecure --config-dir ${MC_CONFIG_DIR}"
+
+                    # connectToMinio
+                    # Use a check-sleep-check loop to wait for MinIO service to be available
+                    connectToMinio() {
+                      SCHEME=$1
+                      ATTEMPTS=0 ; LIMIT=29 ; # Allow 30 attempts
+                      set -e ; # fail if we can't read the keys.
+                      ACCESS=$(cat /config/rootUser) ; SECRET=$(cat /config/rootPassword) ;
+                      set +e ; # The connections to minio are allowed to fail.
+                      echo "Connecting to MinIO server: $SCHEME://$MINIO_ENDPOINT:$MINIO_PORT" ;
+                      MC_COMMAND="${MC} alias set myminio $SCHEME://$MINIO_ENDPOINT:$MINIO_PORT $ACCESS $SECRET" ;
+                      $MC_COMMAND ;
+                      STATUS=$? ;
+                      until [ $STATUS = 0 ]
+                      do
+                        ATTEMPTS=`expr $ATTEMPTS + 1` ;
+                        echo \"Failed attempts: $ATTEMPTS\" ;
+                        if [ $ATTEMPTS -gt $LIMIT ]; then
+                          exit 1 ;
+                        fi ;
+                        sleep 2 ; # 1 second intervals between attempts
+                        $MC_COMMAND ;
+                        STATUS=$? ;
+                      done ;
+                      set -e ; # reset `e` as active
+                      return 0
+                    }
+
+                    # checkPolicyExists ($policy)
+                    # Check if the policy exists, by using the exit code of `mc admin policy info`
+                    checkPolicyExists() {
+                      POLICY=$1
+                      CMD=$(${MC} admin policy info myminio $POLICY > /dev/null 2>&1)
+                      return $?
+                    }
+
+                    # createPolicy($name, $filename)
+                    createPolicy () {
+                      NAME=$1
+                      FILENAME=$2
+
+                      # Create the name if it does not exist
+                      echo "Checking policy: $NAME (in /config/$FILENAME.json)"
+                      if ! checkPolicyExists $NAME ; then
+                        echo "Creating policy '$NAME'"
+                      else
+                        echo "Policy '$NAME' already exists."
+                      fi
+                      ${MC} admin policy create myminio $NAME /config/$FILENAME.json
+
+                    }
+
+                    # Try connecting to MinIO instance
+                    scheme=http
+                    connectToMinio $scheme
+                add-svcacct: |-
+                    #!/bin/sh
+                    set -e ; # Have script exit in the event of a failed command.
+                    MC_CONFIG_DIR="/etc/minio/mc/"
+                    MC="/usr/bin/mc --insecure --config-dir ${MC_CONFIG_DIR}"
+
+                    # AccessKey and secretkey credentials file are added to prevent shell execution errors caused by special characters.
+                    # Special characters for example : ',",<,>,{,}
+                    MINIO_ACCESSKEY_SECRETKEY_TMP="/tmp/accessKey_and_secretKey_svcacct_tmp"
+
+                    # connectToMinio
+                    # Use a check-sleep-check loop to wait for MinIO service to be available
+                    connectToMinio() {
+                      SCHEME=$1
+                      ATTEMPTS=0 ; LIMIT=29 ; # Allow 30 attempts
+                      set -e ; # fail if we can't read the keys.
+                      ACCESS=$(cat /config/rootUser) ; SECRET=$(cat /config/rootPassword) ;
+                      set +e ; # The connections to minio are allowed to fail.
+                      echo "Connecting to MinIO server: $SCHEME://$MINIO_ENDPOINT:$MINIO_PORT" ;
+                      MC_COMMAND="${MC} alias set myminio $SCHEME://$MINIO_ENDPOINT:$MINIO_PORT $ACCESS $SECRET" ;
+                      $MC_COMMAND ;
+                      STATUS=$? ;
+                      until [ $STATUS = 0 ]
+                      do
+                        ATTEMPTS=`expr $ATTEMPTS + 1` ;
+                        echo \"Failed attempts: $ATTEMPTS\" ;
+                        if [ $ATTEMPTS -gt $LIMIT ]; then
+                          exit 1 ;
+                        fi ;
+                        sleep 2 ; # 2 second intervals between attempts
+                        $MC_COMMAND ;
+                        STATUS=$? ;
+                      done ;
+                      set -e ; # reset `e` as active
+                      return 0
+                    }
+
+                    # checkSvcacctExists ()
+                    # Check if the svcacct exists, by using the exit code of `mc admin user svcacct info`
+                    checkSvcacctExists() {
+                      CMD=$(${MC} admin user svcacct info myminio $(head -1 $MINIO_ACCESSKEY_SECRETKEY_TMP) > /dev/null 2>&1)
+                      return $?
+                    }
+
+                    # createSvcacct ($user)
+                    createSvcacct () {
+                      USER=$1
+                      FILENAME=$2
+                      #check accessKey_and_secretKey_tmp file
+                      if [[ ! -f $MINIO_ACCESSKEY_SECRETKEY_TMP ]];then
+                        echo "credentials file does not exist"
+                        return 1
+                      fi
+                      if [[ $(cat $MINIO_ACCESSKEY_SECRETKEY_TMP|wc -l) -ne 2 ]];then
+                        echo "credentials file is invalid"
+                        rm -f $MINIO_ACCESSKEY_SECRETKEY_TMP
+                        return 1
+                      fi
+                      SVCACCT=$(head -1 $MINIO_ACCESSKEY_SECRETKEY_TMP)
+                      # Create the svcacct if it does not exist
+                      if ! checkSvcacctExists ; then
+                        echo "Creating svcacct '$SVCACCT'"
+                        # Check if policy file is define
+                        if [ -z $FILENAME ]; then
+                          ${MC} admin user svcacct add --access-key $(head -1 $MINIO_ACCESSKEY_SECRETKEY_TMP) --secret-key $(tail -n1 $MINIO_ACCESSKEY_SECRETKEY_TMP) myminio $USER
+                        else
+                          ${MC} admin user svcacct add --access-key $(head -1 $MINIO_ACCESSKEY_SECRETKEY_TMP) --secret-key $(tail -n1 $MINIO_ACCESSKEY_SECRETKEY_TMP) --policy /config/$FILENAME.json myminio $USER
+                        fi
+                      else
+                        echo "Svcacct '$SVCACCT' already exists."
+                      fi
+                      #clean up credentials files.
+                      rm -f $MINIO_ACCESSKEY_SECRETKEY_TMP
+                    }
+
+                    # Try connecting to MinIO instance
+                    scheme=http
+                    connectToMinio $scheme
+                add-user: |-
+                    #!/bin/sh
+                    set -e ; # Have script exit in the event of a failed command.
+                    MC_CONFIG_DIR="/etc/minio/mc/"
+                    MC="/usr/bin/mc --insecure --config-dir ${MC_CONFIG_DIR}"
+
+                    # AccessKey and secretkey credentials file are added to prevent shell execution errors caused by special characters.
+                    # Special characters for example : ',",<,>,{,}
+                    MINIO_ACCESSKEY_SECRETKEY_TMP="/tmp/accessKey_and_secretKey_tmp"
+
+                    # connectToMinio
+                    # Use a check-sleep-check loop to wait for MinIO service to be available
+                    connectToMinio() {
+                      SCHEME=$1
+                      ATTEMPTS=0 ; LIMIT=29 ; # Allow 30 attempts
+                      set -e ; # fail if we can't read the keys.
+                      ACCESS=$(cat /config/rootUser) ; SECRET=$(cat /config/rootPassword) ;
+                      set +e ; # The connections to minio are allowed to fail.
+                      echo "Connecting to MinIO server: $SCHEME://$MINIO_ENDPOINT:$MINIO_PORT" ;
+                      MC_COMMAND="${MC} alias set myminio $SCHEME://$MINIO_ENDPOINT:$MINIO_PORT $ACCESS $SECRET" ;
+                      $MC_COMMAND ;
+                      STATUS=$? ;
+                      until [ $STATUS = 0 ]
+                      do
+                        ATTEMPTS=`expr $ATTEMPTS + 1` ;
+                        echo \"Failed attempts: $ATTEMPTS\" ;
+                        if [ $ATTEMPTS -gt $LIMIT ]; then
+                          exit 1 ;
+                        fi ;
+                        sleep 2 ; # 1 second intervals between attempts
+                        $MC_COMMAND ;
+                        STATUS=$? ;
+                      done ;
+                      set -e ; # reset `e` as active
+                      return 0
+                    }
+
+                    # checkUserExists ()
+                    # Check if the user exists, by using the exit code of `mc admin user info`
+                    checkUserExists() {
+                      CMD=$(${MC} admin user info myminio $(head -1 $MINIO_ACCESSKEY_SECRETKEY_TMP) > /dev/null 2>&1)
+                      return $?
+                    }
+
+                    # createUser ($policy)
+                    createUser() {
+                      POLICY=$1
+                      #check accessKey_and_secretKey_tmp file
+                      if [[ ! -f $MINIO_ACCESSKEY_SECRETKEY_TMP ]];then
+                        echo "credentials file does not exist"
+                        return 1
+                      fi
+                      if [[ $(cat $MINIO_ACCESSKEY_SECRETKEY_TMP|wc -l) -ne 2 ]];then
+                        echo "credentials file is invalid"
+                        rm -f $MINIO_ACCESSKEY_SECRETKEY_TMP
+                        return 1
+                      fi
+                      USER=$(head -1 $MINIO_ACCESSKEY_SECRETKEY_TMP)
+                      # Create the user if it does not exist
+                      if ! checkUserExists ; then
+                        echo "Creating user '$USER'"
+                        cat $MINIO_ACCESSKEY_SECRETKEY_TMP | ${MC} admin user add myminio
+                      else
+                        echo "User '$USER' already exists."
+                      fi
+                      #clean up credentials files.
+                      rm -f $MINIO_ACCESSKEY_SECRETKEY_TMP
+
+                      # set policy for user
+                      if [ ! -z $POLICY -a $POLICY != " " ] ; then
+                          echo "Adding policy '$POLICY' for '$USER'"
+                          set +e ; # policy already attach errors out, allow it.
+                          ${MC} admin policy attach myminio $POLICY --user=$USER
+                          set -e
+                      else
+                          echo "User '$USER' has no policy attached."
+                      fi
+                    }
+
+                    # Try connecting to MinIO instance
+                    scheme=http
+                    connectToMinio $scheme
+
+
+
+                    # Create the users
+                    echo console > $MINIO_ACCESSKEY_SECRETKEY_TMP
+                    echo console123 >> $MINIO_ACCESSKEY_SECRETKEY_TMP
+                    createUser consoleAdmin
+                custom-command: |-
+                    #!/bin/sh
+                    set -e ; # Have script exit in the event of a failed command.
+                    MC_CONFIG_DIR="/etc/minio/mc/"
+                    MC="/usr/bin/mc --insecure --config-dir ${MC_CONFIG_DIR}"
+
+                    # connectToMinio
+                    # Use a check-sleep-check loop to wait for MinIO service to be available
+                    connectToMinio() {
+                      SCHEME=$1
+                      ATTEMPTS=0 ; LIMIT=29 ; # Allow 30 attempts
+                      set -e ; # fail if we can't read the keys.
+                      ACCESS=$(cat /config/rootUser) ; SECRET=$(cat /config/rootPassword) ;
+                      set +e ; # The connections to minio are allowed to fail.
+                      echo "Connecting to MinIO server: $SCHEME://$MINIO_ENDPOINT:$MINIO_PORT" ;
+                      MC_COMMAND="${MC} alias set myminio $SCHEME://$MINIO_ENDPOINT:$MINIO_PORT $ACCESS $SECRET" ;
+                      $MC_COMMAND ;
+                      STATUS=$? ;
+                      until [ $STATUS = 0 ]
+                      do
+                        ATTEMPTS=`expr $ATTEMPTS + 1` ;
+                        echo \"Failed attempts: $ATTEMPTS\" ;
+                        if [ $ATTEMPTS -gt $LIMIT ]; then
+                          exit 1 ;
+                        fi ;
+                        sleep 2 ; # 1 second intervals between attempts
+                        $MC_COMMAND ;
+                        STATUS=$? ;
+                      done ;
+                      set -e ; # reset `e` as active
+                      return 0
+                    }
+
+                    # runCommand ($@)
+                    # Run custom mc command
+                    runCommand() {
+                      ${MC} "$@"
+                      return $?
+                    }
+
+                    # Try connecting to MinIO instance
+                    scheme=http
+                    connectToMinio $scheme
+                initialize: "#!/bin/sh\nset -e ; # Have script exit in the event of a failed command.\nMC_CONFIG_DIR=\"/etc/minio/mc/\"\nMC=\"/usr/bin/mc --insecure --config-dir ${MC_CONFIG_DIR}\"\n\n# connectToMinio\n# Use a check-sleep-check loop to wait for MinIO service to be available\nconnectToMinio() {\n  SCHEME=$1\n  ATTEMPTS=0 ; LIMIT=29 ; # Allow 30 attempts\n  set -e ; # fail if we can't read the keys.\n  ACCESS=$(cat /config/rootUser) ; SECRET=$(cat /config/rootPassword) ;\n  set +e ; # The connections to minio are allowed to fail.\n  echo \"Connecting to MinIO server: $SCHEME://$MINIO_ENDPOINT:$MINIO_PORT\" ;\n  MC_COMMAND=\"${MC} alias set myminio $SCHEME://$MINIO_ENDPOINT:$MINIO_PORT $ACCESS $SECRET\" ;\n  $MC_COMMAND ;\n  STATUS=$? ;\n  until [ $STATUS = 0 ]\n  do\n    ATTEMPTS=`expr $ATTEMPTS + 1` ;\n    echo \\\"Failed attempts: $ATTEMPTS\\\" ;\n    if [ $ATTEMPTS -gt $LIMIT ]; then\n      exit 1 ;\n    fi ;\n    sleep 2 ; # 1 second intervals between attempts\n    $MC_COMMAND ;\n    STATUS=$? ;\n  done ;\n  set -e ; # reset `e` as active\n  return 0\n}\n\n# checkBucketExists ($bucket)\n# Check if the bucket exists, by using the exit code of `mc ls`\ncheckBucketExists() {\n  BUCKET=$1\n  CMD=$(${MC} stat myminio/$BUCKET > /dev/null 2>&1)\n  return $?\n}\n\n# createBucket ($bucket, $policy, $purge)\n# Ensure bucket exists, purging if asked to\ncreateBucket() {\n  BUCKET=$1\n  POLICY=$2\n  PURGE=$3\n  VERSIONING=$4\n  OBJECTLOCKING=$5\n\n  # Purge the bucket, if set & exists\n  # Since PURGE is user input, check explicitly for `true`\n  if [ $PURGE = true ]; then\n    if checkBucketExists $BUCKET ; then\n      echo \"Purging bucket '$BUCKET'.\"\n      set +e ; # don't exit if this fails\n      ${MC} rm -r --force myminio/$BUCKET\n      set -e ; # reset `e` as active\n    else\n      echo \"Bucket '$BUCKET' does not exist, skipping purge.\"\n    fi\n  fi\n\n# Create the bucket if it does not exist and set objectlocking if enabled (NOTE: versioning will be not changed if OBJECTLOCKING is set because it enables versioning to the Buckets created)\nif ! checkBucketExists $BUCKET ; then\n    if [ ! -z $OBJECTLOCKING ] ; then\n      if [ $OBJECTLOCKING = true ] ; then\n          echo \"Creating bucket with OBJECTLOCKING '$BUCKET'\"\n          ${MC} mb --with-lock myminio/$BUCKET\n      elif [ $OBJECTLOCKING = false ] ; then\n            echo \"Creating bucket '$BUCKET'\"\n            ${MC} mb myminio/$BUCKET\n      fi\n  elif [ -z $OBJECTLOCKING ] ; then\n        echo \"Creating bucket '$BUCKET'\"\n        ${MC} mb myminio/$BUCKET\n  else\n    echo \"Bucket '$BUCKET' already exists.\"  \n  fi\n  fi\n\n\n  # set versioning for bucket if objectlocking is disabled or not set\n  if [ $OBJECTLOCKING = false ] ; then\n  if [ ! -z $VERSIONING ] ; then\n    if [ $VERSIONING = true ] ; then\n        echo \"Enabling versioning for '$BUCKET'\"\n        ${MC} version enable myminio/$BUCKET\n    elif [ $VERSIONING = false ] ; then\n        echo \"Suspending versioning for '$BUCKET'\"\n        ${MC} version suspend myminio/$BUCKET\n    fi\n    fi\n  else\n      echo \"Bucket '$BUCKET' versioning unchanged.\"\n  fi\n\n\n  # At this point, the bucket should exist, skip checking for existence\n  # Set policy on the bucket\n  echo \"Setting policy of bucket '$BUCKET' to '$POLICY'.\"\n  ${MC} anonymous set $POLICY myminio/$BUCKET\n}\n\n# Try connecting to MinIO instance\nscheme=http\nconnectToMinio $scheme"
+        traits:
+            meshmap:
+                edges: []
+                id: bed1f2d2-fd7f-47c8-9ca3-f6f485b0e0b2
+                meshmodel-metadata:
+                    capabilities: ""
+                    defaultData: ""
+                    genealogy: ""
+                    isAnnotation: false
+                    isCustomResource: false
+                    isModelAnnotation: "FALSE"
+                    isNamespaced: true
+                    logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: bottom-round-rectangle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        z-index: 3
+                    styles: ""
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg
+                    svgComplete: ""
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg
+                position:
+                    posX: 0
+                    posY: 0
+                whiteboardData:
+                    style: {}
+        type: ConfigMap
+        version: ""
+    glasskube-operator-minio-qmfeu:
+        annotations: {}
+        apiVersion: v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels:
+            app: minio
+            chart: minio-5.0.14
+            heritage: Helm
+            release: glasskube-operator
+        model: kubernetes
+        name: glasskube-operator-minio
+        namespace: default
+        settings:
+            data:
+                root Password: VWVNOURDRjdpYWJTcTJsVmhBczJtWGQ3Z05Xb3JSWjV3SmYyREo1Yg==
+                root User: eVcwQkM0dXk5QXlOdnhpb1owSlc=
+            type: Opaque
+        traits:
+            meshmap:
+                edges: []
+                id: 20ecc777-d460-460a-9dc6-7e4f0cb8c8b3
+                meshmodel-metadata:
+                    capabilities: ""
+                    defaultData: ""
+                    genealogy: ""
+                    isAnnotation: false
+                    isCustomResource: false
+                    isModelAnnotation: "FALSE"
+                    isNamespaced: true
+                    logoURL: Created by Meshery Authors
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: shield
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        background-clip: node
+                        background-image-containment: over
+                        background-opacity: "0"
+                        height: 32
+                        padding: 1
+                        width: 32
+                        z-index: 3
+                    styles: '{"height":32,"width":32,"background-clip":"node","background-image-containment":"over","padding":1,"background-opacity":"0"}'
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/secret-color.svg
+                    svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/secret-complete.svg
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/secret-white.svg
+                position:
+                    posX: 0
+                    posY: 0
+                whiteboardData:
+                    style: {}
+        type: Secret
+        version: ""
+    glasskube-operator-minio-rdspy:
+        annotations: {}
+        apiVersion: apps/v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels:
+            app: minio
+            chart: minio-5.0.14
+            heritage: Helm
+            release: glasskube-operator
+        model: kubernetes
+        name: glasskube-operator-minio
+        namespace: default
+        settings:
+            spec:
+                replicas: 1
+                selector:
+                    match Labels:
+                        app: minio
+                        release: glasskube-operator
+                strategy:
+                    rolling Update:
+                        max Surge: 100%
+                        max Unavailable: 0
+                    type: RollingUpdate
+                template:
+                    metadata:
+                        annotations:
+                            checksum/config: 1c281e6dc0d8db920fcbed9f47f60528a563b3017305f271da90a3ae4608d54c
+                            checksum/secrets: a8fa2d0dfeabdbdcf731827962c0f897bbce3acfc7faa789c14cf14659da1f8e
+                        labels:
+                            app: minio
+                            release: glasskube-operator
+                        name: glasskube-operator-minio
+                    spec:
+                        containers:
+                            - command:
+                                - /bin/sh
+                                - -ce
+                                - /usr/bin/docker-entrypoint.sh minio server /export -S /etc/minio/certs/ --address :9000 --console-address :9001
+                              env:
+                                - name: MINIO_ROOT_USER
+                                  value From:
+                                    secret Key Ref:
+                                        key: rootUser
+                                        name: glasskube-operator-minio
+                                - name: MINIO_ROOT_PASSWORD
+                                  value From:
+                                    secret Key Ref:
+                                        key: rootPassword
+                                        name: glasskube-operator-minio
+                                - name: MINIO_PROMETHEUS_AUTH_TYPE
+                                  value: public
+                              image: quay.io/minio/minio:RELEASE.2023-09-30T07-02-29Z
+                              image Pull Policy: IfNotPresent
+                              name: minio
+                              ports:
+                                - container Port: 9000
+                                  name: http
+                                - container Port: 9001
+                                  name: http-console
+                              resources:
+                                requests:
+                                    memory: 256Mi
+                              volume Mounts:
+                                - mount Path: /tmp/credentials
+                                  name: minio-user
+                                  read Only: true
+                                - mount Path: /export
+                                  name: export
+                        security Context:
+                            fs Group: 1000
+                            fs Group Change Policy: OnRootMismatch
+                            run As Group: 1000
+                            run As User: 1000
+                        service Account Name: minio-sa
+                        volumes:
+                            - name: export
+                              persistent Volume Claim:
+                                claim Name: glasskube-operator-minio
+                            - name: minio-user
+                              secret:
+                                secret Name: glasskube-operator-minio
+        traits:
+            meshmap:
+                edges:
+                    - data:
+                        id: 88ec11fd-e6db-4958-8bf7-ac0c72b98219
+                        metadata:
+                            port: 9000
+                            protocol: TCP
+                        source: 7dbb8a9c-d58f-4533-bd35-7eb7c9559cd5
+                        subType: Network
+                        target: b3f00e4a-662d-490a-9c00-86993a895099
+                      style:
+                        control-point-distances: null
+                        control-point-weights: "0.5"
+                        curve-style: bezier
+                        haystack-radius: "0"
+                        line-color: rgb(153,153,153)
+                        line-style: dotted
+                        opacity: "1"
+                        segment-distances: 20px
+                        segment-weights: "0.5"
+                        target-arrow-shape: vee
+                        taxi-direction: auto
+                        taxi-turn: 50%
+                        taxi-turn-min-distance: 10px
+                        width: 1.5px
+                    - data:
+                        id: ae0e6360-3e57-43ad-b6ce-67077d915192
+                        metadata:
+                            port: 9001
+                            protocol: TCP
+                        source: 7a088f27-1c01-4b7f-b600-ee38d8ad2e7d
+                        subType: Network
+                        target: b3f00e4a-662d-490a-9c00-86993a895099
+                      style:
+                        control-point-distances: null
+                        control-point-weights: "0.5"
+                        curve-style: bezier
+                        haystack-radius: "0"
+                        line-color: rgb(153,153,153)
+                        line-style: dotted
+                        opacity: "1"
+                        segment-distances: 20px
+                        segment-weights: "0.5"
+                        target-arrow-shape: vee
+                        taxi-direction: auto
+                        taxi-turn: 50%
+                        taxi-turn-min-distance: 10px
+                        width: 1.5px
+                id: b3f00e4a-662d-490a-9c00-86993a895099
+                meshmodel-metadata:
+                    capabilities: |-
+                        {
+                          "fieldRefs": [
+                            {
+                              "fieldPath": "spec.template.spec.containers",
+                              "jsonSchemaPath": "properties.spec.allOf[0].properties.template.allOf[0].properties.spec.allOf[0].properties.containers.items.allOf[0]",
+                              "component": {
+                                "kind": "Container",
+                                "model": "meshery-core"
+                              },
+                              "renderChildren": true
+                            }
+                          ],
+                          "designer": {
+                            "edit": {
+                              "shape": {
+                                "convert-shape": false
+                              }
+                            }
+                          }
+                        }
+                    defaultData: ""
+                    genealogy: parent
+                    isAnnotation: false
+                    isCustomResource: false
+                    isModelAnnotation: "FALSE"
+                    isNamespaced: true
+                    logoURL: Created by Meshery Authors
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: round-rectangle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        background-opacity: 0.5
+                        border-width: 2
+                        z-index: 3
+                    styles: '{"border-width":2,"background-opacity":0.5}'
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+                    svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg
+                position:
+                    posX: -4
+                    posY: 5
+                whiteboardData:
+                    style: {}
+        type: Deployment
+        version: ""
+    glasskube-operator-minio-wgdam:
+        annotations: {}
+        apiVersion: v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels:
+            app: minio
+            chart: minio-5.0.14
+            heritage: Helm
+            release: glasskube-operator
+        model: kubernetes
+        name: glasskube-operator-minio
+        namespace: default
+        settings:
+            spec:
+                access Modes:
+                    - ReadWriteOnce
+                resources:
+                    requests:
+                        storage: 20Gi
+        traits:
+            meshmap:
+                edges: []
+                id: 099d6718-599c-45ef-8db0-427d5e20ddfe
+                meshmodel-metadata:
+                    capabilities: ""
+                    defaultData: ""
+                    genealogy: ""
+                    isAnnotation: false
+                    isCustomResource: false
+                    isModelAnnotation: "FALSE"
+                    isNamespaced: true
+                    logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: round-rectangle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        z-index: 3
+                    styles: ""
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/persistentvolumeclaim-color.svg
+                    svgComplete: ""
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/persistentvolumeclaim-white.svg
+                position:
+                    posX: 0
+                    posY: 0
+                whiteboardData:
+                    style: {}
+        type: PersistentVolumeClaim
+        version: ""
+    glasskube-operator-nijbi:
+        annotations: {}
+        apiVersion: rbac.authorization.k8s.io/v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels: {}
+        model: kubernetes
+        name: glasskube-operator
+        namespace: ""
+        settings:
+            rules:
+                - api Groups:
+                    - glasskube.eu
+                  resources:
+                    - '*'
+                  verbs:
+                    - get
+                    - list
+                    - watch
+                    - patch
+                    - update
+                - api Groups:
+                    - glasskube.eu
+                  resources:
+                    - gitlabrunners
+                  verbs:
+                    - create
+                    - delete
+                - api Groups:
+                    - glasskube.eu
+                  resources:
+                    - miniobuckets
+                  verbs:
+                    - create
+                - api Groups:
+                    - apps
+                  resources:
+                    - deployments
+                    - statefulsets
+                  verbs:
+                    - create
+                    - get
+                    - list
+                    - patch
+                    - update
+                    - watch
+                - api Groups:
+                    - ""
+                  resources:
+                    - services
+                    - secrets
+                    - configmaps
+                    - serviceaccounts
+                    - pods
+                  verbs:
+                    - create
+                    - get
+                    - list
+                    - patch
+                    - update
+                    - watch
+                - api Groups:
+                    - ""
+                  resources:
+                    - persistentvolumeclaims
+                  verbs:
+                    - create
+                    - get
+                    - list
+                    - patch
+                    - update
+                    - watch
+                    - delete
+                - api Groups:
+                    - ""
+                  resources:
+                    - nodes
+                  verbs:
+                    - get
+                    - list
+                    - watch
+                - api Groups:
+                    - networking.k8s.io
+                  resources:
+                    - ingresses
+                  verbs:
+                    - create
+                    - get
+                    - list
+                    - patch
+                    - update
+                    - watch
+                - api Groups:
+                    - networking.k8s.io
+                  resources:
+                    - ingressclasses
+                  verbs:
+                    - get
+                    - list
+                - api Groups:
+                    - storage.k8s.io
+                  resources:
+                    - storageclasses
+                  verbs:
+                    - get
+                    - list
+                    - watch
+                - api Groups:
+                    - mariadb.mmontes.io
+                    - postgresql.cnpg.io
+                  resources:
+                    - '*'
+                  verbs:
+                    - create
+                    - get
+                    - list
+                    - patch
+                    - update
+                    - watch
+                - api Groups:
+                    - mariadb.mmontes.io
+                  resources:
+                    - mariadbs
+                  verbs:
+                    - delete
+                - api Groups:
+                    - cert-manager.io
+                  resources:
+                    - clusterissuers
+                  verbs:
+                    - get
+                    - list
+                    - watch
+                - api Groups:
+                    - monitoring.coreos.com
+                  resources:
+                    - servicemonitors
+                  verbs:
+                    - create
+                    - get
+                    - list
+                    - patch
+                    - update
+                    - watch
+                - api Groups:
+                    - apiextensions.k8s.io
+                  resources:
+                    - customresourcedefinitions
+                  verbs:
+                    - get
+                    - list
+                - api Groups:
+                    - batch
+                  resources:
+                    - cronjobs
+                  verbs:
+                    - create
+                    - get
+                    - list
+                    - patch
+                    - update
+                    - watch
+                - api Groups:
+                    - rbac.authorization.k8s.io
+                  resources:
+                    - roles
+                    - rolebindings
+                    - clusterrolebindings
+                  verbs:
+                    - create
+                    - get
+                    - list
+                    - patch
+                    - update
+                    - watch
+                - api Groups:
+                    - rbac.authorization.k8s.io
+                  resources:
+                    - clusterrolebindings
+                  verbs:
+                    - delete
+                - api Groups:
+                    - rbac.authorization.k8s.io
+                  resource Names:
+                    - system:auth-delegator
+                  resources:
+                    - clusterroles
+                  verbs:
+                    - bind
+        traits:
+            meshmap:
+                edges:
+                    - data:
+                        id: ba48fc29-21d0-4fa9-bf89-d663af0ccc5b
+                        metadata:
+                            binded_by: 212ee9bd-47f9-4952-9d49-40ca08768199
+                        source: 621c654f-478e-4bc9-bf54-69fd1de9c579
+                        subType: Permission
+                        target: 3513da46-0dec-4563-86fb-b3fba16770d4
+                      style:
+                        control-point-distances: null
+                        control-point-weights: "0.5"
+                        curve-style: bezier
+                        haystack-radius: "0"
+                        line-color: rgb(153,153,153)
+                        line-style: dotted
+                        opacity: "1"
+                        segment-distances: 20px
+                        segment-weights: "0.5"
+                        target-arrow-shape: vee
+                        taxi-direction: auto
+                        taxi-turn: 50%
+                        taxi-turn-min-distance: 10px
+                        width: 1.5px
+                id: 621c654f-478e-4bc9-bf54-69fd1de9c579
+                meshmodel-metadata:
+                    capabilities: ""
+                    defaultData: ""
+                    genealogy: ""
+                    isAnnotation: false
+                    isCustomResource: false
+                    isModelAnnotation: "FALSE"
+                    isNamespaced: false
+                    logoURL: Created by Meshery Authors
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: round-rectangle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        height: 22px
+                        width: 22px
+                        x: "8.5"
+                        "y": "7.5"
+                        z-index: 3
+                    styles: '{"height":"22px", "width":"22px", "x":"8.5", "y":"7.5"}'
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrole-color.svg
+                    svgComplete: ""
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrole-white.svg
+                position:
+                    posX: 0
+                    posY: 0
+                whiteboardData:
+                    style: {}
+        type: ClusterRole
+        version: ""
+    glasskube-operator-sfgha:
+        annotations: {}
+        apiVersion: apps/v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels: {}
+        model: kubernetes
+        name: glasskube-operator
+        namespace: default
+        settings:
+            spec:
+                replicas: 1
+                selector:
+                    match Labels:
+                        app.kubernetes.io/instance: glasskube-operator
+                        app.kubernetes.io/name: glasskube-operator
+                strategy:
+                    type: Recreate
+                template:
+                    metadata:
+                        labels:
+                            app.kubernetes.io/instance: glasskube-operator
+                            app.kubernetes.io/name: glasskube-operator
+                    spec:
+                        containers:
+                            - env:
+                                - name: NAMESPACE
+                                  value From:
+                                    field Ref:
+                                        field Path: metadata.namespace
+                                - name: BPL_JVM_THREAD_COUNT
+                                  value: "16"
+                                - name: MINIO_SECRET_NAME
+                                  value: glasskube-operator-minio
+                                - name: MINIO_HOST_NAME
+                                  value: glasskube-operator-minio
+                              image: glasskube/operator:0.12.2
+                              image Pull Policy: IfNotPresent
+                              name: glasskube-operator
+                              resources:
+                                limits:
+                                    cpu: 1000m
+                                    memory: 640Mi
+                                requests:
+                                    cpu: 100m
+                                    memory: 400Mi
+                              security Context:
+                                allow Privilege Escalation: false
+                                capabilities: {}
+                                read Only Root Filesystem: true
+                                run As Non Root: true
+                        service Account Name: glasskube-operator
+        traits:
+            meshmap:
+                edges: []
+                id: 36ac7234-1c14-41bd-87ef-00c7f57f4ef0
+                meshmodel-metadata:
+                    capabilities: |-
+                        {
+                          "fieldRefs": [
+                            {
+                              "fieldPath": "spec.template.spec.containers",
+                              "jsonSchemaPath": "properties.spec.allOf[0].properties.template.allOf[0].properties.spec.allOf[0].properties.containers.items.allOf[0]",
+                              "component": {
+                                "kind": "Container",
+                                "model": "meshery-core"
+                              },
+                              "renderChildren": true
+                            }
+                          ],
+                          "designer": {
+                            "edit": {
+                              "shape": {
+                                "convert-shape": false
+                              }
+                            }
+                          }
+                        }
+                    defaultData: ""
+                    genealogy: parent
+                    isAnnotation: false
+                    isCustomResource: false
+                    isModelAnnotation: "FALSE"
+                    isNamespaced: true
+                    logoURL: Created by Meshery Authors
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: round-rectangle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        background-opacity: 0.5
+                        border-width: 2
+                        z-index: 3
+                    styles: '{"border-width":2,"background-opacity":0.5}'
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/deployment-color.svg
+                    svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/deployment-complete.svg
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/deployment-white.svg
+                position:
+                    posX: -4
+                    posY: 5
+                whiteboardData:
+                    style: {}
+        type: Deployment
+        version: ""
+    glitchtips.glasskube.eu:
+        annotations: {}
+        apiVersion: apiextensions.k8s.io/v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels: {}
+        model: kubernetes
+        name: glitchtips.glasskube.eu
+        namespace: ""
+        settings:
+            spec:
+                group: glasskube.eu
+                names:
+                    kind: Glitchtip
+                    plural: glitchtips
+                    singular: glitchtip
+                scope: Namespaced
+                versions:
+                    - name: v1alpha1
+                      schema:
+                        open APIV3Schema:
+                            properties:
+                                spec:
+                                    properties:
+                                        database:
+                                            nullable: true
+                                            properties:
+                                                backups:
+                                                    properties:
+                                                        retention Policy:
+                                                            type: string
+                                                        s3:
+                                                            properties:
+                                                                access Key Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                                bucket:
+                                                                    type: string
+                                                                endpoint:
+                                                                    type: string
+                                                                region Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                                secret Key Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                            required:
+                                                                - bucket
+                                                                - accessKeySecret
+                                                                - secretKeySecret
+                                                            type: object
+                                                        schedule:
+                                                            type: string
+                                                    required:
+                                                        - s3
+                                                    type: object
+                                                instances:
+                                                    minimum: 1
+                                                    type: integer
+                                                storage:
+                                                    properties:
+                                                        size:
+                                                            type: string
+                                                        storage Class:
+                                                            type: string
+                                                    type: object
+                                            type: object
+                                        host:
+                                            type: string
+                                        organization Creation Enabled:
+                                            type: boolean
+                                        registration Enabled:
+                                            type: boolean
+                                        replicas:
+                                            type: integer
+                                        resources:
+                                            properties:
+                                                claims:
+                                                    items:
+                                                        properties:
+                                                            name:
+                                                                type: string
+                                                        type: object
+                                                    type: array
+                                                limits:
+                                                    additionalProperties:
+                                                        any Of:
+                                                            - type: integer
+                                                            - type: string
+                                                        x-kubernetes-int-or-string: true
+                                                    type: object
+                                                requests:
+                                                    additionalProperties:
+                                                        any Of:
+                                                            - type: integer
+                                                            - type: string
+                                                        x-kubernetes-int-or-string: true
+                                                    type: object
+                                            type: object
+                                        smtp:
+                                            nullable: true
+                                            properties:
+                                                auth Secret:
+                                                    properties:
+                                                        name:
+                                                            type: string
+                                                    type: object
+                                                from Address:
+                                                    type: string
+                                                host:
+                                                    type: string
+                                                port:
+                                                    type: integer
+                                                tls Enabled:
+                                                    type: boolean
+                                            required:
+                                                - host
+                                                - fromAddress
+                                                - authSecret
+                                            type: object
+                                        version:
+                                            pattern: \d+\.\d+\.\d+
+                                            type: string
+                                    required:
+                                        - host
+                                    type: object
+                                status:
+                                    properties:
+                                        postgres Ready:
+                                            type: boolean
+                                        ready Replicas:
+                                            type: integer
+                                        redis Ready:
+                                            type: boolean
+                                        worker Ready Replicas:
+                                            type: integer
+                                    type: object
+                            type: object
+                      served: true
+                      storage: true
+                      subresources:
+                        status: {}
+        traits:
+            meshmap:
+                edges: []
+                id: 3e88b38a-54db-4e71-b688-3f667df54cc8
+                meshmodel-metadata:
+                    capabilities: ""
+                    defaultData: ""
+                    genealogy: ""
+                    isAnnotation: false
+                    isCustomResource: false
+                    isNamespaced: false
+                    logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: circle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides: ""
+                    styles: ""
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/customresourcedefinition-color.svg
+                    svgComplete: ""
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/customresourcedefinition-white.svg
+                position:
+                    posX: 0
+                    posY: 0
+                whiteboardData:
+                    style: {}
+        type: CustomResourceDefinition
+        version: ""
+    keycloaks.glasskube.eu:
+        annotations: {}
+        apiVersion: apiextensions.k8s.io/v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels: {}
+        model: kubernetes
+        name: keycloaks.glasskube.eu
+        namespace: ""
+        settings:
+            spec:
+                group: glasskube.eu
+                names:
+                    kind: Keycloak
+                    plural: keycloaks
+                    singular: keycloak
+                scope: Namespaced
+                versions:
+                    - name: v1alpha1
+                      schema:
+                        open APIV3Schema:
+                            properties:
+                                spec:
+                                    properties:
+                                        database:
+                                            nullable: true
+                                            properties:
+                                                backups:
+                                                    properties:
+                                                        retention Policy:
+                                                            type: string
+                                                        s3:
+                                                            properties:
+                                                                access Key Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                                bucket:
+                                                                    type: string
+                                                                endpoint:
+                                                                    type: string
+                                                                region Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                                secret Key Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                            required:
+                                                                - bucket
+                                                                - accessKeySecret
+                                                                - secretKeySecret
+                                                            type: object
+                                                        schedule:
+                                                            type: string
+                                                    required:
+                                                        - s3
+                                                    type: object
+                                                instances:
+                                                    minimum: 1
+                                                    type: integer
+                                                storage:
+                                                    properties:
+                                                        size:
+                                                            type: string
+                                                        storage Class:
+                                                            type: string
+                                                    type: object
+                                            type: object
+                                        host:
+                                            type: string
+                                        management:
+                                            properties:
+                                                enabled:
+                                                    type: boolean
+                                            type: object
+                                        resources:
+                                            properties:
+                                                claims:
+                                                    items:
+                                                        properties:
+                                                            name:
+                                                                type: string
+                                                        type: object
+                                                    type: array
+                                                limits:
+                                                    additionalProperties:
+                                                        any Of:
+                                                            - type: integer
+                                                            - type: string
+                                                        x-kubernetes-int-or-string: true
+                                                    type: object
+                                                requests:
+                                                    additionalProperties:
+                                                        any Of:
+                                                            - type: integer
+                                                            - type: string
+                                                        x-kubernetes-int-or-string: true
+                                                    type: object
+                                            type: object
+                                        version:
+                                            pattern: \d+\.\d+\.\d+
+                                            type: string
+                                    required:
+                                        - host
+                                    type: object
+                                status:
+                                    properties:
+                                        postgres Ready:
+                                            type: boolean
+                                        ready Instances:
+                                            type: integer
+                                    type: object
+                            type: object
+                      served: true
+                      storage: true
+                      subresources:
+                        status: {}
+        traits:
+            meshmap:
+                edges: []
+                id: 46dc1564-a692-48fa-a63a-c1b9f118a6d9
+                meshmodel-metadata:
+                    capabilities: ""
+                    defaultData: ""
+                    genealogy: ""
+                    isAnnotation: false
+                    isCustomResource: false
+                    isNamespaced: false
+                    logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: circle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        z-index: 3
+                    styles: ""
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/customresourcedefinition-color.svg
+                    svgComplete: ""
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/customresourcedefinition-white.svg
+                position:
+                    posX: 0
+                    posY: 0
+                whiteboardData:
+                    style: {}
+        type: CustomResourceDefinition
+        version: ""
+    matomos.glasskube.eu:
+        annotations: {}
+        apiVersion: apiextensions.k8s.io/v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels: {}
+        model: kubernetes
+        name: matomos.glasskube.eu
+        namespace: ""
+        settings:
+            spec:
+                group: glasskube.eu
+                names:
+                    kind: Matomo
+                    plural: matomos
+                    singular: matomo
+                scope: Namespaced
+                versions:
+                    - name: v1alpha1
+                      schema:
+                        open APIV3Schema:
+                            properties:
+                                spec:
+                                    properties:
+                                        database:
+                                            properties:
+                                                backups:
+                                                    type: object
+                                                storage:
+                                                    properties:
+                                                        size:
+                                                            type: string
+                                                        storage Class:
+                                                            type: string
+                                                    type: object
+                                            type: object
+                                        host:
+                                            type: string
+                                        resources:
+                                            properties:
+                                                claims:
+                                                    items:
+                                                        properties:
+                                                            name:
+                                                                type: string
+                                                        type: object
+                                                    type: array
+                                                limits:
+                                                    additionalProperties:
+                                                        any Of:
+                                                            - type: integer
+                                                            - type: string
+                                                        x-kubernetes-int-or-string: true
+                                                    type: object
+                                                requests:
+                                                    additionalProperties:
+                                                        any Of:
+                                                            - type: integer
+                                                            - type: string
+                                                        x-kubernetes-int-or-string: true
+                                                    type: object
+                                            type: object
+                                        smtp:
+                                            nullable: true
+                                            properties:
+                                                auth Secret:
+                                                    properties:
+                                                        name:
+                                                            type: string
+                                                    type: object
+                                                from Address:
+                                                    type: string
+                                                host:
+                                                    type: string
+                                                port:
+                                                    type: integer
+                                                tls Enabled:
+                                                    type: boolean
+                                            required:
+                                                - host
+                                                - fromAddress
+                                                - authSecret
+                                            type: object
+                                        version:
+                                            type: string
+                                    type: object
+                                status:
+                                    properties:
+                                        ready Replicas:
+                                            type: integer
+                                    type: object
+                            type: object
+                      served: true
+                      storage: true
+                      subresources:
+                        status: {}
+        traits:
+            meshmap:
+                edges: []
+                id: 4180b651-61f4-4304-9522-be8f7f0eb88c
+                meshmodel-metadata:
+                    capabilities: ""
+                    defaultData: ""
+                    genealogy: ""
+                    isAnnotation: false
+                    isCustomResource: false
+                    isNamespaced: false
+                    logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: circle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        z-index: 3
+                    styles: ""
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/customresourcedefinition-color.svg
+                    svgComplete: ""
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/customresourcedefinition-white.svg
+                position:
+                    posX: 0
+                    posY: 0
+                whiteboardData:
+                    style: {}
+        type: CustomResourceDefinition
+        version: ""
+    metabases.glasskube.eu:
+        annotations: {}
+        apiVersion: apiextensions.k8s.io/v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels: {}
+        model: kubernetes
+        name: metabases.glasskube.eu
+        namespace: ""
+        settings:
+            spec:
+                group: glasskube.eu
+                names:
+                    kind: Metabase
+                    plural: metabases
+                    singular: metabase
+                scope: Namespaced
+                versions:
+                    - name: v1alpha1
+                      schema:
+                        open APIV3Schema:
+                            properties:
+                                spec:
+                                    properties:
+                                        database:
+                                            nullable: true
+                                            properties:
+                                                backups:
+                                                    properties:
+                                                        retention Policy:
+                                                            type: string
+                                                        s3:
+                                                            properties:
+                                                                access Key Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                                bucket:
+                                                                    type: string
+                                                                endpoint:
+                                                                    type: string
+                                                                region Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                                secret Key Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                            required:
+                                                                - bucket
+                                                                - accessKeySecret
+                                                                - secretKeySecret
+                                                            type: object
+                                                        schedule:
+                                                            type: string
+                                                    required:
+                                                        - s3
+                                                    type: object
+                                                instances:
+                                                    minimum: 1
+                                                    type: integer
+                                                storage:
+                                                    properties:
+                                                        size:
+                                                            type: string
+                                                        storage Class:
+                                                            type: string
+                                                    type: object
+                                            type: object
+                                        host:
+                                            type: string
+                                        replicas:
+                                            type: integer
+                                        resources:
+                                            properties:
+                                                claims:
+                                                    items:
+                                                        properties:
+                                                            name:
+                                                                type: string
+                                                        type: object
+                                                    type: array
+                                                limits:
+                                                    additionalProperties:
+                                                        any Of:
+                                                            - type: integer
+                                                            - type: string
+                                                        x-kubernetes-int-or-string: true
+                                                    type: object
+                                                requests:
+                                                    additionalProperties:
+                                                        any Of:
+                                                            - type: integer
+                                                            - type: string
+                                                        x-kubernetes-int-or-string: true
+                                                    type: object
+                                            type: object
+                                        smtp:
+                                            nullable: true
+                                            properties:
+                                                auth Secret:
+                                                    properties:
+                                                        name:
+                                                            type: string
+                                                    type: object
+                                                from Address:
+                                                    type: string
+                                                host:
+                                                    type: string
+                                                port:
+                                                    type: integer
+                                                tls Enabled:
+                                                    type: boolean
+                                            required:
+                                                - host
+                                                - fromAddress
+                                                - authSecret
+                                            type: object
+                                        version:
+                                            pattern: \d+\.\d+\.\d+
+                                            type: string
+                                    required:
+                                        - host
+                                    type: object
+                                status:
+                                    properties:
+                                        postgres Ready:
+                                            type: boolean
+                                        ready Replicas:
+                                            type: integer
+                                    type: object
+                            type: object
+                      served: true
+                      storage: true
+                      subresources:
+                        status: {}
+        traits:
+            meshmap:
+                edges: []
+                id: 43a8d038-1165-4274-8a12-590e2bba3eb9
+                meshmodel-metadata:
+                    capabilities: ""
+                    defaultData: ""
+                    genealogy: ""
+                    isAnnotation: false
+                    isCustomResource: false
+                    isNamespaced: false
+                    logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: circle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        z-index: 3
+                    styles: ""
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/customresourcedefinition-color.svg
+                    svgComplete: ""
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/customresourcedefinition-white.svg
+                position:
+                    posX: 0
+                    posY: 0
+                whiteboardData:
+                    style: {}
+        type: CustomResourceDefinition
+        version: ""
+    minio-sa:
+        annotations: {}
+        apiVersion: v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels: {}
+        model: kubernetes
+        name: minio-sa
+        namespace: default
+        settings: {}
+        traits:
+            meshmap:
+                edges: []
+                id: 4ed012d4-c7bc-4a51-8a72-4b2a5194fec3
+                meshmodel-metadata:
+                    capabilities: ""
+                    defaultData: ""
+                    genealogy: ""
+                    isAnnotation: false
+                    isCustomResource: false
+                    isModelAnnotation: "FALSE"
+                    isNamespaced: true
+                    logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: bottom-round-rectangle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        z-index: 3
+                    styles: ""
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+                    svgComplete: ""
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg
+                position:
+                    posX: 0
+                    posY: 0
+                whiteboardData:
+                    style: {}
+        type: ServiceAccount
+        version: ""
+    miniobuckets.glasskube.eu:
+        annotations: {}
+        apiVersion: apiextensions.k8s.io/v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels: {}
+        model: kubernetes
+        name: miniobuckets.glasskube.eu
+        namespace: ""
+        settings:
+            spec:
+                group: glasskube.eu
+                names:
+                    kind: MinioBucket
+                    plural: miniobuckets
+                    singular: miniobucket
+                scope: Namespaced
+                versions:
+                    - name: v1alpha1
+                      schema:
+                        open APIV3Schema:
+                            properties:
+                                spec:
+                                    properties:
+                                        bucket Name Override:
+                                            nullable: true
+                                            type: string
+                                        policy Override:
+                                            nullable: true
+                                            type: string
+                                        user Secret:
+                                            nullable: true
+                                            properties:
+                                                name:
+                                                    type: string
+                                            type: object
+                                    type: object
+                                status:
+                                    properties:
+                                        bucket Created:
+                                            type: boolean
+                                        policy Created:
+                                            type: boolean
+                                        policy Linked:
+                                            type: boolean
+                                        user Created:
+                                            type: boolean
+                                        username:
+                                            type: string
+                                    type: object
+                            type: object
+                      served: true
+                      storage: true
+                      subresources:
+                        status: {}
+        traits:
+            meshmap:
+                edges: []
+                id: 15a82bbc-1a2f-43ae-9298-dca05f653e6a
+                meshmodel-metadata:
+                    capabilities: ""
+                    defaultData: ""
+                    genealogy: ""
+                    isAnnotation: false
+                    isCustomResource: false
+                    isNamespaced: false
+                    logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: circle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        z-index: 3
+                    styles: ""
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/customresourcedefinition-color.svg
+                    svgComplete: ""
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/customresourcedefinition-white.svg
+                position:
+                    posX: 0
+                    posY: 0
+                whiteboardData:
+                    style: {}
+        type: CustomResourceDefinition
+        version: ""
+    nextclouds.glasskube.eu:
+        annotations: {}
+        apiVersion: apiextensions.k8s.io/v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels: {}
+        model: kubernetes
+        name: nextclouds.glasskube.eu
+        namespace: ""
+        settings:
+            spec:
+                group: glasskube.eu
+                names:
+                    kind: Nextcloud
+                    plural: nextclouds
+                    singular: nextcloud
+                scope: Namespaced
+                versions:
+                    - name: v1alpha1
+                      schema:
+                        open APIV3Schema:
+                            properties:
+                                spec:
+                                    properties:
+                                        apps:
+                                            properties:
+                                                office:
+                                                    nullable: true
+                                                    properties:
+                                                        host:
+                                                            type: string
+                                                        version:
+                                                            type: string
+                                                    type: object
+                                                oidc:
+                                                    nullable: true
+                                                    properties:
+                                                        issuer Url:
+                                                            type: string
+                                                        name:
+                                                            type: string
+                                                        oidc Secret:
+                                                            properties:
+                                                                name:
+                                                                    type: string
+                                                            type: object
+                                                    required:
+                                                        - name
+                                                        - oidcSecret
+                                                        - issuerUrl
+                                                    type: object
+                                            type: object
+                                        database:
+                                            nullable: true
+                                            properties:
+                                                backups:
+                                                    properties:
+                                                        retention Policy:
+                                                            type: string
+                                                        s3:
+                                                            properties:
+                                                                access Key Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                                bucket:
+                                                                    type: string
+                                                                endpoint:
+                                                                    type: string
+                                                                region Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                                secret Key Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                            required:
+                                                                - bucket
+                                                                - accessKeySecret
+                                                                - secretKeySecret
+                                                            type: object
+                                                        schedule:
+                                                            type: string
+                                                    required:
+                                                        - s3
+                                                    type: object
+                                                instances:
+                                                    minimum: 1
+                                                    type: integer
+                                                storage:
+                                                    properties:
+                                                        size:
+                                                            type: string
+                                                        storage Class:
+                                                            type: string
+                                                    type: object
+                                            type: object
+                                        default Phone Region:
+                                            type: string
+                                        host:
+                                            type: string
+                                        server:
+                                            properties:
+                                                max Children:
+                                                    type: integer
+                                                max Spare Servers:
+                                                    type: integer
+                                                min Spare Servers:
+                                                    type: integer
+                                                resources:
+                                                    nullable: true
+                                                    properties:
+                                                        claims:
+                                                            items:
+                                                                properties:
+                                                                    name:
+                                                                        type: string
+                                                                type: object
+                                                            type: array
+                                                        limits:
+                                                            additionalProperties:
+                                                                any Of:
+                                                                    - type: integer
+                                                                    - type: string
+                                                                x-kubernetes-int-or-string: true
+                                                            type: object
+                                                        requests:
+                                                            additionalProperties:
+                                                                any Of:
+                                                                    - type: integer
+                                                                    - type: string
+                                                                x-kubernetes-int-or-string: true
+                                                            type: object
+                                                    type: object
+                                                start Servers:
+                                                    type: integer
+                                            type: object
+                                        smtp:
+                                            nullable: true
+                                            properties:
+                                                auth Secret:
+                                                    properties:
+                                                        name:
+                                                            type: string
+                                                    type: object
+                                                from Address:
+                                                    type: string
+                                                host:
+                                                    type: string
+                                                port:
+                                                    type: integer
+                                                tls Enabled:
+                                                    type: boolean
+                                            required:
+                                                - host
+                                                - fromAddress
+                                                - authSecret
+                                            type: object
+                                        storage:
+                                            properties:
+                                                s3:
+                                                    properties:
+                                                        access Key Secret:
+                                                            properties:
+                                                                key:
+                                                                    type: string
+                                                                name:
+                                                                    type: string
+                                                                optional:
+                                                                    type: boolean
+                                                            type: object
+                                                        auto Create:
+                                                            nullable: true
+                                                            type: boolean
+                                                        bucket:
+                                                            type: string
+                                                        hostname:
+                                                            nullable: true
+                                                            type: string
+                                                        legacy Auth:
+                                                            nullable: true
+                                                            type: boolean
+                                                        object Prefix:
+                                                            nullable: true
+                                                            type: string
+                                                        port:
+                                                            nullable: true
+                                                            type: integer
+                                                        region:
+                                                            nullable: true
+                                                            type: string
+                                                        secret Key Secret:
+                                                            properties:
+                                                                key:
+                                                                    type: string
+                                                                name:
+                                                                    type: string
+                                                                optional:
+                                                                    type: boolean
+                                                            type: object
+                                                        use Path Style:
+                                                            nullable: true
+                                                            type: boolean
+                                                        use Ssl:
+                                                            type: boolean
+                                                    required:
+                                                        - bucket
+                                                        - accessKeySecret
+                                                        - secretKeySecret
+                                                    type: object
+                                            type: object
+                                        version:
+                                            pattern: \d+\.\d+\.\d+
+                                            type: string
+                                    type: object
+                                status:
+                                    properties:
+                                        office Ready:
+                                            type: boolean
+                                        postgres Ready:
+                                            type: boolean
+                                        ready Replicas:
+                                            type: integer
+                                        redis Ready:
+                                            type: boolean
+                                    type: object
+                            type: object
+                      served: true
+                      storage: true
+                      subresources:
+                        status: {}
+        traits:
+            meshmap:
+                edges: []
+                id: 533ac142-45f2-4312-98b4-83170516ff88
+                meshmodel-metadata:
+                    capabilities: ""
+                    defaultData: ""
+                    genealogy: ""
+                    isAnnotation: false
+                    isCustomResource: false
+                    isNamespaced: false
+                    logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: circle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        z-index: 3
+                    styles: ""
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/customresourcedefinition-color.svg
+                    svgComplete: ""
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/customresourcedefinition-white.svg
+                position:
+                    posX: 0
+                    posY: 0
+                whiteboardData:
+                    style: {}
+        type: CustomResourceDefinition
+        version: ""
+    odoos.glasskube.eu:
+        annotations: {}
+        apiVersion: apiextensions.k8s.io/v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels: {}
+        model: kubernetes
+        name: odoos.glasskube.eu
+        namespace: ""
+        settings:
+            spec:
+                group: glasskube.eu
+                names:
+                    kind: Odoo
+                    plural: odoos
+                    singular: odoo
+                scope: Namespaced
+                versions:
+                    - name: v1alpha1
+                      schema:
+                        open APIV3Schema:
+                            properties:
+                                spec:
+                                    properties:
+                                        database:
+                                            nullable: true
+                                            properties:
+                                                backups:
+                                                    properties:
+                                                        retention Policy:
+                                                            type: string
+                                                        s3:
+                                                            properties:
+                                                                access Key Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                                bucket:
+                                                                    type: string
+                                                                endpoint:
+                                                                    type: string
+                                                                region Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                                secret Key Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                            required:
+                                                                - bucket
+                                                                - accessKeySecret
+                                                                - secretKeySecret
+                                                            type: object
+                                                        schedule:
+                                                            type: string
+                                                    required:
+                                                        - s3
+                                                    type: object
+                                                instances:
+                                                    minimum: 1
+                                                    type: integer
+                                                storage:
+                                                    properties:
+                                                        size:
+                                                            type: string
+                                                        storage Class:
+                                                            type: string
+                                                    type: object
+                                            type: object
+                                        demo Enabled:
+                                            type: boolean
+                                        host:
+                                            type: string
+                                        resources:
+                                            properties:
+                                                claims:
+                                                    items:
+                                                        properties:
+                                                            name:
+                                                                type: string
+                                                        type: object
+                                                    type: array
+                                                limits:
+                                                    additionalProperties:
+                                                        any Of:
+                                                            - type: integer
+                                                            - type: string
+                                                        x-kubernetes-int-or-string: true
+                                                    type: object
+                                                requests:
+                                                    additionalProperties:
+                                                        any Of:
+                                                            - type: integer
+                                                            - type: string
+                                                        x-kubernetes-int-or-string: true
+                                                    type: object
+                                            type: object
+                                        version:
+                                            pattern: \d+\.\d+\.\d+
+                                            type: string
+                                    type: object
+                                status:
+                                    properties:
+                                        demo Enabled On Install:
+                                            type: boolean
+                                        ready:
+                                            type: boolean
+                                    type: object
+                            type: object
+                      served: true
+                      storage: true
+                      subresources:
+                        status: {}
+        traits:
+            meshmap:
+                edges: []
+                id: dd1969ea-cbbc-41e8-8f49-9e5027fbc09f
+                meshmodel-metadata:
+                    capabilities: ""
+                    defaultData: ""
+                    genealogy: ""
+                    isAnnotation: false
+                    isCustomResource: false
+                    isNamespaced: false
+                    logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: circle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        z-index: 3
+                    styles: ""
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/customresourcedefinition-color.svg
+                    svgComplete: ""
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/customresourcedefinition-white.svg
+                position:
+                    posX: 0
+                    posY: 0
+                whiteboardData:
+                    style: {}
+        type: CustomResourceDefinition
+        version: ""
+    planes.glasskube.eu:
+        annotations: {}
+        apiVersion: apiextensions.k8s.io/v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels: {}
+        model: kubernetes
+        name: planes.glasskube.eu
+        namespace: ""
+        settings:
+            spec:
+                group: glasskube.eu
+                names:
+                    kind: Plane
+                    plural: planes
+                    singular: plane
+                scope: Namespaced
+                versions:
+                    - name: v1alpha1
+                      schema:
+                        open APIV3Schema:
+                            properties:
+                                spec:
+                                    properties:
+                                        api:
+                                            properties:
+                                                concurrency:
+                                                    type: integer
+                                                resources:
+                                                    nullable: true
+                                                    properties:
+                                                        claims:
+                                                            items:
+                                                                properties:
+                                                                    name:
+                                                                        type: string
+                                                                type: object
+                                                            type: array
+                                                        limits:
+                                                            additionalProperties:
+                                                                any Of:
+                                                                    - type: integer
+                                                                    - type: string
+                                                                x-kubernetes-int-or-string: true
+                                                            type: object
+                                                        requests:
+                                                            additionalProperties:
+                                                                any Of:
+                                                                    - type: integer
+                                                                    - type: string
+                                                                x-kubernetes-int-or-string: true
+                                                            type: object
+                                                    type: object
+                                            type: object
+                                        beat Worker:
+                                            properties:
+                                                resources:
+                                                    nullable: true
+                                                    properties:
+                                                        claims:
+                                                            items:
+                                                                properties:
+                                                                    name:
+                                                                        type: string
+                                                                type: object
+                                                            type: array
+                                                        limits:
+                                                            additionalProperties:
+                                                                any Of:
+                                                                    - type: integer
+                                                                    - type: string
+                                                                x-kubernetes-int-or-string: true
+                                                            type: object
+                                                        requests:
+                                                            additionalProperties:
+                                                                any Of:
+                                                                    - type: integer
+                                                                    - type: string
+                                                                x-kubernetes-int-or-string: true
+                                                            type: object
+                                                    type: object
+                                            type: object
+                                        database:
+                                            nullable: true
+                                            properties:
+                                                backups:
+                                                    properties:
+                                                        retention Policy:
+                                                            type: string
+                                                        s3:
+                                                            properties:
+                                                                access Key Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                                bucket:
+                                                                    type: string
+                                                                endpoint:
+                                                                    type: string
+                                                                region Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                                secret Key Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                            required:
+                                                                - bucket
+                                                                - accessKeySecret
+                                                                - secretKeySecret
+                                                            type: object
+                                                        schedule:
+                                                            type: string
+                                                    required:
+                                                        - s3
+                                                    type: object
+                                                instances:
+                                                    minimum: 1
+                                                    type: integer
+                                                storage:
+                                                    properties:
+                                                        size:
+                                                            type: string
+                                                        storage Class:
+                                                            type: string
+                                                    type: object
+                                            type: object
+                                        default User:
+                                            properties:
+                                                email:
+                                                    type: string
+                                                password:
+                                                    type: string
+                                            required:
+                                                - email
+                                                - password
+                                            type: object
+                                        frontend:
+                                            properties:
+                                                resources:
+                                                    nullable: true
+                                                    properties:
+                                                        claims:
+                                                            items:
+                                                                properties:
+                                                                    name:
+                                                                        type: string
+                                                                type: object
+                                                            type: array
+                                                        limits:
+                                                            additionalProperties:
+                                                                any Of:
+                                                                    - type: integer
+                                                                    - type: string
+                                                                x-kubernetes-int-or-string: true
+                                                            type: object
+                                                        requests:
+                                                            additionalProperties:
+                                                                any Of:
+                                                                    - type: integer
+                                                                    - type: string
+                                                                x-kubernetes-int-or-string: true
+                                                            type: object
+                                                    type: object
+                                            type: object
+                                        host:
+                                            type: string
+                                        registration Enabled:
+                                            type: boolean
+                                        s3:
+                                            properties:
+                                                access Key Secret:
+                                                    properties:
+                                                        key:
+                                                            type: string
+                                                        name:
+                                                            type: string
+                                                        optional:
+                                                            type: boolean
+                                                    type: object
+                                                bucket:
+                                                    type: string
+                                                endpoint:
+                                                    nullable: true
+                                                    type: string
+                                                region:
+                                                    type: string
+                                                secret Key Secret:
+                                                    properties:
+                                                        key:
+                                                            type: string
+                                                        name:
+                                                            type: string
+                                                        optional:
+                                                            type: boolean
+                                                    type: object
+                                                use Path Style:
+                                                    nullable: true
+                                                    type: boolean
+                                            required:
+                                                - bucket
+                                                - accessKeySecret
+                                                - secretKeySecret
+                                                - region
+                                            type: object
+                                        smtp:
+                                            properties:
+                                                auth Secret:
+                                                    properties:
+                                                        name:
+                                                            type: string
+                                                    type: object
+                                                from Address:
+                                                    type: string
+                                                host:
+                                                    type: string
+                                                port:
+                                                    type: integer
+                                                ssl Enabled:
+                                                    type: boolean
+                                                tls Enabled:
+                                                    type: boolean
+                                            required:
+                                                - host
+                                                - fromAddress
+                                                - authSecret
+                                            type: object
+                                        space:
+                                            properties:
+                                                resources:
+                                                    nullable: true
+                                                    properties:
+                                                        claims:
+                                                            items:
+                                                                properties:
+                                                                    name:
+                                                                        type: string
+                                                                type: object
+                                                            type: array
+                                                        limits:
+                                                            additionalProperties:
+                                                                any Of:
+                                                                    - type: integer
+                                                                    - type: string
+                                                                x-kubernetes-int-or-string: true
+                                                            type: object
+                                                        requests:
+                                                            additionalProperties:
+                                                                any Of:
+                                                                    - type: integer
+                                                                    - type: string
+                                                                x-kubernetes-int-or-string: true
+                                                            type: object
+                                                    type: object
+                                            type: object
+                                        version:
+                                            type: string
+                                        worker:
+                                            properties:
+                                                concurrency:
+                                                    type: integer
+                                                resources:
+                                                    nullable: true
+                                                    properties:
+                                                        claims:
+                                                            items:
+                                                                properties:
+                                                                    name:
+                                                                        type: string
+                                                                type: object
+                                                            type: array
+                                                        limits:
+                                                            additionalProperties:
+                                                                any Of:
+                                                                    - type: integer
+                                                                    - type: string
+                                                                x-kubernetes-int-or-string: true
+                                                            type: object
+                                                        requests:
+                                                            additionalProperties:
+                                                                any Of:
+                                                                    - type: integer
+                                                                    - type: string
+                                                                x-kubernetes-int-or-string: true
+                                                            type: object
+                                                    type: object
+                                            type: object
+                                    required:
+                                        - host
+                                    type: object
+                                status:
+                                    properties:
+                                        api:
+                                            properties:
+                                                ready:
+                                                    type: boolean
+                                            type: object
+                                        beat Worker:
+                                            properties:
+                                                ready:
+                                                    type: boolean
+                                            type: object
+                                        database:
+                                            properties:
+                                                ready:
+                                                    type: boolean
+                                            type: object
+                                        frontend:
+                                            properties:
+                                                ready:
+                                                    type: boolean
+                                            type: object
+                                        redis:
+                                            properties:
+                                                ready:
+                                                    type: boolean
+                                            type: object
+                                        space:
+                                            properties:
+                                                ready:
+                                                    type: boolean
+                                            type: object
+                                        worker:
+                                            properties:
+                                                ready:
+                                                    type: boolean
+                                            type: object
+                                    type: object
+                            type: object
+                      served: true
+                      storage: true
+                      subresources:
+                        status: {}
+        traits:
+            meshmap:
+                edges: []
+                id: 20cea2c8-89a6-430a-a123-5a712912a447
+                meshmodel-metadata:
+                    capabilities: ""
+                    defaultData: ""
+                    genealogy: ""
+                    isAnnotation: false
+                    isCustomResource: false
+                    isNamespaced: false
+                    logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: circle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        z-index: 3
+                    styles: ""
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/customresourcedefinition-color.svg
+                    svgComplete: ""
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/customresourcedefinition-white.svg
+                position:
+                    posX: 0
+                    posY: 0
+                whiteboardData:
+                    style: {}
+        type: CustomResourceDefinition
+        version: ""
+    vaults.glasskube.eu:
+        annotations: {}
+        apiVersion: apiextensions.k8s.io/v1
+        dependsOn: []
+        id: null
+        isAnnotation: null
+        labels: {}
+        model: kubernetes
+        name: vaults.glasskube.eu
+        namespace: ""
+        settings:
+            spec:
+                group: glasskube.eu
+                names:
+                    kind: Vault
+                    plural: vaults
+                    singular: vault
+                scope: Namespaced
+                versions:
+                    - name: v1alpha1
+                      schema:
+                        open APIV3Schema:
+                            properties:
+                                spec:
+                                    properties:
+                                        audit Storage:
+                                            nullable: true
+                                            properties:
+                                                enabled:
+                                                    type: boolean
+                                                size:
+                                                    any Of:
+                                                        - type: integer
+                                                        - type: string
+                                                    x-kubernetes-int-or-string: true
+                                            required:
+                                                - enabled
+                                            type: object
+                                        auto Unseal:
+                                            nullable: true
+                                            properties:
+                                                address:
+                                                    type: string
+                                                auth Path:
+                                                    description: Optional. Default is "kubernetes".
+                                                    type: string
+                                                key Name:
+                                                    description: Optional. Default is "namespace.name".
+                                                    type: string
+                                                mount Path:
+                                                    description: Optional. Default is "transit".
+                                                    type: string
+                                                role Name:
+                                                    description: Optional. Default is "namespace.name".
+                                                    type: string
+                                                tls Ca Secret:
+                                                    nullable: true
+                                                    properties:
+                                                        key:
+                                                            type: string
+                                                        name:
+                                                            type: string
+                                                        optional:
+                                                            type: boolean
+                                                    type: object
+                                            required:
+                                                - address
+                                            type: object
+                                        database:
+                                            nullable: true
+                                            properties:
+                                                backups:
+                                                    properties:
+                                                        retention Policy:
+                                                            type: string
+                                                        s3:
+                                                            properties:
+                                                                access Key Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                                bucket:
+                                                                    type: string
+                                                                endpoint:
+                                                                    type: string
+                                                                region Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                                secret Key Secret:
+                                                                    properties:
+                                                                        key:
+                                                                            type: string
+                                                                        name:
+                                                                            type: string
+                                                                        optional:
+                                                                            type: boolean
+                                                                    type: object
+                                                            required:
+                                                                - bucket
+                                                                - accessKeySecret
+                                                                - secretKeySecret
+                                                            type: object
+                                                        schedule:
+                                                            type: string
+                                                    required:
+                                                        - s3
+                                                    type: object
+                                                instances:
+                                                    minimum: 1
+                                                    type: integer
+                                                storage:
+                                                    properties:
+                                                        size:
+                                                            type: string
+                                                        storage Class:
+                                                            type: string
+                                                    type: object
+                                            type: object
+                                        host:
+                                            type: string
+                                        replicas:
+                                            type: integer
+                                        resources:
+                                            properties:
+                                                claims:
+                                                    items:
+                                                        properties:
+                                                            name:
+                                                                type: string
+                                                        type: object
+                                                    type: array
+                                                limits:
+                                                    additionalProperties:
+                                                        any Of:
+                                                            - type: integer
+                                                            - type: string
+                                                        x-kubernetes-int-or-string: true
+                                                    type: object
+                                                requests:
+                                                    additionalProperties:
+                                                        any Of:
+                                                            - type: integer
+                                                            - type: string
+                                                        x-kubernetes-int-or-string: true
+                                                    type: object
+                                            type: object
+                                        service Registration:
+                                            properties:
+                                                enabled:
+                                                    type: boolean
+                                            required:
+                                                - enabled
+                                            type: object
+                                        ui:
+                                            properties:
+                                                enabled:
+                                                    type: boolean
+                                            required:
+                                                - enabled
+                                            type: object
+                                        version:
+                                            pattern: \d+\.\d+\.\d+
+                                            type: string
+                                    required:
+                                        - host
+                                    type: object
+                                status:
+                                    properties:
+                                        postgres Ready:
+                                            type: boolean
+                                        ready Replicas:
+                                            type: integer
+                                    type: object
+                            type: object
+                      served: true
+                      storage: true
+                      subresources:
+                        status: {}
+        traits:
+            meshmap:
+                edges: []
+                id: 25a43529-f510-4e0c-ab7a-56f7bb36f5ee
+                meshmodel-metadata:
+                    capabilities: ""
+                    defaultData: ""
+                    genealogy: ""
+                    isAnnotation: false
+                    isCustomResource: false
+                    isNamespaced: false
+                    logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+                    model: kubernetes
+                    modelDisplayName: Kubernetes
+                    primaryColor: '#326CE5'
+                    secondaryColor: '#7aa1f0'
+                    shape: circle
+                    shapePolygonPoints: ""
+                    status: enabled
+                    styleOverrides:
+                        z-index: 3
+                    styles: ""
+                    subCategory: ""
+                    svgColor: ui/public/static/img/meshmodels/kubernetes/color/customresourcedefinition-color.svg
+                    svgComplete: ""
+                    svgWhite: ui/public/static/img/meshmodels/kubernetes/white/customresourcedefinition-white.svg
+                position:
+                    posX: 0
+                    posY: 0
+                whiteboardData:
+                    style: {}
+        type: CustomResourceDefinition
+        version: ""
+version: 0.0.3
