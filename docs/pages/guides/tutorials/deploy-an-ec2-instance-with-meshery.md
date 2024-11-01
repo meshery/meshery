@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Deploy an EC2 Instance with Meshery
-abstract: "Learn how to deploy and manage an EC2 instance through Kubernetes with Meshery, utilizing AWS Controllers for Kubernetes (ACK) to enhance cloud resource management"
-permalink: guides/tutorials/deploy-an-ec2-instance-with-meshery
+title: Deploy an AWS EC2 Instance with Meshery
+abstract: "Learn how to deploy and manage an AWS EC2 instance through Kubernetes with Meshery, utilizing AWS Controllers for Kubernetes (ACK) to enhance cloud resource management"
+permalink: guides/tutorials/deploy-an-aws-ec2-instance-with-meshery
 model: aws
 kind: EC2
 type: guides
