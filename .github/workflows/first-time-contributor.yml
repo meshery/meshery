@@ -36,14 +36,13 @@ jobs:
               repo: context.repo.repo,
               body: message
             });
-
       - name: Label Pull Request (Optional)
         uses: actions/github-script@v6
         with:
           github-token: ${{ secrets.GH_ACCESS_TOKEN }} 
           script: |
-            await github.rest.pulls.createReviewComment({
-              pull_number: context.issue.number,
+            await github.rest.issues.addLabels({
+              issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               labels: ['first-time-contributor'] 
