@@ -178,4 +178,4 @@ id: bda951e5-329a-48c8-a4e2-1f3d269cc8b6
 name: Argocd metrics
 relationships: []
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.8
+version: 0.0.10

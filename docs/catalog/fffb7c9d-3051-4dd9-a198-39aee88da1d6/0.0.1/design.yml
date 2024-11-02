@@ -1296,6 +1296,7 @@ components:
         subjects:
             - name: prometheus-postgres-exporter
             - name: prometheus-postgres-exporter
+            - name: prometheus-postgres-exporter
             - kind: ServiceAccount
               name: prometheus-postgres-exporter
       description: ""
@@ -6855,4 +6856,4 @@ relationships:
       type: parent
       version: ""
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.13
+version: 0.0.14

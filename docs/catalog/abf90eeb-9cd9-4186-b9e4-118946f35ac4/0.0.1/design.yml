@@ -1,4 +1,6 @@
-apiVersion: jaegertracing.io/v1
-kind: Jaeger
-metadata:
-    name: simplest
+components: []
+id: abf90eeb-9cd9-4186-b9e4-118946f35ac4
+name: ""
+relationships: []
+schemaVersion: designs.meshery.io/v1beta1
+version: 0.0.2

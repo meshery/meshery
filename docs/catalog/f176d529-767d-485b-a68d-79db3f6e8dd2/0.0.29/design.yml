@@ -714,6 +714,8 @@ components:
             name: vc-vcluster
         subjects:
             - name: vc-vcluster
+            - name: vc-vcluster
+            - name: vc-vcluster
             - kind: ServiceAccount
               name: vc-vcluster
               namespace: default
@@ -11293,4 +11295,4 @@ relationships:
       type: parent
       version: ""
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.31
+version: 0.0.33
