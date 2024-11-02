@@ -1,52 +1,57 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { NoSsr, TableCell, Popover } from '@mui/material';
 import {
-  NoSsr,
-  TableCell,
   Button,
-  FormControl,
-  Select,
-  TableContainer,
-  Table,
-  Grid,
-  TableRow,
   IconButton,
   Typography,
-  Popover,
   AppBar,
   Tabs,
   Tab,
   MenuItem,
-  Box,
-  Chip,
-} from '@material-ui/core';
-import {
   CustomColumnVisibilityControl,
   CustomTooltip,
   SearchBar,
   UniversalFilter,
+  ResponsiveDataTable,
+  DeleteIcon,
+  InfoIcon,
+  Grid,
+  Table,
 } from '@layer5/sistent';
-import { withStyles } from '@material-ui/core/styles';
+import {
+  CenterContent,
+  InnerTableContainer,
+  InnerTableWrapper,
+  NoGutter,
+  IconText,
+  CreateButton,
+  List,
+  ChipFormControl,
+  StyledStatusSelect,
+  ContentContainer,
+  ListItem,
+  StatusChip,
+} from './styles';
+import { ToolWrapper } from '../Lifecycle/Workspaces';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { updateProgress } from '../../lib/store';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 // import CustomColumnVisibilityControl from '../../utils/custom-column';
 // import SearchBar from '../../utils/custom-search';
-import { ResponsiveDataTable } from '@layer5/sistent';
-import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
 import { iconMedium } from '../../css/icons.styles';
 import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
 import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
-import styles from './styles';
+// import styles from './styles';
 import MeshSyncTable from './meshSync';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
-import classNames from 'classnames';
+// import classNames from 'classnames';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import SyncIcon from '@mui/icons-material/Sync';
@@ -70,6 +75,7 @@ import { updateVisibleColumns } from '../../utils/responsive-column';
 import { useWindowDimensions } from '../../utils/dimension';
 // import UniversalFilter from '../../utils/custom-filter';
 import MultiSelectWrapper from '../multi-select-wrapper';
+
 import {
   useGetEnvironmentsQuery,
   useAddConnectionToEnvironmentMutation,
@@ -84,7 +90,6 @@ import { useGetConnectionsQuery, useUpdateConnectionMutation } from '@/rtk-query
 import { useGetSchemaQuery } from '@/rtk-query/schema';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
-import { DeleteIcon } from '@layer5/sistent';
 import { withRouter } from 'next/router';
 import { UsesSistent } from '../SistentWrapper';
 import { formatDate } from '../DataFormatter';
@@ -328,7 +333,6 @@ function Connections(props) {
   _operatorStateRef.current = _operatorState;
   const meshSyncResetRef = useRef(null);
   const { notify } = useNotification();
-  const StyleClass = useStyles();
   const url = `https://docs.meshery.io/concepts/logical/connections#states-and-the-lifecycle-of-connections`;
   const envUrl = `https://docs.meshery.io/concepts/logical/environments`;
 
@@ -476,8 +480,8 @@ function Connections(props) {
                     interactive={true}
                     title="Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)"
                   >
-                    <IconButton className={classes.infoIconButton} color="primary">
-                      <InfoOutlinedIcon height={20} width={20} className={classes.infoIcon} />
+                    <IconButton color="primary">
+                      <InfoIcon height={20} width={20} />
                     </IconButton>
                   </CustomTextTooltip>
                 </UsesSistent>
@@ -501,7 +505,7 @@ function Connections(props) {
                 <IconButton disableRipple={true} disableFocusRipple={true}>
                   <InfoOutlinedIcon
                     fill={theme.palette.secondary.iconMain}
-                    style={{
+                    sx={{
                       cursor: 'pointer',
                       height: 20,
                       width: 20,
@@ -526,8 +530,8 @@ function Connections(props) {
           return (
             isEnvironmentsSuccess && (
               <div onClick={(e) => e.stopPropagation()}>
-                <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
-                  <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
+                <Grid item xs={12} sx={{ height: '5rem', width: '15rem' }}>
+                  <Grid item xs={12} sx={{ marginTop: '2rem', cursor: 'pointer' }}>
                     <MultiSelectWrapper
                       updating={updatingEnvs}
                       onChange={(selected, unselected) =>
@@ -677,7 +681,7 @@ function Connections(props) {
                 <IconButton disableRipple={true} disableFocusRipple={true}>
                   <InfoOutlinedIcon
                     fill={theme.palette.secondary.iconMain}
-                    style={{
+                    sx={{
                       cursor: 'pointer',
                       height: 20,
                       width: 20,
@@ -708,8 +712,8 @@ function Connections(props) {
               : !CAN(keys.CHANGE_CONNECTION_STATE.action, keys.CHANGE_CONNECTION_STATE.subject);
           return (
             <>
-              <FormControl className={classes.chipFormControl}>
-                <Select
+              <ChipFormControl>
+                <StyledStatusSelect
                   labelId="connection-status-select-label"
                   id="connection-status-select"
                   disabled={disabled}
@@ -723,7 +727,6 @@ function Connections(props) {
                       getColumnValue(tableMeta.rowData, 'kind', columns),
                     )
                   }
-                  className={classes.statusSelect}
                   disableUnderline
                   MenuProps={{
                     anchorOrigin: {
@@ -743,12 +746,11 @@ function Connections(props) {
                     nextStatus.map((status) => (
                       <MenuItem
                         disabled={status === value ? true : false}
-                        style={{ padding: '0', display: status === value ? 'none' : 'flex' }}
+                        sx={{ padding: '0', display: status === value ? 'none' : 'flex' }}
                         value={status}
                         key={status}
                       >
-                        <Chip
-                          className={classNames(classes.statusChip, classes[status])}
+                        <StatusChip
                           avatar={icons[status] ? icons[status]() : ''}
                           label={
                             status == value
@@ -758,8 +760,8 @@ function Connections(props) {
                         />
                       </MenuItem>
                     ))}
-                </Select>
-              </FormControl>
+                </StyledStatusSelect>
+              </ChipFormControl>
             </>
           );
         },
@@ -781,7 +783,7 @@ function Connections(props) {
         },
         customBodyRender: function CustomBody(_, tableMeta) {
           return (
-            <div className={classes.centerContent}>
+            <CenterContent>
               {getColumnValue(tableMeta.rowData, 'kind', columns) ===
               CONNECTION_KINDS.KUBERNETES ? (
                 <IconButton
@@ -790,12 +792,12 @@ function Connections(props) {
                   aria-haspopup="true"
                   onClick={(e) => handleActionMenuOpen(e, tableMeta)}
                 >
-                  <MoreVertIcon style={iconMedium} />
+                  <MoreVertIcon sx={iconMedium} />
                 </IconButton>
               ) : (
                 '-'
               )}
-            </div>
+            </CenterContent>
           );
         },
       },
@@ -847,10 +849,10 @@ function Connections(props) {
         color="primary"
         size="large"
         onClick={() => handleDeleteConnections(selected)}
-        style={{ background: theme.palette.secondary.danger, marginRight: '10px' }}
+        sx={{ background: theme.palette.secondary.danger, marginRight: '10px' }}
         disabled={!CAN(keys.DELETE_A_CONNECTION.action, keys.DELETE_A_CONNECTION.subject)}
       >
-        <DeleteIcon fill={theme.palette.secondary.whiteIcon} style={iconMedium} />
+        <DeleteIcon fill={theme.palette.secondary.whiteIcon} sx={iconMedium} />
         Delete
       </Button>
     ),
@@ -896,28 +898,28 @@ function Connections(props) {
       const colSpan = rowData.length;
       const connection = connections && connections[tableMeta.rowIndex];
       return (
-        <TableCell colSpan={colSpan} className={classes.innerTableWrapper}>
-          <TableContainer className={classes.innerTableContainer}>
+        <InnerTableWrapper colSpan={colSpan}>
+          <InnerTableContainer>
             <Table>
-              <TableRow className={classes.noGutter}>
-                <TableCell style={{ padding: '20px 0', overflowX: 'hidden' }}>
-                  <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
-                    <Grid item xs={12} md={12} className={classes.contentContainer}>
+              <NoGutter>
+                <TableCell sx={{ padding: '20px 0', overflowX: 'hidden' }}>
+                  <Grid container spacing={1} sx={{ textTransform: 'lowercase' }}>
+                    <Grid item xs={12} md={12}>
                       <Grid container spacing={1}>
-                        <Grid item xs={12} md={12} className={classes.contentContainer}>
+                        <ContentContainer item xs={12} md={12}>
                           <FormatConnectionMetadata
                             connection={connection}
                             meshsyncControllerState={meshsyncControllerState}
                           />
-                        </Grid>
+                        </ContentContainer>
                       </Grid>
                     </Grid>
                   </Grid>
                 </TableCell>
-              </TableRow>
+              </NoGutter>
             </Table>
-          </TableContainer>
-        </TableCell>
+          </InnerTableContainer>
+        </InnerTableWrapper>
       );
     },
   };
@@ -1119,10 +1121,9 @@ function Connections(props) {
     <NoSsr>
       {CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) ? (
         <>
-          <AppBar position="static" color="default" className={classes.appBar}>
+          <AppBar position="static" color="default">
             <Tabs
               value={tab}
-              className={classes.tabs}
               onChange={(e, newTab) => {
                 e.stopPropagation();
                 setTab(newTab);
@@ -1135,32 +1136,27 @@ function Connections(props) {
               }}
             >
               <Tab
-                className={classes.tab}
                 label={
-                  <div className={classes.iconText}>
-                    <span style={{ marginRight: '0.3rem' }}>Connections</span>
+                  <IconText>
+                    <span sx={{ marginRight: '0.3rem' }}>Connections</span>
                     <ConnectionIcon width="20" height="20" />
                     {/* <img src="/static/img/connection-light.svg" className={classes.icon} /> */}
-                  </div>
+                  </IconText>
                 }
               />
               <Tab
-                className={classes.tab}
                 label={
-                  <div className={classes.iconText}>
-                    <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
+                  <IconText>
+                    <span sx={{ marginRight: '0.3rem' }}>MeshSync</span>
                     <MeshsyncIcon width="20" height="20" />
-                  </div>
+                  </IconText>
                 }
               />
             </Tabs>
           </AppBar>
           {tab === 0 && (
-            <div
-              className={StyleClass.toolWrapper}
-              style={{ marginBottom: '5px', marginTop: '-30px' }}
-            >
-              <div className={classes.createButton}>
+            <ToolWrapper sx={{ marginBottom: '5px', marginTop: '-30px' }}>
+              <CreateButton>
                 {/* <div>
               <Button
                 aria-label="Rediscover"
@@ -1169,17 +1165,17 @@ function Connections(props) {
                 size="large"
                 // @ts-ignore
                 onClick={onOpenCreateConnectionModal}
-                style={{ marginRight: '1rem', borderRadius: '5px' }}
+                sx={{ marginRight: '1rem', borderRadius: '5px' }}
               >
                 Connect Helm Repository
               </Button>
             </div> */}
                 <MesherySettingsEnvButtons />
-              </div>
+              </CreateButton>
               <UsesSistent>
                 <div
                   className={classes.searchAndView}
-                  style={{
+                  sx={{
                     display: 'flex',
                     borderRadius: '0.5rem 0.5rem 0 0',
                   }}
@@ -1208,7 +1204,7 @@ function Connections(props) {
                   />
                 </div>
               </UsesSistent>
-            </div>
+            </ToolWrapper>
           )}
           {tab === 0 && CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) && (
             <UsesSistent>
@@ -1216,7 +1212,6 @@ function Connections(props) {
                 data={connections}
                 columns={columns}
                 options={options}
-                className={classes.muiRow}
                 tableCols={tableCols}
                 updateCols={updateCols}
                 columnVisibility={columnVisibility}
@@ -1242,25 +1237,24 @@ function Connections(props) {
               horizontal: 'left',
             }}
           >
-            <Grid style={{ margin: '10px' }}>
-              <div className={classNames(classes.list, classes.listButton)}>
-                <Box className={classes.listItem} sx={{ width: '100%' }}>
+            <Grid sx={{ margin: '10px' }}>
+              <List>
+                <ListItem sx={{ width: '100%' }}>
                   <Button
                     type="submit"
                     onClick={handleFlushMeshSync(rowData.rowIndex)}
                     data-cy="btnResetDatabase"
-                    className={classes.button}
                     disabled={
                       !CAN(keys.FLUSH_MESHSYNC_DATA.action, keys.FLUSH_MESHSYNC_DATA.subject)
                     }
                   >
                     <SyncIcon {...iconMedium} fill={theme.palette.secondary.iconMain} />
-                    <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
+                    <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
                       Flush MeshSync
                     </Typography>
                   </Button>
-                </Box>
-              </div>
+                </ListItem>
+              </List>
             </Grid>
           </Popover>
           <PromptComponent ref={meshSyncResetRef} />
@@ -1308,9 +1302,7 @@ const ConnectionManagementPageWithErrorBoundary = (props) => {
 };
 
 // @ts-ignore
-export default withStyles(styles)(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  )(withRouter(ConnectionManagementPageWithErrorBoundary)),
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withRouter(ConnectionManagementPageWithErrorBoundary));
