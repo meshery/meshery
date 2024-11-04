@@ -38,7 +38,9 @@
     "status": "",
     "version": "",
     "components": null,
-    "relationships": null
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
@@ -72,7 +74,7 @@
                 "credential_id": "00000000-0000-0000-0000-000000000000",
                 "deleted_at": "0001-01-01T00:00:00Z",
                 "id": "00000000-0000-0000-0000-000000000000",
-                "kind": "artifacthub",
+                "kind": "github",
                 "name": "",
                 "status": "",
                 "sub_type": "",
@@ -85,7 +87,9 @@
               "status": "",
               "version": "",
               "components": null,
-              "relationships": null
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
             },
             "patch": null
           }
@@ -118,7 +122,7 @@
                 "credential_id": "00000000-0000-0000-0000-000000000000",
                 "deleted_at": "0001-01-01T00:00:00Z",
                 "id": "00000000-0000-0000-0000-000000000000",
-                "kind": "artifacthub",
+                "kind": "github",
                 "name": "",
                 "status": "",
                 "sub_type": "",
@@ -131,7 +135,9 @@
               "status": "",
               "version": "",
               "components": null,
-              "relationships": null
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
             },
             "patch": null
           }

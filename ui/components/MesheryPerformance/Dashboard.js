@@ -255,7 +255,7 @@ function Dashboard({ updateProgress, grafana, router, classes }) {
               maxWidth="md"
               title="Performance Profile Wizard"
             >
-              <MesheryPerformanceComponent />
+              <MesheryPerformanceComponent closeModal={() => setRunTest(false)} />
             </Modal>
           </UsesSistent>
         </>
