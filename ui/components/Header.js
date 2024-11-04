@@ -83,7 +83,7 @@ const styles = (theme) => ({
   toolbarOnDrawerClosed: {
     minHeight: 59,
     padding: theme.spacing(2),
-    paddingLeft: 34,
+    paddingLeft: 0,
     paddingRight: 34,
     backgroundColor: theme.palette.secondary.mainBackground,
     boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
@@ -536,6 +536,17 @@ class Header extends React.PureComponent {
                   </Grid>
                 </Hidden>
                 <Grid item xs container alignItems="center" className={classes.pageTitleWrapper}>
+                  {/* Extension Point for   Logo */}
+                  <div
+                    id="nav-header-logo"
+                    style={{
+                      height: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      minWidth: '34px',
+                      justifyContent: 'center',
+                    }}
+                  ></div>
                   <SpaceSwitcher title={title} isBeta={isBeta} />
                 </Grid>
                 <Grid item className={classes.userContainer} style={{ position: 'relative' }}>
