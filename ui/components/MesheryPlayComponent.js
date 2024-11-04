@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/router';
 import { connect } from 'react-redux';
 import NoSsr from '@mui/material/NoSsr';
-import { blue } from '@mui/material/colors';
 import PropTypes from 'prop-types';
 import SettingsIcon from '@mui/icons-material/Settings';
 import { bindActionCreators } from 'redux';
@@ -11,20 +10,17 @@ import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
 import { UsesSistent } from './SistentWrapper';
 import {
   Button,
-  useTheme,
   Divider,
   MenuItem,
   TextField,
   Grid,
   Typography,
-  styled,
 } from '@layer5/sistent';
 
 const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
   const [adapter, setAdapterState] = useState(null);
   const router = useRouter();
   const prevMeshAdaptersRef = useRef();
-  
   const handleRouteChange = () => {
     const queryParam = router?.query?.adapter;
     if (queryParam) {
