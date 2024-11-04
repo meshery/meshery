@@ -8,10 +8,7 @@ import { bindActionCreators } from 'redux';
 import { setAdapter } from '../lib/store';
 import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
 import { UsesSistent } from './SistentWrapper';
-import {
-  Button, Divider, MenuItem, TextField, Grid, Typography,
-} from '@layer5/sistent';
-
+import { Button, Divider, MenuItem, TextField, Grid, Typography, } from '@layer5/sistent';
 const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
   const [adapter, setAdapterState] = useState(null);
   const router = useRouter();
@@ -29,24 +26,18 @@ const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
       setAdapterState(meshAdapters.get(0));
     }
   };
-
   useEffect(() => {
     router.events.on('routeChangeComplete', handleRouteChange);
-    return () => { 
-      router.events.off('routeChangeComplete', handleRouteChange);
-    };
-  },[]);
+    return () => { router.events.off('routeChangeComplete', handleRouteChange); }; },[]);
   useEffect(() => {
     if (prevMeshAdaptersRef.current?.size !== meshAdapters.size && meshAdapters.size > 0) {
       handleRouteChange();
     }
     prevMeshAdaptersRef.current = meshAdapters;
   }, [meshAdapters]);
-
   const handleConfigure = () => {
     router.push('/settings#service-mesh');
   };
-
   const pickImage = (adapter) => {
     let image = '/static/img/meshery-logo.png';
     let imageIcon = <img src={image} className={classes.expTitleIcon} />;
@@ -56,7 +47,6 @@ const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
     }
     return imageIcon;
   };
-
   const handleAdapterChange = (event) => {
     if (event.target.value !== '') {
       const selectedAdapter = meshAdapters.filter(
@@ -68,7 +58,6 @@ const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
       }
     }
   };
-
   const renderIndividualAdapter = () => {
     let adapCount = 0;
     let selectedAdapter;
@@ -81,7 +70,6 @@ const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
         });
       }
     });
-
     if (selectedAdapter) {
       const imageIcon = pickImage(selectedAdapter);
       return (
@@ -185,13 +173,11 @@ const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
                   </UsesSistent>
   );
 };
-
 MesheryPlayComponent.propTypes = {
   meshAdapters: PropTypes.array.isRequired,
   setAdapter: PropTypes.func.isRequired,
   classes: PropTypes.object.isRequired,
 };
-
 const mapStateToProps = (state) => {
   const k8sconfig = state.get('k8sConfig');
   const meshAdapters = state.get('meshAdapters');
@@ -199,7 +185,5 @@ const mapStateToProps = (state) => {
   const selectedAdapter = state.get('selectedAdapter');
   return { k8sconfig, meshAdapters, meshAdaptersts, selectedAdapter };
 };
-
 const mapDispatchToProps = (dispatch) => bindActionCreators({ setAdapter }, dispatch);
-
 export default connect(mapStateToProps, mapDispatchToProps)(MesheryPlayComponent);
