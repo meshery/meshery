@@ -20,87 +20,11 @@ import {
   styled,
 } from '@layer5/sistent';
 
-const StyledButton = styled(Button)(({ theme }) => ({
-  backgroundColor: blue[500],
-  color: theme.palette.getContrastText(blue[500]),
-}));
-
-const PlayRoot = styled('div')(({ theme }) => ({
-  padding: theme.spacing(0),
-  marginBottom: theme.spacing(2),
-}));
-
-const styles = (theme) => ({
-  icon: {
-    fontSize: 23,
-    width: theme.spacing(2.5),
-    marginRight: theme.spacing(0.5),
-    alignSelf: 'flex-start',
-  },
-  playRoot: {
-    padding: theme.spacing(0),
-    marginBottom: theme.spacing(2),
-  },
-  buttons: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  button: {
-    marginTop: theme.spacing(3),
-    marginLeft: theme.spacing(1),
-  },
-  margin: { margin: theme.spacing(1) },
-  alreadyConfigured: {
-    textAlign: 'center',
-    padding: theme.spacing(20),
-  },
-  colorSwitchBase: {
-    color: blue[300],
-    '&$colorChecked': {
-      color: blue[500],
-      '& + $colorBar': { backgroundColor: blue[500] },
-    },
-  },
-  colorBar: {},
-  colorChecked: {},
-  uploadButton: {
-    margin: theme.spacing(1),
-    marginTop: theme.spacing(3),
-  },
-  fileLabel: { width: '100%' },
-  editorContainer: { width: '100%' },
-  deleteLabel: { paddingRight: theme.spacing(2) },
-  alignRight: { textAlign: 'right' },
-  expTitleIcon: {
-    width: theme.spacing(3),
-    display: 'inline',
-    verticalAlign: 'middle',
-  },
-  expIstioTitleIcon: {
-    width: theme.spacing(2),
-    display: 'inline',
-    verticalAlign: 'middle',
-    marginLeft: theme.spacing(0.5),
-    marginRight: theme.spacing(0.5),
-  },
-  expTitle: {
-    display: 'inline',
-    verticalAlign: 'middle',
-    marginLeft: theme.spacing(1),
-  },
-  paneSection: {
-    backgroundColor: theme.palette.secondary.elevatedComponents,
-    padding: theme.spacing(2.5),
-    borderRadius: 4,
-  },
-});
-
 const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
   const [adapter, setAdapterState] = useState(null);
   const router = useRouter();
   const prevMeshAdaptersRef = useRef();
-  const theme = useTheme();
-
+  
   const handleRouteChange = () => {
     const queryParam = router?.query?.adapter;
     if (queryParam) {
