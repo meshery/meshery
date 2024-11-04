@@ -9,12 +9,7 @@ import { setAdapter } from '../lib/store';
 import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
 import { UsesSistent } from './SistentWrapper';
 import {
-  Button,
-  Divider,
-  MenuItem,
-  TextField,
-  Grid,
-  Typography,
+  Button, Divider, MenuItem, TextField, Grid, Typography,
 } from '@layer5/sistent';
 
 const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
