@@ -73,7 +73,7 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	if !exists {
 		err := ErrInvalidCapability("PersistAnonymousUser", k.Provider.Name())
 		k.log.Error(err)
-		sendErrorResponse(&res, http.StatusFound, err.Error())
+		sendErrorResponse(&res, http.StatusFound, err.Error(), k.log)
 		http.Redirect(res, req, errorUI, http.StatusFound)
 		return
 	}
@@ -95,7 +95,7 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	if err != nil {
 		err = ErrUnreachableRemoteProvider(err)
 		k.log.Error(err)
-		sendErrorResponse(&res, http.StatusFound, err.Error())
+		sendErrorResponse(&res, http.StatusFound, err.Error(), k.log)
 		http.Redirect(res, req, errorUI, http.StatusFound)
 		return
 	}
@@ -106,7 +106,7 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	if err != nil {
 		err = ErrUnmarshal(err, "user flow response")
 		k.log.Error(err)
-		sendErrorResponse(&res, http.StatusFound, err.Error())
+		sendErrorResponse(&res, http.StatusFound, err.Error(), k.log)
 		http.Redirect(res, req, errorUI, http.StatusFound)
 		return
 	}
@@ -118,7 +118,7 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	if err != nil {
 		err = ErrDBPut(errors.Wrapf(err, "failed to write capabilities for the user %s", flowResponse.UserID.String()))
 		k.log.Error(err)
-		sendErrorResponse(&res, http.StatusFound, err.Error())
+		sendErrorResponse(&res, http.StatusFound, err.Error(), k.log)
 		http.Redirect(res, req, errorUI, http.StatusFound)
 
 		return
@@ -133,8 +133,12 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 
 	http.Redirect(res, req, redirectURL, http.StatusFound)
 }
-func sendErrorResponse(res *http.ResponseWriter, status int, message string) {
+func sendErrorResponse(res *http.ResponseWriter, status int, message string, log logger.Handler) {
 	(*res).Header().Set("Content-Type", "application/json")
 	(*res).WriteHeader(status)
-	json.NewEncoder(*res).Encode(ErrorResponse{Status: status, Message: message})
+	err := json.NewEncoder(*res).Encode(ErrorResponse{Status: status, Message: message})
+	if err != nil {
+		log.Error(ErrMarshal(err, "error response"))
+		return
+	}
 }

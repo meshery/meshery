@@ -167,20 +167,24 @@ func GetRefURL(req *http.Request) string {
 	return refURLB64
 }
 func (h *Handler) HandleErrorHandler(w http.ResponseWriter, r *http.Request) {
-	// Set response header content type to JSON
-	w.Header().Set("Content-Type", "application/json")
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 
-	// Decode the JSON body sent from SendErrorResponse
-	var errorResponse models.ErrorResponse
-	err := json.NewDecoder(r.Body).Decode(&errorResponse)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("An error occurred while processing the error response."))
-		return
+	w.WriteHeader(http.StatusInternalServerError)
+
+	// Define the error response structure
+	type ErrorResponse struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
 	}
 
-	// Display the status and message
-	w.WriteHeader(errorResponse.Status)
-	responseMessage := fmt.Sprintf("Error %d: %s", errorResponse.Status, errorResponse.Message)
-	w.Write([]byte(responseMessage))
+	// Create an error response instance
+	errorResponse := ErrorResponse{
+		Status:  http.StatusInternalServerError,
+		Message: "We encountered an error while processing your request. Please try again later.",
+	}
+
+	// Encode and send the error response as JSON
+	if err := json.NewEncoder(w).Encode(errorResponse); err != nil {
+		h.log.Error(models.ErrMarshal(err, "error response"))
+	}
 }
