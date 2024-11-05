@@ -71,7 +71,7 @@ const User = (props) => {
 
     return (
       <Link href={url}>
-        <Button variant="contained" color="primary">
+        <Button variant="contained" color="primary" data-testid="sign-in-button">
           Sign In
         </Button>
       </Link>
