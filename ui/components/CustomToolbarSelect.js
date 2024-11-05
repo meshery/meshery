@@ -119,7 +119,7 @@ function CustomToolbarSelect({
             </IconButton>
           </Tooltip>
         )}
-        <Tooltip title="Compare selected">
+        <Tooltip title="Compare selected" data-testid="compare-selected">
           <IconButton className={classes.iconButton} onClick={handleCompareSelected}>
             <CompareArrowsIcon className={classes.icon} />
           </IconButton>
