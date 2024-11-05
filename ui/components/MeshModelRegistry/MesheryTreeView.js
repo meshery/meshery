@@ -462,22 +462,24 @@ const MesheryTreeViewRegistrants = ({
             <StyledTreeItem
               nodeId={`${registrant.id}.1`}
               data-id={`${registrant.id}.1`}
-              labelText={`Models (${registrant?.models?.length})`}
+              labelText={`Models (${registrant?.summary?.models})`}
             >
-              {registrant?.models.map((modelDef, index) => (
-                <MesheryTreeViewItem
-                  key={index}
-                  modelDef={modelDef}
-                  handleToggle={handleToggle}
-                  handleSelect={handleSelect}
-                  expanded={expanded}
-                  selected={selected}
-                  setShow={setShow}
-                  registrantID={registrant.id}
-                  setShowDetailsData={setShowDetailsData}
-                  showDetailsData={showDetailsData}
-                />
-              ))}
+              {registrant.models
+                .filter((model) => model?.registrant?.kind == registrant?.kind)
+                ?.map((modelDef, index) => (
+                  <MesheryTreeViewItem
+                    key={index}
+                    modelDef={modelDef}
+                    handleToggle={handleToggle}
+                    handleSelect={handleSelect}
+                    expanded={expanded}
+                    selected={selected}
+                    setShow={setShow}
+                    registrantID={registrant.id}
+                    setShowDetailsData={setShowDetailsData}
+                    showDetailsData={showDetailsData}
+                  />
+                ))}
             </StyledTreeItem>
           </div>
         </StyledTreeItem>
