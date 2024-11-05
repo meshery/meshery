@@ -31,6 +31,18 @@ layout: default
     </section>
 </div>
 <!-- components end -->
+
+{% assign pageTitle = page.title %}
+
+{% assign modelcustomdata = site.modelscustominfo %}
+{% for modelinfo in modelcustomdata %}
+  {% if modelinfo.title == pageTitle %}
+    <div>
+        {{ modelinfo }}
+    </div>
+  {% endif %}
+{% endfor %}
+
 {% include_cached integration/models-components.html %}
 {% include_cached integration/meshery-registry.html %}
 
