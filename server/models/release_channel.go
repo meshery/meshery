@@ -129,7 +129,7 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	if len(flowResponse.Capabilities.Extensions.Navigator) > 0 {
 		flowResponse.Capabilities.DownloadProviderExtensionPackage(k.log)
 	}
-	redirectURL := GetRedirectURLForNavigatorExtension(&providerProperties)
+	redirectURL := GetRedirectURLForNavigatorExtension(&providerProperties, k.log)
 
 	http.Redirect(res, req, redirectURL, http.StatusFound)
 }

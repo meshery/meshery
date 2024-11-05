@@ -44,7 +44,6 @@ func (h *Handler) ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, b
 	// 	http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	// 	return
 	// }
-
 	reqURL := r.URL.Path
 	reqURL = strings.Replace(reqURL, reqBasePath, "", 1)
 	var filePath strings.Builder
@@ -52,11 +51,7 @@ func (h *Handler) ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, b
 		provider, ok := h.config.Providers[h.Provider]
 		if ok && provider != nil {
 			provProps := provider.GetProviderProperties()
-			if len(provProps.Extensions.Navigator) == 0 {
-				provider.TokenHandler(w, r, false)
-			}
-			provProps = provider.GetProviderProperties()
-			redirectURL := models.GetRedirectURLForNavigatorExtension(&provProps)
+			redirectURL := models.GetRedirectURLForNavigatorExtension(&provProps, h.log)
 			http.Redirect(w, r, redirectURL, http.StatusPermanentRedirect)
 			return
 		}
@@ -74,7 +69,7 @@ func (h *Handler) ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, b
 	} else if filepath.Ext(reqURL) == "" {
 		filePath.WriteString(".html")
 	}
-
 	finalPath := filepath.Join(baseFolderPath, filePath.String())
 	http.ServeFile(w, r, finalPath)
+
 }
