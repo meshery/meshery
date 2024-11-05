@@ -93,7 +93,8 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 
 	resp, err := client.Do(newReq)
 	if err != nil {
-		k.log.Error(ErrUnreachableRemoteProvider(err))
+		err = ErrUnreachableRemoteProvider(err)
+		k.log.Error(err)
 		sendErrorResponse(&res, http.StatusFound, err.Error())
 		http.Redirect(res, req, errorUI, http.StatusFound)
 		return
@@ -103,7 +104,8 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	flowResponse := AnonymousFlowResponse{}
 	err = json.NewDecoder(resp.Body).Decode(&flowResponse)
 	if err != nil {
-		k.log.Error(ErrUnmarshal(err, "user flow response"))
+		err = ErrUnmarshal(err, "user flow response")
+		k.log.Error(err)
 		sendErrorResponse(&res, http.StatusFound, err.Error())
 		http.Redirect(res, req, errorUI, http.StatusFound)
 		return
