@@ -406,7 +406,7 @@ GEM
       psych (>= 4.0.0)
     reline (0.5.10)
       io-console (~> 0.5)
-    rexml (3.3.8)
+    rexml (3.3.9)
     rouge (3.30.0)
     rubyzip (2.3.2)
     safe_yaml (1.0.5)
