@@ -3,6 +3,7 @@ package handlers
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -164,4 +165,22 @@ func GetRefURL(req *http.Request) string {
 	}
 	refURLB64 := base64.RawURLEncoding.EncodeToString([]byte(refURL))
 	return refURLB64
+}
+func (h *Handler) HandleErrorHandler(w http.ResponseWriter, r *http.Request) {
+	// Set response header content type to JSON
+	w.Header().Set("Content-Type", "application/json")
+
+	// Decode the JSON body sent from SendErrorResponse
+	var errorResponse models.ErrorResponse
+	err := json.NewDecoder(r.Body).Decode(&errorResponse)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("An error occurred while processing the error response."))
+		return
+	}
+
+	// Display the status and message
+	w.WriteHeader(errorResponse.Status)
+	responseMessage := fmt.Sprintf("Error %d: %s", errorResponse.Status, errorResponse.Message)
+	w.Write([]byte(responseMessage))
 }

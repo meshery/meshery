@@ -71,7 +71,9 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	errorUI := "/error"
 	ep, exists := providerProperties.Capabilities.GetEndpointForFeature(PersistAnonymousUser)
 	if !exists {
-		k.log.Error(ErrInvalidCapability("PersistAnonymousUser", k.Provider.Name()))
+		err := ErrInvalidCapability("PersistAnonymousUser", k.Provider.Name())
+		k.log.Error(err)
+		sendErrorResponse(&res, http.StatusFound, err.Error())
 		http.Redirect(res, req, errorUI, http.StatusFound)
 		return
 	}
@@ -92,6 +94,7 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	resp, err := client.Do(newReq)
 	if err != nil {
 		k.log.Error(ErrUnreachableRemoteProvider(err))
+		sendErrorResponse(&res, http.StatusFound, err.Error())
 		http.Redirect(res, req, errorUI, http.StatusFound)
 		return
 	}
@@ -101,6 +104,7 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	err = json.NewDecoder(resp.Body).Decode(&flowResponse)
 	if err != nil {
 		k.log.Error(ErrUnmarshal(err, "user flow response"))
+		sendErrorResponse(&res, http.StatusFound, err.Error())
 		http.Redirect(res, req, errorUI, http.StatusFound)
 		return
 	}
@@ -112,6 +116,7 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	if err != nil {
 		err = ErrDBPut(errors.Wrapf(err, "failed to write capabilities for the user %s", flowResponse.UserID.String()))
 		k.log.Error(err)
+		sendErrorResponse(&res, http.StatusFound, err.Error())
 		http.Redirect(res, req, errorUI, http.StatusFound)
 
 		return
@@ -125,4 +130,9 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	redirectURL := GetRedirectURLForNavigatorExtension(&providerProperties)
 
 	http.Redirect(res, req, redirectURL, http.StatusFound)
+}
+func sendErrorResponse(res *http.ResponseWriter, status int, message string) {
+	(*res).Header().Set("Content-Type", "application/json")
+	(*res).WriteHeader(status)
+	json.NewEncoder(*res).Encode(ErrorResponse{Status: status, Message: message})
 }
