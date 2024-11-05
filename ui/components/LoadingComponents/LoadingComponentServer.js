@@ -2,10 +2,12 @@ import React from 'react';
 // import AnimatedMeshery from './Animations/AnimatedMesheryCSS';
 import PropTypes from 'prop-types';
 import uiConfig from '../../ui.config';
+import { useTheme } from '@material-ui/core';
 
 function LoadingScreen(props) {
   const { message, children, isLoading, ...other } = props;
   const AnimatedLogoDark = uiConfig.AnimatedLogoDark;
+  const theme = useTheme();
 
   if (isLoading) {
     return (
@@ -21,7 +23,10 @@ function LoadingScreen(props) {
         }}
       >
         <div>
-          <AnimatedLogoDark style={{ height: '100px', margin: '4px 0px 8px' }} />
+          <AnimatedLogoDark
+            style={{ height: '100px', margin: '4px 0px 8px' }}
+            textFill={theme.palette.type === 'dark' ? '#fff' : ''}
+          />
           <h1
             style={{
               fontFamily: 'sans-serif',
