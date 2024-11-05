@@ -8464,6 +8464,11 @@ components:
             - name: ack-ec2-controller
             - name: ack-ec2-controller
             - name: ack-ec2-controller
+            - name: ack-ec2-controller
+            - name: ack-ec2-controller
+            - name: ack-ec2-controller
+            - name: ack-ec2-controller
+            - name: ack-ec2-controller
             - kind: ServiceAccount
               name: ack-ec2-controller
               namespace: default
@@ -8641,6 +8646,11 @@ components:
             kind: ClusterRole
             name: ack-ec2-controller
         subjects:
+            - name: ack-ec2-controller
+            - name: ack-ec2-controller
+            - name: ack-ec2-controller
+            - name: ack-ec2-controller
+            - name: ack-ec2-controller
             - name: ack-ec2-controller
             - name: ack-ec2-controller
             - name: ack-ec2-controller
@@ -9447,6 +9457,11 @@ components:
             kind: Role
             name: ack-configmaps-cache-ec2-controller
         subjects:
+            - name: ack-ec2-controller
+            - name: ack-ec2-controller
+            - name: ack-ec2-controller
+            - name: ack-ec2-controller
+            - name: ack-ec2-controller
             - name: ack-ec2-controller
             - name: ack-ec2-controller
             - name: ack-ec2-controller
@@ -30682,4 +30697,4 @@ relationships:
       type: sibling
       version: v1.0.0
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.67
+version: 0.0.72
