@@ -101,7 +101,9 @@ collections:
   models:
     output: true
   catalog:
-    output: true   
+    output: true
+  modelscustominfo:
+    output: false 
   # integrations:
   #   output: true
   #   permalink: /extensibility/:collection/:path    
