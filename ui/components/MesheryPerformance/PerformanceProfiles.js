@@ -605,6 +605,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
             setProfileForModal={setProfileForModal}
             pages={Math.ceil(count / pageSize)}
             setPage={setPage}
+            testHandler={setSelectedProfile}
           />
         ) : (
           <UsesSistent>
@@ -663,6 +664,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
               contentType={profileForModal?.content_type}
               runTestOnMount={!!profileForModal?.runTest}
               metadata={profileForModal?.metadata}
+              closeModal={() => setProfileForModal(undefined)}
             />
           </Modal>
         </UsesSistent>

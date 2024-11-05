@@ -8,3 +8,7 @@
 svg.css-19bqh2r:hover {
   cursor: pointer;
 }
+
+.app-error {
+  background-color: #f0a303 !important;
+}
