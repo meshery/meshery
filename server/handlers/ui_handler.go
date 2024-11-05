@@ -47,13 +47,15 @@ func (h *Handler) ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, b
 
 	reqURL := r.URL.Path
 	reqURL = strings.Replace(reqURL, reqBasePath, "", 1)
-
 	var filePath strings.Builder
 	if reqURL == "/" && viper.Get("RELEASE_CHANNEL") == (models.Kanvas{}).String() {
-
 		provider, ok := h.config.Providers[h.Provider]
 		if ok && provider != nil {
 			provProps := provider.GetProviderProperties()
+			if len(provProps.Extensions.Navigator) == 0 {
+				provider.TokenHandler(w, r, false)
+			}
+			provProps = provider.GetProviderProperties()
 			redirectURL := models.GetRedirectURLForNavigatorExtension(&provProps)
 			http.Redirect(w, r, redirectURL, http.StatusPermanentRedirect)
 			return
