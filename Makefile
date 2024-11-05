@@ -81,7 +81,7 @@ docker-testing-env:
 #-----------------------------------------------------------------------------
 # Meshery Server Native Builds
 #-----------------------------------------------------------------------------
-.PHONY: server wrk2-setup nighthawk-setup server-local server-skip-compgen server-no-content golangci proto-build error build-server server-binary
+.PHONY: server wrk2-setup nighthawk-setup server-local server-skip-compgen server-no-content golangci proto-build error build-server server-binary server-binary-local
 ## Setup wrk2 for local development.
 wrk2-setup:
 	echo "setup-wrk does not work on Mac Catalina at the moment"
@@ -125,6 +125,18 @@ server-binary:
 	cd server/cmd; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	KEYS_PATH=$(KEYS_PATH) \
+	../../main; cd ../../
+
+## Running the meshery server using binary with local provider.
+server-binary-local:
+	cd server/cmd; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_LOCAL) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
