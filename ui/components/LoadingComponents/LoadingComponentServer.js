@@ -2,43 +2,47 @@ import React from 'react';
 // import AnimatedMeshery from './Animations/AnimatedMesheryCSS';
 import PropTypes from 'prop-types';
 import uiConfig from '../../ui.config';
-import { useTheme } from '@material-ui/core';
+import { Typography, styled } from '@layer5/sistent';
+import { UsesSistent } from '../SistentWrapper';
+
+const StyledAnimatedLogoDark = styled(uiConfig.AnimatedLogoDark)(({ theme }) => ({
+  height: '100px',
+  margin: '4px 0px 8px',
+  fill: theme.palette.mode === 'dark' ? '#fff' : '',
+}));
 
 function LoadingScreen(props) {
   const { message, children, isLoading, ...other } = props;
-  const AnimatedLogoDark = uiConfig.AnimatedLogoDark;
-  const theme = useTheme();
 
   if (isLoading) {
     return (
-      <div
-        {...other}
-        style={{
-          display: 'grid',
-          placeItems: 'center',
-          minHeight: '100vh',
-          textAlign: 'center',
-          backgroundColor: '#263238', // color of navigation menu
-          color: '#dedede', // soften the subtitle / message
-        }}
-      >
-        <div>
-          <AnimatedLogoDark
-            style={{ height: '100px', margin: '4px 0px 8px' }}
-            textFill={theme.palette.type === 'dark' ? '#fff' : ''}
-          />
-          <h1
-            style={{
-              fontFamily: 'sans-serif',
-              fontSize: '18px',
-              fontWeight: 'normal',
-              marginTop: '1rem',
-            }}
-          >
-            {message}
-          </h1>
+      <UsesSistent>
+        <div
+          {...other}
+          style={{
+            display: 'grid',
+            placeItems: 'center',
+            minHeight: '100vh',
+            textAlign: 'center',
+            backgroundColor: '#263238', // color of navigation menu
+            color: '#dedede', // soften the subtitle / message
+          }}
+        >
+          <div>
+            <StyledAnimatedLogoDark />
+            <Typography
+              sx={{
+                fontFamily: 'Qanelas Soft, sans-serif',
+                fontSize: '16px',
+                fontWeight: 'normal',
+                marginTop: '1rem',
+              }}
+            >
+              {message}
+            </Typography>
+          </div>
         </div>
-      </div>
+      </UsesSistent>
     );
   }
 
