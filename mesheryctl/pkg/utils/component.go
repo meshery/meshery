@@ -348,13 +348,14 @@ func CreateComponentsMetadataAndCreateSVGsForMDStyle(model ModelCSV, components 
 - name: %s
   colorIcon: %s
   whiteIcon: %s
-  description: %s`
+  description: %s
+  isAnnotation: %s`
 
 		compName := utils.FormatName(manifests.FormatToReadableString(comp.Component))
 		colorIconDir := filepath.Join(svgDir, compName, "icons", "color")
 		whiteIconDir := filepath.Join(svgDir, compName, "icons", "white")
 
-		componentMetadata += fmt.Sprintf(componentTemplate, compName, fmt.Sprintf("%s/%s-color.svg", colorIconDir, compName), fmt.Sprintf("%s/%s-white.svg", whiteIconDir, compName), comp.Description)
+		componentMetadata += fmt.Sprintf(componentTemplate, compName, fmt.Sprintf("%s/%s-color.svg", colorIconDir, compName), fmt.Sprintf("%s/%s-white.svg", whiteIconDir, compName), comp.Description, comp.IsAnnotation)
 
 		// create color svg dir
 		err = os.MkdirAll(filepath.Join(path, compName, "icons", "color"), 0777)
