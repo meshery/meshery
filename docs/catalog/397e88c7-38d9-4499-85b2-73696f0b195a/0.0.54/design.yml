@@ -792,9 +792,14 @@ components:
         version: networking.k8s.io/v1
       configuration:
         metadata:
+            name: network-policy-wy
             namespace: default
         spec:
-            ingress: database
+            ingress:
+                - from: []
+                  ports: []
+                - from: []
+                  ports: []
             selector:
                 match Labels:
                     role: db
@@ -861,8 +866,8 @@ components:
         opacity: 1
         padding: 6
         position:
-            x: 0
-            "y": 0
+            x: -42.82193343118047
+            "y": -20.054198484311343
         primaryColor: '#326CE5'
         secondaryColor: '#7aa1f0'
         shape: circle
@@ -2084,4 +2089,4 @@ relationships:
       type: parent
       version: v1.0.0
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.56
+version: 0.0.66

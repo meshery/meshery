@@ -3490,7 +3490,7 @@ func (l *RemoteProvider) TokenHandler(w http.ResponseWriter, r *http.Request, _ 
 	redirectURL := "/"
 	isPlayGround, _ := strconv.ParseBool(viper.GetString("PLAYGROUND"))
 	if isPlayGround {
-		redirectURL = GetRedirectURLForNavigatorExtension(&providerProperties)
+		redirectURL = GetRedirectURLForNavigatorExtension(&providerProperties, l.Log)
 	}
 
 	refQueryParam := r.URL.Query().Get("ref")
