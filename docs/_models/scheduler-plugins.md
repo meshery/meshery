@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/scheduler-plugins/components/elastic-quota/icons/color/elastic-quota-color.svg
   whiteIcon: assets/img/integrations/scheduler-plugins/components/elastic-quota/icons/white/elastic-quota-white.svg
   description: 
+  isAnnotation: false
 - name: pod-group
   colorIcon: assets/img/integrations/scheduler-plugins/components/pod-group/icons/color/pod-group-color.svg
   whiteIcon: assets/img/integrations/scheduler-plugins/components/pod-group/icons/white/pod-group-white.svg
   description: 
+  isAnnotation: false
 - name: node-resource-topology
   colorIcon: assets/img/integrations/scheduler-plugins/components/node-resource-topology/icons/color/node-resource-topology-color.svg
   whiteIcon: assets/img/integrations/scheduler-plugins/components/node-resource-topology/icons/white/node-resource-topology-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Custom pod placement rules",
   "Priority-based scheduling",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Integrates with scheduler plugins"
 howItWorksDetails: "Flexible and customizable scheduling within Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

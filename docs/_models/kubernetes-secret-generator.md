@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/kubernetes-secret-generator/components/basic-auth/icons/color/basic-auth-color.svg
   whiteIcon: assets/img/integrations/kubernetes-secret-generator/components/basic-auth/icons/white/basic-auth-white.svg
   description: 
+  isAnnotation: false
 - name: ssh-key-pair
   colorIcon: assets/img/integrations/kubernetes-secret-generator/components/ssh-key-pair/icons/color/ssh-key-pair-color.svg
   whiteIcon: assets/img/integrations/kubernetes-secret-generator/components/ssh-key-pair/icons/white/ssh-key-pair-white.svg
   description: 
+  isAnnotation: false
 - name: string-secret
   colorIcon: assets/img/integrations/kubernetes-secret-generator/components/string-secret/icons/color/string-secret-color.svg
   whiteIcon: assets/img/integrations/kubernetes-secret-generator/components/string-secret/icons/white/string-secret-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Create secrets for Kubernetes applications",
   "Manage secrets securely",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

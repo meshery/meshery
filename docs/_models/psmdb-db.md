@@ -14,18 +14,22 @@ components:
   colorIcon: assets/img/integrations/psmdb-db/components/percona-server-mongo-db-backup/icons/color/percona-server-mongo-db-backup-color.svg
   whiteIcon: assets/img/integrations/psmdb-db/components/percona-server-mongo-db-backup/icons/white/percona-server-mongo-db-backup-white.svg
   description: 
+  isAnnotation: 
 - name: percona-server-mongo-db-restore
   colorIcon: assets/img/integrations/psmdb-db/components/percona-server-mongo-db-restore/icons/color/percona-server-mongo-db-restore-color.svg
   whiteIcon: assets/img/integrations/psmdb-db/components/percona-server-mongo-db-restore/icons/white/percona-server-mongo-db-restore-white.svg
   description: 
+  isAnnotation: 
 - name: percona-server-mongo-db
   colorIcon: assets/img/integrations/psmdb-db/components/percona-server-mongo-db/icons/color/percona-server-mongo-db-color.svg
   whiteIcon: assets/img/integrations/psmdb-db/components/percona-server-mongo-db/icons/white/percona-server-mongo-db-white.svg
   description: 
+  isAnnotation: 
 - name: percona-server-mongo-db
   colorIcon: assets/img/integrations/psmdb-db/components/percona-server-mongo-db/icons/color/percona-server-mongo-db-color.svg
   whiteIcon: assets/img/integrations/psmdb-db/components/percona-server-mongo-db/icons/white/percona-server-mongo-db-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "High-performance MongoDB database",
   "Enhanced security and monitoring features",
@@ -33,6 +37,7 @@ featureList: [
 ]
 howItWorks: "Integrates Percona Server for MongoDB"
 howItWorksDetails: "Streamlined MongoDB management within Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

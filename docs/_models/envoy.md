@@ -17,6 +17,7 @@ featureList: [
 ]
 howItWorks: "Integrates Envoy configurations"
 howItWorksDetails: "Enhanced traffic management and observability in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

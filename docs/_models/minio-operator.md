@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/minio-operator/components/tenant/icons/color/tenant-color.svg
   whiteIcon: assets/img/integrations/minio-operator/components/tenant/icons/white/tenant-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "AWS S3 Compatibility",
   "MinIO IAM is built with AWS Identity and Access Management (IAM) compatibility at its core and presents that framework to applications and users no matter the environment.",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

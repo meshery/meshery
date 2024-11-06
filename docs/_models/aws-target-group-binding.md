@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/aws-target-group-binding/components/target-group-binding/icons/color/target-group-binding-color.svg
   whiteIcon: assets/img/integrations/aws-target-group-binding/components/target-group-binding/icons/white/target-group-binding-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Expose your pods using an existing ALB TargetGroup or NLB TargetGroup.",
   "Allows you to provision the load balancer infrastructure completely outside of Kubernetes.",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

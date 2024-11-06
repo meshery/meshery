@@ -14,10 +14,12 @@ components:
   colorIcon: assets/img/integrations/cass-operator/components/cassandra-datacenter/icons/color/cassandra-datacenter-color.svg
   whiteIcon: assets/img/integrations/cass-operator/components/cassandra-datacenter/icons/white/cassandra-datacenter-white.svg
   description: 
+  isAnnotation: false
 - name: cassandra-task
   colorIcon: assets/img/integrations/cass-operator/components/cassandra-task/icons/color/cassandra-task-color.svg
   whiteIcon: assets/img/integrations/cass-operator/components/cassandra-task/icons/white/cassandra-task-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Manages Cassandra configuration",
   "Provides backup and restore functionality",
@@ -25,6 +27,7 @@ featureList: [
 ]
 howItWorks: "Simplified Cassandra management in Kubernetes"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

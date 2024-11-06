@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/terraform/components/workspace/icons/color/workspace-color.svg
   whiteIcon: assets/img/integrations/terraform/components/workspace/icons/white/workspace-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Declarative infrastructure configuration",
   "Multi-cloud support",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Integrates Terraform configurations"
 howItWorksDetails: "Infrastructure as code management within Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

@@ -14,26 +14,32 @@ components:
   colorIcon: assets/img/integrations/aws-eventbridge-controller/components/archive/icons/color/archive-color.svg
   whiteIcon: assets/img/integrations/aws-eventbridge-controller/components/archive/icons/white/archive-white.svg
   description: 
+  isAnnotation: false
 - name: endpoint
   colorIcon: assets/img/integrations/aws-eventbridge-controller/components/endpoint/icons/color/endpoint-color.svg
   whiteIcon: assets/img/integrations/aws-eventbridge-controller/components/endpoint/icons/white/endpoint-white.svg
   description: 
+  isAnnotation: false
 - name: event-bus
   colorIcon: assets/img/integrations/aws-eventbridge-controller/components/event-bus/icons/color/event-bus-color.svg
   whiteIcon: assets/img/integrations/aws-eventbridge-controller/components/event-bus/icons/white/event-bus-white.svg
   description: 
+  isAnnotation: false
 - name: field-export
   colorIcon: assets/img/integrations/aws-eventbridge-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-eventbridge-controller/components/field-export/icons/white/field-export-white.svg
   description: 
+  isAnnotation: false
 - name: rule
   colorIcon: assets/img/integrations/aws-eventbridge-controller/components/rule/icons/color/rule-color.svg
   whiteIcon: assets/img/integrations/aws-eventbridge-controller/components/rule/icons/white/rule-white.svg
   description: 
+  isAnnotation: false
 - name: adopted-resource
   colorIcon: assets/img/integrations/aws-eventbridge-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-eventbridge-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Amazon EventBridge Event Bus is a serverless event bus that helps you receive, filter, transform, route, and deliver events.",
   "Amazon EventBridge Pipes is a serverless point-to-point integration resource that helps you connect event producers to event consumers with optional filtering, enrichment, and transformation capabilities.",
@@ -41,6 +47,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

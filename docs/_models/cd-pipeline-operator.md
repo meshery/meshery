@@ -14,10 +14,12 @@ components:
   colorIcon: assets/img/integrations/cd-pipeline-operator/components/cd-pipeline/icons/color/cd-pipeline-color.svg
   whiteIcon: assets/img/integrations/cd-pipeline-operator/components/cd-pipeline/icons/white/cd-pipeline-white.svg
   description: 
+  isAnnotation: false
 - name: stage
   colorIcon: assets/img/integrations/cd-pipeline-operator/components/stage/icons/color/stage-color.svg
   whiteIcon: assets/img/integrations/cd-pipeline-operator/components/stage/icons/white/stage-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Provides a pre-defined set of CI/CD patterns and tools.",
   "Allows shortening the time that is passed before an active development.",
@@ -25,6 +27,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

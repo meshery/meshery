@@ -14,30 +14,37 @@ components:
   colorIcon: assets/img/integrations/tenant-operator/components/integration-config/icons/color/integration-config-color.svg
   whiteIcon: assets/img/integrations/tenant-operator/components/integration-config/icons/white/integration-config-white.svg
   description: 
+  isAnnotation: false
 - name: quota
   colorIcon: assets/img/integrations/tenant-operator/components/quota/icons/color/quota-color.svg
   whiteIcon: assets/img/integrations/tenant-operator/components/quota/icons/white/quota-white.svg
   description: 
+  isAnnotation: false
 - name: resource-supervisor
   colorIcon: assets/img/integrations/tenant-operator/components/resource-supervisor/icons/color/resource-supervisor-color.svg
   whiteIcon: assets/img/integrations/tenant-operator/components/resource-supervisor/icons/white/resource-supervisor-white.svg
   description: 
+  isAnnotation: false
 - name: template-group-instance
   colorIcon: assets/img/integrations/tenant-operator/components/template-group-instance/icons/color/template-group-instance-color.svg
   whiteIcon: assets/img/integrations/tenant-operator/components/template-group-instance/icons/white/template-group-instance-white.svg
   description: 
+  isAnnotation: false
 - name: template-instance
   colorIcon: assets/img/integrations/tenant-operator/components/template-instance/icons/color/template-instance-color.svg
   whiteIcon: assets/img/integrations/tenant-operator/components/template-instance/icons/white/template-instance-white.svg
   description: 
+  isAnnotation: false
 - name: template
   colorIcon: assets/img/integrations/tenant-operator/components/template/icons/color/template-color.svg
   whiteIcon: assets/img/integrations/tenant-operator/components/template/icons/white/template-white.svg
   description: 
+  isAnnotation: FALSE
 - name: tenant
   colorIcon: assets/img/integrations/tenant-operator/components/tenant/icons/color/tenant-color.svg
   whiteIcon: assets/img/integrations/tenant-operator/components/tenant/icons/white/tenant-white.svg
   description: 
+  isAnnotation: FALSE
 featureList: [
   "Isolates tenants within a Kubernetes cluster",
   "Enforces resource quotas for tenants",
@@ -45,6 +52,7 @@ featureList: [
 ]
 howItWorks: "Integrates with Tenant Operator"
 howItWorksDetails: "Improved isolation and management of tenants within Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

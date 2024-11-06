@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/openelb/components/bgp-conf/icons/color/bgp-conf-color.svg
   whiteIcon: assets/img/integrations/openelb/components/bgp-conf/icons/white/bgp-conf-white.svg
   description: 
+  isAnnotation: false
 - name: bgp-peer
   colorIcon: assets/img/integrations/openelb/components/bgp-peer/icons/color/bgp-peer-color.svg
   whiteIcon: assets/img/integrations/openelb/components/bgp-peer/icons/white/bgp-peer-white.svg
   description: 
+  isAnnotation: false
 - name: eip
   colorIcon: assets/img/integrations/openelb/components/eip/icons/color/eip-color.svg
   whiteIcon: assets/img/integrations/openelb/components/eip/icons/white/eip-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Bare-metal load balancing",
   "Layer 2/3 load balancing",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Integrates with OpenELB configurations"
 howItWorksDetails: "Simplified load balancing configuration and management within Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

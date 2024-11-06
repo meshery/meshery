@@ -14,26 +14,32 @@ components:
   colorIcon: assets/img/integrations/fluentbit-operator/components/filter/icons/color/filter-color.svg
   whiteIcon: assets/img/integrations/fluentbit-operator/components/filter/icons/white/filter-white.svg
   description: 
+  isAnnotation: false
 - name: fluent-bit-config
   colorIcon: assets/img/integrations/fluentbit-operator/components/fluent-bit-config/icons/color/fluent-bit-config-color.svg
   whiteIcon: assets/img/integrations/fluentbit-operator/components/fluent-bit-config/icons/white/fluent-bit-config-white.svg
   description: 
+  isAnnotation: false
 - name: input
   colorIcon: assets/img/integrations/fluentbit-operator/components/input/icons/color/input-color.svg
   whiteIcon: assets/img/integrations/fluentbit-operator/components/input/icons/white/input-white.svg
   description: 
+  isAnnotation: false
 - name: output
   colorIcon: assets/img/integrations/fluentbit-operator/components/output/icons/color/output-color.svg
   whiteIcon: assets/img/integrations/fluentbit-operator/components/output/icons/white/output-white.svg
   description: 
+  isAnnotation: false
 - name: parser
   colorIcon: assets/img/integrations/fluentbit-operator/components/parser/icons/color/parser-color.svg
   whiteIcon: assets/img/integrations/fluentbit-operator/components/parser/icons/white/parser-white.svg
   description: 
+  isAnnotation: false
 - name: fluent-bit
   colorIcon: assets/img/integrations/fluentbit-operator/components/fluent-bit/icons/color/fluent-bit-color.svg
   whiteIcon: assets/img/integrations/fluentbit-operator/components/fluent-bit/icons/white/fluent-bit-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Fluent Bit Management: Deploy and destroy Fluent Bit DaemonSet automatically.",
   "Fluentd Management: Deploy and destroy Fluentd StatefulSet automatically.",
@@ -48,6 +54,7 @@ Fluent Bit only mode: If you just need to collect logs and send logs to the fina
 Fluent Bit + Fluentd mode: If you also need to perform some advanced processing on the logs collected or send to more sinks, then you also need Fluentd.
 Fluentd only mode: If you need to receive logs through networks like HTTP or Syslog and then process and send the log to the final sinks, you only need Fluentd.
 Fluent Operator includes CRDs and controllers for both Fluent Bit and Fluentd which allows you to config your log processing pipelines in the 3 modes mentioned above as you wish."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

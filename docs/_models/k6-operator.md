@@ -20,6 +20,7 @@ howItWorks: "k6 integrates seamlessly with CI/CD and automation tools, enabling 
 "
 howItWorksDetails: "You can use k6 to simulate traffic as part of your chaos experiments, trigger them from your k6 tests or inject different types of faults in Kubernetes with xk6-disruptor.
 "
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

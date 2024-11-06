@@ -14,18 +14,22 @@ components:
   colorIcon: assets/img/integrations/aws-ecr-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-ecr-controller/components/field-export/icons/white/field-export-white.svg
   description: 
+  isAnnotation: false
 - name: adopted-resource
   colorIcon: assets/img/integrations/aws-ecr-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-ecr-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+  isAnnotation: false
 - name: pull-through-cache-rule
   colorIcon: assets/img/integrations/aws-ecr-controller/components/pull-through-cache-rule/icons/color/pull-through-cache-rule-color.svg
   whiteIcon: assets/img/integrations/aws-ecr-controller/components/pull-through-cache-rule/icons/white/pull-through-cache-rule-white.svg
   description: 
+  isAnnotation: false
 - name: repository
   colorIcon: assets/img/integrations/aws-ecr-controller/components/repository/icons/color/repository-color.svg
   whiteIcon: assets/img/integrations/aws-ecr-controller/components/repository/icons/white/repository-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "OCI and Docker support",
   "Public container image and artifact gallery
@@ -35,6 +39,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

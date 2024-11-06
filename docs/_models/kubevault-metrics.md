@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/kubevault-metrics/components/metrics-configuration/icons/color/metrics-configuration-color.svg
   whiteIcon: assets/img/integrations/kubevault-metrics/components/metrics-configuration/icons/white/metrics-configuration-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Exposes KubeVault and Vault metrics to Prometheus",
   "Enables monitoring of Vault health and performance",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Integrates KubeVault metrics"
 howItWorksDetails: "Enhanced monitoring and observability of Vault in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

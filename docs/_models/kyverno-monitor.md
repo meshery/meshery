@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/kyverno-monitor/components/kyverno-monitor/icons/color/kyverno-monitor-color.svg
   whiteIcon: assets/img/integrations/kyverno-monitor/components/kyverno-monitor/icons/white/kyverno-monitor-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Use Meshery&ldquos GitHub Actions to test policies and validate resources without need for the Kyverno CLI.",
   "Use Meshery with Kyverno to inspect image metadata and 
@@ -23,6 +24,7 @@ match resources using label selectors and wildcards.",
 ]
 howItWorks: "Block non-conformant resources"
 howItWorksDetails: "Using MeshMap, apply best practice design templates for admission control over non-conformant resources."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

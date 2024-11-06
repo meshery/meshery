@@ -17,6 +17,7 @@ featureList: [
 ]
 howItWorks: "Integrates Inclavare Containers"
 howItWorksDetails: "Confidential computing for sensitive applications in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

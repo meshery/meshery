@@ -14,22 +14,27 @@ components:
   colorIcon: assets/img/integrations/aws-documentdb-controller/components/db-cluster/icons/color/db-cluster-color.svg
   whiteIcon: assets/img/integrations/aws-documentdb-controller/components/db-cluster/icons/white/db-cluster-white.svg
   description: 
+  isAnnotation: 
 - name: db-instance
   colorIcon: assets/img/integrations/aws-documentdb-controller/components/db-instance/icons/color/db-instance-color.svg
   whiteIcon: assets/img/integrations/aws-documentdb-controller/components/db-instance/icons/white/db-instance-white.svg
   description: 
+  isAnnotation: 
 - name: db-subnet-group
   colorIcon: assets/img/integrations/aws-documentdb-controller/components/db-subnet-group/icons/color/db-subnet-group-color.svg
   whiteIcon: assets/img/integrations/aws-documentdb-controller/components/db-subnet-group/icons/white/db-subnet-group-white.svg
   description: 
+  isAnnotation: 
 - name: adopted-resource
   colorIcon: assets/img/integrations/aws-documentdb-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-documentdb-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+  isAnnotation: 
 - name: field-export
   colorIcon: assets/img/integrations/aws-documentdb-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-documentdb-controller/components/field-export/icons/white/field-export-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Scalable NoSQL database",
   "Supports MongoDB workloads",
@@ -37,6 +42,7 @@ featureList: [
 ]
 howItWorks: "Integrates DocumentDB"
 howItWorksDetails: "Simplified NoSQL database management on AWS"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

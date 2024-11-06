@@ -17,6 +17,7 @@ featureList: [
 ]
 howItWorks: "Integrates Jaeger traces"
 howItWorksDetails: "Enhanced observability and troubleshooting of distributed systems in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

@@ -14,66 +14,82 @@ components:
   colorIcon: assets/img/integrations/crossplane/components/composite-resource-definition/icons/color/composite-resource-definition-color.svg
   whiteIcon: assets/img/integrations/crossplane/components/composite-resource-definition/icons/white/composite-resource-definition-white.svg
   description: 
+  isAnnotation: false
 - name: composition-revision
   colorIcon: assets/img/integrations/crossplane/components/composition-revision/icons/color/composition-revision-color.svg
   whiteIcon: assets/img/integrations/crossplane/components/composition-revision/icons/white/composition-revision-white.svg
   description: 
+  isAnnotation: false
 - name: composition
   colorIcon: assets/img/integrations/crossplane/components/composition/icons/color/composition-color.svg
   whiteIcon: assets/img/integrations/crossplane/components/composition/icons/white/composition-white.svg
   description: 
+  isAnnotation: false
 - name: environment-config
   colorIcon: assets/img/integrations/crossplane/components/environment-config/icons/color/environment-config-color.svg
   whiteIcon: assets/img/integrations/crossplane/components/environment-config/icons/white/environment-config-white.svg
   description: 
+  isAnnotation: false
 - name: usage
   colorIcon: assets/img/integrations/crossplane/components/usage/icons/color/usage-color.svg
   whiteIcon: assets/img/integrations/crossplane/components/usage/icons/white/usage-white.svg
   description: 
+  isAnnotation: false
 - name: configuration-revision
   colorIcon: assets/img/integrations/crossplane/components/configuration-revision/icons/color/configuration-revision-color.svg
   whiteIcon: assets/img/integrations/crossplane/components/configuration-revision/icons/white/configuration-revision-white.svg
   description: 
+  isAnnotation: false
 - name: configuration
   colorIcon: assets/img/integrations/crossplane/components/configuration/icons/color/configuration-color.svg
   whiteIcon: assets/img/integrations/crossplane/components/configuration/icons/white/configuration-white.svg
   description: 
+  isAnnotation: false
 - name: controller-config
   colorIcon: assets/img/integrations/crossplane/components/controller-config/icons/color/controller-config-color.svg
   whiteIcon: assets/img/integrations/crossplane/components/controller-config/icons/white/controller-config-white.svg
   description: 
+  isAnnotation: false
 - name: deployment-runtime-config
   colorIcon: assets/img/integrations/crossplane/components/deployment-runtime-config/icons/color/deployment-runtime-config-color.svg
   whiteIcon: assets/img/integrations/crossplane/components/deployment-runtime-config/icons/white/deployment-runtime-config-white.svg
   description: 
+  isAnnotation: false
 - name: function-revision
   colorIcon: assets/img/integrations/crossplane/components/function-revision/icons/color/function-revision-color.svg
   whiteIcon: assets/img/integrations/crossplane/components/function-revision/icons/white/function-revision-white.svg
   description: 
+  isAnnotation: false
 - name: function
   colorIcon: assets/img/integrations/crossplane/components/function/icons/color/function-color.svg
   whiteIcon: assets/img/integrations/crossplane/components/function/icons/white/function-white.svg
   description: 
+  isAnnotation: false
 - name: lock
   colorIcon: assets/img/integrations/crossplane/components/lock/icons/color/lock-color.svg
   whiteIcon: assets/img/integrations/crossplane/components/lock/icons/white/lock-white.svg
   description: 
+  isAnnotation: false
 - name: provider-revision
   colorIcon: assets/img/integrations/crossplane/components/provider-revision/icons/color/provider-revision-color.svg
   whiteIcon: assets/img/integrations/crossplane/components/provider-revision/icons/white/provider-revision-white.svg
   description: 
+  isAnnotation: false
 - name: provider
   colorIcon: assets/img/integrations/crossplane/components/provider/icons/color/provider-color.svg
   whiteIcon: assets/img/integrations/crossplane/components/provider/icons/white/provider-white.svg
   description: 
+  isAnnotation: false
 - name: store-config
   colorIcon: assets/img/integrations/crossplane/components/store-config/icons/color/store-config-color.svg
   whiteIcon: assets/img/integrations/crossplane/components/store-config/icons/white/store-config-white.svg
   description: 
+  isAnnotation: false
 - name: image-config
   colorIcon: assets/img/integrations/crossplane/components/image-config/icons/color/image-config-color.svg
   whiteIcon: assets/img/integrations/crossplane/components/image-config/icons/white/image-config-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Highly extensible backend that enables you to orchestrate applications and infrastructure no matter where they run.",
   "Highly configurable frontend that lets you define the declarative API it offers.",
@@ -81,6 +97,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

@@ -17,6 +17,7 @@ featureList: [
 ]
 howItWorks: "Streamlined Bitwarden secrets management in Kubernetes"
 howItWorksDetails: "The sm-operator uses a controller to synchronize Bitwarden secrets into Kubernetes secrets. "
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/jaeger-operator/components/jaeger/icons/color/jaeger-color.svg
   whiteIcon: assets/img/integrations/jaeger-operator/components/jaeger/icons/white/jaeger-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Automates Jaeger installation and configuration",
   "Manages Jaeger resources",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Jaeger"
 howItWorksDetails: "Streamlined Jaeger management within Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

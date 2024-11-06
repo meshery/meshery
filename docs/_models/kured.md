@@ -17,6 +17,7 @@ featureList: [
 ]
 howItWorks: "Integrates with Kured"
 howItWorksDetails: "Improved node reliability and security in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

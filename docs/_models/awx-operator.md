@@ -14,18 +14,22 @@ components:
   colorIcon: assets/img/integrations/awx-operator/components/awx-backup/icons/color/awx-backup-color.svg
   whiteIcon: assets/img/integrations/awx-operator/components/awx-backup/icons/white/awx-backup-white.svg
   description: 
+  isAnnotation: false
 - name: awx-restore
   colorIcon: assets/img/integrations/awx-operator/components/awx-restore/icons/color/awx-restore-color.svg
   whiteIcon: assets/img/integrations/awx-operator/components/awx-restore/icons/white/awx-restore-white.svg
   description: 
+  isAnnotation: false
 - name: awx
   colorIcon: assets/img/integrations/awx-operator/components/awx/icons/color/awx-color.svg
   whiteIcon: assets/img/integrations/awx-operator/components/awx/icons/white/awx-white.svg
   description: 
+  isAnnotation: false
 - name: awx-mesh-ingress
   colorIcon: assets/img/integrations/awx-operator/components/awx-mesh-ingress/icons/color/awx-mesh-ingress-color.svg
   whiteIcon: assets/img/integrations/awx-operator/components/awx-mesh-ingress/icons/white/awx-mesh-ingress-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Keep revision history and audit trail of all configuration changes",
   "Use MeshMap&lsquo;s visual designer to explore your App Mesh configuration",
@@ -33,6 +37,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

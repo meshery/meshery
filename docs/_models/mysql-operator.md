@@ -14,34 +14,42 @@ components:
   colorIcon: assets/img/integrations/mysql-operator/components/inno-db-cluster/icons/color/inno-db-cluster-color.svg
   whiteIcon: assets/img/integrations/mysql-operator/components/inno-db-cluster/icons/white/inno-db-cluster-white.svg
   description: 
+  isAnnotation: false
 - name: my-sql-backup
   colorIcon: assets/img/integrations/mysql-operator/components/my-sql-backup/icons/color/my-sql-backup-color.svg
   whiteIcon: assets/img/integrations/mysql-operator/components/my-sql-backup/icons/white/my-sql-backup-white.svg
   description: 
+  isAnnotation: false
 - name: cluster-kopf-peering
   colorIcon: assets/img/integrations/mysql-operator/components/cluster-kopf-peering/icons/color/cluster-kopf-peering-color.svg
   whiteIcon: assets/img/integrations/mysql-operator/components/cluster-kopf-peering/icons/white/cluster-kopf-peering-white.svg
   description: 
+  isAnnotation: false
 - name: kopf-peering
   colorIcon: assets/img/integrations/mysql-operator/components/kopf-peering/icons/color/kopf-peering-color.svg
   whiteIcon: assets/img/integrations/mysql-operator/components/kopf-peering/icons/white/kopf-peering-white.svg
   description: 
+  isAnnotation: false
 - name: mysql-backup
   colorIcon: assets/img/integrations/mysql-operator/components/mysql-backup/icons/color/mysql-backup-color.svg
   whiteIcon: assets/img/integrations/mysql-operator/components/mysql-backup/icons/white/mysql-backup-white.svg
   description: 
+  isAnnotation: 
 - name: mysql-cluster
   colorIcon: assets/img/integrations/mysql-operator/components/mysql-cluster/icons/color/mysql-cluster-color.svg
   whiteIcon: assets/img/integrations/mysql-operator/components/mysql-cluster/icons/white/mysql-cluster-white.svg
   description: 
+  isAnnotation: 
 - name: mysql-database
   colorIcon: assets/img/integrations/mysql-operator/components/mysql-database/icons/color/mysql-database-color.svg
   whiteIcon: assets/img/integrations/mysql-operator/components/mysql-database/icons/white/mysql-database-white.svg
   description: 
+  isAnnotation: 
 - name: mysql-user
   colorIcon: assets/img/integrations/mysql-operator/components/mysql-user/icons/color/mysql-user-color.svg
   whiteIcon: assets/img/integrations/mysql-operator/components/mysql-user/icons/white/mysql-user-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Automates MySQL deployment and scaling",
   "Manages backups, restores, and upgrades",
@@ -49,6 +57,7 @@ featureList: [
 ]
 howItWorks: "Deploys and manages MySQL"
 howItWorksDetails: "Streamlined MySQL management within Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

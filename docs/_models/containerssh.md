@@ -17,6 +17,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Secure and flexible SSH access to Kubernetes resources"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

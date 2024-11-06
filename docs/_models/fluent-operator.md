@@ -14,58 +14,72 @@ components:
   colorIcon: assets/img/integrations/fluent-operator/components/cluster-filter/icons/color/cluster-filter-color.svg
   whiteIcon: assets/img/integrations/fluent-operator/components/cluster-filter/icons/white/cluster-filter-white.svg
   description: 
+  isAnnotation: false
 - name: cluster-fluent-bit-config
   colorIcon: assets/img/integrations/fluent-operator/components/cluster-fluent-bit-config/icons/color/cluster-fluent-bit-config-color.svg
   whiteIcon: assets/img/integrations/fluent-operator/components/cluster-fluent-bit-config/icons/white/cluster-fluent-bit-config-white.svg
   description: 
+  isAnnotation: false
 - name: cluster-input
   colorIcon: assets/img/integrations/fluent-operator/components/cluster-input/icons/color/cluster-input-color.svg
   whiteIcon: assets/img/integrations/fluent-operator/components/cluster-input/icons/white/cluster-input-white.svg
   description: 
+  isAnnotation: false
 - name: cluster-output
   colorIcon: assets/img/integrations/fluent-operator/components/cluster-output/icons/color/cluster-output-color.svg
   whiteIcon: assets/img/integrations/fluent-operator/components/cluster-output/icons/white/cluster-output-white.svg
   description: 
+  isAnnotation: false
 - name: cluster-parser
   colorIcon: assets/img/integrations/fluent-operator/components/cluster-parser/icons/color/cluster-parser-color.svg
   whiteIcon: assets/img/integrations/fluent-operator/components/cluster-parser/icons/white/cluster-parser-white.svg
   description: 
+  isAnnotation: false
 - name: fluent-bit
   colorIcon: assets/img/integrations/fluent-operator/components/fluent-bit/icons/color/fluent-bit-color.svg
   whiteIcon: assets/img/integrations/fluent-operator/components/fluent-bit/icons/white/fluent-bit-white.svg
   description: 
+  isAnnotation: false
 - name: cluster-fluentd-config
   colorIcon: assets/img/integrations/fluent-operator/components/cluster-fluentd-config/icons/color/cluster-fluentd-config-color.svg
   whiteIcon: assets/img/integrations/fluent-operator/components/cluster-fluentd-config/icons/white/cluster-fluentd-config-white.svg
   description: 
+  isAnnotation: false
 - name: filter
   colorIcon: assets/img/integrations/fluent-operator/components/filter/icons/color/filter-color.svg
   whiteIcon: assets/img/integrations/fluent-operator/components/filter/icons/white/filter-white.svg
   description: 
+  isAnnotation: false
 - name: fluentd-config
   colorIcon: assets/img/integrations/fluent-operator/components/fluentd-config/icons/color/fluentd-config-color.svg
   whiteIcon: assets/img/integrations/fluent-operator/components/fluentd-config/icons/white/fluentd-config-white.svg
   description: 
+  isAnnotation: false
 - name: fluentd
   colorIcon: assets/img/integrations/fluent-operator/components/fluentd/icons/color/fluentd-color.svg
   whiteIcon: assets/img/integrations/fluent-operator/components/fluentd/icons/white/fluentd-white.svg
   description: 
+  isAnnotation: false
 - name: collector
   colorIcon: assets/img/integrations/fluent-operator/components/collector/icons/color/collector-color.svg
   whiteIcon: assets/img/integrations/fluent-operator/components/collector/icons/white/collector-white.svg
   description: 
+  isAnnotation: false
 - name: output
   colorIcon: assets/img/integrations/fluent-operator/components/output/icons/color/output-color.svg
   whiteIcon: assets/img/integrations/fluent-operator/components/output/icons/white/output-white.svg
   description: 
+  isAnnotation: false
 - name: fluent-bit-config
   colorIcon: assets/img/integrations/fluent-operator/components/fluent-bit-config/icons/color/fluent-bit-config-color.svg
   whiteIcon: assets/img/integrations/fluent-operator/components/fluent-bit-config/icons/white/fluent-bit-config-white.svg
   description: 
+  isAnnotation: false
 - name: parser
   colorIcon: assets/img/integrations/fluent-operator/components/parser/icons/color/parser-color.svg
   whiteIcon: assets/img/integrations/fluent-operator/components/parser/icons/white/parser-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Fluentd decouples data sources from backend systems by providing a unified logging layer in between.",
   "Fluentds 500+ plugins connect it to many data sources and outputs while keeping its core simple.",
@@ -73,6 +87,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

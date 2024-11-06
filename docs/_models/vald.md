@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/vald/components/vald-mirror-target/icons/color/vald-mirror-target-color.svg
   whiteIcon: assets/img/integrations/vald/components/vald-mirror-target/icons/white/vald-mirror-target-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "High-performance vector search",
   "Approximate nearest neighbor (ANN) search",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Integrates with Vald"
 howItWorksDetails: "Enhanced search capabilities within Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

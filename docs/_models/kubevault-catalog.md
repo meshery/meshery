@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/kubevault-catalog/components/vault-server-version/icons/color/vault-server-version-color.svg
   whiteIcon: assets/img/integrations/kubevault-catalog/components/vault-server-version/icons/white/vault-server-version-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Simplifies Vault configuration",
   "Provides pre-configured templates and examples",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Integrates with KubeVault Catalog"
 howItWorksDetails: "Easier and faster Vault setup with pre-defined configurations"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

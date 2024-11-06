@@ -17,6 +17,7 @@ featureList: [
 ]
 howItWorks: "Remote attestation of hardware and software"
 howItWorksDetails: "Integrates Keylime attestation"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

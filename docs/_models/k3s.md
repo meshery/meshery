@@ -17,6 +17,7 @@ featureList: [
 ]
 howItWorks: "Integrates with K3s clusters"
 howItWorksDetails: "Simplified K3s management and integration with other Kubernetes tools"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

@@ -14,34 +14,42 @@ components:
   colorIcon: assets/img/integrations/loki/components/pod-monitor/icons/color/pod-monitor-color.svg
   whiteIcon: assets/img/integrations/loki/components/pod-monitor/icons/white/pod-monitor-white.svg
   description: 
+  isAnnotation: 
 - name: probe
   colorIcon: assets/img/integrations/loki/components/probe/icons/color/probe-color.svg
   whiteIcon: assets/img/integrations/loki/components/probe/icons/white/probe-white.svg
   description: 
+  isAnnotation: 
 - name: service-monitor
   colorIcon: assets/img/integrations/loki/components/service-monitor/icons/color/service-monitor-color.svg
   whiteIcon: assets/img/integrations/loki/components/service-monitor/icons/white/service-monitor-white.svg
   description: 
+  isAnnotation: 
 - name: grafana-agent
   colorIcon: assets/img/integrations/loki/components/grafana-agent/icons/color/grafana-agent-color.svg
   whiteIcon: assets/img/integrations/loki/components/grafana-agent/icons/white/grafana-agent-white.svg
   description: 
+  isAnnotation: 
 - name: integration
   colorIcon: assets/img/integrations/loki/components/integration/icons/color/integration-color.svg
   whiteIcon: assets/img/integrations/loki/components/integration/icons/white/integration-white.svg
   description: 
+  isAnnotation: 
 - name: logs-instance
   colorIcon: assets/img/integrations/loki/components/logs-instance/icons/color/logs-instance-color.svg
   whiteIcon: assets/img/integrations/loki/components/logs-instance/icons/white/logs-instance-white.svg
   description: 
+  isAnnotation: 
 - name: metrics-instance
   colorIcon: assets/img/integrations/loki/components/metrics-instance/icons/color/metrics-instance-color.svg
   whiteIcon: assets/img/integrations/loki/components/metrics-instance/icons/white/metrics-instance-white.svg
   description: 
+  isAnnotation: 
 - name: pod-logs
   colorIcon: assets/img/integrations/loki/components/pod-logs/icons/color/pod-logs-color.svg
   whiteIcon: assets/img/integrations/loki/components/pod-logs/icons/white/pod-logs-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Log aggregation and storage",
   "Multi-tenancy",
@@ -49,6 +57,7 @@ featureList: [
 ]
 howItWorks: "Integrates Loki logs"
 howItWorksDetails: "Cost-effective and scalable log management for Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

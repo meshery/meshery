@@ -14,10 +14,12 @@ components:
   colorIcon: assets/img/integrations/security-role-perm-operator-svc/components/mojaloop-permission-exclusions/icons/color/mojaloop-permission-exclusions-color.svg
   whiteIcon: assets/img/integrations/security-role-perm-operator-svc/components/mojaloop-permission-exclusions/icons/white/mojaloop-permission-exclusions-white.svg
   description: 
+  isAnnotation: false
 - name: mojaloop-role
   colorIcon: assets/img/integrations/security-role-perm-operator-svc/components/mojaloop-role/icons/color/mojaloop-role-color.svg
   whiteIcon: assets/img/integrations/security-role-perm-operator-svc/components/mojaloop-role/icons/white/mojaloop-role-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Automates RBAC role and permission management",
   "Enforces security policies",
@@ -25,6 +27,7 @@ featureList: [
 ]
 howItWorks: "Manages security roles and permissions"
 howItWorksDetails: "Simplified RBAC management and enhanced security in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

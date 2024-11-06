@@ -14,10 +14,12 @@ components:
   colorIcon: assets/img/integrations/k8gb/components/dns-endpoint/icons/color/dns-endpoint-color.svg
   whiteIcon: assets/img/integrations/k8gb/components/dns-endpoint/icons/white/dns-endpoint-white.svg
   description: 
+  isAnnotation: false
 - name: gslb
   colorIcon: assets/img/integrations/k8gb/components/gslb/icons/color/gslb-color.svg
   whiteIcon: assets/img/integrations/k8gb/components/gslb/icons/white/gslb-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Provides a security benchmark for Kubernetes",
   "Identifies misconfigurations and vulnerabilities",
@@ -25,6 +27,7 @@ featureList: [
 ]
 howItWorks: "Integrates K8GB audits"
 howItWorksDetails: "Enhanced security and compliance for Kubernetes clusters"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

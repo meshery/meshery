@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/vault-operator/components/vault/icons/color/vault-color.svg
   whiteIcon: assets/img/integrations/vault-operator/components/vault/icons/white/vault-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Automates Vault deployment and scaling",
   "Manages Vault configuration",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Vault"
 howItWorksDetails: "Simplified Vault management within Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

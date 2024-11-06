@@ -14,18 +14,22 @@ components:
   colorIcon: assets/img/integrations/kanister-operator/components/action-set/icons/color/action-set-color.svg
   whiteIcon: assets/img/integrations/kanister-operator/components/action-set/icons/white/action-set-white.svg
   description: 
+  isAnnotation: false
 - name: blueprint
   colorIcon: assets/img/integrations/kanister-operator/components/blueprint/icons/color/blueprint-color.svg
   whiteIcon: assets/img/integrations/kanister-operator/components/blueprint/icons/white/blueprint-white.svg
   description: 
+  isAnnotation: false
 - name: profile
   colorIcon: assets/img/integrations/kanister-operator/components/profile/icons/color/profile-color.svg
   whiteIcon: assets/img/integrations/kanister-operator/components/profile/icons/white/profile-white.svg
   description: 
+  isAnnotation: false
 - name: repository-server
   colorIcon: assets/img/integrations/kanister-operator/components/repository-server/icons/color/repository-server-color.svg
   whiteIcon: assets/img/integrations/kanister-operator/components/repository-server/icons/white/repository-server-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Encapsulate key data management tasks in blueprints that allow uniform operations at scale.",
   "Customize blueprints to fit specific needs of your environment and workload without starting from scratch.",
@@ -33,6 +37,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

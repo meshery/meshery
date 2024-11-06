@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/kubegems-installer/components/plugin/icons/color/plugin-color.svg
   whiteIcon: assets/img/integrations/kubegems-installer/components/plugin/icons/white/plugin-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Automated installation of Kubegems",
   "Easy configuration of Kubegems settings",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

@@ -14,22 +14,27 @@ components:
   colorIcon: assets/img/integrations/aws-ecs-controller/components/cluster/icons/color/cluster-color.svg
   whiteIcon: assets/img/integrations/aws-ecs-controller/components/cluster/icons/white/cluster-white.svg
   description: 
+  isAnnotation: 
 - name: service
   colorIcon: assets/img/integrations/aws-ecs-controller/components/service/icons/color/service-color.svg
   whiteIcon: assets/img/integrations/aws-ecs-controller/components/service/icons/white/service-white.svg
   description: 
+  isAnnotation: 
 - name: task-definition
   colorIcon: assets/img/integrations/aws-ecs-controller/components/task-definition/icons/color/task-definition-color.svg
   whiteIcon: assets/img/integrations/aws-ecs-controller/components/task-definition/icons/white/task-definition-white.svg
   description: 
+  isAnnotation: 
 - name: adopted-resource
   colorIcon: assets/img/integrations/aws-ecs-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-ecs-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+  isAnnotation: 
 - name: field-export
   colorIcon: assets/img/integrations/aws-ecs-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-ecs-controller/components/field-export/icons/white/field-export-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Simplifies container deployment and management",
   "Integrates with other AWS services",
@@ -37,6 +42,7 @@ featureList: [
 ]
 howItWorks: "Deploys containers on ECS"
 howItWorksDetails: "Easy and scalable container management on AWS"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

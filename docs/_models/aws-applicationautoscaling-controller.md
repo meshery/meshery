@@ -14,22 +14,27 @@ components:
   colorIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+  isAnnotation: false
 - name: scalable-target
   colorIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/scalable-target/icons/color/scalable-target-color.svg
   whiteIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/scalable-target/icons/white/scalable-target-white.svg
   description: 
+  isAnnotation: false
 - name: field-export
   colorIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/field-export/icons/white/field-export-white.svg
   description: 
+  isAnnotation: false
 - name: scaling-target
   colorIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/scaling-target/icons/color/scaling-target-color.svg
   whiteIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/scaling-target/icons/white/scaling-target-white.svg
   description: 
+  isAnnotation: false
 - name: scaling-policy
   colorIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/scaling-policy/icons/color/scaling-policy-color.svg
   whiteIcon: assets/img/integrations/aws-applicationautoscaling-controller/components/scaling-policy/icons/white/scaling-policy-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Dynamically scales EC2 instances and other AWS resources",
   "Provides target tracking scaling policies",
@@ -37,6 +42,7 @@ featureList: [
 ]
 howItWorks: "Integrates with Application Autoscaling"
 howItWorksDetails: "Automated scaling of resources for Kubernetes applications on AWS"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

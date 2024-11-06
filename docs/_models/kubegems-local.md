@@ -14,22 +14,27 @@ components:
   colorIcon: assets/img/integrations/kubegems-local/components/environment/icons/color/environment-color.svg
   whiteIcon: assets/img/integrations/kubegems-local/components/environment/icons/white/environment-white.svg
   description: 
+  isAnnotation: false
 - name: tenant-gateway
   colorIcon: assets/img/integrations/kubegems-local/components/tenant-gateway/icons/color/tenant-gateway-color.svg
   whiteIcon: assets/img/integrations/kubegems-local/components/tenant-gateway/icons/white/tenant-gateway-white.svg
   description: 
+  isAnnotation: false
 - name: tenant-network-policy
   colorIcon: assets/img/integrations/kubegems-local/components/tenant-network-policy/icons/color/tenant-network-policy-color.svg
   whiteIcon: assets/img/integrations/kubegems-local/components/tenant-network-policy/icons/white/tenant-network-policy-white.svg
   description: 
+  isAnnotation: false
 - name: tenant-resource-quota
   colorIcon: assets/img/integrations/kubegems-local/components/tenant-resource-quota/icons/color/tenant-resource-quota-color.svg
   whiteIcon: assets/img/integrations/kubegems-local/components/tenant-resource-quota/icons/white/tenant-resource-quota-white.svg
   description: 
+  isAnnotation: false
 - name: tenant
   colorIcon: assets/img/integrations/kubegems-local/components/tenant/icons/color/tenant-color.svg
   whiteIcon: assets/img/integrations/kubegems-local/components/tenant/icons/white/tenant-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Test Kubegems features locally",
   "Develop and debug Kubegems extensions",
@@ -37,6 +42,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

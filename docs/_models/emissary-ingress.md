@@ -17,6 +17,7 @@ featureList: [
 ]
 howItWorks: "Manages Emissary Ingress configurations"
 howItWorksDetails: "Simplified API gateway management and enhanced traffic routing in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

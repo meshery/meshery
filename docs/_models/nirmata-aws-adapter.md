@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/nirmata-aws-adapter/components/aws-config/icons/color/aws-config-color.svg
   whiteIcon: assets/img/integrations/nirmata-aws-adapter/components/aws-config/icons/white/aws-config-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Automates certificate issuance and renewal",
   "Integrates with Venafi Trust Protection Platform",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Manages certificates within Meshery"
 howItWorksDetails: "Streamlined certificate management and improved security in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

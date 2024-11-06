@@ -24,6 +24,7 @@ Fluent Bit only mode: If you just need to collect logs and send logs to the fina
 Fluent Bit + Fluentd mode: If you also need to perform some advanced processing on the logs collected or send to more sinks, then you also need Fluentd.
 Fluentd only mode: If you need to receive logs through networks like HTTP or Syslog and then process and send the log to the final sinks, you only need Fluentd.
 Fluent Operator includes CRDs and controllers for both Fluent Bit and Fluentd which allows you to config your log processing pipelines in the 3 modes mentioned above as you wish."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

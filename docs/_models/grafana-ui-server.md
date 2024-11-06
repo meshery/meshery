@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/grafana-ui-server/components/grafana-dashboard/icons/color/grafana-dashboard-color.svg
   whiteIcon: assets/img/integrations/grafana-ui-server/components/grafana-dashboard/icons/white/grafana-dashboard-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Centralize the analysis, visualization, and alerting for all of your data with Grafana.",
   "Meshery discovers your Grafana servers. Easily import existing Grafana dashboards and panels into Meshery",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

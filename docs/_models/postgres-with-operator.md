@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/postgres-with-operator/components/kubegres/icons/color/kubegres-color.svg
   whiteIcon: assets/img/integrations/postgres-with-operator/components/kubegres/icons/white/kubegres-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Provides a comprehensive PostgreSQL solution",
   "Simplifies PostgreSQL management",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Deploys and manages PostgreSQL"
 howItWorksDetails: "Streamlined PostgreSQL management within Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

@@ -17,6 +17,7 @@ featureList: [
 ]
 howItWorks: "Integrates in-toto attestations"
 howItWorksDetails: "Enhanced security and trust in software supply chains in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

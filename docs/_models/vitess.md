@@ -14,34 +14,42 @@ components:
   colorIcon: assets/img/integrations/vitess/components/etcd-lockserver/icons/color/etcd-lockserver-color.svg
   whiteIcon: assets/img/integrations/vitess/components/etcd-lockserver/icons/white/etcd-lockserver-white.svg
   description: 
+  isAnnotation: 
 - name: vitess-backup
   colorIcon: assets/img/integrations/vitess/components/vitess-backup/icons/color/vitess-backup-color.svg
   whiteIcon: assets/img/integrations/vitess/components/vitess-backup/icons/white/vitess-backup-white.svg
   description: 
+  isAnnotation: 
 - name: vitess-backup-schedule
   colorIcon: assets/img/integrations/vitess/components/vitess-backup-schedule/icons/color/vitess-backup-schedule-color.svg
   whiteIcon: assets/img/integrations/vitess/components/vitess-backup-schedule/icons/white/vitess-backup-schedule-white.svg
   description: 
+  isAnnotation: 
 - name: vitess-backup-storage
   colorIcon: assets/img/integrations/vitess/components/vitess-backup-storage/icons/color/vitess-backup-storage-color.svg
   whiteIcon: assets/img/integrations/vitess/components/vitess-backup-storage/icons/white/vitess-backup-storage-white.svg
   description: 
+  isAnnotation: 
 - name: vitess-cell
   colorIcon: assets/img/integrations/vitess/components/vitess-cell/icons/color/vitess-cell-color.svg
   whiteIcon: assets/img/integrations/vitess/components/vitess-cell/icons/white/vitess-cell-white.svg
   description: 
+  isAnnotation: 
 - name: vitess-cluster
   colorIcon: assets/img/integrations/vitess/components/vitess-cluster/icons/color/vitess-cluster-color.svg
   whiteIcon: assets/img/integrations/vitess/components/vitess-cluster/icons/white/vitess-cluster-white.svg
   description: 
+  isAnnotation: 
 - name: vitess-keyspace
   colorIcon: assets/img/integrations/vitess/components/vitess-keyspace/icons/color/vitess-keyspace-color.svg
   whiteIcon: assets/img/integrations/vitess/components/vitess-keyspace/icons/white/vitess-keyspace-white.svg
   description: 
+  isAnnotation: 
 - name: vitess-shard
   colorIcon: assets/img/integrations/vitess/components/vitess-shard/icons/color/vitess-shard-color.svg
   whiteIcon: assets/img/integrations/vitess/components/vitess-shard/icons/white/vitess-shard-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
@@ -49,6 +57,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

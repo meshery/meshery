@@ -14,22 +14,27 @@ components:
   colorIcon: assets/img/integrations/aws-kms-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-kms-controller/components/field-export/icons/white/field-export-white.svg
   description: 
+  isAnnotation: false
 - name: adopted-resource
   colorIcon: assets/img/integrations/aws-kms-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-kms-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+  isAnnotation: false
 - name: alias
   colorIcon: assets/img/integrations/aws-kms-controller/components/alias/icons/color/alias-color.svg
   whiteIcon: assets/img/integrations/aws-kms-controller/components/alias/icons/white/alias-white.svg
   description: 
+  isAnnotation: false
 - name: grant
   colorIcon: assets/img/integrations/aws-kms-controller/components/grant/icons/color/grant-color.svg
   whiteIcon: assets/img/integrations/aws-kms-controller/components/grant/icons/white/grant-white.svg
   description: 
+  isAnnotation: false
 - name: key
   colorIcon: assets/img/integrations/aws-kms-controller/components/key/icons/color/key-color.svg
   whiteIcon: assets/img/integrations/aws-kms-controller/components/key/icons/white/key-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Secure key management",
   "Encrypts data at rest and in transit",
@@ -37,6 +42,7 @@ featureList: [
 ]
 howItWorks: "Integrates with KMS"
 howItWorksDetails: "Enhanced security for Kubernetes applications and data on AWS"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

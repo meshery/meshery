@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/dragonfly/components/dragonfly/icons/color/dragonfly-color.svg
   whiteIcon: assets/img/integrations/dragonfly/components/dragonfly/icons/white/dragonfly-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Efficient image and file distribution",
   "Reduces network bandwidth consumption",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Integrates Dragonfly"
 howItWorksDetails: "Faster and more reliable image distribution in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

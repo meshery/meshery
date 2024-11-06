@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/edp-argocd-operator/components/argo-application/icons/color/argo-application-color.svg
   whiteIcon: assets/img/integrations/edp-argocd-operator/components/argo-application/icons/white/argo-application-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Automates ArgoCD deployment and configuration",
   "Integrates with EDP components",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Manages ArgoCD in EDP"
 howItWorksDetails: "Streamlined ArgoCD setup and integration with EDP"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

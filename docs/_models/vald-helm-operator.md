@@ -14,10 +14,12 @@ components:
   colorIcon: assets/img/integrations/vald-helm-operator/components/vald-helm-operator-release/icons/color/vald-helm-operator-release-color.svg
   whiteIcon: assets/img/integrations/vald-helm-operator/components/vald-helm-operator-release/icons/white/vald-helm-operator-release-white.svg
   description: 
+  isAnnotation: false
 - name: vald-release
   colorIcon: assets/img/integrations/vald-helm-operator/components/vald-release/icons/color/vald-release-color.svg
   whiteIcon: assets/img/integrations/vald-helm-operator/components/vald-release/icons/white/vald-release-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Automates Vald deployment and management",
   "Manages Vald configuration",
@@ -25,6 +27,7 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Vald"
 howItWorksDetails: "Simplified Vald management within Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

@@ -14,26 +14,32 @@ components:
   colorIcon: assets/img/integrations/aws-sns-controller/components/platform-endpoint/icons/color/platform-endpoint-color.svg
   whiteIcon: assets/img/integrations/aws-sns-controller/components/platform-endpoint/icons/white/platform-endpoint-white.svg
   description: 
+  isAnnotation: false
 - name: platform-application
   colorIcon: assets/img/integrations/aws-sns-controller/components/platform-application/icons/color/platform-application-color.svg
   whiteIcon: assets/img/integrations/aws-sns-controller/components/platform-application/icons/white/platform-application-white.svg
   description: 
+  isAnnotation: false
 - name: field-export
   colorIcon: assets/img/integrations/aws-sns-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-sns-controller/components/field-export/icons/white/field-export-white.svg
   description: 
+  isAnnotation: false
 - name: adopted-resource
   colorIcon: assets/img/integrations/aws-sns-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-sns-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+  isAnnotation: false
 - name: subscription
   colorIcon: assets/img/integrations/aws-sns-controller/components/subscription/icons/color/subscription-color.svg
   whiteIcon: assets/img/integrations/aws-sns-controller/components/subscription/icons/white/subscription-white.svg
   description: 
+  isAnnotation: false
 - name: topic
   colorIcon: assets/img/integrations/aws-sns-controller/components/topic/icons/color/topic-color.svg
   whiteIcon: assets/img/integrations/aws-sns-controller/components/topic/icons/white/topic-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Message fanout: Each account can support 100,000 Standard topics and each topic supports up to 12.5M subscriptions.",
   "Amazon SNS supports VPC Endpoints (VPCE) via AWS PrivateLink.",
@@ -41,6 +47,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

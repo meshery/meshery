@@ -14,10 +14,12 @@ components:
   colorIcon: assets/img/integrations/jira-service-desk-operator/components/customer/icons/color/customer-color.svg
   whiteIcon: assets/img/integrations/jira-service-desk-operator/components/customer/icons/white/customer-white.svg
   description: 
+  isAnnotation: false
 - name: project
   colorIcon: assets/img/integrations/jira-service-desk-operator/components/project/icons/color/project-color.svg
   whiteIcon: assets/img/integrations/jira-service-desk-operator/components/project/icons/white/project-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Teams can track issues, manage projects, and automate workflows.",
   "Configure Issues - abstract away use a Jira's REST API in it's underlying layer and extend to perform other tasks that are supported via the REST API.",
@@ -25,6 +27,7 @@ featureList: [
 ]
 howItWorks: "Configure and customize Jira Projects and Issues"
 howItWorksDetails: "Automate the process of setting up the Jira Service Desk (JSD) operator configuration of alertmanager in a Kubernetes native way. "
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

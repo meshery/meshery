@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/kusk-gateway/components/envoy-fleet/icons/color/envoy-fleet-color.svg
   whiteIcon: assets/img/integrations/kusk-gateway/components/envoy-fleet/icons/white/envoy-fleet-white.svg
   description: 
+  isAnnotation: false
 - name: static-route
   colorIcon: assets/img/integrations/kusk-gateway/components/static-route/icons/color/static-route-color.svg
   whiteIcon: assets/img/integrations/kusk-gateway/components/static-route/icons/white/static-route-white.svg
   description: 
+  isAnnotation: false
 - name: api
   colorIcon: assets/img/integrations/kusk-gateway/components/api/icons/color/api-color.svg
   whiteIcon: assets/img/integrations/kusk-gateway/components/api/icons/white/api-white.svg
   description: 
+  isAnnotation: FALSE
 featureList: [
   "Rapidly prototype your APIs by mocking your API responses",
   " Protect your endpoints with automatic request and response validations",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Manages Kusk Gateway configurations"
 howItWorksDetails: "Simplified API gateway management and enhanced customization in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

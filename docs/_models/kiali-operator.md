@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/kiali-operator/components/kiali/icons/color/kiali-color.svg
   whiteIcon: assets/img/integrations/kiali-operator/components/kiali/icons/white/kiali-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Kiali Operator is a Kubernetes operator for managing Kiali, a service mesh observability tool.",
   "Automates Kiali deployment and configuration",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Simplifies Istio troubleshooting and monitoring"
 howItWorksDetails: "Integrates Kiali visualizations"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

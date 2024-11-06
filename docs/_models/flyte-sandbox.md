@@ -14,10 +14,12 @@ components:
   colorIcon: assets/img/integrations/flyte-sandbox/components/scheduled-spark-application/icons/color/scheduled-spark-application-color.svg
   whiteIcon: assets/img/integrations/flyte-sandbox/components/scheduled-spark-application/icons/white/scheduled-spark-application-white.svg
   description: 
+  isAnnotation: 
 - name: spark-application
   colorIcon: assets/img/integrations/flyte-sandbox/components/spark-application/icons/color/spark-application-color.svg
   whiteIcon: assets/img/integrations/flyte-sandbox/components/spark-application/icons/white/spark-application-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Provides a hands-on learning environment",
   "Simplifies Flyte exploration and testing",
@@ -25,6 +27,7 @@ featureList: [
 ]
 howItWorks: "Integrates with Flyte Sandbox"
 howItWorksDetails: "Facilitates learning and experimentation with Flyte"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

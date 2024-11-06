@@ -14,10 +14,12 @@ components:
   colorIcon: assets/img/integrations/ingress-azure/components/azure-application-gateway-rewrite/icons/color/azure-application-gateway-rewrite-color.svg
   whiteIcon: assets/img/integrations/ingress-azure/components/azure-application-gateway-rewrite/icons/white/azure-application-gateway-rewrite-white.svg
   description: 
+  isAnnotation: false
 - name: azure-ingress-prohibited-target
   colorIcon: assets/img/integrations/ingress-azure/components/azure-ingress-prohibited-target/icons/color/azure-ingress-prohibited-target-color.svg
   whiteIcon: assets/img/integrations/ingress-azure/components/azure-ingress-prohibited-target/icons/white/azure-ingress-prohibited-target-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Exposes Kubernetes services to the internet",
   "Load balancing and traffic routing",
@@ -25,6 +27,7 @@ featureList: [
 ]
 howItWorks: "Manages Ingress Azure configuration"
 howItWorksDetails: "Simplified ingress management for Kubernetes on Azure"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

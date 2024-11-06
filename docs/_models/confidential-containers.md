@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/confidential-containers/components/cc-runtime/icons/color/cc-runtime-color.svg
   whiteIcon: assets/img/integrations/confidential-containers/components/cc-runtime/icons/white/cc-runtime-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Allows cloud native application owners to enforce application security requirements.",
   "Transparent deployment of unmodified containers.",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

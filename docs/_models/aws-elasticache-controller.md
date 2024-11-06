@@ -14,38 +14,47 @@ components:
   colorIcon: assets/img/integrations/aws-elasticache-controller/components/cache-parameter-group/icons/color/cache-parameter-group-color.svg
   whiteIcon: assets/img/integrations/aws-elasticache-controller/components/cache-parameter-group/icons/white/cache-parameter-group-white.svg
   description: 
+  isAnnotation: false
 - name: cache-subnet-group
   colorIcon: assets/img/integrations/aws-elasticache-controller/components/cache-subnet-group/icons/color/cache-subnet-group-color.svg
   whiteIcon: assets/img/integrations/aws-elasticache-controller/components/cache-subnet-group/icons/white/cache-subnet-group-white.svg
   description: 
+  isAnnotation: false
 - name: field-export
   colorIcon: assets/img/integrations/aws-elasticache-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-elasticache-controller/components/field-export/icons/white/field-export-white.svg
   description: 
+  isAnnotation: false
 - name: adopted-resource
   colorIcon: assets/img/integrations/aws-elasticache-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-elasticache-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+  isAnnotation: false
 - name: snapshot
   colorIcon: assets/img/integrations/aws-elasticache-controller/components/snapshot/icons/color/snapshot-color.svg
   whiteIcon: assets/img/integrations/aws-elasticache-controller/components/snapshot/icons/white/snapshot-white.svg
   description: 
+  isAnnotation: false
 - name: user
   colorIcon: assets/img/integrations/aws-elasticache-controller/components/user/icons/color/user-color.svg
   whiteIcon: assets/img/integrations/aws-elasticache-controller/components/user/icons/white/user-white.svg
   description: 
+  isAnnotation: false
 - name: user-group
   colorIcon: assets/img/integrations/aws-elasticache-controller/components/user-group/icons/color/user-group-color.svg
   whiteIcon: assets/img/integrations/aws-elasticache-controller/components/user-group/icons/white/user-group-white.svg
   description: 
+  isAnnotation: false
 - name: replication-group
   colorIcon: assets/img/integrations/aws-elasticache-controller/components/replication-group/icons/color/replication-group-color.svg
   whiteIcon: assets/img/integrations/aws-elasticache-controller/components/replication-group/icons/white/replication-group-white.svg
   description: 
+  isAnnotation: false
 - name: cache-cluster
   colorIcon: assets/img/integrations/aws-elasticache-controller/components/cache-cluster/icons/color/cache-cluster-color.svg
   whiteIcon: assets/img/integrations/aws-elasticache-controller/components/cache-cluster/icons/white/cache-cluster-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Fully managed Redis and Memcached",
   "Add a cache to your relational database",
@@ -53,6 +62,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

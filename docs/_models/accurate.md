@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/accurate/components/sub-namespace/icons/color/sub-namespace-color.svg
   whiteIcon: assets/img/integrations/accurate/components/sub-namespace/icons/white/sub-namespace-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Resource propagation between namespaces.",
   "Inheriting labels and annotations creation/update from parent namespaces.",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

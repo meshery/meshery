@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/kubegems-models/components/model-deployment/icons/color/model-deployment-color.svg
   whiteIcon: assets/img/integrations/kubegems-models/components/model-deployment/icons/white/model-deployment-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Anomaly detection in Kubernetes clusters",
   "Predictive scaling for Kubernetes applications",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

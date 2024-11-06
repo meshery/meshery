@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/kubevirt/components/ssp/icons/color/ssp-color.svg
   whiteIcon: assets/img/integrations/kubevirt/components/ssp/icons/white/ssp-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Runs VMs alongside containers in Kubernetes",
   "Leverages Kubernetes for VM orchestration",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Manages KubeVirt virtual machines"
 howItWorksDetails: "Unified management of VMs and containers in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/karmada/components/karmada/icons/color/karmada-color.svg
   whiteIcon: assets/img/integrations/karmada/components/karmada/icons/white/karmada-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Simplifies multi-cluster management",
   "Provides a unified control plane",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Integrates Karmada clusters"
 howItWorksDetails: "Streamlined multi-cluster management and governance"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

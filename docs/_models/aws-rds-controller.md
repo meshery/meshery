@@ -14,50 +14,62 @@ components:
   colorIcon: assets/img/integrations/aws-rds-controller/components/db-cluster/icons/color/db-cluster-color.svg
   whiteIcon: assets/img/integrations/aws-rds-controller/components/db-cluster/icons/white/db-cluster-white.svg
   description: 
+  isAnnotation: false
 - name: db-cluster-parameter-group
   colorIcon: assets/img/integrations/aws-rds-controller/components/db-cluster-parameter-group/icons/color/db-cluster-parameter-group-color.svg
   whiteIcon: assets/img/integrations/aws-rds-controller/components/db-cluster-parameter-group/icons/white/db-cluster-parameter-group-white.svg
   description: 
+  isAnnotation: false
 - name: db-instance
   colorIcon: assets/img/integrations/aws-rds-controller/components/db-instance/icons/color/db-instance-color.svg
   whiteIcon: assets/img/integrations/aws-rds-controller/components/db-instance/icons/white/db-instance-white.svg
   description: 
+  isAnnotation: false
 - name: db-parameter-group
   colorIcon: assets/img/integrations/aws-rds-controller/components/db-parameter-group/icons/color/db-parameter-group-color.svg
   whiteIcon: assets/img/integrations/aws-rds-controller/components/db-parameter-group/icons/white/db-parameter-group-white.svg
   description: 
+  isAnnotation: false
 - name: db-proxy
   colorIcon: assets/img/integrations/aws-rds-controller/components/db-proxy/icons/color/db-proxy-color.svg
   whiteIcon: assets/img/integrations/aws-rds-controller/components/db-proxy/icons/white/db-proxy-white.svg
   description: 
+  isAnnotation: false
 - name: db-subnet-group
   colorIcon: assets/img/integrations/aws-rds-controller/components/db-subnet-group/icons/color/db-subnet-group-color.svg
   whiteIcon: assets/img/integrations/aws-rds-controller/components/db-subnet-group/icons/white/db-subnet-group-white.svg
   description: 
+  isAnnotation: false
 - name: global-cluster
   colorIcon: assets/img/integrations/aws-rds-controller/components/global-cluster/icons/color/global-cluster-color.svg
   whiteIcon: assets/img/integrations/aws-rds-controller/components/global-cluster/icons/white/global-cluster-white.svg
   description: 
+  isAnnotation: false
 - name: field-export
   colorIcon: assets/img/integrations/aws-rds-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-rds-controller/components/field-export/icons/white/field-export-white.svg
   description: 
+  isAnnotation: false
 - name: adopted-resource
   colorIcon: assets/img/integrations/aws-rds-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-rds-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+  isAnnotation: false
 - name: db-snapshot
   colorIcon: assets/img/integrations/aws-rds-controller/components/db-snapshot/icons/color/db-snapshot-color.svg
   whiteIcon: assets/img/integrations/aws-rds-controller/components/db-snapshot/icons/white/db-snapshot-white.svg
   description: 
+  isAnnotation: 
 - name: db-cluster-snapshot
   colorIcon: assets/img/integrations/aws-rds-controller/components/db-cluster-snapshot/icons/color/db-cluster-snapshot-color.svg
   whiteIcon: assets/img/integrations/aws-rds-controller/components/db-cluster-snapshot/icons/white/db-cluster-snapshot-white.svg
   description: 
+  isAnnotation: 
 - name: db-cluster-snapshot
   colorIcon: assets/img/integrations/aws-rds-controller/components/db-cluster-snapshot/icons/color/db-cluster-snapshot-color.svg
   whiteIcon: assets/img/integrations/aws-rds-controller/components/db-cluster-snapshot/icons/white/db-cluster-snapshot-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Amazon RDS integrates with AWS Config to support compliance and enhance security by recording and auditing changes to the configuration of your DB instance",
   "Amazon Aurora supports quick, efficient cloning operations, where entire multi-terabyte database clusters can be cloned in minutes.",
@@ -65,6 +77,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

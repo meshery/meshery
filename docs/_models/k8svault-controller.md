@@ -14,10 +14,12 @@ components:
   colorIcon: assets/img/integrations/k8svault-controller/components/vault-binding/icons/color/vault-binding-color.svg
   whiteIcon: assets/img/integrations/k8svault-controller/components/vault-binding/icons/white/vault-binding-white.svg
   description: 
+  isAnnotation: false
 - name: vault-mirror
   colorIcon: assets/img/integrations/k8svault-controller/components/vault-mirror/icons/color/vault-mirror-color.svg
   whiteIcon: assets/img/integrations/k8svault-controller/components/vault-mirror/icons/white/vault-mirror-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Automated deployment and configuration of Vault on Kubernetes",
   "Integration with Kubernetes authentication and authorization mechanisms",
@@ -25,6 +27,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

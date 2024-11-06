@@ -14,46 +14,57 @@ components:
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-connection/icons/color/pulsar-connection-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-connection/icons/white/pulsar-connection-white.svg
   description: 
+  isAnnotation: false
 - name: pulsar-namespace
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-namespace/icons/color/pulsar-namespace-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-namespace/icons/white/pulsar-namespace-white.svg
   description: 
+  isAnnotation: false
 - name: pulsar-permission
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-permission/icons/color/pulsar-permission-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-permission/icons/white/pulsar-permission-white.svg
   description: 
+  isAnnotation: false
 - name: pulsar-tenant
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-tenant/icons/color/pulsar-tenant-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-tenant/icons/white/pulsar-tenant-white.svg
   description: 
+  isAnnotation: false
 - name: pulsar-topic
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-topic/icons/color/pulsar-topic-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-topic/icons/white/pulsar-topic-white.svg
   description: 
+  isAnnotation: false
 - name: pulsar-geo-replication
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-geo-replication/icons/color/pulsar-geo-replication-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-geo-replication/icons/white/pulsar-geo-replication-white.svg
   description: 
+  isAnnotation: false
 - name: pulsar-function
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-function/icons/color/pulsar-function-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-function/icons/white/pulsar-function-white.svg
   description: 
+  isAnnotation: 
 - name: pulsar-package
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-package/icons/color/pulsar-package-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-package/icons/white/pulsar-package-white.svg
   description: 
+  isAnnotation: 
 - name: pulsar-sink
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-sink/icons/color/pulsar-sink-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-sink/icons/white/pulsar-sink-white.svg
   description: 
+  isAnnotation: 
 - name: pulsar-source
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-source/icons/color/pulsar-source-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-source/icons/white/pulsar-source-white.svg
   description: 
+  isAnnotation: 
 - name: pulsar-source
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-source/icons/color/pulsar-source-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-source/icons/white/pulsar-source-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Automates Pulsar resource management",
   "Simplifies Pulsar configuration",
@@ -61,6 +72,7 @@ featureList: [
 ]
 howItWorks: "Manages Pulsar resources"
 howItWorksDetails: "Streamlined Pulsar resource management within Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

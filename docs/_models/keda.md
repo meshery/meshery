@@ -14,26 +14,32 @@ components:
   colorIcon: assets/img/integrations/keda/components/cloud-event-source/icons/color/cloud-event-source-color.svg
   whiteIcon: assets/img/integrations/keda/components/cloud-event-source/icons/white/cloud-event-source-white.svg
   description: 
+  isAnnotation: 
 - name: cluster-trigger-authentication
   colorIcon: assets/img/integrations/keda/components/cluster-trigger-authentication/icons/color/cluster-trigger-authentication-color.svg
   whiteIcon: assets/img/integrations/keda/components/cluster-trigger-authentication/icons/white/cluster-trigger-authentication-white.svg
   description: 
+  isAnnotation: 
 - name: scaled-job
   colorIcon: assets/img/integrations/keda/components/scaled-job/icons/color/scaled-job-color.svg
   whiteIcon: assets/img/integrations/keda/components/scaled-job/icons/white/scaled-job-white.svg
   description: 
+  isAnnotation: 
 - name: scaled-object
   colorIcon: assets/img/integrations/keda/components/scaled-object/icons/color/scaled-object-color.svg
   whiteIcon: assets/img/integrations/keda/components/scaled-object/icons/white/scaled-object-white.svg
   description: 
+  isAnnotation: 
 - name: trigger-authentication
   colorIcon: assets/img/integrations/keda/components/trigger-authentication/icons/color/trigger-authentication-color.svg
   whiteIcon: assets/img/integrations/keda/components/trigger-authentication/icons/white/trigger-authentication-white.svg
   description: 
+  isAnnotation: 
 - name: trigger-authentication
   colorIcon: assets/img/integrations/keda/components/trigger-authentication/icons/color/trigger-authentication-color.svg
   whiteIcon: assets/img/integrations/keda/components/trigger-authentication/icons/white/trigger-authentication-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Scales applications based on various metrics",
   "Integrates with external event sources",
@@ -41,6 +47,7 @@ featureList: [
 ]
 howItWorks: "Integrates with KEDA scalers"
 howItWorksDetails: "Event-driven autoscaling of Kubernetes applications"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

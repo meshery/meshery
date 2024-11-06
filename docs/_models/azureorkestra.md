@@ -14,78 +14,97 @@ components:
   colorIcon: assets/img/integrations/azureorkestra/components/filter/icons/color/filter-color.svg
   whiteIcon: assets/img/integrations/azureorkestra/components/filter/icons/white/filter-white.svg
   description: 
+  isAnnotation: 
 - name: filter-policy
   colorIcon: assets/img/integrations/azureorkestra/components/filter-policy/icons/color/filter-policy-color.svg
   whiteIcon: assets/img/integrations/azureorkestra/components/filter-policy/icons/white/filter-policy-white.svg
   description: 
+  isAnnotation: 
 - name: auth-service
   colorIcon: assets/img/integrations/azureorkestra/components/auth-service/icons/color/auth-service-color.svg
   whiteIcon: assets/img/integrations/azureorkestra/components/auth-service/icons/white/auth-service-white.svg
   description: 
+  isAnnotation: 
 - name: consul-resolver
   colorIcon: assets/img/integrations/azureorkestra/components/consul-resolver/icons/color/consul-resolver-color.svg
   whiteIcon: assets/img/integrations/azureorkestra/components/consul-resolver/icons/white/consul-resolver-white.svg
   description: 
+  isAnnotation: 
 - name: dev-portal
   colorIcon: assets/img/integrations/azureorkestra/components/dev-portal/icons/color/dev-portal-color.svg
   whiteIcon: assets/img/integrations/azureorkestra/components/dev-portal/icons/white/dev-portal-white.svg
   description: 
+  isAnnotation: 
 - name: host
   colorIcon: assets/img/integrations/azureorkestra/components/host/icons/color/host-color.svg
   whiteIcon: assets/img/integrations/azureorkestra/components/host/icons/white/host-white.svg
   description: 
+  isAnnotation: 
 - name: kubernetes-endpoint-resolver
   colorIcon: assets/img/integrations/azureorkestra/components/kubernetes-endpoint-resolver/icons/color/kubernetes-endpoint-resolver-color.svg
   whiteIcon: assets/img/integrations/azureorkestra/components/kubernetes-endpoint-resolver/icons/white/kubernetes-endpoint-resolver-white.svg
   description: 
+  isAnnotation: 
 - name: kubernetes-service-resolver
   colorIcon: assets/img/integrations/azureorkestra/components/kubernetes-service-resolver/icons/color/kubernetes-service-resolver-color.svg
   whiteIcon: assets/img/integrations/azureorkestra/components/kubernetes-service-resolver/icons/white/kubernetes-service-resolver-white.svg
   description: 
+  isAnnotation: 
 - name: log-service
   colorIcon: assets/img/integrations/azureorkestra/components/log-service/icons/color/log-service-color.svg
   whiteIcon: assets/img/integrations/azureorkestra/components/log-service/icons/white/log-service-white.svg
   description: 
+  isAnnotation: 
 - name: mapping
   colorIcon: assets/img/integrations/azureorkestra/components/mapping/icons/color/mapping-color.svg
   whiteIcon: assets/img/integrations/azureorkestra/components/mapping/icons/white/mapping-white.svg
   description: 
+  isAnnotation: 
 - name: module
   colorIcon: assets/img/integrations/azureorkestra/components/module/icons/color/module-color.svg
   whiteIcon: assets/img/integrations/azureorkestra/components/module/icons/white/module-white.svg
   description: 
+  isAnnotation: 
 - name: rate-limit-service
   colorIcon: assets/img/integrations/azureorkestra/components/rate-limit-service/icons/color/rate-limit-service-color.svg
   whiteIcon: assets/img/integrations/azureorkestra/components/rate-limit-service/icons/white/rate-limit-service-white.svg
   description: 
+  isAnnotation: 
 - name: tcp-mapping
   colorIcon: assets/img/integrations/azureorkestra/components/tcp-mapping/icons/color/tcp-mapping-color.svg
   whiteIcon: assets/img/integrations/azureorkestra/components/tcp-mapping/icons/white/tcp-mapping-white.svg
   description: 
+  isAnnotation: 
 - name: tls-context
   colorIcon: assets/img/integrations/azureorkestra/components/tls-context/icons/color/tls-context-color.svg
   whiteIcon: assets/img/integrations/azureorkestra/components/tls-context/icons/white/tls-context-white.svg
   description: 
+  isAnnotation: 
 - name: tracing-service
   colorIcon: assets/img/integrations/azureorkestra/components/tracing-service/icons/color/tracing-service-color.svg
   whiteIcon: assets/img/integrations/azureorkestra/components/tracing-service/icons/white/tracing-service-white.svg
   description: 
+  isAnnotation: 
 - name: project
   colorIcon: assets/img/integrations/azureorkestra/components/project/icons/color/project-color.svg
   whiteIcon: assets/img/integrations/azureorkestra/components/project/icons/white/project-white.svg
   description: 
+  isAnnotation: 
 - name: project-controller
   colorIcon: assets/img/integrations/azureorkestra/components/project-controller/icons/color/project-controller-color.svg
   whiteIcon: assets/img/integrations/azureorkestra/components/project-controller/icons/white/project-controller-white.svg
   description: 
+  isAnnotation: 
 - name: project-revision
   colorIcon: assets/img/integrations/azureorkestra/components/project-revision/icons/color/project-revision-color.svg
   whiteIcon: assets/img/integrations/azureorkestra/components/project-revision/icons/white/project-revision-white.svg
   description: 
+  isAnnotation: 
 - name: rate-limit
   colorIcon: assets/img/integrations/azureorkestra/components/rate-limit/icons/color/rate-limit-color.svg
   whiteIcon: assets/img/integrations/azureorkestra/components/rate-limit/icons/white/rate-limit-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Simplifies complex deployment workflows",
   "Provides a unified control plane for hybrid environments",
@@ -93,6 +112,7 @@ featureList: [
 ]
 howItWorks: "Integrates with Azure Orkestra"
 howItWorksDetails: "Streamlined hybrid and multi-cloud orchestration within Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

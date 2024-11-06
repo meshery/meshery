@@ -14,10 +14,12 @@ components:
   colorIcon: assets/img/integrations/akri/components/configuration/icons/color/configuration-color.svg
   whiteIcon: assets/img/integrations/akri/components/configuration/icons/white/configuration-white.svg
   description: 
+  isAnnotation: 
 - name: instance
   colorIcon: assets/img/integrations/akri/components/instance/icons/color/instance-color.svg
   whiteIcon: assets/img/integrations/akri/components/instance/icons/white/instance-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Expose heterogeneous leaf devices as resources in a Kubernetes cluster",
   "It is made for the edge and handles the dynamic appearance and disappearance of leaf devices.",
@@ -25,6 +27,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

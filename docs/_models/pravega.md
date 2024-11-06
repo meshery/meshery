@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/pravega/components/zookeeper-cluster/icons/color/zookeeper-cluster-color.svg
   whiteIcon: assets/img/integrations/pravega/components/zookeeper-cluster/icons/white/zookeeper-cluster-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

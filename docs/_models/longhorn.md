@@ -17,6 +17,7 @@ featureList: [
 ]
 howItWorks: "Integrates Longhorn storage"
 howItWorksDetails: "Reliable and scalable storage solution for Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

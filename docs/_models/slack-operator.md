@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/slack-operator/components/channel/icons/color/channel-color.svg
   whiteIcon: assets/img/integrations/slack-operator/components/channel/icons/white/channel-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Automates Slack notification sending",
   "Customizable notification templates",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Integrates Slack notifications"
 howItWorksDetails: "Improved incident response and communication within Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

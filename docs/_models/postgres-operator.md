@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/postgres-operator/components/operator-configuration/icons/color/operator-configuration-color.svg
   whiteIcon: assets/img/integrations/postgres-operator/components/operator-configuration/icons/white/operator-configuration-white.svg
   description: 
+  isAnnotation: false
 - name: postgresql
   colorIcon: assets/img/integrations/postgres-operator/components/postgresql/icons/color/postgresql-color.svg
   whiteIcon: assets/img/integrations/postgres-operator/components/postgresql/icons/white/postgresql-white.svg
   description: 
+  isAnnotation: false
 - name: postgres-team
   colorIcon: assets/img/integrations/postgres-operator/components/postgres-team/icons/color/postgres-team-color.svg
   whiteIcon: assets/img/integrations/postgres-operator/components/postgres-team/icons/white/postgres-team-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Automates PostgreSQL deployment and scaling",
   "Manages PostgreSQL configuration",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Deploys and manages PostgreSQL"
 howItWorksDetails: "Simplified PostgreSQL management within Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

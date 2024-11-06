@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/aws-mq-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-mq-controller/components/field-export/icons/white/field-export-white.svg
   description: 
+  isAnnotation: false
 - name: adopted-resource
   colorIcon: assets/img/integrations/aws-mq-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-mq-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+  isAnnotation: false
 - name: broker
   colorIcon: assets/img/integrations/aws-mq-controller/components/broker/icons/color/broker-color.svg
   whiteIcon: assets/img/integrations/aws-mq-controller/components/broker/icons/white/broker-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Reliable and scalable message brokering",
   "Supports various messaging protocols",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Integrates with AWS MQ"
 howItWorksDetails: "Simplified message brokering for Kubernetes applications on AWS"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

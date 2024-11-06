@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/porter/components/bgp-conf/icons/color/bgp-conf-color.svg
   whiteIcon: assets/img/integrations/porter/components/bgp-conf/icons/white/bgp-conf-white.svg
   description: 
+  isAnnotation: false
 - name: bgp-peer
   colorIcon: assets/img/integrations/porter/components/bgp-peer/icons/color/bgp-peer-color.svg
   whiteIcon: assets/img/integrations/porter/components/bgp-peer/icons/white/bgp-peer-white.svg
   description: 
+  isAnnotation: false
 - name: eip
   colorIcon: assets/img/integrations/porter/components/eip/icons/color/eip-color.svg
   whiteIcon: assets/img/integrations/porter/components/eip/icons/white/eip-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Packages applications as bundles for distribution",
   "Simplifies application installation and management",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Integrates Porter bundles"
 howItWorksDetails: "Streamlined application packaging and deployment in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

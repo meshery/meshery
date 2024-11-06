@@ -17,6 +17,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "From the convenience of your Docker Desktop interface, connect Meshery with your Kubernetes cluster. Watch as MeshSync discovers all of your Kuberentes clusters. Visually design your Docker-based infrastructure. Choose from hundreds of ready-made design patterns using Meshery Catalog. Use our no-code designer, MeshMap, to collaboratively design and operate your infra."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

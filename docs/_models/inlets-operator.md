@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/inlets-operator/components/tunnel/icons/color/tunnel-color.svg
   whiteIcon: assets/img/integrations/inlets-operator/components/tunnel/icons/white/tunnel-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Exposes local services to the internet",
   "Secure tunneling",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Manages inlets tunnels"
 howItWorksDetails: "Easy and secure remote access to Kubernetes services"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

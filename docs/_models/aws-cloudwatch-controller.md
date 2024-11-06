@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/aws-cloudwatch-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-cloudwatch-controller/components/field-export/icons/white/field-export-white.svg
   description: 
+  isAnnotation: false
 - name: adopted-resource
   colorIcon: assets/img/integrations/aws-cloudwatch-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-cloudwatch-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+  isAnnotation: false
 - name: metric-alarm
   colorIcon: assets/img/integrations/aws-cloudwatch-controller/components/metric-alarm/icons/color/metric-alarm-color.svg
   whiteIcon: assets/img/integrations/aws-cloudwatch-controller/components/metric-alarm/icons/white/metric-alarm-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Provides you with data and actionable insights to monitor your applications, respond to system-wide performance changes, and optimize resource utilization.",
   "Collects monitoring and operational data in the form of logs, metrics, and traces.",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

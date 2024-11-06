@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/aws-load-balancer-controller/components/ingress-class-params/icons/color/ingress-class-params-color.svg
   whiteIcon: assets/img/integrations/aws-load-balancer-controller/components/ingress-class-params/icons/white/ingress-class-params-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Manage AWS Elastic Load Balancers for a Kubernetes cluster.",
   "Provide high performance traffic serving that can scale to millions of requests per second.",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Elastic Load Balancing (ELB) automatically distributes incoming application traffic across multiple targets and virtual appliances in one or more Availability Zones (AZs)."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

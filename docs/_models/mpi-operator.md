@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/mpi-operator/components/mpi-job/icons/color/mpi-job-color.svg
   whiteIcon: assets/img/integrations/mpi-operator/components/mpi-job/icons/white/mpi-job-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Easily run synchronized, allreduce-style distributed training on Kubernetes.",
   "Invite anyone to review and make changes to your private designs.",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility
