@@ -57,6 +57,9 @@ func GetModelDirectoryPaths(modelPath string) ([]string, error) {
 		if len(sortedVersionDirs) == 0 {
 			continue
 		}
+		if modelName == "kubernetes" {
+			sortedVersionDirs[0] = "../meshmodel/kubernetes/v1.32.0-alpha.3"
+		}
 		modelDefDirPath, err := getLatestModelDefDir(sortedVersionDirs[0])
 		if err != nil {
 			continue

@@ -222,7 +222,7 @@ export function getSharableCommonHostAndprotocolLink(sharedResource) {
     return `${webAddr}?${APPLICATION}=${sharedResource.id}`;
   }
   if (sharedResource?.pattern_file) {
-    return `${webAddr}?${DESIGN}=${sharedResource.id}`;
+    return `${webAddr}?mode=${DESIGN}&${DESIGN}=${sharedResource.id}`;
   }
   if (sharedResource?.filter_resource) {
     return `${webAddr}?${FILTER}=${sharedResource.id}`;
