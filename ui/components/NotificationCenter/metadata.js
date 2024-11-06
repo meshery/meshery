@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Grid, Box, styled, List, ListItem, Link } from '@layer5/sistent';
+import { Typography, Grid, Box, styled, List, ListItem } from '@layer5/sistent';
 import { Launch as LaunchIcon } from '@material-ui/icons';
 import { alpha } from '@mui/material';
 import { SEVERITY_STYLE, SEVERITY } from '../NotificationCenter/constants';
