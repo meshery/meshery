@@ -1930,6 +1930,7 @@ components:
             - name: glasskube-operator
             - name: glasskube-operator
             - name: glasskube-operator
+            - name: glasskube-operator
             - kind: ServiceAccount
               name: glasskube-operator
               namespace: default
@@ -46496,4 +46497,4 @@ relationships:
       type: parent
       version: ""
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.8
+version: 0.0.9

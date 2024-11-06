@@ -224,13 +224,13 @@ const K8sContextConnectionChip_ = ({
   const { getControllerStatesByConnectionID } = useControllerStatus(meshsyncControllerState);
 
   const { operatorState, meshSyncState, natsState } = getControllerStatesByConnectionID(
-    ctx.connection_id,
+    ctx?.connection_id,
   );
 
   return (
-    <div id={ctx.id} className={classes.chip}>
+    <div id={ctx?.metadata?.id} className={classes.chip}>
       <CustomTextTooltip
-        title={`Server: ${ctx.server},  Operator: ${formatToTitleCase(
+        title={`Server: ${ctx?.metadata?.server},  Operator: ${formatToTitleCase(
           operatorState,
         )}, MeshSync: ${formatToTitleCase(meshSyncState)}, Broker: ${formatToTitleCase(natsState)}`}
       >
@@ -243,13 +243,13 @@ const K8sContextConnectionChip_ = ({
         >
           {selectable && (
             <UsesSistent>
-              <Checkbox checked={selected} onChange={() => onSelectChange(ctx.id)} />
+              <Checkbox checked={selected} onChange={() => onSelectChange(ctx?.metadata?.id)} />
             </UsesSistent>
           )}
           <_ConnectionChip
             title={ctx?.name}
-            onDelete={onDelete ? () => onDelete(ctx.name, ctx.connection_id) : null}
-            handlePing={() => ping(ctx.name, ctx.server, ctx.connection_id)}
+            onDelete={onDelete ? () => onDelete(ctx?.metadata?.name, ctx?.id) : null}
+            handlePing={() => ping(ctx?.metadata?.name, ctx?.metadata?.server, ctx?.id)}
             iconSrc={
               connectionMetadataState && connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                 ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
@@ -442,13 +442,13 @@ function K8sContextMenu({
                     {contexts?.contexts?.map((ctx) => {
                       return (
                         <K8sContextConnectionChip
-                          key={ctx.id}
+                          key={ctx?.metadata?.id}
                           classes={classes}
                           ctx={ctx}
                           selectable
                           onDelete={handleKubernetesDelete}
-                          selected={activeContexts.includes(ctx.id)}
-                          onSelectChange={() => setActiveContexts(ctx.id)}
+                          selected={activeContexts.includes(ctx?.id)}
+                          onSelectChange={() => setActiveContexts(ctx?.id)}
                           meshsyncControllerState={meshsyncControllerState}
                           connectionMetadataState={connectionMetadataState}
                         />
