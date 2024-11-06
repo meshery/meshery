@@ -9,7 +9,7 @@ type: deployment
 compatibility: 
     - kubernetes
 patternId: 69afafc0-f0a6-4c6c-beae-c96956b40a4f
-image: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/69afafc0-f0a6-4c6c-beae-c96956b40a4f-light.png,https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/69afafc0-f0a6-4c6c-beae-c96956b40a4f-dark.png
+image: /assets/images/logos/service-mesh-pattern.svg
 patternInfo: |
   This%20pattern%20establishes%20and%20visualizes%20the%20relationship%20between%20Runtime%20Class(a%20Kubernetes%20component)%20and%20other%20Kubernetes%20components
 patternCaveats: |

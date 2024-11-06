@@ -62,6 +62,8 @@ export const LoadingMessages = [
   'Tip: Relationships characterize how components are connected and interact with each other.',
   'Tip: Relationships are defined in Meshery Models to ensure their accuracy and specificity.',
   'Tip: Meshery is inherently cognizant of the interrelationships between components in your designs.',
+  'Connect Meshery to your clusters and discover insights.',
+  'mesheryctl is a powerful CLI tool for interacting with one or more Meshery Servers.',
 ];
 
 export const getRandomLoadingMessage = () => {
