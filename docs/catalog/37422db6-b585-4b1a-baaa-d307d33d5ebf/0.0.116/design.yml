@@ -643,6 +643,7 @@ components:
         version: v1
       configuration:
         metadata:
+            name: persistent-volume-claim-nk
             namespace: default
         spec:
             volume Name: persistent-volume-gs
@@ -6674,4 +6675,4 @@ relationships:
       type: parent
       version: v1.0.0
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.181
+version: 0.0.190
