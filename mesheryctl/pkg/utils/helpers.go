@@ -315,7 +315,7 @@ var Services = map[string]Service{
 		Ports:  []string{"10004:10004"},
 	},
 	"meshery-app-mesh": {
-		Image:  "layer5/meshery-app-mesh:stable-latest",
+		Image:  "meshery/meshery-app-mesh:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10005:10005"},
 	},
