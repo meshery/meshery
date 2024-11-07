@@ -71,7 +71,8 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	errorUI := "/error"
 	ep, exists := providerProperties.Capabilities.GetEndpointForFeature(PersistAnonymousUser)
 	if !exists {
-		k.log.Error(ErrInvalidCapability("PersistAnonymousUser", k.Provider.Name()))
+		err := ErrInvalidCapability("PersistAnonymousUser", k.Provider.Name())
+		k.log.Error(err)
 		http.Redirect(res, req, errorUI, http.StatusFound)
 		return
 	}
@@ -91,7 +92,8 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 
 	resp, err := client.Do(newReq)
 	if err != nil {
-		k.log.Error(ErrUnreachableRemoteProvider(err))
+		err = ErrUnreachableRemoteProvider(err)
+		k.log.Error(err)
 		http.Redirect(res, req, errorUI, http.StatusFound)
 		return
 	}
@@ -100,7 +102,8 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	flowResponse := AnonymousFlowResponse{}
 	err = json.NewDecoder(resp.Body).Decode(&flowResponse)
 	if err != nil {
-		k.log.Error(ErrUnmarshal(err, "user flow response"))
+		err = ErrUnmarshal(err, "user flow response")
+		k.log.Error(err)
 		http.Redirect(res, req, errorUI, http.StatusFound)
 		return
 	}
@@ -122,7 +125,7 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	if len(flowResponse.Capabilities.Extensions.Navigator) > 0 {
 		flowResponse.Capabilities.DownloadProviderExtensionPackage(k.log)
 	}
-	redirectURL := GetRedirectURLForNavigatorExtension(&providerProperties)
+	redirectURL := GetRedirectURLForNavigatorExtension(&providerProperties, k.log)
 
 	http.Redirect(res, req, redirectURL, http.StatusFound)
 }
