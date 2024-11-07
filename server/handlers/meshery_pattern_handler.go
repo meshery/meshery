@@ -186,6 +186,9 @@ func (h *Handler) handlePatternPOST(
 
 		bytPattern := parsedBody.PatternData.PatternFile
 		fileName := parsedBody.PatternData.FileName
+		if fileName == "" {
+			fileName = parsedBody.PatternData.Name
+		}
 		mesheryPattern.SourceContent = bytPattern
 		if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) {
 			var k8sres string
