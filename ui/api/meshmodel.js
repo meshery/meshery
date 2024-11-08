@@ -134,8 +134,8 @@ export async function getMeshModelComponent(model, component, version, apiVersio
   const apiVersionQueryString = !apiVersion
     ? ''
     : !version
-    ? `?apiVersion=${apiVersion}`
-    : `&apiVersion=${apiVersion}`;
+      ? `?apiVersion=${apiVersion}`
+      : `&apiVersion=${apiVersion}`;
 
   return promisifiedDataFetch(
     `${MESHMODEL_ENDPOINT}/${model}/components/${component}${versionQueryString}${apiVersionQueryString}`,

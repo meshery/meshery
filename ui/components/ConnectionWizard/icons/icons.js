@@ -315,8 +315,8 @@ const icons = (completed, active) => {
                 !active && !completed
                   ? '#3C494E'
                   : active && !completed
-                  ? 'url(#paint0_linear)'
-                  : 'white'
+                    ? 'url(#paint0_linear)'
+                    : 'white'
               }
             />
           </g>

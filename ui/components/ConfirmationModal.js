@@ -564,8 +564,8 @@ function ConfirmationMsg(props) {
                         ? classes.disabledBtnDel
                         : classes.button
                       : tabVal === ACTIONS.UNDEPLOY
-                      ? classes.undeployBtn
-                      : classes.button
+                        ? classes.undeployBtn
+                        : classes.button
                   }
                   autoFocus
                   type="submit"
