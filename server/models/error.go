@@ -257,11 +257,49 @@ func ErrEncoding(err error, obj string) error {
 }
 
 func ErrFetch(err error, obj string, statusCode int) error {
-	return errors.New(ErrFetchCode, errors.Alert, []string{"Unable to fetch data from the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode), err.Error()}, []string{}, []string{})
+	return errors.New(
+		ErrFetchCode,
+		errors.Alert,
+		[]string{"Unable to fetch data from the Provider", obj},
+		[]string{"Status Code: " + fmt.Sprint(statusCode), err.Error()},
+		[]string{
+			"Network connectivity issues between Meshery and the Provider",
+			"Provider service may be down or unresponsive",
+			"Invalid or expired authentication credentials",
+			"Rate limiting or quota exceeded",
+		},
+		[]string{
+			"Verify network connectivity to the Provider",
+			"Check if the Provider service is up and running",
+			"Ensure authentication credentials are valid and not expired",
+			"Wait and retry if rate limited, or check your usage quota",
+		},
+	)
 }
 
 func ErrPost(err error, obj string, statusCode int) error {
-	return errors.New(ErrPostCode, errors.Alert, []string{"Unable to post data to the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode), err.Error()}, []string{}, []string{})
+	return errors.New(
+		ErrPostCode,
+		errors.Alert,
+		[]string{"Unable to post data to the Provider", obj},
+		[]string{"Status Code: " + fmt.Sprint(statusCode), err.Error()},
+		[]string{
+			"Network connectivity issues between Meshery and the Provider",
+			"Provider service may be down or unresponsive",
+			"Invalid or malformed request data",
+			"Invalid or expired authentication credentials",
+			"Rate limiting or quota exceeded",
+			"Provider API endpoint may have changed",
+		},
+		[]string{
+			"Verify network connectivity to the Provider",
+			"Check if the Provider service is up and running",
+			"Validate the format and content of the data being posted",
+			"Ensure authentication credentials are valid and not expired",
+			"Wait and retry if rate limited, or check your usage quota",
+			"Verify the Provider API endpoint is correct",
+		},
+	)
 }
 
 func ErrDelete(err error, obj string, statusCode int) error {

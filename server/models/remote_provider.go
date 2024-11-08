@@ -1869,7 +1869,7 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string, 
 		l.Log.Info("design successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	err = ErrFetch(fmt.Errorf("could not retrieve design from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrFetch(fmt.Errorf("could not retrieve design from remote provider"), "design:"+patternID, resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -1917,7 +1917,7 @@ func (l *RemoteProvider) DeleteMesheryPattern(req *http.Request, patternID strin
 		l.Log.Info("design successfully retrieved from remote provider")
 		return bdr, nil
 	}
-	err = ErrDelete(fmt.Errorf("could not retrieve design from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrDelete(fmt.Errorf("could not delete design from remote provider"), "design:"+patternID, resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
@@ -2138,10 +2138,10 @@ func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns Meshe
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("design successfully retrieved from remote provider")
+		l.Log.Info("designs successfully deleted from remote provider")
 		return bdr, nil
 	}
-	err = ErrFetch(fmt.Errorf("could not retrieve design from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
+	err = ErrDelete(fmt.Errorf("could not delete designs from remote provider"), "designs", resp.StatusCode)
 	l.Log.Error(err)
 	return nil, err
 }
