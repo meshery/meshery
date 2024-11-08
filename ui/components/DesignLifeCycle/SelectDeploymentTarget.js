@@ -59,7 +59,7 @@ const K8sContextConnection = ({ connection, environment }) => {
 
   return (
     <K8sContextConnectionChip
-      ctx={connection}
+      ctx={{ ...connection.metadata, connection_id: connection.id }}
       onSelectChange={toggleK8sConnection}
       selected={isSelected}
       selectable
