@@ -119,11 +119,11 @@ const EmptyState = () => {
 };
 
 const NavbarNotificationIcon = withErrorBoundary(() => {
-  const { data, error } = useGetEventsSummaryQuery({
+  const { data, error, isLoading } = useGetEventsSummaryQuery({
     status: STATUS.UNREAD,
   });
 
-  if (error || !data) {
+  if (error || (!data && !isLoading)) {
     console.log(
       '[NavbarNotificationIcon] Error fetching notification summary for NotificationIconCount',
       error,
