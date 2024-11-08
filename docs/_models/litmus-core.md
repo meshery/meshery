@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/litmus-core/components/chaos-engine/icons/color/chaos-engine-color.svg
   whiteIcon: assets/img/integrations/litmus-core/components/chaos-engine/icons/white/chaos-engine-white.svg
   description: 
+  isAnnotation: false
 - name: chaos-result
   colorIcon: assets/img/integrations/litmus-core/components/chaos-result/icons/color/chaos-result-color.svg
   whiteIcon: assets/img/integrations/litmus-core/components/chaos-result/icons/white/chaos-result-white.svg
   description: 
+  isAnnotation: false
 - name: chaos-experiment
   colorIcon: assets/img/integrations/litmus-core/components/chaos-experiment/icons/color/chaos-experiment-color.svg
   whiteIcon: assets/img/integrations/litmus-core/components/chaos-experiment/icons/white/chaos-experiment-white.svg
   description: 
+  isAnnotation: FALSE
 featureList: [
   "Automates chaos experiments",
   "Simulates various failure scenarios",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Integrates chaos experiments"
 howItWorksDetails: "Enhanced resilience testing and validation of Kubernetes applications"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

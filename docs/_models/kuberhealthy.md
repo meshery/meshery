@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/kuberhealthy/components/kuberhealthy-check/icons/color/kuberhealthy-check-color.svg
   whiteIcon: assets/img/integrations/kuberhealthy/components/kuberhealthy-check/icons/white/kuberhealthy-check-white.svg
   description: 
+  isAnnotation: false
 - name: kuberhealthy-job
   colorIcon: assets/img/integrations/kuberhealthy/components/kuberhealthy-job/icons/color/kuberhealthy-job-color.svg
   whiteIcon: assets/img/integrations/kuberhealthy/components/kuberhealthy-job/icons/white/kuberhealthy-job-white.svg
   description: 
+  isAnnotation: false
 - name: kuberhealthy-state
   colorIcon: assets/img/integrations/kuberhealthy/components/kuberhealthy-state/icons/color/kuberhealthy-state-color.svg
   whiteIcon: assets/img/integrations/kuberhealthy/components/kuberhealthy-state/icons/white/kuberhealthy-state-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Periodically runs health checks",
   "Reports cluster health status",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Runs Kuberhealthy checks"
 howItWorksDetails: "Proactive health monitoring and alerting for Kubernetes clusters"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

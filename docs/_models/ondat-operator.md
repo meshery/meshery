@@ -17,6 +17,7 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Ondat storage"
 howItWorksDetails: "Simplified persistent storage management within Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

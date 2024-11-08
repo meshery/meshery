@@ -17,6 +17,7 @@ featureList: [
 ]
 howItWorks: "Integrates Falco alerts"
 howItWorksDetails: "Enhanced security and threat detection for Kubernetes environments"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

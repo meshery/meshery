@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/aws-kinesis-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-kinesis-controller/components/field-export/icons/white/field-export-white.svg
   description: 
+  isAnnotation: false
 - name: adopted-resource
   colorIcon: assets/img/integrations/aws-kinesis-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-kinesis-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+  isAnnotation: false
 - name: stream
   colorIcon: assets/img/integrations/aws-kinesis-controller/components/stream/icons/color/stream-color.svg
   whiteIcon: assets/img/integrations/aws-kinesis-controller/components/stream/icons/white/stream-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Collects, processes, and analyzes streaming data",
   "Scalable and durable",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Integrates with Kinesis Data Streams"
 howItWorksDetails: "Real-time data processing and analytics in AWS"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

@@ -14,46 +14,57 @@ components:
   colorIcon: assets/img/integrations/argo-workflows/components/cluster-workflow-template/icons/color/cluster-workflow-template-color.svg
   whiteIcon: assets/img/integrations/argo-workflows/components/cluster-workflow-template/icons/white/cluster-workflow-template-white.svg
   description: 
+  isAnnotation: false
 - name: cron-workflow
   colorIcon: assets/img/integrations/argo-workflows/components/cron-workflow/icons/color/cron-workflow-color.svg
   whiteIcon: assets/img/integrations/argo-workflows/components/cron-workflow/icons/white/cron-workflow-white.svg
   description: 
+  isAnnotation: false
 - name: event-bus
   colorIcon: assets/img/integrations/argo-workflows/components/event-bus/icons/color/event-bus-color.svg
   whiteIcon: assets/img/integrations/argo-workflows/components/event-bus/icons/white/event-bus-white.svg
   description: 
+  isAnnotation: false
 - name: event-source
   colorIcon: assets/img/integrations/argo-workflows/components/event-source/icons/color/event-source-color.svg
   whiteIcon: assets/img/integrations/argo-workflows/components/event-source/icons/white/event-source-white.svg
   description: 
+  isAnnotation: false
 - name: sensor
   colorIcon: assets/img/integrations/argo-workflows/components/sensor/icons/color/sensor-color.svg
   whiteIcon: assets/img/integrations/argo-workflows/components/sensor/icons/white/sensor-white.svg
   description: 
+  isAnnotation: false
 - name: workflow-artifact-gc-task
   colorIcon: assets/img/integrations/argo-workflows/components/workflow-artifact-gc-task/icons/color/workflow-artifact-gc-task-color.svg
   whiteIcon: assets/img/integrations/argo-workflows/components/workflow-artifact-gc-task/icons/white/workflow-artifact-gc-task-white.svg
   description: 
+  isAnnotation: false
 - name: workflow-event-binding
   colorIcon: assets/img/integrations/argo-workflows/components/workflow-event-binding/icons/color/workflow-event-binding-color.svg
   whiteIcon: assets/img/integrations/argo-workflows/components/workflow-event-binding/icons/white/workflow-event-binding-white.svg
   description: 
+  isAnnotation: false
 - name: workflow
   colorIcon: assets/img/integrations/argo-workflows/components/workflow/icons/color/workflow-color.svg
   whiteIcon: assets/img/integrations/argo-workflows/components/workflow/icons/white/workflow-white.svg
   description: 
+  isAnnotation: false
 - name: workflow-task-result
   colorIcon: assets/img/integrations/argo-workflows/components/workflow-task-result/icons/color/workflow-task-result-color.svg
   whiteIcon: assets/img/integrations/argo-workflows/components/workflow-task-result/icons/white/workflow-task-result-white.svg
   description: 
+  isAnnotation: false
 - name: workflow-task-set
   colorIcon: assets/img/integrations/argo-workflows/components/workflow-task-set/icons/color/workflow-task-set-color.svg
   whiteIcon: assets/img/integrations/argo-workflows/components/workflow-task-set/icons/white/workflow-task-set-white.svg
   description: 
+  isAnnotation: false
 - name: workflow-template
   colorIcon: assets/img/integrations/argo-workflows/components/workflow-template/icons/color/workflow-template-color.svg
   whiteIcon: assets/img/integrations/argo-workflows/components/workflow-template/icons/white/workflow-template-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "UI to visualize and manage Workflows.",
   "Workflow templating to store commonly used Workflows in the cluster.",
@@ -61,6 +72,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

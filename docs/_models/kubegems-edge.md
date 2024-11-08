@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/kubegems-edge/components/edge-cluster/icons/color/edge-cluster-color.svg
   whiteIcon: assets/img/integrations/kubegems-edge/components/edge-cluster/icons/white/edge-cluster-white.svg
   description: 
+  isAnnotation: false
 - name: edge-hub
   colorIcon: assets/img/integrations/kubegems-edge/components/edge-hub/icons/color/edge-hub-color.svg
   whiteIcon: assets/img/integrations/kubegems-edge/components/edge-hub/icons/white/edge-hub-white.svg
   description: 
+  isAnnotation: false
 - name: edge-task
   colorIcon: assets/img/integrations/kubegems-edge/components/edge-task/icons/color/edge-task-color.svg
   whiteIcon: assets/img/integrations/kubegems-edge/components/edge-task/icons/white/edge-task-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Simplified deployment for edge environments",
   "Optimized for resource-constrained devices",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

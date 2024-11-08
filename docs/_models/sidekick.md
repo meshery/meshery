@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/sidekick/components/sidekick/icons/color/sidekick-color.svg
   whiteIcon: assets/img/integrations/sidekick/components/sidekick/icons/white/sidekick-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Automates sidecar injection and management",
   "Supports various sidecar patterns",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Manages Sidekick configurations"
 howItWorksDetails: "Simplified sidecar container management within Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

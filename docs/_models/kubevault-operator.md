@@ -14,10 +14,12 @@ components:
   colorIcon: assets/img/integrations/kubevault-operator/components/vault-server/icons/color/vault-server-color.svg
   whiteIcon: assets/img/integrations/kubevault-operator/components/vault-server/icons/white/vault-server-white.svg
   description: 
+  isAnnotation: false
 - name: recommendation
   colorIcon: assets/img/integrations/kubevault-operator/components/recommendation/icons/color/recommendation-color.svg
   whiteIcon: assets/img/integrations/kubevault-operator/components/recommendation/icons/white/recommendation-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Automates Vault operations and lifecycle",
   "Handles Vault scaling and upgrades",
@@ -25,6 +27,7 @@ featureList: [
 ]
 howItWorks: "Deploys and manages KubeVault Operator"
 howItWorksDetails: "Streamlined Vault operation and management in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

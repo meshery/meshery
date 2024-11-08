@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/amd-gpu/components/node-feature/icons/color/node-feature-color.svg
   whiteIcon: assets/img/integrations/amd-gpu/components/node-feature/icons/white/node-feature-white.svg
   description: 
+  isAnnotation: false
 - name: node-feature-rule
   colorIcon: assets/img/integrations/amd-gpu/components/node-feature-rule/icons/color/node-feature-rule-color.svg
   whiteIcon: assets/img/integrations/amd-gpu/components/node-feature-rule/icons/white/node-feature-rule-white.svg
   description: 
+  isAnnotation: false
 - name: node-feature-group
   colorIcon: assets/img/integrations/amd-gpu/components/node-feature-group/icons/color/node-feature-group-color.svg
   whiteIcon: assets/img/integrations/amd-gpu/components/node-feature-group/icons/white/node-feature-group-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Enables GPU acceleration for Kubernetes workloads",
   "Supports various AMD GPU models",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Manages AMD GPU resources"
 howItWorksDetails: "Improved performance for GPU-accelerated workloads in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

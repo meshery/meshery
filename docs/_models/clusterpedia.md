@@ -14,18 +14,22 @@ components:
   colorIcon: assets/img/integrations/clusterpedia/components/cluster-sync-resources/icons/color/cluster-sync-resources-color.svg
   whiteIcon: assets/img/integrations/clusterpedia/components/cluster-sync-resources/icons/white/cluster-sync-resources-white.svg
   description: 
+  isAnnotation: false
 - name: pedia-cluster
   colorIcon: assets/img/integrations/clusterpedia/components/pedia-cluster/icons/color/pedia-cluster-color.svg
   whiteIcon: assets/img/integrations/clusterpedia/components/pedia-cluster/icons/white/pedia-cluster-white.svg
   description: 
+  isAnnotation: false
 - name: cluster-import-policy
   colorIcon: assets/img/integrations/clusterpedia/components/cluster-import-policy/icons/color/cluster-import-policy-color.svg
   whiteIcon: assets/img/integrations/clusterpedia/components/cluster-import-policy/icons/white/cluster-import-policy-white.svg
   description: 
+  isAnnotation: false
 - name: pedia-cluster-lifecycle
   colorIcon: assets/img/integrations/clusterpedia/components/pedia-cluster-lifecycle/icons/color/pedia-cluster-lifecycle-color.svg
   whiteIcon: assets/img/integrations/clusterpedia/components/pedia-cluster-lifecycle/icons/white/pedia-cluster-lifecycle-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Invite anyone to review and make changes to your private designs.",
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
@@ -33,6 +37,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

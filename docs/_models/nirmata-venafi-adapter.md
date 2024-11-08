@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/nirmata-venafi-adapter/components/image-key/icons/color/image-key-color.svg
   whiteIcon: assets/img/integrations/nirmata-venafi-adapter/components/image-key/icons/white/image-key-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Automates certificate issuance and renewal",
   "Integrates with Venafi Trust Protection Platform",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Manages certificates within Meshery"
 howItWorksDetails: "Streamlined certificate management and improved security in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

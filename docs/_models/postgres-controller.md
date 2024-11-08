@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/postgres-controller/components/postgres-database/icons/color/postgres-database-color.svg
   whiteIcon: assets/img/integrations/postgres-controller/components/postgres-database/icons/white/postgres-database-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Automates PostgreSQL deployment and scaling",
   "Manages PostgreSQL configuration",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Deploys and manages PostgreSQL"
 howItWorksDetails: "Simplified PostgreSQL management within Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

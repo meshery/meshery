@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/pgo/components/pg-upgrade/icons/color/pg-upgrade-color.svg
   whiteIcon: assets/img/integrations/pgo/components/pg-upgrade/icons/white/pg-upgrade-white.svg
   description: 
+  isAnnotation: false
 - name: postgres-cluster
   colorIcon: assets/img/integrations/pgo/components/postgres-cluster/icons/color/postgres-cluster-color.svg
   whiteIcon: assets/img/integrations/pgo/components/postgres-cluster/icons/white/postgres-cluster-white.svg
   description: 
+  isAnnotation: false
 - name: pg-admin
   colorIcon: assets/img/integrations/pgo/components/pg-admin/icons/color/pg-admin-color.svg
   whiteIcon: assets/img/integrations/pgo/components/pg-admin/icons/white/pg-admin-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Automates PostgreSQL deployment and management",
   "High availability and disaster recovery",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Deploys and manages PostgreSQL"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

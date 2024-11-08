@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/chaosblade-operator/components/chaos-blade/icons/color/chaos-blade-color.svg
   whiteIcon: assets/img/integrations/chaosblade-operator/components/chaos-blade/icons/white/chaos-blade-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Improves the fault tolerance of distributed systems.",
   "Ensures business continuity during the process of enterprises going to cloud or moving to cloud native systems.",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

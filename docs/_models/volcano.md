@@ -14,22 +14,27 @@ components:
   colorIcon: assets/img/integrations/volcano/components/job/icons/color/job-color.svg
   whiteIcon: assets/img/integrations/volcano/components/job/icons/white/job-white.svg
   description: 
+  isAnnotation: false
 - name: command
   colorIcon: assets/img/integrations/volcano/components/command/icons/color/command-color.svg
   whiteIcon: assets/img/integrations/volcano/components/command/icons/white/command-white.svg
   description: 
+  isAnnotation: false
 - name: numatopology
   colorIcon: assets/img/integrations/volcano/components/numatopology/icons/color/numatopology-color.svg
   whiteIcon: assets/img/integrations/volcano/components/numatopology/icons/white/numatopology-white.svg
   description: 
+  isAnnotation: false
 - name: pod-group
   colorIcon: assets/img/integrations/volcano/components/pod-group/icons/color/pod-group-color.svg
   whiteIcon: assets/img/integrations/volcano/components/pod-group/icons/white/pod-group-white.svg
   description: 
+  isAnnotation: false
 - name: queue
   colorIcon: assets/img/integrations/volcano/components/queue/icons/color/queue-color.svg
   whiteIcon: assets/img/integrations/volcano/components/queue/icons/white/queue-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
@@ -37,6 +42,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

@@ -14,10 +14,12 @@ components:
   colorIcon: assets/img/integrations/aws-elasticsearchservice-controller/components/elasticsearch-domain/icons/color/elasticsearch-domain-color.svg
   whiteIcon: assets/img/integrations/aws-elasticsearchservice-controller/components/elasticsearch-domain/icons/white/elasticsearch-domain-white.svg
   description: 
+  isAnnotation: false
 - name: adopted-resource
   colorIcon: assets/img/integrations/aws-elasticsearchservice-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-elasticsearchservice-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Scalable search and analytics",
   "Easy to deploy and manage",
@@ -25,6 +27,7 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Elasticsearch"
 howItWorksDetails: "Simplified Elasticsearch management and integration with AWS"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

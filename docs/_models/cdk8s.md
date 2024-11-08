@@ -17,6 +17,7 @@ featureList: [
 ]
 howItWorks: "Deploy through GitOps"
 howItWorksDetails: "cdk8s is an open-source software development framework for defining Kubernetes applications and reusable abstractions using familiar programming languages and rich object-oriented APIs. cdk8s apps synthesize into standard Kubernetes manifests which can be applied to any Kubernetes cluster."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

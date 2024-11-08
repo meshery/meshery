@@ -14,34 +14,42 @@ components:
   colorIcon: assets/img/integrations/cloudcore/components/edge-application/icons/color/edge-application-color.svg
   whiteIcon: assets/img/integrations/cloudcore/components/edge-application/icons/white/edge-application-white.svg
   description: 
+  isAnnotation: false
 - name: node-group
   colorIcon: assets/img/integrations/cloudcore/components/node-group/icons/color/node-group-color.svg
   whiteIcon: assets/img/integrations/cloudcore/components/node-group/icons/white/node-group-white.svg
   description: 
+  isAnnotation: false
 - name: cluster-object-sync
   colorIcon: assets/img/integrations/cloudcore/components/cluster-object-sync/icons/color/cluster-object-sync-color.svg
   whiteIcon: assets/img/integrations/cloudcore/components/cluster-object-sync/icons/white/cluster-object-sync-white.svg
   description: 
+  isAnnotation: false
 - name: device
   colorIcon: assets/img/integrations/cloudcore/components/device/icons/color/device-color.svg
   whiteIcon: assets/img/integrations/cloudcore/components/device/icons/white/device-white.svg
   description: 
+  isAnnotation: false
 - name: device-model
   colorIcon: assets/img/integrations/cloudcore/components/device-model/icons/color/device-model-color.svg
   whiteIcon: assets/img/integrations/cloudcore/components/device-model/icons/white/device-model-white.svg
   description: 
+  isAnnotation: false
 - name: object-sync
   colorIcon: assets/img/integrations/cloudcore/components/object-sync/icons/color/object-sync-color.svg
   whiteIcon: assets/img/integrations/cloudcore/components/object-sync/icons/white/object-sync-white.svg
   description: 
+  isAnnotation: false
 - name: rule
   colorIcon: assets/img/integrations/cloudcore/components/rule/icons/color/rule-color.svg
   whiteIcon: assets/img/integrations/cloudcore/components/rule/icons/white/rule-white.svg
   description: 
+  isAnnotation: false
 - name: rule-endpoint
   colorIcon: assets/img/integrations/cloudcore/components/rule-endpoint/icons/color/rule-endpoint-color.svg
   whiteIcon: assets/img/integrations/cloudcore/components/rule-endpoint/icons/white/rule-endpoint-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Simplifies cloud-native application development",
   "Provides a unified platform for development and operations",
@@ -49,6 +57,7 @@ featureList: [
 ]
 howItWorks: "Integrates CloudCore"
 howItWorksDetails: "Accelerated cloud-native application development"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

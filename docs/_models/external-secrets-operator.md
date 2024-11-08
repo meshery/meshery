@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/external-secrets-operator/components/external-backend/icons/color/external-backend-color.svg
   whiteIcon: assets/img/integrations/external-secrets-operator/components/external-backend/icons/white/external-backend-white.svg
   description: 
+  isAnnotation: false
 - name: external-config-map
   colorIcon: assets/img/integrations/external-secrets-operator/components/external-config-map/icons/color/external-config-map-color.svg
   whiteIcon: assets/img/integrations/external-secrets-operator/components/external-config-map/icons/white/external-config-map-white.svg
   description: 
+  isAnnotation: false
 - name: external-secret
   colorIcon: assets/img/integrations/external-secrets-operator/components/external-secret/icons/color/external-secret-color.svg
   whiteIcon: assets/img/integrations/external-secrets-operator/components/external-secret/icons/white/external-secret-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Automates secret synchronization",
   "Supports multiple secret stores",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Manages external secrets"
 howItWorksDetails: "Secure and centralized secret management for Kubernetes applications"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

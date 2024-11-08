@@ -14,34 +14,42 @@ components:
   colorIcon: assets/img/integrations/camel-k/components/build/icons/color/build-color.svg
   whiteIcon: assets/img/integrations/camel-k/components/build/icons/white/build-white.svg
   description: 
+  isAnnotation: false
 - name: camel-catalog
   colorIcon: assets/img/integrations/camel-k/components/camel-catalog/icons/color/camel-catalog-color.svg
   whiteIcon: assets/img/integrations/camel-k/components/camel-catalog/icons/white/camel-catalog-white.svg
   description: 
+  isAnnotation: false
 - name: integration-kit
   colorIcon: assets/img/integrations/camel-k/components/integration-kit/icons/color/integration-kit-color.svg
   whiteIcon: assets/img/integrations/camel-k/components/integration-kit/icons/white/integration-kit-white.svg
   description: 
+  isAnnotation: false
 - name: integration-platform
   colorIcon: assets/img/integrations/camel-k/components/integration-platform/icons/color/integration-platform-color.svg
   whiteIcon: assets/img/integrations/camel-k/components/integration-platform/icons/white/integration-platform-white.svg
   description: 
+  isAnnotation: false
 - name: integration
   colorIcon: assets/img/integrations/camel-k/components/integration/icons/color/integration-color.svg
   whiteIcon: assets/img/integrations/camel-k/components/integration/icons/white/integration-white.svg
   description: 
+  isAnnotation: false
 - name: kamelet-binding
   colorIcon: assets/img/integrations/camel-k/components/kamelet-binding/icons/color/kamelet-binding-color.svg
   whiteIcon: assets/img/integrations/camel-k/components/kamelet-binding/icons/white/kamelet-binding-white.svg
   description: 
+  isAnnotation: false
 - name: kamelet
   colorIcon: assets/img/integrations/camel-k/components/kamelet/icons/color/kamelet-color.svg
   whiteIcon: assets/img/integrations/camel-k/components/kamelet/icons/white/kamelet-white.svg
   description: 
+  isAnnotation: false
 - name: pipe
   colorIcon: assets/img/integrations/camel-k/components/pipe/icons/color/pipe-color.svg
   whiteIcon: assets/img/integrations/camel-k/components/pipe/icons/white/pipe-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Define routing and mediation rules in a variety of domain-specific languages.",
   "Enables easier integration with all kinds of transport or messaging models.",
@@ -49,6 +57,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

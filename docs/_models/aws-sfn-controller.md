@@ -14,18 +14,22 @@ components:
   colorIcon: assets/img/integrations/aws-sfn-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-sfn-controller/components/field-export/icons/white/field-export-white.svg
   description: 
+  isAnnotation: false
 - name: adopted-resource
   colorIcon: assets/img/integrations/aws-sfn-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-sfn-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+  isAnnotation: false
 - name: activity
   colorIcon: assets/img/integrations/aws-sfn-controller/components/activity/icons/color/activity-color.svg
   whiteIcon: assets/img/integrations/aws-sfn-controller/components/activity/icons/white/activity-white.svg
   description: 
+  isAnnotation: false
 - name: state-machine
   colorIcon: assets/img/integrations/aws-sfn-controller/components/state-machine/icons/color/state-machine-color.svg
   whiteIcon: assets/img/integrations/aws-sfn-controller/components/state-machine/icons/white/state-machine-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Step Functions is based on state machines and tasks.",
   "Supports Catch and Retry statements",
@@ -33,6 +37,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

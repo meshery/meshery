@@ -14,66 +14,82 @@ components:
   colorIcon: assets/img/integrations/couchbase-operator/components/couchbase-autoscaler/icons/color/couchbase-autoscaler-color.svg
   whiteIcon: assets/img/integrations/couchbase-operator/components/couchbase-autoscaler/icons/white/couchbase-autoscaler-white.svg
   description: 
+  isAnnotation: 
 - name: couchbase-backup-restore
   colorIcon: assets/img/integrations/couchbase-operator/components/couchbase-backup-restore/icons/color/couchbase-backup-restore-color.svg
   whiteIcon: assets/img/integrations/couchbase-operator/components/couchbase-backup-restore/icons/white/couchbase-backup-restore-white.svg
   description: 
+  isAnnotation: 
 - name: couchbase-backup
   colorIcon: assets/img/integrations/couchbase-operator/components/couchbase-backup/icons/color/couchbase-backup-color.svg
   whiteIcon: assets/img/integrations/couchbase-operator/components/couchbase-backup/icons/white/couchbase-backup-white.svg
   description: 
+  isAnnotation: 
 - name: couchbase-bucket
   colorIcon: assets/img/integrations/couchbase-operator/components/couchbase-bucket/icons/color/couchbase-bucket-color.svg
   whiteIcon: assets/img/integrations/couchbase-operator/components/couchbase-bucket/icons/white/couchbase-bucket-white.svg
   description: 
+  isAnnotation: 
 - name: couchbase-cluster
   colorIcon: assets/img/integrations/couchbase-operator/components/couchbase-cluster/icons/color/couchbase-cluster-color.svg
   whiteIcon: assets/img/integrations/couchbase-operator/components/couchbase-cluster/icons/white/couchbase-cluster-white.svg
   description: 
+  isAnnotation: 
 - name: couchbase-collection-group
   colorIcon: assets/img/integrations/couchbase-operator/components/couchbase-collection-group/icons/color/couchbase-collection-group-color.svg
   whiteIcon: assets/img/integrations/couchbase-operator/components/couchbase-collection-group/icons/white/couchbase-collection-group-white.svg
   description: 
+  isAnnotation: 
 - name: couchbase-collection
   colorIcon: assets/img/integrations/couchbase-operator/components/couchbase-collection/icons/color/couchbase-collection-color.svg
   whiteIcon: assets/img/integrations/couchbase-operator/components/couchbase-collection/icons/white/couchbase-collection-white.svg
   description: 
+  isAnnotation: 
 - name: couchbase-ephemeral-bucket
   colorIcon: assets/img/integrations/couchbase-operator/components/couchbase-ephemeral-bucket/icons/color/couchbase-ephemeral-bucket-color.svg
   whiteIcon: assets/img/integrations/couchbase-operator/components/couchbase-ephemeral-bucket/icons/white/couchbase-ephemeral-bucket-white.svg
   description: 
+  isAnnotation: 
 - name: couchbase-group
   colorIcon: assets/img/integrations/couchbase-operator/components/couchbase-group/icons/color/couchbase-group-color.svg
   whiteIcon: assets/img/integrations/couchbase-operator/components/couchbase-group/icons/white/couchbase-group-white.svg
   description: 
+  isAnnotation: 
 - name: couchbase-memcached-bucket
   colorIcon: assets/img/integrations/couchbase-operator/components/couchbase-memcached-bucket/icons/color/couchbase-memcached-bucket-color.svg
   whiteIcon: assets/img/integrations/couchbase-operator/components/couchbase-memcached-bucket/icons/white/couchbase-memcached-bucket-white.svg
   description: 
+  isAnnotation: 
 - name: couchbase-migration-replication
   colorIcon: assets/img/integrations/couchbase-operator/components/couchbase-migration-replication/icons/color/couchbase-migration-replication-color.svg
   whiteIcon: assets/img/integrations/couchbase-operator/components/couchbase-migration-replication/icons/white/couchbase-migration-replication-white.svg
   description: 
+  isAnnotation: 
 - name: couchbase-replication
   colorIcon: assets/img/integrations/couchbase-operator/components/couchbase-replication/icons/color/couchbase-replication-color.svg
   whiteIcon: assets/img/integrations/couchbase-operator/components/couchbase-replication/icons/white/couchbase-replication-white.svg
   description: 
+  isAnnotation: 
 - name: couchbase-role-binding
   colorIcon: assets/img/integrations/couchbase-operator/components/couchbase-role-binding/icons/color/couchbase-role-binding-color.svg
   whiteIcon: assets/img/integrations/couchbase-operator/components/couchbase-role-binding/icons/white/couchbase-role-binding-white.svg
   description: 
+  isAnnotation: 
 - name: couchbase-scope-group
   colorIcon: assets/img/integrations/couchbase-operator/components/couchbase-scope-group/icons/color/couchbase-scope-group-color.svg
   whiteIcon: assets/img/integrations/couchbase-operator/components/couchbase-scope-group/icons/white/couchbase-scope-group-white.svg
   description: 
+  isAnnotation: 
 - name: couchbase-scope
   colorIcon: assets/img/integrations/couchbase-operator/components/couchbase-scope/icons/color/couchbase-scope-color.svg
   whiteIcon: assets/img/integrations/couchbase-operator/components/couchbase-scope/icons/white/couchbase-scope-white.svg
   description: 
+  isAnnotation: 
 - name: couchbase-user
   colorIcon: assets/img/integrations/couchbase-operator/components/couchbase-user/icons/color/couchbase-user-color.svg
   whiteIcon: assets/img/integrations/couchbase-operator/components/couchbase-user/icons/white/couchbase-user-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Automates Couchbase cluster deployment",
   "Manages Couchbase configuration",
@@ -81,6 +97,7 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Couchbase"
 howItWorksDetails: "Streamlined Couchbase management in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

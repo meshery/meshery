@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/fabedge/components/global-service/icons/color/global-service-color.svg
   whiteIcon: assets/img/integrations/fabedge/components/global-service/icons/white/global-service-white.svg
   description: 
+  isAnnotation: false
 - name: cluster
   colorIcon: assets/img/integrations/fabedge/components/cluster/icons/color/cluster-color.svg
   whiteIcon: assets/img/integrations/fabedge/components/cluster/icons/white/cluster-white.svg
   description: 
+  isAnnotation: false
 - name: community
   colorIcon: assets/img/integrations/fabedge/components/community/icons/color/community-color.svg
   whiteIcon: assets/img/integrations/fabedge/components/community/icons/white/community-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Simplifies network management at the edge",
   "Provides secure and reliable connectivity",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Integrates FabEdge configurations"
 howItWorksDetails: "Streamlined network management and improved performance for edge workloads"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

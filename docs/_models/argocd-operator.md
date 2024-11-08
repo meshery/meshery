@@ -14,22 +14,27 @@ components:
   colorIcon: assets/img/integrations/argocd-operator/components/argo-cd-export/icons/color/argo-cd-export-color.svg
   whiteIcon: assets/img/integrations/argocd-operator/components/argo-cd-export/icons/white/argo-cd-export-white.svg
   description: 
+  isAnnotation: false
 - name: argo-cd
   colorIcon: assets/img/integrations/argocd-operator/components/argo-cd/icons/color/argo-cd-color.svg
   whiteIcon: assets/img/integrations/argocd-operator/components/argo-cd/icons/white/argo-cd-white.svg
   description: 
+  isAnnotation: false
 - name: application
   colorIcon: assets/img/integrations/argocd-operator/components/application/icons/color/application-color.svg
   whiteIcon: assets/img/integrations/argocd-operator/components/application/icons/white/application-white.svg
   description: 
+  isAnnotation: 
 - name: application-set
   colorIcon: assets/img/integrations/argocd-operator/components/application-set/icons/color/application-set-color.svg
   whiteIcon: assets/img/integrations/argocd-operator/components/application-set/icons/white/application-set-white.svg
   description: 
+  isAnnotation: 
 - name: app-project
   colorIcon: assets/img/integrations/argocd-operator/components/app-project/icons/color/app-project-color.svg
   whiteIcon: assets/img/integrations/argocd-operator/components/app-project/icons/white/app-project-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Declarative continuous delivery with a fully-loaded UI.",
   "Application definitions, configurations, and environments can be declarative and version controlled.",
@@ -37,6 +42,7 @@ featureList: [
 ]
 howItWorks: "Deploys and manages Argo CD"
 howItWorksDetails: "Simplified Argo CD management within Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

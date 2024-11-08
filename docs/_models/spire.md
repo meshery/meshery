@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/spire/components/cluster-federated-trust-domain/icons/color/cluster-federated-trust-domain-color.svg
   whiteIcon: assets/img/integrations/spire/components/cluster-federated-trust-domain/icons/white/cluster-federated-trust-domain-white.svg
   description: 
+  isAnnotation: false
 - name: cluster-spiffeid
   colorIcon: assets/img/integrations/spire/components/cluster-spiffeid/icons/color/cluster-spiffeid-color.svg
   whiteIcon: assets/img/integrations/spire/components/cluster-spiffeid/icons/white/cluster-spiffeid-white.svg
   description: 
+  isAnnotation: false
 - name: controller-manager-config
   colorIcon: assets/img/integrations/spire/components/controller-manager-config/icons/color/controller-manager-config-color.svg
   whiteIcon: assets/img/integrations/spire/components/controller-manager-config/icons/white/controller-manager-config-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "SPIRE design and deployment best practices",
   "Configure SPIRE to securely issue and renew SVIDs.",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Configure your signing framework"
 howItWorksDetails: "Simplify access from identified services to secret stores, databases, services meshes and cloud provider services."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

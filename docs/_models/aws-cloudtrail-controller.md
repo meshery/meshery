@@ -14,18 +14,22 @@ components:
   colorIcon: assets/img/integrations/aws-cloudtrail-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-cloudtrail-controller/components/field-export/icons/white/field-export-white.svg
   description: 
+  isAnnotation: false
 - name: adopted-resource
   colorIcon: assets/img/integrations/aws-cloudtrail-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-cloudtrail-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+  isAnnotation: false
 - name: event-data-store
   colorIcon: assets/img/integrations/aws-cloudtrail-controller/components/event-data-store/icons/color/event-data-store-color.svg
   whiteIcon: assets/img/integrations/aws-cloudtrail-controller/components/event-data-store/icons/white/event-data-store-white.svg
   description: 
+  isAnnotation: false
 - name: trail
   colorIcon: assets/img/integrations/aws-cloudtrail-controller/components/trail/icons/color/trail-color.svg
   whiteIcon: assets/img/integrations/aws-cloudtrail-controller/components/trail/icons/white/trail-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Data events that capture data plane actions within a resource, such as reading or writing an Amazon S3 object.",
   "Configuration items from AWS Config that capture resource configuration history and resource compliance history as evaluated by AWS Config rules.",
@@ -33,6 +37,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

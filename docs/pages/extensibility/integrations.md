@@ -33,6 +33,9 @@ total: {{ site.models.size }}
     {% for item in sorted_index %}
     {% if item.type=="extensibility" and item.category=="integrations" and item.list=="include" and item.language == "en" -%}
       <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+      {% if item.isAnnotation == "TRUE" or item.isAnnotation == "true" %}
+      <span class="deprecated-label">Annotation</span>
+      {% endif %}
       {% if item.abstract %}
         -  {{ item.abstract }}
       {% endif %}

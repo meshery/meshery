@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/keda-http-scaler/components/http-scaled-object/icons/color/http-scaled-object-color.svg
   whiteIcon: assets/img/integrations/keda-http-scaler/components/http-scaled-object/icons/white/http-scaled-object-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Scales based on HTTP requests and metrics",
   "Integrates with various ingress controllers",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Scales deployments with KEDA HTTP Scaler"
 howItWorksDetails: "Automated scaling of Kubernetes applications based on HTTP traffic"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

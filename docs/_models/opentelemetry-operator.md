@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/opentelemetry-operator/components/op-amp-bridge/icons/color/op-amp-bridge-color.svg
   whiteIcon: assets/img/integrations/opentelemetry-operator/components/op-amp-bridge/icons/white/op-amp-bridge-white.svg
   description: 
+  isAnnotation: FALSE
 featureList: [
   "Automates OpenTelemetry deployment and configuration",
   "Simplifies tracing, metrics, and logging",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Deploys and manages OpenTelemetry"
 howItWorksDetails: "Streamlined observability setup and management in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

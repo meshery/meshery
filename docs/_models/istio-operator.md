@@ -14,22 +14,27 @@ components:
   colorIcon: assets/img/integrations/istio-operator/components/istio-control-plane/icons/color/istio-control-plane-color.svg
   whiteIcon: assets/img/integrations/istio-operator/components/istio-control-plane/icons/white/istio-control-plane-white.svg
   description: 
+  isAnnotation: false
 - name: peer-istio-control-plane
   colorIcon: assets/img/integrations/istio-operator/components/peer-istio-control-plane/icons/color/peer-istio-control-plane-color.svg
   whiteIcon: assets/img/integrations/istio-operator/components/peer-istio-control-plane/icons/white/peer-istio-control-plane-white.svg
   description: 
+  isAnnotation: false
 - name: istio-mesh
   colorIcon: assets/img/integrations/istio-operator/components/istio-mesh/icons/color/istio-mesh-color.svg
   whiteIcon: assets/img/integrations/istio-operator/components/istio-mesh/icons/white/istio-mesh-white.svg
   description: 
+  isAnnotation: false
 - name: istio-mesh-gateway
   colorIcon: assets/img/integrations/istio-operator/components/istio-mesh-gateway/icons/color/istio-mesh-gateway-color.svg
   whiteIcon: assets/img/integrations/istio-operator/components/istio-mesh-gateway/icons/white/istio-mesh-gateway-white.svg
   description: 
+  isAnnotation: false
 - name: istio-operator
   colorIcon: assets/img/integrations/istio-operator/components/istio-operator/icons/color/istio-operator-color.svg
   whiteIcon: assets/img/integrations/istio-operator/components/istio-operator/icons/white/istio-operator-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Enable and enforce mutual TLS between your clusters",
   "Analyze Istio Destination Rules",
@@ -37,6 +42,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

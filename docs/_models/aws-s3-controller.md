@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/aws-s3-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-s3-controller/components/field-export/icons/white/field-export-white.svg
   description: 
+  isAnnotation: false
 - name: adopted-resource
   colorIcon: assets/img/integrations/aws-s3-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-s3-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+  isAnnotation: false
 - name: bucket
   colorIcon: assets/img/integrations/aws-s3-controller/components/bucket/icons/color/bucket-color.svg
   whiteIcon: assets/img/integrations/aws-s3-controller/components/bucket/icons/white/bucket-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Stores and retrieves any amount of data",
   "Highly scalable and durable",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Integrates S3 storage"
 howItWorksDetails: "Provides scalable and reliable storage for Kubernetes applications"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

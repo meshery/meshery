@@ -14,138 +14,172 @@ components:
   colorIcon: assets/img/integrations/kubesphere/components/cluster-rule-group/icons/color/cluster-rule-group-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/cluster-rule-group/icons/white/cluster-rule-group-white.svg
   description: 
+  isAnnotation: false
 - name: global-rule-group
   colorIcon: assets/img/integrations/kubesphere/components/global-rule-group/icons/color/global-rule-group-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/global-rule-group/icons/white/global-rule-group-white.svg
   description: 
+  isAnnotation: false
 - name: rule-group
   colorIcon: assets/img/integrations/kubesphere/components/rule-group/icons/color/rule-group-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/rule-group/icons/white/rule-group-white.svg
   description: 
+  isAnnotation: false
 - name: application
   colorIcon: assets/img/integrations/kubesphere/components/application/icons/color/application-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/application/icons/white/application-white.svg
   description: 
+  isAnnotation: false
 - name: helm-application
   colorIcon: assets/img/integrations/kubesphere/components/helm-application/icons/color/helm-application-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/helm-application/icons/white/helm-application-white.svg
   description: 
+  isAnnotation: false
 - name: helm-application-version
   colorIcon: assets/img/integrations/kubesphere/components/helm-application-version/icons/color/helm-application-version-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/helm-application-version/icons/white/helm-application-version-white.svg
   description: 
+  isAnnotation: false
 - name: helm-category
   colorIcon: assets/img/integrations/kubesphere/components/helm-category/icons/color/helm-category-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/helm-category/icons/white/helm-category-white.svg
   description: 
+  isAnnotation: false
 - name: helm-release
   colorIcon: assets/img/integrations/kubesphere/components/helm-release/icons/color/helm-release-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/helm-release/icons/white/helm-release-white.svg
   description: 
+  isAnnotation: false
 - name: helm-repo
   colorIcon: assets/img/integrations/kubesphere/components/helm-repo/icons/color/helm-repo-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/helm-repo/icons/white/helm-repo-white.svg
   description: 
+  isAnnotation: false
 - name: cluster
   colorIcon: assets/img/integrations/kubesphere/components/cluster/icons/color/cluster-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/cluster/icons/white/cluster-white.svg
   description: 
+  isAnnotation: false
 - name: gateway
   colorIcon: assets/img/integrations/kubesphere/components/gateway/icons/color/gateway-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/gateway/icons/white/gateway-white.svg
   description: 
+  isAnnotation: false
 - name: federated-role-binding
   colorIcon: assets/img/integrations/kubesphere/components/federated-role-binding/icons/color/federated-role-binding-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/federated-role-binding/icons/white/federated-role-binding-white.svg
   description: 
+  isAnnotation: false
 - name: federated-role
   colorIcon: assets/img/integrations/kubesphere/components/federated-role/icons/color/federated-role-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/federated-role/icons/white/federated-role-white.svg
   description: 
+  isAnnotation: false
 - name: federated-user
   colorIcon: assets/img/integrations/kubesphere/components/federated-user/icons/color/federated-user-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/federated-user/icons/white/federated-user-white.svg
   description: 
+  isAnnotation: false
 - name: global-role-binding
   colorIcon: assets/img/integrations/kubesphere/components/global-role-binding/icons/color/global-role-binding-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/global-role-binding/icons/white/global-role-binding-white.svg
   description: 
+  isAnnotation: false
 - name: global-role
   colorIcon: assets/img/integrations/kubesphere/components/global-role/icons/color/global-role-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/global-role/icons/white/global-role-white.svg
   description: 
+  isAnnotation: false
 - name: group-binding
   colorIcon: assets/img/integrations/kubesphere/components/group-binding/icons/color/group-binding-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/group-binding/icons/white/group-binding-white.svg
   description: 
+  isAnnotation: false
 - name: group
   colorIcon: assets/img/integrations/kubesphere/components/group/icons/color/group-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/group/icons/white/group-white.svg
   description: 
+  isAnnotation: false
 - name: login-record
   colorIcon: assets/img/integrations/kubesphere/components/login-record/icons/color/login-record-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/login-record/icons/white/login-record-white.svg
   description: 
+  isAnnotation: false
 - name: role-base
   colorIcon: assets/img/integrations/kubesphere/components/role-base/icons/color/role-base-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/role-base/icons/white/role-base-white.svg
   description: 
+  isAnnotation: false
 - name: user
   colorIcon: assets/img/integrations/kubesphere/components/user/icons/color/user-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/user/icons/white/user-white.svg
   description: 
+  isAnnotation: false
 - name: workspace-role-binding
   colorIcon: assets/img/integrations/kubesphere/components/workspace-role-binding/icons/color/workspace-role-binding-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/workspace-role-binding/icons/white/workspace-role-binding-white.svg
   description: 
+  isAnnotation: false
 - name: workspace-role
   colorIcon: assets/img/integrations/kubesphere/components/workspace-role/icons/color/workspace-role-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/workspace-role/icons/white/workspace-role-white.svg
   description: 
+  isAnnotation: false
 - name: ipam-block
   colorIcon: assets/img/integrations/kubesphere/components/ipam-block/icons/color/ipam-block-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/ipam-block/icons/white/ipam-block-white.svg
   description: 
+  isAnnotation: false
 - name: ipam-handle
   colorIcon: assets/img/integrations/kubesphere/components/ipam-handle/icons/color/ipam-handle-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/ipam-handle/icons/white/ipam-handle-white.svg
   description: 
+  isAnnotation: false
 - name: ip-pool
   colorIcon: assets/img/integrations/kubesphere/components/ip-pool/icons/color/ip-pool-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/ip-pool/icons/white/ip-pool-white.svg
   description: 
+  isAnnotation: false
 - name: namespace-network-policy
   colorIcon: assets/img/integrations/kubesphere/components/namespace-network-policy/icons/color/namespace-network-policy-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/namespace-network-policy/icons/white/namespace-network-policy-white.svg
   description: 
+  isAnnotation: false
 - name: resource-quota
   colorIcon: assets/img/integrations/kubesphere/components/resource-quota/icons/color/resource-quota-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/resource-quota/icons/white/resource-quota-white.svg
   description: 
+  isAnnotation: false
 - name: service-policy
   colorIcon: assets/img/integrations/kubesphere/components/service-policy/icons/color/service-policy-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/service-policy/icons/white/service-policy-white.svg
   description: 
+  isAnnotation: false
 - name: strategy
   colorIcon: assets/img/integrations/kubesphere/components/strategy/icons/color/strategy-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/strategy/icons/white/strategy-white.svg
   description: 
+  isAnnotation: false
 - name: provisioner-capability
   colorIcon: assets/img/integrations/kubesphere/components/provisioner-capability/icons/color/provisioner-capability-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/provisioner-capability/icons/white/provisioner-capability-white.svg
   description: 
+  isAnnotation: false
 - name: storage-class-capability
   colorIcon: assets/img/integrations/kubesphere/components/storage-class-capability/icons/color/storage-class-capability-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/storage-class-capability/icons/white/storage-class-capability-white.svg
   description: 
+  isAnnotation: false
 - name: workspace
   colorIcon: assets/img/integrations/kubesphere/components/workspace/icons/color/workspace-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/workspace/icons/white/workspace-white.svg
   description: 
+  isAnnotation: false
 - name: workspace-template
   colorIcon: assets/img/integrations/kubesphere/components/workspace-template/icons/color/workspace-template-color.svg
   whiteIcon: assets/img/integrations/kubesphere/components/workspace-template/icons/white/workspace-template-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
@@ -153,6 +187,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

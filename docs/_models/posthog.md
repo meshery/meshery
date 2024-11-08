@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/posthog/components/click-house-installation/icons/color/click-house-installation-color.svg
   whiteIcon: assets/img/integrations/posthog/components/click-house-installation/icons/white/click-house-installation-white.svg
   description: 
+  isAnnotation: 
 - name: click-house-installation-template
   colorIcon: assets/img/integrations/posthog/components/click-house-installation-template/icons/color/click-house-installation-template-color.svg
   whiteIcon: assets/img/integrations/posthog/components/click-house-installation-template/icons/white/click-house-installation-template-white.svg
   description: 
+  isAnnotation: 
 - name: click-house-operator-configuration
   colorIcon: assets/img/integrations/posthog/components/click-house-operator-configuration/icons/color/click-house-operator-configuration-color.svg
   whiteIcon: assets/img/integrations/posthog/components/click-house-operator-configuration/icons/white/click-house-operator-configuration-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Event tracking and analysis",
   "User behavior insights",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Integrates PostHog analytics"
 howItWorksDetails: "Data-driven insights for improving Kubernetes applications and services"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

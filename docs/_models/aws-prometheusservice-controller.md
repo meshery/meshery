@@ -14,26 +14,32 @@ components:
   colorIcon: assets/img/integrations/aws-prometheusservice-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-prometheusservice-controller/components/field-export/icons/white/field-export-white.svg
   description: 
+  isAnnotation: false
 - name: adopted-resource
   colorIcon: assets/img/integrations/aws-prometheusservice-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-prometheusservice-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+  isAnnotation: false
 - name: alert-manager-definition
   colorIcon: assets/img/integrations/aws-prometheusservice-controller/components/alert-manager-definition/icons/color/alert-manager-definition-color.svg
   whiteIcon: assets/img/integrations/aws-prometheusservice-controller/components/alert-manager-definition/icons/white/alert-manager-definition-white.svg
   description: 
+  isAnnotation: false
 - name: workspace
   colorIcon: assets/img/integrations/aws-prometheusservice-controller/components/workspace/icons/color/workspace-color.svg
   whiteIcon: assets/img/integrations/aws-prometheusservice-controller/components/workspace/icons/white/workspace-white.svg
   description: 
+  isAnnotation: false
 - name: logging-configuration
   colorIcon: assets/img/integrations/aws-prometheusservice-controller/components/logging-configuration/icons/color/logging-configuration-color.svg
   whiteIcon: assets/img/integrations/aws-prometheusservice-controller/components/logging-configuration/icons/white/logging-configuration-white.svg
   description: 
+  isAnnotation: false
 - name: rule-groups-namespace
   colorIcon: assets/img/integrations/aws-prometheusservice-controller/components/rule-groups-namespace/icons/color/rule-groups-namespace-color.svg
   whiteIcon: assets/img/integrations/aws-prometheusservice-controller/components/rule-groups-namespace/icons/white/rule-groups-namespace-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "No collection agents required",
   "Amazon Managed Service for Prometheus includes a remote write-compatible API that can ingest metrics from OpenTelemetry, Prometheus libraries, and existing Prometheus servers.",
@@ -41,6 +47,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

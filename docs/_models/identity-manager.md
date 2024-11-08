@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/identity-manager/components/workload-identity/icons/color/workload-identity-color.svg
   whiteIcon: assets/img/integrations/identity-manager/components/workload-identity/icons/white/workload-identity-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "User authentication and authorization",
   "Identity federation",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Integrates with Identity Manager"
 howItWorksDetails: "Centralized identity and access management for Kubernetes clusters"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

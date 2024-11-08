@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/kubegems/components/application/icons/color/application-color.svg
   whiteIcon: assets/img/integrations/kubegems/components/application/icons/white/application-white.svg
   description: 
+  isAnnotation: 
 - name: application-set
   colorIcon: assets/img/integrations/kubegems/components/application-set/icons/color/application-set-color.svg
   whiteIcon: assets/img/integrations/kubegems/components/application-set/icons/white/application-set-white.svg
   description: 
+  isAnnotation: 
 - name: app-project
   colorIcon: assets/img/integrations/kubegems/components/app-project/icons/color/app-project-color.svg
   whiteIcon: assets/img/integrations/kubegems/components/app-project/icons/white/app-project-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Unified multi-cluster management",
   "Observability and monitoring",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

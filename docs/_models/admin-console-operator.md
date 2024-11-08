@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/admin-console-operator/components/admin-console/icons/color/admin-console-color.svg
   whiteIcon: assets/img/integrations/admin-console-operator/components/admin-console/icons/white/admin-console-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Deployed and configured CI/CD toolset (Jenkins, Gerrit, Nexus, SonarQube)",
   "Kubernetes native approach (CRD, CR) to declare CI/CD pipelines",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

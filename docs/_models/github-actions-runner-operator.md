@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/github-actions-runner-operator/components/github-action-runner/icons/color/github-action-runner-color.svg
   whiteIcon: assets/img/integrations/github-actions-runner-operator/components/github-action-runner/icons/white/github-action-runner-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

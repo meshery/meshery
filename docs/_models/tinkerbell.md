@@ -14,26 +14,32 @@ components:
   colorIcon: assets/img/integrations/tinkerbell/components/hardware/icons/color/hardware-color.svg
   whiteIcon: assets/img/integrations/tinkerbell/components/hardware/icons/white/hardware-white.svg
   description: 
+  isAnnotation: false
 - name: template
   colorIcon: assets/img/integrations/tinkerbell/components/template/icons/color/template-color.svg
   whiteIcon: assets/img/integrations/tinkerbell/components/template/icons/white/template-white.svg
   description: 
+  isAnnotation: false
 - name: workflow
   colorIcon: assets/img/integrations/tinkerbell/components/workflow/icons/color/workflow-color.svg
   whiteIcon: assets/img/integrations/tinkerbell/components/workflow/icons/white/workflow-white.svg
   description: 
+  isAnnotation: false
 - name: job
   colorIcon: assets/img/integrations/tinkerbell/components/job/icons/color/job-color.svg
   whiteIcon: assets/img/integrations/tinkerbell/components/job/icons/white/job-white.svg
   description: 
+  isAnnotation: false
 - name: machine
   colorIcon: assets/img/integrations/tinkerbell/components/machine/icons/color/machine-color.svg
   whiteIcon: assets/img/integrations/tinkerbell/components/machine/icons/white/machine-white.svg
   description: 
+  isAnnotation: false
 - name: task
   colorIcon: assets/img/integrations/tinkerbell/components/task/icons/color/task-color.svg
   whiteIcon: assets/img/integrations/tinkerbell/components/task/icons/white/task-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
@@ -41,6 +47,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

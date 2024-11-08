@@ -14,18 +14,22 @@ components:
   colorIcon: assets/img/integrations/argo-cd/components/argo-cd-extension/icons/color/argo-cd-extension-color.svg
   whiteIcon: assets/img/integrations/argo-cd/components/argo-cd-extension/icons/white/argo-cd-extension-white.svg
   description: 
+  isAnnotation: false
 - name: application
   colorIcon: assets/img/integrations/argo-cd/components/application/icons/color/application-color.svg
   whiteIcon: assets/img/integrations/argo-cd/components/application/icons/white/application-white.svg
   description: 
+  isAnnotation: false
 - name: application-set
   colorIcon: assets/img/integrations/argo-cd/components/application-set/icons/color/application-set-color.svg
   whiteIcon: assets/img/integrations/argo-cd/components/application-set/icons/white/application-set-white.svg
   description: 
+  isAnnotation: false
 - name: app-project
   colorIcon: assets/img/integrations/argo-cd/components/app-project/icons/color/app-project-color.svg
   whiteIcon: assets/img/integrations/argo-cd/components/app-project/icons/white/app-project-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Gain mastery over Argo as a workflow engine for Kubernetes",
   "Design application definitions using the intuitive, context-aware visual designer, MeshMap.",
@@ -33,6 +37,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

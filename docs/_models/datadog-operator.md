@@ -14,42 +14,52 @@ components:
   colorIcon: assets/img/integrations/datadog-operator/components/datadog-agent-profile/icons/color/datadog-agent-profile-color.svg
   whiteIcon: assets/img/integrations/datadog-operator/components/datadog-agent-profile/icons/white/datadog-agent-profile-white.svg
   description: 
+  isAnnotation: false
 - name: datadog-agent
   colorIcon: assets/img/integrations/datadog-operator/components/datadog-agent/icons/color/datadog-agent-color.svg
   whiteIcon: assets/img/integrations/datadog-operator/components/datadog-agent/icons/white/datadog-agent-white.svg
   description: 
+  isAnnotation: false
 - name: datadog-metric
   colorIcon: assets/img/integrations/datadog-operator/components/datadog-metric/icons/color/datadog-metric-color.svg
   whiteIcon: assets/img/integrations/datadog-operator/components/datadog-metric/icons/white/datadog-metric-white.svg
   description: 
+  isAnnotation: false
 - name: datadog-monitor
   colorIcon: assets/img/integrations/datadog-operator/components/datadog-monitor/icons/color/datadog-monitor-color.svg
   whiteIcon: assets/img/integrations/datadog-operator/components/datadog-monitor/icons/white/datadog-monitor-white.svg
   description: 
+  isAnnotation: false
 - name: datadog-pod-autoscaler
   colorIcon: assets/img/integrations/datadog-operator/components/datadog-pod-autoscaler/icons/color/datadog-pod-autoscaler-color.svg
   whiteIcon: assets/img/integrations/datadog-operator/components/datadog-pod-autoscaler/icons/white/datadog-pod-autoscaler-white.svg
   description: 
+  isAnnotation: false
 - name: datadog-slo
   colorIcon: assets/img/integrations/datadog-operator/components/datadog-slo/icons/color/datadog-slo-color.svg
   whiteIcon: assets/img/integrations/datadog-operator/components/datadog-slo/icons/white/datadog-slo-white.svg
   description: 
+  isAnnotation: false
 - name: extended-daemon-set-replica-set
   colorIcon: assets/img/integrations/datadog-operator/components/extended-daemon-set-replica-set/icons/color/extended-daemon-set-replica-set-color.svg
   whiteIcon: assets/img/integrations/datadog-operator/components/extended-daemon-set-replica-set/icons/white/extended-daemon-set-replica-set-white.svg
   description: 
+  isAnnotation: false
 - name: extended-daemon-set
   colorIcon: assets/img/integrations/datadog-operator/components/extended-daemon-set/icons/color/extended-daemon-set-color.svg
   whiteIcon: assets/img/integrations/datadog-operator/components/extended-daemon-set/icons/white/extended-daemon-set-white.svg
   description: 
+  isAnnotation: false
 - name: extended-daemonset-setting
   colorIcon: assets/img/integrations/datadog-operator/components/extended-daemonset-setting/icons/color/extended-daemonset-setting-color.svg
   whiteIcon: assets/img/integrations/datadog-operator/components/extended-daemonset-setting/icons/white/extended-daemonset-setting-white.svg
   description: 
+  isAnnotation: false
 - name: datadog-dashboard
   colorIcon: assets/img/integrations/datadog-operator/components/datadog-dashboard/icons/color/datadog-dashboard-color.svg
   whiteIcon: assets/img/integrations/datadog-operator/components/datadog-dashboard/icons/white/datadog-dashboard-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Seamlessly aggregates metrics and events across the full devops stack.",
   "Monitor, troubleshoot, and optimize application performance.",
@@ -57,6 +67,7 @@ featureList: [
 ]
 howItWorks: "Integrates with Kubernetes resources"
 howItWorksDetails: "Deploys and manages Datadog agents"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

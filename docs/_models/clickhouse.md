@@ -14,18 +14,22 @@ components:
   colorIcon: assets/img/integrations/clickhouse/components/click-house-installation/icons/color/click-house-installation-color.svg
   whiteIcon: assets/img/integrations/clickhouse/components/click-house-installation/icons/white/click-house-installation-white.svg
   description: 
+  isAnnotation: false
 - name: click-house-installation-template
   colorIcon: assets/img/integrations/clickhouse/components/click-house-installation-template/icons/color/click-house-installation-template-color.svg
   whiteIcon: assets/img/integrations/clickhouse/components/click-house-installation-template/icons/white/click-house-installation-template-white.svg
   description: 
+  isAnnotation: false
 - name: click-house-keeper-installation
   colorIcon: assets/img/integrations/clickhouse/components/click-house-keeper-installation/icons/color/click-house-keeper-installation-color.svg
   whiteIcon: assets/img/integrations/clickhouse/components/click-house-keeper-installation/icons/white/click-house-keeper-installation-white.svg
   description: 
+  isAnnotation: false
 - name: click-house-operator-configuration
   colorIcon: assets/img/integrations/clickhouse/components/click-house-operator-configuration/icons/color/click-house-operator-configuration-color.svg
   whiteIcon: assets/img/integrations/clickhouse/components/click-house-operator-configuration/icons/white/click-house-operator-configuration-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Fast data ingestion and querying",
   "Columnar storage for efficient analytics",
@@ -33,6 +37,7 @@ featureList: [
 ]
 howItWorks: "Integrates ClickHouse"
 howItWorksDetails: "High-performance analytics database for Kubernetes data"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

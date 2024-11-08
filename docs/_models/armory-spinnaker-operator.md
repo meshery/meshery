@@ -14,10 +14,12 @@ components:
   colorIcon: assets/img/integrations/armory-spinnaker-operator/components/armory-account/icons/color/armory-account-color.svg
   whiteIcon: assets/img/integrations/armory-spinnaker-operator/components/armory-account/icons/white/armory-account-white.svg
   description: 
+  isAnnotation: false
 - name: spinnaker-service
   colorIcon: assets/img/integrations/armory-spinnaker-operator/components/spinnaker-service/icons/color/spinnaker-service-color.svg
   whiteIcon: assets/img/integrations/armory-spinnaker-operator/components/spinnaker-service/icons/white/spinnaker-service-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Stop using Halyard commands: just kubectl apply your Spinnaker configuration.",
   "Expose Spinnaker to the outside world (via LoadBalancer).",
@@ -25,6 +27,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

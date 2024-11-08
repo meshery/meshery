@@ -14,22 +14,27 @@ components:
   colorIcon: assets/img/integrations/actions-runner-controller/components/horizontal-runner-autoscaler/icons/color/horizontal-runner-autoscaler-color.svg
   whiteIcon: assets/img/integrations/actions-runner-controller/components/horizontal-runner-autoscaler/icons/white/horizontal-runner-autoscaler-white.svg
   description: 
+  isAnnotation: 
 - name: runner-deployment
   colorIcon: assets/img/integrations/actions-runner-controller/components/runner-deployment/icons/color/runner-deployment-color.svg
   whiteIcon: assets/img/integrations/actions-runner-controller/components/runner-deployment/icons/white/runner-deployment-white.svg
   description: 
+  isAnnotation: 
 - name: runner-replica-set
   colorIcon: assets/img/integrations/actions-runner-controller/components/runner-replica-set/icons/color/runner-replica-set-color.svg
   whiteIcon: assets/img/integrations/actions-runner-controller/components/runner-replica-set/icons/white/runner-replica-set-white.svg
   description: 
+  isAnnotation: 
 - name: runner
   colorIcon: assets/img/integrations/actions-runner-controller/components/runner/icons/color/runner-color.svg
   whiteIcon: assets/img/integrations/actions-runner-controller/components/runner/icons/white/runner-white.svg
   description: 
+  isAnnotation: 
 - name: runner-set
   colorIcon: assets/img/integrations/actions-runner-controller/components/runner-set/icons/color/runner-set-color.svg
   whiteIcon: assets/img/integrations/actions-runner-controller/components/runner-set/icons/white/runner-set-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Deploy self hosted runners on Kubernetes cluster with a simple set of commands.",
   "Auto scale runners based on demand.",
@@ -37,6 +42,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/aperture-agent/components/agent/icons/color/agent-color.svg
   whiteIcon: assets/img/integrations/aperture-agent/components/agent/icons/white/agent-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Collects and analyzes telemetry data",
   "Provides traffic control and shaping",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Integrates Aperture Agent"
 howItWorksDetails: "Enhanced observability and security for Kubernetes applications"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

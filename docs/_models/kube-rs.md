@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/kube-rs/components/document/icons/color/document-color.svg
   whiteIcon: assets/img/integrations/kube-rs/components/document/icons/white/document-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Provides a Rust interface for Kubernetes API",
   "Enables building Kubernetes tools in Rust",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Integrates kube-rs client library"
 howItWorksDetails: "Streamlined development of Kubernetes tools in Rust"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

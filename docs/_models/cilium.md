@@ -14,46 +14,57 @@ components:
   colorIcon: assets/img/integrations/cilium/components/cilium-clusterwide-envoy-config/icons/color/cilium-clusterwide-envoy-config-color.svg
   whiteIcon: assets/img/integrations/cilium/components/cilium-clusterwide-envoy-config/icons/white/cilium-clusterwide-envoy-config-white.svg
   description: 
+  isAnnotation: false
 - name: cilium-clusterwide-network-policy
   colorIcon: assets/img/integrations/cilium/components/cilium-clusterwide-network-policy/icons/color/cilium-clusterwide-network-policy-color.svg
   whiteIcon: assets/img/integrations/cilium/components/cilium-clusterwide-network-policy/icons/white/cilium-clusterwide-network-policy-white.svg
   description: 
+  isAnnotation: false
 - name: cilium-egress-gateway-policy
   colorIcon: assets/img/integrations/cilium/components/cilium-egress-gateway-policy/icons/color/cilium-egress-gateway-policy-color.svg
   whiteIcon: assets/img/integrations/cilium/components/cilium-egress-gateway-policy/icons/white/cilium-egress-gateway-policy-white.svg
   description: 
+  isAnnotation: false
 - name: cilium-endpoint
   colorIcon: assets/img/integrations/cilium/components/cilium-endpoint/icons/color/cilium-endpoint-color.svg
   whiteIcon: assets/img/integrations/cilium/components/cilium-endpoint/icons/white/cilium-endpoint-white.svg
   description: 
+  isAnnotation: false
 - name: cilium-envoy-config
   colorIcon: assets/img/integrations/cilium/components/cilium-envoy-config/icons/color/cilium-envoy-config-color.svg
   whiteIcon: assets/img/integrations/cilium/components/cilium-envoy-config/icons/white/cilium-envoy-config-white.svg
   description: 
+  isAnnotation: false
 - name: cilium-external-workload
   colorIcon: assets/img/integrations/cilium/components/cilium-external-workload/icons/color/cilium-external-workload-color.svg
   whiteIcon: assets/img/integrations/cilium/components/cilium-external-workload/icons/white/cilium-external-workload-white.svg
   description: 
+  isAnnotation: false
 - name: cilium-identity
   colorIcon: assets/img/integrations/cilium/components/cilium-identity/icons/color/cilium-identity-color.svg
   whiteIcon: assets/img/integrations/cilium/components/cilium-identity/icons/white/cilium-identity-white.svg
   description: 
+  isAnnotation: false
 - name: cilium-local-redirect-policy
   colorIcon: assets/img/integrations/cilium/components/cilium-local-redirect-policy/icons/color/cilium-local-redirect-policy-color.svg
   whiteIcon: assets/img/integrations/cilium/components/cilium-local-redirect-policy/icons/white/cilium-local-redirect-policy-white.svg
   description: 
+  isAnnotation: false
 - name: cilium-network-policy
   colorIcon: assets/img/integrations/cilium/components/cilium-network-policy/icons/color/cilium-network-policy-color.svg
   whiteIcon: assets/img/integrations/cilium/components/cilium-network-policy/icons/white/cilium-network-policy-white.svg
   description: 
+  isAnnotation: false
 - name: cilium-node-config
   colorIcon: assets/img/integrations/cilium/components/cilium-node-config/icons/color/cilium-node-config-color.svg
   whiteIcon: assets/img/integrations/cilium/components/cilium-node-config/icons/white/cilium-node-config-white.svg
   description: 
+  isAnnotation: false
 - name: cilium-node
   colorIcon: assets/img/integrations/cilium/components/cilium-node/icons/color/cilium-node-color.svg
   whiteIcon: assets/img/integrations/cilium/components/cilium-node/icons/white/cilium-node-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Ensure Cilium Service Mesh daemonset operation",
   "Define microservice isolation using eBPF",
@@ -61,6 +72,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

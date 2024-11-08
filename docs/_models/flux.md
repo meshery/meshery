@@ -14,22 +14,27 @@ components:
   colorIcon: assets/img/integrations/flux/components/bucket/icons/color/bucket-color.svg
   whiteIcon: assets/img/integrations/flux/components/bucket/icons/white/bucket-white.svg
   description: 
+  isAnnotation: false
 - name: git-repository
   colorIcon: assets/img/integrations/flux/components/git-repository/icons/color/git-repository-color.svg
   whiteIcon: assets/img/integrations/flux/components/git-repository/icons/white/git-repository-white.svg
   description: 
+  isAnnotation: false
 - name: helm-chart
   colorIcon: assets/img/integrations/flux/components/helm-chart/icons/color/helm-chart-color.svg
   whiteIcon: assets/img/integrations/flux/components/helm-chart/icons/white/helm-chart-white.svg
   description: 
+  isAnnotation: false
 - name: helm-repository
   colorIcon: assets/img/integrations/flux/components/helm-repository/icons/color/helm-repository-color.svg
   whiteIcon: assets/img/integrations/flux/components/helm-repository/icons/white/helm-repository-white.svg
   description: 
+  isAnnotation: false
 - name: oci-repository
   colorIcon: assets/img/integrations/flux/components/oci-repository/icons/color/oci-repository-color.svg
   whiteIcon: assets/img/integrations/flux/components/oci-repository/icons/white/oci-repository-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Synchronizes Kubernetes state with Git",
   "Continuous reconciliation",
@@ -37,6 +42,7 @@ featureList: [
 ]
 howItWorks: "Integrates Flux configurations"
 howItWorksDetails: "Streamlined GitOps continuous delivery in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

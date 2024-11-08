@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/bitwarden-crd-operator/components/bitwarden-secret/icons/color/bitwarden-secret-color.svg
   whiteIcon: assets/img/integrations/bitwarden-crd-operator/components/bitwarden-secret/icons/white/bitwarden-secret-white.svg
   description: 
+  isAnnotation: false
 - name: bitwarden-template
   colorIcon: assets/img/integrations/bitwarden-crd-operator/components/bitwarden-template/icons/color/bitwarden-template-color.svg
   whiteIcon: assets/img/integrations/bitwarden-crd-operator/components/bitwarden-template/icons/white/bitwarden-template-white.svg
   description: 
+  isAnnotation: false
 - name: registry-credential
   colorIcon: assets/img/integrations/bitwarden-crd-operator/components/registry-credential/icons/color/registry-credential-color.svg
   whiteIcon: assets/img/integrations/bitwarden-crd-operator/components/registry-credential/icons/white/registry-credential-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Provides a declarative API for Bitwarden",
   "Integrates with Kubernetes resources",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Streamlined Bitwarden secrets management in Kubernetes"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

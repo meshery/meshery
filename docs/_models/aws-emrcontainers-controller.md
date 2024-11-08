@@ -14,18 +14,22 @@ components:
   colorIcon: assets/img/integrations/aws-emrcontainers-controller/components/virtual-cluster/icons/color/virtual-cluster-color.svg
   whiteIcon: assets/img/integrations/aws-emrcontainers-controller/components/virtual-cluster/icons/white/virtual-cluster-white.svg
   description: 
+  isAnnotation: false
 - name: job-run
   colorIcon: assets/img/integrations/aws-emrcontainers-controller/components/job-run/icons/color/job-run-color.svg
   whiteIcon: assets/img/integrations/aws-emrcontainers-controller/components/job-run/icons/white/job-run-white.svg
   description: 
+  isAnnotation: false
 - name: adopted-resource
   colorIcon: assets/img/integrations/aws-emrcontainers-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-emrcontainers-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+  isAnnotation: false
 - name: field-export
   colorIcon: assets/img/integrations/aws-emrcontainers-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-emrcontainers-controller/components/field-export/icons/white/field-export-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Runs Spark, Hive, and Presto on Kubernetes",
   "Integrates with other AWS services",
@@ -33,6 +37,7 @@ featureList: [
 ]
 howItWorks: "Runs containers on EMR"
 howItWorksDetails: "Easier big data processing on Kubernetes with EMR"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

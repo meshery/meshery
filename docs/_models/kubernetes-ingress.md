@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/kubernetes-ingress/components/backend/icons/color/backend-color.svg
   whiteIcon: assets/img/integrations/kubernetes-ingress/components/backend/icons/white/backend-white.svg
   description: 
+  isAnnotation: FALSE
 - name: defaults
   colorIcon: assets/img/integrations/kubernetes-ingress/components/defaults/icons/color/defaults-color.svg
   whiteIcon: assets/img/integrations/kubernetes-ingress/components/defaults/icons/white/defaults-white.svg
   description: 
+  isAnnotation: FALSE
 - name: global
   colorIcon: assets/img/integrations/kubernetes-ingress/components/global/icons/color/global-color.svg
   whiteIcon: assets/img/integrations/kubernetes-ingress/components/global/icons/white/global-white.svg
   description: 
+  isAnnotation: FALSE
 featureList: [
   "High-performance load balancing and routing",
   "Supports various protocols",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Configures HAProxy Ingress"
 howItWorksDetails: "Scalable and reliable ingress management with HAProxy in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

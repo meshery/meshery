@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/aws-node-termination-handler-2/components/terminator/icons/color/terminator-color.svg
   whiteIcon: assets/img/integrations/aws-node-termination-handler-2/components/terminator/icons/white/terminator-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Keep revision history and audit trail of all configuration changes",
   "Use MeshMap&lsquo;s visual designer to explore your App Mesh configuration",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

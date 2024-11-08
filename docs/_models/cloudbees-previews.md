@@ -14,22 +14,27 @@ components:
   colorIcon: assets/img/integrations/cloudbees-previews/components/hierarchy-configuration/icons/color/hierarchy-configuration-color.svg
   whiteIcon: assets/img/integrations/cloudbees-previews/components/hierarchy-configuration/icons/white/hierarchy-configuration-white.svg
   description: 
+  isAnnotation: false
 - name: hnc-configuration
   colorIcon: assets/img/integrations/cloudbees-previews/components/hnc-configuration/icons/color/hnc-configuration-color.svg
   whiteIcon: assets/img/integrations/cloudbees-previews/components/hnc-configuration/icons/white/hnc-configuration-white.svg
   description: 
+  isAnnotation: false
 - name: subnamespace-anchor
   colorIcon: assets/img/integrations/cloudbees-previews/components/subnamespace-anchor/icons/color/subnamespace-anchor-color.svg
   whiteIcon: assets/img/integrations/cloudbees-previews/components/subnamespace-anchor/icons/white/subnamespace-anchor-white.svg
   description: 
+  isAnnotation: false
 - name: environment
   colorIcon: assets/img/integrations/cloudbees-previews/components/environment/icons/color/environment-color.svg
   whiteIcon: assets/img/integrations/cloudbees-previews/components/environment/icons/white/environment-white.svg
   description: 
+  isAnnotation: false
 - name: git-repository
   colorIcon: assets/img/integrations/cloudbees-previews/components/git-repository/icons/color/git-repository-color.svg
   whiteIcon: assets/img/integrations/cloudbees-previews/components/git-repository/icons/white/git-repository-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Automates preview environment creation",
   "Enables isolated testing and development",
@@ -37,6 +42,7 @@ featureList: [
 ]
 howItWorks: "Integrates CloudBees Previews"
 howItWorksDetails: "Streamlined preview environment management for Kubernetes applications"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

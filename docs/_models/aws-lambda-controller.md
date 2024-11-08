@@ -14,38 +14,47 @@ components:
   colorIcon: assets/img/integrations/aws-lambda-controller/components/code-signing-config/icons/color/code-signing-config-color.svg
   whiteIcon: assets/img/integrations/aws-lambda-controller/components/code-signing-config/icons/white/code-signing-config-white.svg
   description: 
+  isAnnotation: false
 - name: event-source-mapping
   colorIcon: assets/img/integrations/aws-lambda-controller/components/event-source-mapping/icons/color/event-source-mapping-color.svg
   whiteIcon: assets/img/integrations/aws-lambda-controller/components/event-source-mapping/icons/white/event-source-mapping-white.svg
   description: 
+  isAnnotation: false
 - name: function-url-config
   colorIcon: assets/img/integrations/aws-lambda-controller/components/function-url-config/icons/color/function-url-config-color.svg
   whiteIcon: assets/img/integrations/aws-lambda-controller/components/function-url-config/icons/white/function-url-config-white.svg
   description: 
+  isAnnotation: false
 - name: layer-version
   colorIcon: assets/img/integrations/aws-lambda-controller/components/layer-version/icons/color/layer-version-color.svg
   whiteIcon: assets/img/integrations/aws-lambda-controller/components/layer-version/icons/white/layer-version-white.svg
   description: 
+  isAnnotation: false
 - name: function
   colorIcon: assets/img/integrations/aws-lambda-controller/components/function/icons/color/function-color.svg
   whiteIcon: assets/img/integrations/aws-lambda-controller/components/function/icons/white/function-white.svg
   description: 
+  isAnnotation: false
 - name: field-export
   colorIcon: assets/img/integrations/aws-lambda-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-lambda-controller/components/field-export/icons/white/field-export-white.svg
   description: 
+  isAnnotation: false
 - name: adopted-resource
   colorIcon: assets/img/integrations/aws-lambda-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-lambda-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+  isAnnotation: false
 - name: alias
   colorIcon: assets/img/integrations/aws-lambda-controller/components/alias/icons/color/alias-color.svg
   whiteIcon: assets/img/integrations/aws-lambda-controller/components/alias/icons/white/alias-white.svg
   description: 
+  isAnnotation: false
 - name: version
   colorIcon: assets/img/integrations/aws-lambda-controller/components/version/icons/color/version-color.svg
   whiteIcon: assets/img/integrations/aws-lambda-controller/components/version/icons/white/version-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Run code for virtually any type of application or backend service. ",
   "Write Lambda functions in your favorite language ",
@@ -53,6 +62,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

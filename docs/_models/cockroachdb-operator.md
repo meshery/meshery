@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/cockroachdb-operator/components/crdb-cluster/icons/color/crdb-cluster-color.svg
   whiteIcon: assets/img/integrations/cockroachdb-operator/components/crdb-cluster/icons/white/crdb-cluster-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Use Couchbase's multi-purpose NoSQL database to supply your applications' JSON data, and seamlessly grow your environment.",
   "DevOps can deploy and scale Couchbase clusters up and down, automatically, and use their preferred CNCF observability tools.",
@@ -22,6 +23,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

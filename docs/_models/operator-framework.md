@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/operator-framework/components/cluster-extension/icons/color/cluster-extension-color.svg
   whiteIcon: assets/img/integrations/operator-framework/components/cluster-extension/icons/white/cluster-extension-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Defines custom resources for operators",
   "Enables declarative configuration",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Integrates with operator CRDs"
 howItWorksDetails: "Facilitates the use of custom resources within Meshery"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

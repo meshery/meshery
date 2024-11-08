@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/katib/components/experiment/icons/color/experiment-color.svg
   whiteIcon: assets/img/integrations/katib/components/experiment/icons/white/experiment-white.svg
   description: 
+  isAnnotation: false
 - name: suggestion
   colorIcon: assets/img/integrations/katib/components/suggestion/icons/color/suggestion-color.svg
   whiteIcon: assets/img/integrations/katib/components/suggestion/icons/white/suggestion-white.svg
   description: 
+  isAnnotation: false
 - name: trial
   colorIcon: assets/img/integrations/katib/components/trial/icons/color/trial-color.svg
   whiteIcon: assets/img/integrations/katib/components/trial/icons/white/trial-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Automates hyperparameter tuning and NAS",
   "Supports various search algorithms",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Integrates Katib experiments"
 howItWorksDetails: "Efficient hyperparameter optimization for machine learning in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

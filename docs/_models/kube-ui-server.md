@@ -14,50 +14,62 @@ components:
   colorIcon: assets/img/integrations/kube-ui-server/components/app-binding/icons/color/app-binding-color.svg
   whiteIcon: assets/img/integrations/kube-ui-server/components/app-binding/icons/white/app-binding-white.svg
   description: 
+  isAnnotation: false
 - name: helm-release
   colorIcon: assets/img/integrations/kube-ui-server/components/helm-release/icons/color/helm-release-color.svg
   whiteIcon: assets/img/integrations/kube-ui-server/components/helm-release/icons/white/helm-release-white.svg
   description: 
+  isAnnotation: false
 - name: helm-repository
   colorIcon: assets/img/integrations/kube-ui-server/components/helm-repository/icons/color/helm-repository-color.svg
   whiteIcon: assets/img/integrations/kube-ui-server/components/helm-repository/icons/white/helm-repository-white.svg
   description: 
+  isAnnotation: false
 - name: feature
   colorIcon: assets/img/integrations/kube-ui-server/components/feature/icons/color/feature-color.svg
   whiteIcon: assets/img/integrations/kube-ui-server/components/feature/icons/white/feature-white.svg
   description: 
+  isAnnotation: false
 - name: feature-set
   colorIcon: assets/img/integrations/kube-ui-server/components/feature-set/icons/color/feature-set-color.svg
   whiteIcon: assets/img/integrations/kube-ui-server/components/feature-set/icons/white/feature-set-white.svg
   description: 
+  isAnnotation: false
 - name: resource-dashboard
   colorIcon: assets/img/integrations/kube-ui-server/components/resource-dashboard/icons/color/resource-dashboard-color.svg
   whiteIcon: assets/img/integrations/kube-ui-server/components/resource-dashboard/icons/white/resource-dashboard-white.svg
   description: 
+  isAnnotation: false
 - name: resource-editor
   colorIcon: assets/img/integrations/kube-ui-server/components/resource-editor/icons/color/resource-editor-color.svg
   whiteIcon: assets/img/integrations/kube-ui-server/components/resource-editor/icons/white/resource-editor-white.svg
   description: 
+  isAnnotation: false
 - name: chart-preset
   colorIcon: assets/img/integrations/kube-ui-server/components/chart-preset/icons/color/chart-preset-color.svg
   whiteIcon: assets/img/integrations/kube-ui-server/components/chart-preset/icons/white/chart-preset-white.svg
   description: 
+  isAnnotation: false
 - name: cluster-chart-preset
   colorIcon: assets/img/integrations/kube-ui-server/components/cluster-chart-preset/icons/color/cluster-chart-preset-color.svg
   whiteIcon: assets/img/integrations/kube-ui-server/components/cluster-chart-preset/icons/white/cluster-chart-preset-white.svg
   description: 
+  isAnnotation: false
 - name: project-quota
   colorIcon: assets/img/integrations/kube-ui-server/components/project-quota/icons/color/project-quota-color.svg
   whiteIcon: assets/img/integrations/kube-ui-server/components/project-quota/icons/white/project-quota-white.svg
   description: 
+  isAnnotation: false
 - name: service-monitor
   colorIcon: assets/img/integrations/kube-ui-server/components/service-monitor/icons/color/service-monitor-color.svg
   whiteIcon: assets/img/integrations/kube-ui-server/components/service-monitor/icons/white/service-monitor-white.svg
   description: 
+  isAnnotation: 
 - name: cluster-profile
   colorIcon: assets/img/integrations/kube-ui-server/components/cluster-profile/icons/color/cluster-profile-color.svg
   whiteIcon: assets/img/integrations/kube-ui-server/components/cluster-profile/icons/white/cluster-profile-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "WhoAmI service returns the user info of the user making the api call.",
   "PodView resource exposes actual resource usage by a Pod. The resource usage information is read from Prometheus.",
@@ -65,6 +77,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/helm-controller/components/bucket/icons/color/bucket-color.svg
   whiteIcon: assets/img/integrations/helm-controller/components/bucket/icons/white/bucket-white.svg
   description: 
+  isAnnotation: false
 - name: git-repository
   colorIcon: assets/img/integrations/helm-controller/components/git-repository/icons/color/git-repository-color.svg
   whiteIcon: assets/img/integrations/helm-controller/components/git-repository/icons/white/git-repository-white.svg
   description: 
+  isAnnotation: false
 - name: helm-chart
   colorIcon: assets/img/integrations/helm-controller/components/helm-chart/icons/color/helm-chart-color.svg
   whiteIcon: assets/img/integrations/helm-controller/components/helm-chart/icons/white/helm-chart-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Manages Helm chart releases",
   "Simplifies Helm chart upgrades and rollbacks",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Manages Helm releases"
 howItWorksDetails: "Streamlined Helm chart management and automation in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

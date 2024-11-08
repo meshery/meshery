@@ -14,22 +14,27 @@ components:
   colorIcon: assets/img/integrations/pg-db/components/pgcluster/icons/color/pgcluster-color.svg
   whiteIcon: assets/img/integrations/pg-db/components/pgcluster/icons/white/pgcluster-white.svg
   description: 
+  isAnnotation: false
 - name: percona-pg-cluster
   colorIcon: assets/img/integrations/pg-db/components/percona-pg-cluster/icons/color/percona-pg-cluster-color.svg
   whiteIcon: assets/img/integrations/pg-db/components/percona-pg-cluster/icons/white/percona-pg-cluster-white.svg
   description: 
+  isAnnotation: false
 - name: pgtask
   colorIcon: assets/img/integrations/pg-db/components/pgtask/icons/color/pgtask-color.svg
   whiteIcon: assets/img/integrations/pg-db/components/pgtask/icons/white/pgtask-white.svg
   description: 
+  isAnnotation: false
 - name: pgreplica
   colorIcon: assets/img/integrations/pg-db/components/pgreplica/icons/color/pgreplica-color.svg
   whiteIcon: assets/img/integrations/pg-db/components/pgreplica/icons/white/pgreplica-white.svg
   description: 
+  isAnnotation: false
 - name: pgpolicy
   colorIcon: assets/img/integrations/pg-db/components/pgpolicy/icons/color/pgpolicy-color.svg
   whiteIcon: assets/img/integrations/pg-db/components/pgpolicy/icons/white/pgpolicy-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Automates PostgreSQL deployment and management",
   "High availability and disaster recovery",
@@ -37,6 +42,7 @@ featureList: [
 ]
 howItWorks: "Deploys and manages PostgreSQL"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

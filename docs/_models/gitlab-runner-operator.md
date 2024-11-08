@@ -14,6 +14,7 @@ components:
   colorIcon: assets/img/integrations/gitlab-runner-operator/components/runner/icons/color/runner-color.svg
   whiteIcon: assets/img/integrations/gitlab-runner-operator/components/runner/icons/white/runner-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",
@@ -21,6 +22,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

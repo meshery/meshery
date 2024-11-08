@@ -17,6 +17,7 @@ featureList: [
 ]
 howItWorks: "Integrates Nocalhost environments"
 howItWorksDetails: "Faster and more efficient development of Kubernetes applications"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

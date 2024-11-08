@@ -14,22 +14,27 @@ components:
   colorIcon: assets/img/integrations/dapr/components/component/icons/color/component-color.svg
   whiteIcon: assets/img/integrations/dapr/components/component/icons/white/component-white.svg
   description: 
+  isAnnotation: false
 - name: resiliency
   colorIcon: assets/img/integrations/dapr/components/resiliency/icons/color/resiliency-color.svg
   whiteIcon: assets/img/integrations/dapr/components/resiliency/icons/white/resiliency-white.svg
   description: 
+  isAnnotation: false
 - name: configuration
   colorIcon: assets/img/integrations/dapr/components/configuration/icons/color/configuration-color.svg
   whiteIcon: assets/img/integrations/dapr/components/configuration/icons/white/configuration-white.svg
   description: 
+  isAnnotation: false
 - name: http-endpoint
   colorIcon: assets/img/integrations/dapr/components/http-endpoint/icons/color/http-endpoint-color.svg
   whiteIcon: assets/img/integrations/dapr/components/http-endpoint/icons/white/http-endpoint-white.svg
   description: 
+  isAnnotation: false
 - name: subscription
   colorIcon: assets/img/integrations/dapr/components/subscription/icons/color/subscription-color.svg
   whiteIcon: assets/img/integrations/dapr/components/subscription/icons/white/subscription-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Helps you write resilient and secured microservices.",
   "Provides you with APIs that abstract away the complexity of common challenges developers encounter regularly when building distributed applications.",
@@ -37,6 +42,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

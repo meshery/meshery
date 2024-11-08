@@ -17,6 +17,7 @@ featureList: [
 ]
 howItWorks: "Integrates Dex with Kubernetes"
 howItWorksDetails: "Centralized authentication for Kubernetes applications"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

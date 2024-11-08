@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/cert-manager-csi-driver-cacerts/components/ca-provider-class/icons/color/ca-provider-class-color.svg
   whiteIcon: assets/img/integrations/cert-manager-csi-driver-cacerts/components/ca-provider-class/icons/white/ca-provider-class-white.svg
   description: 
+  isAnnotation: false
 - name: cluster-issuer
   colorIcon: assets/img/integrations/cert-manager-csi-driver-cacerts/components/cluster-issuer/icons/color/cluster-issuer-color.svg
   whiteIcon: assets/img/integrations/cert-manager-csi-driver-cacerts/components/cluster-issuer/icons/white/cluster-issuer-white.svg
   description: 
+  isAnnotation: 
 - name: issuer
   colorIcon: assets/img/integrations/cert-manager-csi-driver-cacerts/components/issuer/icons/color/issuer-color.svg
   whiteIcon: assets/img/integrations/cert-manager-csi-driver-cacerts/components/issuer/icons/white/issuer-white.svg
   description: 
+  isAnnotation: 
 featureList: [
   "Automates CA certificate management",
   "Integrates with cert-manager",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Manages certificates with cert-manager"
 howItWorksDetails: "Streamlined certificate management and enhanced security in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

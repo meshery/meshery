@@ -14,38 +14,47 @@ components:
   colorIcon: assets/img/integrations/loki-simple-scalable/components/prometheus-rule/icons/color/prometheus-rule-color.svg
   whiteIcon: assets/img/integrations/loki-simple-scalable/components/prometheus-rule/icons/white/prometheus-rule-white.svg
   description: 
+  isAnnotation: false
 - name: service-monitor
   colorIcon: assets/img/integrations/loki-simple-scalable/components/service-monitor/icons/color/service-monitor-color.svg
   whiteIcon: assets/img/integrations/loki-simple-scalable/components/service-monitor/icons/white/service-monitor-white.svg
   description: 
+  isAnnotation: false
 - name: pod-monitor
   colorIcon: assets/img/integrations/loki-simple-scalable/components/pod-monitor/icons/color/pod-monitor-color.svg
   whiteIcon: assets/img/integrations/loki-simple-scalable/components/pod-monitor/icons/white/pod-monitor-white.svg
   description: 
+  isAnnotation: false
 - name: probe
   colorIcon: assets/img/integrations/loki-simple-scalable/components/probe/icons/color/probe-color.svg
   whiteIcon: assets/img/integrations/loki-simple-scalable/components/probe/icons/white/probe-white.svg
   description: 
+  isAnnotation: false
 - name: grafana-agent
   colorIcon: assets/img/integrations/loki-simple-scalable/components/grafana-agent/icons/color/grafana-agent-color.svg
   whiteIcon: assets/img/integrations/loki-simple-scalable/components/grafana-agent/icons/white/grafana-agent-white.svg
   description: 
+  isAnnotation: false
 - name: integration
   colorIcon: assets/img/integrations/loki-simple-scalable/components/integration/icons/color/integration-color.svg
   whiteIcon: assets/img/integrations/loki-simple-scalable/components/integration/icons/white/integration-white.svg
   description: 
+  isAnnotation: false
 - name: logs-instance
   colorIcon: assets/img/integrations/loki-simple-scalable/components/logs-instance/icons/color/logs-instance-color.svg
   whiteIcon: assets/img/integrations/loki-simple-scalable/components/logs-instance/icons/white/logs-instance-white.svg
   description: 
+  isAnnotation: false
 - name: metrics-instance
   colorIcon: assets/img/integrations/loki-simple-scalable/components/metrics-instance/icons/color/metrics-instance-color.svg
   whiteIcon: assets/img/integrations/loki-simple-scalable/components/metrics-instance/icons/white/metrics-instance-white.svg
   description: 
+  isAnnotation: false
 - name: pod-logs
   colorIcon: assets/img/integrations/loki-simple-scalable/components/pod-logs/icons/color/pod-logs-color.svg
   whiteIcon: assets/img/integrations/loki-simple-scalable/components/pod-logs/icons/white/pod-logs-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Easy deployment and configuration",
   "Scalable architecture",
@@ -53,6 +62,7 @@ featureList: [
 ]
 howItWorks: "Deploys Loki Simple Scalable with Helm"
 howItWorksDetails: "Simplified Loki deployment and management in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

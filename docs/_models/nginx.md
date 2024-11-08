@@ -17,6 +17,7 @@ featureList: [
 ]
 howItWorks: "Integrates NGINX"
 howItWorksDetails: "Powerful and flexible web serving and load balancing in Kubernetes"
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility

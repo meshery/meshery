@@ -14,14 +14,17 @@ components:
   colorIcon: assets/img/integrations/flagger/components/canary/icons/color/canary-color.svg
   whiteIcon: assets/img/integrations/flagger/components/canary/icons/white/canary-white.svg
   description: 
+  isAnnotation: false
 - name: metric-template
   colorIcon: assets/img/integrations/flagger/components/metric-template/icons/color/metric-template-color.svg
   whiteIcon: assets/img/integrations/flagger/components/metric-template/icons/white/metric-template-white.svg
   description: 
+  isAnnotation: false
 - name: alert-provider
   colorIcon: assets/img/integrations/flagger/components/alert-provider/icons/color/alert-provider-color.svg
   whiteIcon: assets/img/integrations/flagger/components/alert-provider/icons/white/alert-provider-white.svg
   description: 
+  isAnnotation: false
 featureList: [
   "Canary (progressive traffic shifting), A/B Testing (HTTP headers and cookies traffic routing), Blue/Green (traffic switching and mirroring)",
   "Flagger was designed to give developers confidence in automating production releases with progressive delivery techniques.",
@@ -29,6 +32,7 @@ featureList: [
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
+isAnnotation: "FALSE"
 language: en
 list: include
 type: extensibility
