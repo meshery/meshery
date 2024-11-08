@@ -119,7 +119,17 @@ const EmptyState = () => {
 };
 
 const NavbarNotificationIcon = withErrorBoundary(() => {
-  const { data } = useGetEventsSummaryQuery();
+  const { data, error } = useGetEventsSummaryQuery({
+    status: STATUS.UNREAD,
+  });
+
+  if (error || !data) {
+    console.log(
+      '[NavbarNotificationIcon] Error fetching notification summary for NotificationIconCount',
+      error,
+    );
+  }
+
   const count_by_severity_level = data?.count_by_severity_level || [];
 
   const currentTopSeverity =
