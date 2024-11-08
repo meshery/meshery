@@ -126,6 +126,9 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 		flowResponse.Capabilities.DownloadProviderExtensionPackage(k.log)
 	}
 	redirectURL := GetRedirectURLForNavigatorExtension(&providerProperties, k.log)
-
+	if redirectURL == "/" {
+		k.log.Info("No navigator extension found, redirecting to /error")
+		redirectURL = errorUI
+	}
 	http.Redirect(res, req, redirectURL, http.StatusFound)
 }
