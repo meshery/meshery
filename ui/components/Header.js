@@ -248,7 +248,7 @@ const K8sContextConnectionChip_ = ({
           <_ConnectionChip
             title={ctx?.name}
             onDelete={onDelete ? () => onDelete(ctx.name, ctx.connection_id) : null}
-            handlePing={() => ping(ctx.name, ctx.server, ctx.connection_id)}
+            handlePing={() => ping(ctx.name, ctx.server, ctx.id)}
             iconSrc={
               connectionMetadataState && connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                 ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
@@ -441,7 +441,7 @@ function K8sContextMenu({
                     {contexts?.contexts?.map((ctx) => {
                       return (
                         <K8sContextConnectionChip
-                          key={ctx.id}
+                          key={ctx.metadata?.id}
                           classes={classes}
                           ctx={ctx}
                           selectable
