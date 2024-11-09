@@ -87,6 +87,9 @@ const styles = (theme) => ({
     paddingRight: 34,
     backgroundColor: theme.palette.secondary.mainBackground,
     boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
+    [theme.breakpoints.down('xs')]: {
+      padding: 0,
+    },
   },
   toolbarOnDrawerOpen: {
     minHeight: 58,
