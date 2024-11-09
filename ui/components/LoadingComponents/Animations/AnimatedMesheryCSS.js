@@ -147,5 +147,5 @@ const AnimatedMeshery = (props) => {
   );
 };
 
-export const AnimatedMesheryDark = (props) => <AnimatedMeshery {...props} textfill="#fff" />;
+export const AnimatedMesheryDark = (props) => <AnimatedMeshery {...props} />;
 export default AnimatedMeshery;

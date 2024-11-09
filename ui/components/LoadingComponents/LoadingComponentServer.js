@@ -2,44 +2,50 @@ import React from 'react';
 // import AnimatedMeshery from './Animations/AnimatedMesheryCSS';
 import PropTypes from 'prop-types';
 import uiConfig from '../../ui.config';
+import { Typography, styled } from '@layer5/sistent';
+import { UsesSistent } from '../SistentWrapper';
+
+const StyledAnimatedLogoDark = styled(uiConfig.AnimatedLogoDark)(({ theme }) => ({
+  height: '100px',
+  margin: '4px 0px 8px',
+  fill: theme.palette.mode === 'dark' ? '#fff' : '',
+}));
 
 function LoadingScreen(props) {
   const { message, children, isLoading, ...other } = props;
-  const AnimatedLogoDark = uiConfig.AnimatedLogoDark;
 
   if (isLoading) {
     return (
-      <div
-        {...other}
-        style={{
-          '@font-face': {
-            fontFamily: 'Qanelas Soft',
-            src: 'url("/static/fonts/qanelas-soft/QanelasSoftBlack.otf") format("opentype")',
-            fontWeight: 'normal',
-          },
-          display: 'grid',
-          placeItems: 'center',
-          minHeight: '100vh',
-          textAlign: 'center',
-          fontFamily: 'QanelasSoftRegular, Qanelas Soft Regular, sans-serif',
-          backgroundColor: '#263238', // color of navigation menu
-          color: '#dedede', // soften the subtitle / message
-        }}
-      >
-        <div>
-          <AnimatedLogoDark style={{ height: '100px', margin: '4px 0px 8px' }} />
-          <h1
-            style={{
-              fontFamily: 'QanelasSoftRegular',
-              fontSize: '.9rem',
-              fontWeight: 'normal',
-              marginTop: '1rem',
-            }}
-          >
-            {message}
-          </h1>
+      <UsesSistent>
+        <div
+          {...other}
+          style={{
+            display: 'grid',
+            placeItems: 'center',
+            minHeight: '100vh',
+            textAlign: 'center',
+            backgroundColor: '#263238', // color of navigation menu
+            color: '#dedede', // soften the subtitle / message
+          }}
+        >
+          <div>
+            <StyledAnimatedLogoDark />
+            <Typography
+              sx={{
+                '@font-face': {
+                  fontFamily: 'Qanelas Soft, Roboto',
+                  src: 'url("/static/fonts/qanelas-soft/QanelasSoftBlack.otf") format("opentype")',
+                  fontWeight: 'normal',
+                  fontSize: '.9rem',
+                },
+                marginTop: '1rem',
+              }}
+            >
+              {message}
+            </Typography>
+          </div>
         </div>
-      </div>
+      </UsesSistent>
     );
   }
 
