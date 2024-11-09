@@ -410,9 +410,23 @@ const ModelImportMessages = ({ message }) => (
   </Typography>
 );
 
+const DataToFileLink = ({ data }) => {
+  // convert the trace to a file
+  const dataString = typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+  const file = new File([dataString], 'trace.txt', { type: 'text/plain' });
+
+  return (
+    <TitleLink href={URL.createObjectURL(file)} download="trace.txt">
+      Download Trace
+    </TitleLink>
+  );
+};
+
 export const FormattedMetadata = ({ event }) => {
   const PropertyFormatters = {
     doc: (value) => <TitleLink href={value}>Doc</TitleLink>,
+    //trace can be very large, so we need to convert it to a file
+    trace: (value) => <DataToFileLink data={value} />,
     ShortDescription: (value) => <SectionBody body={value} style={{ marginBlock: '0.5rem' }} />,
     error: (value) => <ErrorMetadataFormatter metadata={value} event={event} />,
     dryRunResponse: (value) => <DryRunResponse response={value} />,
@@ -485,6 +499,7 @@ export const FormattedMetadata = ({ event }) => {
     'ModelDetails',
   ];
   const hasImportedModelName = !!metadata.ImportedModelName;
+
   const orderedMetadata = hasImportedModelName
     ? reorderObjectProperties({ ...metadata, ShortDescription: null }, order) // Exclude ShortDescription
     : reorderObjectProperties(metadata, order);

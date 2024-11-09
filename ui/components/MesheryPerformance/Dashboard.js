@@ -3,8 +3,6 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { updateProgress } from '../../lib/store';
 import { bindActionCreators } from 'redux';
-import { Button, Grid, Paper, Typography } from '@material-ui/core';
-import { useTheme, withStyles } from '@material-ui/core/styles';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { withRouter } from 'next/router';
 import MesheryMetrics from '../MesheryMetrics';
@@ -17,64 +15,67 @@ import { EVENT_TYPES } from '../../lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/General/error-404/index';
-import { Modal } from '@layer5/sistent';
+import { Modal, Button, Grid, Paper, Typography, useTheme, styled } from '@layer5/sistent';
 import { UsesSistent } from '../SistentWrapper';
 
 // const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 // const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
 
-const styles = (theme) => ({
-  paper: { padding: '1rem', backgroundColor: theme.palette.secondary.elevatedComponents },
-  resultContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    ['@media (max-width: 830px)']: {
-      flexDirection: 'column',
-    },
-  },
-  vSep: {
-    height: '10.4rem',
-    width: '1px',
-    background: 'black',
-    marginTop: '1.1rem',
-    bottom: '0',
-    left: '36%',
-    backgroundColor: '#36454f',
-    opacity: '0.7',
-    ['@media (max-width: 830px)']: {
-      display: 'none',
-    },
-  },
-  hSep: {
-    display: 'none',
-    ['@media (max-width: 830px)']: {
-      display: 'block',
-      width: '100%',
-      height: '1px',
-      background: 'black',
-      marginTop: '1.1rem',
-      bottom: '0',
-      left: '36%',
-      backgroundColor: '#36454f',
-      opacity: '0.7',
-    },
-  },
-  resultText: {
-    color: theme.palette.secondary.lightText,
-  },
-  profileText: {
-    color: theme.palette.secondary.lightText,
-  },
-  resultNum: {
-    color: theme.palette.secondary.number,
-  },
-  profileNum: {
-    color: theme.palette.secondary.number,
-  },
+const StyledPaper = styled(Paper)(({ theme }) => ({
+  padding: '1rem',
+  backgroundColor: theme.palette.background?.default,
+}));
+
+const StyledButton = styled(Button)(() => {
+  const theme = useTheme();
+  return {
+    padding: '0.5rem',
+    color:
+      theme.palette.mode === 'dark'
+        ? theme.palette.text?.default
+        : theme.palette.background?.default,
+    backgroundColor:
+      theme.palette.mode === 'dark' ? theme.palette.border?.strong : theme.palette.icon?.weather,
+  };
 });
 
-function Dashboard({ updateProgress, grafana, router, classes }) {
+const ResultContainer = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'space-between',
+  [theme.breakpoints.down('md')]: {
+    flexDirection: 'column',
+  },
+}));
+
+const Separator = styled('div')(({ theme, vertical }) => ({
+  ...(vertical
+    ? {
+        height: '10.4rem',
+        width: '1px',
+        background: 'black',
+        marginTop: '1.1rem',
+        backgroundColor: theme.palette.border?.normal,
+        opacity: '0.7',
+        [theme.breakpoints.down('md')]: {
+          display: 'none',
+        },
+      }
+    : {
+        display: 'none',
+        [theme.breakpoints.down('md')]: {
+          display: 'block',
+          width: '100%',
+          height: '1px',
+          background: 'black',
+          marginTop: '1.1rem',
+          backgroundColor: theme.palette.border?.normal,
+          opacity: '0.7',
+        },
+      }),
+}));
+
+function Dashboard({ updateProgress, grafana, router }) {
   const [profiles, setProfiles] = useState({ count: 0, profiles: [] });
   const [tests, setTests] = useState({ count: 0, tests: [] });
   const [runTest, setRunTest] = useState(false);
@@ -166,103 +167,106 @@ function Dashboard({ updateProgress, grafana, router, classes }) {
   }
 
   return (
-    <>
+    <UsesSistent>
       {CAN(keys.VIEW_PERFORMANCE_PROFILES.action, keys.VIEW_PERFORMANCE_PROFILES.subject) ? (
         <>
           <Grid container spacing={2} style={{ padding: '0.5rem' }} alignContent="space-around">
             <Grid container item spacing={1} direction="column" lg xs={12}>
               <Grid item>
-                <Paper className={classes.paper}>
-                  <div className={classes.resultContainer}>
-                    <div className={classes.paper}>
-                      <div style={{ display: 'flex', alignItems: 'center', height: '6.8rem' }}>
+                <StyledPaper>
+                  <ResultContainer>
+                    <StyledPaper sx={{ boxShadow: 'none' }}>
+                      <div
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          height: '6.8rem',
+                          color: theme.palette.text.default,
+                        }}
+                      >
                         <Typography
-                          className={classes.resultNum}
                           variant="h2"
                           component="div"
-                          color="primary"
-                          style={{ marginRight: '0.75rem' }}
+                          style={{ marginRight: '0.75rem', color: theme.palette.icon?.weather }}
                         >
                           {tests.count.toLocaleString('en')}
                         </Typography>
-                        <Typography variant="body1" className={classes.resultText} component="div">
+                        <Typography
+                          variant="body1"
+                          component="div"
+                          style={{ color: theme.palette.text.default }}
+                        >
                           Total Tests Run
                         </Typography>
                       </div>
                       <div style={{ margin: '2rem 0 0 auto', width: 'fit-content' }}>
-                        <Button
-                          variant="contained"
-                          color="primary"
+                        <StyledButton
                           onClick={() => setRunTest(true)}
                           disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
                         >
                           Run Test
-                        </Button>
+                        </StyledButton>
                       </div>
-                    </div>
-                    <div className={classes.vSep} />
-                    <div className={classes.hSep} />
-                    <div className={classes.paper}>
+                    </StyledPaper>
+                    <Separator vertical />
+                    <Separator />
+                    <StyledPaper sx={{ boxShadow: 'none' }}>
                       <div style={{ display: 'flex', alignItems: 'center', height: '6.8rem' }}>
                         <Typography
-                          className={classes.profileNum}
                           variant="h2"
                           component="div"
-                          color="primary"
-                          style={{ marginRight: '0.75rem' }}
+                          style={{ marginRight: '0.75rem', color: theme.palette.icon?.weather }}
                         >
                           {profiles.count}
                         </Typography>
-                        <Typography variant="body1" className={classes.profileText} component="div">
+                        <Typography
+                          variant="body1"
+                          component="div"
+                          style={{ color: theme.palette.text.default }}
+                        >
                           Profiles
                         </Typography>
                       </div>
                       <div style={{ margin: '2rem 0 0 auto', width: 'fit-content' }}>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          onClick={() => router.push('/performance/profiles')}
-                        >
+                        <StyledButton onClick={() => router.push('/performance/profiles')}>
                           Manage Profiles
-                        </Button>
+                        </StyledButton>
                       </div>
-                    </div>
-                  </div>
-                </Paper>
+                    </StyledPaper>
+                  </ResultContainer>
+                </StyledPaper>
               </Grid>
               <Grid item>
-                <Paper className={classes.paper}>
+                <StyledPaper>
                   <PerformanceCalendar style={{ height: '40rem', margin: '2rem 0 0' }} />
-                </Paper>
+                </StyledPaper>
               </Grid>
             </Grid>
             <Grid item lg xs={12}>
-              <Paper className={classes.paper} style={{ height: '100%' }}>
+              <StyledPaper style={{ height: '100%' }}>
                 <MesheryMetrics
                   boardConfigs={grafana.selectedBoardsConfigs}
                   grafanaURL={grafana.grafanaURL}
                   grafanaAPIKey={grafana.grafanaAPIKey}
                   handleGrafanaChartAddition={() => router.push('/settings/#metrics')}
                 />
-              </Paper>
+              </StyledPaper>
             </Grid>
           </Grid>
 
-          <UsesSistent>
-            <Modal
-              open={!!runTest}
-              closeModal={() => setRunTest(false)}
-              maxWidth="md"
-              title="Performance Profile Wizard"
-            >
-              <MesheryPerformanceComponent closeModal={() => setRunTest(false)} />
-            </Modal>
-          </UsesSistent>
+          <Modal
+            open={!!runTest}
+            closeModal={() => setRunTest(false)}
+            maxWidth="md"
+            title="Performance Profile Wizard"
+          >
+            <MesheryPerformanceComponent />
+          </Modal>
         </>
       ) : (
         <DefaultError />
       )}
-    </>
+    </UsesSistent>
   );
 }
 
@@ -275,6 +279,4 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(Dashboard)),
-);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(Dashboard));

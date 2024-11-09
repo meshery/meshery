@@ -511,6 +511,8 @@ input CatalogSelector {
   class: [String]
   technology: [String]
   patternType: [String]
+  userid: [String]
+  orgID: [String]
 }
 
 # ================ TELEMETRY ====================

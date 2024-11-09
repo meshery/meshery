@@ -1,7 +1,7 @@
 import React from 'react';
 
 const AnimatedMeshery = (props) => {
-  const textfill = props.textFill || '#00000';
+  const textfill = props.textFill || '#ccc';
   return (
     <div>
       <svg

@@ -32,9 +32,12 @@ function LoadingScreen(props) {
             <StyledAnimatedLogoDark />
             <Typography
               sx={{
-                fontFamily: 'Qanelas Soft, sans-serif',
-                fontSize: '16px',
-                fontWeight: 'normal',
+                '@font-face': {
+                  fontFamily: 'Qanelas Soft, Roboto',
+                  src: 'url("/static/fonts/qanelas-soft/QanelasSoftBlack.otf") format("opentype")',
+                  fontWeight: 'normal',
+                  fontSize: '.9rem',
+                 },
                 marginTop: '1rem',
               }}
             >
