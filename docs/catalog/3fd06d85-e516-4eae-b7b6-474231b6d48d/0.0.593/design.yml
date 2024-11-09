@@ -10363,6 +10363,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -10487,6 +10488,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -10611,6 +10613,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: haystack
             line-color: '#00B39F'
@@ -10736,6 +10739,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -10860,6 +10864,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -10984,6 +10989,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: straight
             line-color: '#00B39F'
@@ -11109,6 +11115,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: straight
             line-color: '#00B39F'
@@ -11234,6 +11241,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -11358,6 +11366,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -11482,6 +11491,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -11606,6 +11616,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -11730,6 +11741,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -11854,6 +11866,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -11978,6 +11991,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -12102,6 +12116,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -12226,6 +12241,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -12350,6 +12366,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -12474,6 +12491,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -12598,6 +12616,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: haystack
             line-color: '#00B39F'
@@ -12723,6 +12742,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -12847,6 +12867,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -12971,6 +12992,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -13095,6 +13117,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -13219,6 +13242,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -13343,6 +13367,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -13467,6 +13492,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -13591,6 +13617,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -13715,6 +13742,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: haystack
             line-color: '#00B39F'
@@ -13840,6 +13868,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -13964,6 +13993,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: haystack
             line-color: '#00B39F'
@@ -14089,6 +14119,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -14213,6 +14244,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: straight
             line-color: '#00B39F'
@@ -14338,6 +14370,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -14462,6 +14495,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: taxi
             line-color: '#00B39F'
@@ -14587,6 +14621,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: taxi
             line-color: '#00B39F'
@@ -14712,6 +14747,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: taxi
             line-color: '#00B39F'
@@ -14837,6 +14873,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: taxi
             line-color: '#00B39F'
@@ -14962,6 +14999,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: taxi
             line-color: '#00B39F'
@@ -15087,6 +15125,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: taxi
             line-color: '#00B39F'
@@ -15212,6 +15251,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: dashed
@@ -15336,6 +15376,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: straight
             line-color: '#00B39F'
@@ -15461,6 +15502,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -15585,6 +15627,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: taxi
             line-color: '#00B39F'
@@ -15710,6 +15753,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: taxi
             line-color: '#00B39F'
@@ -15835,6 +15879,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: taxi
             line-color: '#00B39F'
@@ -15960,6 +16005,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: taxi
             line-color: '#00B39F'
@@ -16085,6 +16131,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: taxi
             line-color: '#00B39F'
@@ -16210,6 +16257,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: taxi
             line-color: '#00B39F'
@@ -16335,6 +16383,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: taxi
             line-color: '#00B39F'
@@ -16460,6 +16509,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -16584,6 +16634,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: taxi
             line-color: '#00B39F'
@@ -16709,6 +16760,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: taxi
             line-color: '#00B39F'
@@ -16834,6 +16886,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: taxi
             line-color: '#00B39F'
@@ -16959,6 +17012,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -17083,6 +17137,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -17207,6 +17262,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -17331,6 +17387,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: dashed
@@ -17455,6 +17512,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: dashed
@@ -17579,6 +17637,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -17703,6 +17762,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -17823,4 +17883,4 @@ relationships:
       type: non-binding
       version: ""
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.696
+version: 0.0.698
