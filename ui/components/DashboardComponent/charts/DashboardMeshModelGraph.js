@@ -161,7 +161,19 @@ function MeshModelCategories({ classes }) {
     <Link href="/settings?settingsCategory=Registry&tab=Models">
       <div className={classes.dashboardSection}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography variant="h6" gutterBottom className={classes.link}>
+          <Typography
+            variant="h6"
+            className={classes.link}
+            sx={{
+              '@font-face': {
+                fontFamily: 'Qanelas Soft',
+                src: 'url("/static/fonts/qanelas-soft/QanelasSoftRegular.otf") format("opentype")',
+                fontWeight: 'normal',
+              },
+              fontFamily: 'Qanelas Soft',
+            }}
+            gutterBottom
+          >
             Models by Category
           </Typography>
 
