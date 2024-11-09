@@ -157,10 +157,7 @@ function MesheryResultDialog(props) {
           Load Profile
         </Typography>
         <Table className={classes.table} size="small" aria-label="Load Profile">
-          <TableBody>
-            {/* {createTableRow('Name', rowData.name)} */}
-            {contents}
-          </TableBody>
+          <TableBody>{contents}</TableBody>
         </Table>
       </NoSsr>
     );
