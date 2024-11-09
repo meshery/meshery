@@ -31,7 +31,6 @@ function PatternCardGridItem({
   handleSubmit,
   handleDownload,
   setSelectedPatterns,
-  canPublishPattern = false,
   user,
   handleInfoModal,
   hideVisibility = false,
@@ -45,7 +44,6 @@ function PatternCardGridItem({
       <MesheryPatternCard
         id={pattern.id}
         user={user}
-        canPublishPattern={canPublishPattern}
         name={pattern.name}
         updated_at={pattern.updated_at}
         created_at={pattern.created_at}
@@ -213,7 +211,6 @@ function MesheryPatternGrid({
               key={pattern.id}
               user={user}
               pattern={pattern}
-              canPublishPattern={canPublishPattern}
               handleClone={() => handleClone(pattern.id, pattern.name)}
               handleDeploy={(e) => {
                 openDeployModal(e, pattern.pattern_file, pattern.name, pattern.id);

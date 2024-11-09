@@ -12,7 +12,8 @@
       "svgWhite": "",
       "target-arrow-color": "#00B39F",
       "target-arrow-shape": "triangle"
-    }
+    },
+    "isAnnotation": false
   },
   "model": {
     "category": {
