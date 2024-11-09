@@ -37,7 +37,7 @@ function LoadingScreen(props) {
                   src: 'url("/static/fonts/qanelas-soft/QanelasSoftBlack.otf") format("opentype")',
                   fontWeight: 'normal',
                   fontSize: '.9rem',
-                 },
+                },
                 marginTop: '1rem',
               }}
             >
