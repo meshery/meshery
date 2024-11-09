@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 const useStyles = makeStyles((theme) => ({
   '@font-face': {
     fontFamily: 'Qanelas Soft',
-    src: 'url("/static/fonts/qanelas-soft/QanelasSoftBlack.otf") format("opentype")',
+    src: 'url("/static/fonts/qanelas-soft/QanelasSoftRegular.otf") format("opentype")',
     fontWeight: 'normal',
   },
   toolWrapper: {

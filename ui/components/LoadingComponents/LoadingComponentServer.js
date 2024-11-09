@@ -33,11 +33,12 @@ function LoadingScreen(props) {
             <Typography
               sx={{
                 '@font-face': {
-                  fontFamily: 'Qanelas Soft, Roboto',
-                  src: 'url("/static/fonts/qanelas-soft/QanelasSoftBlack.otf") format("opentype")',
+                  fontFamily: 'Qanelas Soft',
+                  src: 'url("/static/fonts/qanelas-soft/QanelasSoftRegular.otf") format("opentype")',
                   fontWeight: 'normal',
                   fontSize: '.9rem',
                 },
+                fontFamily: 'Qanelas Soft, Roboto',
                 marginTop: '1rem',
               }}
             >

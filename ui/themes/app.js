@@ -44,17 +44,10 @@ export var darkTheme = createTheme({
     useNextVariants: true,
     fontFace: {
       fontFamily: 'Qanelas Soft',
-      src: 'url("/static/fonts/qanelas-soft/QanelasSoftRegular.otf") format("opentype")',
       fontWeight: 400,
       fontDisplay: 'swap',
     },
-    '@font-face': {
-      fontFamily: 'Qanelas Soft',
-      src: 'url("/static/fonts/qanelas-soft/QanelasSoftRegular.otf") format("opentype")',
-      fontWeight: 'normal',
-      fontDisplay: 'swap',
-    },
-    // fontFamily: ['Qanelas Soft', 'Roboto', 'Helvectica', 'Arial', 'sans-serif'].join(','),
+    fontFamily: ['Qanelas Soft', 'Roboto', 'Helvectica', 'Arial', 'sans-serif'].join(','),
     h5: {
       fontWeight: 'bolder',
       fontSize: 26,
