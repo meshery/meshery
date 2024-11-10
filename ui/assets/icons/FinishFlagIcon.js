@@ -1,6 +1,6 @@
 import React from 'react';
 
-const FinishFlagIcon = ({ width, height, fill = '#3C494F', style = {} }) => (
+const FinishFlagIcon = ({ width = '24', height = '24', fill = '#3C494F', style = {} }) => (
   <svg
     width={width}
     height={height}
