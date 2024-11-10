@@ -44,6 +44,8 @@ import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
 import { UsesSistent } from './SistentWrapper';
 import Router from 'next/router';
 import HeaderMenu from './HeaderMenu';
+import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
+import { Box } from '@material-ui/core';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -458,6 +460,9 @@ function K8sContextMenu({
                       );
                     })}
                   </div>
+                  <Box display="flex" marginTop={1} marginLeft={7}>
+                    <MesherySettingsEnvButtons />
+                  </Box>
                 </Paper>
               </ClickAwayListener>
             </CanShow>
