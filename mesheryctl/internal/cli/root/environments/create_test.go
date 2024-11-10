@@ -17,10 +17,8 @@ func TestCreateEnvironmentCmd(t *testing.T) {
 	utils.StartMockery(t)
 	defer utils.StopMockery(t)
 
-	// Create a test helper
 	testContext := utils.NewTestHelper(t)
 
-	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
 	if !ok {
 		t.Fatal("Not able to get current working directory")
@@ -67,12 +65,10 @@ func TestCreateEnvironmentCmd(t *testing.T) {
 		
 	}
 
-	// Loop through each test case
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
 			if(tt.Fixture!=""){
 				apiResponse:=  utils.NewGoldenFile(t,tt.Fixture,fixturesDir).Load()
-				// set token
 				utils.TokenFlag = tt.Token
 
 				// mock response
