@@ -12,5 +12,6 @@ svg.css-19bqh2r:hover {
 }
 
 .app-error {
-  background-color: #f0a303 !important;
+  /* yellow[20] = #C98300 */
+  background-color: #C98300 !important;
 }
