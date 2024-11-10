@@ -8474,6 +8474,10 @@ components:
             - name: ack-ec2-controller
             - name: ack-ec2-controller
             - name: ack-ec2-controller
+            - name: ack-ec2-controller
+            - name: ack-ec2-controller
+            - name: ack-ec2-controller
+            - name: ack-ec2-controller
             - kind: ServiceAccount
               name: ack-ec2-controller
               namespace: default
@@ -8651,6 +8655,10 @@ components:
             kind: ClusterRole
             name: ack-ec2-controller
         subjects:
+            - name: ack-ec2-controller
+            - name: ack-ec2-controller
+            - name: ack-ec2-controller
+            - name: ack-ec2-controller
             - name: ack-ec2-controller
             - name: ack-ec2-controller
             - name: ack-ec2-controller
@@ -9467,6 +9475,10 @@ components:
             kind: Role
             name: ack-configmaps-cache-ec2-controller
         subjects:
+            - name: ack-ec2-controller
+            - name: ack-ec2-controller
+            - name: ack-ec2-controller
+            - name: ack-ec2-controller
             - name: ack-ec2-controller
             - name: ack-ec2-controller
             - name: ack-ec2-controller
@@ -11972,6 +11984,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -12100,6 +12113,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -12228,6 +12242,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -12356,6 +12371,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that represents a set of permissions
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -12506,6 +12522,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -12634,6 +12651,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -12762,6 +12780,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -12890,6 +12909,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -13018,6 +13038,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -13146,6 +13167,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -13274,6 +13296,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -13402,6 +13425,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -13530,6 +13554,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -13658,6 +13683,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -13786,6 +13812,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -13914,6 +13941,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -14042,6 +14070,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -14170,6 +14199,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -14298,6 +14328,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -14426,6 +14457,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -14554,6 +14586,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that represents a set of permissions
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -14704,6 +14737,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -14832,6 +14866,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -14962,6 +14997,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -15090,6 +15126,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that represents a set of permissions
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -15240,6 +15277,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -15368,6 +15406,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -15496,6 +15535,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -15624,6 +15664,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -15752,6 +15793,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -15880,6 +15922,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -16008,6 +16051,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -16136,6 +16180,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -16264,6 +16309,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -16392,6 +16438,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -16520,6 +16567,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -16648,6 +16696,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -16776,6 +16825,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -16904,6 +16954,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -17099,6 +17150,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -17227,6 +17279,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -17357,6 +17410,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -17485,6 +17539,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -17613,6 +17668,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -17741,6 +17797,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -17869,6 +17926,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -17997,6 +18055,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -18125,6 +18184,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -18253,6 +18313,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -18381,6 +18442,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -18509,6 +18571,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -18637,6 +18700,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -18832,6 +18896,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -18962,6 +19027,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -19157,6 +19223,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -19352,6 +19419,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -19482,6 +19550,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -19677,6 +19746,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -19807,6 +19877,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -19935,6 +20006,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -20063,6 +20135,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -20191,6 +20264,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -20319,6 +20393,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -20447,6 +20522,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -20575,6 +20651,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -20703,6 +20780,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -20831,6 +20909,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -20959,6 +21038,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -21089,6 +21169,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -21217,6 +21298,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -21345,6 +21427,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -21473,6 +21556,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -21601,6 +21685,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: taxi
             line-color: rgb(66,99,235)
@@ -21726,6 +21811,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: taxi
             line-color: rgb(66,99,235)
@@ -21851,6 +21937,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -21979,6 +22066,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -22107,6 +22195,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -22235,6 +22324,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -22363,6 +22453,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -22491,6 +22582,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -22615,6 +22707,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -22739,6 +22832,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -22863,6 +22957,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#8b572a'
             line-style: solid
@@ -22987,6 +23082,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#8b572a'
             line-style: solid
@@ -23111,6 +23207,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#8b572a'
             line-style: solid
@@ -23235,6 +23332,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: bezier
             line-color: '#8b572a'
@@ -23360,6 +23458,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#8b572a'
             line-style: solid
@@ -23484,6 +23583,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -23612,6 +23712,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -23736,6 +23837,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -23864,6 +23966,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -23992,6 +24095,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -24120,6 +24224,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -24248,6 +24353,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -24376,6 +24482,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -24504,6 +24611,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -24632,6 +24740,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -24760,6 +24869,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -24888,6 +24998,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -25016,6 +25127,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -25144,6 +25256,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -25272,6 +25385,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -25400,6 +25514,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -25528,6 +25643,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -25656,6 +25772,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -25784,6 +25901,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -25912,6 +26030,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -26040,6 +26159,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -26168,6 +26288,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that represents a set of permissions
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -26318,6 +26439,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -26446,6 +26568,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -26574,6 +26697,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -26702,6 +26826,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -26830,6 +26955,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -26958,6 +27084,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -27086,6 +27213,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -27214,6 +27342,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -27342,6 +27471,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -27470,6 +27600,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -27598,6 +27729,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -27726,6 +27858,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that represents a set of permissions
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -27876,6 +28009,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -28004,6 +28138,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -28132,6 +28267,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -28260,6 +28396,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -28388,6 +28525,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -28516,6 +28654,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -28644,6 +28783,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -28772,6 +28912,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -28900,6 +29041,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -29028,6 +29170,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -29156,6 +29299,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -29284,6 +29428,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -29412,6 +29557,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -29540,6 +29686,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that represents a set of permissions
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -29690,6 +29837,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -29818,6 +29966,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -29946,6 +30095,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -30074,6 +30224,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -30204,6 +30355,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -30332,6 +30484,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -30460,6 +30613,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -30588,6 +30742,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: A relationship between two objects that are siblings.
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -30712,4 +30867,4 @@ relationships:
       type: sibling
       version: v1.0.0
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.81
+version: 0.0.85
