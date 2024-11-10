@@ -96,7 +96,7 @@
                   "spec",
                   "ports",
                   "_",
-                  "targetPort"
+                  "port"
                 ],
                 [
                   "configuration",
