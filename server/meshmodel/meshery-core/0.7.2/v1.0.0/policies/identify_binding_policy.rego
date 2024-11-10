@@ -149,7 +149,8 @@ is_valid_binding(resource1, resource2, selectors) if {
 		result == true
 		i := result
 	]
-   # if this count is true then only the binding is valid.
+
+	# if this count is true then only the binding is valid.
 	count(match_results) == count(valid_results)
 }
 
