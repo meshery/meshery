@@ -7358,6 +7358,8 @@ components:
             - name: Service Account
             - name: Service Account
             - name: Service Account
+            - name: Service Account
+            - name: Service Account
       description: ""
       displayName: cluster-role-binding-sv
       format: JSON
@@ -7541,6 +7543,8 @@ components:
             kind: Role
             name: Role
         subjects:
+            - name: Service Account
+            - name: Service Account
             - name: Service Account
             - name: Service Account
             - name: Service Account
@@ -75838,4 +75842,4 @@ relationships:
       type: parent
       version: v1.0.0
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.412
+version: 0.0.414

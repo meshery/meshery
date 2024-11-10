@@ -17883,4 +17883,4 @@ relationships:
       type: non-binding
       version: ""
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.698
+version: 0.0.699
