@@ -160,9 +160,9 @@
                   "template",
                   "spec",
                   "containers",
-                  "0",
-                  "ports",
                   "_",
+                  "ports",
+                  "0",
                   "containerPort"
                 ],
                 [
@@ -171,9 +171,9 @@
                   "template",
                   "spec",
                   "containers",
-                  "0",
-                  "ports",
                   "_",
+                  "ports",
+                  "0",
                   "protocol"
                 ]
               ]
