@@ -47,7 +47,7 @@ func TestCreateEnvironmentCmd(t *testing.T) {
 			Name:             "Invalid OrgId as Non-UUID",
 			Args:             []string{"create", "--orgId", "invalid-org-id", "--name", "TestEnv", "--description", "This is a test environment"},
 			URL:              testContext.BaseURL + "/api/environments",
-			Fixture:          "create.emvironment.invalid-orgid.response.golden",
+			Fixture:          "create.emvironment.local.provider.invalid-orgid.response.golden",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectedResponse: "create.environment.output.golden",
 			ExpectedError:    false,
