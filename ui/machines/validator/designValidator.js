@@ -101,6 +101,7 @@ export const formatDryRunResponse = (dryRunResponse) => {
 
         if (!errorAndMeta.success) {
           errorList.push({
+            type: 'ComponentError',
             compName,
             component: errorAndMeta.component,
             contextId: contextKey,
@@ -133,7 +134,13 @@ const DryRunDesignActor = fromPromise(async ({ input: { validationPayload } }) =
 
   const validationResults = formatDryRunResponse(dryRunResults.data?.dryRunResponse);
   return {
-    validationResults: validationResults,
+    validationResults: [
+      ...validationResults,
+      {
+        type: 'RequestError',
+        errors: [dryRunResults.error],
+      },
+    ],
   };
 });
 
