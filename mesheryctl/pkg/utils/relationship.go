@@ -26,17 +26,18 @@ type RelationshipCSVHelper struct {
 }
 
 type RelationshipCSV struct {
-	RowIndex    int    `json:"-" csv:"-"`
-	Model       string `json:"Model" csv:"Model"`
-	Version     string `json:"Version" csv:"Version"`
-	KIND        string `json:"kind" csv:"kind"`
-	Type        string `json:"type" csv:"type"`
-	SubType     string `json:"subType" csv:"subType"`
-	Description string `json:"metadata.description" csv:"metadata.description	"`
-	Styles      string `json:"metadata.styles" csv:"metadata.styles"`
-	EvalPolicy  string `json:"evalPolicy" csv:"evalPolicy"`
-	Selector    string `json:"selector" csv:"selector"`
-	Filename    string `json:"filename" csv:"filename"`
+	RowIndex     int    `json:"-" csv:"-"`
+	Model        string `json:"Model" csv:"Model"`
+	Version      string `json:"Version" csv:"Version"`
+	KIND         string `json:"kind" csv:"kind"`
+	Type         string `json:"type" csv:"type"`
+	SubType      string `json:"subType" csv:"subType"`
+	Description  string `json:"metadata.description" csv:"metadata.description"`
+	IsAnnotation string `json:"metadata.isAnnotation" csv:"metadata.isAnnotation"`
+	Styles       string `json:"metadata.styles" csv:"metadata.styles"`
+	EvalPolicy   string `json:"evalPolicy" csv:"evalPolicy"`
+	Selector     string `json:"selector" csv:"selector"`
+	Filename     string `json:"filename" csv:"filename"`
 }
 
 func NewRelationshipCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64, localCsvPath string) (*RelationshipCSVHelper, error) {
@@ -159,10 +160,14 @@ func ProcessRelationships(relationshipCSVHelper *RelationshipCSVHelper, spreadsh
 					rel.Metadata = &_rel.Relationship_Metadata{}
 				}
 			}
-
+			annotation := false
+			if utils.ReplaceSpacesAndConvertToLowercase(relationship.IsAnnotation) == "true" {
+				annotation = true
+			}
 			rel.Metadata = &_rel.Relationship_Metadata{
-				Description: &relationship.Description,
-				Styles:      &styles,
+				Description:  &relationship.Description,
+				IsAnnotation: &annotation,
+				Styles:       &styles,
 			}
 
 			var selectorSet _rel.SelectorSet

@@ -7,7 +7,6 @@ import rego.v1
 # The flow that the policy follows from evaluation to final trace
 default rels_in_design_file := []
 
-
 # Counts the total number of relationships in the design file
 rels_in_design_file := input.relationships if {
 	count(input.relationships) > 0
