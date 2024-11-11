@@ -21,7 +21,7 @@ import App from 'next/app';
 import Head from 'next/head';
 import { SnackbarContent, SnackbarProvider } from 'notistack';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect, Provider, useSelector } from 'react-redux';
 import Header from '../components/Header';
 import MesheryProgressBar from '../components/MesheryProgressBar';
@@ -59,7 +59,7 @@ import { ErrorBoundary } from '../components/General/ErrorBoundary';
 import { NotificationCenterProvider } from '../components/NotificationCenter';
 import { getMeshModelComponentByName } from '../api/meshmodel';
 import { CONNECTION_KINDS, CONNECTION_KINDS_DEF, CONNECTION_STATES } from '../utils/Enum';
-import { ability } from '../utils/can';
+import CAN, { ability } from '../utils/can';
 import { getCredentialByID } from '@/api/credentials';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
 import { useTheme } from '@material-ui/core/styles';
@@ -73,6 +73,7 @@ import { BasicMarkdown, CircularProgress } from '@layer5/sistent';
 import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
 import { LoadSessionGuard } from '@/rtk-query/ability';
 import { randomLoadingMessage } from '@/components/LoadingComponents/loadingMessages';
+import { keys } from '@/utils/permission_constants';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -158,6 +159,44 @@ const Footer = ({ classes, capabilitiesRegistry, handleL5CommunityClick }) => {
       </Typography>
     </footer>
   );
+};
+
+const KubernetesSubscription = ({ store, setActiveContexts, setAppState }) => {
+  const k8sContextSubscription = (page = '', search = '', pageSize = '10', order = '') => {
+    // Don't fetch k8s contexts if user doesn't have permission
+    if (!CAN(keys.VIEW_ALL_KUBERNETES_CLUSTERS.action, keys.VIEW_ALL_KUBERNETES_CLUSTERS.subject)) {
+      return () => {};
+    }
+
+    return subscribeK8sContext(
+      (result) => {
+        // TODO: Remove local state and only use redux store
+        setAppState({ k8sContexts: result.k8sContext }, () => setActiveContexts('all'));
+        store.dispatch({
+          type: actionTypes.UPDATE_CLUSTER_CONFIG,
+          k8sConfig: result.k8sContext.contexts,
+        });
+      },
+      {
+        selector: {
+          page: page,
+          pageSize: pageSize,
+          order: order,
+          search: search,
+        },
+      },
+    );
+  };
+
+  useEffect(() => {
+    const disposeK8sContextSubscription = k8sContextSubscription();
+    setAppState({ disposeK8sContextSubscription });
+    return () => {
+      disposeK8sContextSubscription();
+    };
+  }, []);
+
+  return null;
 };
 
 class MesheryApp extends App {
@@ -258,29 +297,6 @@ class MesheryApp extends App {
       (err) => console.error(err),
     );
 
-    // this.initEventsSubscription()
-    const k8sContextSubscription = (page = '', search = '', pageSize = '10', order = '') => {
-      return subscribeK8sContext(
-        (result) => {
-          this.setState({ k8sContexts: result.k8sContext }, () => this.setActiveContexts('all'));
-          this.props.store.dispatch({
-            type: actionTypes.UPDATE_CLUSTER_CONFIG,
-            k8sConfig: result.k8sContext.contexts,
-          });
-        },
-        {
-          selector: {
-            page: page,
-            pageSize: pageSize,
-            order: order,
-            search: search,
-          },
-        },
-      );
-    };
-    const disposeK8sContextSubscription = k8sContextSubscription();
-    this.setState({ disposeK8sContextSubscription });
-
     document.addEventListener('fullscreenchange', this.fullScreenChanged);
     this.loadMeshModelComponent();
     this.setState({ isLoading: false });
@@ -333,6 +349,14 @@ class MesheryApp extends App {
   }
 
   initSubscriptions = (contexts) => {
+    const connectionIDs = getConnectionIDsFromContextIds(contexts, this.props.k8sConfig);
+
+    // No need to create a controller subscription if there are no connections
+    if (connectionIDs.length < 1) {
+      this.setState({ mesheryControllerSubscription: () => {} });
+      return;
+    }
+
     const mesheryControllerSubscription = new GQLSubscription({
       type: MESHERY_CONTROLLER_SUBSCRIPTION,
       connectionIDs: getConnectionIDsFromContextIds(contexts, this.props.k8sConfig),
@@ -622,8 +646,14 @@ class MesheryApp extends App {
     console.log('using theme setter is no longer supported');
     // this.setState({ theme: thememode });
   };
+
+  setAppState(partialState, callback) {
+    return this.setState(partialState, callback);
+  }
+
   render() {
     const { Component, pageProps, classes, isDrawerCollapsed, relayEnvironment } = this.props;
+    const setAppState = this.setAppState.bind(this);
 
     //eslint-disable-next-line
     const ThemeResponsiveSnackbar = forwardRef((props, forwardedRef) => {
@@ -763,6 +793,11 @@ class MesheryApp extends App {
                         >
                           <NotificationCenterProvider>
                             <MesheryProgressBar />
+                            <KubernetesSubscription
+                              store={this.props.store}
+                              setActiveContexts={this.setActiveContexts}
+                              setAppState={setAppState}
+                            />
                             {!this.state.isFullScreenMode && (
                               <Header
                                 onDrawerToggle={this.handleDrawerToggle}

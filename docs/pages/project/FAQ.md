@@ -68,12 +68,26 @@ category: project
 <h6>Question: How do I install Meshery?</h6>
 </summary>
 <p><strong>Answer:</strong> Meshery runs on a <a href="{{site.baseurl}}/installation">number of platforms</a>. You are encouraged to use <code>mesheryctl</code> to configure and control Meshery deployments. Install `mesheryctl` using any of these options:</p>
+
 <ul>
 <li><a href="/installation/linux-mac/bash">Bash user</a></li>
 <li><a href="/installation/linux-mac/brew">Brew user</a></li>
 <li><a href="/installation/windows/scoop">Scoop user</a></li>
 <li><a href="https://github.com/meshery/meshery/releases/latest">Direct download</a></li>
 </ul>
+</details>
+
+<details>
+    <summary>
+    <h6>Question: Does Meshery require Kubernetes to manage infrastructure?</h6>
+</summary>
+<p><strong>Answer:</strong> While Meshery's configuration and lifecycle management features require Kubernetes to operate, you don't need to run your infrastructure on Kubernetes. Meshery can:</p>
+<ul>
+<li>Perform load generation and performance analysis independent of Kubernetes</li>
+<li>Configure and manage non-Kubernetes infrastructure (like AWS and GCP services)</li>
+<li>Use Kubernetes operators to manage Cloud services outside of Kubernetes (e.g. AWS EC2)</li>
+</ul>
+<p>See <a href="https://docs.meshery.io/extensibility/integrations">supported cloud integrations</a> for more details.</p>
 </details>
 
 <details>
