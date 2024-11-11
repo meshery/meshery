@@ -1,3 +1,5 @@
+@import './font.css';
+
 .error-autocomplete-value .MuiOutlinedInput-notchedOutline {
   border: 1px solid red;
 }
@@ -10,5 +12,7 @@ svg.css-19bqh2r:hover {
 }
 
 .app-error {
-  background-color: #f0a303 !important;
+  /* yellow[20] = #C98300 */
+  /* saffron[30] = #C4990A  */
+  background-color: #C4990A !important;
 }
