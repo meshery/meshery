@@ -21,6 +21,7 @@ import {
 } from '../../machines/validator/designValidator';
 import { ErrorIcon } from '@layer5/sistent';
 import { NOTIFICATIONCOLORS } from '@/themes/index';
+import { FormatStructuredData } from '../DataFormatter';
 
 function breakCapitalizedWords(input) {
   // Use regular expression to split capitalized words
@@ -239,6 +240,23 @@ export const FormatDryRunResponse = withStyles(styles)(({
 
   const canShowComponentCount =
     annotationComponentsCount !== undefined && annotationComponentsCount !== undefined;
+
+  const dryRunRequestErrors = dryRunErrors
+    .filter((error) => error.type === 'RequestError')
+    .flatMap((error) => error?.errors || []);
+  const componentErrors = dryRunErrors.filter((error) => error.type === 'ComponentError');
+
+  console.log('dryRunRequestErrors', dryRunRequestErrors);
+
+  // const ErrorListItem = ({ children }) => (
+  //   <ListItem disablePadding className={classes.singleErrorRoot}>
+  //     <ListItemIcon>
+  //       <ErrorIcon height="24px" width="24px" bang fill={NOTIFICATIONCOLORS.ERROR_DARK} />
+  //     </ListItemIcon>
+
+  //     {children}
+  //   </ListItem>
+  // );
   return (
     <List
       aria-labelledby="nested-list-subheader"
@@ -277,8 +295,13 @@ export const FormatDryRunResponse = withStyles(styles)(({
       }
       className={classes.root}
     >
+      <div style={{ padding: '1rem' }}> </div>
+      {dryRunRequestErrors?.map((error, index) => (
+        <FormatStructuredData key={index} data={error?.data} />
+      ))}
+
       {totalDryRunErrors > 0 ? (
-        dryRunErrors?.map((err) => (
+        componentErrors?.map((err) => (
           <ExpandableComponentErrors
             key={`${err.compName}`}
             component={err.component}

@@ -17,7 +17,7 @@ identify_relationship(
 	# Node A  -> Node B and Node B -> Node A.
 	# Hence do not try to identify annotation rels, but only evaluate if the exisitng ones are valid or not.
 	relationship.subType != "annotation"
-
+	relationship.metadata.isAnnotation != true
 	some selector_set in relationship.selectors
 	from_selectors := {kind: selectors |
 		some selectors in selector_set.allow.from

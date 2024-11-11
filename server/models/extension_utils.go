@@ -16,8 +16,6 @@ func GetRedirectURLForNavigatorExtension(remoteProviderProperties *ProviderPrope
 		if href.External != nil && !*href.External {
 			redirectURL, _ = url.JoinPath("/extension", href.URI)
 		}
-	} else {
-		remoteProviderProperties.DownloadProviderExtensionPackage(log)
 	}
 
 	return redirectURL

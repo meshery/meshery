@@ -8,7 +8,8 @@
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    }
+    },
+    "isAnnotation": false
   },
   "model": {
     "category": {
@@ -96,7 +97,7 @@
                   "spec",
                   "ports",
                   "_",
-                  "targetPort"
+                  "port"
                 ],
                 [
                   "configuration",
@@ -160,9 +161,9 @@
                   "template",
                   "spec",
                   "containers",
-                  "0",
-                  "ports",
                   "_",
+                  "ports",
+                  "0",
                   "containerPort"
                 ],
                 [
@@ -171,9 +172,9 @@
                   "template",
                   "spec",
                   "containers",
-                  "0",
-                  "ports",
                   "_",
+                  "ports",
+                  "0",
                   "protocol"
                 ]
               ]
