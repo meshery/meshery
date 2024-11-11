@@ -61,6 +61,17 @@ func (h *Handler) ProviderMiddleware(next http.Handler) http.Handler {
 	}
 	return http.HandlerFunc(fn)
 }
+func (h *Handler) NoCacheMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+		// Set headers to disable caching
+		w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+		w.Header().Set("Pragma", "no-cache")
+		w.Header().Set("Expires", "0")
+
+		// Call the next handler
+		next.ServeHTTP(w, req)
+	})
+}
 
 // AuthMiddleware is a middleware to validate if a user is authenticated
 func (h *Handler) AuthMiddleware(next http.Handler, auth models.AuthenticationMechanism) http.Handler {

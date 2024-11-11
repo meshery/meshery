@@ -350,7 +350,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 	gMux.Handle("/user/logout", h.ProviderMiddleware(h.SessionInjectorMiddleware(func(w http.ResponseWriter, req *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
 		h.LogoutHandler(w, req, user, provider)
 	})))
-	gMux.Handle("/user/login", h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	gMux.Handle("/user/login", h.NoCacheMiddleware(h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		providerI := req.Context().Value(models.ProviderCtxKey)
 		provider, ok := providerI.(models.Provider)
 		if !ok {
@@ -358,8 +358,8 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 			return
 		}
 		h.LoginHandler(w, req, provider, false)
-	})))
-	gMux.Handle("/api/user/token", h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
+	}))))
+	gMux.Handle("/api/user/token", h.NoCacheMiddleware(h.ProviderMiddleware(http.HandlerFunc(func(w http.ResponseWriter, req *http.Request) {
 		providerI := req.Context().Value(models.ProviderCtxKey)
 		provider, ok := providerI.(models.Provider)
 		if !ok {
@@ -367,7 +367,7 @@ func NewRouter(_ context.Context, h models.HandlerInterface, port int, g http.Ha
 			return
 		}
 		h.TokenHandler(w, req, provider, false)
-	}))).Methods("POST", "GET")
+	})))).Methods("POST", "GET")
 	gMux.Handle("/api/token", h.ProviderMiddleware(h.AuthMiddleware(h.SessionInjectorMiddleware(
 		func(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 			provider.ExtractToken(w, req)
