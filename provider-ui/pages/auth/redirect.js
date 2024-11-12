@@ -10,7 +10,7 @@ const Redirect = () => {
     if (returnTo) {
       redirectURL = new URL(`${returnTo}?${params.toString()}`)
     } else {
-      redirectURL = new URL(`https://meshery.layer5.io/?${params.toString()}`)
+      redirectURL = new URL(`https://cloud.layer5.io/?${params.toString()}`)
     }
 
     window.location.href = redirectURL.toString();
