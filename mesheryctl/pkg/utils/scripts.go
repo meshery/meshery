@@ -17,6 +17,27 @@ func GenerateConfigGKE(configPath, SAName, namespc string) error {
 	NAMESPACE="%s"
 	TARGET_FOLDER=$(dirname ${KUBECFG_FILE_NAME})
 
+	command_exists() {
+		command -v $1 >/dev/null 2>&1
+	}
+	check_prerequisites() {
+		if ! command_exists jq ; then
+			echo -e "\\nMissing required utility: 'jq'. Please install 'jq' and try again."
+			exit;
+		fi
+		if ! command_exists base64 ; then
+			echo -e "\\nMissing required utility: 'base64'. Please install 'base64' and try again."
+			exit;
+		fi
+		if ! command_exists awk ; then
+			echo -e "\\nMissing required utility: 'awk'. Please install 'awk' and try again."
+			exit;
+		fi
+		if ! command_exists tail ; then
+			echo -e "\\nMissing required utility: 'tail'. Please install 'tail' and try again."
+			exit;
+		fi
+	}
 	create_service_account() {
 		echo -e "\\nCreating a service account in ${NAMESPACE} namespace: ${SERVICE_ACCOUNT_NAME}"
 		kubectl create sa "${SERVICE_ACCOUNT_NAME}" --namespace "${NAMESPACE}"
@@ -81,6 +102,7 @@ func GenerateConfigGKE(configPath, SAName, namespc string) error {
 		--kubeconfig="${KUBECFG_FILE_NAME}"
 	}
 
+	check_prerequisites
 	create_service_account
 	get_secret_name_from_service_account
 	extract_ca_crt_from_secret
