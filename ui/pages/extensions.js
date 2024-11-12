@@ -73,7 +73,7 @@ const MeshMapSnapShotLogo = withStyles(LogoStyles)(({ classes }) => {
 
 const MeshMapSnapShotCard = ({ classes, githubActionEnabled = false }) => {
   const handleEnable = (e) => {
-    window.open('https://cloud.layer5.io/connect/github/new/', '_blank');
+    window.open('https://meshery.layer5.io/connect/github/new/', '_blank');
     e.stopPropagation();
   };
 
