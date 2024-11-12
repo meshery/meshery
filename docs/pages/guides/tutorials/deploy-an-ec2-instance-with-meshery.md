@@ -107,7 +107,7 @@ While this step is already handled in the design, but it's worth clarifying how 
 
 #### Deploy EC2 Controller Design
 
-After configuring your design, the next step is deployment. To learn more about deploying your designs in Meshery, see [Deploying Meshery Designs](https://meshery.layer5.io/academy/learning-paths/mastering-meshery/introduction-to-meshery?chapter=deploying-meshery-designs). To deploy the resources, follow these steps:
+After configuring your design, the next step is deployment. To learn more about deploying your designs in Meshery, see [Deploying Meshery Designs](https://cloud.layer5.io/academy/learning-paths/mastering-meshery/introduction-to-meshery?chapter=deploying-meshery-designs). To deploy the resources, follow these steps:
 
 1. Click the **Actions** button at the top of the Kanvas and click **Deploy**.
 
