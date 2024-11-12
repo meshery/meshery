@@ -35,13 +35,42 @@ func (c *GKEConfig) validate() error {
 	}
 	return nil
 }
+func (c *GKEConfig) checkPrerequisites() error {
+	requiredCommands := []string{"jq", "base64", "awk", "tail"}
+	for _, cmd := range requiredCommands {
+		if _, err := exec.LookPath(cmd); err != nil {
+			return fmt.Errorf("required command %s is not installed", cmd)
+		}
+	}
+	return nil
+}
 
 func (c *GKEConfig) executeScript() error {
+	if err := c.checkConnectivity(); err != nil {
+		return err
+	}
+
+	if err := c.checkPrerequisites(); err != nil {
+		return err
+	}
+
 	script := c.generateScript()
 	cmd := exec.Command("sh", "-c", script)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 	return cmd.Run()
+}
+
+func (c *GKEConfig) checkConnectivity() error {
+	cmd := exec.Command("kubectl", "cluster-info")
+	cmd.Stdout = nil
+	cmd.Stderr = nil
+
+	if err := cmd.Run(); err != nil {
+		return fmt.Errorf("failed to connect to Kubernetes API server: %w", err)
+	}
+
+	return nil
 }
 
 func (c *GKEConfig) generateScript() string {
@@ -69,11 +98,17 @@ main
 
 func serviceAccountTemplate() string {
 	return `create_service_account() {
-    echo -e "\nCreating a service account in ${NAMESPACE} namespace: ${SERVICE_ACCOUNT_NAME}"
-    kubectl create sa "${SERVICE_ACCOUNT_NAME}" --namespace "${NAMESPACE}"
-    kubectl create clusterrolebinding "${SERVICE_ACCOUNT_NAME}" --clusterrole=cluster-admin --serviceaccount=default:"${SERVICE_ACCOUNT_NAME}" --namespace "${NAMESPACE}"
+    echo "Creating a service account in ${NAMESPACE} namespace: ${SERVICE_ACCOUNT_NAME}"
+    if ! kubectl create sa "${SERVICE_ACCOUNT_NAME}" --namespace "${NAMESPACE}"; then
+        echo "[ERROR] Failed to create service account"
+        exit 1
+    fi
+    if ! kubectl create clusterrolebinding "${SERVICE_ACCOUNT_NAME}" --clusterrole=cluster-admin --serviceaccount=default:"${SERVICE_ACCOUNT_NAME}" --namespace "${NAMESPACE}"; then
+        echo "[ERROR] Failed to create cluster role binding"
+        exit 1
+    fi
     
-    echo -e "\nCreating token secret for service account..."
+    echo "Creating token secret for service account..."
     cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Secret
@@ -92,25 +127,25 @@ EOF
 func secretOpsTemplate() string {
 	return `
 get_secret_name_from_service_account() {
-    echo -e "\nGetting secret of service account ${SERVICE_ACCOUNT_NAME} on ${NAMESPACE}"
+    echo "Getting secret of service account ${SERVICE_ACCOUNT_NAME} on ${NAMESPACE}"
     SECRET_NAME="${SERVICE_ACCOUNT_NAME}-token"
     echo "Secret name: ${SECRET_NAME}"
 }
 
 extract_ca_crt_from_secret() {
-    echo -e -n "\nExtracting ca.crt from secret..."
+    echo -n "Extracting ca.crt from secret..."
     kubectl get secret --namespace "${NAMESPACE}" "${SECRET_NAME}" -o jsonpath='{.data.ca\.crt}' | base64 --decode > "${TARGET_FOLDER}/ca.crt"
-    printf "done"
+    echo "done"
 }
 
 get_user_token_from_secret() {
-    echo -e -n "\nGetting user token from secret..."
+    echo -n "Getting user token from secret..."
     USER_TOKEN=$(kubectl get secret --namespace "${NAMESPACE}" "${SECRET_NAME}" -o json | jq -r '.data["token"]' | base64 --decode)
     if [ -z "${USER_TOKEN}" ]; then
         echo "Error: Failed to get user token"
         exit 1
     fi
-    printf "done"
+    echo "done"
 }`
 }
 
@@ -118,7 +153,7 @@ func kubeConfigTemplate() string {
 	return `
 set_kube_config_values() {
     context=$(kubectl config current-context)
-    echo -e "\nSetting current context to: $context"
+    echo "Setting current context to: $context"
 
     CLUSTER_NAME=$(kubectl config get-contexts "$context" | awk '{print $3}' | tail -n 1)
     echo "Cluster name: ${CLUSTER_NAME}"
@@ -131,7 +166,7 @@ set_kube_config_values() {
         exit 1
     fi
 
-    echo -e "\nPreparing k8s-${SERVICE_ACCOUNT_NAME}-${NAMESPACE}-conf"
+    echo "Preparing k8s-${SERVICE_ACCOUNT_NAME}-${NAMESPACE}-conf"
     kubectl config set-cluster "${CLUSTER_NAME}" \
     --kubeconfig="${KUBECFG_FILE_NAME}" \
     --server="${ENDPOINT}" \
@@ -165,9 +200,9 @@ main() {
     get_user_token_from_secret
     set_kube_config_values
 
-    echo -e "\nAll done! Test with:"
+    echo "All done! Test with:"
     echo "KUBECONFIG=${KUBECFG_FILE_NAME} kubectl get pods"
-    echo "you should not have any permissions by default - you have just created the authentication part"
+    echo "You should not have any permissions by default - you have just created the authentication part"
     echo "You will need to create RBAC permissions"
 }`
 }
