@@ -97,7 +97,7 @@
                   "spec",
                   "ports",
                   "_",
-                  "port"
+                  "targetPort"
                 ],
                 [
                   "configuration",
@@ -161,9 +161,9 @@
                   "template",
                   "spec",
                   "containers",
-                  "_",
-                  "ports",
                   "0",
+                  "ports",
+                  "_",
                   "containerPort"
                 ],
                 [
@@ -172,9 +172,9 @@
                   "template",
                   "spec",
                   "containers",
-                  "_",
-                  "ports",
                   "0",
+                  "ports",
+                  "_",
                   "protocol"
                 ]
               ]
