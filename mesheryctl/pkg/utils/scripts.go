@@ -15,7 +15,7 @@ type GKEConfig struct {
 }
 
 // GenerateConfigGKE generates kubernetes config for GKE
-func GenerateConfigGKE(configPath, SAName, namespc string) error {
+func GenerateGKEKubernetesConfig(configPath, SAName, namespace string) error {
 	cfg := &GKEConfig{
 		ConfigPath: configPath,
 		SAName:     SAName,
