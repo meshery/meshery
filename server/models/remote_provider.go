@@ -331,7 +331,9 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 			releaseChannel.Intercept(r, w)
 			return
 		}
-
+		w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+		w.Header().Set("Pragma", "no-cache")
+		w.Header().Set("Expires", "Thu, 01 Jan 1970 00:00:00 GMT")
 		http.Redirect(w, r, l.RemoteProviderURL+"/login?"+queryParams.Encode(), http.StatusFound)
 		return
 	}
