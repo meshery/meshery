@@ -192,7 +192,7 @@ export const StyledContentContainer = styled(Grid)(({ theme }) => ({
   [theme.breakpoints.down(1050)]: {
     flexDirection: 'column',
   },
-  flexWrap: 'nowrap', // 'noWrap' is incorrect, 'nowrap' is the correct value for flexWrap
+  flexWrap: 'nowrap',
 }));
 
 export const StyledTabs = styled(Tabs)(({ theme }) => ({
