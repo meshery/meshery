@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NoSsr, TableCell, Popover } from '@mui/material';
 import {
-  Box,
   Button,
   IconButton,
   Typography,
@@ -1174,7 +1173,8 @@ function Connections(props) {
                 <MesherySettingsEnvButtons />
               </CreateButton>
               <UsesSistent>
-                <Box
+                <div
+                  className={classes.searchAndView}
                   sx={{
                     display: 'flex',
                     borderRadius: '0.5rem 0.5rem 0 0',
@@ -1202,7 +1202,7 @@ function Connections(props) {
                     columns={getVisibilityColums(columns)}
                     customToolsProps={{ columnVisibility, setColumnVisibility }}
                   />
-                </Box>
+                </div>
               </UsesSistent>
             </ToolWrapper>
           )}
