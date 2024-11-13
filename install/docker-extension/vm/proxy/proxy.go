@@ -234,7 +234,7 @@ func (p *Proxy) ServeHTTP(wr http.ResponseWriter, req *http.Request) {
 				HttpOnly: true,
 			})
 			req.AddCookie(&http.Cookie{
-				Name:     "meshery.layer5.io_ref",
+				Name:     "cloud.layer5.io_ref",
 				Value:    "/",
 				Path:     "/",
 				HttpOnly: true,

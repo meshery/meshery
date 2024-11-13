@@ -11,7 +11,7 @@ list: include
 ---
 
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisite Reading</strong></p>
-  <ol><li><a ahref="contributing-ui">Contributing to Meshery UI</a></li></ol>
+  <ol><li><a href="contributing-ui">Contributing to Meshery UI</a></li></ol>
 </div>
 
 ## <a name="contributing-ui-sistent">Contributing to Meshery UI - Sistent</a>

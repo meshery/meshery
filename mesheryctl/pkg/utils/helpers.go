@@ -281,7 +281,7 @@ var Services = map[string]Service{
 		Image:  "layer5/meshery:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Environment: []string{
-			"PROVIDER_BASE_URLS=https://meshery.layer5.io",
+			"PROVIDER_BASE_URLS=https://cloud.layer5.io",
 			"ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-osm:10009 meshery-traefik-mesh:10006 meshery-nginx-sm:10010 meshery-cilium:10012",
 			"EVENT=mesheryLocal",
 			"PORT=9081",
