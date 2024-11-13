@@ -72,7 +72,6 @@ function PerformanceCard({
   handleDelete,
   handleEdit,
   handleRunTest,
-  handleProfile,
   requestFullSize,
   requestSizeRestore,
 }) {
@@ -266,15 +265,6 @@ function PerformanceCard({
               className={classes.testsButton}
             >
               {renderTable ? 'Hide' : 'View'} Results
-            </Button>
-            <Button
-              color="primary"
-              variant="contained"
-              onClick={(ev) => genericClickHandler(ev, handleProfile)}
-              disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
-              className={classes.testsButton}
-            >
-              Edit Profile
             </Button>
             <Button
               color="primary"

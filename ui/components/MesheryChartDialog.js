@@ -18,7 +18,7 @@ function MesheryChartDialog(props) {
         onClose={handleClose}
         aria-labelledby="chart-dialog-title"
       >
-        <DialogTitle id="chart-dialog-title" data-testid="chart-dialog-title">
+        <DialogTitle id="chart-dialog-title">
           {title && title.length ? title : 'Comparison'}
         </DialogTitle>
         <DialogContent>

@@ -83,7 +83,7 @@ const styles = (theme) => ({
   toolbarOnDrawerClosed: {
     minHeight: 59,
     padding: theme.spacing(2),
-    paddingLeft: 0,
+    paddingLeft: 34,
     paddingRight: 34,
     backgroundColor: theme.palette.secondary.mainBackground,
     boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
@@ -224,13 +224,13 @@ const K8sContextConnectionChip_ = ({
   const { getControllerStatesByConnectionID } = useControllerStatus(meshsyncControllerState);
 
   const { operatorState, meshSyncState, natsState } = getControllerStatesByConnectionID(
-    ctx?.connection_id,
+    ctx.connection_id,
   );
 
   return (
-    <div id={ctx?.metadata?.id} className={classes.chip}>
+    <div id={ctx.id} className={classes.chip}>
       <CustomTextTooltip
-        title={`Server: ${ctx?.metadata?.server},  Operator: ${formatToTitleCase(
+        title={`Server: ${ctx.server},  Operator: ${formatToTitleCase(
           operatorState,
         )}, MeshSync: ${formatToTitleCase(meshSyncState)}, Broker: ${formatToTitleCase(natsState)}`}
       >
@@ -243,13 +243,13 @@ const K8sContextConnectionChip_ = ({
         >
           {selectable && (
             <UsesSistent>
-              <Checkbox checked={selected} onChange={() => onSelectChange(ctx?.metadata?.id)} />
+              <Checkbox checked={selected} onChange={() => onSelectChange(ctx.id)} />
             </UsesSistent>
           )}
           <_ConnectionChip
             title={ctx?.name}
-            onDelete={onDelete ? () => onDelete(ctx?.metadata?.name, ctx?.id) : null}
-            handlePing={() => ping(ctx?.metadata?.name, ctx?.metadata?.server, ctx?.id)}
+            onDelete={onDelete ? () => onDelete(ctx.name, ctx.connection_id) : null}
+            handlePing={() => ping(ctx.name, ctx.server, ctx.connection_id)}
             iconSrc={
               connectionMetadataState && connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                 ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
@@ -442,13 +442,13 @@ function K8sContextMenu({
                     {contexts?.contexts?.map((ctx) => {
                       return (
                         <K8sContextConnectionChip
-                          key={ctx?.metadata?.id}
+                          key={ctx.id}
                           classes={classes}
                           ctx={ctx}
                           selectable
                           onDelete={handleKubernetesDelete}
-                          selected={activeContexts.includes(ctx?.id)}
-                          onSelectChange={() => setActiveContexts(ctx?.id)}
+                          selected={activeContexts.includes(ctx.id)}
+                          onSelectChange={() => setActiveContexts(ctx.id)}
                           meshsyncControllerState={meshsyncControllerState}
                           connectionMetadataState={connectionMetadataState}
                         />
@@ -536,17 +536,6 @@ class Header extends React.PureComponent {
                   </Grid>
                 </Hidden>
                 <Grid item xs container alignItems="center" className={classes.pageTitleWrapper}>
-                  {/* Extension Point for   Logo */}
-                  <div
-                    id="nav-header-logo"
-                    style={{
-                      height: '100%',
-                      display: 'flex',
-                      alignItems: 'center',
-                      minWidth: '34px',
-                      justifyContent: 'center',
-                    }}
-                  ></div>
                   <SpaceSwitcher title={title} isBeta={isBeta} />
                 </Grid>
                 <Grid item className={classes.userContainer} style={{ position: 'relative' }}>

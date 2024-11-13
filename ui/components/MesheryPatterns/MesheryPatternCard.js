@@ -53,6 +53,7 @@ function MesheryPatternCard_({
   setYaml,
   description = {},
   visibility,
+  canPublishPattern = false,
   user,
   pattern,
   handleInfoModal,
@@ -162,7 +163,7 @@ function MesheryPatternCard_({
           </div>
           <div className={classes.bottomPart}>
             <div className={classes.cardButtons}>
-              {visibility === VISIBILITY.PUBLISHED && (
+              {canPublishPattern && visibility === VISIBILITY.PUBLISHED && (
                 <TooltipButton
                   variant="contained"
                   title="Unpublish"

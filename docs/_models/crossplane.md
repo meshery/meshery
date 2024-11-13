@@ -70,10 +70,6 @@ components:
   colorIcon: assets/img/integrations/crossplane/components/store-config/icons/color/store-config-color.svg
   whiteIcon: assets/img/integrations/crossplane/components/store-config/icons/white/store-config-white.svg
   description: 
-- name: image-config
-  colorIcon: assets/img/integrations/crossplane/components/image-config/icons/color/image-config-color.svg
-  whiteIcon: assets/img/integrations/crossplane/components/image-config/icons/white/image-config-white.svg
-  description: 
 featureList: [
   "Highly extensible backend that enables you to orchestrate applications and infrastructure no matter where they run.",
   "Highly configurable frontend that lets you define the declarative API it offers.",

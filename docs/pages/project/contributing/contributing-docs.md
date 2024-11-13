@@ -485,32 +485,6 @@ You can include block quotes to emphasize text.
 
 ## Development
 
-### Adding Integration Specific Information to Individual Integration Pages
-
-Integration pages ([example](https://docs.meshery.io/extensibility/integrations/aws)) are automatically generated, however, integration specific documentation is often needed. 
-
-[modelscustominfo](https://github.com/meshery/meshery/tree/master/docs/_modelscustominfo) collection holds custom markdown files. Follow these steps:
-
-1. Create a file inside the `modelscustominfo` collection.
-2. Ensure the file includes frontmatter with the `title` key, set to the title of the integration.
-
-The content that follows the frontmatter in this file will be automatically parsed and rendered on the integration page
-
-Example: 
-
-file: `_modelscustominfo/aad.md`
-
-```md
----
-title: Azure Active Directory (AAD)
----
-
-<h2>Azure Active Directory (AAD)</h2>
-
-```
-
-In this example, the heading "<b>Azure Active Directory</b>" will be displayed on the integration page:
-[Azure Active Directory Integration Page](https://docs.meshery.io/extensibility/integrations/aad-pod-identity)
 
 ### Suggested Reading
 

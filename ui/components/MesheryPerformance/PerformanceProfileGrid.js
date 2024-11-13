@@ -7,7 +7,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
-function PerformanceCardGridItem({ profile, deleteHandler, setProfileForModal, testHandler }) {
+function PerformanceCardGridItem({ profile, deleteHandler, setProfileForModal }) {
   const [gridProps, setGridProps] = useState(INITIAL_GRID_SIZE);
 
   return (
@@ -16,8 +16,7 @@ function PerformanceCardGridItem({ profile, deleteHandler, setProfileForModal, t
         profile={profile}
         handleEdit={() => setProfileForModal(profile)}
         handleDelete={() => deleteHandler(profile.id)}
-        handleProfile={() => setProfileForModal({ ...profile })}
-        handleRunTest={() => testHandler({ ...profile, runTest: true })}
+        handleRunTest={() => setProfileForModal({ ...profile, runTest: true })}
         requestFullSize={() => setGridProps({ xl: 12, md: 12, xs: 12 })}
         requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
       />
@@ -58,7 +57,6 @@ function PerformanceProfileGrid({
   setProfileForModal,
   pages = 1,
   setPage,
-  testHandler,
 }) {
   const classes = useStyles();
   return (
@@ -69,7 +67,6 @@ function PerformanceProfileGrid({
             key={profile.id}
             profile={profile}
             deleteHandler={deleteHandler}
-            testHandler={testHandler}
             setProfileForModal={setProfileForModal}
           />
         ))}

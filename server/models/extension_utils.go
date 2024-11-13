@@ -2,11 +2,9 @@ package models
 
 import (
 	"net/url"
-
-	"github.com/layer5io/meshkit/logger"
 )
 
-func GetRedirectURLForNavigatorExtension(remoteProviderProperties *ProviderProperties, log logger.Handler) string {
+func GetRedirectURLForNavigatorExtension(remoteProviderProperties *ProviderProperties) string {
 	redirectURL := "/"
 	// This is not ideal as it only considers for 1st navigator extension.
 	// The navigator extension to which redirection should happen must be available, either pre-configured with server/ via user selection
@@ -16,9 +14,6 @@ func GetRedirectURLForNavigatorExtension(remoteProviderProperties *ProviderPrope
 		if href.External != nil && !*href.External {
 			redirectURL, _ = url.JoinPath("/extension", href.URI)
 		}
-	} else {
-		remoteProviderProperties.DownloadProviderExtensionPackage(log)
 	}
-
 	return redirectURL
 }
