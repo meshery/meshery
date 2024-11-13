@@ -19,7 +19,7 @@ func GenerateConfigGKE(configPath, SAName, namespc string) error {
 	cfg := &GKEConfig{
 		ConfigPath: configPath,
 		SAName:     SAName,
-		Namespace:  namespc,
+		Namespace:  namespace,
 	}
 
 	if err := cfg.validate(); err != nil {
