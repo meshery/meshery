@@ -16,7 +16,6 @@ import {
   InfoIcon,
   DeleteIcon,
 } from '@layer5/sistent';
-
 import {
   StyledChipFormControl,
   StyledStatusSelect,
@@ -32,9 +31,8 @@ import {
   StyledListButton,
   StyledListItem,
   StyledButton,
-  StyledIconText
+  StyledIconText,
 } from './styles';
-
 
 import { Popover, TableRow, NoSsr } from '@mui/material';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -52,7 +50,6 @@ import { iconMedium } from '../../css/icons.styles';
 import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
 import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
-import styles from './styles';
 import MeshSyncTable from './meshSync';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
