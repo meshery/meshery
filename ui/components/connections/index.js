@@ -17,6 +17,25 @@ import {
   DeleteIcon,
 } from '@layer5/sistent';
 
+import {
+  StyledChipFormControl,
+  StyledStatusSelect,
+  StyledStatusChip,
+  StyledCenterContent,
+  StyledInnerTableWrapper,
+  StyledInnerTableContainer,
+  StyledContentContainer,
+  StyledTabs,
+  StyledTab,
+  StyledCreateButton,
+  StyledList,
+  StyledListButton,
+  StyledListItem,
+  StyledButton,
+  StyledIconText
+} from './styles';
+
+
 import { Popover, TableRow, NoSsr } from '@mui/material';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { connect } from 'react-redux';
