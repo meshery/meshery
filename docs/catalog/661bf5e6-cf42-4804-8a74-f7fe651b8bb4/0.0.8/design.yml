@@ -568,6 +568,8 @@ components:
             - name: ama-logs
             - name: ama-logs
             - name: ama-logs
+            - name: ama-logs
+            - name: ama-logs
             - kind: ServiceAccount
               name: ama-logs
               namespace: kube-system
@@ -2075,4 +2077,4 @@ relationships:
       type: parent
       version: ""
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.29
+version: 0.0.31
