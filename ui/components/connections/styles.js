@@ -1,10 +1,7 @@
 import { alpha } from '@material-ui/core';
+import { Colors } from '../../themes/app';
 import { CONNECTION_STATES } from '../../utils/Enum';
 import { notificationColors } from '../../themes';
-import { Colors } from '../../themes/app';
-import { FormControl, Grid, Button, Select, Chip, Box, styled } from '@layer5/sistent';
-import { TableCell, TableContainer } from '@mui/material';
-import { TableRow } from '@mui/material';
 
 const styles = (theme) => ({
   grid: { padding: theme.spacing(2) },
@@ -17,10 +14,44 @@ const styles = (theme) => ({
       // textTransform: 'capitalize',
     },
   },
+  statusSelect: {
+    '& .MuiSelect-select.MuiSelect-select': {
+      padding: '0',
+    },
+  },
+  createButton: {
+    display: 'flex',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    whiteSpace: 'nowrap',
+  },
   viewSwitchButton: {
     justifySelf: 'flex-end',
     marginLeft: 'auto',
     paddingLeft: '1rem',
+  },
+  chipFormControl: {
+    minWidth: '100%',
+    '& .MuiSelect-icon': {
+      marginRight: '10px !important',
+    },
+  },
+  statusChip: {
+    minWidth: '145px !important',
+    width: '100% !important',
+    display: 'flex !important',
+    justifyContent: 'flex-start !important',
+    textTransform: 'capitalize',
+    borderRadius: '0 !important',
+    padding: '6px 8px',
+    '& .MuiChip-label': {
+      paddingTop: '3px',
+      fontWeight: '400',
+    },
+    '&:hover': {
+      boxShadow: '0px 1px 2px 0px rgba(0, 0, 0, 0.25)',
+      cursor: 'pointer',
+    },
   },
   appBar: {
     marginBottom: '3rem',
@@ -34,6 +65,29 @@ const styles = (theme) => ({
   expandedRows: {
     background: `${theme.palette.secondary.default}10`,
   },
+  contentContainer: {
+    [theme.breakpoints.down(1050)]: {
+      flexDirection: 'column',
+    },
+    flexWrap: 'noWrap',
+  },
+  innerTableWrapper: {
+    background: `linear-gradient(90deg, ${theme.palette.secondary.innertableBg1} 0.04%, ${theme.palette.secondary.innertableBg2} 100.04%)`,
+    borderRadius: 0,
+    padding: '0',
+  },
+  innerTableContainer: {
+    background: theme.palette.secondary.innertableBg1,
+    margin: '10px 10px 10px 13px',
+    borderLeft: `9px solid ${theme.palette.secondary.pinball}`,
+    borderRadius: '10px 0 0 10px',
+    width: 'calc(100% - 23px)',
+    border: 'none',
+    overflowX: 'hidden',
+  },
+  noGutter: {
+    padding: '0',
+  },
   showMore: {
     color: Colors.keppelGreen,
     cursor: 'pointer',
@@ -42,6 +96,10 @@ const styles = (theme) => ({
     display: 'flex',
     justifyContent: 'flex-end',
     width: '100%',
+  },
+  centerContent: {
+    display: 'flex',
+    justifyContent: 'center',
   },
   tab: {
     minWidth: 40,
@@ -56,6 +114,30 @@ const styles = (theme) => ({
     '& .MuiTabs-indicator': {
       backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
     },
+  },
+  iconText: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  list: {
+    display: 'flex',
+    flexDirection: 'column',
+    gridGap: '0.5rem',
+    marginBlock: '0.5rem',
+    borderRadius: '0.25rem',
+    backgroundColor: theme.palette.secondary.honeyComb,
+  },
+  listButton: {
+    '&:hover': {
+      backgroundColor: alpha(theme.palette.secondary.link2, 0.25),
+    },
+  },
+  listItem: {
+    display: 'flex',
+    gridGap: '0.5rem',
+    alignItems: 'center',
+    justifyContent: 'space-around',
   },
   button: {
     width: '100%',
@@ -153,103 +235,6 @@ const styles = (theme) => ({
       color: `${theme.palette.secondary.iconMain} !important`,
     },
   },
-});
-export const CenterContent = styled('div')({
-  display: 'flex',
-  justifyContent: 'center',
-});
-
-export const InnerTableContainer = styled(TableContainer)(({ theme }) => ({
-  background: theme.palette.secondary.innertableBg1,
-  margin: '10px 10px 10px 13px',
-  borderLeft: `9px solid ${theme.palette.secondary.pinball}`,
-  borderRadius: '10px 0 0 10px',
-  width: 'calc(100% - 23px)',
-  border: 'none',
-  overflowX: 'hidden',
-}));
-
-export const InnerTableWrapper = styled(TableCell)(({ theme }) => ({
-  background: `linear-gradient(90deg, ${theme.palette.secondary.innertableBg1} 0.04%, ${theme.palette.secondary.innertableBg2} 100.04%)`,
-  borderRadius: 0,
-  padding: '0',
-}));
-
-export const NoGutter = styled(TableRow)({
-  padding: '0',
-});
-
-export const IconText = styled('div')({
-  display: 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-});
-
-export const CreateButton = styled('div')({
-  display: 'flex',
-  justifyContent: 'flex-start',
-  alignItems: 'center',
-  whiteSpace: 'nowrap',
-});
-
-export const List = styled('div')(({ theme }) => ({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: '0.5rem',
-  marginBlock: '0.5rem',
-  borderRadius: '0.25rem',
-  backgroundColor: theme.palette.secondary.honeyComb,
-}));
-
-export const ListButton = styled(Button)(({ theme }) => ({
-  '&:hover': {
-    backgroundColor: alpha(theme.palette.secondary.link2, 0.25),
-  },
-}));
-
-export const ChipFormControl = styled(FormControl)({
-  minWidth: '100%',
-  '& .MuiSelect-icon': {
-    marginRight: '10px !important',
-  },
-});
-
-export const StyledStatusSelect = styled(Select)({
-  '& .MuiSelect-select': {
-    padding: '0',
-  },
-});
-
-export const StatusChip = styled(Chip)({
-  minWidth: '145px !important',
-  width: '100% !important',
-  display: 'flex !important',
-  justifyContent: 'flex-start !important',
-  textTransform: 'capitalize',
-  borderRadius: '0 !important',
-  padding: '6px 8px',
-  '& .MuiChip-label': {
-    paddingTop: '3px',
-    fontWeight: '400',
-  },
-  '&:hover': {
-    boxShadow: '0px 1px 2px 0px rgba(0, 0, 0, 0.25)',
-    cursor: 'pointer',
-  },
-});
-
-export const ContentContainer = styled(Grid)(({ theme }) => ({
-  flexWrap: 'nowrap',
-  [theme.breakpoints.down('md')]: {
-    flexDirection: 'column',
-  },
-}));
-
-export const ListItem = styled(Box)({
-  display: 'flex',
-  gap: '0.5rem',
-  alignItems: 'center',
-  justifyContent: 'space-around',
 });
 
 export default styles;
