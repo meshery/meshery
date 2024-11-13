@@ -21,8 +21,8 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import {
   useUpdateEntityStatusMutation,
-  useGetModelByNameQuery,
-  useGetComponentByNameQuery,
+  useGetComponentsQuery,
+  useGetMeshModelsQuery,
 } from '@/rtk-query/meshModel';
 import _ from 'lodash';
 import { JustifyAndAlignCenter } from './MeshModel.style';
@@ -156,16 +156,12 @@ const ModelContents = withSuppressedErrorBoundary(({ modelDef }) => {
     let relationships = 0;
     if (modelDef?.versionBasedData) {
       modelDef?.versionBasedData.forEach((modelDefVersion) => {
-        components =
-          components +
-          (modelDefVersion?.components === null ? 0 : modelDefVersion.components.length);
-        relationships =
-          relationships +
-          (modelDefVersion?.relationships === null ? 0 : modelDefVersion.relationships.length);
+        components = components + modelDefVersion?.components_count;
+        relationships = relationships + modelDefVersion?.relationships_count;
       });
     } else {
-      components = modelDef?.components === null ? 0 : modelDef?.components?.length;
-      relationships = modelDef?.relationships === null ? 0 : modelDef?.relationships?.length;
+      components = modelDef?.components_count;
+      relationships = modelDef?.relationships_count;
     }
     return {
       components,
@@ -238,9 +234,9 @@ const ModelContents = withSuppressedErrorBoundary(({ modelDef }) => {
 });
 
 const ComponentContents = withSuppressedErrorBoundary(({ componentDef }) => {
-  const { data, isSuccess } = useGetComponentByNameQuery({
-    name: componentDef.component.kind,
+  const { data, isSuccess } = useGetComponentsQuery({
     params: {
+      id: componentDef.id,
       apiVersion: componentDef.component.version,
       trim: false,
     },
@@ -362,7 +358,7 @@ const RegistrantContent = withSuppressedErrorBoundary(({ registrant }) => {
   };
 
   const metaDataLeft = {
-    models: registrant?.models?.length.toString(),
+    models: registrant?.summary?.models?.toString(),
     components: registrant.summary?.components?.toString(),
   };
 
@@ -418,9 +414,9 @@ const StatusChip = withSuppressedErrorBoundary(
   withStyles(styles)(({ classes, entityData, entityType }) => {
     const nextStatus = Object.values(REGISTRY_ITEM_STATES);
     const [updateEntityStatus] = useUpdateEntityStatusMutation();
-    const { data: modelData, isSuccess } = useGetModelByNameQuery({
-      name: entityData.name,
+    const { data: modelData, isSuccess } = useGetMeshModelsQuery({
       params: {
+        id: entityData.model.id,
         version: entityData.model.version,
       },
     });
