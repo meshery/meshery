@@ -21,12 +21,17 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import {
   useUpdateEntityStatusMutation,
-  useGetModelByNameQuery,
-  useGetComponentByNameQuery,
+  useGetComponentsQuery,
+  useGetMeshModelsQuery,
 } from '@/rtk-query/meshModel';
 import _ from 'lodash';
 import { JustifyAndAlignCenter } from './MeshModel.style';
 import { withSuppressedErrorBoundary } from '../General/ErrorBoundary';
+import { reactJsonTheme } from './helper';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Accordion, AccordionDetails, AccordionSummary } from '@layer5/sistent';
+import dynamic from 'next/dynamic';
+const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
 
 const ExportAvailable = true;
 const KeyValue = ({ property, value }) => {
@@ -77,29 +82,63 @@ const RenderContents = ({
   PropertyFormattersRight,
   orderLeft,
   orderRight,
+  jsonData,
 }) => {
   const StyleClass = useStyles();
-
+  const theme = useTheme();
   return (
-    <div className={StyleClass.segment}>
-      <div
-        className={StyleClass.fullWidth}
-        style={{ display: 'flex', flexDirection: 'column', paddingRight: '1rem' }}
-      >
-        <FormatStructuredData
-          data={reorderObjectProperties(metaDataLeft, orderLeft)}
-          propertyFormatters={PropertyFormattersLeft}
-          order={orderLeft}
-        />
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      <div className={StyleClass.segment}>
+        <div
+          className={StyleClass.fullWidth}
+          style={{ display: 'flex', flexDirection: 'column', paddingRight: '1rem' }}
+        >
+          <FormatStructuredData
+            data={reorderObjectProperties(metaDataLeft, orderLeft)}
+            propertyFormatters={PropertyFormattersLeft}
+            order={orderLeft}
+          />
+        </div>
+
+        <div className={StyleClass.fullWidth} style={{ display: 'flex', flexDirection: 'column' }}>
+          <FormatStructuredData
+            data={reorderObjectProperties(metaDataRight, orderRight)}
+            propertyFormatters={PropertyFormattersRight}
+            order={orderRight}
+          />
+        </div>
       </div>
 
-      <div className={StyleClass.fullWidth} style={{ display: 'flex', flexDirection: 'column' }}>
-        <FormatStructuredData
-          data={reorderObjectProperties(metaDataRight, orderRight)}
-          propertyFormatters={PropertyFormattersRight}
-          order={orderRight}
-        />
-      </div>
+      {jsonData && (
+        <Accordion
+          style={{
+            borderRadius: '6px',
+            backgroundColor: theme.palette.secondary.toolbarBg2,
+            color: theme.palette.secondary.text,
+          }}
+        >
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon style={{ fill: theme.palette.secondary.text }} />}
+          >
+            Advanced Details
+          </AccordionSummary>
+          <AccordionDetails>
+            <ReactJson
+              theme={reactJsonTheme(theme.palette.type)}
+              name={false}
+              displayDataTypes={false}
+              iconStyle="circle"
+              src={jsonData}
+              style={{
+                fontSize: 'inherit',
+                minHeight: 'inherit',
+                padding: '1.1rem',
+              }}
+              collapsed={1} // expanded upto 1 level
+            />
+          </AccordionDetails>
+        </Accordion>
+      )}
     </div>
   );
 };
@@ -117,16 +156,12 @@ const ModelContents = withSuppressedErrorBoundary(({ modelDef }) => {
     let relationships = 0;
     if (modelDef?.versionBasedData) {
       modelDef?.versionBasedData.forEach((modelDefVersion) => {
-        components =
-          components +
-          (modelDefVersion?.components === null ? 0 : modelDefVersion.components.length);
-        relationships =
-          relationships +
-          (modelDefVersion?.relationships === null ? 0 : modelDefVersion.relationships.length);
+        components = components + modelDefVersion?.components_count;
+        relationships = relationships + modelDefVersion?.relationships_count;
       });
     } else {
-      components = modelDef?.components === null ? 0 : modelDef?.components?.length;
-      relationships = modelDef?.relationships === null ? 0 : modelDef?.relationships?.length;
+      components = modelDef?.components_count;
+      relationships = modelDef?.relationships_count;
     }
     return {
       components,
@@ -192,15 +227,16 @@ const ModelContents = withSuppressedErrorBoundary(({ modelDef }) => {
         PropertyFormattersRight={PropertyFormattersRight}
         orderLeft={orderdMetadataLeft}
         orderRight={orderdMetadataRight}
+        jsonData={modelDef}
       />
     </div>
   );
 });
 
 const ComponentContents = withSuppressedErrorBoundary(({ componentDef }) => {
-  const { data, isSuccess } = useGetComponentByNameQuery({
-    name: componentDef.component.kind,
+  const { data, isSuccess } = useGetComponentsQuery({
     params: {
+      id: componentDef.id,
       apiVersion: componentDef.component.version,
       trim: false,
     },
@@ -256,6 +292,7 @@ const ComponentContents = withSuppressedErrorBoundary(({ componentDef }) => {
             PropertyFormattersRight={PropertyFormattersRight}
             orderLeft={orderdMetadataLeft}
             orderRight={orderdMetadataRight}
+            jsonData={componentData}
           />
         </div>
       ) : (
@@ -308,6 +345,7 @@ const RelationshipContents = withSuppressedErrorBoundary(({ relationshipDef }) =
         PropertyFormattersRight={PropertyFormattersRight}
         orderLeft={orderdMetadataLeft}
         orderRight={orderdMetadataRight}
+        jsonData={relationshipDef}
       />
     </div>
   );
@@ -320,7 +358,7 @@ const RegistrantContent = withSuppressedErrorBoundary(({ registrant }) => {
   };
 
   const metaDataLeft = {
-    models: registrant?.models?.length.toString(),
+    models: registrant?.summary?.models?.toString(),
     components: registrant.summary?.components?.toString(),
   };
 
@@ -351,6 +389,7 @@ const RegistrantContent = withSuppressedErrorBoundary(({ registrant }) => {
         PropertyFormattersRight={PropertyFormattersRight}
         orderLeft={orderdMetadataLeft}
         orderRight={orderdMetadataRight}
+        jsonData={registrant}
       />
     </div>
   );
@@ -375,9 +414,9 @@ const StatusChip = withSuppressedErrorBoundary(
   withStyles(styles)(({ classes, entityData, entityType }) => {
     const nextStatus = Object.values(REGISTRY_ITEM_STATES);
     const [updateEntityStatus] = useUpdateEntityStatusMutation();
-    const { data: modelData, isSuccess } = useGetModelByNameQuery({
-      name: entityData.name,
+    const { data: modelData, isSuccess } = useGetMeshModelsQuery({
       params: {
+        id: entityData.model.id,
         version: entityData.model.version,
       },
     });

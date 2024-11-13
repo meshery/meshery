@@ -47,8 +47,7 @@ var (
 
 const (
 	// DefaultProviderURL is the provider url for the "none" provider
-	DefaultProviderURL = "https://meshery.layer5.io"
-	PoliciesPath       = "../meshmodel/kubernetes/v1.25.2/v1.0.0/policies"
+	DefaultProviderURL = "https://cloud.layer5.io"
 	RelationshipsPath  = "../meshmodel/kubernetes/"
 )
 
@@ -279,7 +278,7 @@ func main() {
 	rego := policies.Rego{}
 	go func() {
 		models.SeedComponents(log, hc, regManager)
-		r, err := policies.NewRegoInstance(PoliciesPath, regManager)
+		r, err := policies.NewRegoInstance(models.PoliciesPath, regManager)
 		if err != nil {
 			log.Warn(ErrCreatingOPAInstance(err))
 		} else {

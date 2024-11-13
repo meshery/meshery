@@ -14,7 +14,7 @@ type HandlerInterface interface {
 	ServerVersionHandler(w http.ResponseWriter, r *http.Request)
 
 	ProviderMiddleware(http.Handler) http.Handler
-
+	NoCacheMiddleware(next http.Handler) http.Handler
 	//Set the AuthenticationMechanism as NoAuth to skip provider authentication for certain endpoints. If the provider is enforced, then this flag will not be respected.
 	//Make sure all the endpoints are behind this middleware thereby protecting them. The reason for not just skipping this middleware is:
 	//1. So that we can enfore provider through this middleware whenever want for use cases where no unauthenticated endpoints should be there, at buildtime.
@@ -27,6 +27,7 @@ type HandlerInterface interface {
 	GraphqlMiddleware(http.Handler) func(http.ResponseWriter, *http.Request, *Preference, *User, Provider)
 
 	ProviderHandler(w http.ResponseWriter, r *http.Request)
+	HandleErrorHandler(w http.ResponseWriter, r *http.Request)
 	ProvidersHandler(w http.ResponseWriter, r *http.Request)
 	ProviderUIHandler(w http.ResponseWriter, r *http.Request)
 	ProviderCapabilityHandler(w http.ResponseWriter, r *http.Request, prefObj *Preference, user *User, provider Provider)
@@ -230,6 +231,8 @@ type HandlerInterface interface {
 	GetDesignsOfWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	AddDesignToWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	RemoveDesignFromWorkspaceHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
+	ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, baseFolderPath string)
 }
 
 // HandlerConfig holds all the config pieces needed by handler methods

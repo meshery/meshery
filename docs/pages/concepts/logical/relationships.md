@@ -30,6 +30,7 @@ Meshery supports different types of relationships to cater to various use cases:
 - **Hierarchical Relationships:** These represent parent-child relationships between components, where one component is a dependency of another. arent-child relationships show clear lineage, similar to a family tree (child, parent, grandparent, etc.).
 - **Sibling Relationships:** These represent relationships between components that are not directly dependent on each other but may still interact or influence each other's behavior; they describe components that share a common origin but operate independently (siblings, cousins, etc.).
 - **Edge Relationships:** These represent relationships that are visually depicted as edges connecting components in MeshMap. Edge relationships are used to define how components interact with each other, such as network connections, bindings, or permissions. They are also used to identify interdependencies between components.
+- **TagSets Relationships:** These represent relationships between components of same Labels or Annotations key/value pairs. Labels and Annotations are two different types of Tags. Labels are often used to identify components and are visible on the design canvas. Annotations are often used to provide additional information about components.
  
 Relationships are are categorized into different kinds, types, and subtypes, so that can be expressive of the specific manner in which one or more components relate to one another. Each type of relationship can be interpretted by Meshery UI (or other [extensions](/extensibility/extensions)) and mapped to a specific visual paradigm for the given kind relationship. Let's look at some examples of these visual paradigms; let's explore examples of way in which relationships are represented in Meshery.
 
@@ -46,7 +47,8 @@ Relationships are are categorized into different kinds, types, and subtypes, so 
       2. Permission
 2. Heirarchical
    1. Inventory
-   2. Parent -->
+   2. Parent 
+3. TagSets -->
 
 {% include relationships.html %}
 
@@ -118,7 +120,7 @@ This Relationship type configures the networking between one or more components.
 
 <details close><summary>Visual Representation of Edge-Mount Relationship</summary>
            <br>
-           <p>1. Edge - Mount: Pod and Persistent volume via Persistent volume claim<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=43d5fdfe-25f8-4c2c-be9d-30861bbc2a08"> (open in playground)</a> </p>
+           <p>Edge - Mount: Pod and Persistent volume via Persistent volume claim<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=43d5fdfe-25f8-4c2c-be9d-30861bbc2a08"> (open in playground)</a> </p>
            <figure>
            <img alt="Edge - Mount" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_mount_relationship_pod_persistent_volume.svg"/>
            </figure>
@@ -133,10 +135,11 @@ This Relationship type configures the networking between one or more components.
 
 <details close><summary>Visual Representation of Edge-Permission Relationship</summary>
            <br>
-           <figure><figcaption>1. Edge - Permission: Cluster Role to Service Account <a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=7dd39d30-7b14-4f9f-a66c-06ba3e5000fa"> (open in playground)</a></figcaption>
-           <img alt="Edge - Permission" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_permission_relationship_cluster_role_service_account.svg"/>
+           <figure><figcaption>1. Edge - Permission: Cluster Role to Service Account <a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=27454352-6b1b-426e-830e-683b8c34b94e"> (open in playground)</a></figcaption>
            </figure>
-   </details>
+<div id="embedded-design-a7b22d89-41bc-4379-a983-20e835341faf" style="height:30rem;width:100%;"></div>
+<script src="{{ site.baseurl }}/assets/img/meshmodel/relationships/embedded-design-edge-binding-permissions-relationship.js" type="module" ></script>
+</details>
 
 ### 4. Edge - Firewall
 
@@ -146,12 +149,12 @@ Kubernetes Network Policy for controlling ingress and egress traffic from Pod-to
 
 <details close><summary>Visual Representation of Edge-Firewall Relationship</summary>
            <br>
-           <figure><figcaption>1. Edge - Firewall: Pod to Pod<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=58fda714-eaa4-490f-b228-b8bcfe3a1e47s"> (open in playground)</a></figcaption>
+           <figure><figcaption>Edge - Firewall: Pod to Pod<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=58fda714-eaa4-490f-b228-b8bcfe3a1e47s"> (open in playground)</a></figcaption>
            <img alt="Edge - Firewall" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/edge_firewall_relationship_pod_to_pod.svg">
            </figure>
    </details>
 
-### 5. Heirarchical - Inventory
+### 5. Hierarchical - Parent - Wallet
 
 **Example**
 
@@ -159,22 +162,50 @@ Kubernetes Network Policy for controlling ingress and egress traffic from Pod-to
 - Example 2) WASMFilter (binary and configuration) --> IstioEnvoyFilter
 
 <details close><summary>Visual Representation of Hierarchical-Inventory Relationship</summary>
-           <figure><br><figcaption>1. Hierarchical - Inventory: Namespace and ConfigMap<a target="_blank" href="https://playground.meshery.io/extension/meshmap?design=21d40e36-8ab7-4f9f-9fed-f6a818510446"> (open in playground)</a></figcaption>
-           <img alt="Hierarchical Inventory Relationship" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/hierarchical_inventory_relationship.svg"/>
+           <figure><br><figcaption>1. Hierarchical - Inventory: Namespace and ConfigMap<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=7d3107fb-c0fe-43cb-9729-cf1674e5d1af"> (open in playground)</a></figcaption>
            </figure>
-   </details>
+<div id="embedded-design-d0987b9a-b20e-4bc1-b47c-69ca3078d380" style="height:30rem;width:100%;"></div>
+<script src="{{ site.baseurl }}/assets/img/meshmodel/relationships/embedded-design-hierarchical-parent-wallet-relationship.js" type="module" ></script>
+</details>
 
-### 6. Heirarchical - Parent
+### 6. Hierarchical - Parent - Inventory
 
 **Example**:
 
 - Example 1) Any namespaced Kubernetes component --> Kubernetes Namespace
 
 <details close><summary>Visual Representation of Hierarchical-Parent Relationship</summary>
-           <figure><br><figcaption>1. Hierarchical - Parent: Namespace (Parent) and ConfigMap (child), Role (Child) <a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=6370ffcd-13a6-4a65-b426-30f1e63dc381"> (open in playground)</a></figcaption>
-           <img alt="Hierarchical Parent Relationship" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/hierarchical_parent_relationship.svg"/>
+           <figure><br><figcaption>1. Hierarchical - Parent: Namespace (Parent) and ConfigMap (child), Role (Child) <a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=ccf38fba-6ada-4332-8ee7-033ee2c21f91"> (open in playground)</a></figcaption>
            </figure>
-   </details>
+<div id="embedded-design-ccf38fba-6ada-4332-8ee7-033ee2c21f91" style="height:30rem;width:100%;"></div>
+<script src="{{ site.baseurl }}/assets/img/meshmodel/relationships/embedded-design-hierarchical-parent-inventory-relationship.js" type="module" ></script>
+</details>
+
+### 7. Match - Labels (Tagsets)
+
+This relationship type defines the associations between components based on shared Labels or Annotations.
+
+**Example**: An label-based tag-set relationship between a NodePort service and an application. 
+
+<details close><summary>Visual Representation of Tag-Sets Relationship</summary>
+          <br>
+          <figure><figcaption>Tag-Set: Service and Deployment that share the same label<a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=2d0a36b9-8170-4076-8aea-4fa6b28caf31"> (open in playground)</a></figcaption>
+          <img alt="Edge - Firewall" src="{{ site.baseurl }}/assets/img/meshmodel/relationships/tagset_relationship.svg"/>
+          </figure>        
+</details>
+
+### 8. Edge - Annotation 
+
+This relationship depicts connections between components without conveying specific semantic meaning.
+
+**Example**: Demonstration of connections between AWS components.
+
+<details close><summary>Visual Representation of Edge - Annotation Relationship</summary>
+           <figure><br><figcaption>Edge - Annotation: Relationship between AWS components <a target="_blank" href="https://playground.meshery.io/extension/meshmap?mode=design&design=daecd14f-6c65-45d9-b74a-4fc536a7868f"> (open in playground)</a></figcaption>
+           </figure>
+<div id="embedded-design-daecd14f-6c65-45d9-b74a-4fc536a7868f" style="height:30rem;width:100%;"></div>
+<script src="{{ site.baseurl }}/assets/img/meshmodel/relationships/embedded-design-edge-annotation-relationship.js" type="module" ></script>
+</details>
 
 ## Selectors in Relationships
 
@@ -294,7 +325,7 @@ Designs are evaluated by the [Policy Engine]({{site.baseurl}}/concepts/logical/p
 
 Patches in Meshery relationships utilize strategies and references (mutatorRef/mutatedRef) for the from and to fields. These convey the property path that will be updated as the relationship is created.
 
-### Cavets and Considerations
+### Caveats and Considerations
 
 1. If the user creates a `Hierarchical Inventory` relationship between `Pod`, `Job`, and any other high-level Kubernetes resources like `Deployment`, `StatefulSet`, or `CronJobs`, after the relationship has been established unfortunately, there’s no system to remove the extra pod configuration automatically.
 If the design is not configured with `labels` `selectors` and `replicas` appropriately, there's a possibility of additional resources getting provisioned when deployed. eg: The relationship between a Pod and deployment can result in 2 Pods (1 pod coming as part of deployment resource) and 1 Deployment.  It’s important to be aware of this possibility and manage configurations carefully to avoid unexpected issues during deployment

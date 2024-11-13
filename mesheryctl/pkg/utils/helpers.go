@@ -66,9 +66,9 @@ const (
 	filterDeleteURL                = docsBaseURL + "reference/mesheryctl/filter/delete"
 	filterListURL                  = docsBaseURL + "reference/mesheryctl/filter/list"
 	filterViewURL                  = docsBaseURL + "reference/mesheryctl/filter/view"
-	patternUsageURL                = docsBaseURL + "reference/mesheryctl/pattern"
-	patternViewURL                 = docsBaseURL + "reference/mesheryctl/pattern/view"
-	patternExportURL               = docsBaseURL + "reference/mesheryctl/pattern/export"
+	designUsageURL                 = docsBaseURL + "reference/mesheryctl/design"
+	designViewURL                  = docsBaseURL + "reference/mesheryctl/design/view"
+	designExportURL                = docsBaseURL + "reference/mesheryctl/design/export"
 	contextDeleteURL               = docsBaseURL + "reference/mesheryctl/system/context/delete"
 	contextViewURL                 = docsBaseURL + "reference/mesheryctl/system/context/view"
 	contextCreateURL               = docsBaseURL + "reference/mesheryctl/system/context/create"
@@ -134,9 +134,9 @@ const (
 	cmdFilterDelete             cmdType = "filter delete"
 	cmdFilterList               cmdType = "filter list"
 	cmdFilterView               cmdType = "filter view"
-	cmdPattern                  cmdType = "pattern"
-	cmdPatternView              cmdType = "pattern view"
-	cmdPatternExport            cmdType = "pattern export"
+	cmdDesign                   cmdType = "design"
+	cmdDesignView               cmdType = "design view"
+	cmdDesignExport             cmdType = "design export"
 	cmdContext                  cmdType = "context"
 	cmdContextDelete            cmdType = "delete"
 	cmdContextCreate            cmdType = "create"
@@ -281,7 +281,7 @@ var Services = map[string]Service{
 		Image:  "layer5/meshery:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Environment: []string{
-			"PROVIDER_BASE_URLS=https://meshery.layer5.io",
+			"PROVIDER_BASE_URLS=https://cloud.layer5.io",
 			"ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-osm:10009 meshery-traefik-mesh:10006 meshery-nginx-sm:10010 meshery-cilium:10012",
 			"EVENT=mesheryLocal",
 			"PORT=9081",

@@ -3,6 +3,7 @@ package handlers
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
@@ -164,4 +165,26 @@ func GetRefURL(req *http.Request) string {
 	}
 	refURLB64 := base64.RawURLEncoding.EncodeToString([]byte(refURL))
 	return refURLB64
+}
+func (h *Handler) HandleErrorHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+
+	w.WriteHeader(http.StatusInternalServerError)
+
+	// Define the error response structure
+	type ErrorResponse struct {
+		Status  int    `json:"status"`
+		Message string `json:"message"`
+	}
+
+	// Create an error response instance
+	errorResponse := ErrorResponse{
+		Status:  http.StatusInternalServerError,
+		Message: "We encountered an error while processing your request. Please try again later.",
+	}
+
+	// Encode and send the error response as JSON
+	if err := json.NewEncoder(w).Encode(errorResponse); err != nil {
+		h.log.Error(models.ErrMarshal(err, "error response"))
+	}
 }

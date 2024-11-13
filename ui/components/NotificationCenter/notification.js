@@ -15,7 +15,7 @@ import {
   useTheme,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core';
-import { SEVERITY_STYLE, STATUS } from './constants';
+import { SEVERITY, SEVERITY_STYLE, STATUS } from './constants';
 import { iconLarge, iconMedium } from '../../css/icons.styles';
 import { MoreVert as MoreVertIcon } from '@material-ui/icons';
 import FacebookIcon from '../../assets/icons/FacebookIcon';
@@ -327,7 +327,7 @@ export const ChangeStatus = ({ event }) => {
 export const Notification = withErrorBoundary(({ event_id }) => {
   const event = useSelector((state) => selectEventById(state, event_id));
   const isVisible = useSelector((state) => selectIsEventVisible(state, event.id));
-  const severityStyles = SEVERITY_STYLE[event.severity];
+  const severityStyles = SEVERITY_STYLE[event.severity] || SEVERITY_STYLE[SEVERITY.INFO];
   const classes = useStyles({
     notificationColor: severityStyles?.color,
     status: event?.status,
@@ -370,6 +370,30 @@ export const Notification = withErrorBoundary(({ event_id }) => {
       : []),
   ];
 
+  const Detail = () => (
+    <ErrorBoundary>
+      <Grid container className={classes.expanded}>
+        <Grid item sm={1} className={classes.actorAvatar}>
+          <AvatarStack
+            avatars={eventActors}
+            direction={{
+              xs: 'row',
+              md: 'column',
+            }}
+          />
+        </Grid>
+        <Grid
+          item
+          sm={10}
+          style={{
+            color: theme.palette.secondary.textMain,
+          }}
+        >
+          <FormattedMetadata event={event} classes={classes} />
+        </Grid>
+      </Grid>
+    </ErrorBoundary>
+  );
   return (
     <Slide
       in={isVisible}
@@ -423,30 +447,7 @@ export const Notification = withErrorBoundary(({ event_id }) => {
             <BasicMenu event={event} />
           </Grid>
         </Grid>
-        <Collapse in={expanded}>
-          <ErrorBoundary>
-            <Grid container className={classes.expanded}>
-              <Grid item sm={1} className={classes.actorAvatar}>
-                <AvatarStack
-                  avatars={eventActors}
-                  direction={{
-                    xs: 'row',
-                    md: 'column',
-                  }}
-                />
-              </Grid>
-              <Grid
-                item
-                sm={10}
-                style={{
-                  color: theme.palette.secondary.textMain,
-                }}
-              >
-                <FormattedMetadata event={event} classes={classes} />
-              </Grid>
-            </Grid>
-          </ErrorBoundary>
-        </Collapse>
+        <Collapse in={expanded}>{expanded && <Detail />}</Collapse>
       </div>
     </Slide>
   );

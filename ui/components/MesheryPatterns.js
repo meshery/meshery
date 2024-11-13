@@ -225,10 +225,12 @@ const styles = (theme) => ({
   },
 });
 
-function TooltipIcon({ children, onClick, title, placement }) {
+function TooltipIcon({ children, onClick, title, placement, disabled }) {
   return (
     <CustomTooltip title={title} placement={placement} interactive>
-      <IconButton onClick={onClick}>{children}</IconButton>
+      <IconButton disabled={disabled} onClick={onClick}>
+        {children}
+      </IconButton>
     </CustomTooltip>
   );
 }
@@ -521,8 +523,8 @@ function MesheryPatterns({
       error_msg: 'Failed to publish catalog',
     },
     UNPUBLISH_CATALOG: {
-      name: 'PUBLISH_CATALOG',
-      error_msg: 'Failed to publish catalog',
+      name: 'UNPUBLISH_CATALOG',
+      error_msg: 'Failed to unpublish catalog',
     },
     SCHEMA_FETCH: {
       name: 'SCHEMA_FETCH',
@@ -795,48 +797,45 @@ function MesheryPatterns({
     });
   };
 
-  const handlePublishModal = (ev, pattern) => {
-    if (canPublishPattern) {
-      ev.stopPropagation();
-      setPublishModal({
-        open: true,
-        pattern: pattern,
-        name: '',
-      });
-    }
-  };
+  // const handlePublishModal = (ev, pattern) => {
+  //   if (canPublishPattern) {
+  //     ev.stopPropagation();
+  //     setPublishModal({
+  //       open: true,
+  //       pattern: pattern,
+  //       name: '',
+  //     });
+  //   }
+  // };
 
   const handleUnpublishModal = (ev, pattern) => {
-    if (canPublishPattern) {
-      ev.stopPropagation();
-      return async () => {
-        let response = await modalRef.current.show({
-          title: `Unpublish Catalog item?`,
-          subtitle: `Are you sure you want to unpublish ${pattern?.name}?`,
-          options: ['Yes', 'No'],
-          showInfoIcon:
-            "Unpublishing a catolog item removes the item from the public-facing catalog (a public website accessible to anonymous visitors at meshery.io/catalog). The catalog item's visibility will change to either public (or private with a subscription). The ability to for other users to continue to access, edit, clone and collaborate on your content depends upon the assigned visibility level (public or private). Prior collaborators (users with whom you have shared your catalog item) will retain access. However, you can always republish it whenever you want. Remember: unpublished catalog items can still be available to other users if that item is set to public visibility. For detailed information, please refer to the [documentation](https://docs.meshery.io/concepts/designs).",
-        });
-        if (response === 'Yes') {
-          updateProgress({ showProgress: true });
-          unpublishCatalog({
-            unpublishBody: JSON.stringify({ id: pattern?.id }),
-          })
-            .unwrap()
-            .then(() => {
-              updateProgress({ showProgress: false });
-              notify({
-                message: `Design Unpublished`,
-                event_type: EVENT_TYPES.SUCCESS,
-              });
-            })
-            .catch(() => {
-              updateProgress({ showProgress: false });
-              handleError(ACTION_TYPES.UNPUBLISH_CATALOG);
+    return async () => {
+      let response = await modalRef.current.show({
+        title: `Unpublish Catalog item?`,
+        subtitle: `Are you sure you want to unpublish ${pattern?.name}?`,
+        options: ['Yes', 'No'],
+        showInfoIcon:
+          "Unpublishing a catolog item removes the item from the public-facing catalog (a public website accessible to anonymous visitors at meshery.io/catalog). The catalog item's visibility will change to either public (or private with a subscription). The ability to for other users to continue to access, edit, clone and collaborate on your content depends upon the assigned visibility level (public or private). Prior collaborators (users with whom you have shared your catalog item) will retain access. However, you can always republish it whenever you want. Remember: unpublished catalog items can still be available to other users if that item is set to public visibility. For detailed information, please refer to the [documentation](https://docs.meshery.io/concepts/designs).",
+      });
+      if (response === 'Yes') {
+        updateProgress({ showProgress: true });
+        unpublishCatalog({
+          unpublishBody: JSON.stringify({ id: pattern?.id }),
+        })
+          .unwrap()
+          .then(() => {
+            updateProgress({ showProgress: false });
+            notify({
+              message: `Design Unpublished`,
+              event_type: EVENT_TYPES.SUCCESS,
             });
-        }
-      };
-    }
+          })
+          .catch(() => {
+            updateProgress({ showProgress: false });
+            handleError(ACTION_TYPES.UNPUBLISH_CATALOG);
+          });
+      }
+    };
   };
 
   const handlePublishModalClose = () => {
@@ -1247,7 +1246,8 @@ function MesheryPatterns({
                 <InfoOutlinedIcon data-cy="information-button" />
               </TooltipIcon>
 
-              {canPublishPattern && visibility !== VISIBILITY.PUBLISHED ? (
+              {/* Publish action can be done through Info modal so we might not need separate publish action */}
+              {/* {canPublishPattern && visibility !== VISIBILITY.PUBLISHED && (
                 <TooltipIcon
                   placement="bottom"
                   title="Publish"
@@ -1256,7 +1256,9 @@ function MesheryPatterns({
                 >
                   <PublicIcon fill="#F91313" data-cy="publish-button" />
                 </TooltipIcon>
-              ) : (
+              )} */}
+
+              {visibility === VISIBILITY.PUBLISHED && (
                 <TooltipIcon
                   title="Unpublish"
                   disabled={!CAN(keys.UNPUBLISH_DESIGN.action, keys.UNPUBLISH_DESIGN.subject)}
@@ -1359,7 +1361,8 @@ function MesheryPatterns({
       },
     },
 
-    onCellClick: (_, meta) => meta.colIndex !== 3 && setSelectedRowData(patterns[meta.rowIndex]),
+    onCellClick: (_, meta) =>
+      meta.colIndex !== 3 && meta.colIndex !== 4 && setSelectedRowData(patterns[meta.rowIndex]),
 
     onRowsDelete: async function handleDelete(row) {
       const toBeDeleted = Object.keys(row.lookup).map((idx) => ({

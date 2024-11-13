@@ -35,7 +35,7 @@ var createEnvironmentCmd = &cobra.Command{
 	Long:  `Create a new environments by providing the name and description of the environment`,
 	Example: `
 // Create a new environment
-mesheryctl exp environment create --orgID [orgID] --name [name] --description [description] 
+mesheryctl exp environment create --orgId [orgId] --name [name] --description [description] 
 // Documentation for environment can be found at:
 https://docs.layer5.io/cloud/spaces/environments/
 `,
@@ -84,7 +84,10 @@ https://docs.layer5.io/cloud/spaces/environments/
 			return err
 		}
 
-		resp, _ := utils.MakeRequest(req)
+		resp, err := utils.MakeRequest(req)
+		if err != nil {
+			return err
+		}
 
 		if resp.StatusCode == http.StatusOK {
 			utils.Log.Info("environment created successfully")
