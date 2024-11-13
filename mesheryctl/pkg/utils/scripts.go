@@ -15,11 +15,11 @@ type GKEConfig struct {
 }
 
 // GenerateConfigGKE generates kubernetes config for GKE
-func GenerateConfigGKE(configPath, SAName, namespc string) error {
+func GenerateConfigGKE(configPath, SAName, namespace string) error {
 	cfg := &GKEConfig{
 		ConfigPath: configPath,
 		SAName:     SAName,
-		Namespace:  namespc,
+		Namespace:  namespace,
 	}
 
 	if err := cfg.validate(); err != nil {
@@ -35,12 +35,25 @@ func (c *GKEConfig) validate() error {
 	}
 	return nil
 }
+
 func (c *GKEConfig) checkPrerequisites() error {
+	var missingCommands []string
 	requiredCommands := []string{"jq", "base64", "awk", "tail"}
+
+	fmt.Println("\nRequired Commands")
+	fmt.Println("--------------")
+
 	for _, cmd := range requiredCommands {
 		if _, err := exec.LookPath(cmd); err != nil {
-			return fmt.Errorf("required command %s is not installed", cmd)
+			fmt.Printf("!! %s is not available\n", cmd)
+			missingCommands = append(missingCommands, cmd)
+		} else {
+			fmt.Printf("✓ %s is available\n", cmd)
 		}
+	}
+
+	if len(missingCommands) > 0 {
+		return fmt.Errorf("missing required commands: %v", missingCommands)
 	}
 	return nil
 }
@@ -62,13 +75,30 @@ func (c *GKEConfig) executeScript() error {
 }
 
 func (c *GKEConfig) checkConnectivity() error {
+	fmt.Println("\nKubernetes API")
+	fmt.Println("--------------")
+
+	// Check if client can be initialized
 	cmd := exec.Command("kubectl", "cluster-info")
 	cmd.Stdout = nil
 	cmd.Stderr = nil
 
 	if err := cmd.Run(); err != nil {
+		fmt.Println("!! cannot connect to Kubernetes API server")
 		return fmt.Errorf("failed to connect to Kubernetes API server: %w", err)
 	}
+	fmt.Println("✓ can connect to Kubernetes API server")
+
+	// Check API query
+	cmd = exec.Command("kubectl", "get", "nodes")
+	if err := cmd.Run(); err != nil {
+		fmt.Println("!! cannot query Kubernetes API")
+		return fmt.Errorf("failed to query Kubernetes API: %w", err)
+	}
+	fmt.Println("✓ can query Kubernetes API")
+
+	fmt.Println("\n--------------")
+	fmt.Println("--------------")
 
 	return nil
 }
@@ -98,17 +128,25 @@ main
 
 func serviceAccountTemplate() string {
 	return `create_service_account() {
-    echo "Creating a service account in ${NAMESPACE} namespace: ${SERVICE_ACCOUNT_NAME}"
-    if ! kubectl create sa "${SERVICE_ACCOUNT_NAME}" --namespace "${NAMESPACE}"; then
-        echo "[ERROR] Failed to create service account"
-        exit 1
-    fi
-    if ! kubectl create clusterrolebinding "${SERVICE_ACCOUNT_NAME}" --clusterrole=cluster-admin --serviceaccount=default:"${SERVICE_ACCOUNT_NAME}" --namespace "${NAMESPACE}"; then
-        echo "[ERROR] Failed to create cluster role binding"
+    echo "\nService Account Creation"
+    echo "--------------"
+    
+    if kubectl create sa "${SERVICE_ACCOUNT_NAME}" --namespace "${NAMESPACE}"; then
+        echo "✓ Service account created in ${NAMESPACE} namespace"
+    else
+        echo "!! Failed to create service account"
         exit 1
     fi
     
-    echo "Creating token secret for service account..."
+    if kubectl create clusterrolebinding "${SERVICE_ACCOUNT_NAME}" --clusterrole=cluster-admin --serviceaccount=default:"${SERVICE_ACCOUNT_NAME}" --namespace "${NAMESPACE}"; then
+        echo "✓ Cluster role binding created"
+    else
+        echo "!! Failed to create cluster role binding"
+        exit 1
+    fi
+    
+    echo "\nToken Secret Creation"
+    echo "--------------"
     cat <<EOF | kubectl apply -f -
 apiVersion: v1
 kind: Secret
@@ -119,7 +157,7 @@ metadata:
     kubernetes.io/service-account.name: "${SERVICE_ACCOUNT_NAME}"
 type: kubernetes.io/service-account-token
 EOF
-    
+    echo "✓ Token secret created"
     sleep 10
 }`
 }
@@ -127,82 +165,91 @@ EOF
 func secretOpsTemplate() string {
 	return `
 get_secret_name_from_service_account() {
-    echo "Getting secret of service account ${SERVICE_ACCOUNT_NAME} on ${NAMESPACE}"
+    echo "\nSecret Operations"
+    echo "--------------"
     SECRET_NAME="${SERVICE_ACCOUNT_NAME}-token"
-    echo "Secret name: ${SECRET_NAME}"
+    echo "✓ Found secret: ${SECRET_NAME}"
 }
 
 extract_ca_crt_from_secret() {
-    echo -n "Extracting ca.crt from secret..."
-    kubectl get secret --namespace "${NAMESPACE}" "${SECRET_NAME}" -o jsonpath='{.data.ca\.crt}' | base64 --decode > "${TARGET_FOLDER}/ca.crt"
-    echo "done"
+    if kubectl get secret --namespace "${NAMESPACE}" "${SECRET_NAME}" -o jsonpath='{.data.ca\.crt}' | base64 --decode > "${TARGET_FOLDER}/ca.crt"; then
+        echo "✓ Extracted ca.crt from secret"
+    else
+        echo "!! Failed to extract ca.crt"
+        exit 1
+    fi
 }
 
 get_user_token_from_secret() {
-    echo -n "Getting user token from secret..."
     USER_TOKEN=$(kubectl get secret --namespace "${NAMESPACE}" "${SECRET_NAME}" -o json | jq -r '.data["token"]' | base64 --decode)
-    if [ -z "${USER_TOKEN}" ]; then
-        echo "Error: Failed to get user token"
+    if [ -n "${USER_TOKEN}" ]; then
+        echo "✓ Retrieved user token"
+    else
+        echo "!! Failed to get user token"
         exit 1
     fi
-    echo "done"
 }`
 }
 
 func kubeConfigTemplate() string {
 	return `
 set_kube_config_values() {
+    echo "\nKubeconfig Setup"
+    echo "--------------"
+    
     context=$(kubectl config current-context)
-    echo "Setting current context to: $context"
-
     CLUSTER_NAME=$(kubectl config get-contexts "$context" | awk '{print $3}' | tail -n 1)
-    echo "Cluster name: ${CLUSTER_NAME}"
-
     ENDPOINT=$(kubectl config view -o jsonpath="{.clusters[?(@.name == \"${CLUSTER_NAME}\")].cluster.server}")
-    echo "Endpoint: ${ENDPOINT}"
 
     if [ -z "${ENDPOINT}" ]; then
-        echo "Error: Failed to get cluster endpoint"
+        echo "!! Failed to get cluster endpoint"
         exit 1
     fi
+    echo "✓ Retrieved cluster information"
 
-    echo "Preparing k8s-${SERVICE_ACCOUNT_NAME}-${NAMESPACE}-conf"
+    echo "\nConfiguring Authentication"
+    echo "--------------"
+    
     kubectl config set-cluster "${CLUSTER_NAME}" \
     --kubeconfig="${KUBECFG_FILE_NAME}" \
     --server="${ENDPOINT}" \
     --certificate-authority="${TARGET_FOLDER}/ca.crt" \
-    --embed-certs=true
+    --embed-certs=true && echo "✓ Cluster configuration set"
 
     kubectl config set-credentials \
     "${SERVICE_ACCOUNT_NAME}-${NAMESPACE}-${CLUSTER_NAME}" \
     --kubeconfig="${KUBECFG_FILE_NAME}" \
-    --token="${USER_TOKEN}"
+    --token="${USER_TOKEN}" && echo "✓ Credentials configured"
 
     kubectl config set-context \
     "${SERVICE_ACCOUNT_NAME}-${NAMESPACE}-${CLUSTER_NAME}" \
     --kubeconfig="${KUBECFG_FILE_NAME}" \
     --cluster="${CLUSTER_NAME}" \
     --user="${SERVICE_ACCOUNT_NAME}-${NAMESPACE}-${CLUSTER_NAME}" \
-    --namespace="${NAMESPACE}"
+    --namespace="${NAMESPACE}" && echo "✓ Context created"
 
     kubectl config use-context "${SERVICE_ACCOUNT_NAME}-${NAMESPACE}-${CLUSTER_NAME}" \
-    --kubeconfig="${KUBECFG_FILE_NAME}"
+    --kubeconfig="${KUBECFG_FILE_NAME}" && echo "✓ Context activated"
 }`
 }
 
 func mainOpsTemplate() string {
 	return `
 main() {
-    mkdir -p "${TARGET_FOLDER}"
+    echo "\nPrerequisites"
+    echo "--------------"
+    mkdir -p "${TARGET_FOLDER}" && echo "✓ Target directory created"
+    
     create_service_account
     get_secret_name_from_service_account
     extract_ca_crt_from_secret
     get_user_token_from_secret
     set_kube_config_values
 
-    echo "All done! Test with:"
-    echo "KUBECONFIG=${KUBECFG_FILE_NAME} kubectl get pods"
-    echo "You should not have any permissions by default - you have just created the authentication part"
-    echo "You will need to create RBAC permissions"
+    echo "\nSetup Complete"
+    echo "--------------"
+    echo "✓ Configuration generated at: ${KUBECFG_FILE_NAME}"
+    echo "✓ Test access with: KUBECONFIG=${KUBECFG_FILE_NAME} kubectl get pods"
+    echo "!! Note: RBAC permissions need to be configured separately"
 }`
 }
