@@ -34,6 +34,8 @@ mesheryctl exp environment create --orgId [orgId] --name [name] --description [d
 </div>
 </pre> 
 
+{% include alert.html type="info" title="Note :" content="If a valid UUID is not provided for --orgId, a default 'zero UUID' will be used." %}
+
 Documentation for environment can be found at:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
