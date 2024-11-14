@@ -32,7 +32,6 @@ var (
 	relationshipSpredsheetGID      int64
 	outputLocation                 string
 	pathToRegistrantConnDefinition string
-	pathToRegistrantCredDefinition string
 	GoogleSpreadSheetURL           = "https://docs.google.com/spreadsheets/d/"
 	srv                            *sheets.Service
 
