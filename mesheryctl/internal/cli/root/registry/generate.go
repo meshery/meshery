@@ -32,6 +32,7 @@ var (
 	relationshipSpredsheetGID      int64
 	outputLocation                 string
 	pathToRegistrantConnDefinition string
+	pathToRegistrantCredDefinition string
 	GoogleSpreadSheetURL           = "https://docs.google.com/spreadsheets/d/"
 	srv                            *sheets.Service
 
@@ -48,7 +49,7 @@ var generateCmd = &cobra.Command{
 	Long:  "Prerequisite: Excecute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under `/server/models/<model-name>`.",
 	Example: `
 // Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
-mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred 
+./mesheryctl registry generate --spreadsheet-id "1t0OqpPI_TRNwNB4Rm8yBRIG_LwaDtAiVmozYlg9FE-k" --spreadsheet-cred $CRED
 // Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
 mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
 // Generate a specific Model from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
@@ -109,4 +110,24 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 		}
 		return err
 	},
+}
+
+func init() {
+	generateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
+	generateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
+
+	generateCmd.MarkFlagsRequiredTogether("spreadsheet-id", "spreadsheet-cred")
+
+	generateCmd.PersistentFlags().StringVar(&pathToRegistrantConnDefinition, "registrant-def", "", "path pointing to the registrant connection definition")
+	generateCmd.PersistentFlags().StringVar(&pathToRegistrantCredDefinition, "registrant-cred", "", "path pointing to the registrant credential definition")
+
+	generateCmd.MarkFlagsRequiredTogether("registrant-def", "registrant-cred")
+
+	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-id", "registrant-def")
+	generateCmd.MarkFlagsMutuallyExclusive("spreadsheet-cred", "registrant-cred")
+	generateCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "", "specific model name to be generated")
+	generateCmd.PersistentFlags().StringVarP(&outputLocation, "output", "o", "../server/meshmodel", "location to output generated models, defaults to ../server/meshmodels")
+
+	generateCmd.PersistentFlags().StringVarP(&csvDirectory, "directory", "d", "", "Directory containing the Model and Component CSV files")
+
 }
