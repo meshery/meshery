@@ -77,7 +77,7 @@ mesheryctl registry generate --registrant-def [path to connection definition] --
 // Generate a specific Model from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred --model "[model-name]"
 // Generate Meshery Models and Component from csv files in a local directory.
-mesheryctl registry generate -directory <DIRECTORY_PATH>
+mesheryctl registry generate --directory <DIRECTORY_PATH>
     `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
@@ -149,6 +149,8 @@ mesheryctl registry generate -directory <DIRECTORY_PATH>
 						modelCSVFilePath = filePath
 					} else if utils.Contains("component", headers) != -1 || utils.Contains("component", secondRow) != -1 { // Check if the file matches the ComponentCSV structure
 						componentCSVFilePath = filePath
+					} else if utils.Contains("kind", headers) != -1 || utils.Contains("kind", secondRow) != -1 { // Check if the file matches the ComponentCSV structure
+						relationshipCSVFilePath = filePath
 					}
 					if err != nil {
 						return fmt.Errorf("error checking file %s: %v", file.Name(), err)
@@ -213,7 +215,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup) error {
 	if err != nil {
 		return err
 	}
-
 	relationshipCSVHelper, err := parseRelationshipSheet(url)
 	if err != nil {
 		return err
