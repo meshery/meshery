@@ -1438,7 +1438,20 @@ const CsvStepper = React.memo(({ handleClose, handleGenerateModal }) => {
         ),
         icon: ModelIcon,
         label: 'Model CSV',
-        helpText: 'Upload the model CSV file.',
+        helpText: (
+          <>
+            Upload the Model CSV file.
+            <a
+              href="https://github.com/meshery/meshery/blob/a514f8689260791077bde8171646933cff15dd08/mesheryctl/templates/template-csvs/Models.csv"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: 'inherit', textDecoration: 'underline' }}
+            >
+              Click here
+            </a>{' '}
+            to see the CSV template.
+          </>
+        ),
       },
       {
         component: (
@@ -1470,13 +1483,26 @@ const CsvStepper = React.memo(({ handleClose, handleGenerateModal }) => {
         ),
         icon: ComponentIcon,
         label: 'Component CSV',
-        helpText: 'Upload the component CSV file.',
+        helpText: (
+          <>
+            Upload the Component CSV file.
+            <a
+              href="https://github.com/meshery/meshery/blob/a514f8689260791077bde8171646933cff15dd08/mesheryctl/templates/template-csvs/Components.csv"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: 'inherit', textDecoration: 'underline' }}
+            >
+              Click here
+            </a>{' '}
+            to see the CSV template.
+          </>
+        ),
       },
       {
         component: (
           <div>
             <Typography>
-              Please upload the<strong> relationship csv</strong>. It is an optional field.
+              Please upload the<strong> relationship csv</strong>.
               <br />
               <strong>Note:</strong> Click on info button to look at csv template.
             </Typography>
@@ -1501,7 +1527,20 @@ const CsvStepper = React.memo(({ handleClose, handleGenerateModal }) => {
         ),
         icon: LanOutlinedIcon,
         label: 'Relationship CSV',
-        helpText: 'Upload the relationship CSV file (optional).',
+        helpText: (
+          <>
+            Upload the relationship CSV file.
+            <a
+              href="https://github.com/meshery/meshery/blob/a514f8689260791077bde8171646933cff15dd08/mesheryctl/templates/template-csvs/Relationships.csv"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: 'inherit', textDecoration: 'underline' }}
+            >
+              Click here
+            </a>{' '}
+            to see the CSV template.
+          </>
+        ),
       },
       {
         component: (
