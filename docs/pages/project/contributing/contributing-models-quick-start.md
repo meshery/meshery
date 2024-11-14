@@ -26,20 +26,14 @@ The following instructions are a no-fluff guide to creating your own Meshery Mod
 ### Create a Model Definition
 
 1. In your meshery/meshery fork, navigate to `mesheryctl/templates/templates-csvs` directory.
-1. Edit the `models.csv` file to include your model definition.
-1. [Annotations] For models that contain annotation components, edit the `components.csv` file to include your component definitions.
-1. Create a new model by executing the following command:
-{% capture code_content %}$ mesheryctl registry generate --directory templates-csvs{% endcapture %}
- {% include code.html code=code_content %}
-1. Review the generated components inside of the `server/meshmodel` directory under your model's name.
-1. Import your model definition into a Meshery Server.
-{% capture code_content %}$ mesheryctl model import -f `server/meshmodel/<model-name>`{% endcapture %}
- {% include code.html code=code_content %}
-   1. You can deploy Meshery Server using the following command:
-   {% capture code_content %}$ mesheryctl system start{% endcapture %}
+2. Edit the `models.csv` file to include your model definition.
+   1. [Annotation-only Components] For models that contain annotation components, edit the `components.csv` file to include your component definitions.
+3. Create a new model by executing the following command:
+   {% capture code_content %}$ mesheryctl registry generate --directory templates-csvs{% endcapture %}
    {% include code.html code=code_content %}
-   or use the [Meshery Playground](https://playground.meshery.io).
-1. Verify that your model is displayed in the Meshery UI under Settings->Registry->Models.
+4. Review the generated components inside of the `server/meshmodel` directory under your model's name.
+5. Import your model definition into a Meshery Server (optionally, use the [Meshery Playground](https://playground.meshery.io)).
+6. Verify that your model is displayed in the Meshery UI under Settings->Registry->Models.
 
 **Congratulations! You have successfully created a new model.**
 
