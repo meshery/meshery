@@ -26,10 +26,10 @@ The following instructions are a no-fluff guide to creating your own Meshery Mod
 ### Create a Model Definition
 
 <ol>
-<li> In your meshery/meshery fork, navigate to <code>mesheryctl/templates/templates-csvs</code> directory. </li>
-<li> Edit the <code>models.csv</code> file to include your model definition.
+<li> In your meshery/meshery fork, navigate to <code>mesheryctl/templates/templates-csvs</code> directory or open the template [spreadsheet](https://docs.google.com/spreadsheets/d/19JEpqvHrG8UL-Bc-An9UIcubf1NVhlfnQSN1TD7JOZ4/edit?gid=1308482975#gid=1308482975). </li>
+<li> Edit the <code>models sheet</code> file to include your model definition.
    <ol>
-      <li> [Annotation-only Components] For models that contain annotation components, edit the <code>components.csv</code> file to include your component definitions. </li>
+      <li> [Annotation-only Components] For models that contain annotation components, edit the <code>components sheet</code> file to include your component definitions. </li>
    </ol>
 </li>
 <li> Create a new model by executing the following command:</li> {% capture code_content %}$ mesheryctl registry generate --directory templates-csvs{% endcapture %}
@@ -56,5 +56,6 @@ The following instructions are a no-fluff guide to creating your own Meshery Mod
 {% include alert.html type="info" title="Contributing to Models" content="See the <a href='/project/contributing/contributing-models'>full Contributing to Models</a> documentation for a detailed understanding of models and the many ways in which you can customize them." %}
 
 We encourage you to get involved in the development of Meshery Models and to share your feedback.
-  
-  {% include alert.html type="info" title="Meshery Models are extensible" content="Meshery Models are designed to be extensible, allowing you to define new components as needed. If you have an idea for a new component, please create one and share it with the Meshery community." %}
+
+{% include alert.html type="info" title="Meshery Models are extensible" content="Meshery Models are designed to be extensible, allowing you to define new components as needed. If you have an idea for a new component, please create one and share it with the Meshery community." %}
+
