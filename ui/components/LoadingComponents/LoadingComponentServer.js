@@ -20,7 +20,7 @@ function LoadingScreen(props) {
       <div
         {...other}
         style={{
-          '@font-face': {
+          '@fontFace': {
             fontFamily: 'Qanelas Soft',
             src: 'url("/static/fonts/qanelas-soft/QanelasSoftBlack.otf") format("opentype")',
             fontWeight: 'normal',
@@ -32,6 +32,7 @@ function LoadingScreen(props) {
           textAlign: 'center',
           backgroundColor: '#263238', // color of navigation menu
           color: '#dedede', // soften the subtitle / message
+          ...(other.style || {}),
         }}
       >
         <div>
