@@ -149,7 +149,7 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 						modelCSVFilePath = filePath
 					} else if utils.Contains("component", headers) != -1 || utils.Contains("component", secondRow) != -1 { // Check if the file matches the ComponentCSV structure
 						componentCSVFilePath = filePath
-					} else if utils.Contains("kind", headers) != -1 || utils.Contains("kind", secondRow) != -1 { // Check if the file matches the ComponentCSV structure
+					} else if utils.Contains("kind", headers) != -1 || utils.Contains("kind", secondRow) != -1 { // Check if the file matches the relationshipCSV structure
 						relationshipCSVFilePath = filePath
 					}
 					if err != nil {
