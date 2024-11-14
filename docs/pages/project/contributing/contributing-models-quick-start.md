@@ -10,13 +10,15 @@ category: contributing
 list: include
 ---
 
-Meshery Models are a way to represent the architecture of a system or application. Models are defined in JSON and can be used to visualize the components and relationships between them. This guide will walk you through the process of creating a new model.
+[Meshery Models](/concepts/logical/models) are a way to represent the architecture of a system or application. Models are defined in JSON and can be used to visualize the components and relationships between them. This guide will walk you through the process of creating a new model.
 
-Meshery Components are the building blocks of a model. Each component represents a different part of the system or application. Components can be anything from a database to a microservice to a server. Relationships define how components interact with each other. For example, a database component might have a relationship with a microservice component that represents the microservice's dependency on the database.
+[Meshery Components](/concepts/logical/components) are the building blocks of a model. Each component represents a different part of the system or application. Components can be anything from a database to a microservice to a server. Relationships define how components interact with each other. For example, a database component might have a relationship with a microservice component that represents the microservice's dependency on the database.
 
-## Quick Start
+## Creating your first Meshery Model
 
-### Pre-requisites
+The following instructions are a no-fluff guide to creating your own Meshery Models quickly. For more detailed information, see the [Contributing to Models](/project/contributing/contributing-models) documentation.
+
+### Prerequisites
 
 1. Install the Meshery CLI by following the [installation instructions](https://docs.meshery.io/installation/).
 1. Fork the [meshery/meshery](https://github.com/meshery/meshery) repository.
