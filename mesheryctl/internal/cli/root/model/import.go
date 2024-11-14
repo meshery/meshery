@@ -57,7 +57,7 @@ var importModelCmd = &cobra.Command{
 			path = args[0]
 		}
 		if utils.IsValidUrl(path) {
-			err := registerModel(nil, nil, "", "urlImport", path, true)
+			err := registerModel(nil, nil, nil, "", "urlImport", path, true)
 			if err != nil {
 				utils.Log.Error(err)
 				return nil
@@ -89,7 +89,7 @@ var importModelCmd = &cobra.Command{
 			fileName = filepath.Base(path)
 		}
 
-		err = registerModel(tarData, nil, fileName, "file", "", true)
+		err = registerModel(tarData, nil, nil, fileName, "file", "", true)
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
@@ -98,7 +98,7 @@ var importModelCmd = &cobra.Command{
 	},
 }
 
-func registerModel(data []byte, componentData []byte, filename string, dataType string, sourceURI string, register bool) error {
+func registerModel(data []byte, componentData []byte, relationshipData []byte, filename string, dataType string, sourceURI string, register bool) error {
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		return err
@@ -111,6 +111,8 @@ func registerModel(data []byte, componentData []byte, filename string, dataType 
 	if dataType == "csv" {
 		importRequest.ImportBody.ModelCsv = "data:text/csv;base64," + base64.StdEncoding.EncodeToString(data)
 		importRequest.ImportBody.ComponentCsv = "data:text/csv;base64," + base64.StdEncoding.EncodeToString(componentData)
+		importRequest.ImportBody.RelationshipCSV = "data:text/csv;base64," + base64.StdEncoding.EncodeToString(relationshipData)
+
 	} else if dataType == "file" {
 		importRequest.ImportBody.ModelFile = data
 	} else {

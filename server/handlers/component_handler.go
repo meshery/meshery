@@ -1294,6 +1294,30 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			h.sendErrorEvent(userID, provider, "Error writing Component CSV to temp file", err)
 			return
 		}
+
+		relationshipCSVData, err := fetchBase64DataFromDataURL(importRequest.ImportBody.RelationshipCSV)
+		if err != nil {
+			h.handleError(rw, err, "Error fetching or decoding Model CSV")
+			h.sendErrorEvent(userID, provider, "Error fetching or decoding Model CSV", err)
+			return
+		}
+		relationshipCsvFile, err := os.CreateTemp("", "relationship-*.csv")
+		if err != nil {
+			err = ErrCreateFile(err, "Error creating temp file for Model CSV")
+			h.handleError(rw, err, "Error creating temp file for Model CSV")
+			h.sendErrorEvent(userID, provider, "Error creating temp file for Model CSV", err)
+			return
+		}
+		defer relationshipCsvFile.Close()
+
+		_, err = relationshipCsvFile.Write(relationshipCSVData)
+		if err != nil {
+			err = ErrWritingIntoFile(err, "Error writing Model CSV to temp file")
+			h.handleError(rw, err, "Error writing Model CSV to temp file")
+			h.sendErrorEvent(userID, provider, "Error writing Model CSV to temp file", err)
+			return
+		}
+
 		var wg sync.WaitGroup
 		modelLocation := filepath.Join(os.Getenv("HOME"), utils.RegistryLocation)
 		if _, err := os.Stat(modelLocation); os.IsNotExist(err) {
@@ -1308,7 +1332,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 		defer os.RemoveAll(tempDir)
 
-		err = mesheryctlUtils.InvokeGenerationFromSheet(&wg, tempDir, 0, 0, "", "", modelCsvFile.Name(), componentCsvFile.Name(), "")
+		err = mesheryctlUtils.InvokeGenerationFromSheet(&wg, tempDir, 0, 0, "", "", modelCsvFile.Name(), componentCsvFile.Name(), "", relationshipCsvFile.Name(), 0)
 		if err != nil {
 			h.handleError(rw, err, "Error invoking generation from sheet")
 			h.sendErrorEvent(userID, provider, "Error invoking generation from sheet", err)

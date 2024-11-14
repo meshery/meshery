@@ -51,7 +51,7 @@ var generateModelCmd = &cobra.Command{
 			if err != nil {
 				return utils.ErrFileRead(err)
 			}
-			err = registerModel(fileData, nil, "", "url", path, !register)
+			err = registerModel(fileData, nil, nil, "", "url", path, !register)
 			if err != nil {
 				utils.Log.Error(err)
 				return nil
@@ -60,7 +60,7 @@ var generateModelCmd = &cobra.Command{
 			utils.Log.Info("Model can be accessed from ", locationForModel)
 			return nil
 		} else {
-			modelcsvpath, componentcsvpath, err := utils.GetCsv(path)
+			modelcsvpath, componentcsvpath, relationshipcsvpath, err := utils.GetCsv(path)
 			if err == nil {
 				modelData, err := os.ReadFile(modelcsvpath)
 				if err != nil {
@@ -70,7 +70,11 @@ var generateModelCmd = &cobra.Command{
 				if err != nil {
 					return utils.ErrFileRead(err)
 				}
-				err = registerModel(modelData, componentData, "model.csv", "csv", "", !register)
+				relationshipData, err := os.ReadFile(relationshipcsvpath)
+				if err != nil {
+					return utils.ErrFileRead(err)
+				}
+				err = registerModel(modelData, componentData, relationshipData, "model.csv", "csv", "", !register)
 				if err != nil {
 					utils.Log.Error(err)
 					return nil

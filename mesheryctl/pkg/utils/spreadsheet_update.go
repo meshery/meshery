@@ -295,12 +295,12 @@ func marshalStructToCSValues[K any](data []*K) ([][]interface{}, error) {
 
 	return results, nil
 }
-func GetCsv(csvDirectory string) (string, string, error) {
+func GetCsv(csvDirectory string) (string, string, string, error) {
 	files, err := os.ReadDir(csvDirectory)
 	if err != nil {
-		return "", "", utils.ErrReadDir(err, csvDirectory)
+		return "", "", "", utils.ErrReadDir(err, csvDirectory)
 	}
-	var modelCSVFilePath, componentCSVFilePath string
+	var modelCSVFilePath, componentCSVFilePath, relationshipCSVFilePath string
 
 	for _, file := range files {
 		filePath := filepath.Join(csvDirectory, file.Name())
@@ -310,18 +310,20 @@ func GetCsv(csvDirectory string) (string, string, error) {
 				modelCSVFilePath = filePath
 			} else if Contains("component", headers) != -1 || Contains("component", secondRow) != -1 {
 				componentCSVFilePath = filePath
+			} else if Contains("kind", headers) != -1 || Contains("kind", secondRow) != -1 { // Check if the file matches the relationshipCSV structure
+				relationshipCSVFilePath = filePath
 			}
 			if err != nil {
-				return "", "", err
+				return "", "", "", err
 			}
 
 		}
 	}
 
 	if modelCSVFilePath == "" || componentCSVFilePath == "" {
-		return "", "", ErrCSVFileNotFound(csvDirectory)
+		return "", "", "", ErrCSVFileNotFound(csvDirectory)
 	}
-	return modelCSVFilePath, componentCSVFilePath, nil
+	return modelCSVFilePath, componentCSVFilePath, relationshipCSVFilePath, nil
 }
 func getCSVHeader(filePath string) (headers, secondRow []string, err error) {
 	file, err := os.Open(filePath)

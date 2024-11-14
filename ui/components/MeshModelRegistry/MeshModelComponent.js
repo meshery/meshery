@@ -191,7 +191,7 @@ const MeshModelComponent_ = ({
   };
 
   const handleGenerateModal = async (data) => {
-    const { uploadType, url, model, component_csv, model_csv, register } = data;
+    const { uploadType, url, model, component_csv, model_csv, relationship_csv, register } = data;
     let requestBody = null;
     switch (uploadType) {
       case 'CSV Import': {
@@ -199,6 +199,7 @@ const MeshModelComponent_ = ({
           importBody: {
             model_csv: model_csv,
             component_csv: component_csv,
+            relationship_csv: relationship_csv,
           },
           uploadType: 'csv',
           register: register,

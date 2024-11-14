@@ -698,6 +698,17 @@ func parseComponentSheet(url string, modelName string, componentSpredsheetGID in
 	}
 	return compCSVHelper, nil
 }
+func parseRelationshipSheet(url string, modelName string, relationshipSpredsheetGID int64, relationshipCSVFilePath string) (*RelationshipCSVHelper, error) {
+	relationshipCSVHelper, err := NewRelationshipCSVHelper(url, "Relationships", relationshipSpredsheetGID, relationshipCSVFilePath)
+	if err != nil {
+		return nil, err
+	}
+	err = relationshipCSVHelper.ParseRelationshipsSheet(modelName)
+	if err != nil {
+		return nil, ErrGenerateModel(err, "unable to start model generation")
+	}
+	return relationshipCSVHelper, nil
+}
 func logModelGenerationSummary(modelToCompGenerateTracker *store.GenerticThreadSafeStore[compGenerateTracker]) {
 	for key, val := range modelToCompGenerateTracker.GetAllPairs() {
 		Log.Info(fmt.Sprintf("Generated %d components for model [%s] %s", val.totalComps, key, val.version))
@@ -709,11 +720,12 @@ func logModelGenerationSummary(modelToCompGenerateTracker *store.GenerticThreadS
 
 	Log.Info(fmt.Sprintf("-----------------------------\n-----------------------------\nGenerated %d models and %d components", totalAggregateModel, totalAggregateComponents))
 }
-func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, componentSheetID int64, spreadsheeetID string, modelName string, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred string) error {
+func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, componentSheetID int64, spreadsheeetID string, modelName string, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath string, relationshipSheetID int64) error {
 	weightedSem := semaphore.NewWeighted(20)
 	url := GoogleSpreadSheetURL + spreadsheeetID
 	totalAvailableModels := 0
 	spreadsheeetChan := make(chan SpreadsheetData)
+	relationshipUpdateChan := make(chan RelationshipCSV)
 	defer func() {
 		logModelGenerationSummary(modelToCompGenerateTracker)
 
@@ -734,7 +746,10 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, co
 	if err != nil {
 		return err
 	}
-
+	relationshipCSVHelper, err := parseRelationshipSheet(url, modelName, relationshipSheetID, relationshipCSVFilePath)
+	if err != nil {
+		return err
+	}
 	var wgForSpreadsheetUpdate sync.WaitGroup
 	wgForSpreadsheetUpdate.Add(1)
 
@@ -743,6 +758,15 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, co
 		VerifyandUpdateSpreadsheet(spreadsheeetCred, &wgForSpreadsheetUpdate, srv, spreadsheeetChan, spreadsheeetID, modelCSVFilePath, componentCSVFilePath)
 	}()
 
+	var wgForRelationshipUpdates sync.WaitGroup
+	wgForRelationshipUpdates.Add(1)
+	go func() {
+		defer wgForRelationshipUpdates.Done()
+		for updatedRelationship := range relationshipUpdateChan {
+			// Collect the updated relationships
+			relationshipCSVHelper.UpdatedRelationships = append(relationshipCSVHelper.UpdatedRelationships, updatedRelationship)
+		}
+	}()
 	// Iterate models from the spreadsheet
 	for _, model := range modelCSVHelper.Models {
 		if modelName != "" && modelName != model.Model {
@@ -872,6 +896,13 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, co
 
 	wg.Wait()
 	close(spreadsheeetChan)
+	ProcessRelationships(relationshipCSVHelper, relationshipUpdateChan, path)
+	close(relationshipUpdateChan)
+	wgForRelationshipUpdates.Wait()
+	err = relationshipCSVHelper.UpdateRelationshipSheet(srv, spreadsheeetCred, spreadsheeetID, relationshipCSVFilePath)
+	if err == nil {
+		Log.Info("Updated relationship to sheet.")
+	}
 	wgForSpreadsheetUpdate.Wait()
 	return nil
 }
