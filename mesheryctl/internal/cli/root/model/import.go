@@ -38,9 +38,9 @@ var importModelCmd = &cobra.Command{
  
 	mesehryctl model import -f OCI 
 	mesehryctl model import -f model.tar.gz 
-	mesehryctl model import --f /path/to/models
-    mesehryctl model import --f http://example.com/model -t /path/to/template.json 
-	mesehryctl model import --f http://example.com/model -t /path/to/template.json -r
+	mesehryctl model import -f /path/to/models
+    mesehryctl model import -f http://example.com/model -t /path/to/template.json 
+	mesehryctl model import -f http://example.com/model -t /path/to/template.json -r
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl model import [ file | filePath | URL ]\nRun 'mesheryctl model import --help' to see detailed help message"
