@@ -20,23 +20,28 @@ The following instructions are a no-fluff guide to creating your own Meshery Mod
 
 ### Prerequisites
 
-1. Install the Meshery CLI by following the [installation instructions](https://docs.meshery.io/installation/).
 1. Fork the [meshery/meshery](https://github.com/meshery/meshery) repository.
+1. Install the Meshery CLI by following the [installation instructions](https://docs.meshery.io/installation/).
 
 ### Create a Model Definition
 
 <ol>
-<li> In your meshery/meshery fork, navigate to <code>mesheryctl/templates/templates-csvs</code> directory or open the template [spreadsheet](https://docs.google.com/spreadsheets/d/19JEpqvHrG8UL-Bc-An9UIcubf1NVhlfnQSN1TD7JOZ4/edit?gid=1308482975#gid=1308482975). </li>
-<li> Edit the <code>models sheet</code> file to include your model definition.
+<li>In your meshery/meshery fork, open the template [spreadsheet](https://docs.google.com/spreadsheets/d/19JEpqvHrG8UL-Bc-An9UIcubf1NVhlfnQSN1TD7JOZ4/edit?gid=1308482975#gid=1308482975).</li>
+<ul><li>Or, optionally, use CSVs by navigating to <code>mesheryctl/templates/templates-csvs</code> directory.</li></ul>
+<li>Edit the <code>models sheet</code> file to include your model definition.
    <ol>
-      <li> [Annotation-only Components] For models that contain annotation components, edit the <code>components sheet</code> file to include your component definitions. </li>
+      <li>[Annotation-only Components] For models that contain annotation components, edit the <code>components sheet</code> file to include your component definitions.</li>
    </ol>
 </li>
-<li> Create a new model by executing the following command:</li> {% capture code_content %}$ mesheryctl registry generate --directory templates-csvs{% endcapture %}
-{% include code.html code=code_content %}
+<li>Generate your neww using a Meshery Server (optionally, use the <a href="https://playground.meshery.io">Meshery Playground</a>). Click the "Generate" button after navigating to Meshery UI --> Settings --> Registry.</li>
+<li> 
 
-<li> Review the generated components inside of the <code>server/meshmodel</code> directory under your model's name.</li>
-<li> Import your model definition into a Meshery Server (optionally, use the <a href="https://playground.meshery.io">Meshery Playground</a>).</li>
+<details>
+   <summary>Or use Meshery CLI</summary>
+   Or, opttionally, use Meshery CLI by executing the following command:</li> <code>mesheryctl registry generate --directory templates-csvs</code>
+   Review the generated components inside of the <code>server/meshmodel</code> directory under your model's name.
+
+</details>
 <li> Verify that your model is displayed in the Meshery UI under Settings->Registry->Models.</li>
 
 </ol>
