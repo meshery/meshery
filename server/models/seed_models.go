@@ -16,12 +16,6 @@ import (
 
 var ModelsPath = "../meshmodel"
 
-<<<<<<< HEAD
-const PoliciesPath = "../meshmodel/kubernetes/v1.25.2/v1.0.0/policies"
-
-func GetModelDirectoryPaths(modelPath string) ([]string, error) {
-	dirEntries := make([]string, 0)
-=======
 const PoliciesPath = "../meshmodel/meshery-core/0.7.2/v1.0.0/policies"
 
 // versionInfo holds information about a version directory
@@ -42,7 +36,6 @@ func GetModelDirectoryPaths(modelPath string) ([]string, error) {
 	dirEntries := []string{}
 
 	// Read all model directories (e.g., accurate, kubernetes)
->>>>>>> 4d7477cac4639ec0c7081bf40563a927de4bce8e
 	modelsDirs, err := os.ReadDir(modelPath)
 	if err != nil {
 		return dirEntries, meshkitUtils.ErrReadDir(err, fmt.Sprintf("failed to read models directory '%s'", modelPath))
@@ -52,17 +45,12 @@ func GetModelDirectoryPaths(modelPath string) ([]string, error) {
 		if !modelDir.IsDir() {
 			continue
 		}
-<<<<<<< HEAD
-		modelVersionsDirPath := filepath.Join(modelPath, modelDir.Name())
-		modelVersionsDir, err := os.ReadDir(modelVersionsDirPath)
-=======
 
 		modelName := modelDir.Name()
 		modelVersionsDirPath := filepath.Join(modelPath, modelName)
 
 		// Get all version directories sorted in descending order (latest first)
 		sortedVersionDirs, err := meshkitUtils.GetAllVersionDirsSortedDesc(modelVersionsDirPath)
->>>>>>> 4d7477cac4639ec0c7081bf40563a927de4bce8e
 		if err != nil {
 			continue
 		}
@@ -127,10 +115,6 @@ func getLatestModelDefDir(latestVersionDirPath string) (string, error) {
 func SeedComponents(log logger.Handler, hc *HandlerConfig, regm *meshmodel.RegistryManager) {
 	regErrorStore := NewRegistrationFailureLogHandler()
 	regHelper := registration.NewRegistrationHelper(utils.UI, regm, regErrorStore)
-<<<<<<< HEAD
-=======
-
->>>>>>> 4d7477cac4639ec0c7081bf40563a927de4bce8e
 	modelDirPaths, err := GetModelDirectoryPaths(ModelsPath)
 	if err != nil {
 		log.Error(ErrSeedingComponents(err))
