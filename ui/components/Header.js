@@ -4,7 +4,6 @@ import AppBar from '@material-ui/core/AppBar';
 import Grid from '@material-ui/core/Grid';
 import Hidden from '@material-ui/core/Hidden';
 import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
 import Toolbar from '@material-ui/core/Toolbar';
 import { withStyles } from '@material-ui/core/styles';
 import { connect, useSelector } from 'react-redux';
@@ -36,7 +35,7 @@ import { useNotification, withNotify } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
-import { Checkbox, OutlinedSettingsIcon } from '@layer5/sistent';
+import { Checkbox, MenuIcon, OutlinedSettingsIcon } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { Colors } from '@/themes/app';
 import { CanShow } from '@/utils/can';
@@ -44,6 +43,7 @@ import { keys } from '@/utils/permission_constants';
 import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
 import { UsesSistent } from './SistentWrapper';
 import Router from 'next/router';
+import HeaderMenu from './HeaderMenu';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -82,15 +82,18 @@ const styles = (theme) => ({
   },
   toolbarOnDrawerClosed: {
     minHeight: 59,
-    padding: theme.spacing(0.5),
-    paddingLeft: theme.spacing(0.5),
+    padding: theme.spacing(2),
+    paddingLeft: 0,
     paddingRight: 34,
     backgroundColor: theme.palette.secondary.mainBackground,
     boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
+    [theme.breakpoints.down('xs')]: {
+      padding: 0,
+    },
   },
   toolbarOnDrawerOpen: {
     minHeight: 58,
-    padding: theme.spacing(0.5),
+    padding: theme.spacing(2),
     paddingLeft: 34,
     paddingRight: 34,
     backgroundColor: theme.palette.secondary.mainBackground,
@@ -285,7 +288,7 @@ function K8sContextMenu({
     position: 'absolute',
     left: '-7rem',
     zIndex: '-1',
-    bottom: showFullContextMenu ? '-55%' : '-110%',
+    bottom: showFullContextMenu ? '40%' : '-110%',
     transform: showFullContextMenu ? `translateY(${transformProperty}%)` : 'translateY(0)',
   };
 
@@ -536,13 +539,20 @@ class Header extends React.PureComponent {
                   </Grid>
                 </Hidden>
                 <Grid item xs container alignItems="center" className={classes.pageTitleWrapper}>
+                  {/* Extension Point for   Logo */}
+                  <div
+                    id="nav-header-logo"
+                    style={{
+                      height: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      minWidth: '34px',
+                      justifyContent: 'center',
+                    }}
+                  ></div>
                   <SpaceSwitcher title={title} isBeta={isBeta} />
                 </Grid>
-                <Grid
-                  item
-                  className={classes.userContainer}
-                  style={{ position: 'relative', right: '-27px' }}
-                >
+                <Grid item className={classes.userContainer} style={{ position: 'relative' }}>
                   {/* According to the capabilities load the component */}
                   {this.state.collaboratorExt && (
                     <ExtensionSandbox
@@ -584,8 +594,18 @@ class Header extends React.PureComponent {
                   <div data-test="notification-button">
                     <NotificationDrawerButton />
                   </div>
+
                   <span className={classes.userSpan}>
                     <User
+                      classes={classes}
+                      color="inherit"
+                      iconButtonClassName={classes.iconButtonAvatar}
+                      avatarClassName={classes.avatar}
+                      updateExtensionType={this.props.updateExtensionType}
+                    />
+                  </span>
+                  <span className={classes.userSpan}>
+                    <HeaderMenu
                       classes={classes}
                       color="inherit"
                       iconButtonClassName={classes.iconButtonAvatar}

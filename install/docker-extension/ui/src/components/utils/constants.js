@@ -16,6 +16,6 @@ export const topicsList = [
   { label: "Resiliency", value: "resiliency" },
 ];
 
-export const mesheryCloudUrl = 'https://meshery.layer5.io'
+export const mesheryCloudUrl = 'https://cloud.layer5.io'
 
 export const MESHMAP = 'meshmap'

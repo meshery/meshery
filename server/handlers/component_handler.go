@@ -214,6 +214,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	returnAnnotationComp := queryParams.Get("annotations")
 
 	filter := &regv1beta1.ModelFilter{
+		Id:          queryParams.Get("id"),
 		Registrant:  queryParams.Get("registrant"),
 		Version:     v,
 		Limit:       limit,
@@ -225,6 +226,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		Components:    queryParams.Get("components") == "true",
 		Relationships: queryParams.Get("relationships") == "true",
 		Status:        queryParams.Get("status"),
+		Trim:          queryParams.Get("trim") == "true",
 	}
 	if search != "" {
 		filter.DisplayName = search
@@ -773,6 +775,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &regv1beta1.ComponentFilter{
+		Id:          queryParams.Get("id"),
 		ModelName:   typ,
 		Version:     v,
 		Trim:        queryParams.Get("trim") == "true",
@@ -988,6 +991,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &regv1beta1.ComponentFilter{
+		Id:          queryParams.Get("id"),
 		Version:     v,
 		Trim:        queryParams.Get("trim") == "true",
 		APIVersion:  queryParams.Get("apiVersion"),
