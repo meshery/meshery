@@ -25,15 +25,21 @@ The following instructions are a no-fluff guide to creating your own Meshery Mod
 
 ### Create a Model Definition
 
-1. In your meshery/meshery fork, navigate to `mesheryctl/templates/templates-csvs` directory.
-2. Edit the `models.csv` file to include your model definition.
-   1. [Annotation-only Components] For models that contain annotation components, edit the `components.csv` file to include your component definitions.
-3. Create a new model by executing the following command:
-   {% capture code_content %}$ mesheryctl registry generate --directory templates-csvs{% endcapture %}
-   {% include code.html code=code_content %}
-4. Review the generated components inside of the `server/meshmodel` directory under your model's name.
-5. Import your model definition into a Meshery Server (optionally, use the [Meshery Playground](https://playground.meshery.io)).
-6. Verify that your model is displayed in the Meshery UI under Settings->Registry->Models.
+<ol>
+<li> In your meshery/meshery fork, navigate to <code>mesheryctl/templates/templates-csvs</code> directory. </li>
+<li> Edit the <code>models.csv</code> file to include your model definition.
+   <ol>
+      <li> [Annotation-only Components] For models that contain annotation components, edit the <code>components.csv</code> file to include your component definitions. </li>
+   </ol>
+</li>
+<li> Create a new model by executing the following command:</li> {% capture code_content %}$ mesheryctl registry generate --directory templates-csvs{% endcapture %}
+{% include code.html code=code_content %}
+
+<li> Review the generated components inside of the <code>server/meshmodel</code> directory under your model's name.</li>
+<li> Import your model definition into a Meshery Server (optionally, use the <a href="https://playground.meshery.io">Meshery Playground</a>).</li>
+<li> Verify that your model is displayed in the Meshery UI under Settings->Registry->Models.</li>
+
+</ol>
 
 **Congratulations! You have successfully created a new model.**
 
