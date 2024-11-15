@@ -49,35 +49,21 @@ mesheryctl model import [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	mesehryctl model import -f OCI 
+	mesehryctl model import --f /path/to/csv-drectory
 
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	mesehryctl model import -f model.tar.gz 
+    mesehryctl model import --f http://example.com/model -t /path/to/template.json 
 
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	mesehryctl model import -f /path/to/models
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-    mesehryctl model import -f http://example.com/model -t /path/to/template.json 
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-	mesehryctl model import -f http://example.com/model -t /path/to/template.json -r
+	mesehryctl model import --f http://example.com/model -t /path/to/template.json -r
 
 </div>
 </pre> 
