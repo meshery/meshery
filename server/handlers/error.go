@@ -148,6 +148,8 @@ const (
 	ErrGetComponentDefinitionCode          = "meshery-server-1362"
 	ErrGetCapabilitiesCode                 = "meshery-server-1363"
 	ErrExportPatternInFormatCode           = "meshery-server-1364"
+	ErrFileTypeCode                        = "replace_me"
+	ErrCreatingOPAInstanceCode             = "replace_me"
 )
 
 var (
@@ -600,7 +602,9 @@ func ErrBuildOCIImg(err error) error {
 func ErrSaveOCIArtifact(err error) error {
 	return errors.New(ErrSaveOCIArtifactCode, errors.Alert, []string{"Failed to persist OCI artifact"}, []string{err.Error()}, []string{"unable to read source directory", "source directory is corrupted", "unable to persist in requested location", "OCI img may be corrupted"}, []string{"check if the source directory is valid and has sufficient permissions", "check if the source directory is not corrupted", "check if sufficient permissions are available to write in requested location", "check if the OCI img is not corrupted"})
 }
-
+func ErrFileType(obj string) error {
+	return errors.New(ErrFileTypeCode, errors.Alert, []string{"Error: ", obj, " is not a valid file type"}, []string{fmt.Sprintf("file is not the expected type %splease verify the file type", obj)}, []string{"The provided file type is wrong"}, []string{"Verify the file type"})
+}
 func ErrIOReader(err error) error {
 	return errors.New(ErrIOReaderCode, errors.Alert, []string{"Failed to read from io.Reader"}, []string{err.Error()}, []string{"unable to read from io.Reader"}, []string{"check if the io.Reader is valid"})
 }
@@ -645,4 +649,7 @@ func ErrGetCapabilities(err error, userId string) error {
 
 func ErrExportPatternInFormat(err error, format, designName string) error {
 	return errors.New(ErrExportPatternInFormatCode, errors.Alert, []string{fmt.Sprintf("Failed to export design file \"%s\" as \"%s\"", designName, format)}, []string{err.Error()}, []string{fmt.Sprintf("Current version of Meshery does not support exporting in \"%s\" format", format)}, []string{"Export design in one of the supported format."})
+}
+func ErrCreatingOPAInstance(err error) error {
+	return errors.New(ErrCreatingOPAInstanceCode, errors.Alert, []string{"Error creating OPA Instance."}, []string{err.Error()}, []string{"Unable to create OPA instance, policies will not be evaluated."}, []string{"Ensure relationships are registered"})
 }
