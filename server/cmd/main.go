@@ -47,7 +47,7 @@ var (
 
 const (
 	// DefaultProviderURL is the provider url for the "none" provider
-	DefaultProviderURL = "https://meshery.layer5.io"
+	DefaultProviderURL = "https://cloud.layer5.io"
 	RelationshipsPath  = "../meshmodel/kubernetes/"
 )
 
@@ -276,15 +276,15 @@ func main() {
 	}
 	//seed the local meshmodel components
 	rego := policies.Rego{}
+
 	go func() {
 		models.SeedComponents(log, hc, regManager)
 		r, err := policies.NewRegoInstance(models.PoliciesPath, regManager)
 		if err != nil {
-			log.Warn(ErrCreatingOPAInstance(err))
+			log.Warn(handlers.ErrCreatingOPAInstance(err))
 		} else {
 			rego = *r
 		}
-
 		krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		hc.MeshModelSummaryChannel.Publish()
 	}()
@@ -341,7 +341,9 @@ func main() {
 
 	models.InitMeshSyncRegistrationQueue()
 	mhelpers.InitRegistrationHelperSingleton(dbHandler, log, &connToInstanceTracker, hc.EventBroadcaster)
+	policies.SyncRelationship.Lock()
 	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, providerEnvVar, &rego, &connToInstanceTracker)
+	policies.SyncRelationship.Unlock()
 
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()

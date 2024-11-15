@@ -63,13 +63,20 @@ const styles = (theme) => ({
   userContainer: {
     paddingLeft: 1,
     display: 'flex',
-
     alignItems: 'center',
+    [theme.breakpoints.down('xs')]: {
+      width: '100%',
+      justifyContent: 'flex-end',
+      marginRight: '1rem',
+      marginBlock: '0.5rem',
+    },
   },
   userSpan: { marginLeft: theme.spacing(1) },
   pageTitleWrapper: {
     flexGrow: 1,
     marginRight: 'auto',
+    flexWrap: 'nowrap',
+    marginBlock: '0.5rem',
   },
   appBarOnDrawerOpen: {
     backgroundColor: theme.palette.secondary.mainBackground,
@@ -87,6 +94,9 @@ const styles = (theme) => ({
     paddingRight: 34,
     backgroundColor: theme.palette.secondary.mainBackground,
     boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
+    [theme.breakpoints.down('xs')]: {
+      padding: 0,
+    },
   },
   toolbarOnDrawerOpen: {
     minHeight: 58,
@@ -285,7 +295,7 @@ function K8sContextMenu({
     position: 'absolute',
     left: '-7rem',
     zIndex: '-1',
-    bottom: showFullContextMenu ? '-55%' : '-110%',
+    bottom: showFullContextMenu ? '40%' : '-110%',
     transform: showFullContextMenu ? `translateY(${transformProperty}%)` : 'translateY(0)',
   };
 
@@ -524,7 +534,7 @@ class Header extends React.PureComponent {
             >
               <Grid container alignItems="center">
                 <Hidden smUp>
-                  <Grid item>
+                  <Grid item style={{ display: 'none' }}>
                     <IconButton
                       color="inherit"
                       aria-label="Open drawer"

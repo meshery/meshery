@@ -273,7 +273,7 @@ func (mch *ComponentCSVHelper) ParseComponentsSheet(modelName string) error {
 				mch.Components[data.Registrant][data.Model] = make([]ComponentCSV, 0)
 			}
 			mch.Components[data.Registrant][data.Model] = append(mch.Components[data.Registrant][data.Model], data)
-			Log.Info(fmt.Sprintf("Reading registrant [%s] model [%s] component [%s]", data.Registrant, data.Model, data.Component))
+			// Log.Info(fmt.Sprintf("Reading registrant [%s] model [%s] component [%s]", data.Registrant, data.Model, data.Component))
 		case err := <-errorChan:
 			Log.Error(err)
 

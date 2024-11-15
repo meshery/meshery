@@ -508,9 +508,12 @@ input CatalogSelector {
   search: String!
   order: String!
   metrics: String
+  trim: String
   class: [String]
   technology: [String]
   patternType: [String]
+  userid: [String]
+  orgID: [String]
 }
 
 # ================ TELEMETRY ====================

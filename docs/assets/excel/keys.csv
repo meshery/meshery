@@ -2,8 +2,8 @@
 Category,Function,Feature,User,Team Admin,Workspace Admin,Org Billing Manager,Org Admin,Provider Admin,Keychain ID,Key ID,Inserted,Local Provider
 Catalog ,Share Design,"Share design with anyone within your organization, and make your design easily accessible to all relevant team members.",X,X,X,,X,X,Catalog Management,d9ae2b08-762f-418f-916f-43de736b53e2,X,TRUE
 Catalog,Clone Design,Clone any published design to customise it according to your use cases,X,X,X,,X,X,Catalog Management,94a12f80-3c45-4a1f-afb2-a68b909d0d7f,X,TRUE
-Designs ,View Designs,View all public and published designs of other team members and private of signed-in user,X,X,X,,X,X,Install extension,3798736d-1f5d-41b3-876f-f3f01453dd15,X,TRUE
-Filters,View Filters,View all public and published filters of other team members and private of signed-in user,X,X,X,,X,X,Install extension,df41c45f-7c73-49c2-a055-0584fdcec1c1,X,TRUE
+Designs ,View Designs,View all public and published designs of other team members and private of signed-in user,X,X,X,,X,X,Catalog Management,3798736d-1f5d-41b3-876f-f3f01453dd15,X,TRUE
+Filters,View Filters,View all public and published filters of other team members and private of signed-in user,X,X,X,,X,X,Catalog Management,df41c45f-7c73-49c2-a055-0584fdcec1c1,X,TRUE
 Catalog Requests,View Catalog Requests,View the catalog publication request queue,,,X,,X,X,Chargeback,30b68d69-d199-48fd-b4ff-54b5282c5c03,X,FALSE
 Catalog Requests,Approve Catalog Request,Approve catalog publication requests,,,X,,X,X,Chargeback,66fbc8c0-b08a-494b-8c60-68ee1b607176,X,FALSE
 Catalog Requests,Deny Catalog Request,Deny catalog publication requests,,,X,,X,X,Chargeback,b9137717-a20a-44e8-a2f9-94dc3d1a6dcb,X,FALSE

@@ -47,9 +47,7 @@ export const FinalizeDeployment = ({ design, openInVisualizer, setOpenInVisualiz
             {envNames.map((env) => (
               <StyledEnvironment key={env}>
                 <EnvironmentIcon fill={palette.text.neutral.default} />
-                <Typography variant="textB1Regular" key={env}>
-                  {env}
-                </Typography>
+                <Typography key={env}>{env}</Typography>
               </StyledEnvironment>
             ))}
           </Stack>
@@ -61,11 +59,15 @@ export const FinalizeDeployment = ({ design, openInVisualizer, setOpenInVisualiz
           justifyContent={'center'}
         >
           <Box display="flex" alignItems="baseline">
-            <Typography variant="textH1Bold" color={palette.text.neutral.default}>
+            <Typography
+              sx={{
+                fontSize: '3.2rem',
+              }}
+              color={palette.text.neutral.default}
+            >
               {configurableComponents.length}
             </Typography>
             <Typography
-              variant="textB2SemiBold"
               color={palette.text.disabled}
               style={{
                 textTransform: 'lowercase',

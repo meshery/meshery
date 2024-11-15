@@ -370,6 +370,30 @@ export const Notification = withErrorBoundary(({ event_id }) => {
       : []),
   ];
 
+  const Detail = () => (
+    <ErrorBoundary>
+      <Grid container className={classes.expanded}>
+        <Grid item sm={1} className={classes.actorAvatar}>
+          <AvatarStack
+            avatars={eventActors}
+            direction={{
+              xs: 'row',
+              md: 'column',
+            }}
+          />
+        </Grid>
+        <Grid
+          item
+          sm={10}
+          style={{
+            color: theme.palette.secondary.textMain,
+          }}
+        >
+          <FormattedMetadata event={event} classes={classes} />
+        </Grid>
+      </Grid>
+    </ErrorBoundary>
+  );
   return (
     <Slide
       in={isVisible}
@@ -423,30 +447,7 @@ export const Notification = withErrorBoundary(({ event_id }) => {
             <BasicMenu event={event} />
           </Grid>
         </Grid>
-        <Collapse in={expanded}>
-          <ErrorBoundary>
-            <Grid container className={classes.expanded}>
-              <Grid item sm={1} className={classes.actorAvatar}>
-                <AvatarStack
-                  avatars={eventActors}
-                  direction={{
-                    xs: 'row',
-                    md: 'column',
-                  }}
-                />
-              </Grid>
-              <Grid
-                item
-                sm={10}
-                style={{
-                  color: theme.palette.secondary.textMain,
-                }}
-              >
-                <FormattedMetadata event={event} classes={classes} />
-              </Grid>
-            </Grid>
-          </ErrorBoundary>
-        </Collapse>
+        <Collapse in={expanded}>{expanded && <Detail />}</Collapse>
       </div>
     </Slide>
   );

@@ -186,6 +186,9 @@ func (h *Handler) handlePatternPOST(
 
 		bytPattern := parsedBody.PatternData.PatternFile
 		fileName := parsedBody.PatternData.FileName
+		if fileName == "" {
+			fileName = parsedBody.PatternData.Name
+		}
 		mesheryPattern.SourceContent = bytPattern
 		if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) {
 			var k8sres string
@@ -953,6 +956,10 @@ func (h *Handler) GetMesheryPatternsHandler(
 //
 // ```?type={type}``` Filters patterns based on type
 //
+// ```?orgID={orgID}``` Filters patterns based on organization ID
+//
+// ```?userid={userid}``` Filters patterns based on user ID
+//
 // responses:
 //
 // 200: mesheryPatternsResponseWrapper
@@ -966,7 +973,7 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("metrics"), q["class"], q["technology"], q["type"])
+	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("metrics"), q.Get("trim"), q["class"], q["technology"], q["type"], q["orgID"], q["userid"])
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
