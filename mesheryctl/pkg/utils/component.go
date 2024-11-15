@@ -207,7 +207,6 @@ type ComponentCSVHelper struct {
 func NewComponentCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64, localCsvPath string) (*ComponentCSVHelper, error) {
 	var csvPath string
 	if localCsvPath == "" {
-		// Ensure we request CSV format with proper encoding
 		sheetURL = sheetURL + "/pub?output=csv&single=true" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
 		Log.Info("Downloading CSV from: ", sheetURL)
 		dirPath := filepath.Join(utils.GetHome(), ".meshery", "content")
