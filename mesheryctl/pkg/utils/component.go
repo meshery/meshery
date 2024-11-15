@@ -1,12 +1,8 @@
 package utils
 
 import (
+	sheet "encoding/csv"
 	"fmt"
-	"os"
-	"path/filepath"
-	"strconv"
-	"strings"
-
 	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/utils"
@@ -15,6 +11,11 @@ import (
 	"github.com/meshery/schemas/models/v1alpha1/capability"
 	schmeaVersion "github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/component"
+	"net/http"
+	"os"
+	"path/filepath"
+	"strconv"
+	"strings"
 )
 
 const (
@@ -206,14 +207,58 @@ type ComponentCSVHelper struct {
 func NewComponentCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64, localCsvPath string) (*ComponentCSVHelper, error) {
 	var csvPath string
 	if localCsvPath == "" {
-		sheetURL = sheetURL + "/pub?output=csv" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
+		// Ensure we request CSV format with proper encoding
+		sheetURL = sheetURL + "/pub?output=csv&single=true" + "&gid=" + strconv.FormatInt(spreadsheetID, 10)
 		Log.Info("Downloading CSV from: ", sheetURL)
 		dirPath := filepath.Join(utils.GetHome(), ".meshery", "content")
 		_ = os.MkdirAll(dirPath, 0755)
 		csvPath = filepath.Join(dirPath, "components.csv")
-		err := utils.DownloadFile(csvPath, sheetURL)
+
+		// Download and process the CSV
+		resp, err := http.Get(sheetURL)
 		if err != nil {
 			return nil, utils.ErrReadingRemoteFile(err)
+		}
+		defer resp.Body.Close()
+
+		if resp.StatusCode != 200 {
+			return nil, fmt.Errorf("failed to get the file %d status code for %s file", resp.StatusCode, sheetURL)
+		}
+
+		reader := sheet.NewReader(resp.Body)
+		reader.TrimLeadingSpace = false 
+
+		// Read all records
+		records, err := reader.ReadAll()
+		if err != nil {
+			return nil, err
+		}
+
+		file, err := os.Create(csvPath)
+		if err != nil {
+			return nil, err
+		}
+		defer file.Close()
+
+		writer := sheet.NewWriter(file)
+		writer.UseCRLF = true
+
+		// Write records with proper quoting for fields containing spaces
+		for _, record := range records {
+			// Quote fields that contain spaces
+			for i, field := range record {
+				if strings.Contains(field, " ") {
+					record[i] = fmt.Sprintf("%q", field)
+				}
+			}
+			if err := writer.Write(record); err != nil {
+				return nil, err
+			}
+		}
+
+		writer.Flush()
+		if err := writer.Error(); err != nil {
+			return nil, err
 		}
 	} else {
 		csvPath = localCsvPath
