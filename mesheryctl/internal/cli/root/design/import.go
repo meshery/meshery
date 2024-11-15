@@ -23,7 +23,6 @@ import (
 	"os"
 	"path"
 
-	"github.com/asaskevich/govalidator"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
@@ -102,9 +101,9 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 	if name != "" {
 		patternName = name
 	}
-
+	validURL := utils.IsValidUrl(file)
 	// Check if the pattern manifest is file or URL
-	if validURL := govalidator.IsURL(file); !validURL {
+	if !validURL {
 		content, err := os.ReadFile(file)
 		if err != nil {
 			return nil, utils.ErrFileRead(err)

@@ -2784,6 +2784,7 @@ input CatalogSelector {
   search: String!
   order: String!
   metrics: String
+  trim: String
   class: [String]
   technology: [String]
   patternType: [String]
@@ -16205,7 +16206,7 @@ func (ec *executionContext) unmarshalInputCatalogSelector(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"page", "pagesize", "search", "order", "metrics", "class", "technology", "patternType", "userid", "orgID"}
+	fieldsInOrder := [...]string{"page", "pagesize", "search", "order", "metrics", "trim", "class", "technology", "patternType", "userid", "orgID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -16247,6 +16248,13 @@ func (ec *executionContext) unmarshalInputCatalogSelector(ctx context.Context, o
 				return it, err
 			}
 			it.Metrics = data
+		case "trim":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trim"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Trim = data
 		case "class":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("class"))
 			data, err := ec.unmarshalOString2ᚕᚖstring(ctx, v)

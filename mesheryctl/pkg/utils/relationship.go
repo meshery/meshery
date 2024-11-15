@@ -104,12 +104,16 @@ func (mrh *RelationshipCSVHelper) ParseRelationshipsSheet(modelName string) erro
 	}
 }
 
-func ProcessRelationships(relationshipCSVHelper *RelationshipCSVHelper, spreadsheetUpdateChan chan RelationshipCSV) {
+func ProcessRelationships(relationshipCSVHelper *RelationshipCSVHelper, spreadsheetUpdateChan chan RelationshipCSV, path string) {
+	if path == "" {
+		path = "../server/meshmodel"
+	}
 	for _, relationship := range relationshipCSVHelper.Relationships {
 		var versions []string
-
 		if relationship.Version == "*" {
-			modelBasePath := fmt.Sprintf("../server/meshmodel/%s", relationship.Model)
+
+			modelBasePath := filepath.Join(path, relationship.Model)
+
 			dirs, err := os.ReadDir(modelBasePath)
 			if err != nil {
 				err = utils.ErrReadDir(err, modelBasePath)
@@ -186,7 +190,7 @@ func ProcessRelationships(relationshipCSVHelper *RelationshipCSVHelper, spreadsh
 				filenameGenerated = true
 			}
 
-			fullPath, err := ConstructRelationshipPath(relationship.Model, version, rel.Version, "../server/meshmodel", relationship.Filename)
+			fullPath, err := ConstructRelationshipPath(relationship.Model, version, rel.Version, path, relationship.Filename)
 			if err != nil {
 				Log.Error(err)
 				continue

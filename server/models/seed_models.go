@@ -115,7 +115,6 @@ func getLatestModelDefDir(latestVersionDirPath string) (string, error) {
 func SeedComponents(log logger.Handler, hc *HandlerConfig, regm *meshmodel.RegistryManager) {
 	regErrorStore := NewRegistrationFailureLogHandler()
 	regHelper := registration.NewRegistrationHelper(utils.UI, regm, regErrorStore)
-
 	modelDirPaths, err := GetModelDirectoryPaths(ModelsPath)
 	if err != nil {
 		log.Error(ErrSeedingComponents(err))
