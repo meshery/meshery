@@ -76,6 +76,7 @@ const styles = (theme) => ({
     flexGrow: 1,
     marginRight: 'auto',
     flexWrap: 'nowrap',
+    marginBlock: '0.5rem',
   },
   appBarOnDrawerOpen: {
     backgroundColor: theme.palette.secondary.mainBackground,
