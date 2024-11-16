@@ -86,6 +86,16 @@ export const StyledBetaHeader = styled('sup')(() => ({
   fontSize: '0.8125rem',
 }));
 
+const StyledSwitcher = styled('div')(() => ({
+  display: 'flex',
+  flexDirection: 'row',
+  justifyContent: 'center',
+  alignItems: 'center',
+  fontSize: '1.5rem',
+  userSelect: 'none',
+  transition: 'width 2s ease-in',
+}));
+
 function OrgMenu(props) {
   const {
     data: orgsResponse,
@@ -293,17 +303,7 @@ function SpaceSwitcher(props) {
     <NoSsr>
       <Provider store={store}>
         <UsesSistent>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'row',
-              justifyContent: 'center',
-              alignItems: 'center',
-              fontSize: '1.5rem',
-              userSelect: 'none',
-              transition: 'width 2s ease-in',
-            }}
-          >
+          <StyledSwitcher>
             <Button
               onClick={() => setOrgOpen(!orgOpen)}
               style={{ marginRight: orgOpen ? '1rem' : '0' }}
@@ -324,7 +324,7 @@ function SpaceSwitcher(props) {
               style={{ marginLeft: DynamicComponent ? '1rem' : '' }}
             />
             {!DynamicComponent && <DefaultHeader title={props.title} isBeta={props.isBeta} />}
-          </div>
+          </StyledSwitcher>
         </UsesSistent>
       </Provider>
     </NoSsr>
