@@ -1,4 +1,4 @@
-import { Button } from '@material-ui/core';
+import { Button } from '@layer5/sistent';
 import { ErrorBoundary as ReactErrorBoundary } from 'react-error-boundary';
 import useTestIDsGenerator from '../hooks/useTestIDs';
 
