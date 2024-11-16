@@ -1,8 +1,8 @@
 ---
 layout: default
-title: Deploy an AWS EC2 Instance with Meshery
-abstract: "Learn how to deploy and manage an AWS EC2 instance through Kubernetes with Meshery, utilizing AWS Controllers for Kubernetes (ACK) to enhance cloud resource management"
-permalink: guides/tutorials/deploy-an-aws-ec2-instance-with-meshery
+title: Deploy AWS EC2 Instances with Meshery
+abstract: "Learn how to deploy and manage AWS EC2 instances through Kubernetes with Meshery, utilizing AWS Controllers for Kubernetes (ACK) to enhance cloud resource management"
+permalink: guides/tutorials/deploy-aws-ec2-instances-with-meshery
 model: aws
 kind: EC2
 type: guides
@@ -49,7 +49,7 @@ Use Meshery to deploy foundational resources such as VPCs, subnets, and other ne
 
 **3. Verify and Monitor Deployment**
 
-Once deployment is complete, verify the EC2 instance via the AWS Management Console or Meshery’s visualization mode, where you’ll gain an interactive view of your deployed resources.
+Once deployment is complete, verify the EC2 instances via the AWS Management Console or Meshery’s visualization mode, where you’ll gain an interactive view of your deployed resources.
 
 ### 1. Connect your Kubernetes Cluster to Meshery
 
@@ -67,7 +67,7 @@ For this guide, the `in-cluster deployment` method is used.  Follow this [setup 
 
 In this section, you will set up the EC2 controller and configure it to connect to your AWS account. This process involves creating a Kubernetes secret that contains your AWS access keys and configuring the controller pod to consume this secret. While these configurations are already included in our designs, the steps will be demonstrated for clarity.
 
-1. **Clone the EC2 Controller Design**: Start by [cloning](...) the EC2 controller design from the catalog. To do this, click on **Clone** on the catalog page. Once cloned, open the design in the playground, and you will see it displayed on the Kanvas.
+1. **Clone the EC2 Controller Design**: Start by [cloning the EC2 controller design](https://cloud.layer5.io/catalog/content/catalog/ec2-controller-design-28a7fad9-c7ef-440a-a8f0-7614e072b866?source=%257B%257D) from the catalog. To do this, click on **Clone** on the catalog page. Once cloned, open the design in the playground, and you will see it displayed on the Kanvas.
 
     ![EC2 Controller Chart](./aws-controllers/controller-chart.png)
 
@@ -133,7 +133,7 @@ This step involves deploying all the necessary resources to create the VPC and o
 - 2 Subnets (1 Public, 1 Private)
 - 1 Security Group
 
-1. Start by [cloning the design](...) from the catalog.
+1. Start by [cloning the design](https://cloud.layer5.io/catalog/content/catalog/vpc-workflow-design-50cac19e-209c-4acf-b91c-4784281db033?source=%257B%257D) from the catalog.
 
 1. Once cloned, open the design in the playground, and you will see it displayed on the Kanvas.
 
@@ -145,15 +145,14 @@ This step involves deploying all the necessary resources to create the VPC and o
 
 ### 4. Deploy EC2 Instance
 
-With the VPC and networking resources set up, deploy the EC2 instance within the VPC using the following steps.
+With the VPC and networking resources set up, deploy the EC2 instances within the VPC using the following steps.
 
-1. [Clone](...) the EC2 instance design from the catalog.
+1. [Clone the EC2 instances design](https://cloud.layer5.io/catalog/content/catalog/ec2-instances-design-a344f109-2d92-41da-8644-3bc285c3ca9e?source=%257B%257D) from the catalog.
 
-1. Open the design on the Playground and deploy the instance.
+1. Open the design on the Playground and deploy the instances.
 
-1. Navigate to the AWS Management Console to confirm the instance’s successful deployment.
+1. Navigate to the AWS Management Console to confirm the instances' successful deployment.
 
-### Conclusion 
+### Conclusion
 
-This guide covered the steps to deploy and manage an EC2 instance using Meshery. It demonstrated how to leverage pre-configured catalog designs, configure and deploy resources, set up the controller and necessary secrets, configure VPC networking resources, and ultimately deploy the EC2 instance. It also showed how to visualize Kubernetes resources using Kanvas's operator mode. This process highlights the ease of managing AWS resources visually through Meshery’s Kanvas interface, eliminating the need for CLI commands.
-
+This guide covered the steps to deploy and manage EC2 instances using Meshery. It demonstrated how to leverage pre-configured catalog designs, configure and deploy resources, set up the controller and necessary secrets, configure VPC networking resources, and ultimately deploy the EC2 instances. It also showed how to visualize Kubernetes resources using Kanvas's operator mode. This process highlights the ease of managing AWS resources visually through Meshery’s Kanvas interface, eliminating the need for CLI commands.
