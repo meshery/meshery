@@ -98,10 +98,10 @@ Use the arrow keys to navigate: ↓ ↑ → ←
     None
 ```
 
-If you cannot see "Meshery" Remote Provider and find such error logs in Meshery Server's logs (`mesheryctl system logs`), please make sure that Meshery Server is able to reach "https://meshery.layer5.io" in order to initialize the "Meshery" Remote Provider.
+If you cannot see "Meshery" Remote Provider and find such error logs in Meshery Server's logs (`mesheryctl system logs`), please make sure that Meshery Server is able to reach "https://cloud.layer5.io" in order to initialize the "Meshery" Remote Provider.
 
 ```bash
-time="2021-11-10T11:05:30Z" level=error msg="[Initialize Provider]: Failed to get capabilities Get \"https://meshery.layer5.io/v0.5.71/capabilities?os=meshery\": dial tcp 3.140.89.205:443: i/o timeout"
+time="2021-11-10T11:05:30Z" level=error msg="[Initialize Provider]: Failed to get capabilities Get \"https://cloud.layer5.io/v0.5.71/capabilities?os=meshery\": dial tcp 3.140.89.205:443: i/o timeout"
 ```
 
 For more details about Meshery Providers:

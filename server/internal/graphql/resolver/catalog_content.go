@@ -27,10 +27,46 @@ type catalogFilterPage struct {
 func (r *queryResolver) fetchCatalogPattern(ctx context.Context, provider models.Provider, selector *model.CatalogSelector) ([]*model.CatalogPattern, error) {
 	token := ctx.Value(models.TokenCtxKey).(string)
 	metrics := "false"
-	if selector.Metrics != nil {
-		metrics = *selector.Metrics
+	trim := "false"
+
+	// Convert []*string to []string for class
+	class := []string{}
+	for _, classPtr := range selector.Class {
+		if classPtr != nil {
+			class = append(class, *classPtr)
+		}
 	}
-	resp, err := provider.GetCatalogMesheryPatterns(token, selector.Page, selector.Pagesize, selector.Search, selector.Order, metrics)
+
+	// Convert []*string to []string for technology
+	technology := []string{}
+	for _, techPtr := range selector.Technology {
+		if techPtr != nil {
+			technology = append(technology, *techPtr)
+		}
+	}
+
+	// Convert []*string to []string for patternType
+	patternType := []string{}
+	for _, typePtr := range selector.PatternType {
+		if typePtr != nil {
+			patternType = append(patternType, *typePtr)
+		}
+	}
+
+	orgID := []string{}
+	for _, orgIDPtr := range selector.OrgID {
+		if orgIDPtr != nil {
+			orgID = append(orgID, *orgIDPtr)
+		}
+	}
+
+	userid := []string{}
+	for _, useridPtr := range selector.Userid {
+		if useridPtr != nil {
+			userid = append(userid, *useridPtr)
+		}
+	}
+	resp, err := provider.GetCatalogMesheryPatterns(token, selector.Page, selector.Pagesize, selector.Search, selector.Order, metrics, trim, class, technology, patternType, orgID, userid)
 
 	if err != nil {
 		r.Log.Error(err)

@@ -115,11 +115,14 @@
    "subCategory": "Cloud Provider",
    "version": "v1.0.0",
    "components": null,
-   "relationships": null
+   "relationships": null,
+   "components_count": 0,
+   "relationships_count": 0
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "enabled",
   "styles": {
+   "background-opacity": 0,
    "primaryColor": "#4285f4",
    "shape": "rectangle",
    "svgColor": "\u003csvg height=\"24\" viewBox=\"0 0 24 24\" width=\"24\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cg fill=\"#4285f4\" transform=\"translate(3 3)\"\u003e\u003cpath d=\"m9 17.9894618-9-4.2751761 4.5-1.4285714 4.5 4.2857143 4.5-4.2857143 4.5 1.4285714z\"/\u003e\u003cpath d=\"m9 0 7.5 7.14285714-7.5 7.14285716-7.5-7.14285716zm0 1.42857143-6 5.71428571 6 5.71428576 6-5.71428576z\"/\u003e\u003cpath d=\"m15.841 9.28471429.659.63-7.5003766 7.22814281-7.5006234-7.22814281.659-.629.627.6-.06205247.05932052 6.27667587 5.88912739 6.2766759-5.88912739-.0632993-.05932052z\"/\u003e\u003c/g\u003e\u003c/svg\u003e",

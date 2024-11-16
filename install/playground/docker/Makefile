@@ -4,7 +4,7 @@
 
 DEBUG=true
 PROD_PLAYGROUND_PORT=80
-REMOTE_PROVIDER=https://meshery.layer5.io
+REMOTE_PROVIDER=https://cloud.layer5.io
 
 #-----------------------------------------------------------------------------
 # Meshery Playground Production Deployment
@@ -23,7 +23,7 @@ play-prod-run:
 	layer5/meshery:playground-latest ./meshery
 	
 # docker run -d --name meshery \
-# 	-e PROVIDER_BASE_URLS=https://meshery.layer5.io \
+# 	-e PROVIDER_BASE_URLS=https://cloud.layer5.io \
 # 	-e PLAYGROUND=true \
 # 	-p 80:8080 \
 # 	layer5/meshery:playground-latest ./meshery

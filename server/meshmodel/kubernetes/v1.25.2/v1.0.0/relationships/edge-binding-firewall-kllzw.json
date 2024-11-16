@@ -3,12 +3,13 @@
   "evaluationQuery": "",
   "kind": "edge",
   "metadata": {
-    "description": "A relationship that act as a firewall for ingress and egress traffic from Pods.",
+    "description": "A relationship that allows traffic from one Pod to another Pod via a NetworkPolicy.",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    }
+    },
+    "isAnnotation": false
   },
   "model": {
     "category": {
@@ -38,7 +39,9 @@
     "status": "",
     "version": "",
     "components": null,
-    "relationships": null
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
   },
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "selectors": [
@@ -54,7 +57,12 @@
                   "id": null,
                   "kind": "self",
                   "mutatedRef": [
-                    []
+                    [
+                      "configuration",
+                      "spec",
+                      "_",
+                      "networkPolicy"
+                    ]
                   ]
                 }
               ],
@@ -63,7 +71,9 @@
                   "id": null,
                   "kind": "NetworkPolicy",
                   "mutatorRef": [
-                    []
+                    [
+                      "displayName"
+                    ]
                   ]
                 }
               ]
@@ -83,7 +93,7 @@
                 "credential_id": "00000000-0000-0000-0000-000000000000",
                 "deleted_at": "0001-01-01T00:00:00Z",
                 "id": "00000000-0000-0000-0000-000000000000",
-                "kind": "artifacthub",
+                "kind": "github",
                 "name": "",
                 "status": "",
                 "sub_type": "",
@@ -96,7 +106,9 @@
               "status": "",
               "version": "",
               "components": null,
-              "relationships": null
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
             },
             "patch": null
           }
@@ -111,7 +123,17 @@
                   "id": null,
                   "kind": "NetworkPolicy",
                   "mutatedRef": [
-                    []
+                    [
+                      "configuration",
+                      "spec",
+                      "ingress"
+                    ],
+                    [
+                      "configuration",
+                      "spec",
+                      "selector",
+                      "matchLabels"
+                    ]
                   ]
                 }
               ],
@@ -120,7 +142,14 @@
                   "id": null,
                   "kind": "self",
                   "mutatorRef": [
-                    []
+                    [
+                      "displayName"
+                    ],
+                    [
+                      "configuration",
+                      "metadata",
+                      "labels"
+                    ]
                   ]
                 }
               ]
@@ -140,7 +169,7 @@
                 "credential_id": "00000000-0000-0000-0000-000000000000",
                 "deleted_at": "0001-01-01T00:00:00Z",
                 "id": "00000000-0000-0000-0000-000000000000",
-                "kind": "artifacthub",
+                "kind": "github",
                 "name": "",
                 "status": "",
                 "sub_type": "",
@@ -153,7 +182,9 @@
               "status": "",
               "version": "",
               "components": null,
-              "relationships": null
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
             },
             "patch": null
           }

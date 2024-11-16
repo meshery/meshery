@@ -1,6 +1,6 @@
 import { useSelectorRtk } from '@/store/hooks';
 import { selectSelectedEnvs } from '@/store/slices/globalEnvironmentContext';
-import { useSelector } from 'react-redux';
+import { useLegacySelector } from 'lib/store';
 const { Box, Typography, Stack, EnvironmentIcon, useTheme, styled } = require('@layer5/sistent');
 const { processDesign, CheckBoxField, StepHeading } = require('./common');
 const _ = require('lodash');
@@ -29,7 +29,9 @@ export const FinalizeDeployment = ({ design, openInVisualizer, setOpenInVisualiz
   const selectedEnvironments = useSelectorRtk(selectSelectedEnvs);
   const envNames = Object.values(selectedEnvironments).map((env) => env.name);
 
-  const capabilitiesRegistry = useSelector((state) => state.get('capabilitiesRegistry'));
+  const capabilitiesRegistry = useLegacySelector((state) => {
+    return state.get('capabilitiesRegistry');
+  });
   const visualizerEnabled = isVisualizerEnabled(capabilitiesRegistry);
   const theme = useTheme();
   const palette = theme.palette;
@@ -45,9 +47,7 @@ export const FinalizeDeployment = ({ design, openInVisualizer, setOpenInVisualiz
             {envNames.map((env) => (
               <StyledEnvironment key={env}>
                 <EnvironmentIcon fill={palette.text.neutral.default} />
-                <Typography variant="textB1Regular" key={env}>
-                  {env}
-                </Typography>
+                <Typography key={env}>{env}</Typography>
               </StyledEnvironment>
             ))}
           </Stack>
@@ -59,11 +59,15 @@ export const FinalizeDeployment = ({ design, openInVisualizer, setOpenInVisualiz
           justifyContent={'center'}
         >
           <Box display="flex" alignItems="baseline">
-            <Typography variant="textH1Bold" color={palette.text.neutral.default}>
+            <Typography
+              sx={{
+                fontSize: '3.2rem',
+              }}
+              color={palette.text.neutral.default}
+            >
               {configurableComponents.length}
             </Typography>
             <Typography
-              variant="textB2SemiBold"
               color={palette.text.disabled}
               style={{
                 textTransform: 'lowercase',

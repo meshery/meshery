@@ -2352,7 +2352,7 @@ enum MesheryControllerStatus {
 
 type MesheryControllersStatusListItem {
     connectionID: String!
-    controller: MesheryController! 
+    controller: MesheryController!
     status: MesheryControllerStatus!
     version: String!
   }
@@ -2502,7 +2502,7 @@ type Container_Port {
 input ServiceMeshFilter {
   # Filter by Service Mesh
   type: MeshType
-  k8sClusterIDs: [String!] 
+  k8sClusterIDs: [String!]
 }
 
 # Control Plane data for a particular Mesh
@@ -2546,7 +2546,7 @@ enum MeshSyncEventType {
 input OperatorStatusInput {
   # Desired status for Meshery Operator
   targetStatus: Status!
-  
+
   contextID: String!
 }
 
@@ -2595,7 +2595,7 @@ type K8sContext {
 
 type K8sContextsPage {
   total_count: Int!,
-  contexts: [K8sContext]! 
+  contexts: [K8sContext]!
 }
 
 # ================= Configuration ===================
@@ -2664,7 +2664,7 @@ type CatalogFilter {
   visibility: String!
   catalog_data: Map
   created_at: String
-  updated_at: String 
+  updated_at: String
 }
 
 # ============== Patterns =================================
@@ -2784,9 +2784,15 @@ input CatalogSelector {
   search: String!
   order: String!
   metrics: String
+  trim: String
+  class: [String]
+  technology: [String]
+  patternType: [String]
+  userid: [String]
+  orgID: [String]
 }
 
-# ================ TELEMETRY ==================== 
+# ================ TELEMETRY ====================
 
 
 type TelemetryComp {
@@ -2888,7 +2894,7 @@ type Query {
   # Query for fetching all patterns with selector
   fetchPatterns(selector: PageFilter!): PatternPageResult!
 
-  # Query for getting kubectl describe details with meshkit 
+  # Query for getting kubectl describe details with meshkit
   getKubectlDescribe(name: String!, kind: String!, namespace: String!): KctlDescribeDetails!
 
   # Query for getting Pattern Catalog from remote provider
@@ -2913,7 +2919,7 @@ type Query {
 input AdapterStatusInput {
   # Desired status for Meshery Operator
   targetStatus: Status!
-  
+
   # The port on which adapter will be deployed
   targetPort: String!
 
@@ -16200,7 +16206,7 @@ func (ec *executionContext) unmarshalInputCatalogSelector(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"page", "pagesize", "search", "order", "metrics"}
+	fieldsInOrder := [...]string{"page", "pagesize", "search", "order", "metrics", "trim", "class", "technology", "patternType", "userid", "orgID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -16242,6 +16248,48 @@ func (ec *executionContext) unmarshalInputCatalogSelector(ctx context.Context, o
 				return it, err
 			}
 			it.Metrics = data
+		case "trim":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trim"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Trim = data
+		case "class":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("class"))
+			data, err := ec.unmarshalOString2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Class = data
+		case "technology":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("technology"))
+			data, err := ec.unmarshalOString2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Technology = data
+		case "patternType":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("patternType"))
+			data, err := ec.unmarshalOString2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.PatternType = data
+		case "userid":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userid"))
+			data, err := ec.unmarshalOString2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Userid = data
+		case "orgID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orgID"))
+			data, err := ec.unmarshalOString2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OrgID = data
 		}
 	}
 

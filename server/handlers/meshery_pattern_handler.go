@@ -186,6 +186,9 @@ func (h *Handler) handlePatternPOST(
 
 		bytPattern := parsedBody.PatternData.PatternFile
 		fileName := parsedBody.PatternData.FileName
+		if fileName == "" {
+			fileName = parsedBody.PatternData.Name
+		}
 		mesheryPattern.SourceContent = bytPattern
 		if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) {
 			var k8sres string
@@ -945,10 +948,21 @@ func (h *Handler) GetMesheryPatternsHandler(
 //
 // ```?search={patternname}``` If search is non empty then a greedy search is performed
 //
-// ```?metrics``` Returns metrics like deployment/share/clone/view/download count for desings, default false,
+// ```?metrics``` Returns metrics like deployment/share/clone/view/download count for designs, default false,
+//
+// ```?class={class}``` Filters patterns based on class
+//
+// ```?technology={technology}``` Filters patterns based on technology
+//
+// ```?type={type}``` Filters patterns based on type
+//
+// ```?orgID={orgID}``` Filters patterns based on organization ID
+//
+// ```?userid={userid}``` Filters patterns based on user ID
+//
 // responses:
 //
-//	200: mesheryPatternsResponseWrapper
+// 200: mesheryPatternsResponseWrapper
 func (h *Handler) GetCatalogMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -959,7 +973,7 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("metrics"))
+	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("metrics"), q.Get("trim"), q["class"], q["technology"], q["type"], q["orgID"], q["userid"])
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)

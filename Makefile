@@ -81,7 +81,7 @@ docker-testing-env:
 #-----------------------------------------------------------------------------
 # Meshery Server Native Builds
 #-----------------------------------------------------------------------------
-.PHONY: server wrk2-setup nighthawk-setup server-local server-skip-compgen server-no-content golangci proto-build error build-server server-binary
+.PHONY: server wrk2-setup nighthawk-setup server-local server-skip-compgen server-no-content golangci proto-build error build-server server-binary server-binary-local
 ## Setup wrk2 for local development.
 wrk2-setup:
 	echo "setup-wrk does not work on Mac Catalina at the moment"
@@ -125,6 +125,18 @@ server-binary:
 	cd server/cmd; \
 	BUILD="$(GIT_VERSION)" \
 	PROVIDER_BASE_URLS=$(MESHERY_CLOUD_PROD) \
+	PORT=9081 \
+	DEBUG=true \
+	ADAPTER_URLS=$(ADAPTER_URLS) \
+	APP_PATH=$(APPLICATIONCONFIGPATH) \
+	KEYS_PATH=$(KEYS_PATH) \
+	../../main; cd ../../
+
+## Running the meshery server using binary with local provider.
+server-binary-local:
+	cd server/cmd; \
+	BUILD="$(GIT_VERSION)" \
+	PROVIDER_BASE_URLS=$(REMOTE_PROVIDER_LOCAL) \
 	PORT=9081 \
 	DEBUG=true \
 	ADAPTER_URLS=$(ADAPTER_URLS) \
@@ -307,6 +319,11 @@ ui-setup:
 	cd ui; npm i; cd ..
 	cd provider-ui; npm i; cd ..
 
+## Clean Install dependencies for building Meshery UI.
+ui-setup-ci:
+	cd ui && npm ci && cd ..
+	cd provider-ui && npm ci && cd ..
+
 ## Run Meshery UI on your local machine. Listen for changes.
 ui:
 	cd ui; npm run dev; cd ..;
@@ -434,10 +451,20 @@ graphql-build: dep-check
 
 ## testing
 test-setup-ui:
-	cd ui; npm ci; npx playwright install --with-deps; cd ..
+	cd ui; npx playwright install --with-deps; cd ..
 
 test-ui:
 	cd ui; npm run test:e2e; cd ..
+
+test-e2e-ci:
+	cd ui; npm run test:e2e:ci; cd ..
+
+#-----------------------------------------------------------------------------
+# Rego Policies
+#-----------------------------------------------------------------------------
+rego-eval:	
+	opa eval -i policies/test/design_all_relationships.yaml -d relationships:policies/test/all_relationships.json -d server/meshmodel/meshery-core/0.7.2/v1.0.0/policies/ \
+	'data.relationship_evaluation_policy.evaluate' --format=pretty
 
 #-----------------------------------------------------------------------------
 # Dependencies
