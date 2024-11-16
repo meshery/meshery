@@ -23,7 +23,7 @@ func GenerateConfigGKE(configPath, SAName, namespace string) error {
 	}
 
 	if err := cfg.validate(); err != nil {
-		return fmt.Errorf("validation failed: %w", err)
+		return ErrInvalidArgument(err)
 	}
 
 	return cfg.executeScript()
