@@ -76,7 +76,7 @@ import {
   useRemoveConnectionFromEnvironmentMutation,
   useSaveEnvironmentMutation,
 } from '../../rtk-query/environments';
-import ErrorBoundary from '../ErrorBoundary';
+import { ErrorBoundary as SistentErrorBoundary } from '@layer5/sistent';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '../General/error-404/index';
@@ -1297,12 +1297,9 @@ const mapStateToProps = (state) => {
 const ConnectionManagementPageWithErrorBoundary = (props) => {
   return (
     <NoSsr>
-      <ErrorBoundary
-        FallbackComponent={() => null}
-        onError={(e) => console.error('Error in Connection Management', e)}
-      >
+      <SistentErrorBoundary>
         <ConnectionManagementPage {...props} />
-      </ErrorBoundary>
+      </SistentErrorBoundary>
     </NoSsr>
   );
 };
