@@ -446,23 +446,25 @@ function K8sContextMenu({
                     )}
                     {contexts?.contexts?.map((ctx) => {
                       return (
-                        <K8sContextConnectionChip
-                          key={ctx.id}
-                          classes={classes}
-                          ctx={ctx}
-                          selectable
-                          onDelete={handleKubernetesDelete}
-                          selected={activeContexts.includes(ctx.id)}
-                          onSelectChange={() => setActiveContexts(ctx.id)}
-                          meshsyncControllerState={meshsyncControllerState}
-                          connectionMetadataState={connectionMetadataState}
-                        />
+                        <>
+                          <K8sContextConnectionChip
+                            key={ctx.id}
+                            classes={classes}
+                            ctx={ctx}
+                            selectable
+                            onDelete={handleKubernetesDelete}
+                            selected={activeContexts.includes(ctx.id)}
+                            onSelectChange={() => setActiveContexts(ctx.id)}
+                            meshsyncControllerState={meshsyncControllerState}
+                            connectionMetadataState={connectionMetadataState}
+                          />
+                          <Box display="flex" marginLeft={6} marginTop={1}>
+                            <MesherySettingsEnvButtons />
+                          </Box>
+                        </>
                       );
                     })}
                   </div>
-                  <Box display="flex" marginTop={1} marginLeft={7}>
-                    <MesherySettingsEnvButtons />
-                  </Box>
                 </Paper>
               </ClickAwayListener>
             </CanShow>
