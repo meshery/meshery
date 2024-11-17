@@ -13,7 +13,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
-var update = flag.Bool("update", true, "update golden files")
+var update = flag.Bool("update", false, "update golden files")
 
 func TestExperimentalList(t *testing.T) {
 	// setup current context
@@ -50,7 +50,7 @@ func TestExperimentalList(t *testing.T) {
 			Fixture:          "list.exp.relationship.api.response.golden",
 			ExpectedResponse: "list.exp.relationship.output.golden",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
-			ExpectError:      true,
+			ExpectError:      false,
 		},
 	}
 
