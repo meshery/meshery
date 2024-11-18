@@ -43,7 +43,6 @@ type compGenerateTracker struct {
 
 var (
 	GoogleSpreadSheetURL     = "https://docs.google.com/spreadsheets/d/"
-	srv                      *sheets.Service
 	totalAggregateComponents int
 	totalAggregateModel      int
 	logDirPath               = filepath.Join(utils.GetHome(), ".meshery", "logs", "registry")
@@ -720,7 +719,7 @@ func logModelGenerationSummary(modelToCompGenerateTracker *store.GenerticThreadS
 
 	Log.Info(fmt.Sprintf("-----------------------------\n-----------------------------\nGenerated %d models and %d components", totalAggregateModel, totalAggregateComponents))
 }
-func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, componentSheetID int64, spreadsheeetID string, modelName string, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath string, relationshipSheetID int64) error {
+func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, componentSheetID int64, spreadsheeetID string, modelName string, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath string, relationshipSheetID int64, srv *sheets.Service) error {
 	weightedSem := semaphore.NewWeighted(20)
 	url := GoogleSpreadSheetURL + spreadsheeetID
 	totalAvailableModels := 0
