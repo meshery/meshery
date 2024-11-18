@@ -15,6 +15,7 @@ import {
   ResponsiveDataTable,
   InfoIcon,
   DeleteIcon,
+  useTheme,
 } from '@layer5/sistent';
 import {
   StyledChipFormControl,
@@ -33,7 +34,6 @@ import {
   StyledButton,
   StyledIconText,
 } from './styles';
-
 import { Popover, TableRow, NoSsr } from '@mui/material';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import { connect } from 'react-redux';
@@ -44,7 +44,7 @@ import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 // import CustomColumnVisibilityControl from '../../utils/custom-column';
 // import SearchBar from '../../utils/custom-search';
-import useStyles from '../../assets/styles/general/tool.styles';
+// import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
 import { iconMedium } from '../../css/icons.styles';
 import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
@@ -58,7 +58,6 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import SyncIcon from '@mui/icons-material/Sync';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
-import { StyledChipFormControl, StyledStatusSelect, StyledStatusChip } from './styles';
 import {
   CONNECTION_KINDS,
   CONNECTION_STATES,
@@ -66,7 +65,6 @@ import {
 } from '../../utils/Enum';
 import FormatConnectionMetadata from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
-import theme from '../../themes/app';
 import { TootltipWrappedConnectionChip } from './ConnectionChip';
 import { DefaultTableCell, SortableTableCell } from './common';
 import { getColumnValue, getVisibilityColums } from '../../utils/utils';
@@ -174,8 +172,8 @@ function ConnectionManagementPage(props) {
   );
 }
 function Connections(props) {
+  const theme = useTheme();
   const {
-    classes,
     updateProgress,
     /*onOpenCreateConnectionModal,*/ operatorState,
     selectedK8sContexts,
@@ -334,7 +332,6 @@ function Connections(props) {
   _operatorStateRef.current = _operatorState;
   const meshSyncResetRef = useRef(null);
   const { notify } = useNotification();
-  const StyleClass = useStyles();
   const url = `https://docs.meshery.io/concepts/logical/connections#states-and-the-lifecycle-of-connections`;
   const envUrl = `https://docs.meshery.io/concepts/logical/environments`;
 
@@ -507,7 +504,7 @@ function Connections(props) {
                 <IconButton disableRipple={true} disableFocusRipple={true}>
                   <InfoOutlinedIcon
                     fill={theme.palette.secondary.iconMain}
-                    style={{
+                    sx={{
                       cursor: 'pointer',
                       height: 20,
                       width: 20,
@@ -683,7 +680,7 @@ function Connections(props) {
                 <IconButton disableRipple={true} disableFocusRipple={true}>
                   <InfoOutlinedIcon
                     fill={theme.palette.secondary.iconMain}
-                    style={{
+                    sx={{
                       cursor: 'pointer',
                       height: 20,
                       width: 20,
@@ -794,7 +791,7 @@ function Connections(props) {
                   aria-haspopup="true"
                   onClick={(e) => handleActionMenuOpen(e, tableMeta)}
                 >
-                  <MoreVertIcon style={iconMedium} />
+                  <MoreVertIcon sx={iconMedium} />
                 </IconButton>
               ) : (
                 '-'
@@ -904,7 +901,7 @@ function Connections(props) {
           <StyledInnerTableContainer>
             <Table>
               <TableRow sx={{ padding: '0' }}>
-                <TableCell style={{ padding: '20px 0', overflowX: 'hidden' }}>
+                <TableCell sx={{ padding: '20px 0', overflowX: 'hidden' }}>
                   <Grid container spacing={1} sx={{ textTransform: 'lowercase' }}>
                     <StyledContentContainer item xs={12} md={12}>
                       <Grid container spacing={1}>
@@ -1123,43 +1120,54 @@ function Connections(props) {
     <NoSsr>
       {CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) ? (
         <>
-          <AppBar position="static" color="default">
-            <StyledTabs
-              value={tab}
-              onChange={(e, newTab) => {
-                e.stopPropagation();
-                setTab(newTab);
-              }}
-              indicatorColor="primary"
-              textColor="primary"
-              variant="fullWidth"
+          <UsesSistent>
+            <AppBar
+              position="static"
               sx={{
                 height: '10%',
+                backgroundColor:
+                  theme.palette.mode === 'dark'
+                    ? theme.palette.primary.disabled
+                    : theme.palette.background.neutral,
               }}
             >
-              <StyledTab
-                label={
-                  <StyledIconText>
-                    <span style={{ marginRight: '0.3rem' }}>Connections</span>
-                    <ConnectionIcon width="20" height="20" />
-                    {/* <img src="/static/img/connection-light.svg" className={classes.icon} /> */}
-                  </StyledIconText>
-                }
-              />
-              <StyledTab
-                label={
-                  <StyledIconText>
-                    <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
-                    <MeshsyncIcon width="20" height="20" />
-                  </StyledIconText>
-                }
-              />
-            </StyledTabs>
-          </AppBar>
+              <StyledTabs
+                value={tab}
+                onChange={(e, newTab) => {
+                  e.stopPropagation();
+                  setTab(newTab);
+                }}
+                indicatorColor="primary"
+                textColor="primary"
+                variant="fullWidth"
+                sx={{
+                  height: '10%',
+                }}
+              >
+                <StyledTab
+                  label={
+                    <StyledIconText>
+                      <span sx={{ marginRight: '0.3rem' }}>Connections</span>
+                      <ConnectionIcon width="20" height="20" />
+                      {/* <img src="/static/img/connection-light.svg" className={classes.icon} /> */}
+                    </StyledIconText>
+                  }
+                />
+                <StyledTab
+                  label={
+                    <StyledIconText>
+                      <span sx={{ marginRight: '0.3rem' }}>MeshSync</span>
+                      <MeshsyncIcon width="20" height="20" />
+                    </StyledIconText>
+                  }
+                />
+              </StyledTabs>
+            </AppBar>
+          </UsesSistent>
           {tab === 0 && (
             <div
-              className={StyleClass.toolWrapper}
-              style={{ marginBottom: '5px', marginTop: '-30px' }}
+              // className={StyleClass.toolWrapper}
+              sx={{ marginBottom: '5px', marginTop: '-30px' }}
             >
               <StyledCreateButton>
                 {/* <div>
@@ -1170,7 +1178,7 @@ function Connections(props) {
                 size="large"
                 // @ts-ignore
                 onClick={onOpenCreateConnectionModal}
-                style={{ marginRight: '1rem', borderRadius: '5px' }}
+                sx={{ marginRight: '1rem', borderRadius: '5px' }}
               >
                 Connect Helm Repository
               </Button>
@@ -1231,7 +1239,6 @@ function Connections(props) {
           )}
           {tab === 1 && (
             <MeshSyncTable
-              classes={classes}
               updateProgress={updateProgress}
               search={search}
               selectedK8sContexts={selectedK8sContexts}
