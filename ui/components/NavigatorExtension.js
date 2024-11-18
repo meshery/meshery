@@ -6,7 +6,12 @@ import {
   createRequires,
 } from '@paciolan/remote-component';
 import { bindActionCreators } from 'redux';
-import { updateLoadTestData, setK8sContexts } from '../lib/store';
+import {
+  updateLoadTestData,
+  setK8sContexts,
+  setOrganization,
+  useLegacySelector,
+} from '../lib/store';
 import GrafanaCustomCharts from './telemetry/grafana/GrafanaCustomCharts';
 import MesheryPerformanceComponent from './MesheryPerformance';
 import dataFetch from '../lib/data-fetch';
@@ -41,6 +46,8 @@ import { mesheryEventBus } from '@/utils/can';
 import { ThemeTogglerCore } from '@/themes/hooks';
 import RJSFForm from './MesheryMeshInterface/PatternService/RJSF';
 import { DynamicFullScrrenLoader } from './LoadingComponents/DynamicFullscreenLoader';
+import { RTKContext, useSelectorRtk, useStoreRtk } from '@/store/hooks';
+import { store } from '../store';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -138,6 +145,14 @@ function NavigatorExtension({
             CAN: CAN,
             useFilterK8sContexts,
             useDynamicComponent,
+          },
+          store: store,
+          currentOrg: setOrganization,
+          reduxHooks: {
+            RTKContext: RTKContext,
+            useSelector: useSelectorRtk,
+            useStoreRtk: useStoreRtk,
+            useLegacySelector: useLegacySelector,
           },
         }}
       />
