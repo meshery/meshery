@@ -331,7 +331,9 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 			releaseChannel.Intercept(r, w)
 			return
 		}
-
+		w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+		w.Header().Set("Pragma", "no-cache")
+		w.Header().Set("Expires", "Thu, 01 Jan 1970 00:00:00 GMT")
 		http.Redirect(w, r, l.RemoteProviderURL+"/login?"+queryParams.Encode(), http.StatusFound)
 		return
 	}
@@ -1669,18 +1671,18 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 	}
 
 	switch resp.StatusCode {
-		case http.StatusRequestEntityTooLarge:
-			err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Design file is too large to upload. Reduce the file size and try again", pattern.Name, l.ProviderName), "", resp.StatusCode)
-			return bdr, err
-		case http.StatusUnauthorized:
-			err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Unauthorized access. Check your credentials.", pattern.Name, l.ProviderName), "", resp.StatusCode)
-			return bdr, err
-		case http.StatusBadRequest:
-			err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Bad request. The design might be corrupt.", pattern.Name, l.ProviderName), "", resp.StatusCode)
-			return bdr, err
-		default:
-			err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s. Check if the design is valid or undo recent changes.", pattern.Name, l.ProviderName), "", resp.StatusCode)
-			return bdr, err
+	case http.StatusRequestEntityTooLarge:
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Design file is too large to upload. Reduce the file size and try again", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		return bdr, err
+	case http.StatusUnauthorized:
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Unauthorized access. Check your credentials.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		return bdr, err
+	case http.StatusBadRequest:
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Bad request. The design might be corrupt.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		return bdr, err
+	default:
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s. Check if the design is valid or undo recent changes.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		return bdr, err
 	}
 }
 
@@ -1753,7 +1755,7 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
-func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order, includeMetrics string, class, technology, patternType []string) ([]byte, error) {
+func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order, includeMetrics, trim string, class, technology, patternType, orgID, workspaceID, userid []string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryPatternsCatalog) {
 		l.Log.Error(ErrOperationNotAvaibale)
 		return []byte{}, ErrInvalidCapability("MesheryPatternsCatalog", l.ProviderName)
@@ -1766,6 +1768,7 @@ func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pag
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
 	q.Set("metrics", includeMetrics)
+	q.Set("trim", trim)
 	if page != "" {
 		q.Set("page", page)
 	}
@@ -1780,7 +1783,7 @@ func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pag
 	}
 	if len(class) > 0 {
 		for _, c := range class {
-				q.Add("class", c)
+			q.Add("class", c)
 		}
 	}
 
@@ -1792,10 +1795,27 @@ func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pag
 
 	if len(patternType) > 0 {
 		for _, pt := range patternType {
-				q.Add("type", pt)
+			q.Add("type", pt)
 		}
 	}
 
+	if len(orgID) > 0 {
+		for _, org := range orgID {
+			q.Add("orgID", org)
+		}
+	}
+
+	if len(userid) > 0 {
+		for _, user := range userid {
+			q.Add("userid", user)
+		}
+	}
+
+	if len(workspaceID) > 0 {
+		for _, workspace := range workspaceID {
+			q.Add("workspaceid", workspace)
+		}
+	}
 	remoteProviderURL.RawQuery = q.Encode()
 	l.Log.Debug("constructed catalog design url: ", remoteProviderURL.String())
 	cReq, _ := http.NewRequest(http.MethodGet, remoteProviderURL.String(), nil)

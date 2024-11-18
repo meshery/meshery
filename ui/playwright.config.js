@@ -30,6 +30,9 @@ module.exports = defineConfig({
   retries: 0,
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : 1,
+  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
+  // reporter: process.env.CI ? "./tests/e2e/custom-playwright-reporter.js" : "list",
+  reporter: process.env.CI ? [['./tests/e2e/custom-playwright-reporter.js'], ['html']] : 'list',
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -38,7 +41,7 @@ module.exports = defineConfig({
       mode: 'on-first-retry',
     },
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'on-first-retry',
+    trace: 'retain-on-failure',
   },
 
   /* Configure projects for major browsers */

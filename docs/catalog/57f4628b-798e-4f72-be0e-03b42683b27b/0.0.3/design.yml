@@ -1186,6 +1186,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -1314,6 +1315,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -1442,6 +1444,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -1570,6 +1573,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -1698,6 +1702,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -1826,6 +1831,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -1954,6 +1960,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines network edges between components
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -2175,6 +2182,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -2299,6 +2307,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines network edges between components
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -2520,6 +2529,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines network edges between components
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -2737,4 +2747,4 @@ relationships:
       type: non-binding
       version: ""
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.12
+version: 0.0.19

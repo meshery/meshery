@@ -958,6 +958,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -1088,6 +1089,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -1218,6 +1220,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -1346,6 +1349,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -1474,6 +1478,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -1604,6 +1609,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -1732,6 +1738,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -1862,6 +1869,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -1992,6 +2000,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -2122,6 +2131,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -2252,6 +2262,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines network edges between components
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -2463,6 +2474,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -2591,6 +2603,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -2719,6 +2732,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -2847,6 +2861,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -2977,6 +2992,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines network edges between components
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -3112,7 +3128,7 @@ relationships:
                           - _
                           - containerPort
                     patchStrategy: replace
-      status: approved
+      status: deleted
       subType: network
       type: non-binding
       version: v1.0.0
@@ -3121,6 +3137,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -3251,6 +3268,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -3379,6 +3397,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -3509,6 +3528,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -3639,6 +3659,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -3767,6 +3788,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -3893,4 +3915,4 @@ relationships:
       type: parent
       version: ""
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.142
+version: 0.0.149

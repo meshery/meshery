@@ -63,13 +63,20 @@ const styles = (theme) => ({
   userContainer: {
     paddingLeft: 1,
     display: 'flex',
-
     alignItems: 'center',
+    [theme.breakpoints.down('xs')]: {
+      width: '100%',
+      justifyContent: 'flex-end',
+      marginRight: '1rem',
+      marginBlock: '0.5rem',
+    },
   },
   userSpan: { marginLeft: theme.spacing(1) },
   pageTitleWrapper: {
     flexGrow: 1,
     marginRight: 'auto',
+    flexWrap: 'nowrap',
+    marginBlock: '0.5rem',
   },
   appBarOnDrawerOpen: {
     backgroundColor: theme.palette.secondary.mainBackground,
@@ -87,6 +94,9 @@ const styles = (theme) => ({
     paddingRight: 34,
     backgroundColor: theme.palette.secondary.mainBackground,
     boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
+    [theme.breakpoints.down('xs')]: {
+      padding: 0,
+    },
   },
   toolbarOnDrawerOpen: {
     minHeight: 58,
@@ -224,13 +234,13 @@ const K8sContextConnectionChip_ = ({
   const { getControllerStatesByConnectionID } = useControllerStatus(meshsyncControllerState);
 
   const { operatorState, meshSyncState, natsState } = getControllerStatesByConnectionID(
-    ctx?.connection_id,
+    ctx.connection_id,
   );
 
   return (
-    <div id={ctx?.metadata?.id} className={classes.chip}>
+    <div id={ctx.id} className={classes.chip}>
       <CustomTextTooltip
-        title={`Server: ${ctx?.metadata?.server},  Operator: ${formatToTitleCase(
+        title={`Server: ${ctx.server},  Operator: ${formatToTitleCase(
           operatorState,
         )}, MeshSync: ${formatToTitleCase(meshSyncState)}, Broker: ${formatToTitleCase(natsState)}`}
       >
@@ -243,13 +253,13 @@ const K8sContextConnectionChip_ = ({
         >
           {selectable && (
             <UsesSistent>
-              <Checkbox checked={selected} onChange={() => onSelectChange(ctx?.metadata?.id)} />
+              <Checkbox checked={selected} onChange={() => onSelectChange(ctx.id)} />
             </UsesSistent>
           )}
           <_ConnectionChip
             title={ctx?.name}
-            onDelete={onDelete ? () => onDelete(ctx?.metadata?.name, ctx?.id) : null}
-            handlePing={() => ping(ctx?.metadata?.name, ctx?.metadata?.server, ctx?.id)}
+            onDelete={onDelete ? () => onDelete(ctx.name, ctx.connection_id) : null}
+            handlePing={() => ping(ctx.name, ctx.server, ctx.connection_id)}
             iconSrc={
               connectionMetadataState && connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                 ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
@@ -285,7 +295,7 @@ function K8sContextMenu({
     position: 'absolute',
     left: '-7rem',
     zIndex: '-1',
-    bottom: showFullContextMenu ? '-55%' : '-110%',
+    bottom: showFullContextMenu ? '40%' : '-110%',
     transform: showFullContextMenu ? `translateY(${transformProperty}%)` : 'translateY(0)',
   };
 
@@ -442,13 +452,13 @@ function K8sContextMenu({
                     {contexts?.contexts?.map((ctx) => {
                       return (
                         <K8sContextConnectionChip
-                          key={ctx?.metadata?.id}
+                          key={ctx.id}
                           classes={classes}
                           ctx={ctx}
                           selectable
                           onDelete={handleKubernetesDelete}
-                          selected={activeContexts.includes(ctx?.id)}
-                          onSelectChange={() => setActiveContexts(ctx?.id)}
+                          selected={activeContexts.includes(ctx.id)}
+                          onSelectChange={() => setActiveContexts(ctx.id)}
                           meshsyncControllerState={meshsyncControllerState}
                           connectionMetadataState={connectionMetadataState}
                         />
@@ -524,7 +534,7 @@ class Header extends React.PureComponent {
             >
               <Grid container alignItems="center">
                 <Hidden smUp>
-                  <Grid item>
+                  <Grid item style={{ display: 'none' }}>
                     <IconButton
                       color="inherit"
                       aria-label="Open drawer"
