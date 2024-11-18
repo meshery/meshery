@@ -1813,7 +1813,7 @@ func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pag
 
 	if len(workspaceID) > 0 {
 		for _, workspace := range workspaceID {
-			q.Add("workspaceID", workspace)
+			q.Add("workspaceid", workspace)
 		}
 	}
 	remoteProviderURL.RawQuery = q.Encode()
