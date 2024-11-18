@@ -514,6 +514,7 @@ input CatalogSelector {
   patternType: [String]
   userid: [String]
   orgID: [String]
+  workspaceID: [String]
 }
 
 # ================ TELEMETRY ====================
