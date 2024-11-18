@@ -814,6 +814,19 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, co
 			}
 
 			version := pkg.GetVersion()
+
+			comps, err := pkg.GenerateComponents()
+			if err != nil {
+				err = ErrGenerateModel(err, model.Model)
+				LogError.Error(err)
+				return
+			}
+			lengthOfComps := len(comps)
+			if lengthOfComps == 0 {
+				err = ErrGenerateModel(fmt.Errorf("no components found for model"), model.Model)
+				LogError.Error(err)
+				return
+			}
 			modelDirPath, compDirPath, err := createVersionedDirectoryForModelAndComp(version, model.Model, path)
 			if err != nil {
 				err = ErrGenerateModel(err, model.Model)
@@ -829,14 +842,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, co
 			if alreadyExist {
 				totalAvailableModels--
 			}
-			comps, err := pkg.GenerateComponents()
-			if err != nil {
-				err = ErrGenerateModel(err, model.Model)
-				LogError.Error(err)
-				return
-			}
-			lengthOfComps := len(comps)
-
 			for _, comp := range comps {
 				comp.Version = defVersion
 				// Assign the component status corresponding to model status.
