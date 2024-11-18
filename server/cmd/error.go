@@ -19,7 +19,6 @@ const (
 	ErrClosingDatabaseInstanceCode                = "meshery-server-1011"
 	ErrInitializingRegistryManagerCode            = "meshery-server-1012"
 	ErrInitializingKeysRegistrationCode           = "meshery-server-1013"
-	ErrCreatingOPAInstanceCode                    = "meshery-server-1323"
 )
 
 func ErrInitializingRegistryManager(err error) error {
@@ -72,8 +71,4 @@ func ErrClosingDatabaseInstance(err error) error {
 
 func ErrInitializingKeysRegistration(err error) error {
 	return errors.New(ErrInitializingKeysRegistrationCode, errors.Fatal, []string{"could not initialize keys registry manager"}, []string{err.Error()}, []string{"could not migrate tables into the database"}, []string{"make sure the database instance passed is not nil"})
-}
-
-func ErrCreatingOPAInstance(err error) error {
-	return errors.New(ErrCreatingOPAInstanceCode, errors.Alert, []string{"Error creating OPA Instance."}, []string{err.Error()}, []string{"Unable to create OPA instance, policies will not be evaluated."}, []string{"Ensure relationships are registered"})
 }

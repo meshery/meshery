@@ -331,7 +331,9 @@ func (l *RemoteProvider) InitiateLogin(w http.ResponseWriter, r *http.Request, _
 			releaseChannel.Intercept(r, w)
 			return
 		}
-
+		w.Header().Set("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0")
+		w.Header().Set("Pragma", "no-cache")
+		w.Header().Set("Expires", "Thu, 01 Jan 1970 00:00:00 GMT")
 		http.Redirect(w, r, l.RemoteProviderURL+"/login?"+queryParams.Encode(), http.StatusFound)
 		return
 	}
@@ -1753,7 +1755,7 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
-func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order, includeMetrics string, class, technology, patternType, orgID, userid []string) ([]byte, error) {
+func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pageSize, search, order, includeMetrics, trim string, class, technology, patternType, orgID, workspaceID, userid []string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(MesheryPatternsCatalog) {
 		l.Log.Error(ErrOperationNotAvaibale)
 		return []byte{}, ErrInvalidCapability("MesheryPatternsCatalog", l.ProviderName)
@@ -1766,6 +1768,7 @@ func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pag
 	remoteProviderURL, _ := url.Parse(l.RemoteProviderURL + ep)
 	q := remoteProviderURL.Query()
 	q.Set("metrics", includeMetrics)
+	q.Set("trim", trim)
 	if page != "" {
 		q.Set("page", page)
 	}
@@ -1805,6 +1808,12 @@ func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pag
 	if len(userid) > 0 {
 		for _, user := range userid {
 			q.Add("userid", user)
+		}
+	}
+
+	if len(workspaceID) > 0 {
+		for _, workspace := range workspaceID {
+			q.Add("workspaceid", workspace)
 		}
 	}
 	remoteProviderURL.RawQuery = q.Encode()
