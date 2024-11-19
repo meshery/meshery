@@ -43,7 +43,6 @@ type compGenerateTracker struct {
 
 var (
 	GoogleSpreadSheetURL     = "https://docs.google.com/spreadsheets/d/"
-	srv                      *sheets.Service
 	totalAggregateComponents int
 	totalAggregateModel      int
 	logDirPath               = filepath.Join(utils.GetHome(), ".meshery", "logs", "registry")
@@ -720,7 +719,7 @@ func logModelGenerationSummary(modelToCompGenerateTracker *store.GenerticThreadS
 
 	Log.Info(fmt.Sprintf("-----------------------------\n-----------------------------\nGenerated %d models and %d components", totalAggregateModel, totalAggregateComponents))
 }
-func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, componentSheetID int64, spreadsheeetID string, modelName string, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath string, relationshipSheetID int64) error {
+func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, componentSheetID int64, spreadsheeetID string, modelName string, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath string, relationshipSheetID int64, srv *sheets.Service) error {
 	weightedSem := semaphore.NewWeighted(20)
 	url := GoogleSpreadSheetURL + spreadsheeetID
 	totalAvailableModels := 0
@@ -814,6 +813,19 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, co
 			}
 
 			version := pkg.GetVersion()
+
+			comps, err := pkg.GenerateComponents()
+			if err != nil {
+				err = ErrGenerateModel(err, model.Model)
+				LogError.Error(err)
+				return
+			}
+			lengthOfComps := len(comps)
+			if lengthOfComps == 0 {
+				err = ErrGenerateModel(fmt.Errorf("no components found for model"), model.Model)
+				LogError.Error(err)
+				return
+			}
 			modelDirPath, compDirPath, err := createVersionedDirectoryForModelAndComp(version, model.Model, path)
 			if err != nil {
 				err = ErrGenerateModel(err, model.Model)
@@ -829,14 +841,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, co
 			if alreadyExist {
 				totalAvailableModels--
 			}
-			comps, err := pkg.GenerateComponents()
-			if err != nil {
-				err = ErrGenerateModel(err, model.Model)
-				LogError.Error(err)
-				return
-			}
-			lengthOfComps := len(comps)
-
 			for _, comp := range comps {
 				comp.Version = defVersion
 				// Assign the component status corresponding to model status.

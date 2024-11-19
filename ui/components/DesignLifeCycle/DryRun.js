@@ -297,7 +297,7 @@ export const FormatDryRunResponse = withStyles(styles)(({
     >
       <div style={{ padding: '1rem' }}> </div>
       {dryRunRequestErrors?.map((error, index) => (
-        <FormatStructuredData key={index} data={error?.data} />
+        <FormatStructuredData key={index} data={error?.data || error?.error} />
       ))}
 
       {totalDryRunErrors > 0 ? (

@@ -2790,6 +2790,7 @@ input CatalogSelector {
   patternType: [String]
   userid: [String]
   orgID: [String]
+  workspaceID: [String]
 }
 
 # ================ TELEMETRY ====================
@@ -16206,7 +16207,7 @@ func (ec *executionContext) unmarshalInputCatalogSelector(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"page", "pagesize", "search", "order", "metrics", "trim", "class", "technology", "patternType", "userid", "orgID"}
+	fieldsInOrder := [...]string{"page", "pagesize", "search", "order", "metrics", "trim", "class", "technology", "patternType", "userid", "orgID", "workspaceID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -16290,6 +16291,13 @@ func (ec *executionContext) unmarshalInputCatalogSelector(ctx context.Context, o
 				return it, err
 			}
 			it.OrgID = data
+		case "workspaceID":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workspaceID"))
+			data, err := ec.unmarshalOString2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.WorkspaceID = data
 		}
 	}
 

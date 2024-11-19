@@ -44,9 +44,9 @@ var (
 	ErrClearLineCode              = "mesheryctl-1120"
 	ErrUpdateToSheetCode          = "mesheryctl-1129"
 	ErrUpdateRelationshipFileCode = "mesheryctl-1130"
-	ErrGenerateModelCode          = "replace_me"
-	ErrGenerateComponentCode      = "replace_me"
-	ErrUpdateComponentCode        = "replace_me"
+	ErrGeneratesModelCode         = "replace_me"
+	ErrGeneratesComponentCode     = "replace_me"
+	ErrUpdateComponentsCode       = "replace_me"
 	ErrCSVFileNotFoundCode        = "replace_me"
 	ErrReadCSVRowCode             = "replace_me"
 )
@@ -494,7 +494,7 @@ func ErrFailReqStatus(statusCode int, obj string) error {
 		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
 }
 func ErrGenerateModel(err error, modelName string) error {
-	return errors.New(ErrGenerateModelCode, errors.Alert, []string{fmt.Sprintf("error generating model: %s", modelName)}, []string{fmt.Sprintf("Error generating model: %s\n %s", modelName, err.Error())}, []string{"Registrant used for the model is not supported", "Verify the model's source URL.", "Failed to create a local directory in the filesystem for this model."}, []string{"Ensure that each kind of registrant used is a supported kind.", "Ensure correct model source URL is provided and properly formatted.", "Ensure sufficient permissions to allow creation of model directory."})
+	return errors.New(ErrGeneratesModelCode, errors.Alert, []string{fmt.Sprintf("error generating model: %s", modelName)}, []string{fmt.Sprintf("Error generating model: %s\n %s", modelName, err.Error())}, []string{"Registrant used for the model is not supported", "Verify the model's source URL.", "Failed to create a local directory in the filesystem for this model."}, []string{"Ensure that each kind of registrant used is a supported kind.", "Ensure correct model source URL is provided and properly formatted.", "Ensure sufficient permissions to allow creation of model directory."})
 }
 func ErrMarshalIndent(err error) error {
 	return errors.New(ErrMarshalIndentCode, errors.Alert,
@@ -643,10 +643,10 @@ func ErrClearLine(err error) error {
 		[]string{"Check if the required clear commands ('clear' or 'cls') are available in the system's PATH"})
 }
 func ErrGenerateComponent(err error, modelName, compName string) error {
-	return errors.New(ErrGenerateComponentCode, errors.Alert, []string{"error generating comp %s of model %s", compName, modelName}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrGeneratesComponentCode, errors.Alert, []string{"error generating comp %s of model %s", compName, modelName}, []string{err.Error()}, []string{}, []string{})
 }
 func ErrUpdateComponent(err error, modelName, compName string) error {
-	return errors.New(ErrUpdateComponentCode, errors.Alert, []string{fmt.Sprintf("error updating component %s of model %s ", compName, modelName)}, []string{err.Error()}, []string{"Component does not exist", "Component definition is corrupted"}, []string{"Ensure existence of component, check for typo in component name", "Regenerate corrupted component"})
+	return errors.New(ErrUpdateComponentsCode, errors.Alert, []string{fmt.Sprintf("error updating component %s of model %s ", compName, modelName)}, []string{err.Error()}, []string{"Component does not exist", "Component definition is corrupted"}, []string{"Ensure existence of component, check for typo in component name", "Regenerate corrupted component"})
 }
 func ErrCSVFileNotFound(path string) error {
 	return errors.New(ErrCSVFileNotFoundCode, errors.Alert, []string{"error reading csv file", path}, []string{fmt.Sprintf("inside the directory %s either the model csv or component csv is missing or they are not of write format", path)}, []string{"Either or both model csv or component csv are absent, the csv is not of correct template"}, []string{fmt.Sprintf("verify both the csv are present in the directory:%s", path), "verify the csv template"})
