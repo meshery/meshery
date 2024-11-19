@@ -8,7 +8,7 @@ import { bindActionCreators } from 'redux';
 import { setAdapter } from '../lib/store';
 import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
 import { UsesSistent } from './SistentWrapper';
-import { Button, Divider, MenuItem, TextField, Grid, Typography, } from '@layer5/sistent';
+import { Button, Divider, MenuItem, TextField, Grid, Typography } from '@layer5/sistent';
 const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
   const [adapter, setAdapterState] = useState(null);
   const router = useRouter();
@@ -28,7 +28,10 @@ const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
   };
   useEffect(() => {
     router.events.on('routeChangeComplete', handleRouteChange);
-    return () => { router.events.off('routeChangeComplete', handleRouteChange); }; },[]);
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
+    };
+  }, []);
   useEffect(() => {
     if (prevMeshAdaptersRef.current?.size !== meshAdapters.size && meshAdapters.size > 0) {
       handleRouteChange();
@@ -74,14 +77,14 @@ const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
       const imageIcon = pickImage(selectedAdapter);
       return (
         <UsesSistent>
-        <React.Fragment>
-          <MesheryAdapterPlayComponent
-            adapter={selectedAdapter}
-            adapCount={adapCount}
-            adapter_icon={imageIcon}
-          />
-        </React.Fragment>
-              </UsesSistent>
+          <React.Fragment>
+            <MesheryAdapterPlayComponent
+              adapter={selectedAdapter}
+              adapCount={adapCount}
+              adapter_icon={imageIcon}
+            />
+          </React.Fragment>
+        </UsesSistent>
       );
     }
     return '';
@@ -89,31 +92,32 @@ const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
   if (meshAdapters.size === 0) {
     return (
       <UsesSistent>
-      <NoSsr>
-        <React.Fragment>
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '1rem',
-              height: '100%',
-              width: '100%',
-            }}>
-            <Typography variant="h6">Adapter Unavailable</Typography>
-            <Typography variant="subtitle">Connect Meshery Adapter(s) in Settings</Typography>
-            <Button variant="contained" color="primary" size="large" onClick={handleConfigure}>
-              <SettingsIcon className={classes.icon} />
-              Configure Settings
-            </Button>
-          </div>
-        </React.Fragment>
-      </NoSsr>
-                </UsesSistent>
+        <NoSsr>
+          <React.Fragment>
+            <div
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '1rem',
+                height: '100%',
+                width: '100%',
+              }}
+            >
+              <Typography variant="h6">Adapter Unavailable</Typography>
+              <Typography variant="subtitle">Connect Meshery Adapter(s) in Settings</Typography>
+              <Button variant="contained" color="primary" size="large" onClick={handleConfigure}>
+                <SettingsIcon className={classes.icon} />
+                Configure Settings
+              </Button>
+            </div>
+          </React.Fragment>
+        </NoSsr>
+      </UsesSistent>
     );
   }
-  if (adapter && adapter !== ''){
+  if (adapter && adapter !== '') {
     const indContent = renderIndividualAdapter();
     if (indContent !== '') {
       return indContent;
@@ -122,55 +126,56 @@ const MesheryPlayComponent = ({ meshAdapters, setAdapter, classes }) => {
   const imageIcon = pickImage(adapter);
   return (
     <UsesSistent>
-    <NoSsr>
-      <React.Fragment>
-        <div className={classes.playRoot}>
-          <Grid container>
-            <Grid item xs={12} className={classes.paneSection}>
-              <TextField
-                select
-                id="adapter_id"
-                name="adapter_name"
-                label="Select Meshery Adapter"
-                data-cy="lifecycle-service-mesh-type"
-                fullWidth
-                value={adapter?.adapter_location || ''}
-                margin="normal"
-                variant="outlined"
-                onChange={handleAdapterChange}
-                SelectProps={{
-                  MenuProps: {
-                    anchorOrigin: {
-                      vertical: 'bottom',
-                      horizontal: 'left',
+      <NoSsr>
+        <React.Fragment>
+          <div className={classes.playRoot}>
+            <Grid container>
+              <Grid item xs={12} className={classes.paneSection}>
+                <TextField
+                  select
+                  id="adapter_id"
+                  name="adapter_name"
+                  label="Select Meshery Adapter"
+                  data-cy="lifecycle-service-mesh-type"
+                  fullWidth
+                  value={adapter?.adapter_location || ''}
+                  margin="normal"
+                  variant="outlined"
+                  onChange={handleAdapterChange}
+                  SelectProps={{
+                    MenuProps: {
+                      anchorOrigin: {
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                      },
+                      transformOrigin: {
+                        vertical: 'top',
+                        horizontal: 'left',
+                      },
+                      getContentAnchorEl: null,
                     },
-                    transformOrigin: {
-                      vertical: 'top',
-                      horizontal: 'left',
-                    },
-                    getContentAnchorEl: null,
-                  },
-                }}
-              >
-                {meshAdapters.map((ada) => (
-                  <MenuItem
-                    key={`${ada.adapter_location}_${new Date().getTime()}`}
-                    value={ada.adapter_location} >
-                    {pickImage(ada)}
-                    <span className={classes.expTitle}>{ada.adapter_location}</span>
-                  </MenuItem>
-                ))}
-              </TextField>
+                  }}
+                >
+                  {meshAdapters.map((ada) => (
+                    <MenuItem
+                      key={`${ada.adapter_location}_${new Date().getTime()}`}
+                      value={ada.adapter_location}
+                    >
+                      {pickImage(ada)}
+                      <span className={classes.expTitle}>{ada.adapter_location}</span>
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
             </Grid>
-          </Grid>
-        </div>
-        <Divider variant="fullWidth" light />
-        {adapter?.adapter_location && (
-          <MesheryAdapterPlayComponent adapter={adapter} adapter_icon={imageIcon} />
-        )}
-      </React.Fragment>
-    </NoSsr>
-                  </UsesSistent>
+          </div>
+          <Divider variant="fullWidth" light />
+          {adapter?.adapter_location && (
+            <MesheryAdapterPlayComponent adapter={adapter} adapter_icon={imageIcon} />
+          )}
+        </React.Fragment>
+      </NoSsr>
+    </UsesSistent>
   );
 };
 MesheryPlayComponent.propTypes = {
