@@ -16,12 +16,14 @@ package registry
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"sync"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	mutils "github.com/layer5io/meshkit/utils"
+	"github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 	"google.golang.org/api/sheets/v4"
@@ -101,13 +103,39 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 				return fmt.Errorf("both ModelCSV and ComponentCSV files must be present in the directory")
 			}
 		}
+		err = os.MkdirAll(logDirPath, 0755)
+		if err != nil {
+			return ErrUpdateRegistry(err, modelLocation)
+		}
+		utils.Log.SetLevel(logrus.DebugLevel)
+		logFilePath := filepath.Join(logDirPath, "model-generation.log")
+		logFile, err = os.Create(logFilePath)
+		if err != nil {
+			return err
+		}
 
+		utils.LogError.SetLevel(logrus.ErrorLevel)
+		logErrorFilePath := filepath.Join(logDirPath, "registry-errors.log")
+		errorLogFile, err = os.Create(logErrorFilePath)
+		if err != nil {
+			return err
+		}
+		multiWriter := io.MultiWriter(os.Stdout, logFile)
+		multiErrorWriter := io.MultiWriter(os.Stdout, errorLogFile)
+
+		utils.Log.UpdateLogOutput(multiWriter)
+		utils.LogError.UpdateLogOutput(multiErrorWriter)
 		err = utils.InvokeGenerationFromSheet(&wg, registryLocation, sheetGID, componentSpredsheetGID, spreadsheeetID, modelName, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath, relationshipSpredsheetGID, srv)
 		if err != nil {
 			// meshkit
 			utils.LogError.Error(err)
 			return nil
 		}
+		_ = logFile.Close()
+		_ = errorLogFile.Close()
+
+		utils.Log.UpdateLogOutput(os.Stdout)
+		utils.LogError.UpdateLogOutput(os.Stdout)
 		return err
 	},
 }
