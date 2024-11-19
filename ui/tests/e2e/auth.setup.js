@@ -17,7 +17,7 @@ setup('authenticate', async ({ page, provider }) => {
   await page.getByLabel('Select Provider').click();
   await page.getByRole('menuitem', { name: provider }).click();
 
-  if (provider !== 'None') {
+  if (provider === 'Meshery') {
     await page.getByLabel('E-Mail').fill(ENV.REMOTE_PROVIDER_USER.email);
     await page.getByLabel('Password').fill(ENV.REMOTE_PROVIDER_USER.password);
     await page.getByRole('button', { name: 'Sign in', exact: true }).click();
