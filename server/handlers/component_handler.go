@@ -1332,7 +1332,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		}
 		defer os.RemoveAll(tempDir)
 
-		err = mesheryctlUtils.InvokeGenerationFromSheet(&wg, tempDir, 0, 0, "", "", modelCsvFile.Name(), componentCsvFile.Name(), "", relationshipCsvFile.Name(), 0)
+		err = mesheryctlUtils.InvokeGenerationFromSheet(&wg, tempDir, 0, 0, "", "", modelCsvFile.Name(), componentCsvFile.Name(), "", relationshipCsvFile.Name(), 0, nil)
 		if err != nil {
 			h.handleError(rw, err, "Error invoking generation from sheet")
 			h.sendErrorEvent(userID, provider, "Error invoking generation from sheet", err)
