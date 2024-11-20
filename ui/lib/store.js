@@ -405,6 +405,15 @@ export const setKeys =
     return dispatch({ type: actionTypes.SET_KEYS, keys });
   };
 
+export const mesheryStore = {
+  organization: {
+    set: (organization) => (dispatch) =>
+      dispatch({ type: actionTypes.SET_ORGANIZATION, organization }),
+    get: () => store.getState().organization,
+    useCurrentOrg: () => useLegacySelector((state) => state.organization),
+  },
+};
+
 export const makeStore = (initialState, options) => {
   return createStore(reducer, initialState, composeWithDevTools(applyMiddleware(thunkMiddleware)));
 };
