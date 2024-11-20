@@ -1,7 +1,8 @@
 import { expect, test as setup } from './fixtures/setup';
 import { ENV } from './env';
 
-const authFile = 'playwright/.auth/user.json';
+const authFileMesheryProvider = 'playwright/.auth/user-local-provider.json';
+const authFileLocalProvider = 'playwright/.auth/user-meshery-provider.json';
 
 /**
  * This function is called only once before any tests are run.
@@ -17,7 +18,7 @@ setup('authenticate', async ({ page, provider }) => {
   await page.getByLabel('Select Provider').click();
   await page.getByRole('menuitem', { name: provider }).click();
 
-  if (provider !== 'None') {
+  if (provider === 'Meshery') {
     await page.getByLabel('E-Mail').fill(ENV.REMOTE_PROVIDER_USER.email);
     await page.getByLabel('Password').fill(ENV.REMOTE_PROVIDER_USER.password);
     await page.getByRole('button', { name: 'Sign in', exact: true }).click();
@@ -39,5 +40,10 @@ setup('authenticate', async ({ page, provider }) => {
     return expect(redirected).toBeTruthy();
   }).toPass();
   // End of authentication steps.
-  await page.context().storageState({ path: authFile });
+  if (provider === 'Meshery') {
+    await page.context().storageState({ path: authFileMesheryProvider });
+  }
+  if (provider === 'None') {
+    await page.context().storageState({ path: authFileLocalProvider });
+  }
 });

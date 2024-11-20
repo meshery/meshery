@@ -67,7 +67,7 @@ module.exports = defineConfig({
         ...devices['Desktop Chrome'],
         provider: 'Meshery',
         // Use prepared auth state.
-        storageState: 'playwright/.auth/user.json',
+        storageState: 'playwright/.auth/user-local-provider.json',
       },
       dependencies: ['setup'],
     },
@@ -77,7 +77,7 @@ module.exports = defineConfig({
         ...devices['Desktop Chrome'],
         provider: 'None',
         // Use prepared auth state.
-        storageState: 'playwright/.auth/user.json',
+        storageState: 'playwright/.auth/user-meshery-provider.json',
       },
       dependencies: ['setup-local-provider'],
     },
@@ -86,7 +86,7 @@ module.exports = defineConfig({
       use: {
         ...devices['Desktop Firefox'],
         // Use prepared auth state.
-        storageState: 'playwright/.auth/user.json',
+        storageState: 'playwright/.auth/user-meshery-provider.json',
       },
       dependencies: ['setup'],
     } /* Test against mobile viewports. */,
