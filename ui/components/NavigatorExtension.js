@@ -6,7 +6,7 @@ import {
   createRequires,
 } from '@paciolan/remote-component';
 import { bindActionCreators } from 'redux';
-import { updateLoadTestData, setK8sContexts } from '../lib/store';
+import { updateLoadTestData, setK8sContexts, mesheryStore } from '../lib/store';
 import GrafanaCustomCharts from './telemetry/grafana/GrafanaCustomCharts';
 import MesheryPerformanceComponent from './MesheryPerformance';
 import dataFetch from '../lib/data-fetch';
@@ -139,6 +139,7 @@ function NavigatorExtension({
             useFilterK8sContexts,
             useDynamicComponent,
           },
+          mesheryStore: mesheryStore,
         }}
       />
     </DynamicFullScrrenLoader>

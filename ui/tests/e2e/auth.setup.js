@@ -1,4 +1,4 @@
-import { expect, test as setup } from '@playwright/test';
+import { expect, test as setup } from './fixtures/setup';
 import { ENV } from './env';
 
 const authFile = 'playwright/.auth/user.json';
@@ -10,15 +10,19 @@ const authFile = 'playwright/.auth/user.json';
  * The cookies are used in the subsequent tests to authenticate the user.
  * @param {import("@playwright/test").TestModifier} param0
  */
-setup('authenticate', async ({ page }) => {
+setup('authenticate', async ({ page, provider }) => {
   // Perform authentication steps. Replace these actions with your own.
 
   await page.goto(ENV.PROVIDER_SELECTION_URL);
   await page.getByLabel('Select Provider').click();
-  await page.getByRole('menuitem', { name: 'Meshery' }).click();
-  await page.getByLabel('E-Mail').fill(ENV.REMOTE_PROVIDER_USER.email);
-  await page.getByLabel('Password').fill(ENV.REMOTE_PROVIDER_USER.password);
-  await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  await page.getByRole('menuitem', { name: provider }).click();
+
+  if (provider === 'Meshery') {
+    await page.getByLabel('E-Mail').fill(ENV.REMOTE_PROVIDER_USER.email);
+    await page.getByLabel('Password').fill(ENV.REMOTE_PROVIDER_USER.password);
+    await page.getByRole('button', { name: 'Sign in', exact: true }).click();
+  }
+
   // Wait until the page receives the cookies.
   // Sometimes login flow sets cookies in the process of several redirects.
   // Wait for the final URL to ensure that the cookies are actually set.

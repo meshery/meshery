@@ -38,27 +38,49 @@ module.exports = defineConfig({
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://127.0.0.1:3000',
     video: {
-      mode: 'on-first-retry',
+      mode: 'retain-on-failure',
     },
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'retain-on-failure',
+    trace: 'retain-on-first-failure',
   },
 
   /* Configure projects for major browsers */
   projects: [
     // setup
-    { name: 'setup', testMatch: 'tests/e2e/*.setup.js' },
-
     {
-      name: 'chromium',
+      name: 'setup',
+      use: {
+        provider: 'Meshery',
+      },
+      testMatch: 'tests/e2e/*.setup.js',
+    },
+    {
+      name: 'setup-local-provider',
+      use: {
+        provider: 'None',
+      },
+      testMatch: 'tests/e2e/*.setup.js',
+    },
+    {
+      name: 'chromium-meshery-provider',
       use: {
         ...devices['Desktop Chrome'],
+        provider: 'Meshery',
         // Use prepared auth state.
         storageState: 'playwright/.auth/user.json',
       },
       dependencies: ['setup'],
     },
-
+    {
+      name: 'chromium-local-provider',
+      use: {
+        ...devices['Desktop Chrome'],
+        provider: 'None',
+        // Use prepared auth state.
+        storageState: 'playwright/.auth/user.json',
+      },
+      dependencies: ['setup-local-provider'],
+    },
     {
       name: 'firefox',
       use: {

@@ -9,7 +9,7 @@ import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { useGetOrgsQuery } from '../../rtk-query/organization';
 import OrgIcon from '../../assets/icons/OrgIcon';
-import ErrorBoundary from '../ErrorBoundary';
+import { ErrorBoundary as SistentErrorBoundary } from '@layer5/sistent';
 import { Provider } from 'react-redux';
 import { store } from '../../store';
 import theme from '../../themes/app';
@@ -120,14 +120,11 @@ const mapStateToProps = (state) => {
 const SpacesPreferencesWithErrorBoundary = (props) => {
   return (
     <NoSsr>
-      <ErrorBoundary
-        FallbackComponent={() => null}
-        onError={(e) => console.error('Error in Spaces Prefs Component', e)}
-      >
+      <SistentErrorBoundary>
         <Provider store={store}>
           <SpacesPreferences {...props} />
         </Provider>
-      </ErrorBoundary>
+      </SistentErrorBoundary>
     </NoSsr>
   );
 };
