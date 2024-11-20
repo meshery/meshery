@@ -82,6 +82,7 @@ type CatalogSelector struct {
 	PatternType []*string `json:"patternType,omitempty"`
 	Userid      []*string `json:"userid,omitempty"`
 	OrgID       []*string `json:"orgID,omitempty"`
+	WorkspaceID []*string `json:"workspaceID,omitempty"`
 }
 
 type ClusterResources struct {
