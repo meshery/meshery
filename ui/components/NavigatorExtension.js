@@ -82,8 +82,7 @@ function NavigatorExtension({
     return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig);
   };
 
-  const getCurrentOrganization = useLegacySelector((state) => state.get('organization'));
-
+  const currentOrganization = useLegacySelector((state) => state.get('organization'));
   return (
     <DynamicFullScrrenLoader isLoading={loading}>
       <RemoteComponent
@@ -142,7 +141,7 @@ function NavigatorExtension({
             useDynamicComponent,
           },
           mesheryStore: mesheryStore,
-          getCurrentOrganization,
+          currentOrganization,
         }}
       />
     </DynamicFullScrrenLoader>
