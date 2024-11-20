@@ -6,7 +6,7 @@ import {
   createRequires,
 } from '@paciolan/remote-component';
 import { bindActionCreators } from 'redux';
-import { updateLoadTestData, setK8sContexts } from '../lib/store';
+import { updateLoadTestData, setK8sContexts, mesheryStore, useLegacySelector } from '../lib/store';
 import GrafanaCustomCharts from './telemetry/grafana/GrafanaCustomCharts';
 import MesheryPerformanceComponent from './MesheryPerformance';
 import dataFetch from '../lib/data-fetch';
@@ -82,6 +82,8 @@ function NavigatorExtension({
     return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig);
   };
 
+  const getCurrentOrganization = useLegacySelector((state) => state.get('organization'));
+
   return (
     <DynamicFullScrrenLoader isLoading={loading}>
       <RemoteComponent
@@ -139,6 +141,8 @@ function NavigatorExtension({
             useFilterK8sContexts,
             useDynamicComponent,
           },
+          mesheryStore: mesheryStore,
+          getCurrentOrganization,
         }}
       />
     </DynamicFullScrrenLoader>
