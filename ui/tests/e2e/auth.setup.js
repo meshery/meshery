@@ -1,4 +1,4 @@
-import { expect, test as setup } from './fixtures/setup';
+import { expect, test as setup } from './fixtures/project';
 import { ENV } from './env';
 
 /**
