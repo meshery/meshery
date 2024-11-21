@@ -665,17 +665,51 @@ func (h *Handler) VerifyAndConvertToDesign(
 			}
 			bytPattern, _ := yaml.Marshal(pattern)
 			mesheryPattern.PatternFile = string(bytPattern)
+		} else if sourcetype == string(models.HelmChart) {
+			// Write sourceContent to a temporary file
+			tempFile, err := os.CreateTemp("", "helm-chart-*.tgz")
+			if err != nil {
+				return fmt.Errorf("failed to create temp file: %w", err)
+			}
+			defer os.Remove(tempFile.Name()) // Ensure cleanup of the temporary file
+
+			_, err = tempFile.Write(sourceContent)
+			if err != nil {
+				return fmt.Errorf("failed to write to temp file: %w", err)
+			}
+
+			err = tempFile.Close()
+			if err != nil {
+				return fmt.Errorf("failed to close temp file: %w", err)
+			}
+
+			// Use the temporary file path as LocalPath
+			latestKuberVersion := getLatestKubeVersionFromRegistry(h.registryManager)
+			resp, err := kubernetes.ConvertHelmChartToK8sManifest(kubernetes.ApplyHelmChartConfig{
+				LocalPath:         tempFile.Name(),
+				KubernetesVersion: latestKuberVersion,
+			})
+			if err != nil {
+				return ErrConvertingHelmChartToDesign(err)
+			}
+
+			result := string(resp)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(result, mesheryPattern.Name, false, h.registryManager)
+			if err != nil {
+				return ErrConvertingHelmChartToDesign(err)
+			}
+			bytPattern, _ := yaml.Marshal(pattern)
+
+			mesheryPattern.PatternFile = string(bytPattern)
 		}
 
+		// Save the updated Meshery pattern
 		resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 		if err != nil {
-			obj := "save"
-			saveErr := ErrApplicationFailure(err, obj)
-			return saveErr
+			return ErrApplicationFailure(err, "save")
 		}
 
 		contentMesheryPatternSlice := make([]models.MesheryPattern, 0)
-
 		if err := json.Unmarshal(resp, &contentMesheryPatternSlice); err != nil {
 			return models.ErrUnmarshal(err, "pattern")
 		}

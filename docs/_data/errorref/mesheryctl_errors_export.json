@@ -2901,15 +2901,6 @@
         "probable_cause": "Object has invalid yaml format",
         "suggested_remediation": "Make sure to input a valid yaml object"
       },
-      "1323": {
-        "name": "ErrCreatingOPAInstanceCode",
-        "code": "1323",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error creating OPA Instance.",
-        "probable_cause": "Unable to create OPA instance, policies will not be evaluated.",
-        "suggested_remediation": "Ensure relationships are registered"
-      },
       "1324": {
         "name": "ErrEventStreamingNotSupportedCode",
         "code": "1324",
@@ -3287,6 +3278,24 @@
         "short_description": "No tar file found inside OCI image",
         "probable_cause": "The OCI image does not contain a ziped file.",
         "suggested_remediation": "Verify that the OCI image contains a ziped file."
+      },
+      "1366": {
+        "name": "ErrFileTypeCode",
+        "code": "1366",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error: \n is not a valid file type",
+        "probable_cause": "The provided file type is wrong",
+        "suggested_remediation": "Verify the file type"
+      },
+      "1367": {
+        "name": "ErrCreatingOPAInstanceCode",
+        "code": "1367",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error creating OPA Instance.",
+        "probable_cause": "Unable to create OPA instance, policies will not be evaluated.",
+        "suggested_remediation": "Ensure relationships are registered"
       }
     }
   }
