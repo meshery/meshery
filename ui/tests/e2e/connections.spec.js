@@ -252,16 +252,15 @@ test('Delete Kubernetes cluster connections', { tag: '@unstable' }, async ({ pag
   // Verify that Confirmation modal opened and delete
   await expect(page.getByText('Delete Connections')).toBeVisible();
 
-  await page.getByRole('button', { name: 'Delete', exact: true }).click();
-
-  const statusReq = await page.waitForResponse(
+  const responsePromise = page.waitForResponse(
     (response) =>
       response
         .url()
-        .startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections/meshery/status`) &&
+        .startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections/kubernetes/status`) &&
       response.status() === 202,
   );
 
-  // Verify that the status of the connection is deleted
-  expect(statusReq.ok()).toBe(true);
+  await page.getByRole('button', { name: 'Delete', exact: true }).click();
+
+  await responsePromise;
 });
