@@ -40,6 +40,10 @@ export const findNestedObject = (object, condition) => {
  * Accept object and removes empty properties from object.
  **/
 export const filterEmptyFields = (data) => {
+  if (!data) {
+    return {};
+  }
+
   return Object.keys(data).reduce((acc, key) => {
     if (data[key] !== undefined && data[key] !== '') {
       acc[key] = data[key];
