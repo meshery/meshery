@@ -48,6 +48,7 @@ The following instructions are a no-fluff guide to creating your own Meshery Mod
 
 **Congratulations! You have successfully created a new model.**
 
+
 ### Contributing a Model Definition
 
 1. Fork the [meshery/meshery.io](https://github.com/meshery/meshery.io) repository.
