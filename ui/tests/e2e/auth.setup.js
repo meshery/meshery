@@ -1,9 +1,6 @@
 import { expect, test as setup } from './fixtures/setup';
 import { ENV } from './env';
 
-const authFileMesheryProvider = 'playwright/.auth/user-local-provider.json';
-const authFileLocalProvider = 'playwright/.auth/user-meshery-provider.json';
-
 /**
  * This function is called only once before any tests are run.
  * It performs the authentication steps.
@@ -41,9 +38,9 @@ setup('authenticate', async ({ page, provider }) => {
   }).toPass();
   // End of authentication steps.
   if (provider === 'Meshery') {
-    await page.context().storageState({ path: authFileMesheryProvider });
+    await page.context().storageState({ path: ENV.AUTHFILEMESHERYPROVIDER });
   }
   if (provider === 'None') {
-    await page.context().storageState({ path: authFileLocalProvider });
+    await page.context().storageState({ path: ENV.AUTHFILELOCALPROVIDER });
   }
 });
