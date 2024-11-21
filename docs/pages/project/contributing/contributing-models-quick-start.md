@@ -46,16 +46,20 @@ The following instructions are a no-fluff guide to creating your own Meshery Mod
 
 </ol>
 
-**Congratulations! You have successfully created a new model.**
+
+<b>Congratulations! You have successfully created a new model.<b>
 
 
 ### Contributing a Model Definition
 
-1. Fork the [meshery/meshery.io](https://github.com/meshery/meshery.io) repository.
-1. Create a new branch in your fork of the meshery/meshery.io repository.
-1. Add your model definition to the `collections/_models` directory.
-1. Create a pull request to the meshery/meshery.io repository.
-1. Once your pull request is merged, your model will be available in the next Meshery release.
+<ol>
+<li> Fork the [meshery/meshery.io](https://github.com/meshery/meshery.io) repository.</li>
+<li> Create a new branch in your fork of the meshery/meshery.io repository.</li>
+<li> Add your model definition to the `collections/_models` directory.</li>
+<li> Create a pull request to the meshery/meshery.io repository.</li>
+<li> Once your pull request is merged, your model will be available in the next Meshery release.</li>
+
+</ol>
 
 ## Next Steps
 
