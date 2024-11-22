@@ -1,0 +1,34 @@
+{
+  "page": 1,
+  "page_size": 25,
+  "total_count": 1,
+  "relationships": [
+    {
+      "kind": "edge",
+      "type": "network",
+      "version": "v1.0.0",
+      "metadata": {
+        "description": "A relationship that defines network edges between components."
+      },
+      "selector": [
+        {
+          "allow": {
+            "from": [
+              {
+                "kind": "Service",
+                "model": "kubernetes"
+              }
+            ],
+            "to": [
+              {
+                "kind": "Pod",
+                "model": "kubernetes"
+              }
+            ]
+          },
+          "deny": {}
+        }
+      ]
+    }
+  ]
+}

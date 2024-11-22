@@ -1,19 +1,48 @@
 package experimental
 
 import (
-	"flag"
+	"bytes"
 	"io"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 	"testing"
+	"flag"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
 var update = flag.Bool("update", false, "update golden files")
+
+// Redirect stdin to simulate "Enter" key press
+func simulateInput(input string) (*os.File, func()) {
+	// Create a pipe to simulate stdin
+	r, w, _ := os.Pipe()
+
+	// Write the simulated input to the write end of the pipe
+	_, _ = w.WriteString(input)
+
+	// Set os.Stdin to the read end of the pipe
+	originalStdin := os.Stdin
+	os.Stdin = r
+
+	// Return a cleanup function to restore the original os.Stdin
+	return w, func() {
+		os.Stdin = originalStdin
+		r.Close()
+		w.Close()
+	}
+}
+
+func trimLastNLines(s string, n int) string {
+	lines := strings.Split(s, "\n")
+	if len(lines) <= n {
+		return ""
+	}
+	return strings.Join(lines[:len(lines)-n], "\n")
+}
 
 func TestExperimentalList(t *testing.T) {
 	// setup current context
@@ -67,6 +96,9 @@ func TestExperimentalList(t *testing.T) {
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
+			// Redirect stdin to simulate input
+			simulateInput("\n")
+
 			// Grab console prints
 			rescueStdout := os.Stdout
 			r, w, _ := os.Pipe()
@@ -111,12 +143,4 @@ func TestExperimentalList(t *testing.T) {
 	}
 
 	utils.StopMockery(t)
-}
-
-func trimLastNLines(s string, n int) string {
-	lines := strings.Split(s, "\n")
-	if len(lines) <= n {
-		return ""
-	}
-	return strings.Join(lines[:len(lines)-n], "\n")
 }
