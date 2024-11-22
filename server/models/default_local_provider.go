@@ -709,8 +709,8 @@ func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, ord
 }
 
 // GetCatalogMesheryPatterns gives the catalog patterns stored with the provider
-func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(_, page, pageSize, search, order, _ string, class, technology, patternType []string) ([]byte, error) {
-	return l.MesheryPatternPersister.GetMesheryCatalogPatterns(page, pageSize, search, order,)
+func (l *DefaultLocalProvider) GetCatalogMesheryPatterns(_, page, pageSize, search, order, _, _ string, class, technology, patternType, orgID, workspaceID, userid []string) ([]byte, error) {
+	return l.MesheryPatternPersister.GetMesheryCatalogPatterns(page, pageSize, search, order)
 }
 
 // PublishCatalogPattern publishes pattern to catalog
