@@ -285,7 +285,13 @@ func main() {
 			rego = *r
 		}
 
-		krh.SeedKeys(viper.GetString("KEYS_PATH"))
+		//adding check for KEYS_PATH
+		keysPath := viper.GetString("KEYS_PATH")
+		if keysPath == "" {
+			keysPath = "../../server/permissions/keys.csv"
+		}
+
+		krh.SeedKeys(keysPath)
 		hc.MeshModelSummaryChannel.Publish()
 	}()
 
