@@ -1,6 +1,7 @@
 // @ts-check
 const { defineConfig, devices } = require('@playwright/test');
 const { BASE_TIMEOUT } = require('./tests/e2e/delays');
+const { ENV } = require('./tests/e2e/env');
 const dotenv = require('dotenv');
 const path = require('path');
 
@@ -67,7 +68,7 @@ module.exports = defineConfig({
         ...devices['Desktop Chrome'],
         provider: 'Meshery',
         // Use prepared auth state.
-        storageState: 'playwright/.auth/user.json',
+        storageState: ENV.AUTHFILEMESHERYPROVIDER,
       },
       dependencies: ['setup'],
     },
@@ -77,7 +78,7 @@ module.exports = defineConfig({
         ...devices['Desktop Chrome'],
         provider: 'None',
         // Use prepared auth state.
-        storageState: 'playwright/.auth/user.json',
+        storageState: ENV.AUTHFILELOCALPROVIDER,
       },
       dependencies: ['setup-local-provider'],
     },
@@ -86,7 +87,7 @@ module.exports = defineConfig({
       use: {
         ...devices['Desktop Firefox'],
         // Use prepared auth state.
-        storageState: 'playwright/.auth/user.json',
+        storageState: ENV.AUTHFILEMESHERYPROVIDER,
       },
       dependencies: ['setup'],
     } /* Test against mobile viewports. */,
