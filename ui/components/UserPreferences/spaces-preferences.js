@@ -59,46 +59,46 @@ const SpacesPreferences = (props) => {
     <NoSsr>
       <>
         {isOrgsSuccess && orgs && (
-           <UsesSistent>
-          <StyledFormContainer>
-            <StyledFormControl>
-              <FormLabel component="legend" sx={{ fontSize: 20 }}>
-                Spaces
-              </FormLabel>
-              <FormGroup>
-                <FormControlLabel
-                  key="SpacesPreferences"
-                  control={
-                    <Grid container spacing={1} alignItems="flex-end">
-                      <Grid item xs={12} data-cy="mesh-adapter-url">
-                        <StyledOrgSelect
-                          value={organization.id}
-                          onChange={handleOrgSelect}
-                          SelectDisplayProps={{ style: { display: 'flex', padding: '10px' } }}
-                        >
-                          {orgs?.map((org) => {
-                            return (
-                              <StyledSelectItem key={org.id} value={org.id}>
-                                <StyledOrgIconWrapper>
-                                  <OrgIcon
-                                    width="24"
-                                    height="24"
-                                    secondaryFill={theme.palette.darkSlateGray}
-                                  />
-                                </StyledOrgIconWrapper>
-                                <StyledOrgText>{org.name}</StyledOrgText>
-                              </StyledSelectItem>
-                            );
-                          })}
-                        </StyledOrgSelect>
+          <UsesSistent>
+            <StyledFormContainer>
+              <StyledFormControl>
+                <FormLabel component="legend" sx={{ fontSize: 20 }}>
+                  Spaces
+                </FormLabel>
+                <FormGroup>
+                  <FormControlLabel
+                    key="SpacesPreferences"
+                    control={
+                      <Grid container spacing={1} alignItems="flex-end">
+                        <Grid item xs={12} data-cy="mesh-adapter-url">
+                          <StyledOrgSelect
+                            value={organization.id}
+                            onChange={handleOrgSelect}
+                            SelectDisplayProps={{ style: { display: 'flex', padding: '10px' } }}
+                          >
+                            {orgs?.map((org) => {
+                              return (
+                                <StyledSelectItem key={org.id} value={org.id}>
+                                  <StyledOrgIconWrapper>
+                                    <OrgIcon
+                                      width="24"
+                                      height="24"
+                                      secondaryFill={theme.palette.darkSlateGray}
+                                    />
+                                  </StyledOrgIconWrapper>
+                                  <StyledOrgText>{org.name}</StyledOrgText>
+                                </StyledSelectItem>
+                              );
+                            })}
+                          </StyledOrgSelect>
+                        </Grid>
                       </Grid>
-                    </Grid>
-                  }
-                />
-              </FormGroup>
-            </StyledFormControl>
-          </StyledFormContainer>
-    </UsesSistent>
+                    }
+                  />
+                </FormGroup>
+              </StyledFormControl>
+            </StyledFormContainer>
+          </UsesSistent>
         )}
       </>
     </NoSsr>
