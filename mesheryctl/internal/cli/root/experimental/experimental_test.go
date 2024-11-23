@@ -74,7 +74,7 @@ func TestExperimentalList(t *testing.T) {
 	}{
 		{
 			Name:             "List registered relationships",
-			Args:             []string{"relationship", "list"},
+			Args:             []string{"relationship", "list", "--page", "1"},
 			URL:              testContext.BaseURL + "/api/meshmodels/relationships",
 			Fixture:          "list.exp.relationship.api.response.golden",
 			ExpectedResponse: "list.exp.relationship.output.golden",
