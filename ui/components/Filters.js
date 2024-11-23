@@ -46,7 +46,6 @@ import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import {
   CustomColumnVisibilityControl,
-  CustomTooltip,
   ResponsiveDataTable,
   SearchBar,
   UniversalFilter,
@@ -55,6 +54,7 @@ import {
   publishCatalogItemSchema,
   publishCatalogItemUiSchema,
 } from '@layer5/sistent';
+import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import useStyles from '../assets/styles/general/tool.styles';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
@@ -129,9 +129,9 @@ const styles = (theme) => ({
 
 function TooltipIcon({ children, onClick, title }) {
   return (
-    <CustomTooltip title={title} placement="top" interactive>
+    <CustomTextTooltip title={title} placement="top" interactive>
       <IconButton onClick={onClick}>{children}</IconButton>
-    </CustomTooltip>
+    </CustomTextTooltip>
   );
 }
 
@@ -199,7 +199,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
       </DialogContent>
       <Divider variant="fullWidth" light />
       <DialogActions>
-        <CustomTooltip title="Update Filter">
+        <CustomTextTooltip title="Update Filter">
           <IconButton
             aria-label="Update"
             color="primary"
@@ -216,8 +216,8 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
           >
             <SaveIcon style={iconMedium} />
           </IconButton>
-        </CustomTooltip>
-        <CustomTooltip title="Delete Filter">
+        </CustomTextTooltip>
+        <CustomTextTooltip title="Delete Filter">
           <IconButton
             aria-label="Delete"
             color="primary"
@@ -234,7 +234,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
           >
             <DeleteIcon style={iconMedium} />
           </IconButton>
-        </CustomTooltip>
+        </CustomTextTooltip>
       </DialogActions>
     </Dialog>
   );
