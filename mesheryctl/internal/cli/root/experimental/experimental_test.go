@@ -1,27 +1,18 @@
 package experimental
 
 import (
+	"flag"
 	"io"
 	"os"
 	"path/filepath"
 	"runtime"
-	"strings"
 	"testing"
-	"flag"
 
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
 var update = flag.Bool("update", false, "update golden files")
-
-func trimLastNLines(s string, n int) string {
-	lines := strings.Split(s, "\n")
-	if len(lines) <= n {
-		return ""
-	}
-	return strings.Join(lines[:len(lines)-n], "\n")
-}
 
 func TestExperimentalList(t *testing.T) {
 	// setup current context
@@ -53,7 +44,7 @@ func TestExperimentalList(t *testing.T) {
 	}{
 		{
 			Name:             "List registered relationships",
-			Args:             []string{"relationship", "list", "--page", "1"},
+			Args:             []string{"relationship", "list", "--page", "0"},
 			URL:              testContext.BaseURL + "/api/meshmodels/relationships",
 			Fixture:          "list.exp.relationship.api.response.golden",
 			ExpectedResponse: "list.exp.relationship.output.golden",
@@ -108,14 +99,13 @@ func TestExperimentalList(t *testing.T) {
 				golden.Write(actualResponse)
 			}
 			expectedResponse := golden.Load()
-			expectedResponse = trimLastNLines(expectedResponse, 2)
 
 			cleanedActualResponse := utils.CleanStringFromHandlePagination(actualResponse)
 			cleanedExceptedResponse := utils.CleanStringFromHandlePagination(expectedResponse)
 
 			utils.Equals(t, cleanedExceptedResponse, cleanedActualResponse)
 		})
-		t.Log("List Exp test Passed")
+		t.Log("List experimental relationship test passed")
 	}
 
 	utils.StopMockery(t)
