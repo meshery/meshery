@@ -24,7 +24,6 @@
    "displayName": "AWS Systems Manager",
    "id": "00000000-0000-0000-0000-000000000000",
    "metadata": {
-    "capabilities": null,
     "isAnnotation": false,
     "primaryColor": "#7AA116",
     "shape": "rectangle",
@@ -62,7 +61,7 @@
    "relationships_count": 0
   },
   "schemaVersion": "components.meshery.io/v1beta1",
-  "status": "ignored",
+  "status": "enabled",
   "styles": {
    "primaryColor": "#7AA116",
    "shape": "rectangle",
