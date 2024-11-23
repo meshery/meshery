@@ -7,7 +7,7 @@ import { bindActionCreators } from 'redux';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { AppBar, Paper, Typography } from '@material-ui/core';
-import { CustomTooltip } from '@layer5/sistent';
+import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faPoll, faDatabase, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
@@ -335,7 +335,11 @@ class MesherySettings extends React.Component {
                 textColor="primary"
                 centered
               >
-                <CustomTooltip title="Connect Meshery Adapters" placement="top" value={ADAPTERS}>
+                <CustomTextTooltip
+                  title="Connect Meshery Adapters"
+                  placement="top"
+                  value={ADAPTERS}
+                >
                   <Tab
                     className={classes.tab}
                     icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
@@ -349,8 +353,12 @@ class MesherySettings extends React.Component {
                       )
                     }
                   />
-                </CustomTooltip>
-                <CustomTooltip title="Configure Metrics backends" placement="top" value={METRICS}>
+                </CustomTextTooltip>
+                <CustomTextTooltip
+                  title="Configure Metrics backends"
+                  placement="top"
+                  value={METRICS}
+                >
                   <Tab
                     className={classes.tab}
                     icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
@@ -359,8 +367,8 @@ class MesherySettings extends React.Component {
                     value={METRICS}
                     disabled={!CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject)}
                   />
-                </CustomTooltip>
-                <CustomTooltip title="Registry" placement="top" value={REGISTRY}>
+                </CustomTextTooltip>
+                <CustomTextTooltip title="Registry" placement="top" value={REGISTRY}>
                   <Tab
                     className={classes.tab}
                     icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
@@ -369,8 +377,8 @@ class MesherySettings extends React.Component {
                     value={REGISTRY}
                     disabled={!CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)}
                   />
-                </CustomTooltip>
-                <CustomTooltip title="Reset System" placement="top" value={RESET}>
+                </CustomTextTooltip>
+                <CustomTextTooltip title="Reset System" placement="top" value={RESET}>
                   <Tab
                     className={classes.tab}
                     icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
@@ -379,7 +387,7 @@ class MesherySettings extends React.Component {
                     value={RESET}
                     // disabled={!CAN(keys.VIEW_SYSTEM_RESET.action, keys.VIEW_SYSTEM_RESET.subject)} TODO: uncomment when key get seeded
                   />
-                </CustomTooltip>
+                </CustomTextTooltip>
               </Tabs>
             </Paper>
             {tabVal === ADAPTERS &&
