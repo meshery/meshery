@@ -31,7 +31,7 @@ func GenerateConfigGKE(configPath, serviceAccountName, namespace string) error {
 
 func (c *GKEConfig) validate() error {
 	if c.ConfigPath == "" || c.SAName == "" || c.Namespace == "" {
-		return fmt.Errorf("configPath, SAName, and namespc are required")
+		return ErrInvalidArgument(fmt.Errorf("configPath, SAName, and namespace are required"))
 	}
 	return nil
 }
@@ -53,7 +53,7 @@ func (c *GKEConfig) checkPrerequisites() error {
 	}
 
 	if len(missingCommands) > 0 {
-		return fmt.Errorf("missing required commands: %v", missingCommands)
+		return ErrMissingCommands(fmt.Errorf("missing required commands: %v", missingCommands))
 	}
 	return nil
 }
@@ -85,7 +85,7 @@ func (c *GKEConfig) checkConnectivity() error {
 
 	if err := cmd.Run(); err != nil {
 		fmt.Println("!! cannot connect to Kubernetes API server")
-		return fmt.Errorf("failed to connect to Kubernetes API server: %w", err)
+		return ErrKubernetesConnectivity(fmt.Errorf("failed to connect to Kubernetes API server: %w", err))
 	}
 	fmt.Println("✓ can connect to Kubernetes API server")
 
@@ -93,7 +93,7 @@ func (c *GKEConfig) checkConnectivity() error {
 	cmd = exec.Command("kubectl", "get", "nodes")
 	if err := cmd.Run(); err != nil {
 		fmt.Println("!! cannot query Kubernetes API")
-		return fmt.Errorf("failed to query Kubernetes API: %w", err)
+		return ErrKubernetesQuery(fmt.Errorf("failed to query Kubernetes API: %w", err))
 	}
 	fmt.Println("✓ can query Kubernetes API")
 
