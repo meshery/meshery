@@ -14,7 +14,9 @@ type GKEConfig struct {
 	Namespace  string
 }
 
-// GenerateConfigGKE generates kubernetes config for GKE
+/*GenerateConfigGKE generates kubernetes config for GKE
+parameters :- configPath ,SAName=Service Account Name, namespace
+*/
 func GenerateConfigGKE(configPath, SAName, namespace string) error {
 	cfg := &GKEConfig{
 		ConfigPath: configPath,
