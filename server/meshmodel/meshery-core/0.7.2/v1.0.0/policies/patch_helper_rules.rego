@@ -99,16 +99,16 @@ contains_mutated_selector(selector) if {
 
 value_already_exists(update_value, existing_value) if {
 	existing_value != null
-	is_array(existing_value)
+	is_custom_array(existing_value)
 	update_value in existing_value
 }
 
 value_already_exists(update_value, existing_value) if {
 	existing_value != null
-	not is_array(existing_value)
+	not is_custom_array(existing_value)
 	existing_value == update_value
 }
 
-is_array(x) if {
+is_custom_array(x) if {
 	type_name(x) == "array"
 } else := false
