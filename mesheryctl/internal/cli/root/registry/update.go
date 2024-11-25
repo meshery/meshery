@@ -33,6 +33,7 @@ import (
 var (
 	modelLocation            string
 	logFile                  *os.File
+	errorLogFile             *os.File
 	sheetGID                 int64
 	totalAggregateComponents int
 	logDirPath               = filepath.Join(mutils.GetHome(), ".meshery", "logs", "registry")
