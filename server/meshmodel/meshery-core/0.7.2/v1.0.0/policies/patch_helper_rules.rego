@@ -111,8 +111,4 @@ value_already_exists(update_value, existing_value) if {
 
 is_array(x) if {
 	type_name(x) == "array"
-}
-
-is_array(x) = false if {
-	type_name(x) != "array"
-}
+} else := false
