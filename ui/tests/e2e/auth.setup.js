@@ -1,7 +1,5 @@
-import { expect, test as setup } from './fixtures/setup';
+import { expect, test as setup } from './fixtures/project';
 import { ENV } from './env';
-
-const authFile = 'playwright/.auth/user.json';
 
 /**
  * This function is called only once before any tests are run.
@@ -39,5 +37,10 @@ setup('authenticate', async ({ page, provider }) => {
     return expect(redirected).toBeTruthy();
   }).toPass();
   // End of authentication steps.
-  await page.context().storageState({ path: authFile });
+  if (provider === 'Meshery') {
+    await page.context().storageState({ path: ENV.AUTHFILEMESHERYPROVIDER });
+  }
+  if (provider === 'None') {
+    await page.context().storageState({ path: ENV.AUTHFILELOCALPROVIDER });
+  }
 });
