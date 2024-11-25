@@ -26,7 +26,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Provider } from 'react-redux';
 import { store } from '../../../store';
 import { useGetUserByIdQuery } from '../../../rtk-query/user.js';
-import { ErrorBoundary } from '../../General/ErrorBoundary';
 import { getUnit8ArrayForDesign } from '@/utils/utils';
 import ServiceMesheryIcon from '@/assets/icons/ServiceMesheryIcon';
 import {
@@ -508,14 +507,9 @@ const OwnerChip = ({ userProfile }) => {
 
 const InfoModal = (props) => {
   return (
-    <ErrorBoundary
-      FallbackComponent={() => null}
-      onError={(e) => console.error('Error in Info modal', e)}
-    >
-      <Provider store={store}>
-        <InfoModal_ {...props} />
-      </Provider>
-    </ErrorBoundary>
+    <Provider store={store}>
+      <InfoModal_ {...props} />
+    </Provider>
   );
 };
 

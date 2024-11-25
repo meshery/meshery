@@ -366,7 +366,6 @@ export const Notification = ({ event_id }) => {
   ];
 
   const Detail = () => (
-    // <ErrorBoundary>
     <Grid container className={classes.expanded}>
       <Grid item sm={1} className={classes.actorAvatar}>
         <AvatarStack
@@ -387,7 +386,6 @@ export const Notification = ({ event_id }) => {
         <FormattedMetadata event={event} classes={classes} />
       </Grid>
     </Grid>
-    // </ErrorBoundary>
   );
   return (
     <Slide
