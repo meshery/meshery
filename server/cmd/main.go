@@ -242,6 +242,8 @@ func main() {
 		GenericPersister:                dbHandler,
 		Log:                             log,
 	}
+
+	// Local remote provider is initalized here.
 	lProv.Initialize()
 
 	hc := &models.HandlerConfig{
@@ -279,6 +281,7 @@ func main() {
 
 	go func() {
 		models.SeedComponents(log, hc, regManager)
+		// Rego is intialized for passing of policy if the policies are made to be per model base this needs to be removed.
 		r, err := policies.NewRegoInstance(models.PoliciesPath, regManager)
 		if err != nil {
 			log.Warn(handlers.ErrCreatingOPAInstance(err))
