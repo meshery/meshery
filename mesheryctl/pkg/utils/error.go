@@ -44,11 +44,11 @@ var (
 	ErrClearLineCode              = "mesheryctl-1120"
 	ErrUpdateToSheetCode          = "mesheryctl-1129"
 	ErrUpdateRelationshipFileCode = "mesheryctl-1130"
-	ErrGeneratesModelCode         = "replace_me"
-	ErrGeneratesComponentCode     = "replace_me"
-	ErrUpdateComponentsCode       = "replace_me"
-	ErrCSVFileNotFoundCode        = "replace_me"
-	ErrReadCSVRowCode             = "replace_me"
+	ErrGeneratesModelCode         = "mesheryctl-1132"
+	ErrGeneratesComponentCode     = "mesheryctl-1133"
+	ErrUpdateComponentsCode       = "mesheryctl-1134"
+	ErrCSVFileNotFoundCode        = "mesheryctl-1135"
+	ErrReadCSVRowCode             = "mesheryctl-1136"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
