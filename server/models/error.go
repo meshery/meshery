@@ -136,6 +136,7 @@ const (
 	ErrSeedingComponentsCode              = "meshery-server-1358"
 	ErrImportFailureCode                  = "meshery-server-1359"
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
+	ErrStatusCodeCode                     = "replace_me"
 )
 
 var (
@@ -262,6 +263,23 @@ func ErrFetch(err error, obj string, statusCode int) error {
 
 func ErrPost(err error, obj string, statusCode int) error {
 	return errors.New(ErrPostCode, errors.Alert, []string{"Unable to post data to the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode), err.Error()}, []string{}, []string{})
+}
+func ErrStatusCode(statusCode int) error {
+	return errors.New(
+		ErrStatusCodeCode,
+		errors.Alert,
+		[]string{"Request was not successful"},
+		[]string{fmt.Sprintf("Received unexpected status code: %d", statusCode)},
+		[]string{
+			"The server might be down or temporarily unavailable.",
+			"There could be network connectivity issues between the client and the server.",
+			"The API endpoint might be misconfigured, or the server is experiencing high load.",
+		},
+		[]string{
+			"Check if the server is online and operational.",
+			"Verify network connectivity and ensure there are no firewalls or DNS issues blocking the request.",
+			"Confirm the API endpoint is correct and functional."},
+	)
 }
 
 func ErrDelete(err error, obj string, statusCode int) error {
