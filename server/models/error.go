@@ -136,7 +136,7 @@ const (
 	ErrSeedingComponentsCode              = "meshery-server-1358"
 	ErrImportFailureCode                  = "meshery-server-1359"
 	ErrMarshallingDesignIntoYAMLCode      = "meshery-server-1135"
-	ErrStatusCodeCode                     = "replace_me"
+	ErrStatusCodeCode                     = "meshery-server-1368"
 )
 
 var (

@@ -3296,6 +3296,15 @@
         "short_description": "Error creating OPA Instance.",
         "probable_cause": "Unable to create OPA instance, policies will not be evaluated.",
         "suggested_remediation": "Ensure relationships are registered"
+      },
+      "1368": {
+        "name": "ErrStatusCodeCode",
+        "code": "1368",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Request was not successful",
+        "probable_cause": "The server might be down or temporarily unavailable.\nThere could be network connectivity issues between the client and the server.\nThe API endpoint might be misconfigured, or the server is experiencing high load.",
+        "suggested_remediation": "Check if the server is online and operational.\nVerify network connectivity and ensure there are no firewalls or DNS issues blocking the request.\nConfirm the API endpoint is correct and functional."
       }
     }
   }
