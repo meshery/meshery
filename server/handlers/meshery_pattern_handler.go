@@ -98,16 +98,13 @@ func (h *Handler) PatternFileRequestHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
-	fmt.Println("its here",r.Method)
 	if r.Method == http.MethodGet {
 		h.GetMesheryPatternsHandler(rw, r, prefObj, user, provider)
 		return
 	}
 
 	if r.Method == http.MethodPost {
-		fmt.Println("calling right url")
 		h.handlePatternPOST(rw, r, prefObj, user, provider)
-		fmt.Println("calling right url")
 		return
 	}
 }
@@ -2038,7 +2035,6 @@ func (h *Handler) DesignFileRequestHandlerWithSourceType(
 	user *models.User,
 	provider models.Provider,
 ) {
-	fmt.Println("So orginally its leading me here")
 	if r.Method == http.MethodPost {
 		h.handlePatternPOST(rw, r, prefObj, user, provider)
 		return

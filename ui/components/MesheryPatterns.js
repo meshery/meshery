@@ -997,7 +997,6 @@ function MesheryPatterns({
           catalog_data,
         });
       }
-      console.log(body);
       uploadPatternFile({
         uploadBody: body,
       })
@@ -1457,7 +1456,6 @@ function MesheryPatterns({
    * }} data
    */
   function handleImportDesign(data) {
-    console.log('handleImport');
     updateProgress({ showProgress: true });
     const { uploadType, name, url, file } = data;
     let requestBody = null;
@@ -1483,9 +1481,8 @@ function MesheryPatterns({
         });
         break;
     }
-    console.log('tying to call');
-    uploadPatternFile({
-      uploadBody: requestBody,
+    updatePattern({
+      updateBody: requestBody,
     })
       .unwrap()
       .then(() => {
