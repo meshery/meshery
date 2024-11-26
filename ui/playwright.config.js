@@ -50,16 +50,6 @@ module.exports = defineConfig({
     // setup
     {
       name: 'setup',
-      use: {
-        provider: 'Meshery',
-      },
-      testMatch: 'tests/e2e/*.setup.js',
-    },
-    {
-      name: 'setup-local-provider',
-      use: {
-        provider: 'None',
-      },
       testMatch: 'tests/e2e/*.setup.js',
     },
     {
@@ -80,7 +70,7 @@ module.exports = defineConfig({
         // Use prepared auth state.
         storageState: ENV.AUTHFILELOCALPROVIDER,
       },
-      dependencies: ['setup-local-provider'],
+      dependencies: ['setup'],
     },
     {
       name: 'firefox',
