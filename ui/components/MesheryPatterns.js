@@ -402,7 +402,6 @@ function MesheryPatterns({
   const [publishCatalog] = usePublishPatternMutation();
   const [unpublishCatalog] = useUnpublishPatternMutation();
   const [deletePattern] = useDeletePatternMutation();
-  // const [importPattern] = useImportPatternMutation();
   const [updatePattern] = useUpdatePatternFileMutation();
   const [uploadPatternFile] = useUploadPatternFileMutation();
   const [deletePatternFile] = useDeletePatternFileMutation();
@@ -978,7 +977,6 @@ function MesheryPatterns({
 
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
       let body;
-      console.log('catalog property', catalog_data);
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({
           pattern_data: {
