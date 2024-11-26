@@ -90,7 +90,6 @@ import {
   useDeletePatternMutation,
   useDeployPatternMutation,
   useGetPatternsQuery,
-  useImportPatternMutation,
   usePublishPatternMutation,
   useUndeployPatternMutation,
   useUnpublishPatternMutation,
@@ -403,7 +402,7 @@ function MesheryPatterns({
   const [publishCatalog] = usePublishPatternMutation();
   const [unpublishCatalog] = useUnpublishPatternMutation();
   const [deletePattern] = useDeletePatternMutation();
-  const [importPattern] = useImportPatternMutation();
+  // const [importPattern] = useImportPatternMutation();
   const [updatePattern] = useUpdatePatternFileMutation();
   const [uploadPatternFile] = useUploadPatternFileMutation();
   const [deletePatternFile] = useDeletePatternFileMutation();
@@ -979,6 +978,7 @@ function MesheryPatterns({
 
     if (type === FILE_OPS.FILE_UPLOAD || type === FILE_OPS.URL_UPLOAD) {
       let body;
+      console.log('catalog property', catalog_data);
       if (type === FILE_OPS.FILE_UPLOAD) {
         body = JSON.stringify({
           pattern_data: {
@@ -997,6 +997,7 @@ function MesheryPatterns({
           catalog_data,
         });
       }
+      console.log(body);
       uploadPatternFile({
         uploadBody: body,
       })
@@ -1456,8 +1457,9 @@ function MesheryPatterns({
    * }} data
    */
   function handleImportDesign(data) {
+    console.log('handleImport');
     updateProgress({ showProgress: true });
-    const { uploadType, name, url, file, designType } = data;
+    const { uploadType, name, url, file } = data;
     let requestBody = null;
     switch (uploadType) {
       case 'File Upload': {
@@ -1481,10 +1483,9 @@ function MesheryPatterns({
         });
         break;
     }
-
-    importPattern({
-      importBody: requestBody,
-      type: designType,
+    console.log('tying to call');
+    uploadPatternFile({
+      uploadBody: requestBody,
     })
       .unwrap()
       .then(() => {

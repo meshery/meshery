@@ -98,13 +98,16 @@ func (h *Handler) PatternFileRequestHandler(
 	user *models.User,
 	provider models.Provider,
 ) {
+	fmt.Println("its here",r.Method)
 	if r.Method == http.MethodGet {
 		h.GetMesheryPatternsHandler(rw, r, prefObj, user, provider)
 		return
 	}
 
 	if r.Method == http.MethodPost {
+		fmt.Println("calling right url")
 		h.handlePatternPOST(rw, r, prefObj, user, provider)
+		fmt.Println("calling right url")
 		return
 	}
 }
@@ -132,7 +135,7 @@ func (h *Handler) handlePatternPOST(
 	userID := uuid.FromStringOrNil(user.ID)
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("create").ActedUpon(userID).WithSeverity(events.Informational)
 
-	sourcetype := mux.Vars(r)["sourcetype"]
+	// sourcetype := mux.Vars(r)["sourcetype"]
 	parsedBody := &MesheryPatternPOSTRequestBody{}
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		h.log.Error(ErrRequestBody(err))
@@ -145,6 +148,21 @@ func (h *Handler) handlePatternPOST(
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
+	sourcetype,err:=utils.IdentifyInputType(parsedBody.PatternData.PatternFile)
+	if err != nil {
+        h.log.Error(fmt.Errorf("error identifying input type: %w", err))
+        http.Error(rw, fmt.Sprintf("Error identifying pattern type: %s", err.Error()), http.StatusBadRequest)
+        event := eventBuilder.
+            WithSeverity(events.Error).
+            WithMetadata(map[string]interface{}{
+                "error": err.Error(),
+            }).
+            WithDescription("Failed to identify pattern source type.").
+            Build()
+        _ = provider.PersistEvent(event)
+        go h.config.EventBroadcaster.Publish(userID, event)
+        return
+    }
 
 	actedUpon := &userID
 	if parsedBody.PatternData != nil && parsedBody.PatternData.ID != nil {
@@ -2020,6 +2038,7 @@ func (h *Handler) DesignFileRequestHandlerWithSourceType(
 	user *models.User,
 	provider models.Provider,
 ) {
+	fmt.Println("So orginally its leading me here")
 	if r.Method == http.MethodPost {
 		h.handlePatternPOST(rw, r, prefObj, user, provider)
 		return
