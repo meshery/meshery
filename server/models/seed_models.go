@@ -57,6 +57,7 @@ func GetModelDirectoryPaths(modelPath string) ([]string, error) {
 		if len(sortedVersionDirs) == 0 {
 			continue
 		}
+		// Temporarily remove this once the connection and credentials of k8s is written to repective version is implemented in the generator, and the namespace bug (where the component namespace is incorrectly marked as true) is resolved.
 		if modelName == "kubernetes" {
 			sortedVersionDirs[0] = "../meshmodel/kubernetes/v1.32.0-alpha.3"
 		}

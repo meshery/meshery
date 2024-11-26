@@ -1,6 +1,7 @@
 // @ts-check
 const { defineConfig, devices } = require('@playwright/test');
 const { BASE_TIMEOUT } = require('./tests/e2e/delays');
+const { ENV } = require('./tests/e2e/env');
 const dotenv = require('dotenv');
 const path = require('path');
 
@@ -32,7 +33,7 @@ module.exports = defineConfig({
   workers: process.env.CI ? 1 : 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   // reporter: process.env.CI ? "./tests/e2e/custom-playwright-reporter.js" : "list",
-  reporter: process.env.CI ? [['./tests/e2e/custom-playwright-reporter.js'], ['html']] : 'list',
+  reporter: [['./tests/e2e/custom-playwright-reporter.js']],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -49,16 +50,6 @@ module.exports = defineConfig({
     // setup
     {
       name: 'setup',
-      use: {
-        provider: 'Meshery',
-      },
-      testMatch: 'tests/e2e/*.setup.js',
-    },
-    {
-      name: 'setup-local-provider',
-      use: {
-        provider: 'None',
-      },
       testMatch: 'tests/e2e/*.setup.js',
     },
     {
@@ -67,7 +58,7 @@ module.exports = defineConfig({
         ...devices['Desktop Chrome'],
         provider: 'Meshery',
         // Use prepared auth state.
-        storageState: 'playwright/.auth/user.json',
+        storageState: ENV.AUTHFILEMESHERYPROVIDER,
       },
       dependencies: ['setup'],
     },
@@ -77,16 +68,16 @@ module.exports = defineConfig({
         ...devices['Desktop Chrome'],
         provider: 'None',
         // Use prepared auth state.
-        storageState: 'playwright/.auth/user.json',
+        storageState: ENV.AUTHFILELOCALPROVIDER,
       },
-      dependencies: ['setup-local-provider'],
+      dependencies: ['setup'],
     },
     {
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox'],
         // Use prepared auth state.
-        storageState: 'playwright/.auth/user.json',
+        storageState: ENV.AUTHFILEMESHERYPROVIDER,
       },
       dependencies: ['setup'],
     } /* Test against mobile viewports. */,
