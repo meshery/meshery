@@ -719,6 +719,19 @@ func logModelGenerationSummary(modelToCompGenerateTracker *store.GenerticThreadS
 
 	Log.Info(fmt.Sprintf("-----------------------------\n-----------------------------\nGenerated %d models and %d components", totalAggregateModel, totalAggregateComponents))
 }
+
+// This function serves dual purposes: it is invoked either via the UI generation or a spreadsheet. Based on the invocation source, the logger configuration is dynamically set to either output solely to the terminal or to a multi-writer.
+
+// Steps Involved:
+
+//  1. Sheet Parsing: Parse the three sheets and prepare their respective csvHelper instances.
+//  2. Registrant-Based Processing:
+//     2.1 Meshery: Use the Meshery components sheet as the source.
+//     2.2 GitHub/ArtifactHub: Perform additional steps, such as determining the registrant type via the URL and generating a package. This package serves as the basis for component generation (refer to the MeshKit function for details).
+//     2.3 File Writing: Write the generated components to their respective paths in the format {model-name/{release-version-in-repo}/defversion/}.
+//  3. Handling Relationships: Relationships marked with * as the version are written to all versions, with the filenames updated in the sheet.
+//
+// If their is ever an error with the writing of file back to spreadsheet of column mismatch just update utils.ComponentCSV struct.
 func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, componentSheetID int64, spreadsheeetID string, modelName string, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath string, relationshipSheetID int64, srv *sheets.Service) error {
 	weightedSem := semaphore.NewWeighted(20)
 	url := GoogleSpreadSheetURL + spreadsheeetID
