@@ -5,7 +5,10 @@ import rego.v1
 # The `perform_eval` function evaluates relationships of kind "edge" and type "binding".
 # It mutates declarations in the `design_file` according to the selectors defined in the relationship.
 # Returns a list of patched declarations resulting from the applied mutations.
-perform_eval(design_file, relationship) := patched_declarations if {
+perform_eval(
+	design_file,
+	relationship,
+) := patched_declarations if {
 	# Ensure the relationship is of kind "edge" and type "binding"
 	lower(relationship.kind) == "edge"
 	lower(relationship.type) == "binding"
