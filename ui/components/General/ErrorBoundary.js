@@ -10,7 +10,7 @@ import SupportIcon from '@/assets/icons/support';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { useSupportWebHookMutation } from '@/rtk-query/webhook';
 import { EVENT_TYPES } from 'lib/event-types';
-import { useGetLoggedInUserQuery } from '@/rtk-query/user';
+import { useGetLoggedInUserQuery, useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { UsesSistent } from '../SistentWrapper';
 import {
   EditButton,
@@ -26,13 +26,16 @@ import { StickyFeedbackButton } from './feedback';
  * CustomErrorFallback component can be use to show error message to users
  * This components can be passed to error boundary to have custom fallback component
  */
-const CustomErrorFallback = ({ showTroubleshoot, props }) => {
+const CustomErrorFallback = ({ showTroubleshoot, ...props }) => {
   const [openSupportModal, setOpenSupportModal] = useState(false);
 
   const { error } = props;
   const { notify } = useNotification();
   const [triggerWebhook] = useSupportWebHookMutation();
   const { data: userData } = useGetLoggedInUserQuery();
+  const { data: providerData } = useGetProviderCapabilitiesQuery();
+  const showSupportBasedOnProvider = providerData?.provider_type === 'remote';
+
   const handleOpenSupportModal = () => {
     setOpenSupportModal(true);
   };
@@ -83,15 +86,19 @@ const CustomErrorFallback = ({ showTroubleshoot, props }) => {
             {showTroubleshoot ? (
               <Troubleshoot showDesignerButton={false} />
             ) : (
-              <ToolBarButtonContainer style={{ marginTop: '0.7rem' }}>
-                <EditButton
-                  variant="contained"
-                  style={{ marginRight: '0.7rem' }}
-                  onClick={handleOpenSupportModal}
-                >
-                  <TextButton>Get Help</TextButton>
-                </EditButton>
-              </ToolBarButtonContainer>
+              <>
+                {showSupportBasedOnProvider ? (
+                  <ToolBarButtonContainer style={{ marginTop: '0.7rem' }}>
+                    <EditButton
+                      variant="contained"
+                      style={{ marginRight: '0.7rem' }}
+                      onClick={handleOpenSupportModal}
+                    >
+                      <TextButton>Get Help</TextButton>
+                    </EditButton>
+                  </ToolBarButtonContainer>
+                ) : null}
+              </>
             )}
             <TryAgainButton variant="outlined" color="primary" onClick={props.resetErrorBoundary}>
               <TextButton>Try Again</TextButton>
@@ -111,11 +118,13 @@ const CustomErrorFallback = ({ showTroubleshoot, props }) => {
                 submitBtnText="Submit"
               />
             </Modal>
-            <StickyFeedbackButton
-              containerStyles={{ zIndex: 11 }}
-              defaultMessage={errorMessage}
-              defaultOpen={true}
-            />
+            {showSupportBasedOnProvider ? (
+              <StickyFeedbackButton
+                containerStyles={{ zIndex: 11 }}
+                defaultMessage={errorMessage}
+                defaultOpen={true}
+              />
+            ) : null}
           </Fallback>
         </FallbackWrapper>
       </UsesSistent>

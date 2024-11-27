@@ -27,9 +27,8 @@ export const StickyFeedbackButton = ({ defaultMessage, defaultOpen, containerSty
   const onSubmit = async (feedback) => {
     if (!validateFeedback(feedback)) {
       notify({
-        message: `validate error`,
-        event_type: EVENT_TYPES.ERROR,
-        // details: error_msg.toString(),
+        message: `We are unable to process your feedback. Did you include a message in your submission?`,
+        event_type: EVENT_TYPES.WARNING,
       });
       return;
     }
@@ -46,16 +45,14 @@ export const StickyFeedbackButton = ({ defaultMessage, defaultOpen, containerSty
 
     if (resp.error) {
       notify({
-        message: `error`,
+        message: `Error submitting feedback. Check your Internet connection and try again.`,
         event_type: EVENT_TYPES.ERROR,
-        // details: error_msg.toString(),
       });
       return;
     }
     notify({
-      message: `SUCCESS`,
+      message: `Thank you! We have received your feedback.`,
       event_type: EVENT_TYPES.SUCCESS,
-      // details: error_msg.toString(),
     });
   };
 
