@@ -67,16 +67,16 @@ const StyledTab = styled(Tab)(() => {
   };
 });
 
-const IconText = styled('div')(({ theme }) => ({
+const IconText = styled('div')(() => ({
   display: 'inline',
-  verticalAlign: 'middle'
+  verticalAlign: 'middle',
 }));
 
 const StyledIcon = styled('img')(({ theme }) => ({
   display: 'inline',
   verticalAlign: 'text-top',
   width: theme.spacing(1.75),
-  marginLeft: theme.spacing(0.5)
+  marginLeft: theme.spacing(0.5),
 }));
 
 function TabContainer(props) {
@@ -244,7 +244,7 @@ const MesherySettings = (props) => {
     <>
       {CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject) ? (
         <div sx={{ flexGrow: 1, maxWidth: '100%', height: 'auto' }}>
-          <StyledPaper square >
+          <StyledPaper square>
             <StyledTabs
               value={tabVal}
               onChange={handleChange('tabVal')}
@@ -330,9 +330,7 @@ const MesherySettings = (props) => {
                     label={
                       <IconText>
                         Prometheus
-                        <StyledIcon
-                          src="/static/img/prometheus_logo_orange_circle.svg"
-                        />
+                        <StyledIcon src="/static/img/prometheus_logo_orange_circle.svg" />
                       </IconText>
                     }
                   />
