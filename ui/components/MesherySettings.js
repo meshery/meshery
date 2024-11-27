@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import { withRouter } from 'next/router';
@@ -27,7 +27,6 @@ import {
   getMeshModelRegistrants,
 } from '../api/meshmodel';
 import { withNotify } from '../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { REGISTRY, METRICS, ADAPTERS, RESET, GRAFANA, PROMETHEUS } from '@/constants/navigator';
@@ -180,301 +179,266 @@ const settingsRouter = (router) => {
 };
 
 //TODO: Tabs are hardcoded everywhere
-class MesherySettings extends React.Component {
-  constructor(props) {
-    super(props);
-    const { k8sconfig, meshAdapters, grafana, prometheus, router } = props;
+const MesherySettings = (props) => {
+  const { k8sconfig, meshAdapters, grafana, prometheus, router, classes } = props;
+  const { selectedSettingsCategory, selectedTab } = settingsRouter(router);
 
-    const { selectedSettingsCategory, selectedTab } = settingsRouter(router);
-    this._isMounted = false;
-    this.state = {
-      completed: {},
-      k8sconfig,
-      meshAdapters,
-      grafana,
-      prometheus,
-      tabVal: selectedSettingsCategory || ADAPTERS,
-      subTabVal: selectedTab || GRAFANA,
-      modelsCount: 0,
-      componentsCount: 0,
-      relationshipsCount: 0,
-      registrantCount: 0,
-      isMeshConfigured: k8sconfig.clusterConfigured,
+  const [state, setState] = useState({
+    k8sconfig,
+    meshAdapters,
+    grafana,
+    prometheus,
+    tabVal: selectedSettingsCategory || ADAPTERS,
+    subTabVal: selectedTab || GRAFANA,
+    modelsCount: 0,
+    componentsCount: 0,
+    relationshipsCount: 0,
+    registrantCount: 0,
+    isMeshConfigured: k8sconfig.clusterConfigured,
+    scannedPrometheus: [],
+    scannedGrafana: [],
+  });
 
-      // Array of scanned prometheus urls
-      scannedPrometheus: [],
-      // Array of scanned grafan urls
-      scannedGrafana: [],
+  const systemResetPromptRef = useRef(null);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const modelsResponse = await getMeshModels();
+        const componentsResponse = await getComponentsDetail();
+        const relationshipsResponse = await getRelationshipsDetail();
+        const registrantResponce = await getMeshModelRegistrants();
+
+        const modelsCount = removeDuplicateVersions(modelsResponse.models).length;
+        const componentsCount = componentsResponse.total_count;
+        const relationshipsCount = relationshipsResponse.total_count;
+        const registrantCount = registrantResponce.total_count;
+
+        setState((prevState) => ({
+          ...prevState,
+          modelsCount,
+          componentsCount,
+          relationshipsCount,
+          registrantCount,
+        }));
+      } catch (error) {
+        console.error(error);
+      }
     };
-    this.systemResetPromptRef = React.createRef();
-  }
+    fetchData();
+  }, []);
 
-  static getDerivedStateFromProps(props, state) {
-    let st = {};
-    if (
-      JSON.stringify(props.k8sconfig) !== JSON.stringify(state.k8sconfig) ||
-      JSON.stringify(props.meshAdapters) !== JSON.stringify(state.meshAdapters)
-    ) {
-      st = {
-        k8sconfig: props.k8sconfig,
-        meshAdapters: props.meshAdapters,
-        grafana: props.grafana,
-        prometheus: props.prometheus,
-      };
+  useEffect(() => {
+    const { selectedSettingsCategory } = settingsRouter(router);
+    if (selectedSettingsCategory && selectedSettingsCategory !== state.tabVal) {
+      setState((prevState) => ({
+        ...prevState,
+        tabVal: selectedSettingsCategory,
+      }));
     }
-    const compare = (arr1, arr2) => arr1.every((val, ind) => val === arr2[ind]);
+  }, [router]);
 
-    if (
-      props.telemetryUrls.grafana.length !== state.scannedGrafana.length ||
-      !compare(props.telemetryUrls.grafana, state.scannedGrafana)
-    ) {
-      st.scannedGrafana = props.telemetryUrls.grafana;
-    }
-
-    if (
-      props.telemetryUrls.prometheus.length !== state.scannedPrometheus.length ||
-      !compare(props.telemetryUrls.prometheus, state.scannedPrometheus)
-    ) {
-      st.scannedPrometheus = props.telemetryUrls.prometheus;
-    }
-    return st;
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    const { selectedSettingsCategory } = settingsRouter(this.props.router);
-
-    if (selectedSettingsCategory && selectedSettingsCategory !== prevState.tabVal) {
-      this.setState({ tabVal: selectedSettingsCategory });
-    }
-  }
-
-  async componentDidMount() {
-    try {
-      const modelsResponse = await getMeshModels();
-      const componentsResponse = await getComponentsDetail();
-      const relationshipsResponse = await getRelationshipsDetail();
-      const registrantResponce = await getMeshModelRegistrants();
-
-      const modelsCount = removeDuplicateVersions(modelsResponse.models).length;
-      const componentsCount = componentsResponse.total_count;
-      const relationshipsCount = relationshipsResponse.total_count;
-      const registrantCount = registrantResponce.total_count;
-
-      this.setState({
-        modelsCount,
-        componentsCount,
-        relationshipsCount,
-        registrantCount,
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-  handleError = (msg) => (error) => {
-    this.props.updateProgress({ showProgress: false });
-    const notify = this.props.notify;
-    notify({
-      message: `${msg}: ${error}`,
-      event_type: EVENT_TYPES.ERROR,
-      details: error.toString(),
-    });
-  };
-
-  handleChange = (val) => {
-    const self = this;
+  const handleChange = (val) => {
     const {
       handleChangeSettingsCategory,
       handleChangeSelectedTab,
       handleChangeSelectedTabCustomCategory,
-    } = settingsRouter(this.props.router);
+    } = settingsRouter(props.router);
+
     return (event, newVal) => {
       if (val === 'tabVal') {
         if (newVal === METRICS) {
           handleChangeSelectedTabCustomCategory(newVal, GRAFANA);
-          self.setState({ tabVal: newVal, subTabVal: GRAFANA });
+          setState((prevState) => ({
+            ...prevState,
+            tabVal: newVal,
+            subTabVal: GRAFANA,
+          }));
         } else {
           handleChangeSettingsCategory(newVal);
-          self.setState({ tabVal: newVal });
+          setState((prevState) => ({
+            ...prevState,
+            tabVal: newVal,
+          }));
         }
       } else if (val === 'subTabVal') {
         handleChangeSelectedTab(newVal);
-        self.setState({ subTabVal: newVal });
+        setState((prevState) => ({
+          ...prevState,
+          subTabVal: newVal,
+        }));
       }
     };
   };
 
-  render() {
-    const { classes } = this.props;
-    const { tabVal, subTabVal, k8sconfig, meshAdapters } = this.state;
-    let backToPlay = '';
-    if (k8sconfig.clusterConfigured === true && meshAdapters.length > 0) {
-      backToPlay = (
-        <div className={classes.backToPlay}>
-          <Link href="/management">
-            <div className={classes.link}>
-              <FontAwesomeIcon icon={faArrowLeft} transform="grow-4" fixedWidth />
-              You are ready to manage cloud native infrastructure
-            </div>
-          </Link>
-        </div>
-      );
-    }
-    return (
-      <>
-        {CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject) ? (
-          <div className={classes.wrapperClss}>
-            <Paper square className={classes.wrapperClss}>
-              <Tabs
-                value={tabVal}
-                className={classes.tabs}
-                onChange={this.handleChange('tabVal')}
-                variant={window.innerWidth < 900 ? 'scrollable' : 'fullWidth'}
-                scrollButtons="on"
-                indicatorColor="primary"
-                textColor="primary"
-                centered
-              >
-                <CustomTooltip title="Connect Meshery Adapters" placement="top" value={ADAPTERS}>
-                  <Tab
-                    className={classes.tab}
-                    icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
-                    label="Adapters"
-                    data-cy="tabServiceMeshes"
-                    value={ADAPTERS}
-                    disabled={
-                      !CAN(
-                        keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
-                        keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.subject,
-                      )
-                    }
-                  />
-                </CustomTooltip>
-                <CustomTooltip title="Configure Metrics backends" placement="top" value={METRICS}>
-                  <Tab
-                    className={classes.tab}
-                    icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
-                    label="Metrics"
-                    // tab="tabMetrics"
-                    value={METRICS}
-                    disabled={!CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject)}
-                  />
-                </CustomTooltip>
-                <CustomTooltip title="Registry" placement="top" value={REGISTRY}>
-                  <Tab
-                    className={classes.tab}
-                    icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
-                    label="Registry"
-                    // tab="registry"
-                    value={REGISTRY}
-                    disabled={!CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)}
-                  />
-                </CustomTooltip>
-                <CustomTooltip title="Reset System" placement="top" value={RESET}>
-                  <Tab
-                    className={classes.tab}
-                    icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
-                    label="Reset"
-                    // tab="systemReset"
-                    value={RESET}
-                    // disabled={!CAN(keys.VIEW_SYSTEM_RESET.action, keys.VIEW_SYSTEM_RESET.subject)} TODO: uncomment when key get seeded
-                  />
-                </CustomTooltip>
-              </Tabs>
-            </Paper>
-            {tabVal === ADAPTERS &&
-              CAN(
-                keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
-                keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.subject,
-              ) && (
-                <TabContainer>
-                  <MeshAdapterConfigComponent />
-                </TabContainer>
-              )}
-            {tabVal === METRICS && CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject) && (
-              <TabContainer>
-                <AppBar position="static" color="default">
-                  <Tabs
-                    value={subTabVal}
-                    className={classes.tabs}
-                    onChange={this.handleChange('subTabVal')}
-                    indicatorColor="primary"
-                    textColor="primary"
-                    variant="fullWidth"
-                  >
-                    <Tab
-                      className={classes.tab}
-                      value={GRAFANA}
-                      label={
-                        <div className={classes.iconText}>
-                          Grafana
-                          <img src="/static/img/grafana_icon.svg" className={classes.icon} />
-                        </div>
-                      }
-                    />
-                    <Tab
-                      className={classes.tab}
-                      value={PROMETHEUS}
-                      label={
-                        <div className={classes.iconText}>
-                          Prometheus
-                          <img
-                            src="/static/img/prometheus_logo_orange_circle.svg"
-                            className={classes.icon}
-                          />
-                        </div>
-                      }
-                    />
-                  </Tabs>
-                </AppBar>
-                {subTabVal === GRAFANA && (
-                  <TabContainer>
-                    <GrafanaComponent
-                      scannedGrafana={this.state.scannedGrafana}
-                      isMeshConfigured={this.state.isMeshConfigured}
-                    />
-                  </TabContainer>
-                )}
-                {subTabVal === PROMETHEUS && (
-                  <TabContainer>
-                    <PrometheusComponent
-                      scannedPrometheus={this.state.scannedPrometheus}
-                      isMeshConfigured={this.state.isMeshConfigured}
-                    />
-                  </TabContainer>
-                )}
-              </TabContainer>
-            )}
-            {tabVal === REGISTRY && CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject) && (
-              <TabContainer>
-                <TabContainer>
-                  <TabContainer>
-                    <MeshModelComponent
-                      modelsCount={this.state.modelsCount}
-                      componentsCount={this.state.componentsCount}
-                      relationshipsCount={this.state.relationshipsCount}
-                      registrantCount={this.state.registrantCount}
-                      settingsRouter={settingsRouter}
-                    />
-                  </TabContainer>
-                </TabContainer>
-              </TabContainer>
-            )}
-            {tabVal === RESET && (
-              <TabContainer>
-                <DatabaseSummary promptRef={this.systemResetPromptRef} />
-              </TabContainer>
-            )}
-            {backToPlay}
-            <PromptComponent ref={this.systemResetPromptRef} />
+  const { tabVal, subTabVal } = state;
+  let backToPlay = '';
+  if (k8sconfig.clusterConfigured === true && meshAdapters.length > 0) {
+    backToPlay = (
+      <div className={classes.backToPlay}>
+        <Link href="/management">
+          <div className={classes.link}>
+            <FontAwesomeIcon icon={faArrowLeft} transform="grow-4" fixedWidth />
+            You are ready to manage cloud native infrastructure
           </div>
-        ) : (
-          <DefaultError />
-        )}
-      </>
+        </Link>
+      </div>
     );
   }
-}
+  return (
+    <>
+      {CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject) ? (
+        <div className={classes.wrapperClss}>
+          <Paper square className={classes.wrapperClss}>
+            <Tabs
+              value={tabVal}
+              className={classes.tabs}
+              onChange={handleChange('tabVal')}
+              variant={window.innerWidth < 900 ? 'scrollable' : 'fullWidth'}
+              scrollButtons="on"
+              indicatorColor="primary"
+              textColor="primary"
+              centered
+            >
+              <CustomTooltip title="Connect Meshery Adapters" placement="top" value={ADAPTERS}>
+                <Tab
+                  className={classes.tab}
+                  icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
+                  label="Adapters"
+                  data-cy="tabServiceMeshes"
+                  value={ADAPTERS}
+                  disabled={
+                    !CAN(
+                      keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
+                      keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.subject,
+                    )
+                  }
+                />
+              </CustomTooltip>
+              <CustomTooltip title="Configure Metrics backends" placement="top" value={METRICS}>
+                <Tab
+                  className={classes.tab}
+                  icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
+                  label="Metrics"
+                  // tab="tabMetrics"
+                  value={METRICS}
+                  disabled={!CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject)}
+                />
+              </CustomTooltip>
+              <CustomTooltip title="Registry" placement="top" value={REGISTRY}>
+                <Tab
+                  className={classes.tab}
+                  icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
+                  label="Registry"
+                  // tab="registry"
+                  value={REGISTRY}
+                  disabled={!CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)}
+                />
+              </CustomTooltip>
+              <CustomTooltip title="Reset System" placement="top" value={RESET}>
+                <Tab
+                  className={classes.tab}
+                  icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
+                  label="Reset"
+                  // tab="systemReset"
+                  value={RESET}
+                  // disabled={!CAN(keys.VIEW_SYSTEM_RESET.action, keys.VIEW_SYSTEM_RESET.subject)} TODO: uncomment when key get seeded
+                />
+              </CustomTooltip>
+            </Tabs>
+          </Paper>
+          {tabVal === ADAPTERS &&
+            CAN(
+              keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
+              keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.subject,
+            ) && (
+              <TabContainer>
+                <MeshAdapterConfigComponent />
+              </TabContainer>
+            )}
+          {tabVal === METRICS && CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject) && (
+            <TabContainer>
+              <AppBar position="static" color="default">
+                <Tabs
+                  value={subTabVal}
+                  className={classes.tabs}
+                  onChange={handleChange('subTabVal')}
+                  indicatorColor="primary"
+                  textColor="primary"
+                  variant="fullWidth"
+                >
+                  <Tab
+                    className={classes.tab}
+                    value={GRAFANA}
+                    label={
+                      <div className={classes.iconText}>
+                        Grafana
+                        <img src="/static/img/grafana_icon.svg" className={classes.icon} />
+                      </div>
+                    }
+                  />
+                  <Tab
+                    className={classes.tab}
+                    value={PROMETHEUS}
+                    label={
+                      <div className={classes.iconText}>
+                        Prometheus
+                        <img
+                          src="/static/img/prometheus_logo_orange_circle.svg"
+                          className={classes.icon}
+                        />
+                      </div>
+                    }
+                  />
+                </Tabs>
+              </AppBar>
+              {subTabVal === GRAFANA && (
+                <TabContainer>
+                  <GrafanaComponent
+                    scannedGrafana={state.scannedGrafana}
+                    isMeshConfigured={state.isMeshConfigured}
+                  />
+                </TabContainer>
+              )}
+              {subTabVal === PROMETHEUS && (
+                <TabContainer>
+                  <PrometheusComponent
+                    scannedPrometheus={state.scannedPrometheus}
+                    isMeshConfigured={state.isMeshConfigured}
+                  />
+                </TabContainer>
+              )}
+            </TabContainer>
+          )}
+          {tabVal === REGISTRY && CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject) && (
+            <TabContainer>
+              <TabContainer>
+                <TabContainer>
+                  <MeshModelComponent
+                    modelsCount={state.modelsCount}
+                    componentsCount={state.componentsCount}
+                    relationshipsCount={state.relationshipsCount}
+                    registrantCount={state.registrantCount}
+                    settingsRouter={settingsRouter}
+                  />
+                </TabContainer>
+              </TabContainer>
+            </TabContainer>
+          )}
+          {tabVal === RESET && (
+            <TabContainer>
+              <DatabaseSummary promptRef={systemResetPromptRef} />
+            </TabContainer>
+          )}
+          {backToPlay}
+          <PromptComponent ref={systemResetPromptRef} />
+        </div>
+      ) : (
+        <DefaultError />
+      )}
+    </>
+  );
+};
 
 const mapStateToProps = (state) => {
   const k8sconfig = state.get('k8sConfig');
