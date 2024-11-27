@@ -29,8 +29,14 @@ import { JustifyAndAlignCenter } from './MeshModel.style';
 import { withSuppressedErrorBoundary } from '../General/ErrorBoundary';
 import { reactJsonTheme } from './helper';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary } from '@layer5/sistent';
+import { Accordion, AccordionDetails, AccordionSummary, styled } from '@layer5/sistent';
 import dynamic from 'next/dynamic';
+import { UsesSistent } from '../SistentWrapper';
+import {
+  StyledKeyValueFormattedValue,
+  StyledKeyValuePropertyDiv,
+  StyledKeyValueProperty,
+} from './MeshModel.style';
 const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
 
 const ExportAvailable = true;
@@ -42,38 +48,20 @@ const KeyValue = ({ property, value }) => {
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        margin: '0.6rem 0',
-      }}
-    >
-      <p
-        style={{
-          padding: '0',
-          margin: '0 0.5rem 0 0',
-          fontSize: '16px',
-          fontWeight: '600',
-        }}
-      >
-        {property}
-      </p>
-      <p style={{ padding: '0', margin: '0', fontSize: '16px' }}>{formattedValue}</p>
-    </div>
+    <UsesSistent>
+      <StyledKeyValuePropertyDiv>
+        <StyledKeyValueProperty>{property}</StyledKeyValueProperty>
+        <StyledKeyValueFormattedValue>{formattedValue}</StyledKeyValueFormattedValue>
+      </StyledKeyValuePropertyDiv>
+    </UsesSistent>
   );
 };
 
-const Title = ({ title }) => (
-  <p
-    style={{
-      fontSize: '19px',
-      fontWeight: 'bold',
-    }}
-  >
-    {title}
-  </p>
-);
+const StyledTitle = styled('div')(({ theme }) => ({
+  fontSize: '18px',
+  fontFamily: theme.typography.fontFamily,
+  fontWeight: theme.typography.fontWeightBold,
+}));
 
 const RenderContents = ({
   metaDataLeft,
@@ -276,30 +264,32 @@ const ComponentContents = withSuppressedErrorBoundary(({ componentDef }) => {
 
   return (
     <>
-      {isSuccess && componentData ? (
-        <div>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <TitleWithImg
-              displayName={componentData?.displayName}
-              iconSrc={componentData?.styles?.svgColor}
+      <UsesSistent>
+        {isSuccess && componentData ? (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+              <TitleWithImg
+                displayName={componentData?.displayName}
+                iconSrc={componentData?.styles?.svgColor}
+              />
+            </div>
+            <Description description={JSON.parse(componentData?.component?.schema)?.description} />
+            <RenderContents
+              metaDataLeft={metaDataLeft}
+              metaDataRight={metaDataRight}
+              PropertyFormattersLeft={PropertyFormattersLeft}
+              PropertyFormattersRight={PropertyFormattersRight}
+              orderLeft={orderdMetadataLeft}
+              orderRight={orderdMetadataRight}
+              jsonData={componentData}
             />
           </div>
-          <Description description={JSON.parse(componentData?.component?.schema)?.description} />
-          <RenderContents
-            metaDataLeft={metaDataLeft}
-            metaDataRight={metaDataRight}
-            PropertyFormattersLeft={PropertyFormattersLeft}
-            PropertyFormattersRight={PropertyFormattersRight}
-            orderLeft={orderdMetadataLeft}
-            orderRight={orderdMetadataRight}
-            jsonData={componentData}
-          />
-        </div>
-      ) : (
-        <JustifyAndAlignCenter>
-          <CircularProgress size={24} />
-        </JustifyAndAlignCenter>
-      )}
+        ) : (
+          <JustifyAndAlignCenter>
+            <CircularProgress size={24} />
+          </JustifyAndAlignCenter>
+        )}
+      </UsesSistent>
     </>
   );
 });
@@ -333,21 +323,23 @@ const RelationshipContents = withSuppressedErrorBoundary(({ relationshipDef }) =
   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
 
   return (
-    <div>
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <Title title={relationshipDef?.subType} />
-        <Description description={relationshipDef?.metadata?.description} />
+    <UsesSistent>
+      <div>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <StyledTitle>{relationshipDef?.subType}</StyledTitle>
+          <Description description={relationshipDef?.metadata?.description} />
+        </div>
+        <RenderContents
+          metaDataLeft={metaDataLeft}
+          metaDataRight={metaDataRight}
+          PropertyFormattersLeft={PropertyFormattersLeft}
+          PropertyFormattersRight={PropertyFormattersRight}
+          orderLeft={orderdMetadataLeft}
+          orderRight={orderdMetadataRight}
+          jsonData={relationshipDef}
+        />
       </div>
-      <RenderContents
-        metaDataLeft={metaDataLeft}
-        metaDataRight={metaDataRight}
-        PropertyFormattersLeft={PropertyFormattersLeft}
-        PropertyFormattersRight={PropertyFormattersRight}
-        orderLeft={orderdMetadataLeft}
-        orderRight={orderdMetadataRight}
-        jsonData={relationshipDef}
-      />
-    </div>
+    </UsesSistent>
   );
 });
 
@@ -380,7 +372,7 @@ const RegistrantContent = withSuppressedErrorBoundary(({ registrant }) => {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Title title={registrant.hostname} />
+        <StyledTitle>{registrant?.hostname}</StyledTitle>
       </div>
       <RenderContents
         metaDataLeft={metaDataLeft}
@@ -405,7 +397,9 @@ const Description = ({ description }) => (
 const TitleWithImg = ({ displayName, iconSrc }) => (
   <div style={{ display: 'flex', alignItems: 'center', flexBasis: '60%' }}>
     {iconSrc && <img src={iconSrc} height="55px" width="55px" style={{ marginRight: '0.6rem' }} />}
-    <Title title={displayName} />
+    <UsesSistent>
+      <StyledTitle>{displayName}</StyledTitle>
+    </UsesSistent>
   </div>
 );
 
