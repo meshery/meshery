@@ -14,7 +14,8 @@ type GKEConfig struct {
 	Namespace  string
 }
 
-/*GenerateConfigGKE generates kubernetes config for GKE
+/*
+GenerateConfigGKE generates kubernetes config for GKE
 parameters :- configPath ,SAName=Service Account Name, namespace
 */
 func GenerateConfigGKE(configPath, SAName, namespace string) error {
@@ -41,7 +42,6 @@ func (c *GKEConfig) validate() error {
 func (c *GKEConfig) checkPrerequisites() error {
 	var missingCommands []string
 	requiredCommands := []string{"jq", "base64", "awk", "tail"}
-
 
 	for _, cmd := range requiredCommands {
 		if _, err := exec.LookPath(cmd); err != nil {
@@ -75,8 +75,6 @@ func (c *GKEConfig) executeScript() error {
 }
 
 func (c *GKEConfig) checkConnectivity() error {
-	fmt.Println("\nKubernetes API")
-	fmt.Println("--------------")
 
 	// Check if client can be initialized
 	cmd := exec.Command("kubectl", "cluster-info")
@@ -94,10 +92,6 @@ func (c *GKEConfig) checkConnectivity() error {
 		fmt.Println("!! cannot query Kubernetes API")
 		return ErrKubernetesQuery(fmt.Errorf("failed to query Kubernetes API: %w", err))
 	}
-	fmt.Println("✓ can query Kubernetes API")
-
-	fmt.Println("\n--------------")
-	fmt.Println("--------------")
 
 	return nil
 }
