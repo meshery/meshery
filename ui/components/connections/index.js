@@ -842,6 +842,10 @@ function Connections(props) {
         text: 'connection(s) selected',
       },
     },
+    sortOrder: {
+      name: 'name',
+      direction: 'asc',
+    },
     customToolbarSelect: (selected) => (
       <Button
         variant="contained"
