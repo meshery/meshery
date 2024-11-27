@@ -7,7 +7,8 @@ import { updateProgress } from '../../lib/store';
 import { Provider } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
 import { store } from '../../store';
-import { ErrorBoundary } from '../General/ErrorBoundary';
+import { ErrorBoundary } from '@layer5/sistent';
+import CustomErrorFallback from '../General/ErrorBoundary';
 // import Verify from "./verify";
 
 const ConnectionWizard = ({ user }) => {
@@ -66,10 +67,7 @@ const ConnectionWizard = ({ user }) => {
 const ConnectionWizardNew = (props) => {
   return (
     <NoSsr>
-      <ErrorBoundary
-        FallbackComponent={() => null}
-        onError={(e) => console.error('Error in connection wizard', e)}
-      >
+      <ErrorBoundary customFallback={CustomErrorFallback}>
         <Provider store={store}>
           <ConnectionWizard {...props} />
         </Provider>
