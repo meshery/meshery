@@ -31,7 +31,6 @@ import { DisableButton } from './MeshModel.style';
 import { useRouter } from 'next/router';
 import { Provider } from 'react-redux';
 import { store } from '../../store';
-import { ErrorBoundary } from '../General/ErrorBoundary';
 import {
   useLazyGetMeshModelsQuery,
   useLazyGetComponentsQuery,
@@ -1707,14 +1706,9 @@ const TabCard = ({ label, count, active, onClick, animate }) => {
 const MeshModelComponent = (props) => {
   return (
     <NoSsr>
-      <ErrorBoundary
-        FallbackComponent={() => null}
-        onError={(e) => console.error('Error in NotificationCenter', e)}
-      >
-        <Provider store={store}>
-          <MeshModelComponent_ {...props} />
-        </Provider>
-      </ErrorBoundary>
+      <Provider store={store}>
+        <MeshModelComponent_ {...props} />
+      </Provider>
     </NoSsr>
   );
 };
