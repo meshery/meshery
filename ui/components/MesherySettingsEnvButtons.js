@@ -25,7 +25,6 @@ import { keys } from '@/utils/permission_constants';
 import useTestIDsGenerator from './hooks/useTestIDs';
 import CAN from '@/utils/can';
 
-
 const styles = styled((theme) => ({
   ctxIcon: {
     display: 'inline',

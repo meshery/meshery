@@ -1,13 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
 import { withRouter } from 'next/router';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import { AppBar, Paper, Typography } from '@material-ui/core';
-import { CustomTooltip } from '@layer5/sistent';
+import {
+  CustomTooltip,
+  Tab,
+  Tabs,
+  AppBar,
+  Paper,
+  Typography,
+  styled,
+  useTheme,
+} from '@layer5/sistent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faPoll, faDatabase, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
@@ -32,97 +37,47 @@ import { keys } from '@/utils/permission_constants';
 import { REGISTRY, METRICS, ADAPTERS, RESET, GRAFANA, PROMETHEUS } from '@/constants/navigator';
 import { removeDuplicateVersions } from './MeshModelRegistry/helper';
 import DefaultError from './General/error-404';
-const styles = (theme) => ({
-  wrapperClss: {
-    flexGrow: 1,
-    maxWidth: '100%',
-    height: 'auto',
-  },
-  tab: {
+
+const StyledPaper = styled(Paper)(() => ({
+  flexGrow: 1,
+  maxWidth: '100%',
+  height: 'auto',
+}));
+
+const StyledTabs = styled(Tabs)(() => {
+  const theme = useTheme();
+  return {
+    width: '100%',
+    '& .MuiTabs-indicator': {
+      backgroundColor: theme.palette.mode === 'dark' ? '#00B39F' : theme.palette.primary.main,
+    },
+  };
+});
+
+const StyledTab = styled(Tab)(() => {
+  const theme = useTheme();
+  return {
     width: '25%',
     minWidth: 40,
     paddingLeft: 0,
     paddingRight: 0,
     '&.Mui-selected': {
-      color: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
+      color: theme.palette.mode === 'dark' ? '#00B39F' : theme.palette.primary.main,
     },
-  },
-  tabs: {
-    width: '100%',
-    '& .MuiTabs-indicator': {
-      backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
-    },
-  },
-  icon: {
-    display: 'inline',
-    verticalAlign: 'text-top',
-    width: theme.spacing(1.75),
-    marginLeft: theme.spacing(0.5),
-  },
-
-  iconText: {
-    display: 'inline',
-    verticalAlign: 'middle',
-  },
-  backToPlay: { margin: theme.spacing(2) },
-  link: { cursor: 'pointer' },
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: theme.spacing(2),
-  },
-  paper: {
-    maxWidth: '90%',
-    margin: 'auto',
-    overflow: 'hidden',
-  },
-  topToolbar: {
-    marginBottom: '2rem',
-    display: 'flex',
-    justifyContent: 'space-between',
-    paddingLeft: '1rem',
-    maxWidth: '90%',
-  },
-  dashboardSection: {
-    backgroundColor: theme.palette.secondary.elevatedComponents,
-    padding: theme.spacing(2),
-    borderRadius: 4,
-    height: '100%',
-  },
-  cardHeader: { fontSize: theme.spacing(2) },
-  card: {
-    height: '100%',
-    marginTop: theme.spacing(2),
-  },
-  cardContent: { height: '100%' },
-  boxWrapper: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'end',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    height: '60vh',
-    borderRadius: 0,
-    color: 'white',
-    ['@media (max-width: 455px)']: {
-      width: '100%',
-    },
-    zIndex: 5,
-  },
-  box: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-    width: 300,
-    height: 300,
-    backgroundColor: theme.palette.secondary.dark,
-    border: '0px solid #000',
-    boxShadow: theme.shadows[5],
-    margin: theme.spacing(2),
-    cursor: 'pointer',
-  },
+  };
 });
+
+const IconText = styled('div')(({ theme }) => ({
+  display: 'inline',
+  verticalAlign: 'middle'
+}));
+
+const StyledIcon = styled('img')(({ theme }) => ({
+  display: 'inline',
+  verticalAlign: 'text-top',
+  width: theme.spacing(1.75),
+  marginLeft: theme.spacing(0.5)
+}));
 
 function TabContainer(props) {
   return (
@@ -288,11 +243,10 @@ const MesherySettings = (props) => {
   return (
     <>
       {CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject) ? (
-        <div className={classes.wrapperClss}>
-          <Paper square className={classes.wrapperClss}>
-            <Tabs
+        <div sx={{ flexGrow: 1, maxWidth: '100%', height: 'auto' }}>
+          <StyledPaper square >
+            <StyledTabs
               value={tabVal}
-              className={classes.tabs}
               onChange={handleChange('tabVal')}
               variant={window.innerWidth < 900 ? 'scrollable' : 'fullWidth'}
               scrollButtons="on"
@@ -301,8 +255,7 @@ const MesherySettings = (props) => {
               centered
             >
               <CustomTooltip title="Connect Meshery Adapters" placement="top" value={ADAPTERS}>
-                <Tab
-                  className={classes.tab}
+                <StyledTab
                   icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
                   label="Adapters"
                   data-cy="tabServiceMeshes"
@@ -316,8 +269,7 @@ const MesherySettings = (props) => {
                 />
               </CustomTooltip>
               <CustomTooltip title="Configure Metrics backends" placement="top" value={METRICS}>
-                <Tab
-                  className={classes.tab}
+                <StyledTab
                   icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
                   label="Metrics"
                   // tab="tabMetrics"
@@ -326,8 +278,7 @@ const MesherySettings = (props) => {
                 />
               </CustomTooltip>
               <CustomTooltip title="Registry" placement="top" value={REGISTRY}>
-                <Tab
-                  className={classes.tab}
+                <StyledTab
                   icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
                   label="Registry"
                   // tab="registry"
@@ -336,8 +287,7 @@ const MesherySettings = (props) => {
                 />
               </CustomTooltip>
               <CustomTooltip title="Reset System" placement="top" value={RESET}>
-                <Tab
-                  className={classes.tab}
+                <StyledTab
                   icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
                   label="Reset"
                   // tab="systemReset"
@@ -345,8 +295,8 @@ const MesherySettings = (props) => {
                   // disabled={!CAN(keys.VIEW_SYSTEM_RESET.action, keys.VIEW_SYSTEM_RESET.subject)} TODO: uncomment when key get seeded
                 />
               </CustomTooltip>
-            </Tabs>
-          </Paper>
+            </StyledTabs>
+          </StyledPaper>
           {tabVal === ADAPTERS &&
             CAN(
               keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
@@ -359,38 +309,34 @@ const MesherySettings = (props) => {
           {tabVal === METRICS && CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject) && (
             <TabContainer>
               <AppBar position="static" color="default">
-                <Tabs
+                <StyledTabs
                   value={subTabVal}
-                  className={classes.tabs}
                   onChange={handleChange('subTabVal')}
                   indicatorColor="primary"
                   textColor="primary"
                   variant="fullWidth"
                 >
-                  <Tab
-                    className={classes.tab}
+                  <StyledTab
                     value={GRAFANA}
                     label={
-                      <div className={classes.iconText}>
+                      <IconText>
                         Grafana
-                        <img src="/static/img/grafana_icon.svg" className={classes.icon} />
-                      </div>
+                        <StyledIcon src="/static/img/grafana_icon.svg" />
+                      </IconText>
                     }
                   />
-                  <Tab
-                    className={classes.tab}
+                  <StyledTab
                     value={PROMETHEUS}
                     label={
-                      <div className={classes.iconText}>
+                      <IconText>
                         Prometheus
-                        <img
+                        <StyledIcon
                           src="/static/img/prometheus_logo_orange_circle.svg"
-                          className={classes.icon}
                         />
-                      </div>
+                      </IconText>
                     }
                   />
-                </Tabs>
+                </StyledTabs>
               </AppBar>
               {subTabVal === GRAFANA && (
                 <TabContainer>
@@ -463,6 +409,7 @@ const mapDispatchToProps = (dispatch) => ({
 
 MesherySettings.propTypes = { classes: PropTypes.object };
 
-export default withStyles(styles, { withTheme: true })(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(MesherySettings))),
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withRouter(withNotify(MesherySettings)));
