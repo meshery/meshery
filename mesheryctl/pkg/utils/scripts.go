@@ -42,8 +42,6 @@ func (c *GKEConfig) checkPrerequisites() error {
 	var missingCommands []string
 	requiredCommands := []string{"jq", "base64", "awk", "tail"}
 
-	fmt.Println("\nRequired Commands")
-	fmt.Println("--------------")
 
 	for _, cmd := range requiredCommands {
 		if _, err := exec.LookPath(cmd); err != nil {
