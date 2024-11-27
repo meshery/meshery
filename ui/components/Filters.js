@@ -990,6 +990,10 @@ function MesheryFilters({
     page,
     print: false,
     download: false,
+    sortOrder: {
+      name: 'updated_at',
+      direction: 'desc',
+    },
     textLabels: {
       selectedRows: {
         text: 'filter(s) selected',

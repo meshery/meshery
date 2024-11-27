@@ -475,6 +475,10 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
     page,
     print: false,
     download: false,
+    sortOrder: {
+      name: 'updated_at',
+      direction: 'desc',
+    },
     textLabels: {
       selectedRows: {
         text: 'profile(s) selected',

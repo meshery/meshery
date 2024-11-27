@@ -39,6 +39,8 @@ var (
 	logDirPath               = filepath.Join(mutils.GetHome(), ".meshery", "logs", "registry")
 )
 
+// This command is used for retreving the information of components based on the sheet. It updates the components with the actual values of the fetched for sheet.
+// Look the utils.ComponentCSV to see the values fetched.
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update the registry with latest data.",

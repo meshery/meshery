@@ -1,38 +1,31 @@
 import React, { useState } from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import Tooltip from '@material-ui/core/Tooltip';
-import IndeterminateCheckBoxIcon from '@material-ui/icons/IndeterminateCheckBox';
-import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
-import { withStyles } from '@material-ui/core/styles';
-import { NoSsr } from '@material-ui/core';
+import { IconButton, Tooltip, styled } from '@layer5/sistent';
+import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
+import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
+import { NoSsr } from '@mui/material';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import GetAppIcon from '@material-ui/icons/GetApp';
+import GetAppIcon from '@mui/icons-material/GetApp';
 import MesheryChartDialog from './MesheryChartDialog';
 import MesheryChart from './MesheryChart';
 import { clearResultsSelection } from '../lib/store';
+import { UsesSistent } from './SistentWrapper';
 
-const defaultToolbarSelectStyles = {
-  iconButton: {
-    marginRight: '24px',
-    top: '50%',
-    display: 'inline-block',
-    position: 'relative',
-  },
-  icon: {
-    color: '#000',
-  },
-  inverseIcon: {
-    transform: 'rotate(90deg)',
-  },
-};
+const StyledIconButton = styled(IconButton)(({ theme }) => ({
+  marginRight: theme.spacing(3),
+  top: '50%',
+  display: 'inline-block',
+  position: 'relative',
+}));
 
-function CustomToolbarSelect({
-  classes,
-  results_selection,
-  setSelectedRows,
-  clearResultsSelection,
-}) {
+const StyledIcon = styled('span')(({ theme }) => ({
+  color:
+    theme.palette.mode === 'dark'
+      ? theme.palette.background.brand.pressed
+      : theme.palette.text.default,
+}));
+
+function CustomToolbarSelect({ results_selection, setSelectedRows, clearResultsSelection }) {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [data, setData] = useState([]);
   const [, setChartCompare] = useState([]);
@@ -98,43 +91,50 @@ function CustomToolbarSelect({
   });
 
   return (
-    <NoSsr>
-      <div className="custom-toolbar-select">
-        <Tooltip title="Deselect ALL">
-          <IconButton className={classes.iconButton} onClick={handleClickDeselectAll}>
-            <IndeterminateCheckBoxIcon className={classes.icon} />
-          </IconButton>
-        </Tooltip>
-        {fullData.length === 1 && (
-          <Tooltip title="Download">
-            <IconButton
-              className={classes.iconButton}
-              key="download"
-              aria-label="download"
-              color="inherit"
-              href={`/api/perf/profile/result/${encodeURIComponent(fullData[0].meshery_id)}`}
-              download={`${fullData[0].name}_test_result.json`}
-            >
-              <GetAppIcon className={classes.icon} />
-            </IconButton>
+    <UsesSistent>
+      <NoSsr>
+        <div className="custom-toolbar-select">
+          <Tooltip title="Deselect ALL">
+            <StyledIconButton onClick={handleClickDeselectAll}>
+              <StyledIcon>
+                <IndeterminateCheckBoxIcon />
+              </StyledIcon>
+            </StyledIconButton>
           </Tooltip>
-        )}
-        <Tooltip title="Compare selected" data-testid="compare-selected">
-          <IconButton className={classes.iconButton} onClick={handleCompareSelected}>
-            <CompareArrowsIcon className={classes.icon} />
-          </IconButton>
-        </Tooltip>
-      </div>
-      <MesheryChartDialog
-        handleClose={handleDialogClose}
-        open={dialogOpen}
-        content={
-          <div>
-            <MesheryChart data={data} />
-          </div>
-        }
-      />
-    </NoSsr>
+          {fullData.length === 1 && (
+            <Tooltip title="Download">
+              <StyledIconButton
+                key="download"
+                aria-label="download"
+                color="inherit"
+                href={`/api/perf/profile/result/${encodeURIComponent(fullData[0].meshery_id)}`}
+                download={`${fullData[0].name}_test_result.json`}
+              >
+                <StyledIcon>
+                  <GetAppIcon />
+                </StyledIcon>
+              </StyledIconButton>
+            </Tooltip>
+          )}
+          <Tooltip title="Compare selected">
+            <StyledIconButton onClick={handleCompareSelected}>
+              <StyledIcon>
+                <CompareArrowsIcon />
+              </StyledIcon>
+            </StyledIconButton>
+          </Tooltip>
+        </div>
+        <MesheryChartDialog
+          handleClose={handleDialogClose}
+          open={dialogOpen}
+          content={
+            <div>
+              <MesheryChart data={data} />
+            </div>
+          }
+        />
+      </NoSsr>
+    </UsesSistent>
   );
 }
 
@@ -147,6 +147,4 @@ const mapStateToProps = (state) => {
   return { results_selection };
 };
 
-export default withStyles(defaultToolbarSelectStyles, { name: 'CustomToolbarSelect' })(
-  connect(mapStateToProps, mapDispatchToProps)(CustomToolbarSelect),
-);
+export default connect(mapStateToProps, mapDispatchToProps)(CustomToolbarSelect);

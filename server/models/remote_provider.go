@@ -135,6 +135,9 @@ func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
 		return providerProperties
 	}
 	if err != nil || resp.StatusCode != http.StatusOK {
+		if err == nil {
+			err = ErrStatusCode(resp.StatusCode)
+		}
 		l.Log.Error(ErrFetch(err, "Capabilities", http.StatusInternalServerError))
 		return providerProperties
 	}

@@ -23,9 +23,37 @@ jobs:
         if: inputs.spreadsheet_uri != ''
           echo "spreadsheet_uri=${{ inputs.spreadsheet_uri }}" >> $GITHUB_ENV
 
-      - name: Dump keys from the spreadsheet
-        run: |
-          curl -L "${{ env.spreadsheet_uri }}" -o "./keys.csv";
+      - name: Download Google Sheets CSV
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fetch = require('node-fetch');
+            const fs = require('fs');
+            const path = require('path');
+
+            const url = `${{ env.spreadsheet_uri }}`;
+            const filePath = path.resolve(process.cwd(), './keys.csv');
+
+            fetch(url)
+              .then(response => {
+                if (!response.ok) {
+                  if (response.status === 404) {
+                    console.error('Error: Page not found (404)');
+                    process.exit(1);
+                  }
+                  throw new Error(`Failed to fetch CSV: ${response.statusText}`);
+                }
+                return response.text();
+              })
+              .then(data => {
+                fs.writeFileSync(filePath, data, 'utf8');
+                console.log(`CSV data saved to ${filePath}`);
+              })
+              .catch(error => {
+                console.error('Error fetching CSV:', error.message);
+                process.exit(1);
+              });
+
       - name: Create permissions folder
         run: |
           [ ! -d "./server/permissions" ] && mkdir -p "./server/permissions";

@@ -1356,6 +1356,10 @@ function MesheryPatterns({
     page,
     print: false,
     download: false,
+    sortOrder: {
+      name: 'updated_at',
+      direction: 'desc',
+    },
     textLabels: {
       selectedRows: {
         text: 'pattern(s) selected',
