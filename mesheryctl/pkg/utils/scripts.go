@@ -86,7 +86,6 @@ func (c *GKEConfig) checkConnectivity() error {
 	cmd.Stderr = nil
 
 	if err := cmd.Run(); err != nil {
-		fmt.Println("!! cannot connect to Kubernetes API server")
 		return ErrKubernetesConnectivity(fmt.Errorf("failed to connect to Kubernetes API server: %w", err))
 	}
 	fmt.Println("✓ can connect to Kubernetes API server")
