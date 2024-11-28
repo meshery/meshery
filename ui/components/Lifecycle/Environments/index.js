@@ -29,6 +29,7 @@ import {
   PrimaryActionButtons,
   createAndEditEnvironmentSchema,
   createAndEditEnvironmentUiSchema,
+  ErrorBoundary,
 } from '@layer5/sistent';
 import ConnectionIcon from '../../../assets/icons/Connection';
 import { TRANSFER_COMPONENT } from '../../../utils/Enum';
@@ -655,7 +656,9 @@ const mapStateToProps = (state) => {
 const EnvironmentsPageWithErrorBoundary = (props) => {
   return (
     <NoSsr>
-      <Environments {...props} />
+      <ErrorBoundary>
+        <Environments {...props} />
+      </ErrorBoundary>
     </NoSsr>
   );
 };
