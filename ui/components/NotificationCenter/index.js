@@ -51,6 +51,7 @@ import {
 } from '../../rtk-query/notificationCenter';
 import _ from 'lodash';
 import DoneIcon from '../../assets/icons/DoneIcon';
+import { ErrorBoundary, withErrorBoundary } from '../General/ErrorBoundary';
 import { hasClass } from '../../utils/Elements';
 import ReadIcon from '../../assets/icons/ReadIcon';
 import UnreadIcon from '../../assets/icons/UnreadIcon';
@@ -59,8 +60,6 @@ import { useNotification } from '../../utils/hooks/useNotification';
 import { useActorRef } from '@xstate/react';
 import { operationsCenterActor } from 'machines/operationsCenter';
 import { useSelectorRtk } from '@/store/hooks';
-import { ErrorBoundary } from '@layer5/sistent';
-import CustomErrorFallback from '../General/ErrorBoundary';
 
 export const NotificationCenterContext = React.createContext({
   drawerAnchorEl: null,
@@ -119,7 +118,7 @@ const EmptyState = () => {
   );
 };
 
-const NavbarNotificationIcon = () => {
+const NavbarNotificationIcon = withErrorBoundary(() => {
   const { data, error, isLoading } = useGetEventsSummaryQuery({
     status: STATUS.UNREAD,
   });
@@ -152,47 +151,42 @@ const NavbarNotificationIcon = () => {
     );
   }
   return <BellIcon className={iconMedium} fill="#fff" />;
-};
+});
 
-const NotificationCountChip = ({
-  classes,
-  notificationStyle,
-  count,
-  type,
-  handleClick,
-  severity,
-}) => {
-  const theme = useTheme();
-  const selectedSeverity = useSelector(selectSeverity);
-  const darkColor = notificationStyle?.darkColor || notificationStyle?.color;
-  const chipStyles = {
-    fill: theme.palette.type === 'dark' ? darkColor : notificationStyle?.color,
-    height: '20px',
-    width: '20px',
-  };
-  count = Number(count).toLocaleString('en', { useGrouping: true });
-  return (
-    <Tooltip title={type} placement="bottom">
-      <Button
-        style={{
-          backgroundColor: alpha(chipStyles.fill, 0.2),
-          border:
-            selectedSeverity === severity
-              ? `solid 2px ${chipStyles.fill}`
-              : 'solid 2px transparent',
-        }}
-        onClick={handleClick}
-      >
-        <div className={classes.severityChip}>
-          {<notificationStyle.icon {...chipStyles} />}
-          <span>{count}</span>
-        </div>
-      </Button>
-    </Tooltip>
-  );
-};
+const NotificationCountChip = withErrorBoundary(
+  ({ classes, notificationStyle, count, type, handleClick, severity }) => {
+    const theme = useTheme();
+    const selectedSeverity = useSelector(selectSeverity);
+    const darkColor = notificationStyle?.darkColor || notificationStyle?.color;
+    const chipStyles = {
+      fill: theme.palette.type === 'dark' ? darkColor : notificationStyle?.color,
+      height: '20px',
+      width: '20px',
+    };
+    count = Number(count).toLocaleString('en', { useGrouping: true });
+    return (
+      <Tooltip title={type} placement="bottom">
+        <Button
+          style={{
+            backgroundColor: alpha(chipStyles.fill, 0.2),
+            border:
+              selectedSeverity === severity
+                ? `solid 2px ${chipStyles.fill}`
+                : 'solid 2px transparent',
+          }}
+          onClick={handleClick}
+        >
+          <div className={classes.severityChip}>
+            {<notificationStyle.icon {...chipStyles} />}
+            <span>{count}</span>
+          </div>
+        </Button>
+      </Tooltip>
+    );
+  },
+);
 
-const Header = ({ handleFilter, handleClose }) => {
+const Header = withErrorBoundary(({ handleFilter, handleClose }) => {
   const { data } = useGetEventsSummaryQuery({
     status: STATUS.UNREAD,
   });
@@ -252,7 +246,7 @@ const Header = ({ handleFilter, handleClose }) => {
       </div>
     </div>
   );
-};
+});
 
 const Loading = () => {
   return (
@@ -364,7 +358,7 @@ const BulkActions = () => {
   );
 };
 
-const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
+const EventsView = withErrorBoundary(({ handleLoadNextPage, isFetching, hasMore }) => {
   const events = useSelector(selectEvents);
   // const page = useSelector((state) => state.events.current_view.page);
   const lastEventRef = useRef(null);
@@ -409,9 +403,9 @@ const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
       {isFetching && hasMore && <Loading />}
     </>
   );
-};
+});
 
-const CurrentFilterView = ({ handleFilter }) => {
+const CurrentFilterView = withErrorBoundary(({ handleFilter }) => {
   const currentFilters = useSelector((state) => state.events.current_view.filters);
   const onDelete = (key, value) => {
     const newFilters = {
@@ -470,7 +464,7 @@ const CurrentFilterView = ({ handleFilter }) => {
       })}
     </div>
   );
-};
+});
 
 const NotificationCenterDrawer = () => {
   const dispatch = useDispatch();
@@ -619,7 +613,10 @@ const NotificationCenter = (props) => {
 
   return (
     <NoSsr>
-      <ErrorBoundary customFallback={CustomErrorFallback}>
+      <ErrorBoundary
+        FallbackComponent={() => null}
+        onError={(e) => console.error('Error in NotificationCenter', e)}
+      >
         <Provider store={store}>
           <NotificationCenterDrawer {...props} />
         </Provider>

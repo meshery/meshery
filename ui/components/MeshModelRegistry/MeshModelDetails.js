@@ -26,6 +26,7 @@ import {
 } from '@/rtk-query/meshModel';
 import _ from 'lodash';
 import { JustifyAndAlignCenter } from './MeshModel.style';
+import { withSuppressedErrorBoundary } from '../General/ErrorBoundary';
 import { reactJsonTheme } from './helper';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, styled } from '@layer5/sistent';
@@ -130,7 +131,7 @@ const RenderContents = ({
   );
 };
 
-const ModelContents = ({ modelDef }) => {
+const ModelContents = withSuppressedErrorBoundary(({ modelDef }) => {
   const PropertyFormattersLeft = {
     version: (value) => <KeyValue property="API Version" value={value} />,
     hostname: (value) => <KeyValue property="Registrant" value={value} />,
@@ -218,9 +219,9 @@ const ModelContents = ({ modelDef }) => {
       />
     </div>
   );
-};
+});
 
-const ComponentContents = ({ componentDef }) => {
+const ComponentContents = withSuppressedErrorBoundary(({ componentDef }) => {
   const { data, isSuccess } = useGetComponentsQuery({
     params: {
       id: componentDef.id,
@@ -291,9 +292,9 @@ const ComponentContents = ({ componentDef }) => {
       </UsesSistent>
     </>
   );
-};
+});
 
-const RelationshipContents = ({ relationshipDef }) => {
+const RelationshipContents = withSuppressedErrorBoundary(({ relationshipDef }) => {
   const PropertyFormattersLeft = {
     version: (value) => <KeyValue property="API Version" value={value} />,
     modelName: (value) => <KeyValue property="Model Name" value={value} />,
@@ -340,9 +341,9 @@ const RelationshipContents = ({ relationshipDef }) => {
       </div>
     </UsesSistent>
   );
-};
+});
 
-const RegistrantContent = ({ registrant }) => {
+const RegistrantContent = withSuppressedErrorBoundary(({ registrant }) => {
   const PropertyFormattersLeft = {
     models: (value) => <KeyValue property="Models" value={value} />,
     components: (value) => <KeyValue property="Components" value={value} />,
@@ -384,7 +385,7 @@ const RegistrantContent = ({ registrant }) => {
       />
     </div>
   );
-};
+});
 
 const Description = ({ description }) => (
   <div style={{ margin: '0.6rem 0' }}>
@@ -403,89 +404,91 @@ const TitleWithImg = ({ displayName, iconSrc }) => (
 );
 
 // TODO: remove with styles and use either makestyle or styled component
-const StatusChip = withStyles(styles)(({ classes, entityData, entityType }) => {
-  const nextStatus = Object.values(REGISTRY_ITEM_STATES);
-  const [updateEntityStatus] = useUpdateEntityStatusMutation();
-  const { data: modelData, isSuccess } = useGetMeshModelsQuery({
-    params: {
-      id: entityData.model.id,
-      version: entityData.model.version,
-    },
-  });
-
-  const data = modelData?.models?.find((model) => model.id === entityData.id);
-  const handleStatusChange = (e) => {
-    updateEntityStatus({
-      entityType: _.toLower(entityType),
-      body: {
-        id: data.id,
-        status: e.target.value,
-        displayname: entityData.displayName,
+const StatusChip = withSuppressedErrorBoundary(
+  withStyles(styles)(({ classes, entityData, entityType }) => {
+    const nextStatus = Object.values(REGISTRY_ITEM_STATES);
+    const [updateEntityStatus] = useUpdateEntityStatusMutation();
+    const { data: modelData, isSuccess } = useGetMeshModelsQuery({
+      params: {
+        id: entityData.model.id,
+        version: entityData.model.version,
       },
     });
-  };
 
-  const icons = {
-    [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.IGNORED]: () => <RemoveCircleIcon />,
-    [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.ENABLED]: () => <AssignmentTurnedInIcon />,
-  };
+    const data = modelData?.models?.find((model) => model.id === entityData.id);
+    const handleStatusChange = (e) => {
+      updateEntityStatus({
+        entityType: _.toLower(entityType),
+        body: {
+          id: data.id,
+          status: e.target.value,
+          displayname: entityData.displayName,
+        },
+      });
+    };
 
-  return (
-    <FormControl
-      className={classes.chipFormControl}
-      style={{ minWidth: '0%', flexDirection: 'inherit' }}
-    >
-      {isSuccess ? (
-        <Select
-          labelId="entity-status-select-label"
-          id={data?.id}
-          key={data?.id}
-          value={data?.status}
-          defaultValue={data?.status}
-          onClick={(e) => e.stopPropagation()}
-          onChange={(e) => handleStatusChange(e)}
-          className={classes.statusSelect}
-          disableUnderline
-          disabled={!isSuccess} // Disable the select when isSuccess is false
-          MenuProps={{
-            anchorOrigin: {
-              vertical: 'bottom',
-              horizontal: 'left',
-            },
-            transformOrigin: {
-              vertical: 'top',
-              horizontal: 'left',
-            },
-            getContentAnchorEl: null,
-            MenuListProps: { disablePadding: true },
-            PaperProps: { square: true },
-          }}
-        >
-          {nextStatus.map((status) => (
-            <MenuItem
-              disabled={status === data?.status}
-              style={{ padding: '0', display: status === data?.status ? 'none' : 'flex' }}
-              value={status}
-              key={status}
-            >
-              <Chip
-                className={classNames(classes.statusChip, classes[status])}
-                avatar={icons[status] ? icons[status]() : ''}
-                label={
-                  status === data?.status
-                    ? status
-                    : REGISTRY_ITEM_STATES_TO_TRANSITION_MAP?.[status] || status
-                }
-              />
-            </MenuItem>
-          ))}
-        </Select>
-      ) : (
-        <CircularProgress size={24} />
-      )}
-    </FormControl>
-  );
-});
+    const icons = {
+      [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.IGNORED]: () => <RemoveCircleIcon />,
+      [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.ENABLED]: () => <AssignmentTurnedInIcon />,
+    };
+
+    return (
+      <FormControl
+        className={classes.chipFormControl}
+        style={{ minWidth: '0%', flexDirection: 'inherit' }}
+      >
+        {isSuccess ? (
+          <Select
+            labelId="entity-status-select-label"
+            id={data?.id}
+            key={data?.id}
+            value={data?.status}
+            defaultValue={data?.status}
+            onClick={(e) => e.stopPropagation()}
+            onChange={(e) => handleStatusChange(e)}
+            className={classes.statusSelect}
+            disableUnderline
+            disabled={!isSuccess} // Disable the select when isSuccess is false
+            MenuProps={{
+              anchorOrigin: {
+                vertical: 'bottom',
+                horizontal: 'left',
+              },
+              transformOrigin: {
+                vertical: 'top',
+                horizontal: 'left',
+              },
+              getContentAnchorEl: null,
+              MenuListProps: { disablePadding: true },
+              PaperProps: { square: true },
+            }}
+          >
+            {nextStatus.map((status) => (
+              <MenuItem
+                disabled={status === data?.status}
+                style={{ padding: '0', display: status === data?.status ? 'none' : 'flex' }}
+                value={status}
+                key={status}
+              >
+                <Chip
+                  className={classNames(classes.statusChip, classes[status])}
+                  avatar={icons[status] ? icons[status]() : ''}
+                  label={
+                    status === data?.status
+                      ? status
+                      : REGISTRY_ITEM_STATES_TO_TRANSITION_MAP?.[status] || status
+                  }
+                />
+              </MenuItem>
+            ))}
+          </Select>
+        ) : (
+          <CircularProgress size={24} />
+        )}
+      </FormControl>
+    );
+  }),
+);
 
 const MeshModelDetails = ({ view, showDetailsData }) => {
   const theme = useTheme();

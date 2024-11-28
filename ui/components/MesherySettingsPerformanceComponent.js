@@ -1,11 +1,8 @@
 /* eslint-disable */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import Button from '@material-ui/core/Button';
 import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
-import { withStyles } from '@material-ui/core/styles';
 import { Autocomplete } from '@material-ui/lab';
-import Grid from '@material-ui/core/Grid';
 import {
   NoSsr,
   Tooltip,
@@ -15,9 +12,11 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  Button,
+  TextField,
+  Grid
 } from '@material-ui/core';
 import dataFetch from '../lib/data-fetch';
-import TextField from '@material-ui/core/TextField';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateLoadTestPref, updateProgress } from '../lib/store';
@@ -27,28 +26,6 @@ import { withNotify } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 
 const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
-
-const styles = (theme) => ({
-  root: {
-    padding: theme.spacing(10),
-  },
-  buttons: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  button: {
-    marginTop: theme.spacing(3),
-    marginLeft: theme.spacing(1),
-  },
-  margin: {
-    margin: theme.spacing(1),
-  },
-  radio: {
-    '&.Mui-checked': {
-      color: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
-    },
-  },
-});
 
 const MesherySettingsPerformanceComponent = (props) => {
   const { classes, notify } = props;
@@ -166,7 +143,7 @@ const MesherySettingsPerformanceComponent = (props) => {
   return (
     <NoSsr>
       <React.Fragment>
-        <div className={classes.root}>
+        <div sx={{padding: theme.spacing(10),}}>
           <label>
             <strong>Performance Load Test Defaults</strong>
           </label>
@@ -245,7 +222,11 @@ const MesherySettingsPerformanceComponent = (props) => {
                     <FormControlLabel
                       value={lg}
                       control={
-                        <Radio color="primary" disabled={lg === 'wrk2'} className={classes.radio} />
+                        <Radio color="primary" disabled={lg === 'wrk2'}  sx={{
+                          '&.Mui-checked': {
+                            color: theme.palette.mode === 'dark' ? '#00B39F' : theme.palette.primary.main,
+                          },
+                        }}  />
                       }
                       label={lg}
                     />
@@ -254,14 +235,16 @@ const MesherySettingsPerformanceComponent = (props) => {
               </FormControl>
             </Grid>
           </Grid>
-          <div className={classes.buttons}>
+          <div sx={{display: 'flex',
+    justifyContent: 'flex-end',}}>
             <Button
               type="submit"
               variant="contained"
               color="primary"
               size="large"
               onClick={handleSubmit}
-              className={classes.button}
+              sx={{ marginTop: theme.spacing(3),
+                marginLeft: theme.spacing(1),}}
               disabled={blockRunTest}
             >
               <SaveOutlinedIcon style={{ marginRight: '3px' }} />
@@ -293,6 +276,5 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withNotify(MesherySettingsPerformanceComponent)),
+export default connect(mapStateToProps, mapDispatchToProps)(withNotify(MesherySettingsPerformanceComponent),
 );

@@ -72,14 +72,6 @@ const userApi = api.injectEndpoints({
       query: () => 'provider/capabilities',
       method: 'GET',
     }),
-    handleFeedbackFormSubmission: builder.mutation({
-      query: (queryArg) => ({
-        url: `extensions/api/identity/users/notify/feedback`,
-        method: 'POST',
-        body: queryArg.userFeedbackRequestBody,
-      }),
-      invalidatesTags: ['users'],
-    }),
   }),
 });
 
@@ -92,5 +84,4 @@ export const {
   useGetUserPrefWithContextQuery,
   useUpdateUserPrefWithContextMutation,
   useGetProviderCapabilitiesQuery,
-  useHandleFeedbackFormSubmissionMutation,
 } = userApi;
