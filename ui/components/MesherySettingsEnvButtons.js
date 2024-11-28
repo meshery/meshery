@@ -5,10 +5,10 @@ import {
   TextField,
   InputAdornment,
   Tooltip,
-  makeStyles,
   Grid,
   Box,
-} from '@material-ui/core';
+  styled,
+} from '@layer5/sistent';
 import React from 'react';
 import { useRef } from 'react';
 import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
@@ -25,7 +25,7 @@ import { keys } from '@/utils/permission_constants';
 import useTestIDsGenerator from './hooks/useTestIDs';
 import CAN from '@/utils/can';
 
-const styles = makeStyles((theme) => ({
+const styles = styled((theme) => ({
   ctxIcon: {
     display: 'inline',
     verticalAlign: 'text-top',
