@@ -27,7 +27,6 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            const fetch = require('node-fetch');
             const fs = require('fs');
             const path = require('path');
 
@@ -73,3 +72,25 @@ jobs:
           commit_user_name: l5io
           commit_user_email: ci@layer5.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>author of the commit that triggered the run
+
+      - name: Send Email on Generate permission keys failure
+        if: ${{ failure() }}
+        uses: dawidd6/action-send-mail@v3.7.1
+        env:
+          msg: ${{ env.reason != '' && env.reason || ' Generate permission keys failure' }}
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.MAIL_USERNAME }}
+          password: ${{ secrets.MAIL_PASSWORD }}
+          subject: GitHub Actions - Generate permission keys failure
+          from: |
+            "Meshery" <no-reply@meshery.io>
+          to: |
+            "Layer5 Support" <support@layer5.io>
+          html_body: |
+            <b>REPO:</b> ${{ github.repository }}<br />
+            <b>WORKFLOW:</b> ${{ github.workflow }}<br />
+            <b>JOB:</b> ${{ github.job }}<br />
+            <b>REASON:</b> ${{ env.msg }}<br />
+            <b>DETAILS:</b> <a href="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}${{ job.status }}">${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}</a><br />

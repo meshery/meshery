@@ -7,8 +7,6 @@ import React, { useEffect, useState } from 'react';
 import { scrollToTop } from '../../utils/utils';
 import { generateUUID } from '../MesheryPerformance/helper';
 
-import { ErrorBoundary } from '@layer5/sistent';
-
 /**
  * usePatternServiceForm seperates the form logic from its UI representation
  * @param {{
@@ -121,11 +119,7 @@ function PatternServiceFormCore_({
 }
 
 const PatternServiceFormCore = (props) => {
-  return (
-    <ErrorBoundary>
-      <PatternServiceFormCore_ {...props} />
-    </ErrorBoundary>
-  );
+  return <PatternServiceFormCore_ {...props} />;
 };
 
 export default PatternServiceFormCore;
