@@ -4,6 +4,7 @@ import { FeedbackButton, styled } from '@layer5/sistent';
 import { EVENT_TYPES } from 'lib/event-types';
 import _ from 'lodash';
 import { useRouter } from 'next/router';
+import { UsesSistent } from '../SistentWrapper';
 
 const FeedbackWrapper = styled('div')(({ theme }) => ({
   [theme.breakpoints.down('sm')]: {
@@ -57,14 +58,16 @@ export const StickyFeedbackButton = ({ defaultMessage, defaultOpen, containerSty
   };
 
   return (
-    <FeedbackWrapper>
-      <FeedbackButton
-        defaultMessage={defaultMessage}
-        containerStyles={containerStyles}
-        renderPosition="right-middle"
-        onSubmit={onSubmit}
-        defaultOpen={defaultOpen}
-      />
-    </FeedbackWrapper>
+    <UsesSistent>
+      <FeedbackWrapper>
+        <FeedbackButton
+          defaultMessage={defaultMessage}
+          containerStyles={containerStyles}
+          renderPosition="right-middle"
+          onSubmit={onSubmit}
+          defaultOpen={defaultOpen}
+        />
+      </FeedbackWrapper>
+    </UsesSistent>
   );
 };
