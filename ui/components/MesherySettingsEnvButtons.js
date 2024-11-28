@@ -24,6 +24,7 @@ import useKubernetesHook from './hooks/useKubernetesHook';
 import { keys } from '@/utils/permission_constants';
 import useTestIDsGenerator from './hooks/useTestIDs';
 import CAN from '@/utils/can';
+import { UsesSistent } from './SistentWrapper';
 
 const styles = styled((theme) => ({
   ctxIcon: {
@@ -198,32 +199,34 @@ const MesherySettingsEnvButtons = () => {
 
   return (
     <div>
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        size="large"
-        onClick={handleClick}
-        style={{
-          padding: '8px',
-          borderRadius: 5,
-          marginRight: '2rem',
-        }}
-        disabled={!CAN(keys.ADD_CLUSTER.action, keys.ADD_CLUSTER.subject)}
-        data-cy="btnResetDatabase"
-      >
-        <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
-        <Typography
+      <UsesSistent>
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          size="large"
+          onClick={handleClick}
           style={{
-            paddingLeft: '4px',
-            marginRight: '4px',
+            padding: '8px',
+            borderRadius: 5,
+            marginRight: '2rem',
           }}
-          data-testid={testIDs('addCluster')}
+          disabled={!CAN(keys.ADD_CLUSTER.action, keys.ADD_CLUSTER.subject)}
+          data-cy="btnResetDatabase"
         >
-          {' '}
-          Add Cluster
-        </Typography>
-      </Button>
+          <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
+          <Typography
+            style={{
+              paddingLeft: '4px',
+              marginRight: '4px',
+            }}
+            data-testid={testIDs('addCluster')}
+          >
+            {' '}
+            Add Cluster
+          </Typography>
+        </Button>
+      </UsesSistent>
       <PromptComponent ref={ref} />
     </div>
   );
