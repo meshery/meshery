@@ -71,7 +71,7 @@ function NavigatorExtension({
           <code>{err.toString()}</code>
         </div>
         <div style={{ marginTop: '1rem' }}>
-          <Troubleshoot showDesignerButton={false} errorMessage={err.toString()} />
+          <Troubleshoot showDesignerButton={false} />
         </div>
       </div>
     );

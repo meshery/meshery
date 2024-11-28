@@ -19,14 +19,13 @@ import {
   ToolBarButtonContainer,
   TryAgainButton,
 } from './style';
-import Troubleshoot from '../TroubleshootingComponent';
 import { StickyFeedbackButton } from './feedback';
 
 /**
  * CustomErrorFallback component can be use to show error message to users
  * This components can be passed to error boundary to have custom fallback component
  */
-const CustomErrorFallback = ({ showTroubleshoot, ...props }) => {
+const CustomErrorFallback = (props) => {
   const [openSupportModal, setOpenSupportModal] = useState(false);
 
   const { error } = props;
@@ -83,23 +82,20 @@ const CustomErrorFallback = ({ showTroubleshoot, ...props }) => {
       <UsesSistent>
         <FallbackWrapper>
           <Fallback showPackageInfo={true} {...props}>
-            {showTroubleshoot ? (
-              <Troubleshoot showDesignerButton={false} />
-            ) : (
-              <>
-                {showSupportBasedOnProvider ? (
-                  <ToolBarButtonContainer style={{ marginTop: '0.7rem' }}>
-                    <EditButton
-                      variant="contained"
-                      style={{ marginRight: '0.7rem' }}
-                      onClick={handleOpenSupportModal}
-                    >
-                      <TextButton>Get Help</TextButton>
-                    </EditButton>
-                  </ToolBarButtonContainer>
-                ) : null}
-              </>
-            )}
+            <>
+              {showSupportBasedOnProvider ? (
+                <ToolBarButtonContainer style={{ marginTop: '0.7rem' }}>
+                  <EditButton
+                    variant="contained"
+                    style={{ marginRight: '0.7rem' }}
+                    onClick={handleOpenSupportModal}
+                  >
+                    <TextButton>Get Help</TextButton>
+                  </EditButton>
+                </ToolBarButtonContainer>
+              ) : null}
+            </>
+
             <TryAgainButton variant="outlined" color="primary" onClick={props.resetErrorBoundary}>
               <TextButton>Try Again</TextButton>
             </TryAgainButton>
