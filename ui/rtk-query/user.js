@@ -28,7 +28,7 @@ const userApi = api.injectEndpoints({
       query: (queryArg) => ({
         url: 'user/prefs',
         method: 'POST',
-        body: queryArg.usersExtensionPreferences,
+        body: queryArg,
         credentials: 'include',
       }),
       invalidatesTags: [Tags.USER_PREF],
