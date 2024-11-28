@@ -48,12 +48,10 @@ const KeyValue = ({ property, value }) => {
   }
 
   return (
-    <UsesSistent>
-      <StyledKeyValuePropertyDiv>
-        <StyledKeyValueProperty>{property}</StyledKeyValueProperty>
-        <StyledKeyValueFormattedValue>{formattedValue}</StyledKeyValueFormattedValue>
-      </StyledKeyValuePropertyDiv>
-    </UsesSistent>
+    <StyledKeyValuePropertyDiv>
+      <StyledKeyValueProperty>{property}</StyledKeyValueProperty>
+      <StyledKeyValueFormattedValue>{formattedValue}</StyledKeyValueFormattedValue>
+    </StyledKeyValuePropertyDiv>
   );
 };
 
@@ -264,32 +262,30 @@ const ComponentContents = withSuppressedErrorBoundary(({ componentDef }) => {
 
   return (
     <>
-      <UsesSistent>
-        {isSuccess && componentData ? (
-          <div>
-            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-              <TitleWithImg
-                displayName={componentData?.displayName}
-                iconSrc={componentData?.styles?.svgColor}
-              />
-            </div>
-            <Description description={JSON.parse(componentData?.component?.schema)?.description} />
-            <RenderContents
-              metaDataLeft={metaDataLeft}
-              metaDataRight={metaDataRight}
-              PropertyFormattersLeft={PropertyFormattersLeft}
-              PropertyFormattersRight={PropertyFormattersRight}
-              orderLeft={orderdMetadataLeft}
-              orderRight={orderdMetadataRight}
-              jsonData={componentData}
+      {isSuccess && componentData ? (
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <TitleWithImg
+              displayName={componentData?.displayName}
+              iconSrc={componentData?.styles?.svgColor}
             />
           </div>
-        ) : (
-          <JustifyAndAlignCenter>
-            <CircularProgress size={24} />
-          </JustifyAndAlignCenter>
-        )}
-      </UsesSistent>
+          <Description description={JSON.parse(componentData?.component?.schema)?.description} />
+          <RenderContents
+            metaDataLeft={metaDataLeft}
+            metaDataRight={metaDataRight}
+            PropertyFormattersLeft={PropertyFormattersLeft}
+            PropertyFormattersRight={PropertyFormattersRight}
+            orderLeft={orderdMetadataLeft}
+            orderRight={orderdMetadataRight}
+            jsonData={componentData}
+          />
+        </div>
+      ) : (
+        <JustifyAndAlignCenter>
+          <CircularProgress size={24} />
+        </JustifyAndAlignCenter>
+      )}
     </>
   );
 });
@@ -323,23 +319,21 @@ const RelationshipContents = withSuppressedErrorBoundary(({ relationshipDef }) =
   const orderdMetadataRight = reorderObjectProperties(metaDataRight, orderRight);
 
   return (
-    <UsesSistent>
-      <div>
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
-          <StyledTitle>{relationshipDef?.subType}</StyledTitle>
-          <Description description={relationshipDef?.metadata?.description} />
-        </div>
-        <RenderContents
-          metaDataLeft={metaDataLeft}
-          metaDataRight={metaDataRight}
-          PropertyFormattersLeft={PropertyFormattersLeft}
-          PropertyFormattersRight={PropertyFormattersRight}
-          orderLeft={orderdMetadataLeft}
-          orderRight={orderdMetadataRight}
-          jsonData={relationshipDef}
-        />
+    <div>
+      <div style={{ display: 'flex', flexDirection: 'column' }}>
+        <StyledTitle>{relationshipDef?.subType}</StyledTitle>
+        <Description description={relationshipDef?.metadata?.description} />
       </div>
-    </UsesSistent>
+      <RenderContents
+        metaDataLeft={metaDataLeft}
+        metaDataRight={metaDataRight}
+        PropertyFormattersLeft={PropertyFormattersLeft}
+        PropertyFormattersRight={PropertyFormattersRight}
+        orderLeft={orderdMetadataLeft}
+        orderRight={orderdMetadataRight}
+        jsonData={relationshipDef}
+      />
+    </div>
   );
 });
 
@@ -397,9 +391,7 @@ const Description = ({ description }) => (
 const TitleWithImg = ({ displayName, iconSrc }) => (
   <div style={{ display: 'flex', alignItems: 'center', flexBasis: '60%' }}>
     {iconSrc && <img src={iconSrc} height="55px" width="55px" style={{ marginRight: '0.6rem' }} />}
-    <UsesSistent>
-      <StyledTitle>{displayName}</StyledTitle>
-    </UsesSistent>
+    <StyledTitle>{displayName}</StyledTitle>
   </div>
 );
 
@@ -518,11 +510,13 @@ const MeshModelDetails = ({ view, showDetailsData }) => {
   };
 
   return (
-    <Paper
-      className={isEmptyDetails ? StyleClass.emptyDetailsContainer : StyleClass.detailsContainer}
-    >
-      {isEmptyDetails ? renderEmptyDetails() : getContent(showDetailsData.type)}
-    </Paper>
+    <UsesSistent>
+      <Paper
+        className={isEmptyDetails ? StyleClass.emptyDetailsContainer : StyleClass.detailsContainer}
+      >
+        {isEmptyDetails ? renderEmptyDetails() : getContent(showDetailsData.type)}
+      </Paper>
+    </UsesSistent>
   );
 };
 
