@@ -3,6 +3,7 @@ import {
   Modal,
   helpAndSupportModalSchema,
   helpAndSupportModalUiSchema,
+  useTheme,
 } from '@layer5/sistent';
 import { useState } from 'react';
 import { RJSFModalWrapper } from '../Modal';
@@ -29,6 +30,7 @@ const CustomErrorFallback = (props) => {
   const [openSupportModal, setOpenSupportModal] = useState(false);
 
   const { error } = props;
+  const theme = useTheme();
   const { notify } = useNotification();
   const [triggerWebhook] = useSupportWebHookMutation();
   const { data: userData } = useGetLoggedInUserQuery();
@@ -96,8 +98,14 @@ const CustomErrorFallback = (props) => {
               ) : null}
             </>
 
-            <TryAgainButton variant="outlined" color="primary" onClick={props.resetErrorBoundary}>
-              <TextButton>Try Again</TextButton>
+            <TryAgainButton color="primary" onClick={props.resetErrorBoundary}>
+              <TextButton
+                style={{
+                  color: theme.palette.text.default,
+                }}
+              >
+                Try Again
+              </TextButton>
             </TryAgainButton>
 
             <Modal

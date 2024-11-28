@@ -5,8 +5,8 @@ export const FallbackWrapper = styled(Box)(() => ({
 }));
 
 export const TryAgainButton = styled(Button)(({ theme }) => ({
+  background: 'transparent',
   border: `1px solid ${theme.palette.border.brand}`,
-  color: theme.palette.border.normal,
   '&:hover': {
     border: `1px solid ${theme.palette.border.brand}`,
   },
@@ -22,12 +22,13 @@ export const EditButton = styled(Button)(({ theme }) => ({
   },
 }));
 
-export const TextButton = styled('span')(() => ({
+export const TextButton = styled('span')(({ style }) => ({
   marginLeft: '0.5rem',
   display: 'block',
   '@media (max-width: 853px)': {
     display: 'none',
   },
+  ...style,
 }));
 
 export const ToolBarButtonContainer = styled('span')(() => ({
