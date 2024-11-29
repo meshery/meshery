@@ -251,7 +251,7 @@ func (h *Handler) handlePatternPOST(
 			}
 
 			result := string(resp)
-			pattern, err := pCore.NewPatternFileFromK8sManifest(result, parsedBody.Name, false, h.registryManager)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(result, fileName, false, h.registryManager)
 			if err != nil {
 				err = ErrConvertingHelmChartToDesign(err)
 				h.log.Error(err)
