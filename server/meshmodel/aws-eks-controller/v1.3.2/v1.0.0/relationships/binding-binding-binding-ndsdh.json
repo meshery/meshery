@@ -1,0 +1,51 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "binding",
+  "metadata": {
+    "description": "Nodegroups provide EC2-based compute resources for workloads in a Cluster.",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
+  },
+  "model": {
+    "category": {
+      "name": ""
+    },
+    "displayName": "",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "model": {
+      "version": "v1.3.2"
+    },
+    "name": "aws-eks-controller",
+    "registrant": {
+      "created_at": "0001-01-01T00:00:00Z",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "deleted_at": "0001-01-01T00:00:00Z",
+      "id": "00000000-0000-0000-0000-000000000000",
+      "kind": "",
+      "name": "",
+      "status": "",
+      "sub_type": "",
+      "type": "",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "user_id": "00000000-0000-0000-0000-000000000000"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "",
+    "status": "",
+    "version": "",
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "subType": "binding",
+  "status": "enabled",
+  "type": "binding",
+  "version": "v1.0.0"
+}

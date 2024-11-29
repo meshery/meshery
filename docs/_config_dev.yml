@@ -99,7 +99,11 @@ collections:
     permalink: reference/mesheryctl/:collection/:path
     name: mesheryctlcommands
   models:
-    output: true    
+    output: true
+  catalog:
+    output: true
+  modelscustominfo:
+    output: false 
   # integrations:
   #   output: true
   #   permalink: /extensibility/:collection/:path    

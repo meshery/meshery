@@ -45,7 +45,7 @@ import { durationOptions } from '../../lib/prePopulatedOptions';
 import fetchControlPlanes from '../graphql/queries/ControlPlanesQuery';
 import { ctxUrl, getK8sClusterIdsFromCtxId } from '../../utils/multi-ctx';
 import { iconMedium } from '../../css/icons.styles';
-import { withNotify } from '../../utils/hooks/useNotification';
+import { useNotification, withNotify } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { generateTestName, generateUUID } from './helper';
 import CAN from '@/utils/can';
@@ -235,6 +235,7 @@ const MesheryPerformanceComponent = (props) => {
     reqBody,
     contentType,
     metadata,
+    closeModal,
   } = props;
   const isJsonString = (str) => {
     try {
@@ -278,6 +279,7 @@ const MesheryPerformanceComponent = (props) => {
   const [staticPrometheusBoardConfigState, setStaticPrometheusBoardConfig] = useState(
     staticPrometheusBoardConfig,
   );
+  const { notify } = useNotification();
 
   const { data: userData, isSuccess: isUserDataFetched } = useGetUserPrefWithContextQuery(
     props?.selectedK8sContexts,
@@ -429,14 +431,17 @@ const MesheryPerformanceComponent = (props) => {
       tNum <= 0
     ) {
       setTError('error-autocomplete-value');
+      closeModal && closeModal();
       return;
     }
 
     if (!performanceProfileIDState) {
       submitProfile(({ id }) => submitLoadTest(id));
+      closeModal && closeModal();
       return;
     }
     submitLoadTest(performanceProfileIDState);
+    closeModal && closeModal();
   };
 
   const submitProfile = (cb) => {
@@ -492,7 +497,7 @@ const MesheryPerformanceComponent = (props) => {
           if (generateNotif) {
             const notify = props.notify;
             notify({
-              message: 'Performance Profile Created!',
+              message: `Performance profile ${result.name} has been created`,
               event_type: EVENT_TYPES.SUCCESS,
             });
           }
@@ -663,7 +668,11 @@ const MesheryPerformanceComponent = (props) => {
           setStaticPrometheusBoardConfig(result);
         }
       },
-      handleError('unable to fetch pre-configured boards'),
+      (err) => {
+        handleWarn(
+          'Unable to fetch pre-configured boards: No Kubernetes cluster is connected, so statistics will not be gathered from cluster',
+        )(err);
+      },
     );
   };
 
@@ -733,6 +742,24 @@ const MesheryPerformanceComponent = (props) => {
       notify({
         message: finalMsg,
         event_type: EVENT_TYPES.ERROR,
+        details: error.toString(),
+      });
+    };
+  }
+
+  function handleWarn(msg) {
+    return (error) => {
+      // setBlockRunTest(false);
+      // setTimerDialogOpen(false);
+      // closeEventStream();
+      let finalMsg = msg;
+      if (typeof error === 'string') {
+        finalMsg = `${msg}`;
+      }
+
+      notify({
+        message: finalMsg,
+        event_type: EVENT_TYPES.WARNING,
         details: error.toString(),
       });
     };

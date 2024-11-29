@@ -28,8 +28,25 @@ export const common = {
 };
 
 export var darkTheme = createTheme({
+  '@font-face': {
+    fontFamily: 'Qanelas Soft',
+    src: 'url("/static/fonts/qanelas-soft/QanelasSoftRegular.otf") format("opentype")',
+    fontWeight: 'normal',
+    fontDisplay: 'swap',
+  },
+  fontFace: {
+    fontFamily: 'Qanelas Soft',
+    src: 'url("/static/fonts/qanelas-soft/QanelasSoftRegular.otf") format("opentype")',
+    fontWeight: 400,
+    fontDisplay: 'swap',
+  },
   typography: {
     useNextVariants: true,
+    fontFace: {
+      fontFamily: 'Qanelas Soft',
+      fontWeight: 400,
+      fontDisplay: 'swap',
+    },
     fontFamily: ['Qanelas Soft', 'Roboto', 'Helvectica', 'Arial', 'sans-serif'].join(','),
     h5: {
       fontWeight: 'bolder',
@@ -316,6 +333,11 @@ darkTheme = {
 let theme = createTheme({
   typography: {
     fontFamily: ['Qanelas Soft', 'Roboto', 'Helvectica', 'Arial', 'sans-serif'].join(','),
+    '@font-face': {
+      fontFamily: 'Qanelas Soft',
+      src: 'url("/static/fonts/qanelas-soft/QanelasSoftBlack.otf") format("opentype")',
+      fontWeight: 'normal',
+    },
     useNextVariants: true,
     h5: {
       fontWeight: 'bolder',

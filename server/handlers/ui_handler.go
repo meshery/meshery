@@ -44,17 +44,23 @@ func (h *Handler) ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, b
 	// 	http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
 	// 	return
 	// }
-
 	reqURL := r.URL.Path
 	reqURL = strings.Replace(reqURL, reqBasePath, "", 1)
-
 	var filePath strings.Builder
 	if reqURL == "/" && viper.Get("RELEASE_CHANNEL") == (models.Kanvas{}).String() {
-
 		provider, ok := h.config.Providers[h.Provider]
 		if ok && provider != nil {
 			provProps := provider.GetProviderProperties()
-			redirectURL := models.GetRedirectURLForNavigatorExtension(&provProps)
+			if len(provProps.Extensions.Navigator) <= 0 {
+				// For the case when the token is valid but the extension capability is missing in provider.
+				// This was the cause for circular redirects.
+				releaseChannel := models.NewReleaseChannelInterceptor(viper.GetString("RELEASE_CHANNEL"), provider, h.log)
+				if releaseChannel != nil {
+					releaseChannel.Intercept(r, w)
+					return
+				}
+			}
+			redirectURL := models.GetRedirectURLForNavigatorExtension(&provProps, h.log)
 			http.Redirect(w, r, redirectURL, http.StatusPermanentRedirect)
 			return
 		}
@@ -72,7 +78,7 @@ func (h *Handler) ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, b
 	} else if filepath.Ext(reqURL) == "" {
 		filePath.WriteString(".html")
 	}
-
 	finalPath := filepath.Join(baseFolderPath, filePath.String())
 	http.ServeFile(w, r, finalPath)
+
 }

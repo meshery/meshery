@@ -186,6 +186,9 @@ func (h *Handler) handlePatternPOST(
 
 		bytPattern := parsedBody.PatternData.PatternFile
 		fileName := parsedBody.PatternData.FileName
+		if fileName == "" {
+			fileName = parsedBody.PatternData.Name
+		}
 		mesheryPattern.SourceContent = bytPattern
 		if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) {
 			var k8sres string
@@ -662,17 +665,51 @@ func (h *Handler) VerifyAndConvertToDesign(
 			}
 			bytPattern, _ := yaml.Marshal(pattern)
 			mesheryPattern.PatternFile = string(bytPattern)
+		} else if sourcetype == string(models.HelmChart) {
+			// Write sourceContent to a temporary file
+			tempFile, err := os.CreateTemp("", "helm-chart-*.tgz")
+			if err != nil {
+				return fmt.Errorf("failed to create temp file: %w", err)
+			}
+			defer os.Remove(tempFile.Name()) // Ensure cleanup of the temporary file
+
+			_, err = tempFile.Write(sourceContent)
+			if err != nil {
+				return fmt.Errorf("failed to write to temp file: %w", err)
+			}
+
+			err = tempFile.Close()
+			if err != nil {
+				return fmt.Errorf("failed to close temp file: %w", err)
+			}
+
+			// Use the temporary file path as LocalPath
+			latestKuberVersion := getLatestKubeVersionFromRegistry(h.registryManager)
+			resp, err := kubernetes.ConvertHelmChartToK8sManifest(kubernetes.ApplyHelmChartConfig{
+				LocalPath:         tempFile.Name(),
+				KubernetesVersion: latestKuberVersion,
+			})
+			if err != nil {
+				return ErrConvertingHelmChartToDesign(err)
+			}
+
+			result := string(resp)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(result, mesheryPattern.Name, false, h.registryManager)
+			if err != nil {
+				return ErrConvertingHelmChartToDesign(err)
+			}
+			bytPattern, _ := yaml.Marshal(pattern)
+
+			mesheryPattern.PatternFile = string(bytPattern)
 		}
 
+		// Save the updated Meshery pattern
 		resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 		if err != nil {
-			obj := "save"
-			saveErr := ErrApplicationFailure(err, obj)
-			return saveErr
+			return ErrApplicationFailure(err, "save")
 		}
 
 		contentMesheryPatternSlice := make([]models.MesheryPattern, 0)
-
 		if err := json.Unmarshal(resp, &contentMesheryPatternSlice); err != nil {
 			return models.ErrUnmarshal(err, "pattern")
 		}
@@ -945,10 +982,23 @@ func (h *Handler) GetMesheryPatternsHandler(
 //
 // ```?search={patternname}``` If search is non empty then a greedy search is performed
 //
-// ```?metrics``` Returns metrics like deployment/share/clone/view/download count for desings, default false,
+// ```?metrics``` Returns metrics like deployment/share/clone/view/download count for designs, default false,
+//
+// ```?class={class}``` Filters patterns based on class
+//
+// ```?technology={technology}``` Filters patterns based on technology
+//
+// ```?type={type}``` Filters patterns based on type
+//
+// ```?orgID={orgID}``` Filters patterns based on organization ID
+//
+// ```?workspaceID={workspaceID}``` Filter patterns based on workspace ID
+//
+// ```?userid={userid}``` Filters patterns based on user ID
+//
 // responses:
 //
-//	200: mesheryPatternsResponseWrapper
+// 200: mesheryPatternsResponseWrapper
 func (h *Handler) GetCatalogMesheryPatternsHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -959,7 +1009,7 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("metrics"))
+	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("metrics"), q.Get("trim"), q["class"], q["technology"], q["type"], q["orgID"], q["workspaceID"], q["userid"])
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)

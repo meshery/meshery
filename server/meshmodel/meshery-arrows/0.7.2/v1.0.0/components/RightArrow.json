@@ -117,7 +117,9 @@
    "subCategory": "Application Definition \u0026 Image Build",
    "version": "v1.0.0",
    "components": null,
-   "relationships": null
+   "relationships": null,
+   "components_count": 0,
+   "relationships_count": 0
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "enabled",
@@ -133,6 +135,7 @@
    "shape": "polygon",
    "shape-polygon-points": "-1 0.22 -1 -0.23 0.46 -0.23 0.46 -0.46 1 0 0.46 0.46 0.46 0.23",
    "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M2 14.56H23.6V7L38 19.6L23.6 32.2V24.64H2V19.6V14.56Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",
+   "svgComplete": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M2 14.56H23.6V7L38 19.6L23.6 32.2V24.64H2V19.6V14.56Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",
    "svgWhite": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M2 14.56H23.6V7L38 19.6L23.6 32.2V24.64H2V19.6V14.56Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",
    "width": 30
   },

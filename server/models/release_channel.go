@@ -65,13 +65,28 @@ type AnonymousFlowResponse struct {
 	UserID       uuid.UUID          `json:"user_id,omitempty"`
 }
 
+// This function is triggered when the token is invalid, the channel is in Kanvas mode, or when a token is present but the capabilities lack the required extension.
+// Process flow:
+// 1. Retrieve the capabilities of the anonymous user.
+// 2. Construct the connection payload.
+// 3. Generate the user using the special token.
+// 4. If the navigator is missing, prompt the user to download the navigator extension.
+
+// The appearance of the default /error page on the Kanvas site could be due to one of the following reasons:
+// 1. The remote provider is down, causing an error while fetching capabilities.
+// 2. The provided special token is either empty or incorrect, resulting in an unauthorized error.
+// 3. An issue occurred during the download of the extension package.
+
+// For exact diagnostics, check the server logs in case of any of these errors.
+
 func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	providerProperties := k.Provider.GetProviderProperties()
 	providerURL, _ := url.Parse(k.Provider.GetProviderURL())
 	errorUI := "/error"
 	ep, exists := providerProperties.Capabilities.GetEndpointForFeature(PersistAnonymousUser)
 	if !exists {
-		k.log.Error(ErrInvalidCapability("PersistAnonymousUser", k.Provider.Name()))
+		err := ErrInvalidCapability("PersistAnonymousUser", k.Provider.Name())
+		k.log.Error(err)
 		http.Redirect(res, req, errorUI, http.StatusFound)
 		return
 	}
@@ -91,7 +106,8 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 
 	resp, err := client.Do(newReq)
 	if err != nil {
-		k.log.Error(ErrUnreachableRemoteProvider(err))
+		err = ErrUnreachableRemoteProvider(err)
+		k.log.Error(err)
 		http.Redirect(res, req, errorUI, http.StatusFound)
 		return
 	}
@@ -100,7 +116,8 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	flowResponse := AnonymousFlowResponse{}
 	err = json.NewDecoder(resp.Body).Decode(&flowResponse)
 	if err != nil {
-		k.log.Error(ErrUnmarshal(err, "user flow response"))
+		err = ErrUnmarshal(err, "user flow response")
+		k.log.Error(err)
 		http.Redirect(res, req, errorUI, http.StatusFound)
 		return
 	}
@@ -122,7 +139,10 @@ func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	if len(flowResponse.Capabilities.Extensions.Navigator) > 0 {
 		flowResponse.Capabilities.DownloadProviderExtensionPackage(k.log)
 	}
-	redirectURL := GetRedirectURLForNavigatorExtension(&providerProperties)
-
+	redirectURL := GetRedirectURLForNavigatorExtension(&providerProperties, k.log)
+	if redirectURL == "/" {
+		k.log.Info("No navigator extension found, redirecting to /error")
+		redirectURL = errorUI
+	}
 	http.Redirect(res, req, redirectURL, http.StatusFound)
 }

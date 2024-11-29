@@ -48,7 +48,7 @@ export const LoadingMessages = [
   'Tip: You can create your own Meshery models.',
   'Tip: Designs can be cloned. Designs can also be merged.',
   'Tip: Designs can be exported as JSON files or OCI images.',
-  'Tip: Find existing or publish your own Meshery Designn on Artifact Hub',
+  'Tip: Find existing or publish your own Meshery Design on Artifact Hub',
   'Designs can be snapshotted. Snapshots are immutable. Snapshots can be compared for differences between Design versions.',
   'Tip: Share your designs and collaborate with colleagues.',
   'Tip: Publish reusable designs to the Meshery Catalog.',
@@ -62,6 +62,8 @@ export const LoadingMessages = [
   'Tip: Relationships characterize how components are connected and interact with each other.',
   'Tip: Relationships are defined in Meshery Models to ensure their accuracy and specificity.',
   'Tip: Meshery is inherently cognizant of the interrelationships between components in your designs.',
+  'Connect Meshery to your clusters and discover insights.',
+  'mesheryctl is a powerful CLI tool for interacting with one or more Meshery Servers.',
 ];
 
 export const getRandomLoadingMessage = () => {

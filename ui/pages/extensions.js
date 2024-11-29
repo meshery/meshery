@@ -34,7 +34,7 @@ const MeshMapSignUpcard = ({ classes, hasAccessToMeshMap = false }) => {
         </Typography>
 
         <Typography className={classes.frontSideDescription} variant="body">
-          <img className={classes.img} src="/static/img/meshmap.svg" />
+          <img className={classes.img} src="/static/img/kanvas-icon-color.svg" />
           Collaboratively design and manage your Kubernetes clusters, service mesh deployments, and
           cloud native apps. Kanvas is now publicly available.{' '}
           {!hasAccessToMeshMap && 'Sign-up today to for access!'}
@@ -73,7 +73,7 @@ const MeshMapSnapShotLogo = withStyles(LogoStyles)(({ classes }) => {
 
 const MeshMapSnapShotCard = ({ classes, githubActionEnabled = false }) => {
   const handleEnable = (e) => {
-    window.open('https://meshery.layer5.io/connect/github/new/', '_blank');
+    window.open('https://cloud.layer5.io/connect/github/new/', '_blank');
     e.stopPropagation();
   };
 
@@ -180,7 +180,7 @@ const MesheryDockerExtension = ({ classes }) => {
         <Typography className={classes.frontSideDescription} variant="body">
           <MesheryDockerExtensionLogo />
           Connect Meshery to your Kubernetes cluster via Docker Desktop and let MeshSync discover
-          your clusters. Use MeshMap&apos;s no-code designer to collaboratively design and manage
+          your clusters. Use Kanvas&apos;s no-code designer to collaboratively design and manage
           your infrastructure with ready-made patterns from Meshery Catalog.
         </Typography>
         {
