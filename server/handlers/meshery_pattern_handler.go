@@ -204,6 +204,7 @@ func (h *Handler) handlePatternPOST(
 				go h.config.EventBroadcaster.Publish(userID, event)
 				return
 			}
+			defer os.Remove(tempFile.Name())
 			_, err = tempFile.Write(parsedBody.PatternData.PatternFile)
 			if err != nil {
 				err = utils.ErrWriteFile(err, tempFile.Name())
