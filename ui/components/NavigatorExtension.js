@@ -81,7 +81,7 @@ function NavigatorExtension({
   const getSelectedK8sClusters = () => {
     return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig);
   };
-
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const currentOrganization = useLegacySelector((state) => state.get('organization'));
   return (
     <DynamicFullScrrenLoader isLoading={loading}>
