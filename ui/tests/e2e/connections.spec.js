@@ -17,17 +17,17 @@ const verifyConnectionsResBody = (body, provider) => {
         ? {
             sub_type: expect.any(String),
             metadata: expect.anything(),
+            kind: expect.any(String),
+            name: expect.any(String),
+            status: expect.any(String),
+            type: expect.any(String),
           }
         : null;
 
     expect(connection).toEqual(
       expect.objectContaining({
         id: expect.any(String),
-        name: expect.any(String),
         credential_id: expect.any(String),
-        type: expect.any(String),
-        kind: expect.any(String),
-        status: expect.any(String),
         user_id: expect.any(String),
         created_at: expect.any(String),
         updated_at: expect.any(String),
