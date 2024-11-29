@@ -292,9 +292,9 @@ const TroubleshootingModal = (props) => {
                     Cloud (at{' '}
                     <a
                       className={classes.troubleshootHelpLink}
-                      href="https://meshery.layer5.io/capabilities"
+                      href="https://cloud.layer5.io/capabilities"
                     >
-                      https://meshery.layer5.io/capabilities
+                      https://cloud.layer5.io/capabilities
                     </a>
                     ), from which MeshMap files are retreived, matches the <code>plugin</code>{' '}
                     version that Meshery Server is using as the filesystem reference in{' '}

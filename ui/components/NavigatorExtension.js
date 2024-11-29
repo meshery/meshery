@@ -6,7 +6,7 @@ import {
   createRequires,
 } from '@paciolan/remote-component';
 import { bindActionCreators } from 'redux';
-import { updateLoadTestData, setK8sContexts } from '../lib/store';
+import { updateLoadTestData, setK8sContexts, mesheryStore, useLegacySelector } from '../lib/store';
 import GrafanaCustomCharts from './telemetry/grafana/GrafanaCustomCharts';
 import MesheryPerformanceComponent from './MesheryPerformance';
 import dataFetch from '../lib/data-fetch';
@@ -40,6 +40,7 @@ import CAN from '@/utils/can';
 import { mesheryEventBus } from '@/utils/can';
 import { ThemeTogglerCore } from '@/themes/hooks';
 import RJSFForm from './MesheryMeshInterface/PatternService/RJSF';
+import { DynamicFullScrrenLoader } from './LoadingComponents/DynamicFullscreenLoader';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -54,10 +55,6 @@ function NavigatorExtension({
   capabilitiesRegistry,
 }) {
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
-  console.log(err);
-  if (loading) {
-    return <LoadingScreen animatedIcon="AnimatedMeshery" message="Loading Meshery Extension" />;
-  }
 
   if (err != null) {
     return (
@@ -85,64 +82,69 @@ function NavigatorExtension({
     return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig);
   };
 
+  const currentOrganization = useLegacySelector((state) => state.get('organization'));
   return (
-    <RemoteComponent
-      injectProps={{
-        GrafanaCustomCharts,
-        updateLoadTestData,
-        PatternServiceForm,
-        RJSFWrapper,
-        PatternServiceFormCore,
-        grafana,
-        prometheus,
-        MesheryPerformanceComponent,
-        dataFetch,
-        createRelayEnvironment,
-        subscriptionClient,
-        isDrawerCollapsed,
-        LoadingScreen,
-        preventLeavingHook: usePreventUserFromLeavingPage,
-        getSelectedK8sClusters,
-        selectedK8sContexts,
-        setK8sContexts,
-        k8sconfig,
-        resolver: {
-          query: {},
-          mutation: {},
-          subscription: {
-            ConfigurationSubscription,
+    <DynamicFullScrrenLoader isLoading={loading}>
+      <RemoteComponent
+        injectProps={{
+          GrafanaCustomCharts,
+          updateLoadTestData,
+          PatternServiceForm,
+          RJSFWrapper,
+          PatternServiceFormCore,
+          grafana,
+          prometheus,
+          MesheryPerformanceComponent,
+          dataFetch,
+          createRelayEnvironment,
+          subscriptionClient,
+          isDrawerCollapsed,
+          LoadingScreen,
+          preventLeavingHook: usePreventUserFromLeavingPage,
+          getSelectedK8sClusters,
+          selectedK8sContexts,
+          setK8sContexts,
+          k8sconfig,
+          resolver: {
+            query: {},
+            mutation: {},
+            subscription: {
+              ConfigurationSubscription,
+            },
           },
-        },
-        ConfirmationModal,
-        SelectDeploymentTarget: SelectDeploymentTarget,
-        getComponentsinFile,
-        UploadImport,
-        InfoModal,
-        ExportModal,
-        GenericRJSFModal: Modal,
-        RJSFModalWrapper: RJSFModalWrapper,
-        PromptComponent,
-        generateValidatePayload,
-        capabilitiesRegistry,
-        CapabilitiesRegistryClass: CapabilitiesRegistry,
-        useNotificationHook: useNotification,
-        MDEditor: MDEditor,
-        StructuredDataFormatter: FormatStructuredData,
-        ValidateDesign,
-        DryRunDesign,
-        DeployStepper,
-        UnDeployStepper,
-        designValidationMachine,
-        mesheryEventBus: mesheryEventBus,
-        ThemeTogglerCore,
-        RJSForm: RJSFForm,
-        hooks: {
-          CAN: CAN,
-          useFilterK8sContexts,
-          useDynamicComponent,
-        },
-      }}
-    />
+          ConfirmationModal,
+          SelectDeploymentTarget: SelectDeploymentTarget,
+          getComponentsinFile,
+          UploadImport,
+          InfoModal,
+          ExportModal,
+          GenericRJSFModal: Modal,
+          RJSFModalWrapper: RJSFModalWrapper,
+          PromptComponent,
+          generateValidatePayload,
+          capabilitiesRegistry,
+          CapabilitiesRegistryClass: CapabilitiesRegistry,
+          useNotificationHook: useNotification,
+          MDEditor: MDEditor,
+          StructuredDataFormatter: FormatStructuredData,
+          ValidateDesign,
+          DryRunDesign,
+          DeployStepper,
+          UnDeployStepper,
+          designValidationMachine,
+          mesheryEventBus: mesheryEventBus,
+          ThemeTogglerCore,
+          RJSForm: RJSFForm,
+          hooks: {
+            CAN: CAN,
+            useFilterK8sContexts,
+            useDynamicComponent,
+          },
+          mesheryStore: mesheryStore,
+          currentOrganization,
+        }}
+      />
+    </DynamicFullScrrenLoader>
   );
 }
 

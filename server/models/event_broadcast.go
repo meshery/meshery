@@ -1,10 +1,12 @@
 package models
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/helpers/utils"
+	"github.com/sirupsen/logrus"
 )
 
 type clients struct {
@@ -18,9 +20,12 @@ type Broadcast struct {
 }
 
 func (c *Broadcast) Subscribe(id uuid.UUID) (chan interface{}, func()) {
-	clientMap, _ := c.clients.LoadOrStore(id, clients{mu: &sync.Mutex{}})
+	clientMap, err := c.clients.LoadOrStore(id, clients{mu: &sync.Mutex{}})
+	logrus.Error(fmt.Errorf("Subscribe client err %v", err)) // Just for debug
 	ch := make(chan interface{}, 1)
-	connectedClient, _ := clientMap.(clients)
+	connectedClient, err := clientMap.(clients)
+
+	logrus.Error(fmt.Errorf("Connection client err %v", err)) // Just for debug
 
 	connectedClient.mu.Lock()
 	connectedClient.listeners = append(connectedClient.listeners, ch)

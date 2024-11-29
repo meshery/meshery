@@ -161,7 +161,7 @@ function MeshModelCategories({ classes }) {
     <Link href="/settings?settingsCategory=Registry&tab=Models">
       <div className={classes.dashboardSection}>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography variant="h6" gutterBottom className={classes.link}>
+          <Typography variant="h6" className={classes.link} gutterBottom>
             Models by Category
           </Typography>
 
