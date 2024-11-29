@@ -190,7 +190,89 @@ func (h *Handler) handlePatternPOST(
 			fileName = parsedBody.PatternData.Name
 		}
 		mesheryPattern.SourceContent = bytPattern
-		if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) {
+		if sourcetype == string(models.HelmChart) {
+			tempFile, err := os.CreateTemp("", "helm-chart-*.tgz")
+			if err != nil {
+				err = utils.ErrCreateDir(err, tempFile.Name())
+				h.log.Error(err)
+				http.Error(rw, err.Error(), http.StatusBadRequest)
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": err,
+				}).WithDescription("Unable to create temp file path.").Build()
+
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
+				return
+			}
+			_, err = tempFile.Write(parsedBody.PatternData.PatternFile)
+			if err != nil {
+				err = utils.ErrWriteFile(err, tempFile.Name())
+				h.log.Error(err)
+				http.Error(rw, err.Error(), http.StatusBadRequest)
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": err,
+				}).WithDescription("Unable to write uploaded design.").Build()
+
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
+				return
+			}
+
+			err = tempFile.Close()
+			if err != nil {
+				err = utils.ErrCloseFile(err)
+				h.log.Error(err)
+				http.Error(rw, err.Error(), http.StatusBadRequest)
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": err,
+				}).WithDescription("Unable to close temp file.").Build()
+
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
+				return
+			}
+			latestKuberVersion := getLatestKubeVersionFromRegistry(h.registryManager)
+			resp, err := kubernetes.ConvertHelmChartToK8sManifest(kubernetes.ApplyHelmChartConfig{
+				LocalPath:         tempFile.Name(),
+				KubernetesVersion: latestKuberVersion,
+			})
+			if err != nil {
+				err = ErrConvertingHelmChartToDesign(err)
+				h.log.Error(err)
+				http.Error(rw, err.Error(), http.StatusBadRequest)
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": err,
+				}).WithDescription("Unable to close temp file.").Build()
+
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
+				return
+			}
+
+			result := string(resp)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(result, parsedBody.Name, false, h.registryManager)
+			if err != nil {
+				err = ErrConvertingHelmChartToDesign(err)
+				h.log.Error(err)
+				http.Error(rw, err.Error(), http.StatusBadRequest)
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": err,
+				}).WithDescription("Unable to convert pattern of helm chart to k8s manifest.").Build()
+
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
+				return
+			}
+			bytPattern, _ := json.Marshal(pattern)
+			mesheryPattern = &models.MesheryPattern{
+				Name:        parsedBody.Name,
+				PatternFile: string(bytPattern),
+				Type: sql.NullString{
+					String: string(models.HelmChart),
+					Valid:  true,
+				},
+			}
+		} else if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) {
 			var k8sres string
 			if sourcetype == string(models.DockerCompose) {
 				k8sres, err = kompose.Convert(bytPattern) // convert the docker compose file into kubernetes manifest
