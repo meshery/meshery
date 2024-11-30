@@ -62,7 +62,8 @@ function NavigatorExtension({
   capabilitiesRegistry,
 }) {
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
-
+  const currentOrganization = useLegacySelector((state) => state.get('organization'));
+  const { store: legacyStore } = useContext(LegacyStoreContext);
   if (err != null) {
     return (
       <div role="alert">
@@ -89,7 +90,6 @@ function NavigatorExtension({
     return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig);
   };
 
-  const { store: legacyStore } = useContext(LegacyStoreContext);
   const extensionExposedMesheryStore = {
     currentOrganization: {
       set: (organization) =>
@@ -103,7 +103,6 @@ function NavigatorExtension({
     },
   };
 
-  const currentOrganization = useLegacySelector((state) => state.get('organization'));
   return (
     <DynamicFullScrrenLoader isLoading={loading}>
       <RemoteComponent
