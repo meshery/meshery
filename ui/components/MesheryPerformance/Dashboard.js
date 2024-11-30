@@ -26,8 +26,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.background?.default,
 }));
 
-const StyledButton = styled(Button)(() => {
-  const theme = useTheme();
+const StyledButton = styled(Button)(({ theme }) => {
   return {
     padding: '0.5rem',
     color:
@@ -36,6 +35,7 @@ const StyledButton = styled(Button)(() => {
         : theme.palette.background?.default,
     backgroundColor:
       theme.palette.mode === 'dark' ? theme.palette.border?.strong : theme.palette.icon?.weather,
+    fontFamily: theme.typography.fontFamily,
   };
 });
 
