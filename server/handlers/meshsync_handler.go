@@ -51,7 +51,8 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	status, _ := strconv.ParseBool(r.URL.Query().Get("status"))
 	isAnnotaion, _ := strconv.ParseBool(r.URL.Query().Get("annotations"))
 	isLabels, _ := strconv.ParseBool(r.URL.Query().Get("labels"))
-	kind := r.URL.Query().Get("kind")
+	// kind is an array of strings
+	kind := r.URL.Query()["kind"]
 
 	filter := struct {
 		ClusterIds []string `json:"clusterIds"`
@@ -73,8 +74,9 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 		Preload("KubernetesResourceMeta").
 		Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds)
 
-	if kind != "" {
-		result = result.Where(&model.KubernetesResource{Kind: kind})
+	if len(kind) > 0 {
+		// result = result.Where(&model.KubernetesResource{Kind: kind})
+		result = result.Where("kubernetes_resources.kind IN (?)", kind)
 	}
 
 	if apiVersion != "" {
