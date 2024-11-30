@@ -175,8 +175,8 @@ components:
       styles:
         height: 145.7831
         position:
-            x: 108.76882300478741
-            "y": 451.6199149071275
+            x: -114.74892150633241
+            "y": 186.1925933001728
         primaryColor: '#ED7100'
         shape: rectangle
         svgColor: ui/public/static/img/meshmodels/aws-ec2-controller/color/adoptedresource-color.svg
@@ -351,8 +351,8 @@ components:
       styles:
         height: 145.16388
         position:
-            x: 118.09385322846742
-            "y": 722.0987121509291
+            x: -117.99676441140284
+            "y": 759.8173315371807
         primaryColor: '#ED7100'
         shape: rectangle
         svgColor: ui/public/static/img/meshmodels/aws-ec2-controller/color/adoptedresource-color.svg
@@ -468,26 +468,26 @@ components:
         background-image: none
         background-opacity: 1
         body-text: AWS EC2 INSTANCES
-        body-text-color: '#ffffff'
-        body-text-font-size: 17
+        body-text-color: '#000000'
+        body-text-font-size: 27
         body-text-font-weight: "400"
         body-text-horizontal-align: center
         body-text-vertical-align: center
         border-color: '#f56823'
         border-style: solid
         border-width: 1
-        height: 60
+        height: 87.25468
         opacity: 1
         padding: 6
         position:
-            x: -156.00091871562933
-            "y": -171.68962549542454
+            x: 266.29575726722055
+            "y": -234.98467763336927
         primaryColor: '#f5a623'
         secondaryColor: '#FFDE00'
         shape: rectangle
         svgColor: ui/public/static/img/meshmodels/meshery-core/color/textbox-color.svg
         svgWhite: ui/public/static/img/meshmodels/meshery-core/white/textbox-white.svg
-        width: 180
+        width: 300.78262
         z-index: 2
       version: v1.0.0
     - capabilities:
@@ -597,8 +597,8 @@ components:
       styles:
         background-image: none
         background-opacity: 1
-        body-text: Before Deploying this design,First you have to Deploy the [EC2-CONTROLLER DESIGN](...), then [VPC-WORKFLOW-DESIGN](...) in that order.
-        body-text-color: '#ffffff'
+        body-text: Before Deploying this design,First you have to Deploy the [EC2-CONTROLLER DESIGN](https://playground.meshery.io/extension/meshmap?mode=design&design=49fb131e-1311-441d-ab1e-f57d92daba91), then [VPC-WORKFLOW-DESIGN](https://playground.meshery.io/extension/meshmap?mode=design&design=45bfbcaf-9fb1-4204-ace3-de33ffd6c6c1) in that order.
+        body-text-color: '#000000'
         body-text-font-size: 21
         body-text-font-weight: "400"
         body-text-horizontal-align: center
@@ -610,8 +610,8 @@ components:
         opacity: 1
         padding: 6
         position:
-            x: -571.0430053021321
-            "y": 198.95330381730957
+            x: 547.2355940356741
+            "y": 182.14857076715123
         primaryColor: '#f5a623'
         secondaryColor: '#FFDE00'
         shape: rectangle
@@ -728,7 +728,7 @@ components:
         background-image: none
         background-opacity: 1
         body-text: This design contains two AWS instances. One private instance and one Public instance that will serve as a bastion host.
-        body-text-color: '#ffffff'
+        body-text-color: '#000000'
         body-text-font-size: 20
         body-text-font-weight: "400"
         body-text-horizontal-align: center
@@ -740,8 +740,8 @@ components:
         opacity: 1
         padding: 6
         position:
-            x: -274.5787011315982
-            "y": -28.102267125084715
+            x: 260.76828885186757
+            "y": -80.22284049549332
         primaryColor: '#f5a623'
         secondaryColor: '#FFDE00'
         shape: rectangle
@@ -858,7 +858,7 @@ components:
         background-image: none
         background-opacity: 1
         body-text: Configure the **Security group ID** and **Subnet ID** for both instances. These values can be obtained from the AWS management console after the VPC workflow has been deployed.
-        body-text-color: '#ffffff'
+        body-text-color: '#000000'
         body-text-font-size: 21
         body-text-font-weight: "400"
         body-text-horizontal-align: center
@@ -870,8 +870,8 @@ components:
         opacity: 1
         padding: 6
         position:
-            x: -860.8126988958624
-            "y": 418.2353745100781
+            x: 546.2017683037546
+            "y": 438.09551356935606
         primaryColor: '#f5a623'
         secondaryColor: '#FFDE00'
         shape: rectangle
@@ -1155,7 +1155,7 @@ components:
         background-image: none
         background-opacity: 1
         body-text: To deploy the Instnaces, click on the **Actions** Button at the top of the screen and click **deploy**. Navigate to the AWS Management console to view your deployed resources.
-        body-text-color: '#ffffff'
+        body-text-color: '#000000'
         body-text-font-size: 21
         body-text-font-weight: "400"
         body-text-horizontal-align: center
@@ -1167,8 +1167,8 @@ components:
         opacity: 1
         padding: 6
         position:
-            x: -1109.1154645900615
-            "y": 659.4977160303578
+            x: 551.4977013664898
+            "y": 723.6612422218714
         primaryColor: '#f5a623'
         secondaryColor: '#FFDE00'
         shape: rectangle
@@ -1296,8 +1296,8 @@ components:
         opacity: 1
         padding: 6
         position:
-            x: -857.5084378989354
-            "y": 188.6619696396273
+            x: 860.928732377731
+            "y": 182.56581081489813
         primaryColor: '#00B39F'
         secondaryColor: '#00D3A9'
         shape: circle
@@ -1426,8 +1426,8 @@ components:
         opacity: 1
         padding: 6
         position:
-            x: -1127.947173897803
-            "y": 416.8571691707048
+            x: 870.1713664461546
+            "y": 436.560408236117
         primaryColor: '#00B39F'
         secondaryColor: '#00D3A9'
         shape: circle
@@ -1556,8 +1556,8 @@ components:
         opacity: 1
         padding: 6
         position:
-            x: -1457.7843097403634
-            "y": 673.1884528382684
+            x: 871.9627722133996
+            "y": 722.5396952872558
         primaryColor: '#00B39F'
         secondaryColor: '#00D3A9'
         shape: circle
@@ -1579,6 +1579,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -1707,6 +1708,7 @@ relationships:
       kind: hierarchical
       metadata:
         description: 'A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.'
+        isAnnotation: null
         styles:
             primaryColor: ""
             svgColor: ""
@@ -1835,6 +1837,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: taxi
             line-color: '#00B39F'
@@ -1960,6 +1963,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             curve-style: taxi
             line-color: '#00B39F'
@@ -2085,6 +2089,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -2200,7 +2205,7 @@ relationships:
                     status: ""
                     version: ""
                   patch: null
-      status: approved
+      status: deleted
       subType: annotation
       type: non-binding
       version: ""
@@ -2209,6 +2214,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -2324,7 +2330,7 @@ relationships:
                     status: ""
                     version: ""
                   patch: null
-      status: approved
+      status: deleted
       subType: annotation
       type: non-binding
       version: ""
@@ -2333,6 +2339,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -2457,6 +2464,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -2581,6 +2589,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -2705,6 +2714,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -2829,6 +2839,7 @@ relationships:
       kind: edge
       metadata:
         description: A relationship that defines annotation edges between components
+        isAnnotation: null
         styles:
             line-color: '#00B39F'
             line-style: solid
@@ -2949,4 +2960,4 @@ relationships:
       type: non-binding
       version: ""
 schemaVersion: designs.meshery.io/v1beta1
-version: 0.0.56
+version: 0.0.90
