@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { connect } from 'react-redux';
 import {
   createUseRemoteComponent,
@@ -6,7 +6,14 @@ import {
   createRequires,
 } from '@paciolan/remote-component';
 import { bindActionCreators } from 'redux';
-import { updateLoadTestData, setK8sContexts, mesheryStore, useLegacySelector } from '../lib/store';
+import {
+  updateLoadTestData,
+  setK8sContexts,
+  useLegacySelector,
+  LegacyStoreContext,
+  actionTypes,
+  selectSelectedK8sClusters,
+} from '../lib/store';
 import GrafanaCustomCharts from './telemetry/grafana/GrafanaCustomCharts';
 import MesheryPerformanceComponent from './MesheryPerformance';
 import dataFetch from '../lib/data-fetch';
@@ -81,7 +88,21 @@ function NavigatorExtension({
   const getSelectedK8sClusters = () => {
     return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig);
   };
-  // eslint-disable-next-line react-hooks/rules-of-hooks
+
+  const { store: legacyStore } = useContext(LegacyStoreContext);
+  const extensionExposedMesheryStore = {
+    currentOrganization: {
+      set: (organization) =>
+        legacyStore.dispatch({ type: actionTypes.SET_ORGANIZATION, organization }),
+      get: () => legacyStore.getState().organization,
+      useCurrentOrg: () => useLegacySelector((state) => state.organization),
+    },
+    selectedK8sClusters: {
+      get: () => selectSelectedK8sClusters(legacyStore.getState()),
+      useSelectedK8sClusters: () => useLegacySelector(selectSelectedK8sClusters),
+    },
+  };
+
   const currentOrganization = useLegacySelector((state) => state.get('organization'));
   return (
     <DynamicFullScrrenLoader isLoading={loading}>
@@ -140,7 +161,7 @@ function NavigatorExtension({
             useFilterK8sContexts,
             useDynamicComponent,
           },
-          mesheryStore: mesheryStore,
+          mesheryStore: extensionExposedMesheryStore,
           currentOrganization,
         }}
       />
