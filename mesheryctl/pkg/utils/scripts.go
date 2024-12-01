@@ -45,10 +45,7 @@ func (c *GKEConfig) checkPrerequisites() error {
 
 	for _, cmd := range requiredCommands {
 		if _, err := exec.LookPath(cmd); err != nil {
-			fmt.Printf("!! %s is not available\n", cmd)
 			missingCommands = append(missingCommands, cmd)
-		} else {
-			fmt.Printf("✓ %s is available\n", cmd)
 		}
 	}
 
@@ -84,12 +81,10 @@ func (c *GKEConfig) checkConnectivity() error {
 	if err := cmd.Run(); err != nil {
 		return ErrKubernetesConnectivity(fmt.Errorf("failed to connect to Kubernetes API server: %w", err))
 	}
-	fmt.Println("✓ can connect to Kubernetes API server")
 
 	// Check API query
 	cmd = exec.Command("kubectl", "get", "nodes")
 	if err := cmd.Run(); err != nil {
-		fmt.Println("!! cannot query Kubernetes API")
 		return ErrKubernetesQuery(fmt.Errorf("failed to query Kubernetes API: %w", err))
 	}
 
