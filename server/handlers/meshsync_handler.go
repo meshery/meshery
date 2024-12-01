@@ -38,10 +38,6 @@ import (
 //
 // responses:
 // 200: []meshsyncResourcesResponseWrapper
-
-// sim
-// func get
-
 func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
