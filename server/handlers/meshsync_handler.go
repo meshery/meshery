@@ -39,6 +39,9 @@ import (
 // responses:
 // 200: []meshsyncResourcesResponseWrapper
 
+// sim
+// func get
+
 func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
@@ -151,84 +154,56 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	}
 }
 
-// swagger:route GET /api/system/meshsync/resources/kinds GetMeshSyncResourcesKinds idGetMeshSyncResourcesKinds
-// Handle GET request for meshsync discovered resources kinds
+// swagger:route GET /api/system/meshsync/resources/summary GetMeshSyncResourcesSummary idGetMeshSyncResourcesSummary
+// Handle GET request for meshsync discovered resources
 //
-// ```?clusterId={[clusterId]}``` clusterId is array of string values. Required.
+// ```?clusterId={clusterId}``` clusterId is id of the cluster to get resources for ( multiple supported)
 //
-// ```?page = {page-number}``` Default page number is 1
-//
-// ```?pagesize = {pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
-//
-// ```?search = {componentname}``` If search is non empty then a greedy search is performed
-//
-// ```?order = {field}``` orders on the passed field
 //
 // responses:
-// 200: []meshsyncResourcesKindsResponseWrapper
+// 200: []meshsyncResourcesSummaryResponseWrapper
 
-func (h *Handler) GetMeshSyncResourcesKinds(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
 
-	page, offset, limit,
-		search, order, sort, _ := getPaginationParams(r)
+	clusterIds := r.URL.Query()["clusterId"]
+	h.log.Info("Fetching meshsync resources summary", "clusterIds", clusterIds)
 
-	filter := struct {
-		ClusterIds []string `json:"clusterIds"`
-	}{}
-
-	var kinds []string
-	var totalCount int64
-
-	clusterIds := r.URL.Query().Get("clusterIds")
-	if clusterIds != "" {
-		err := json.Unmarshal([]byte(clusterIds), &filter.ClusterIds)
-		if err != nil {
-			h.log.Error(ErrFetchMeshSyncResources(err))
-			http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
-			return
-		}
-	} else {
-		filter.ClusterIds = []string{}
+	if len(clusterIds) == 0 {
+		http.Error(rw, "clusterIds is required", http.StatusBadRequest)
+		return
 	}
 
-	result := provider.GetGenericPersister().Model(&model.KubernetesResource{}).Distinct("kind").
-		Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds)
-
-	if search != "" {
-		result = result.Where("kubernetes_resources.kind LIKE ?", "%"+search+"%")
+	var kindCounts []struct {
+		Kind  string
+		Count int64
 	}
+	var namespaces []string
 
-	if limit != 0 {
-		result = result.Limit(limit)
-	}
+	err := provider.GetGenericPersister().
+		Model(&model.KubernetesResource{}).
+		Select("kind, count(*) as count").
+		Group("kind").
+		Where("kubernetes_resources.cluster_id IN (?)", clusterIds).
+		Scan(&kindCounts).Error
 
-	if offset != 0 {
-		result = result.Offset(offset)
-	}
+	err = provider.GetGenericPersister().
+		Model(&model.KubernetesResource{}).
+		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resources.id = kubernetes_resource_object_meta.id").
+		Select("distinct namespace").
+		Where("kubernetes_resources.cluster_id IN (?)", clusterIds).
+		Scan(&namespaces).Error
 
-	order = models.SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
-	if order != "" {
-		if sort == "desc" {
-			result = result.Order(clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true})
-		} else {
-			result = result.Order(order)
-		}
-	}
-
-	err := result.Pluck("kinds", &kinds).Error
 	if err != nil {
 		h.log.Error(ErrFetchMeshSyncResources(err))
 		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
 		return
 	}
 
-	response := &models.MeshSyncResourcesKindsAPIResponse{
-		Kinds:      kinds,
-		TotalCount: totalCount,
-		Page:       page,
-		PageSize:   limit,
+	response := &models.MeshSyncResourcesSummaryAPIResponse{
+		Kinds:      kindCounts,
+		Namespaces: namespaces,
 	}
 
 	if err := enc.Encode(response); err != nil {
@@ -236,6 +211,7 @@ func (h *Handler) GetMeshSyncResourcesKinds(rw http.ResponseWriter, r *http.Requ
 		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
 	}
 }
+
 func (h *Handler) DeleteMeshSyncResource(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	resourceID := mux.Vars(r)["id"]
 	db := provider.GetGenericPersister()
