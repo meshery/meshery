@@ -15,10 +15,7 @@ test.describe('Service Mesh Performance Management Tests', { tag: '@unstable' },
   peformanceProfiles.forEach(({ profileWithUUID, serviceMesh, url, loadGenerator }) => {
     test(`Add performance profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
       page,
-      provider,
     }) => {
-      test.skip(provider === 'None');
-
       await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
       await page.getByLabel('Add Performance Profile').click();
       await page.getByLabel('Profile Name').fill(profileWithUUID);
@@ -38,10 +35,7 @@ test.describe('Service Mesh Performance Management Tests', { tag: '@unstable' },
 
     test(`View detailed result of a performance profile (Graph Visualiser) with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
       page,
-      provider,
     }) => {
-      test.skip(provider === 'None');
-
       await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
       await expect(await page.getByText(`${profileWithUUID}`)).toBeVisible();
       await page.getByRole('button', { name: 'View Results', exact: true }).first().click();
@@ -52,10 +46,7 @@ test.describe('Service Mesh Performance Management Tests', { tag: '@unstable' },
 
     test(`Edit the configuration of a performance profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
       page,
-      provider,
     }) => {
-      test.skip(provider === 'None');
-
       await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
       await page.getByText(profileWithUUID, { exact: true }).first().click();
 
@@ -73,10 +64,7 @@ test.describe('Service Mesh Performance Management Tests', { tag: '@unstable' },
 
     test(`Compare test of a performance profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
       page,
-      provider,
     }) => {
-      test.skip(provider === 'None');
-
       await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
       await page.getByText(profileWithUUID, { exact: true }).first().click();
       await page.getByRole('button', { name: 'View Results', exact: true }).first().click();
@@ -89,10 +77,7 @@ test.describe('Service Mesh Performance Management Tests', { tag: '@unstable' },
 
     test(`Delete a performance profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
       page,
-      provider,
     }) => {
-      test.skip(provider === 'None');
-
       await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
       await page.getByText(profileWithUUID, { exact: true }).first().click();
       await page.getByTestId('performanceProfileCard-delete').first().click();
