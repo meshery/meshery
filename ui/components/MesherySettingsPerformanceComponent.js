@@ -14,7 +14,7 @@ import {
   Radio,
   Button,
   TextField,
-  Grid
+  Grid,
 } from '@material-ui/core';
 import dataFetch from '../lib/data-fetch';
 import { connect } from 'react-redux';
@@ -143,7 +143,7 @@ const MesherySettingsPerformanceComponent = (props) => {
   return (
     <NoSsr>
       <React.Fragment>
-        <div sx={{padding: theme.spacing(10),}}>
+        <div sx={{ padding: theme.spacing(10) }}>
           <label>
             <strong>Performance Load Test Defaults</strong>
           </label>
@@ -222,11 +222,18 @@ const MesherySettingsPerformanceComponent = (props) => {
                     <FormControlLabel
                       value={lg}
                       control={
-                        <Radio color="primary" disabled={lg === 'wrk2'}  sx={{
-                          '&.Mui-checked': {
-                            color: theme.palette.mode === 'dark' ? '#00B39F' : theme.palette.primary.main,
-                          },
-                        }}  />
+                        <Radio
+                          color="primary"
+                          disabled={lg === 'wrk2'}
+                          sx={{
+                            '&.Mui-checked': {
+                              color:
+                                theme.palette.mode === 'dark'
+                                  ? '#00B39F'
+                                  : theme.palette.primary.main,
+                            },
+                          }}
+                        />
                       }
                       label={lg}
                     />
@@ -235,16 +242,14 @@ const MesherySettingsPerformanceComponent = (props) => {
               </FormControl>
             </Grid>
           </Grid>
-          <div sx={{display: 'flex',
-    justifyContent: 'flex-end',}}>
+          <div sx={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Button
               type="submit"
               variant="contained"
               color="primary"
               size="large"
               onClick={handleSubmit}
-              sx={{ marginTop: theme.spacing(3),
-                marginLeft: theme.spacing(1),}}
+              sx={{ marginTop: theme.spacing(3), marginLeft: theme.spacing(1) }}
               disabled={blockRunTest}
             >
               <SaveOutlinedIcon style={{ marginRight: '3px' }} />
@@ -276,5 +281,7 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(withNotify(MesherySettingsPerformanceComponent),
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withNotify(MesherySettingsPerformanceComponent));
