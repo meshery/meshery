@@ -227,28 +227,31 @@ Assess your cloud native infrastructure configuration against deployment and ope
 <br /><br />
 
 <h3>Visually and collaboratively manage your infrastructure</h3>
-<br /><br />
+<br /><br /> 
 <p>Meshery uses [relationships](https://docs.meshery.io/concepts/logical/relationships) to define how and when components interrelate with one another. Meshery supports a variety of relationships between components. These relationships are categorized into two types: semantic and non-semantic.</p>
 <br /><br />
 
 <h3>Manage your connections with Environments</h3>
-<br /><br />
+<br /><br />  <img src=".github/assets/images/readme/environments.gif" class="screenshot"
+                        alt="Multi-cluster Kubernetes Manager" loading="lazy" />
 <p>[Environments](https://docs.meshery.io/concepts/logical/environments) make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis.</p>
 <br /><br />
 
 
 <h3>Workspaces: Your team's Google Drive for cloud native projects</h3>
-<br /><br />
+<br /><br /> <img src=".github/assets/images/readme/workspace.gif" class="screenshot"
+                        alt="Multi-cluster Kubernetes Manager" loading="lazy" />
 <p>Workspaces let you organize your work and serve as the central point of collaboration for you and your teams and point of access control to Environments and their resources./<p>
 <br /><br />
 
 <h3>Manage infra performance with Performance Profiles</h3>
-<br /><br />
+<br /><br /><img src=".github/assets/images/readme/performance-metrics.gif" class="screenshot"
+                    alt="Multi-cluster Kubernetes Manager" loading="lazy" />
 <p>Create and reuse performance profiles for consistent characterization of the configuration of your infrastructure in context of how it performs.</p>
 <br /><br />
 
 <img alt="WebAssembly Logo" src="https://docs.meshery.io/assets/img/readme/webassembly_logo.svg" style="margin-right:10px;" width="10%" align="left" />
-<h3> See changes to your infra before you merge</h3>
+<h3> See changes to your infra before you merge</h3>  
 <p>Get snapshots of your infrastructure directly in your PRs. Preview your deployment, view changes pull request-to-pull request and get infrastructure snapshots within your PRs by connecting Kanvas to your GitHub repositories.
 </p>
 <br /><br />
@@ -264,14 +267,16 @@ Assess your cloud native infrastructure configuration against deployment and ope
 <br /><br />
 
 
-<h3>Manage the performance of your infrastructure and its workloads</h3>
+<h3>Access the Cloud Native Patterns for Kubernetes</h3>
 <br /><br />
+<img src = ".github/assets/images/readme/smp-video-poster-play.png">
 <p>Design and manage all of your cloud native infrastructure using the design configurator in Meshery or start from a template using the patterns from the [catalog](https://meshery.io/catalog).
 </p>
 <br /><br />
 
-<h3>Access the Cloud Native Patterns for Kubernetes</h3>
+<h3>Manage the performance of your infrastructure and its workloads</h3>
 <br /><br />
+<img src = ".github/assets/images/readme/service-mesh-performance-example.gif">
 <p>Baseline and track your cloud native performance from release to release.
 
 - Use performance profiles to track the historical performance of your workloads.
