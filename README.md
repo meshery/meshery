@@ -227,7 +227,7 @@ Assess your cloud native infrastructure configuration against deployment and ope
 <br /><br />
 
 <h3>Visually and collaboratively manage your infrastructure</h3>
-<br /><br /> 
+<br /><br />
 <p>Meshery uses [relationships](https://docs.meshery.io/concepts/logical/relationships) to define how and when components interrelate with one another. Meshery supports a variety of relationships between components. These relationships are categorized into two types: semantic and non-semantic.</p>
 <br /><br />
 
@@ -251,7 +251,7 @@ Assess your cloud native infrastructure configuration against deployment and ope
 <br /><br />
 
 <img alt="WebAssembly Logo" src="https://docs.meshery.io/assets/img/readme/webassembly_logo.svg" style="margin-right:10px;" width="10%" align="left" />
-<h3> See changes to your infra before you merge</h3>  
+<h3> See changes to your infra before you merge</h3>
 <p>Get snapshots of your infrastructure directly in your PRs. Preview your deployment, view changes pull request-to-pull request and get infrastructure snapshots within your PRs by connecting Kanvas to your GitHub repositories.
 </p>
 <br /><br />
