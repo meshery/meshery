@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
 import { ENV } from './env';
 import { v4 as uuidv4 } from 'uuid';
+import { expect, test } from './fixtures/project';
 
 test.describe('Service Mesh Performance Management Tests', { tag: '@unstable' }, () => {
   const peformanceProfiles = [

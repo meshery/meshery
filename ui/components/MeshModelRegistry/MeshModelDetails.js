@@ -29,8 +29,14 @@ import { JustifyAndAlignCenter } from './MeshModel.style';
 import { withSuppressedErrorBoundary } from '../General/ErrorBoundary';
 import { reactJsonTheme } from './helper';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary } from '@layer5/sistent';
+import { Accordion, AccordionDetails, AccordionSummary, styled } from '@layer5/sistent';
 import dynamic from 'next/dynamic';
+import { UsesSistent } from '../SistentWrapper';
+import {
+  StyledKeyValueFormattedValue,
+  StyledKeyValuePropertyDiv,
+  StyledKeyValueProperty,
+} from './MeshModel.style';
 const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
 
 const ExportAvailable = true;
@@ -42,38 +48,18 @@ const KeyValue = ({ property, value }) => {
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        margin: '0.6rem 0',
-      }}
-    >
-      <p
-        style={{
-          padding: '0',
-          margin: '0 0.5rem 0 0',
-          fontSize: '16px',
-          fontWeight: '600',
-        }}
-      >
-        {property}
-      </p>
-      <p style={{ padding: '0', margin: '0', fontSize: '16px' }}>{formattedValue}</p>
-    </div>
+    <StyledKeyValuePropertyDiv>
+      <StyledKeyValueProperty>{property}</StyledKeyValueProperty>
+      <StyledKeyValueFormattedValue>{formattedValue}</StyledKeyValueFormattedValue>
+    </StyledKeyValuePropertyDiv>
   );
 };
 
-const Title = ({ title }) => (
-  <p
-    style={{
-      fontSize: '19px',
-      fontWeight: 'bold',
-    }}
-  >
-    {title}
-  </p>
-);
+const StyledTitle = styled('div')(({ theme }) => ({
+  fontSize: '18px',
+  fontFamily: theme.typography.fontFamily,
+  fontWeight: theme.typography.fontWeightBold,
+}));
 
 const RenderContents = ({
   metaDataLeft,
@@ -335,7 +321,7 @@ const RelationshipContents = withSuppressedErrorBoundary(({ relationshipDef }) =
   return (
     <div>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <Title title={relationshipDef?.subType} />
+        <StyledTitle>{relationshipDef?.subType}</StyledTitle>
         <Description description={relationshipDef?.metadata?.description} />
       </div>
       <RenderContents
@@ -380,7 +366,7 @@ const RegistrantContent = withSuppressedErrorBoundary(({ registrant }) => {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Title title={registrant.hostname} />
+        <StyledTitle>{registrant?.hostname}</StyledTitle>
       </div>
       <RenderContents
         metaDataLeft={metaDataLeft}
@@ -405,7 +391,7 @@ const Description = ({ description }) => (
 const TitleWithImg = ({ displayName, iconSrc }) => (
   <div style={{ display: 'flex', alignItems: 'center', flexBasis: '60%' }}>
     {iconSrc && <img src={iconSrc} height="55px" width="55px" style={{ marginRight: '0.6rem' }} />}
-    <Title title={displayName} />
+    <StyledTitle>{displayName}</StyledTitle>
   </div>
 );
 
@@ -524,11 +510,13 @@ const MeshModelDetails = ({ view, showDetailsData }) => {
   };
 
   return (
-    <Paper
-      className={isEmptyDetails ? StyleClass.emptyDetailsContainer : StyleClass.detailsContainer}
-    >
-      {isEmptyDetails ? renderEmptyDetails() : getContent(showDetailsData.type)}
-    </Paper>
+    <UsesSistent>
+      <Paper
+        className={isEmptyDetails ? StyleClass.emptyDetailsContainer : StyleClass.detailsContainer}
+      >
+        {isEmptyDetails ? renderEmptyDetails() : getContent(showDetailsData.type)}
+      </Paper>
+    </UsesSistent>
   );
 };
 

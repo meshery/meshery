@@ -165,5 +165,6 @@ module.exports = {
     'graphql-ws': require('graphql-ws'),
     'react-dom': require('react-dom'),
     '@xstate/react': require('@xstate/react'),
+    yjs: require('yjs'),
   },
 };

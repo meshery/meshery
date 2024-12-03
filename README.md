@@ -92,6 +92,8 @@ Meshery manages the provisioning, configuration and operation of your Kubernetes
 
 Using a GitOps-centric approach, visually and collaboratively design and manage your infrastructure and microservices. Extend Meshery as your self-service engineering platform by taking advantage of its [vast set of extensibility features](https://docs.meshery.io/extensibility), including gRPC adapters, hot-loadable Reactjs packages and Golang plugins, subscriptions on NATS topics, consumable _and_ extendable API interfaces via REST and GraphQL. 
 
+<img src ="https://meshery.io/assets/images/screens/multi-cluster-management.gif">
+
 <p style="clear:both;">
  
 <h2>Multi-Cluster Kubernetes, Multi-Cloud, and Cloud Native Configuration Management</h2>
