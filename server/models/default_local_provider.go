@@ -688,7 +688,7 @@ func (l *DefaultLocalProvider) SaveMesheryPattern(_ string, pattern *MesheryPatt
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, order, updatedAfter string, visibility []string, _ string) ([]byte, error) {
+func (l *DefaultLocalProvider) GetMesheryPatterns(_, page, pageSize, search, order, updatedAfter string, visibility []string, _, _ string) ([]byte, error) {
 	if page == "" {
 		page = "0"
 	}
