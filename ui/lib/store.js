@@ -5,6 +5,7 @@ import { fromJS } from 'immutable';
 import { createContext } from 'react';
 import { createDispatchHook, createSelectorHook } from 'react-redux';
 import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
+import { mesheryEventBus } from '@/utils/eventBus';
 const initialState = fromJS({
   page: {
     path: '',
@@ -265,7 +266,15 @@ export const updateK8SConfig =
 export const setK8sContexts =
   ({ selectedK8sContexts }) =>
   (dispatch) => {
-    return dispatch({ type: actionTypes.SET_K8S_CONTEXT, selectedK8sContexts });
+    const result = dispatch({ type: actionTypes.SET_K8S_CONTEXT, selectedK8sContexts });
+    console.log('setK8sContexts', selectedK8sContexts);
+    mesheryEventBus.publish({
+      type: 'K8S_CONTEXTS_UPDATED',
+      data: {
+        selectedK8sContexts: selectedK8sContexts,
+      },
+    });
+    return result;
   };
 
 export const updateLoadTestData =
