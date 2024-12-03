@@ -65,7 +65,7 @@ func ConvertToPatternFile(resources []model.KubernetesResource, stripSchema bool
 		err := MapToStruct(resource.ComponentMetadata, &componentDef)
 
 		if err != nil {
-			fmt.Println("error converting to struct", err)
+			continue
 		}
 
 		componentDef.Id = uuid.FromStringOrNil(resource.KubernetesResourceMeta.UID)
