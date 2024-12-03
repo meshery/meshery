@@ -57,7 +57,7 @@ func JsonParse(input *string, allowEmpty bool, defaultValue interface{}) interfa
 }
 
 // ConvertToPatternFile converts a list of Kubernetes resources to a PatternFile.
-func ConvertToPatternFile(resources []model.KubernetesResource) pattern.PatternFile {
+func ConvertToPatternFile(resources []model.KubernetesResource, stripSchema bool) pattern.PatternFile {
 	components := []*component.ComponentDefinition{}
 
 	for _, resource := range resources {
@@ -75,41 +75,13 @@ func ConvertToPatternFile(resources []model.KubernetesResource) pattern.PatternF
 			"spec":     JsonParse(&resource.Spec.Attribute, true, map[string]interface{}{}),
 			"data":     JsonParse(&resource.Data, true, map[string]interface{}{}),
 		}
-		componentDef.Component.Schema = "" // remove schema as it is not needed
+
+		if stripSchema {
+			componentDef.Component.Schema = ""
+		}
 
 		components = append(components, &componentDef)
-		// fmt.Println("componentDef", componentDef)
-
-		// }
-		// 	resourceComponent := resource.ComponentMetadata
-
-		// 	componentMetadata := resource.ComponentMetadata["metadata"]
-		// 	componentMetadata["instanceDetails"] = resource
-
-		// 	componentInstance := &component.ComponentDefinition{
-		// 		Id:          resource.KubernetesResourceMeta.UID,
-		// 		DisplayName: resource.KubernetesResourceMeta.Name,
-		// 		Configuration: map[string]interface{}{
-		// 			"metadata": resource.KubernetesResourceMeta,
-		// 			"spec":     JsonParse(resource.Spec, true, map[string]interface{}{}),
-		// 			"data":     JsonParse(resource.Data, true, map[string]interface{}{}),
-		// 		},
-		// 		Component: component.Component{
-		// 			Kind:    resourceComponent["kind"].(string),
-		// 			Schema:  "",A
-		// 			Version: resourceComponent["version"].(string),
-		// 		},
-		// 		Metadata: componentMetadata,
 	}
-
-	// 	component.Component.Schema = ""
-
-	// 	if resource.ComponentMetadata.Metadata != nil {
-	// 		component.Metadata = resource.ComponentMetadata.Metadata
-	// 	}
-
-	// 	components = append(components, component)
-	// }
 
 	var emptyUUID uuid.UUID
 
@@ -147,6 +119,8 @@ func ConvertToPatternFile(resources []model.KubernetesResource) pattern.PatternF
 // ```?status={status}``` status is a boolean value. If true then status is returned
 //
 // ```?clusterId={[clusterId]}``` clusterId is array of string values. Required.
+//
+// ```?asDesign={bool}``` asDesign is a boolean value. If true then the response is returned as a design and resources are omitted
 //
 // responses:
 // 200: []meshsyncResourcesResponseWrapper
@@ -187,7 +161,6 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 		Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds)
 
 	if len(kind) > 0 {
-		// result = result.Where(&model.KubernetesResource{Kind: kind})
 		result = result.Where("kubernetes_resources.kind IN (?)", kind)
 	}
 
@@ -253,8 +226,8 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	var design pattern.PatternFile
 
 	if asDesign {
-		design = ConvertToPatternFile(resources)
-		resources = []model.KubernetesResource{} // clear resources to save memory
+		design = ConvertToPatternFile(resources, true) // strip schema
+		resources = []model.KubernetesResource{}       // clear resources to save memory
 	}
 
 	response := &models.MeshSyncResourcesAPIResponse{
@@ -298,6 +271,7 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	}
 	var namespaces []string
 
+	// TODO: simplify into one query if possible
 	err := provider.GetGenericPersister().
 		Model(&model.KubernetesResource{}).
 		Select("kind, count(*) as count").
