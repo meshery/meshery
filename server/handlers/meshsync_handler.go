@@ -2,14 +2,126 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"strconv"
 
+	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshsync/pkg/model"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"gorm.io/gorm/clause"
 )
+
+// MapToStruct converts a map[string]interface{} to a specified struct type.
+// The targetStruct should be a pointer to the desired struct.
+func MapToStruct(data map[string]interface{}, targetStruct interface{}) error {
+	// Validate input
+	if data == nil {
+		return fmt.Errorf("data is nil")
+	}
+	if targetStruct == nil {
+		return fmt.Errorf("targetStruct is nil")
+	}
+
+	// Marshal the map into JSON
+	jsonData, err := json.Marshal(data)
+	if err != nil {
+		return fmt.Errorf("failed to marshal map: %w", err)
+	}
+
+	// Unmarshal the JSON into the target struct
+	if err := json.Unmarshal(jsonData, targetStruct); err != nil {
+		return fmt.Errorf("failed to unmarshal JSON into struct: %w", err)
+	}
+
+	return nil
+}
+
+// JsonParse safely parses a JSON string into an interface{} with a fallback default value.
+func JsonParse(input *string, allowEmpty bool, defaultValue interface{}) interface{} {
+	if input == nil {
+		return defaultValue
+	}
+	var result interface{}
+	if err := json.Unmarshal([]byte(*input), &result); err != nil {
+		if allowEmpty {
+			return defaultValue
+		}
+		return nil
+	}
+	return result
+}
+
+// ConvertToPatternFile converts a list of Kubernetes resources to a PatternFile.
+func ConvertToPatternFile(resources []model.KubernetesResource) pattern.PatternFile {
+	components := []*component.ComponentDefinition{}
+
+	for _, resource := range resources {
+		var componentDef component.ComponentDefinition
+		err := MapToStruct(resource.ComponentMetadata, &componentDef)
+
+		if err != nil {
+			fmt.Println("error converting to struct", err)
+		}
+
+		componentDef.Id = uuid.FromStringOrNil(resource.KubernetesResourceMeta.UID)
+		componentDef.DisplayName = resource.KubernetesResourceMeta.Name
+		componentDef.Configuration = map[string]interface{}{
+			"metadata": resource.KubernetesResourceMeta,
+			"spec":     JsonParse(&resource.Spec.Attribute, true, map[string]interface{}{}),
+			"data":     JsonParse(&resource.Data, true, map[string]interface{}{}),
+		}
+		componentDef.Component.Schema = "" // remove schema as it is not needed
+
+		components = append(components, &componentDef)
+		// fmt.Println("componentDef", componentDef)
+
+		// }
+		// 	resourceComponent := resource.ComponentMetadata
+
+		// 	componentMetadata := resource.ComponentMetadata["metadata"]
+		// 	componentMetadata["instanceDetails"] = resource
+
+		// 	componentInstance := &component.ComponentDefinition{
+		// 		Id:          resource.KubernetesResourceMeta.UID,
+		// 		DisplayName: resource.KubernetesResourceMeta.Name,
+		// 		Configuration: map[string]interface{}{
+		// 			"metadata": resource.KubernetesResourceMeta,
+		// 			"spec":     JsonParse(resource.Spec, true, map[string]interface{}{}),
+		// 			"data":     JsonParse(resource.Data, true, map[string]interface{}{}),
+		// 		},
+		// 		Component: component.Component{
+		// 			Kind:    resourceComponent["kind"].(string),
+		// 			Schema:  "",A
+		// 			Version: resourceComponent["version"].(string),
+		// 		},
+		// 		Metadata: componentMetadata,
+	}
+
+	// 	component.Component.Schema = ""
+
+	// 	if resource.ComponentMetadata.Metadata != nil {
+	// 		component.Metadata = resource.ComponentMetadata.Metadata
+	// 	}
+
+	// 	components = append(components, component)
+	// }
+
+	var emptyUUID uuid.UUID
+
+	return pattern.PatternFile{
+		Name:          "EmptyDesignName",
+		Id:            emptyUUID,
+		SchemaVersion: "designs.meshery.io/v1beta1",
+		Version:       "v1",
+		Components:    components,
+		Relationships: []*relationship.RelationshipDefinition{},
+	}
+}
 
 // swagger:route GET /api/system/meshsync/resources GetMeshSyncResources idGetMeshSyncResources
 // Handle GET request for meshsync discovered resources
@@ -50,6 +162,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	status, _ := strconv.ParseBool(r.URL.Query().Get("status"))
 	isAnnotaion, _ := strconv.ParseBool(r.URL.Query().Get("annotations"))
 	isLabels, _ := strconv.ParseBool(r.URL.Query().Get("labels"))
+	asDesign, _ := strconv.ParseBool(r.URL.Query().Get("asDesign"))
 	// kind is an array of strings
 	kind := r.URL.Query()["kind"]
 
@@ -137,11 +250,19 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 		pgSize = limit
 	}
 
+	var design pattern.PatternFile
+
+	if asDesign {
+		design = ConvertToPatternFile(resources)
+		resources = []model.KubernetesResource{} // clear resources to save memory
+	}
+
 	response := &models.MeshSyncResourcesAPIResponse{
 		Page:       page,
 		PageSize:   pgSize,
 		TotalCount: totalCount,
 		Resources:  resources,
+		Design:     design,
 	}
 
 	if err := enc.Encode(response); err != nil {
