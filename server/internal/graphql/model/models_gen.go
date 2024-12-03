@@ -71,11 +71,18 @@ type CatalogPattern struct {
 }
 
 type CatalogSelector struct {
-	Page     string  `json:"page"`
-	Pagesize string  `json:"pagesize"`
-	Search   string  `json:"search"`
-	Order    string  `json:"order"`
-	Metrics  *string `json:"metrics,omitempty"`
+	Page        string    `json:"page"`
+	Pagesize    string    `json:"pagesize"`
+	Search      string    `json:"search"`
+	Order       string    `json:"order"`
+	Metrics     *string   `json:"metrics,omitempty"`
+	Trim        *string   `json:"trim,omitempty"`
+	Class       []*string `json:"class,omitempty"`
+	Technology  []*string `json:"technology,omitempty"`
+	PatternType []*string `json:"patternType,omitempty"`
+	Userid      []*string `json:"userid,omitempty"`
+	OrgID       []*string `json:"orgID,omitempty"`
+	WorkspaceID []*string `json:"workspaceID,omitempty"`
 }
 
 type ClusterResources struct {
@@ -289,6 +296,7 @@ type PageFilter struct {
 	UpdatedAfter *string  `json:"updated_after,omitempty"`
 	Visibility   []string `json:"visibility,omitempty"`
 	Metrics      *string  `json:"metrics,omitempty"`
+	Trim         *string  `json:"trim,omitempty"`
 }
 
 type PatternPageResult struct {

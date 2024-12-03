@@ -117,7 +117,9 @@
    "subCategory": "Application Definition \u0026 Image Build",
    "version": "v1.0.0",
    "components": null,
-   "relationships": null
+   "relationships": null,
+   "components_count": 0,
+   "relationships_count": 0
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "enabled",
@@ -127,7 +129,7 @@
    "secondaryColor": "#00D3A9",
    "shape": "circle",
    "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"170\" height=\"180\" viewBox=\"0 0 1024 1024\"\u003e\u003cpath d=\"M8.2 751.4c0 8.6 3.4 17.401 10 24.001 13.2 13.2 34.8 13.2 48 0l451.8-451.8 445.2 445.2c13.2 13.2 34.8 13.2 48 0s13.2-34.8 0-48L542 251.401c-13.2-13.2-34.8-13.2-48 0l-475.8 475.8c-6.8 6.8-10 15.4-10 24.2z\"/\u003e\u003c/svg\u003e",
-   "svgComplete": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"170\" height=\"180\" viewBox=\"0 0 1024 1024\"\u003e\u003cpath d=\"M8.2 751.4c0 8.6 3.4 17.401 10 24.001 13.2 13.2 34.8 13.2 48 0l451.8-451.8 445.2 445.2c13.2 13.2 34.8 13.2 48 0s13.2-34.8 0-48L542 251.401c-13.2-13.2-34.8-13.2-48 0l-475.8 475.8c-6.8 6.8-10 15.4-10 24.2z\"/\u003e\u003c/svg\u003e",
+   "svgComplete": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"170\" height=\"180\" fill=\"#00B39F\" viewBox=\"0 0 1024 1024\"\u003e\u003cpath d=\"M8.2 751.4c0 8.6 3.4 17.401 10 24.001 13.2 13.2 34.8 13.2 48 0l451.8-451.8 445.2 445.2c13.2 13.2 34.8 13.2 48 0s13.2-34.8 0-48L542 251.401c-13.2-13.2-34.8-13.2-48 0l-475.8 475.8c-6.8 6.8-10 15.4-10 24.2z\"/\u003e\u003c/svg\u003e",
    "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" fill=\"white\" width=\"170\" height=\"180\" viewBox=\"0 0 1024 1024\"\u003e\u003cpath d=\"M8.2 751.4c0 8.6 3.4 17.401 10 24.001 13.2 13.2 34.8 13.2 48 0l451.8-451.8 445.2 445.2c13.2 13.2 34.8 13.2 48 0s13.2-34.8 0-48L542 251.401c-13.2-13.2-34.8-13.2-48 0l-475.8 475.8c-6.8 6.8-10 15.4-10 24.2z\"/\u003e\u003c/svg\u003e"
   },
   "version": "v1.0.0"

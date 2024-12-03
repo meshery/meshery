@@ -3,9 +3,8 @@ import { ability } from '../utils/can';
 import { useGetUserKeysQuery } from './userKeys';
 import _ from 'lodash';
 import CustomErrorMessage from '@/components/ErrorPage';
-import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
-import { randomLoadingMessage } from '@/components/LoadingComponents/loadingMessages';
-
+// import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
+import { DynamicFullScrrenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
 export const useGetUserAbilities = (org, skip) => {
   const { data, ...res } = useGetUserKeysQuery(
     {
@@ -53,8 +52,6 @@ export const LoadSessionGuard = ({ children }) => {
   }
 
   return (
-    <LoadingScreen isLoading={isLoading || !org?.id} message={randomLoadingMessage}>
-      {children}
-    </LoadingScreen>
+    <DynamicFullScrrenLoader isLoading={isLoading || !org?.id}>{children}</DynamicFullScrrenLoader>
   );
 };

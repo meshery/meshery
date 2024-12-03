@@ -21,16 +21,21 @@ import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import {
   useUpdateEntityStatusMutation,
-  useGetModelByNameQuery,
-  useGetComponentByNameQuery,
+  useGetComponentsQuery,
+  useGetMeshModelsQuery,
 } from '@/rtk-query/meshModel';
 import _ from 'lodash';
 import { JustifyAndAlignCenter } from './MeshModel.style';
-import { withSuppressedErrorBoundary } from '../General/ErrorBoundary';
 import { reactJsonTheme } from './helper';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Accordion, AccordionDetails, AccordionSummary } from '@layer5/sistent';
+import { Accordion, AccordionDetails, AccordionSummary, styled } from '@layer5/sistent';
 import dynamic from 'next/dynamic';
+import { UsesSistent } from '../SistentWrapper';
+import {
+  StyledKeyValueFormattedValue,
+  StyledKeyValuePropertyDiv,
+  StyledKeyValueProperty,
+} from './MeshModel.style';
 const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
 
 const ExportAvailable = true;
@@ -42,38 +47,18 @@ const KeyValue = ({ property, value }) => {
   }
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-        margin: '0.6rem 0',
-      }}
-    >
-      <p
-        style={{
-          padding: '0',
-          margin: '0 0.5rem 0 0',
-          fontSize: '16px',
-          fontWeight: '600',
-        }}
-      >
-        {property}
-      </p>
-      <p style={{ padding: '0', margin: '0', fontSize: '16px' }}>{formattedValue}</p>
-    </div>
+    <StyledKeyValuePropertyDiv>
+      <StyledKeyValueProperty>{property}</StyledKeyValueProperty>
+      <StyledKeyValueFormattedValue>{formattedValue}</StyledKeyValueFormattedValue>
+    </StyledKeyValuePropertyDiv>
   );
 };
 
-const Title = ({ title }) => (
-  <p
-    style={{
-      fontSize: '19px',
-      fontWeight: 'bold',
-    }}
-  >
-    {title}
-  </p>
-);
+const StyledTitle = styled('div')(({ theme }) => ({
+  fontSize: '18px',
+  fontFamily: theme.typography.fontFamily,
+  fontWeight: theme.typography.fontWeightBold,
+}));
 
 const RenderContents = ({
   metaDataLeft,
@@ -143,7 +128,7 @@ const RenderContents = ({
   );
 };
 
-const ModelContents = withSuppressedErrorBoundary(({ modelDef }) => {
+const ModelContents = ({ modelDef }) => {
   const PropertyFormattersLeft = {
     version: (value) => <KeyValue property="API Version" value={value} />,
     hostname: (value) => <KeyValue property="Registrant" value={value} />,
@@ -156,16 +141,12 @@ const ModelContents = withSuppressedErrorBoundary(({ modelDef }) => {
     let relationships = 0;
     if (modelDef?.versionBasedData) {
       modelDef?.versionBasedData.forEach((modelDefVersion) => {
-        components =
-          components +
-          (modelDefVersion?.components === null ? 0 : modelDefVersion.components.length);
-        relationships =
-          relationships +
-          (modelDefVersion?.relationships === null ? 0 : modelDefVersion.relationships.length);
+        components = components + modelDefVersion?.components_count;
+        relationships = relationships + modelDefVersion?.relationships_count;
       });
     } else {
-      components = modelDef?.components === null ? 0 : modelDef?.components?.length;
-      relationships = modelDef?.relationships === null ? 0 : modelDef?.relationships?.length;
+      components = modelDef?.components_count;
+      relationships = modelDef?.relationships_count;
     }
     return {
       components,
@@ -235,12 +216,12 @@ const ModelContents = withSuppressedErrorBoundary(({ modelDef }) => {
       />
     </div>
   );
-});
+};
 
-const ComponentContents = withSuppressedErrorBoundary(({ componentDef }) => {
-  const { data, isSuccess } = useGetComponentByNameQuery({
-    name: componentDef.component.kind,
+const ComponentContents = ({ componentDef }) => {
+  const { data, isSuccess } = useGetComponentsQuery({
     params: {
+      id: componentDef.id,
       apiVersion: componentDef.component.version,
       trim: false,
     },
@@ -306,9 +287,9 @@ const ComponentContents = withSuppressedErrorBoundary(({ componentDef }) => {
       )}
     </>
   );
-});
+};
 
-const RelationshipContents = withSuppressedErrorBoundary(({ relationshipDef }) => {
+const RelationshipContents = ({ relationshipDef }) => {
   const PropertyFormattersLeft = {
     version: (value) => <KeyValue property="API Version" value={value} />,
     modelName: (value) => <KeyValue property="Model Name" value={value} />,
@@ -339,7 +320,7 @@ const RelationshipContents = withSuppressedErrorBoundary(({ relationshipDef }) =
   return (
     <div>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <Title title={relationshipDef?.subType} />
+        <StyledTitle>{relationshipDef?.subType}</StyledTitle>
         <Description description={relationshipDef?.metadata?.description} />
       </div>
       <RenderContents
@@ -353,16 +334,16 @@ const RelationshipContents = withSuppressedErrorBoundary(({ relationshipDef }) =
       />
     </div>
   );
-});
+};
 
-const RegistrantContent = withSuppressedErrorBoundary(({ registrant }) => {
+const RegistrantContent = ({ registrant }) => {
   const PropertyFormattersLeft = {
     models: (value) => <KeyValue property="Models" value={value} />,
     components: (value) => <KeyValue property="Components" value={value} />,
   };
 
   const metaDataLeft = {
-    models: registrant?.models?.length.toString(),
+    models: registrant?.summary?.models?.toString(),
     components: registrant.summary?.components?.toString(),
   };
 
@@ -384,7 +365,7 @@ const RegistrantContent = withSuppressedErrorBoundary(({ registrant }) => {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-        <Title title={registrant.hostname} />
+        <StyledTitle>{registrant?.hostname}</StyledTitle>
       </div>
       <RenderContents
         metaDataLeft={metaDataLeft}
@@ -397,7 +378,7 @@ const RegistrantContent = withSuppressedErrorBoundary(({ registrant }) => {
       />
     </div>
   );
-});
+};
 
 const Description = ({ description }) => (
   <div style={{ margin: '0.6rem 0' }}>
@@ -409,96 +390,94 @@ const Description = ({ description }) => (
 const TitleWithImg = ({ displayName, iconSrc }) => (
   <div style={{ display: 'flex', alignItems: 'center', flexBasis: '60%' }}>
     {iconSrc && <img src={iconSrc} height="55px" width="55px" style={{ marginRight: '0.6rem' }} />}
-    <Title title={displayName} />
+    <StyledTitle>{displayName}</StyledTitle>
   </div>
 );
 
 // TODO: remove with styles and use either makestyle or styled component
-const StatusChip = withSuppressedErrorBoundary(
-  withStyles(styles)(({ classes, entityData, entityType }) => {
-    const nextStatus = Object.values(REGISTRY_ITEM_STATES);
-    const [updateEntityStatus] = useUpdateEntityStatusMutation();
-    const { data: modelData, isSuccess } = useGetModelByNameQuery({
-      name: entityData.name,
-      params: {
-        version: entityData.model.version,
+const StatusChip = withStyles(styles)(({ classes, entityData, entityType }) => {
+  const nextStatus = Object.values(REGISTRY_ITEM_STATES);
+  const [updateEntityStatus] = useUpdateEntityStatusMutation();
+  const { data: modelData, isSuccess } = useGetMeshModelsQuery({
+    params: {
+      id: entityData.model.id,
+      version: entityData.model.version,
+    },
+  });
+
+  const data = modelData?.models?.find((model) => model.id === entityData.id);
+  const handleStatusChange = (e) => {
+    updateEntityStatus({
+      entityType: _.toLower(entityType),
+      body: {
+        id: data.id,
+        status: e.target.value,
+        displayname: entityData.displayName,
       },
     });
+  };
 
-    const data = modelData?.models?.find((model) => model.id === entityData.id);
-    const handleStatusChange = (e) => {
-      updateEntityStatus({
-        entityType: _.toLower(entityType),
-        body: {
-          id: data.id,
-          status: e.target.value,
-          displayname: entityData.displayName,
-        },
-      });
-    };
+  const icons = {
+    [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.IGNORED]: () => <RemoveCircleIcon />,
+    [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.ENABLED]: () => <AssignmentTurnedInIcon />,
+  };
 
-    const icons = {
-      [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.IGNORED]: () => <RemoveCircleIcon />,
-      [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.ENABLED]: () => <AssignmentTurnedInIcon />,
-    };
-
-    return (
-      <FormControl
-        className={classes.chipFormControl}
-        style={{ minWidth: '0%', flexDirection: 'inherit' }}
-      >
-        {isSuccess ? (
-          <Select
-            labelId="entity-status-select-label"
-            id={data?.id}
-            key={data?.id}
-            value={data?.status}
-            defaultValue={data?.status}
-            onClick={(e) => e.stopPropagation()}
-            onChange={(e) => handleStatusChange(e)}
-            className={classes.statusSelect}
-            disableUnderline
-            disabled={!isSuccess} // Disable the select when isSuccess is false
-            MenuProps={{
-              anchorOrigin: {
-                vertical: 'bottom',
-                horizontal: 'left',
-              },
-              transformOrigin: {
-                vertical: 'top',
-                horizontal: 'left',
-              },
-              getContentAnchorEl: null,
-              MenuListProps: { disablePadding: true },
-              PaperProps: { square: true },
-            }}
-          >
-            {nextStatus.map((status) => (
-              <MenuItem
-                disabled={status === data?.status}
-                style={{ padding: '0', display: status === data?.status ? 'none' : 'flex' }}
-                value={status}
-                key={status}
-              >
-                <Chip
-                  className={classNames(classes.statusChip, classes[status])}
-                  avatar={icons[status] ? icons[status]() : ''}
-                  label={
-                    status === data?.status
-                      ? status
-                      : REGISTRY_ITEM_STATES_TO_TRANSITION_MAP?.[status] || status
-                  }
-                />
-              </MenuItem>
-            ))}
-          </Select>
-        ) : (
-          <CircularProgress size={24} />
-        )}
-      </FormControl>
-    );
-  }),
-);
+  return (
+    <FormControl
+      className={classes.chipFormControl}
+      style={{ minWidth: '0%', flexDirection: 'inherit' }}
+    >
+      {isSuccess ? (
+        <Select
+          labelId="entity-status-select-label"
+          id={data?.id}
+          key={data?.id}
+          value={data?.status}
+          defaultValue={data?.status}
+          onClick={(e) => e.stopPropagation()}
+          onChange={(e) => handleStatusChange(e)}
+          className={classes.statusSelect}
+          disableUnderline
+          disabled={!isSuccess} // Disable the select when isSuccess is false
+          MenuProps={{
+            anchorOrigin: {
+              vertical: 'bottom',
+              horizontal: 'left',
+            },
+            transformOrigin: {
+              vertical: 'top',
+              horizontal: 'left',
+            },
+            getContentAnchorEl: null,
+            MenuListProps: { disablePadding: true },
+            PaperProps: { square: true },
+          }}
+        >
+          {nextStatus.map((status) => (
+            <MenuItem
+              disabled={status === data?.status}
+              style={{ padding: '0', display: status === data?.status ? 'none' : 'flex' }}
+              value={status}
+              key={status}
+            >
+              <Chip
+                className={classNames(classes.statusChip, classes[status])}
+                avatar={icons[status] ? icons[status]() : ''}
+                label={
+                  status === data?.status
+                    ? status
+                    : REGISTRY_ITEM_STATES_TO_TRANSITION_MAP?.[status] || status
+                }
+              />
+            </MenuItem>
+          ))}
+        </Select>
+      ) : (
+        <CircularProgress size={24} />
+      )}
+    </FormControl>
+  );
+});
 
 const MeshModelDetails = ({ view, showDetailsData }) => {
   const theme = useTheme();
@@ -528,11 +507,13 @@ const MeshModelDetails = ({ view, showDetailsData }) => {
   };
 
   return (
-    <Paper
-      className={isEmptyDetails ? StyleClass.emptyDetailsContainer : StyleClass.detailsContainer}
-    >
-      {isEmptyDetails ? renderEmptyDetails() : getContent(showDetailsData.type)}
-    </Paper>
+    <UsesSistent>
+      <Paper
+        className={isEmptyDetails ? StyleClass.emptyDetailsContainer : StyleClass.detailsContainer}
+      >
+        {isEmptyDetails ? renderEmptyDetails() : getContent(showDetailsData.type)}
+      </Paper>
+    </UsesSistent>
   );
 };
 

@@ -29,10 +29,12 @@ mesheryctl exp environment create [flags]
 Create a new environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp environment create --orgID [orgID] --name [name] --description [description] 
+mesheryctl exp environment create --orgId [orgId] --name [name] --description [description] 
 
 </div>
 </pre> 
+
+{% include alert.html type="info" title="Note :" content="If a valid UUID is not provided for --orgId, a default 'zero UUID' will be used." %}
 
 Documentation for environment can be found at:
 <pre class='codeblock-pre'>
