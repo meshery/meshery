@@ -296,6 +296,7 @@ type PageFilter struct {
 	UpdatedAfter *string  `json:"updated_after,omitempty"`
 	Visibility   []string `json:"visibility,omitempty"`
 	Metrics      *string  `json:"metrics,omitempty"`
+	Trim         *string  `json:"trim,omitempty"`
 }
 
 type PatternPageResult struct {
