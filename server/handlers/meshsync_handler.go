@@ -75,6 +75,7 @@ func ConvertToPatternFile(resources []model.KubernetesResource, stripSchema bool
 			"spec":     JsonParse(&resource.Spec.Attribute, true, map[string]interface{}{}),
 			"data":     JsonParse(&resource.Data, true, map[string]interface{}{}),
 		}
+		// componentDef.Metadata.InstanceDetails = resource
 
 		if stripSchema {
 			componentDef.Component.Schema = ""
@@ -226,8 +227,17 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	var design pattern.PatternFile
 
 	if asDesign {
-		design = ConvertToPatternFile(resources, true) // strip schema
-		resources = []model.KubernetesResource{}       // clear resources to save memory
+		rawDesign := ConvertToPatternFile(resources, true) // strip schema
+		resources = []model.KubernetesResource{}           // clear resources to save memory
+		evalResponse, error := h.Rego.RegoPolicyHandler(rawDesign, RelationshipPolicyPackageName)
+		if error != nil {
+			design = rawDesign
+			h.log.Error(fmt.Errorf("Error evaluating design: %v", error))
+		} else {
+			// if there is error in evaluation, return the raw design (without any relationships)
+			design = evalResponse.Design
+		}
+
 	}
 
 	response := &models.MeshSyncResourcesAPIResponse{
