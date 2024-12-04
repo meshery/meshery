@@ -1001,6 +1001,7 @@ func genericHTTPDesignFile(fileURL, patternName, sourceType string, reg *meshmod
 //
 // ```?metrics``` Returns metrics like deployment/share/clone/view/download count for desings, default is false,
 //
+// ```?trim``` Trims the response to exclude the pattern file content, default is false
 // responses:
 //
 //	200: mesheryPatternsResponseWrapper
@@ -1015,6 +1016,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 	updateAfter := q.Get("updated_after")
 	includeMetrics := q.Get("metrics")
+	trim := q.Get("trim")
 	err := r.ParseForm() // necessary to get r.Form["visibility"], i.e, ?visibility=public&visbility=private
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
@@ -1035,7 +1037,8 @@ func (h *Handler) GetMesheryPatternsHandler(
 		}
 	}
 
-	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter, filter.Visibility, includeMetrics)
+	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter, filter.Visibility, includeMetrics, trim)
+	
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)

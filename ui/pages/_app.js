@@ -54,8 +54,6 @@ import { RelayEnvironmentProvider } from 'react-relay';
 import { createRelayEnvironment } from '../lib/relayEnvironment';
 import './styles/charts.css';
 import uiConfig from '../ui.config';
-
-import { ErrorBoundary } from '../components/General/ErrorBoundary';
 import { NotificationCenterProvider } from '../components/NotificationCenter';
 import { getMeshModelComponentByName } from '../api/meshmodel';
 import { CONNECTION_KINDS, CONNECTION_KINDS_DEF, CONNECTION_STATES } from '../utils/Enum';
@@ -69,11 +67,12 @@ import classNames from 'classnames';
 import { forwardRef } from 'react';
 import { formatToTitleCase } from '@/utils/utils';
 import { useThemePreference } from '@/themes/hooks';
-import { BasicMarkdown, CircularProgress } from '@layer5/sistent';
+import { BasicMarkdown, CircularProgress, ErrorBoundary } from '@layer5/sistent';
 import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
 import { LoadSessionGuard } from '@/rtk-query/ability';
 import { randomLoadingMessage } from '@/components/LoadingComponents/loadingMessages';
 import { keys } from '@/utils/permission_constants';
+import CustomErrorFallback from '@/components/General/ErrorBoundary';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -740,7 +739,7 @@ class MesheryApp extends App {
           <RelayEnvironmentProvider environment={relayEnvironment}>
             <MesheryThemeProvider>
               <NoSsr>
-                <ErrorBoundary>
+                <ErrorBoundary customFallback={CustomErrorFallback}>
                   <LoadSessionGuard>
                     <div className={classes.root}>
                       <CssBaseline />
@@ -817,7 +816,7 @@ class MesheryApp extends App {
                               }}
                             >
                               <MuiPickersUtilsProvider utils={MomentUtils}>
-                                <ErrorBoundary>
+                                <ErrorBoundary customFallback={CustomErrorFallback}>
                                   <Component
                                     pageContext={this.pageContext}
                                     contexts={this.state.k8sContexts}
