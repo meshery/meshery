@@ -52,3 +52,16 @@ The following points of extension are currently incorporated into Meshery.
             {% endif %}
     {% endfor %}
 </ul>
+
+## As an Extension Provider, How to Verify Integration’s Compatibility?
+
+When Meshery updates its Golang version, it’s essential for extension providers to verify that their Golang-based integrations remain compatible. Follow these steps to ensure your plugin works with the updated Golang version.
+
+1. Checkout the [Meshery](https://github.com/meshery/meshery) repository.
+2. Update `/go.mod` to new Golang version.
+3. Update `/install/Makefile.core.mk`. Change $GOVERSION to new Golang version.
+4. Run `make server`.
+5. Update your Golang-based plugin to use the new Golang version and Build.
+6. Run your upgraded Meshery Server and your upgraded extension together.
+7. Check for errors in Meshery Server logs.
+8. Validate your plugin’s functionality.
