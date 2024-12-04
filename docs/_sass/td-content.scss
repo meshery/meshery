@@ -33,8 +33,20 @@
     & > h4 {
       font-size: 1rem;
     }
+
   }
 }
+
+
+h1:has(> a.anchorjs-link)::before,
+h2:has(> a.anchorjs-link)::before,
+h3:has(> a.anchorjs-link)::before {
+  content: "";
+  display: block;
+  height: var(--navbar-height);
+  margin-top: calc(var(--navbar-height) * -1);
+}
+
 
 ///////////////// Code Terminal /////////////////////////////
 :root {
