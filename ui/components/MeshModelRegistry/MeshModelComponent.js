@@ -31,7 +31,6 @@ import { DisableButton } from './MeshModel.style';
 import { useRouter } from 'next/router';
 import { Provider } from 'react-redux';
 import { store } from '../../store';
-import { ErrorBoundary } from '../General/ErrorBoundary';
 import {
   useLazyGetMeshModelsQuery,
   useLazyGetComponentsQuery,
@@ -754,15 +753,25 @@ const GenerateModal = React.memo((props) => {
       <UsesSistent>
         <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Generate Model">
           <FormControl style={{ padding: '10px' }}>
-            <FormLabel id="upload-method-choices"> Upload Method</FormLabel>
+            <FormLabel id="upload-method-choices" sx={{ marginBottom: '1rem' }}>
+              Upload Method
+            </FormLabel>
             <RadioGroup
               aria-labelledby="upload-method-choices"
               name="uploadMethod"
               value={uploadMethod}
               onChange={handleChange}
             >
-              <FormControlLabel value="url" control={<Radio />} label="URL Import" />
-              <FormControlLabel value="csv" control={<Radio />} label="CSV Import" />
+              <FormControlLabel
+                value="url"
+                control={<Radio color="primary" />}
+                label="URL Import"
+              />
+              <FormControlLabel
+                value="csv"
+                control={<Radio color="primary" />}
+                label="CSV Import"
+              />
             </RadioGroup>
           </FormControl>
           <ModalFooter
@@ -1707,14 +1716,9 @@ const TabCard = ({ label, count, active, onClick, animate }) => {
 const MeshModelComponent = (props) => {
   return (
     <NoSsr>
-      <ErrorBoundary
-        FallbackComponent={() => null}
-        onError={(e) => console.error('Error in NotificationCenter', e)}
-      >
-        <Provider store={store}>
-          <MeshModelComponent_ {...props} />
-        </Provider>
-      </ErrorBoundary>
+      <Provider store={store}>
+        <MeshModelComponent_ {...props} />
+      </Provider>
     </NoSsr>
   );
 };
