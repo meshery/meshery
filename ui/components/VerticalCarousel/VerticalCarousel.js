@@ -6,13 +6,13 @@ import { Grid } from '@material-ui/core';
 //   item,
 //   setActiveIndex
 // }) => {
-//
+
 //   const handleClick = (direction) => {
 //     if(direction === "prev") setActiveIndex(prev => prev -1)
 //     if(direction === "next") setActiveIndex(prev => prev + 1)
 //     return
 //   }
-//
+
 //   return (
 //     <div style={{position: "relative"}}>
 //       <IconButton
@@ -31,7 +31,7 @@ import { Grid } from '@material-ui/core';
 //     </div>
 //   );
 // }
-//
+
 // VerticalCarousel.propTypes = {
 //   data: PropTypes.array.isRequired,
 //   leadingText: PropTypes.string.isRequired,
