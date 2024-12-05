@@ -34,9 +34,18 @@ import {
 import { withNotify } from '../utils/hooks/useNotification';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { REGISTRY, METRICS, ADAPTERS, RESET, GRAFANA, PROMETHEUS } from '@/constants/navigator';
+import {
+  REGISTRY,
+  METRICS,
+  ADAPTERS,
+  RESET,
+  GRAFANA,
+  PROMETHEUS,
+  OVERVIEW,
+} from '@/constants/navigator';
 import { removeDuplicateVersions } from './MeshModelRegistry/helper';
 import DefaultError from './General/error-404';
+import Overview from './DashboardComponent/overview';
 
 const StyledPaper = styled(Paper)(() => ({
   flexGrow: 1,
@@ -143,7 +152,7 @@ const MesherySettings = (props) => {
     meshAdapters,
     grafana,
     prometheus,
-    tabVal: selectedSettingsCategory || ADAPTERS,
+    tabVal: selectedSettingsCategory || OVERVIEW,
     subTabVal: selectedTab || GRAFANA,
     modelsCount: 0,
     componentsCount: 0,
@@ -254,6 +263,22 @@ const MesherySettings = (props) => {
               textColor="primary"
               centered
             >
+              <CustomTooltip title="Overview" placement="top" value={OVERVIEW}>
+                <StyledTab
+                  icon={
+                    <img
+                      src="/static/img/meshery-logo/meshery-logo.svg"
+                      alt="Meshery logo"
+                      height={32}
+                      width={32}
+                    />
+                  }
+                  label="Overview"
+                  // tab="Overview"
+                  value={OVERVIEW}
+                  // disabled={!CAN(keys.VIEW_OVERVIEW.action, keys.VIEW_OVERVIEW.subject)}
+                />
+              </CustomTooltip>
               <CustomTooltip title="Connect Meshery Adapters" placement="top" value={ADAPTERS}>
                 <StyledTab
                   icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
@@ -286,6 +311,7 @@ const MesherySettings = (props) => {
                   disabled={!CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)}
                 />
               </CustomTooltip>
+
               <CustomTooltip title="Reset System" placement="top" value={RESET}>
                 <StyledTab
                   icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
@@ -297,6 +323,11 @@ const MesherySettings = (props) => {
               </CustomTooltip>
             </StyledTabs>
           </StyledPaper>
+          {tabVal === OVERVIEW && (
+            <TabContainer>
+              <Overview />
+            </TabContainer>
+          )}
           {tabVal === ADAPTERS &&
             CAN(
               keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
@@ -369,6 +400,7 @@ const MesherySettings = (props) => {
               </TabContainer>
             </TabContainer>
           )}
+
           {tabVal === RESET && (
             <TabContainer>
               <DatabaseSummary promptRef={systemResetPromptRef} />
