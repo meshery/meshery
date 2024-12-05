@@ -68,7 +68,6 @@ const User = (props) => {
 
   if (userData?.status == 'anonymous') {
     const url = `${capabilitiesRegistry?.provider_url}?anonymousUserID=${userData?.id}&source=${sourceURL}&ref=${refURL}`;
-    console.log('AAAAAAAA', url);
 
     return (
       <Link href={url}>
