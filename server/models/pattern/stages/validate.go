@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/jsonschema"
 	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
 	"github.com/meshery/schemas/models/v1beta1/component"
@@ -77,9 +76,6 @@ func Validator(prov ServiceInfoProvider, act ServiceActionProvider, validate boo
 				return
 			}
 			act.Log(fmt.Sprintf("%s version for %s: %s", component.Model.Name, component.DisplayName, wc.Model.Model.Version)) //Eg: kubernetes version for Namespace: v1.25.0
-			if core.Format {
-				component.Configuration = core.Format.DePrettify(component.Configuration, false)
-			}
 			//Validate component definition
 			if validate {
 				if err := validateWorkload(component.Configuration, wc); err != nil {

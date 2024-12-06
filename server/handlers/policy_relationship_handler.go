@@ -11,7 +11,6 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
@@ -66,10 +65,6 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	patternUUID := relationshipPolicyEvalPayload.Design.Id
 	eventBuilder.ActedUpon(patternUUID)
-
-	for _, component := range relationshipPolicyEvalPayload.Design.Components {
-		component.Configuration = core.Format.DePrettify(component.Configuration, false)
-	}
 
 	// evaluate specified relationship policies
 	// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
@@ -141,7 +136,6 @@ func processEvaluationResponse(registry *registry.RegistryManager, evalPayload p
 		}
 		_component, _ := entities[0].(*component.ComponentDefinition)
 
-		_c.Configuration = core.Format.Prettify(_c.Configuration, false)
 		_component.Id = _c.Id
 		if _c.DisplayName != "" {
 			_component.DisplayName = _c.DisplayName
@@ -157,7 +151,6 @@ func processEvaluationResponse(registry *registry.RegistryManager, evalPayload p
 	for _, component := range evalResponse.Trace.ComponentsUpdated {
 		_c := component
 
-		_c.Configuration = core.Format.Prettify(_c.Configuration, false)
 		compsUpdated = append(compsUpdated, _c)
 	}
 
@@ -202,7 +195,6 @@ func processEvaluationResponse(registry *registry.RegistryManager, evalPayload p
 			}
 		}
 
-		_c.Configuration = core.Format.Prettify(_c.Configuration, false)
 		evalResponse.Design.Components = append(evalResponse.Design.Components, _c)
 
 	}

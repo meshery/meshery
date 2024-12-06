@@ -20,7 +20,6 @@ import (
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/events"
 
 	meshkitOci "github.com/layer5io/meshkit/models/oci"
@@ -1187,7 +1186,6 @@ func prettifyCompDefSchema(entities []entity.Entity) []component.ComponentDefini
 		if ok {
 			m := make(map[string]interface{})
 			_ = json.Unmarshal([]byte(comp.Component.Schema), &m)
-			m = core.Format.Prettify(m, true)
 			b, _ := json.Marshal(m)
 			comp.Component.Schema = string(b)
 			comps = append(comps, *comp)
