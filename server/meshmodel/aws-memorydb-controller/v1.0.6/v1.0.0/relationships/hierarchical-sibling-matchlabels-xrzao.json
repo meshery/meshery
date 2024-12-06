@@ -46,6 +46,6 @@
   "schemaVersion": "relationships.meshery.io/v1alpha3",
   "subType": "matchlabels",
   "status": "enabled",
-  "type": "sibling",
+  "type": "binding",
   "version": "v1.0.0"
 }
