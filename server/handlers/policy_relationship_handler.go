@@ -23,7 +23,7 @@ import (
 )
 
 const (
-	relationshipPolicyPackageName = "data.relationship_evaluation_policy"
+	RelationshipPolicyPackageName = "data.relationship_evaluation_policy"
 	suffix                        = "_relationship"
 )
 
@@ -69,7 +69,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	// evaluate specified relationship policies
 	// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
 	evaluationResponse, err := h.Rego.RegoPolicyHandler(relationshipPolicyEvalPayload.Design,
-		relationshipPolicyPackageName,
+		RelationshipPolicyPackageName,
 	)
 	if err != nil {
 		h.log.Debug(err)

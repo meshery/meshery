@@ -37,6 +37,7 @@ import {
   updateTelemetryUrls,
   setConnectionMetadata,
   LegacyStoreContext,
+  setK8sContexts,
 } from '../lib/store';
 import { styles } from '../themes';
 import { getConnectionIDsFromContextIds, getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
@@ -386,10 +387,7 @@ class MesheryApp extends App {
     if (activeK8sContexts.includes('all')) {
       activeK8sContexts = ['all'];
     }
-    this.props.store.dispatch({
-      type: actionTypes.SET_K8S_CONTEXT,
-      selectedK8sContexts: activeK8sContexts,
-    });
+    this.props.store.dispatch(setK8sContexts({ selectedK8sContexts: activeK8sContexts }));
   };
 
   setActiveContexts = (id) => {
