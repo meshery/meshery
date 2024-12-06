@@ -498,6 +498,7 @@ input PageFilter {
   updated_after: String
   visibility: [String!]
   metrics: String
+  trim: String
 }
 
 # ============== CATALOG =============================

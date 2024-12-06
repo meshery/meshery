@@ -42,12 +42,12 @@ import { ValidateDesign } from './DesignLifeCycle/ValidateDesign';
 import { DryRunDesign } from './DesignLifeCycle/DryRun';
 import { DeployStepper, UnDeployStepper } from './DesignLifeCycle/DeployStepper';
 import { designValidationMachine } from 'machines/validator/designValidator';
-import Troubleshoot from './TroubleshootingComponent';
 import CAN from '@/utils/can';
 import { mesheryEventBus } from '@/utils/eventBus';
 import { ThemeTogglerCore } from '@/themes/hooks';
 import RJSFForm from './MesheryMeshInterface/PatternService/RJSF';
 import { DynamicFullScrrenLoader } from './LoadingComponents/DynamicFullscreenLoader';
+import Troubleshoot from './TroubleshootingComponent';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
