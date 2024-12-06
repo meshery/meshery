@@ -94,9 +94,6 @@ func (mrh *RelationshipCSVHelper) ParseRelationshipsSheet(modelName string) erro
 			if modelName != "" && data.Model != modelName {
 				continue
 			}
-			if utils.ReplaceSpacesAndConvertToLowercase(data.PublishToRegistry) == "false" {
-				continue
-			}
 			data.RowIndex = currentRow
 			currentRow++
 			mrh.Relationships = append(mrh.Relationships, data)
@@ -154,8 +151,15 @@ func ProcessRelationships(relationshipCSVHelper *RelationshipCSVHelper, spreadsh
 				Name:  relationship.Model,
 				Model: model.Model{Version: version},
 			}
-			status := _rel.Enabled
-			rel.Status = &status
+
+			if utils.ReplaceSpacesAndConvertToLowercase(relationship.PublishToRegistry) == "false" {
+				status := _rel.Ignored
+				rel.Status = &status
+			} else {
+				status := _rel.Enabled
+				rel.Status = &status
+			}
+			
 			var styles _rel.RelationshipDefinitionMetadataStyles
 
 			if relationship.Styles != "" {
