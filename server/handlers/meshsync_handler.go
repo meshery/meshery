@@ -282,23 +282,32 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	var namespaces []string
 
 	// TODO: simplify into one query if possible
-	err := provider.GetGenericPersister().
+	err1 := provider.GetGenericPersister().
 		Model(&model.KubernetesResource{}).
 		Select("kind, count(*) as count").
 		Group("kind").
 		Where("kubernetes_resources.cluster_id IN (?)", clusterIds).
 		Scan(&kindCounts).Error
 
-	err = provider.GetGenericPersister().
+	if err1 != nil {
+		h.log.Error(ErrFetchMeshSyncResources(err1))
+	}
+
+	err2 := provider.GetGenericPersister().
 		Model(&model.KubernetesResource{}).
 		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resources.id = kubernetes_resource_object_meta.id").
 		Select("distinct namespace").
 		Where("kubernetes_resources.cluster_id IN (?)", clusterIds).
 		Scan(&namespaces).Error
 
-	if err != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err))
-		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+	if err2 != nil {
+		h.log.Error(ErrFetchMeshSyncResources(err2))
+	}
+
+	// only return error if both queries failed
+	if err1 != nil && err2 != nil {
+		combinedErr := fmt.Errorf("Error fetching meshsync resources summary: %v, %v", err1, err2)
+		http.Error(rw, ErrFetchMeshSyncResources(combinedErr).Error(), http.StatusInternalServerError)
 		return
 	}
 
