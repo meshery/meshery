@@ -111,6 +111,10 @@ Troubleshooting guides to using Meshery's various features and components.
 </thead>
 <tbody>
   {% for files in site.data.errorref %}
+  <!-- Log files to the console -->
+    <!-- <script>
+      console.log("Files: ", {{ files | jsonify }});
+    </script> -->
     {% for eachFile in files %}
       {% for component in eachFile  %}
           {% comment %} <tr><td colspan="2">{{component}}</td></tr> {% endcomment %}
