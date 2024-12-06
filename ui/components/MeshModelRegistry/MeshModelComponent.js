@@ -753,7 +753,9 @@ const GenerateModal = React.memo((props) => {
       <UsesSistent>
         <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Generate Model">
           <FormControl style={{ padding: '10px' }}>
-            <FormLabel id="upload-method-choices"> Upload Method</FormLabel>
+            <FormLabel id="upload-method-choices" sx={{ marginBottom: '1rem' }}>
+              Upload Method
+            </FormLabel>
             <RadioGroup
               aria-labelledby="upload-method-choices"
               name="uploadMethod"
