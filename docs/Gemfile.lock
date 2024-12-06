@@ -451,10 +451,12 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  bundler (= 2.4.14)
   github-pages
   graphql
   graphql-docs
   haml
+  jekyll (~> 3.7)
   jekyll-include-cache
   rails
   rake
