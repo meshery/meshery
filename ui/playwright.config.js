@@ -1,6 +1,7 @@
 // @ts-check
 const { defineConfig, devices } = require('@playwright/test');
 const { BASE_TIMEOUT } = require('./tests/e2e/delays');
+const { ENV } = require('./tests/e2e/env');
 const dotenv = require('dotenv');
 const path = require('path');
 
@@ -32,39 +33,51 @@ module.exports = defineConfig({
   workers: process.env.CI ? 1 : 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   // reporter: process.env.CI ? "./tests/e2e/custom-playwright-reporter.js" : "list",
-  reporter: process.env.CI ? [['./tests/e2e/custom-playwright-reporter.js'], ['html']] : 'list',
+  reporter: [['./tests/e2e/custom-playwright-reporter.js']],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     // baseURL: 'http://127.0.0.1:3000',
     video: {
-      mode: 'on-first-retry',
+      mode: 'retain-on-failure',
     },
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: 'retain-on-failure',
+    trace: 'retain-on-first-failure',
   },
 
   /* Configure projects for major browsers */
   projects: [
     // setup
-    { name: 'setup', testMatch: 'tests/e2e/*.setup.js' },
-
     {
-      name: 'chromium',
+      name: 'setup',
+      testMatch: 'tests/e2e/*.setup.js',
+    },
+    {
+      name: 'chromium-meshery-provider',
       use: {
         ...devices['Desktop Chrome'],
+        provider: 'Meshery',
         // Use prepared auth state.
-        storageState: 'playwright/.auth/user.json',
+        storageState: ENV.AUTHFILEMESHERYPROVIDER,
       },
       dependencies: ['setup'],
     },
-
+    {
+      name: 'chromium-local-provider',
+      use: {
+        ...devices['Desktop Chrome'],
+        provider: 'None',
+        // Use prepared auth state.
+        storageState: ENV.AUTHFILELOCALPROVIDER,
+      },
+      dependencies: ['setup'],
+    },
     {
       name: 'firefox',
       use: {
         ...devices['Desktop Firefox'],
         // Use prepared auth state.
-        storageState: 'playwright/.auth/user.json',
+        storageState: ENV.AUTHFILEMESHERYPROVIDER,
       },
       dependencies: ['setup'],
     } /* Test against mobile viewports. */,

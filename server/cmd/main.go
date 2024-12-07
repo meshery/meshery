@@ -242,6 +242,8 @@ func main() {
 		GenericPersister:                dbHandler,
 		Log:                             log,
 	}
+
+	// Local remote provider is initalized here.
 	lProv.Initialize()
 
 	hc := &models.HandlerConfig{
@@ -276,15 +278,17 @@ func main() {
 	}
 	//seed the local meshmodel components
 	rego := policies.Rego{}
+
 	go func() {
+		// This is where models are seeded from meshmodel directory to registry
 		models.SeedComponents(log, hc, regManager)
+		// Rego is intialized for passing of policy if the policies are made to be per model base this needs to be removed.
 		r, err := policies.NewRegoInstance(models.PoliciesPath, regManager)
 		if err != nil {
-			log.Warn(ErrCreatingOPAInstance(err))
+			log.Warn(handlers.ErrCreatingOPAInstance(err))
 		} else {
 			rego = *r
 		}
-
 		krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		hc.MeshModelSummaryChannel.Publish()
 	}()
@@ -341,7 +345,9 @@ func main() {
 
 	models.InitMeshSyncRegistrationQueue()
 	mhelpers.InitRegistrationHelperSingleton(dbHandler, log, &connToInstanceTracker, hc.EventBroadcaster)
+	policies.SyncRelationship.Lock()
 	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, providerEnvVar, &rego, &connToInstanceTracker)
+	policies.SyncRelationship.Unlock()
 
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()
