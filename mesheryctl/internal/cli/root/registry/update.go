@@ -102,6 +102,7 @@ type compUpdateTracker struct {
 	version           string
 }
 
+// InvokeCompUpdate updates the registry with the latest component information.
 func InvokeCompUpdate() error {
 	utils.Log.UpdateLogOutput(logFile)
 

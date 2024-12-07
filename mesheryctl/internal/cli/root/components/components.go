@@ -123,6 +123,7 @@ func selectComponentPrompt(components []component.ComponentDefinition) component
 	}
 }
 
+// OutputJson outputs the component definition in json format
 func OutputJson(component interface{}) error {
 	if err := prettifyJson(component); err != nil {
 		// if prettifyJson return error, marshal output in conventional way using json.MarshalIndent
@@ -186,7 +187,7 @@ func listComponents(cmd *cobra.Command, url string, displayCountOnly bool) error
 	}
 
 	header := []string{"Model", "kind", "Version"}
-	rows := [][]string{}
+	var rows [][]string
 
 	for _, component := range componentsResponse.Components {
 		if len(component.DisplayName) > 0 {

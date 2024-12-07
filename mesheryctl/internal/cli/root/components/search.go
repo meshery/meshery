@@ -83,7 +83,7 @@ mesheryctl components search [query-text]
 		}
 
 		header := []string{"Model", "kind", "Version"}
-		rows := [][]string{}
+		var rows [][]string
 
 		for _, component := range componentsResponse.Components {
 			if len(component.DisplayName) > 0 {
