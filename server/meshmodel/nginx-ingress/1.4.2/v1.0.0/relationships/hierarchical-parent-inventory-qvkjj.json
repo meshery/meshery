@@ -3,13 +3,13 @@
   "evaluationQuery": "",
   "kind": "hierarchical",
   "metadata": {
-    "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. E.g Secret-\u003ePod, ConfigMaps-\u003eDeployment, etc...",
+    "description": "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. E.g Secret-\u003ePod, ConfigMaps-\u003eDeployment, etc. This has been extended to support rewrite-target annotation for NGINX Ingress.",
     "styles": {
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
     },
-    "isAnnotation": false
+    "isAnnotation": true
   },
   "model": {
     "category": {
@@ -189,6 +189,22 @@
                   "name"
                 ]
               ]
+            }
+          },
+          {
+            "id": null,
+            "kind": "Ingress",
+            "match": {},
+            "patch": {
+              "patchStrategy": "add",
+              "mutatorRef": [
+                [
+                  "metadata",
+                  "annotations",
+                  "nginx.ingress.kubernetes.io/rewrite-target"
+                ]
+              ],
+              "value": "/$1"
             }
           }
         ]
