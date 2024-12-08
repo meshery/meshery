@@ -58,6 +58,10 @@ components:
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-ns-isolation-policy/icons/color/pulsar-ns-isolation-policy-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-ns-isolation-policy/icons/white/pulsar-ns-isolation-policy-white.svg
   description: 
+- name: pulsar-ns-isolation-policy
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-ns-isolation-policy/icons/color/pulsar-ns-isolation-policy-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-ns-isolation-policy/icons/white/pulsar-ns-isolation-policy-white.svg
+  description: 
 featureList: [
   "Automates Pulsar resource management",
   "Simplifies Pulsar configuration",
