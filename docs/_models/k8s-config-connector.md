@@ -1402,6 +1402,14 @@ components:
   colorIcon: assets/img/integrations/k8s-config-connector/components/gke-hub-feature/icons/color/gke-hub-feature-color.svg
   whiteIcon: assets/img/integrations/k8s-config-connector/components/gke-hub-feature/icons/white/gke-hub-feature-white.svg
   description: 
+- name: privileged-access-manager-entitlement
+  colorIcon: assets/img/integrations/k8s-config-connector/components/privileged-access-manager-entitlement/icons/color/privileged-access-manager-entitlement-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/privileged-access-manager-entitlement/icons/white/privileged-access-manager-entitlement-white.svg
+  description: 
+- name: workstation-cluster
+  colorIcon: assets/img/integrations/k8s-config-connector/components/workstation-cluster/icons/color/workstation-cluster-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/workstation-cluster/icons/white/workstation-cluster-white.svg
+  description: 
 featureList: [
   "Provides a wide range of cloud services",
   "Integrates with Kubernetes",

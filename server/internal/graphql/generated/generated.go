@@ -2774,6 +2774,7 @@ input PageFilter {
   updated_after: String
   visibility: [String!]
   metrics: String
+  trim: String
 }
 
 # ============== CATALOG =============================
@@ -16372,7 +16373,7 @@ func (ec *executionContext) unmarshalInputPageFilter(ctx context.Context, obj in
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"page", "pageSize", "order", "search", "from", "to", "updated_after", "visibility", "metrics"}
+	fieldsInOrder := [...]string{"page", "pageSize", "order", "search", "from", "to", "updated_after", "visibility", "metrics", "trim"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -16442,6 +16443,13 @@ func (ec *executionContext) unmarshalInputPageFilter(ctx context.Context, obj in
 				return it, err
 			}
 			it.Metrics = data
+		case "trim":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trim"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Trim = data
 		}
 	}
 

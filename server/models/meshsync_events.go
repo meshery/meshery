@@ -260,12 +260,15 @@ func (mh *MeshsyncDataHandler) requestMeshsyncStore() error {
 // Returns metadata for the component identified by apiVersion and kind.
 // If the component does not exist in the registry, default metadata for k8s component is returned.
 func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind string) (data map[string]interface{}) {
-	compStyles := component.Styles{}
+	componentDef := component.ComponentDefinition{} // Retrieve the entire component
 	defer func() {
-		data, _ = utils.MarshalAndUnmarshal[component.Styles, map[string]interface{}](compStyles)
+		data, _ = utils.MarshalAndUnmarshal[component.ComponentDefinition, map[string]interface{}](componentDef)
 	}()
-	result := mh.dbHandler.Model(component.ComponentDefinition{}).Select("styles").
-		Where("component->>'version' = ? and component->>'kind' = ?", apiVersion, kind).Scan(&data)
+
+	// Query the database for the complete component definition
+	result := mh.dbHandler.Model(component.ComponentDefinition{}).
+		Where("component->>'version' = ? AND component->>'kind' = ?", apiVersion, kind).
+		First(&componentDef)
 
 	if result.Error != nil {
 		if result.Error == gorm.ErrRecordNotFound {
@@ -273,18 +276,12 @@ func (mh *MeshsyncDataHandler) getComponentMetadata(apiVersion string, kind stri
 		} else {
 			mh.log.Error(ErrDBRead(result.Error))
 		}
-		compStyles = K8sMeshModelMetadata.Styles
+		// Provide a default or fallback component definition
+		componentDef = component.ComponentDefinition{
+			Styles: &K8sMeshModelMetadata.Styles,
+		}
 		return
 	}
-	strMetadata, err := utils.Cast[string](data["styles"])
-	if err != nil {
-		compStyles = K8sMeshModelMetadata.Styles
-		return
-	}
-	err = encoding.Unmarshal([]byte(strMetadata), &compStyles)
-	if err != nil {
-		compStyles = K8sMeshModelMetadata.Styles
-		return
-	}
+
 	return
 }
