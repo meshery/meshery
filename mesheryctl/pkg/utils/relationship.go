@@ -159,7 +159,7 @@ func ProcessRelationships(relationshipCSVHelper *RelationshipCSVHelper, spreadsh
 				status := _rel.Enabled
 				rel.Status = &status
 			}
-			
+
 			var styles _rel.RelationshipDefinitionMetadataStyles
 
 			if relationship.Styles != "" {
