@@ -90,7 +90,6 @@ import {
   useDeletePatternMutation,
   useDeployPatternMutation,
   useGetPatternsQuery,
-  useImportPatternMutation,
   usePublishPatternMutation,
   useUndeployPatternMutation,
   useUnpublishPatternMutation,
@@ -403,7 +402,6 @@ function MesheryPatterns({
   const [publishCatalog] = usePublishPatternMutation();
   const [unpublishCatalog] = useUnpublishPatternMutation();
   const [deletePattern] = useDeletePatternMutation();
-  const [importPattern] = useImportPatternMutation();
   const [updatePattern] = useUpdatePatternFileMutation();
   const [uploadPatternFile] = useUploadPatternFileMutation();
   const [deletePatternFile] = useDeletePatternFileMutation();
@@ -1461,7 +1459,7 @@ function MesheryPatterns({
    */
   function handleImportDesign(data) {
     updateProgress({ showProgress: true });
-    const { uploadType, name, url, file, designType } = data;
+    const { uploadType, name, url, file } = data;
     let requestBody = null;
     switch (uploadType) {
       case 'File Upload': {
@@ -1485,10 +1483,8 @@ function MesheryPatterns({
         });
         break;
     }
-
-    importPattern({
-      importBody: requestBody,
-      type: designType,
+    updatePattern({
+      updateBody: requestBody,
     })
       .unwrap()
       .then(() => {
