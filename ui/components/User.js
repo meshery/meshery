@@ -12,6 +12,7 @@ import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidato
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import { Button } from '@layer5/sistent';
+import { UsesSistent } from './SistentWrapper';
 
 /**
  * Extension Point: Avatar behavior for User Modes
@@ -71,9 +72,11 @@ const User = (props) => {
 
     return (
       <Link href={url}>
-        <Button variant="contained" color="primary" data-testid="sign-in-button">
-          Sign In
-        </Button>
+        <UsesSistent>
+          <Button variant="contained" color="primary" data-testid="sign-in-button">
+            Sign In
+          </Button>
+        </UsesSistent>
       </Link>
     );
   }
