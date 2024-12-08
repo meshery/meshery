@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { Avatar } from '@layer5/sistent';
-import IconButton from '@material-ui/core/IconButton';
-import NoSsr from '@material-ui/core/NoSsr';
+import IconButton from '@mui/material/IconButton';
+import NoSsr from '@mui/material/NoSsr';
 import Link from 'next/link';
 import { Provider, connect } from 'react-redux';
 import { store } from '../store';
@@ -11,7 +11,8 @@ import { updateUser } from '../lib/store';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
-import { Button } from '@material-ui/core';
+import { Button } from '@layer5/sistent';
+import { UsesSistent } from './SistentWrapper';
 
 /**
  * Extension Point: Avatar behavior for User Modes
@@ -71,9 +72,11 @@ const User = (props) => {
 
     return (
       <Link href={url}>
-        <Button variant="contained" color="primary" data-testid="sign-in-button">
-          Sign In
-        </Button>
+        <UsesSistent>
+          <Button variant="contained" color="primary" data-testid="sign-in-button">
+            Sign In
+          </Button>
+        </UsesSistent>
       </Link>
     );
   }
@@ -91,7 +94,7 @@ const User = (props) => {
             <Avatar
               className={avatarClassName}
               src={isGetUserSuccess ? userData?.avatar_url : null}
-              imgProps={{ referrerPolicy: 'no-referrer' }}
+              referrerPolicy="no-referrer"
             />
           </IconButton>
         </div>
