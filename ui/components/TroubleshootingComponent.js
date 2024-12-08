@@ -59,20 +59,25 @@ const Troubleshoot = (props) => {
 
   return (
     <div>
-      <Button variant="contained" color="primary" size="large" onClick={handleOpen}>
-        Troubleshooting Guide
-      </Button>
-      <Button
-        variant="contained"
-        color="primary"
-        size="large"
-        onClick={handleOpenForm}
-        style={{
-          marginLeft: '0.31rem',
-        }}
-      >
-        Get Help
-      </Button>
+      <UsesSistent>
+        <Button variant="contained" color="primary" size="large" onClick={handleOpen}>
+          Troubleshooting Guide
+        </Button>
+      </UsesSistent>
+      <UsesSistent>
+        <Button
+          variant="contained"
+          color="primary"
+          size="large"
+          onClick={handleOpenForm}
+          style={{
+            marginLeft: '0.31rem',
+          }}
+        >
+          Get Help
+        </Button>
+      </UsesSistent>
+
       <TroubleshootingModal
         viewDataErrorMessage={props?.viewDataErrorMessage}
         viewHeaderErrorMessage={props?.viewHeaderErrorMessage}
