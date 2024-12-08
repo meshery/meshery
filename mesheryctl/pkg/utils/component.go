@@ -11,7 +11,6 @@ import (
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/csv"
-	"github.com/layer5io/meshkit/utils/manifests"
 	"github.com/meshery/schemas/models/v1alpha1/capability"
 	schmeaVersion "github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/component"
@@ -303,7 +302,7 @@ func CreateComponentsMetadataAndCreateSVGsForMDXStyle(model ModelCSV, components
 			componentTemplate += ","
 		}
 
-		compName := utils.FormatName(manifests.FormatToReadableString(comp.Component))
+		compName := utils.FormatName(comp.Component)
 		colorIconDir := filepath.Join(svgDir, compName, "icons", "color")
 		whiteIconDir := filepath.Join(svgDir, compName, "icons", "white")
 
@@ -350,7 +349,7 @@ func CreateComponentsMetadataAndCreateSVGsForMDStyle(model ModelCSV, components 
   whiteIcon: %s
   description: %s`
 
-		compName := utils.FormatName(manifests.FormatToReadableString(comp.Component))
+		compName := utils.FormatName(comp.Component)
 		colorIconDir := filepath.Join(svgDir, compName, "icons", "color")
 		whiteIconDir := filepath.Join(svgDir, compName, "icons", "white")
 
