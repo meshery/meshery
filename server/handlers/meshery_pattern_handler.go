@@ -190,7 +190,90 @@ func (h *Handler) handlePatternPOST(
 			fileName = parsedBody.PatternData.Name
 		}
 		mesheryPattern.SourceContent = bytPattern
-		if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) {
+		if sourcetype == string(models.HelmChart) {
+			tempFile, err := os.CreateTemp("", "helm-chart-*.tgz")
+			if err != nil {
+				err = utils.ErrCreateDir(err, tempFile.Name())
+				h.log.Error(err)
+				http.Error(rw, err.Error(), http.StatusBadRequest)
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": err,
+				}).WithDescription("Unable to create temp file path.").Build()
+
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
+				return
+			}
+			defer os.Remove(tempFile.Name())
+			_, err = tempFile.Write(parsedBody.PatternData.PatternFile)
+			if err != nil {
+				err = utils.ErrWriteFile(err, tempFile.Name())
+				h.log.Error(err)
+				http.Error(rw, err.Error(), http.StatusBadRequest)
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": err,
+				}).WithDescription("Unable to write uploaded design.").Build()
+
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
+				return
+			}
+
+			err = tempFile.Close()
+			if err != nil {
+				err = utils.ErrCloseFile(err)
+				h.log.Error(err)
+				http.Error(rw, err.Error(), http.StatusBadRequest)
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": err,
+				}).WithDescription("Unable to close temp file.").Build()
+
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
+				return
+			}
+			latestKuberVersion := getLatestKubeVersionFromRegistry(h.registryManager)
+			resp, err := kubernetes.ConvertHelmChartToK8sManifest(kubernetes.ApplyHelmChartConfig{
+				LocalPath:         tempFile.Name(),
+				KubernetesVersion: latestKuberVersion,
+			})
+			if err != nil {
+				err = ErrConvertingHelmChartToDesign(err)
+				h.log.Error(err)
+				http.Error(rw, err.Error(), http.StatusBadRequest)
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": err,
+				}).WithDescription("Unable to close temp file.").Build()
+
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
+				return
+			}
+
+			result := string(resp)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(result, fileName, false, h.registryManager)
+			if err != nil {
+				err = ErrConvertingHelmChartToDesign(err)
+				h.log.Error(err)
+				http.Error(rw, err.Error(), http.StatusBadRequest)
+				event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+					"error": err,
+				}).WithDescription("Unable to convert pattern of helm chart to k8s manifest.").Build()
+
+				_ = provider.PersistEvent(event)
+				go h.config.EventBroadcaster.Publish(userID, event)
+				return
+			}
+			bytPattern, _ := json.Marshal(pattern)
+			mesheryPattern = &models.MesheryPattern{
+				Name:        parsedBody.Name,
+				PatternFile: string(bytPattern),
+				Type: sql.NullString{
+					String: string(models.HelmChart),
+					Valid:  true,
+				},
+			}
+		} else if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) {
 			var k8sres string
 			if sourcetype == string(models.DockerCompose) {
 				k8sres, err = kompose.Convert(bytPattern) // convert the docker compose file into kubernetes manifest
@@ -665,17 +748,51 @@ func (h *Handler) VerifyAndConvertToDesign(
 			}
 			bytPattern, _ := yaml.Marshal(pattern)
 			mesheryPattern.PatternFile = string(bytPattern)
+		} else if sourcetype == string(models.HelmChart) {
+			// Write sourceContent to a temporary file
+			tempFile, err := os.CreateTemp("", "helm-chart-*.tgz")
+			if err != nil {
+				return fmt.Errorf("failed to create temp file: %w", err)
+			}
+			defer os.Remove(tempFile.Name()) // Ensure cleanup of the temporary file
+
+			_, err = tempFile.Write(sourceContent)
+			if err != nil {
+				return fmt.Errorf("failed to write to temp file: %w", err)
+			}
+
+			err = tempFile.Close()
+			if err != nil {
+				return fmt.Errorf("failed to close temp file: %w", err)
+			}
+
+			// Use the temporary file path as LocalPath
+			latestKuberVersion := getLatestKubeVersionFromRegistry(h.registryManager)
+			resp, err := kubernetes.ConvertHelmChartToK8sManifest(kubernetes.ApplyHelmChartConfig{
+				LocalPath:         tempFile.Name(),
+				KubernetesVersion: latestKuberVersion,
+			})
+			if err != nil {
+				return ErrConvertingHelmChartToDesign(err)
+			}
+
+			result := string(resp)
+			pattern, err := pCore.NewPatternFileFromK8sManifest(result, mesheryPattern.Name, false, h.registryManager)
+			if err != nil {
+				return ErrConvertingHelmChartToDesign(err)
+			}
+			bytPattern, _ := yaml.Marshal(pattern)
+
+			mesheryPattern.PatternFile = string(bytPattern)
 		}
 
+		// Save the updated Meshery pattern
 		resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 		if err != nil {
-			obj := "save"
-			saveErr := ErrApplicationFailure(err, obj)
-			return saveErr
+			return ErrApplicationFailure(err, "save")
 		}
 
 		contentMesheryPatternSlice := make([]models.MesheryPattern, 0)
-
 		if err := json.Unmarshal(resp, &contentMesheryPatternSlice); err != nil {
 			return models.ErrUnmarshal(err, "pattern")
 		}
@@ -884,6 +1001,7 @@ func genericHTTPDesignFile(fileURL, patternName, sourceType string, reg *meshmod
 //
 // ```?metrics``` Returns metrics like deployment/share/clone/view/download count for desings, default is false,
 //
+// ```?trim``` Trims the response to exclude the pattern file content, default is false
 // responses:
 //
 //	200: mesheryPatternsResponseWrapper
@@ -898,6 +1016,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 	updateAfter := q.Get("updated_after")
 	includeMetrics := q.Get("metrics")
+	trim := q.Get("trim")
 	err := r.ParseForm() // necessary to get r.Form["visibility"], i.e, ?visibility=public&visbility=private
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
@@ -918,7 +1037,8 @@ func (h *Handler) GetMesheryPatternsHandler(
 		}
 	}
 
-	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter, filter.Visibility, includeMetrics)
+	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter, filter.Visibility, includeMetrics, trim)
+	
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)

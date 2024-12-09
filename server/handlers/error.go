@@ -148,8 +148,8 @@ const (
 	ErrGetComponentDefinitionCode          = "meshery-server-1362"
 	ErrGetCapabilitiesCode                 = "meshery-server-1363"
 	ErrExportPatternInFormatCode           = "meshery-server-1364"
-	ErrFileTypeCode                        = "replace_me"
-	ErrCreatingOPAInstanceCode             = "replace_me"
+	ErrFileTypeCode                        = "meshery-server-1366"
+	ErrCreatingOPAInstanceCode             = "meshery-server-1367"
 )
 
 var (

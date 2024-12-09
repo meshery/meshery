@@ -24,6 +24,7 @@ jobs:
               key: ${{ secrets.METAL_SSH_KEY }}
               script: |
                 cd meshery
+                git restore .
                 git pull
                 docker compose -f install/playground/docker/docker-compose.yaml pull
                 docker compose -f install/playground/docker/docker-compose.yaml down
