@@ -189,7 +189,7 @@ We also storing test result on every PR in github actions, in case you need to d
 - Check the PR you are made, go to the bottom of PR directly above the comment
 - Wait until all github actions completed, and scroll until you see `Meshery UI and Server / UI end-to-end tests`  
 - Click details and it will redirecting you to the actions workflow
-- Go to summary tab, scroll down until you see artifact, and check the artifact `playwright-result`
+- Go to summary tab, scroll down until you see artifact, and check the artifact `playwright-report`
 - Download the artifact
 - Extract the file into a folder
 - Go to [Playwright Trace Page](https://trace.playwright.dev/)
