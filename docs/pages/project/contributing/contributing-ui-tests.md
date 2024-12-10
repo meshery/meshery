@@ -86,7 +86,7 @@ make docker-testing-env-build
 make docker-testing-env
 ```
 
-## Setup playwright & Run the test cases
+## Setup playwright
 
 For playwrights, always try to use a native OS whenever possible. The Docker-based approach is intended only for unsupported OSes and is generally not recommended because it runs on top of Ubuntu images, which can be redundant if you already using Ubuntu or Windows.
 
@@ -98,7 +98,7 @@ Setup playwright:
 make test-setup-ui
 ```
 
-Run the test cases:
+Run the all project and test cases:
 
 ```bash
 make test-ui
@@ -133,7 +133,60 @@ In the last step go to ui folder,
 cd ui;
 ```
 
-And run this command for running the test cases:
+## Run the test cases
+
+There are several options we can use to run the test cases:
+
+To run playwright UI mode using the browser, you can add `--ui` in the cli, for example:
 ```bash
-PW_TEST_CONNECT_WS_ENDPOINT=ws://localhost:8080/ npx playwright test
+npx playwright test --ui
 ```
+
+If you are using playwright from, you can use `--ui-port=<playwright-docker-server>`, for example:
+```bash, for example:
+npx playwright test --ui-port=8080
+```
+
+To run playwright for specific project only, for example meshery-provider, you can run this command:
+```bash
+npx playwright test --ui --project=chromium-meshery-provider --ui 
+```
+
+To run specific test, you can add the test file location, for example:
+```bash
+npx playwright test --ui --project=chromium-meshery-provider --ui tests/e2e/service-mesh-performance.spec.js 
+```
+
+For more detail, you can read the [Playwright Cli docs](https://playwright.dev/docs/test-cli)
+
+
+## Testing Meshery & Local Provider
+By default our test cases is running against both Meshery and Local Provider, we are utilizing playwright feature such as:
+
+- StorageState: In meshery setup auth, we have 2 storage state, which store a session for both Meshery and Local provider.
+- Project: After the setup completed it will run project based test which depends on storage state for one for Local Provider and one for Meshery Provider
+- Test Parameterize: In Local provider we are limiting some feature, to test against missing feature, we leverage this playwright feature to check or even skipping the test is not possible to run, To do the check you need to specify `provider` directly from the test, and make sure the test is wrapped using Project fixture:
+
+```javascript
+import { expect, test } from './fixtures/project';
+
+test('Random test', async ({ provider }) => {
+  if (provider === "Meshery") {
+    // Run this for testing Meshery provider
+  }
+
+  if (provider === "None") {
+    // Run this for testing Local provider
+  }
+});
+```
+
+## Debugging Test on Github Actions
+We also storing test result on every PR in github actions, in case you need to debug it furter:
+- Check the PR you are made, go to actions which run the e2e testing, it will redirecting you to actions jobs
+- Go to summary tab, and check the artifact `playwright-result`
+- Download the artifact
+- Extract the file into a folder
+- Go to [Playwright Trace Page](https://trace.playwright.dev/)
+- From the test folder pick one folder which represent the test, you wanna check
+- Upload the trace file
