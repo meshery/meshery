@@ -148,6 +148,8 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	isAnnotaion, _ := strconv.ParseBool(r.URL.Query().Get("annotations"))
 	isLabels, _ := strconv.ParseBool(r.URL.Query().Get("labels"))
 	asDesign, _ := strconv.ParseBool(r.URL.Query().Get("asDesign"))
+
+	namespaces := r.URL.Query()["namespace"] // namespace is an array of strings to scope the resources
 	// kind is an array of strings
 	kind := r.URL.Query()["kind"]
 
@@ -167,60 +169,68 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 		filter.ClusterIds = []string{}
 	}
 
-	result := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
+	query := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
+		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
 		Preload("KubernetesResourceMeta").
 		Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds)
 
+	if len(namespaces) > 0 {
+		query = query.Where("kubernetes_resource_object_meta.namespace IN (?) or kubernetes_resource_object_meta.name IN (?)", namespaces, namespaces)
+	}
+
 	if len(kind) > 0 {
-		result = result.Where("kubernetes_resources.kind IN (?)", kind)
+		query = query.Where("kubernetes_resources.kind IN (?)", kind)
 	}
 
 	if apiVersion != "" {
-		result = result.Where(&model.KubernetesResource{APIVersion: apiVersion})
+		query = query.Where(&model.KubernetesResource{APIVersion: apiVersion})
 	}
 
 	if isLabels {
-		result = result.Preload("KubernetesResourceMeta.Labels", "kind = ?", model.KindLabel)
+		query = query.Preload("KubernetesResourceMeta.Labels", "kind = ?", model.KindLabel)
 	}
 	if isAnnotaion {
-		result = result.Preload("KubernetesResourceMeta.Annotations", "kind = ?", model.KindAnnotation)
+		query = query.Preload("KubernetesResourceMeta.Annotations", "kind = ?", model.KindAnnotation)
 	}
 
 	if spec {
-		result = result.Preload("Spec")
+		query = query.Preload("Spec")
 	}
 
 	if status {
-		result = result.Preload("Status")
+		query = query.Preload("Status")
 	}
 
 	if search != "" {
 
-		result = result.
-			Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
+		query = query.
+			// Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
 			Where("kubernetes_resource_object_meta.name LIKE ?", "%"+search+"%")
 	}
 
-	result.Count(&totalCount)
+	query.Count(&totalCount)
 
 	if limit != 0 {
-		result = result.Limit(limit)
+		query = query.Limit(limit)
 	}
 
 	if offset != 0 {
-		result = result.Offset(offset)
+		query = query.Offset(offset)
 	}
 
 	order = models.SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order != "" {
 		if sort == "desc" {
-			result = result.Order(clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true})
+			query = query.Order(clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true})
 		} else {
-			result = result.Order(order)
+			query = query.Order(order)
 		}
 	}
 
-	err := result.Find(&resources).Error
+	// prrint the query
+	h.log.Info("Resources query", query.Statement.SQL.String())
+
+	err := query.Find(&resources).Error
 	if err != nil {
 		h.log.Error(ErrFetchMeshSyncResources(err))
 		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
