@@ -241,7 +241,7 @@ Assess your cloud native infrastructure configuration against deployment and ope
 <h3>Workspaces: Your team's Google Drive for cloud native projects</h3>
 <br /><br /> <img src=".github/assets/images/readme/workspace.gif" class="screenshot"
                         alt="Multi-cluster Kubernetes Manager" loading="lazy" />
-<p>Workspaces let you organize your work and serve as the central point of collaboration for you and your teams and point of access control to Environments and their resources.<p>
+<p>Workspaces let you organize your work and serve as the central point of collaboration for you and your teams and point of access control to Environments and their resources.</p>
 <br /><br />
 
 <h3>Manage infra performance with Performance Profiles</h3>
