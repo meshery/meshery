@@ -288,6 +288,7 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	enc := json.NewEncoder(rw)
 
 	clusterIds := r.URL.Query()["clusterId"]
+	namespaceScope := r.URL.Query()["namespace"]
 	h.log.Info("Fetching meshsync resources summary", "clusterIds", clusterIds)
 
 	if len(clusterIds) == 0 {
@@ -302,12 +303,18 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	var namespaces []string
 
 	// TODO: simplify into one query if possible
-	err1 := provider.GetGenericPersister().
+	kindsQuery := provider.GetGenericPersister().
 		Model(&model.KubernetesResource{}).
+		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resources.id = kubernetes_resource_object_meta.id").
 		Select("kind, count(*) as count").
 		Group("kind").
-		Where("kubernetes_resources.cluster_id IN (?)", clusterIds).
-		Scan(&kindCounts).Error
+		Where("kubernetes_resources.cluster_id IN (?)", clusterIds)
+
+	if len(namespaceScope) > 0 {
+		kindsQuery = kindsQuery.Where("kubernetes_resource_object_meta.namespace IN (?) or kubernetes_resource_object_meta.name IN (?)",
+			namespaceScope, namespaceScope)
+	}
+	err1 := kindsQuery.Scan(&kindCounts).Error
 
 	if err1 != nil {
 		h.log.Error(ErrFetchMeshSyncResources(err1))
