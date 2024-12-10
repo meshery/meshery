@@ -70,13 +70,23 @@ func ConvertToPatternFile(resources []model.KubernetesResource, stripSchema bool
 
 		componentDef.Id = uuid.FromStringOrNil(resource.KubernetesResourceMeta.UID)
 		componentDef.DisplayName = resource.KubernetesResourceMeta.Name
+
+		var spec interface{}
+		if resource.Spec != nil && resource.Spec.Attribute == "" {
+			spec = JsonParse(&resource.Spec.Attribute, true, map[string]interface{}{})
+		}
+
 		componentDef.Configuration = map[string]interface{}{
 			"metadata": resource.KubernetesResourceMeta,
-			"spec":     JsonParse(&resource.Spec.Attribute, true, map[string]interface{}{}),
+			"spec":     spec,
 			"data":     JsonParse(&resource.Data, true, map[string]interface{}{}),
 		}
-		// componentDef.Metadata.InstanceDetails = resource
 
+		if componentDef.Metadata.AdditionalProperties == nil {
+			componentDef.Metadata.AdditionalProperties = make(map[string]interface{})
+		}
+
+		componentDef.Metadata.AdditionalProperties["instanceDetails"] = resource
 		if stripSchema {
 			componentDef.Component.Schema = ""
 		}
@@ -87,7 +97,7 @@ func ConvertToPatternFile(resources []model.KubernetesResource, stripSchema bool
 	var emptyUUID uuid.UUID
 
 	return pattern.PatternFile{
-		Name:          "EmptyDesignName",
+		Name:          "ClusterSnapshot",
 		Id:            emptyUUID,
 		SchemaVersion: "designs.meshery.io/v1beta1",
 		Version:       "v1",
