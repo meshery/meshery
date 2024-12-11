@@ -119,7 +119,7 @@ function CustomToolbarSelect({ results_selection, setSelectedRows, clearResultsS
           <Tooltip title="Compare selected">
             <StyledIconButton onClick={handleCompareSelected}>
               <StyledIcon>
-                <CompareArrowsIcon />
+                <CompareArrowsIcon data-testid="compare-selected" />
               </StyledIcon>
             </StyledIconButton>
           </Tooltip>
