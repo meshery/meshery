@@ -11,7 +11,7 @@ list: include
 
 When Meshery is updated to use a newer version of Golang, extension providers need to ensure their integrations remain compatible with Meshery. Follow these steps to verify compatibility of your integrations caused by Golang version changes:
 
-{% include alert.html type="info" title="Note" content="The current Golang Version is mentioned the <a href='https://docs.meshery.io/project/contributing#meshery-contribution-flow'>Contributing Guide</a>. Update to this version everywhere." %}
+{% include alert.html type="info" title="Note" content="The current Golang Version is mentioned in the <a href='https://docs.meshery.io/project/contributing#meshery-contribution-flow'>Contributing Guide</a>. Update to this version everywhere." %}
 
 ### Checkout the Latest Meshery Repository
 Clone the latest version of the Meshery repository to ensure you are working with the most recent codebase. If you already have the repository, use git pull to fetch the latest changes.
