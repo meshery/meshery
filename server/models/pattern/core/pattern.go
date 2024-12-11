@@ -13,7 +13,6 @@ import (
 	registry "github.com/layer5io/meshkit/models/meshmodel/registry"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	mutils "github.com/layer5io/meshkit/utils"
-	"github.com/layer5io/meshkit/utils/manifests"
 	"github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
@@ -21,36 +20,10 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-type prettifier bool
-
-/*
-The logic and principle for prettification/deprettification.
-1. Specific considerations are made when schema is passed to be prettified like handling kubernetes specific fields.
-2. A general rule of thumb is to never prettify or deprettify the end-user fields, the ones which are entered by USER.
-For non schema files, it would be all end string fields (user input) and for schema files it would be ENUMS as they are the only system defined fields that are used at end user input.
-*/
-func (p prettifier) Prettify(m map[string]interface{}, isSchema bool) map[string]interface{} {
-	res := ConvertMapInterfaceMapString(m, true, isSchema)
-	out, ok := res.(map[string]interface{})
-	if !ok {
-		fmt.Println("failed to cast")
-	}
-	return out
-}
-func (p prettifier) DePrettify(m map[string]interface{}, isSchema bool) map[string]interface{} {
-	res := ConvertMapInterfaceMapString(m, false, isSchema)
-	out, ok := res.(map[string]interface{})
-	if !ok {
-		fmt.Println("failed to cast")
-	}
-
-	return out
-}
-
 // ConvertMapInterfaceMapString converts map[interface{}]interface{} => map[string]interface{}
 //
 // It will also convert []interface{} => []string
-func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) interface{} {
+func ConvertMapInterfaceMapString(v interface{}, isSchema bool) interface{} {
 	switch x := v.(type) {
 	case map[interface{}]interface{}:
 		m := map[string]interface{}{}
@@ -61,16 +34,12 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) i
 					m[k2] = v2
 					continue
 				}
-				newmap := ConvertMapInterfaceMapString(v2, prettify, isSchema)
+				newmap := ConvertMapInterfaceMapString(v2, isSchema)
 				if isSchema && isSpecialKey(k2) { //Few special keys in schema should not be prettified
 					m[k2] = newmap
-				} else if prettify {
-					m[manifests.FormatToReadableString(k2)] = newmap
-				} else {
-					m[manifests.DeFormatReadableString(k2)] = newmap
 				}
 			default:
-				m[fmt.Sprint(k)] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
+				m[fmt.Sprint(k)] = ConvertMapInterfaceMapString(v2, isSchema)
 			}
 		}
 		return m
@@ -78,7 +47,7 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) i
 	case []interface{}:
 		x2 := make([]interface{}, len(x))
 		for i, v2 := range x {
-			x2[i] = ConvertMapInterfaceMapString(v2, prettify, isSchema)
+			x2[i] = ConvertMapInterfaceMapString(v2, isSchema)
 		}
 		return x2
 	case map[string]interface{}:
@@ -89,23 +58,12 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) i
 				m[k] = v2
 				continue
 			}
-			newmap := ConvertMapInterfaceMapString(v2, prettify, isSchema)
+			newmap := ConvertMapInterfaceMapString(v2, isSchema)
 			if isSchema && isSpecialKey(k) {
 				m[k] = newmap
-			} else if prettify {
-				m[manifests.FormatToReadableString(k)] = newmap
-			} else {
-				m[manifests.DeFormatReadableString(k)] = newmap
 			}
 		}
 		return m
-	case string:
-		if isSchema {
-			if prettify {
-				return manifests.FormatToReadableString(x) //Whitespace formatting should be done at the time of prettification only
-			}
-			return manifests.DeFormatReadableString(x)
-		}
 	}
 	return v
 }
@@ -121,9 +79,6 @@ func isSpecialKey(k string) bool {
 	}
 	return false
 }
-
-// In case of any breaking change or bug caused by this, set this to false and the whitespace addition in schema generated/consumed would be removed(will go back to default behavior)
-const Format prettifier = true
 
 type DryRunResponseWrapper struct {
 	//When success is true, error will be nil and Component will contain the structure of the component as it will look after deployment
@@ -449,7 +404,6 @@ func createPatternDeclarationFromK8s(manifest map[string]interface{}, regManager
 		return component.ComponentDefinition{}, ErrCreatePatternService(fmt.Errorf("cannot cast to the component-definition for APIVersion: %s Kind: %s", apiVersion, kind))
 	}
 
-	rest = Format.Prettify(rest, false)
 	uuidV4, _ := uuid.NewV4()
 	declaration := component.ComponentDefinition{
 		Id:            uuidV4,
