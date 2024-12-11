@@ -13,6 +13,7 @@ import (
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
@@ -72,7 +73,7 @@ func ConvertToPatternFile(resources []model.KubernetesResource, stripSchema bool
 		componentDef.DisplayName = resource.KubernetesResourceMeta.Name
 
 		var spec interface{}
-		if resource.Spec != nil && resource.Spec.Attribute == "" {
+		if resource.Spec != nil {
 			spec = JsonParse(&resource.Spec.Attribute, true, map[string]interface{}{})
 		}
 
@@ -104,6 +105,48 @@ func ConvertToPatternFile(resources []model.KubernetesResource, stripSchema bool
 		Components:    components,
 		Relationships: []*relationship.RelationshipDefinition{},
 	}
+}
+
+// scopes down the query based on the namespaces
+func filterByNamespaces(query *gorm.DB, namespaces []string) *gorm.DB {
+	if len(namespaces) > 0 {
+		return query.Where("kubernetes_resource_object_meta.namespace IN (?) or kubernetes_resource_object_meta.name IN (?)", namespaces, namespaces)
+	}
+	return query
+}
+
+func searchResources(query *gorm.DB, search string) *gorm.DB {
+	if search != "" {
+		return query.Where("kubernetes_resource_object_meta.name LIKE ?", "%"+search+"%")
+	}
+	return query
+}
+
+func filterByKinds(query *gorm.DB, kinds []string) *gorm.DB {
+	if len(kinds) > 0 {
+		return query.Where("kubernetes_resources.kind IN (?)", kinds)
+	}
+	return query
+}
+
+func filterByClusters(query *gorm.DB, clusterIDs []string) *gorm.DB {
+	if len(clusterIDs) > 0 {
+		query.Where("kubernetes_resources.cluster_id IN (?)", clusterIDs)
+	}
+	return query
+}
+
+func queryBuilder(initial *gorm.DB, funcs ...func(*gorm.DB) *gorm.DB) *gorm.DB {
+	result := initial
+
+	for _, f := range funcs {
+		if result == nil {
+			panic("gorm.DB instance is nil. Ensure the initial instance is provided.")
+		}
+		result = f(result)
+	}
+
+	return result
 }
 
 // swagger:route GET /api/system/meshsync/resources GetMeshSyncResources idGetMeshSyncResources
@@ -174,13 +217,9 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 		Preload("KubernetesResourceMeta").
 		Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds)
 
-	if len(namespaces) > 0 {
-		query = query.Where("kubernetes_resource_object_meta.namespace IN (?) or kubernetes_resource_object_meta.name IN (?)", namespaces, namespaces)
-	}
-
-	if len(kind) > 0 {
-		query = query.Where("kubernetes_resources.kind IN (?)", kind)
-	}
+	query = filterByNamespaces(query, namespaces)
+	query = searchResources(query, search)
+	query = filterByKinds(query, kind)
 
 	if apiVersion != "" {
 		query = query.Where(&model.KubernetesResource{APIVersion: apiVersion})
@@ -199,13 +238,6 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 
 	if status {
 		query = query.Preload("Status")
-	}
-
-	if search != "" {
-
-		query = query.
-			// Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
-			Where("kubernetes_resource_object_meta.name LIKE ?", "%"+search+"%")
 	}
 
 	query.Count(&totalCount)
@@ -310,10 +342,8 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 		Group("kind").
 		Where("kubernetes_resources.cluster_id IN (?)", clusterIds)
 
-	if len(namespaceScope) > 0 {
-		kindsQuery = kindsQuery.Where("kubernetes_resource_object_meta.namespace IN (?) or kubernetes_resource_object_meta.name IN (?)",
-			namespaceScope, namespaceScope)
-	}
+	kindsQuery = filterByNamespaces(kindsQuery, namespaceScope)
+
 	err1 := kindsQuery.Scan(&kindCounts).Error
 
 	if err1 != nil {
