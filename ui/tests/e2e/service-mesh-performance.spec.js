@@ -66,7 +66,6 @@ test.describe('Service Mesh Performance Management Tests', { tag: '@unstable' },
       page,
     }) => {
       await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
-      await page.getByText(profileWithUUID, { exact: true }).first().click();
       await page.getByRole('button', { name: 'View Results', exact: true }).first().click();
       await page.getByTestId('MUIDataTableBodyRow-0').locator('input[type="checkbox"]').check();
 
@@ -79,6 +78,15 @@ test.describe('Service Mesh Performance Management Tests', { tag: '@unstable' },
       page,
     }) => {
       await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
+
+      const searchProfiles = await page
+        .getByTestId('open-search-performance-profiles')
+        .getByRole('button')
+        .first();
+
+      await searchProfiles.click();
+      await page.getByPlaceholder('Search Profiles...').fill(profileWithUUID);
+
       await page.getByText(profileWithUUID, { exact: true }).first().click();
       await page.getByTestId('performanceProfileCard-delete').first().click();
 
