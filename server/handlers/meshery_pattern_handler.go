@@ -132,7 +132,8 @@ func (h *Handler) handlePatternPOST(
 	userID := uuid.FromStringOrNil(user.ID)
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("create").ActedUpon(userID).WithSeverity(events.Informational)
 
-	sourcetype := mux.Vars(r)["sourcetype"]
+
+
 	parsedBody := &MesheryPatternPOSTRequestBody{}
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		h.log.Error(ErrRequestBody(err))
@@ -145,6 +146,25 @@ func (h *Handler) handlePatternPOST(
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
+
+	sourcetype := mux.Vars(r)["sourcetype"]
+	if sourcetype == "" || sourcetype == "undefined" {
+		sourcetype,err=utils.IdentifyInputType(parsedBody.PatternData.PatternFile)
+		if err != nil {
+			h.log.Error(fmt.Errorf("error identifying input type: %w", err))
+			http.Error(rw, fmt.Sprintf("Error identifying pattern type: %s", err.Error()), http.StatusBadRequest)
+			event := eventBuilder.
+				WithSeverity(events.Error).
+				WithMetadata(map[string]interface{}{
+					"error": err.Error(),
+				}).
+				WithDescription("Failed to identify pattern type. Please specify you Design Type").
+				Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+			return
+		}
+    }
 
 	actedUpon := &userID
 	if parsedBody.PatternData != nil && parsedBody.PatternData.ID != nil {

@@ -402,8 +402,8 @@ function MesheryPatterns({
   const [clonePattern] = useClonePatternMutation();
   const [publishCatalog] = usePublishPatternMutation();
   const [unpublishCatalog] = useUnpublishPatternMutation();
-  const [deletePattern] = useDeletePatternMutation();
   const [importPattern] = useImportPatternMutation();
+  const [deletePattern] = useDeletePatternMutation();
   const [updatePattern] = useUpdatePatternFileMutation();
   const [uploadPatternFile] = useUploadPatternFileMutation();
   const [deletePatternFile] = useDeletePatternFileMutation();
@@ -1481,7 +1481,6 @@ function MesheryPatterns({
         });
         break;
     }
-
     importPattern({
       importBody: requestBody,
       type: designType,
@@ -1494,6 +1493,7 @@ function MesheryPatterns({
           event_type: EVENT_TYPES.SUCCESS,
         });
         getPatterns();
+        handleUploadImportClose();
       })
       .catch(() => {
         updateProgress({ showProgress: false });
