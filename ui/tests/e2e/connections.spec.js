@@ -151,7 +151,7 @@ test(
     await expect(page.getByTestId('connection-discoveredModal')).toBeVisible();
 
     // Verify available contexts were connected
-    await expect(page.getByRole('menuitem', { name: 'connected' })).toBeVisible();
+    await expect(page.getByRole('menuitem', { name: 'registered' })).toBeVisible();
 
     // Click "OK" button to close success modal
     await page.getByRole('button', { name: 'OK', exact: true }).click();
