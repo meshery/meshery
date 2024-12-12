@@ -158,7 +158,7 @@ func (h *Handler) handlePatternPOST(
 				WithMetadata(map[string]interface{}{
 					"error": err.Error(),
 				}).
-				WithDescription("Failed to identify pattern type. Please specify you Design Type").
+				WithDescription("Failed to identify pattern type. Please specify your Design Type").
 				Build()
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
