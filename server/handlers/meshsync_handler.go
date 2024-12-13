@@ -162,19 +162,6 @@ func filterByPatternIds(query *gorm.DB, patternIDs []string) *gorm.DB {
 	return query
 }
 
-func queryBuilder(initial *gorm.DB, funcs ...func(*gorm.DB) *gorm.DB) *gorm.DB {
-	result := initial
-
-	for _, f := range funcs {
-		if result == nil {
-			panic("gorm.DB instance is nil. Ensure the initial instance is provided.")
-		}
-		result = f(result)
-	}
-
-	return result
-}
-
 // swagger:route GET /api/system/meshsync/resources GetMeshSyncResources idGetMeshSyncResources
 // Handle GET request for meshsync discovered resources
 //
@@ -217,7 +204,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	isAnnotaion, _ := strconv.ParseBool(r.URL.Query().Get("annotations"))
 	isLabels, _ := strconv.ParseBool(r.URL.Query().Get("labels"))
 	asDesign, _ := strconv.ParseBool(r.URL.Query().Get("asDesign"))
-	patternIds, _ := r.URL.Query()["patternId"]
+	patternIds := r.URL.Query()["patternId"]
 
 	namespaces := r.URL.Query()["namespace"] // namespace is an array of strings to scope the resources
 	// kind is an array of strings
@@ -369,9 +356,9 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 		Model(&model.KubernetesResource{}).
 		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resources.id = kubernetes_resource_object_meta.id").
 		Select("kind, count(*) as count").
-		Group("kind").
-		Where("kubernetes_resources.cluster_id IN (?)", clusterIds)
+		Group("kind")
 
+	kindsQuery = filterByClusters(kindsQuery, clusterIds)
 	kindsQuery = filterByNamespaces(kindsQuery, namespaceScope)
 	kindsQuery = filterByPatternIds(kindsQuery, patternIds)
 
