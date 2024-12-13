@@ -1472,6 +1472,8 @@ func (h *Handler) DownloadMesheryPatternHandler(
 
 			return
 		}
+
+
 		return
 	}
 
@@ -1539,6 +1541,8 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	_ = provider.PersistEvent(eventBuilder.Build())
 }
 
 // swagger:route POST /api/pattern/clone/{id} PatternsAPI idCloneMesheryPattern
@@ -1648,6 +1652,7 @@ func (h *Handler) CloneMesheryPatternHandler(
 		http.Error(rw, ErrClonePattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
+	_ = provider.PersistEvent(eventBuilder.Build())
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
