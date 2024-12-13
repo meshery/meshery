@@ -13,6 +13,7 @@ import {
   LegacyStoreContext,
   actionTypes,
   selectSelectedK8sClusters,
+  selectK8sConfig,
 } from '../lib/store';
 import GrafanaCustomCharts from './telemetry/grafana/GrafanaCustomCharts';
 import MesheryPerformanceComponent from './MesheryPerformance';
@@ -100,6 +101,10 @@ function NavigatorExtension({
     selectedK8sClusters: {
       get: () => selectSelectedK8sClusters(legacyStore.getState()),
       useSelectedK8sClusters: () => useLegacySelector(selectSelectedK8sClusters),
+    },
+    k8sconfig: {
+      get: () => selectK8sConfig(legacyStore.getState()),
+      useK8sConfig: () => useLegacySelector(selectK8sConfig),
     },
   };
 
