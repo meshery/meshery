@@ -1457,7 +1457,7 @@ function MesheryPatterns({
    */
   function handleImportDesign(data) {
     updateProgress({ showProgress: true });
-    const { uploadType, name, url, file, designType } = data;
+    const { uploadType, name, url, file, designType = 'Auto' } = data;
     let requestBody = null;
     switch (uploadType) {
       case 'File Upload': {

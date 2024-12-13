@@ -148,7 +148,7 @@ func (h *Handler) handlePatternPOST(
 	}
 
 	sourcetype := mux.Vars(r)["sourcetype"]
-	if sourcetype == "" || sourcetype == "undefined" {
+	if sourcetype =="Auto" {
 		sourcetype,err=utils.IdentifyInputType(parsedBody.PatternData.PatternFile)
 		if err != nil {
 			h.log.Error(fmt.Errorf("error identifying input type: %w", err))
