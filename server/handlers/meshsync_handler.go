@@ -77,8 +77,26 @@ func ConvertToPatternFile(resources []model.KubernetesResource, stripSchema bool
 			spec = JsonParse(&resource.Spec.Attribute, true, map[string]interface{}{})
 		}
 
+		labels := map[string]string{}
+
+		if resource.KubernetesResourceMeta.Labels != nil {
+			for _, label := range resource.KubernetesResourceMeta.Labels {
+				labels[label.Key] = label.Value
+			}
+		}
+
+		metadata := map[string]interface{}{
+			"labels": labels,
+			"name":   resource.KubernetesResourceMeta.Name,
+		}
+
+		// only set namespace if it is not empty otherwise evaluator creates empty namespace
+		if resource.KubernetesResourceMeta.Namespace != "" {
+			metadata["namespace"] = resource.KubernetesResourceMeta.Namespace
+		}
+
 		componentDef.Configuration = map[string]interface{}{
-			"metadata": resource.KubernetesResourceMeta,
+			"metadata": metadata,
 			"spec":     spec,
 			"data":     JsonParse(&resource.Data, true, map[string]interface{}{}),
 		}
@@ -131,7 +149,14 @@ func filterByKinds(query *gorm.DB, kinds []string) *gorm.DB {
 
 func filterByClusters(query *gorm.DB, clusterIDs []string) *gorm.DB {
 	if len(clusterIDs) > 0 {
-		query.Where("kubernetes_resources.cluster_id IN (?)", clusterIDs)
+		return query.Where("kubernetes_resources.cluster_id IN (?)", clusterIDs)
+	}
+	return query
+}
+
+func filterByPatternIds(query *gorm.DB, patternIDs []string) *gorm.DB {
+	if len(patternIDs) > 0 {
+		return query.Where("kubernetes_resources.pattern_resource IN (?)", patternIDs)
 	}
 	return query
 }
@@ -191,6 +216,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	isAnnotaion, _ := strconv.ParseBool(r.URL.Query().Get("annotations"))
 	isLabels, _ := strconv.ParseBool(r.URL.Query().Get("labels"))
 	asDesign, _ := strconv.ParseBool(r.URL.Query().Get("asDesign"))
+	patternIds, _ := r.URL.Query()["patternId"]
 
 	namespaces := r.URL.Query()["namespace"] // namespace is an array of strings to scope the resources
 	// kind is an array of strings
@@ -220,6 +246,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	query = filterByNamespaces(query, namespaces)
 	query = searchResources(query, search)
 	query = filterByKinds(query, kind)
+	query = filterByPatternIds(query, patternIds)
 
 	if apiVersion != "" {
 		query = query.Where(&model.KubernetesResource{APIVersion: apiVersion})
@@ -287,7 +314,8 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 			h.log.Error(fmt.Errorf("Error evaluating design: %v", error))
 		} else {
 			// if there is error in evaluation, return the raw design (without any relationships)
-			design = evalResponse.Design
+			design = rawDesign
+			design.Relationships = evalResponse.Design.Relationships // only add relationships
 		}
 
 	}
@@ -321,6 +349,7 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 
 	clusterIds := r.URL.Query()["clusterId"]
 	namespaceScope := r.URL.Query()["namespace"]
+	patternIds := r.URL.Query()["patternId"]
 	h.log.Info("Fetching meshsync resources summary", "clusterIds", clusterIds)
 
 	if len(clusterIds) == 0 {
@@ -343,6 +372,7 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 		Where("kubernetes_resources.cluster_id IN (?)", clusterIds)
 
 	kindsQuery = filterByNamespaces(kindsQuery, namespaceScope)
+	kindsQuery = filterByPatternIds(kindsQuery, patternIds)
 
 	err1 := kindsQuery.Scan(&kindCounts).Error
 
