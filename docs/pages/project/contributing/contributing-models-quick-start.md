@@ -47,7 +47,7 @@ The following instructions are a no-fluff guide to creating your own Meshery Mod
 
 </ol>
 
-**Congratulations! You have successfully created a new model.**
+**Congratulations! You have created a new model.**
 
 ### Contributing a Model Definition
 

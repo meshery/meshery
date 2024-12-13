@@ -4,7 +4,7 @@
 
 #### Accessing Meshery UI
 
-After successfully deploying Meshery, you can access Meshery's web-based user interface. Your default browser will be automatically opened and directed to Meshery UI (default location is [http://localhost:9081](http://localhost:9081)).
+After deploying Meshery, you can access Meshery's web-based user interface. Your default browser will be automatically opened and directed to Meshery UI (default location is [http://localhost:9081](http://localhost:9081)).
 
 You can use the following command to open Meshery UI in your default browser:
 

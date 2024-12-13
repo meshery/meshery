@@ -23,7 +23,7 @@ Before diving into Meshery's testing environment, certain prerequisites are nece
 
 ## Setting up environment variable
 
-To run the tests successfully, three environment variables must be configured:  
+To run the tests, three environment variables must be configured:  
 • `REMOTE_PROVIDER_USER_EMAIL`: The email associated with your account within your provider.  
 • `REMOTE_PROVIDER_USER_PASSWORD` : The password associated with your account within your provider.  
 • `PROVIDER_TOKEN`: Your provider token, can be generated from an account registered within your provider  
