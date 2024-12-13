@@ -149,12 +149,12 @@ npx playwright test --ui-port=8080
 
 To run playwright for specific project only, for example meshery-provider, you can run this command:
 ```bash
-npx playwright test --ui --project=chromium-meshery-provider --ui 
+npx playwright test --ui --project=chromium-meshery-provider 
 ```
 
 To run specific test, you can add the test file location, for example:
 ```bash
-npx playwright test --ui --project=chromium-meshery-provider --ui tests/e2e/service-mesh-performance.spec.js 
+npx playwright test --ui --project=chromium-meshery-provider tests/e2e/service-mesh-performance.spec.js 
 ```
 
 For more detail, you can read the [Playwright Cli docs](https://playwright.dev/docs/test-cli)
@@ -164,9 +164,9 @@ For more detail, you can read the [Playwright Cli docs](https://playwright.dev/d
 
 By default our test cases is running against both Meshery and Local Provider, we are utilizing playwright feature such as:
 
-- StorageState: In meshery [setup auth](https://github.com/meshery/meshery/blob/master/ui/tests/e2e/auth.setup.js), we have 2 storage state, which store a session for both Meshery and Local provider.
-- Project: After the setup completed it will run project based test which depends on storage state for one for Local Provider and one for Meshery Provider
-- Test Parameterize: In Local provider we are limiting some feature, to test against missing feature, we leverage this playwright feature to check or even skipping the test is not possible to run, To do the check you need to specify `provider` directly from the test, and make sure the test is wrapped using Project fixture:
+- StorageState: In meshery [setup auth](https://github.com/meshery/meshery/blob/master/ui/tests/e2e/auth.setup.js), we have 2 storage state, which store a session for Meshery and Local provider.
+- Project: After the setup completes, it will run the project-based test depending on which storage state for the Local Provider and one for the Meshery Provider
+- Test Parameterize:  In the Local provider we are limiting some features to test against. For the missing features, we leverage this playwright feature to check or even skip the test. If it is not possible to run then you need to specify the `provider` directly from the test, and make sure the test is wrapped using:
 
 ```javascript
 import { expect, test } from './fixtures/project';
@@ -184,14 +184,14 @@ test('Random test', async ({ provider }) => {
 
 ## Debugging Test on Github Actions
 
-We also storing test result on every PR in github actions, in case you need to debug it furter:
+We also storing test result on every PR in github actions, in case you need to debug it further:
 
 - Check the PR you are made, go to the bottom of PR directly above the comment
 - Wait until all github actions completed, and scroll until you see `Meshery UI and Server / UI end-to-end tests`  
-- Click details and it will redirecting you to the actions workflow
+- Click details and it will redirect you to the actions workflow
 - Go to summary tab, scroll down until you see artifact, and check the artifact `playwright-report`
 - Download the artifact
 - Extract the file into a folder
 - Go to [Playwright Trace Page](https://trace.playwright.dev/)
-- From the test folder pick one folder which represent the test, you wanna check
+- From the test folder pick one folder which represents the test, you want to check
 - Upload the trace file
