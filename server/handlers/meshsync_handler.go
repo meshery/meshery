@@ -128,7 +128,8 @@ func ConvertToPatternFile(resources []model.KubernetesResource, stripSchema bool
 // scopes down the query based on the namespaces
 func filterByNamespaces(query *gorm.DB, namespaces []string) *gorm.DB {
 	if len(namespaces) > 0 {
-		return query.Where("kubernetes_resource_object_meta.namespace IN (?) or kubernetes_resource_object_meta.name IN (?)", namespaces, namespaces)
+		return query.Where("kubernetes_resource_object_meta.namespace IN (?) or ( kubernetes_resources.kind = 'Namespace' AND kubernetes_resource_object_meta.name IN (?) )", namespaces, namespaces)
+
 	}
 	return query
 }
