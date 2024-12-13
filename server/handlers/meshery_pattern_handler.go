@@ -1276,6 +1276,9 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			http.Error(rw, _errors.Wrapf(err, "failed to export design \"%s\" in %s format", pattern.Name, exportFormat).Error(), http.StatusInternalServerError)
 			return
 		}
+
+		event := eventBuilder.WithDescription("K8Manifest Downloaded").Build()
+		provider.PersistEvent(event)
 		return
 	}
 
@@ -1542,7 +1545,9 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		return
 	}
 
-	_ = provider.PersistEvent(eventBuilder.Build())
+	event := eventBuilder.WithDescription("Design File Downloaded").Build()
+	provider.PersistEvent(event)
+
 }
 
 // swagger:route POST /api/pattern/clone/{id} PatternsAPI idCloneMesheryPattern
