@@ -9,8 +9,9 @@ import SupportIcon from '@/assets/icons/support';
 import { EVENT_TYPES } from 'lib/event-types';
 import { UsesSistent } from './SistentWrapper';
 import { useSupportWebHookMutation } from '@/rtk-query/webhook';
+import { StickyFeedbackButton } from './General/feedback';
 
-const Troubleshoot = (props) => {
+const Troubleshoot = ({ errorMessage, ...props }) => {
   const [open, setOpen] = React.useState(true);
   const [openForm, setOpenForm] = React.useState(false);
   const { notify } = useNotification();
@@ -95,6 +96,11 @@ const Troubleshoot = (props) => {
           />
         </Modal>
       </UsesSistent>
+      <StickyFeedbackButton
+        containerStyles={{ zIndex: 11 }}
+        defaultMessage={errorMessage}
+        defaultOpen={true}
+      />
     </div>
   );
 };

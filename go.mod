@@ -21,9 +21,9 @@ require (
 	github.com/docker/docker v24.0.7+incompatible
 	github.com/docker/go-connections v0.5.0
 	github.com/eiannone/keyboard v0.0.0-20220611211555-0d226195f203
-	github.com/envoyproxy/go-control-plane v0.12.1-0.20240621013728-1eb8caab5155
+	github.com/envoyproxy/go-control-plane v0.13.1
 	github.com/fatih/color v1.17.0
-	github.com/fsnotify/fsnotify v1.7.0
+	github.com/fsnotify/fsnotify v1.8.0
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-openapi/runtime v0.28.0
 	github.com/go-openapi/strfmt v0.23.0
@@ -39,13 +39,13 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/meshery-operator v0.7.0
-	github.com/layer5io/meshkit v0.7.80
+	github.com/layer5io/meshkit v0.7.87
 	github.com/layer5io/meshsync v0.6.24
 	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.6.1
 	github.com/lib/pq v1.10.9
 	github.com/manifoldco/promptui v0.9.0
-	github.com/meshery/schemas v0.7.33
+	github.com/meshery/schemas v0.7.40
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
@@ -56,19 +56,19 @@ require (
 	github.com/sirupsen/logrus v1.9.3
 	github.com/spf13/cobra v1.8.1
 	github.com/spf13/pflag v1.0.5
-	github.com/spf13/viper v1.18.2
+	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.9.0
-	github.com/vektah/gqlparser/v2 v2.5.14
+	github.com/vektah/gqlparser/v2 v2.5.17
 	github.com/vmihailenco/taskq/v3 v3.2.9
 	golang.org/x/oauth2 v0.22.0
-	golang.org/x/sync v0.8.0
-	golang.org/x/text v0.18.0
+	golang.org/x/sync v0.10.0
+	golang.org/x/text v0.21.0
 	gonum.org/v1/gonum v0.15.0
 	google.golang.org/api v0.195.0
-	google.golang.org/grpc v1.66.0
+	google.golang.org/grpc v1.67.1
 	google.golang.org/protobuf v1.34.2
 	gopkg.in/yaml.v2 v2.4.0
-	gorm.io/gorm v1.25.11
+	gorm.io/gorm v1.25.12
 	k8s.io/api v0.28.4
 	k8s.io/apiextensions-apiserver v0.28.4
 	k8s.io/apimachinery v0.28.4
@@ -133,7 +133,7 @@ require (
 	github.com/chai2010/gettext-go v1.0.2 // indirect
 	github.com/chzyer/readline v1.5.1 // indirect
 	github.com/cloudflare/circl v1.3.7 // indirect
-	github.com/cncf/xds/go v0.0.0-20240423153145-555b57ec207b // indirect
+	github.com/cncf/xds/go v0.0.0-20240723142845-024c85f92f20 // indirect
 	github.com/cockroachdb/apd/v3 v3.2.1 // indirect
 	github.com/compose-spec/compose-go v1.19.0 // indirect
 	github.com/containerd/containerd v1.7.21 // indirect
@@ -153,7 +153,7 @@ require (
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/emicklei/go-restful/v3 v3.11.0 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
-	github.com/envoyproxy/protoc-gen-validate v1.0.4 // indirect
+	github.com/envoyproxy/protoc-gen-validate v1.1.0 // indirect
 	github.com/evanphx/json-patch v5.7.0+incompatible // indirect
 	github.com/exponent-io/jsonpath v0.0.0-20210407135951-1de76d718b3f // indirect
 	github.com/fatih/camelcase v1.0.0 // indirect
@@ -305,15 +305,14 @@ require (
 	go.opentelemetry.io/otel/trace v1.28.0 // indirect
 	go.starlark.net v0.0.0-20230814145427-12f4cb8177e4 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/crypto v0.27.0 // indirect
+	golang.org/x/crypto v0.31.0 // indirect
 	golang.org/x/crypto/x509roots/fallback v0.0.0-20240904212608-c9da6b9a4008 // indirect
 	golang.org/x/exp v0.0.0-20240904232852-e7e105dedf7e // indirect
 	golang.org/x/net v0.29.0 // indirect
-	golang.org/x/sys v0.25.0 // indirect
-	golang.org/x/term v0.24.0 // indirect
+	golang.org/x/sys v0.28.0 // indirect
+	golang.org/x/term v0.27.0 // indirect
 	golang.org/x/time v0.6.0 // indirect
 	golang.org/x/tools v0.24.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20240814211410-ddb44dafa142 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240903143218-8af14fe29dc1 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
@@ -337,3 +336,5 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.4.1 // indirect
 	sigs.k8s.io/yaml v1.4.0 // indirect
 )
+
+replace github.com/vektah/gqlparser/v2 => github.com/vektah/gqlparser/v2 v2.5.11

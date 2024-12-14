@@ -6,10 +6,13 @@ import (
 	"encoding/csv"
 	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 	"sync"
 
 	cuecsv "cuelang.org/go/pkg/encoding/csv"
 	"github.com/gocarina/gocsv"
+	"github.com/layer5io/meshkit/utils"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"google.golang.org/api/sheets/v4"
 )
@@ -157,6 +160,35 @@ func VerifyandUpdateSpreadsheet(cred string, wg *sync.WaitGroup, srv *sheets.Ser
 		return
 	}
 }
+func (mrh *RelationshipCSVHelper) UpdateRelationshipSheet(srv *sheets.Service, cred, sheetId, csvPath string) error {
+	if len(mrh.UpdatedRelationships) == 0 {
+		return nil
+	}
+
+	var dataToUpdate []*sheets.ValueRange
+
+	for _, rel := range mrh.UpdatedRelationships {
+		row := rel.RowIndex
+		// Column O corresponds to column 15 in A1 notation (O is the 15th letter)
+		rangeStr := fmt.Sprintf("Relationships!O%d", row)
+		valueRange := &sheets.ValueRange{
+			Range:  rangeStr,
+			Values: [][]interface{}{{rel.Filename}},
+		}
+		dataToUpdate = append(dataToUpdate, valueRange)
+	}
+
+	batchUpdateValuesRequest := &sheets.BatchUpdateValuesRequest{
+		ValueInputOption: "USER_ENTERED",
+		Data:             dataToUpdate,
+	}
+
+	_, err := srv.Spreadsheets.Values.BatchUpdate(sheetId, batchUpdateValuesRequest).Context(context.Background()).Do()
+	if err != nil {
+		return ErrUpdateToSheet(err, sheetId)
+	}
+	return nil
+}
 
 func updateModelsSheet(srv *sheets.Service, cred, sheetId string, values []*ModelCSV) error {
 	marshalledValues, err := marshalStructToCSValues[ModelCSV](values)
@@ -262,4 +294,56 @@ func marshalStructToCSValues[K any](data []*K) ([][]interface{}, error) {
 	}
 
 	return results, nil
+}
+func GetCsv(csvDirectory string) (string, string, string, error) {
+	files, err := os.ReadDir(csvDirectory)
+	if err != nil {
+		return "", "", "", utils.ErrReadDir(err, csvDirectory)
+	}
+	var modelCSVFilePath, componentCSVFilePath, relationshipCSVFilePath string
+
+	for _, file := range files {
+		filePath := filepath.Join(csvDirectory, file.Name())
+		if !file.IsDir() && strings.HasSuffix(file.Name(), ".csv") {
+			headers, secondRow, err := getCSVHeader(filePath)
+			if Contains("modelDisplayName", headers) != -1 || Contains("modelDisplayName", secondRow) != -1 {
+				modelCSVFilePath = filePath
+			} else if Contains("component", headers) != -1 || Contains("component", secondRow) != -1 {
+				componentCSVFilePath = filePath
+			} else if Contains("kind", headers) != -1 || Contains("kind", secondRow) != -1 { // Check if the file matches the relationshipCSV structure
+				relationshipCSVFilePath = filePath
+			}
+			if err != nil {
+				return "", "", "", err
+			}
+
+		}
+	}
+
+	if modelCSVFilePath == "" || componentCSVFilePath == "" {
+		return "", "", "", ErrCSVFileNotFound(csvDirectory)
+	}
+	return modelCSVFilePath, componentCSVFilePath, relationshipCSVFilePath, nil
+}
+func getCSVHeader(filePath string) (headers, secondRow []string, err error) {
+	file, err := os.Open(filePath)
+	if err != nil {
+		err = utils.ErrOpenFile(filePath)
+		return headers, secondRow, err
+	}
+	defer file.Close()
+
+	reader := csv.NewReader(file)
+	headers, err = reader.Read()
+	if err != nil {
+		err = ErrReadCSVRow(err, "header")
+		return headers, secondRow, err
+	}
+
+	secondRow, err = reader.Read()
+	if err != nil {
+		err = ErrReadCSVRow(err, "second row")
+		return headers, secondRow, err
+	}
+	return headers, secondRow, nil
 }

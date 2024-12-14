@@ -155,7 +155,7 @@ func ErrUnsupportedPlatform(platform string, config string) error {
 		ErrUnsupportedPlatformCode,
 		errors.Alert,
 		[]string{"Unsupported platform"},
-		[]string{"The provided platform is not supprted"},
+		[]string{"The provided platform is not supported."},
 		[]string{"The platform ", platform, " is not supported for the deployment of Meshery. "},
 		[]string{"Supported platforms are:\n\n- docker\n- kubernetes\n\n Verify this setting in your meshconfig at ", config, " or verify by executing `mesheryctl system context view`"})
 }

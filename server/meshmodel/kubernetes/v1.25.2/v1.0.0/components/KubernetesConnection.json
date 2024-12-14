@@ -125,7 +125,7 @@
   ],
   "component": {
    "kind": "KubernetesConnection",
-   "schema": "{\"properties\":{\"id\":{\"type\":\"string\",\"format\":\"uuid\"},\"name\":{\"type\":\"string\",\"format\":\"uuid\"},\"cluster\":{\"type\":\"object\",\"additionalProperties\":true},\"server\":{\"type\":\"string\"},\"meshery_instance_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"kubernetes_server_id\":{\"type\":\"string\",\"format\":\"uuid\"},\"deployment_type\":{\"type\":\"string\"},\"updated_at\":{\"type\":\"string\",\"format\":\"date-time\"},\"created_at\":{\"type\":\"string\",\"format\":\"date-time\"}}}",
+   "schema": "{\"properties\": {\"id\": {\"type\": \"string\", \"format\": \"uuid\"}, \"name\": {\"type\": \"string\", \"format\": \"uuid\"}, \"cluster\": {\"type\": \"object\", \"additionalProperties\": true}, \"server\": {\"type\": \"string\"}, \"meshery_instance_id\": {\"type\": \"string\", \"format\": \"uuid\"}, \"kubernetes_server_id\": {\"type\": \"string\", \"format\": \"uuid\"}, \"deployment_type\": {\"type\": \"string\"}, \"updated_at\": {\"type\": \"string\", \"format\": \"date-time\"}, \"created_at\": {\"type\": \"string\", \"format\": \"date-time\"}}}",
    "version": "meshery.layer5.io/v1alpha1"
   },
   "configuration": null,
@@ -208,7 +208,9 @@
    "status": "enabled",
    "version": "v1.0.0",
    "components": null,
-   "relationships": null
+   "relationships": null,
+   "components_count": 0,
+   "relationships_count": 0
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "enabled",

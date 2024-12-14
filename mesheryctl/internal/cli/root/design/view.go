@@ -39,7 +39,7 @@ var linkDocPatternView = map[string]string{
 var viewCmd = &cobra.Command{
 	Use:   "view design name",
 	Short: "Display a design content",
-	Long:  `Displays the contents of a specific design based on name or id`,
+	Long:  `Display the content of a specific design based on name or id`,
 	Args:  cobra.MaximumNArgs(1),
 	Example: `
 // view a design

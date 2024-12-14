@@ -38,11 +38,6 @@ import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { FacebookShareButton, LinkedinShareButton, TwitterShareButton } from 'react-share';
 import ReadIcon from '../../assets/icons/ReadIcon';
 import UnreadIcon from '../../assets/icons/UnreadIcon';
-import {
-  ErrorBoundary,
-  withErrorBoundary,
-  withSuppressedErrorBoundary,
-} from '../General/ErrorBoundary';
 import { FormattedMetadata } from './metadata';
 import theme from '../../themes/app';
 import { truncate } from 'lodash';
@@ -202,7 +197,7 @@ const formatTimestamp = (utcTimestamp) => {
   return moment(utcTimestamp).fromNow();
 };
 
-const BasicMenu = withSuppressedErrorBoundary(({ event }) => {
+const BasicMenu = ({ event }) => {
   const classes = useMenuStyles();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
@@ -274,7 +269,7 @@ const BasicMenu = withSuppressedErrorBoundary(({ event }) => {
       </Popover>
     </div>
   );
-});
+};
 
 export const DeleteEvent = ({ event }) => {
   const classes = useMenuStyles();
@@ -324,7 +319,7 @@ export const ChangeStatus = ({ event }) => {
   );
 };
 
-export const Notification = withErrorBoundary(({ event_id }) => {
+export const Notification = ({ event_id }) => {
   const event = useSelector((state) => selectEventById(state, event_id));
   const isVisible = useSelector((state) => selectIsEventVisible(state, event.id));
   const severityStyles = SEVERITY_STYLE[event.severity] || SEVERITY_STYLE[SEVERITY.INFO];
@@ -370,6 +365,28 @@ export const Notification = withErrorBoundary(({ event_id }) => {
       : []),
   ];
 
+  const Detail = () => (
+    <Grid container className={classes.expanded}>
+      <Grid item sm={1} className={classes.actorAvatar}>
+        <AvatarStack
+          avatars={eventActors}
+          direction={{
+            xs: 'row',
+            md: 'column',
+          }}
+        />
+      </Grid>
+      <Grid
+        item
+        sm={10}
+        style={{
+          color: theme.palette.secondary.textMain,
+        }}
+      >
+        <FormattedMetadata event={event} classes={classes} />
+      </Grid>
+    </Grid>
+  );
   return (
     <Slide
       in={isVisible}
@@ -423,33 +440,10 @@ export const Notification = withErrorBoundary(({ event_id }) => {
             <BasicMenu event={event} />
           </Grid>
         </Grid>
-        <Collapse in={expanded}>
-          <ErrorBoundary>
-            <Grid container className={classes.expanded}>
-              <Grid item sm={1} className={classes.actorAvatar}>
-                <AvatarStack
-                  avatars={eventActors}
-                  direction={{
-                    xs: 'row',
-                    md: 'column',
-                  }}
-                />
-              </Grid>
-              <Grid
-                item
-                sm={10}
-                style={{
-                  color: theme.palette.secondary.textMain,
-                }}
-              >
-                <FormattedMetadata event={event} classes={classes} />
-              </Grid>
-            </Grid>
-          </ErrorBoundary>
-        </Collapse>
+        <Collapse in={expanded}>{expanded && <Detail />}</Collapse>
       </div>
     </Slide>
   );
-});
+};
 
 export default Notification;

@@ -136,7 +136,7 @@
   "metadata": {
    "genealogy": "parent",
    "isAnnotation": false,
-   "isNamespaced": false,
+   "isNamespaced": true,
    "published": false,
    "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
   },
@@ -180,7 +180,9 @@
    "subCategory": "Scheduling \u0026 Orchestration",
    "version": "v1.0.0",
    "components": null,
-   "relationships": null
+   "relationships": null,
+   "components_count": 0,
+   "relationships_count": 0
   },
   "schemaVersion": "components.meshery.io/v1beta1",
   "status": "enabled",
