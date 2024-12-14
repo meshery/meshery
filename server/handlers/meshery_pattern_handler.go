@@ -1278,7 +1278,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			return
 		}
 
-		event := eventBuilder.WithDescription("K8Manifest Downloaded").Build()
+		event := eventBuilder.WithDescription("Kubernetes Manifest Downloaded").Build()
 		err=provider.PersistEvent(event)
 		if(err!=nil){
 			h.log.Error(models.ErrPersistEvent(err))
