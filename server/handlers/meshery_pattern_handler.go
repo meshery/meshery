@@ -21,6 +21,7 @@ import (
 	"github.com/gofrs/uuid"
 	guid "github.com/google/uuid"
 	"github.com/gorilla/mux"
+
 	helpers "github.com/layer5io/meshery/server/helpers/utils"
 	isql "github.com/layer5io/meshery/server/internal/sql"
 	"github.com/layer5io/meshery/server/meshes"
@@ -1278,7 +1279,10 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		}
 
 		event := eventBuilder.WithDescription("K8Manifest Downloaded").Build()
-		provider.PersistEvent(event)
+		err=provider.PersistEvent(event)
+		if(err!=nil){
+			h.log.Error(models.ErrPersistEvent(err))
+		}
 		return
 	}
 
@@ -1546,7 +1550,10 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	}
 
 	event := eventBuilder.WithDescription("Design File Downloaded").Build()
-	provider.PersistEvent(event)
+	err=provider.PersistEvent(event)
+	if(err!=nil){
+		h.log.Error(models.ErrPersistEvent(err))
+	}
 
 }
 
