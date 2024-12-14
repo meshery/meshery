@@ -1176,21 +1176,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	var formatConverter converter.ConvertFormat
 	userID := uuid.FromStringOrNil(user.ID)
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("download").ActedUpon(userID).WithSeverity(events.Informational)
-
-	exportFormat := r.URL.Query().Get("export")
-	if exportFormat != "" {
-		var errConvert error
-		formatConverter, errConvert = converter.NewFormatConverter(converter.DesignFormat(exportFormat))
-		if errConvert != nil {
-			err := ErrExportPatternInFormat(errConvert, exportFormat, "")
-			h.log.Error(err)
-			http.Error(rw, err.Error(), http.StatusBadRequest)
-			return
-		}
-	}
-
 	patternID := mux.Vars(r)["id"]
-	ociFormat, _ := strconv.ParseBool(r.URL.Query().Get("oci"))
 	ahpkg, _ := strconv.ParseBool(r.URL.Query().Get("pkg"))
 	var unmarshalledPatternFile pattern.PatternFile
 
@@ -1259,27 +1245,10 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		pattern.PatternFile = patternFileStr
 	}
 
-	if formatConverter != nil {
-		patternFile, err := formatConverter.Convert(pattern.PatternFile)
-		if err != nil {
-			err = ErrExportPatternInFormat(err, exportFormat, pattern.Name)
-			h.log.Error(err)
-			http.Error(rw, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.yml", pattern.Name))
-		rw.Header().Set("Content-Type", "application/yaml")
-		_, err = fmt.Fprint(rw, patternFile)
-		if err != nil {
-			err = ErrWriteResponse(err)
-			h.log.Error(err)
-			http.Error(rw, _errors.Wrapf(err, "failed to export design \"%s\" in %s format", pattern.Name, exportFormat).Error(), http.StatusInternalServerError)
-			return
-		}
-		return
-	}
+	exportFormat := r.URL.Query().Get("export")
 
-	if ociFormat {
+	// for downloading oci image
+	if (exportFormat=="OCI Image") {
 		tmpDir, err := oci.CreateTempOCIContentDir()
 		if err != nil {
 			h.log.Error(ErrCreateDir(err, "OCI"))
@@ -1475,6 +1444,41 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		return
 	}
 
+	// for downloading kubernetes manifest
+	if exportFormat != "" {
+		var errConvert error
+		formatConverter, errConvert = converter.NewFormatConverter(converter.DesignFormat(exportFormat))
+		fmt.Println(formatConverter)
+		fmt.Println(errConvert)
+		if errConvert != nil {
+			err := ErrExportPatternInFormat(errConvert, exportFormat, "")
+			h.log.Error(err)
+			http.Error(rw, err.Error(), http.StatusBadRequest)
+			return
+		}
+	}
+
+	if formatConverter != nil {
+		patternFile, err := formatConverter.Convert(pattern.PatternFile)
+		if err != nil {
+			err = ErrExportPatternInFormat(err, exportFormat, pattern.Name)
+			h.log.Error(err)
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.yml", pattern.Name))
+		rw.Header().Set("Content-Type", "application/yaml")
+		_, err = fmt.Fprint(rw, patternFile)
+		if err != nil {
+			err = ErrWriteResponse(err)
+			h.log.Error(err)
+			http.Error(rw, _errors.Wrapf(err, "failed to export design \"%s\" in %s format", pattern.Name, exportFormat).Error(), http.StatusInternalServerError)
+			return
+		}
+		return
+	}
+
+	
 	if ahpkg {
 		rw.Header().Set("Content-Type", "application/zip")
 		rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.zip", pattern.Name))
