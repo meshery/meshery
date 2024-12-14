@@ -13,6 +13,7 @@ import (
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
@@ -70,13 +71,41 @@ func ConvertToPatternFile(resources []model.KubernetesResource, stripSchema bool
 
 		componentDef.Id = uuid.FromStringOrNil(resource.KubernetesResourceMeta.UID)
 		componentDef.DisplayName = resource.KubernetesResourceMeta.Name
+
+		var spec interface{}
+		if resource.Spec != nil {
+			spec = JsonParse(&resource.Spec.Attribute, true, map[string]interface{}{})
+		}
+
+		labels := map[string]string{}
+
+		if resource.KubernetesResourceMeta.Labels != nil {
+			for _, label := range resource.KubernetesResourceMeta.Labels {
+				labels[label.Key] = label.Value
+			}
+		}
+
+		metadata := map[string]interface{}{
+			"labels": labels,
+			"name":   resource.KubernetesResourceMeta.Name,
+		}
+
+		// only set namespace if it is not empty otherwise evaluator creates empty namespace
+		if resource.KubernetesResourceMeta.Namespace != "" {
+			metadata["namespace"] = resource.KubernetesResourceMeta.Namespace
+		}
+
 		componentDef.Configuration = map[string]interface{}{
-			"metadata": resource.KubernetesResourceMeta,
-			"spec":     JsonParse(&resource.Spec.Attribute, true, map[string]interface{}{}),
+			"metadata": metadata,
+			"spec":     spec,
 			"data":     JsonParse(&resource.Data, true, map[string]interface{}{}),
 		}
-		// componentDef.Metadata.InstanceDetails = resource
 
+		if componentDef.Metadata.AdditionalProperties == nil {
+			componentDef.Metadata.AdditionalProperties = make(map[string]interface{})
+		}
+
+		componentDef.Metadata.AdditionalProperties["instanceDetails"] = resource
 		if stripSchema {
 			componentDef.Component.Schema = ""
 		}
@@ -87,13 +116,50 @@ func ConvertToPatternFile(resources []model.KubernetesResource, stripSchema bool
 	var emptyUUID uuid.UUID
 
 	return pattern.PatternFile{
-		Name:          "EmptyDesignName",
+		Name:          "ClusterSnapshot",
 		Id:            emptyUUID,
 		SchemaVersion: "designs.meshery.io/v1beta1",
 		Version:       "v1",
 		Components:    components,
 		Relationships: []*relationship.RelationshipDefinition{},
 	}
+}
+
+// scopes down the query based on the namespaces
+func filterByNamespaces(query *gorm.DB, namespaces []string) *gorm.DB {
+	if len(namespaces) > 0 {
+		return query.Where("kubernetes_resource_object_meta.namespace IN (?) or ( kubernetes_resources.kind = 'Namespace' AND kubernetes_resource_object_meta.name IN (?) )", namespaces, namespaces)
+
+	}
+	return query
+}
+
+func searchResources(query *gorm.DB, search string) *gorm.DB {
+	if search != "" {
+		return query.Where("kubernetes_resource_object_meta.name LIKE ?", "%"+search+"%")
+	}
+	return query
+}
+
+func filterByKinds(query *gorm.DB, kinds []string) *gorm.DB {
+	if len(kinds) > 0 {
+		return query.Where("kubernetes_resources.kind IN (?)", kinds)
+	}
+	return query
+}
+
+func filterByClusters(query *gorm.DB, clusterIDs []string) *gorm.DB {
+	if len(clusterIDs) > 0 {
+		return query.Where("kubernetes_resources.cluster_id IN (?)", clusterIDs)
+	}
+	return query
+}
+
+func filterByPatternIds(query *gorm.DB, patternIDs []string) *gorm.DB {
+	if len(patternIDs) > 0 {
+		return query.Where("kubernetes_resources.pattern_resource IN (?)", patternIDs)
+	}
+	return query
 }
 
 // swagger:route GET /api/system/meshsync/resources GetMeshSyncResources idGetMeshSyncResources
@@ -138,6 +204,9 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	isAnnotaion, _ := strconv.ParseBool(r.URL.Query().Get("annotations"))
 	isLabels, _ := strconv.ParseBool(r.URL.Query().Get("labels"))
 	asDesign, _ := strconv.ParseBool(r.URL.Query().Get("asDesign"))
+	patternIds := r.URL.Query()["patternId"]
+
+	namespaces := r.URL.Query()["namespace"] // namespace is an array of strings to scope the resources
 	// kind is an array of strings
 	kind := r.URL.Query()["kind"]
 
@@ -157,60 +226,58 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 		filter.ClusterIds = []string{}
 	}
 
-	result := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
+	query := provider.GetGenericPersister().Model(&model.KubernetesResource{}).
+		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
 		Preload("KubernetesResourceMeta").
 		Where("kubernetes_resources.cluster_id IN (?)", filter.ClusterIds)
 
-	if len(kind) > 0 {
-		result = result.Where("kubernetes_resources.kind IN (?)", kind)
-	}
+	query = filterByNamespaces(query, namespaces)
+	query = searchResources(query, search)
+	query = filterByKinds(query, kind)
+	query = filterByPatternIds(query, patternIds)
 
 	if apiVersion != "" {
-		result = result.Where(&model.KubernetesResource{APIVersion: apiVersion})
+		query = query.Where(&model.KubernetesResource{APIVersion: apiVersion})
 	}
 
 	if isLabels {
-		result = result.Preload("KubernetesResourceMeta.Labels", "kind = ?", model.KindLabel)
+		query = query.Preload("KubernetesResourceMeta.Labels", "kind = ?", model.KindLabel)
 	}
 	if isAnnotaion {
-		result = result.Preload("KubernetesResourceMeta.Annotations", "kind = ?", model.KindAnnotation)
+		query = query.Preload("KubernetesResourceMeta.Annotations", "kind = ?", model.KindAnnotation)
 	}
 
 	if spec {
-		result = result.Preload("Spec")
+		query = query.Preload("Spec")
 	}
 
 	if status {
-		result = result.Preload("Status")
+		query = query.Preload("Status")
 	}
 
-	if search != "" {
-
-		result = result.
-			Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resource_object_meta.id = kubernetes_resources.id").
-			Where("kubernetes_resource_object_meta.name LIKE ?", "%"+search+"%")
-	}
-
-	result.Count(&totalCount)
+	query.Count(&totalCount)
 
 	if limit != 0 {
-		result = result.Limit(limit)
+		query = query.Limit(limit)
 	}
 
 	if offset != 0 {
-		result = result.Offset(offset)
+		query = query.Offset(offset)
 	}
 
 	order = models.SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
 	if order != "" {
 		if sort == "desc" {
-			result = result.Order(clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true})
+			query = query.Order(clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true})
 		} else {
-			result = result.Order(order)
+			query = query.Order(order)
 		}
 	}
 
-	err := result.Find(&resources).Error
+	// prrint the query
+	h.log.Info("Resources query", query.Statement.SQL.String())
+
+	err := query.Find(&resources).Error
 	if err != nil {
 		h.log.Error(ErrFetchMeshSyncResources(err))
 		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
@@ -235,7 +302,8 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 			h.log.Error(fmt.Errorf("Error evaluating design: %v", error))
 		} else {
 			// if there is error in evaluation, return the raw design (without any relationships)
-			design = evalResponse.Design
+			design = rawDesign
+			design.Relationships = evalResponse.Design.Relationships // only add relationships
 		}
 
 	}
@@ -268,6 +336,8 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	enc := json.NewEncoder(rw)
 
 	clusterIds := r.URL.Query()["clusterId"]
+	namespaceScope := r.URL.Query()["namespace"]
+	patternIds := r.URL.Query()["patternId"]
 	h.log.Info("Fetching meshsync resources summary", "clusterIds", clusterIds)
 
 	if len(clusterIds) == 0 {
@@ -282,12 +352,17 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	var namespaces []string
 
 	// TODO: simplify into one query if possible
-	err1 := provider.GetGenericPersister().
+	kindsQuery := provider.GetGenericPersister().
 		Model(&model.KubernetesResource{}).
+		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resources.id = kubernetes_resource_object_meta.id").
 		Select("kind, count(*) as count").
-		Group("kind").
-		Where("kubernetes_resources.cluster_id IN (?)", clusterIds).
-		Scan(&kindCounts).Error
+		Group("kind")
+
+	kindsQuery = filterByClusters(kindsQuery, clusterIds)
+	kindsQuery = filterByNamespaces(kindsQuery, namespaceScope)
+	kindsQuery = filterByPatternIds(kindsQuery, patternIds)
+
+	err1 := kindsQuery.Scan(&kindCounts).Error
 
 	if err1 != nil {
 		h.log.Error(ErrFetchMeshSyncResources(err1))
