@@ -21,7 +21,6 @@ import (
 	"github.com/gofrs/uuid"
 	guid "github.com/google/uuid"
 	"github.com/gorilla/mux"
-
 	helpers "github.com/layer5io/meshery/server/helpers/utils"
 	isql "github.com/layer5io/meshery/server/internal/sql"
 	"github.com/layer5io/meshery/server/meshes"
@@ -1278,7 +1277,8 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			return
 		}
 
-		event := eventBuilder.WithDescription("Kubernetes Manifest Downloaded").Build()
+		eventDescription := fmt.Sprintf("\"%s\" downloaded as Meshery Design", pattern.Name)
+		event := eventBuilder.WithDescription(eventDescription).Build()
 		err=provider.PersistEvent(event)
 		if(err!=nil){
 			h.log.Error(models.ErrPersistEvent(err))
@@ -1549,7 +1549,8 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		return
 	}
 
-	event := eventBuilder.WithDescription("Design File Downloaded").Build()
+	eventDescription := fmt.Sprintf("\"%s\" downloaded as Meshery Design", pattern.Name)
+	event := eventBuilder.WithDescription(eventDescription).Build()
 	err=provider.PersistEvent(event)
 	if(err!=nil){
 		h.log.Error(models.ErrPersistEvent(err))
@@ -1664,7 +1665,6 @@ func (h *Handler) CloneMesheryPatternHandler(
 		http.Error(rw, ErrClonePattern(err).Error(), http.StatusInternalServerError)
 		return
 	}
-	_ = provider.PersistEvent(eventBuilder.Build())
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
 	rw.Header().Set("Content-Type", "application/json")
 	fmt.Fprint(rw, string(resp))
