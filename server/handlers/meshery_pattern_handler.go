@@ -152,13 +152,13 @@ func (h *Handler) handlePatternPOST(
 		sourcetype,err=utils.IdentifyInputType(parsedBody.PatternData.PatternFile)
 		if err != nil {
 			h.log.Error(fmt.Errorf("error identifying input type: %w", err))
-			http.Error(rw, fmt.Sprintf("Error identifying pattern type: %s", err.Error()), http.StatusBadRequest)
+			http.Error(rw, fmt.Sprintf("Error identifying design type: %s", err.Error()), http.StatusBadRequest)
 			event := eventBuilder.
 				WithSeverity(events.Error).
 				WithMetadata(map[string]interface{}{
 					"error": err.Error(),
 				}).
-				WithDescription("Failed to identify pattern type. Please specify your Design Type").
+				WithDescription("Design type not recognized. Please specify your Design Type").
 				Build()
 			_ = provider.PersistEvent(event)
 			go h.config.EventBroadcaster.Publish(userID, event)
