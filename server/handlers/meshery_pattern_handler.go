@@ -1552,7 +1552,7 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	eventDescription := fmt.Sprintf("\"%s\" downloaded as Meshery Design", pattern.Name)
 	event := eventBuilder.WithDescription(eventDescription).Build()
 	err=provider.PersistEvent(event)
-	if(err!=nil){
+	if err != nil {
 		h.log.Error(models.ErrPersistEvent(err))
 	}
 
