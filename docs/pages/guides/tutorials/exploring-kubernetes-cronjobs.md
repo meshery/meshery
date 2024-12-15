@@ -53,7 +53,7 @@ To deploy a web application on Meshery, follow these steps:
 [![Located App]({{site.baseurl}}/assets/img/meshery-design/app-deploy.png)]({{site.baseurl}}/assets/img/meshery-design/app-deploy.png)
 8. Once the popup window opens, wait for the dry run to complete, and then click the deploy button.
 [![Dry Run]({{site.baseurl}}/assets/img/meshery-design/click-deploy.png)]({{site.baseurl}}/assets/img/meshery-design/click-deploy.png)
-9. Upon successful deployment, a confirmation pop-up will appear, indicating that your app has been deployed.
+9. Upon successful deployment, a confirmation pop-up will appear, indicating that your app has been successfully deployed.
 [![Deployment Success]({{site.baseurl}}/assets/img/meshery-design/deploy-success.png)]({{site.baseurl}}/assets/img/meshery-design/deploy-success.png)
 
 <!-- 
@@ -92,7 +92,7 @@ Show user how to do this using Kanvas Designer to drag and drop components and c
 [![Deploy CronJob]({{site.baseurl}}/assets/img/kanvas/deploy.png)]({{site.baseurl}}/assets/img/kanvas/deploy.png)
 11. In the pop-up window, review and correct any errors as necessary. Then, click the deploy button.
 [![Deploy CronJob]({{site.baseurl}}/assets/img/kanvas/deploy-app.png)]({{site.baseurl}}/assets/img/kanvas/deploy-app.png)
-12. You'll receive a confirmation message indicating that your app has been deployed.
+12. You'll receive a confirmation message indicating that your app has been successfully deployed.
 
 #### 4. **Verifying CronJob Execution:**
    - Monitor the execution of the CronJob and verify that backups are created at the specified intervals.
@@ -189,4 +189,4 @@ Show user how to make Design public and share with other users in Kanvas Designe
 -->
 
 ### Conclusion
-Congratulations! You've completed the lab on exploring Kubernetes CronJobs using Meshery Playground. This hands-on experience has provided valuable insights into scheduling and automating tasks in Kubernetes using CronJobs. Explore more scenarios in the Meshery Playground to enhance your skills in cloud-native technologies.
+Congratulations! You've successfully completed the lab on exploring Kubernetes CronJobs using Meshery Playground. This hands-on experience has provided valuable insights into scheduling and automating tasks in Kubernetes using CronJobs. Explore more scenarios in the Meshery Playground to enhance your skills in cloud-native technologies.

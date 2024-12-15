@@ -68,7 +68,7 @@ These YAML files contain the Cassandra Service and Cassandra StatefulSet manifes
 
         ![Import cassandra-service](./screenshots/cassandra-2.png)
 
-3. Under the "Designs" tab, you will see that we have imported the `cassandra-service` design.
+3. Under the "Designs" tab, you will see that we have successfully imported the `cassandra-service` design.
 
    When you click on the names of the designs on the `Designs` tab, you can see the visual representations of the various Kubernetes resources and their relationships on the canvas.
 
@@ -126,4 +126,4 @@ To delete the resources, use the `Undeploy` option from the Action dropdown in t
 
 #### Conclusion
 
-Congratulations! You’ve completed the tutorial on deploying Apache Cassandra on Kubernetes using StatefulSets in Meshery Playground. This hands-on experience should have given you valuable insights into managing Cassandra instances with persistent storage, automatic discovery, and seamless scalability. You also explored how Kubernetes' StatefulSet feature ensures robust application state management and high availability in Meshery Playground.
+Congratulations! You’ve successfully completed the tutorial on deploying Apache Cassandra on Kubernetes using StatefulSets in Meshery Playground. This hands-on experience should have given you valuable insights into managing Cassandra instances with persistent storage, automatic discovery, and seamless scalability. You also explored how Kubernetes' StatefulSet feature ensures robust application state management and high availability in Meshery Playground.

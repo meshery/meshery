@@ -202,7 +202,7 @@ If you want to work on the UI, it will be a good idea to use the included UI dev
 make ui
 ```
 
-Once you have the server configured, and running on the default port `http://localhost:9081`, you may proceed to access the Meshery UI at `http://localhost:3000`.
+Once you have the server configured, and running successfully on the default port `http://localhost:9081`, you may proceed to access the Meshery UI at `http://localhost:3000`.
 Any UI changes made now will automatically be recompiled and served in the browser.
 
 To access the [Meshery UI Development Server](#ui-development-server) on port `3000`, you will need to select your **Cloud Provider** by navigating to `localhost:9081` after running the Meshery server.
@@ -308,7 +308,7 @@ If you want to work on the UI, it will be a good idea to use the included UI dev
 make ui
 ```
 
-Once you have the server configured, and running on the default port `http://localhost:9081`, you may proceed to access the Meshery UI at `http://localhost:3000`.
+Once you have the server configured, and running successfully on the default port `http://localhost:9081`, you may proceed to access the Meshery UI at `http://localhost:3000`.
 Any UI changes made now will automatically be recompiled and served in the browser.
 
 ### Running Meshery from IDE

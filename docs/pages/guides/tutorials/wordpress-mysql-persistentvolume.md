@@ -70,7 +70,7 @@ These YAML files contain the Service definitions, Persistent Volume Claims, and 
 
         ![Import mysql-deployment](./wordpress-mysql-persistentvolume/wp2.png)
 
-3. Under the "Designs" tab, you will see that we have imported the `mysql-deployment` design.
+3. Under the "Designs" tab, you will see that we have successfully imported the `mysql-deployment` design.
 
    When you click on the names of the designs on the `Designs` tab, you can see the visual representations of the various Kubernetes resources and their relationships on the canvas.
 
@@ -249,4 +249,4 @@ To delete the resources, use the `Undeploy` option from the Action dropdown in t
 
 #### Conclusion
 
-Congratulations! You’ve completed the tutorial on deploying a WordPress site and MySQL database with Persistent Volumes using Meshery Playground. This hands-on experience should have given you valuable insights into importing manifest files, visualizing resources, creating persistent volumes, and managing deployments in Meshery Playground.
+Congratulations! You’ve successfully completed the tutorial on deploying a WordPress site and MySQL database with Persistent Volumes using Meshery Playground. This hands-on experience should have given you valuable insights into importing manifest files, visualizing resources, creating persistent volumes, and managing deployments in Meshery Playground.
