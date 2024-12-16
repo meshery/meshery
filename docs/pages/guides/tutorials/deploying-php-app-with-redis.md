@@ -103,6 +103,11 @@ Under the “Designs” tab, you will see that we have successfully imported the
 kubectl set image deployment/<deployment-name> <container-name>=new-image:tag
 ```
 
+
+#### 6. Open the files in visualizer
+
+
+
 ### Deleting the resources
 
 To delete the resources, use the **Undeploy** option from the _Design_ view.
