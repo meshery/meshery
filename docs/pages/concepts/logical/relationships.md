@@ -343,47 +343,6 @@ In any given Meshery deployment, you can reference and search the full set of re
 
 - Run `mesheryctl relationship list`
 
-
-# Relationship test results
-
-{% assign relationship_tests = site.data.relationshiptestresult.relationship-v07167-2 %}
-
-{% assign grouped_relationships = relationship_tests | group_by: "name" %}
-
-<table class="table table-bordered">
-    <thead>
-        <tr>
-            <th>Name</th>
-            <th>Extension Version</th>
-            <th>Kind</th>
-            <th>Type</th>
-            <th>SubType</th>
-            <th>Test Result</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for group in grouped_relationships %}
-        {% for item in group.items %}
-        <tr>
-            <td>{{ item.name }}</td>
-            <td>{{ item.extensionVersion }}</td>
-            <td>{{ item.kind }}</td>
-            <td>{{ item.type }}</td>
-            <td>{{ item.subType }}</td>
-            <td>
-                {% if item.testResultPassed %}
-                    <img src="/assets/img/passing.svg" />
-                {% else %}
-                    <img src="/assets/img/failing.svg" />
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
-        {% endfor %}
-    </tbody>
-</table>
-
-
 <!--
 ```
 mesheryctl model import -f [ oci:// | file:// ]`
