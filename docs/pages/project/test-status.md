@@ -23,14 +23,14 @@ This page contains results of tests performed in the development of Meshery.
 
 {% assign grouped_relationships = relationship_tests | group_by: "name" %}
 
-<table class="table table-bordered">
+<table class="table">
     <thead>
         <tr>
-            <th>Name</th>
-            <th>Extension Version</th>
-            <th>Kind</th>
-            <th>Type</th>
-            <th>SubType</th>
+            <th>Model</th>
+            <th>Meshery Version</th>
+            <th>Relationship Kind</th>
+            <th>Relationship Type</th>
+            <th>Relationship SubType</th>
             <th>Test Result</th>
         </tr>
     </thead>
