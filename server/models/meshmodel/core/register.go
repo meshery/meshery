@@ -216,7 +216,7 @@ func GetK8sMeshModelComponents(kubeconfig []byte) ([]component.ComponentDefiniti
 				Schema:  crd.schema,
 			},
 			Metadata:    compMetadata,
-			DisplayName: manifests.FormatToReadableString(crd.kind),
+			DisplayName: crd.kind,
 			Model: model.ModelDefinition{
 				SchemaVersion: v1beta1.ModelSchemaVersion,
 				Version:       "v1.0.0",
