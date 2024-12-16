@@ -44,10 +44,12 @@ import { Lock, Public } from '@material-ui/icons';
 const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';
 const PATTERN_PLURAL = 'patterns';
-const VIEW_VISIBILITY = {
+
+export const VIEW_VISIBILITY = {
   PUBLIC: 'public',
   PRIVATE: 'private',
 };
+
 const InfoModal_ = React.memo((props) => {
   const {
     infoModalOpen,
