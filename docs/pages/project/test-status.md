@@ -9,7 +9,12 @@ category: contributing
 list: include
 ---
 
-# End-to-End Test Status
+This page contains results of tests performed in the development of Meshery.
+
+**Resources:**
+
+- See [Contributing to Meshery's End-to-End Tests](/project/contributing/contributing-ui-tests)
+- See the [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?gid=0#gid=0) for a list of test cases.
 
 ## Relationships Test Results
 
