@@ -10,6 +10,7 @@ redirect_from:
   - concepts/relationships
 ---
 
+
 Meshery Relationships characterize how [components](./components) are connected and interact with each other. Relationships are defined within [models](./models) to aid in structuring the interrelationships between one or more components in a [design](./design) to further in comprehending the overall structure and dependencies within managed systems. 
 
 Meshery recognizes that relationships exist in various forms and that the existence of a relationship might be interdependent upon the existence (or absence) of another relationship. To support this complexity, Meshery relationships are highly expressive, characterizing the nature of interaction of interconnected components no matter their genealogy.
@@ -341,6 +342,47 @@ In any given Meshery deployment, you can reference and search the full set of re
 **Meshery CLI**
 
 - Run `mesheryctl relationship list`
+
+
+# Relationship test results
+
+{% assign relationship_tests = site.data.relationshiptestresult.relationship-v07167-2 %}
+
+{% assign grouped_relationships = relationship_tests | group_by: "name" %}
+
+<table class="table table-bordered">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Extension Version</th>
+            <th>Kind</th>
+            <th>Type</th>
+            <th>SubType</th>
+            <th>Test Result</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for group in grouped_relationships %}
+        {% for item in group.items %}
+        <tr>
+            <td>{{ item.name }}</td>
+            <td>{{ item.extensionVersion }}</td>
+            <td>{{ item.kind }}</td>
+            <td>{{ item.type }}</td>
+            <td>{{ item.subType }}</td>
+            <td>
+                {% if item.testResultPassed %}
+                    <img src="/assets/img/passing.svg" />
+                {% else %}
+                    <img src="/assets/img/failing.svg" />
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        {% endfor %}
+    </tbody>
+</table>
+
 
 <!--
 ```
