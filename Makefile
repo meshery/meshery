@@ -18,7 +18,7 @@ include install/Makefile.show-help.mk
 #-----------------------------------------------------------------------------
 # Docker-based Builds
 #-----------------------------------------------------------------------------
-.PHONY: docker-build docker-local-cloud docker-cloud docker-playground-build docker-testing-env-build docker-testing-env 
+.PHONY: docker-build docker-local-cloud docker-cloud docker-playground-build docker-testing-env-build docker-testing-env
 
 ## Build Meshery Server and UI container.
 docker-build:
@@ -462,7 +462,7 @@ test-e2e-ci:
 #-----------------------------------------------------------------------------
 # Rego Policies
 #-----------------------------------------------------------------------------
-rego-eval:	
+rego-eval:
 	opa eval -i policies/test/design_all_relationships.yaml -d relationships:policies/test/all_relationships.json -d server/meshmodel/meshery-core/0.7.2/v1.0.0/policies/ \
 	'data.relationship_evaluation_policy.evaluate' --format=pretty
 
