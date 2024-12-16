@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { connect } from 'react-redux';
 import {
   createUseRemoteComponent,
@@ -6,7 +6,15 @@ import {
   createRequires,
 } from '@paciolan/remote-component';
 import { bindActionCreators } from 'redux';
-import { updateLoadTestData, setK8sContexts, mesheryStore, useLegacySelector } from '../lib/store';
+import {
+  updateLoadTestData,
+  setK8sContexts,
+  useLegacySelector,
+  LegacyStoreContext,
+  actionTypes,
+  selectSelectedK8sClusters,
+  selectK8sConfig,
+} from '../lib/store';
 import GrafanaCustomCharts from './telemetry/grafana/GrafanaCustomCharts';
 import MesheryPerformanceComponent from './MesheryPerformance';
 import dataFetch from '../lib/data-fetch';
@@ -35,12 +43,12 @@ import { ValidateDesign } from './DesignLifeCycle/ValidateDesign';
 import { DryRunDesign } from './DesignLifeCycle/DryRun';
 import { DeployStepper, UnDeployStepper } from './DesignLifeCycle/DeployStepper';
 import { designValidationMachine } from 'machines/validator/designValidator';
-import Troubleshoot from './TroubleshootingComponent';
 import CAN from '@/utils/can';
-import { mesheryEventBus } from '@/utils/can';
+import { mesheryEventBus } from '@/utils/eventBus';
 import { ThemeTogglerCore } from '@/themes/hooks';
 import RJSFForm from './MesheryMeshInterface/PatternService/RJSF';
 import { DynamicFullScrrenLoader } from './LoadingComponents/DynamicFullscreenLoader';
+import Troubleshoot from './TroubleshootingComponent';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -55,7 +63,8 @@ function NavigatorExtension({
   capabilitiesRegistry,
 }) {
   const [loading, err, RemoteComponent] = useRemoteComponent(url);
-
+  const currentOrganization = useLegacySelector((state) => state.get('organization'));
+  const { store: legacyStore } = useContext(LegacyStoreContext);
   if (err != null) {
     return (
       <div role="alert">
@@ -82,7 +91,23 @@ function NavigatorExtension({
     return getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig);
   };
 
-  const currentOrganization = useLegacySelector((state) => state.get('organization'));
+  const extensionExposedMesheryStore = {
+    currentOrganization: {
+      set: (organization) =>
+        legacyStore.dispatch({ type: actionTypes.SET_ORGANIZATION, organization }),
+      get: () => legacyStore.getState().organization,
+      useCurrentOrg: () => useLegacySelector((state) => state.organization),
+    },
+    selectedK8sClusters: {
+      get: () => selectSelectedK8sClusters(legacyStore.getState()),
+      useSelectedK8sClusters: () => useLegacySelector(selectSelectedK8sClusters),
+    },
+    k8sconfig: {
+      get: () => selectK8sConfig(legacyStore.getState()),
+      useK8sConfig: () => useLegacySelector(selectK8sConfig),
+    },
+  };
+
   return (
     <DynamicFullScrrenLoader isLoading={loading}>
       <RemoteComponent
@@ -140,7 +165,7 @@ function NavigatorExtension({
             useFilterK8sContexts,
             useDynamicComponent,
           },
-          mesheryStore: mesheryStore,
+          mesheryStore: extensionExposedMesheryStore,
           currentOrganization,
         }}
       />

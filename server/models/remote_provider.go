@@ -135,6 +135,9 @@ func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
 		return providerProperties
 	}
 	if err != nil || resp.StatusCode != http.StatusOK {
+		if err == nil {
+			err = ErrStatusCode(resp.StatusCode)
+		}
 		l.Log.Error(ErrFetch(err, "Capabilities", http.StatusInternalServerError))
 		return providerProperties
 	}
@@ -1687,7 +1690,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 }
 
 // GetMesheryPatterns gives the patterns stored with the provider
-func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, search, order, updatedAfter string, visibility []string, includeMetrics string) ([]byte, error) {
+func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, search, order, updatedAfter string, visibility []string, includeMetrics string, trim string) ([]byte, error) {
 	if !l.Capabilities.IsSupported(PersistMesheryPatterns) {
 		l.Log.Error(ErrOperationNotAvaibale)
 		return []byte{}, fmt.Errorf("%s is not suppported by provider: %s", PersistMesheryPatterns, l.ProviderName)
@@ -1716,6 +1719,7 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 	}
 
 	q.Set("metrics", includeMetrics)
+	q.Set("trim", trim)
 
 	if len(visibility) > 0 {
 		for _, v := range visibility {

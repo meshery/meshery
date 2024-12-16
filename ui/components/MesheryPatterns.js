@@ -1121,14 +1121,6 @@ function MesheryPatterns({
             </TableCell>
           );
         },
-        // customBodyRender: function CustomBody(_, tableMeta) {
-        //   const visibility = patterns[tableMeta.rowIndex]?.visibility;
-        //   return (
-        //     <div style={{ cursor: 'default' }}>
-        //       <img className={classes.visibilityImg} src={`/static/img/${visibility}.svg`} />
-        //     </div>
-        //   );
-        // },
       },
     },
     {
@@ -1358,6 +1350,10 @@ function MesheryPatterns({
     page,
     print: false,
     download: false,
+    sortOrder: {
+      name: 'updated_at',
+      direction: 'desc',
+    },
     textLabels: {
       selectedRows: {
         text: 'pattern(s) selected',

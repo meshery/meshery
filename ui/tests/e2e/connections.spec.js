@@ -1,8 +1,8 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './fixtures/project';
 import { ENV } from './env';
 import os from 'os';
 
-const verifyConnectionsResBody = (body) => {
+const verifyConnectionsResBody = (body, provider) => {
   expect(body).toEqual(
     expect.objectContaining({
       connections: expect.any(Array),
@@ -12,16 +12,22 @@ const verifyConnectionsResBody = (body) => {
     }),
   );
   for (const connection of body.connections) {
+    const mesheryKeys =
+      provider === 'Meshery'
+        ? {
+            sub_type: expect.any(String),
+            metadata: expect.anything(),
+            kind: expect.any(String),
+            name: expect.any(String),
+            status: expect.any(String),
+            type: expect.any(String),
+          }
+        : null;
+
     expect(connection).toEqual(
       expect.objectContaining({
         id: expect.any(String),
-        name: expect.any(String),
         credential_id: expect.any(String),
-        type: expect.any(String),
-        sub_type: expect.any(String),
-        kind: expect.any(String),
-        metadata: expect.anything(),
-        status: expect.any(String),
         user_id: expect.any(String),
         created_at: expect.any(String),
         updated_at: expect.any(String),
@@ -29,6 +35,7 @@ const verifyConnectionsResBody = (body) => {
           Time: expect.any(String),
           Valid: expect.any(Boolean),
         }),
+        ...mesheryKeys,
       }),
     );
   }
@@ -62,7 +69,7 @@ const transitionTests = [
 test.describe.configure({ mode: 'serial' });
 let connectionCount = 0;
 
-test.beforeEach(async ({ page }) => {
+test.beforeEach(async ({ page, provider }) => {
   const connectionsReq = page.waitForRequest(
     (request) =>
       request.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/integrations/connections`) &&
@@ -86,7 +93,7 @@ test.beforeEach(async ({ page }) => {
   await connectionsReq;
   const res = await connectionsRes;
   const body = await res.json();
-  verifyConnectionsResBody(body);
+  verifyConnectionsResBody(body, provider);
 
   connectionCount = body.connections.length;
 });
@@ -144,7 +151,7 @@ test(
     await expect(page.getByTestId('connection-discoveredModal')).toBeVisible();
 
     // Verify available contexts were connected
-    await expect(page.getByRole('menuitem', { name: 'connected' })).toBeVisible();
+    await expect(page.getByRole('menuitem', { name: 'registered' })).toBeVisible();
 
     // Click "OK" button to close success modal
     await page.getByRole('button', { name: 'OK', exact: true }).click();
@@ -152,7 +159,7 @@ test(
 );
 
 transitionTests.forEach((t) => {
-  test(t.name, { tag: '@unstable' }, async ({ page }) => {
+  test(t.name, { tag: '@unstable' }, async ({ page, provider }) => {
     const stateTransitionReq = page.waitForRequest(
       (request) =>
         request.url() ===
@@ -206,7 +213,7 @@ transitionTests.forEach((t) => {
     await getConnectionsReq;
     const res = await getConnectionsRes;
     const body = await res.json();
-    verifyConnectionsResBody(body);
+    verifyConnectionsResBody(body, provider);
 
     // expect new state to be shown as current state
     await expect(firstRow.locator('span', { hasText: t.statusAfterTransition })).toBeVisible();

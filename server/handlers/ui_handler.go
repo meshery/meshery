@@ -52,6 +52,8 @@ func (h *Handler) ServeUI(w http.ResponseWriter, r *http.Request, reqBasePath, b
 		if ok && provider != nil {
 			provProps := provider.GetProviderProperties()
 			if len(provProps.Extensions.Navigator) <= 0 {
+				// For the case when the token is valid but the extension capability is missing in provider.
+				// This was the cause for circular redirects.
 				releaseChannel := models.NewReleaseChannelInterceptor(viper.GetString("RELEASE_CHANNEL"), provider, h.log)
 				if releaseChannel != nil {
 					releaseChannel.Intercept(r, w)
