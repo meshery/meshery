@@ -104,11 +104,31 @@ kubectl set image deployment/<deployment-name> <container-name>=new-image:tag
 ```
 
 
-#### 6. Open the files in visualizer
+#### 6. Open the files in Operate
+
+1. Once deployment is successful user can click on Open in Operate, or click on notification on top right click on the deployment successfull notification and click on Open in Operate, or directly click on the Operate tab beside Design on the design and visualize the design inside operate mode.
+![Operate](./screenshots/operate.png)
+
+2. Click on the Layers option below to view all available filters.
+![Operate layers](./screenshots/operate-layers.png)
+Now you can utilize this filter to visualize your design.
+![Operate layers expanded](./screenshots/operate-layers-expand.png)
+
+3. After selecting your filters, you should see a view displaying only your relevant resources.
 
 
+#### 7. Using built-in terminal for logs
 
-### Deleting the resources
+1. Right click on a pod, to open the circular-content menu.
+![Operate logs menu](./screenshots/operate-logs-menu.png)
+
+2. Select the logs option from circular-context menu, this will start the session for logs
+
+3. Now you can use the in built terminal to view logs
+![Operate logs ](./screenshots/operate-logs.png)
+
+
+#### 8. Deleting the resources
 
 To delete the resources, use the **Undeploy** option from the _Design_ view.
 
