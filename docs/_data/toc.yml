@@ -167,6 +167,7 @@
     - title: 🧑‍🔬 Tutorials ↆ
       url: guides/tutorials
       children:
+<<<<<<< HEAD
         - title: Exploring Kubernetes CronJobs
           url: guides/tutorials/exploring-kubernetes-cronjobs
         - title: Understanding Kubernetes ConfigMaps and Secrets with Meshery
@@ -177,6 +178,21 @@
           url: guides/tutorials/wordpress-mysql-persistentvolume
         - title: Deploy an AWS EC2 Instance with Meshery
           url: guides/tutorials/deploy-an-aws-ec2-instance-with-meshery
+=======
+      - title: Exploring Kubernetes Pods
+        url: guides/tutorials/kubernetes-pods
+      - title: Exploring Kubernetes ConJobs
+        url: guides/tutorials/exploring-kubernetes-cronjobs
+      - title: Understanding Kubernetes ConfigMaps and Secrets
+        url: guides/tutorials/kubernetes-configmaps-secrets
+      - title: Deploying PHP Guestbook application with Redis in Meshery
+        url: guides/tutorials/deploying-php-app-with-redis
+    - title: Upgrading Meshery ↆ
+      url: installation/upgrades
+      children:
+        - title: Meshery CLI
+          url: installation/upgrades#upgrading-meshery-cli
+>>>>>>> fa232be3a3 (fix configurations)
 # - title: ⚙️ Tasks
 #   url: tasks
 #   links:

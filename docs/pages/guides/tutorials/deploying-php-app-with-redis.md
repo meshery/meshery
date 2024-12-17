@@ -73,6 +73,9 @@ These YAML files contain the Service definitions and Deployment configurations f
 
 ![Import redis-leader-deployment](./screenshots/redis-leader-deployment.png)
 
+#### Scaling Deployments
+You might be wondering how you would go about scaling your microservice. Here we will, explore how to scale individual components of the microservices application by adjusting the replicas in the Deployment configuration.
+1. 
 
 Now, follow the same steps (1-6) to import the rest of the files.
 
@@ -97,9 +100,10 @@ Under the “Designs” tab, you will see that we have successfully imported the
 ![Import redis-php-guestbook-finalize](./screenshots/redis-php-guestbook-finalize.png)
 
 
-#### 5. **Updating the Deployments:**
+#### 4. **Updating Deployments:**
+   - Learn how to update the microservices application by rolling out changes to the Deployment.
 
-```bash
+\```bash
 kubectl set image deployment/<deployment-name> <container-name>=new-image:tag
 ```
 
