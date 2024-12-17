@@ -40,7 +40,7 @@ Learn how to import manifest files, visualize Kubernetes resources, create new r
 
 #### Download the Kubernetes Configuration Files
 
-To get started we will need some yaml files that will contain the configurations for the pods and services that will run on Meshery. You can download them to see what the look like.
+To get started we will need some yaml files that will contain the configurations for the pods and services that will run on Meshery. Go ahead and download them.
 1. [redis-leader-deployment.yaml](https://k8s.io/examples/application/guestbook/redis-leader-deployment.yaml)
 2. [redis-leader-service.yaml](https://k8s.io/examples/application/guestbook/redis-leader-service.yaml)
 3. [redis-follower-deployment.yaml](https://k8s.io/examples/application/guestbook/redis-follower-deployment.yaml)
