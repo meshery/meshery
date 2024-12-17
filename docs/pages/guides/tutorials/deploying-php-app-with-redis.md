@@ -96,8 +96,22 @@ Under the “Designs” tab, you will see that we have successfully imported the
 ![Import redis-php-guestbook-finalize](./screenshots/redis-php-guestbook-finalize.png)
 
 
-#### 4. **Updating Deployments:**
-   - Learn how to update the microservices application by rolling out changes to the Deployment.
+1. Click Actions in the top right corner and click on Deploy.
+![Import redis-php-guestbook-deploy](./screenshots/redis-php-guestbook-deploy.png)
+
+1. The design will be validated to make sure there are no errors.
+![Import redis-php-guestbook-validate](./screenshots/redis-php-guestbook-validate.png)
+1. Choose the Kubernetes cluster you want to deploy to.
+![Import redis-php-guestbook-identify](./screenshots/redis-php-guestbook-identify.png)
+1. A Dry-Run will be triggered.
+![Import redis-php-guestbook-dryrun](./screenshots/redis-php-guestbook-dryrun.png)
+1. Finally your deployment and click Deploy to deploy the application to the cluster.
+![Import redis-php-guestbook-finalize](./screenshots/redis-php-guestbook-finalize.png)
+1. On sucessful deployment you will see the following modal asking yout o open you deployment in visualizer
+![Import redis-php-guestbook-finalize](./screenshots/redis-php-guestbook-finalize.png)
+
+
+#### 5. **Updating the Deployments:**
 
 ```bash
 kubectl set image deployment/<deployment-name> <container-name>=new-image:tag
