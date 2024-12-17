@@ -1,13 +1,16 @@
 ---
 layout: default
-title: Exploring Kubernetes Deployments with Meshery Playground
-abstract: Learn Kubernetes Deployments with Meshery Playground
-permalink: guides/tutorials/kubernetes-deployments
-redirect_from: guides/tutorials/kubernetes-deployments/
-type: guide
-category: tutorial
+title: Deploying PHP Guestbook application with Redis in Meshery
+abstract: Learn how to deploy a PHP Guestbook application with Redis on Kubernetes using Meshery.
+permalink: guides/tutorials/deploying-php-app-with-redis
+redirect_from: guides/tutorials/deploying-php-app-with-redis/
+model: kubernetes
+kind: deployments
+type: guides
+category: tutorials
 language: en
-abstract: "In this tutorial, we will explore Kubernetes Deployments using Meshery Playground, an interactive live cluster environment, to perform hands-on labs for deploying and managing applications."
+list: include
+abstract: "In this tutorial, we will deploy guest book built with PHP and Redis in Kubernetes. We will make use of Meshery Playground in an interactive live cluster environment."
 ---
 
 ### Introduction
@@ -74,15 +77,11 @@ These YAML files contain the Service definitions and Deployment configurations f
 4. Under the “Designs” tab, you will see that we have successfully imported the manifest as designs, then you can drag and drop them in the canvas. This will "Merge" all the designs since it's all just one application
     ![merging all designs](./screenshots/app-canvas.png)
 
+#### Scaling Deployments
+You might be wondering how you would go about scaling your microservice. Here we will, explore how to scale individual components of the microservices application by adjusting the replicas in the Deployment configuration.
+1. 
 
 
-
-#### 3. **Scaling Deployments:**
-  - Explore how to scale individual components of the microservices application by adjusting the replicas in the Deployment configuration.
-
-\```bash
-kubectl scale deployment <deployment-name> --replicas=3
-\```
 
 #### 4. **Updating Deployments:**
    - Learn how to update the microservices application by rolling out changes to the Deployment.
