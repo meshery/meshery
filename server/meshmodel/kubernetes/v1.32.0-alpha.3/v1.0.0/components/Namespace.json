@@ -136,7 +136,7 @@
   "metadata": {
    "genealogy": "parent",
    "isAnnotation": false,
-   "isNamespaced": true,
+   "isNamespaced": false,
    "published": false,
    "source_uri": "git://github.com/kubernetes/kubernetes/master/api/openapi-spec/v3"
   },

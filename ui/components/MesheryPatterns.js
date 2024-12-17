@@ -86,6 +86,7 @@ import { DryRunDesign } from './DesignLifeCycle/DryRun';
 import { DEPLOYMENT_TYPE } from './DesignLifeCycle/common';
 import {
   useClonePatternMutation,
+  useDeletePatternFileMutation,
   useDeletePatternMutation,
   useDeployPatternMutation,
   useGetPatternsQuery,
@@ -405,7 +406,7 @@ function MesheryPatterns({
   const [importPattern] = useImportPatternMutation();
   const [updatePattern] = useUpdatePatternFileMutation();
   const [uploadPatternFile] = useUploadPatternFileMutation();
-  const [deletePatternFile] = useDeletePatternMutation();
+  const [deletePatternFile] = useDeletePatternFileMutation();
 
   useEffect(() => {
     if (patternsData) {
@@ -945,6 +946,7 @@ function MesheryPatterns({
         .then(() => {
           updateProgress({ showProgress: false });
           notify({ message: `"${name}" Design deleted`, event_type: EVENT_TYPES.SUCCESS });
+          getPatterns();
           resetSelectedRowData()();
         })
         .catch(() => {
@@ -1119,14 +1121,6 @@ function MesheryPatterns({
             </TableCell>
           );
         },
-        // customBodyRender: function CustomBody(_, tableMeta) {
-        //   const visibility = patterns[tableMeta.rowIndex]?.visibility;
-        //   return (
-        //     <div style={{ cursor: 'default' }}>
-        //       <img className={classes.visibilityImg} src={`/static/img/${visibility}.svg`} />
-        //     </div>
-        //   );
-        // },
       },
     },
     {
@@ -1321,6 +1315,7 @@ function MesheryPatterns({
             message: `${patterns.patterns.length} Designs deleted`,
             event_type: EVENT_TYPES.SUCCESS,
           });
+          getPatterns();
           resetSelectedRowData()();
         }, 1200);
       })
@@ -1355,6 +1350,10 @@ function MesheryPatterns({
     page,
     print: false,
     download: false,
+    sortOrder: {
+      name: 'updated_at',
+      direction: 'desc',
+    },
     textLabels: {
       selectedRows: {
         text: 'pattern(s) selected',

@@ -26,18 +26,19 @@ type RelationshipCSVHelper struct {
 }
 
 type RelationshipCSV struct {
-	RowIndex     int    `json:"-" csv:"-"`
-	Model        string `json:"Model" csv:"Model"`
-	Version      string `json:"Version" csv:"Version"`
-	KIND         string `json:"kind" csv:"kind"`
-	Type         string `json:"type" csv:"type"`
-	SubType      string `json:"subType" csv:"subType"`
-	Description  string `json:"metadata.description" csv:"metadata.description"`
-	IsAnnotation string `json:"metadata.isAnnotation" csv:"metadata.isAnnotation"`
-	Styles       string `json:"metadata.styles" csv:"metadata.styles"`
-	EvalPolicy   string `json:"evalPolicy" csv:"evalPolicy"`
-	Selector     string `json:"selector" csv:"selector"`
-	Filename     string `json:"filename" csv:"filename"`
+	RowIndex          int    `json:"-" csv:"-"`
+	Model             string `json:"Model" csv:"Model"`
+	Version           string `json:"Version" csv:"Version"`
+	KIND              string `json:"kind" csv:"kind"`
+	Type              string `json:"type" csv:"type"`
+	SubType           string `json:"subType" csv:"subType"`
+	PublishToRegistry string `json:"PublishToRegistry" csv:"PublishToRegistry"`
+	Description       string `json:"metadata.description" csv:"metadata.description"`
+	IsAnnotation      string `json:"metadata.isAnnotation" csv:"metadata.isAnnotation"`
+	Styles            string `json:"metadata.styles" csv:"metadata.styles"`
+	EvalPolicy        string `json:"evalPolicy" csv:"evalPolicy"`
+	Selector          string `json:"selector" csv:"selector"`
+	Filename          string `json:"filename" csv:"filename"`
 }
 
 func NewRelationshipCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64, localCsvPath string) (*RelationshipCSVHelper, error) {
@@ -104,12 +105,16 @@ func (mrh *RelationshipCSVHelper) ParseRelationshipsSheet(modelName string) erro
 	}
 }
 
-func ProcessRelationships(relationshipCSVHelper *RelationshipCSVHelper, spreadsheetUpdateChan chan RelationshipCSV) {
+func ProcessRelationships(relationshipCSVHelper *RelationshipCSVHelper, spreadsheetUpdateChan chan RelationshipCSV, path string) {
+	if path == "" {
+		path = "../server/meshmodel"
+	}
 	for _, relationship := range relationshipCSVHelper.Relationships {
 		var versions []string
-
 		if relationship.Version == "*" {
-			modelBasePath := fmt.Sprintf("../server/meshmodel/%s", relationship.Model)
+
+			modelBasePath := filepath.Join(path, relationship.Model)
+
 			dirs, err := os.ReadDir(modelBasePath)
 			if err != nil {
 				err = utils.ErrReadDir(err, modelBasePath)
@@ -146,8 +151,15 @@ func ProcessRelationships(relationshipCSVHelper *RelationshipCSVHelper, spreadsh
 				Name:  relationship.Model,
 				Model: model.Model{Version: version},
 			}
-			status := _rel.Enabled
-			rel.Status = &status
+
+			if utils.ReplaceSpacesAndConvertToLowercase(relationship.PublishToRegistry) == "false" {
+				status := _rel.Ignored
+				rel.Status = &status
+			} else {
+				status := _rel.Enabled
+				rel.Status = &status
+			}
+
 			var styles _rel.RelationshipDefinitionMetadataStyles
 
 			if relationship.Styles != "" {
@@ -186,7 +198,7 @@ func ProcessRelationships(relationshipCSVHelper *RelationshipCSVHelper, spreadsh
 				filenameGenerated = true
 			}
 
-			fullPath, err := ConstructRelationshipPath(relationship.Model, version, rel.Version, "../server/meshmodel", relationship.Filename)
+			fullPath, err := ConstructRelationshipPath(relationship.Model, version, rel.Version, path, relationship.Filename)
 			if err != nil {
 				Log.Error(err)
 				continue
