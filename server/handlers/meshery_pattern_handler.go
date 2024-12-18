@@ -1001,8 +1001,7 @@ func genericHTTPDesignFile(fileURL, patternName, sourceType string, reg *meshmod
 //
 // ```?metrics``` Returns metrics like deployment/share/clone/view/download count for desings, default is false,
 //
-// ```?trim``` Trims the response to exclude the pattern file content, default is false
-// responses:
+// / ```?populate``` Add the design content to the response like pattern_file return design file content
 //
 //	200: mesheryPatternsResponseWrapper
 func (h *Handler) GetMesheryPatternsHandler(
@@ -1016,7 +1015,6 @@ func (h *Handler) GetMesheryPatternsHandler(
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 	updateAfter := q.Get("updated_after")
 	includeMetrics := q.Get("metrics")
-	trim := q.Get("trim")
 	err := r.ParseForm() // necessary to get r.Form["visibility"], i.e, ?visibility=public&visbility=private
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
@@ -1025,9 +1023,12 @@ func (h *Handler) GetMesheryPatternsHandler(
 	}
 	filter := struct {
 		Visibility []string `json:"visibility"`
+		Populate   []string `json:"populate"`
 	}{}
 
 	visibility := q.Get("visibility")
+	populate := q.Get("populate")
+
 	if visibility != "" {
 		err := json.Unmarshal([]byte(visibility), &filter.Visibility)
 		if err != nil {
@@ -1037,8 +1038,17 @@ func (h *Handler) GetMesheryPatternsHandler(
 		}
 	}
 
-	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter, filter.Visibility, includeMetrics, trim)
-	
+	if populate != "" {
+		err = json.Unmarshal([]byte(populate), &filter.Populate)
+		if err != nil {
+			h.log.Error(ErrFetchPattern(err))
+			http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+
+	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter, filter.Visibility, includeMetrics, filter.Populate)
+
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
@@ -1095,7 +1105,7 @@ func (h *Handler) GetCatalogMesheryPatternsHandler(
 	q := r.URL.Query()
 	tokenString := r.Context().Value(models.TokenCtxKey).(string)
 
-	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("metrics"), q.Get("trim"), q["class"], q["technology"], q["type"], q["orgID"], q["workspaceID"], q["userid"])
+	resp, err := provider.GetCatalogMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), q.Get("metrics"), q["populate"], q["class"], q["technology"], q["type"], q["orgID"], q["workspaceID"], q["userid"])
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))
 		http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
