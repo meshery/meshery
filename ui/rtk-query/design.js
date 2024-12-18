@@ -20,6 +20,7 @@ export const designsApi = api
             search: queryArg.search,
             order: queryArg.order,
             visibility: queryArg.visibility,
+            populate: queryArg.populate,
           },
           method: 'GET',
         }),
@@ -122,6 +123,7 @@ export const designsApi = api
 
 export const {
   useGetPatternsQuery,
+  useGetPatternQuery,
   useDeployPatternMutation,
   useUndeployPatternMutation,
   useClonePatternMutation,
