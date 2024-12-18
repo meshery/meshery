@@ -1728,7 +1728,6 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 	}
 	if len(populate) > 0 {
 		for _, p := range populate {
-			l.Log.Debug("populate: ", p)
 			q.Add("populate", p)
 		}
 	}
@@ -1827,7 +1826,6 @@ func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pag
 
 	if len(populate) > 0 {
 		for _, p := range populate {
-			l.Log.Debug("populate: ", p)
 			q.Add("populate", p)
 		}
 	}

@@ -123,7 +123,6 @@ export const designsApi = api
 
 export const {
   useGetPatternsQuery,
-  useGetPatternQuery,
   useDeployPatternMutation,
   useUndeployPatternMutation,
   useClonePatternMutation,
