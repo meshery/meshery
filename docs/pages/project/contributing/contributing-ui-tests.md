@@ -24,9 +24,9 @@ Before diving into Meshery's testing environment, certain prerequisites are nece
 ## Setting up environment variable
 
 To run the tests successfully, three environment variables must be configured:  
-• `REMOTE_PROVIDER_USER_EMAIL`: The email associated with your account within your provider.  
-• `REMOTE_PROVIDER_USER_PASSWORD` : The password associated with your account within your provider.  
-• `PROVIDER_TOKEN`: Your provider token, can be generated from an account registered within your provider  
+• `REMOTE_PROVIDER_USER_EMAIL` (Required): The email associated with your account within your provider.  
+• `REMOTE_PROVIDER_USER_PASSWORD` (Required): The password associated with your account within your provider.  
+• `PROVIDER_TOKEN` (Optional): Your provider token, can be generated from an account registered within your provider  
 
 {% include alert.html
     type="info"
@@ -44,7 +44,7 @@ There are a few ways to set up the Meshery UI and server, but for end-to-end tes
 {% include alert.html type="warning" title="Several Test may break" content='Some test cases required you to have kubernetes cluster and build meshery adapter as well, be aware of that. Which is out of scope for this documentation<ul><li><a href="https://docs.meshery.io/installation/kubernetes/minikube">Kubernetes Cluster</a>: Instalation of kubernetes cluster with Minikube.</li>
 <li><a href="https://docs.meshery.io/installation/multiple-adapters">Meshery Adapters</a>: Using Multiple Adapters</li></ul>' %}
 
-### Native OS (Recommended)
+### Native OS Build (Recommended)
 
 This approach is very quick to build, but also dependent on your operating system, so you need to have all dependencies necessary to be able compile and running the server.
 
@@ -70,7 +70,7 @@ make server-binary
 
 There is also Meshery CLI which can help you run the UI and Server, for more detail, you go to [Meshery CLI documentation](https://docs.meshery.io/project/contributing/contributing-cli-guide#process)
 
-### Docker Based
+### Docker Based Build
 
 Alternatively, a Docker-based setup can be utilized, simplifying the process, and ensuring consistency across different environments. It is closer to the production environment than the native solution but slower in terms of build time.
 
@@ -90,7 +90,7 @@ make docker-testing-env
 
 For playwrights, always try to use a native OS whenever possible. The Docker-based approach is intended only for unsupported OSes and is generally not recommended because it runs on top of Ubuntu images, which can be redundant if you already using Ubuntu or Windows.
 
-### Native OS (Recommended)
+### Playwright on Native OS (Recommended)
 
 Setup playwright:
 
@@ -104,7 +104,7 @@ Run the all project and test cases:
 make test-ui
 ```
 
-### Docker based
+### Playwright server on docker based image
 
 The first step is to pull the docker image from [Azure Container Registry](https://mcr.microsoft.com/en-us/product/playwright/tags) where the playwright stores their image using this command:
 
@@ -133,7 +133,7 @@ In the last step go to ui folder,
 cd ui;
 ```
 
-## Run the test cases
+## Run the test cases with Playwright CLI
 
 There are several options we can use to run the test cases, in CLI:
 
@@ -160,7 +160,7 @@ npx playwright test --ui --project=chromium-meshery-provider tests/e2e/service-m
 For more detail, you can read the [Playwright Cli docs](https://playwright.dev/docs/test-cli)
 
 
-## Testing Meshery & Local 
+## Testing Meshery & Local Provider 
 
 By default our test cases is running against both Meshery and Local Provider, we are utilizing playwright feature such as:
 
