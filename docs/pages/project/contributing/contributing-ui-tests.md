@@ -182,6 +182,19 @@ test('Random test', async ({ provider }) => {
 });
 ```
 
+## Testing Policy
+
+To maintain consistency across test cases, every new test will be tagged with `@unstable`. This will ensure that it appears with a warning icon rather than a failing icon in the test reporter comments on pull requests. For example:
+
+```javascript
+import { expect, test } from './fixtures/project';
+
+test('Random test',  { tag: '@unstable' }, async ({ provider }) => {
+  // Test cases here
+  // ...
+});
+```
+
 ## Debugging Test on Github Actions
 
 We also storing test result on every PR in github actions, in case you need to debug it further:
