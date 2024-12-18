@@ -446,4 +446,4 @@ export const selectK8sConfig = (state) => {
 export const LegacyStoreContext = createContext(null);
 
 export const useLegacySelector = createSelectorHook(LegacyStoreContext);
-export const useLegacyDispactch = createDispatchHook(LegacyStoreContext);
+export const useLegacyDispatch = createDispatchHook(LegacyStoreContext);
