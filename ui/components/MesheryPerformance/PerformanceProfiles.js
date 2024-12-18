@@ -27,7 +27,7 @@ import {
 import MesheryPerformanceComponent from './index';
 import PerformanceProfileGrid from './PerformanceProfileGrid';
 import PerformanceResults from './PerformanceResults';
-import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
+import _PromptComponent from '../PromptComponent';
 import ViewSwitch from '../ViewSwitch';
 import { UsesSistent } from '../SistentWrapper';
 
@@ -224,8 +224,8 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
       subtitle: `Are you sure you want to delete ${count > 1 ? 'these' : 'this'} ${
         count ? count : ''
       } performance profile${count > 1 ? 's' : ''}?`,
-      variant: PROMPT_VARIANTS.DANGER,
-      options: ['Yes', 'No'],
+      variant: 'error',
+      primaryOption: 'DELETE',
     });
     return response;
   }
@@ -487,11 +487,10 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
 
     onRowsDelete: async function handleDeleteRow(row) {
       let response = await showModal(Object.keys(row.lookup).length);
-      if (response === 'Yes') {
+      if (response === 'CONFIRM') {
         const pids = Object.keys(row.lookup).map((idx) => testProfiles[idx]?.id);
         pids.forEach((pid) => handleDelete(pid));
-      }
-      if (response === 'No') {
+      } else {
         fetchTestProfiles(page, pageSize, search, sortOrder);
       }
     },
@@ -674,7 +673,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
         </UsesSistent>
       </div>
 
-      <PromptComponent ref={modalRef} />
+      <_PromptComponent ref={modalRef} />
     </>
   );
 }

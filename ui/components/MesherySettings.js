@@ -21,7 +21,7 @@ import GrafanaComponent from './telemetry/grafana/GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
 import PrometheusComponent from './telemetry/prometheus/PrometheusComponent';
 import { updateProgress } from '../lib/store';
-import PromptComponent from './PromptComponent';
+import _PromptComponent from './PromptComponent';
 import { iconMedium } from '../css/icons.styles';
 import MeshModelComponent from './MeshModelRegistry/MeshModelComponent';
 import DatabaseSummary from './DatabaseSummary';
@@ -407,7 +407,7 @@ const MesherySettings = (props) => {
             </TabContainer>
           )}
           {backToPlay}
-          <PromptComponent ref={systemResetPromptRef} />
+          <_PromptComponent ref={systemResetPromptRef} />
         </div>
       ) : (
         <DefaultError />

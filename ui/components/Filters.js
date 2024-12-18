@@ -21,7 +21,7 @@ import Moment from 'react-moment';
 import CloseIcon from '@material-ui/icons/Close';
 import EditIcon from '@material-ui/icons/Edit';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
-import PromptComponent from './PromptComponent';
+import _PromptComponent from './PromptComponent';
 import FullscreenIcon from '@material-ui/icons/Fullscreen';
 import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
 import { FILE_OPS, MesheryFiltersCatalog, VISIBILITY } from '../utils/Enum';
@@ -943,12 +943,11 @@ function MesheryFilters({
   async function showmodal(count) {
     let response = await modalRef.current.show({
       title: `Delete ${count ? count : ''} Filter${count > 1 ? 's' : ''}?`,
-
       subtitle: `Are you sure you want to delete ${count > 1 ? 'these' : 'this'} ${
         count ? count : ''
       } filter${count > 1 ? 's' : ''}?`,
-
-      options: ['Yes', 'No'],
+      primaryOption: 'Yes',
+      variant: 'error',
     });
     return response;
   }
@@ -1319,7 +1318,7 @@ function MesheryFilters({
                   />
                 </UsesSistent>
               )}
-            <PromptComponent ref={modalRef} />
+            <_PromptComponent ref={modalRef} />
           </>
         ) : (
           <DefaultError />
