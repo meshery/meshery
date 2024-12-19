@@ -443,3 +443,20 @@ export const getDesignVersion = (design) => {
     }
   }
 };
+
+export const urlEncodeParams = (params) => {
+  const urlSearchParams = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (_.isNil(value)) {
+      return;
+    }
+    if (Array.isArray(value)) {
+      value.forEach((val) => urlSearchParams.append(key, val));
+    } else {
+      urlSearchParams.append(key, value);
+    }
+  });
+
+  return urlSearchParams.toString();
+};

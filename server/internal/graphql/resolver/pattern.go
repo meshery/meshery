@@ -28,11 +28,15 @@ func (r *Resolver) fetchPatterns(ctx context.Context, provider models.Provider, 
 	if selector.Metrics != nil {
 		metrics = *selector.Metrics
 	}
-	trim := "false"
-	if selector.Trim != nil {
-		trim = *selector.Trim
+
+	populate := []string{}
+	for _, populatePtr := range selector.Populate {
+		if populatePtr != nil {
+			populate = append(populate, *populatePtr)
+		}
 	}
-	resp, err := provider.GetMesheryPatterns(tokenString, selector.Page, selector.PageSize, search, order, updateAfter, selector.Visibility, metrics, trim)
+
+	resp, err := provider.GetMesheryPatterns(tokenString, selector.Page, selector.PageSize, search, order, updateAfter, selector.Visibility, metrics, populate)
 
 	if err != nil {
 		r.Log.Error(ErrFetchingPatterns(err))

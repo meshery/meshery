@@ -498,7 +498,7 @@ input PageFilter {
   updated_after: String
   visibility: [String!]
   metrics: String
-  trim: String
+  populate: [String]
 }
 
 # ============== CATALOG =============================
@@ -509,7 +509,7 @@ input CatalogSelector {
   search: String!
   order: String!
   metrics: String
-  trim: String
+  populate: [String]
   class: [String]
   technology: [String]
   patternType: [String]
