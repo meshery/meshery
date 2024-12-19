@@ -10,7 +10,7 @@ command: pattern
 subcommand: list
 ---
 
-# mesheryctl pattern list
+# mesheryctl design list
 
 List patterns
 
@@ -19,7 +19,7 @@ List patterns
 Display list of all available pattern files.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern list [flags]
+mesheryctl design list [flags]
 
 </div>
 </pre> 
@@ -29,7 +29,7 @@ mesheryctl pattern list [flags]
 list all available patterns
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern list
+mesheryctl design list
 
 </div>
 </pre> 
@@ -57,7 +57,7 @@ mesheryctl pattern list
 
 ## Screenshots
 
-Usage of mesheryctl pattern list
+Usage of mesheryctl design list
 ![pattern-list-usage](/assets/img/mesheryctl/patternList.png)
 
 ## See Also

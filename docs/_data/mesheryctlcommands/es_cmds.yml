@@ -370,21 +370,21 @@ mesh:
 pattern:
   name: pattern
   description:
-  usage: mesheryctl pattern
+  usage: mesheryctl design
 
   flags:
     file:
       name: --file, -f
       description: (obligatorio) ruta al archivo de patrón.
       usage: |
-        mesheryctl pattern apply --file [pattern path]
-        mesheryctl pattern delete --file [pattern path]
+        mesheryctl design apply --file [pattern path]
+        mesheryctl design delete --file [pattern path]
 
   subcommands:
     apply:
       name: apply
       description: Aplicar archivo de patrón activará la implementación del archivo de patrón
-      usage: mesheryctl pattern apply [flags]
+      usage: mesheryctl design apply [flags]
       flags:
         file:
           name: --file, -f
@@ -394,33 +394,33 @@ pattern:
     delete:
       name: delete
       description: Desaprovisionar la malla de recursos / servicios utilizando el archivo de patrón
-      usage: mesheryctl pattern delete [flags]
+      usage: mesheryctl design delete [flags]
       flags:
         file:
           name: --file, -f
           description: Elimina los recursos que se crearon mediante el archivo de patrón.
-          usage: mesheryctl pattern delete -f [path to pattern file]
+          usage: mesheryctl design delete -f [path to pattern file]
 
     list:
       name: list
       description: muestra una lista de archivos de patrones disponibles
-      usage: mesheryctl pattern list
+      usage: mesheryctl design list
       flags:
         all:
           name: --all, -a
           description: mostrar todos los metadatos del archivo de patrón
-          usage: mesheryctl pattern list --all
+          usage: mesheryctl design list --all
 
     view:
       name: view
       description: muestra el contenido de un archivo de patrón específico
-      usage: mesheryctl pattern view [pattern-name|pattern-id]
+      usage: mesheryctl design view [pattern-name|pattern-id]
       flags:
         all:
           name: --all, -a
           description: mostrar todo el contenido del archivo de patrón
-          usage: mesheryctl pattern view [pattern-name|pattern-id] --all
+          usage: mesheryctl design view [pattern-name|pattern-id] --all
         json:
           name: -o json
           description: mostrar el contenido de un patrón en formato json
-          usage: mesheryctl pattern view [pattern-name|pattern-id] -o json
+          usage: mesheryctl design view [pattern-name|pattern-id] -o json

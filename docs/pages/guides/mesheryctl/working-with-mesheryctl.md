@@ -16,7 +16,7 @@ Meshery's command line interface is `mesheryctl`. Use `mesheryctl` to both manag
 - `mesheryctl filter` - Cloud Native Filter Management
 - `mesheryctl mesh` - Cloud Native Lifecycle & Configuration Management
 - `mesheryctl perf` - Cloud Native Performance Management
-- `mesheryctl pattern` - Cloud Native Pattern Configuration & Management
+- `mesheryctl design` - Cloud Native Pattern Configuration & Management
 - `mesheryctl system` - Meshery Lifecycle and Troubleshooting
 
 ## Configuring Meshery Deployments with meshconfig
