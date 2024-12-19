@@ -1,3 +1,4 @@
+import { urlEncodeParams } from '@/utils/utils';
 import { api } from './index';
 import { ctxUrl } from '@/utils/multi-ctx';
 
@@ -12,18 +13,17 @@ export const designsApi = api
   .injectEndpoints({
     endpoints: (builder) => ({
       getPatterns: builder.query({
-        query: (queryArg) => ({
-          url: `pattern`,
-          params: {
+        query: (queryArg) => {
+          const params = urlEncodeParams({
             page: queryArg.page,
             pagesize: queryArg.pagesize,
             search: queryArg.search,
             order: queryArg.order,
             visibility: queryArg.visibility,
             populate: queryArg.populate,
-          },
-          method: 'GET',
-        }),
+          });
+          return `pattern?${params}`;
+        },
         providesTags: () => [{ type: TAGS.DESIGNS }],
       }),
       deployPattern: builder.mutation({

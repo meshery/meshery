@@ -77,7 +77,7 @@ mesheryctl design apply [design-name]
 			// search and fetch patterns with pattern-name
 			utils.Log.Debug("Fetching designs")
 
-			req, err = utils.NewRequest("GET", patternURL+`?populate=["pattern_file"]&search=`+patternName, nil)
+			req, err = utils.NewRequest("GET", patternURL+`?populate=pattern_file&search=`+patternName, nil)
 			if err != nil {
 				utils.Log.Error(err)
 				return nil

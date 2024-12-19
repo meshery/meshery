@@ -1023,12 +1023,10 @@ func (h *Handler) GetMesheryPatternsHandler(
 	}
 	filter := struct {
 		Visibility []string `json:"visibility"`
-		Populate   []string `json:"populate"`
 	}{}
 
 	visibility := q.Get("visibility")
-	populate := q.Get("populate")
-
+	populate := q["populate"]
 	if visibility != "" {
 		err := json.Unmarshal([]byte(visibility), &filter.Visibility)
 		if err != nil {
@@ -1038,16 +1036,7 @@ func (h *Handler) GetMesheryPatternsHandler(
 		}
 	}
 
-	if populate != "" {
-		err = json.Unmarshal([]byte(populate), &filter.Populate)
-		if err != nil {
-			h.log.Error(ErrFetchPattern(err))
-			http.Error(rw, ErrFetchPattern(err).Error(), http.StatusInternalServerError)
-			return
-		}
-	}
-
-	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter, filter.Visibility, includeMetrics, filter.Populate)
+	resp, err := provider.GetMesheryPatterns(tokenString, q.Get("page"), q.Get("pagesize"), q.Get("search"), q.Get("order"), updateAfter, filter.Visibility, includeMetrics, populate)
 
 	if err != nil {
 		h.log.Error(ErrFetchPattern(err))

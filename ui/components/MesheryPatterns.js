@@ -398,7 +398,7 @@ function MesheryPatterns({
     search: search,
     order: sortOrder,
     visibility: visibilityFilter ? JSON.stringify([visibilityFilter]) : '',
-    populate: JSON.stringify(['pattern_file']),
+    populate: 'pattern_file',
   });
   const [clonePattern] = useClonePatternMutation();
   const [publishCatalog] = usePublishPatternMutation();
