@@ -86,7 +86,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 			// search and fetch patterns with pattern-name
 			utils.Log.Debug("Fetching patterns")
 
-			req, err = utils.NewRequest("GET", patternURL+`?populate=pattern_file&search=`+patternName, nil)
+			req, err = utils.NewRequest("GET", patternURL+"?populate=pattern_file&search="+patternName, nil)
 			if err != nil {
 				utils.Log.Error(err)
 				return nil
