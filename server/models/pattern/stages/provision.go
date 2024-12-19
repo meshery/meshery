@@ -62,26 +62,6 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 				act.GetRegistry(),
 			)
 
-			// var annotations map[string]string
-
-			// _annotations, ok := component.Configuration["annotations"]
-			// if !ok {
-			// 	annotations = map[string]string{} // Directly initialize `annotations` to an empty map
-			// } else {
-			// 	var err error
-			// 	annotations, err = utils.Cast[map[string]string](_annotations)
-			// 	if err != nil {
-			// 		errs = append(errs, err)
-			// 		return false
-			// 	}
-			// }
-
-			// // Get annotations for the component and merge with existing, if any
-			// component.Configuration["annotations"] = helpers.MergeStringMaps(
-			// 	annotations,
-			// 	getAdditionalAnnotations(data.Pattern),
-			// )
-
 			ccp.Component = component
 
 			msg, err := act.Provision(ccp)
@@ -130,12 +110,3 @@ func mergeErrors(errs []error) error {
 
 	return fmt.Errorf("%s", strings.Join(errMsg, "\n"))
 }
-
-// move into meshkit and change annotations prefix name
-
-// func getAdditionalAnnotations(pattern *pattern.PatternFile) map[string]string {
-// 	annotations := make(map[string]string, 2)
-// 	annotations[fmt.Sprintf("%s.name", models.MesheryAnnotationPrefix)] = pattern.Name
-// 	annotations[fmt.Sprintf("%s.id", models.MesheryAnnotationPrefix)] = pattern.Id.String()
-// 	return annotations
-// }
