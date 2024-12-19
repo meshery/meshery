@@ -21,10 +21,14 @@ table th {
   text-align: left;
 }
 
-table td{
+table td {
   border: 1px solid #dddddd;
   padding: 8px;
   text-align: left;
+}
+table td img{
+  text-align: center;
+  max-width: 2rem;
 }
 
 .td-box .row.section > table th,

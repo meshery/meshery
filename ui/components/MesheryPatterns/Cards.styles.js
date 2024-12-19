@@ -63,6 +63,9 @@ const useStyles = makeStyles((theme) => ({
       alignItems: 'center',
     },
   },
+  visibilityChip: {
+    width: '3.8rem',
+  },
   bottomPart: {
     display: 'flex',
     justifyContent: 'flex-start',

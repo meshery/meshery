@@ -744,7 +744,7 @@ class MesheryApp extends App {
                       {canShowNav && (
                         <nav
                           className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer}
-                          data-test="navigation"
+                          data-testid="navigation"
                           id="left-navigation-bar"
                           style={{ height: '100%', overflow: 'visible' }}
                         >
