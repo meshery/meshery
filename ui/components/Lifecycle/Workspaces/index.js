@@ -42,7 +42,7 @@ import { updateProgress } from '../../../lib/store';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import WorkspaceCard from './workspace-card';
 import { RJSFModalWrapper } from '../../Modal';
-import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
+import _PromptComponent from '../../PromptComponent';
 import { debounce } from 'lodash';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import EnvironmentIcon from '../../../assets/icons/Environment';
@@ -429,8 +429,8 @@ const Workspaces = ({ organization }) => {
     let response = await ref.current.show({
       title: `Delete workspace ?`,
       subtitle: deleteWorkspaceModalContent(workspace.name),
-      options: ['DELETE', 'CANCEL'],
-      variant: PROMPT_VARIANTS.DANGER,
+      primaryOption: 'DELETE',
+      variant: 'error',
     });
     if (response === 'DELETE') {
       handleDeleteWorkspace(workspace.id, workspace.name);
@@ -856,7 +856,7 @@ const Workspaces = ({ organization }) => {
             body={`Do you want to delete ${selectedWorkspaces.length} workspace(s) ?`}
             action={handleBulkDeleteWorkspace}
           />
-          <PromptComponent ref={ref} />
+          <_PromptComponent ref={ref} />
         </>
       ) : (
         <DefaultError />
