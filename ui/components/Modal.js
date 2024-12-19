@@ -341,7 +341,6 @@ function RJSFModalWrapper({
   const handleFormSubmit = () => {
     if (formRef.current && formRef.current.validateForm()) {
       handleSubmit(formRef.current.state.formData);
-      handleClose();
     }
   };
 
