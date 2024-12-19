@@ -1,23 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Grid, NoSsr, Typography, Box } from '@material-ui/core';
 import { connect } from 'react-redux';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { withStyles } from '@material-ui/core/styles';
 import { Pagination, PaginationItem } from '@material-ui/lab';
 import { withRouter } from 'next/router';
 import { debounce } from 'lodash';
 import { Delete } from '@material-ui/icons';
-import classNames from 'classnames';
-
+import { NoSsr } from '@mui/material';
+import { ToolWrapper, CreateButtonWrapper, BulkActionWrapper } from '../Workspaces/index.js';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import EnvironmentCard from './environment-card';
 import EnvironmentIcon from '../../../assets/icons/Environment';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { updateProgress } from '../../../lib/store';
 import { useNotification } from '../../../utils/hooks/useNotification';
-import useStyles from '../../../assets/styles/general/tool.styles';
-import SearchBar from '../../../utils/custom-search';
 import { RJSFModalWrapper } from '../../Modal';
 import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
 import { EmptyState } from '../General';
@@ -29,6 +25,12 @@ import {
   PrimaryActionButtons,
   createAndEditEnvironmentSchema,
   createAndEditEnvironmentUiSchema,
+  ErrorBoundary,
+  Button,
+  Grid,
+  Typography,
+  SearchBar,
+  useTheme,
 } from '@layer5/sistent';
 import ConnectionIcon from '../../../assets/icons/Connection';
 import { TRANSFER_COMPONENT } from '../../../utils/Enum';
@@ -41,7 +43,7 @@ import {
   useUpdateEnvironmentMutation,
   useDeleteEnvironmentMutation,
 } from '../../../rtk-query/environments';
-import styles from './styles';
+// import styles from './styles';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '../../General/error-404/index';
@@ -52,7 +54,7 @@ const ACTION_TYPES = {
   EDIT: 'edit',
 };
 
-const Environments = ({ organization, classes }) => {
+const Environments = ({ organization }) => {
   const [environmentModal, setEnvironmentModal] = useState({
     open: false,
     schema: {},
@@ -78,9 +80,11 @@ const Environments = ({ organization, classes }) => {
   const pageSize = 10;
   const connectionPageSize = 25;
 
+  const theme = useTheme();
+
   const modalRef = useRef(null);
   const { notify } = useNotification();
-  const StyleClass = useStyles();
+  // const StyleClass = useStyles();
 
   const {
     data: environmentsData,
@@ -441,28 +445,33 @@ const Environments = ({ organization, classes }) => {
   };
 
   return (
+    <UsesSistent>
     <NoSsr>
       {CAN(keys.VIEW_ENVIRONMENTS.action, keys.VIEW_ENVIRONMENTS.subject) ? (
         <>
-          <div className={StyleClass.toolWrapper} style={{ marginBottom: '20px', display: 'flex' }}>
-            <div className={classes.createButtonWrapper}>
+          <ToolWrapper>
+            <CreateButtonWrapper>
               <Button
                 type="submit"
                 variant="contained"
                 color="primary"
                 size="large"
                 onClick={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.CREATE)}
-                style={{
+                sx={{
                   padding: '8px',
-                  borderRadius: 5,
+                  borderRadius: 2,
                   marginRight: '2rem',
+                  backgroundColor:
+                    theme.palette.mode === 'dark'
+                      ? theme.palette.background.brand?.default
+                      : theme.palette.background.brand?.default,
                 }}
                 disabled={!CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject)}
                 data-cy="btnResetDatabase"
               >
-                <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
+                <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
                 <Typography
-                  style={{
+                  sx={{
                     paddingLeft: '4px',
                     marginRight: '4px',
                   }}
@@ -470,26 +479,28 @@ const Environments = ({ organization, classes }) => {
                   Create
                 </Typography>
               </Button>
-            </div>
-            <SearchBar
-              onSearch={(value) => {
-                setSearch(value);
-              }}
-              placeholder="Search Environments..."
-              expanded={isSearchExpanded}
-              setExpanded={setIsSearchExpanded}
-            />
-          </div>
+            </CreateButtonWrapper>
+            <UsesSistent>
+              <SearchBar
+                onSearch={(value) => {
+                  setSearch(value);
+                }}
+                placeholder="Search Environments..."
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
+              />
+            </UsesSistent>
+          </ToolWrapper>
           {selectedEnvironments.length > 0 && (
-            <Box className={classNames(classes.bulkActionWrapper, StyleClass.toolWrapper)}>
+            <BulkActionWrapper>
               <Typography>
                 {selectedEnvironments.length > 1
                   ? `${selectedEnvironments.length} environments selected`
                   : `${selectedEnvironments.length} environment selected`}
               </Typography>
-              <Button className={classes.iconButton}>
+              <Button>
                 <Delete
-                  style={{ color: 'red', margin: '0 2px' }}
+                  sx={{ color: 'red', margin: '0 2px' }}
                   onClick={handleBulkDeleteEnvironmentConfirm}
                   disabled={
                     selectedEnvironments.length > 0
@@ -498,7 +509,7 @@ const Environments = ({ organization, classes }) => {
                   }
                 />
               </Button>
-            </Box>
+            </BulkActionWrapper>
           )}
           {environments.length > 0 ? (
             <>
@@ -506,7 +517,7 @@ const Environments = ({ organization, classes }) => {
                 {environments.map((environment) => (
                   <Grid item xs={12} md={6} key={environment.id}>
                     <EnvironmentCard
-                      classes={classes}
+                      // classes={classes}
                       environmentDetails={environment}
                       selectedEnvironments={selectedEnvironments}
                       onEdit={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.EDIT, environment)}
@@ -519,8 +530,7 @@ const Environments = ({ organization, classes }) => {
               </Grid>
               <Grid
                 container
-                sx={{ padding: '2rem 0' }}
-                style={{ marginTop: '20px' }}
+                sx={{ padding: '2rem 0', marginTop: '20px' }}
                 flex
                 justifyContent="center"
                 spacing={2}
@@ -642,6 +652,7 @@ const Environments = ({ organization, classes }) => {
         <DefaultError />
       )}
     </NoSsr>
+    </UsesSistent>
   );
 };
 
@@ -655,11 +666,11 @@ const mapStateToProps = (state) => {
 const EnvironmentsPageWithErrorBoundary = (props) => {
   return (
     <NoSsr>
-      <Environments {...props} />
+      <ErrorBoundary>
+        <Environments {...props} />
+      </ErrorBoundary>
     </NoSsr>
   );
 };
 
-export default withStyles(styles)(
-  connect(mapStateToProps)(withRouter(EnvironmentsPageWithErrorBoundary)),
-);
+export default connect(mapStateToProps)(withRouter(EnvironmentsPageWithErrorBoundary));
