@@ -11,7 +11,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"sync"
 
 	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/utils"
@@ -136,14 +135,7 @@ func IsClosed[K any](ch chan K) bool {
 
 const UI = "../../ui/public/static/img/meshmodels" //Relative to cmd/main.go
 var UISVGPaths = make([]string, 1)
-var hashCheckSVG = make(map[string]string)
-var mx sync.Mutex
 
-func writeHashCheckSVG(key string, val string) {
-	mx.Lock()
-	hashCheckSVG[key] = val
-	mx.Unlock()
-}
 func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename string) (svgColorPath, svgWhitePath, svgCompletePath string) {
 
 	filename = strings.ToLower(filename)
