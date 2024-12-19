@@ -1276,6 +1276,13 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			http.Error(rw, _errors.Wrapf(err, "failed to export design \"%s\" in %s format", pattern.Name, exportFormat).Error(), http.StatusInternalServerError)
 			return
 		}
+
+		eventDescription := fmt.Sprintf("\"%s\" downloaded as Meshery Design", pattern.Name)
+		event := eventBuilder.WithDescription(eventDescription).Build()
+		err=provider.PersistEvent(event)
+		if err != nil {
+			h.log.Error(models.ErrPersistEvent(err))
+		}
 		return
 	}
 
@@ -1472,6 +1479,8 @@ func (h *Handler) DownloadMesheryPatternHandler(
 
 			return
 		}
+
+
 		return
 	}
 
@@ -1539,6 +1548,14 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
+
+	eventDescription := fmt.Sprintf("\"%s\" downloaded as Meshery Design", pattern.Name)
+	event := eventBuilder.WithDescription(eventDescription).Build()
+	err=provider.PersistEvent(event)
+	if err != nil {
+		h.log.Error(models.ErrPersistEvent(err))
+	}
+
 }
 
 // swagger:route POST /api/pattern/clone/{id} PatternsAPI idCloneMesheryPattern
