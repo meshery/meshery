@@ -6,6 +6,7 @@ import (
 
 	"github.com/layer5io/meshery/server/models/pattern/planner"
 	"github.com/layer5io/meshkit/logger"
+	"github.com/layer5io/meshkit/orchestration"
 
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
 	"github.com/meshery/schemas/models/v1beta1/component"
@@ -48,7 +49,7 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 		_ = plan.Execute(func(name string, component component.ComponentDefinition) bool {
 			ccp := CompConfigPair{}
 
-			err := EnrichComponentWithMesheryMetadata(&component, data.Pattern.Id.String(), data.Pattern.Name)
+			err := orchestration.EnrichComponentWithMesheryMetadata(&component, data.Pattern.Id.String(), data.Pattern.Version)
 
 			if err != nil {
 				fmt.Println("Err while assigning labels", err)
