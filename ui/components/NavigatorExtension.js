@@ -108,6 +108,8 @@ function NavigatorExtension({
     },
   };
 
+  const PerformanceTestComponent = (props) => <MesheryPerformanceComponent {...props} />;
+
   return (
     <DynamicFullScrrenLoader isLoading={loading}>
       <RemoteComponent
@@ -119,7 +121,7 @@ function NavigatorExtension({
           PatternServiceFormCore,
           grafana,
           prometheus,
-          MesheryPerformanceComponent,
+          MesheryPerformanceComponent: PerformanceTestComponent,
           dataFetch,
           createRelayEnvironment,
           subscriptionClient,
