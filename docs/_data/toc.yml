@@ -175,6 +175,8 @@
           url: guides/tutorials/kubernetes-pods
         - title: Deploying WordPress and MySQL with Persistent Volumes with Meshery
           url: guides/tutorials/wordpress-mysql-persistentvolume
+        - title: Deploying PHP Guestbook application with Redis in Meshery
+          url: guides/tutorials/deploy-php-redis
         - title: Deploy an AWS EC2 Instance with Meshery
           url: guides/tutorials/deploy-an-aws-ec2-instance-with-meshery
 # - title: ⚙️ Tasks
