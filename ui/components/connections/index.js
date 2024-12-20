@@ -975,7 +975,7 @@ function Connections(props) {
       .unwrap()
       .then(() => {
         notify({
-          message: `Connection status updated successfully`,
+          message: `Connection status updated`,
           event_type: EVENT_TYPES.SUCCESS,
         });
       })
