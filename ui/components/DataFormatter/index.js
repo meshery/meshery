@@ -127,7 +127,7 @@ export const Link = ({ href, title }) => {
         color: 'inherit',
         textDecorationLine: 'underline',
         cursor: 'pointer',
-        marginBottom: '0.5rem',
+        marginBottom: '0.75rem',
       }}
     >
       {title}
@@ -189,7 +189,6 @@ export const KeyValue = ({ Key, Value }) => {
         alignItems: 'flex-start',
         gap: '0.25rem',
         flexWrap: 'wrap',
-        marginBottom: '1.5rem',
         fontFamily: 'Qanelas Soft, sans-serif',
       }}
     >
@@ -197,9 +196,12 @@ export const KeyValue = ({ Key, Value }) => {
         body={Key.replaceAll('_', ' ')}
         style={{
           textTransform: 'capitalize',
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
           color: theme.palette.text.primary,
         }}
       />
+
       {React.isValidElement(Value) ? (
         Value
       ) : (
@@ -209,7 +211,8 @@ export const KeyValue = ({ Key, Value }) => {
             color: theme.palette.text.secondary,
             textOverflow: 'ellipsis',
             wordBreak: 'break-all',
-            whiteSpace: 'pre-line',
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
           }}
         />
       )}
@@ -218,19 +221,19 @@ export const KeyValue = ({ Key, Value }) => {
 };
 
 export const SectionHeading = ({ children, ...props }) => {
-  const level = useContext(LevelContext);
-  const fontSize = Math.max(0.9, 1.3 - 0.1 * level) + 'rem';
-  const margin = Math.max(0.25, 0.55 - 0.15 * level) + 'rem';
+  // const level = useContext(LevelContext);
+  // const fontSize = Math.max(0.9, 1.3 - 0.1 * level) + 'rem';
+  // const margin = Math.max(0.25, 0.55 - 0.15 * level) + 'rem';
 
   return (
+    // <div style={{ marginBlock: margin }}>
     <Typography
-      variant="h7"
+      variant="body1"
       style={{
         fontWeight: 'bold !important',
         textTransform: 'capitalize',
-        marginBottom: margin,
         wordBreak: 'break-all',
-        fontSize,
+        // fontSize,
       }}
       {...props}
     >
@@ -253,12 +256,17 @@ export const SectionBody = ({ body, style = {} }) => {
     ></TextWithLinks>
   );
 };
-
 const ArrayFormatter = ({ items }) => {
   return (
-    <ol style={{ paddingInline: '0.75rem', paddingBlock: '0.25rem', margin: '0rem' }}>
+    <ol
+      style={{
+        paddingInline: items.length === 1 ? '0' : '1rem',
+        paddingBlock: '0.25rem',
+        margin: '0rem',
+      }}
+    >
       {items.map((item) => (
-        <li key={item}>
+        <li key={item} style={{ listStyleType: items.length === 1 ? 'none' : 'decimal' }}>
           <Level>
             <DynamicFormatter data={item} />
           </Level>
@@ -295,14 +303,21 @@ const DynamicFormatter = ({ data, uiSchema }) => {
       }
       if (propertyFormatters?.[title]) {
         return (
-          <Grid item key={title} sm={12} {...(uiSchema?.[title] || {})}>
-            {propertyFormatters[title](data, data)}
-          </Grid>
+          // <Grid key={title} sm={12} {...(uiSchema?.[title] || {})}>
+          propertyFormatters[title](data, data)
+          // </Grid>
         );
       }
       if (typeof data == 'string') {
         return (
-          <Grid item key={title} sm={12} {...(uiSchema?.[title] || {})}>
+          <Grid
+            item
+            key={title}
+            sm={12}
+            {...(uiSchema?.[title] || {})}
+            spacing={3}
+            style={{ marginBlock: '0.3rem' }}
+          >
             <KeyValue key={title} Key={title} Value={data} />
           </Grid>
         );
@@ -347,6 +362,7 @@ export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema }
           style={{
             wordBreak: 'break-word',
             overflowWrap: 'break-word',
+            gap: '0.3rem',
           }}
         >
           <DynamicFormatter data={data} uiSchema={uiSchema} />
