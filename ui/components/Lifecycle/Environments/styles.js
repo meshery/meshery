@@ -54,26 +54,26 @@ export const TabCardContent = styled('div')({
   flexDirection: 'row',
 });
 
-export const TabIconBox = styled('div')({
+export const TabIconBox = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  border: `1px solid #00B39F`,
+  border: `1px solid ${theme.palette.background?.brand?.default}`,
   borderRadius: '5px 0 0 5px',
   padding: '8px 16px',
   borderRight: 0,
   '&:hover': {
     cursor: 'default',
   },
-});
+}));
 
-export const TabNameBox = styled('div')(() => ({
+export const TabNameBox = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   flexDirection: 'column',
-  background: '#00B39F',
-  color: '#fff',
+  background: theme.palette.background?.brand?.default,
+  color: theme.palette.mode === 'dark' ? theme.palette.text?.inverse : theme.palette.text?.default,
   padding: '8px 16px',
-  border: `1px solid #00B39F`,
+  border: `1px solid ${theme.palette.background?.brand?.default}`,
   borderRadius: '0 5px 5px 0',
 }));
 
@@ -236,15 +236,15 @@ export const CreateButtonWrapper = styled('div')({
   whiteSpace: 'nowrap',
 });
 
-export const EditButton = styled('button')({
-  backgroundColor: '#00B39F',
+export const EditButton = styled('button')(({ theme }) => ({
+  backgroundColor: theme.palette.background?.brand?.default,
   '&:hover': {
-    backgroundColor: '#00D3a9',
+    backgroundColor: theme.palette.background?.brand?.default,
   },
   '@media (max-width: 768px)': {
     minWidth: '50px',
   },
-});
+}));
 
 export const TextButton = styled('button')({
   marginLeft: '0.5rem',

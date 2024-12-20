@@ -227,18 +227,12 @@ const EnvironmentCard = ({
             </Grid>
             <Grid sx={{ display: 'flex', flexDirection: 'row', color: 'white' }}>
               <Grid xs={6} sx={{ textAlign: 'left' }}>
-                <DateLabel
-                  variant="span"
-                  onClick={(e) => e.stopPropagation()}
-                >
+                <DateLabel variant="span" onClick={(e) => e.stopPropagation()}>
                   Updated At: {formattoLongDate(environmentDetails?.updated_at)}
                 </DateLabel>
               </Grid>
               <Grid xs={6} sx={{ textAlign: 'left' }}>
-                <DateLabel
-                  variant="span"
-                  onClick={(e) => e.stopPropagation()}
-                >
+                <DateLabel variant="span" onClick={(e) => e.stopPropagation()}>
                   Created At: {formattoLongDate(environmentDetails?.created_at)}
                 </DateLabel>
               </Grid>
