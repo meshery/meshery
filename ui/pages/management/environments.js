@@ -1,10 +1,10 @@
 import React from 'react';
-import { NoSsr, withStyles } from '@material-ui/core';
+import { NoSsr } from '@mui/material';
 import { connect } from 'react-redux';
 import Head from 'next/head';
 import { EnvironmentComponent } from '../../components/Lifecycle';
 
-const styles = { paper: { maxWidth: '90%', margin: 'auto', overflow: 'hidden' } };
+import { Box } from '@mui/material';
 
 const Environments = () => {
   return (
@@ -12,9 +12,11 @@ const Environments = () => {
       <Head>
         <title>Environments | Meshery</title>
       </Head>
-      <EnvironmentComponent />
+      <Box sx={{ maxWidth: '90%', margin: 'auto', overflow: 'hidden' }}>
+        <EnvironmentComponent />
+      </Box>
     </NoSsr>
   );
 };
 
-export default withStyles(styles)(connect(null)(Environments));
+export default connect(null)(Environments);
