@@ -13,7 +13,7 @@ In Meshery, a **Component** is a fundamental building block used to represent an
 
 ## Components as building blocks
 
-Meshery Models and their Components represent a standardized and reusable collection of building blocks used to describe both the desired and actual configuration of infrastructure pre and post-deployment. More than this Components are using to describe non-infrastructure concepts, for example, a component might capture a comment or a visual element that you've placed into a Meshery Design. To aid in distinguishing between types of Components, they are categorized into two groups: Semantic and Non-Semantic components. A component is considered semantically meaningful when it behaves as a direct representation of an aspect of your infrastructure. A component is considered non-semantically meaningful when it behaves as an annotation to aid in the comprehension of your designs.
+Meshery Models and their packaged Components represent a standardized and reusable collection of building blocks used to describe both the desired and actual configuration of infrastructure pre and post-deployment. More than this Components are using to describe non-infrastructure concepts, for example, a component might capture a comment or a visual element that you've placed into a Meshery Design. To aid in distinguishing between types of Components, they are categorized into two groups: Semantic and Non-Semantic components. A component is considered semantically meaningful when it behaves as a direct representation of an aspect of your infrastructure. A component is considered non-semantically meaningful when it behaves as an annotation to aid in the comprehension of your designs.
 
 <!--
 ### Semantic Components
