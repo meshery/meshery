@@ -90,7 +90,7 @@ https://docs.layer5.io/cloud/spaces/environments/
 		}
 
 		if resp.StatusCode == http.StatusOK {
-			utils.Log.Info("environment created successfully")
+			utils.Log.Info("environment created")
 			return nil
 		}
 		utils.Log.Info("Error creating environment")
