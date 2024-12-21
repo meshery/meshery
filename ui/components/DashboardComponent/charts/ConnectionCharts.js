@@ -24,6 +24,15 @@ export default function ConnectionStatsChart({ classes }) {
       .map((data) => [data.status, data.count]) || [];
 
   const chartOptions = {
+    size: {
+      height: 300,
+    },
+    padding: {
+      top: 20,
+      right: 100,  // Adjusted for legend
+      bottom: 20,
+      left: 20,
+    },
     data: {
       columns: chartData,
       type: donut(),
@@ -32,19 +41,31 @@ export default function ConnectionStatsChart({ classes }) {
         router.push('/management/connections');
       },
     },
-    arc: {
-      cornerRadius: {
-        ratio: 0.05,
-      },
-    },
     donut: {
-      title: 'Connections\n by Status',
+      title: 'Connections\nby Status',
       padAngle: 0.03,
+      width: 50,
       label: {
+        show: true,
         format: function (value) {
           return value;
         },
+        threshold: 0.05
       },
+    },
+    legend: {
+      show: true,
+      position: 'right',
+      padding: 5,
+      item: {
+        onclick: function () {
+          router.push('/management/connections');
+        },
+        tile: {
+          width: 10,
+          height: 10
+        }
+      }
     },
     tooltip: {
       format: {
@@ -53,6 +74,19 @@ export default function ConnectionStatsChart({ classes }) {
         },
       },
     },
+  };
+
+  // Custom styles for the container
+  const containerStyles = {
+    width: '100%',
+    height: '100%',
+    minHeight: '350px',
+    position: 'relative',
+    '.bb-legend-item': {
+      maxWidth: '100px',
+      whiteSpace: 'normal',
+      wordWrap: 'break-word'
+    }
   };
 
   return (
@@ -65,8 +99,8 @@ export default function ConnectionStatsChart({ classes }) {
       }}
     >
       <div className={classes.dashboardSection}>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography variant="h6" gutterBottom className={classes.link}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1rem' }}>
+          <Typography variant="h6" className={classes.link}>
             Connections
           </Typography>
           <div onClick={(e) => e.stopPropagation()}>
@@ -91,15 +125,7 @@ export default function ConnectionStatsChart({ classes }) {
             </CustomTextTooltip>
           </div>
         </div>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            alignContent: 'center',
-            height: '100%',
-          }}
-        >
+        <Box sx={containerStyles}>
           {chartData.length > 0 ? (
             <BBChart options={chartOptions} />
           ) : (
