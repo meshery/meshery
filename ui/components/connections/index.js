@@ -40,7 +40,7 @@ import { ResponsiveDataTable } from '@layer5/sistent';
 import useStyles from '../../assets/styles/general/tool.styles';
 import Modal from '../Modal';
 import { iconMedium } from '../../css/icons.styles';
-import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
+import _PromptComponent from '../PromptComponent';
 import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import styles from './styles';
@@ -993,11 +993,11 @@ function Connections(props) {
     let response = await modalRef.current.show({
       title: `Connection Status Transition`,
       subtitle: `Are you sure that you want to transition the connection status to ${e.target.value.toUpperCase()}?`,
-      options: ['Confirm', 'Cancel'],
+      primaryOption: 'CONFIRM',
       showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-      // variant: PROMPT_VARIANTS.CONFIRMATION,
+      variant: 'warning',
     });
-    if (response === 'Confirm') {
+    if (response === 'CONFIRM') {
       const requestBody = JSON.stringify({
         [connectionId]: e.target.value,
       });
@@ -1010,11 +1010,11 @@ function Connections(props) {
       let response = await modalRef.current.show({
         title: `Delete Connection`,
         subtitle: `Are you sure that you want to delete the connection?`,
-        options: ['Delete', 'Cancel'],
+        primaryOption: 'DELETE',
         showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-        variant: PROMPT_VARIANTS.DANGER,
+        variant: 'error',
       });
-      if (response === 'Delete') {
+      if (response === 'DELETE') {
         const requestBody = JSON.stringify({
           [connectionId]: CONNECTION_STATES.DELETED,
         });
@@ -1028,11 +1028,11 @@ function Connections(props) {
       let response = await modalRef.current.show({
         title: `Delete Connections`,
         subtitle: `Are you sure that you want to delete the connections?`,
-        options: ['Delete', 'Cancel'],
+        primaryOption: 'DELETE',
         showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-        variant: PROMPT_VARIANTS.DANGER,
+        variant: 'error',
       });
-      if (response === 'Delete') {
+      if (response === 'DELETE') {
         // let bulkConnections = {}
         // selected.data.map(({ index }) => {
         //   bulkConnections = {
@@ -1068,8 +1068,8 @@ function Connections(props) {
       let response = await meshSyncResetRef.current.show({
         title: `Flush MeshSync data for ${connections[index].metadata?.name} ?`,
         subtitle: `Are you sure to Flush MeshSync data for “${connections[index].metadata?.name}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
-        options: ['PROCEED', 'CANCEL'],
-        variant: PROMPT_VARIANTS.WARNING,
+        primaryOption: 'PROCEED',
+        variant: 'warning',
       });
       if (response === 'PROCEED') {
         updateProgress({ showProgress: true });
@@ -1237,7 +1237,7 @@ function Connections(props) {
               k8sconfig={k8sconfig}
             />
           )}
-          <PromptComponent ref={modalRef} />
+          <_PromptComponent ref={modalRef} />
           <Popover
             open={open}
             anchorEl={anchorEl}
@@ -1268,7 +1268,7 @@ function Connections(props) {
               </div>
             </Grid>
           </Popover>
-          <PromptComponent ref={meshSyncResetRef} />
+          <_PromptComponent ref={meshSyncResetRef} />
         </>
       ) : (
         <DefaultError />

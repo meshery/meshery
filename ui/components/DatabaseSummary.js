@@ -11,7 +11,6 @@ import { EVENT_TYPES } from '../lib/event-types';
 import ResponsiveDataTable from '../utils/data-table';
 import SearchBar from '../utils/custom-search';
 import useStyles from '../assets/styles/general/tool.styles';
-import { PROMPT_VARIANTS } from './PromptComponent';
 import { store } from '../store';
 import { useGetDatabaseSummaryQuery } from '@/rtk-query/system';
 import CAN from '@/utils/can';
@@ -72,8 +71,8 @@ const DatabaseSummary = (props) => {
       let responseOfResetDatabase = await props.promptRef.current.show({
         title: 'Reset Meshery Database?',
         subtitle: 'Are you sure that you want to purge all data?',
-        options: ['RESET', 'CANCEL'],
-        variant: PROMPT_VARIANTS.DANGER,
+        primaryOption: 'RESET',
+        variant: 'error',
       });
       if (responseOfResetDatabase === 'RESET') {
         props.updateProgress({ showProgress: true });

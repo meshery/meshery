@@ -19,7 +19,7 @@ import { useNotification } from '../../../utils/hooks/useNotification';
 import useStyles from '../../../assets/styles/general/tool.styles';
 import SearchBar from '../../../utils/custom-search';
 import { RJSFModalWrapper } from '../../Modal';
-import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
+import _PromptComponent from '../../PromptComponent';
 import { EmptyState } from '../General';
 import {
   Modal as SisitentModal,
@@ -297,11 +297,11 @@ const Environments = ({ organization, classes }) => {
     let response = await modalRef.current.show({
       title: `Delete "${environment.name}" environment?`,
       subtitle: deleteEnvironmentModalContent(environment.name),
-      options: ['DELETE', 'CANCEL'],
+      primaryOption: 'DELETE',
       showInfoIcon: `Deleting an environment does not delete any resources (e.g. connections) currently contained with the environment.
       Resources that belong to others environments will continue to belong to those other environments.
       Learn more about the behavior of [lifecycle of environments and their resources](https://docs.meshery.io/concepts/logical/environments) in Meshery Docs.`,
-      variant: PROMPT_VARIANTS.DANGER,
+      variant: 'error',
     });
     if (response === 'DELETE') {
       handleDeleteEnvironment(environment.id);
@@ -344,8 +344,8 @@ const Environments = ({ organization, classes }) => {
     let response = await modalRef.current.show({
       title: `Delete Environment(s) ?`,
       subtitle: `Do you want to delete ${selectedEnvironments.length} environment(s) ?`,
-      options: ['DELETE', 'CANCEL'],
-      variant: PROMPT_VARIANTS.DANGER,
+      primaryOption: 'DELETE',
+      variant: 'error',
     });
     if (response === 'DELETE') {
       handleBulkDeleteEnv();
@@ -636,7 +636,7 @@ const Environments = ({ organization, classes }) => {
               </ModalFooter>
             </SisitentModal>
           </UsesSistent>
-          <PromptComponent ref={modalRef} />
+          <_PromptComponent ref={modalRef} />
         </>
       ) : (
         <DefaultError />
