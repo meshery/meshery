@@ -290,7 +290,7 @@ You should be able to access the site on port `4000`. If you want to access it i
 
 - Ensure you have an account on <a href="https://www.github.com/" class="meshery-light">Github</a>
 - Open your forked Meshery repository on GitHub.
-- Click on the "**Code**" button of your forked repository it will give you the option to open the project in Gituhubb Codespaces.
+- Click on the "**Code**" button of your forked repository it will give you the option to open the project in Gituhub Codespaces.
 
 {% include alert.html type="dark" title="About Github" content="Github Codespaces will automatically clone and open the repository for you in a browser-based version of Visual Studio Code. It comes with pre-installed tools which are quiet helpful to spin up the development environment for <a href='https://github.com/meshery/meshery'>Meshery.</a>" %}
 
