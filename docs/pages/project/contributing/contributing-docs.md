@@ -308,7 +308,7 @@ You should be able to access the site on port `4000`. If you want to access it i
   </code>
   </div></pre>
 
-You should be able to access the site on port `4000`. If you want to access it in your localhost just click the `code` button on your forked repository and select open with Visual Studio Code this will launch a Github Codespace instance in your local machine and connects with the remote Github Codespace environment after that run `cd docs` then `make docs` and it will start the development server on port `4000`.
+You should be able to access the site on port `4000`. If you want to access it in your localhost just click the `code` button on your forked repository and select open with Visual Studio Code under your Github Codespace this will launch a Github Codespace instance in your local machine and connects with the remote Github Codespace environment after that run `cd docs` then `make docs` and it will start the development server on port `4000`.
 
 ### Make Necessary Changes
 - Make changes as required based on the issue you are solving.
