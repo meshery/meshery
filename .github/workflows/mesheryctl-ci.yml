@@ -30,7 +30,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.59
+          version: v1.62
           working-directory: mesheryctl
           args: --timeout 10m --verbose
           skip-cache: true
