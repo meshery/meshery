@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Kanvas Snapshot
-permalink: extensions/helm-kanvas-snapshot
+permalink: extensions/kanvas-snapshot
 language: en
 abstract: Screenshot service provided via Kanvas to capture a snapshot of your infrastructure at any given time.
 display-title: "false"
@@ -11,8 +11,6 @@ category: kanvas
 ---
 
 # <img style="height: 4rem; width: 4rem;" src="{{site.baseurl}}/assets/img/kanvas-icon-color.svg" /> Kanvas Snapshot
-
-Walks in application and takes a shot of your infrastructure using Meshery Extension Kanvas
 
 Kanvas Snapshot is a screenshot service provided via Kanvas for your designs. Visualize changes to your code-base with each pull request made. The SnapShot GitHub Action is configurable from within your Cloud account.
 
