@@ -257,7 +257,6 @@ func _processPattern(opts *core.ProcessPatternOptions) (map[string]interface{}, 
 		chain := stages.CreateChain()
 		chain.
 			// Add(stages.Import(sip, sap)).
-			Add(stages.Format()).
 			// Add(stages.ServiceIdentifierAndMutator(sip, sap)).
 			Add(stages.Filler(opts.SkipPrintLogs)).
 			// Calling this stage `The Validation stage` is a bit deceiving considering
