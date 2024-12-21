@@ -13,6 +13,7 @@ import {
   LegacyStoreContext,
   actionTypes,
   selectSelectedK8sClusters,
+  selectK8sConfig,
 } from '../lib/store';
 import GrafanaCustomCharts from './telemetry/grafana/GrafanaCustomCharts';
 import MesheryPerformanceComponent from './MesheryPerformance';
@@ -101,7 +102,13 @@ function NavigatorExtension({
       get: () => selectSelectedK8sClusters(legacyStore.getState()),
       useSelectedK8sClusters: () => useLegacySelector(selectSelectedK8sClusters),
     },
+    k8sconfig: {
+      get: () => selectK8sConfig(legacyStore.getState()),
+      useK8sConfig: () => useLegacySelector(selectK8sConfig),
+    },
   };
+
+  const PerformanceTestComponent = (props) => <MesheryPerformanceComponent {...props} />;
 
   return (
     <DynamicFullScrrenLoader isLoading={loading}>
@@ -114,7 +121,7 @@ function NavigatorExtension({
           PatternServiceFormCore,
           grafana,
           prometheus,
-          MesheryPerformanceComponent,
+          MesheryPerformanceComponent: PerformanceTestComponent,
           dataFetch,
           createRelayEnvironment,
           subscriptionClient,

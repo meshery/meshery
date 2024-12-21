@@ -1,6 +1,5 @@
 // @ts-nocheck
 import React, { useState, useEffect } from 'react';
-import PropTypes from 'prop-types';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import { Autocomplete } from '@material-ui/lab';
@@ -25,8 +24,6 @@ import {
 } from '@material-ui/core';
 import { CustomTooltip, ModalBody, ModalFooter } from '@layer5/sistent';
 import TextField from '@material-ui/core/TextField';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import HelpOutlineOutlinedIcon from '@material-ui/icons/HelpOutlineOutlined';
@@ -55,6 +52,9 @@ import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/Custom
 import { useGetUserPrefWithContextQuery } from '@/rtk-query/user';
 import { useSavePerformanceProfileMutation } from '@/rtk-query/performance-profile';
 import { useGetMeshQuery } from '@/rtk-query/mesh';
+import { useLegacySelector, useLegacyDispatch } from '../../lib/store';
+import { Box } from '@mui/material';
+import { ArrowBack } from '@material-ui/icons';
 
 // =============================== HELPER FUNCTIONS ===========================
 
@@ -216,7 +216,7 @@ const infoloadGenerators = (
 );
 
 let eventStream = null;
-const MesheryPerformanceComponent = (props) => {
+const MesheryPerformanceComponent_ = (props) => {
   const {
     testName = '',
     meshName = '',
@@ -224,7 +224,6 @@ const MesheryPerformanceComponent = (props) => {
     qps = '0',
     c = '0',
     t = '30s',
-    result,
     staticPrometheusBoardConfig,
     performanceProfileID,
     profileName,
@@ -255,7 +254,9 @@ const MesheryPerformanceComponent = (props) => {
   const [tValueState, setTValue] = useState(t);
   const [loadGeneratorState, setLoadGenerator] = useState(loadGenerator || 'fortio');
   const [additionalOptionsState, setAdditionalOptions] = useState(additional_options || '');
-  const [resultState, setResult] = useState(result);
+  const [testResult, setTestResult] = useState();
+  const [testResultsOpen, setTestResultsOpen] = useState(false);
+
   const [headersState, setHeaders] = useState(headers || '');
   const [cookiesState, setCookies] = useState(cookies || '');
   const [reqBodyState, setReqBody] = useState(reqBody || '');
@@ -279,6 +280,8 @@ const MesheryPerformanceComponent = (props) => {
   const [staticPrometheusBoardConfigState, setStaticPrometheusBoardConfig] = useState(
     staticPrometheusBoardConfig,
   );
+
+  console.log('resultState', testResult);
   const { notify } = useNotification();
 
   const { data: userData, isSuccess: isUserDataFetched } = useGetUserPrefWithContextQuery(
@@ -550,6 +553,7 @@ const MesheryPerformanceComponent = (props) => {
 
   function handleSuccess() {
     return (result) => {
+      console.log('sucess result', result);
       if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined') {
         const notify = props.notify;
         notify({
@@ -566,11 +570,13 @@ const MesheryPerformanceComponent = (props) => {
             c: cState,
             t: tState,
             loadGenerator: loadGeneratorState,
-            result: resultState,
+            result: result,
           },
         });
         setTestUUID(generateUUID());
-        setResult(result);
+        console.log('set result', result);
+        setTestResultsOpen(true);
+        setTestResult(result);
       }
       closeEventStream();
       setBlockRunTest(false);
@@ -596,12 +602,13 @@ const MesheryPerformanceComponent = (props) => {
     let track = 0;
     return (e) => {
       const data = JSON.parse(e.data);
+      console.log('event', data);
       switch (data.status) {
         case 'info':
           notify({ message: data.message, event_type: EVENT_TYPES.INFO });
           if (track === 0) {
             setTimerDialogOpen(true);
-            setResult({});
+            // setResult({});
             track++;
           }
           break;
@@ -858,6 +865,45 @@ const MesheryPerformanceComponent = (props) => {
       </React.Fragment>
     );
   }
+
+  const Results = () => {
+    if (!testResult || !testResult.runner_results) {
+      return null;
+    }
+
+    return (
+      <div>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <IconButton onClick={() => setTestResultsOpen(false)}>
+            <ArrowBack />
+          </IconButton>
+          <Typography variant="h6" gutterBottom className={classes.chartTitle} id="timerAnchor">
+            Test Results
+          </Typography>
+          <IconButton
+            key="download"
+            aria-label="download"
+            color="inherit"
+            // onClick={() => self.props.closeSnackbar(key) }
+            href={`/api/perf/profile/result/${encodeURIComponent(testResult.meshery_id)}`}
+          >
+            <GetAppIcon style={iconMedium} />
+          </IconButton>
+        </Box>
+        <div className={classes.chartContent} style={chartStyle}>
+          <MesheryChart
+            rawdata={[testResult && testResult.runner_results ? testResult : {}]}
+            data={[testResult && testResult.runner_results ? testResult.runner_results : {}]}
+          />
+        </div>
+      </div>
+    );
+  };
+
+  if (testResultsOpen) {
+    return <Results />;
+  }
+
   return (
     <NoSsr>
       {CAN(keys.VIEW_PERFORMANCE_PROFILES.action, keys.VIEW_PERFORMANCE_PROFILES.subject) ? (
@@ -1239,6 +1285,19 @@ const MesheryPerformanceComponent = (props) => {
                   >
                     Clear
                   </Button>
+                  {testResult && (
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      className={classes.spacing}
+                      disabled={disableTestState}
+                      onClick={() => setTestResultsOpen(true)}
+                    >
+                      Results
+                    </Button>
+                  )}
                   <Button
                     type="submit"
                     variant="contained"
@@ -1281,35 +1340,6 @@ const MesheryPerformanceComponent = (props) => {
                 />
               </div>
             ) : null}
-
-            {result && result.runner_results && (
-              <div>
-                <Typography
-                  variant="h6"
-                  gutterBottom
-                  className={classes.chartTitle}
-                  id="timerAnchor"
-                >
-                  Test Results
-                  <IconButton
-                    key="download"
-                    aria-label="download"
-                    color="inherit"
-                    // onClick={() => self.props.closeSnackbar(key) }
-                    href={`/api/perf/profile/result/${encodeURIComponent(result.meshery_id)}`}
-                  >
-                    <GetAppIcon style={iconMedium} />
-                  </IconButton>
-                </Typography>
-                <div className={classes.chartContent} style={chartStyle}>
-                  <MesheryChart
-                    rawdata={[result && result.runner_results ? result : {}]}
-                    data={[result && result.runner_results ? result.runner_results : {}]}
-                  />
-                </div>
-              </div>
-            )}
-            {/* </div> */}
           </React.Fragment>
 
           {displayStaticCharts}
@@ -1324,36 +1354,77 @@ const MesheryPerformanceComponent = (props) => {
     </NoSsr>
   );
 };
-MesheryPerformanceComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
-};
 
-const mapDispatchToProps = (dispatch) => ({
-  updateLoadTestData: bindActionCreators(updateLoadTestData, dispatch),
-  updateStaticPrometheusBoardConfig: bindActionCreators(
-    updateStaticPrometheusBoardConfig,
-    dispatch,
-  ),
-  updateLoadTestPref: bindActionCreators(updateLoadTestPref, dispatch),
-  updateProgress: bindActionCreators(updateProgress, dispatch),
-});
+// const mapDispatchToProps = (dispatch) => ({
+//   updateLoadTestData: bindActionCreators(updateLoadTestData, dispatch),
+//   updateStaticPrometheusBoardConfig: bindActionCreators(
+//     updateStaticPrometheusBoardConfig,
+//     dispatch,
+//   ),
+//   updateLoadTestPref: bindActionCreators(updateLoadTestPref, dispatch),
+//   updateProgress: bindActionCreators(updateProgress, dispatch),
+// });
 
-const mapStateToProps = (state) => {
-  const grafana = state.get('grafana').toJS();
-  const prometheus = state.get('prometheus').toJS();
-  const k8sConfig = state.get('k8sConfig');
-  const staticPrometheusBoardConfig = state.get('staticPrometheusBoardConfig').toJS();
-  const selectedK8sContexts = state.get('selectedK8sContexts');
+// const mapStateToProps = (state) => {
+//   const grafana = state.get('grafana').toJS();
+//   const prometheus = state.get('prometheus').toJS();
+//   const k8sConfig = state.get('k8sConfig');
+//   const staticPrometheusBoardConfig = state.get('staticPrometheusBoardConfig').toJS();
+//   const selectedK8sContexts = state.get('selectedK8sContexts');
 
-  return {
+//   return {
+//     grafana,
+//     prometheus,
+//     staticPrometheusBoardConfig,
+//     k8sConfig,
+//     selectedK8sContexts,
+//   };
+// };
+
+export const MesheryPerformanceComponentWithStyles = withStyles(styles)(
+  withNotify(MesheryPerformanceComponent_),
+);
+
+export const MesheryPerformanceComponent = (props) => {
+  const dispatch = useLegacyDispatch();
+
+  // Gather all required Redux states
+  const grafana = useLegacySelector((state) =>
+    state.get('grafana')?.toJS ? state.get('grafana').toJS() : state.get('grafana'),
+  );
+  const prometheus = useLegacySelector((state) =>
+    state.get('prometheus')?.toJS ? state.get('prometheus').toJS() : state.get('prometheus'),
+  );
+  const k8sConfig = useLegacySelector((state) => state.k8sConfig);
+  const staticPrometheusBoardConfig = useLegacySelector((state) =>
+    state.get('staticPrometheusBoardConfig')?.toJS
+      ? state.get('staticPrometheusBoardConfig').toJS()
+      : state.get('staticPrometheusBoardConfig'),
+  );
+  const selectedK8sContexts = useLegacySelector((state) =>
+    state.get('selectedK8sContexts').toJS
+      ? state.get('selectedK8sContexts').toJS()
+      : state.get('selectedK8sContexts'),
+  );
+
+  // Create dispatch methods matching the original connect mapping
+  const wrappedProps = {
+    ...props,
     grafana,
     prometheus,
-    staticPrometheusBoardConfig,
     k8sConfig,
+    staticPrometheusBoardConfig,
     selectedK8sContexts,
+
+    // Wrap dispatch actions to match original connect behavior
+    updateLoadTestData: (data) => dispatch(updateLoadTestData(data)),
+    updateStaticPrometheusBoardConfig: (config) =>
+      dispatch(updateStaticPrometheusBoardConfig(config)),
+    updateLoadTestPref: (pref) => dispatch(updateLoadTestPref(pref)),
+    updateProgress: (progress) => dispatch(updateProgress(progress)),
   };
+
+  return <MesheryPerformanceComponentWithStyles {...wrappedProps} />;
 };
 
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withNotify(MesheryPerformanceComponent)),
-);
+export default MesheryPerformanceComponent;

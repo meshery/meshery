@@ -398,6 +398,7 @@ function MesheryPatterns({
     search: search,
     order: sortOrder,
     visibility: visibilityFilter ? JSON.stringify([visibilityFilter]) : '',
+    populate: 'pattern_file',
   });
   const [clonePattern] = useClonePatternMutation();
   const [publishCatalog] = usePublishPatternMutation();
@@ -1121,14 +1122,6 @@ function MesheryPatterns({
             </TableCell>
           );
         },
-        // customBodyRender: function CustomBody(_, tableMeta) {
-        //   const visibility = patterns[tableMeta.rowIndex]?.visibility;
-        //   return (
-        //     <div style={{ cursor: 'default' }}>
-        //       <img className={classes.visibilityImg} src={`/static/img/${visibility}.svg`} />
-        //     </div>
-        //   );
-        // },
       },
     },
     {

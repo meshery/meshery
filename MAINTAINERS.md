@@ -36,6 +36,7 @@
 | --------------------- | ------------------ | ----------- |
 | Ashish Tiwari         | revolyssup         | API7        |
 | Mario Arriaga         | MarioArriaga92     | F5          |
+| Sangram Rath          | sangramrath        | OD10        |
 
 ### Docs Maintainers
 
