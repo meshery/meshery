@@ -308,7 +308,7 @@ You should be able to access the site on port `4000`. If you want to access it i
   </code>
   </div></pre>
 
-You should be able to access the site on port `4000`. If you want to access it in your localhost just click on open with Visual Studio Code in your forked repository and run `cd docs` then `make docs` and it will start the development server on port 127.0.0.1:4000.
+You should be able to access the site on port `4000`. If you want to access it in your localhost just click on open with Visual Studio Code in your forked repository and run `cd docs` then `make docs` and it will start the development server on port `4000`.
 
 ### Make Necessary Changes
 - Make changes as required based on the issue you are solving.
