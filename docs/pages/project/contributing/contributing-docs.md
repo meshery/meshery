@@ -292,7 +292,7 @@ You should be able to access the site on port `4000`. If you want to access it i
 - Open your forked Meshery repository on GitHub.
 - Click on the "**Code**" button of your forked repository it will give you the option to open the project in Gituhub Codespaces.
 
-{% include alert.html type="dark" title="About Github" content="Github Codespaces will automatically clone and open the repository for you in a browser-based version of Visual Studio Code. It comes with pre-installed tools which are quiet helpful to spin up the development environment for <a href='https://github.com/meshery/meshery'>Meshery.</a>" %}
+{% include alert.html type="dark" title="About Github Codespaces" content="Github Codespaces will automatically clone and open the repository for you in a browser-based version of Visual Studio Code. It comes with pre-installed tools which are quiet helpful to spin up the development environment for <a href='https://github.com/meshery/meshery'>Meshery.</a>" %}
 
 - After opening the project on Github Codespaces, change to the docs directory.
   
@@ -308,7 +308,7 @@ You should be able to access the site on port `4000`. If you want to access it i
   </code>
   </div></pre>
 
-You should be able to access the site on port `4000`. If you want to access it in your localhost just click on open with Visual Studio Code in your forked repository and run `cd docs` then `make docs` and it will start the development server on port `4000`.
+You should be able to access the site on port `4000`. If you want to access it in your localhost just click the `code` button on your forked repository and select open with Visual Studio Code this will launch a Github Codespace instance in your local machine and connects with the remote Github Codespace environment after that run `cd docs` then `make docs` and it will start the development server on port `4000`.
 
 ### Make Necessary Changes
 - Make changes as required based on the issue you are solving.
