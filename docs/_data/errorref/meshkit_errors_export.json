@@ -560,6 +560,15 @@
         "short_description": "could not clone the repo",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "11190": {
+        "name": "ErrApplyManifestCode",
+        "code": "11190",
+        "severity": "Alert",
+        "long_description": "Make sure manifest yaml is valid",
+        "short_description": "Error Applying manifest",
+        "probable_cause": "Manifest could be invalid",
+        "suggested_remediation": ""
       }
     }
   }
