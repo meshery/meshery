@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
@@ -55,6 +56,10 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) i
 	case map[interface{}]interface{}:
 		m := map[string]interface{}{}
 		for k, v2 := range x {
+			if strKey, ok := k.(string); ok && isComponentName(strKey) { //Component-related fields should not be prettified/deprettified
+				m[strKey] = v2
+				continue
+			}
 			switch k2 := k.(type) {
 			case string:
 				if isSchema && k2 == "enum" { //While schema prettification, ENUMS are end system defined end user input and therefore should not be prettified/deprettified
@@ -85,6 +90,10 @@ func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) i
 		m := map[string]interface{}{}
 		// foundFormatIntOrString := false
 		for k, v2 := range x {
+			if isComponentName(k) { //Component-related fields should not be prettified/deprettified
+				m[k] = v2
+				continue
+			}
 			if isSchema && k == "enum" { //While schema prettification, ENUMS are end system defined end user input and therefore should not be prettified/deprettified
 				m[k] = v2
 				continue
@@ -120,6 +129,15 @@ func isSpecialKey(k string) bool {
 		}
 	}
 	return false
+}
+
+/*
+A component-related field is valid if its name follows the following naming conventions:
+1. The key is exactly "ComponentName".
+2. The key has prefix of "component_".
+*/
+func isComponentName(key string) bool {
+	return key == "ComponentName" || strings.HasPrefix(key, "component_")
 }
 
 // In case of any breaking change or bug caused by this, set this to false and the whitespace addition in schema generated/consumed would be removed(will go back to default behavior)
