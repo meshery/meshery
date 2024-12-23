@@ -78,6 +78,7 @@ func ConvertToPatternFile(resources []model.KubernetesResource, stripSchema bool
 		}
 
 		labels := map[string]string{}
+		annotations := map[string]string{}
 
 		if resource.KubernetesResourceMeta.Labels != nil {
 			for _, label := range resource.KubernetesResourceMeta.Labels {
@@ -85,9 +86,16 @@ func ConvertToPatternFile(resources []model.KubernetesResource, stripSchema bool
 			}
 		}
 
+		if resource.KubernetesResourceMeta.Annotations != nil {
+			for _, annotation := range resource.KubernetesResourceMeta.Annotations {
+				annotations[annotation.Key] = annotation.Value
+			}
+		}
+
 		metadata := map[string]interface{}{
-			"labels": labels,
-			"name":   resource.KubernetesResourceMeta.Name,
+			"labels":      labels,
+			"annotations": annotations,
+			"name":        resource.KubernetesResourceMeta.Name,
 		}
 
 		// only set namespace if it is not empty otherwise evaluator creates empty namespace
