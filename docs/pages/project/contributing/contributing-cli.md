@@ -82,23 +82,23 @@ Part of delivering a great user experience is providing intuitive interfaces. In
 
 Command structure and command behavior should be designed in such a way that they are intuitive. Users should ideally be able to understand what a command is used for without having to extensively go through the documentation. For example, `mesheryctl pattern apply -f <pattern name>` requires no further clarification as it is evident that the command will apply the pattern specified.
 
-Consistency is key when designing intuitive interfaces. Although `mesheryctl perf run -f <performance profile name>` may sound more intuitive, users who are experienced in using the CLI will prefer the consistant verb `apply` over `run`. This will also ensure a consistent command language making memorizing easier.
+Consistency is key when designing intuitive interfaces. Although `mesheryctl perf run -f <performance profile name>` may sound more intuitive, users who are experienced in using the CLI will prefer the consistent verb `apply` over `run`. This will also ensure a consistent command language making memorizing easier.
 
 **Flags**
 
 Consistency should also be enforced when chaining commands and using flags. For example, if `mesheryctl pattern` has a `list` and `view` command and has an `-all` and `--output` flag, then, similar commands like `mesheryctl perf` should also support the same commands and flags and provide a consistent user experience.
 
-### Rational defaults overriden with flags
+### Rational defaults overridden with flags
 
 Default behaviour should be optimised for what users will need to do most of the time.
 
-These assumed defaults should be easily overriden by the user with flags.
+These assumed defaults should be easily overridden by the user with flags.
 
-For example, `mesheryctl system context create <context name>` assumes a default platform for the created context. But this can be easily overriden with the `--platform` flag.
+For example, `mesheryctl system context create <context name>` assumes a default platform for the created context. But this can be easily overridden with the `--platform` flag.
 
 ### User Experience: GUI vs CLI
 
-Ideally, all functionaly provided in Meshery UI should be available to users via CLI (in `mesheryctl`). Meshery strives for parity of functionality between it's two clients. For example, viewing a performance profile in the GUI and with `mesheryctl system perf view <profile name>` in the CLI should show the same data.
+Ideally, all functionally provided in Meshery UI should be available to users via CLI (in `mesheryctl`). Meshery strives for parity of functionality between it's two clients. For example, viewing a performance profile in the GUI and with `mesheryctl system perf view <profile name>` in the CLI should show the same data.
 
 Command line interfaces offer less context to the user, which makes them inherently less intuitive compared to graphical user interfaces. Both of these user interfaces, however, are the same in that they are both clients of Meshery Server. Both clients _are_ a user experience and as such, to be attended to in this way. The following considerations should be accounted for when designing `mesheryctl` experiences:
 
