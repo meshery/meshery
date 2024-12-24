@@ -1259,7 +1259,9 @@ class MesheryAdapterPlayComponent extends React.Component {
         boardConfigs={boardConfigs}
         grafanaAPIKey={grafanaAPIKey}
         grafanaURL={grafanaURL}
-        handleGrafanaChartAddition={() => this.props.router.push('/settings/#metrics')}
+        handleGrafanaChartAddition={() =>
+          this.props.router.push('/settings?settingsCategory=Metrics')
+        }
       />
     );
   }

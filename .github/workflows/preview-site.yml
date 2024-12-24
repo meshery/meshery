@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@master
 
       - name: Download Site dir
-        uses: dawidd6/action-download-artifact@v2
+        uses: dawidd6/action-download-artifact@v6
         with:
           github_token: ${{ secrets.GH_ACCESS_TOKEN }}
           workflow: build-and-preview-site.yml

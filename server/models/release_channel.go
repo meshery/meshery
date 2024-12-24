@@ -65,6 +65,20 @@ type AnonymousFlowResponse struct {
 	UserID       uuid.UUID          `json:"user_id,omitempty"`
 }
 
+// This function is triggered when the token is invalid, the channel is in Kanvas mode, or when a token is present but the capabilities lack the required extension.
+// Process flow:
+// 1. Retrieve the capabilities of the anonymous user.
+// 2. Construct the connection payload.
+// 3. Generate the user using the special token.
+// 4. If the navigator is missing, prompt the user to download the navigator extension.
+
+// The appearance of the default /error page on the Kanvas site could be due to one of the following reasons:
+// 1. The remote provider is down, causing an error while fetching capabilities.
+// 2. The provided special token is either empty or incorrect, resulting in an unauthorized error.
+// 3. An issue occurred during the download of the extension package.
+
+// For exact diagnostics, check the server logs in case of any of these errors.
+
 func (k *Kanvas) Intercept(req *http.Request, res http.ResponseWriter) {
 	providerProperties := k.Provider.GetProviderProperties()
 	providerURL, _ := url.Parse(k.Provider.GetProviderURL())

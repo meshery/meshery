@@ -189,7 +189,7 @@ Troubleshooting guides to using Meshery's various features and components.
         <td><a href="https://discuss.layer5.io/search?q={{ err_code[1]['name'] | xml_escape }}-{{ err_code[1]['code'] }}" target="_blank">search forum</a></td>
       </tr>
       <tr id="{{ component[1].component_name }}-{{ err_code[1]["name"] }}-more-info" class="tbl-hidden-row">
-        <td style="word-break:break-all;" colspan="3">
+        <td style="word-break:break-all;" colspan="4">
           <div class="error-heading">Long Description</div>
           <p class="error-details">{{ err_code[1]["long_description"] | xml_escape }}</p>
           <div class="error-heading">Probable Cause</div>

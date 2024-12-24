@@ -841,15 +841,6 @@ function MesheryFilters({
             </TableCell>
           );
         },
-        //   customBodyRender: function CustomBody(_, tableMeta, value) {
-        //     const visibility = filters[tableMeta.rowIndex]?.visibility;
-        //     return (
-        //       // <>
-        //       //   <img className={classes.visibilityImg} src={`/static/img/${visibility}.svg`} />
-        //       // </>
-        //       {value}
-        //     );
-        //   },
       },
     },
     {
@@ -990,6 +981,10 @@ function MesheryFilters({
     page,
     print: false,
     download: false,
+    sortOrder: {
+      name: 'updated_at',
+      direction: 'desc',
+    },
     textLabels: {
       selectedRows: {
         text: 'filter(s) selected',

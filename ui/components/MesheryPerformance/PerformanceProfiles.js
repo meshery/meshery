@@ -475,6 +475,10 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
     page,
     print: false,
     download: false,
+    sortOrder: {
+      name: 'updated_at',
+      direction: 'desc',
+    },
     textLabels: {
       selectedRows: {
         text: 'profile(s) selected',
@@ -575,7 +579,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
               )}
             </>
           )}
-          <div className={classes.viewSwitchButton}>
+          <div className={classes.viewSwitchButton} data-testid="open-search-performance-profiles">
             <UsesSistent>
               <SearchBar
                 onSearch={(value) => {

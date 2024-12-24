@@ -1,13 +1,19 @@
 import MesherySettings from '../components/MesherySettings';
-import { NoSsr, withStyles } from '@material-ui/core';
+import { NoSsr } from '@mui/material';
 import { updatepagepath, updatepagetitle } from '../lib/store';
 import { connect } from 'react-redux';
 import Head from 'next/head';
 import { bindActionCreators } from 'redux';
 import { getPath } from '../lib/path';
 import React, { useEffect } from 'react';
+import { Paper, styled } from '@layer5/sistent';
+import { UsesSistent } from '@/components/SistentWrapper';
 
-const styles = { paper: { maxWidth: '90%', margin: 'auto', overflow: 'hidden' } };
+const PaperStyle = styled(Paper)(() => ({
+  maxWidth: '90%',
+  margin: 'auto',
+  overflow: 'hidden',
+}));
 
 function Settings(props) {
   useEffect(() => {
@@ -16,12 +22,16 @@ function Settings(props) {
   }, []);
 
   return (
-    <NoSsr>
-      <Head>
-        <title>Settings | Meshery</title>
-      </Head>
-      <MesherySettings />
-    </NoSsr>
+    <UsesSistent>
+      <NoSsr>
+        <Head>
+          <title>Settings | Meshery</title>
+        </Head>
+        <PaperStyle>
+          <MesherySettings />
+        </PaperStyle>
+      </NoSsr>
+    </UsesSistent>
   );
 }
 
@@ -30,4 +40,4 @@ const mapDispatchToProps = (dispatch) => ({
   updatepagetitle: bindActionCreators(updatepagetitle, dispatch),
 });
 
-export default withStyles(styles)(connect(null, mapDispatchToProps)(Settings));
+export default connect(null, mapDispatchToProps)(Settings);

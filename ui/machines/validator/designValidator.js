@@ -132,15 +132,17 @@ const DryRunDesignActor = fromPromise(async ({ input: { validationPayload } }) =
     verify: false,
   });
 
+  const requestErrors = dryRunResults?.error
+    ? [
+        {
+          type: 'RequestError',
+          errors: [dryRunResults.error],
+        },
+      ]
+    : [];
   const validationResults = formatDryRunResponse(dryRunResults.data?.dryRunResponse);
   return {
-    validationResults: [
-      ...validationResults,
-      {
-        type: 'RequestError',
-        errors: [dryRunResults.error],
-      },
-    ],
+    validationResults: [...validationResults, ...requestErrors],
   };
 });
 

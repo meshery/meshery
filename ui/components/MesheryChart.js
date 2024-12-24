@@ -387,7 +387,7 @@ function MesheryChart(props) {
       </Popper>
       <div>
         <div ref={titleRef} className={classes.title} style={{ display: 'none' }} />
-        <Grid container spacing={1} style={{ margin: '1rem' }} justifyContent="center">
+        <Grid container justifyContent="center" style={{ padding: '0.5rem' }}>
           {NonRecursiveConstructDisplayCells(chartData?.options?.metadata || {})?.map((el, i) => {
             return (
               <Grid item xs={4} key={`nri-${i}`}>
@@ -410,7 +410,7 @@ function MesheryChart(props) {
             }}
           >
             {props.data.length === 1 ? (
-              <div style={{ margin: '1rem' }}>
+              <div>
                 <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom>
                   Percentile Summary
                 </Typography>

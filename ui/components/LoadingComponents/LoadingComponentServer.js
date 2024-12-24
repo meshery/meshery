@@ -22,10 +22,10 @@ function LoadingScreen(props) {
         style={{
           '@fontFace': {
             fontFamily: 'Qanelas Soft',
-            src: 'url("/static/fonts/qanelas-soft/QanelasSoftBlack.otf") format("opentype")',
+            src: 'url("/static/fonts/qanelas-soft/QanelasSoftRegular.otf") format("opentype")',
             fontWeight: 'normal',
           },
-          fontFamily: 'QanelasSoftRegular, Qanelas Soft Regular, sans-serif',
+          fontFamily: 'Qanelas Soft, sans-serif',
           display: 'grid',
           placeItems: 'center',
           minHeight: '100vh',
@@ -39,7 +39,7 @@ function LoadingScreen(props) {
           <AnimatedLogoDark />
           <h1
             style={{
-              fontFamily: 'QanelasSoftRegular',
+              fontFamily: 'Qanelas Soft',
               fontSize: '.9rem',
               fontWeight: 'normal',
               marginTop: '1rem',

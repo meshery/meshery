@@ -22,6 +22,7 @@ import {
 import {
   CustomColumnVisibilityControl,
   CustomTooltip,
+  ErrorBoundary,
   SearchBar,
   UniversalFilter,
 } from '@layer5/sistent';
@@ -76,7 +77,6 @@ import {
   useRemoveConnectionFromEnvironmentMutation,
   useSaveEnvironmentMutation,
 } from '../../rtk-query/environments';
-import ErrorBoundary from '../ErrorBoundary';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '../General/error-404/index';
@@ -89,6 +89,7 @@ import { withRouter } from 'next/router';
 import { UsesSistent } from '../SistentWrapper';
 import { formatDate } from '../DataFormatter';
 import { getFallbackImageBasedOnKind } from '@/utils/fallback';
+import CustomErrorFallback from '../General/ErrorBoundary';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -841,6 +842,10 @@ function Connections(props) {
         text: 'connection(s) selected',
       },
     },
+    sortOrder: {
+      name: 'name',
+      direction: 'asc',
+    },
     customToolbarSelect: (selected) => (
       <Button
         variant="contained"
@@ -1297,10 +1302,7 @@ const mapStateToProps = (state) => {
 const ConnectionManagementPageWithErrorBoundary = (props) => {
   return (
     <NoSsr>
-      <ErrorBoundary
-        FallbackComponent={() => null}
-        onError={(e) => console.error('Error in Connection Management', e)}
-      >
+      <ErrorBoundary customFallback={CustomErrorFallback}>
         <ConnectionManagementPage {...props} />
       </ErrorBoundary>
     </NoSsr>

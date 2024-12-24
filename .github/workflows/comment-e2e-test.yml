@@ -11,6 +11,7 @@ permissions:
 
 jobs:
   e2e-test-reporter:
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-latest
     steps:
     - name: Download e2e test report artifact

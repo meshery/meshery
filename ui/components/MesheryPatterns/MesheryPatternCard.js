@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Avatar, Divider, Grid, IconButton, Typography, Link } from '@material-ui/core';
-import { CustomTooltip } from '@layer5/sistent';
+import { CustomTooltip, VisibilityChipMenu } from '@layer5/sistent';
 import DeleteIcon from '@material-ui/icons/Delete';
 import Save from '@material-ui/icons/Save';
 import Fullscreen from '@material-ui/icons/Fullscreen';
@@ -19,7 +19,7 @@ import CloneIcon from '../../public/static/img/CloneIcon';
 import { VISIBILITY } from '@/utils/Enum';
 import { useTheme } from '@material-ui/core/styles';
 import { useRouter } from 'next/router';
-import { Edit } from '@material-ui/icons';
+import { Edit, Lock, Public } from '@material-ui/icons';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
@@ -32,6 +32,8 @@ import DryRunIcon from '@/assets/icons/DryRunIcon';
 import CheckIcon from '@/assets/icons/CheckIcon';
 import PatternIcon from '@/assets/icons/Pattern';
 import { iconLarge } from 'css/icons.styles';
+import { UsesSistent } from '../SistentWrapper';
+import { VIEW_VISIBILITY } from '../Modals/Information/InfoModal';
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
 function MesheryPatternCard_({
@@ -96,7 +98,7 @@ function MesheryPatternCard_({
 
   const formatted_pattern_file = formatPatternFile(pattern_file);
   return (
-    <>
+    <UsesSistent>
       {fullScreen && (
         <YAMLDialog
           fullScreen={fullScreen}
@@ -129,7 +131,7 @@ function MesheryPatternCard_({
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
-                  width: '20rem',
+                  width: '100%',
                 }}
                 variant="h6"
                 component="div"
@@ -139,7 +141,17 @@ function MesheryPatternCard_({
               {hideVisibility ? (
                 <PatternIcon {...iconLarge} color={true} />
               ) : (
-                <img className={classes.img} src={`/static/img/${visibility}.svg`} />
+                <div className={classes.visibilityChip}>
+                  <VisibilityChipMenu
+                    value={visibility}
+                    onChange={() => {}}
+                    enabled={false}
+                    options={[
+                      [VIEW_VISIBILITY.PUBLIC, Public],
+                      [VIEW_VISIBILITY.PRIVATE, Lock],
+                    ]}
+                  />
+                </div>
               )}
             </div>
             <div className={classes.lastRunText}>
@@ -380,7 +392,7 @@ function MesheryPatternCard_({
           </Grid>
         </>
       </FlipCard>
-    </>
+    </UsesSistent>
   );
 }
 

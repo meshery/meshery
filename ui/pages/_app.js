@@ -37,6 +37,7 @@ import {
   updateTelemetryUrls,
   setConnectionMetadata,
   LegacyStoreContext,
+  setK8sContexts,
 } from '../lib/store';
 import { styles } from '../themes';
 import { getConnectionIDsFromContextIds, getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
@@ -54,8 +55,6 @@ import { RelayEnvironmentProvider } from 'react-relay';
 import { createRelayEnvironment } from '../lib/relayEnvironment';
 import './styles/charts.css';
 import uiConfig from '../ui.config';
-
-import { ErrorBoundary } from '../components/General/ErrorBoundary';
 import { NotificationCenterProvider } from '../components/NotificationCenter';
 import { getMeshModelComponentByName } from '../api/meshmodel';
 import { CONNECTION_KINDS, CONNECTION_KINDS_DEF, CONNECTION_STATES } from '../utils/Enum';
@@ -69,11 +68,12 @@ import classNames from 'classnames';
 import { forwardRef } from 'react';
 import { formatToTitleCase } from '@/utils/utils';
 import { useThemePreference } from '@/themes/hooks';
-import { BasicMarkdown, CircularProgress } from '@layer5/sistent';
+import { BasicMarkdown, CircularProgress, ErrorBoundary } from '@layer5/sistent';
 import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
 import { LoadSessionGuard } from '@/rtk-query/ability';
 import { randomLoadingMessage } from '@/components/LoadingComponents/loadingMessages';
 import { keys } from '@/utils/permission_constants';
+import CustomErrorFallback from '@/components/General/ErrorBoundary';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -387,10 +387,7 @@ class MesheryApp extends App {
     if (activeK8sContexts.includes('all')) {
       activeK8sContexts = ['all'];
     }
-    this.props.store.dispatch({
-      type: actionTypes.SET_K8S_CONTEXT,
-      selectedK8sContexts: activeK8sContexts,
-    });
+    this.props.store.dispatch(setK8sContexts({ selectedK8sContexts: activeK8sContexts }));
   };
 
   setActiveContexts = (id) => {
@@ -740,14 +737,14 @@ class MesheryApp extends App {
           <RelayEnvironmentProvider environment={relayEnvironment}>
             <MesheryThemeProvider>
               <NoSsr>
-                <ErrorBoundary>
+                <ErrorBoundary customFallback={CustomErrorFallback}>
                   <LoadSessionGuard>
                     <div className={classes.root}>
                       <CssBaseline />
                       {canShowNav && (
                         <nav
                           className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer}
-                          data-test="navigation"
+                          data-testid="navigation"
                           id="left-navigation-bar"
                           style={{ height: '100%', overflow: 'visible' }}
                         >
@@ -817,7 +814,7 @@ class MesheryApp extends App {
                               }}
                             >
                               <MuiPickersUtilsProvider utils={MomentUtils}>
-                                <ErrorBoundary>
+                                <ErrorBoundary customFallback={CustomErrorFallback}>
                                   <Component
                                     pageContext={this.pageContext}
                                     contexts={this.state.k8sContexts}

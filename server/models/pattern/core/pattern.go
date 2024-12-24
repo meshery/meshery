@@ -166,30 +166,6 @@ func NewPatternFile(yml []byte) (patternFile pattern.PatternFile, err error) {
 	return
 }
 
-// AssignAdditionalLabels adds labels to identify resources deployed by meshery.
-func AssignAdditionalLabels(comp *component.ComponentDefinition) error {
-
-	if comp.Configuration == nil {
-		comp.Configuration = make(map[string]interface{})
-	}
-
-	existingLabels := map[string]interface{}{}
-	var err error
-
-	if comp.Configuration["labels"] == nil {
-		comp.Configuration["labels"] = make(map[string]interface{})
-	} else {
-		existingLabels, err = mutils.Cast[map[string]interface{}](comp.Configuration["labels"])
-		if err != nil {
-			return err
-		}
-	}
-
-	existingLabels["resource.pattern.meshery.io/id"] = comp.Id.String() //set the patternID to track back the object
-	comp.Configuration["labels"] = existingLabels
-	return nil
-}
-
 // ToCytoscapeJS converts pattern file into cytoscape object
 func ToCytoscapeJS(patternFile *pattern.PatternFile, log logger.Handler) (cytoscapejs.GraphElem, error) {
 	var cy cytoscapejs.GraphElem

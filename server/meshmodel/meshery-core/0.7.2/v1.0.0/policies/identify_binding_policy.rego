@@ -57,6 +57,7 @@ identify_relationship(
 	})
 }
 
+# Evaluate bindind based on the feasiblity
 evaluate_bindings(
 	binding_declarations,
 	relationship,

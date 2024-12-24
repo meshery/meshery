@@ -16,7 +16,6 @@ const View = (props) => {
     resource,
     classes,
   } = props;
-
   function RenderDynamicTable(key, value) {
     const allKeys = value.reduce((keys, obj) => {
       Object.keys(obj).forEach((key) => {

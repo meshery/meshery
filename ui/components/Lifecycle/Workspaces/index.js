@@ -21,7 +21,6 @@ import {
   Typography,
   DeleteIcon,
   SearchBar,
-  ErrorBoundary,
   styled,
   useTheme,
 } from '@layer5/sistent';
@@ -876,9 +875,7 @@ const mapStateToProps = (state) => {
 const WorkspacesPageWithErrorBoundary = (props) => {
   return (
     <NoSsr>
-      <ErrorBoundary>
-        <Workspaces {...props} />
-      </ErrorBoundary>
+      <Workspaces {...props} />
     </NoSsr>
   );
 };

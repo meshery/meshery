@@ -68,7 +68,7 @@ mesheryctl design view [design-name | ID]
 		url := mctlCfg.GetBaseMesheryURL()
 		if len(pattern) == 0 {
 			if viewAllFlag {
-				url += "/api/pattern?pagesize=10000"
+				url += "/api/pattern?populate=pattern_file&pagesize=10000"
 			} else {
 				return errors.New(utils.DesignViewError("Design name or ID is not specified. Use `-a` to view all designs"))
 			}
@@ -77,7 +77,7 @@ mesheryctl design view [design-name | ID]
 			url += "/api/pattern/" + pattern
 		} else {
 			// else search pattern by name
-			url += "/api/pattern?search=" + pattern
+			url += "/api/pattern?populate=pattern_file&search=" + pattern
 		}
 
 		req, err := utils.NewRequest("GET", url, nil)

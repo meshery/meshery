@@ -186,7 +186,7 @@ func (h *Handler) PatternFileHandler(
 	serverURL, _ := r.Context().Value(models.MesheryServerURL).(string)
 
 	if action == "deploy" {
-		viewLink := fmt.Sprintf("%s/extension/meshmap?mode=visualize&design=%s", serverURL, patternID)
+		viewLink := fmt.Sprintf("%s/extension/meshmap?mode=operator&type=view&id=%s", serverURL, patternID)
 		description = fmt.Sprintf("%s.", description)
 		metadata["view_link"] = viewLink
 	}

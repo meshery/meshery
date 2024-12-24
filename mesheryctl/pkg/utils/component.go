@@ -26,6 +26,8 @@ type ComponentCSV struct {
 	Registrant         string `json:"registrant" csv:"registrant"`
 	Model              string `json:"model" csv:"model"`
 	Component          string `json:"component" csv:"component"`
+	Category           string `json:"category" csv:"category"`
+	SubCategory        string `json:"subCategory" csv:"subCategory"`
 	Description        string `json:"description" csv:"description"`
 	Shape              string `json:"shape" csv:"shape"`
 	PrimaryColor       string `json:"primaryColor" csv:"primaryColor"`
@@ -46,8 +48,6 @@ type ComponentCSV struct {
 	Version            string `json:"version" csv:"version"`
 
 	ModelDisplayName string `json:"modelDisplayName" csv:"-"`
-	Category         string `json:"category" csv:"-"`
-	SubCategory      string `json:"subCategory" csv:"-"`
 
 	Status string `json:"status" csv:"status"`
 }

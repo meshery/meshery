@@ -140,6 +140,7 @@
   "status": "enabled",
   "styles": {
    "background-opacity": 0,
+   "border-color": "#808080",
    "height": 22,
    "menu-forground-color": "#424242",
    "padding": 2,

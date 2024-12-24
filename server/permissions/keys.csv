@@ -37,7 +37,7 @@ Teams,Remove User from Team,Discontinue user membership of a team and team resou
 Teams,Create Team,Establish new team for organizing groups of users and resource access.,,X,,,X,X,Team Management,41a9eb36-b99b-4715-8140-780f97d3c6a0,X,FALSE
 Teams,Delete Team,Dissolve a team and all user memberships. Leave associated resources intact.,,X,,,X,X,Team Management,bbb691b6-8664-44c7-8ea7-9c46b1ca1e8b,X,FALSE
 Teams,Edit Team,Edit a team and add new members to it. ,,X,,,X,X,Team Management,6cf69881-0be0-4723-b5f0-031b7847509a,X,FALSE
-Teams,Remove Roles from Team members,Remove roles from users in a team,,X,X,,X,X,Team Management,ed3dbd2d-52f8-4608-87e0-7f2999a4518c,X,FALSE
+Teams,Remove Roles from Team members,Remove roles from users in a team.,,X,X,,X,X,Team Management,ed3dbd2d-52f8-4608-87e0-7f2999a4518c,X,FALSE
 Teams,Assign Roles to Team members,Assign roles to users in a team,,X,X,,X,X,Team Management,06f33eca-950c-4daa-b46d-e73af39e0868,X,FALSE
 Teams,Open Team Invite,"This governs the team's invitation permissions, determining whether the team is allowed to extend invitations to new individuals to join through open invite link.",,X,X,,X,X,Organization Management,6086c0a5-cd79-48ca-8c9f-a0e0ad75343c,X,FALSE
 Organizations,Create Organization,"Establish new organization for organizing teams, users, and resource access.",,,,,X,X,Organization Management,17a6fa82-cdab-46db-a7ce-a9d0a1bbf40f,X,FALSE
@@ -83,7 +83,7 @@ Environments,Edit Environment,Edit environment and it connection membership,,,X,
 Environments,Assign connections to environment,Add new connections to environments,,,X,,X,X,Organization Management,52cbe0b8-9aa7-4605-8eed-aa37e595adbb,X,TRUE
 Environments,Remove connections from environments,"Remove connections from environment, ",,,X,,X,X,Organization Management,65648682-e47f-43d7-a5ad-dc042803f951,X,TRUE
 Catalog,View Catalog,View all items in catalog,X,X,X,,X,X,User View,0cd05106-36b6-4393-a08e-4222fc10c8de,X,FALSE
-Workspace,View Workspace,See all workspaces within an organisation,X,X,X,,X,X,Workspace Management,bc9379e8-dc18-4655-b53c-c641271c4ba3,X,TRUE
+Workspace,View Workspace,See all workspaces within an organization,X,X,X,,X,X,Workspace Management,bc9379e8-dc18-4655-b53c-c641271c4ba3,X,TRUE
 Workspace,Delete Workspace,Dissolve workspace and all team and environment memberships. Leave associated resources intact,,,X,,X,X,Workspace Management,09eb0507-2f14-4bc4-92c5-9e26a4efbd5e,X,TRUE
 Workspace,Edit Workspace,Edit workspace and it's team and environment membership,,,X,,X,X,Workspace Management,4112230f-5d1e-4d30-9790-942ad5c1dc50,X,TRUE
 Workspace,Create Workspace,Create new workspace,,,X,,X,X,Workspace Management,eb42ac41-a883-465e-843c-d64e962a3a0e,X,TRUE

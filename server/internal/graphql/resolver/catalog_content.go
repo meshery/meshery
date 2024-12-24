@@ -27,7 +27,6 @@ type catalogFilterPage struct {
 func (r *queryResolver) fetchCatalogPattern(ctx context.Context, provider models.Provider, selector *model.CatalogSelector) ([]*model.CatalogPattern, error) {
 	token := ctx.Value(models.TokenCtxKey).(string)
 	metrics := "false"
-	trim := "false"
 
 	// Convert []*string to []string for class
 	class := []string{}
@@ -73,7 +72,15 @@ func (r *queryResolver) fetchCatalogPattern(ctx context.Context, provider models
 			userid = append(userid, *useridPtr)
 		}
 	}
-	resp, err := provider.GetCatalogMesheryPatterns(token, selector.Page, selector.Pagesize, selector.Search, selector.Order, metrics, trim, class, technology, patternType, orgID, workspaceID , userid)
+
+	populate := []string{}
+	for _, populatePtr := range selector.Populate {
+		if populatePtr != nil {
+			populate = append(populate, *populatePtr)
+		}
+	}
+
+	resp, err := provider.GetCatalogMesheryPatterns(token, selector.Page, selector.Pagesize, selector.Search, selector.Order, metrics, populate, class, technology, patternType, orgID, workspaceID, userid)
 
 	if err != nil {
 		r.Log.Error(err)

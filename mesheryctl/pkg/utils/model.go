@@ -43,7 +43,6 @@ type compGenerateTracker struct {
 
 var (
 	GoogleSpreadSheetURL     = "https://docs.google.com/spreadsheets/d/"
-	srv                      *sheets.Service
 	totalAggregateComponents int
 	totalAggregateModel      int
 	logDirPath               = filepath.Join(utils.GetHome(), ".meshery", "logs", "registry")
@@ -720,7 +719,20 @@ func logModelGenerationSummary(modelToCompGenerateTracker *store.GenerticThreadS
 
 	Log.Info(fmt.Sprintf("-----------------------------\n-----------------------------\nGenerated %d models and %d components", totalAggregateModel, totalAggregateComponents))
 }
-func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, componentSheetID int64, spreadsheeetID string, modelName string, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath string, relationshipSheetID int64) error {
+
+// This function serves dual purposes: it is invoked either via the UI generation or a spreadsheet. Based on the invocation source, the logger configuration is dynamically set to either output solely to the terminal or to a multi-writer.
+
+// Steps Involved:
+
+//  1. Sheet Parsing: Parse the three sheets and prepare their respective csvHelper instances.
+//  2. Registrant-Based Processing:
+//     2.1 Meshery: Use the Meshery components sheet as the source.
+//     2.2 GitHub/ArtifactHub: Perform additional steps, such as determining the registrant type via the URL and generating a package. This package serves as the basis for component generation (refer to the MeshKit function for details).
+//     2.3 File Writing: Write the generated components to their respective paths in the format {model-name/{release-version-in-repo}/defversion/}.
+//  3. Handling Relationships: Relationships marked with * as the version are written to all versions, with the filenames updated in the sheet.
+//
+// If their is ever an error with the writing of file back to spreadsheet of column mismatch just update utils.ComponentCSV struct.
+func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, componentSheetID int64, spreadsheeetID string, modelName string, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath string, relationshipSheetID int64, srv *sheets.Service) error {
 	weightedSem := semaphore.NewWeighted(20)
 	url := GoogleSpreadSheetURL + spreadsheeetID
 	totalAvailableModels := 0
@@ -814,6 +826,19 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, co
 			}
 
 			version := pkg.GetVersion()
+
+			comps, err := pkg.GenerateComponents()
+			if err != nil {
+				err = ErrGenerateModel(err, model.Model)
+				LogError.Error(err)
+				return
+			}
+			lengthOfComps := len(comps)
+			if lengthOfComps == 0 {
+				err = ErrGenerateModel(fmt.Errorf("no components found for model"), model.Model)
+				LogError.Error(err)
+				return
+			}
 			modelDirPath, compDirPath, err := createVersionedDirectoryForModelAndComp(version, model.Model, path)
 			if err != nil {
 				err = ErrGenerateModel(err, model.Model)
@@ -829,14 +854,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, co
 			if alreadyExist {
 				totalAvailableModels--
 			}
-			comps, err := pkg.GenerateComponents()
-			if err != nil {
-				err = ErrGenerateModel(err, model.Model)
-				LogError.Error(err)
-				return
-			}
-			lengthOfComps := len(comps)
-
 			for _, comp := range comps {
 				comp.Version = defVersion
 				// Assign the component status corresponding to model status.
