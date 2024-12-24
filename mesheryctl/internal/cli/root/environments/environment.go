@@ -46,9 +46,9 @@ var EnvironmentCmd = &cobra.Command{
 	Long:  "View list of environments and detailed information of a specific environments",
 	Example: `
 // To view a list environments
-mesheryctl exp environment list --orgID [orgId]
+mesheryctl environment list --orgID [orgId]
 // To create a environment
-mesheryctl exp environment create --orgID [orgId] --name [name] --description [description]
+mesheryctl environment create --orgID [orgId] --name [name] --description [description]
 // Documentation for environment can be found at:
 https://docs.layer5.io/cloud/spaces/environments/
 	`,

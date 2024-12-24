@@ -39,7 +39,7 @@ var viewEnvironmentCmd = &cobra.Command{
 	Long:  "view a environments registered in Meshery Server",
 	Example: `
 // View details of a specific environment
-mesheryctl exp environment view --orgID [orgId]
+mesheryctl environment view --orgID [orgId]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		orgIdFlag, _ := cmd.Flags().GetString("orgId")
