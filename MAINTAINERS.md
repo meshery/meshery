@@ -44,7 +44,6 @@
 | ----------------- | --------------- | ----------- |
 | Adithya Krishna   | adithyaakrishna | Red Hat     |
 | Lee Calcote       | leecalcote      | Layer5      |
-| Vishal Vivek      | vishalvivekm    | Layer5      |
 
 ### Site Maintainers
 
