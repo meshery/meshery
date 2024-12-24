@@ -222,6 +222,16 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, manuallyAddedContent map
 					cmd.DisableAutoGenTag = c.DisableAutoGenTag
 				}
 			})
+			if cmd.HasAvailableSubCommands() {
+				for _, subCmd := range cmd.Commands() {
+					if subCmd.IsAvailableCommand() {
+						subCmdPathParts := strings.Split(subCmd.CommandPath(), " ")
+						subCmdString := subCmdPathParts[1] + " " + subCmdPathParts[2]
+						buf.WriteString(fmt.Sprintf("* [%s](%s)\n", subCmd.CommandPath(), linkHandler(subCmdString)))
+					}
+				}
+				buf.WriteString("\n")
+			}
 		}
 		buf.WriteString("Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.")
 		buf.WriteString("\n")
