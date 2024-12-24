@@ -93,7 +93,7 @@ Under the “Designs” tab, you will see that we have successfully imported the
 ![Import redis-php-guestbook-dryrun](./screenshots/redis-php-guestbook-dryrun.png)
 1. Finally your deployment and click Deploy to deploy the application to the cluster.
 ![Import redis-php-guestbook-finalize](./screenshots/redis-php-guestbook-finalize.png)
-1. On sucessful deployment you will see the following modal asking yout o open you deployment in visualizer
+1. On successful deployment you will see the following modal asking yout o open you deployment in visualizer
 ![Import redis-php-guestbook-finalize](./screenshots/redis-php-guestbook-finalize.png)
 
 
@@ -106,7 +106,7 @@ kubectl set image deployment/<deployment-name> <container-name>=new-image:tag
 
 #### 6. Open the files in Operate
 
-1. Once deployment is successful user can click on Open in Operate, or click on notification on top right click on the deployment successfull notification and click on Open in Operate, or directly click on the Operate tab beside Design on the design and visualize the design inside operate mode.
+1. Once deployment is successful user can click on Open in Operate, or click on notification on top right click on the deployment successful notification and click on Open in Operate, or directly click on the Operate tab beside Design on the design and visualize the design inside operate mode.
 ![Operate](./screenshots/operate.png)
 
 2. Click on the Layers option below to view all available filters.
