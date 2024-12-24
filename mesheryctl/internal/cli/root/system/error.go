@@ -106,12 +106,12 @@ func ErrHealthCheckFailed(err error) error {
 		errors.Alert,
 		[]string{"Health checks failed"},
 		[]string{"Failed to initialize healthchecker" + err.Error()},
-		[]string{"Health checks execution failed in starting Meshery server successfully"},
+		[]string{"Health checks execution failed in starting Meshery server"},
 		[]string{"Ensure Mesheryctl is running and has the right configurations."})
 }
 
 func ErrDownloadFile(err error, obj string) error {
-	return errors.New(ErrDownloadFileCode, errors.Alert, []string{"Error downloading file ", obj}, []string{err.Error()}, []string{"Failed to download docker-compose or manifest file due to system/config/network issues"}, []string{"Make sure docker-compose or manifest file is downloaded successfully"})
+	return errors.New(ErrDownloadFileCode, errors.Alert, []string{"Error downloading file ", obj}, []string{err.Error()}, []string{"Failed to download docker-compose or manifest file due to system/config/network issues"}, []string{"Make sure docker-compose or manifest file is downloaded"})
 }
 
 func ErrStopMeshery(err error) error {
@@ -166,8 +166,8 @@ func ErrRetrievingCurrentContext(err error) error {
 		errors.Alert,
 		[]string{"Error retrieving current-context"},
 		[]string{err.Error()},
-		[]string{"current-context is not retrieved successfully"},
-		[]string{"Verify current-context is retrieved successfully and valid" + FormatErrorReference()})
+		[]string{"current-context is not retrieved"},
+		[]string{"Verify current-context is retrieved and valid" + FormatErrorReference()})
 }
 
 func ErrSettingDefaultContextToConfig(err error) error {

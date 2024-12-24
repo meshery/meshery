@@ -80,7 +80,7 @@ var GenerateRelationshipDocsCmd = &cobra.Command{
 			utils.Log.Error(err)
 			return nil
 		}
-		utils.Log.Info("Relationships data generated successfully in docs/_data/RelationshipsData.json")
+		utils.Log.Info("Relationships data generated in docs/_data/RelationshipsData.json")
 		return nil
 	},
 }
