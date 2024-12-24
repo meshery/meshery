@@ -63,7 +63,7 @@ jobs:
       - name: Check out meshery-istio code
         uses: actions/checkout@v4
         with:
-          repository: layer5io/meshery-istio
+          repository: devhindo/meshery-istio
           path: ./meshery-istio
       # - name: Check out meshery-consul code
       #   uses: actions/checkout@v4

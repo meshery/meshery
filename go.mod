@@ -9,6 +9,8 @@ replace (
 	k8s.io/client-go => k8s.io/client-go v0.28.3
 	k8s.io/kubectl => k8s.io/kubectl v0.28.3
 	oras.land/oras-go v1.2.4 => oras.land/oras-go v1.2.3
+	github.com/layer5io/meshery-istio => github.com/devhindo/meshery-istio v0.0.0-20241224091859-38508880e21a
+
 )
 
 require (
