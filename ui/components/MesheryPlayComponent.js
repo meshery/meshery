@@ -124,7 +124,7 @@ const MesheryPlayComponent = (props) => {
   }, [meshAdapters?.size]);
 
   const handleConfigure = () => {
-    router.push('/settings#service-mesh');
+    router.push('/settings?settingsCategory=Adapters');
   };
 
   const pickImage = (adapter) => {
