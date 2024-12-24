@@ -61,7 +61,7 @@ In order to pull in these environment metrics, you can also manually configure M
 
 Connect Meshery to your Grafana and Prometheus instances to enable enhanced service mesh performance management. Deploy a service mesh and any available sample application
 
-Retreive the IP address of your Minikube cluster by executing:
+Retrieve the IP address of your Minikube cluster by executing:
 
  <pre class="codeblock-pre">
  <div class="codeblock"><div class="clipboardjs">
