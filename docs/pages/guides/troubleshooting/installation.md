@@ -77,7 +77,7 @@ When deploying Meshery out-of-cluster, verify your kubeconfig's contexts and the
 <div class="codeblock"><div class="clipboardjs">kubectl config get-contexts</div></div>
 </pre>
 
-If you're using Docker Destkop, consider whether you need to change your current Kubernetes context to `docker-desktop`.
+If you're using Docker Desktop, consider whether you need to change your current Kubernetes context to `docker-desktop`.
 
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">kubectl config use-context
