@@ -10,7 +10,7 @@ command: pattern
 subcommand: import
 ---
 
-# mesheryctl pattern import
+# mesheryctl design import
 
 Import a Meshery design
 
@@ -27,7 +27,7 @@ Import a Meshery design
 	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern import [flags]
+mesheryctl design import [flags]
 
 </div>
 </pre> 
@@ -37,7 +37,7 @@ mesheryctl pattern import [flags]
 Import pattern manifest
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern import -f [file/URL] -s [source-type] -n [name]
+mesheryctl design import -f [file/URL] -s [source-type] -n [name]
 
 </div>
 </pre> 

@@ -10,7 +10,7 @@ command: pattern
 subcommand: delete
 ---
 
-# mesheryctl pattern delete
+# mesheryctl design delete
 
 Delete pattern file
 
@@ -19,7 +19,7 @@ Delete pattern file
 delete pattern file will trigger deletion of the pattern file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern delete [flags]
+mesheryctl design delete [flags]
 
 </div>
 </pre> 
@@ -29,7 +29,7 @@ mesheryctl pattern delete [flags]
 delete a pattern file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern delete [file | URL]
+mesheryctl design delete [file | URL]
 
 </div>
 </pre> 

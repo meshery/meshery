@@ -30,7 +30,7 @@ Before you can use the Meshery CLI to import a Docker Compose app, you must firs
 Once you have created your Design Definition file, you can use the Meshery CLI to import your Docker Compose app into Meshery. To do this, run the following command:
 
 <pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">mesheryctl pattern import -f [file/url] -s [source-type]</div></div>
+<div class="codeblock"><div class="clipboardjs">mesheryctl design import -f [file/url] -s [source-type]</div></div>
 </pre>
 
 This command enable users to import their existing designs from sources as
@@ -42,7 +42,7 @@ This command enable users to import their existing designs from sources as
 **Example :**
 
 <pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">mesheryctl pattern import -f ./SampleDesign.yml -s "Kubernetes Manifest"</div></div>
+<div class="codeblock"><div class="clipboardjs">mesheryctl design import -f ./SampleDesign.yml -s "Kubernetes Manifest"</div></div>
 </pre>
 
 ## Import Designs Using Meshery UI
