@@ -90,7 +90,7 @@ Users can also narrow down the tests to just check the status of the Meshery ope
 
 **Answer**: _Yes, as long as you've Docker installed, it's fine to run Meshery. But you will need a Kubernetes cluster to handle tasks such as deploying infrastructure and so on, if you want to do them via Meshery._
 
-##### Question: I ran a preflight check to see if I satisfy all requirements for Meshery in my system. It returned postive results but I couldn't start Meshery. What to do?
+##### Question: I ran a preflight check to see if I satisfy all requirements for Meshery in my system. It returned positive results but I couldn't start Meshery. What to do?
 
 **Answer**: _Make sure if you've configured your system to run Meshery in smooth manner. For configuration, do check out the docs site and [this page]({{ site.baseurl }}/installation) to see instructions related to the platform you use._
 
