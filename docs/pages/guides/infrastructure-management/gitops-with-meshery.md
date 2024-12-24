@@ -28,7 +28,7 @@ See [Extension: Kanvas Snapshot](/extensions/snapshot) for more details.
 - Red light performance regressions
 - Baseline and analyze the performance of your services is key to efficient operation of any application
   - Meshery is the canonical implementation of the Cloud Native Performance specification
-- Define your performance profiles upfront. See statistcal analysis with microservice latency and throughput quartiles
+- Define your performance profiles upfront. See statistical analysis with microservice latency and throughput quartiles
 - Meshery includes your choice of load generator, so that you can meausure your way
 - Meshery packages all these features into an easy-to-use GitHub Action
 
