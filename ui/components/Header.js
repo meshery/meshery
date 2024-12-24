@@ -24,7 +24,7 @@ import { _ConnectionChip } from './connections/ConnectionChip';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateK8SConfig, updateProgress, updateCapabilities } from '../lib/store';
 import { bindActionCreators } from 'redux';
-import PromptComponent, { PROMPT_VARIANTS } from './PromptComponent';
+import _PromptComponent from './PromptComponent';
 import { iconMedium } from '../css/icons.styles';
 import ExtensionSandbox from './ExtensionSandbox';
 import RemoteComponent from './RemoteComponent';
@@ -303,8 +303,8 @@ function K8sContextMenu({
     let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
       title: `Delete ${name} context ?`,
       subtitle: `Are you sure you want to delete ${name} cluster from Meshery?`,
-      options: ['CONFIRM', 'CANCEL'],
-      variant: PROMPT_VARIANTS.DANGER,
+      primaryOption: 'CONFIRM',
+      variant: 'error',
     });
     if (responseOfDeleteK8sCtx === 'CONFIRM') {
       const successCallback = async () => {
@@ -471,7 +471,7 @@ function K8sContextMenu({
           </div>
         </Slide>
       </div>
-      <PromptComponent ref={deleteCtxtRef} />
+      <_PromptComponent ref={deleteCtxtRef} />
     </>
   );
 }
