@@ -16,7 +16,7 @@ Generate Models
 
 ## Synopsis
 
-Prerequisite: Excecute this command from the root of a meshery/meshery repo fork.
+Prerequisite: Execute this command from the root of a meshery/meshery repo fork.
 
 Given a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories.
 
