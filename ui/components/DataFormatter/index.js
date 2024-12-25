@@ -5,6 +5,7 @@ import _ from 'lodash';
 import { useContext } from 'react';
 import { isEmptyAtAllDepths } from '../../utils/objects';
 import CopyIcon from '../../assets/icons/CopyIcon';
+import { UsesSistent } from './../SistentWrapper';
 
 const FormatterContext = React.createContext({
   propertyFormatters: {},
@@ -179,13 +180,13 @@ export const TextWithLinks = ({ text, ...typographyProps }) => {
   return <Typography {...typographyProps}> {elements}</Typography>;
 };
 
-export const KeyValue = ({ Key, Value }) => {
+export const KeyValue = ({ Key, Value, showAll }) => {
   const theme = useTheme();
   return (
     <div
       style={{
         display: 'flex',
-        flexDirection: 'column',
+        flexDirection: showAll ? 'row' : 'column',
         alignItems: 'flex-start',
         gap: '0.25rem',
         flexWrap: 'wrap',
@@ -199,6 +200,7 @@ export const KeyValue = ({ Key, Value }) => {
           overflow: 'hidden',
           whiteSpace: 'nowrap',
           color: theme.palette.text.primary,
+          minWidth: showAll && '25%',
         }}
       />
 
@@ -257,16 +259,17 @@ export const SectionBody = ({ body, style = {} }) => {
   );
 };
 const ArrayFormatter = ({ items }) => {
+  const theme = useTheme();
   return (
     <ol
       style={{
-        paddingInline: items.length === 1 ? '0' : '1rem',
+        paddingInline: '1rem',
         paddingBlock: '0.25rem',
         margin: '0rem',
       }}
     >
       {items.map((item) => (
-        <li key={item} style={{ listStyleType: items.length === 1 ? 'none' : 'decimal' }}>
+        <li key={item} style={{ color: theme.palette.text.secondary }}>
           <Level>
             <DynamicFormatter data={item} />
           </Level>
@@ -286,12 +289,14 @@ export function reorderObjectProperties(obj, order) {
   return { ...orderedProperties, ...remainingProperties };
 }
 
-const DynamicFormatter = ({ data, uiSchema }) => {
+const DynamicFormatter = ({ data, uiSchema, showAll }) => {
   const { propertyFormatters } = useContext(FormatterContext);
   const level = useContext(LevelContext);
+
   if (_.isString(data)) {
     return <SectionBody body={data}></SectionBody>;
   }
+
   if (_.isArray(data)) {
     return <ArrayFormatter items={data} />;
   }
@@ -301,6 +306,7 @@ const DynamicFormatter = ({ data, uiSchema }) => {
       if (!title.trim() || !data || _.isEmpty(data)) {
         return null;
       }
+
       if (propertyFormatters?.[title]) {
         return (
           <Grid key={title} sm={12} {...(uiSchema?.[title] || {})}>
@@ -308,6 +314,7 @@ const DynamicFormatter = ({ data, uiSchema }) => {
           </Grid>
         );
       }
+
       if (typeof data == 'string') {
         return (
           <Grid
@@ -318,7 +325,7 @@ const DynamicFormatter = ({ data, uiSchema }) => {
             spacing={3}
             style={{ marginBlock: '0.3rem' }}
           >
-            <KeyValue key={title} Key={title} Value={data} />
+            <KeyValue key={title} Key={title} Value={data} showAll={showAll} />
           </Grid>
         );
       }
@@ -345,13 +352,13 @@ const DynamicFormatter = ({ data, uiSchema }) => {
   return null;
 };
 
-export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema }) => {
+export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema, showAll }) => {
   if (!data || isEmptyAtAllDepths(data)) {
     return null;
   }
 
   return (
-    <>
+    <UsesSistent>
       <FormatterContext.Provider
         value={{
           propertyFormatters: propertyFormatters,
@@ -365,9 +372,9 @@ export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema }
             gap: '0.3rem',
           }}
         >
-          <DynamicFormatter data={data} uiSchema={uiSchema} />
+          <DynamicFormatter data={data} uiSchema={uiSchema} showAll={showAll} />
         </Grid>
       </FormatterContext.Provider>
-    </>
+    </UsesSistent>
   );
 };
