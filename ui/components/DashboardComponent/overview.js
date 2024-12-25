@@ -1,20 +1,23 @@
 import React from 'react';
-import { NoSsr, Grid } from '@material-ui/core';
-
+import { NoSsr, Grid } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import Popup from '../Popup';
-import { withStyles } from '@material-ui/core/styles';
-import { withRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { withNotify } from '../../utils/hooks/useNotification';
-import blue from '@material-ui/core/colors/blue';
-
+import { blue } from '@mui/material/colors';
 import DashboardMeshModelGraph from './charts/DashboardMeshModelGraph.js';
 import ConnectionStatsChart from './charts/ConnectionCharts.js';
 import MesheryConfigurationChart from './charts/MesheryConfigurationCharts.js';
 import { Provider } from 'react-redux';
 import { store } from '@/store/index';
+import {useTheme} from '@layer5/sistent';
 
-const styles = (theme) => ({
-  rootClass: { backgroundColor: theme.palette.secondary.elevatedComponents2, marginTop: '1rem' },
+const Root = styled('div')(({ theme }) => ({
+  backgroundColor: theme.palette.secondary.elevatedComponents2,
+  marginTop: '1rem',
+}));
+
+const useStyles = (theme) => ({
   datatable: {
     boxShadow: 'none',
   },
@@ -39,13 +42,11 @@ const styles = (theme) => ({
   margin: { margin: theme.spacing(1) },
   colorSwitchBase: {
     color: blue[300],
-    '&$colorChecked': {
+    '&.Mui-checked': {
       color: blue[500],
-      '& + $colorBar': { backgroundColor: blue[500] },
+      '& + .MuiSwitch-track': { backgroundColor: blue[500] },
     },
   },
-  colorBar: {},
-  colorChecked: {},
   fileLabel: { width: '100%' },
   fileLabelText: {},
   inClusterLabel: { paddingRight: theme.spacing(2) },
@@ -79,12 +80,16 @@ const styles = (theme) => ({
   },
 });
 
-const Overview = ({ classes }) => {
+const Overview = () => {
+  const router = useRouter();
+  const theme = useTheme();
+  const classes = useStyles(theme);
+
   return (
     <NoSsr>
       <Popup />
       <Provider store={store}>
-        <div className={classes.rootClass}>
+        <Root>
           <Grid container spacing={2}>
             <Grid item xs={12} md={12}>
               <DashboardMeshModelGraph classes={classes} />
@@ -101,10 +106,10 @@ const Overview = ({ classes }) => {
               </Grid>
             </Grid>
           </Grid>
-        </div>
+        </Root>
       </Provider>
     </NoSsr>
   );
 };
 
-export default withStyles(styles, { withTheme: true })(withRouter(withNotify(Overview)));
+export default withNotify(Overview);

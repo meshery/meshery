@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { ArrowBack } from '@material-ui/icons';
 import TooltipButton from '../../utils/TooltipButton';
-import { Paper, Typography } from '@material-ui/core';
+// import { Paper, Typography } from '@material-ui/core';
 import NameValueTable from '../DataFormatter/NameValueTable';
-import { ResponsiveDataTable } from '@layer5/sistent';
+import { ResponsiveDataTable, Paper, Typography } from '@layer5/sistent';
 import { ALL_VIEW } from './resources/config';
 import GetNodeIcon from '../configuratorComponents/MeshModel/NodeIcon';
 import { JsonParse } from '../../utils/utils';
@@ -230,6 +230,7 @@ const View = (props) => {
           margin: '1rem auto',
         }}
       >
+        <UsesSistent>
         <Paper>
           <HeaderComponent />
           <div style={{ margin: '1rem clamp(0.2rem, 5%, 7rem)', paddingBottom: '1rem' }}>
@@ -237,6 +238,7 @@ const View = (props) => {
             <RenderObject obj={resource} />
           </div>
         </Paper>
+        </UsesSistent>
       </div>
     </>
   );
@@ -247,6 +249,7 @@ export default View;
 export const Title = ({ onClick, data, value }) => {
   const [isHovered, setHovered] = useState(false);
   return (
+    <UsesSistent>
     <div
       style={{
         color: 'inherit',
@@ -268,5 +271,6 @@ export const Title = ({ onClick, data, value }) => {
         </Typography>
       </div>
     </div>
+    </UsesSistent>
   );
 };
