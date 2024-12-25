@@ -101,7 +101,12 @@ const ACTION_TYPES = {
   },
 };
 
-const ConnectionTable = ({ classes, meshsyncControllerState, connectionMetadataState }) => {
+const ConnectionTable = ({
+  classes,
+  meshsyncControllerState,
+  connectionMetadataState,
+  selectedFilter,
+}) => {
   const organization = useLegacySelector((state) => state.get('organization'));
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
@@ -111,7 +116,10 @@ const ConnectionTable = ({ classes, meshsyncControllerState, connectionMetadataS
   const [rowData, setRowData] = useState(null);
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [selectedFilters, setSelectedFilters] = useState({ status: 'All', kind: 'All' });
+  const [selectedFilters, setSelectedFilters] = useState({
+    status: 'All',
+    kind: 'All',
+  });
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState();
   const [kindFilter, setKindFilter] = useState();
@@ -169,7 +177,11 @@ const ConnectionTable = ({ classes, meshsyncControllerState, connectionMetadataS
     search: search,
     order: sortOrder,
     status: statusFilter ? JSON.stringify([statusFilter]) : '',
-    kind: kindFilter ? JSON.stringify([kindFilter]) : '',
+    kind: selectedFilter
+      ? JSON.stringify([selectedFilter])
+      : kindFilter
+      ? JSON.stringify([kindFilter])
+      : '',
   });
   const {
     data: environmentsResponse,
@@ -877,7 +889,7 @@ const ConnectionTable = ({ classes, meshsyncControllerState, connectionMetadataS
         customHeadRender: function CustomHead({ ...column }) {
           return (
             <TableCell>
-              <b style={{ fontSize: '1.25rem' }}>{column.label}</b>
+              <b>{column.label}</b>
             </TableCell>
           );
         },
@@ -1062,15 +1074,7 @@ const ConnectionTable = ({ classes, meshsyncControllerState, connectionMetadataS
     <>
       <div className={StyleClass.toolWrapper} style={{ marginBottom: '5px', marginTop: '-30px' }}>
         <div className={classes.createButton}>
-          <MesherySettingsEnvButtons
-            variant="contained"
-            // addClusterButtonClass={{
-            //   borderRadius: 5,
-            //   marginRight: '2rem',
-            //   padding: '8px',
-            // }}
-            addClusterButtonClass={classes.addClusterButtonClass}
-          />
+          <MesherySettingsEnvButtons />
         </div>
         <UsesSistent>
           <div
@@ -1098,6 +1102,7 @@ const ConnectionTable = ({ classes, meshsyncControllerState, connectionMetadataS
             />
 
             <CustomColumnVisibilityControl
+              style={{ zIndex: 1300 }}
               id="ref"
               columns={getVisibilityColums(columns)}
               customToolsProps={{ columnVisibility, setColumnVisibility }}

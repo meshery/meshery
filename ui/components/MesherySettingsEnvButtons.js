@@ -41,8 +41,8 @@ const styles = styled((theme) => ({
     [theme.breakpoints.down('md')]: { fontSize: '12px' },
   },
 }));
-// Add links to docs
-const MesherySettingsEnvButtons = ({ variant, addClusterButtonClass }) => {
+
+const MesherySettingsEnvButtons = () => {
   let k8sfileElementVal = '';
   let formData = new FormData();
   const ref = useRef(null);
@@ -202,11 +202,13 @@ const MesherySettingsEnvButtons = ({ variant, addClusterButtonClass }) => {
       <UsesSistent>
         <Button
           type="submit"
-          variant={variant}
-          color="primary"
-          size={variant === 'contained' ? 'large' : 'small'}
+          variant="contained"
           onClick={handleClick}
-          classes={addClusterButtonClass}
+          style={{
+            width: '100%',
+            borderRadius: 5,
+            padding: '8px',
+          }}
           disabled={!CAN(keys.ADD_CLUSTER.action, keys.ADD_CLUSTER.subject)}
           data-cy="btnResetDatabase"
         >

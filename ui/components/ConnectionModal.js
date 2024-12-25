@@ -27,6 +27,7 @@ const ConnectionModal = ({
             <ConnectionTable
               meshsyncControllerState={meshsyncControllerState}
               connectionMetadataState={connectionMetadataState}
+              selectedFilter={'kubernetes'}
             />
           </div>
         </ModalBody>

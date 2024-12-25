@@ -35,7 +35,7 @@ import { useNotification, withNotify } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
-import { Checkbox, MenuIcon, OutlinedSettingsIcon } from '@layer5/sistent';
+import { Checkbox, MenuIcon, OutlinedSettingsIcon, Box, CustomTooltip } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { Colors } from '@/themes/app';
 import { CanShow } from '@/utils/can';
@@ -218,6 +218,9 @@ const styles = (theme) => ({
     whiteSpace: 'nowrap',
     color: theme.palette.secondary.text,
     margin: '0.5rem',
+  },
+  mesherySettingsEnvButtons: {
+    marginTop: '1rem',
   },
 });
 
@@ -458,9 +461,16 @@ function K8sContextMenu({
                             </UsesSistent>
                             <span style={{ fontWeight: 'bolder' }}>select all</span>
                           </div>
-                          <IconButton size="small" onClick={() => setIsConnectionOpenModal(true)}>
-                            <Edit style={{ ...iconSmall }} />
-                          </IconButton>
+                          <CustomTooltip title="Configure Connections">
+                            <div>
+                              <IconButton
+                                size="small"
+                                onClick={() => setIsConnectionOpenModal(true)}
+                              >
+                                <Edit style={{ ...iconSmall }} />
+                              </IconButton>
+                            </div>
+                          </CustomTooltip>
                         </div>
                       </>
                     ) : (
@@ -493,10 +503,9 @@ function K8sContextMenu({
                       );
                     })}
                     {contexts?.contexts?.length > 0 && (
-                      <MesherySettingsEnvButtons
-                        variant="outlined"
-                        addClusterButtonClass={classes.addClusterButtonClass}
-                      />
+                      <Box className={classes.mesherySettingsEnvButtons}>
+                        <MesherySettingsEnvButtons />
+                      </Box>
                     )}
                   </div>
                 </Paper>
