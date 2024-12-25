@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
 import {
@@ -84,42 +84,47 @@ const styles = (theme) => ({
 });
 
 const MesheryPlayComponent = (props) => {
-  const router = useRouter();
   const { meshAdapters, classes } = props;
-  const [adapter, setAdapterState] = useState({});
+  const router = useRouter();
 
-  const handleRouteChange = useCallback(() => {
-    const queryParam = router.query.adapter;
+  // Initialize state
+  const [adapter, setAdapterState] = useState(() => {
+    if (meshAdapters && meshAdapters.size > 0) {
+      return meshAdapters[0];
+    }
+    return {};
+  });
+
+  const handleRouteChange = () => {
+    const queryParam = router?.query?.adapter;
     if (queryParam) {
       const selectedAdapter = meshAdapters.find(
         ({ adapter_location }) => adapter_location === queryParam,
       );
       if (selectedAdapter) {
-        setAdapterState({ adapter: selectedAdapter });
+        setAdapterState(selectedAdapter);
       }
     } else if (meshAdapters.size > 0) {
-      setAdapterState({ adapter: meshAdapters[0] });
+      setAdapterState(meshAdapters.get(0));
     }
-  }, [router.query.adapter, meshAdapters]);
+  };
 
   useEffect(() => {
-    // mount
     router.events.on('routeChangeComplete', handleRouteChange);
 
-    // unmount
     return () => {
       router.events.off('routeChangeComplete', handleRouteChange);
     };
-  }, [router, handleRouteChange]);
+  }, [router.events]);
 
   useEffect(() => {
     if (meshAdapters?.size > 0) {
       handleRouteChange();
     }
-  }, [meshAdapters, handleRouteChange]);
+  }, [meshAdapters?.size]);
 
   const handleConfigure = () => {
-    router.push('/settings#service-mesh');
+    router.push('/settings?settingsCategory=Adapters');
   };
 
   const pickImage = (adapter) => {
@@ -134,13 +139,14 @@ const MesheryPlayComponent = (props) => {
 
   const handleAdapterChange = () => {
     return (event) => {
+      const { setAdapter } = props;
       if (event.target.value !== '') {
         const selectedAdapter = meshAdapters.filter(
           ({ adapter_location }) => adapter_location === event.target.value,
         );
         if (selectedAdapter && selectedAdapter.size === 1) {
-          setAdapterState({ adapter: selectedAdapter[0] });
-          setAdapter({ selectedAdapter: selectedAdapter[0].name });
+          setAdapterState(selectedAdapter.get(0));
+          setAdapter({ selectedAdapter: selectedAdapter.get(0).name });
         }
       }
     };
@@ -199,14 +205,15 @@ const MesheryPlayComponent = (props) => {
     );
   }
 
-  if (adapter && adapter !== '') {
+  if (props.adapter && props.adapter !== '') {
     const indContent = renderIndividualAdapter();
     if (indContent !== '') {
       return indContent;
-    } // else it will render all the available adapters
+    }
   }
 
   const imageIcon = pickImage(adapter);
+
   return (
     <NoSsr>
       <>
@@ -223,7 +230,7 @@ const MesheryPlayComponent = (props) => {
                 value={adapter && adapter.adapter_location ? adapter.adapter_location : ''}
                 margin="normal"
                 variant="outlined"
-                onChange={handleAdapterChange}
+                onChange={handleAdapterChange()}
                 SelectProps={{
                   MenuProps: {
                     anchorOrigin: {
@@ -243,9 +250,7 @@ const MesheryPlayComponent = (props) => {
                     key={`${ada.adapter_location}_${new Date().getTime()}`}
                     value={ada.adapter_location}
                   >
-                    {/* <ListItemIcon> */}
                     {pickImage(ada)}
-                    {/* </ListItemIcon> */}
                     <span className={classes.expTitle}>{ada.adapter_location}</span>
                   </MenuItem>
                 ))}
@@ -262,7 +267,12 @@ const MesheryPlayComponent = (props) => {
   );
 };
 
-MesheryPlayComponent.propTypes = { classes: PropTypes.object.isRequired };
+MesheryPlayComponent.propTypes = {
+  classes: PropTypes.object.isRequired,
+  meshAdapters: PropTypes.object.isRequired,
+  setAdapter: PropTypes.func.isRequired,
+  adapter: PropTypes.string,
+};
 
 const mapDispatchToProps = (dispatch) => ({
   setAdapter: bindActionCreators(setAdapter, dispatch),
