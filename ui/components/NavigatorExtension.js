@@ -49,6 +49,7 @@ import { ThemeTogglerCore } from '@/themes/hooks';
 import RJSFForm from './MesheryMeshInterface/PatternService/RJSF';
 import { DynamicFullScrrenLoader } from './LoadingComponents/DynamicFullscreenLoader';
 import Troubleshoot from './TroubleshootingComponent';
+import TypingFilter from './TypingFilter';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -151,6 +152,7 @@ function NavigatorExtension({
           generateValidatePayload,
           capabilitiesRegistry,
           CapabilitiesRegistryClass: CapabilitiesRegistry,
+          TypingFilter: TypingFilter,
           useNotificationHook: useNotification,
           MDEditor: MDEditor,
           StructuredDataFormatter: FormatStructuredData,
