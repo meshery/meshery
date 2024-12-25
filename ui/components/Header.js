@@ -63,13 +63,20 @@ const styles = (theme) => ({
   userContainer: {
     paddingLeft: 1,
     display: 'flex',
-
     alignItems: 'center',
+    [theme.breakpoints.down('xs')]: {
+      width: '100%',
+      justifyContent: 'flex-end',
+      marginRight: '1rem',
+      marginBlock: '0.5rem',
+    },
   },
   userSpan: { marginLeft: theme.spacing(1) },
   pageTitleWrapper: {
     flexGrow: 1,
     marginRight: 'auto',
+    flexWrap: 'nowrap',
+    marginBlock: '0.5rem',
   },
   appBarOnDrawerOpen: {
     backgroundColor: theme.palette.secondary.mainBackground,
@@ -527,7 +534,7 @@ class Header extends React.PureComponent {
             >
               <Grid container alignItems="center">
                 <Hidden smUp>
-                  <Grid item>
+                  <Grid item style={{ display: 'none' }}>
                     <IconButton
                       color="inherit"
                       aria-label="Open drawer"
@@ -576,7 +583,7 @@ class Header extends React.PureComponent {
                     />
                   </div>
 
-                  <div data-test="settings-button" aria-describedby={abilityUpdated}>
+                  <div data-testid="settings-button" aria-describedby={abilityUpdated}>
                     <CanShow Key={keys.VIEW_SETTINGS}>
                       <IconButton onClick={() => Router.push('/settings')} color="inherit">
                         <OutlinedSettingsIcon
@@ -591,7 +598,7 @@ class Header extends React.PureComponent {
                     </CanShow>
                   </div>
 
-                  <div data-test="notification-button">
+                  <div data-testid="notification-button">
                     <NotificationDrawerButton />
                   </div>
 

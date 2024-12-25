@@ -22,6 +22,10 @@ import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
+import { VisibilityChipMenu } from '@layer5/sistent';
+import { VIEW_VISIBILITY } from '../Modals/Information/InfoModal';
+import { Public, Lock } from '@mui/icons-material';
+import { UsesSistent } from '../SistentWrapper';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
@@ -62,7 +66,7 @@ function FiltersCard_({
   const classes = useStyles();
 
   return (
-    <>
+    <UsesSistent>
       {fullScreen && (
         <YAMLDialog
           fullScreen={fullScreen}
@@ -91,7 +95,17 @@ function FiltersCard_({
               <Typography variant="h6" component="div">
                 {name}
               </Typography>
-              <img className={classes.img} src={`/static/img/${visibility}.svg`} />
+              <div className={classes.visibilityChip}>
+                <VisibilityChipMenu
+                  value={visibility}
+                  onChange={() => {}}
+                  enabled={false}
+                  options={[
+                    [VIEW_VISIBILITY.PUBLIC, Public],
+                    [VIEW_VISIBILITY.PRIVATE, Lock],
+                  ]}
+                />
+              </div>{' '}
             </div>
             <div className={classes.lastRunText}>
               <div>
@@ -272,7 +286,7 @@ function FiltersCard_({
           </Grid>
         </>
       </FlipCard>
-    </>
+    </UsesSistent>
   );
 }
 

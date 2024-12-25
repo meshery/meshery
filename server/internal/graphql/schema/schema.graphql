@@ -498,6 +498,7 @@ input PageFilter {
   updated_after: String
   visibility: [String!]
   metrics: String
+  populate: [String]
 }
 
 # ============== CATALOG =============================
@@ -508,11 +509,13 @@ input CatalogSelector {
   search: String!
   order: String!
   metrics: String
+  populate: [String]
   class: [String]
   technology: [String]
   patternType: [String]
   userid: [String]
   orgID: [String]
+  workspaceID: [String]
 }
 
 # ================ TELEMETRY ====================

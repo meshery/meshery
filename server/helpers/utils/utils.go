@@ -1,18 +1,16 @@
 package utils
 
 import (
-	"crypto/md5"
 	"database/sql/driver"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
-	"sync"
 
 	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/utils"
@@ -29,7 +27,7 @@ const (
 	HelmChartOperatorName = "meshery-operator"
 	MesheryFolder         = ".meshery"
 	ManifestsFolder       = "manifests"
-	registryLocation      = ".meshery/models"
+	RegistryLocation      = ".meshery/models"
 	DefVersion            = "1.0.0"
 )
 
@@ -137,15 +135,9 @@ func IsClosed[K any](ch chan K) bool {
 
 const UI = "../../ui/public/static/img/meshmodels" //Relative to cmd/main.go
 var UISVGPaths = make([]string, 1)
-var hashCheckSVG = make(map[string]string)
-var mx sync.Mutex
 
-func writeHashCheckSVG(key string, val string) {
-	mx.Lock()
-	hashCheckSVG[key] = val
-	mx.Unlock()
-}
 func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename string) (svgColorPath, svgWhitePath, svgCompletePath string) {
+
 	filename = strings.ToLower(filename)
 	successCreatingDirectory := false
 	defer func() {
@@ -162,13 +154,6 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 		}
 		successCreatingDirectory = true
 
-		hash := md5.Sum([]byte(svgColor))
-		hashString := hex.EncodeToString(hash[:])
-		pathsvg := hashCheckSVG[hashString]
-		if pathsvg != "" { // the image has already been loaded, point the component to that path
-			svgColorPath = pathsvg
-			goto White
-		}
 		f, err := os.Create(filepath.Join(path, filename+"-color.svg"))
 		if err != nil {
 			fmt.Println(err)
@@ -180,10 +165,9 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 			return
 		}
 		svgColorPath = getRelativePathForAPI(filepath.Join(dirname, "color", filename+"-color.svg")) //Replace the actual SVG with path to SVG
-		writeHashCheckSVG(hashString, svgColor)
 
 	}
-White:
+
 	if svgWhite != "" {
 		path := filepath.Join(UI, dirname, "white")
 		err := os.MkdirAll(path, 0777)
@@ -193,13 +177,6 @@ White:
 		}
 		successCreatingDirectory = true
 
-		hash := md5.Sum([]byte(svgWhite))
-		hashString := hex.EncodeToString(hash[:])
-		pathsvg := hashCheckSVG[hashString]
-		if pathsvg != "" { // the image has already been loaded, point the component to that path
-			svgWhitePath = pathsvg
-			goto Complete
-		}
 		f, err := os.Create(filepath.Join(path, filename+"-white.svg"))
 		if err != nil {
 			fmt.Println(err)
@@ -211,10 +188,8 @@ White:
 			return
 		}
 		svgWhitePath = getRelativePathForAPI(filepath.Join(dirname, "white", filename+"-white.svg")) //Replace the actual SVG with path to SVG
-		writeHashCheckSVG(hashString, svgWhite)
 
 	}
-Complete:
 	if svgComplete != "" {
 		path := filepath.Join(UI, dirname, "complete")
 		err := os.MkdirAll(path, 0777)
@@ -224,13 +199,6 @@ Complete:
 		}
 		successCreatingDirectory = true
 
-		hash := md5.Sum([]byte(svgComplete))
-		hashString := hex.EncodeToString(hash[:])
-		pathsvg := hashCheckSVG[hashString]
-		if pathsvg != "" { // the image has already been loaded, point the component to that path
-			svgCompletePath = pathsvg
-			return
-		}
 		f, err := os.Create(filepath.Join(path, filename+"-complete.svg"))
 		if err != nil {
 			fmt.Println(err)
@@ -242,7 +210,6 @@ Complete:
 			return
 		}
 		svgCompletePath = getRelativePathForAPI(filepath.Join(dirname, "complete", filename+"-complete.svg")) //Replace the actual SVG with path to SVG
-		writeHashCheckSVG(hashString, svgComplete)
 
 	}
 	return
@@ -501,7 +468,7 @@ func ReplaceSVGData(model *model.ModelDefinition) error {
 	return nil
 }
 func CreateVersionedDirectoryForModelAndComp(version, modelName string) (string, string, error) {
-	modelLocation := filepath.Join(os.Getenv("HOME"), registryLocation)
+	modelLocation := filepath.Join(os.Getenv("HOME"), RegistryLocation)
 	modelDirPath := filepath.Join(modelLocation, modelName, version, DefVersion)
 	err := utils.CreateDirectory(modelDirPath)
 	if err != nil {
@@ -511,4 +478,59 @@ func CreateVersionedDirectoryForModelAndComp(version, modelName string) (string,
 	compDirPath := filepath.Join(modelDirPath, "components")
 	err = utils.CreateDirectory(compDirPath)
 	return modelDirPath, compDirPath, err
+}
+func CopyDirectory(src string, dst string) error {
+	entries, err := os.ReadDir(src)
+	if err != nil {
+		return err
+	}
+
+	for _, entry := range entries {
+		srcPath := filepath.Join(src, entry.Name())
+		dstPath := filepath.Join(dst, entry.Name())
+
+		info, err := entry.Info()
+		if err != nil {
+			return err
+		}
+
+		if info.IsDir() {
+			if err := os.MkdirAll(dstPath, info.Mode()); err != nil {
+				return err
+			}
+			if err := CopyDirectory(srcPath, dstPath); err != nil {
+				return err
+			}
+		} else {
+			if err := copyFile(srcPath, dstPath); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
+func copyFile(src, dst string) error {
+	srcFile, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer srcFile.Close()
+
+	dstFile, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer dstFile.Close()
+
+	if _, err := io.Copy(dstFile, srcFile); err != nil {
+		return err
+	}
+
+	// Ensure the destination file has the same permissions as the source
+	srcInfo, err := os.Stat(src)
+	if err != nil {
+		return err
+	}
+	return os.Chmod(dst, srcInfo.Mode())
 }

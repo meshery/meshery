@@ -81,7 +81,7 @@ components:
 - name: packet-capture
   colorIcon: assets/img/integrations/antrea/components/packet-capture/icons/color/packet-capture-color.svg
   whiteIcon: assets/img/integrations/antrea/components/packet-capture/icons/white/packet-capture-white.svg
-  description: #00c1d5
+  description: 
 featureList: [
   "Network policy enforcement",
   "Kubernetes network policy integration",

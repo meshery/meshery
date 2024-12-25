@@ -64,6 +64,8 @@ https://docs.layer5.io/cloud/spaces/environments/
 </div>
 </pre>
 
+
+{% include alert.html type="info" title="Note :" content="If a valid UUID is not provided for --orgId, a default 'zero UUID' will be used." %}
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

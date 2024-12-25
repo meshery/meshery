@@ -77,7 +77,7 @@ mesheryctl design apply [design-name]
 			// search and fetch patterns with pattern-name
 			utils.Log.Debug("Fetching designs")
 
-			req, err = utils.NewRequest("GET", patternURL+"?search="+patternName, nil)
+			req, err = utils.NewRequest("GET", patternURL+"?populate=pattern_file&search="+patternName, nil)
 			if err != nil {
 				utils.Log.Error(err)
 				return nil
@@ -287,7 +287,7 @@ func multiplePatternsConfirmation(profiles []models.MesheryPattern) int {
 		fmt.Printf("Name: %v\n", a.Name)
 		fmt.Printf("ID: %s\n", a.ID.String())
 		fmt.Printf("DesignFile:\n")
-		fmt.Printf(a.PatternFile)
+		fmt.Printf("%s\n", a.PatternFile)
 		fmt.Println("---------------------")
 	}
 
