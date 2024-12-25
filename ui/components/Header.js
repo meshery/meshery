@@ -13,7 +13,7 @@ import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
 import Slide from '@material-ui/core/Slide';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import { alpha, Button } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import { Edit, Search } from '@material-ui/icons';
 import { TextField } from '@material-ui/core';
@@ -37,7 +37,7 @@ import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
 import { Checkbox, MenuIcon, OutlinedSettingsIcon } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
-import { Colors, notificationColors } from '@/themes/app';
+import { Colors } from '@/themes/app';
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
@@ -45,6 +45,7 @@ import { UsesSistent } from './SistentWrapper';
 import Router from 'next/router';
 import HeaderMenu from './HeaderMenu';
 import ConnectionModal from './ConnectionModal';
+import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -87,6 +88,12 @@ const styles = (theme) => ({
   },
   appBarOnDrawerClosed: {
     backgroundColor: theme.palette.secondary.mainBackground,
+  },
+  addClusterButtonClass: {
+    borderRadius: 5,
+    marginRight: '2rem',
+    width: '100%',
+    marginTop: '1rem',
   },
   toolbarOnDrawerClosed: {
     minHeight: 59,
@@ -206,186 +213,11 @@ const styles = (theme) => ({
       boxShadow: '0 0 10px orange, 0 0 60px orange,0 0 200px yellow, inset 0 0 80px yellow',
     },
   },
-  chipFormControl: {
-    minWidth: '100%',
-    '& .MuiSelect-icon': {
-      marginRight: '10px !important',
-    },
-  },
-  statusChip: {
-    minWidth: '145px !important',
-    width: '100% !important',
-    display: 'flex !important',
-    justifyContent: 'flex-start !important',
-    textTransform: 'capitalize',
-    borderRadius: '0 !important',
-    padding: '6px 8px',
-    '& .MuiChip-label': {
-      paddingTop: '3px',
-      fontWeight: '400',
-    },
-    '&:hover': {
-      boxShadow: '0px 1px 2px 0px rgba(0, 0, 0, 0.25)',
-      cursor: 'pointer',
-    },
-  },
-  statusSelect: {
-    '& .MuiSelect-select.MuiSelect-select': {
-      padding: '0',
-    },
-  } /** Connection status select colors according to the status */,
-  ignored: {
-    '& .MuiChip-label': {
-      color: `${theme.palette.secondary.default}`,
-    },
-    background: `${theme.palette.secondary.default}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.default} !important`,
-    },
-  },
-  connected: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.success,
-    },
-    background: `${theme.palette.secondary.success}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.success} !important`,
-    },
-  },
-  registered: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.primary,
-    },
-    background: `${theme.palette.secondary.primary}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.primary} !important`,
-    },
-  },
-  register: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.primary,
-    },
-    background: `${theme.palette.secondary.primary}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.primary} !important`,
-    },
-  },
-  discovered: {
-    '& .MuiChip-label': {
-      color: notificationColors.info,
-    },
-    background: `${notificationColors.info}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${notificationColors.info} !important`,
-    },
-  },
-  deleted: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.error,
-    },
-    background: `${theme.palette.secondary.lightError}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.error} !important`,
-    },
-  },
-  maintenance: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.warning,
-    },
-    background: `${theme.palette.secondary.warning}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.warning} !important`,
-    },
-  },
-  disconnected: {
-    '& .MuiChip-label': {
-      color: notificationColors.lightwarning,
-    },
-    background: `${notificationColors.lightwarning}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${notificationColors.lightwarning} !important`,
-    },
-  },
-  notfound: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.text,
-    },
-    background: `${theme.palette.secondary.disableButtonBg}60 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.iconMain} !important`,
-    },
-  },
-  centerContent: {
-    display: 'flex',
-    justifyContent: 'center',
-  },
-  innerTableWrapper: {
-    background: `linear-gradient(90deg, ${theme.palette.secondary.innertableBg1} 0.04%, ${theme.palette.secondary.innertableBg2} 100.04%)`,
-    borderRadius: 0,
-    padding: '0',
-  },
-  innerTableContainer: {
-    background: theme.palette.secondary.innertableBg1,
-    margin: '10px 10px 10px 13px',
-    borderLeft: `9px solid ${theme.palette.secondary.pinball}`,
-    borderRadius: '10px 0 0 10px',
-    width: 'calc(100% - 23px)',
-    border: 'none',
-    overflowX: 'hidden',
-  },
-  noGutter: {
-    padding: '0',
-  },
-  contentContainer: {
-    [theme.breakpoints.down(1050)]: {
-      flexDirection: 'column',
-    },
-    flexWrap: 'noWrap',
-  },
-  createButton: {
-    display: 'flex',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    whiteSpace: 'nowrap',
-  },
-  viewSwitchButton: {
-    justifySelf: 'flex-end',
-    marginLeft: 'auto',
-    paddingLeft: '1rem',
-  },
-  tableHeader: {
-    fontWeight: 'bolder',
-    fontSize: 18,
-  },
-  muiRow: {
-    '& .MuiTableCell-root': {
-      // textTransform: 'capitalize',
-    },
-  },
-  list: {
-    display: 'flex',
-    flexDirection: 'column',
-    gridGap: '0.5rem',
-    marginBlock: '0.5rem',
-    borderRadius: '0.25rem',
-    backgroundColor: theme.palette.secondary.honeyComb,
-  },
-  listButton: {
-    '&:hover': {
-      backgroundColor: alpha(theme.palette.secondary.link2, 0.25),
-    },
-  },
-  listItem: {
-    display: 'flex',
-    gridGap: '0.5rem',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-  },
-  listContainer: {
+  addButton: {
     width: '100%',
-    justifyContent: 'flex-start',
-    display: 'flex',
-    alignItems: 'center',
+    whiteSpace: 'nowrap',
+    color: theme.palette.secondary.text,
+    margin: '0.5rem',
   },
 });
 
@@ -660,6 +492,12 @@ function K8sContextMenu({
                         />
                       );
                     })}
+                    {contexts?.contexts?.length > 0 && (
+                      <MesherySettingsEnvButtons
+                        variant="outlined"
+                        addClusterButtonClass={classes.addClusterButtonClass}
+                      />
+                    )}
                   </div>
                 </Paper>
               </ClickAwayListener>
@@ -671,7 +509,6 @@ function K8sContextMenu({
       <ConnectionModal
         isOpenModal={isConnectionOpenModal}
         setIsOpenModal={setIsConnectionOpenModal}
-        classes={classes}
         meshsyncControllerState={meshsyncControllerState}
         connectionMetadataState={connectionMetadataState}
       />
