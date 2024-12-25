@@ -125,7 +125,6 @@ function Connections(props) {
 
           {tab === 0 && CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) && (
             <ConnectionTable
-              classes={classes}
               meshsyncControllerState={meshsyncControllerState}
               connectionMetadataState={connectionMetadataState}
             />

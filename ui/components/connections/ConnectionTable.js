@@ -14,6 +14,7 @@ import {
   MenuItem,
   Box,
   Chip,
+  withStyles,
 } from '@material-ui/core';
 import {
   CustomTooltip,
@@ -71,6 +72,7 @@ import { DeleteIcon } from '@layer5/sistent';
 import { UsesSistent } from '../SistentWrapper';
 import { formatDate } from '../DataFormatter';
 import { getFallbackImageBasedOnKind } from '@/utils/fallback';
+import styles from './styles';
 
 const ACTION_TYPES = {
   FETCH_CONNECTIONS: {
@@ -1056,12 +1058,19 @@ const ConnectionTable = ({ classes, meshsyncControllerState, connectionMetadataS
       });
     }
   }, [environmentsError, connectionError, isEnvironmentsSuccess]);
-
   return (
     <>
       <div className={StyleClass.toolWrapper} style={{ marginBottom: '5px', marginTop: '-30px' }}>
         <div className={classes.createButton}>
-          <MesherySettingsEnvButtons />
+          <MesherySettingsEnvButtons
+            variant="contained"
+            // addClusterButtonClass={{
+            //   borderRadius: 5,
+            //   marginRight: '2rem',
+            //   padding: '8px',
+            // }}
+            addClusterButtonClass={classes.addClusterButtonClass}
+          />
         </div>
         <UsesSistent>
           <div
@@ -1140,4 +1149,4 @@ const ConnectionTable = ({ classes, meshsyncControllerState, connectionMetadataS
   );
 };
 
-export default ConnectionTable;
+export default withStyles(styles)(ConnectionTable);

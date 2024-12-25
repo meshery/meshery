@@ -7,7 +7,6 @@ import ConnectionTable from './connections/ConnectionTable';
 const ConnectionModal = ({
   isOpenModal,
   setIsOpenModal,
-  classes,
   meshsyncControllerState,
   connectionMetadataState,
 }) => {
@@ -24,9 +23,8 @@ const ConnectionModal = ({
         maxWidth="xl"
       >
         <ModalBody>
-          <div style={{ marginBlock: '2rem' }}>
+          <div style={{ marginBlock: '2rem', maxHeight: '65vh' }}>
             <ConnectionTable
-              classes={classes}
               meshsyncControllerState={meshsyncControllerState}
               connectionMetadataState={connectionMetadataState}
             />
