@@ -67,6 +67,35 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
+		// Check if both "spreadsheet-id" and "spreadsheet-cred" are provided together
+		if (spreadsheeetID == "" && spreadsheeetCred != "") || (spreadsheeetID != "" && spreadsheeetCred == "") {
+			return fmt.Errorf("both 'spreadsheet-id' and 'spreadsheet-cred' must be provided together")
+		}
+
+		// Check if both "registrant-def" and "registrant-cred" are provided together
+		if (pathToRegistrantConnDefinition == "" && pathToRegistrantCredDefinition != "") ||
+			(pathToRegistrantConnDefinition != "" && pathToRegistrantCredDefinition == "") {
+			return fmt.Errorf("both 'registrant-def' and 'registrant-cred' must be provided together")
+		}
+
+		// Check mutually exclusive flags
+		if spreadsheeetID != "" && pathToRegistrantConnDefinition != "" {
+			return fmt.Errorf("'spreadsheet-id' and 'registrant-def' cannot be used together")
+		}
+
+		// Check mutually exclusive flags
+		if spreadsheeetCred != "" && pathToRegistrantCredDefinition != "" {
+			return fmt.Errorf("'spreadsheet-cred' and 'registrant-cred' cannot be used together")
+		}
+
+		if csvDirectory != "" && (spreadsheeetID != "" || pathToRegistrantConnDefinition != "") {
+			return fmt.Errorf("'directory' flag cannot be used with 'spreadsheet-id' or 'registrant-def'")
+		}
+
+		if modelName == "" && csvDirectory == "" && spreadsheeetID == "" && pathToRegistrantConnDefinition == "" {
+			return fmt.Errorf("at least one of the following flags must be provided: 'model', 'directory', 'spreadsheet-id', or 'registrant-def'")
+		}
+
 		var wg sync.WaitGroup
 		cwd, _ = os.Getwd()
 		registryLocation = filepath.Join(cwd, outputLocation)
