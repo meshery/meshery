@@ -180,13 +180,13 @@ export const TextWithLinks = ({ text, ...typographyProps }) => {
   return <Typography {...typographyProps}> {elements}</Typography>;
 };
 
-export const KeyValue = ({ Key, Value, showAll }) => {
+export const KeyValue = ({ Key, Value }) => {
   const theme = useTheme();
   return (
     <div
       style={{
         display: 'flex',
-        flexDirection: showAll ? 'row' : 'column',
+        flexDirection: 'column',
         alignItems: 'flex-start',
         gap: '0.25rem',
         flexWrap: 'wrap',
@@ -200,7 +200,6 @@ export const KeyValue = ({ Key, Value, showAll }) => {
           overflow: 'hidden',
           whiteSpace: 'nowrap',
           color: theme.palette.text.primary,
-          minWidth: showAll && '25%',
         }}
       />
 
@@ -223,24 +222,25 @@ export const KeyValue = ({ Key, Value, showAll }) => {
 };
 
 export const SectionHeading = ({ children, ...props }) => {
-  // const level = useContext(LevelContext);
-  // const fontSize = Math.max(0.9, 1.3 - 0.1 * level) + 'rem';
-  // const margin = Math.max(0.25, 0.55 - 0.15 * level) + 'rem';
+  const level = useContext(LevelContext);
+  const fontSize = Math.max(0.9, 1.3 - 0.1 * level) + 'rem';
+  const margin = Math.max(0.25, 0.55 - 0.15 * level) + 'rem';
 
   return (
-    // <div style={{ marginBlock: margin }}>
-    <Typography
-      variant="body1"
-      style={{
-        fontWeight: 'bold !important',
-        textTransform: 'capitalize',
-        wordBreak: 'break-all',
-        // fontSize,
-      }}
-      {...props}
-    >
-      {children}
-    </Typography>
+    <div style={{ marginBlock: margin }}>
+      <Typography
+        variant="body1"
+        style={{
+          fontWeight: 'bold !important',
+          textTransform: 'capitalize',
+          wordBreak: 'break-all',
+          fontSize,
+        }}
+        {...props}
+      >
+        {children}
+      </Typography>
+    </div>
   );
 };
 
@@ -289,7 +289,7 @@ export function reorderObjectProperties(obj, order) {
   return { ...orderedProperties, ...remainingProperties };
 }
 
-const DynamicFormatter = ({ data, uiSchema, showAll }) => {
+const DynamicFormatter = ({ data, uiSchema }) => {
   const { propertyFormatters } = useContext(FormatterContext);
   const level = useContext(LevelContext);
 
@@ -323,9 +323,13 @@ const DynamicFormatter = ({ data, uiSchema, showAll }) => {
             sm={12}
             {...(uiSchema?.[title] || {})}
             spacing={3}
-            style={{ marginBlock: '0.3rem' }}
+            style={{
+              marginBlock: '0.4rem',
+              maxWidth: title !== 'name' && 'fit-content',
+              marginRight: '1rem',
+            }}
           >
-            <KeyValue key={title} Key={title} Value={data} showAll={showAll} />
+            <KeyValue key={title} Key={title} Value={data} />
           </Grid>
         );
       }
@@ -352,7 +356,7 @@ const DynamicFormatter = ({ data, uiSchema, showAll }) => {
   return null;
 };
 
-export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema, showAll }) => {
+export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema }) => {
   if (!data || isEmptyAtAllDepths(data)) {
     return null;
   }
@@ -369,10 +373,10 @@ export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema, 
           style={{
             wordBreak: 'break-word',
             overflowWrap: 'break-word',
-            gap: '0.3rem',
+            gap: '0.3rem 1rem',
           }}
         >
-          <DynamicFormatter data={data} uiSchema={uiSchema} showAll={showAll} />
+          <DynamicFormatter data={data} uiSchema={uiSchema} />
         </Grid>
       </FormatterContext.Provider>
     </UsesSistent>
