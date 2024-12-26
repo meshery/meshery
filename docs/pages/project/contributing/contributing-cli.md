@@ -80,13 +80,13 @@ The following principles should be taken in mind while designing `mesheryctl` co
 
 Part of delivering a great user experience is providing intuitive interfaces. In the case of `mesheryctl` takes inspiration from and delivers similar user experiences as popular CLIs do in this ecosystem, like `kubectl` and `docker`. Here is relevant `kubectl` information to reference - [Kubectl SIG CLI Community Meeting Minutes](https://docs.google.com/document/u/2/d/1r0YElcXt6G5mOWxwZiXgGu_X6he3F--wKwg-9UBc29I/edit#), [contributing to kubectl](https://github.com/kubernetes/community/blob/master/sig-cli/CONTRIBUTING.md), [code](https://github.com/kubernetes/kubernetes/tree/master/pkg/kubectl/cmd/config).
 
-Command structure and command behavior should be designed in such a way that they are intuitive. Users should ideally be able to understand what a command is used for without having to extensively go through the documentation. For example, `mesheryctl pattern apply -f <pattern name>` requires no further clarification as it is evident that the command will apply the pattern specified.
+Command structure and command behavior should be designed in such a way that they are intuitive. Users should ideally be able to understand what a command is used for without having to extensively go through the documentation. For example, `mesheryctl design apply -f <pattern name>` requires no further clarification as it is evident that the command will apply the pattern specified.
 
 Consistency is key when designing intuitive interfaces. Although `mesheryctl perf run -f <performance profile name>` may sound more intuitive, users who are experienced in using the CLI will prefer the consistent verb `apply` over `run`. This will also ensure a consistent command language making memorizing easier.
 
 **Flags**
 
-Consistency should also be enforced when chaining commands and using flags. For example, if `mesheryctl pattern` has a `list` and `view` command and has an `-all` and `--output` flag, then, similar commands like `mesheryctl perf` should also support the same commands and flags and provide a consistent user experience.
+Consistency should also be enforced when chaining commands and using flags. For example, if `mesheryctl design` has a `list` and `view` command and has an `-all` and `--output` flag, then, similar commands like `mesheryctl perf` should also support the same commands and flags and provide a consistent user experience.
 
 ### Rational defaults overridden with flags
 
@@ -177,15 +177,15 @@ Also, if the screenshot is present in the command, an `Annotation` macro variabl
 
 {% capture code_content %}var linkDocPatternApply = map[string]string{
 	"link":    "![pattern-apply-usage](/assets/img/mesheryctl/patternApply.png)",
-	"caption": "Usage of mesheryctl pattern apply",
+	"caption": "Usage of mesheryctl design apply",
 }
 ...
 Example:```
 // apply a pattern file
-mesheryctl pattern apply -f [file | URL]
+mesheryctl design apply -f [file | URL]
 
 // deploy a saved pattern
-mesheryctl pattern apply [pattern-name]```,
+mesheryctl design apply [pattern-name]```,
 Annotations: linkDocPatternApply,
 ...
 {% endcapture %}
@@ -209,10 +209,10 @@ If your mesheryctl docs end like this, add the include tag at the end of the fil
 {% capture code_content %}
 Example:```
 // apply a pattern file
-mesheryctl pattern apply -f [file | URL]
+mesheryctl design apply -f [file | URL]
 
 // deploy a saved pattern
-mesheryctl pattern apply [pattern-name]```,
+mesheryctl design apply [pattern-name]```,
 Annotations: linkDocPatternApply,
 ...
 <pre class='codeblock-pre'>
