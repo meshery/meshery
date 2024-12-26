@@ -8,7 +8,7 @@ import { useGetEnvironmentConnectionsQuery } from '../../../rtk-query/environmen
 import classNames from 'classnames';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { Checkbox } from '@layer5/sistent';
+import { Checkbox, useTheme } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
 
 export const formattoLongDate = (date) => {
@@ -20,12 +20,16 @@ export const formattoLongDate = (date) => {
 };
 
 export const TransferButton = ({ title, count, onAssign, classes, disabled }) => {
+  const theme = useTheme();
   return (
     <Button
       variant="contained"
       color="primary"
       disabled={disabled}
       className={classes.popupButton}
+      style={{
+        backgroundColor: theme.palette.background.secondary,
+      }}
       onClick={onAssign}
     >
       <Grid>
@@ -71,7 +75,7 @@ const EnvironmentCard = ({
   const environmentConnectionsCount = environmentConnections?.total_count || 0;
 
   const deleted = environmentDetails.deleted_at.Valid;
-
+  const theme = useTheme();
   return (
     <FlipCard
       disableFlip={
@@ -85,6 +89,7 @@ const EnvironmentCard = ({
           style={{
             minHeight: '320px',
             height: '320px',
+            backgroundColor: theme.palette.background.hover,
           }}
         >
           <Grid style={{ display: 'flex', flexDirection: 'row', pb: 1 }}>
