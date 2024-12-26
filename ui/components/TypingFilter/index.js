@@ -160,7 +160,7 @@ const FilterValueSuggestions = ({ filterStateMachine, dispatchFilterMachine, fil
  * @param {boolean} autoFilter - A boolean to indicate if the filter should be applied automatically (on user input) .
  * @returns {JSX.Element} - A React JSX element representing the TypingFilter component.
  */
-const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false }) => {
+const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false, placeholder }) => {
   const theme = useTheme();
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -244,7 +244,7 @@ const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false }) => {
       <TextField
         ref={inputFieldRef}
         variant="outlined"
-        placeholder="Filter Notifications"
+        placeholder={placeholder}
         fullWidth
         size="small"
         className={classes.input}
@@ -285,6 +285,8 @@ const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false }) => {
                 <div
                   className={classes.dropDown}
                   style={{
+                    maxHeight: '20rem',
+                    overflowY: 'auto',
                     width: inputFieldRef.current ? inputFieldRef.current.clientWidth : 0,
                   }}
                 >
