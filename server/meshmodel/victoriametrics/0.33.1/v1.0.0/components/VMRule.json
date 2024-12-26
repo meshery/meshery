@@ -1,0 +1,74 @@
+{
+  "capabilities": null,
+  "component": {
+   "kind": "VMRule",
+   "schema": "{\n \"description\": \"VMRule defines rule records for vmalert application\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VMRuleSpec defines the desired state of VMRule\",\n   \"properties\": {\n    \"groups\": {\n     \"description\": \"Groups list of group rules\",\n     \"items\": {\n      \"description\": \"RuleGroup is a list of sequentially evaluated recording and alerting rules.\",\n      \"properties\": {\n       \"concurrency\": {\n        \"description\": \"Concurrency defines how many rules execute at once.\",\n        \"type\": \"integer\"\n       },\n       \"eval_alignment\": {\n        \"description\": \"Optional\\nThe evaluation timestamp will be aligned with group's interval,\\ninstead of using the actual timestamp that evaluation happens at.\\nIt is enabled by default to get more predictable results\\nand to visually align with graphs plotted via Grafana or vmui.\",\n        \"type\": \"boolean\"\n       },\n       \"eval_delay\": {\n        \"description\": \"Optional\\nAdjust the `time` parameter of group evaluation requests to compensate intentional query delay from the datasource.\",\n        \"type\": \"string\"\n       },\n       \"eval_offset\": {\n        \"description\": \"Optional\\nGroup will be evaluated at the exact offset in the range of [0...interval].\",\n        \"type\": \"string\"\n       },\n       \"extra_filter_labels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"ExtraFilterLabels optional list of label filters applied to every rule's\\nrequest within a group. Is compatible only with VM datasource.\\nSee more details [here](https://docs.victoriametrics.com/#prometheus-querying-api-enhancements)\\nDeprecated, use params instead\",\n        \"type\": \"object\"\n       },\n       \"headers\": {\n        \"description\": \"Headers contains optional HTTP headers added to each rule request\\nMust be in form `header-name: value`\\nFor example:\\n headers:\\n   - \\\"CustomHeader: foo\\\"\\n   - \\\"CustomHeader2: bar\\\"\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"interval\": {\n        \"description\": \"evaluation interval for group\",\n        \"type\": \"string\"\n       },\n       \"labels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"Labels optional list of labels added to every rule within a group.\\nIt has priority over the external labels.\\nLabels are commonly used for adding environment\\nor tenant-specific tag.\",\n        \"type\": \"object\"\n       },\n       \"limit\": {\n        \"description\": \"Limit the number of alerts an alerting rule and series a recording\\nrule can produce\",\n        \"type\": \"integer\"\n       },\n       \"name\": {\n        \"description\": \"Name of group\",\n        \"type\": \"string\"\n       },\n       \"notifier_headers\": {\n        \"description\": \"NotifierHeaders contains optional HTTP headers added to each alert request which will send to notifier\\nMust be in form `header-name: value`\\nFor example:\\n headers:\\n   - \\\"CustomHeader: foo\\\"\\n   - \\\"CustomHeader2: bar\\\"\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"params\": {\n        \"additionalProperties\": {\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        },\n        \"description\": \"Params optional HTTP URL parameters added to each rule request\",\n        \"type\": \"object\"\n       },\n       \"rules\": {\n        \"description\": \"Rules list of alert rules\",\n        \"items\": {\n         \"description\": \"Rule describes an alerting or recording rule.\",\n         \"properties\": {\n          \"alert\": {\n           \"description\": \"Alert is a name for alert\",\n           \"type\": \"string\"\n          },\n          \"annotations\": {\n           \"additionalProperties\": {\n            \"type\": \"string\"\n           },\n           \"description\": \"Annotations will be added to rule configuration\",\n           \"type\": \"object\"\n          },\n          \"debug\": {\n           \"description\": \"Debug enables logging for rule\\nit useful for tracking\",\n           \"type\": \"boolean\"\n          },\n          \"expr\": {\n           \"description\": \"Expr is query, that will be evaluated at dataSource\",\n           \"type\": \"string\"\n          },\n          \"for\": {\n           \"description\": \"For evaluation interval in time.Duration format\\n30s, 1m, 1h  or nanoseconds\",\n           \"type\": \"string\"\n          },\n          \"keep_firing_for\": {\n           \"description\": \"KeepFiringFor will make alert continue firing for this long\\neven when the alerting expression no longer has results.\\nUse time.Duration format, 30s, 1m, 1h  or nanoseconds\",\n           \"type\": \"string\"\n          },\n          \"labels\": {\n           \"additionalProperties\": {\n            \"type\": \"string\"\n           },\n           \"description\": \"Labels will be added to rule configuration\",\n           \"type\": \"object\"\n          },\n          \"record\": {\n           \"description\": \"Record represents a query, that will be recorded to dataSource\",\n           \"type\": \"string\"\n          },\n          \"update_entries_limit\": {\n           \"description\": \"UpdateEntriesLimit defines max number of rule's state updates stored in memory.\\nOverrides `-rule.updateEntriesLimit` in vmalert.\",\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"tenant\": {\n        \"description\": \"Tenant id for group, can be used only with enterprise version of vmalert.\\nSee more details [here](https://docs.victoriametrics.com/vmalert#multitenancy).\",\n        \"type\": \"string\"\n       },\n       \"type\": {\n        \"description\": \"Type defines datasource type for enterprise version of vmalert\\npossible values - prometheus,graphite,vlogs\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\",\n       \"rules\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"groups\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"VM Rule\",\n \"type\": \"object\"\n}",
+   "version": "operator.victoriametrics.com/v1beta1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "VM Rule",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://github.com/VictoriaMetrics/helm-charts/releases/download/victoria-metrics-k8s-stack-0.33.1/victoria-metrics-k8s-stack-0.33.1.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "Observability and Analysis"
+   },
+   "displayName": "Victoria Metrics",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://github.com/VictoriaMetrics/helm-charts/releases/download/victoria-metrics-k8s-stack-0.33.1/victoria-metrics-k8s-stack-0.33.1.tgz",
+    "styleOverrides": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+   },
+   "model": {
+    "version": "0.33.1"
+   },
+   "name": "victoriametrics",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Monitoring",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null,
+   "components_count": 0,
+   "relationships_count": 0
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "",
+   "svgWhite": ""
+  },
+  "version": "v1.0.0"
+ }
