@@ -10,7 +10,7 @@ command: pattern
 subcommand: export
 ---
 
-# mesheryctl pattern export
+# mesheryctl design export
 
 Export a design from Meshery
 
@@ -23,7 +23,7 @@ By default, the exported design will be saved in the current directory. The diff
 type allowed are oci, original, and current. The default design type is current.
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern export [pattern-name | ID] [flags]
+mesheryctl design export [pattern-name | ID] [flags]
 
 </div>
 </pre> 
@@ -39,7 +39,7 @@ mesheryctl pattern export [pattern-name | ID] [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	mesheryctl pattern export [pattern-name | ID]
+	mesheryctl design export [pattern-name | ID]
 
 </div>
 </pre> 
@@ -53,7 +53,7 @@ mesheryctl pattern export [pattern-name | ID] [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	mesheryctl pattern export [pattern-name | ID] --type [design-type]
+	mesheryctl design export [pattern-name | ID] --type [design-type]
 
 </div>
 </pre> 
@@ -67,7 +67,7 @@ mesheryctl pattern export [pattern-name | ID] [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	mesheryctl pattern export [pattern-name | ID] --output ./designs
+	mesheryctl design export [pattern-name | ID] --output ./designs
 
 </div>
 </pre> 
@@ -81,7 +81,7 @@ mesheryctl pattern export [pattern-name | ID] [flags]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	mesheryctl pattern export [pattern-name | ID] --type [design-type] --output ./exports
+	mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exports
 
 </div>
 </pre> 

@@ -38,6 +38,7 @@ import { capitalize } from 'lodash';
 import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
 import { DeploymentSummaryFormatter } from './DeploymentSummary';
 import { SEVERITY } from '../NotificationCenter/constants';
+import EnvironmentModal from '../Modals/EnvironmentModal';
 
 export const ValidateContent = {
   btnText: 'Next',
@@ -123,11 +124,16 @@ const SelectTargetStep = () => {
     state.get('connectionMetadataState'),
   );
   const meshsyncControllerState = useLegacySelector((state) => state.get('controllerState'));
+  const [isEnvrionmentModalOpen, setIsEnvrionmentModalOpen] = useState(false);
   return (
     <DeploymentTargetContext.Provider
       value={{ connectionMetadataState, meshsyncControllerState, organization }}
     >
-      <SelectTargetEnvironments organization={organization} />
+      <SelectTargetEnvironments setIsEnvrionmentModalOpen={setIsEnvrionmentModalOpen} />
+      <EnvironmentModal
+        isOpenModal={isEnvrionmentModalOpen}
+        setIsOpenModal={setIsEnvrionmentModalOpen}
+      />
     </DeploymentTargetContext.Provider>
   );
 };

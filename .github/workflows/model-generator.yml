@@ -63,7 +63,6 @@ jobs:
         with:
           commit_user_name: l5io
           commit_user_email: ci@layer5.io
-          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "New Models generated and updated"
           branch: master
