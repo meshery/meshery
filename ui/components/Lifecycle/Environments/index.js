@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { Button, Grid, NoSsr, Typography, Box } from '@material-ui/core';
-import { connect } from 'react-redux';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { withStyles } from '@material-ui/core/styles';
@@ -14,7 +13,7 @@ import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import EnvironmentCard from './environment-card';
 import EnvironmentIcon from '../../../assets/icons/Environment';
 import { EVENT_TYPES } from '../../../lib/event-types';
-import { updateProgress } from '../../../lib/store';
+import { updateProgress, useLegacySelector } from '../../../lib/store';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import useStyles from '../../../assets/styles/general/tool.styles';
 import SearchBar from '../../../utils/custom-search';
@@ -29,6 +28,7 @@ import {
   PrimaryActionButtons,
   createAndEditEnvironmentSchema,
   createAndEditEnvironmentUiSchema,
+  useTheme,
 } from '@layer5/sistent';
 import ConnectionIcon from '../../../assets/icons/Connection';
 import { TRANSFER_COMPONENT } from '../../../utils/Enum';
@@ -52,7 +52,10 @@ const ACTION_TYPES = {
   EDIT: 'edit',
 };
 
-const Environments = ({ organization, classes }) => {
+const Environments = ({ classes }) => {
+  const organization = useLegacySelector((state) =>
+    state.get('organization')?.toJS ? state.get('organization').toJS() : state.get('organization'),
+  );
   const [environmentModal, setEnvironmentModal] = useState({
     open: false,
     schema: {},
@@ -439,12 +442,19 @@ const Environments = ({ organization, classes }) => {
       );
     }
   };
-
+  const theme = useTheme();
   return (
     <NoSsr>
       {CAN(keys.VIEW_ENVIRONMENTS.action, keys.VIEW_ENVIRONMENTS.subject) ? (
         <>
-          <div className={StyleClass.toolWrapper} style={{ marginBottom: '20px', display: 'flex' }}>
+          <div
+            className={StyleClass.toolWrapper}
+            style={{
+              marginBottom: '20px',
+              display: 'flex',
+              backgroundColor: theme.palette.background.hover,
+            }}
+          >
             <div className={classes.createButtonWrapper}>
               <Button
                 type="submit"
@@ -645,13 +655,6 @@ const Environments = ({ organization, classes }) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  const organization = state.get('organization');
-  return {
-    organization,
-  };
-};
-
 const EnvironmentsPageWithErrorBoundary = (props) => {
   return (
     <NoSsr>
@@ -660,6 +663,4 @@ const EnvironmentsPageWithErrorBoundary = (props) => {
   );
 };
 
-export default withStyles(styles)(
-  connect(mapStateToProps)(withRouter(EnvironmentsPageWithErrorBoundary)),
-);
+export default withStyles(styles)(withRouter(EnvironmentsPageWithErrorBoundary));
