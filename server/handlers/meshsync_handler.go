@@ -170,6 +170,14 @@ func filterByPatternIds(query *gorm.DB, patternIDs []string) *gorm.DB {
 	return query
 }
 
+func selectDistinctKeyValues(db *gorm.DB, kind string) *gorm.DB {
+	return db.
+		Select("DISTINCT kubernetes_key_values.key, kubernetes_key_values.value").
+		Joins("join kubernetes_resource_object_meta on kubernetes_resources.id = kubernetes_resource_object_meta.id").
+		Joins("join kubernetes_key_values on kubernetes_resource_object_meta.id = kubernetes_key_values.id").
+		Where("kubernetes_key_values.kind = ?", kind)
+}
+
 // swagger:route GET /api/system/meshsync/resources GetMeshSyncResources idGetMeshSyncResources
 // Handle GET request for meshsync discovered resources
 //
@@ -387,6 +395,18 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 		h.log.Error(ErrFetchMeshSyncResources(err2))
 	}
 
+	var labels []model.KubernetesKeyValue
+
+	labelsQuery := selectDistinctKeyValues(provider.GetGenericPersister().Model(&model.KubernetesResource{}), "label")
+	labelsQuery = filterByClusters(labelsQuery, clusterIds)
+	labelsQuery = filterByNamespaces(labelsQuery, namespaceScope)
+
+	err := labelsQuery.Scan(&labels).Error
+
+	if err != nil {
+		h.log.Error(ErrFetchMeshSyncResources(err))
+	}
+
 	// only return error if both queries failed
 	if err1 != nil && err2 != nil {
 		combinedErr := fmt.Errorf("Error fetching meshsync resources summary: %v, %v", err1, err2)
@@ -397,6 +417,7 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	response := &models.MeshSyncResourcesSummaryAPIResponse{
 		Kinds:      kindCounts,
 		Namespaces: namespaces,
+		Labels:     labels,
 	}
 
 	if err := enc.Encode(response); err != nil {
