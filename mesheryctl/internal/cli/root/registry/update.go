@@ -73,7 +73,7 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		srv, err := mutils.NewSheetSRV(spreadsheeetCred)
 		if err != nil {
 			utils.Log.Error(ErrUpdateRegistry(err, modelLocation))
-			return err
+			return cmd.Help()
 		}
 		resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
 		if err != nil || resp.HTTPStatusCode != 200 {
