@@ -44,7 +44,7 @@ import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
 import { UsesSistent } from './SistentWrapper';
 import Router from 'next/router';
 import HeaderMenu from './HeaderMenu';
-import ConnectionModal from './ConnectionModal';
+import ConnectionModal from './Modals/ConnectionModal';
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';

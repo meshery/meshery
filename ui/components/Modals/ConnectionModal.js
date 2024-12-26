@@ -1,8 +1,8 @@
 import React from 'react';
-import { UsesSistent } from './SistentWrapper';
+import { UsesSistent } from '../SistentWrapper';
 import { Modal, ModalBody } from '@layer5/sistent';
 import ConnectionIcon from '@/assets/icons/Connection';
-import ConnectionTable from './connections/ConnectionTable';
+import ConnectionTable from '../connections/ConnectionTable';
 
 const ConnectionModal = ({
   isOpenModal,
