@@ -212,7 +212,7 @@ Example:```
 mesheryctl design apply -f [file | URL]
 
 // deploy a saved pattern
-mesheryctl design apply [pattern-name]```,
+mesheryctl design apply [design-name]```,
 Annotations: linkDocPatternApply,
 ...
 <pre class='codeblock-pre'>
