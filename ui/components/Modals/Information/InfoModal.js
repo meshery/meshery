@@ -154,7 +154,7 @@ const InfoModal_ = React.memo((props) => {
       .then(() => {
         setSaveFormLoading(false);
         notify({
-          message: `${selectedResource.name} data saved successfully`,
+          message: `${selectedResource.name} data saved`,
           event_type: EVENT_TYPES.SUCCESS,
         });
         patternFetcher()();
