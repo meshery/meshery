@@ -221,10 +221,10 @@ export const KeyValue = ({ Key, Value }) => {
   );
 };
 
-export const SectionHeading = ({ children, ...props }) => {
+export const SectionHeading = ({ children, isLevel, ...props }) => {
   const level = useContext(LevelContext);
-  const fontSize = Math.max(0.9, 1.3 - 0.1 * level) + 'rem';
-  const margin = Math.max(0.25, 0.55 - 0.15 * level) + 'rem';
+  const fontSize = isLevel ? Math.max(0.9, 1.3 - 0.1 * level) + 'rem' : '1rem';
+  const margin = isLevel ? Math.max(0.25, 0.55 - 0.15 * level) + 'rem' : 'inherit';
 
   return (
     <div style={{ marginBlock: margin }}>
@@ -243,7 +243,6 @@ export const SectionHeading = ({ children, ...props }) => {
     </div>
   );
 };
-
 export const SectionBody = ({ body, style = {} }) => {
   const theme = useTheme();
   return (
@@ -289,7 +288,7 @@ export function reorderObjectProperties(obj, order) {
   return { ...orderedProperties, ...remainingProperties };
 }
 
-const DynamicFormatter = ({ data, uiSchema }) => {
+const DynamicFormatter = ({ data, uiSchema, isLevel = true }) => {
   const { propertyFormatters } = useContext(FormatterContext);
   const level = useContext(LevelContext);
 
@@ -344,7 +343,9 @@ const DynamicFormatter = ({ data, uiSchema }) => {
             marginBlock: '0.25rem',
           }}
         >
-          <SectionHeading level={level}>{title}</SectionHeading>
+          <SectionHeading level={level} isLevel={isLevel}>
+            {title}
+          </SectionHeading>
           <Level>
             <DynamicFormatter level={level + 1} data={data} />
           </Level>
@@ -356,7 +357,7 @@ const DynamicFormatter = ({ data, uiSchema }) => {
   return null;
 };
 
-export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema }) => {
+export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema, isLevel }) => {
   if (!data || isEmptyAtAllDepths(data)) {
     return null;
   }
@@ -376,7 +377,7 @@ export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema }
             gap: '0.3rem 1rem',
           }}
         >
-          <DynamicFormatter data={data} uiSchema={uiSchema} />
+          <DynamicFormatter data={data} uiSchema={uiSchema} isLevel={isLevel} />
         </Grid>
       </FormatterContext.Provider>
     </UsesSistent>
