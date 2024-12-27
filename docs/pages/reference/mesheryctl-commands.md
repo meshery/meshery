@@ -824,7 +824,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
     <th>Flag</th>
     <th>Function</th>
   </tr>
-  {% assign command14 = site.data.mesheryctlcommands.cmds.environments %}
+  {% assign command14 = site.data.mesheryctlcommands.cmds.environment %}
   {% assign subcommand_flag_count = 0 %}
     {% for subcommand_hash in command14.subcommands %}
       {% assign subcommand = subcommand_hash[1] %}
