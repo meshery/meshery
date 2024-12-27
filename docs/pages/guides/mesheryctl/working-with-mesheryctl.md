@@ -16,7 +16,7 @@ Meshery's command line interface is `mesheryctl`. Use `mesheryctl` to both manag
 - `mesheryctl filter` - Cloud Native Filter Management
 - `mesheryctl mesh` - Cloud Native Lifecycle & Configuration Management
 - `mesheryctl perf` - Cloud Native Performance Management
-- `mesheryctl pattern` - Cloud Native Pattern Configuration & Management
+- `mesheryctl design` - Cloud Native Pattern Configuration & Management
 - `mesheryctl system` - Meshery Lifecycle and Troubleshooting
 
 ## Configuring Meshery Deployments with meshconfig
@@ -37,7 +37,7 @@ A meshconfig `context` represents a single Meshery deployment. Using `context`s,
 
 #### Question: Why are contexts necessary?
 
-Many Meshery users have more than one Meshery deployment. Contexts allow you to deploy different versions of Meshery, update your release channel subscription settings, selectively install one or more Meshery Adapters, and so on. Contexts allow you to configure your invididual Meshery deployments.
+Many Meshery users have more than one Meshery deployment. Contexts allow you to deploy different versions of Meshery, update your release channel subscription settings, selectively install one or more Meshery Adapters, and so on. Contexts allow you to configure your individual Meshery deployments.
 
 #### Question: What is `current-context`?
 
