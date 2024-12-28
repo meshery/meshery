@@ -67,35 +67,6 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
-		// Check if both "spreadsheet-id" and "spreadsheet-cred" are provided together
-		if (spreadsheeetID == "" && spreadsheeetCred != "") || (spreadsheeetID != "" && spreadsheeetCred == "") {
-			return fmt.Errorf("both 'spreadsheet-id' and 'spreadsheet-cred' must be provided together")
-		}
-
-		// Check if both "registrant-def" and "registrant-cred" are provided together
-		if (pathToRegistrantConnDefinition == "" && pathToRegistrantCredDefinition != "") ||
-			(pathToRegistrantConnDefinition != "" && pathToRegistrantCredDefinition == "") {
-			return fmt.Errorf("both 'registrant-def' and 'registrant-cred' must be provided together")
-		}
-
-		// Check mutually exclusive flags
-		if spreadsheeetID != "" && pathToRegistrantConnDefinition != "" {
-			return fmt.Errorf("'spreadsheet-id' and 'registrant-def' cannot be used together")
-		}
-
-		// Check mutually exclusive flags
-		if spreadsheeetCred != "" && pathToRegistrantCredDefinition != "" {
-			return fmt.Errorf("'spreadsheet-cred' and 'registrant-cred' cannot be used together")
-		}
-
-		if csvDirectory != "" && (spreadsheeetID != "" || pathToRegistrantConnDefinition != "") {
-			return fmt.Errorf("'directory' flag cannot be used with 'spreadsheet-id' or 'registrant-def'")
-		}
-
-		if modelName == "" && csvDirectory == "" && spreadsheeetID == "" && pathToRegistrantConnDefinition == "" {
-			return fmt.Errorf("at least one of the following flags must be provided: 'model', 'directory', 'spreadsheet-id', or 'registrant-def'")
-		}
-
 		var wg sync.WaitGroup
 		cwd, _ = os.Getwd()
 		registryLocation = filepath.Join(cwd, outputLocation)
@@ -106,8 +77,13 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 		}
 		var err error
 
-		if csvDirectory == "" {
+		if len(csvDirectory) == 0 {
+			if len(spreadsheeetCred) == 0 {
+				return fmt.Errorf("spreadsheet cred is invalid.")
+			}
+
 			srv, err = mutils.NewSheetSRV(spreadsheeetCred)
+
 			if err != nil {
 				utils.LogError.Error(ErrUpdateRegistry(err, modelLocation))
 				return nil
@@ -124,6 +100,10 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 			// Collect list of corresponding relationship by name from spreadsheet
 			relationshipSpredsheetGID = GetSheetIDFromTitle(resp, "Relationships")
 		} else {
+			if len(csvDirectory) == 0 {
+				return fmt.Errorf("Csv directory is invalid.")
+			}
+
 			modelCSVFilePath, componentCSVFilePath, relationshipCSVFilePath, err = utils.GetCsv(csvDirectory)
 			if err != nil {
 				return fmt.Errorf("error reading the directory: %v", err)
@@ -132,10 +112,12 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 				return fmt.Errorf("both ModelCSV and ComponentCSV files must be present in the directory")
 			}
 		}
+
 		err = os.MkdirAll(logDirPath, 0755)
 		if err != nil {
 			return ErrUpdateRegistry(err, modelLocation)
 		}
+
 		utils.Log.SetLevel(logrus.DebugLevel)
 		logFilePath := filepath.Join(logDirPath, "model-generation.log")
 		logFile, err = os.Create(logFilePath)
