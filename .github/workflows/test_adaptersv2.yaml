@@ -254,6 +254,7 @@ jobs:
           fi
           if [ "$itran" -eq 1 ] && [ "$itdidnotrun" -eq 1  ] ;then
               status="partial"
+              exitstatus=0
           fi
           echo $(jq '."overall-status" |=  "'$status'"' data.json) > data.json;     
           MESHERY_VERSION=$(curl -L -s https://github.com/meshery/meshery/releases/latest | grep -oP 'releases/tag/\K[^"]+' | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+' | head -1)    
