@@ -24,27 +24,19 @@ import (
 type prettifier bool
 
 /*
-The logic and principle for prettification/deprettification.
-1. Specific considerations are made when schema is passed to be prettified like handling kubernetes specific fields.
-2. A general rule of thumb is to never prettify or deprettify the end-user fields, the ones which are entered by USER.
-For non schema files, it would be all end string fields (user input) and for schema files it would be ENUMS as they are the only system defined fields that are used at end user input.
+Deprecated: This function is deprecated and will be removed in the future. Dont Rely on this function or prettification of schema
 */
 func (p prettifier) Prettify(m map[string]interface{}, isSchema bool) map[string]interface{} {
-	res := ConvertMapInterfaceMapString(m, true, isSchema)
-	out, ok := res.(map[string]interface{})
-	if !ok {
-		fmt.Println("failed to cast")
-	}
-	return out
-}
-func (p prettifier) DePrettify(m map[string]interface{}, isSchema bool) map[string]interface{} {
-	res := ConvertMapInterfaceMapString(m, false, isSchema)
-	out, ok := res.(map[string]interface{})
-	if !ok {
-		fmt.Println("failed to cast")
-	}
+	return m
 
-	return out
+}
+
+/*
+Deprecated: This function is deprecated and will be removed in the future. Dont Rely on this function or prettification of schema
+*/
+func (p prettifier) DePrettify(m map[string]interface{}, isSchema bool) map[string]interface{} {
+	return m
+
 }
 
 // ConvertMapInterfaceMapString converts map[interface{}]interface{} => map[string]interface{}
