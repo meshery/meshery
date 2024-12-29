@@ -80,7 +80,7 @@ The following principles should be taken in mind while designing `mesheryctl` co
 
 Part of delivering a great user experience is providing intuitive interfaces. In the case of `mesheryctl` takes inspiration from and delivers similar user experiences as popular CLIs do in this ecosystem, like `kubectl` and `docker`. Here is relevant `kubectl` information to reference - [Kubectl SIG CLI Community Meeting Minutes](https://docs.google.com/document/u/2/d/1r0YElcXt6G5mOWxwZiXgGu_X6he3F--wKwg-9UBc29I/edit#), [contributing to kubectl](https://github.com/kubernetes/community/blob/master/sig-cli/CONTRIBUTING.md), [code](https://github.com/kubernetes/kubernetes/tree/master/pkg/kubectl/cmd/config).
 
-Command structure and command behavior should be designed in such a way that they are intuitive. Users should ideally be able to understand what a command is used for without having to extensively go through the documentation. For example, `mesheryctl design apply -f <pattern name>` requires no further clarification as it is evident that the command will apply the pattern specified.
+Command structure and command behavior should be designed in such a way that they are intuitive. Users should ideally be able to understand what a command is used for without having to extensively go through the documentation. For example, `mesheryctl design apply -f <design name>` requires no further clarification as it is evident that the command will apply the design specified.
 
 Consistency is key when designing intuitive interfaces. Although `mesheryctl perf run -f <performance profile name>` may sound more intuitive, users who are experienced in using the CLI will prefer the consistent verb `apply` over `run`. This will also ensure a consistent command language making memorizing easier.
 
@@ -184,8 +184,8 @@ Example:```
 // apply a pattern file
 mesheryctl design apply -f [file | URL]
 
-// deploy a saved pattern
-mesheryctl design apply [pattern-name]```,
+// deploy a saved design
+mesheryctl design apply [design-name]```,
 Annotations: linkDocPatternApply,
 ...
 {% endcapture %}
@@ -211,7 +211,7 @@ Example:```
 // apply a pattern file
 mesheryctl design apply -f [file | URL]
 
-// deploy a saved pattern
+// deploy a saved design
 mesheryctl design apply [design-name]```,
 Annotations: linkDocPatternApply,
 ...
