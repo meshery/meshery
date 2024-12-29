@@ -6,7 +6,6 @@ RUN apk update && apk add --no-cache \
     readline-dev \
     zlib-dev \
     openssl-dev \
-    git \
     bash \
     wget \
     curl
