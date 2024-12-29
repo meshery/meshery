@@ -75,7 +75,7 @@ mesheryctl design offboard -f [filepath]
 				// utils.Log.Error(err)
 				return errors.Wrap(err, utils.DesignError(fmt.Sprintf("failed to delete design %s", args[0])))
 			}
-			utils.Log.Info("pattern ", args[0], " deleted successfully")
+			utils.Log.Info("pattern ", args[0], " deleted")
 			return nil
 		}
 
@@ -160,7 +160,7 @@ mesheryctl design offboard -f [filepath]
 		}
 
 		if res.StatusCode == 200 {
-			utils.Log.Info("design successfully offboarded")
+			utils.Log.Info("design offboarded")
 		}
 		utils.Log.Info(string(body))
 

@@ -10,6 +10,8 @@ import {
   useTheme,
   styled,
   EnvironmentIcon,
+  IconButton,
+  CustomTooltip,
 } from '@layer5/sistent';
 import { Loading, StepHeading } from './common';
 import { K8sContextConnectionChip } from '../Header';
@@ -26,6 +28,7 @@ import { useSelectorRtk, useDispatchRtk } from '@/store/hooks';
 import Link from 'next/link';
 import { Button } from '@layer5/sistent';
 import { AddIcon } from '@layer5/sistent';
+import { Edit } from '@material-ui/icons';
 
 export const DeploymentTargetContext = createContext({
   meshsyncControllerState: null,
@@ -151,7 +154,7 @@ export const EnvironmentsEmptyState = ({ message }) => {
   );
 };
 
-export const SelectTargetEnvironments = () => {
+export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
   const organization = useContext(DeploymentTargetContext).organization;
   const { data, isLoading, isError } = useGetEnvironmentsQuery({ orgId: organization.id });
   const environments = data?.environments || [];
@@ -165,8 +168,21 @@ export const SelectTargetEnvironments = () => {
 
   return (
     <Stack gap={2}>
-      <StepHeading>Identify Deployment Targets</StepHeading>
-
+      <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
+        <StepHeading>Identify Deployment Targets</StepHeading>
+        <CustomTooltip title="Configure Environments">
+          <div>
+            <IconButton
+              onClick={() => {
+                setIsEnvrionmentModalOpen(true);
+              }}
+              aria-label="edit-environments"
+            >
+              <Edit />
+            </IconButton>
+          </div>
+        </CustomTooltip>
+      </Box>
       {environments.length === 0 && (
         <EnvironmentsEmptyState message="No environments found. Add a new environment." />
       )}
