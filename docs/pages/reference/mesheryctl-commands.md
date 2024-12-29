@@ -18,13 +18,13 @@ Meshery CLI commands are categorized by function, which are:
 
 - [`mesheryctl`](#global-commands-and-flags) - Global flags and CLI configuration
 - [`mesheryctl system`](#meshery-lifecycle-management-and-troubleshooting) - Meshery Lifecycle and Troubleshooting
-- [`mesheryctl adapter`](#cloud-native-performance-management) - Lifecycle & Configuration Management: provisioning and configuration best practices
-- [`mesheryctl perf`](#cloud-native-lifecycle-and-configuration-management) - Performance Management: Workload and cloud native performance characterization
+- [`mesheryctl adapter`](#cloud-native-lifecycle-and-configuration-management) - Lifecycle & Configuration Management: provisioning and configuration best practices
+- [`mesheryctl perf`](#cloud-native-performance-management) - Performance Management: Workload and cloud native performance characterization
 - [`mesheryctl design`](#cloud-native-design-configuration-and-management) - Design Patterns: Cloud native patterns and best practices
 - [`mesheryctl filter`](#data-plane-intelligence) - Data Plane Intelligence: Registry and configuration of WebAssembly filters for Envoy
-- [`mesheryctl model`](#meshery-registry-management) - A unit of packaging to define managed infrastructure and their relationships, and details specifics of how to manage them.
-- [`mesheryctl components`](#meshery-models) - Fundamental building block used to represent and define the infrastructure under management
-- [`mesheryctl registry`](#meshery-components) - Model Database: Manage the state and contents of Meshery's internal registry of capabilities.
+- [`mesheryctl model`](#meshery-models) - A unit of packaging to define managed infrastructure and their relationships, and details specifics of how to manage them.
+- [`mesheryctl components`](#meshery-components) - Fundamental building block used to represent and define the infrastructure under management
+- [`mesheryctl registry`](#meshery-registry-management) - Model Database: Manage the state and contents of Meshery's internal registry of capabilities.
 - [`mesheryctl exp`](#experimental-featuresexp) - Experimental features
 
 
