@@ -9,7 +9,7 @@ is_alias_relationship(relationship) if {
 }
 
 identify_relationships(design_file, relationships_in_scope) := eval_results if {
-	eval_results := union({valid_relationships |
+	eval_results := union({new_relationships |
 		some relationship in relationships_in_scope
 
 		is_alias_relationship(relationship)
@@ -19,7 +19,11 @@ identify_relationships(design_file, relationships_in_scope) := eval_results if {
 		is_relationship_feasible_to(component, relationship)
 		print("rel is feasible")
 
-		valid_relationships := identify_alias_relationships(component, relationship)
+		identified_relationships := identify_alias_relationships(component, relationship)
+		new_relationships := { rel |
+		    some rel in identified_relationships
+	     	not alias_relationship_already_exists(design_file, rel)
+	    }
 	})
 
 	print("Identify alias rels Eval results", eval_results)
@@ -72,6 +76,22 @@ identify_alias_relationships(component, relationship) := {rel |
 			"value": "pending",
 		},
 	])
+}
+
+alias_relationship_already_exists(design_file, relationship) := existing_rel if {
+    some existing_rel in design_file.relationships
+    is_alias_relationship(existing_rel)
+
+    some selector in existing_rel.selectors
+    some to in selector.allow.to
+
+    some new_selector in relationship.selectors
+    some new_to in new_selector.allow.to
+
+    to.kind == new_to.kind
+    to.patch == new_to.patch
+    to.id == new_to.id
+
 }
 
 
