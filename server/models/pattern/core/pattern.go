@@ -24,7 +24,7 @@ import (
 type prettifier bool
 
 /*
-Deprecated: This function is deprecated and will be removed in the future. Dont Rely on this function or prettification of schema
+This function is deprecated and will be removed in the future. Dont Rely on this function or prettification of schema
 */
 func (p prettifier) Prettify(m map[string]interface{}, isSchema bool) map[string]interface{} {
 	return m
@@ -32,7 +32,7 @@ func (p prettifier) Prettify(m map[string]interface{}, isSchema bool) map[string
 }
 
 /*
-Deprecated: This function is deprecated and will be removed in the future. Dont Rely on this function or prettification of schema
+This function is deprecated and will be removed in the future. Dont Rely on this function or prettification of schema
 */
 func (p prettifier) DePrettify(m map[string]interface{}, isSchema bool) map[string]interface{} {
 	return m
@@ -40,7 +40,6 @@ func (p prettifier) DePrettify(m map[string]interface{}, isSchema bool) map[stri
 }
 
 // ConvertMapInterfaceMapString converts map[interface{}]interface{} => map[string]interface{}
-//
 // It will also convert []interface{} => []string
 func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) interface{} {
 	switch x := v.(type) {
