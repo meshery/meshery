@@ -41,6 +41,7 @@ func (p prettifier) DePrettify(m map[string]interface{}, isSchema bool) map[stri
 
 // ConvertMapInterfaceMapString converts map[interface{}]interface{} => map[string]interface{}
 // It will also convert []interface{} => []string
+// TODO: migrate this to generate a ui schema
 func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) interface{} {
 	switch x := v.(type) {
 	case map[interface{}]interface{}:
