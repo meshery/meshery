@@ -39,7 +39,7 @@ const PlayRoot = styled('div')(({ theme }) => ({
 export const PaneSection = styled('div')(() => {
   const theme = useTheme();
   return {
-    backgroundColor: theme.palette.background?.default,
+    backgroundColor: theme.palette.text?.default,
     padding: theme.spacing(2.5),
     borderRadius: 4,
   };
@@ -127,18 +127,20 @@ const MesheryPlayComponent = (props) => {
       if (adap.adapter_location === props.adapter) {
         adapter = adap;
         meshAdapters.forEach((ad) => {
-          if (ad.name === adap.name) adapCount += 1;
+          if (ad.name == adap.name) adapCount += 1;
         });
       }
     });
     if (adapter) {
       const imageIcon = pickImage(adapter);
       return (
-        <MesheryAdapterPlayComponent
-          adapter={adapter}
-          adapCount={adapCount}
-          adapter_icon={imageIcon}
-        />
+        <>
+          <MesheryAdapterPlayComponent
+            adapter={adapter}
+            adapCount={adapCount}
+            adapter_icon={imageIcon}
+          />
+        </>
       );
     }
     return null;
@@ -164,9 +166,9 @@ const MesheryPlayComponent = (props) => {
     );
   }
 
-  if (selectedAdapterProp && selectedAdapterProp !== '') {
+  if (props.adapter && props.adapter !== '') {
     const indContent = renderIndividualAdapter();
-    if (indContent) {
+    if (indContent !== '') {
       return indContent;
     }
   }
@@ -206,7 +208,10 @@ const MesheryPlayComponent = (props) => {
                   }}
                 >
                   {meshAdapters.map((ada) => (
-                    <MenuItem key={ada.adapter_location} value={ada.adapter_location}>
+                    <MenuItem
+                      key={`${ada.adapter_location}_${new Date().getTime()}`}
+                      value={ada.adapter_location}
+                    >
                       {pickImage(ada)}
                       <Typography variant="body1" sx={{ ml: 1 }}>
                         {ada.adapter_location}
@@ -219,7 +224,7 @@ const MesheryPlayComponent = (props) => {
           </Grid>
         </PlayRoot>
         <Divider variant="fullWidth" light />
-        {adapter?.adapter_location && (
+        {adapter && adapter.adapter_location && (
           <MesheryAdapterPlayComponent adapter={adapter} adapter_icon={imageIcon} />
         )}
       </NoSsr>
@@ -228,7 +233,7 @@ const MesheryPlayComponent = (props) => {
 };
 
 MesheryPlayComponent.propTypes = {
-  meshAdapters: PropTypes.array.isRequired,
+  meshAdapters: PropTypes.object.isRequired,
   setAdapter: PropTypes.func.isRequired,
   adapter: PropTypes.string,
 };
