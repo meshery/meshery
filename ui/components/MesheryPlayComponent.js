@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import NoSsr from '@mui/material/NoSsr';
 import { Button, Divider, MenuItem, TextField, Grid, Typography, styled } from '@layer5/sistent';
-import { blue } from '@mui/material/colors';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
 import SettingsIcon from '@mui/icons-material/Settings';
