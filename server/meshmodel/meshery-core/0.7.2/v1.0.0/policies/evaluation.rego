@@ -19,8 +19,14 @@ filter_pending_relationships(rel, relationships) := rel if {
 	}
 }
 
+# scope for relationships to evaluate against
+# TODO: make this dynamic based on the models referenced in the design file
+relationships_to_evaluate_against := data.relationships
+
 # Main evaluation function that processes relationships and updates the design.
 evaluate := eval_results if {
+	print("Wooo in evbal")
+
 	# Iterate over relationships in the design file and resolve patches.
 	resultant_patches := {patched_object |
 		some rel in rels_in_design_file
@@ -143,12 +149,67 @@ evaluate := eval_results if {
 		"value": final_rels_with_deletions,
 	}])
 
+	# New Evaluation Flow
+
+	# 1. Identify relationships in the design file.
+
+	design_file_to_evaluate := json.patch(input, [
+		{
+			"op": "replace",
+			"path": "/relationships",
+			"value": {rel | some rel in input.relationships},
+		},
+		{
+			"op": "replace",
+			"path": "/components",
+			"value": {comp | some comp in input.components},
+		},
+	])
+
+	new_identified_rels := identify_relationships(design_file_to_evaluate, relationships_to_evaluate_against)
+
+	#2. Validate Relationships
+	# newly identified relationships dont need to be validated ( as they are valid or pending)
+	validated_rels := validate_relationships_phase(design_file_to_evaluate)
+
+	print("New identified rels", count(new_identified_rels))
+	print("Validated rels", count(validated_rels))
+
+	#3. Actions
+
+	design_file_to_apply_actions := json.patch(design_file_to_evaluate, [{
+		"op": "replace",
+		"path": "/relationships",
+		"value": new_identified_rels | validated_rels,
+	}])
+
+	print("All relationships", count(design_file_to_apply_actions.relationships))
+
+	actions_response := action_phase(design_file_to_apply_actions)
+
+	# print("Final Design", final_evaluated_design_file)
+
+
+	design_to_return := json.patch(final_design_file, [{
+        "op": "replace",
+        "path": "/relationships",
+        "value": array.concat(set_to_array(actions_response.relationships_added),final_design_file.relationships),
+    },
+    {
+            "op": "replace",
+            "path": "/components",
+            "value": array.concat(set_to_array(actions_response.components_added),final_design_file.components),
+        }
+	])
+
+
+
 	# Prepare the evaluation results with updated design and trace information.
 	eval_results := {
-		"design": final_design_file,
+		"design": design_to_return,
 		"trace": {
 			"componentsUpdated": updated_declarations,
-			"componentsAdded": components_added,
+			"componentsAdded": {x | some x in components_added} | actions_response.components_added ,
 			"relationshipsAdded": relationships_added,
 			"relationshipsRemoved": relationships_deleted,
 			"relationshipsUpdated": intermediate_rels,
