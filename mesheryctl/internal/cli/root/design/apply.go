@@ -272,7 +272,7 @@ mesheryctl design apply [design-name]
 		}
 
 		if res.StatusCode == 200 {
-			utils.Log.Info("design successfully applied")
+			utils.Log.Info("design applied")
 		}
 		utils.Log.Info(string(body))
 		return nil

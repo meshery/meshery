@@ -120,6 +120,11 @@ const styles = (theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  addClusterButtonClass: {
+    borderRadius: 5,
+    marginRight: '2rem',
+    padding: '8px',
+  },
   list: {
     display: 'flex',
     flexDirection: 'column',

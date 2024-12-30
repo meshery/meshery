@@ -52,7 +52,7 @@ The following section outlines the fields and their descriptions
     - **meshery/component-type**: The component type pf this custom resource with respect to meshery design, for this case **management-plane**
 - **spec**
   The specification section defines the desired state of our custom resource that Kubernetes can then use to take corrective measures to bring the cluster to.
-  - **size**: The size is an integer value denoting the number of Broker instances that that should be in one cluster, currently it is adviced to have one Broker instance in a cluster but that can be scaled vertically up or down depending on load.
+  - **size**: The size is an integer value denoting the number of Broker instances that that should be in one cluster, currently it is advised to have one Broker instance in a cluster but that can be scaled vertically up or down depending on load.
 
 ### Usage
 

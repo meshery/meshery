@@ -18,5 +18,6 @@ type MeshSyncResourcesSummaryAPIResponse struct {
 		Kind  string
 		Count int64
 	} `json:"kinds"`
-	Namespaces []string `json:"namespaces"`
+	Namespaces []string                   `json:"namespaces"`
+	Labels     []model.KubernetesKeyValue `json:"labels"`
 }
