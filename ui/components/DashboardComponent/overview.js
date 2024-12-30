@@ -8,7 +8,7 @@ import ConnectionStatsChart from './charts/ConnectionCharts.js';
 import MesheryConfigurationChart from './charts/MesheryConfigurationCharts.js';
 import { Provider } from 'react-redux';
 import { store } from '@/store/index';
-import { useTheme,styled } from '@layer5/sistent';
+import { useTheme, styled } from '@layer5/sistent';
 
 const Root = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.text.default,

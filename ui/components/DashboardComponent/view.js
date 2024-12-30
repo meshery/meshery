@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowBack } from '@material-ui/icons';
 import TooltipButton from '../../utils/TooltipButton';
-// import { Paper, Typography } from '@material-ui/core';
 import NameValueTable from '../DataFormatter/NameValueTable';
 import { ResponsiveDataTable, Paper, Typography } from '@layer5/sistent';
 import { ALL_VIEW } from './resources/config';
