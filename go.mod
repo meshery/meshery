@@ -2,6 +2,8 @@ module github.com/layer5io/meshery
 
 go 1.23
 
+toolchain go1.23.4
+
 replace (
 	github.com/docker/cli => github.com/docker/cli v23.0.6+incompatible
 	github.com/docker/docker => github.com/docker/docker v23.0.6+incompatible
