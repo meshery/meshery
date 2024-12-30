@@ -726,7 +726,6 @@ const Workspaces = ({ organization }) => {
               ? CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)
               : CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)) &&
               workspaceModal.open && (
-                <UsesSistent>
                   <SisitentModal
                     open={workspaceModal.open}
                     closeModal={handleWorkspaceModalClose}
@@ -747,9 +746,7 @@ const Workspaces = ({ organization }) => {
                       handleClose={handleWorkspaceModalClose}
                     />
                   </SisitentModal>
-                </UsesSistent>
               )}
-            <UsesSistent>
               <SisitentModal
                 open={assignEnvironmentModal}
                 closeModal={handleAssignEnvironmentModalClose}
@@ -849,7 +846,6 @@ const Workspaces = ({ organization }) => {
                   />
                 </ModalFooter>
               </SisitentModal>
-            </UsesSistent>
             <GenericModal
               open={deleteWorkspacesModal}
               handleClose={handleDeleteWorkspacesModalClose}

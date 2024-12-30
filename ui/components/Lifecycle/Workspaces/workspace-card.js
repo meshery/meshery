@@ -275,9 +275,7 @@ const CardBack = ({
         <Grid xs={12}>
           <Grid xs={12} sx={{ display: 'flex', flexDirection: 'row' }}>
             <Grid xs={6} sx={{ display: 'flex', alignItems: 'flex-start' }}>
-              <UsesSistent>
                 <BulkSelectCheckbox onClick={(e) => e.stopPropagation()} onChange={onSelect} />
-              </UsesSistent>
               <CardTitle
                 sx={{ color: theme.palette.text.default }}
                 variant="body2"
