@@ -4,6 +4,10 @@ import rego.v1
 
 # Contains all the helper functions used in the policy.
 
+set_to_array(set) := [val |
+	some val in set
+]
+
 # Checks if object 'x' has key 'k'.
 has_key(x, k) if {
 	x[k]
@@ -135,6 +139,12 @@ extract_components_by_type(declarations, selector) := {result |
 # TODO: Add checks for
 # 1. when operators/regex are used in the version fields
 # 2. deny selctor
+
+is_relationship_feasible_from(fromComponent, relationship) := from if {
+	some selector in relationship.selectors
+	some from in selector.allow.from
+	is_relationship_feasible(from, fromComponent.component.kind)
+}
 
 is_relationship_feasible(selector, comp_type) if {
 	selector.kind == "*"
