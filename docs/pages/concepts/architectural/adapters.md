@@ -56,7 +56,7 @@ Yes, see the [extensibility]({{site.baseurl}}/extensibility) documentation for d
 
 #### Do adapters have to be written in Golang?
 
-No. Adapters much interface with Meshery Server via gRPC. What language is used in that adapter is the perogative of a given adapter's maintainers.
+No. Adapters much interface with Meshery Server via gRPC. What language is used in that adapter is the prerogative of a given adapter's maintainers.
 
 #### Can I run more than one instance of the same Meshery adapter?
 

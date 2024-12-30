@@ -20,10 +20,51 @@ This page contains results of tests performed in the development of Meshery.
 ## Relationships Test Results
 
 {% assign relationship_tests = site.data.relationshiptestresult.relationship-v07167-2 %}
-
 {% assign grouped_relationships = relationship_tests | group_by: "name" %}
 
-<table class="table">
+<style>
+/* General Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #333;
+    padding: 8px;
+    text-align: left;
+}
+
+.accordion-header {
+    cursor: pointer;
+    background-color: #444;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    font-size: 18px;
+}
+
+.accordion-header:hover {
+    background-color: #666;
+}
+
+.accordion-content {
+    display: none;
+    background-color: #222;
+}
+
+.accordion-content table {
+    margin: 0;
+    background-color: #333;
+}
+
+.accordion-content td {
+    color: white;
+    padding: 5px 10px;
+}
+</style>
+
+<table>
     <thead>
         <tr>
             <th>Model</th>
@@ -36,23 +77,59 @@ This page contains results of tests performed in the development of Meshery.
     </thead>
     <tbody>
         {% for group in grouped_relationships %}
-        {% for item in group.items %}
-        <tr>
-            <td>{{ item.name }}</td>
-            <td>{{ item.extensionVersion }}</td>
-            <td>{{ item.kind }}</td>
-            <td>{{ item.type }}</td>
-            <td>{{ item.subType }}</td>
-            <td>
-                {% if item.testResultPassed %}
-                    <img src="/assets/img/passing.svg" />
-                {% else %}
-                    <img src="/assets/img/failing.svg" />
-                {% endif %}
+        <!-- Accordion Header Row -->
+        <tr class="accordion-header">
+            <td colspan="6">{{ group.name }}</td>
+        </tr>
+        <!-- Hidden Content: Detailed Table -->
+        <tr class="accordion-content">
+            <td colspan="6">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Meshery Version</th>
+                            <th>Relationship Kind</th>
+                            <th>Relationship Type</th>
+                            <th>Relationship SubType</th>
+                            <th>Test Result</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in group.items %}
+                        <tr>
+                            <td>{{ item.extensionVersion }}</td>
+                            <td>{{ item.kind }}</td>
+                            <td>{{ item.type }}</td>
+                            <td>{{ item.subType }}</td>
+                            <td>
+                                {% if item.testResultPassed %}
+                                    <img src="/assets/img/passing.svg" alt="Pass" />
+                                {% else %}
+                                    <img src="/assets/img/failing.svg" alt="Fail" />
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </td>
         </tr>
-        {% endfor %}
         {% endfor %}
     </tbody>
 </table>
 
+<script>
+// JavaScript for toggling the accordion content
+document.addEventListener("DOMContentLoaded", function () {
+    const headers = document.querySelectorAll(".accordion-header");
+
+    headers.forEach(header => {
+        header.addEventListener("click", function () {
+            const content = this.nextElementSibling;
+            if (content.classList.contains("accordion-content")) {
+                content.style.display = content.style.display === "table-row" ? "none" : "table-row";
+            }
+        });
+    });
+});
+</script>

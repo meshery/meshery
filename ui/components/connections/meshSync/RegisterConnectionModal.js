@@ -39,7 +39,7 @@ const RegisterConnectionModal = ({
       .unwrap()
       .then(() => {
         notify({
-          message: 'Connection registered successfully!',
+          message: 'Connection registered!',
           event_type: EVENT_TYPES.SUCCESS,
         });
       })
