@@ -51,12 +51,12 @@ const AlreadyConfigured = styled('div')(({ theme }) => ({
 }));
 
 const MesheryPlayComponent = (props) => {
-  const { meshAdapters, adapter: selectedAdapterProp, setAdapter } = props;
+  const { meshAdapters } = props;
   const router = useRouter();
 
   // Initialize state
   const [adapter, setAdapterState] = useState(() => {
-    if (meshAdapters && meshAdapters.length > 0) {
+    if (meshAdapters && meshAdapters.size > 0) {
       return meshAdapters[0];
     }
     return {};
@@ -71,8 +71,8 @@ const MesheryPlayComponent = (props) => {
       if (selectedAdapter) {
         setAdapterState(selectedAdapter);
       }
-    } else if (meshAdapters.length > 0) {
-      setAdapterState(meshAdapters[0]);
+    } else if (meshAdapters.size > 0) {
+      setAdapterState(meshAdapters.get(0));
     }
   };
 
@@ -82,14 +82,14 @@ const MesheryPlayComponent = (props) => {
     return () => {
       router.events.off('routeChangeComplete', handleRouteChange);
     };
-  }, [router.events, meshAdapters]);
+  }, [router.events]);
 
   useEffect(() => {
-    if (meshAdapters?.length > 0) {
+    if (meshAdapters?.size > 0) {
       handleRouteChange();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [meshAdapters?.length]);
+  }, [meshAdapters?.size]);
 
   const handleConfigure = () => {
     router.push('/settings?settingsCategory=Adapters');
@@ -105,34 +105,37 @@ const MesheryPlayComponent = (props) => {
     return imageIcon;
   };
 
-  const handleAdapterChange = (event) => {
-    if (event.target.value !== '') {
-      const selectedAdapter = meshAdapters.find(
-        ({ adapter_location }) => adapter_location === event.target.value,
-      );
-      if (selectedAdapter) {
-        setAdapterState(selectedAdapter);
-        setAdapter({ selectedAdapter: selectedAdapter.name });
+  const handleAdapterChange = () => {
+    return (event) => {
+      const { setAdapter } = props;
+      if (event.target.value !== '') {
+        const selectedAdapter = meshAdapters.filter(
+          ({ adapter_location }) => adapter_location === event.target.value,
+        );
+        if (selectedAdapter && selectedAdapter.size === 1) {
+          setAdapterState(selectedAdapter.get(0));
+          setAdapter({ selectedAdapter: selectedAdapter.get(0).name });
+        }
       }
-    }
+    };
   };
 
   const renderIndividualAdapter = () => {
     let adapCount = 0;
-    let adapterToRender;
+    let adapter;
     meshAdapters.forEach((adap) => {
       if (adap.adapter_location === props.adapter) {
-        adapterToRender = adap;
+        adapter = adap;
         meshAdapters.forEach((ad) => {
           if (ad.name === adap.name) adapCount += 1;
         });
       }
     });
-    if (adapterToRender) {
-      const imageIcon = pickImage(adapterToRender);
+    if (adapter) {
+      const imageIcon = pickImage(adapter);
       return (
         <MesheryAdapterPlayComponent
-          adapter={adapterToRender}
+          adapter={adapter}
           adapCount={adapCount}
           adapter_icon={imageIcon}
         />
@@ -141,7 +144,7 @@ const MesheryPlayComponent = (props) => {
     return null;
   };
 
-  if (meshAdapters.length === 0) {
+  if (meshAdapters.size === 0) {
     return (
       <NoSsr>
         <AlreadyConfigured>
