@@ -74,43 +74,7 @@ identify_alias_relationships(component, relationship) := {rel |
 	])
 }
 
-# identify_additions(
-# 	design_file,
-# 	relationship,
-# ) := unique_comps if {
-# 	lower(relationship.kind) == "hierarchical"
-# 	lower(relationship.type) == "parent"
-# 	lower(relationship.subType) == "alias"
 
-# 	print("In the policy", relationship.kind, relationship.type, relationship.subType)
-
-# 	unique_comps := union({result |
-# 		some component in design_file.components
-# 		result := identifyAliasesInAComponent(component, relationship)
-# 	})
-# }
-
-# alias_paths(from_selector,component) := paths if {
-#     from_selector.patch.mutatedRef
-# }
-identifyAliasesInAComponent(component, relationship) := aliases if {
-	aliases := {alias |
-		some selector in relationship.selectors
-		some from in selector.allow.from
-		some to in selector.allow.to
-		is_relationship_feasible(from, component.component.kind)
-
-		# is_alias_feasible(from,component)
-		print("From", component.configuration)
-		now := format_int(time.now_ns(), 10)
-		id := uuid.rfc4122(sprintf("%s%s", [json.marshal(component), now]))
-		alias := {
-			"id": id,
-			"component": {"kind": to.kind},
-			"model": to.model,
-		}
-	}
-}
 
 is_relationship_feasible_to(component, relationship) := to if {
 	some selector in relationship.selectors
