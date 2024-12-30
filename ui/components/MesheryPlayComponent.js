@@ -88,7 +88,6 @@ const MesheryPlayComponent = (props) => {
     if (meshAdapters?.size > 0) {
       handleRouteChange();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meshAdapters?.size]);
 
   const handleConfigure = () => {
@@ -143,7 +142,7 @@ const MesheryPlayComponent = (props) => {
         </>
       );
     }
-    return null;
+    return '';
   };
 
   if (meshAdapters.size === 0) {
@@ -189,10 +188,10 @@ const MesheryPlayComponent = (props) => {
                   label="Select Meshery Adapter"
                   data-cy="lifecycle-service-mesh-type"
                   fullWidth
-                  value={adapter?.adapter_location || ''}
+                  value={adapter && adapter.adapter_location ? adapter.adapter_location : ''}
                   margin="normal"
                   variant="outlined"
-                  onChange={handleAdapterChange}
+                  onChange={handleAdapterChange()}
                   SelectProps={{
                     MenuProps: {
                       anchorOrigin: {
@@ -203,7 +202,6 @@ const MesheryPlayComponent = (props) => {
                         vertical: 'top',
                         horizontal: 'left',
                       },
-                      // Removed getContentAnchorEl as it's deprecated in MUI v5
                     },
                   }}
                 >
@@ -244,7 +242,7 @@ const mapStateToProps = (state) => {
   const meshAdapters = state.get('meshAdapters');
   const meshAdaptersts = state.get('meshAdaptersts');
   const selectedAdapter = state.get('selectedAdapter');
-  return { k8sconfig, meshAdapters, meshAdaptersts, adapter: selectedAdapter };
+  return { k8sconfig, meshAdapters, meshAdaptersts, selectedAdapter };
 };
 
 // Mapping dispatch to props
