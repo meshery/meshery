@@ -81,7 +81,7 @@ const User = (props) => {
   return (
     <div>
       <NoSsr>
-        <div data-test="profile-button">
+        <div data-testid="profile-button">
           <IconButton
             color={color}
             className={iconButtonClassName}

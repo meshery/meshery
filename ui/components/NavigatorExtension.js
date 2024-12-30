@@ -13,6 +13,7 @@ import {
   LegacyStoreContext,
   actionTypes,
   selectSelectedK8sClusters,
+  selectK8sConfig,
 } from '../lib/store';
 import GrafanaCustomCharts from './telemetry/grafana/GrafanaCustomCharts';
 import MesheryPerformanceComponent from './MesheryPerformance';
@@ -48,6 +49,7 @@ import { ThemeTogglerCore } from '@/themes/hooks';
 import RJSFForm from './MesheryMeshInterface/PatternService/RJSF';
 import { DynamicFullScrrenLoader } from './LoadingComponents/DynamicFullscreenLoader';
 import Troubleshoot from './TroubleshootingComponent';
+import TypingFilter from './TypingFilter';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -101,7 +103,13 @@ function NavigatorExtension({
       get: () => selectSelectedK8sClusters(legacyStore.getState()),
       useSelectedK8sClusters: () => useLegacySelector(selectSelectedK8sClusters),
     },
+    k8sconfig: {
+      get: () => selectK8sConfig(legacyStore.getState()),
+      useK8sConfig: () => useLegacySelector(selectK8sConfig),
+    },
   };
+
+  const PerformanceTestComponent = (props) => <MesheryPerformanceComponent {...props} />;
 
   return (
     <DynamicFullScrrenLoader isLoading={loading}>
@@ -114,7 +122,7 @@ function NavigatorExtension({
           PatternServiceFormCore,
           grafana,
           prometheus,
-          MesheryPerformanceComponent,
+          MesheryPerformanceComponent: PerformanceTestComponent,
           dataFetch,
           createRelayEnvironment,
           subscriptionClient,
@@ -144,6 +152,7 @@ function NavigatorExtension({
           generateValidatePayload,
           capabilitiesRegistry,
           CapabilitiesRegistryClass: CapabilitiesRegistry,
+          TypingFilter: TypingFilter,
           useNotificationHook: useNotification,
           MDEditor: MDEditor,
           StructuredDataFormatter: FormatStructuredData,

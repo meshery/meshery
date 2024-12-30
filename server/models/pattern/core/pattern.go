@@ -24,32 +24,24 @@ import (
 type prettifier bool
 
 /*
-The logic and principle for prettification/deprettification.
-1. Specific considerations are made when schema is passed to be prettified like handling kubernetes specific fields.
-2. A general rule of thumb is to never prettify or deprettify the end-user fields, the ones which are entered by USER.
-For non schema files, it would be all end string fields (user input) and for schema files it would be ENUMS as they are the only system defined fields that are used at end user input.
+This function is deprecated and will be removed in the future. Dont Rely on this function or prettification of schema
 */
 func (p prettifier) Prettify(m map[string]interface{}, isSchema bool) map[string]interface{} {
-	res := ConvertMapInterfaceMapString(m, true, isSchema)
-	out, ok := res.(map[string]interface{})
-	if !ok {
-		fmt.Println("failed to cast")
-	}
-	return out
-}
-func (p prettifier) DePrettify(m map[string]interface{}, isSchema bool) map[string]interface{} {
-	res := ConvertMapInterfaceMapString(m, false, isSchema)
-	out, ok := res.(map[string]interface{})
-	if !ok {
-		fmt.Println("failed to cast")
-	}
+	return m
 
-	return out
+}
+
+/*
+This function is deprecated and will be removed in the future. Dont Rely on this function or prettification of schema
+*/
+func (p prettifier) DePrettify(m map[string]interface{}, isSchema bool) map[string]interface{} {
+	return m
+
 }
 
 // ConvertMapInterfaceMapString converts map[interface{}]interface{} => map[string]interface{}
-//
 // It will also convert []interface{} => []string
+// TODO: migrate this to generate a ui schema
 func ConvertMapInterfaceMapString(v interface{}, prettify bool, isSchema bool) interface{} {
 	switch x := v.(type) {
 	case map[interface{}]interface{}:
@@ -164,30 +156,6 @@ func NewPatternFile(yml []byte) (patternFile pattern.PatternFile, err error) {
 	}
 
 	return
-}
-
-// AssignAdditionalLabels adds labels to identify resources deployed by meshery.
-func AssignAdditionalLabels(comp *component.ComponentDefinition) error {
-
-	if comp.Configuration == nil {
-		comp.Configuration = make(map[string]interface{})
-	}
-
-	existingLabels := map[string]interface{}{}
-	var err error
-
-	if comp.Configuration["labels"] == nil {
-		comp.Configuration["labels"] = make(map[string]interface{})
-	} else {
-		existingLabels, err = mutils.Cast[map[string]interface{}](comp.Configuration["labels"])
-		if err != nil {
-			return err
-		}
-	}
-
-	existingLabels["resource.pattern.meshery.io/id"] = comp.Id.String() //set the patternID to track back the object
-	comp.Configuration["labels"] = existingLabels
-	return nil
 }
 
 // ToCytoscapeJS converts pattern file into cytoscape object
