@@ -236,7 +236,6 @@ MesheryPlayComponent.propTypes = {
   adapter: PropTypes.string,
 };
 
-// Mapping state to props
 const mapStateToProps = (state) => {
   const k8sconfig = state.get('k8sConfig');
   const meshAdapters = state.get('meshAdapters');
@@ -245,7 +244,6 @@ const mapStateToProps = (state) => {
   return { k8sconfig, meshAdapters, meshAdaptersts, selectedAdapter };
 };
 
-// Mapping dispatch to props
 const mapDispatchToProps = (dispatch) => ({
   setAdapter: bindActionCreators(setAdapter, dispatch),
 });
