@@ -1,15 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import NoSsr from '@mui/material/NoSsr';
-import {
-  Button,
-  Divider,
-  MenuItem,
-  TextField,
-  Grid,
-  Typography,
-  styled
-} from '@layer5/sistent';
+import { Button, Divider, MenuItem, TextField, Grid, Typography, styled } from '@layer5/sistent';
 import { blue } from '@mui/material/colors';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
@@ -18,7 +10,6 @@ import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
 import { bindActionCreators } from 'redux';
 import { setAdapter } from '../lib/store';
 import { UsesSistent } from './SistentWrapper';
-
 
 const StyledButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(3),
@@ -144,9 +135,7 @@ const MesheryPlayComponent = (props) => {
       <NoSsr>
         <AlreadyConfigured>
           <Typography variant="h6">Adapter Unavailable</Typography>
-          <Typography variant="subtitle1">
-            Connect Meshery Adapter(s) in Settings
-          </Typography>
+          <Typography variant="subtitle1">Connect Meshery Adapter(s) in Settings</Typography>
           <StyledButton
             variant="contained"
             color="primary"
@@ -172,57 +161,54 @@ const MesheryPlayComponent = (props) => {
 
   return (
     <UsesSistent>
-    <NoSsr>
-      <PlayRoot>
-        <Grid container>
-          <Grid item xs={12}>
-            <PaneSection>
-              <TextField
-                select
-                id="adapter_id"
-                name="adapter_name"
-                label="Select Meshery Adapter"
-                data-cy="lifecycle-service-mesh-type"
-                fullWidth
-                value={adapter?.adapter_location || ''}
-                margin="normal"
-                variant="outlined"
-                onChange={handleAdapterChange}
-                SelectProps={{
-                  MenuProps: {
-                    anchorOrigin: {
-                      vertical: 'bottom',
-                      horizontal: 'left',
+      <NoSsr>
+        <PlayRoot>
+          <Grid container>
+            <Grid item xs={12}>
+              <PaneSection>
+                <TextField
+                  select
+                  id="adapter_id"
+                  name="adapter_name"
+                  label="Select Meshery Adapter"
+                  data-cy="lifecycle-service-mesh-type"
+                  fullWidth
+                  value={adapter?.adapter_location || ''}
+                  margin="normal"
+                  variant="outlined"
+                  onChange={handleAdapterChange}
+                  SelectProps={{
+                    MenuProps: {
+                      anchorOrigin: {
+                        vertical: 'bottom',
+                        horizontal: 'left',
+                      },
+                      transformOrigin: {
+                        vertical: 'top',
+                        horizontal: 'left',
+                      },
+                      // Removed getContentAnchorEl as it's deprecated in MUI v5
                     },
-                    transformOrigin: {
-                      vertical: 'top',
-                      horizontal: 'left',
-                    },
-                    // Removed getContentAnchorEl as it's deprecated in MUI v5
-                  },
-                }}
-              >
-                {meshAdapters.map((ada) => (
-                  <MenuItem
-                    key={ada.adapter_location}
-                    value={ada.adapter_location}
-                  >
-                    {pickImage(ada)}
-                    <Typography variant="body1" sx={{ ml: 1 }}>
-                      {ada.adapter_location}
-                    </Typography>
-                  </MenuItem>
-                ))}
-              </TextField>
-            </PaneSection>
+                  }}
+                >
+                  {meshAdapters.map((ada) => (
+                    <MenuItem key={ada.adapter_location} value={ada.adapter_location}>
+                      {pickImage(ada)}
+                      <Typography variant="body1" sx={{ ml: 1 }}>
+                        {ada.adapter_location}
+                      </Typography>
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </PaneSection>
+            </Grid>
           </Grid>
-        </Grid>
-      </PlayRoot>
-      <Divider variant="fullWidth" light />
-      {adapter?.adapter_location && (
-        <MesheryAdapterPlayComponent adapter={adapter} adapter_icon={imageIcon} />
-      )}
-    </NoSsr>
+        </PlayRoot>
+        <Divider variant="fullWidth" light />
+        {adapter?.adapter_location && (
+          <MesheryAdapterPlayComponent adapter={adapter} adapter_icon={imageIcon} />
+        )}
+      </NoSsr>
     </UsesSistent>
   );
 };
@@ -236,7 +222,7 @@ MesheryPlayComponent.propTypes = {
 // Mapping state to props
 const mapStateToProps = (state) => {
   const k8sconfig = state.get('k8sConfig');
-  const meshAdapters = state.get('meshAdapters').toJS(); // Assuming meshAdapters is Immutable
+  const meshAdapters = state.get('meshAdapters');
   const meshAdaptersts = state.get('meshAdaptersts');
   const selectedAdapter = state.get('selectedAdapter');
   return { k8sconfig, meshAdapters, meshAdaptersts, adapter: selectedAdapter };
