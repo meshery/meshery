@@ -65,7 +65,7 @@ mesheryctl design apply BookInfoApp
 
 This will apply the pattern BookInfoApp, which has already been imported into Meshery.
 
-See [mesheryctl design subcommand section]({{ site.baseurl }}/reference/mesheryctl/#cloud-native-pattern-configuration-and-management) for more details on the `pattern` subcommand.
+See [mesheryctl design subcommand section]({{ site.baseurl }}/reference/mesheryctl/#cloud-native-pattern-configuration-and-management) for more details on the `design` subcommand.
 
 ## WASM Filters
 
