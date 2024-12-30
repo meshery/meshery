@@ -15,7 +15,7 @@ test.describe('Service Mesh Performance Management Tests', { tag: '@unstable' },
   peformanceProfiles.forEach(({ profileWithUUID, serviceMesh, url, loadGenerator }) => {
     test(`Add performance profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
       page,
-      provider
+      provider,
     }) => {
       test.skip(provider === 'None');
       await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
@@ -37,7 +37,7 @@ test.describe('Service Mesh Performance Management Tests', { tag: '@unstable' },
 
     test(`View detailed result of a performance profile (Graph Visualiser) with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
       page,
-      provider
+      provider,
     }) => {
       test.skip(provider === 'None');
       await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
@@ -50,7 +50,7 @@ test.describe('Service Mesh Performance Management Tests', { tag: '@unstable' },
 
     test(`Edit the configuration of a performance profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
       page,
-      provider
+      provider,
     }) => {
       test.skip(provider === 'None');
       await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
@@ -70,7 +70,7 @@ test.describe('Service Mesh Performance Management Tests', { tag: '@unstable' },
 
     test(`Compare test of a performance profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
       page,
-      provider
+      provider,
     }) => {
       test.skip(provider === 'None');
       await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
@@ -84,7 +84,7 @@ test.describe('Service Mesh Performance Management Tests', { tag: '@unstable' },
 
     test(`Delete a performance profile with load generator "${loadGenerator}" and service mesh "${serviceMesh}"`, async ({
       page,
-      provider
+      provider,
     }) => {
       test.skip(provider === 'None');
       await page.goto(`${ENV.MESHERY_SERVER_URL}/performance/profiles`);
