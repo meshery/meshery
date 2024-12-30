@@ -81,9 +81,9 @@ export const FinalizeDeployment = ({ design, openInVisualizer, setOpenInVisualiz
       <Stack mt={3} gap={1}>
         {visualizerEnabled && (
           <CheckBoxField
-            label="Open in Visualizer"
+            label="Open in Operator"
             checked={openInVisualizer}
-            helpText="Opens the deployed design in visualizer"
+            helpText="Opens the deployed design in operator"
             onChange={() => setOpenInVisualizer(!openInVisualizer)}
           />
         )}
