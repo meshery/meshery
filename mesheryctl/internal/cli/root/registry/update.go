@@ -59,7 +59,9 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		spreadsheetCred, _ := cmd.Flags().GetString("spreadsheet-cred")
 
 		if spreadsheetID == "" || spreadsheetCred == "" {
-			return cmd.Help()
+			if err := cmd.Help(); err != nil {
+				return ErrUpdateRegistry(err, modelLocation)
+			}
 		}
 
 		err := os.MkdirAll(logDirPath, 0755)
