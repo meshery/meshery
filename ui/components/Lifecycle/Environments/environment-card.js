@@ -8,18 +8,18 @@ import { keys } from '@/utils/permission_constants';
 import { Grid, useTheme } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
 import {
-  PopupButton,
-  TabCount,
-  CardWrapper,
-  TabTitle,
   Name,
   IconButton,
-  EmptyDescription,
+  CardWrapper,
+  DateLabel,
   DescriptionLabel,
+  EmptyDescription,
+  TabCount,
+  TabTitle,
+  PopupButton,
   AllocationButton,
   BulkSelectCheckbox,
   CardTitle,
-  DateLabel,
 } from './styles';
 
 export const formattoLongDate = (date) => {
@@ -178,15 +178,13 @@ const EnvironmentCard = ({
               background: 'linear-gradient(180deg, #007366 0%, #000 100%)',
             }}
           >
-            <Grid xs={12} sx={{ display: 'flex', flexDirection: 'row', height: '40px' }}>
+            <Grid xs={12} sx={{ display: 'flex', flexDirection: 'row' }}>
               <Grid xs={6} sx={{ display: 'flex', alignItems: 'flex-start' }}>
-                <UsesSistent>
                   <BulkSelectCheckbox
                     onClick={(e) => e.stopPropagation()}
                     onChange={onSelect}
                     disabled={deleted ? true : false}
                   />
-                </UsesSistent>
                 <CardTitle
                   sx={{ color: 'white' }}
                   variant="body2"

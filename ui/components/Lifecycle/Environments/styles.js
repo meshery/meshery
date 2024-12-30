@@ -146,7 +146,7 @@ export const BulkSelectCheckbox = styled(Checkbox)({
   },
 });
 
-export const CardTitle = styled('h2')({
+export const CardTitle = styled(Typography)({
   fontSize: '1.25rem',
   fontWeight: 800,
   '&:hover': {

@@ -609,10 +609,10 @@ const Workspaces = ({ organization }) => {
   };
 
   return (
-    <NoSsr>
-      {CAN(keys.VIEW_WORKSPACE.action, keys.VIEW_WORKSPACE.subject) ? (
-        <>
-          <UsesSistent>
+    <UsesSistent>
+      <NoSsr>
+        {CAN(keys.VIEW_WORKSPACE.action, keys.VIEW_WORKSPACE.subject) ? (
+          <>
             <ToolWrapper>
               <CreateButtonWrapper>
                 <Button
@@ -651,217 +651,219 @@ const Workspaces = ({ organization }) => {
                 setExpanded={setIsSearchExpanded}
               />
             </ToolWrapper>
-          </UsesSistent>
-          {selectedWorkspaces.length > 0 && (
-            <BulkActionWrapper>
-              <Typography>
-                {selectedWorkspaces.length > 1
-                  ? `${selectedWorkspaces.length} workspaces selected`
-                  : `${selectedWorkspaces.length} workspace selected`}
-              </Typography>
-              <Button>
-                <DeleteIcon
-                  fill={theme.palette.text.default}
-                  onClick={handleDeleteWorkspacesModalOpen}
-                  disabled={
-                    CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject) &&
-                    selectedWorkspaces.length > 0
-                      ? false
-                      : true
-                  }
-                />
-              </Button>
-            </BulkActionWrapper>
-          )}
-          {workspaces.length > 0 ? (
-            <>
-              <Grid container spacing={2} sx={{ marginTop: '10px' }}>
-                {workspaces.map((workspace) => (
-                  <Grid item xs={12} md={6} key={workspace.id}>
-                    <WorkspaceCard
-                      workspaceDetails={workspace}
-                      onEdit={(e) => handleWorkspaceModalOpen(e, ACTION_TYPES.EDIT, workspace)}
-                      onDelete={(e) => handleDeleteWorkspaceConfirm(e, workspace)}
-                      onSelect={(e) => handleBulkSelect(e, workspace.id)}
-                      selectedWorkspaces={selectedWorkspaces}
-                      onAssignEnvironment={(e) => handleAssignEnvironmentModalOpen(e, workspace)}
-                      onAssignDesign={(e) => handleAssignDesignModalOpen(e, workspace)}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-              <Grid
-                container
-                sx={{ padding: '2rem 0', marginTop: '20px' }}
-                flex
-                justifyContent="center"
-                spacing={2}
-              >
-                <Pagination
-                  count={Math.ceil(workspacesData?.total_count / pageSize)}
-                  page={page + 1}
-                  sx={{
-                    backgroundColor: 'white',
-                    borderRadius: '1rem',
-                    padding: '0.5rem',
-                  }}
-                  onChange={debounce((_, page) => setPage(page - 1), 150)}
-                  boundaryCount={3}
-                  renderItem={(item) => (
-                    <PaginationItem
-                      slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
-                      {...item}
-                    />
-                  )}
-                />
-              </Grid>
-            </>
-          ) : (
-            <EmptyState
-              icon={<WorkspaceIcon height="6rem" width="6rem" fill="#808080" />}
-              message="No workspace available"
-              pointerLabel="Click “Create” to establish your first workspace."
-            />
-          )}
-          {(actionType === ACTION_TYPES.CREATE
-            ? CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)
-            : CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)) &&
-            workspaceModal.open && (
-              <UsesSistent>
-                <SisitentModal
-                  open={workspaceModal.open}
-                  closeModal={handleWorkspaceModalClose}
-                  title={actionType === ACTION_TYPES.CREATE ? 'Create Workspace' : 'Edit Workspace'}
-                >
-                  <RJSFModalWrapper
-                    schema={workspaceModal.schema.schema}
-                    uiSchema={workspaceModal.schema.uiSchema}
-                    handleSubmit={
-                      actionType === ACTION_TYPES.CREATE
-                        ? handleCreateWorkspace
-                        : handleEditWorkspace
+            {selectedWorkspaces.length > 0 && (
+              <BulkActionWrapper>
+                <Typography>
+                  {selectedWorkspaces.length > 1
+                    ? `${selectedWorkspaces.length} workspaces selected`
+                    : `${selectedWorkspaces.length} workspace selected`}
+                </Typography>
+                <Button>
+                  <DeleteIcon
+                    fill={theme.palette.text.default}
+                    onClick={handleDeleteWorkspacesModalOpen}
+                    disabled={
+                      CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject) &&
+                      selectedWorkspaces.length > 0
+                        ? false
+                        : true
                     }
-                    submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
-                    initialData={initialData}
-                    handleClose={handleWorkspaceModalClose}
                   />
-                </SisitentModal>
-              </UsesSistent>
+                </Button>
+              </BulkActionWrapper>
             )}
-          <UsesSistent>
-            <SisitentModal
-              open={assignEnvironmentModal}
-              closeModal={handleAssignEnvironmentModalClose}
-              title={`Assign Environments to ${environmentAssignWorkspace.name}`}
-              headerIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
-              maxWidth="md"
-            >
-              <ModalBody>
-                <TransferList
-                  name="Environments"
-                  assignableData={environmentsData}
-                  assignedData={handleAssignEnvironmentsData}
-                  originalAssignedData={workspaceEnvironmentsData}
-                  emptyStateIconLeft={
-                    <EnvironmentIcon
-                      height="5rem"
-                      width="5rem"
-                      fill="#808080"
-                      secondaryFill="#979797"
+            {workspaces.length > 0 ? (
+              <>
+                <Grid container spacing={2} sx={{ marginTop: '10px' }}>
+                  {workspaces.map((workspace) => (
+                    <Grid item xs={12} md={6} key={workspace.id}>
+                      <WorkspaceCard
+                        workspaceDetails={workspace}
+                        onEdit={(e) => handleWorkspaceModalOpen(e, ACTION_TYPES.EDIT, workspace)}
+                        onDelete={(e) => handleDeleteWorkspaceConfirm(e, workspace)}
+                        onSelect={(e) => handleBulkSelect(e, workspace.id)}
+                        selectedWorkspaces={selectedWorkspaces}
+                        onAssignEnvironment={(e) => handleAssignEnvironmentModalOpen(e, workspace)}
+                        onAssignDesign={(e) => handleAssignDesignModalOpen(e, workspace)}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+                <Grid
+                  container
+                  sx={{ padding: '2rem 0', marginTop: '20px' }}
+                  flex
+                  justifyContent="center"
+                  spacing={2}
+                >
+                  <Pagination
+                    count={Math.ceil(workspacesData?.total_count / pageSize)}
+                    page={page + 1}
+                    sx={{
+                      backgroundColor: 'white',
+                      borderRadius: '1rem',
+                      padding: '0.5rem',
+                    }}
+                    onChange={debounce((_, page) => setPage(page - 1), 150)}
+                    boundaryCount={3}
+                    renderItem={(item) => (
+                      <PaginationItem
+                        slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
+                        {...item}
+                      />
+                    )}
+                  />
+                </Grid>
+              </>
+            ) : (
+              <EmptyState
+                icon={<WorkspaceIcon height="6rem" width="6rem" fill="#808080" />}
+                message="No workspace available"
+                pointerLabel="Click “Create” to establish your first workspace."
+              />
+            )}
+            {(actionType === ACTION_TYPES.CREATE
+              ? CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)
+              : CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)) &&
+              workspaceModal.open && (
+                <UsesSistent>
+                  <SisitentModal
+                    open={workspaceModal.open}
+                    closeModal={handleWorkspaceModalClose}
+                    title={
+                      actionType === ACTION_TYPES.CREATE ? 'Create Workspace' : 'Edit Workspace'
+                    }
+                  >
+                    <RJSFModalWrapper
+                      schema={workspaceModal.schema.schema}
+                      uiSchema={workspaceModal.schema.uiSchema}
+                      handleSubmit={
+                        actionType === ACTION_TYPES.CREATE
+                          ? handleCreateWorkspace
+                          : handleEditWorkspace
+                      }
+                      submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
+                      initialData={initialData}
+                      handleClose={handleWorkspaceModalClose}
                     />
-                  }
-                  emtyStateMessageLeft="No environments available"
-                  emptyStateIconRight={
-                    <EnvironmentIcon
-                      height="5rem"
-                      width="5rem"
-                      fill="#808080"
-                      secondaryFill="#979797"
-                    />
-                  }
-                  emtyStateMessageRight="No environments assigned"
-                  assignablePage={handleAssignablePageEnvironment}
-                  assignedPage={handleAssignedPageEnvironment}
-                  originalLeftCount={environments?.total_count}
-                  originalRightCount={environmentsOfWorkspace?.total_count}
-                  leftPermission={CAN(
-                    keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.action,
-                    keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.subject,
-                  )}
-                  rightPermission={CAN(
-                    keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.action,
-                    keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.subject,
-                  )}
-                />
-              </ModalBody>
-              <ModalFooter variant="filled" helpText="Assign environment to workspace">
-                <PrimaryActionButtons
-                  primaryText="Save"
-                  secondaryText="Cancel"
-                  primaryButtonProps={{
-                    onClick: handleAssignEnvironments,
-                    disabled: disableTranferButton,
-                  }}
-                  secondaryButtonProps={{
-                    onClick: handleAssignEnvironmentModalClose,
-                  }}
-                />
-              </ModalFooter>
-            </SisitentModal>
+                  </SisitentModal>
+                </UsesSistent>
+              )}
+            <UsesSistent>
+              <SisitentModal
+                open={assignEnvironmentModal}
+                closeModal={handleAssignEnvironmentModalClose}
+                title={`Assign Environments to ${environmentAssignWorkspace.name}`}
+                headerIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
+                maxWidth="md"
+              >
+                <ModalBody>
+                  <TransferList
+                    name="Environments"
+                    assignableData={environmentsData}
+                    assignedData={handleAssignEnvironmentsData}
+                    originalAssignedData={workspaceEnvironmentsData}
+                    emptyStateIconLeft={
+                      <EnvironmentIcon
+                        height="5rem"
+                        width="5rem"
+                        fill="#808080"
+                        secondaryFill="#979797"
+                      />
+                    }
+                    emtyStateMessageLeft="No environments available"
+                    emptyStateIconRight={
+                      <EnvironmentIcon
+                        height="5rem"
+                        width="5rem"
+                        fill="#808080"
+                        secondaryFill="#979797"
+                      />
+                    }
+                    emtyStateMessageRight="No environments assigned"
+                    assignablePage={handleAssignablePageEnvironment}
+                    assignedPage={handleAssignedPageEnvironment}
+                    originalLeftCount={environments?.total_count}
+                    originalRightCount={environmentsOfWorkspace?.total_count}
+                    leftPermission={CAN(
+                      keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.action,
+                      keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.subject,
+                    )}
+                    rightPermission={CAN(
+                      keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.action,
+                      keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.subject,
+                    )}
+                  />
+                </ModalBody>
+                <ModalFooter variant="filled" helpText="Assign environment to workspace">
+                  <PrimaryActionButtons
+                    primaryText="Save"
+                    secondaryText="Cancel"
+                    primaryButtonProps={{
+                      onClick: handleAssignEnvironments,
+                      disabled: disableTranferButton,
+                    }}
+                    secondaryButtonProps={{
+                      onClick: handleAssignEnvironmentModalClose,
+                    }}
+                  />
+                </ModalFooter>
+              </SisitentModal>
 
-            <SisitentModal
-              open={assignDesignModal}
-              closeModal={handleAssignDesignModalClose}
-              title={`Assign Designs to ${designAssignWorkspace.name}`}
-              headerIcon={<DesignsIcon height="2rem" width="2rem" fill="#ffffff" />}
-              maxWidth="md"
-            >
-              <ModalBody>
-                <TransferList
-                  name="Designs"
-                  assignableData={designsData}
-                  assignedData={handleAssignDesignsData}
-                  originalAssignedData={workspaceDesignsData}
-                  emptyStateIconLeft={<DesignsIcon height="5rem" width="5rem" />}
-                  emtyStateMessageLeft="No designs available"
-                  emptyStateIconRight={<DesignsIcon height="5rem" width="5rem" />}
-                  emtyStateMessageRight="No designs assigned"
-                  assignablePage={handleAssignablePageDesign}
-                  assignedPage={handleAssignedPageDesign}
-                  originalLeftCount={designs?.total_count}
-                  originalRightCount={designsOfWorkspace?.total_count}
-                  leftPermission={true}
-                  rightPermission={true}
-                />
-              </ModalBody>
-              <ModalFooter variant="filled" helpText="Assign designs to workspace">
-                <PrimaryActionButtons
-                  primaryText="Save"
-                  secondaryText="Cancel"
-                  primaryButtonProps={{
-                    onClick: handleAssignDesigns,
-                    disabled: disableTranferButton,
-                  }}
-                  secondaryButtonProps={{
-                    onClick: handleAssignDesignModalClose,
-                  }}
-                />
-              </ModalFooter>
-            </SisitentModal>
-          </UsesSistent>
-          <GenericModal
-            open={deleteWorkspacesModal}
-            handleClose={handleDeleteWorkspacesModalClose}
-            title={'Delete Workspace'}
-            body={`Do you want to delete ${selectedWorkspaces.length} workspace(s) ?`}
-            action={handleBulkDeleteWorkspace}
-          />
-          <PromptComponent ref={ref} />
-        </>
-      ) : (
-        <DefaultError />
-      )}
-    </NoSsr>
+              <SisitentModal
+                open={assignDesignModal}
+                closeModal={handleAssignDesignModalClose}
+                title={`Assign Designs to ${designAssignWorkspace.name}`}
+                headerIcon={<DesignsIcon height="2rem" width="2rem" fill="#ffffff" />}
+                maxWidth="md"
+              >
+                <ModalBody>
+                  <TransferList
+                    name="Designs"
+                    assignableData={designsData}
+                    assignedData={handleAssignDesignsData}
+                    originalAssignedData={workspaceDesignsData}
+                    emptyStateIconLeft={<DesignsIcon height="5rem" width="5rem" />}
+                    emtyStateMessageLeft="No designs available"
+                    emptyStateIconRight={<DesignsIcon height="5rem" width="5rem" />}
+                    emtyStateMessageRight="No designs assigned"
+                    assignablePage={handleAssignablePageDesign}
+                    assignedPage={handleAssignedPageDesign}
+                    originalLeftCount={designs?.total_count}
+                    originalRightCount={designsOfWorkspace?.total_count}
+                    leftPermission={true}
+                    rightPermission={true}
+                  />
+                </ModalBody>
+                <ModalFooter variant="filled" helpText="Assign designs to workspace">
+                  <PrimaryActionButtons
+                    primaryText="Save"
+                    secondaryText="Cancel"
+                    primaryButtonProps={{
+                      onClick: handleAssignDesigns,
+                      disabled: disableTranferButton,
+                    }}
+                    secondaryButtonProps={{
+                      onClick: handleAssignDesignModalClose,
+                    }}
+                  />
+                </ModalFooter>
+              </SisitentModal>
+            </UsesSistent>
+            <GenericModal
+              open={deleteWorkspacesModal}
+              handleClose={handleDeleteWorkspacesModalClose}
+              title={'Delete Workspace'}
+              body={`Do you want to delete ${selectedWorkspaces.length} workspace(s) ?`}
+              action={handleBulkDeleteWorkspace}
+            />
+            <PromptComponent ref={ref} />
+          </>
+        ) : (
+          <DefaultError />
+        )}
+      </NoSsr>
+    </UsesSistent>
   );
 };
 

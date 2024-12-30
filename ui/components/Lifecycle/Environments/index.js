@@ -29,8 +29,7 @@ import {
   Button,
   Grid,
   Typography,
-  SearchBar,
-  useTheme,
+  SearchBar
 } from '@layer5/sistent';
 import ConnectionIcon from '../../../assets/icons/Connection';
 import { TRANSFER_COMPONENT } from '../../../utils/Enum';
@@ -43,7 +42,6 @@ import {
   useUpdateEnvironmentMutation,
   useDeleteEnvironmentMutation,
 } from '../../../rtk-query/environments';
-// import styles from './styles';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '../../General/error-404/index';
@@ -80,11 +78,8 @@ const Environments = ({ organization }) => {
   const pageSize = 10;
   const connectionPageSize = 25;
 
-  const theme = useTheme();
-
   const modalRef = useRef(null);
   const { notify } = useNotification();
-  // const StyleClass = useStyles();
 
   const {
     data: environmentsData,
@@ -461,10 +456,6 @@ const Environments = ({ organization }) => {
                     padding: '8px',
                     borderRadius: 2,
                     marginRight: '2rem',
-                    backgroundColor:
-                      theme.palette.mode === 'dark'
-                        ? theme.palette.background.brand?.default
-                        : theme.palette.background.brand?.default,
                   }}
                   disabled={!CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject)}
                   data-cy="btnResetDatabase"
@@ -480,16 +471,14 @@ const Environments = ({ organization }) => {
                   </Typography>
                 </Button>
               </CreateButtonWrapper>
-              <UsesSistent>
-                <SearchBar
-                  onSearch={(value) => {
-                    setSearch(value);
-                  }}
-                  placeholder="Search Environments..."
-                  expanded={isSearchExpanded}
-                  setExpanded={setIsSearchExpanded}
-                />
-              </UsesSistent>
+              <SearchBar
+                onSearch={(value) => {
+                  setSearch(value);
+                }}
+                placeholder="Search Environments..."
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
+              />
             </ToolWrapper>
             {selectedEnvironments.length > 0 && (
               <BulkActionWrapper>
@@ -567,6 +556,7 @@ const Environments = ({ organization }) => {
                     fill="#808080"
                     secondaryFill="#979797"
                   />
+                  // TODO: replace all fill and secondary fill hex values with sistent tokens
                 }
                 message="No environment available"
                 pointerLabel="Click “Create” to establish your first environment."
@@ -575,81 +565,77 @@ const Environments = ({ organization }) => {
             {(CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject) ||
               CAN(keys.EDIT_ENVIRONMENT.action, keys.EDIT_ENVIRONMENT.subject)) &&
               environmentModal.open && (
-                <UsesSistent>
-                  <SisitentModal
-                    open={environmentModal.open}
-                    closeModal={handleEnvironmentModalClose}
-                    title={
-                      actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
+                <SisitentModal
+                  open={environmentModal.open}
+                  closeModal={handleEnvironmentModalClose}
+                  title={
+                    actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
+                  }
+                >
+                  <RJSFModalWrapper
+                    schema={environmentModal.schema.schema}
+                    uiSchema={environmentModal.schema.uischema}
+                    handleSubmit={
+                      actionType === ACTION_TYPES.CREATE
+                        ? handleCreateEnvironment
+                        : handleEditEnvironment
                     }
-                  >
-                    <RJSFModalWrapper
-                      schema={environmentModal.schema.schema}
-                      uiSchema={environmentModal.schema.uischema}
-                      handleSubmit={
-                        actionType === ACTION_TYPES.CREATE
-                          ? handleCreateEnvironment
-                          : handleEditEnvironment
-                      }
-                      submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
-                      initialData={initialData}
-                      handleClose={handleEnvironmentModalClose}
-                    />
-                  </SisitentModal>
-                </UsesSistent>
+                    submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
+                    initialData={initialData}
+                    handleClose={handleEnvironmentModalClose}
+                  />
+                </SisitentModal>
               )}
-            <UsesSistent>
-              <SisitentModal
-                open={assignConnectionModal}
-                closeModal={handleonAssignConnectionModalClose}
-                title={`${connectionAssignEnv.name} Resources`}
-                headerIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
-                maxWidth="md"
-              >
-                <ModalBody>
-                  <TransferList
-                    name="Connections"
-                    assignableData={connectionsData}
-                    assignedData={handleAssignConnectionData}
-                    originalAssignedData={environmentConnectionsData}
-                    emptyStateIconLeft={
-                      <ConnectionIcon width="120" primaryFill="#808080" secondaryFill="#979797" />
-                    }
-                    emtyStateMessageLeft="No connections available"
-                    emptyStateIconRight={
-                      <ConnectionIcon width="120" primaryFill="#808080" secondaryFill="#979797" />
-                    }
-                    emtyStateMessageRight="No connections assigned"
-                    transferComponentType={TRANSFER_COMPONENT.CHIP}
-                    assignablePage={handleAssignablePage}
-                    assignedPage={handleAssignedPage}
-                    originalLeftCount={connections?.total_count}
-                    originalRightCount={environmentConnections?.total_count}
-                    leftPermission={CAN(
-                      keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.action,
-                      keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.subject,
-                    )}
-                    rightPermission={CAN(
-                      keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
-                      keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
-                    )}
-                  />
-                </ModalBody>
-                <ModalFooter variant="filled" helpText="Assign connections to environment">
-                  <PrimaryActionButtons
-                    primaryText="Save"
-                    secondaryText="Cancel"
-                    primaryButtonProps={{
-                      onClick: handleAssignConnection,
-                      disabled: disableTranferButton,
-                    }}
-                    secondaryButtonProps={{
-                      onClick: handleonAssignConnectionModalClose,
-                    }}
-                  />
-                </ModalFooter>
-              </SisitentModal>
-            </UsesSistent>
+            <SisitentModal
+              open={assignConnectionModal}
+              closeModal={handleonAssignConnectionModalClose}
+              title={`${connectionAssignEnv.name} Resources`}
+              headerIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
+              maxWidth="md"
+            >
+              <ModalBody>
+                <TransferList
+                  name="Connections"
+                  assignableData={connectionsData}
+                  assignedData={handleAssignConnectionData}
+                  originalAssignedData={environmentConnectionsData}
+                  emptyStateIconLeft={
+                    <ConnectionIcon width="120" primaryFill="#808080" secondaryFill="#979797" />
+                  }
+                  emtyStateMessageLeft="No connections available"
+                  emptyStateIconRight={
+                    <ConnectionIcon width="120" primaryFill="#808080" secondaryFill="#979797" />
+                  }
+                  emtyStateMessageRight="No connections assigned"
+                  transferComponentType={TRANSFER_COMPONENT.CHIP}
+                  assignablePage={handleAssignablePage}
+                  assignedPage={handleAssignedPage}
+                  originalLeftCount={connections?.total_count}
+                  originalRightCount={environmentConnections?.total_count}
+                  leftPermission={CAN(
+                    keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.action,
+                    keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.subject,
+                  )}
+                  rightPermission={CAN(
+                    keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
+                    keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
+                  )}
+                />
+              </ModalBody>
+              <ModalFooter variant="filled" helpText="Assign connections to environment">
+                <PrimaryActionButtons
+                  primaryText="Save"
+                  secondaryText="Cancel"
+                  primaryButtonProps={{
+                    onClick: handleAssignConnection,
+                    disabled: disableTranferButton,
+                  }}
+                  secondaryButtonProps={{
+                    onClick: handleonAssignConnectionModalClose,
+                  }}
+                />
+              </ModalFooter>
+            </SisitentModal>
             <PromptComponent ref={modalRef} />
           </>
         ) : (
