@@ -55,6 +55,12 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED --model "[model-name]"
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		spreadsheetID, _ := cmd.Flags().GetString("spreadsheet-id")
+		spreadsheetCred, _ := cmd.Flags().GetString("spreadsheet-cred")
+
+		if spreadsheetID == "" || spreadsheetCred == "" {
+			return cmd.Help()
+		}
 
 		err := os.MkdirAll(logDirPath, 0755)
 		if err != nil {
@@ -73,7 +79,7 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		srv, err := mutils.NewSheetSRV(spreadsheeetCred)
 		if err != nil {
 			utils.Log.Error(ErrUpdateRegistry(err, modelLocation))
-			return cmd.Help()
+			return err
 		}
 		resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
 		if err != nil || resp.HTTPStatusCode != 200 {
