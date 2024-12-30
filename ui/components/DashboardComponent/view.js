@@ -231,13 +231,13 @@ const View = (props) => {
         }}
       >
         <UsesSistent>
-        <Paper>
-          <HeaderComponent />
-          <div style={{ margin: '1rem clamp(0.2rem, 5%, 7rem)', paddingBottom: '1rem' }}>
-            <ResourceMetrics />
-            <RenderObject obj={resource} />
-          </div>
-        </Paper>
+          <Paper>
+            <HeaderComponent />
+            <div style={{ margin: '1rem clamp(0.2rem, 5%, 7rem)', paddingBottom: '1rem' }}>
+              <ResourceMetrics />
+              <RenderObject obj={resource} />
+            </div>
+          </Paper>
         </UsesSistent>
       </div>
     </>
@@ -250,27 +250,27 @@ export const Title = ({ onClick, data, value }) => {
   const [isHovered, setHovered] = useState(false);
   return (
     <UsesSistent>
-    <div
-      style={{
-        color: 'inherit',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        textDecoration: isHovered ? 'underline' : 'none',
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      <div onClick={onClick} style={{ display: 'inherit', alignItems: 'center' }}>
-        <div>
-          <GetNodeIcon metadata={JsonParse(data)} />
+      <div
+        style={{
+          color: 'inherit',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          textDecoration: isHovered ? 'underline' : 'none',
+        }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        <div onClick={onClick} style={{ display: 'inherit', alignItems: 'center' }}>
+          <div>
+            <GetNodeIcon metadata={JsonParse(data)} />
+          </div>
+          <Typography style={{ marginLeft: '0.50rem' }} variant="body2">
+            {value}
+          </Typography>
         </div>
-        <Typography style={{ marginLeft: '0.50rem' }} variant="body2">
-          {value}
-        </Typography>
       </div>
-    </div>
     </UsesSistent>
   );
 };

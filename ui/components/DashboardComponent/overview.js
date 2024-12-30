@@ -1,8 +1,6 @@
 import React from 'react';
 import { NoSsr, Grid } from '@mui/material';
-import { styled } from '@mui/material/styles';
 import Popup from '../Popup';
-import { useRouter } from 'next/router';
 import { withNotify } from '../../utils/hooks/useNotification';
 import { blue } from '@mui/material/colors';
 import DashboardMeshModelGraph from './charts/DashboardMeshModelGraph.js';
@@ -10,10 +8,10 @@ import ConnectionStatsChart from './charts/ConnectionCharts.js';
 import MesheryConfigurationChart from './charts/MesheryConfigurationCharts.js';
 import { Provider } from 'react-redux';
 import { store } from '@/store/index';
-import {useTheme} from '@layer5/sistent';
+import { useTheme,styled } from '@layer5/sistent';
 
 const Root = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.secondary.elevatedComponents2,
+  backgroundColor: theme.palette.text.default,
   marginTop: '1rem',
 }));
 
@@ -81,7 +79,6 @@ const useStyles = (theme) => ({
 });
 
 const Overview = () => {
-  const router = useRouter();
   const theme = useTheme();
   const classes = useStyles(theme);
 
