@@ -1,6 +1,7 @@
 module github.com/layer5io/meshery
 
 go 1.23
+toolchain go1.23.4
 
 replace (
 	github.com/docker/cli => github.com/docker/cli v23.0.6+incompatible
@@ -13,7 +14,7 @@ replace (
 
 require (
 	cuelang.org/go v0.6.0
-	fortio.org/fortio v1.66.2
+	fortio.org/fortio v1.68.0
 	github.com/99designs/gqlgen v0.17.45
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/briandowns/spinner v1.23.1
@@ -60,12 +61,12 @@ require (
 	github.com/stretchr/testify v1.9.0
 	github.com/vektah/gqlparser/v2 v2.5.17
 	github.com/vmihailenco/taskq/v3 v3.2.9
-	golang.org/x/oauth2 v0.22.0
+	golang.org/x/oauth2 v0.23.0
 	golang.org/x/sync v0.10.0
 	golang.org/x/text v0.21.0
 	gonum.org/v1/gonum v0.15.0
 	google.golang.org/api v0.195.0
-	google.golang.org/grpc v1.67.1
+	google.golang.org/grpc v1.68.0
 	google.golang.org/protobuf v1.34.2
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/gorm v1.25.12
@@ -89,10 +90,11 @@ require (
 	cloud.google.com/go/auth/oauth2adapt v0.2.4 // indirect
 	cloud.google.com/go/compute/metadata v0.5.0 // indirect
 	dario.cat/mergo v1.0.0 // indirect
-	fortio.org/cli v1.9.0 // indirect
-	fortio.org/dflag v1.7.2 // indirect
-	fortio.org/log v1.16.0 // indirect
-	fortio.org/scli v1.15.2 // indirect
+	fortio.org/cli v1.9.2 // indirect
+	fortio.org/dflag v1.7.3 // indirect
+	fortio.org/log v1.17.1 // indirect
+	fortio.org/safecast v1.0.0 // indirect
+	fortio.org/scli v1.15.3 // indirect
 	fortio.org/sets v1.2.0 // indirect
 	fortio.org/struct2env v0.4.1 // indirect
 	fortio.org/version v1.0.4 // indirect
@@ -133,7 +135,7 @@ require (
 	github.com/chai2010/gettext-go v1.0.2 // indirect
 	github.com/chzyer/readline v1.5.1 // indirect
 	github.com/cloudflare/circl v1.3.7 // indirect
-	github.com/cncf/xds/go v0.0.0-20240723142845-024c85f92f20 // indirect
+	github.com/cncf/xds/go v0.0.0-20240905190251-b4127c9b8d78 // indirect
 	github.com/cockroachdb/apd/v3 v3.2.1 // indirect
 	github.com/compose-spec/compose-go v1.19.0 // indirect
 	github.com/containerd/containerd v1.7.21 // indirect
@@ -308,7 +310,7 @@ require (
 	golang.org/x/crypto v0.31.0 // indirect
 	golang.org/x/crypto/x509roots/fallback v0.0.0-20240904212608-c9da6b9a4008 // indirect
 	golang.org/x/exp v0.0.0-20240904232852-e7e105dedf7e // indirect
-	golang.org/x/net v0.29.0 // indirect
+	golang.org/x/net v0.31.0 // indirect
 	golang.org/x/sys v0.28.0 // indirect
 	golang.org/x/term v0.27.0 // indirect
 	golang.org/x/time v0.6.0 // indirect
