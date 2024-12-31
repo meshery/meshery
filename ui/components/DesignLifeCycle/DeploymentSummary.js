@@ -86,7 +86,7 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
             onClick={() => window.open(event.metadata?.view_link, '_blank')}
             style={{ gap: '0.25rem' }}
           >
-            Open In Visualizer <ExternalLinkIcon fill={theme.palette.common.white} />
+            Open In Operator <ExternalLinkIcon fill={theme.palette.common.white} />
           </Button>
         )}
       </StyledDetailBox>
