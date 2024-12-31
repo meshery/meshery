@@ -46,9 +46,9 @@ var EnvironmentCmd = &cobra.Command{
 	Long:  "View list of environments and detailed information of a specific environments",
 	Example: `
 // To view a list environments
-mesheryctl exp environment list --orgID [orgId]
+mesheryctl environment list --orgID [orgId]
 // To create a environment
-mesheryctl exp environment create --orgID [orgId] --name [name] --description [description]
+mesheryctl environment create --orgID [orgId] --name [name] --description [description]
 // Documentation for environment can be found at:
 https://docs.layer5.io/cloud/spaces/environments/
 	`,
@@ -63,7 +63,7 @@ https://docs.layer5.io/cloud/spaces/environments/
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return utils.ErrInvalidArgument(errors.New(utils.EnvironmentSubError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl exp environment --help' to display usage guide.'\n", args[0]), "environment")))
+			return utils.ErrInvalidArgument(errors.New(utils.EnvironmentSubError(fmt.Sprintf("'%s' is an invalid command. Use 'mesheryctl environment --help' to display usage guide.'\n", args[0]), "environment")))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

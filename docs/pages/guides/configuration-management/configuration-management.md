@@ -49,23 +49,23 @@ Once these patterns are imported, you can then edit these patterns or use the pa
 
 You can also manage cloud native patterns through Meshery's CLI, mesheryctl.
 
-The `mesheryctl pattern` subcommand lets you import and apply patterns to your cluster.
+The `mesheryctl design` subcommand lets you import and apply patterns to your cluster.
 
 For example, if you have your pattern written in a file say, `istio-bookinfo.yaml` which deploys Istio service mesh and onboards the BookInfo app on Istio, you can use mesheryctl to apply this pattern as shown below:
 
 ```
-mesheryctl pattern apply -f istio-bookinfo.yaml
+mesheryctl design apply -f istio-bookinfo.yaml
 ```
 
 If you already have a pattern imported into Meshery, you can apply the pattern by name.
 
 ```
-mesheryctl pattern apply BookInfoApp
+mesheryctl design apply BookInfoApp
 ```
 
 This will apply the pattern BookInfoApp, which has already been imported into Meshery.
 
-See [mesheryctl pattern subcommand section]({{ site.baseurl }}/reference/mesheryctl/#cloud-native-pattern-configuration-and-management) for more details on the `pattern` subcommand.
+See [mesheryctl design subcommand section]({{ site.baseurl }}/reference/mesheryctl/#cloud-native-pattern-configuration-and-management) for more details on the `design` subcommand.
 
 ## WASM Filters
 

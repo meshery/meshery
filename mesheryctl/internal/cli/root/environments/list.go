@@ -36,7 +36,7 @@ var listEnvironmentCmd = &cobra.Command{
 	Long:  `List name of all registered environments`,
 	Example: `
 // List all registered environment
-mesheryctl exp environment list --orgID [orgId]
+mesheryctl environment list --orgID [orgId]
 
 // Documentation for environment can be found at:
 https://docs.layer5.io/cloud/spaces/environments/
