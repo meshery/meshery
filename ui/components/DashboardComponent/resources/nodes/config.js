@@ -1,5 +1,5 @@
 import React from 'react';
-import { getResourceStr, resourceParsers, timeAgo } from '../../../../utils/k8s-utils';
+import { getResourceStr, resourceParsers, timeAgo, getStatus } from '../../../../utils/k8s-utils';
 import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
 
@@ -196,6 +196,32 @@ export const NodeTableConfig = (
           customBodyRender: function CustomBody(value) {
             let time = timeAgo(value);
             return <>{time}</>;
+          },
+        },
+      },
+      {
+        name: 'conditions',
+        label: 'Conditions',
+        options: {
+          sort: true,
+          sortThirdClickReset: true,
+          customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+            return (
+              <SortableTableCell
+                index={index}
+                columnData={column}
+                columnMeta={columnMeta}
+                onSort={() => sortColumn(index)}
+              />
+            );
+          },
+          customBodyRender: function CustomBody(val) {
+            let status = getStatus(val?.attribute);
+            if (status) {
+              return <>{status}</>;
+            } else {
+              return <>-</>;
+            }
           },
         },
       },
