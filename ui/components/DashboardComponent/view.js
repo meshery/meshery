@@ -78,24 +78,22 @@ const View = (props) => {
     };
 
     return (
-      <>
+      <UsesSistent>
         <div style={{ margin: '2rem 0' }}>
           <Typography style={{ fontSize: '1.2rem', marginBottom: '1rem' }} align="left">
             {key.toUpperCase()}
           </Typography>
-          <UsesSistent>
-            <ResponsiveDataTable
-              classes={classes.muiRow}
-              data={value}
-              columns={columns}
-              options={options}
-              tableCols={columns}
-              updateCols={() => {}}
-              columnVisibility={{}}
-            />
-          </UsesSistent>
+          <ResponsiveDataTable
+            classes={classes.muiRow}
+            data={value}
+            columns={columns}
+            options={options}
+            tableCols={columns}
+            updateCols={() => {}}
+            columnVisibility={{}}
+          />
         </div>
-      </>
+      </UsesSistent>
     );
   }
 
@@ -143,7 +141,7 @@ const View = (props) => {
       }, [obj]);
 
       return (
-        <>
+        <UsesSistent>
           {processedData.map((obj, index) => (
             <div key={index}>
               {Object.entries(obj).map(([key, value], innerIndex) => {
@@ -168,7 +166,7 @@ const View = (props) => {
               })}
             </div>
           ))}
-        </>
+        </UsesSistent>
       );
     }
 
@@ -223,23 +221,21 @@ const View = (props) => {
   };
 
   return (
-    <>
+    <UsesSistent>
       <div
         style={{
           margin: '1rem auto',
         }}
       >
-        <UsesSistent>
-          <Paper>
-            <HeaderComponent />
-            <div style={{ margin: '1rem clamp(0.2rem, 5%, 7rem)', paddingBottom: '1rem' }}>
-              <ResourceMetrics />
-              <RenderObject obj={resource} />
-            </div>
-          </Paper>
-        </UsesSistent>
+        <Paper>
+          <HeaderComponent />
+          <div style={{ margin: '1rem clamp(0.2rem, 5%, 7rem)', paddingBottom: '1rem' }}>
+            <ResourceMetrics />
+            <RenderObject obj={resource} />
+          </div>
+        </Paper>
       </div>
-    </>
+    </UsesSistent>
   );
 };
 
