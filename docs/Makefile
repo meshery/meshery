@@ -14,5 +14,5 @@ install:
 	bundle install
 
 docker:
-	docker build -t jekyll-with-ruby3.2.2 .
-	docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll-with-ruby3.2.2 bash -c "bundle install; jekyll serve --drafts --livereload --config _config.yml,_config_dev.yml"
+	docker build -t jekyll .
+	docker run --name meshery-docs --rm -p 4000:4000 -v `pwd`:"/srv/jekyll" jekyll bash -c "bundle install; jekyll serve --drafts --livereload --config _config.yml,_config_dev.yml"

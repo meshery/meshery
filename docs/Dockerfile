@@ -10,9 +10,10 @@ RUN apk update && apk add --no-cache \
     wget \
     curl
 
-ENV RUBY_VERSION=3.2.2
+ENV RUBY_BASE_VERSION=3.2
+ENV RUBY_VERSION=3.2.6
 
-RUN wget https://cache.ruby-lang.org/pub/ruby/3.2/ruby-${RUBY_VERSION}.tar.gz && \
+RUN wget https://cache.ruby-lang.org/pub/ruby/${RUBY_BASE_VERSION}/ruby-${RUBY_VERSION}.tar.gz && \
     tar -xzf ruby-${RUBY_VERSION}.tar.gz && \
     cd ruby-${RUBY_VERSION} && \
     ./configure && \
