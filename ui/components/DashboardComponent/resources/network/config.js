@@ -1,5 +1,5 @@
 import React from 'react';
-import { timeAgo } from '../../../../utils/k8s-utils';
+import { getStatus, timeAgo } from '../../../../utils/k8s-utils';
 import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
 
@@ -32,6 +32,7 @@ export const NetWorkTableConfig = (
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
+        ['status.attribute', 's'],
       ],
       columns: [
         {
@@ -243,6 +244,22 @@ export const NetWorkTableConfig = (
             customBodyRender: function CustomBody(value) {
               let time = timeAgo(value);
               return <>{time}</>;
+            },
+          },
+        },
+        {
+          name: 'status.attribute',
+          label: 'Status',
+          options: {
+            sort: false,
+            setCellProps: () => ({ style: { paddingLeft: '0px' } }),
+            setCellHeaderProps: () => ({ style: { paddingLeft: '0px' } }),
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
+            customBodyRender: function CustomBody(value) {
+              const status = getStatus(value);
+              return <>{status}</>;
             },
           },
         },
