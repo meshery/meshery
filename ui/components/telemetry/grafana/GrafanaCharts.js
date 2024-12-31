@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@material-ui/core';
-import { Grid, ExpansionPanelDetails, Typography } from '@layer5/sistent';
+import { Grid, ExpansionPanelDetails, Typography, styled } from '@layer5/sistent';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import LazyLoad from 'react-lazyload';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
