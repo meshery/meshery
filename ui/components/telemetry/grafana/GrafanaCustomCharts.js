@@ -16,6 +16,7 @@ import {
   DialogTitle,
   Chip,
   styled,
+  useTheme,
 } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
 
@@ -31,10 +32,13 @@ const StyledHeading = styled(Typography)(({ theme }) => ({
   fontSize: theme.typography.pxToRem(15),
 }));
 
-const SecondaryHeading = styled(Typography)(({ theme }) => ({
-  fontSize: theme.typography.pxToRem(15),
-  color: theme.palette.text.secondary,
-}));
+const SecondaryHeading = styled(Typography)(() => {
+  const theme = useTheme();
+  return {
+    fontSize: theme.typography.pxToRem(15),
+    color: theme.palette.text.secondary,
+  };
+});
 
 const DateRangePickerContainer = styled('div')({
   display: 'flex',

@@ -1,10 +1,18 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import { MenuItem, NoSsr, TextField } from '@material-ui/core';
+import { NoSsr } from '@material-ui/core';
+import { MenuItem, TextField } from '@layer5/sistent';
 import { connect } from 'react-redux';
+import { UsesSistent } from '@/components/SistentWrapper';
 
-const grafanaStyles = () => ({ root: { width: '100%' } });
+const Root = styled(Box)(() => ({
+  width: '100%',
+}));
+
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  marginTop: theme.spacing(2),
+  marginBottom: theme.spacing(1),
+}));
 
 class GrafanaMetricsCompare extends Component {
   constructor(props) {
@@ -73,44 +81,46 @@ class GrafanaMetricsCompare extends Component {
     const { panels, panel, selectedSeries, series } = this.state;
 
     return (
-      <NoSsr>
-        <TextField
-          select
-          id="panel"
-          name="panel"
-          label="Panel"
-          fullWidth
-          value={panel}
-          margin="normal"
-          variant="outlined"
-          onChange={this.handleChange('panel')}
-        >
-          {panels &&
-            Object.keys(panels).map((p) => (
-              <MenuItem key={p} value={p}>
-                {p}
-              </MenuItem>
-            ))}
-        </TextField>
-        <TextField
-          select
-          id="series"
-          name="series"
-          label="Series"
-          fullWidth
-          value={selectedSeries}
-          margin="normal"
-          variant="outlined"
-          onChange={this.handleChange('series')}
-        >
-          {series &&
-            series.map((s) => (
-              <MenuItem key={s} value={s}>
-                {s}
-              </MenuItem>
-            ))}
-        </TextField>
-      </NoSsr>
+      <UsesSistent>
+        <NoSsr>
+          <Root>
+            <StyledTextField
+              select
+              id="panel"
+              name="panel"
+              label="Panel"
+              fullWidth
+              value={panel}
+              variant="outlined"
+              onChange={handleChange('panel')}
+            >
+              {panels &&
+                Object.keys(panels).map((p) => (
+                  <MenuItem key={p} value={p}>
+                    {p}
+                  </MenuItem>
+                ))}
+            </StyledTextField>
+            <StyledTextField
+              select
+              id="series"
+              name="series"
+              label="Series"
+              fullWidth
+              value={selectedSeries}
+              variant="outlined"
+              onChange={handleChange('series')}
+            >
+              {series &&
+                series.map((s) => (
+                  <MenuItem key={s} value={s}>
+                    {s}
+                  </MenuItem>
+                ))}
+            </StyledTextField>
+          </Root>
+        </NoSsr>
+      </UsesSistent>
     );
   }
 }
@@ -122,4 +132,4 @@ GrafanaMetricsCompare.propTypes = {
 
 const mapDispatchToProps = () => ({});
 
-export default withStyles(grafanaStyles)(connect(null, mapDispatchToProps)(GrafanaMetricsCompare));
+export default connect(null, mapDispatchToProps)(GrafanaMetricsCompare);
