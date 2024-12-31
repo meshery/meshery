@@ -20,10 +20,10 @@ identify_relationships(design_file, relationships_in_scope) := eval_results if {
 		print("rel is feasible")
 
 		identified_relationships := identify_alias_relationships(component, relationship)
-		new_relationships := { rel |
-		    some rel in identified_relationships
-	     	not alias_relationship_already_exists(design_file, rel)
-	    }
+		new_relationships := {rel |
+			some rel in identified_relationships
+			not alias_relationship_already_exists(design_file, rel)
+		}
 	})
 
 	print("Identify alias rels Eval results", eval_results)
@@ -34,27 +34,61 @@ new_uuid(seed) := id if {
 	id := uuid.rfc4122(sprintf("%s%s", [seed, now]))
 }
 
+alias_paths(from, to, component) := paths if {
+	paths := [
+		["configuration", "spec", "containers", "0"],
+		["configuration", "spec", "containers", "1"],
+		["configuration", "spec", "containers", "2"],
+	]
+}
+
 identify_alias_relationships(component, relationship) := {rel |
 	some selector in relationship.selectors
-	some from in selector.allow.from
-	some to in selector.allow.to
+	some from in selector.allow.from # from is child or alias
+	some to in selector.allow.to # to is parent
 
+	# identify if alias can be created
+	identified_alias_paths := alias_paths(from, to, component)
 
+	count(identified_alias_paths) > 0 # if alias paths are present then alias can be created
+
+	some path in identified_alias_paths
+
+	selector_patch_declaration := {
+		"patchStrategy": "replace",
+		"mutatorRef": [path], # path to the component that needs to be mutated ( basically the ref to alias)
+		"mutatedRef": [path],
+	}
+
+	# create alias relationship declaration
 	selector_declaration := {
-	  "allow" : {
-		"from": [json.patch(from, [{
-			"op": "replace",
-			"path": "/id",
-			"value": new_uuid(component),
-		}])],
-		"to": [json.patch(to, [{
-			"op": "replace",
-			"path": "/id",
-			"value": component.id,
-		}])]
-	  },
-
-	  "deny" :  {}
+		"allow": {
+			"from": [json.patch(from, [
+				{
+					"op": "replace",
+					"path": "/id",
+					"value": new_uuid(selector_patch_declaration),
+				},
+				{
+					"op": "replace",
+					"path": "/patch",
+					"value": selector_patch_declaration,
+				},
+			])],
+			"to": [json.patch(to, [
+				{
+					"op": "replace",
+					"path": "/id",
+					"value": component.id,
+				},
+				{
+					"op": "replace",
+					"path": "/patch",
+					"value": selector_patch_declaration,
+				},
+			])],
+		},
+		"deny": {},
 	}
 
 	print("selector dec", selector)
@@ -68,7 +102,7 @@ identify_alias_relationships(component, relationship) := {rel |
 		{
 			"op": "add",
 			"path": "/id",
-			"value": new_uuid(component.id),
+			"value": new_uuid(selector_declaration),
 		},
 		{
 			"op": "replace",
@@ -79,22 +113,19 @@ identify_alias_relationships(component, relationship) := {rel |
 }
 
 alias_relationship_already_exists(design_file, relationship) := existing_rel if {
-    some existing_rel in design_file.relationships
-    is_alias_relationship(existing_rel)
+	some existing_rel in design_file.relationships
+	is_alias_relationship(existing_rel)
 
-    some selector in existing_rel.selectors
-    some to in selector.allow.to
+	some selector in existing_rel.selectors
+	some to in selector.allow.to
 
-    some new_selector in relationship.selectors
-    some new_to in new_selector.allow.to
+	some new_selector in relationship.selectors
+	some new_to in new_selector.allow.to
 
-    to.kind == new_to.kind
-    to.patch == new_to.patch
-    to.id == new_to.id
-
+	to.kind == new_to.kind
+	to.patch == new_to.patch
+	to.id == new_to.id
 }
-
-
 
 is_relationship_feasible_to(component, relationship) := to if {
 	some selector in relationship.selectors
@@ -111,23 +142,22 @@ validate_relationships_phase(design_file) := validated_rels if {
 
 ## Action Phase
 
-add_components_action(design_file,alias_relationships) := components_added if {
+add_components_action(design_file, alias_relationships) := components_added if {
+	components_added := {component |
+		some relationship in alias_relationships
+		relationship.status == "pending"
+		some selector in relationship.selectors
+		some from in selector.allow.from
 
-    components_added := {component |
-
-        some relationship in alias_relationships
-        relationship.status == "pending"
-        some selector in relationship.selectors
-        some from in selector.allow.from
-
-        print("To Add", from)
-        component := {
-            "id": from.id,
-            "component": {"kind": from.kind},
-            "model": from.model,
-        }
-    }
+		print("To Add", from)
+		component := {
+			"id": from.id,
+			"component": {"kind": from.kind},
+			"model": from.model,
+		}
+	}
 }
+
 # action response {
 #   components_added :      list of components added
 #   components_deleted :    list of components deleted
@@ -137,43 +167,40 @@ add_components_action(design_file,alias_relationships) := components_added if {
 #   relationships_updated : list of relationships updated
 # }
 action_phase(design_file) := result if {
-    alias_relationships := {rel |
-        some rel in design_file.relationships
-        is_alias_relationship(rel)
-    }
+	alias_relationships := {rel |
+		some rel in design_file.relationships
+		is_alias_relationship(rel)
+	}
 
+	components_added := add_components_action(design_file, alias_relationships)
+	relationships_added := {rel |
+		some alias_rel in alias_relationships
+		alias_rel.status == "pending"
+		rel := json.patch(alias_rel, [{
+			"op": "replace",
+			"path": "/status",
+			"value": "approved",
+		}])
+	}
+	relationships_deleted := {alias_rel |
+		some alias_rel in alias_relationships
+		alias_rel.status == "deleteted"
+	}
 
-    components_added := add_components_action(design_file, alias_relationships)
-    relationships_added := { rel |
-        some alias_rel in alias_relationships
-        alias_rel.status == "pending"
-        rel := json.patch(alias_rel, [{
-            "op": "replace",
-            "path": "/status",
-            "value": "approved",
-        }])
-    }
-    relationships_deleted := { alias_rel |
-        some alias_rel in alias_relationships
-        alias_rel.status == "deleteted"
-    }
+	print("Components added", count(components_added))
 
-    print("Components added", count(components_added))
-
-    result := {
-        "components_added": components_added,
-        "components_deleted": {},
-        "components_updated": {},
-        "relationships_updated": {},
-        "relationships_added": relationships_added,
-        "relationships_deleted": relationships_deleted,
-
-    }
-
+	result := {
+		"components_added": components_added,
+		"components_deleted": {},
+		"components_updated": {},
+		"relationships_updated": {},
+		"relationships_added": relationships_added,
+		"relationships_deleted": relationships_deleted,
+	}
 } else := {
-    "components_added": {},
-    "components_deleted": {},
-    "components_updated": {},
-    "relationships_updated": {},
-    "relationships_added": {},
+	"components_added": {},
+	"components_deleted": {},
+	"components_updated": {},
+	"relationships_updated": {},
+	"relationships_added": {},
 }
