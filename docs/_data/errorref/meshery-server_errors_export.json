@@ -2845,7 +2845,7 @@
         "long_description": "",
         "short_description": "Failed to create design service from Manifest",
         "probable_cause": "Invalid Manifest\nMeshery doesn't identifies the Resource mentioned in the Manifest",
-        "suggested_remediation": "Check if all of the meshery adapters are running\nCheck if Meshery has successfully identified and registered Kubernetes components"
+        "suggested_remediation": "Check if all of the meshery adapters are running\nCheck if Meshery has identified and registered Kubernetes components"
       },
       "1317": {
         "name": "ErrPatternFromCytoscapeCode",
