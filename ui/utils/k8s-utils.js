@@ -252,3 +252,13 @@ export function getResourceStr(value, resourceType) {
   const valueInfo = resourceFormatters[resourceType](value);
   return `${valueInfo.value}${valueInfo.unit}`;
 }
+
+export const getStatus = (status) => {
+  const attribute = JSON.parse(status);
+  if (attribute?.phase) {
+    return attribute.phase;
+  }
+  const lastCondition = attribute?.conditions?.reverse()[0];
+  const readyCondition = lastCondition?.type === 'Ready' && lastCondition?.status === 'True';
+  return readyCondition ? 'Ready' : false;
+};
