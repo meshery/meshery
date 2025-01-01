@@ -6,9 +6,7 @@ import { Autocomplete } from '@material-ui/lab';
 import {
   NoSsr,
   Tooltip,
-  IconButton,
   CircularProgress,
-  FormControl,
   RadioGroup,
   FormControlLabel,
   Radio,
@@ -24,8 +22,16 @@ import { durationOptions } from '../lib/prePopulatedOptions';
 import { ctxUrl } from '../utils/multi-ctx';
 import { withNotify } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
+import theme from '@/themes/app';
+import { styled } from '@mui/styles';
+import { FormControl } from '@layer5/sistent';
 
 const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
+
+const FormControlWrapper = styled(FormControl)({
+  minWidth: 180,
+  margin: '10px',
+});
 
 const MesherySettingsPerformanceComponent = (props) => {
   const { classes, notify } = props;
@@ -143,7 +149,7 @@ const MesherySettingsPerformanceComponent = (props) => {
   return (
     <NoSsr>
       <React.Fragment>
-        <div sx={{ padding: theme.spacing(10) }}>
+        <div style={{ padding: theme.spacing(10) }}>
           <label>
             <strong>Performance Load Test Defaults</strong>
           </label>
@@ -192,7 +198,7 @@ const MesherySettingsPerformanceComponent = (props) => {
                   label="Duration*"
                   fullWidth
                   variant="outlined"
-                  className={classes.errorValue}
+                  // className={classes.errorValue}
                   classes={{ root: tError }}
                   value={tValue}
                   inputValue={t}
@@ -207,7 +213,7 @@ const MesherySettingsPerformanceComponent = (props) => {
               </Tooltip>
             </Grid>
             <Grid item xs={12} lg={4}>
-              <FormControl component="loadGenerator" className={classes.formControl}>
+              <FormControlWrapper component="loadGenerator">
                 <label>
                   <strong>Default Load Generator</strong>
                 </label>
@@ -239,10 +245,10 @@ const MesherySettingsPerformanceComponent = (props) => {
                     />
                   ))}
                 </RadioGroup>
-              </FormControl>
+              </FormControlWrapper>
             </Grid>
           </Grid>
-          <div sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Button
               type="submit"
               variant="contained"

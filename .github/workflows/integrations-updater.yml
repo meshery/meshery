@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 # This workflow uses the service account: meshery-integrations-sheet@meshery-237716.iam.gserviceaccount.com
-# See these instructions for setup - https://theoephraim.github.io/node-google-spreadsheet/#/getting-started/authentication
+# See these instructions for setup - https://theoephraim.github.io/node-google-spreadsheet/#/guides/authentication
 
 jobs:
   integrations:
