@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@material-ui/core';
 import { TextField, Grid, Button, Chip, MenuItem, styled } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -29,9 +29,9 @@ const AlignRight = styled('div')(({ theme }) => ({
   marginBottom: theme.spacing(2),
 }));
 
-// const ChartTitle = styled('div')({
-//   textAlign: 'center',
-// });
+const ChartTitle = styled('div')({
+  textAlign: 'center',
+});
 
 const PanelChipsContainer = styled('div')(({ theme }) => ({
   display: 'flex',
