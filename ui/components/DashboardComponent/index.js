@@ -17,6 +17,7 @@ import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/Custom
 import { iconLarge } from '../../css/icons.styles';
 import { useWindowDimensions } from '@/utils/dimension';
 import { Tab, Tabs } from '@layer5/sistent';
+import { UsesSistent } from '../SistentWrapper';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -164,36 +165,38 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
     <>
       <div className={classes.wrapperClss}>
         <Paper square className={classes.wrapperClss}>
-          <Tabs
-            value={getResourceCategoryIndex(resourceCategory)}
-            indicatorColor="primary"
-            onChange={(_e, val) => {
-              changeResourceTab(getResourceCategory(val));
-            }}
-            variant={width < 1280 ? 'scrollable' : 'fullWidth'}
-            scrollButtons="on"
-            textColor="primary"
-            centered
-          >
-            {ResourceCategoryTabs.map((resource, idx) => {
-              return (
-                <CustomTextTooltip key={idx} title={`View ${resource}`} placement="top">
-                  <Tab
-                    value={idx}
-                    key={resource}
-                    icon={
-                      resource === 'Overview' ? (
-                        <MesheryIcon style={iconLarge} />
-                      ) : (
-                        <KubernetesIcon style={iconLarge} />
-                      )
-                    }
-                    label={resource}
-                  />
-                </CustomTextTooltip>
-              );
-            })}
-          </Tabs>
+          <UsesSistent>
+            <Tabs
+              value={getResourceCategoryIndex(resourceCategory)}
+              indicatorColor="primary"
+              onChange={(_e, val) => {
+                changeResourceTab(getResourceCategory(val));
+              }}
+              variant={width < 1280 ? 'scrollable' : 'fullWidth'}
+              scrollButtons="on"
+              textColor="primary"
+              // centered
+            >
+              {ResourceCategoryTabs.map((resource, idx) => {
+                return (
+                  <CustomTextTooltip key={idx} title={`View ${resource}`} placement="top">
+                    <Tab
+                      value={idx}
+                      key={resource}
+                      icon={
+                        resource === 'Overview' ? (
+                          <MesheryIcon style={iconLarge} />
+                        ) : (
+                          <KubernetesIcon style={iconLarge} />
+                        )
+                      }
+                      label={resource}
+                    />
+                  </CustomTextTooltip>
+                );
+              })}
+            </Tabs>
+          </UsesSistent>
         </Paper>
 
         <TabPanel value={resourceCategory} index={'Overview'}>

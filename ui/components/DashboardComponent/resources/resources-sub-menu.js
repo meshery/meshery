@@ -138,7 +138,7 @@ const ResourcesSubMenu = (props) => {
     <>
       <div className={classes.wrapperClss}>
         <Paper className={classes.wrapperClss}>
-          <div className={classes.subMenuTab}>
+          <div>
             <Box sx={{ margin: '0 auto', width: '100%', maxWidth: { xs: 800, sm: 880, md: 1200 } }}>
               <UsesSistent>
                 <Tabs
@@ -148,7 +148,7 @@ const ResourcesSubMenu = (props) => {
                   scrollButtons="on"
                   indicatorColor="primary"
                   textColor="primary"
-                  centered
+                  // centered
                 >
                   {TABS.map((key, index) => (
                     <Tooltip
