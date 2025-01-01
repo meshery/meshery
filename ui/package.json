@@ -96,7 +96,7 @@
     "react-json-view": "^1.21.3",
     "react-jss": "^10.9.0",
     "react-lazyload": "^3.2.0",
-    "react-moment": "^1.1.2",
+    "react-moment": "^1.1.3",
     "react-redux": "8.0.2",
     "react-relay": "^16.0.0",
     "react-runtime": "^1.1.0",
