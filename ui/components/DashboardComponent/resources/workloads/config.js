@@ -223,22 +223,6 @@ export const WorkloadTableConfig = (
             },
           },
         },
-        {
-          name: 'status.attribute',
-          label: 'Status',
-          options: {
-            sort: false,
-            setCellProps: () => ({ style: { paddingLeft: '0px' } }),
-            setCellHeaderProps: () => ({ style: { paddingLeft: '0px' } }),
-            customHeadRender: function CustomHead({ ...column }) {
-              return <DefaultTableCell columnData={column} />;
-            },
-            customBodyRender: function CustomBody(value) {
-              const status = getStatus(value);
-              return <>{status}</>;
-            },
-          },
-        },
       ],
     },
     DEPLOYMENT: {

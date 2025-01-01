@@ -476,8 +476,20 @@ export const NetWorkTableConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let rules = Object.keys(attribute?.rules);
-              return <>{rules?.join(',')}</>;
+
+              let rules = attribute?.rules;
+              return (
+                <>
+                  {rules?.map((rule, i) => {
+                    return (
+                      <>
+                        {`${rule.host}`}
+                        {i < rules.length - 1 && ','}
+                      </>
+                    );
+                  })}
+                </>
+              );
             },
           },
         },
