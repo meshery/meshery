@@ -324,7 +324,7 @@ const DynamicFormatter = ({ data, uiSchema, isLevel = true }) => {
             spacing={3}
             style={{
               marginBlock: '0.4rem',
-              maxWidth: title !== 'name' && 'fit-content',
+              maxWidth: title !== 'age' && 'fit-content',
               marginRight: '1rem',
             }}
           >

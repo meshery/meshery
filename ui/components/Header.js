@@ -257,6 +257,7 @@ const K8sContextConnectionChip_ = ({
   return (
     <div id={ctx.id} className={classes.chip}>
       <CustomTextTooltip
+        disableInteractive
         title={`Server: ${ctx.server},  Operator: ${formatToTitleCase(
           operatorState,
         )}, MeshSync: ${formatToTitleCase(meshSyncState)}, Broker: ${formatToTitleCase(natsState)}`}
