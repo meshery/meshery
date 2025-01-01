@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@material-ui/core';
+import { NoSsr } from '@mui/material';
 import { TextField, Grid, Button, useTheme, styled } from '@layer5/sistent';
 import ReactSelectWrapper from '../../ReactSelectWrapper';
 import CAN from '@/utils/can';

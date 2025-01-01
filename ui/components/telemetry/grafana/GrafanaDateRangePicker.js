@@ -1,6 +1,6 @@
 import React from 'react';
 import { Component } from 'react';
-import { NoSsr } from '@material-ui/core';
+import { NoSsr } from '@mui/material';
 import {
   Button,
   TextField,

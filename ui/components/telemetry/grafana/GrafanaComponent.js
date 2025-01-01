@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@material-ui/core';
+import { NoSsr } from '@mui/material';
 import { Typography, Box, styled, useTheme } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';

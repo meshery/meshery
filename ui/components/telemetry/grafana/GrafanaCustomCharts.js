@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@material-ui/core';
+import { NoSsr } from '@mui/material';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
 import { ExpansionPanel, ExpansionPanelSummary } from '../../ExpansionPanels';
