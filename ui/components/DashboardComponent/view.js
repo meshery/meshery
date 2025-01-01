@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { ArrowBack } from '@material-ui/icons';
 import TooltipButton from '../../utils/TooltipButton';
-import { Paper, Typography } from '@material-ui/core';
 import NameValueTable from '../DataFormatter/NameValueTable';
-import { ResponsiveDataTable } from '@layer5/sistent';
+import { ResponsiveDataTable, Paper, Typography } from '@layer5/sistent';
 import { ALL_VIEW } from './resources/config';
 import GetNodeIcon from '../configuratorComponents/MeshModel/NodeIcon';
 import { JsonParse } from '../../utils/utils';
@@ -79,24 +78,22 @@ const View = (props) => {
     };
 
     return (
-      <>
+      <UsesSistent>
         <div style={{ margin: '2rem 0' }}>
           <Typography style={{ fontSize: '1.2rem', marginBottom: '1rem' }} align="left">
             {key.toUpperCase()}
           </Typography>
-          <UsesSistent>
-            <ResponsiveDataTable
-              classes={classes.muiRow}
-              data={value}
-              columns={columns}
-              options={options}
-              tableCols={columns}
-              updateCols={() => {}}
-              columnVisibility={{}}
-            />
-          </UsesSistent>
+          <ResponsiveDataTable
+            classes={classes.muiRow}
+            data={value}
+            columns={columns}
+            options={options}
+            tableCols={columns}
+            updateCols={() => {}}
+            columnVisibility={{}}
+          />
         </div>
-      </>
+      </UsesSistent>
     );
   }
 
@@ -144,7 +141,7 @@ const View = (props) => {
       }, [obj]);
 
       return (
-        <>
+        <UsesSistent>
           {processedData.map((obj, index) => (
             <div key={index}>
               {Object.entries(obj).map(([key, value], innerIndex) => {
@@ -169,7 +166,7 @@ const View = (props) => {
               })}
             </div>
           ))}
-        </>
+        </UsesSistent>
       );
     }
 
@@ -224,7 +221,7 @@ const View = (props) => {
   };
 
   return (
-    <>
+    <UsesSistent>
       <div
         style={{
           margin: '1rem auto',
@@ -238,7 +235,7 @@ const View = (props) => {
           </div>
         </Paper>
       </div>
-    </>
+    </UsesSistent>
   );
 };
 
@@ -247,26 +244,28 @@ export default View;
 export const Title = ({ onClick, data, value }) => {
   const [isHovered, setHovered] = useState(false);
   return (
-    <div
-      style={{
-        color: 'inherit',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        textDecoration: isHovered ? 'underline' : 'none',
-      }}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
-      <div onClick={onClick} style={{ display: 'inherit', alignItems: 'center' }}>
-        <div>
-          <GetNodeIcon metadata={JsonParse(data)} />
+    <UsesSistent>
+      <div
+        style={{
+          color: 'inherit',
+          cursor: 'pointer',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          textDecoration: isHovered ? 'underline' : 'none',
+        }}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+      >
+        <div onClick={onClick} style={{ display: 'inherit', alignItems: 'center' }}>
+          <div>
+            <GetNodeIcon metadata={JsonParse(data)} />
+          </div>
+          <Typography style={{ marginLeft: '0.50rem' }} variant="body2">
+            {value}
+          </Typography>
         </div>
-        <Typography style={{ marginLeft: '0.50rem' }} variant="body2">
-          {value}
-        </Typography>
       </div>
-    </div>
+    </UsesSistent>
   );
 };

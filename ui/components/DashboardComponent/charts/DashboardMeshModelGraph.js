@@ -1,6 +1,5 @@
-import Grid from '@material-ui/core/Grid';
+import { Grid, Typography, IconButton, useTheme } from '@layer5/sistent';
 import React, { useMemo } from 'react';
-import { IconButton, Typography } from '@material-ui/core';
 import BBChart from '../../BBChart';
 import { donut } from 'billboard.js';
 import { dataToColors } from '../../../utils/charts';
@@ -19,6 +18,7 @@ import {
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
+import { UsesSistent } from '@/components/SistentWrapper';
 
 function MeshModelContructs({ classes }) {
   const params = {
@@ -69,44 +69,46 @@ function MeshModelContructs({ classes }) {
   );
 
   return (
-    <Link
-      href="/settings?settingsCategory=Registry"
-      style={{
-        pointerEvents: !CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)
-          ? 'none'
-          : 'auto',
-      }}
-    >
-      <div className={classes.dashboardSection}>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography variant="h6" gutterBottom className={classes.link}>
-            Registry
-          </Typography>
+    <UsesSistent>
+      <Link
+        href="/settings?settingsCategory=Registry"
+        style={{
+          pointerEvents: !CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)
+            ? 'none'
+            : 'auto',
+        }}
+      >
+        <div className={classes.dashboardSection}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Typography variant="h6" gutterBottom className={classes.link}>
+              Registry
+            </Typography>
 
-          <div onClick={(e) => e.stopPropagation()}>
-            <CustomTextTooltip
-              placement="left"
-              interactive={true}
-              variant="standard"
-              title={`The Meshery Registry is a critical component acting as the central repository for all capabilities known to Meshery. [Learn More](https://docs.meshery.io/concepts/logical/registry)`}
-            >
-              <IconButton disableRipple={true} disableFocusRipple={true}>
-                <InfoOutlined
-                  color={theme.palette.secondary.iconMain}
-                  style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
-                />
-              </IconButton>
-            </CustomTextTooltip>
+            <div onClick={(e) => e.stopPropagation()}>
+              <CustomTextTooltip
+                placement="left"
+                interactive={true}
+                variant="standard"
+                title={`The Meshery Registry is a critical component acting as the central repository for all capabilities known to Meshery. [Learn More](https://docs.meshery.io/concepts/logical/registry)`}
+              >
+                <IconButton disableRipple={true} disableFocusRipple={true}>
+                  <InfoOutlined
+                    color={theme.palette.secondary.iconMain}
+                    style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  />
+                </IconButton>
+              </CustomTextTooltip>
+            </div>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <BBChart options={chartOptions} />
           </div>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <BBChart options={chartOptions} />
-        </div>
-      </div>
-    </Link>
+      </Link>
+    </UsesSistent>
   );
 }
 
@@ -158,51 +160,74 @@ function MeshModelCategories({ classes }) {
   );
 
   return (
-    <Link href="/settings?settingsCategory=Registry&tab=Models">
-      <div className={classes.dashboardSection}>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography variant="h6" className={classes.link} gutterBottom>
-            Models by Category
-          </Typography>
+    <UsesSistent>
+      <Link href="/settings?settingsCategory=Registry&tab=Models">
+        <div className={classes.dashboardSection}>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Typography variant="h6" className={classes.link} gutterBottom>
+              Models by Category
+            </Typography>
 
-          <div onClick={(e) => e.stopPropagation()}>
-            <CustomTextTooltip
-              title={`Meshery Models represent the fundamental building blocks of your infrastructure. Models are categorized by their function. For example, a model for Prometheus belongs in the "Observability and Analysis" category. [Learn More](https://docs.meshery.io/concepts/logical/models)`}
-              placement="left"
-              variant="standard"
-              interactive={true}
-            >
-              <IconButton disableRipple={true} disableFocusRipple={true}>
-                <InfoOutlined
-                  color={theme.palette.secondary.iconMain}
-                  style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
-                />
-              </IconButton>
-            </CustomTextTooltip>
+            <div onClick={(e) => e.stopPropagation()}>
+              <CustomTextTooltip
+                title={`Meshery Models represent the fundamental building blocks of your infrastructure. Models are categorized by their function. For example, a model for Prometheus belongs in the "Observability and Analysis" category. [Learn More](https://docs.meshery.io/concepts/logical/models)`}
+                placement="left"
+                variant="standard"
+                interactive={true}
+              >
+                <IconButton disableRipple={true} disableFocusRipple={true}>
+                  <InfoOutlined
+                    color={theme.palette.secondary.iconMain}
+                    style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  />
+                </IconButton>
+              </CustomTextTooltip>
+            </div>
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <BBChart options={chartOptions} />
           </div>
         </div>
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-          <BBChart options={chartOptions} />
-        </div>
-      </div>
-    </Link>
+      </Link>
+    </UsesSistent>
   );
 }
 
 const MeshModelGraph = ({ classes }) => {
+  const theme = useTheme();
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12} md={6}>
-        <MeshModelCategories classes={classes} />
-      </Grid>
+    <UsesSistent>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={6}>
+          <div
+            className={classes.dashboardSection}
+            style={{
+              backgroundColor: theme.palette.background.default,
+              borderRadius: '8px',
+              padding: '1rem',
+            }}
+          >
+            <MeshModelCategories classes={classes} />
+          </div>
+        </Grid>
 
-      <Grid item xs={12} md={6}>
-        <MeshModelContructs classes={classes} />
+        <Grid item xs={12} md={6}>
+          <div
+            className={classes.dashboardSection}
+            style={{
+              backgroundColor: theme.palette.background.default,
+              borderRadius: '8px',
+              padding: '1rem',
+            }}
+          >
+            <MeshModelContructs classes={classes} />
+          </div>
+        </Grid>
       </Grid>
-    </Grid>
+    </UsesSistent>
   );
 };
 
