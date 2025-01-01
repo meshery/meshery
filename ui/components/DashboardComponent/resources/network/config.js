@@ -1,5 +1,5 @@
 import React from 'react';
-import { timeAgo } from '../../../../utils/k8s-utils';
+import { getStatus, timeAgo } from '../../../../utils/k8s-utils';
 import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
 
@@ -32,6 +32,7 @@ export const NetWorkTableConfig = (
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
+        ['status.attribute', 's'],
       ],
       columns: [
         {
@@ -246,6 +247,20 @@ export const NetWorkTableConfig = (
             },
           },
         },
+        {
+          name: 'status.attribute',
+          label: 'Status',
+          options: {
+            sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
+            customBodyRender: function CustomBody(value) {
+              const status = getStatus(value);
+              return <>{status}</>;
+            },
+          },
+        },
       ],
     },
     Endpoints: {
@@ -374,6 +389,8 @@ export const NetWorkTableConfig = (
         ['id', 'na'],
         ['metadata.name', 'xs'],
         ['apiVersion', 's'],
+        ['status.attribute', 'm'],
+        ['spec.attribute', 'm'],
         ['spec.attribute', 'm'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
@@ -433,6 +450,23 @@ export const NetWorkTableConfig = (
           },
         },
         {
+          name: 'status.attribute',
+          label: 'LoadBalancer IP',
+          options: {
+            sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
+            customBodyRender: function CustomBody(val) {
+              let attribute = JSON.parse(val);
+              let loadBalancer = attribute?.loadBalancer;
+              let ingress = loadBalancer?.ingress;
+              const IPs = ingress?.map((ingress) => ingress.ip);
+              return <>{IPs?.join(',')}</>;
+            },
+          },
+        },
+        {
           name: 'spec.attribute',
           label: 'Rules',
           options: {
@@ -442,14 +476,15 @@ export const NetWorkTableConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let ingressRules = attribute?.ingressRule;
+
+              let rules = attribute?.rules;
               return (
                 <>
-                  {ingressRules?.map((rule, i) => {
+                  {rules?.map((rule, i) => {
                     return (
                       <>
                         {`${rule.host}`}
-                        {i < ingressRules.length - 1 && ','}
+                        {i < rules.length - 1 && ','}
                       </>
                     );
                   })}

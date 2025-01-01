@@ -1,5 +1,5 @@
 import React from 'react';
-import { timeAgo } from '../../../../utils/k8s-utils';
+import { getStatus, timeAgo } from '../../../../utils/k8s-utils';
 import { SINGLE_VIEW } from '../config';
 
 import { Title } from '../../view';
@@ -26,6 +26,7 @@ export const NamespaceTableConfig = (
       ['apiVersion', 'm'],
       ['cluster_id', 'xs'],
       ['metadata.creationTimestamp', 'l'],
+      ['status.attribute', 'm'],
     ],
     columns: [
       {
@@ -123,6 +124,20 @@ export const NamespaceTableConfig = (
           customBodyRender: function CustomBody(value) {
             let time = timeAgo(value);
             return <>{time}</>;
+          },
+        },
+      },
+      {
+        name: 'status.attribute',
+        label: 'Status',
+        options: {
+          sort: false,
+          customHeadRender: function CustomHead({ ...column }) {
+            return <DefaultTableCell columnData={column} />;
+          },
+          customBodyRender: function CustomBody(val) {
+            const phase = getStatus(val);
+            return <>{phase}</>;
           },
         },
       },
