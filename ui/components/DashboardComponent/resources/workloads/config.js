@@ -1,5 +1,5 @@
 import React from 'react';
-import { getStatus, timeAgo } from '../../../../utils/k8s-utils';
+import { timeAgo } from '../../../../utils/k8s-utils';
 import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
 import { Title } from '../../view';
