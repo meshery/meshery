@@ -48,6 +48,15 @@ There are two types of providers defined in Meshery, `local` and `remote`.
 
 The use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. This provides security for the public-facing Meshery UI as the remote provider enforces identity with authentication and authorization. You should also use a remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people). This can be seen when using Meshery Playground, where a user is prompted to login through the _Layer5 Meshery Cloud_ remote provider. Visit [Meshery Playground](https://playground.meshery.io/) to experience this.
 
+#### Event Visibility in Remote Providers
+
+Meshery's extensibility framework for remote providers currently does not include automatic propagation of events persisted locally by `provider.PersistEvent(event)`. To address this limitation, remote providers could be enhanced to optionally subscribe to and process server events. This would involve:
+
+- **Provider-Specific Event Handling**: Allowing remote providers to define the types of events they wish to consume, ensuring tailored integration for different provider use cases.
+- **Event Subscription APIs**: Introducing APIs that enable remote providers to subscribe to server events dynamically, improving their ability to offer real-time insights and actions based on event data.
+
+These enhancements would strengthen the integration between Meshery and its remote providers, making the platform more adaptable to varied deployment needs.
+
 A specific remote provider can be enforced in a Meshery instance by passing the name of the provider with the env variable `PROVIDER`.  
 
 Name: **"Meshery"** (default)
