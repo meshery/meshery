@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@material-ui/core';
-import { TextField, Grid, Button, Chip, MenuItem, useTheme, styled } from '@layer5/sistent';
+import { TextField, Grid, Button, Chip, MenuItem, useTheme, styled, Box } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dataFetch from '../../../lib/data-fetch';
@@ -19,10 +19,10 @@ const GrafanaRoot = styled(Box)(() => {
   };
 });
 
-const ButtonContainer = styled(Box)(() => ({
+const ButtonContainer = styled(Box)({
   display: 'flex',
   justifyContent: 'flex-end',
-}));
+});
 
 const StyledButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(3),
@@ -37,10 +37,10 @@ const GrafanaIcon = styled('img')(({ theme }) => ({
   width: theme.spacing(2.5),
 }));
 
-const PanelChips = styled(Box)(({ theme }) => ({
+const PanelChips = styled(Box)({
   display: 'flex',
   flexWrap: 'wrap',
-}));
+});
 
 const StyledChip = styled(Chip)(({ theme }) => ({
   margin: theme.spacing(0.25),
@@ -140,7 +140,6 @@ class GrafanaSelectionComponent extends Component {
         )}`; // accounts for the last 24hrs
       }
       this.props.updateProgress({ showProgress: true });
-      const self = this;
       dataFetch(
         queryURL,
         { credentials: 'include' },
@@ -184,7 +183,7 @@ class GrafanaSelectionComponent extends Component {
         (error) => {
           templateVarOptions[ind] = [templateVars[ind].Value];
           this.setState({ templateVarOptions });
-          self.props.handleError(error);
+          this.props.handleError(error);
         },
       );
     }
@@ -226,10 +225,8 @@ class GrafanaSelectionComponent extends Component {
 
   genRandomNumberForKey = () => Math.floor(trueRandom() * 1000 + 1);
 
-  render = () => {
-    const self = this;
+  render() {
     const {
-      classes,
       grafanaBoardSearch,
       grafanaURL,
       handleGrafanaBoardSearchChange,
@@ -279,7 +276,7 @@ class GrafanaSelectionComponent extends Component {
                   fullWidth
                   value={grafanaBoard}
                   variant="outlined"
-                  onChange={handleChange('grafanaBoard')}
+                  onChange={this.handleChange('grafanaBoard')}
                 >
                   {grafanaBoards?.map((board) => (
                     <MenuItem key={`bd_---_${board.uri}`} value={board.uri}>
@@ -291,7 +288,7 @@ class GrafanaSelectionComponent extends Component {
 
               {templateVars.length > 0 &&
                 templateVars.map(({ name }, ind) => {
-                  if (ind === 0 || typeof getSelectedTemplateVar(ind - 1) !== 'undefined') {
+                  if (ind === 0 || typeof this.getSelectedTemplateVar(ind - 1) !== 'undefined') {
                     return (
                       <Grid item xs={12} sm={4} key={ind}>
                         <StyledTextField
@@ -300,17 +297,17 @@ class GrafanaSelectionComponent extends Component {
                           name={`template_var_${ind}`}
                           label={`Template variable: ${name}`}
                           fullWidth
-                          value={getSelectedTemplateVar(ind)}
+                          value={this.getSelectedTemplateVar(ind)}
                           variant="outlined"
-                          onChange={handleChange(`template_var_${ind}`)}
+                          onChange={this.handleChange(`template_var_${ind}`)}
                         >
                           <MenuItem
-                            key={`tmplVarOpt__-___${ind}_${genRandomNumberForKey()}`}
+                            key={`tmplVarOpt__-___${ind}_${this.genRandomNumberForKey()}`}
                             value=""
                           />
                           {templateVarOptions[ind]?.map((opt) => (
                             <MenuItem
-                              key={`tmplVarOpt__-__${name}_${opt}_${ind}_${genRandomNumberForKey()}`}
+                              key={`tmplVarOpt__-__${name}_${opt}_${ind}_${this.genRandomNumberForKey()}`}
                               value={opt}
                             >
                               {opt}
@@ -332,7 +329,7 @@ class GrafanaSelectionComponent extends Component {
                   fullWidth
                   value={selectedPanels}
                   variant="outlined"
-                  onChange={handleChange('selectedPanels')}
+                  onChange={this.handleChange('selectedPanels')}
                   SelectProps={{
                     multiple: true,
                     renderValue: (selected) => (
@@ -367,7 +364,7 @@ class GrafanaSelectionComponent extends Component {
                 variant="contained"
                 color="primary"
                 size="large"
-                onClick={addSelectedBoardPanelConfig}
+                onClick={this.addSelectedBoardPanelConfig}
               >
                 Add
               </StyledButton>
@@ -376,23 +373,28 @@ class GrafanaSelectionComponent extends Component {
         </NoSsr>
       </UsesSistent>
     );
-  };
+  }
 }
 
 GrafanaSelectionComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
   grafanaURL: PropTypes.string.isRequired,
-  // grafanaBoards: PropTypes.array.isRequired,
+  //grafanaBoards: PropTypes.array.isRequired,
   handleGrafanaBoardSearchChange: PropTypes.func.isRequired,
   handleGrafanaChipDelete: PropTypes.func.isRequired,
   handleGrafanaClick: PropTypes.func.isRequired,
   addSelectedBoardPanelConfig: PropTypes.func.isRequired,
   handleError: PropTypes.func.isRequired,
+  updateProgress: PropTypes.func.isRequired, // Added for completeness
+  connectionID: PropTypes.string.isRequired, // Assuming connectionID is required
 };
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
-const mapStateToProps = () => ({});
+
+const mapStateToProps = (state) => ({
+  grafanaBoards: state.grafanaBoards,
+  connectionID: state.connectionID,
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(GrafanaSelectionComponent);
