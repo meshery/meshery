@@ -43,6 +43,32 @@ is_alias_relationship(relationship) if {
 	lower(relationship.subType) == "alias"
 }
 
+# Get the from component id
+from_component_id(relationship) := component if {
+	some selector in relationship.selectors
+	some from in selector.allow.from
+	component := from.id
+}
+
+# Get the to component id
+to_component_id(relationship) := component if {
+	some selector in relationship.selectors
+	some to in selector.allow.to
+	component := to.id
+}
+
+# Get the component declaration by id
+component_declaration_by_id(design_file, id) := component if {
+	some component in design_file.components
+	component.id == id
+}
+
+alias_ref_from_relationship(relationship) := ref if {
+	some selector in relationship.selectors
+	some from in selector.allow.from
+	ref := from.patch.mutatorRef[0]
+}
+
 identify_relationships(design_file, relationships_in_scope) := eval_results if {
 	eval_results := union({new_relationships |
 		some relationship in relationships_in_scope
@@ -119,7 +145,9 @@ identify_alias_relationships(component, relationship) := {rel |
 	some to in selector.allow.to # to is parent
 
 	# identify if alias can be created
-	identified_alias_paths := alias_paths(from, to, component)
+	identified_alias_paths := identify_alias_paths(from, to, component)
+
+	print("Identified Alias Paths", count(identified_alias_paths))
 
 	count(identified_alias_paths) > 0 # if alias paths are present then alias can be created
 
@@ -162,7 +190,7 @@ identify_alias_relationships(component, relationship) := {rel |
 		"deny": {},
 	}
 
-	print("selector dec", selector)
+	# print("selector dec", selector)
 
 	rel := json.patch(relationship, [
 		{
@@ -206,26 +234,54 @@ is_relationship_feasible_to(component, relationship) := to if {
 
 ## Validate
 
-validate_relationships_phase(design_file) := validated_rels if {
-	# print("Validating relationships", design_file)
-	validated_rels := design_file.relationships
+# validate relationship and return the updated relationship
+is_alias_relationship_valid(relationship, design_file) if {
+	relationship.status == "approved"
+
+	# check if the from component is still present
+	from_component := component_declaration_by_id(design_file, from_component_id(relationship))
+
+	# check if the to component is still present
+	to_component := component_declaration_by_id(design_file, to_component_id(relationship))
+
+	# check if the path in the to component is still present
+
+	ref := alias_ref_from_relationship(relationship)
+	object_get_nested(to_component, ref, null) != null
+}
+
+validate_relationship(relationship, design_file) := relationship if {
+	is_alias_relationship_valid(relationship, design_file)
+}
+
+validate_relationship(relationship, design_file) := updated_relationship if {
+	not is_alias_relationship_valid(relationship, design_file)
+	updated_relationship := json.patch(relationship, [{
+		"op": "replace",
+		"path": "/status",
+		"value": "deleted",
+	}])
+}
+
+# validate all relationships in the design file
+validate_relationships_phase(design_file) := {validated |
+	some rel in design_file.relationships
+	validated := validate_relationship(rel, design_file)
 }
 
 ## Action Phase
 
-add_components_action(design_file, alias_relationships) := components_added if {
-	components_added := {component |
-		some relationship in alias_relationships
-		relationship.status == "pending"
-		some selector in relationship.selectors
-		some from in selector.allow.from
+add_components_action(design_file, alias_relationships) := {component |
+	some relationship in alias_relationships
+	relationship.status == "pending"
+	some selector in relationship.selectors
+	some from in selector.allow.from
 
-		print("To Add", from)
-		component := {
-			"id": from.id,
-			"component": {"kind": from.kind},
-			"model": from.model,
-		}
+	print("To Add", from)
+	component := {
+		"id": from.id,
+		"component": {"kind": from.kind},
+		"model": from.model,
 	}
 }
 
