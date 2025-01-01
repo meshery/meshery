@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@material-ui/core';
 import { Chip } from '@layer5/sistent';
