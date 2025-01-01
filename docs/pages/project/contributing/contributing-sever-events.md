@@ -11,7 +11,6 @@ list: include
 
 Meshery incorporates an internal events publication mechanism that provides users with real-time updates on the processes occurring within the Meshery server when interacting with its endpoints. It ensures that users are kept in the loop regarding the ongoing activities within the API, and guides users towards future steps to resolve issues. This guide will provide step-by-step instructions on sending events from the server, including when to trigger events and what information to include.
 
-
 First, let's take a look at how the event object is constructed,
 
 <pre class="codeblock-pre">
@@ -54,7 +53,7 @@ The event mechanism utilizes [builder pattern](https://en.wikipedia.org/wiki/Bui
 - `WithMetadata`: it takes a Map `map[string]interface{}` data structure containing any supplementary information that the developer/contributor deems essential for the user to be informed about.
 - `Build` : returns the [Event](https://github.com/meshery/meshkit/blob/ea3c60907a1cd1902902a4113206579992772083/models/events/events.go#L37) instance constructed upon the previously described functions and prepares it for publication through the [Broadcast](https://github.com/meshery/meshery/blob/1b5d78ed34648e0a91df8c2273026b930f748fbc/server/models/event_broadcast.go#L14), which is responsible for disseminating events.
 
-
+<img src="./images/events-table.png" alt="Event Schema" style="width:50%;">
 
 ## An Example in Code
 
