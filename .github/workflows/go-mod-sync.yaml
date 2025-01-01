@@ -5,7 +5,7 @@ on:
     branches:
       - "master"
     paths:
-      - "go.mod"
+      - "server/go.mod"
 jobs:
   sync:
     if: github.repository == 'meshery/meshery'
