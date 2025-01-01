@@ -72,7 +72,7 @@ const InnerGrid = styled(Grid)(({ theme }) => ({
   marginTop: theme.spacing(2),
 }));
 
-const TimeList = styled(Grid)(({ theme }) => ({
+const TimeList = styled(Grid)(() => ({
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'flex-start',

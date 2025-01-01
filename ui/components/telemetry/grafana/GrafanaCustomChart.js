@@ -19,6 +19,7 @@ import {
   Tooltip,
   LinearProgress,
   Box,
+  styled,
 } from '@layer5/sistent';
 import { UsesSistent } from '../../SistentWrapper';
 
@@ -788,7 +789,7 @@ class GrafanaCustomChart extends Component {
   };
 
   render() {
-    const { classes, board, panel, inDialog, handleChartDialogOpen, panelData } = this.props;
+    const { board, panel, inDialog, handleChartDialogOpen, panelData } = this.props;
     const { error, errorCount, chartData } = this.state;
     const self = this;
 
@@ -887,7 +888,6 @@ class GrafanaCustomChart extends Component {
 }
 
 GrafanaCustomChart.propTypes = {
-  classes: PropTypes.object.isRequired,
   grafanaURL: PropTypes.string.isRequired,
   connectionID: PropTypes.string.isRequired,
   // grafanaAPIKey: PropTypes.string.isRequired,

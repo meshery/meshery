@@ -8,7 +8,6 @@ import dataFetch from '../../../lib/data-fetch';
 import { updateProgress } from '../../../lib/store';
 import { trueRandom } from '../../../lib/trueRandom';
 import { UsesSistent } from '@/components/SistentWrapper';
-import { useTheme } from '@emotion/react';
 
 const GrafanaRoot = styled(Box)(() => {
   const theme = useTheme();

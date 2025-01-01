@@ -60,22 +60,19 @@ class GrafanaMetricsCompare extends Component {
     this.setState({ panel, series, selectedSeries: series.length > 0 ? series[0] : '' });
   }
 
-  handleChange(name) {
+  handleChange = (name) => (event) => {
     const { panels } = this.state;
-    const self = this;
-    return (event) => {
-      if (name === 'panel') {
-        let series = [];
-        const panel = event.target.value;
-        if (panels[panel] && panels[panel].targets) {
-          series = panels[panel].targets.map((target) => target.expr);
-        }
-        self.setState({ panel, series, selectedSeries: series.length > 0 ? series[0] : '' });
-      } else if (name === 'series') {
-        self.setState({ selectedSeries: event.target.value });
+    if (name === 'panel') {
+      let series = [];
+      const panel = event.target.value;
+      if (panels[panel] && panels[panel].targets) {
+        series = panels[panel].targets.map((target) => target.expr);
       }
-    };
-  }
+      this.setState({ panel, series, selectedSeries: series.length > 0 ? series[0] : '' });
+    } else if (name === 'series') {
+      this.setState({ selectedSeries: event.target.value });
+    }
+  };
 
   render() {
     const { panels, panel, selectedSeries, series } = this.state;
@@ -86,13 +83,12 @@ class GrafanaMetricsCompare extends Component {
           <Root>
             <StyledTextField
               select
-              id="panel"
-              name="panel"
-              label="Panel"
               fullWidth
+              label="Panel"
               value={panel}
+              onChange={this.handleChange('panel')}
+              margin="dense"
               variant="outlined"
-              onChange={handleChange('panel')}
             >
               {panels &&
                 Object.keys(panels).map((p) => (
@@ -103,13 +99,12 @@ class GrafanaMetricsCompare extends Component {
             </StyledTextField>
             <StyledTextField
               select
-              id="series"
-              name="series"
-              label="Series"
               fullWidth
+              label="Series"
               value={selectedSeries}
+              onChange={this.handleChange('series')}
+              margin="dense"
               variant="outlined"
-              onChange={handleChange('series')}
             >
               {series &&
                 series.map((s) => (
