@@ -5,13 +5,13 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import {
   CustomTooltip,
-  Tab,
-  Tabs,
   AppBar,
   Paper,
   Typography,
   styled,
   useTheme,
+  Tabs,
+  Tab,
 } from '@layer5/sistent';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faPoll, faDatabase, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
@@ -46,6 +46,7 @@ import {
 import { removeDuplicateVersions } from './MeshModelRegistry/helper';
 import DefaultError from './General/error-404';
 import Overview from './DashboardComponent/overview';
+import { UsesSistent } from './SistentWrapper';
 
 const StyledPaper = styled(Paper)(() => ({
   flexGrow: 1,
@@ -53,15 +54,15 @@ const StyledPaper = styled(Paper)(() => ({
   height: 'auto',
 }));
 
-const StyledTabs = styled(Tabs)(() => {
-  const theme = useTheme();
-  return {
-    width: '100%',
-    '& .MuiTabs-indicator': {
-      backgroundColor: theme.palette.mode === 'dark' ? '#00B39F' : theme.palette.primary.main,
-    },
-  };
-});
+// const StyledTabs = styled(Tabs)(() => {
+//   const theme = useTheme();
+//   return {
+//     width: '100%',
+//     '& .MuiTabs-indicator': {
+//       backgroundColor: theme.palette.mode === 'dark' ? '#00B39F' : theme.palette.primary.main,
+//     },
+//   };
+// });
 
 const StyledTab = styled(Tab)(() => {
   const theme = useTheme();
@@ -253,76 +254,78 @@ const MesherySettings = (props) => {
     <>
       {CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject) ? (
         <div sx={{ flexGrow: 1, maxWidth: '100%', height: 'auto' }}>
-          <StyledPaper square>
-            <StyledTabs
-              value={tabVal}
-              onChange={handleChange('tabVal')}
-              variant={window.innerWidth < 900 ? 'scrollable' : 'fullWidth'}
-              scrollButtons="on"
-              indicatorColor="primary"
-              textColor="primary"
-              centered
-            >
-              <CustomTooltip title="Overview" placement="top" value={OVERVIEW}>
-                <StyledTab
-                  icon={
-                    <img
-                      src="/static/img/meshery-logo/meshery-logo.svg"
-                      alt="Meshery logo"
-                      height={32}
-                      width={32}
-                    />
-                  }
-                  label="Overview"
-                  // tab="Overview"
-                  value={OVERVIEW}
-                  // disabled={!CAN(keys.VIEW_OVERVIEW.action, keys.VIEW_OVERVIEW.subject)}
-                />
-              </CustomTooltip>
-              <CustomTooltip title="Connect Meshery Adapters" placement="top" value={ADAPTERS}>
-                <StyledTab
-                  icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
-                  label="Adapters"
-                  data-cy="tabServiceMeshes"
-                  value={ADAPTERS}
-                  disabled={
-                    !CAN(
-                      keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
-                      keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.subject,
-                    )
-                  }
-                />
-              </CustomTooltip>
-              <CustomTooltip title="Configure Metrics backends" placement="top" value={METRICS}>
-                <StyledTab
-                  icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
-                  label="Metrics"
-                  // tab="tabMetrics"
-                  value={METRICS}
-                  disabled={!CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject)}
-                />
-              </CustomTooltip>
-              <CustomTooltip title="Registry" placement="top" value={REGISTRY}>
-                <StyledTab
-                  icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
-                  label="Registry"
-                  // tab="registry"
-                  value={REGISTRY}
-                  disabled={!CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)}
-                />
-              </CustomTooltip>
+          <UsesSistent>
+            <StyledPaper square>
+              <Tabs
+                value={tabVal}
+                onChange={handleChange('tabVal')}
+                variant={window.innerWidth < 900 ? 'scrollable' : 'fullWidth'}
+                scrollButtons="on"
+                indicatorColor="primary"
+                textColor="primary"
+                centered
+              >
+                <CustomTooltip title="Overview" placement="top" value={OVERVIEW}>
+                  <Tab
+                    icon={
+                      <img
+                        src="/static/img/meshery-logo/meshery-logo.svg"
+                        alt="Meshery logo"
+                        height={32}
+                        width={32}
+                      />
+                    }
+                    label="Overview"
+                    // tab="Overview"
+                    value={OVERVIEW}
+                    // disabled={!CAN(keys.VIEW_OVERVIEW.action, keys.VIEW_OVERVIEW.subject)}
+                  />
+                </CustomTooltip>
+                <CustomTooltip title="Connect Meshery Adapters" placement="top" value={ADAPTERS}>
+                  <Tab
+                    icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
+                    label="Adapters"
+                    data-cy="tabServiceMeshes"
+                    value={ADAPTERS}
+                    disabled={
+                      !CAN(
+                        keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
+                        keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.subject,
+                      )
+                    }
+                  />
+                </CustomTooltip>
+                <CustomTooltip title="Configure Metrics backends" placement="top" value={METRICS}>
+                  <Tab
+                    icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
+                    label="Metrics"
+                    // tab="tabMetrics"
+                    value={METRICS}
+                    disabled={!CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject)}
+                  />
+                </CustomTooltip>
+                <CustomTooltip title="Registry" placement="top" value={REGISTRY}>
+                  <Tab
+                    icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
+                    label="Registry"
+                    // tab="registry"
+                    value={REGISTRY}
+                    disabled={!CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)}
+                  />
+                </CustomTooltip>
 
-              <CustomTooltip title="Reset System" placement="top" value={RESET}>
-                <StyledTab
-                  icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
-                  label="Reset"
-                  // tab="systemReset"
-                  value={RESET}
-                  // disabled={!CAN(keys.VIEW_SYSTEM_RESET.action, keys.VIEW_SYSTEM_RESET.subject)} TODO: uncomment when key get seeded
-                />
-              </CustomTooltip>
-            </StyledTabs>
-          </StyledPaper>
+                <CustomTooltip title="Reset System" placement="top" value={RESET}>
+                  <StyledTab
+                    icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
+                    label="Reset"
+                    // tab="systemReset"
+                    value={RESET}
+                    // disabled={!CAN(keys.VIEW_SYSTEM_RESET.action, keys.VIEW_SYSTEM_RESET.subject)} TODO: uncomment when key get seeded
+                  />
+                </CustomTooltip>
+              </Tabs>
+            </StyledPaper>
+          </UsesSistent>
           {tabVal === OVERVIEW && (
             <TabContainer>
               <Overview />
@@ -340,14 +343,14 @@ const MesherySettings = (props) => {
           {tabVal === METRICS && CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject) && (
             <TabContainer>
               <AppBar position="static" color="default">
-                <StyledTabs
+                <Tabs
                   value={subTabVal}
                   onChange={handleChange('subTabVal')}
                   indicatorColor="primary"
                   textColor="primary"
                   variant="fullWidth"
                 >
-                  <StyledTab
+                  <Tab
                     value={GRAFANA}
                     label={
                       <IconText>
@@ -356,7 +359,7 @@ const MesherySettings = (props) => {
                       </IconText>
                     }
                   />
-                  <StyledTab
+                  <Tab
                     value={PROMETHEUS}
                     label={
                       <IconText>
@@ -365,7 +368,7 @@ const MesherySettings = (props) => {
                       </IconText>
                     }
                   />
-                </StyledTabs>
+                </Tabs>
               </AppBar>
               {subTabVal === GRAFANA && (
                 <TabContainer>

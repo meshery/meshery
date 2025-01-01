@@ -20,11 +20,9 @@ import {
   CardHeader,
   Box,
 } from '@material-ui/core';
-import { CustomTooltip } from '@layer5/sistent';
+import { CustomTooltip, Tab, Tabs } from '@layer5/sistent';
 import NoSsr from '@material-ui/core/NoSsr';
 import { updateUser, updateProgress, toggleCatalogContent } from '../../lib/store';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 import { Paper } from '@material-ui/core';
 import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
 import SettingsCellIcon from '@material-ui/icons/SettingsCell';
@@ -45,6 +43,7 @@ import {
   useUpdateUserPrefWithContextMutation,
 } from '@/rtk-query/user';
 import { ThemeTogglerCore } from '@/themes/hooks';
+import { UsesSistent } from '../SistentWrapper';
 
 const styles = (theme) => ({
   statsWrapper: {
@@ -295,6 +294,10 @@ const UserPreference = (props) => {
   const handleTabValChange = (event, newVal) => {
     setTabVal(newVal);
   };
+
+  console.log('userPrefs:', userPrefs);
+  console.log('providerType:', providerType);
+  console.log('props.capabilitiesRegistry:', props.capabilitiesRegistry);
 
   useEffect(() => {
     if (props.capabilitiesRegistry && !capabilitiesLoaded) {
@@ -602,181 +605,175 @@ const UserPreference = (props) => {
     updateUserPrefWithContext(updates);
   };
   return (
-    <NoSsr>
-      <Paper square className={props.classes.paperRoot}>
-        <Tabs
-          value={tabVal}
-          onChange={handleTabValChange}
-          variant={width < 600 ? 'scrollable' : 'fullWidth'}
-          scrollButtons="on"
-          allowScrollButtonsMobile={true}
-          indicatorColor="primary"
-          textColor="primary"
-          className={props.classes.tabs}
-          centered
-        >
-          <CustomTooltip title="General preferences" placement="top">
-            <Tab
-              className={props.classes.tab}
-              icon={<SettingsCellIcon style={iconMedium} />}
-              label={<span className={props.classes.tabLabel}>General</span>}
-            />
-          </CustomTooltip>
-          <CustomTooltip title="Choose Performance Test Defaults" placement="top">
-            <Tab
-              className={props.classes.tab}
-              icon={<FontAwesomeIcon icon={faTachometerAlt} style={iconMedium} />}
-              label={<span className={props.classes.tabLabel}>Performance</span>}
-            />
-          </CustomTooltip>
-          {/* NOTE: This tab's appearance is logical hence it must be put at last here! Otherwise added logic will need to be added for tab numbers!*/}
-          {userPrefs && providerType != 'local' && (
-            <CustomTooltip title="Remote Provider preferences" placement="top">
+    <UsesSistent>
+      <NoSsr>
+        <Paper square className={props.classes.paperRoot}>
+          <Tabs
+            value={tabVal}
+            onChange={handleTabValChange}
+            variant={width < 600 ? 'scrollable' : 'fullWidth'}
+            scrollButtons="on"
+            allowScrollButtonsMobile={true}
+            indicatorColor="primary"
+            textColor="primary"
+            centered
+          >
+            <CustomTooltip title="General preferences" placement="top">
               <Tab
-                className={props.classes.tab}
-                icon={<SettingsRemoteIcon style={iconMedium} />}
-                label={<span className={props.classes.tabLabel}>Remote Provider</span>}
+                icon={<SettingsCellIcon style={iconMedium} />}
+                label={<span className={props.classes.tabLabel}>General</span>}
               />
             </CustomTooltip>
+            <CustomTooltip title="Choose Performance Test Defaults" placement="top">
+              <Tab
+                icon={<FontAwesomeIcon icon={faTachometerAlt} style={iconMedium} />}
+                label={<span className={props.classes.tabLabel}>Performance</span>}
+              />
+            </CustomTooltip>
+            {/* NOTE: This tab's appearance is logical hence it must be put at last here! Otherwise added logic will need to be added for tab numbers!*/}
+            {userPrefs && providerType != 'local' && (
+              <CustomTooltip title="Remote Provider preferences" placement="top">
+                <Tab
+                  icon={<SettingsRemoteIcon style={iconMedium} />}
+                  label={<span className={props.classes.tabLabel}>Remote Provider</span>}
+                />
+              </CustomTooltip>
+            )}
+          </Tabs>
+        </Paper>
+        <Paper className={props.classes.statsWrapper}>
+          {tabVal === 0 && (
+            <>
+              <div className={props.classes.formContainer}>
+                <FormControl component="fieldset" className={props.classes.formGrp}>
+                  <FormLabel component="legend" className={props.classes.formLegend}>
+                    Extensions
+                  </FormLabel>
+                  <FormGroup>
+                    <FormControlLabel
+                      key="CatalogContentPreference"
+                      control={
+                        <Switch
+                          checked={catalogContent}
+                          onChange={handleCatalogContentToggle}
+                          color="primary"
+                          classes={{
+                            switchBase: props.classes.switchBase,
+                            track: props.classes.track,
+                            checked: props.classes.checked,
+                          }}
+                          data-cy="CatalogContentPreference"
+                        />
+                      }
+                      labelPlacement="end"
+                      label="Meshery Catalog Content"
+                    />
+                  </FormGroup>
+                </FormControl>
+              </div>
+              <div className={props.classes.formContainer}>
+                <FormControl component="fieldset" className={props.classes.formGrp}>
+                  <FormLabel component="legend" className={props.classes.formLegend}>
+                    Analytics and Improvement Program
+                  </FormLabel>
+                  <FormGroup>
+                    <FormControlLabel
+                      key="UsageStatsPreference"
+                      control={
+                        <Switch
+                          checked={anonymousStats}
+                          onChange={handleToggle('anonymousUsageStats')}
+                          color="primary"
+                          classes={{
+                            switchBase: props.classes.switchBase,
+                            track: props.classes.track,
+                            checked: props.classes.checked,
+                          }}
+                          data-cy="UsageStatsPreference"
+                        />
+                      }
+                      labelPlacement="end"
+                      label="Send Anonymous Usage Statistics"
+                    />
+                    <FormControlLabel
+                      key="PerfResultPreference"
+                      control={
+                        <Switch
+                          checked={perfResultStats}
+                          onChange={handleToggle('anonymousPerfResults')}
+                          color="primary"
+                          classes={{
+                            switchBase: props.classes.switchBase,
+                            track: props.classes.track,
+                            checked: props.classes.checked,
+                          }}
+                          data-cy="PerfResultPreference"
+                        />
+                      }
+                      labelPlacement="end"
+                      label="Send Anonymous Performance Results"
+                    />
+                  </FormGroup>
+                </FormControl>
+              </div>
+
+              <div className={props.classes.formContainer}>
+                <FormControl component="fieldset" className={props.classes.formGrp}>
+                  <FormLabel component="legend" className={props.classes.formLegend}>
+                    Theme
+                  </FormLabel>
+
+                  <FormGroup>
+                    <FormControlLabel
+                      key="ThemePreference"
+                      control={
+                        <ThemeToggler
+                          handleUpdateUserPref={handleUpdateUserPref}
+                          classes={props.classes}
+                        />
+                      }
+                      labelPlacement="end"
+                    />
+                  </FormGroup>
+                </FormControl>
+              </div>
+            </>
           )}
-        </Tabs>
-      </Paper>
-      <Paper className={props.classes.statsWrapper}>
-        {tabVal === 0 && (
-          <>
-            <div className={props.classes.formContainer}>
-              <FormControl component="fieldset" className={props.classes.formGrp}>
-                <FormLabel component="legend" className={props.classes.formLegend}>
-                  Extensions
-                </FormLabel>
-                <FormGroup>
-                  <FormControlLabel
-                    key="CatalogContentPreference"
-                    control={
-                      <Switch
-                        checked={catalogContent}
-                        onChange={handleCatalogContentToggle}
-                        color="primary"
-                        classes={{
-                          switchBase: props.classes.switchBase,
-                          track: props.classes.track,
-                          checked: props.classes.checked,
-                        }}
-                        data-cy="CatalogContentPreference"
-                      />
-                    }
-                    labelPlacement="end"
-                    label="Meshery Catalog Content"
-                  />
-                </FormGroup>
-              </FormControl>
-            </div>
-            <div className={props.classes.formContainer}>
-              <FormControl component="fieldset" className={props.classes.formGrp}>
-                <FormLabel component="legend" className={props.classes.formLegend}>
-                  Analytics and Improvement Program
-                </FormLabel>
-                <FormGroup>
-                  <FormControlLabel
-                    key="UsageStatsPreference"
-                    control={
-                      <Switch
-                        checked={anonymousStats}
-                        onChange={handleToggle('anonymousUsageStats')}
-                        color="primary"
-                        classes={{
-                          switchBase: props.classes.switchBase,
-                          track: props.classes.track,
-                          checked: props.classes.checked,
-                        }}
-                        data-cy="UsageStatsPreference"
-                      />
-                    }
-                    labelPlacement="end"
-                    label="Send Anonymous Usage Statistics"
-                  />
-                  <FormControlLabel
-                    key="PerfResultPreference"
-                    control={
-                      <Switch
-                        checked={perfResultStats}
-                        onChange={handleToggle('anonymousPerfResults')}
-                        color="primary"
-                        classes={{
-                          switchBase: props.classes.switchBase,
-                          track: props.classes.track,
-                          checked: props.classes.checked,
-                        }}
-                        data-cy="PerfResultPreference"
-                      />
-                    }
-                    labelPlacement="end"
-                    label="Send Anonymous Performance Results"
-                  />
-                </FormGroup>
-              </FormControl>
-            </div>
+          {tabVal === 1 && <MesherySettingsPerformanceComponent />}
+          {tabVal === 2 && userPrefs && providerType !== 'local' && (
+            <>
+              <Tabs
+                value={value}
+                onChange={handleValChange}
+                variant={width < 600 ? 'scrollable' : 'fullWidth'}
+                scrollButtons="on"
+                allowScrollButtonsMobile={true}
+                indicatorColor="primary"
+                textColor="primary"
+                centered
+              >
+                <CustomTooltip title="Details" placement="top">
+                  <Tab label={<span className={props.classes.tabLabel}>Details</span>} />
+                </CustomTooltip>
+                <CustomTooltip title="Plugins" placement="top">
+                  <Tab label={<span className={props.classes.tabLabel}>Plugins</span>} />
+                </CustomTooltip>
+              </Tabs>
+              <Paper className={props.classes.statsWrapper}>
+                {value === 0 && <RemoteProviderInfoTab />}
 
-            <div className={props.classes.formContainer}>
-              <FormControl component="fieldset" className={props.classes.formGrp}>
-                <FormLabel component="legend" className={props.classes.formLegend}>
-                  Theme
-                </FormLabel>
-
-                <FormGroup>
-                  <FormControlLabel
-                    key="ThemePreference"
-                    control={
-                      <ThemeToggler
-                        handleUpdateUserPref={handleUpdateUserPref}
-                        classes={props.classes}
-                      />
-                    }
-                    labelPlacement="end"
+                {value === 1 && (
+                  <ExtensionSandbox
+                    type="user_prefs"
+                    Extension={(url) => RemoteComponent({ url })}
                   />
-                </FormGroup>
-              </FormControl>
-            </div>
-          </>
-        )}
-        {tabVal === 1 && <MesherySettingsPerformanceComponent />}
-        {tabVal === 2 && userPrefs && providerType !== 'local' && (
-          <>
-            <Tabs
-              value={value}
-              onChange={handleValChange}
-              variant={width < 600 ? 'scrollable' : 'fullWidth'}
-              scrollButtons="on"
-              allowScrollButtonsMobile={true}
-              indicatorColor="primary"
-              textColor="primary"
-              className={props.classes.tabs}
-              centered
-            >
-              <CustomTooltip title="Details" placement="top">
-                <Tab
-                  className={props.classes.tab}
-                  label={<span className={props.classes.tabLabel}>Details</span>}
-                />
-              </CustomTooltip>
-              <CustomTooltip title="Plugins" placement="top">
-                <Tab
-                  className={props.classes.tab}
-                  label={<span className={props.classes.tabLabel}>Plugins</span>}
-                />
-              </CustomTooltip>
-            </Tabs>
-            <Paper className={props.classes.statsWrapper}>
-              {value === 0 && <RemoteProviderInfoTab />}
-
-              {value === 1 && (
-                <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteComponent({ url })} />
-              )}
-            </Paper>
-          </>
-        )}
-      </Paper>
-    </NoSsr>
+                )}
+              </Paper>
+            </>
+          )}
+        </Paper>
+      </NoSsr>
+    </UsesSistent>
   );
 };
 
