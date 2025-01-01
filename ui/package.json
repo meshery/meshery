@@ -131,7 +131,7 @@
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react": "^7.37.2",
     "http-proxy": "^1.18.1",
-    "husky": "^7.0.2",
+    "husky": "^9.1.7",
     "lint-staged": "^15.2.10",
     "node-polyfill-webpack-plugin": "^4.0.0",
     "nodemon": "^2.0.20",
