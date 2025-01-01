@@ -264,6 +264,9 @@ const K8sContextConnectionChip_ = ({
         Operator: ${formatToTitleCase(operatorState)},
         MeshSync: ${formatToTitleCase(meshSyncState)},
         Broker: ${formatToTitleCase(natsState)}`}
+        title={`Server: ${ctx.server},  Operator: ${formatToTitleCase(
+          operatorState,
+        )}, MeshSync: ${formatToTitleCase(meshSyncState)}, Broker: ${formatToTitleCase(natsState)}`}
       >
         <div
           style={{

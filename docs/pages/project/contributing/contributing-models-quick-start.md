@@ -27,7 +27,7 @@ The following instructions are a no-fluff guide to creating your own Meshery Mod
 
 <ol>
 
-<li>In your meshery/meshery fork, open the template [spreadsheet](https://docs.google.com/spreadsheets/d/19JEpqvHrG8UL-Bc-An9UIcubf1NVhlfnQSN1TD7JOZ4/edit?gid=1308482975#gid=1308482975).</li>
+<li>In your meshery/meshery fork, open the template <a href="https://docs.google.com/spreadsheets/d/19JEpqvHrG8UL-Bc-An9UIcubf1NVhlfnQSN1TD7JOZ4/edit?gid=1308482975#gid=1308482975">spreadsheet</a>.</li>
 <ul><li>Or, optionally, use CSVs by navigating to <code>mesheryctl/templates/templates-csvs</code> directory.</li></ul>
 <li>Edit the <code>models sheet</code> file to include your model definition.
    <ol>

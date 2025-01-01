@@ -30,7 +30,7 @@ mesheryctl design [flags]
 Apply pattern file:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design apply --file [path to pattern file | URL of the file]
+mesheryctl design apply --file [path to design file | URL of the file]
 
 </div>
 </pre> 
@@ -38,7 +38,7 @@ mesheryctl design apply --file [path to pattern file | URL of the file]
 Delete pattern file:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design delete --file [path to pattern file]
+mesheryctl design delete --file [path to design file]
 
 </div>
 </pre> 
@@ -46,7 +46,7 @@ mesheryctl design delete --file [path to pattern file]
 View pattern file:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl design view [pattern name | ID]
+mesheryctl design view [design name | ID]
 
 </div>
 </pre> 
