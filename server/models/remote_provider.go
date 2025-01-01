@@ -491,7 +491,7 @@ func (l *RemoteProvider) GetUsers(token, page, pageSize, search, order, filter s
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("user data successfully retrieved from remote provider")
+		l.Log.Info("user data retrieved from remote provider")
 		return bd, nil
 	}
 	err = ErrFetch(err, "Users Data", resp.StatusCode)
@@ -542,7 +542,7 @@ func (l *RemoteProvider) GetUsersKeys(token, page, pageSize, search, order, filt
 		return nil, ErrDataRead(err, "Users Keys")
 	}
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("user keys successfully retrieved from remote provider")
+		l.Log.Info("user keys retrieved from remote provider")
 		return bd, nil
 	}
 	err = ErrFetch(fmt.Errorf("unable to fetch keys for the org id %s", orgID), "Users Keys", resp.StatusCode)
@@ -658,7 +658,7 @@ func (l *RemoteProvider) Logout(w http.ResponseWriter, req *http.Request) error 
 		l.Log.Error(ErrLogout(err))
 		return err
 	}
-	l.Log.Info("response successfully retrieved from remote provider")
+	l.Log.Info("response retrieved from remote provider")
 	// if request succeeds then redirect to Provider UI
 	// And empties the token and session cookies
 	if resp.StatusCode == http.StatusFound || resp.StatusCode == http.StatusOK {
@@ -790,7 +790,7 @@ func (l *RemoteProvider) GetK8sContexts(token, page, pageSize, search, order str
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("kubernetes contexts successfully retrieved from remote provider")
+		l.Log.Info("kubernetes contexts retrieved from remote provider")
 		return bdr, nil
 	}
 	err = ErrFetch(fmt.Errorf("unable to fetch kubernetes contexts"), "Kubernetes Contexts", resp.StatusCode)
@@ -853,7 +853,7 @@ func (l *RemoteProvider) DeleteK8sContext(token, id string) (K8sContext, error) 
 
 		deletedContext := K8sContext{}
 		_ = json.NewDecoder(resp.Body).Decode(&deletedContext)
-		l.Log.Info("kubernetes successfully deleted from remote provider")
+		l.Log.Info("kubernetes deleted from remote provider")
 		return deletedContext, nil
 	}
 	err = ErrDelete(fmt.Errorf("unable to delete kubernetes context with id: %s", id), "Kubernetes Context", resp.StatusCode)
@@ -1076,7 +1076,7 @@ func (l *RemoteProvider) FetchSmiResults(req *http.Request, page, pageSize, sear
 		return nil, ErrDataRead(err, "SMI Result")
 	}
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("results successfully retrieved from remote provider")
+		l.Log.Info("results retrieved from remote provider")
 		return bdr, nil
 	}
 	err = ErrFetch(err, "SMI Result", resp.StatusCode)
@@ -1177,7 +1177,7 @@ func (l *RemoteProvider) GetResult(tokenVal string, resultID uuid.UUID) (*Mesher
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("result successfully retrieved from remote provider")
+		l.Log.Info("result retrieved from remote provider")
 		res := &MesheryResult{}
 		err = json.Unmarshal(bdr, res)
 		if err != nil {
@@ -1290,7 +1290,7 @@ func (l *RemoteProvider) PublishSmiResults(result *SmiResult) (string, error) {
 		return "", ErrDataRead(err, "SMI Result")
 	}
 	if resp.StatusCode == http.StatusCreated {
-		l.Log.Info("results successfully published to remote provider")
+		l.Log.Info("results published to remote provider")
 		idMap := map[string]string{}
 		if err = json.Unmarshal(bdr, &idMap); err != nil {
 			return "", ErrUnmarshal(err, "idMap")
@@ -1364,7 +1364,7 @@ func (l *RemoteProvider) PublishMetrics(tokenString string, result *MesheryResul
 		return ErrPost(err, "metrics", resp.StatusCode)
 	}
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("metrics successfully published to remote provider")
+		l.Log.Info("metrics published to remote provider")
 		return nil
 	}
 	defer func() {
@@ -1420,7 +1420,7 @@ func (l *RemoteProvider) SaveMesheryPatternResource(token string, resource *Patt
 			return nil, ErrUnmarshal(err, "Design Resource")
 		}
 
-		// l.Log.Info("design successfully sent to remote provider: %+v", pr)
+		// l.Log.Info("design sent to remote provider: %+v", pr)
 		return &pr, nil
 	}
 
@@ -1612,7 +1612,7 @@ func (l *RemoteProvider) SaveMesheryPatternSourceContent(tokenString string, pat
 	}()
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("pattern source successfully uploaded to remote provider")
+		l.Log.Info("pattern source uploaded to remote provider")
 		return nil
 	}
 
@@ -1669,7 +1669,7 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info(fmt.Sprintf("design %s successfully sent to remote provider", pattern.Name))
+		l.Log.Info(fmt.Sprintf("design %s sent to remote provider", pattern.Name))
 		return bdr, nil
 	}
 
@@ -1754,7 +1754,7 @@ func (l *RemoteProvider) GetMesheryPatterns(tokenString string, page, pageSize, 
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("designs successfully retrieved from remote provider")
+		l.Log.Info("designs retrieved from remote provider")
 		return bdr, nil
 	}
 	err = ErrFetch(fmt.Errorf("unable to fetch designs"), "designs", resp.StatusCode)
@@ -1850,7 +1850,7 @@ func (l *RemoteProvider) GetCatalogMesheryPatterns(tokenString string, page, pag
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("catalog design successfully retrieved from remote provider")
+		l.Log.Info("catalog design retrieved from remote provider")
 		return bdr, nil
 	}
 	err = ErrFetch(fmt.Errorf("error while fetching catalog design: %s", bdr), "design page - Catalog", resp.StatusCode)
@@ -1900,7 +1900,7 @@ func (l *RemoteProvider) GetMesheryPattern(req *http.Request, patternID string, 
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("design successfully retrieved from remote provider")
+		l.Log.Info("design retrieved from remote provider")
 		return bdr, nil
 	}
 	err = ErrFetch(fmt.Errorf("could not retrieve design from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
@@ -1948,7 +1948,7 @@ func (l *RemoteProvider) DeleteMesheryPattern(req *http.Request, patternID strin
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("design successfully retrieved from remote provider")
+		l.Log.Info("design retrieved from remote provider")
 		return bdr, nil
 	}
 	err = ErrDelete(fmt.Errorf("could not retrieve design from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
@@ -2006,7 +2006,7 @@ func (l *RemoteProvider) CloneMesheryPattern(req *http.Request, patternID string
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("design successfully cloned from remote provider")
+		l.Log.Info("design cloned from remote provider")
 		return bdr, nil
 	}
 	err = ErrClone(fmt.Errorf("error while cloning design file with id %s: %s", patternID, bdr), "design")
@@ -2061,7 +2061,7 @@ func (l *RemoteProvider) PublishCatalogPattern(req *http.Request, publishPattern
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("design successfully published to catalog")
+		l.Log.Info("design published to catalog")
 		return bdr, nil
 	}
 	err = ErrPublish(fmt.Errorf("error while publishing design file to catalog with id %s: %s", publishPatternRequest.ID, bdr), "design")
@@ -2116,7 +2116,7 @@ func (l *RemoteProvider) UnPublishCatalogPattern(req *http.Request, publishPatte
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("design successfully unpublished from catalog")
+		l.Log.Info("design unpublished from catalog")
 		return bdr, nil
 	}
 	err = ErrPublish(fmt.Errorf("error while unpublishing design file from catalog with id %s: %s", publishPatternRequest.ID, bdr), "design")
@@ -2172,7 +2172,7 @@ func (l *RemoteProvider) DeleteMesheryPatterns(req *http.Request, patterns Meshe
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("design successfully retrieved from remote provider")
+		l.Log.Info("design retrieved from remote provider")
 		return bdr, nil
 	}
 	err = ErrFetch(fmt.Errorf("could not retrieve design from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
@@ -2233,7 +2233,7 @@ func (l *RemoteProvider) RemotePatternFile(req *http.Request, resourceURL, path 
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("design successfully sent to remote provider: ", string(bdr))
+		l.Log.Info("design sent to remote provider: ", string(bdr))
 		return bdr, nil
 	}
 
@@ -2287,7 +2287,7 @@ func (l *RemoteProvider) SaveMesheryFilter(tokenString string, filter *MesheryFi
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		// l.Log.Info("filter successfully sent to remote provider: %s", string(bdr)) stop logging filter data
+		// l.Log.Info("filter sent to remote provider: %s", string(bdr)) stop logging filter data
 		return bdr, nil
 	}
 
@@ -2346,7 +2346,7 @@ func (l *RemoteProvider) GetMesheryFilters(tokenString string, page, pageSize, s
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("filters successfully retrieved from remote provider")
+		l.Log.Info("filters retrieved from remote provider")
 		return bdr, nil
 	}
 	err = ErrFetch(fmt.Errorf("error while fetching filters: %s", bdr), "Filters page", resp.StatusCode)
@@ -2399,7 +2399,7 @@ func (l *RemoteProvider) GetCatalogMesheryFilters(tokenString string, page, page
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("catalog filters successfully retrieved from remote provider")
+		l.Log.Info("catalog filters retrieved from remote provider")
 		return bdr, nil
 	}
 	err = ErrFetch(fmt.Errorf("error while fetching catalog filters: %s", bdr), "Filters page - Catalog", resp.StatusCode)
@@ -2444,7 +2444,7 @@ func (l *RemoteProvider) GetMesheryFilterFile(req *http.Request, filterID string
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("filter successfully retrieved from remote provider")
+		l.Log.Info("filter retrieved from remote provider")
 		return bdr, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("could not retrieve filter from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
@@ -2485,7 +2485,7 @@ func (l *RemoteProvider) GetMesheryFilter(req *http.Request, filterID string) ([
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("filter successfully retrieved from remote provider")
+		l.Log.Info("filter retrieved from remote provider")
 		return bdr, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("could not retrieve filter from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
@@ -2528,7 +2528,7 @@ func (l *RemoteProvider) DeleteMesheryFilter(req *http.Request, filterID string)
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("filter successfully retrieved from remote provider")
+		l.Log.Info("filter retrieved from remote provider")
 		return bdr, nil
 	}
 	err = ErrDelete(fmt.Errorf("error while fetching filter: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
@@ -2585,7 +2585,7 @@ func (l *RemoteProvider) CloneMesheryFilter(req *http.Request, filterID string, 
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("filter successfully cloned from remote provider")
+		l.Log.Info("filter cloned from remote provider")
 		return bdr, nil
 	}
 	err = ErrClone(fmt.Errorf("error while cloning filter with id %s: %s", filterID, bdr), "filter")
@@ -2640,7 +2640,7 @@ func (l *RemoteProvider) PublishCatalogFilter(req *http.Request, publishFilterRe
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("filter successfully published to catalog")
+		l.Log.Info("filter published to catalog")
 		return bdr, nil
 	}
 	err = ErrPublish(fmt.Errorf("error while publishing filter file to catalog with id %s: %s", publishFilterRequest.ID, bdr), "filter")
@@ -2695,7 +2695,7 @@ func (l *RemoteProvider) UnPublishCatalogFilter(req *http.Request, publishFilter
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("filter successfully unpublished from catalog")
+		l.Log.Info("filter unpublished from catalog")
 		return bdr, nil
 	}
 	err = ErrUnpPublish(fmt.Errorf("error while unpublishing filter file from catalog with id %s: %s", publishFilterRequest.ID, bdr), "filter")
@@ -2757,7 +2757,7 @@ func (l *RemoteProvider) RemoteFilterFile(req *http.Request, resourceURL, path s
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		// l.Log.Info("filter successfully sent to remote provider: %s", string(bdr)) stop logging filter data
+		// l.Log.Info("filter sent to remote provider: %s", string(bdr)) stop logging filter data
 		return bdr, nil
 	}
 
@@ -2810,7 +2810,7 @@ func (l *RemoteProvider) SaveMesheryApplication(tokenString string, application 
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("application successfully sent to remote provider: ", string(bdr))
+		l.Log.Info("application sent to remote provider: ", string(bdr))
 		return bdr, nil
 	}
 
@@ -2842,7 +2842,7 @@ func (l *RemoteProvider) SaveApplicationSourceContent(tokenString string, applic
 	}()
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("application source successfully uploaded to remote provider")
+		l.Log.Info("application source uploaded to remote provider")
 		return nil
 	}
 
@@ -2883,7 +2883,7 @@ func (l *RemoteProvider) GetApplicationSourceContent(req *http.Request, applicat
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("applications successfully retrieved from remote provider")
+		l.Log.Info("applications retrieved from remote provider")
 		return bdr, nil
 	}
 	err = ErrFetch(fmt.Errorf("error while fetching applications: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
@@ -2925,7 +2925,7 @@ func (l *RemoteProvider) GetDesignSourceContent(token, designID string) ([]byte,
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("design source content successfully retrieved from remote provider")
+		l.Log.Info("design source content retrieved from remote provider")
 		return bdr, nil
 	}
 	err = ErrFetch(fmt.Errorf("error while fetching designs: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
@@ -2985,7 +2985,7 @@ func (l *RemoteProvider) GetMesheryApplications(tokenString string, page, pageSi
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("applications successfully retrieved from remote provider")
+		l.Log.Info("applications retrieved from remote provider")
 		return bdr, nil
 	}
 	err = ErrFetch(fmt.Errorf("error while fetching applications: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
@@ -3028,7 +3028,7 @@ func (l *RemoteProvider) GetMesheryApplication(req *http.Request, applicationID 
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("application successfully retrieved from remote provider")
+		l.Log.Info("application retrieved from remote provider")
 		return bdr, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to retrieve application from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
@@ -3070,7 +3070,7 @@ func (l *RemoteProvider) DeleteMesheryApplication(req *http.Request, application
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("application successfully retrieved from remote provider")
+		l.Log.Info("application retrieved from remote provider")
 		return bdr, nil
 	}
 	return nil, ErrDelete(fmt.Errorf("could not retrieve application from remote provider"), "Application :"+applicationID, resp.StatusCode)
@@ -3151,7 +3151,7 @@ func (l *RemoteProvider) SavePerformanceProfile(tokenString string, pp *Performa
 	}
 
 	if resp.StatusCode == http.StatusCreated {
-		l.Log.Info("performance profile successfully sent to remote provider: ", string(bdr))
+		l.Log.Info("performance profile sent to remote provider: ", string(bdr))
 		return bdr, nil
 	}
 
@@ -3203,7 +3203,7 @@ func (l *RemoteProvider) GetPerformanceProfiles(tokenString string, page, pageSi
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("performance profiles successfully retrieved from remote provider")
+		l.Log.Info("performance profiles retrieved from remote provider")
 		return bdr, nil
 	}
 	return nil, ErrPost(fmt.Errorf("failed to retrieve performance profile from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
@@ -3246,7 +3246,7 @@ func (l *RemoteProvider) GetPerformanceProfile(req *http.Request, performancePro
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("performance profile successfully retrieved from remote provider")
+		l.Log.Info("performance profile retrieved from remote provider")
 		return bdr, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to retrieve performance profile from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
@@ -3287,7 +3287,7 @@ func (l *RemoteProvider) DeletePerformanceProfile(req *http.Request, performance
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("performance profile successfully retrieved from remote provider")
+		l.Log.Info("performance profile retrieved from remote provider")
 		return bdr, nil
 	}
 	return nil, ErrDelete(fmt.Errorf("failed to retrieve performance profile from remote provider"), "Perf Profile :"+performanceProfileID, resp.StatusCode)
@@ -3336,7 +3336,7 @@ func (l *RemoteProvider) SaveSchedule(tokenString string, s *Schedule) ([]byte, 
 	}
 
 	if resp.StatusCode == http.StatusCreated {
-		l.Log.Info("schedule successfully sent to remote provider: ", string(bdr))
+		l.Log.Info("schedule sent to remote provider: ", string(bdr))
 		return bdr, nil
 	}
 
@@ -3390,7 +3390,7 @@ func (l *RemoteProvider) GetSchedules(req *http.Request, page, pageSize, order s
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("schedules successfully retrieved from remote provider")
+		l.Log.Info("schedules retrieved from remote provider")
 		return bdr, nil
 	}
 	err = ErrFetch(fmt.Errorf("error while fetching schedules: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
@@ -3433,7 +3433,7 @@ func (l *RemoteProvider) GetSchedule(req *http.Request, scheduleID string) ([]by
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("schedule successfully retrieved from remote provider")
+		l.Log.Info("schedule retrieved from remote provider")
 		return bdr, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("could not retrieve schedule from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
@@ -3476,7 +3476,7 @@ func (l *RemoteProvider) DeleteSchedule(req *http.Request, scheduleID string) ([
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("schedule successfully retrieved from remote provider")
+		l.Log.Info("schedule retrieved from remote provider")
 		return bdr, nil
 	}
 	return nil, ErrDelete(fmt.Errorf("could not retrieve schedule from remote provider"), fmt.Sprint(bdr), resp.StatusCode)
@@ -3816,7 +3816,7 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 	// check for all success status codes
 	statusOK := response.StatusCode >= 200 && response.StatusCode < 300
 	if statusOK {
-		l.Log.Info("response successfully retrieved from remote provider")
+		l.Log.Info("response retrieved from remote provider")
 		return response, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to request to remote provider"), fmt.Sprint(bdr), resp.StatusCode)
@@ -4232,7 +4232,7 @@ func (l *RemoteProvider) DeleteConnection(req *http.Request, connectionID uuid.U
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("connection successfully deleted from remote provider")
+		l.Log.Info("connection deleted from remote provider")
 		var conn connections.Connection
 		if err = json.Unmarshal(bdr, &conn); err != nil {
 			return nil, err
@@ -4496,7 +4496,7 @@ func (l *RemoteProvider) GetCredentialByID(token string, credentialID uuid.UUID)
 
 	bdr, _ := io.ReadAll(resp.Body)
 	if resp.StatusCode != http.StatusOK {
-		return nil, resp.StatusCode, ErrFetch(fmt.Errorf("could not retrieve credential with id %s: %d", credentialID, resp.StatusCode), fmt.Sprint(bdr), resp.StatusCode)
+		return nil, resp.StatusCode, ErrFetch(fmt.Errorf("could not retrieve credential with id %s", credentialID), fmt.Sprint(bdr), resp.StatusCode)
 	}
 
 	var cp Credential
@@ -4584,7 +4584,7 @@ func (l *RemoteProvider) DeleteUserCredential(req *http.Request, credentialID uu
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("credential successfully deleted from remote provider")
+		l.Log.Info("credential deleted from remote provider")
 		return nil, nil
 	}
 	err = ErrDelete(fmt.Errorf("error while deleting credential: %s", bdr), fmt.Sprint(bdr), resp.StatusCode)
@@ -4672,7 +4672,7 @@ func (l *RemoteProvider) GetEnvironments(token, page, pageSize, search, order, f
 	}
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
-		l.Log.Info("Environments data successfully retrieved from remote provider")
+		l.Log.Info("Environments data retrieved from remote provider")
 		return bd, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to get environments"), "Environments", resp.StatusCode)
@@ -4718,7 +4718,7 @@ func (l *RemoteProvider) GetEnvironmentByID(req *http.Request, environmentID, or
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("Environment successfully retrieved from remote provider")
+		l.Log.Info("Environment retrieved from remote provider")
 		return bdr, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to get environment by ID"), "Environment", resp.StatusCode)
@@ -4806,7 +4806,7 @@ func (l *RemoteProvider) DeleteEnvironment(req *http.Request, environmentID stri
 	}
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
-		l.Log.Info("Environment successfully deleted from remote provider")
+		l.Log.Info("Environment deleted from remote provider")
 		return bdr, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to delete environment"), "Environment", resp.StatusCode)
@@ -4895,7 +4895,7 @@ func (l *RemoteProvider) AddConnectionToEnvironment(req *http.Request, environme
 	}
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
-		l.Log.Info("Connection successfully added to environment")
+		l.Log.Info("Connection added to environment")
 		return bdr, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to get environments"), "Environment", resp.StatusCode)
@@ -4935,7 +4935,7 @@ func (l *RemoteProvider) RemoveConnectionFromEnvironment(req *http.Request, envi
 	}
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
-		l.Log.Info("Connection successfully removed from environment")
+		l.Log.Info("Connection removed from environment")
 		return bdr, nil
 	}
 
@@ -4995,7 +4995,7 @@ func (l *RemoteProvider) GetConnectionsOfEnvironment(req *http.Request, environm
 	}
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
-		l.Log.Info("Connections successfully retrieved from environment")
+		l.Log.Info("Connections retrieved from environment")
 		return bdr, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to get environments"), "Environment", resp.StatusCode)
@@ -5048,7 +5048,7 @@ func (l *RemoteProvider) GetOrganizations(token, page, pageSize, search, order, 
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("user data successfully retrieved from remote provider")
+		l.Log.Info("user data retrieved from remote provider")
 		return bd, nil
 	}
 
@@ -5105,7 +5105,7 @@ func (l *RemoteProvider) GetWorkspaces(token, page, pageSize, search, order, fil
 	}
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
-		l.Log.Info("Workspaces data successfully retrieved from remote provider")
+		l.Log.Info("Workspaces data retrieved from remote provider")
 		return bd, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to get workspaces"), "Workspaces", resp.StatusCode)
@@ -5151,7 +5151,7 @@ func (l *RemoteProvider) GetWorkspaceByID(req *http.Request, workspaceID, orgID 
 	}
 
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("Workspace successfully retrieved from remote provider")
+		l.Log.Info("Workspace retrieved from remote provider")
 		return bdr, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to get workspace by ID"), "Workspace", resp.StatusCode)
@@ -5239,7 +5239,7 @@ func (l *RemoteProvider) DeleteWorkspace(req *http.Request, workspaceID string) 
 	}
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
-		l.Log.Info("Workspace successfully deleted from remote provider")
+		l.Log.Info("Workspace deleted from remote provider")
 		return bdr, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to delete workspace"), "Workspace", resp.StatusCode)
@@ -5328,7 +5328,7 @@ func (l *RemoteProvider) AddEnvironmentToWorkspace(req *http.Request, workspaceI
 	}
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
-		l.Log.Info("Environment successfully added to workspace")
+		l.Log.Info("Environment added to workspace")
 		return bdr, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to get workspaces"), "Workspace", resp.StatusCode)
@@ -5368,7 +5368,7 @@ func (l *RemoteProvider) RemoveEnvironmentFromWorkspace(req *http.Request, works
 	}
 
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
-		l.Log.Info("Environment successfully removed from workspace")
+		l.Log.Info("Environment removed from workspace")
 		return bdr, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to unassign environment from workspace"), "Workspace", resp.StatusCode)
@@ -5423,7 +5423,7 @@ func (l *RemoteProvider) GetEnvironmentsOfWorkspace(req *http.Request, workspace
 		return nil, err
 	}
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
-		l.Log.Info("Environments successfully retrieved from workspace")
+		l.Log.Info("Environments retrieved from workspace")
 		return bdr, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to get environments of workspace"), "Workspace", resp.StatusCode)
@@ -5456,7 +5456,7 @@ func (l *RemoteProvider) AddDesignToWorkspace(req *http.Request, workspaceID str
 		return nil, err
 	}
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
-		l.Log.Info("Design successfully added to workspace")
+		l.Log.Info("Design added to workspace")
 		return bdr, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to add design to workspace"), "Workspace", resp.StatusCode)
@@ -5489,7 +5489,7 @@ func (l *RemoteProvider) RemoveDesignFromWorkspace(req *http.Request, workspaceI
 		return nil, err
 	}
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
-		l.Log.Info("Design successfully removed from workspace")
+		l.Log.Info("Design removed from workspace")
 		return bdr, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to remove design from workspace"), "Workspace", resp.StatusCode)
@@ -5541,7 +5541,7 @@ func (l *RemoteProvider) GetDesignsOfWorkspace(req *http.Request, workspaceID, p
 		return nil, err
 	}
 	if resp.StatusCode == http.StatusOK || resp.StatusCode == http.StatusNoContent {
-		l.Log.Info("Designs successfully retrieved from workspace")
+		l.Log.Info("Designs retrieved from workspace")
 		return bdr, nil
 	}
 	return nil, ErrFetch(fmt.Errorf("failed to get designs of workspace"), "Workspace", resp.StatusCode)
