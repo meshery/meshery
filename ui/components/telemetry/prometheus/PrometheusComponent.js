@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@mui/material';
-import { Typography, styled, Box } from '@layer5/sistent';
+import { Typography, styled } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dataFetch from '../../../lib/data-fetch';
