@@ -107,7 +107,7 @@
     "redux-thunk": "^2.4.0",
     "relay-runtime": "^15.0.0",
     "rxjs": "^7.8.1",
-    "styled-jsx": "^5.1.2",
+    "styled-jsx": "^5.1.6",
     "tar": "^7.4.3",
     "universal-cookie": "^7.2.2",
     "uuid": "^9.0.1",
