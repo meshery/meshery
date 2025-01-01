@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import { NoSsr, Typography } from '@material-ui/core';
+import { NoSsr } from '@mui/material';
+import { Typography, styled } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dataFetch from '../../../lib/data-fetch';
@@ -16,24 +16,41 @@ import { withNotify } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { CONNECTION_KINDS } from '@/utils/Enum';
 import { withTelemetryHook } from '@/components/hooks/useTelemetryHook';
+import { UsesSistent } from '../../SistentWrapper';
 
-const promStyles = (theme) => ({
-  buttons: {
+const StyledBox = styled(Box)(({ theme }) => ({
+  '& .buttons': {
     display: 'flex',
-    //   justifyContent: 'flex-end',
   },
-  button: {
+  '& .button': {
     marginTop: theme.spacing(3),
-    //   marginLeft: theme.spacing(1),
   },
-  margin: { margin: theme.spacing(1) },
-  icon: { width: theme.spacing(2.5) },
-  alignRight: { textAlign: 'right' },
-  formControl: { margin: theme.spacing(1), minWidth: 180 },
-  panelChips: { display: 'flex', flexWrap: 'wrap' },
-  panelChip: { margin: theme.spacing(0.25) },
-  chartTitle: { marginLeft: theme.spacing(3), marginTop: theme.spacing(2), textAlign: 'center' },
-});
+  '& .margin': {
+    margin: theme.spacing(1),
+  },
+  '& .icon': {
+    width: theme.spacing(2.5),
+  },
+  '& .alignRight': {
+    textAlign: 'right',
+  },
+  '& .formControl': {
+    margin: theme.spacing(1),
+    minWidth: 180,
+  },
+  '& .panelChips': {
+    display: 'flex',
+    flexWrap: 'wrap',
+  },
+  '& .panelChip': {
+    margin: theme.spacing(0.25),
+  },
+  '& .chartTitle': {
+    marginLeft: theme.spacing(3),
+    marginTop: theme.spacing(2),
+    textAlign: 'center',
+  },
+}));
 
 // todo
 export const submitPrometheusConfigure = (self, cb = () => {}) => {
@@ -296,30 +313,36 @@ class PrometheusComponent extends Component {
       }
 
       return (
-        <NoSsr>
-          <React.Fragment>
-            <PrometheusSelectionComponent
-              prometheusURL={prometheusURL}
-              handlePrometheusChipDelete={this.handlePrometheusChipDelete}
-              addSelectedBoardPanelConfig={this.addSelectedBoardPanelConfig}
-              handlePrometheusClick={this.handlePrometheusClick}
-              handleError={this.handleError}
-              connectionID={connectionID}
-            />
-            {displaySelec}
-          </React.Fragment>
-        </NoSsr>
+        <UsesSistent>
+          <NoSsr>
+            <StyledBox>
+              <PrometheusSelectionComponent
+                prometheusURL={prometheusURL}
+                handlePrometheusChipDelete={this.handlePrometheusChipDelete}
+                addSelectedBoardPanelConfig={this.addSelectedBoardPanelConfig}
+                handlePrometheusClick={this.handlePrometheusClick}
+                handleError={this.handleError}
+                connectionID={connectionID}
+              />
+              {displaySelec}
+            </StyledBox>
+          </NoSsr>
+        </UsesSistent>
       );
     }
     return (
-      <NoSsr>
-        <PrometheusConfigComponent
-          prometheusURL={prometheusURL && { label: prometheusURL, value: prometheusURL }}
-          urlError={urlError}
-          handleChange={this.handleChange}
-          handlePrometheusConfigure={this.handlePrometheusConfigure}
-        />
-      </NoSsr>
+      <UsesSistent>
+        <NoSsr>
+          <StyledBox>
+            <PrometheusConfigComponent
+              prometheusURL={prometheusURL && { label: prometheusURL, value: prometheusURL }}
+              urlError={urlError}
+              handleChange={this.handleChange}
+              handlePrometheusConfigure={this.handlePrometheusConfigure}
+            />
+          </StyledBox>
+        </NoSsr>
+      </UsesSistent>
     );
   }
 }
@@ -344,9 +367,7 @@ const mapStateToProps = (st) => {
   return { grafana, prometheus, selectedK8sContexts, k8sconfig };
 };
 
-export default withStyles(promStyles)(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  )(withTelemetryHook(withNotify(PrometheusComponent), CONNECTION_KINDS.PROMETHEUS)),
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withTelemetryHook(withNotify(PrometheusComponent), CONNECTION_KINDS.PROMETHEUS));
