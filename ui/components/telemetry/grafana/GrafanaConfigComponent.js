@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@material-ui/core';
-import { TextField, Grid, Button, useTheme } from '@layer5/sistent';
+import { TextField, Grid, Button, useTheme, styled } from '@layer5/sistent';
 import ReactSelectWrapper from '../../ReactSelectWrapper';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -35,7 +35,6 @@ const StyledButton = styled(Button)(({ theme }) => ({
 }));
 
 function GrafanaConfigComponent({
-  classes,
   grafanaURL,
   grafanaAPIKey,
   urlError,
@@ -116,7 +115,6 @@ function GrafanaConfigComponent({
 }
 
 GrafanaConfigComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
   grafanaURL: PropTypes.object.isRequired,
   grafanaAPIKey: PropTypes.string.isRequired,
   handleChange: PropTypes.func.isRequired,

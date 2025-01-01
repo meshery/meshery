@@ -71,7 +71,7 @@ class GrafanaCharts extends Component {
 
   render() {
     const { from, startDate, to, endDate, liveTail, refresh } = this.state;
-    const { classes, boardPanelConfigs } = this.props;
+    const { boardPanelConfigs } = this.props;
     let { grafanaURL } = this.props;
     if (grafanaURL.endsWith('/')) {
       grafanaURL = grafanaURL.substring(0, grafanaURL.length - 1);
@@ -138,7 +138,6 @@ class GrafanaCharts extends Component {
 }
 
 GrafanaCharts.propTypes = {
-  classes: PropTypes.object.isRequired,
   grafanaURL: PropTypes.string.isRequired,
   boardPanelConfigs: PropTypes.array.isRequired,
 };

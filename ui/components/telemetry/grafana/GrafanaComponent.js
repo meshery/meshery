@@ -354,7 +354,6 @@ class GrafanaComponent extends Component {
   }
 
   render() {
-    const { classes } = this.props;
     const {
       urlError,
       grafanaURL,
@@ -429,7 +428,6 @@ class GrafanaComponent extends Component {
 }
 
 GrafanaComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
   scannedGrafana: PropTypes.array.isRequired,
 };
 

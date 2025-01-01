@@ -45,7 +45,7 @@ const DateRangePickerContainer = styled('div')({
   justifyContent: 'flex-end',
 });
 
-const ChartsHeaderOptions = styled('div')(({ theme }) => ({
+const ChartsHeaderOptions = styled('div')(() => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
@@ -56,6 +56,10 @@ const ChartsHeaderOptions = styled('div')(({ theme }) => ({
 const StyledIcon = styled('img')(({ theme }) => ({
   width: theme.spacing(2.5),
 }));
+
+const StyledChip = styled(Chip)({
+  width: '100%',
+});
 
 const StyledDialogTitle = styled(DialogTitle)({
   '& > *': {
@@ -115,13 +119,11 @@ class GrafanaCustomCharts extends Component {
   };
 
   GrafanaChip(grafanaURL) {
-    const { classes } = this.props;
     return (
-      <Chip
+      <StyledChip
         label={grafanaURL}
         onClick={() => window.open(grafanaURL)}
-        icon={<img src="/static/img/grafana_icon.svg" className={classes.icon} />}
-        className={classes.chip}
+        icon={<StyledIcon src="/static/img/grafana_icon.svg" />}
         variant="outlined"
       />
     );
@@ -140,7 +142,7 @@ class GrafanaCustomCharts extends Component {
       chartDialogPanelData,
       sparkline,
     } = this.state;
-    const { classes, boardPanelConfigs, boardPanelData } = this.props;
+    const { boardPanelConfigs, boardPanelData } = this.props;
     const { grafanaURL, grafanaAPIKey, prometheusURL, connectionID } = this.props;
     const { enableGrafanaChip } = this.props;
     // we are now proxying. . .
@@ -304,7 +306,6 @@ class GrafanaCustomCharts extends Component {
 }
 
 GrafanaCustomCharts.propTypes = {
-  classes: PropTypes.object.isRequired,
   // grafanaURL: PropTypes.string.isRequired,
   // grafanaAPIKey: PropTypes.string.isRequired,
   boardPanelConfigs: PropTypes.array.isRequired,

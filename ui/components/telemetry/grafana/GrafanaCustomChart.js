@@ -22,12 +22,12 @@ import {
 } from '@layer5/sistent';
 import { UsesSistent } from '../../SistentWrapper';
 
-const StyledCard = styled(Card)(({ theme }) => ({
+const StyledCard = styled(Card)(() => ({
   height: '100%',
   width: '100%',
 }));
 
-const StyledCardContent = styled(CardContent)(({ theme }) => ({
+const StyledCardContent = styled(CardContent)(() => ({
   height: '100%',
   width: '100%',
 }));

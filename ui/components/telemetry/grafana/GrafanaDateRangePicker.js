@@ -29,14 +29,14 @@ const StyledDialog = styled(Dialog)(({ theme }) => ({
   },
 }));
 
-const DialogTitleBar = styled('div')(({ theme }) => ({
+const DialogTitleBar = styled('div')(() => ({
   display: 'flex',
   justifyContent: 'space-between',
   backgroundColor: 'rgb(57, 102, 121)',
   color: 'white',
 }));
 
-const CloseIconButton = styled(IconButton)(({ theme }) => ({
+const CloseIconButton = styled(IconButton)(() => ({
   height: '2.3rem',
   marginTop: '0.8rem',
   marginRight: '10px',
@@ -51,11 +51,11 @@ const CloseIcon = styled(Close)({
   },
 });
 
-const RangeButton = styled(Button)(({ theme }) => ({
+const RangeButton = styled(Button)(() => ({
   border: '1px solid rgba(0, 0, 0, 0.23)',
 }));
 
-const RangeDialogRow = styled('div')(({ theme }) => ({
+const RangeDialogRow = styled('div')(() => ({
   display: 'flex',
   gap: '4rem',
   '& > *': { flex: '1' },
@@ -625,7 +625,7 @@ class GrafanaDateRangePicker extends Component {
 
   render() {
     const { open } = this.state;
-    const { startDate, endDate, liveTail, refresh, classes } = this.props;
+    const { startDate, endDate, liveTail, refresh } = this.props;
     return (
       <UsesSistent>
         <NoSsr>

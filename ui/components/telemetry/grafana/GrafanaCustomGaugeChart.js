@@ -25,16 +25,16 @@ const ErrorMessage = styled(Box)(() => {
   };
 });
 
-const ChartTitle = styled(Box)(() => {
-  const theme = useTheme();
-  return {
-    fontSize: '12px',
-    color: theme.palette.text.secondary,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    width: '100%',
-  };
-});
+// const ChartTitle = styled(Box)(() => {
+//   const theme = useTheme();
+//   return {
+//     fontSize: '12px',
+//     color: theme.palette.text.secondary,
+//     fontWeight: 'bold',
+//     textAlign: 'center',
+//     width: '100%',
+//   };
+// });
 
 export default function GrafanaCustomGaugeChart(props) {
   let chartRef = null;
