@@ -254,6 +254,9 @@ export function getResourceStr(value, resourceType) {
 }
 
 export const getStatus = (status) => {
+  if (!status) {
+    return false;
+  }
   const attribute = JSON.parse(status);
   if (attribute?.phase) {
     return attribute.phase;

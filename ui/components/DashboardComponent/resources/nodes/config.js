@@ -30,6 +30,7 @@ export const NodeTableConfig = (
       ['status.attribute', 'm'],
       ['status.attribute', 'm'],
       ['metadata.creationTimestamp', 'l'],
+      ['status.attribute', 'm'],
     ],
     columns: [
       {
@@ -200,7 +201,7 @@ export const NodeTableConfig = (
         },
       },
       {
-        name: 'conditions',
+        name: 'status.attribute',
         label: 'Conditions',
         options: {
           sort: true,
@@ -216,7 +217,7 @@ export const NodeTableConfig = (
             );
           },
           customBodyRender: function CustomBody(val) {
-            let status = getStatus(val?.attribute);
+            let status = getStatus(val);
             if (status) {
               return <>{status}</>;
             } else {
