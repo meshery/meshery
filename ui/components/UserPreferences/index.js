@@ -295,10 +295,6 @@ const UserPreference = (props) => {
     setTabVal(newVal);
   };
 
-  console.log('userPrefs:', userPrefs);
-  console.log('providerType:', providerType);
-  console.log('props.capabilitiesRegistry:', props.capabilitiesRegistry);
-
   useEffect(() => {
     if (props.capabilitiesRegistry && !capabilitiesLoaded) {
       setCapabilitiesLoaded(true); // to prevent re-compute
