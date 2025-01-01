@@ -18,7 +18,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@babel/eslint-parser": "^7.25.9",
-    "@emotion/cache": "^11.10.5",
+    "@emotion/cache": "^11.14.0",
     "@emotion/react": "^11.13.5",
     "@emotion/server": "^11.11.0",
     "@emotion/styled": "^11.13.5",
