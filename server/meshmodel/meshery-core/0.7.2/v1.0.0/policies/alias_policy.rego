@@ -69,12 +69,48 @@ new_uuid(seed) := id if {
 	id := uuid.rfc4122(sprintf("%s%s", [seed, now]))
 }
 
-alias_paths(from, to, component) := paths if {
-	paths := [
-		["configuration", "spec", "containers", "0"],
-		["configuration", "spec", "containers", "1"],
-		["configuration", "spec", "containers", "2"],
+object_get_nested(obj, path, default_value) := value if {
+	walk(obj) = [path, v]
+	path == path
+	value = v
+} else := default_value
+
+pop_last(arr) := array.slice(arr, 0, count(arr) - 1)
+
+array_endswith(arr, item) if {
+	arr[count(arr) - 1] == item
+}
+
+# check if the reference is a direct reference or an array reference
+# if the reference is a direct reference then it should not end with _
+is_direct_reference(ref) if {
+	not array_endswith(ref, "_")
+}
+
+identify_alias_paths(from, to, component) := paths if {
+	ref := from.patch.mutatorRef[0]
+	not is_direct_reference(ref)
+	direct_ref := pop_last(ref)
+
+	print("Direct Ref", direct_ref)
+
+	items := object_get_nested(component, direct_ref, [])
+
+	print("Items", items)
+
+	paths := [path |
+		some index in numbers.range(0, count(items) - 1)
+		path := array.concat(direct_ref, [sprintf("%d", [index])])
 	]
+
+	print("Paths", paths)
+}
+
+identify_alias_paths(from, to, component) := paths if {
+	ref := from.patch.mutatorRef[0]
+	is_direct_reference(ref)
+
+	paths := [ref]
 }
 
 identify_alias_relationships(component, relationship) := {rel |
