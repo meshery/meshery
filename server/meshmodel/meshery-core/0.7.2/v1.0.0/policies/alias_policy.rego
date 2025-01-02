@@ -359,17 +359,16 @@ action_phase(design_file) := result if {
 	print("Components added", count(components_added))
 
 	result := {
-		"components_added": components_added,
-		"components_deleted": component_deleted,
-		"components_updated": {},
-		"relationships_updated": {},
-		"relationships_added": relationships_added,
-		"relationships_deleted": relationships_deleted,
+		"components_to_add": components_added,
+		"components_to_delete": component_deleted,
+		"updates": {},
+		"relationships_to_add": relationships_added,
+		"relationships_to_delete": relationships_deleted,
 	}
 } else := {
-	"components_added": {},
-	"components_deleted": {},
-	"components_updated": {},
-	"relationships_updated": {},
-	"relationships_added": {},
+	"components_to_add": {},
+	"components_to_delete": {},
+	"updates": {},
+	"relationships_to_add": {},
+	"relationships_to_delete": {},
 }

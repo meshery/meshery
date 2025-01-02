@@ -8,6 +8,10 @@ set_to_array(set) := [val |
 	some val in set
 ]
 
+array_to_set(arr) := {val |
+	some val in arr
+}
+
 # Checks if object 'x' has key 'k'.
 has_key(x, k) if {
 	x[k]
