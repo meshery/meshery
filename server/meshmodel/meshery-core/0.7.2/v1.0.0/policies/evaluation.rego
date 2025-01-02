@@ -189,29 +189,28 @@ evaluate := eval_results if {
 
 	# print("Final Design", final_evaluated_design_file)
 
-
-	design_to_return := json.patch(final_design_file, [{
-        "op": "replace",
-        "path": "/relationships",
-        "value": array.concat(set_to_array(actions_response.relationships_added),final_design_file.relationships),
-    },
-    {
-            "op": "replace",
-            "path": "/components",
-            "value": array.concat(set_to_array(actions_response.components_added),final_design_file.components),
-        }
+	design_to_return := json.patch(final_design_file, [
+		{
+			"op": "replace",
+			"path": "/relationships",
+			"value": array.concat(set_to_array(actions_response.relationships_added), final_design_file.relationships),
+		},
+		{
+			"op": "replace",
+			"path": "/components",
+			"value": array.concat(set_to_array(actions_response.components_added), final_design_file.components),
+		},
 	])
-
-
 
 	# Prepare the evaluation results with updated design and trace information.
 	eval_results := {
 		"design": design_to_return,
 		"trace": {
 			"componentsUpdated": updated_declarations,
-			"componentsAdded": {x | some x in components_added} | actions_response.components_added ,
+			"componentsAdded": {x | some x in components_added} | actions_response.components_added,
+			"componentsRemoved": actions_response.components_deleted,
 			"relationshipsAdded": relationships_added,
-			"relationshipsRemoved": relationships_deleted,
+			"relationshipsRemoved": {x | some x in relationships_deleted} | actions_response.relationships_deleted,
 			"relationshipsUpdated": intermediate_rels,
 		},
 	}
