@@ -25,8 +25,6 @@ relationships_to_evaluate_against := data.relationships
 
 # Main evaluation function that processes relationships and updates the design.
 evaluate := eval_results if {
-	print("Wooo in evbal")
-
 	# Iterate over relationships in the design file and resolve patches.
 	resultant_patches := {patched_object |
 		some rel in rels_in_design_file
@@ -187,34 +185,70 @@ evaluate := eval_results if {
 
 	actions_response := action_phase(design_file_to_apply_actions)
 
-	# print("Final Design", final_evaluated_design_file)
-
-	design_to_return := json.patch(final_design_file, [
-		{
-			"op": "replace",
-			"path": "/relationships",
-			"value": array.concat(set_to_array(actions_response.relationships_added), final_design_file.relationships),
-		},
-		{
-			"op": "replace",
-			"path": "/components",
-			"value": array.concat(set_to_array(actions_response.components_added), final_design_file.components),
-		},
-	])
+	# Prepare the final design to return.
+	design_to_return := final_design_from_actions(
+		final_design_file,
+		actions_response,
+	)
 
 	# Prepare the evaluation results with updated design and trace information.
 	eval_results := {
 		"design": design_to_return,
 		"trace": {
 			"componentsUpdated": updated_declarations,
-			"componentsAdded": {x | some x in components_added} | actions_response.components_added,
-			"componentsRemoved": actions_response.components_deleted,
-			"relationshipsAdded": relationships_added,
-			"relationshipsRemoved": {x | some x in relationships_deleted} | actions_response.relationships_deleted,
+			"componentsAdded": array_to_set(components_added) | actions_response.components_to_add,
+			"componentsRemoved": actions_response.components_to_delete,
+			"relationshipsAdded": array_to_set(relationships_added) | actions_response.relationships_to_add,
+			"relationshipsRemoved": array_to_set(relationships_deleted) | actions_response.relationships_to_delete,
 			"relationshipsUpdated": intermediate_rels,
 		},
 	}
 }
+
+# --- Post Processing Phase ---##
+delete_components(all_comps, comps_to_delete) := new_comps if {
+	count(comps_to_delete) > 0
+	new_comps := {comp |
+		some comp in all_comps
+		some comp_to_delete in comps_to_delete
+		comp.id != comp_to_delete.id
+	}
+} else := all_comps
+
+delete_relationships(all_rels, rels_to_delete) := new_rels if {
+	count(rels_to_delete) > 0
+	new_rels := {rel |
+		some rel in all_rels
+		some rel_to_delete in rels_to_delete
+		rel.id != rel_to_delete.id
+	}
+} else := all_rels
+
+final_design_from_actions(old_design, actions_response) := new_design if {
+	# Add new components to the design
+
+	with_new_components := array_to_set(old_design.components) | actions_response.components_to_add
+	final_components := delete_components(with_new_components, actions_response.components_to_delete)
+
+	# Add new relationships to the design
+	with_new_relationships := array_to_set(old_design.relationships) | actions_response.relationships_to_add
+	final_relationships := delete_relationships(with_new_relationships, actions_response.relationships_to_delete)
+
+	new_design := json.patch(old_design, [
+		{
+			"op": "replace",
+			"path": "/components",
+			"value": final_components,
+		},
+		{
+			"op": "replace",
+			"path": "/relationships",
+			"value": final_relationships,
+		},
+	])
+} else := old_design
+
+# ----------------------------------------------#
 
 # Returns the updated declaration if it exists; otherwise, returns the original declaration.
 filter_updated_declaration(declaration, updated_declarations) := obj.declaration if {

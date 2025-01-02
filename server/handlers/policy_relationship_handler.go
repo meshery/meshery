@@ -115,33 +115,12 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	}
 }
 
-func removeComponentsFromDesign(components []*component.ComponentDefinition, componentsToRemove []component.ComponentDefinition) []*component.ComponentDefinition {
-	// Create a map for quick lookup of components to be removed
-	removeMap := make(map[string]struct{})
-	for _, cmp := range componentsToRemove {
-		removeMap[string(cmp.Id.String())] = struct{}{}
-	}
-
-	// Filter components
-	filteredComponents := components[:0] // Reuse the slice memory
-	for _, c := range components {
-		if _, found := removeMap[c.Id.String()]; !found {
-			filteredComponents = append(filteredComponents, c)
-		}
-	}
-
-	return filteredComponents
-}
-
 func processEvaluationResponse(registry *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
 	compsUpdated := []component.ComponentDefinition{}
 	compsAdded := []component.ComponentDefinition{}
 
 	// components which were added by the evaluator based on the relationship definition, but doesn't exist in the registry.
 	unknownComponents := []*component.ComponentDefinition{}
-
-	// Remove the components from design
-	evalResponse.Design.Components = removeComponentsFromDesign(evalResponse.Design.Components, evalResponse.Trace.ComponentsRemoved)
 
 	// Hydrate (replace the partial definition with a complete declaration) the newly added components with the actual
 	// component definition from the registry. and add a complete component declaration to the design
