@@ -122,7 +122,11 @@ identify_alias_paths(from, to, component) := paths if {
 
 	print("Direct Ref", direct_ref)
 
-	items := object_get_nested(component, direct_ref, [])
+	# remove nullish values
+	items := [item |
+		some item in object_get_nested(component, direct_ref, [])
+		item != null
+	]
 
 	print("Items", items)
 	count(items) > 0
