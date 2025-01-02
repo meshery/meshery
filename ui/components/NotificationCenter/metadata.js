@@ -12,6 +12,7 @@ import { canTruncateDescription } from './notification';
 import { FormatDryRunResponse } from '../DesignLifeCycle/DryRun';
 import { formatDryRunResponse } from 'machines/validator/designValidator';
 import { DeploymentSummaryFormatter } from '../DesignLifeCycle/DeploymentSummary';
+import { UsesSistent } from '../SistentWrapper';
 
 const DryRunResponse = ({ response }) => {
   return <FormatDryRunResponse dryRunErrors={formatDryRunResponse(response)} />;
@@ -19,6 +20,7 @@ const DryRunResponse = ({ response }) => {
 
 const TitleLink = ({ href, children, ...props }) => {
   return (
+    <UsesSistent>
     <a
       href={href}
       target="_blank"
@@ -43,6 +45,7 @@ const TitleLink = ({ href, children, ...props }) => {
         </sup>
       </Typography>
     </a>
+    </UsesSistent>
   );
 };
 
@@ -62,20 +65,20 @@ const UnsuccessfulEntityWithError = ({ modelName, error }) => {
     .join(', ')}.`;
   if (isEntityFile) {
     return (
-      <>
+      <UsesSistent>
         <Typography variant="body1">
           Import process for file {modelName} encountered error
         </Typography>
         <ErrorMetadataFormatter metadata={error.error} event={{}} />
-      </>
+      </UsesSistent>
     );
   }
 
   return (
-    <>
+    <UsesSistent>
       <Typography variant="body1">{message}</Typography>
       <ErrorMetadataFormatter metadata={error.error} event={{}} />
-    </>
+    </UsesSistent>
   );
 };
 
@@ -133,6 +136,7 @@ const ComponentWithIcon = ({ component }) => {
     : 'Version not available';
 
   return (
+    <UsesSistent>
     <Grid
       container
       alignItems="center"
@@ -161,6 +165,7 @@ const ComponentWithIcon = ({ component }) => {
         </Typography>
       </Grid>
     </Grid>
+    </UsesSistent>
   );
 };
 
@@ -170,6 +175,7 @@ const RelationshipDetail = ({ relationship }) => {
   const renderSelectors = (selectors) => {
     return selectors.map((selector, index) => {
       return (
+        <UsesSistent>
         <div key={index} style={{ marginLeft: '2rem', marginTop: '0.5rem' }}>
           <React.Fragment key={index}>
             <Typography variant="body1">
@@ -199,6 +205,7 @@ const RelationshipDetail = ({ relationship }) => {
             </Grid>
           </React.Fragment>
         </div>
+        </UsesSistent>
       );
     });
   };
@@ -216,6 +223,7 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
   const errorLink = `https://docs.meshery.io/reference/error-codes#${formattedErrorCode}`;
   const ErrorDetailsObjectFormatter = ({ heading, value }) => {
     return (
+      <UsesSistent>
       <Box>
         <Typography variant="body1">
           <strong>{heading}</strong>
@@ -230,9 +238,11 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
           ))}
         </List>
       </Box>
+      </UsesSistent>
     );
   };
   return (
+    <UsesSistent>
     <Grid container>
       <div>
         <TitleLink href={errorLink}> {formattedErrorCode} </TitleLink>
@@ -275,11 +285,13 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
         </Grid>
       </Grid>
     </Grid>
+    </UsesSistent>
   );
 };
 
 const EmptyState = ({ event }) => {
   return (
+    <UsesSistent>
     <Typography
       variant="body1"
       style={{
@@ -297,6 +309,7 @@ const EmptyState = ({ event }) => {
         ></TextWithLinks>
       }{' '}
     </Typography>
+    </UsesSistent>
   );
 };
 
@@ -322,6 +335,7 @@ const ModelImportedSection = ({ modelDetails }) => {
         const hasErrors = Array.isArray(detail.Errors) && detail.Errors.length > 0;
 
         return (
+          <UsesSistent>
           <Box key={index} mb={2}>
             <Typography gutterBottom>
               <span style={{ fontWeight: 'bold', fontSize: '17px' }}>
@@ -364,6 +378,7 @@ const ModelImportedSection = ({ modelDetails }) => {
                 </Box>
               ))}
           </Box>
+          </UsesSistent>
         );
       })}
     </>
@@ -371,10 +386,12 @@ const ModelImportedSection = ({ modelDetails }) => {
 };
 
 const ModelImportMessages = ({ message }) => (
+  <UsesSistent>
   <Typography>
     <span style={{ fontWeight: 'bold', fontSize: '17px' }}>{`SUMMARY: `}</span>
     <span style={{ fontSize: '17px' }}>{message}</span>
   </Typography>
+  </UsesSistent>
 );
 
 const DataToFileLink = ({ data }) => {
@@ -449,10 +466,12 @@ export const FormattedMetadata = ({ event }) => {
     ? reorderObjectProperties({ ...metadata, ShortDescription: null }, order) // Exclude ShortDescription
     : reorderObjectProperties(metadata, order);
   return (
+    <UsesSistent>
     <FormatStructuredData
       propertyFormatters={PropertyFormatters}
       data={orderedMetadata}
       order={order}
     />
+    </UsesSistent>
   );
 };
