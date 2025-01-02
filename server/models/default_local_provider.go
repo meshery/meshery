@@ -543,7 +543,7 @@ func (l *DefaultLocalProvider) PublishMetrics(_ string, result *MesheryResult) e
 		return nil
 	}
 	if resp.StatusCode == http.StatusOK {
-		l.Log.Info("metrics successfully published to remote provider")
+		l.Log.Info("metrics published to remote provider")
 		return nil
 	}
 	defer func() {
