@@ -22,7 +22,7 @@ jobs:
             export PRERELEASE=$( cat latest_release.json | jq '.["prerelease"]' | tr -d '"')
             export RELEASE_BODY=$( cat latest_release.json | jq '.["body"]' | tr -d '"')
 
-            PROCESSED_BODY=$(echo "$RELEASE_BODY" | sed 's/]:/] :/g')
+            PROCESSED_BODY=$(echo "$RELEASE_BODY" | sed -E 's|(\[)|\\\1|g; s|(\])|\\\1|g')
 
             printf '%b\n' "---\nlayout: release\ndate: $(date +'%Y-%m-%d')\ntag: $RELEASE_TAG\nprerelease: $PRERELEASE\n---\n\n$PROCESSED_BODY" > ./docs/_releases/$RELEASE_TAG.md
 
