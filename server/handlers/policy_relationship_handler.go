@@ -97,7 +97,6 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	_ = provider.PersistEvent(event)
 
 	// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
-	// go h.config.EventBroadcaster.Publish(userUUID, event)
 	unknownComponents := processEvaluationResponse(h.registryManager, relationshipPolicyEvalPayload, &evaluationResponse)
 	if len(unknownComponents) > 0 {
 		event := events.NewEvent().FromUser(userUUID).FromSystem(*h.SystemID).WithCategory("relationship").WithAction("evaluation").WithSeverity(events.Informational).ActedUpon(patternUUID).WithDescription(fmt.Sprintf("Relationship evaluation for \"%s\" at version \"%s\" resulted in the addition of new components but they are not registered inside the registry.", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).WithMetadata(map[string]interface{}{
@@ -116,12 +115,33 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	}
 }
 
+func removeComponentsFromDesign(components []*component.ComponentDefinition, componentsToRemove []component.ComponentDefinition) []*component.ComponentDefinition {
+	// Create a map for quick lookup of components to be removed
+	removeMap := make(map[string]struct{})
+	for _, cmp := range componentsToRemove {
+		removeMap[string(cmp.Id.String())] = struct{}{}
+	}
+
+	// Filter components
+	filteredComponents := components[:0] // Reuse the slice memory
+	for _, c := range components {
+		if _, found := removeMap[c.Id.String()]; !found {
+			filteredComponents = append(filteredComponents, c)
+		}
+	}
+
+	return filteredComponents
+}
+
 func processEvaluationResponse(registry *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
 	compsUpdated := []component.ComponentDefinition{}
 	compsAdded := []component.ComponentDefinition{}
 
 	// components which were added by the evaluator based on the relationship definition, but doesn't exist in the registry.
 	unknownComponents := []*component.ComponentDefinition{}
+
+	// Remove the components from design
+	evalResponse.Design.Components = removeComponentsFromDesign(evalResponse.Design.Components, evalResponse.Trace.ComponentsRemoved)
 
 	// Hydrate (replace the partial definition with a complete declaration) the newly added components with the actual
 	// component definition from the registry. and add a complete component declaration to the design
@@ -151,7 +171,6 @@ func processEvaluationResponse(registry *registry.RegistryManager, evalPayload p
 		}
 		_component, _ := entities[0].(*component.ComponentDefinition)
 
-		_c.Configuration = core.Format.Prettify(_c.Configuration, false)
 		_component.Id = _c.Id
 		if _c.DisplayName != "" {
 			_component.DisplayName = _c.DisplayName
@@ -166,8 +185,6 @@ func processEvaluationResponse(registry *registry.RegistryManager, evalPayload p
 
 	for _, component := range evalResponse.Trace.ComponentsUpdated {
 		_c := component
-
-		_c.Configuration = core.Format.Prettify(_c.Configuration, false)
 		compsUpdated = append(compsUpdated, _c)
 	}
 
