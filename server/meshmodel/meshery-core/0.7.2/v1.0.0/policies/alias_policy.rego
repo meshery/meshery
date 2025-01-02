@@ -76,9 +76,10 @@ identify_relationships(design_file, relationships_in_scope) := eval_results if {
 		is_alias_relationship(relationship)
 		some component in design_file.components
 
-		print("is alias rel", component)
+		# print("is alias rel", component)
 		is_relationship_feasible_to(component, relationship)
-		print("rel is feasible")
+
+		# print("rel is feasible")
 
 		identified_relationships := identify_alias_relationships(component, relationship)
 		new_relationships := {rel |
@@ -87,7 +88,7 @@ identify_relationships(design_file, relationships_in_scope) := eval_results if {
 		}
 	})
 
-	print("Identify alias rels Eval results", eval_results)
+	print("Identify alias rels Eval results", count(eval_results))
 }
 
 new_uuid(seed) := id if {
@@ -95,10 +96,11 @@ new_uuid(seed) := id if {
 	id := uuid.rfc4122(sprintf("%s%s", [seed, now]))
 }
 
-object_get_nested(obj, path, default_value) := value if {
-	walk(obj) = [path, v]
-	path == path
-	value = v
+object_get_nested(obj, path, default_value) := current_value if {
+	stringfied_path := [sprintf("%v", [v]) | some v in path]
+	[current_path, current_value] := walk(obj)
+	stringfied_current_path := [sprintf("%v", [v]) | some v in current_path]
+	stringfied_current_path == stringfied_path
 } else := default_value
 
 pop_last(arr) := array.slice(arr, 0, count(arr) - 1)
@@ -123,6 +125,7 @@ identify_alias_paths(from, to, component) := paths if {
 	items := object_get_nested(component, direct_ref, [])
 
 	print("Items", items)
+	count(items) > 0
 
 	paths := [path |
 		some index in numbers.range(0, count(items) - 1)
@@ -135,7 +138,8 @@ identify_alias_paths(from, to, component) := paths if {
 identify_alias_paths(from, to, component) := paths if {
 	ref := from.patch.mutatorRef[0]
 	is_direct_reference(ref)
-
+	value := object_get_nested(component, ref, null)
+	value != null
 	paths := [ref]
 }
 
@@ -213,6 +217,7 @@ identify_alias_relationships(component, relationship) := {rel |
 
 alias_relationship_already_exists(design_file, relationship) := existing_rel if {
 	some existing_rel in design_file.relationships
+	existing_rel.status != "deleted" # check if the relationship is not deleted
 	is_alias_relationship(existing_rel)
 
 	some selector in existing_rel.selectors
@@ -240,14 +245,23 @@ is_alias_relationship_valid(relationship, design_file) if {
 
 	# check if the from component is still present
 	from_component := component_declaration_by_id(design_file, from_component_id(relationship))
+	print("Is valid -> from_component", from_component)
 
 	# check if the to component is still present
 	to_component := component_declaration_by_id(design_file, to_component_id(relationship))
+	print("Is valid -> to_component", to_component)
 
 	# check if the path in the to component is still present
 
 	ref := alias_ref_from_relationship(relationship)
-	object_get_nested(to_component, ref, null) != null
+	print("Is valid -> ref", ref)
+	value := object_get_nested(to_component, ref, null)
+	print("Is valid -> value", value)
+	value != null
+}
+
+is_alias_relationship_valid(relationship, design_file) if {
+	relationship.status == "pending"
 }
 
 validate_relationship(relationship, design_file) := relationship if {
@@ -256,11 +270,18 @@ validate_relationship(relationship, design_file) := relationship if {
 
 validate_relationship(relationship, design_file) := updated_relationship if {
 	not is_alias_relationship_valid(relationship, design_file)
-	updated_relationship := json.patch(relationship, [{
-		"op": "replace",
-		"path": "/status",
-		"value": "deleted",
-	}])
+	updated_relationship := json.patch(relationship, [
+		{
+			"op": "replace",
+			"path": "/status",
+			"value": "deleted",
+		},
+		{
+			"op": "replace",
+			"path": "/version",
+			"value": "deleted-by-alias-policy",
+		},
+	])
 }
 
 # validate all relationships in the design file
@@ -283,6 +304,21 @@ add_components_action(design_file, alias_relationships) := {component |
 		"component": {"kind": from.kind},
 		"model": from.model,
 	}
+}
+
+remove_components_action(design_file, alias_relationships) := {component |
+	some relationship in alias_relationships
+	print("Alias Rel in del phase", relationship)
+	relationship.status == "deleted"
+	some selector in relationship.selectors
+	some from in selector.allow.from
+
+	print("To Remove", from)
+	component := json.patch(component_declaration_by_id(design_file, from.id), [{
+		"op": "replace",
+		"path": "/displayName",
+		"value": "removed by alias policy",
+	}])
 }
 
 # action response {
@@ -309,16 +345,22 @@ action_phase(design_file) := result if {
 			"value": "approved",
 		}])
 	}
+
+	# Relationships that are deleted already at the validation phase
 	relationships_deleted := {alias_rel |
 		some alias_rel in alias_relationships
-		alias_rel.status == "deleteted"
+		alias_rel.status == "deleted"
 	}
+
+	print("Relationships Deleted by alias policy", count(relationships_deleted))
+
+	component_deleted := remove_components_action(design_file, alias_relationships)
 
 	print("Components added", count(components_added))
 
 	result := {
 		"components_added": components_added,
-		"components_deleted": {},
+		"components_deleted": component_deleted,
 		"components_updated": {},
 		"relationships_updated": {},
 		"relationships_added": relationships_added,
