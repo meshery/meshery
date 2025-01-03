@@ -55,6 +55,13 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED --model "[model-name]"
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		spreadsheetID, _ := cmd.Flags().GetString("spreadsheet-id")
+		spreadsheetCred, _ := cmd.Flags().GetString("spreadsheet-cred")
+
+		if spreadsheetID == "" || spreadsheetCred == "" {
+			cmd.Help()
+			return ErrUpdateRegistry(fmt.Errorf("missing required fields: spreadsheet ID and credentials"), modelLocation)
+		}
 
 		err := os.MkdirAll(logDirPath, 0755)
 		if err != nil {
