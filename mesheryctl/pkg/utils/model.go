@@ -434,6 +434,7 @@ featureList: [
 ]
 howItWorks: "%s"
 howItWorksDetails: "%s"
+isAnnotation: "%s"
 language: en
 list: include
 type: extensibility
@@ -457,6 +458,7 @@ category: integrations
 		m.Feature3,
 		m.HowItWorks,
 		m.HowItWorksDetails,
+		m.IsAnnotation,
 	)
 
 	markdown = strings.ReplaceAll(markdown, "\r", "\n")
