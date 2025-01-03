@@ -149,7 +149,6 @@ evaluate := eval_results if {
 
 	# New Evaluation Flow
 
-	# 1. Identify relationships in the design file.
 
 	design_file_to_evaluate := json.patch(input, [
 		{
@@ -164,18 +163,26 @@ evaluate := eval_results if {
 		},
 	])
 
-	new_identified_rels := identify_relationships(design_file_to_evaluate, relationships_to_evaluate_against)
 
-	#2. Validate Relationships
-	# newly identified relationships dont need to be validated ( as they are valid or pending)
+	#1. Validate Relationships
 	validated_rels := validate_relationships_phase(design_file_to_evaluate)
+
+	design_file_with_validated_rels := json.patch(design_file_to_evaluate, [{
+		"op": "replace",
+		"path": "/relationships",
+		"value":  validated_rels,
+	}])
+
+	
+	# 2. Identify relationships in the design file.
+	new_identified_rels := identify_relationships(design_file_with_validated_rels, relationships_to_evaluate_against)
 
 	print("New identified rels", count(new_identified_rels))
 	print("Validated rels", count(validated_rels))
 
 	#3. Actions
 
-	design_file_to_apply_actions := json.patch(design_file_to_evaluate, [{
+	design_file_to_apply_actions := json.patch(design_file_with_validated_rels, [{
 		"op": "replace",
 		"path": "/relationships",
 		"value": new_identified_rels | validated_rels,

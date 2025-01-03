@@ -249,16 +249,17 @@ is_alias_relationship_valid(relationship, design_file) if {
 
 	# check if the from component is still present
 	from_component := component_declaration_by_id(design_file, from_component_id(relationship))
-	print("Is valid -> from_component", from_component)
+	#print("Is valid -> from_component", from_component)
+	
 
 	# check if the to component is still present
 	to_component := component_declaration_by_id(design_file, to_component_id(relationship))
-	print("Is valid -> to_component", to_component)
+	#print("Is valid -> to_component", to_component)
 
 	# check if the path in the to component is still present
 
 	ref := alias_ref_from_relationship(relationship)
-	print("Is valid -> ref", ref)
+	print("Is valid -> ref", ref,relationship.id)
 	value := object_get_nested(to_component, ref, null)
 	print("Is valid -> value", value)
 	value != null
