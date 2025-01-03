@@ -59,9 +59,8 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		spreadsheetCred, _ := cmd.Flags().GetString("spreadsheet-cred")
 
 		if spreadsheetID == "" || spreadsheetCred == "" {
-			if err := cmd.Help(); err != nil {
-				return ErrUpdateRegistry(err, modelLocation)
-			}
+			cmd.Help()
+			return ErrUpdateRegistry(fmt.Errorf("missing required fields: spreadsheet ID and credentials"), modelLocation)
 		}
 
 		err := os.MkdirAll(logDirPath, 0755)
