@@ -77,8 +77,13 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 		}
 		var err error
 
-		if csvDirectory == "" {
+		if len(csvDirectory) == 0 {
+			if len(spreadsheeetCred) == 0 {
+				return fmt.Errorf("spreadsheet cred is invalid.")
+			}
+
 			srv, err = mutils.NewSheetSRV(spreadsheeetCred)
+
 			if err != nil {
 				utils.LogError.Error(ErrUpdateRegistry(err, modelLocation))
 				return nil
@@ -95,6 +100,10 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 			// Collect list of corresponding relationship by name from spreadsheet
 			relationshipSpredsheetGID = GetSheetIDFromTitle(resp, "Relationships")
 		} else {
+			if len(csvDirectory) == 0 {
+				return fmt.Errorf("Csv directory is invalid.")
+			}
+
 			modelCSVFilePath, componentCSVFilePath, relationshipCSVFilePath, err = utils.GetCsv(csvDirectory)
 			if err != nil {
 				return fmt.Errorf("error reading the directory: %v", err)
@@ -103,10 +112,12 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 				return fmt.Errorf("both ModelCSV and ComponentCSV files must be present in the directory")
 			}
 		}
+
 		err = os.MkdirAll(logDirPath, 0755)
 		if err != nil {
 			return ErrUpdateRegistry(err, modelLocation)
 		}
+
 		utils.Log.SetLevel(logrus.DebugLevel)
 		logFilePath := filepath.Join(logDirPath, "model-generation.log")
 		logFile, err = os.Create(logFilePath)
