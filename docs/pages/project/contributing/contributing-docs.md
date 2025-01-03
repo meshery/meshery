@@ -147,7 +147,15 @@ Meshery documentation is built using the following components:
   </code>
   </div></pre>
 
+{% include alert.html type="info" title="Note" content="After installing rbenv, you need to install the ruby-build plugin to use the <code>rbenv install</code> command. This step is necessary for both package manager and manual installations of rbenv." %}
 
+- Install ruby-build as an rbenv plugin
+
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
+  </code>
+  </div></pre>
+  
 #### Install Ruby
 
 - rbenv install version
