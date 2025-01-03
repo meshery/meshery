@@ -280,11 +280,6 @@ validate_relationship(relationship, design_file) := updated_relationship if {
 			"path": "/status",
 			"value": "deleted",
 		},
-		{
-			"op": "replace",
-			"path": "/version",
-			"value": "deleted-by-alias-policy",
-		},
 	])
 }
 
@@ -318,11 +313,7 @@ remove_components_action(design_file, alias_relationships) := {component |
 	some from in selector.allow.from
 
 	print("To Remove", from)
-	component := json.patch(component_declaration_by_id(design_file, from.id), [{
-		"op": "replace",
-		"path": "/displayName",
-		"value": "removed by alias policy",
-	}])
+	component := component_declaration_by_id(design_file, from.id)
 }
 
 # action response {

@@ -208,19 +208,19 @@ evaluate := eval_results if {
 # --- Post Processing Phase ---##
 delete_components(all_comps, comps_to_delete) := new_comps if {
 	count(comps_to_delete) > 0
+	ids_to_delete := { comp.id | some comp in comps_to_delete }
 	new_comps := {comp |
 		some comp in all_comps
-		some comp_to_delete in comps_to_delete
-		comp.id != comp_to_delete.id
+		not comp.id in ids_to_delete
 	}
 } else := all_comps
 
 delete_relationships(all_rels, rels_to_delete) := new_rels if {
 	count(rels_to_delete) > 0
+	ids_to_delete := {rel.id | some rel in rels_to_delete }
 	new_rels := {rel |
 		some rel in all_rels
-		some rel_to_delete in rels_to_delete
-		rel.id != rel_to_delete.id
+		not rel.id in ids_to_delete
 	}
 } else := all_rels
 
