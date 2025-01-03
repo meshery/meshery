@@ -1209,7 +1209,7 @@ func (l *DefaultLocalProvider) SeedContent(log logger.Handler) {
 
 				for i, file := range files {
 					// Ensure only design.yml is imported
-					if file.Name == "design.yml" {
+					if file.Name == "design.yml" || file.Name == "design.yaml" {
 						wg.Add(1)
 						go func(file *walker.File, index int) {
 							defer wg.Done()
