@@ -87,9 +87,8 @@ identify_relationships(design_file, relationships_in_scope) := eval_results if {
 			not alias_relationship_already_exists(design_file, rel)
 		}
 	})
-
 	#print("Identify alias rels Eval results", count(eval_results))
-	
+
 }
 
 new_uuid(seed) := id if {
@@ -136,7 +135,6 @@ identify_alias_paths(from, to, component) := paths if {
 		some index in numbers.range(0, count(items) - 1)
 		path := array.concat(direct_ref, [sprintf("%d", [index])])
 	]
-
 	#print("Paths", paths)
 }
 
@@ -175,7 +173,8 @@ identify_alias_relationships(component, relationship) := {rel |
 				{
 					"op": "replace",
 					"path": "/id",
-					"value": new_uuid(selector_patch_declaration),
+					"value": new_uuid({"c": component, "s": selector_patch_declaration}),
+					# use both component and selector patch declaration to create a unique id
 				},
 				{
 					"op": "replace",
@@ -250,18 +249,23 @@ is_alias_relationship_valid(relationship, design_file) if {
 
 	# check if the from component is still present
 	from_component := component_declaration_by_id(design_file, from_component_id(relationship))
+	from_component != null
+
 	#print("Is valid -> from_component", from_component)
-	
 
 	# check if the to component is still present
 	to_component := component_declaration_by_id(design_file, to_component_id(relationship))
+	to_component != null
+
 	#print("Is valid -> to_component", to_component)
 
 	# check if the path in the to component is still present
 
 	ref := alias_ref_from_relationship(relationship)
+
 	#print("Is valid -> ref", ref,relationship.id)
 	value := object_get_nested(to_component, ref, null)
+
 	#print("Is valid -> value", value)
 	value != null
 }
@@ -276,13 +280,11 @@ validate_relationship(relationship, design_file) := relationship if {
 
 validate_relationship(relationship, design_file) := updated_relationship if {
 	not is_alias_relationship_valid(relationship, design_file)
-	updated_relationship := json.patch(relationship, [
-		{
-			"op": "replace",
-			"path": "/status",
-			"value": "deleted",
-		},
-	])
+	updated_relationship := json.patch(relationship, [{
+		"op": "replace",
+		"path": "/status",
+		"value": "deleted",
+	}])
 }
 
 # validate all relationships in the design file
