@@ -165,28 +165,31 @@ const styles = (theme) => ({
   },
 });
 
-const ThemeToggler = ({ classes }) => {
-  const Component = ({ mode, toggleTheme }) => {
-    return (
-      <div>
-        <Switch
-          color="primary"
-          classes={{
-            switchBase: classes.switchBase,
-            track: classes.track,
-            checked: classes.checked,
-            font: classes.checked,
-          }}
-          checked={mode === 'dark'}
-          onChange={toggleTheme}
-        />
-        Dark Mode
-      </div>
-    );
-  };
-
-  return <ThemeTogglerCore Component={Component}></ThemeTogglerCore>;
-};
+const ThemeToggler = ({ classes, handleUpdateUserPref }) => (
+  <ThemeTogglerCore
+    Component={({ mode, toggleTheme }) => (
+      <FormControlLabel
+        control={
+          <Switch
+            color="primary"
+            classes={{
+              switchBase: classes.switchBase,
+              track: classes.track,
+              checked: classes.checked,
+            }}
+            checked={mode === 'dark'}
+            onChange={() => {
+              toggleTheme();
+              handleUpdateUserPref(mode === 'dark' ? 'light' : 'dark');
+            }}
+          />
+        }
+        label="Dark Mode"
+        labelPlacement="end"
+      />
+    )}
+  />
+);
 
 const UserPreference = (props) => {
   const [anonymousStats, setAnonymousStats] = useState(props.anonymousStats);
@@ -720,15 +723,9 @@ const UserPreference = (props) => {
                   </FormLabel>
 
                   <FormGroup>
-                    <FormControlLabel
-                      key="ThemePreference"
-                      control={
-                        <ThemeToggler
-                          handleUpdateUserPref={handleUpdateUserPref}
-                          classes={props.classes}
-                        />
-                      }
-                      labelPlacement="end"
+                    <ThemeToggler
+                      handleUpdateUserPref={handleUpdateUserPref}
+                      classes={props.classes}
                     />
                   </FormGroup>
                 </FormControl>
