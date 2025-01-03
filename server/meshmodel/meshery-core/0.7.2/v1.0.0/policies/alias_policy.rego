@@ -88,7 +88,8 @@ identify_relationships(design_file, relationships_in_scope) := eval_results if {
 		}
 	})
 
-	print("Identify alias rels Eval results", count(eval_results))
+	#print("Identify alias rels Eval results", count(eval_results))
+	
 }
 
 new_uuid(seed) := id if {
@@ -128,7 +129,7 @@ identify_alias_paths(from, to, component) := paths if {
 		item != null
 	]
 
-	print("Items", items)
+	#print("Items", items)
 	count(items) > 0
 
 	paths := [path |
@@ -136,7 +137,7 @@ identify_alias_paths(from, to, component) := paths if {
 		path := array.concat(direct_ref, [sprintf("%d", [index])])
 	]
 
-	print("Paths", paths)
+	#print("Paths", paths)
 }
 
 identify_alias_paths(from, to, component) := paths if {
@@ -155,7 +156,7 @@ identify_alias_relationships(component, relationship) := {rel |
 	# identify if alias can be created
 	identified_alias_paths := identify_alias_paths(from, to, component)
 
-	print("Identified Alias Paths", count(identified_alias_paths))
+	#print("Identified Alias Paths", count(identified_alias_paths))
 
 	count(identified_alias_paths) > 0 # if alias paths are present then alias can be created
 
@@ -259,9 +260,9 @@ is_alias_relationship_valid(relationship, design_file) if {
 	# check if the path in the to component is still present
 
 	ref := alias_ref_from_relationship(relationship)
-	print("Is valid -> ref", ref,relationship.id)
+	#print("Is valid -> ref", ref,relationship.id)
 	value := object_get_nested(to_component, ref, null)
-	print("Is valid -> value", value)
+	#print("Is valid -> value", value)
 	value != null
 }
 
@@ -298,7 +299,6 @@ add_components_action(design_file, alias_relationships) := {component |
 	some selector in relationship.selectors
 	some from in selector.allow.from
 
-	print("To Add", from)
 	component := {
 		"id": from.id,
 		"component": {"kind": from.kind},
@@ -308,12 +308,10 @@ add_components_action(design_file, alias_relationships) := {component |
 
 remove_components_action(design_file, alias_relationships) := {component |
 	some relationship in alias_relationships
-	print("Alias Rel in del phase", relationship)
 	relationship.status == "deleted"
 	some selector in relationship.selectors
 	some from in selector.allow.from
 
-	print("To Remove", from)
 	component := component_declaration_by_id(design_file, from.id)
 }
 
