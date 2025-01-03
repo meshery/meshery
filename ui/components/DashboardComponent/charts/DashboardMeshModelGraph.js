@@ -16,11 +16,12 @@ import {
   useGetRelationshipsQuery,
   useGetRegistrantsQuery,
 } from '@/rtk-query/meshModel';
+import { DashboardSection } from './style';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
 
-function MeshModelContructs({ classes }) {
+function MeshModelContructs() {
   const params = {
     page: 0,
     pagesize: '1',
@@ -77,9 +78,9 @@ function MeshModelContructs({ classes }) {
           : 'auto',
       }}
     >
-      <div className={classes.dashboardSection}>
+      <DashboardSection>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography variant="h6" gutterBottom className={classes.link}>
+          <Typography variant="h6" gutterBottom>
             Registry
           </Typography>
 
@@ -105,12 +106,12 @@ function MeshModelContructs({ classes }) {
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <BBChart options={chartOptions} />
         </div>
-      </div>
+      </DashboardSection>
     </Link>
   );
 }
 
-function MeshModelCategories({ classes }) {
+function MeshModelCategories() {
   const router = useRouter();
   const categoryMap = useGetCategoriesSummary();
 
@@ -159,9 +160,9 @@ function MeshModelCategories({ classes }) {
 
   return (
     <Link href="/settings?settingsCategory=Registry&tab=Models">
-      <div className={classes.dashboardSection}>
+      <DashboardSection>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography variant="h6" className={classes.link} gutterBottom>
+          <Typography variant="h6" gutterBottom>
             Models by Category
           </Typography>
 
@@ -187,20 +188,20 @@ function MeshModelCategories({ classes }) {
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <BBChart options={chartOptions} />
         </div>
-      </div>
+      </DashboardSection>
     </Link>
   );
 }
 
-const MeshModelGraph = ({ classes }) => {
+const MeshModelGraph = () => {
   return (
     <Grid container spacing={2}>
       <Grid item xs={12} md={6}>
-        <MeshModelCategories classes={classes} />
+        <MeshModelCategories />
       </Grid>
 
       <Grid item xs={12} md={6}>
-        <MeshModelContructs classes={classes} />
+        <MeshModelContructs />
       </Grid>
     </Grid>
   );

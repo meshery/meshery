@@ -3,7 +3,6 @@ import { Box, Typography, IconButton } from '@material-ui/core';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { dataToColors, isValidColumnName } from '../../../utils/charts';
-import ConnectClustersBtn from '../../General/ConnectClustersBtn';
 import Link from 'next/link';
 import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
@@ -13,8 +12,10 @@ import { InfoOutlined } from '@material-ui/icons';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
+import { DashboardSection } from './style';
+import ConnectCluster from './ConnectCluster';
 
-export default function ConnectionStatsChart({ classes }) {
+export default function ConnectionStatsChart() {
   const { data: statusData } = useGetAllConnectionStatusQuery();
   const router = useRouter();
 
@@ -64,9 +65,9 @@ export default function ConnectionStatsChart({ classes }) {
           : 'auto',
       }}
     >
-      <div className={classes.dashboardSection}>
+      <DashboardSection>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography variant="h6" gutterBottom className={classes.link}>
+          <Typography variant="h6" gutterBottom>
             Connections
           </Typography>
           <div onClick={(e) => e.stopPropagation()}>
@@ -100,26 +101,9 @@ export default function ConnectionStatsChart({ classes }) {
             height: '100%',
           }}
         >
-          {chartData.length > 0 ? (
-            <BBChart options={chartOptions} />
-          ) : (
-            <div
-              style={{
-                padding: '2rem',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column',
-              }}
-            >
-              <Typography style={{ fontSize: '1.5rem', marginBottom: '1rem' }} align="center">
-                No connections found in your clusters
-              </Typography>
-              <ConnectClustersBtn />
-            </div>
-          )}
+          {chartData.length > 0 ? <BBChart options={chartOptions} /> : <ConnectCluster />}
         </Box>
-      </div>
+      </DashboardSection>
     </Link>
   );
 }
