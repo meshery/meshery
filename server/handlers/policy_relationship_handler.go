@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Masterminds/semver/v3"
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
@@ -118,6 +119,15 @@ func (h *Handler) EvaluateRelationshipPolicy(
 func processEvaluationResponse(registry *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
 	compsUpdated := []component.ComponentDefinition{}
 	compsAdded := []component.ComponentDefinition{}
+
+	// Bump the version of design
+	oldVersion, versionParseErr := semver.NewVersion(evalResponse.Design.Version)
+	if versionParseErr != nil {
+		oldVersion = semver.MustParse("0.0.0")
+	}
+
+	newVersion := oldVersion.IncPatch()
+	evalResponse.Design.Version = newVersion.String()
 
 	// components which were added by the evaluator based on the relationship definition, but doesn't exist in the registry.
 	unknownComponents := []*component.ComponentDefinition{}
