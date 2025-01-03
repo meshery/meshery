@@ -1821,7 +1821,6 @@ func extractTarGz(gzipStream io.Reader, downloadPath string) error {
 	return nil
 }
 
-
 // // GetLatestStableReleaseTag fetches and returns the latest release tag from GitHub
 // func getLatestStableReleaseTag() (string, error) {
 // 	url := "https://github.com/layer5io/wasm-filters/releases/latest"
