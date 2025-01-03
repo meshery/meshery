@@ -7,16 +7,7 @@ package relationship_evaluation_policy
 # Example: A Container acts as an alias to the field `spec.containers[x]`
 # in a Pod (where `x` is the index of the container in the Pod).
 #
-# 1. Identification of Alias Relationships:
-#    - An alias relationship exists if fields in the component are defined as aliases in the relationship block.
-#    - The alias relationship is identified by the presence of a selector where:
-#        - `from` specifies the child component.
-#        - `to` specifies the parent component.
-#    - The `mutatorRef`/`mutatedRef` must be a single-item array,
-#      where the item at index `0` points to the field in the child component that acts as an alias to the parent.
-#    - Newly identified relationships have a status of **pending**.
-#
-# 2. Validation of Alias Relationships:
+# 1. Validation of Alias Relationships:
 #    - A previously approved alias relationship remains valid if:
 #        - The path it aliases still exists in the parent component.
 #        - The child alias component is still present.
@@ -24,6 +15,15 @@ package relationship_evaluation_policy
 #        - The child component is missing (e.g., the user deleted the container component inside the Pod).
 #        - The aliased configuration in the parent is missing
 #          (e.g., the user deleted the `containers` field in the Pod).
+#
+# 2. Identification of Alias Relationships:
+#    - An alias relationship exists if fields in the component are defined as aliases in the relationship block.
+#    - The alias relationship is identified by the presence of a selector where:
+#        - `from` specifies the child component.
+#        - `to` specifies the parent component.
+#    - The `mutatorRef`/`mutatedRef` must be a single-item array,
+#      where the item at index `0` points to the field in the child component that acts as an alias to the parent.
+#    - Newly identified relationships have a status of **pending**.
 #
 # 3. Action Phase:
 #    - For each pending relationship:
