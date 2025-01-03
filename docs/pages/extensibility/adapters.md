@@ -54,7 +54,7 @@ The code hierarchy is pluggable and independent from one another. There can be N
 - `utils/` - holds all the utility functions that are specific to meshery projects and are to be used generically across all of them.
 - `tracing/` - holds the implementations of tracing handlers with different tracing providers like jaeger,newrelic, etc.
 
-Each package inside a meshkit is a handler interface implementation, the implementation could be from any third-party packages or the go-kit.
+Each package inside a meshkit is a handler interface implementation, the implementation could be from any third-party packages.
 
 ### [Meshery Adapter Library](https://github.com/meshery/meshery-adapter-library)
 
@@ -73,4 +73,4 @@ _Figure: Displaying Meshery Adapter library architecture along with an example o
 
 #### Overview and Usage
 
-The library consists of interfaces and default implementations for the main and common functionality of an adapter. It also provides a mini-framework that runs the gRPC adapter service, calling the functions of handlers injected by the adapter code. This is represented in an UML-ish style in the figure below. The library is used in all of Meshery's adapters.
+The library consists of interfaces and default implementations for the main and common functionality of an adapter. It also provides a mini-framework that runs the gRPC adapter service, calling the functions of handlers injected by the adapter code. This is represented in an UML-ish style in the figure pictured. The library is used in all of Meshery's adapters.

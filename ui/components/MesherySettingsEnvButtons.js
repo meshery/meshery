@@ -5,10 +5,10 @@ import {
   TextField,
   InputAdornment,
   Tooltip,
-  makeStyles,
   Grid,
   Box,
-} from '@material-ui/core';
+  styled,
+} from '@layer5/sistent';
 import React from 'react';
 import { useRef } from 'react';
 import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
@@ -24,8 +24,9 @@ import useKubernetesHook from './hooks/useKubernetesHook';
 import { keys } from '@/utils/permission_constants';
 import useTestIDsGenerator from './hooks/useTestIDs';
 import CAN from '@/utils/can';
+import { UsesSistent } from './SistentWrapper';
 
-const styles = makeStyles((theme) => ({
+const styles = styled((theme) => ({
   ctxIcon: {
     display: 'inline',
     verticalAlign: 'text-top',
@@ -40,7 +41,7 @@ const styles = makeStyles((theme) => ({
     [theme.breakpoints.down('md')]: { fontSize: '12px' },
   },
 }));
-// Add links to docs
+
 const MesherySettingsEnvButtons = () => {
   let k8sfileElementVal = '';
   let formData = new FormData();
@@ -198,32 +199,31 @@ const MesherySettingsEnvButtons = () => {
 
   return (
     <div>
-      <Button
-        type="submit"
-        variant="contained"
-        color="primary"
-        size="large"
-        onClick={handleClick}
-        style={{
-          padding: '8px',
-          borderRadius: 5,
-          marginRight: '2rem',
-        }}
-        disabled={!CAN(keys.ADD_CLUSTER.action, keys.ADD_CLUSTER.subject)}
-        data-cy="btnResetDatabase"
-      >
-        <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
-        <Typography
+      <UsesSistent>
+        <Button
+          type="submit"
+          variant="contained"
+          onClick={handleClick}
           style={{
-            paddingLeft: '4px',
-            marginRight: '4px',
+            width: '100%',
+            borderRadius: 5,
+            padding: '8px',
           }}
-          data-testid={testIDs('addCluster')}
+          disabled={!CAN(keys.ADD_CLUSTER.action, keys.ADD_CLUSTER.subject)}
+          data-cy="btnResetDatabase"
         >
-          {' '}
-          Add Cluster
-        </Typography>
-      </Button>
+          <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
+          <Typography
+            style={{
+              paddingLeft: '4px',
+              marginRight: '4px',
+            }}
+            data-testid={testIDs('addCluster')}
+          >
+            Add Cluster
+          </Typography>
+        </Button>
+      </UsesSistent>
       <PromptComponent ref={ref} />
     </div>
   );

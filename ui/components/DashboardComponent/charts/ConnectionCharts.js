@@ -75,6 +75,7 @@ export default function ConnectionStatsChart({ classes }) {
               variant="standard"
               title={`Meshery Connections are managed and unmanaged resources that either through discovery or manual entry can be assigned to one or more Environments. [Learn More](https://docs.meshery.io/concepts/logical/connections)`}
               placement="left"
+              leaveDelay={200}
             >
               <IconButton
                 disableRipple={true}

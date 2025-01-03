@@ -1,4 +1,4 @@
-FROM golang:1.21 AS meshery-server
+FROM golang:1.23 AS meshery-server
 ARG TOKEN
 ARG GIT_VERSION
 ARG GIT_COMMITSHA
@@ -108,6 +108,11 @@ COPY --from=wrk2 /wrk2/wrk /usr/local/bin
 COPY --from=seed_content /seed_content /home/appuser/.meshery/seed_content
 COPY --from=layer5/getnighthawk:v1.0.1 /usr/local/bin/nighthawk_service /app/server/cmd/
 COPY --from=layer5/getnighthawk:v1.0.1 /usr/local/bin/nighthawk_output_transform /app/server/cmd/
+
+# Permission keys are authorization keys which server will
+# seed on initial boot for local provider, if there is update on this path
+# ensure to update here also https://github.com/meshery/meshery/blob/85a0fd9b9cc03bbc51c4aa1efd1e837db72ef691/install/kubernetes/helm/meshery/values.yaml#L19
+ENV KEYS_PATH="/app/server/permissions/keys.csv"
 
 RUN addgroup docker
 RUN mkdir -p /var/run; chown -R appuser:docker /var/run/

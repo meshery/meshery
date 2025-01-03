@@ -24,7 +24,8 @@ import (
 )
 
 const (
-	relationshipPolicyPackageName = "data.relationship_evaluation_policy"
+	//TODO: Might needs to be made dyanamic to support dynamically loading policies based on eval request.
+	RelationshipPolicyPackageName = "data.relationship_evaluation_policy"
 	suffix                        = "_relationship"
 )
 
@@ -67,6 +68,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	patternUUID := relationshipPolicyEvalPayload.Design.Id
 	eventBuilder.ActedUpon(patternUUID)
 
+	// deprettify the configuration of the components
 	for _, component := range relationshipPolicyEvalPayload.Design.Components {
 		component.Configuration = core.Format.DePrettify(component.Configuration, false)
 	}
@@ -74,7 +76,7 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	// evaluate specified relationship policies
 	// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
 	evaluationResponse, err := h.Rego.RegoPolicyHandler(relationshipPolicyEvalPayload.Design,
-		relationshipPolicyPackageName,
+		RelationshipPolicyPackageName,
 	)
 	if err != nil {
 		h.log.Debug(err)
@@ -85,8 +87,9 @@ func (h *Handler) EvaluateRelationshipPolicy(
 
 	currentTime := time.Now()
 	evaluationResponse.Timestamp = &currentTime
-	// include trace instead of design file
-	event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).
+
+	// include trace instead of design file in the event
+	event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for design \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).
 		WithMetadata(map[string]interface{}{
 			"trace":        evaluationResponse.Trace,
 			"evaluated_at": *evaluationResponse.Timestamp,
@@ -120,6 +123,9 @@ func processEvaluationResponse(registry *registry.RegistryManager, evalPayload p
 	// components which were added by the evaluator based on the relationship definition, but doesn't exist in the registry.
 	unknownComponents := []*component.ComponentDefinition{}
 
+	// Hydrate (replace the partial definition with a complete declaration) the newly added components with the actual
+	// component definition from the registry. and add a complete component declaration to the design
+	// Refactor To make a single batch call to the registry to get all the components.
 	for _, cmp := range evalResponse.Trace.ComponentsAdded {
 		_c := cmp
 
@@ -131,9 +137,13 @@ func processEvaluationResponse(registry *registry.RegistryManager, evalPayload p
 			Limit:      1,
 			Trim:       true,
 		}
+
+		// NOTE: this is not deterministic as any version of the component can be used.
+		// NOTE: Confirm that the registry returns the latest version in case version is not specified.
 		if _c.Model.Model.Version == "*" {
 			compFilter.Version = ""
 		}
+
 		entities, _, _, _ := registry.GetEntities(compFilter)
 		if len(entities) == 0 {
 			unknownComponents = append(unknownComponents, &_c)
@@ -210,7 +220,8 @@ func processEvaluationResponse(registry *registry.RegistryManager, evalPayload p
 	return unknownComponents
 }
 
-// unused currently
+// Needs to be reinstiated inorder to load the policies based on the evaluation queries.
+// This should load policies identified by relationship declarations in the design file.
 
 // func (h *Handler) verifyEvaluationQueries(evaluationQueries []string) (verifiedEvaluationQueries []string) {
 // 	registeredRelationships, _, _, _ := h.registryManager.GetEntities(&regv1alpha3.RelationshipFilter{})

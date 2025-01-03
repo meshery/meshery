@@ -5,6 +5,7 @@ import (
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/helpers/utils"
+	"github.com/sirupsen/logrus"
 )
 
 type clients struct {
@@ -18,9 +19,16 @@ type Broadcast struct {
 }
 
 func (c *Broadcast) Subscribe(id uuid.UUID) (chan interface{}, func()) {
-	clientMap, _ := c.clients.LoadOrStore(id, clients{mu: &sync.Mutex{}})
+	clientMap, err := c.clients.LoadOrStore(id, clients{mu: &sync.Mutex{}})
+	if err {
+		logrus.Infof("Client for id %s does not exist in clients map", id)
+	}
 	ch := make(chan interface{}, 1)
-	connectedClient, _ := clientMap.(clients)
+	connectedClient, err := clientMap.(clients)
+
+	if err {
+		logrus.Infof("Client for id %s is not connected. Attempting to connect to client %s.", id, id)
+	}
 
 	connectedClient.mu.Lock()
 	connectedClient.listeners = append(connectedClient.listeners, ch)

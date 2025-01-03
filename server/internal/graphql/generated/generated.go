@@ -2774,6 +2774,7 @@ input PageFilter {
   updated_after: String
   visibility: [String!]
   metrics: String
+  populate: [String]
 }
 
 # ============== CATALOG =============================
@@ -2784,7 +2785,7 @@ input CatalogSelector {
   search: String!
   order: String!
   metrics: String
-  trim: String
+  populate: [String]
   class: [String]
   technology: [String]
   patternType: [String]
@@ -16207,7 +16208,7 @@ func (ec *executionContext) unmarshalInputCatalogSelector(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"page", "pagesize", "search", "order", "metrics", "trim", "class", "technology", "patternType", "userid", "orgID", "workspaceID"}
+	fieldsInOrder := [...]string{"page", "pagesize", "search", "order", "metrics", "populate", "class", "technology", "patternType", "userid", "orgID", "workspaceID"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -16249,13 +16250,13 @@ func (ec *executionContext) unmarshalInputCatalogSelector(ctx context.Context, o
 				return it, err
 			}
 			it.Metrics = data
-		case "trim":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("trim"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+		case "populate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("populate"))
+			data, err := ec.unmarshalOString2ᚕᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Trim = data
+			it.Populate = data
 		case "class":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("class"))
 			data, err := ec.unmarshalOString2ᚕᚖstring(ctx, v)
@@ -16372,7 +16373,7 @@ func (ec *executionContext) unmarshalInputPageFilter(ctx context.Context, obj in
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"page", "pageSize", "order", "search", "from", "to", "updated_after", "visibility", "metrics"}
+	fieldsInOrder := [...]string{"page", "pageSize", "order", "search", "from", "to", "updated_after", "visibility", "metrics", "populate"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -16442,6 +16443,13 @@ func (ec *executionContext) unmarshalInputPageFilter(ctx context.Context, obj in
 				return it, err
 			}
 			it.Metrics = data
+		case "populate":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("populate"))
+			data, err := ec.unmarshalOString2ᚕᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Populate = data
 		}
 	}
 

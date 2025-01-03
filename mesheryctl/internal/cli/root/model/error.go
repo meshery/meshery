@@ -8,7 +8,7 @@ import (
 
 const (
 	ErrExportModelCode            = "mesheryctl-1127"
-	ErrTemplateFileNotPresentCode = "replace_me"
+	ErrTemplateFileNotPresentCode = "mesheryctl-1131"
 )
 
 func ErrExportModel(err error, name string) error {

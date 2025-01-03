@@ -26,7 +26,8 @@ The following instructions are a no-fluff guide to creating your own Meshery Mod
 ### Create a Model Definition
 
 <ol>
-<li>In your meshery/meshery fork, open the template [spreadsheet](https://docs.google.com/spreadsheets/d/19JEpqvHrG8UL-Bc-An9UIcubf1NVhlfnQSN1TD7JOZ4/edit?gid=1308482975#gid=1308482975).</li>
+
+<li>In your meshery/meshery fork, open the template <a href="https://docs.google.com/spreadsheets/d/19JEpqvHrG8UL-Bc-An9UIcubf1NVhlfnQSN1TD7JOZ4/edit?gid=1308482975#gid=1308482975">spreadsheet</a>.</li>
 <ul><li>Or, optionally, use CSVs by navigating to <code>mesheryctl/templates/templates-csvs</code> directory.</li></ul>
 <li>Edit the <code>models sheet</code> file to include your model definition.
    <ol>
@@ -38,10 +39,10 @@ The following instructions are a no-fluff guide to creating your own Meshery Mod
 
 <details>
    <summary>Or use Meshery CLI</summary>
-   Or, opttionally, use Meshery CLI by executing the following command:</li> <code>mesheryctl registry generate --directory templates-csvs</code>
+   Or, opttionally, use Meshery CLI by executing the following command:<code>mesheryctl registry generate --directory templates-csvs</code>
    Review the generated components inside of the <code>server/meshmodel</code> directory under your model's name.
 
-</details>
+</details></li>
 <li> Verify that your model is displayed in the Meshery UI under Settings->Registry->Models.</li>
 
 </ol>
