@@ -18,6 +18,7 @@ export const pingMesheryOperator = (id, successcb, errorcb) => {
       if (
         data === null ||
         data?.operator === null ||
+        data?.operator?.status === CONTROLLER_STATES.NOTDEPLOYED ||
         data?.operator?.status === CONTROLLER_STATES.UNKOWN
       ) {
         errorcb();
