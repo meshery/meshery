@@ -77,7 +77,7 @@ mesheryctl design view [design-name | ID]
 			url += "/api/pattern/" + pattern
 		} else {
 			// else search pattern by name
-			url += "/api/pattern?populate=pattern_file&search=" + pattern
+			url += "/api/pattern?&search=" + pattern
 		}
 
 		req, err := utils.NewRequest("GET", url, nil)

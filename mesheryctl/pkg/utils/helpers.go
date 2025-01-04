@@ -653,9 +653,9 @@ func StringInSlice(str string, slice []string) bool {
 // GetID returns a array of IDs from meshery server endpoint /api/{configurations}
 func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 	url := mesheryServerUrl + "/api/" + configuration + "?"
-	if configuration == "pattern" {
-		url += "populate=pattern_file&"
-	}
+	// if configuration == "pattern" {
+	// 	url += "populate=pattern_file&"
+	// }
 	url += "page_size=10000"
 	configType := configuration + "s"
 	var idList []string
