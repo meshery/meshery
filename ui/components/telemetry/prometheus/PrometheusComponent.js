@@ -14,7 +14,7 @@ import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import fetchAvailableAddons from '../../graphql/queries/AddonsStatusQuery';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
-import { CONNECTION_KINDS } from '@/utils/Enum';
+import { CONNECTION_KINDS, CONNECTION_STATES } from '@/utils/Enum';
 import { withTelemetryHook } from '@/components/hooks/useTelemetryHook';
 import { UsesSistent } from '../../SistentWrapper';
 
@@ -224,28 +224,49 @@ class PrometheusComponent extends Component {
   handlePrometheusChipDelete = (e) => {
     e.preventDefault();
     const self = this;
+    const connectionId = self?.state?.connectionID; // Extract connectionID from state
+
+    if (!connectionId) {
+      console.error('Connection ID is missing');
+      return;
+    }
+
     self.props.updateProgress({ showProgress: true });
     dataFetch(
       `/api/integrations/connections/${CONNECTION_KINDS.PROMETHEUS}/status`,
       {
         method: 'PUT',
         credentials: 'include',
-        body: JSON.stringify({ id: self?.state?.connectionID }),
+        body: JSON.stringify({ [connectionId]: CONNECTION_STATES.DISCOVERED }),
       },
-      (result) => {
+      () => {
         self.props.updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          self.setState({
+        self.setState(
+          {
             prometheusConfigSuccess: false,
             prometheusURL: '',
             selectedPrometheusBoardsConfigs: [],
-          });
-          self.props.updatePrometheusConfig({
-            prometheus: { prometheusURL: '', selectedPrometheusBoardsConfigs: [] },
-          });
-        }
+          },
+          () => {
+            self.props.notify({
+              message: `Connection "${connectionId}" is transitioned to discovered state.`,
+              event_type: EVENT_TYPES.SUCCESS,
+            });
+
+            // Update Prometheus configuration in the global state
+            self.props.updatePrometheusConfig({
+              prometheus: {
+                prometheusURL: '',
+                selectedPrometheusBoardsConfigs: [],
+              },
+            });
+          },
+        );
       },
-      self.handleError,
+      (error) => {
+        self.props.updateProgress({ showProgress: false });
+        self.handleError(error);
+      },
     );
   };
 

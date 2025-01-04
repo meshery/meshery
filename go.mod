@@ -17,6 +17,7 @@ require (
 	cuelang.org/go v0.6.0
 	fortio.org/fortio v1.66.2
 	github.com/99designs/gqlgen v0.17.45
+	github.com/Masterminds/semver/v3 v3.2.1
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/briandowns/spinner v1.23.1
 	github.com/docker/cli v24.0.6+incompatible
@@ -68,7 +69,7 @@ require (
 	gonum.org/v1/gonum v0.15.0
 	google.golang.org/api v0.195.0
 	google.golang.org/grpc v1.69.2
-	google.golang.org/protobuf v1.35.2
+	google.golang.org/protobuf v1.36.1
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/gorm v1.25.12
 	k8s.io/api v0.28.4
@@ -107,7 +108,6 @@ require (
 	github.com/BurntSushi/toml v1.3.2 // indirect
 	github.com/MakeNowJust/heredoc v1.0.0 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
-	github.com/Masterminds/semver/v3 v3.2.1 // indirect
 	github.com/Masterminds/sprig/v3 v3.2.3 // indirect
 	github.com/Masterminds/squirrel v1.5.4 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
