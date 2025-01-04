@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/Masterminds/semver/v3"
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
@@ -97,7 +98,6 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	_ = provider.PersistEvent(event)
 
 	// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
-	// go h.config.EventBroadcaster.Publish(userUUID, event)
 	unknownComponents := processEvaluationResponse(h.registryManager, relationshipPolicyEvalPayload, &evaluationResponse)
 	if len(unknownComponents) > 0 {
 		event := events.NewEvent().FromUser(userUUID).FromSystem(*h.SystemID).WithCategory("relationship").WithAction("evaluation").WithSeverity(events.Informational).ActedUpon(patternUUID).WithDescription(fmt.Sprintf("Relationship evaluation for \"%s\" at version \"%s\" resulted in the addition of new components but they are not registered inside the registry.", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).WithMetadata(map[string]interface{}{
@@ -119,6 +119,15 @@ func (h *Handler) EvaluateRelationshipPolicy(
 func processEvaluationResponse(registry *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
 	compsUpdated := []component.ComponentDefinition{}
 	compsAdded := []component.ComponentDefinition{}
+
+	// Bump the version of design
+	oldVersion, versionParseErr := semver.NewVersion(evalResponse.Design.Version)
+	if versionParseErr != nil {
+		oldVersion = semver.MustParse("0.0.0")
+	}
+
+	newVersion := oldVersion.IncPatch()
+	evalResponse.Design.Version = newVersion.String()
 
 	// components which were added by the evaluator based on the relationship definition, but doesn't exist in the registry.
 	unknownComponents := []*component.ComponentDefinition{}
@@ -151,7 +160,6 @@ func processEvaluationResponse(registry *registry.RegistryManager, evalPayload p
 		}
 		_component, _ := entities[0].(*component.ComponentDefinition)
 
-		_c.Configuration = core.Format.Prettify(_c.Configuration, false)
 		_component.Id = _c.Id
 		if _c.DisplayName != "" {
 			_component.DisplayName = _c.DisplayName
@@ -166,8 +174,6 @@ func processEvaluationResponse(registry *registry.RegistryManager, evalPayload p
 
 	for _, component := range evalResponse.Trace.ComponentsUpdated {
 		_c := component
-
-		_c.Configuration = core.Format.Prettify(_c.Configuration, false)
 		compsUpdated = append(compsUpdated, _c)
 	}
 
