@@ -75,12 +75,6 @@ const styles = (theme) => ({
     paddingLeft: '1rem',
     maxWidth: '90%',
   },
-  dashboardSection: {
-    backgroundColor: theme.palette.secondary.elevatedComponents,
-    padding: theme.spacing(2),
-    borderRadius: 4,
-    height: '100%',
-  },
   cardHeader: { fontSize: theme.spacing(2) },
   card: {
     height: '100%',

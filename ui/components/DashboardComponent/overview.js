@@ -1,19 +1,24 @@
 import React from 'react';
-import { NoSsr, Grid } from '@material-ui/core';
-
+import { NoSsr, Grid, Typography, Paper } from '@material-ui/core';
+import ErrorIcon from '@material-ui/icons/Error';
 import Popup from '../Popup';
 import { withStyles } from '@material-ui/core/styles';
 import { withRouter } from 'next/router';
 import { withNotify } from '../../utils/hooks/useNotification';
 import blue from '@material-ui/core/colors/blue';
-
-import DashboardMeshModelGraph from './charts/DashboardMeshModelGraph.js';
-import ConnectionStatsChart from './charts/ConnectionCharts.js';
-import MesheryConfigurationChart from './charts/MesheryConfigurationCharts.js';
-import { Provider } from 'react-redux';
+import { connect, Provider } from 'react-redux';
 import { store } from '@/store/index';
+import HoneycombComponent from './HoneyComb/HoneyCombComponent';
+import { useGetMeshSyncResourceKindsQuery } from '@/rtk-query/meshsync';
+import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
+import { bindActionCreators } from 'redux';
+import { setK8sContexts, updateProgress } from 'lib/store';
+import { NodeStatusChart } from './charts/NodeStatusChart';
+import { UsesSistent } from '../SistentWrapper';
+import { PodStatusChart } from './charts/PodStatusChart';
+import { ResourceUtilizationChart } from './charts/ResourceUtilizationChart';
 
-const styles = (theme) => ({
+export const styles = (theme) => ({
   rootClass: { backgroundColor: theme.palette.secondary.elevatedComponents2, marginTop: '1rem' },
   datatable: {
     boxShadow: 'none',
@@ -71,40 +76,140 @@ const styles = (theme) => ({
     color: '#000',
   },
   dashboardSection: {
-    backgroundColor: theme.palette.secondary.elevatedComponents,
+    backgroundColor: theme.palette.secondary.elevatedComponents ?? '#202020',
     padding: theme.spacing(2),
     borderRadius: 4,
     height: '100%',
     marginBottom: theme.spacing(2),
   },
+  legendSection: {
+    display: 'flex',
+    gap: '2rem',
+    flexWrap: 'wrap',
+  },
+  chartSection: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignContent: 'center',
+    height: '100%',
+    flexDirection: 'column',
+  },
+  errorContainer: {
+    padding: theme.spacing(2),
+    textAlign: 'center',
+    backgroundColor: theme.palette.secondary.elevatedComponents2,
+    marginTop: '1rem',
+    borderRadius: 4,
+  },
+  errorIcon: {
+    color: theme.palette.error.main,
+    fontSize: '3rem',
+    marginBottom: theme.spacing(1),
+  },
+  errorMessage: {
+    color: theme.palette.error.main,
+    marginBottom: theme.spacing(1),
+  },
 });
 
-const Overview = ({ classes }) => {
+const ErrorDisplay = ({ classes }) => (
+  <Paper className={classes.errorContainer}>
+    <ErrorIcon className={classes.errorIcon} />
+    <Typography variant="h6" className={classes.errorMessage}>
+      Unable to fetch cluster data
+    </Typography>
+    <Typography variant="body1">
+      There was an error retrieving cluster information. Please check your connection and try again.
+    </Typography>
+  </Paper>
+);
+
+const Overview = ({ classes, selectedK8sContexts, k8scontext }) => {
+  const clusterIds = getK8sClusterIdsFromCtxId(selectedK8sContexts, k8scontext);
+  const {
+    data: clusterSummary,
+    isFetching,
+    isLoading,
+    isError,
+  } = useGetMeshSyncResourceKindsQuery(
+    {
+      page: 0,
+      pagesize: 'all',
+      clusterIds: clusterIds,
+      metrics: true,
+    },
+    {
+      skip: clusterIds.length === 0,
+    },
+  );
+  const isClusterLoading = isFetching || isLoading;
+  if (isError) {
+    return (
+      <NoSsr>
+        <ErrorDisplay classes={classes} />
+      </NoSsr>
+    );
+  }
+
   return (
     <NoSsr>
-      <Popup />
-      <Provider store={store}>
-        <div className={classes.rootClass}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={12}>
-              <DashboardMeshModelGraph classes={classes} />
-            </Grid>
-
-            <Grid item xs={12}>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                  <ConnectionStatsChart classes={classes} />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <MesheryConfigurationChart classes={classes} />
+      <UsesSistent>
+        <Popup />
+        <Provider store={store}>
+          <div className={classes.rootClass}>
+            <Grid container spacing={2}>
+              <Grid item xs={12}>
+                <Grid container spacing={2}>
+                  <Grid item xs={12} md={6}>
+                    <NodeStatusChart
+                      classes={classes}
+                      nodeData={clusterSummary?.nodeSummaries}
+                      isClusterLoading={isClusterLoading}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <PodStatusChart
+                      classes={classes}
+                      podData={clusterSummary?.podSummaries}
+                      isClusterLoading={isClusterLoading}
+                    />
+                  </Grid>
                 </Grid>
               </Grid>
+              <Grid item xs={12} md={12}>
+                <ResourceUtilizationChart
+                  classes={classes}
+                  usageData={clusterSummary?.usage}
+                  isClusterLoading={isClusterLoading}
+                />
+              </Grid>
+              <Grid item xs={12} md={12} style={{ marginBottom: '1rem' }}>
+                <HoneycombComponent
+                  kinds={clusterSummary?.kinds}
+                  isClusterLoading={isClusterLoading}
+                />
+              </Grid>
             </Grid>
-          </Grid>
-        </div>
-      </Provider>
+          </div>
+        </Provider>
+      </UsesSistent>
     </NoSsr>
   );
 };
 
-export default withStyles(styles, { withTheme: true })(withRouter(withNotify(Overview)));
+const mapStateToProps = (state) => {
+  return {
+    selectedK8sContexts: state.get('selectedK8sContexts'),
+    k8scontext: state.get('k8sConfig'),
+  };
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  updateProgress: bindActionCreators(updateProgress, dispatch),
+  setK8sContexts: bindActionCreators(setK8sContexts, dispatch),
+});
+
+export default withStyles(styles, { withTheme: true })(
+  withRouter(withNotify(connect(mapStateToProps, mapDispatchToProps)(Overview))),
+);
