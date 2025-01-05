@@ -61,7 +61,7 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 mesheryctl registry update --csv-dir /path/to/csv-directory
 
 // Example to update with both Google Sheets and CSV, CSV takes precedence
-mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 encoded spreadsheet credential] --csv-dir /path/to/csv-directory
+mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 encoded spreadsheet credential] --csv-dir [/path/to/csv-directory]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
@@ -80,7 +80,7 @@ mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 enco
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if csvDir != "" {
 			utils.Log.Info("Using local CSV directory: ", csvDir)
-			err := InvokeCompUpdateFromCSV()
+			err := InvokeComponentsUpdateFromCSV()
 			if err != nil {
 				utils.Log.Error(err)
 				return err
@@ -90,7 +90,7 @@ mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 enco
 
 		if spreadsheeetID != "" && spreadsheeetCred != "" {
 			utils.Log.Info("Using Google Sheet with ID: ", spreadsheeetID)
-			err := InvokeCompUpdateFromSheets()
+			err := InvokeComponentsUpdateFromSheets()
 			if err != nil {
 				utils.Log.Error(err)
 				return err
@@ -110,7 +110,7 @@ type compUpdateTracker struct {
 	version           string
 }
 
-func InvokeCompUpdateFromSheets() error {
+func InvokeComponentsUpdateFromSheets() error {
 	utils.Log.UpdateLogOutput(logFile)
 
 	defer func() {
@@ -161,7 +161,7 @@ func InvokeCompUpdateFromSheets() error {
 	return nil
 }
 
-func InvokeCompUpdateFromCSV() error {
+func InvokeComponentsUpdateFromCSV() error {
 	utils.Log.UpdateLogOutput(logFile)
 	defer func() {
 		_ = logFile.Close()
