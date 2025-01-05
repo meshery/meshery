@@ -15,7 +15,7 @@ import fetchAvailableAddons from '../../graphql/queries/AddonsStatusQuery';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
-import { CONNECTION_KINDS } from '@/utils/Enum';
+import { CONNECTION_KINDS, CONNECTION_STATES } from '@/utils/Enum';
 import { withTelemetryHook } from '@/components/hooks/useTelemetryHook';
 import { getCredentialByID } from '@/api/credentials';
 
@@ -107,7 +107,10 @@ export const submitGrafanaConfigure = (self, cb) => {
       if (typeof result !== 'undefined') {
         const notify = self.props.notify;
         notify({ message: 'Grafana was configured!', event_type: EVENT_TYPES.SUCCESS });
-        self.setState({ grafanaConfigSuccess: true });
+        self.setState({
+          grafanaConfigSuccess: true,
+          connectionID: result.id,
+        });
         self.props.updateGrafanaConfig({
           grafana: {
             grafanaURL,
@@ -115,6 +118,8 @@ export const submitGrafanaConfigure = (self, cb) => {
             grafanaBoardSearch,
             grafanaBoards,
             selectedBoardsConfigs,
+            connectionName: result.name,
+            connectionID: result.id,
           },
         });
         getGrafanaBoards(self, cb);
@@ -143,24 +148,23 @@ class GrafanaComponent extends Component {
     };
   }
 
-  UNSAFE_componentWillReceiveProps(nextProps) {
+  componentDidUpdate(prevProps) {
     const { grafanaURL, grafanaAPIKey, selectedBoardsConfigs, connectionID, connectionName } =
-      nextProps.grafana;
-    if (nextProps.grafana.ts > this.state.ts) {
+      this.props.grafana;
+    if (this.props.ts > prevProps.ts) {
       this.setState(
         {
           grafanaURL,
           grafanaAPIKey,
           selectedBoardsConfigs,
           grafanaConfigSuccess: grafanaURL !== '',
-          ts: nextProps.ts,
+          ts: this.props.ts,
           connectionID,
           connectionName,
         },
         () => getGrafanaBoards(this),
       );
     }
-    return {};
   }
 
   componentDidMount() {
@@ -212,31 +216,43 @@ class GrafanaComponent extends Component {
 
   handleChange = (name) => (data) => {
     if (name === 'grafanaURL' && !!data) {
-      this.setState({ urlError: false });
-      this.setState({ [name]: data.value });
+      const grafanaURL = data?.value;
+      const isInvalidURL = !(
+        grafanaURL.toLowerCase().startsWith('http://') ||
+        grafanaURL.toLowerCase().startsWith('https://')
+      );
+
+      if (isInvalidURL) {
+        this.setState({ urlError: true, [name]: '' });
+        return;
+      }
+
+      this.setState({ urlError: false, [name]: grafanaURL });
     }
 
-    const grafanaConnectionObj = data.target?.value;
     if (name === 'grafanaBoardSearch') {
       if (this.boardSearchTimeout) clearTimeout(this.boardSearchTimeout);
       this.boardSearchTimeout = setTimeout(() => getGrafanaBoards(this), 500); // to delay the search by a few.
     }
 
-    getCredentialByID(grafanaConnectionObj?.credential_id).then((res) => {
-      const grafanaCfg = {
-        grafanaURL: grafanaConnectionObj?.value || '',
-        grafanaAPIKey: res?.secret?.secret || '',
-        grafanaBoardSearch:
-          grafanaConnectionObj?.metadata?.grafanaBoardSearch || this.state?.grafanaBoardSearch,
-        grafanaBoards: grafanaConnectionObj?.metadata['grafana_boards'] || [],
-        selectedBoardsConfigs: grafanaConnectionObj?.metadata['selectedBoardsConfigs'],
-        connectionID: grafanaConnectionObj?.id,
-        connectionName: grafanaConnectionObj?.name,
-      };
-      this.props.updateGrafanaConfig({ grafana: grafanaCfg });
-    });
+    const grafanaCfg = {
+      grafanaURL: data?.value || '',
+      grafanaAPIKey: '',
+      grafanaBoardSearch: data?.metadata?.grafanaBoardSearch || this.state?.grafanaBoardSearch,
+      grafanaBoards: data?.metadata?.grafana_boards || [],
+      selectedBoardsConfigs: data?.metadata?.selectedBoardsConfigs || [],
+      connectionID: data?.id,
+      connectionName: data?.name,
+    };
 
-    // this.setState({ [name]: event.target.value });
+    if (typeof data?.credential_id !== 'undefined') {
+      getCredentialByID(data?.credential_id).then((res) => {
+        if (typeof res?.secret?.secret !== 'undefined') {
+          grafanaCfg.grafanaAPIKey = res?.secret?.secret;
+        }
+      });
+    }
+    this.props.updateGrafanaConfig({ grafana: grafanaCfg });
   };
 
   handleChangeApiKey = (event) => {
@@ -265,38 +281,56 @@ class GrafanaComponent extends Component {
     notify({ message: msg, event_type: EVENT_TYPES.ERROR });
   };
 
-  handleGrafanaChipDelete = () => {
-    this.props.updateProgress({ showProgress: true });
+  handleGrafanaChipDelete = (e) => {
+    e.preventDefault();
     const self = this;
+    const connectionId = self?.state?.connectionID;
+
+    if (!connectionId) {
+      console.error('Connection ID is missing');
+      return;
+    }
+
+    this.props.updateProgress({ showProgress: false });
     dataFetch(
       `/api/integrations/connections/${CONNECTION_KINDS.GRAFANA}/status`,
       {
         method: 'PUT',
         credentials: 'include',
+        body: JSON.stringify({ [connectionId]: CONNECTION_STATES.DISCOVERED }),
       },
-      (result) => {
-        this.props.updateProgress({ showProgress: false });
-        if (typeof result !== 'undefined') {
-          self.setState({
+      () => {
+        self.props.updateProgress({ showProgress: false });
+        self.setState(
+          {
             grafanaConfigSuccess: false,
             grafanaURL: '',
             grafanaAPIKey: '',
             grafanaBoardSearch: '',
             grafanaBoards: [],
             selectedBoardsConfigs: [],
-          });
-          self.props.updateGrafanaConfig({
-            grafana: {
-              grafanaURL: '',
-              grafanaAPIKey: '',
-              grafanaBoardSearch: '',
-              grafanaBoards: [],
-              selectedBoardsConfigs: [],
-            },
-          });
-        }
+          },
+          () => {
+            self.props.notify({
+              message: `Connection "${connectionId}" is transitioned to discovered state.`,
+              event_type: EVENT_TYPES.SUCCESS,
+            });
+            self.props.updateGrafanaConfig({
+              grafana: {
+                grafanaURL: '',
+                grafanaAPIKey: '',
+                grafanaBoardSearch: '',
+                grafanaBoards: [],
+                selectedBoardsConfigs: [],
+              },
+            });
+          },
+        );
       },
-      self.handleError('There was an error communicating with Grafana'),
+      (error) => {
+        self.props.updateProgress({ showProgress: false });
+        self.handleError(error);
+      },
     );
   };
 
@@ -423,10 +457,7 @@ class GrafanaComponent extends Component {
           grafanaURL={grafanaURL && { label: grafanaURL, value: grafanaURL }}
           grafanaAPIKey={grafanaAPIKey}
           urlError={urlError}
-          handleChange={(name) => {
-            // Simulating event.target.value
-            return (value) => this.handleChange(name)({ target: { value } });
-          }}
+          handleChange={this.handleChange}
           handleChangeApiKey={this.handleChangeApiKey}
           handleGrafanaConfigure={this.handleGrafanaConfigure}
         />
