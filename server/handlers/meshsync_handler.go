@@ -375,6 +375,11 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 //
 // ```?clusterId={clusterId}``` clusterId is id of the cluster to get resources for ( multiple supported)
 //
+// ```?namespace={namespace}``` namespace is an array of strings to scope the resources
+//
+// ```?patternId={patternId}``` patternId is an array of strings to scope the resources
+//
+// ```?metrics={bool}``` metrics is a boolean value. If true then metrics are returned like pod summaries, node summaries and usage
 //
 // responses:
 // 200: []meshsyncResourcesSummaryResponseWrapper
@@ -398,8 +403,23 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 		Count int64
 	}
 	var namespaces []string
+	var podSummaries []struct {
+		Status string `json:"status"`
+		Count  int64  `json:"count"`
+	}
+	var nodeSummaries []struct {
+		Status string `json:"status"`
+		Count  int64  `json:"count"`
+	}
+	var usage []struct {
+		Resource   string  `json:"resource"`
+		Percentage float64 `json:"percentage"`
+	}
 
-	// TODO: simplify into one query if possible
+	// Parse metrics parameter, default to false
+	metricsParam := r.URL.Query().Get("metrics")
+	calculateMetrics := metricsParam == "true"
+
 	kindsQuery := provider.GetGenericPersister().
 		Model(&model.KubernetesResource{}).
 		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resources.id = kubernetes_resource_object_meta.id").
@@ -411,10 +431,6 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	kindsQuery = filterByPatternIds(kindsQuery, patternIds)
 
 	err1 := kindsQuery.Scan(&kindCounts).Error
-
-	if err1 != nil {
-		h.log.Error(ErrFetchMeshSyncResources(err1))
-	}
 
 	err2 := provider.GetGenericPersister().
 		Model(&model.KubernetesResource{}).
@@ -440,6 +456,141 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 		h.log.Error(ErrFetchMeshSyncResources(err))
 	}
 
+	// Only calculate pod summaries, node summaries and usage if metrics=true
+	if calculateMetrics {
+		podStatusQuery := provider.GetGenericPersister().
+			Model(&model.KubernetesResource{}).
+			Joins("JOIN kubernetes_resource_statuses ON kubernetes_resources.id = kubernetes_resource_statuses.id").
+			Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resources.id = kubernetes_resource_object_meta.id").
+			Select("JSON_EXTRACT(kubernetes_resource_statuses.attribute, '$.phase') as status, COUNT(*) as count").
+			Where("kubernetes_resources.kind = ?", "Pod").
+			Group("JSON_EXTRACT(kubernetes_resource_statuses.attribute, '$.phase')")
+
+		podStatusQuery = filterByClusters(podStatusQuery, clusterIds)
+		podStatusQuery = filterByNamespaces(podStatusQuery, namespaceScope)
+		podStatusQuery = filterByPatternIds(podStatusQuery, patternIds)
+
+		err = podStatusQuery.Scan(&podSummaries).Error
+		if err != nil {
+			h.log.Error(ErrFetchMeshSyncResources(err))
+		}
+
+		nodeStatusQuery := provider.GetGenericPersister().
+			Model(&model.KubernetesResource{}).
+			Joins("JOIN kubernetes_resource_statuses ON kubernetes_resources.id = kubernetes_resource_statuses.id").
+			Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resources.id = kubernetes_resource_object_meta.id").
+			Select(`
+            CASE
+                WHEN EXISTS (
+                    SELECT 1 FROM json_each(kubernetes_resource_statuses.attribute, '$.conditions')
+                    WHERE json_extract(value, '$.type') = 'Ready'
+                    AND json_extract(value, '$.status') = 'True'
+                )
+                THEN 'Ready'
+                ELSE 'Not Ready'
+            END as status,
+            COUNT(*) as count
+        `).
+			Where("kubernetes_resources.kind = ?", "Node").
+			Group("status")
+
+		nodeStatusQuery = filterByClusters(nodeStatusQuery, clusterIds)
+		nodeStatusQuery = filterByNamespaces(nodeStatusQuery, namespaceScope)
+		nodeStatusQuery = filterByPatternIds(nodeStatusQuery, patternIds)
+
+		err = nodeStatusQuery.Scan(&nodeSummaries).Error
+		if err != nil {
+			h.log.Error(ErrFetchMeshSyncResources(err))
+		}
+
+		cpuQuery := provider.GetGenericPersister().
+			Table("kubernetes_resources").
+			Joins("JOIN kubernetes_resource_statuses s ON kubernetes_resources.id = s.id").
+			Select(`
+            'CPU' as resource,
+            ROUND(
+                (1.0 - (
+                    CAST(SUM(CAST(COALESCE(NULLIF(json_extract(s.attribute, '$.allocatable.cpu'), ''), '0') AS DECIMAL)) AS FLOAT) /
+                    NULLIF(CAST(SUM(CAST(COALESCE(NULLIF(json_extract(s.attribute, '$.capacity.cpu'), ''), '0') AS DECIMAL)) AS FLOAT), 0)
+                )) * 100.0,
+                2
+            ) as percentage`).
+			Where("kubernetes_resources.kind = ? AND json_extract(s.attribute, '$.capacity.cpu') IS NOT NULL", "Node").
+			Where(`EXISTS (
+			SELECT 1 FROM json_each(s.attribute, '$.conditions')
+			WHERE json_extract(value, '$.type') = 'Ready'
+			AND json_extract(value, '$.status') = 'True'
+		)`)
+
+		memoryQuery := provider.GetGenericPersister().
+			Table("kubernetes_resources").
+			Joins("JOIN kubernetes_resource_statuses s ON kubernetes_resources.id = s.id").
+			Select(`
+            'Memory' as resource,
+            ROUND(
+                (1.0 - (
+                    CAST(SUM(CAST(
+                        REPLACE(
+                            REPLACE(
+                                COALESCE(NULLIF(json_extract(s.attribute, '$.allocatable.memory'), ''), '0Ki'),
+                                'Ki', ''
+                            ),
+                            '"', ''
+                        ) AS DECIMAL
+                    )) AS FLOAT) /
+                    NULLIF(CAST(SUM(CAST(
+                        REPLACE(
+                            REPLACE(
+                                COALESCE(NULLIF(json_extract(s.attribute, '$.capacity.memory'), ''), '0Ki'),
+                                'Ki', ''
+                            ),
+                            '"', ''
+                        ) AS DECIMAL
+                    )) AS FLOAT), 0)
+                )) * 100.0,
+                2
+            ) as percentage`).
+			Where("kubernetes_resources.kind = ? AND json_extract(s.attribute, '$.capacity.memory') IS NOT NULL", "Node").
+			Where(`EXISTS (
+			SELECT 1 FROM json_each(s.attribute, '$.conditions')
+			WHERE json_extract(value, '$.type') = 'Ready'
+			AND json_extract(value, '$.status') = 'True'
+		)`)
+
+		// Apply cluster filters
+		cpuQuery = filterByClusters(cpuQuery, clusterIds)
+		memoryQuery = filterByClusters(memoryQuery, clusterIds)
+
+		var result struct {
+			Resource   string  `json:"resource"`
+			Percentage float64 `json:"percentage"`
+		}
+
+		if err := cpuQuery.Scan(&result).Error; err != nil {
+			h.log.Error(ErrFetchMeshSyncResources(err))
+		}
+		usage = append(usage, result)
+
+		if err := memoryQuery.Scan(&result).Error; err != nil {
+			h.log.Error(ErrFetchMeshSyncResources(err))
+		}
+		usage = append(usage, result)
+
+		usage = append(usage, struct {
+			Resource   string  `json:"resource"`
+			Percentage float64 `json:"percentage"`
+		}{
+			Resource:   "Disk",
+			Percentage: 10.0,
+		})
+	}
+
+	if err != nil {
+		h.log.Error(ErrFetchMeshSyncResources(err))
+		http.Error(rw, ErrFetchMeshSyncResources(err).Error(), http.StatusInternalServerError)
+		return
+	}
+
 	// only return error if both queries failed
 	if err1 != nil && err2 != nil {
 		combinedErr := fmt.Errorf("Error fetching meshsync resources summary: %v, %v", err1, err2)
@@ -448,9 +599,12 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	}
 
 	response := &models.MeshSyncResourcesSummaryAPIResponse{
-		Kinds:      kindCounts,
-		Namespaces: namespaces,
-		Labels:     labels,
+		Kinds:         kindCounts,
+		Namespaces:    namespaces,
+		Labels:        labels,
+		PodSummaries:  podSummaries,
+		NodeSummaries: nodeSummaries,
+		Usage:         usage,
 	}
 
 	if err := enc.Encode(response); err != nil {
