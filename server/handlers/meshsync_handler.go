@@ -353,8 +353,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 			design = rawDesign
 			h.log.Error(fmt.Errorf("Error evaluating design: %v", error))
 		} else {
-			design = rawDesign
-			design = evalResponse.Design // only add relationships
+			design = evalResponse.Design // use the evaluated design
 		}
 
 	}
