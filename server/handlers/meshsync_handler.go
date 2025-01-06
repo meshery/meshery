@@ -344,14 +344,17 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	if asDesign {
 		rawDesign := ConvertToPatternFile(resources, true) // strip schema
 		resources = []model.KubernetesResource{}           // clear resources to save memory
-		evalResponse, error := h.Rego.RegoPolicyHandler(rawDesign, RelationshipPolicyPackageName)
+		// evalResponse, error := h.Rego.RegoPolicyHandler(rawDesign, RelationshipPolicyPackageName)
+		evalResponse, error := h.EvaluateDesign(pattern.EvaluationRequest{
+			Design: rawDesign,
+		})
+
 		if error != nil {
 			design = rawDesign
 			h.log.Error(fmt.Errorf("Error evaluating design: %v", error))
 		} else {
-			// if there is error in evaluation, return the raw design (without any relationships)
 			design = rawDesign
-			design.Relationships = evalResponse.Design.Relationships // only add relationships
+			design = evalResponse.Design // only add relationships
 		}
 
 	}
