@@ -12,7 +12,6 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
@@ -30,49 +29,10 @@ const (
 	suffix                        = "_relationship"
 )
 
-// swagger:route POST /api/meshmodels/relationships/evaluate EvaluateRelationshipPolicy relationshipPolicyEvalPayloadWrapper
-// Handle POST request for evaluating relationships in the provided design file by running a set of provided evaluation queries on the design file
-//
-// responses:
-// 200
-func (h *Handler) EvaluateRelationshipPolicy(
-	rw http.ResponseWriter,
-	r *http.Request,
-	_ *models.Preference,
-	user *models.User,
-	provider models.Provider,
-) {
-	userUUID := uuid.FromStringOrNil(user.ID)
-	defer func() {
-		_ = r.Body.Close()
-	}()
-
-	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromUser(userUUID).WithCategory("relationship").WithAction("evaluation")
-
-	body, err := io.ReadAll(r.Body)
-	if err != nil {
-		h.log.Error(ErrRequestBody(err))
-		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
-		rw.WriteHeader((http.StatusBadRequest))
-		return
-	}
-
-	relationshipPolicyEvalPayload := pattern.EvaluationRequest{}
-	err = json.Unmarshal(body, &relationshipPolicyEvalPayload)
-
-	if err != nil {
-		http.Error(rw, ErrDecoding(err, "design file").Error(), http.StatusInternalServerError)
-		return
-	}
-	// decode the pattern file
-
-	patternUUID := relationshipPolicyEvalPayload.Design.Id
-	eventBuilder.ActedUpon(patternUUID)
-
-	// deprettify the configuration of the components
-	for _, component := range relationshipPolicyEvalPayload.Design.Components {
-		component.Configuration = core.Format.DePrettify(component.Configuration, false)
-	}
+// Helper method to make design evaluation based on the relationship policies.
+func (h *Handler) EvaluateDesign(
+	relationshipPolicyEvalPayload pattern.EvaluationRequest,
+) (pattern.EvaluationResponse, error) {
 
 	// evaluate specified relationship policies
 	// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
@@ -82,38 +42,16 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	if err != nil {
 		h.log.Debug(err)
 		// log an event
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
-		return
+		return pattern.EvaluationResponse{}, err
 	}
 
 	currentTime := time.Now()
 	evaluationResponse.Timestamp = &currentTime
 
-	// include trace instead of design file in the event
-	event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for design \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).
-		WithMetadata(map[string]interface{}{
-			"trace":        evaluationResponse.Trace,
-			"evaluated_at": *evaluationResponse.Timestamp,
-		}).WithSeverity(events.Informational).Build()
-	_ = provider.PersistEvent(event)
-
 	// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
-	unknownComponents := processEvaluationResponse(h.registryManager, relationshipPolicyEvalPayload, &evaluationResponse)
-	if len(unknownComponents) > 0 {
-		event := events.NewEvent().FromUser(userUUID).FromSystem(*h.SystemID).WithCategory("relationship").WithAction("evaluation").WithSeverity(events.Informational).ActedUpon(patternUUID).WithDescription(fmt.Sprintf("Relationship evaluation for \"%s\" at version \"%s\" resulted in the addition of new components but they are not registered inside the registry.", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).WithMetadata(map[string]interface{}{
-			"ComponentsToBeAdded": unknownComponents,
-		}).Build()
+	_ = processEvaluationResponse(h.registryManager, relationshipPolicyEvalPayload, &evaluationResponse)
 
-		_ = provider.PersistEvent(event)
-	}
-	// write the response
-	ec := json.NewEncoder(rw)
-	err = ec.Encode(evaluationResponse)
-	if err != nil {
-		h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
-		http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
-		return
-	}
+	return evaluationResponse, nil
 }
 
 func processEvaluationResponse(registry *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
@@ -218,12 +156,78 @@ func processEvaluationResponse(registry *registry.RegistryManager, evalPayload p
 			}
 		}
 
-		_c.Configuration = core.Format.Prettify(_c.Configuration, false)
 		evalResponse.Design.Components = append(evalResponse.Design.Components, _c)
 
 	}
 
 	return unknownComponents
+}
+
+// swagger:route POST /api/meshmodels/relationships/evaluate EvaluateRelationshipPolicy relationshipPolicyEvalPayloadWrapper
+// Handle POST request for evaluating relationships in the provided design file by running a set of provided evaluation queries on the design file
+//
+// responses:
+// 200
+func (h *Handler) EvaluateRelationshipPolicy(
+	rw http.ResponseWriter,
+	r *http.Request,
+	_ *models.Preference,
+	user *models.User,
+	provider models.Provider,
+) {
+	userUUID := uuid.FromStringOrNil(user.ID)
+	defer func() {
+		_ = r.Body.Close()
+	}()
+
+	eventBuilder := events.NewEvent().FromSystem(*h.SystemID).FromUser(userUUID).WithCategory("relationship").WithAction("evaluation")
+
+	body, err := io.ReadAll(r.Body)
+	if err != nil {
+		h.log.Error(ErrRequestBody(err))
+		http.Error(rw, ErrRequestBody(err).Error(), http.StatusBadRequest)
+		rw.WriteHeader((http.StatusBadRequest))
+		return
+	}
+
+	relationshipPolicyEvalPayload := pattern.EvaluationRequest{}
+	err = json.Unmarshal(body, &relationshipPolicyEvalPayload)
+
+	if err != nil {
+		http.Error(rw, ErrDecoding(err, "design file").Error(), http.StatusInternalServerError)
+		return
+	}
+	// decode the pattern file
+	patternUUID := relationshipPolicyEvalPayload.Design.Id
+	eventBuilder.ActedUpon(patternUUID)
+
+	// evaluate specified relationship policies
+	// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
+	evaluationResponse, err := h.EvaluateDesign(relationshipPolicyEvalPayload)
+
+	if err != nil {
+		h.log.Debug(err)
+		// log an event
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// include trace instead of design file in the event
+	event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for design \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).
+		WithMetadata(map[string]interface{}{
+			"trace":        evaluationResponse.Trace,
+			"evaluated_at": *evaluationResponse.Timestamp,
+		}).WithSeverity(events.Informational).Build()
+	_ = provider.PersistEvent(event)
+
+	// write the response
+	ec := json.NewEncoder(rw)
+	err = ec.Encode(evaluationResponse)
+	if err != nil {
+		h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
+		http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
+		return
+	}
 }
 
 // Needs to be reinstiated inorder to load the policies based on the evaluation queries.
