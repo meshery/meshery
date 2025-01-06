@@ -48,9 +48,9 @@ const HeaderIcon = styled(IconButton)(({ theme }) => ({
   },
 }));
 
-const ErrorText = styled('span')({
-  color: '#D32F2F',
-});
+const ErrorText = styled('span')(({ theme }) => ({
+  color: theme.palette.error.default,
+}));
 
 const grafanaDateRangeToDate = (dt, startDate) => {
   const dto = new Date();
