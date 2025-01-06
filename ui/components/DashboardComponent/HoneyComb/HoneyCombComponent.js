@@ -7,6 +7,7 @@ import { ResourceSelector } from '../charts/ResourceSelector';
 import { useRouter } from 'next/router';
 import { componentIcon } from '../charts/utils';
 import ConnectCluster from '../charts/ConnectCluster';
+import { generateDynamicURL } from '../resources/config';
 
 const useStyles = makeStyles((theme) => ({
   rootContainer: {
@@ -92,9 +93,9 @@ const HoneycombComponent = (props) => {
         <div className={classes.mainSection}>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Typography variant="h6">Cluster Resource Overview</Typography>
-            {!isClusterLoading && (
+            {!isClusterLoading && kinds && (
               <ResourceSelector
-                kinds={kinds.map((kind) => kind.Kind)}
+                kinds={kinds?.map((kind) => kind?.Kind)}
                 selectedkind={selectedKind}
                 onKindChange={onKindChange}
               />
@@ -117,7 +118,7 @@ const HoneycombComponent = (props) => {
                         <Hexagon
                           className={classes.selected}
                           onClick={() => {
-                            router.push(`?resourceCategory=${item?.Kind}`);
+                            router.push(generateDynamicURL(item?.Kind));
                           }}
                         >
                           <CustomTooltip title={item?.Kind || ''} placement="top">

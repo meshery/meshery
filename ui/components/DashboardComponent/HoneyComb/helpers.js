@@ -1,7 +1,3 @@
-import * as React from 'react';
-
-export const HoneycombContext = React.createContext({ gap: 2 });
-
 export const getGridColumnsCount = (hexagonSide, containerWidth) => {
   if (!hexagonSide || !containerWidth || hexagonSide <= 0 || containerWidth <= 0) {
     return 1; // Return default value for invalid inputs

@@ -1,15 +1,13 @@
 import * as React from 'react';
-import { HoneycombContext } from './helpers';
 
-const Hexagon = ({ children, className, style, onclick }) => {
-  const { gap } = React.useContext(HoneycombContext);
+const Hexagon = ({ children, className, style, onClick }) => {
   return (
     <div
       className={className}
       style={{
         ...style,
         position: 'absolute',
-        inset: `${gap}px`,
+        inset: `3px`,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -17,7 +15,7 @@ const Hexagon = ({ children, className, style, onclick }) => {
         pointerEvents: 'auto',
         boxSizing: 'border-box',
       }}
-      onClick={onclick}
+      onClick={onClick}
     >
       {children}
     </div>

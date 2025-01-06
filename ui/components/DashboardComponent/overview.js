@@ -13,10 +13,7 @@ import { useGetMeshSyncResourceKindsQuery } from '@/rtk-query/meshsync';
 import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
 import { bindActionCreators } from 'redux';
 import { setK8sContexts, updateProgress } from 'lib/store';
-import { NodeStatusChart } from './charts/NodeStatusChart';
 import { UsesSistent } from '../SistentWrapper';
-import { PodStatusChart } from './charts/PodStatusChart';
-import { ResourceUtilizationChart } from './charts/ResourceUtilizationChart';
 
 export const styles = (theme) => ({
   rootClass: { backgroundColor: theme.palette.secondary.elevatedComponents2, marginTop: '1rem' },
@@ -137,10 +134,9 @@ const Overview = ({ classes, selectedK8sContexts, k8scontext }) => {
       page: 0,
       pagesize: 'all',
       clusterIds: clusterIds,
-      metrics: true,
     },
     {
-      skip: clusterIds.length === 0,
+      skip: clusterIds.size === 0,
     },
   );
   const isClusterLoading = isFetching || isLoading;
@@ -159,31 +155,6 @@ const Overview = ({ classes, selectedK8sContexts, k8scontext }) => {
         <Provider store={store}>
           <div className={classes.rootClass}>
             <Grid container spacing={2}>
-              <Grid item xs={12}>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} md={6}>
-                    <NodeStatusChart
-                      classes={classes}
-                      nodeData={clusterSummary?.nodeSummaries}
-                      isClusterLoading={isClusterLoading}
-                    />
-                  </Grid>
-                  <Grid item xs={12} md={6}>
-                    <PodStatusChart
-                      classes={classes}
-                      podData={clusterSummary?.podSummaries}
-                      isClusterLoading={isClusterLoading}
-                    />
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item xs={12} md={12}>
-                <ResourceUtilizationChart
-                  classes={classes}
-                  usageData={clusterSummary?.usage}
-                  isClusterLoading={isClusterLoading}
-                />
-              </Grid>
               <Grid item xs={12} md={12} style={{ marginBottom: '1rem' }}>
                 <HoneycombComponent
                   kinds={clusterSummary?.kinds}

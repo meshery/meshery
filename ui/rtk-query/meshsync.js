@@ -39,7 +39,6 @@ const meshSyncApi = api
             namespace: namespaces,
             pagesize,
             order,
-            metrics,
           });
           return `system/meshsync/resources/summary?${params}`;
         },
