@@ -1,10 +1,13 @@
+const isClient = typeof window !== 'undefined';
+
 /**
  * Finds the host on which Meshery is running, it could be
  * localhost:{port} or an IP adress or a webadress
  * @returns {string} application host
  */
 function getHost() {
-  return window.location.host;
+  if (!isClient) return '';
+  return window?.location?.host || '';
 }
 
 /**
@@ -13,7 +16,8 @@ function getHost() {
  * @returns {string}
  */
 export function getProtocol() {
-  return window.location.protocol;
+  if (!isClient) return 'http:'; // provide default for SSR
+  return window?.location?.protocol || 'http:';
 }
 
 /**
@@ -22,6 +26,7 @@ export function getProtocol() {
  * @example http://localhost:9081
  */
 export function getWebAdress() {
+  if (!isClient) return ''; // early return for SSR
   return getProtocol() + '//' + getHost();
 }
 
@@ -33,7 +38,8 @@ export function getWebAdress() {
  * @returns {string} queryVal
  */
 export function getQueryParam(queryKey) {
-  let queryParamString = window.location.search;
+  if (!isClient) return '';
+  let queryParamString = window?.location?.search || '';
   queryParamString = queryParamString.replace('?', '');
 
   let queryVal = '';
@@ -50,8 +56,7 @@ export function getQueryParam(queryKey) {
 }
 
 export function getRawUrlFromCssUrlString(url) {
-  if (!url) return;
-
+  if (!url) return '';
   // turns url(http://localhost:9081/path/to/svg) to http://localhost:9081/path/to/svg
   if (url.startsWith('url')) {
     url = url.slice(4).slice(0, -1);
