@@ -14,7 +14,6 @@ import {
   Typography,
   styled,
   useTheme,
-  Grid,
 } from '@layer5/sistent';
 import DashboardMeshModelGraph from './DashboardComponent/charts/DashboardMeshModelGraph';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -47,6 +46,7 @@ import {
   PROMETHEUS,
   OVERVIEW,
 } from '@/constants/navigator';
+import Grid from '@material-ui/core/Grid';
 import { removeDuplicateVersions } from './MeshModelRegistry/helper';
 import DefaultError from './General/error-404';
 import { store } from '../store';
@@ -339,20 +339,13 @@ const MesherySettings = (props) => {
               <NoSsr>
                 <Provider store={store}>
                   <RootClass>
+                    <DashboardMeshModelGraph />
                     <Grid container spacing={2}>
-                      <Grid item xs={12} md={12}>
-                        <DashboardMeshModelGraph />
+                      <Grid item xs={12} md={6}>
+                        <ConnectionStatsChart />
                       </Grid>
-
-                      <Grid item xs={12}>
-                        <Grid container spacing={2}>
-                          <Grid item xs={12} md={6}>
-                            <ConnectionStatsChart />
-                          </Grid>
-                          <Grid item xs={12} md={6}>
-                            <MesheryConfigurationChart />
-                          </Grid>
-                        </Grid>
+                      <Grid item xs={12} md={6}>
+                        <MesheryConfigurationChart />
                       </Grid>
                     </Grid>
                   </RootClass>

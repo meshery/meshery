@@ -1,9 +1,8 @@
-import React, { useState, useMemo } from 'react';
+import React from 'react';
 import ResponsiveHoneycomb from './ResponsiveHoneycomb';
 import Hexagon from './Hexagon';
 import { makeStyles } from '@material-ui/core';
 import { CustomTooltip, ErrorBoundary, Skeleton, Typography } from '@layer5/sistent';
-import { ResourceSelector } from '../charts/ResourceSelector';
 import { useRouter } from 'next/router';
 import { componentIcon } from '../charts/utils';
 import ConnectCluster from '../charts/ConnectCluster';
@@ -58,18 +57,7 @@ const useStyles = makeStyles((theme) => ({
 
 const HoneycombComponent = (props) => {
   const classes = useStyles();
-  const { kinds, isClusterLoading } = props;
-  const [selectedKind, setSelectedKind] = useState('all');
-
-  const onKindChange = (kind) => {
-    setSelectedKind(kind);
-  };
-
-  const filteredKinds = useMemo(() => {
-    if (selectedKind === 'all') return kinds;
-    return kinds.filter((kind) => kind.Kind === selectedKind);
-  }, [selectedKind, kinds]);
-
+  const { kinds, isClusterLoading, isClusterIdsEmpty } = props;
   const router = useRouter();
 
   const renderLoadingSkeleton = () => {
@@ -91,17 +79,8 @@ const HoneycombComponent = (props) => {
     <ErrorBoundary>
       <div className={classes.rootContainer}>
         <div className={classes.mainSection}>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography variant="h6">Cluster Resource Overview</Typography>
-            {!isClusterLoading && kinds && (
-              <ResourceSelector
-                kinds={kinds?.map((kind) => kind?.Kind)}
-                selectedkind={selectedKind}
-                onKindChange={onKindChange}
-              />
-            )}
-          </div>
-          {isClusterLoading ? (
+          <Typography variant="h6">Cluster Resource Overview</Typography>
+          {isClusterLoading || isClusterIdsEmpty ? (
             renderLoadingSkeleton()
           ) : !kinds ? (
             <ConnectCluster />
@@ -113,7 +92,7 @@ const HoneycombComponent = (props) => {
                     <ResponsiveHoneycomb
                       defaultWidth={1024}
                       size={47}
-                      items={filteredKinds}
+                      items={kinds}
                       renderItem={(item) => (
                         <Hexagon
                           className={classes.selected}

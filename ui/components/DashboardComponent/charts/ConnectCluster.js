@@ -13,8 +13,8 @@ const ConnectCluster = () => {
         flexDirection: 'column',
       }}
     >
-      <Typography style={{ fontSize: '1.5rem', marginBottom: '1rem' }} align="center">
-        No connections found in your clusters
+      <Typography variant="h5" align="center" style={{ marginBottom: '0.5rem' }}>
+        Connect the clusters which have valid Kubernetes resources
       </Typography>
       <ConnectClustersBtn />
     </div>

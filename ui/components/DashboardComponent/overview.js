@@ -124,6 +124,8 @@ const ErrorDisplay = ({ classes }) => (
 
 const Overview = ({ classes, selectedK8sContexts, k8scontext }) => {
   const clusterIds = getK8sClusterIdsFromCtxId(selectedK8sContexts, k8scontext);
+  const isClusterIdsEmpty = clusterIds.size === 0;
+
   const {
     data: clusterSummary,
     isFetching,
@@ -136,7 +138,7 @@ const Overview = ({ classes, selectedK8sContexts, k8scontext }) => {
       clusterIds: clusterIds,
     },
     {
-      skip: clusterIds.size === 0,
+      skip: isClusterIdsEmpty,
     },
   );
   const isClusterLoading = isFetching || isLoading;
@@ -159,6 +161,7 @@ const Overview = ({ classes, selectedK8sContexts, k8scontext }) => {
                 <HoneycombComponent
                   kinds={clusterSummary?.kinds}
                   isClusterLoading={isClusterLoading}
+                  isClusterIdsEmpty={isClusterIdsEmpty}
                 />
               </Grid>
             </Grid>
