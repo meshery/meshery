@@ -18,18 +18,6 @@ type MeshSyncResourcesSummaryAPIResponse struct {
 		Kind  string
 		Count int64
 	} `json:"kinds"`
-	Namespaces   []string                   `json:"namespaces"`
-	Labels       []model.KubernetesKeyValue `json:"labels"`
-	PodSummaries []struct {
-		Status string `json:"status"`
-		Count  int64  `json:"count"`
-	} `json:"podSummaries"`
-	NodeSummaries []struct {
-		Status string `json:"status"`
-		Count  int64  `json:"count"`
-	} `json:"nodeSummaries"`
-	Usage []struct {
-		Resource   string  `json:"resource"`
-		Percentage float64 `json:"percentage"`
-	} `json:"usage"`
+	Namespaces []string                   `json:"namespaces"`
+	Labels     []model.KubernetesKeyValue `json:"labels"`
 }
