@@ -33,12 +33,13 @@ const meshSyncApi = api
       }),
 
       getMeshSyncResourceKinds: builder.query({
-        query: ({ clusterIds = ['all'], namespaces = [], pagesize, order }) => {
+        query: ({ clusterIds = ['all'], namespaces = [], pagesize, order, metrics }) => {
           const params = urlEncodeParams({
             clusterId: clusterIds,
             namespace: namespaces,
             pagesize,
             order,
+            metrics,
           });
           return `system/meshsync/resources/summary?${params}`;
         },
