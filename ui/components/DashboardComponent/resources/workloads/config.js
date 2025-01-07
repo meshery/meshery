@@ -19,7 +19,7 @@ export const WorkloadTableConfig = (
 ) => {
   const ping = useKubernetesHook();
   return {
-    PODS: {
+    Pod: {
       name: 'Pod',
       colViews: [
         ['id', 'na'],
@@ -225,7 +225,7 @@ export const WorkloadTableConfig = (
         },
       ],
     },
-    DEPLOYMENT: {
+    Deployment: {
       name: 'Deployment',
       colViews: [
         ['id', 'na'],
@@ -406,7 +406,7 @@ export const WorkloadTableConfig = (
         },
       ],
     },
-    DAEMONSETS: {
+    DaemonSet: {
       name: 'DaemonSet',
       colViews: [
         ['id', 'na'],
@@ -545,7 +545,7 @@ export const WorkloadTableConfig = (
         },
       ],
     },
-    STATEFULSETS: {
+    StatefulSet: {
       name: 'StatefulSet',
       colViews: [
         ['id', 'na'],
@@ -703,7 +703,7 @@ export const WorkloadTableConfig = (
         },
       ],
     },
-    REPLICASETS: {
+    ReplicaSet: {
       name: 'ReplicaSet',
       colViews: [
         ['id', 'na'],
@@ -873,7 +873,7 @@ export const WorkloadTableConfig = (
         },
       ],
     },
-    REPLICATIONCONTROLLERS: {
+    ReplicationController: {
       name: 'ReplicationController',
       colViews: [
         ['id', 'na'],
@@ -1026,7 +1026,7 @@ export const WorkloadTableConfig = (
         },
       ],
     },
-    JOBS: {
+    Job: {
       name: 'Job',
       colViews: [
         ['id', 'na'],
@@ -1147,7 +1147,7 @@ export const WorkloadTableConfig = (
         },
       ],
     },
-    CRONJOBS: {
+    CronJob: {
       name: 'CronJob',
       colViews: [
         ['id', 'na'],
