@@ -89,6 +89,7 @@ function MeshModelContructs() {
               placement="left"
               interactive={true}
               variant="standard"
+              leaveDelay={200}
               title={`The Meshery Registry is a critical component acting as the central repository for all capabilities known to Meshery. [Learn More](https://docs.meshery.io/concepts/logical/registry)`}
             >
               <IconButton disableRipple={true} disableFocusRipple={true}>
@@ -172,6 +173,7 @@ function MeshModelCategories() {
               placement="left"
               variant="standard"
               interactive={true}
+              leaveDelay={200}
             >
               <IconButton disableRipple={true} disableFocusRipple={true}>
                 <InfoOutlined

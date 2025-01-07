@@ -92,6 +92,7 @@ export default function MesheryConfigurationChart() {
               placement="left"
               interactive={true}
               variant="standard"
+              leaveDelay={200}
               title={`Meshery Designs are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured. [Learn more](https://docs.meshery.io/concepts/logical/designs)`}
             >
               <IconButton disableRipple={true} disableFocusRipple={true}>
