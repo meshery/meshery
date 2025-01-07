@@ -15,8 +15,9 @@ import { bindActionCreators } from 'redux';
 import { setK8sContexts, updateProgress } from 'lib/store';
 import { UsesSistent } from '../SistentWrapper';
 import ConnectCluster from './charts/ConnectCluster';
+import { HoneycombRoot } from './style';
 
-export const styles = (theme) => ({
+const styles = (theme) => ({
   rootClass: { backgroundColor: theme.palette.secondary.elevatedComponents2, marginTop: '1rem' },
   datatable: {
     boxShadow: 'none',
@@ -74,7 +75,7 @@ export const styles = (theme) => ({
     color: '#000',
   },
   dashboardSection: {
-    backgroundColor: theme.palette.secondary.elevatedComponents ?? '#202020',
+    backgroundColor: theme.palette.secondary.elevatedComponents,
     padding: theme.spacing(2),
     borderRadius: 4,
     height: '100%',
@@ -131,7 +132,15 @@ const Overview = ({ classes, selectedK8sContexts, k8scontext }) => {
   );
 
   if (clusterIds.length === 0) {
-    return <ConnectCluster message="No workloads found in your cluster(s)." />;
+    return (
+      <UsesSistent>
+        <div className={classes.rootClass}>
+          <HoneycombRoot>
+            <ConnectCluster message="No clusters available. Please connect your clusters to proceed." />
+          </HoneycombRoot>
+        </div>
+      </UsesSistent>
+    );
   }
 
   const isClusterLoading = isFetching || isLoading;
