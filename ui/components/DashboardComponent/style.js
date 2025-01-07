@@ -54,7 +54,7 @@ export const HoneycombCell = styled('li')(({ row, column }) => ({
   gridColumn: `${column} / span 4`,
   position: 'relative',
   pointerEvents: 'none',
-  transform: row % 2 ? 'translateX(25%)' : 'translateX(-25%)',
+  transform: row % 2 ? 'translateX(24%)' : 'translateX(-26%)',
 }));
 
 export const HoneycombContainer = styled('ul')(({ columnSize, columns, rowSize }) => ({
@@ -69,7 +69,7 @@ export const HoneycombContainer = styled('ul')(({ columnSize, columns, rowSize }
 export const HexagonWrapper = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.mode === 'dark' ? '#363636' : '#e9eff1', // TODO: this is the honeycomb color add this token in sistent
   position: 'absolute',
-  inset: '2px',
+  inset: '3.5px',
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
