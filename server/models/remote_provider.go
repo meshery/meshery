@@ -125,7 +125,13 @@ func (l *RemoteProvider) loadCapabilities(token string) ProviderProperties {
 	// If not token is provided then make a simple GET request
 	if token == "" {
 		c := &http.Client{}
-		resp, err = c.Do(req)
+		for i := 0; i < 10; i++ {
+			resp, err = c.Do(req)
+			if err == nil && resp != nil {
+				break
+			}
+			l.Log.Info("Retrying to fetch capabilities ", i)
+		}
 	} else {
 		// Proceed to make a request with the token
 		resp, err = l.DoRequest(req, token)
