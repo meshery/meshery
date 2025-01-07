@@ -12,7 +12,7 @@ import { InfoOutlined } from '@material-ui/icons';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
-import { DashboardSection } from './style';
+import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
 
 export default function ConnectionStatsChart() {

@@ -2,10 +2,10 @@ import React from 'react';
 import { gauge } from 'billboard.js';
 import { Box, Typography, Stack, KEPPEL, SAFFRON, CircularProgress } from '@layer5/sistent';
 import BBChart from '@/components/BBChart';
-import { LoadingContainer } from './style';
 import ConnectCluster from './ConnectCluster';
+import { LoadingContainer, ChartSectionWithColumn } from '../style';
 
-export const ResourceUtilizationChart = ({ classes, usageData, isClusterLoading }) => {
+export const ResourceUtilizationChart = ({ usageData, isClusterLoading }) => {
   const commonConfig = {
     gauge: {
       max: 100,
@@ -52,13 +52,7 @@ export const ResourceUtilizationChart = ({ classes, usageData, isClusterLoading 
   };
 
   return (
-    <div
-      className={classes.dashboardSection}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
+    <ChartSectionWithColumn>
       <Stack direction="row" mb={4}>
         <Typography variant="h6">Resource Utilization</Typography>
       </Stack>
@@ -103,6 +97,6 @@ export const ResourceUtilizationChart = ({ classes, usageData, isClusterLoading 
           </>
         )}
       </Box>
-    </div>
+    </ChartSectionWithColumn>
   );
 };

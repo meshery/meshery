@@ -2,12 +2,13 @@ import React from 'react';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { Stack } from '@mui/material';
-import { CircularProgress, Typography } from '@layer5/sistent';
+import { CircularProgress, KEPPEL, Typography } from '@layer5/sistent';
 import { getLegendTemplate } from './utils';
 import ConnectCluster from './ConnectCluster';
-import { LoadingContainer } from './style';
+import { LoadingContainer, ChartSectionWithColumn, LegendSection } from '../style';
+import { ERROR_COLOR } from '@/constants/colors';
 
-export const NodeStatusChart = ({ classes, nodeData, isClusterLoading }) => {
+export const NodeStatusChart = ({ nodeData, isClusterLoading }) => {
   const data = nodeData?.map((node) => {
     return [node.status, node.count];
   });
@@ -17,9 +18,8 @@ export const NodeStatusChart = ({ classes, nodeData, isClusterLoading }) => {
       columns: data,
       type: donut(),
       colors: {
-        Ready: '#00A18F',
-        'Not Ready': '#D32F2F',
-        Unknown: '#757575',
+        Ready: KEPPEL,
+        'Not Ready': ERROR_COLOR,
       },
     },
     arc: {
@@ -51,17 +51,11 @@ export const NodeStatusChart = ({ classes, nodeData, isClusterLoading }) => {
   };
 
   return (
-    <div
-      className={classes.dashboardSection}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
+    <ChartSectionWithColumn>
       <Stack direction="row" mb={2}>
         <Typography variant="h6">Node Status Overview</Typography>
       </Stack>
-      <div className={classes.chartSection}>
+      <>
         {isClusterLoading ? (
           <LoadingContainer>
             <CircularProgress />
@@ -75,10 +69,10 @@ export const NodeStatusChart = ({ classes, nodeData, isClusterLoading }) => {
         ) : (
           <>
             <BBChart options={chartOptions} />
-            <div id="nodeLegend" className={classes.legendSection}></div>
+            <LegendSection id="nodeLegend"></LegendSection>
           </>
         )}
-      </div>
-    </div>
+      </>
+    </ChartSectionWithColumn>
   );
 };

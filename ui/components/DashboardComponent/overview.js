@@ -14,6 +14,7 @@ import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
 import { bindActionCreators } from 'redux';
 import { setK8sContexts, updateProgress } from 'lib/store';
 import { UsesSistent } from '../SistentWrapper';
+import ConnectCluster from './charts/ConnectCluster';
 
 export const styles = (theme) => ({
   rootClass: { backgroundColor: theme.palette.secondary.elevatedComponents2, marginTop: '1rem' },
@@ -79,19 +80,6 @@ export const styles = (theme) => ({
     height: '100%',
     marginBottom: theme.spacing(2),
   },
-  legendSection: {
-    display: 'flex',
-    gap: '2rem',
-    flexWrap: 'wrap',
-  },
-  chartSection: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    alignContent: 'center',
-    height: '100%',
-    flexDirection: 'column',
-  },
   errorContainer: {
     padding: theme.spacing(2),
     textAlign: 'center',
@@ -138,10 +126,16 @@ const Overview = ({ classes, selectedK8sContexts, k8scontext }) => {
       clusterIds: clusterIds,
     },
     {
-      skip: isClusterIdsEmpty,
+      skip: isClusterIdsEmpty || clusterIds.length === 0,
     },
   );
+
+  if (clusterIds.length === 0) {
+    return <ConnectCluster />;
+  }
+
   const isClusterLoading = isFetching || isLoading;
+
   if (isError) {
     return (
       <NoSsr>
@@ -157,7 +151,7 @@ const Overview = ({ classes, selectedK8sContexts, k8scontext }) => {
         <Provider store={store}>
           <div className={classes.rootClass}>
             <Grid container spacing={2}>
-              <Grid item xs={12} md={12} style={{ marginBottom: '1rem' }}>
+              <Grid item xs={12} md={12}>
                 <HoneycombComponent
                   kinds={clusterSummary?.kinds}
                   isClusterLoading={isClusterLoading}

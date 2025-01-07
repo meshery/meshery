@@ -1,12 +1,21 @@
 import React from 'react';
 import { donut } from 'billboard.js';
 import { Stack } from '@mui/material';
-import { Typography, SAFFRON, CircularProgress } from '@layer5/sistent';
+import {
+  Typography,
+  SAFFRON,
+  CircularProgress,
+  KEPPEL,
+  DARK_SLATE_GRAY,
+  TEAL_BLUE,
+} from '@layer5/sistent';
 import BBChart from '@/components/BBChart';
 import { getLegendTemplate } from './utils';
 import ConnectCluster from './ConnectCluster';
-import { LoadingContainer } from './style';
-export const PodStatusChart = ({ classes, podData, isClusterLoading }) => {
+import { LoadingContainer, ChartSectionWithColumn, LegendSection } from '../style';
+import { ERROR_COLOR } from '@/constants/colors';
+
+export const PodStatusChart = ({ podData, isClusterLoading }) => {
   const columns = podData?.map((pod) => {
     return [pod.status, pod.count];
   });
@@ -17,11 +26,11 @@ export const PodStatusChart = ({ classes, podData, isClusterLoading }) => {
       columns: columns,
       type: donut(),
       colors: {
-        Running: '#00A18F',
+        Running: KEPPEL,
         Pending: SAFFRON,
-        Failed: '#D32F2F',
-        Succeeded: '#1976D2',
-        Unknown: '#757575',
+        Failed: ERROR_COLOR,
+        Succeeded: TEAL_BLUE,
+        Unknown: DARK_SLATE_GRAY,
       },
     },
     arc: {
@@ -52,17 +61,11 @@ export const PodStatusChart = ({ classes, podData, isClusterLoading }) => {
     },
   };
   return (
-    <div
-      className={classes.dashboardSection}
-      style={{
-        display: 'flex',
-        flexDirection: 'column',
-      }}
-    >
+    <ChartSectionWithColumn>
       <Stack direction="row" mb={2}>
         <Typography variant="h6">Pod Status Overview</Typography>
       </Stack>
-      <div className={classes.chartSection}>
+      <>
         {isClusterLoading ? (
           <LoadingContainer>
             <CircularProgress />
@@ -76,10 +79,10 @@ export const PodStatusChart = ({ classes, podData, isClusterLoading }) => {
         ) : (
           <>
             <BBChart options={chartOptions} />
-            <div id="podLegend" className={classes.legendSection}></div>
+            <LegendSection id="podLegend"></LegendSection>
           </>
         )}
-      </div>
-    </div>
+      </>
+    </ChartSectionWithColumn>
   );
 };

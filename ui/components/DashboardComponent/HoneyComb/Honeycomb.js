@@ -1,23 +1,19 @@
 import * as React from 'react';
 import { getColumnSize, getRowSize } from './helpers';
 import HoneycombCell from './HoneycombCell.js';
+import { HoneycombContainer } from '../style';
 
 const Honeycomb = React.forwardRef(({ items, renderItem, size, columns, className }, ref) => {
   const rowSize = getRowSize(size);
   const columnSize = getColumnSize(size);
 
   return (
-    <ul
+    <HoneycombContainer
       ref={ref}
       className={className}
-      style={{
-        display: 'grid',
-        gridTemplateColumns: `repeat(${columns * 4}, ${columnSize}px)`,
-        justifyContent: 'center',
-        gridAutoRows: `${rowSize}px`,
-        padding: `0 ${columnSize}px`,
-        listStyle: 'none',
-      }}
+      columnSize={columnSize}
+      columns={columns}
+      rowSize={rowSize}
     >
       {items.map((item, index) => {
         const row = 1 + Math.floor(index / columns) * 3;
@@ -30,7 +26,7 @@ const Honeycomb = React.forwardRef(({ items, renderItem, size, columns, classNam
           </HoneycombCell>
         );
       })}
-    </ul>
+    </HoneycombContainer>
   );
 });
 

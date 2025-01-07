@@ -13,7 +13,7 @@ import { useGetFiltersQuery } from '@/rtk-query/filter';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
-import { DashboardSection } from './style';
+import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
 
 export default function MesheryConfigurationChart() {
