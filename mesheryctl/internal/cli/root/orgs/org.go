@@ -36,29 +36,36 @@ var OrgCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			return utils.ErrLoadConfig(err)
+			utils.Log.Error(utils.ErrLoadConfig(err))
+			return nil
+
 		}
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		url := fmt.Sprintf("%s/api/identity/orgs?pagsize=%d&page=%d", baseUrl, pageNo, pageSize)
 
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
+
 		defer resp.Body.Close()
 		JsonData, err := io.ReadAll(resp.Body)
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
 		var orgs orgsStruct
 		err = json.Unmarshal(JsonData, &orgs)
 		if err != nil {
-			return err
+			utils.Log.Error(err)
+			return nil
 		}
 
 		var orgsData [][]string
