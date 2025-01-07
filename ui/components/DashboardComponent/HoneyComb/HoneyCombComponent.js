@@ -43,7 +43,7 @@ const HoneycombComponent = (props) => {
         {isClusterLoading || isClusterIdsEmpty ? (
           renderLoadingSkeleton()
         ) : !kinds ? (
-          <ConnectCluster />
+          <ConnectCluster message="No workloads found in your cluster(s)." />
         ) : (
           <>
             {Array.isArray(kinds) && kinds.length > 0 && (

@@ -73,7 +73,7 @@ export const ResourceUtilizationChart = ({ usageData, isClusterLoading }) => {
             <CircularProgress />
           </LoadingContainer>
         ) : !usageData ? (
-          <ConnectCluster />
+          <ConnectCluster message="No workloads found in your cluster(s)." />
         ) : (
           <>
             <Box>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { NoSsr, Grid, Typography, Paper } from '@material-ui/core';
+import { NoSsr, Typography, Paper } from '@material-ui/core';
 import ErrorIcon from '@material-ui/icons/Error';
 import Popup from '../Popup';
 import { withStyles } from '@material-ui/core/styles';
@@ -131,7 +131,7 @@ const Overview = ({ classes, selectedK8sContexts, k8scontext }) => {
   );
 
   if (clusterIds.length === 0) {
-    return <ConnectCluster />;
+    return <ConnectCluster message="No workloads found in your cluster(s)." />;
   }
 
   const isClusterLoading = isFetching || isLoading;
@@ -150,15 +150,11 @@ const Overview = ({ classes, selectedK8sContexts, k8scontext }) => {
         <Popup />
         <Provider store={store}>
           <div className={classes.rootClass}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={12}>
-                <HoneycombComponent
-                  kinds={clusterSummary?.kinds}
-                  isClusterLoading={isClusterLoading}
-                  isClusterIdsEmpty={isClusterIdsEmpty}
-                />
-              </Grid>
-            </Grid>
+            <HoneycombComponent
+              kinds={clusterSummary?.kinds}
+              isClusterLoading={isClusterLoading}
+              isClusterIdsEmpty={isClusterIdsEmpty}
+            />
           </div>
         </Provider>
       </UsesSistent>

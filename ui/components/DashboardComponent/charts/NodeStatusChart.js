@@ -61,7 +61,7 @@ export const NodeStatusChart = ({ nodeData, isClusterLoading }) => {
             <CircularProgress />
           </LoadingContainer>
         ) : !nodeData ? (
-          <ConnectCluster />
+          <ConnectCluster message="No workloads found in your cluster(s)." />
         ) : totalNodes === 0 ? (
           <Typography variant="body1" align="center">
             No nodes are currently in the cluster

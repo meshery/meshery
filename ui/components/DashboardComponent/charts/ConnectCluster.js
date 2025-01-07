@@ -2,11 +2,11 @@ import ConnectClustersBtn from '@/components/General/ConnectClustersBtn';
 import React from 'react';
 import { ConnectClusterWrapper, ConnectClusterText } from '../style';
 
-const ConnectCluster = () => {
+const ConnectCluster = ({ message }) => {
   return (
     <ConnectClusterWrapper>
       <ConnectClusterText variant="h5" align="center">
-        No workloads found in your cluster(s).
+        {message}
       </ConnectClusterText>
       <ConnectClustersBtn />
     </ConnectClusterWrapper>

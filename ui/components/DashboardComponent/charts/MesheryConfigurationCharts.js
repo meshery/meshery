@@ -116,7 +116,11 @@ export default function MesheryConfigurationChart() {
             height: '100%',
           }}
         >
-          {chartData.length > 0 ? <BBChart options={chartOptions} /> : <ConnectCluster />}
+          {chartData.length > 0 ? (
+            <BBChart options={chartOptions} />
+          ) : (
+            <ConnectCluster message={'No connections found in your clusters'} />
+          )}
         </Box>
       </DashboardSection>
     </Link>

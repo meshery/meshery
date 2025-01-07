@@ -71,7 +71,7 @@ export const PodStatusChart = ({ podData, isClusterLoading }) => {
             <CircularProgress />
           </LoadingContainer>
         ) : !podData ? (
-          <ConnectCluster />
+          <ConnectCluster message="No workloads found in your cluster(s)." />
         ) : totalPods === 0 ? (
           <Typography variant="body1" align="center">
             No pods are currently in the cluster

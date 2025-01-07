@@ -261,7 +261,7 @@ const MesherySettings = (props) => {
     );
   }
   return (
-    <UsesSistent>
+    <>
       {CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject) ? (
         <div sx={{ flexGrow: 1, maxWidth: '100%', height: 'auto' }}>
           <UsesSistent>
@@ -439,7 +439,7 @@ const MesherySettings = (props) => {
       ) : (
         <DefaultError />
       )}
-    </UsesSistent>
+    </>
   );
 };
 
