@@ -126,8 +126,8 @@ export const removeDuplicateVersions = (data) => {
  * @property {string} base0D - ITEM_STRING_EXPANDED_COLOR, ARROW_COLOR
  * @property {string} base0E - BOOLEAN_COLOR, NUMBER_COLOR
  */
-export const reactJsonTheme = (themeType, backgroundColor) => ({
-  base00: backgroundColor ? backgroundColor : themeType === 'dark' ? '#303030' : '#ffffff',
+export const reactJsonTheme = (themeType) => ({
+  base00: themeType === 'dark' ? '#303030' : '#ffffff',
   base01: '#444c56',
   base02: themeType === 'dark' ? '#586069' : '#abb2bf',
   base03: '#6a737d',
