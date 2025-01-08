@@ -187,7 +187,7 @@ const ValidationResults_ = (props) => {
       >
         {errorCount == 0 && (
           <Typography varaint="h6" align="center" style={{ marginBlock: '1rem' }} disablePadding>
-            No Validation errors.
+            No validation errors.
           </Typography>
         )}
 
