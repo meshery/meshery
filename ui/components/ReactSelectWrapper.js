@@ -166,12 +166,18 @@ class ReactSelectWrapper extends React.Component {
         color: theme.palette.text.primary,
         '& input': { font: 'inherit' },
       }),
+      menuPortal: (base) => ({
+        ...base,
+        zIndex: 9999,
+      }),
     };
 
     return (
       <div className={classes.root}>
         <NoSsr>
           <CreateSelect
+            menuPortalTarget={document.body}
+            menuPosition="fixed"
             classes={classes}
             styles={selectStyles}
             textFieldProps={{ label, InputLabelProps: { shrink: true }, error }}
