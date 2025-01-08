@@ -1,16 +1,5 @@
 /* eslint-disable react/display-name */
-import {
-  Box,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  Divider,
-  IconButton,
-  NoSsr,
-  TableCell,
-  Typography,
-} from '@material-ui/core';
+
 import {
   CustomColumnVisibilityControl,
   CustomTooltip,
@@ -21,16 +10,25 @@ import {
   importDesignUiSchema,
   publishCatalogItemSchema,
   publishCatalogItemUiSchema,
+  Box,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  IconButton,
+  ResponsiveDataTable,
+  Typography,
 } from '@layer5/sistent';
-import { withStyles } from '@material-ui/core/styles';
-import CloseIcon from '@material-ui/icons/Close';
-import DeleteIcon from '@material-ui/icons/Delete';
-import FullscreenIcon from '@material-ui/icons/Fullscreen';
-import GetAppIcon from '@material-ui/icons/GetApp';
-import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
-import SaveIcon from '@material-ui/icons/Save';
+import { NoSsr } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import DeleteIcon from '@mui/icons-material/Delete';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
+import SaveIcon from '@mui/icons-material/Save';
 import CustomToolbarSelect from './MesheryPatterns/CustomToolbarSelect';
-import AddIcon from '@material-ui/icons/AddCircleOutline';
+import AddIcon from '@mui/icons-material/AddCircleOutline';
 import React, { useEffect, useRef, useState } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import Moment from 'react-moment';
@@ -46,9 +44,9 @@ import {
 import ViewSwitch from './ViewSwitch';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
 import UndeployIcon from '../public/static/img/UndeployIcon';
-import DoneAllIcon from '@material-ui/icons/DoneAll';
-import PublicIcon from '@material-ui/icons/Public';
-import PublishIcon from '@material-ui/icons/Publish';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
+import PublicIcon from '@mui/icons-material/Public';
+import PublishIcon from '@mui/icons-material/Publish';
 import PromptComponent, { PROMPT_VARIANTS } from './PromptComponent';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { FILE_OPS, MesheryPatternsCatalog, VISIBILITY } from '../utils/Enum';
@@ -65,11 +63,11 @@ import { getMeshModels } from '../api/meshmodel';
 import { modifyRJSFSchema } from '../utils/utils';
 import { ResponsiveDataTable } from '@layer5/sistent';
 import useStyles from '../assets/styles/general/tool.styles';
-import { Edit as EditIcon } from '@material-ui/icons';
+import { Edit as EditIcon } from '@mui/icons-material';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
 import InfoModal from './Modals/Information/InfoModal';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { SortableTableCell } from './connections/common/index.js';
 import DefaultError from './General/error-404/index';
 import CAN from '@/utils/can';
@@ -109,122 +107,99 @@ const genericClickHandler = (ev, fn) => {
   fn(ev);
 };
 
-const styles = (theme) => ({
-  grid: {
-    padding: theme.spacing(1),
+const StyledGrid = styled(Box)(({ theme }) => ({
+  padding: theme.spacing(1),
+}));
+
+const TableHeader = styled(Typography)(() => ({
+  fontWeight: 'bolder',
+  fontSize: 18,
+}));
+
+const StyledRow = styled(Box)(() => ({
+  '& .MuiTableRow-root': {
+    cursor: 'pointer',
   },
-  tableHeader: {
-    fontWeight: 'bolder',
-    fontSize: 18,
-  },
-  muiRow: {
-    '& .MuiTableRow-root': {
-      cursor: 'pointer',
-    },
-  },
-  iconPatt: {
-    width: '24px',
-    height: '24px',
-    filter: theme.palette.secondary.brightness,
-  },
-  viewSwitchButton: {
-    justifySelf: 'flex-end',
-    paddingLeft: '1rem',
-    '@media (max-width: 1450px)': {
-      marginRight: '2rem',
-    },
-  },
-  createButton: {
-    display: 'flex',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    whiteSpace: 'nowrap',
-  },
-  UploadImport: {
-    marginLeft: '1.5rem',
-  },
-  noDesignAddButton: {
-    marginTop: '0.5rem',
-  },
-  noDesignContainer: {
-    padding: '2rem',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-  },
-  noDesignButtons: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'row',
-  },
-  noDesignPaper: {
-    padding: '0.5rem',
-    fontSize: '3rem',
-  },
-  noDesignText: {
-    fontSize: '2rem',
-    marginBottom: '2rem',
-  },
-  addIcon: {
-    paddingRight: '.35rem',
-  },
-  visibilityImg: {
-    filter: theme.palette.secondary.img,
-  },
-  searchAndView: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    margin: 'auto',
-    '@media (max-width: 1450px)': {
-      paddingLeft: 0,
-      margin: 0,
-    },
-  },
-  searchWrapper: {
-    justifySelf: 'flex-end',
-    marginLeft: 'auto',
-    paddingLeft: '1rem',
-    display: 'flex',
-    '@media (max-width: 965px)': {
-      width: 'max-content',
-    },
-  },
-  catalogFilter: {
+}));
+
+const IconPatt = styled('div')(({ theme }) => ({
+  width: '24px',
+  height: '24px',
+  filter: theme.palette.secondary.brightness,
+}));
+
+const ViewSwitchButton = styled(Box)(() => ({
+  justifySelf: 'flex-end',
+  paddingLeft: '1rem',
+  '@media (max-width: 1450px)': {
     marginRight: '2rem',
   },
-  btnText: {
-    display: 'block',
-    '@media (max-width: 765px)': {
-      display: 'none',
-    },
+}));
+
+const CreateButton = styled(Box)(() => ({
+  display: 'flex',
+  justifyContent: 'flex-start',
+  alignItems: 'center',
+  whiteSpace: 'nowrap',
+}));
+
+const NoDesignContainer = styled(Box)(() => ({
+  padding: '2rem',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  flexDirection: 'column',
+}));
+
+const AddIconStyled = styled(AddIcon)(() => ({
+  paddingRight: '.35rem',
+}));
+
+const SearchWrapper = styled(Box)(() => ({
+  justifySelf: 'flex-end',
+  marginLeft: 'auto',
+  paddingLeft: '1rem',
+  display: 'flex',
+  '@media (max-width: 965px)': {
+    width: 'max-content',
   },
-  backButton: {
-    marginRight: theme.spacing(2),
+}));
+
+// const CatalogFilter = styled(Box)(() => ({
+//   marginRight: '2rem',
+// }));
+
+const BtnText = styled('span')(() => ({
+  display: 'block',
+  '@media (max-width: 765px)': {
+    display: 'none',
   },
-  yamlDialogTitle: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  yamlDialogTitleText: {
-    flexGrow: 1,
-  },
-  fullScreenCodeMirror: {
+}));
+
+const YamlDialogTitle = styled(DialogTitle)(() => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'end',
+}));
+
+const YamlDialogTitleText = styled(Typography)(() => ({
+  flexGrow: 1,
+}));
+
+const FullScreenCodeMirror = styled(Box)(() => ({
+  height: '100%',
+  '& .CodeMirror': {
+    minHeight: '300px',
     height: '100%',
-    '& .CodeMirror': {
-      minHeight: '300px',
-      height: '100%',
-    },
   },
-  autoComplete: {
-    width: '120px',
-    minWidth: '120px',
-    maxWidth: 150,
-    marginRight: 'auto',
-  },
-});
+}));
+
+const AutoComplete = styled('div')(() => ({
+  width: '120px',
+  minWidth: '120px',
+  maxWidth: 150,
+  marginRight: 'auto',
+}));
 
 function TooltipIcon({ children, onClick, title, placement, disabled }) {
   return (
@@ -237,7 +212,6 @@ function TooltipIcon({ children, onClick, title, placement, disabled }) {
 }
 
 function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
-  const classes = useStyles();
   const [yaml, setYaml] = useState(pattern.pattern_file);
   const [fullScreen, setFullScreen] = useState(false);
 
@@ -254,16 +228,13 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
       fullScreen={fullScreen}
       fullWidth={!fullScreen}
     >
-      <DialogTitle
+      <YamlDialogTitle
         style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'end' }}
         disableTypography
         id="pattern-dialog-title"
-        className={classes.yamlDialogTitle}
       >
         <div>
-          <Typography variant="h6" className={classes.yamlDialogTitleText}>
-            {pattern.name}
-          </Typography>
+          <YamlDialogTitleText variant="h6">{pattern.name}</YamlDialogTitleText>
         </div>
         <div>
           <CustomTooltip
@@ -277,12 +248,11 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
             <CloseIcon />
           </CustomTooltip>
         </div>
-      </DialogTitle>
+      </YamlDialogTitle>
       <Divider variant="fullWidth" light />
       <DialogContent>
-        <CodeMirror
+        <FullScreenCodeMirror
           value={pattern.pattern_file}
-          className={fullScreen ? classes.fullScreenCodeMirror : ''}
           options={{
             theme: 'material',
             lineNumbers: true,
@@ -350,7 +320,6 @@ function resetSelectedPattern() {
 function MesheryPatterns({
   updateProgress,
   user,
-  classes,
   selectedK8sContexts,
   catalogVisibility,
   disableCreateImportDesignButton = false,
@@ -383,7 +352,6 @@ function MesheryPatterns({
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [viewType, setViewType] = useState('grid');
   const { notify } = useNotification();
-  const StyleClass = useStyles();
   const [visibilityFilter, setVisibilityFilter] = useState(null);
 
   const [deployPatternMutation] = useDeployPatternMutation();
@@ -1121,9 +1089,9 @@ function MesheryPatterns({
         searchable: true,
         customHeadRender: function CustomHead({ index, ...column }) {
           return (
-            <TableCell key={index}>
+            <TableHeader key={index}>
               <b>{column.label}</b>
-            </TableCell>
+            </TableHeader>
           );
         },
       },
@@ -1137,9 +1105,9 @@ function MesheryPatterns({
         searchable: false,
         customHeadRender: function CustomHead({ index, ...column }) {
           return (
-            <TableCell key={index}>
+            <TableHeader key={index}>
               <b>{column.label}</b>
-            </TableCell>
+            </TableHeader>
           );
         },
         customBodyRender: function CustomBody(_, tableMeta) {
@@ -1161,7 +1129,9 @@ function MesheryPatterns({
                   }}
                   disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                 >
-                  <EditIcon fill="currentColor" className={classes.iconPatt} />
+                  <IconPatt>
+                    <EditIcon fill="currentColor" />
+                  </IconPatt>
                 </TooltipIcon>
               )}
               {visibility === VISIBILITY.PUBLISHED ? (
@@ -1174,7 +1144,9 @@ function MesheryPatterns({
                   }}
                   disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)}
                 >
-                  <CloneIcon fill="currentColor" className={classes.iconPatt} />
+                  <IconPatt>
+                    <CloneIcon fill="currentColor" />
+                  </IconPatt>
                 </TooltipIcon>
               ) : (
                 <TooltipIcon
@@ -1538,11 +1510,11 @@ function MesheryPatterns({
               isReadOnly={arePatternsReadOnly}
             />
           )}
-          <div className={StyleClass.toolWrapper}>
+          <StyledGrid>
             {width < 600 && isSearchExpanded ? null : (
-              <div style={{ display: 'flex' }}>
+              <CreateButton style={{ display: 'flex' }}>
                 {!selectedPattern.show && (patterns.length >= 0 || viewType === 'table') && (
-                  <div className={classes.createButton}>
+                  <div>
                     {disableCreateImportDesignButton ? null : (
                       <div style={{ display: 'flex', order: '1' }}>
                         <TooltipButton
@@ -1558,8 +1530,8 @@ function MesheryPatterns({
                             !CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)
                           }
                         >
-                          <AddIcon className={classes.addIcon} />
-                          <span className={classes.btnText}> Create Design </span>
+                          <AddIconStyled />
+                          <BtnText> Create Design </BtnText>
                         </TooltipButton>
                         <TooltipButton
                           title="Import Design"
@@ -1572,25 +1544,29 @@ function MesheryPatterns({
                           style={{ display: 'flex', marginRight: '2rem', marginLeft: '-0.6rem' }}
                           disabled={!CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject)}
                         >
-                          <PublishIcon className={classes.addIcon} />
-                          <span className={classes.btnText}> Import Design </span>
+                          <AddIconStyled>
+                            <PublishIcon />
+                          </AddIconStyled>
+                          <BtnText> Import Design </BtnText>
                         </TooltipButton>
                       </div>
                     )}
                   </div>
                 )}
                 {!selectedPattern.show && (
-                  <div className={classes.catalogFilter} style={{ display: 'flex' }}>
-                    {/* <CatalogFilter
+                  <div style={{ display: 'flex' }}>
+                    {/* <StyledCatalogFilter>
+                    <CatalogFilter
                       catalogVisibility={catalogVisibility}
                       handleCatalogVisibility={handleCatalogVisibility}
                       classes={classes}
-                    /> */}
+                    /> 
+                    </StyledCatalogFilter>*/}
                   </div>
                 )}
-              </div>
+              </CreateButton>
             )}
-            <div className={classes.searchWrapper} style={{ display: 'flex' }}>
+            <SearchWrapper style={{ display: 'flex' }}>
               <UsesSistent>
                 <SearchBar
                   onSearch={(value) => {
@@ -1625,23 +1601,27 @@ function MesheryPatterns({
               </UsesSistent>
 
               {!selectedPattern.show && (
-                <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true} />
+                <ViewSwitchButton>
+                  {' '}
+                  <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true} />
+                </ViewSwitchButton>
               )}
-            </div>
-          </div>
+            </SearchWrapper>
+          </StyledGrid>
           {!selectedPattern.show && viewType === 'table' && (
             <>
               <UsesSistent>
-                <ResponsiveDataTable
-                  data={patterns}
-                  columns={columns}
-                  // @ts-ignore
-                  options={options}
-                  className={classes.muiRow}
-                  tableCols={tableCols}
-                  updateCols={updateCols}
-                  columnVisibility={columnVisibility}
-                />
+                <StyledRow>
+                  <ResponsiveDataTable
+                    data={patterns}
+                    columns={columns}
+                    // @ts-ignore
+                    options={options}
+                    tableCols={tableCols}
+                    updateCols={updateCols}
+                    columnVisibility={columnVisibility}
+                  />
+                </StyledRow>
               </UsesSistent>
               <ExportModal
                 downloadModal={downloadModal}
@@ -1737,11 +1717,7 @@ const ImportModal = React.memo((props) => {
           open={true}
           closeModal={handleClose}
           headerIcon={
-            <Pattern
-              fill="#fff"
-              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-              className={undefined}
-            />
+            <Pattern fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
           }
           maxWidth="sm"
           title="Import Design"
@@ -1771,11 +1747,7 @@ const PublishModal = React.memo((props) => {
           aria-label="catalog publish"
           title={title}
           headerIcon={
-            <Pattern
-              fill="#fff"
-              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-              className={undefined}
-            />
+            <Pattern fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
           }
           maxWidth="sm"
         >
@@ -1805,4 +1777,4 @@ const mapStateToProps = (state) => ({
 });
 
 // @ts-ignore
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(MesheryPatterns));
+export default connect(mapStateToProps, mapDispatchToProps)(MesheryPatterns);
