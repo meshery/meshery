@@ -3,3 +3,5 @@ export const ErrorTypes = {
   PAGE_NOT_FOUND: 'PAGE_NOT_FOUND',
   UNKNOWN: 'UNKNOWN',
 };
+
+export const KUBERNETES = 'kubernetes';

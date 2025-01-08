@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
-import { connect } from 'react-redux';
+import { connect, Provider } from 'react-redux';
+import { NoSsr } from '@material-ui/core';
 import { bindActionCreators } from 'redux';
 import {
   CustomTooltip,
@@ -13,6 +14,7 @@ import {
   Tabs,
   Tab,
 } from '@layer5/sistent';
+import DashboardMeshModelGraph from './DashboardComponent/charts/DashboardMeshModelGraph';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faPoll, faDatabase, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
 import { faMendeley } from '@fortawesome/free-brands-svg-icons';
@@ -43,9 +45,12 @@ import {
   PROMETHEUS,
   OVERVIEW,
 } from '@/constants/navigator';
+import Grid from '@material-ui/core/Grid';
 import { removeDuplicateVersions } from './MeshModelRegistry/helper';
 import DefaultError from './General/error-404';
-import Overview from './DashboardComponent/overview';
+import { store } from '../store';
+import MesheryConfigurationChart from './DashboardComponent/charts/MesheryConfigurationCharts';
+import ConnectionStatsChart from './DashboardComponent/charts/ConnectionCharts';
 import { UsesSistent } from './SistentWrapper';
 
 const StyledPaper = styled(Paper)(() => ({
@@ -87,6 +92,11 @@ const StyledIcon = styled('img')(({ theme }) => ({
   verticalAlign: 'text-top',
   width: theme.spacing(1.75),
   marginLeft: theme.spacing(0.5),
+}));
+
+const RootClass = styled('div')(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#303030' : '#eaeff1',
+  marginTop: '1rem',
 }));
 
 function TabContainer(props) {
@@ -328,7 +338,21 @@ const MesherySettings = (props) => {
           </UsesSistent>
           {tabVal === OVERVIEW && (
             <TabContainer>
-              <Overview />
+              <NoSsr>
+                <Provider store={store}>
+                  <RootClass>
+                    <DashboardMeshModelGraph />
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <ConnectionStatsChart />
+                      </Grid>
+                      <Grid item xs={12} md={6}>
+                        <MesheryConfigurationChart />
+                      </Grid>
+                    </Grid>
+                  </RootClass>
+                </Provider>
+              </NoSsr>
             </TabContainer>
           )}
           {tabVal === ADAPTERS &&

@@ -13,7 +13,7 @@ const style = (theme) => ({
 
 function ConnectClustersBtn({ classes }) {
   return (
-    <Link href="/settings">
+    <Link href="/management/connections">
       <Button
         type="submit"
         variant="contained"
