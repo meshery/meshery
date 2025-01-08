@@ -1301,6 +1301,9 @@ func IsValidUrl(path string) bool {
 	if err != nil {
 		return false
 	}
+	if u.Scheme == "ftp" && u.Path == "" {
+		return false
+	}
 	return u.Scheme != "" && u.Host != ""
 }
 

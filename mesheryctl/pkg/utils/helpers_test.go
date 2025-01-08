@@ -557,7 +557,7 @@ func TestIsValidUrl(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			result := IsValidUrl(tt.path)
 			if result != tt.expected {
-				t.Errorf("isPathValidUrl(%s) = %v; want %v", tt.path, result, tt.expected)
+				t.Errorf("IsValidUrl(%s) = %v; want %v", tt.path, result, tt.expected)
 			}
 		})
 	}
@@ -583,11 +583,11 @@ func TestIsDirectory(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			result, err := IsDirectory(tt.path)
 			if (err != nil) != tt.expectError {
-				t.Errorf("isPathDirectory(%s) unexpected error state: got %v, want error %v", tt.path, err, tt.expectError)
+				t.Errorf("IsDirectory(%s) unexpected error state: got %v, want error %v", tt.path, err, tt.expectError)
 				return
 			}
 			if result != tt.expected {
-				t.Errorf("isPathDirectory(%s) = %v; want %v", tt.path, result, tt.expected)
+				t.Errorf("IsDirectory(%s) = %v; want %v", tt.path, result, tt.expected)
 			}
 		})
 	}
