@@ -41,7 +41,7 @@ var OrgCmd = &cobra.Command{
 
 		}
 		baseUrl := mctlCfg.GetBaseMesheryURL()
-		url := fmt.Sprintf("%s/api/identity/orgs?pagsize=%d&page=%d", baseUrl, pageNo, pageSize)
+		url := fmt.Sprintf("%s/api/identity/orgs?page=%d&pagesize=%d", baseUrl, pageNo, pageSize)
 
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
