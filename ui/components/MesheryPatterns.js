@@ -14,7 +14,6 @@ import {
 import {
   CustomColumnVisibilityControl,
   CustomTooltip,
-  DeploymentsIcon,
   OutlinedPatternIcon,
   SearchBar,
   UniversalFilter,
@@ -698,7 +697,7 @@ function MesheryPatterns({
     e.stopPropagation();
     designLifecycleModal.openModal({
       title: `Deploy design "${name}"`,
-      headerIcon: <DoneAllIcon fill="#fff" height={'2rem'} width={'2rem'} />,     
+      headerIcon: <DoneAllIcon fill="#fff" height={'2rem'} width={'2rem'} />,
       reactNode: (
         <DeployStepper
           handleClose={designLifecycleModal.closeModal}
@@ -717,7 +716,7 @@ function MesheryPatterns({
     const design = parseDesignFile(pattern_file);
     designLifecycleModal.openModal({
       title: `Undeploy design "${name}"`,
-      headerIcon: <UndeployIcon fill="#fff" height={'2rem'} width={'2rem'} />,     
+      headerIcon: <UndeployIcon fill="#fff" height={'2rem'} width={'2rem'} />,
       reactNode: (
         <UnDeployStepper
           handleClose={designLifecycleModal.closeModal}
@@ -737,7 +736,7 @@ function MesheryPatterns({
     const design = parseDesignFile(pattern_file);
     designLifecycleModal.openModal({
       title: `Dryrun design "${name}"`,
-      headerIcon: <DryRunIcon fill="#fff" height={'2rem'} width={'2rem'} />,     
+      headerIcon: <DryRunIcon fill="#fff" height={'2rem'} width={'2rem'} />,
       reactNode: (
         <ModalBody style={{ minWidth: '30rem', width: 'auto' }}>
           <DryRunDesign
@@ -758,7 +757,7 @@ function MesheryPatterns({
     const design = parseDesignFile(pattern_file);
     designLifecycleModal.openModal({
       title: `Validate design "${name}"`,
-      headerIcon: <CheckIcon fill="#fff" height={'2rem'} width={'2rem'} />,     
+      headerIcon: <CheckIcon fill="#fff" height={'2rem'} width={'2rem'} />,
       reactNode: (
         <ModalBody style={{ minWidth: '30rem', width: 'auto' }}>
           <ValidateDesign
