@@ -64,38 +64,55 @@ var importModelCmd = &cobra.Command{
 			}
 			return nil
 		}
-		info, err := os.Stat(path)
-		if err != nil {
-			return models.ErrFolderStat(err, path)
-		}
-
-		var tarData []byte
-		var fileName string
-
-		if info.IsDir() {
-			var buf bytes.Buffer
-			err = meshkitutils.Compress(path, &buf)
-			if err != nil {
-				return err
-			}
-			tarData = buf.Bytes()
-			fileName = filepath.Base(path) + ".tar.gz"
-		} else {
-			fileData, err := os.ReadFile(path)
-			if err != nil {
-				return utils.ErrFileRead(err)
-			}
-			tarData = fileData
-			fileName = filepath.Base(path)
-		}
-
-		err = registerModel(tarData, nil, nil, fileName, "file", "", true)
+		isPathDirectory, err := utils.IsDirectory(path)
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
 		}
+		if isPathDirectory {
+			err := registerModelFromDirectory(path, !register)
+			if err != nil {
+				utils.Log.Error(err)
+			}
+			return nil
+		}
+
+		var fileName = filepath.Base(path)
+		fileData, err := os.ReadFile(path)
+		if err != nil {
+			utils.Log.Error(err)
+			return nil
+		}
+
+		err = registerModelFromFile(fileData, fileName, !register)
+		if err != nil {
+			utils.Log.Error(err)
+		}
 		return nil
 	},
+}
+
+func registerModelFromDirectory(path string, registerFlag bool) error {
+	var buf bytes.Buffer
+	err := meshkitutils.Compress(path, &buf)
+	if err != nil {
+		return err
+	}
+	tarData := buf.Bytes()
+	fileName := filepath.Base(path) + ".tar.gz"
+	err = registerModelFromFile(tarData, fileName, registerFlag)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func registerModelFromFile(data []byte, fileName string, registerFlag bool) error {
+	err := registerModel(data, nil, nil, fileName, "file", "", registerFlag)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func registerModel(data []byte, componentData []byte, relationshipData []byte, filename string, dataType string, sourceURI string, register bool) error {

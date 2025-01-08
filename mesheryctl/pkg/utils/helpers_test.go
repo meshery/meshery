@@ -538,3 +538,57 @@ func TestSetOverrideValues(t *testing.T) {
 		}
 	}
 }
+
+func TestIsValidUrl(t *testing.T) {
+	tests := []struct {
+		name     string
+		path     string
+		expected bool
+	}{
+		{"valid http URL", "http://example.com", true},
+		{"valid https URL", "https://example.com", true},
+		{"valid git URL", "git://example.com/repo.git", true},
+		{"invalid URL missing scheme", "example.com", false},
+		{"invalid ftp URL", "ftp://example.com", false},
+		{"empty path", "", false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result := IsValidUrl(tt.path)
+			if result != tt.expected {
+				t.Errorf("isPathValidUrl(%s) = %v; want %v", tt.path, result, tt.expected)
+			}
+		})
+	}
+}
+
+func TestIsDirectory(t *testing.T) {
+	tempDir := t.TempDir()
+	f, _ := os.CreateTemp("", "tempFile")
+	defer os.Remove(f.Name())
+	tests := []struct {
+		name        string
+		path        string
+		expected    bool
+		expectError bool
+	}{
+		{"valid directory", tempDir, true, false},
+		{"valid file", f.Name(), false, false},
+		{"non-existent path", "./nonexistent", false, true},
+		{"empty path", "", false, true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := IsDirectory(tt.path)
+			if (err != nil) != tt.expectError {
+				t.Errorf("isPathDirectory(%s) unexpected error state: got %v, want error %v", tt.path, err, tt.expectError)
+				return
+			}
+			if result != tt.expected {
+				t.Errorf("isPathDirectory(%s) = %v; want %v", tt.path, result, tt.expected)
+			}
+		})
+	}
+}

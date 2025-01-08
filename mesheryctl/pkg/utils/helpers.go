@@ -1303,3 +1303,11 @@ func IsValidUrl(path string) bool {
 	}
 	return u.Scheme != "" && u.Host != ""
 }
+
+func IsDirectory(path string) (bool, error) {
+	info, err := os.Stat(path)
+	if err != nil {
+		return false, err
+	}
+	return info.IsDir(), nil
+}
