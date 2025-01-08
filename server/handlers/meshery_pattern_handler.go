@@ -1914,7 +1914,9 @@ func (h *Handler) GetMesheryPatternHandler(
 
 	// deprettify pattern for backward compatibility with older designs which had the configuration in prettified format
 	var design patternV1beta1.PatternFile
-	err = yaml.Unmarshal([]byte(pattern.PatternFile), &design)
+	err = encoding.Unmarshal([]byte(pattern.PatternFile), &design)
+
+	// err := encoding.Unmarshal([]byte(mesheryPattern.PatternFile), &v1alpha1PatternFile)
 
 	if err != nil {
 		err = ErrParsePattern(err)
@@ -1927,7 +1929,7 @@ func (h *Handler) GetMesheryPatternHandler(
 		component.Configuration = core.Format.DePrettify(component.Configuration, false)
 	}
 
-	patternBytes, err := yaml.Marshal(design)
+	patternBytes, err := encoding.Marshal(design)
 	pattern.PatternFile = string(patternBytes)
 	// done deprettifying
 
