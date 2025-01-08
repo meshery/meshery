@@ -34,10 +34,10 @@ const FormatterContext = React.createContext({
 });
 const LevelContext = React.createContext(0);
 
-export const ColourContainer = styled('div')({
-  backgroundColor: '#212121',
+export const ColourContainer = styled('div')(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? '#212121' : '#e9eff1',
   padding: '1rem',
-});
+}));
 
 export const JSONViewFormatter = ({ data }) => {
   const theme = useTheme();

@@ -4,7 +4,6 @@ import { TooltipIconButton } from '../../utils/TooltipButton';
 import { Paper, Typography } from '@material-ui/core';
 import { Box, ErrorBoundary, OperatorDataFormatter, useResourceCleanData } from '@layer5/sistent';
 import { ALL_VIEW } from './resources/config';
-import _ from 'lodash';
 import GetNodeIcon from '../configuratorComponents/MeshModel/NodeIcon';
 import { JsonParse } from '../../utils/utils';
 import { FALLBACK_MESHERY_IMAGE_PATH } from '@/constants/common';
