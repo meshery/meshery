@@ -37,8 +37,6 @@ If you are on macOS or Linux system, you can download, install, and run both `me
   </div>
 </pre>
 
-The script above downloads Meshery's command line interface, <code>mesheryctl</code>.
-
 {% include alert.html type="info" title="Meshery CLI" content="Meshery's command line interface, <code>mesheryctl</code>, can be installed in <a href='/installation/mesheryctl'>various ways</a>. In addition to <a href='/installation/linux-mac/bash'>Bash</a>, you can also use <a href='/installation/linux-mac/brew'>Brew</a> or <a href='/installation/windows/scoop'>Scoop</a> to install <code>mesheryctl</code>. Alternatively, <code>mesheryctl</code> is also available via <a href='https://github.com/meshery/meshery/releases/latest'>direct download</a>." %}
 
 ## 2. Access Meshery
