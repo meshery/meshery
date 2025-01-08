@@ -1,3 +1,17 @@
+// Copyright Meshery Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 package orgs
 
 import (
@@ -16,6 +30,7 @@ import (
 var (
 	pageNo   int
 	pageSize int
+	name     string
 )
 
 type orgsStruct struct {
@@ -24,8 +39,12 @@ type orgsStruct struct {
 
 var OrgCmd = &cobra.Command{
 	Use:   "org",
-	Short: "show existing organizations with their name,id, date of creation",
-	Long:  "show existing organiazations with their name, id, date of creation",
+	Short: "List registered orgs",
+	Long: `Print all registered organizations with their id, name and date of creation. Organization will be returned based on provider you logged in.
+	
+	Documentation for organizations can be found at 
+	https://docs.layer5.io/cloud/identity/organizations/
+	`,
 	Example: `
 	// list all organizations
 	mesheryctl exp org
@@ -69,7 +88,7 @@ var OrgCmd = &cobra.Command{
 		}
 
 		var orgsData [][]string
-		columnNames := []string{"Name", "Id", "Created-At"}
+		columnNames := []string{"NAME", "ID", "CREATED-AT"}
 
 		for _, org := range orgs.Orgs {
 			orgsData = append(orgsData, []string{org.Name, org.ID.String(), org.CreatedAt.String()})
@@ -84,4 +103,5 @@ var OrgCmd = &cobra.Command{
 func init() {
 	OrgCmd.Flags().IntVarP(&pageNo, "page", "p", 0, "page number to fetch")
 	OrgCmd.Flags().IntVarP(&pageSize, "page_size", "s", 10, "page size")
+	OrgCmd.Flags().StringVarP(&name, "grab", "g", "", "name of organization to search")
 }
