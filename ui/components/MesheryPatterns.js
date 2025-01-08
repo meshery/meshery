@@ -697,7 +697,7 @@ function MesheryPatterns({
     const design = parseDesignFile(pattern_file);
     e.stopPropagation();
     designLifecycleModal.openModal({
-      title: `Deploy design "${name}`,
+      title: `Deploy design "${name}"`,
       headerIcon: <DoneAllIcon fill="#fff" height={'2rem'} width={'2rem'} />,     
       reactNode: (
         <DeployStepper
@@ -716,7 +716,7 @@ function MesheryPatterns({
     e.stopPropagation();
     const design = parseDesignFile(pattern_file);
     designLifecycleModal.openModal({
-      title: `Undeploy design "${name}`,
+      title: `Undeploy design "${name}"`,
       headerIcon: <UndeployIcon fill="#fff" height={'2rem'} width={'2rem'} />,     
       reactNode: (
         <UnDeployStepper
@@ -736,7 +736,7 @@ function MesheryPatterns({
 
     const design = parseDesignFile(pattern_file);
     designLifecycleModal.openModal({
-      title: `Dryrun design "${name}`,
+      title: `Dryrun design "${name}"`,
       headerIcon: <DryRunIcon fill="#fff" height={'2rem'} width={'2rem'} />,     
       reactNode: (
         <ModalBody style={{ minWidth: '30rem', width: 'auto' }}>
@@ -757,7 +757,7 @@ function MesheryPatterns({
 
     const design = parseDesignFile(pattern_file);
     designLifecycleModal.openModal({
-      title: `Validate design "${name}`,
+      title: `Validate design "${name}"`,
       headerIcon: <CheckIcon fill="#fff" height={'2rem'} width={'2rem'} />,     
       reactNode: (
         <ModalBody style={{ minWidth: '30rem', width: 'auto' }}>
