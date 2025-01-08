@@ -5,3 +5,6 @@ export const ErrorTypes = {
 };
 
 export const KUBERNETES = 'kubernetes';
+
+export const FALLBACK_MESHERY_IMAGE_PATH =
+  '/static/img/meshmodels/meshery-core/color/meshery-core-color.svg';
