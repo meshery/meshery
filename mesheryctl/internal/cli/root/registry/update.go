@@ -59,8 +59,8 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		spreadsheetCred, _ := cmd.Flags().GetString("spreadsheet-cred")
 
 		if spreadsheetID == "" || spreadsheetCred == "" {
-			cmd.Help()
-			return ErrUpdateRegistry(fmt.Errorf("missing required fields: spreadsheet ID and credentials"), modelLocation)
+			utils.Log.Error(fmt.Errorf("missing required fields: spredsheet ID and credentials"))
+			return cmd.Help()
 		}
 
 		err := os.MkdirAll(logDirPath, 0755)
@@ -76,7 +76,6 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		srv, err := mutils.NewSheetSRV(spreadsheeetCred)
 		if err != nil {
 			utils.Log.Error(ErrUpdateRegistry(err, modelLocation))
@@ -99,9 +98,8 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		return nil
 	},
 }
-var (
-	ExcludeDirs = []string{"relationships", "policies"}
-)
+
+var ExcludeDirs = []string{"relationships", "policies"}
 
 type compUpdateTracker struct {
 	totalComps        int
@@ -278,5 +276,4 @@ func init() {
 	updateCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "", "specific model name to be generated")
 
 	updateCmd.MarkFlagsRequiredTogether("spreadsheet-id", "spreadsheet-cred")
-
 }
