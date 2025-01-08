@@ -1,39 +1,27 @@
 /* eslint-disable react/display-name */
 import React, { useState, useEffect, useRef } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import {
-  NoSsr,
-  TableCell,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Divider,
-  Typography,
-  Button,
-} from '@material-ui/core';
+import { NoSsr } from '@mui/material';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
-import DeleteIcon from '@material-ui/icons/Delete';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Moment from 'react-moment';
-import CloseIcon from '@material-ui/icons/Close';
-import EditIcon from '@material-ui/icons/Edit';
+import CloseIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
 import PromptComponent from './PromptComponent';
-import FullscreenIcon from '@material-ui/icons/Fullscreen';
-import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import { FILE_OPS, MesheryFiltersCatalog, VISIBILITY } from '../utils/Enum';
 import ViewSwitch from './ViewSwitch';
 import FiltersGrid from './MesheryFilters/FiltersGrid';
 import { trueRandom } from '../lib/trueRandom';
-import GetAppIcon from '@material-ui/icons/GetApp';
-import PublicIcon from '@material-ui/icons/Public';
-import PublishIcon from '@material-ui/icons/Publish';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import PublicIcon from '@mui/icons-material/Public';
+import PublishIcon from '@mui/icons-material/Publish';
 import downloadContent from '../utils/fileDownloader';
 import CloneIcon from '../public/static/img/CloneIcon';
-import SaveIcon from '@material-ui/icons/Save';
+import SaveIcon from '@mui/icons-material/Save';
 import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubscription';
 import fetchCatalogFilter from './graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../css/icons.styles';
@@ -54,13 +42,20 @@ import {
   importFilterUiSchema,
   publishCatalogItemSchema,
   publishCatalogItemUiSchema,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogActions,
+  Divider,
+  Typography,
+  Button,
+  Box,
+  styled,
 } from '@layer5/sistent';
-import useStyles from '../assets/styles/general/tool.styles';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
-import { Box } from '@mui/material';
 import InfoModal from './Modals/Information/InfoModal';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { SortableTableCell } from './connections/common/index.js';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -79,53 +74,52 @@ import {
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 
-const styles = (theme) => ({
-  grid: {
-    padding: theme.spacing(2),
-  },
-  tableHeader: {
-    fontWeight: 'bolder',
-    fontSize: 18,
-  },
-  createButton: {
-    width: 'fit-content',
-    alignSelf: 'flex-start',
-  },
-  viewSwitchButton: {
-    justifySelf: 'flex-end',
-    paddingLeft: '1rem',
-  },
-  ymlDialogTitle: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  searchWrapper: {
-    justifySelf: 'flex-end',
-    marginLeft: 'auto',
-    paddingLeft: '1rem',
-    display: 'flex',
-  },
+const GridWrapper = styled('div')(({ theme }) => ({
+  padding: theme.spacing(2),
+}));
 
-  ymlDialogTitleText: {
-    flexGrow: 1,
-  },
-  fullScreenCodeMirror: {
+const TableHeader = styled(ResponsiveDataTable)(() => ({
+  fontWeight: 'bolder',
+  fontSize: 18,
+}));
+
+const CreateButton = styled(Button)(() => ({
+  width: 'fit-content',
+  alignSelf: 'flex-start',
+}));
+
+const ViewSwitchButton = styled('div')(() => ({
+  justifySelf: 'flex-end',
+  paddingLeft: '1rem',
+}));
+
+const YmlDialogTitle = styled(DialogTitle)(() => ({
+  display: 'flex',
+  alignItems: 'center',
+}));
+
+const YmlDialogTitleText = styled(Typography)(() => ({
+  flexGrow: 1,
+}));
+
+const FullScreenCodeMirrorWrapper = styled('div')(() => ({
+  height: '100%',
+  '& .CodeMirror': {
+    minHeight: '300px',
     height: '100%',
-    '& .CodeMirror': {
-      minHeight: '300px',
-      height: '100%',
-    },
   },
-  visibilityImg: {
-    filter: theme.palette.secondary.img,
+}));
+
+const BtnText = styled('span')(({ theme }) => ({
+  display: 'block',
+  [theme.breakpoints.down('700')]: {
+    display: 'none',
   },
-  btnText: {
-    display: 'block',
-    '@media (max-width: 700px)': {
-      display: 'none',
-    },
-  },
-});
+}));
+
+const ActionsBox = styled(Box)(() => ({
+  display: 'flex',
+}));
 
 function TooltipIcon({ children, onClick, title }) {
   return (
@@ -135,7 +129,7 @@ function TooltipIcon({ children, onClick, title }) {
   );
 }
 
-function YAMLEditor({ filter, onClose, onSubmit, classes }) {
+function YAMLEditor({ filter, onClose, onSubmit }) {
   const [fullScreen, setFullScreen] = useState(false);
 
   const toggleFullScreen = () => {
@@ -163,29 +157,28 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
       fullScreen={fullScreen}
       fullWidth={!fullScreen}
     >
-      <DialogTitle disableTypography id="filter-dialog-title" className={classes.ymlDialogTitle}>
-        <Typography variant="h6" className={classes.ymlDialogTitleText}>
-          {filter.name}
-        </Typography>
-        <TooltipIcon
-          title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-          onClick={toggleFullScreen}
-        >
-          {fullScreen ? (
-            <FullscreenExitIcon style={iconMedium} />
-          ) : (
-            <FullscreenIcon style={iconMedium} />
-          )}
-        </TooltipIcon>
-        <TooltipIcon title="Exit" onClick={onClose}>
-          <CloseIcon style={iconMedium} />
-        </TooltipIcon>
-      </DialogTitle>
+      <YmlDialogTitle>
+        <DialogTitle disableTypography id="filter-dialog-title">
+          <YmlDialogTitleText variant="h6">{filter.name}</YmlDialogTitleText>
+          <TooltipIcon
+            title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+            onClick={toggleFullScreen}
+          >
+            {fullScreen ? (
+              <FullscreenExitIcon style={iconMedium} />
+            ) : (
+              <FullscreenIcon style={iconMedium} />
+            )}
+          </TooltipIcon>
+          <TooltipIcon title="Exit" onClick={onClose}>
+            <CloseIcon style={iconMedium} />
+          </TooltipIcon>
+        </DialogTitle>
+      </YmlDialogTitle>
       <Divider variant="fullWidth" light />
-      <DialogContent>
+      <FullScreenCodeMirrorWrapper>
         <CodeMirror
           value={config}
-          className={fullScreen ? classes.fullScreenCodeMirror : ''}
           options={{
             theme: 'material',
             lineNumbers: true,
@@ -196,7 +189,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
           }}
           onChange={(_, data, val) => setYaml(val)}
         />
-      </DialogContent>
+      </FullScreenCodeMirrorWrapper>
       <Divider variant="fullWidth" light />
       <DialogActions>
         <CustomTooltip title="Update Filter">
@@ -247,7 +240,6 @@ function resetSelectedFilter() {
 function MesheryFilters({
   updateProgress,
   user,
-  classes,
   catalogVisibility,
   // toggleCatalogContent,
 }) {
@@ -271,7 +263,6 @@ function MesheryFilters({
 
   //hooks
   const { notify } = useNotification();
-  const StyleClass = useStyles();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const [infoModal, setInfoModal] = useState({
@@ -836,9 +827,9 @@ function MesheryFilters({
         searchable: true,
         customHeadRender: function CustomHead({ index, ...column }) {
           return (
-            <TableCell key={index}>
+            <TableHeader key={index}>
               <b>{column.label}</b>
-            </TableCell>
+            </TableHeader>
           );
         },
       },
@@ -852,16 +843,16 @@ function MesheryFilters({
         searchable: false,
         customHeadRender: function CustomHead({ index, ...column }) {
           return (
-            <TableCell key={index}>
+            <TableHeader key={index}>
               <b>{column.label}</b>
-            </TableCell>
+            </TableHeader>
           );
         },
         customBodyRender: function CustomBody(_, tableMeta) {
           const rowData = filters[tableMeta.rowIndex];
           const visibility = filters[tableMeta.rowIndex]?.visibility;
           return (
-            <Box
+            <ActionsBox
               sx={{
                 display: 'flex',
               }}
@@ -876,7 +867,7 @@ function MesheryFilters({
                   }}
                   disabled={!CAN(keys.CLONE_WASM_FILTER.action, keys.CLONE_WASM_FILTER.subject)}
                 >
-                  <CloneIcon fill="currentColor" className={classes.iconPatt} />
+                  <CloneIcon fill="currentColor" />
                 </TooltipIcon>
               ) : (
                 <TooltipIcon
@@ -927,7 +918,7 @@ function MesheryFilters({
                   <PublicIcon fill="#F91313" data-cy="unpublish-button" />
                 </TooltipIcon>
               )}
-            </Box>
+            </ActionsBox>
           );
         },
       },
@@ -1174,14 +1165,13 @@ function MesheryFilters({
                 filter={selectedRowData}
                 onClose={resetSelectedRowData()}
                 onSubmit={handleSubmit}
-                classes={classes}
               />
             )}
-            <div className={StyleClass.toolWrapper}>
+            <GridWrapper>
               {width < 600 && isSearchExpanded ? null : (
                 <div style={{ display: 'flex' }}>
                   {!selectedFilter.show && (filters.length > 0 || viewType === 'table') && (
-                    <div className={classes.createButton}>
+                    <CreateButton>
                       <div>
                         <Button
                           aria-label="Add Filter"
@@ -1193,26 +1183,22 @@ function MesheryFilters({
                           style={{ marginRight: '2rem' }}
                           disabled={!CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject)}
                         >
-                          <PublishIcon
-                            style={iconMedium}
-                            className={classes.addIcon}
-                            data-cy="import-button"
-                          />
-                          <span className={classes.btnText}> Import Filters </span>
+                          <PublishIcon style={iconMedium} data-cy="import-button" />
+                          <BtnText> Import Filters </BtnText>
                         </Button>
                       </div>
-                    </div>
+                    </CreateButton>
                   )}
-                  <div style={{ jdisplay: 'flex' }}>
+                  <ViewSwitchButton style={{ jdisplay: 'flex' }}>
                     {/* <CatalogFilter
                       catalogVisibility={catalogVisibility}
                       handleCatalogVisibility={handleCatalogVisibility}
                       classes={classes}
                     /> */}
-                  </div>
+                  </ViewSwitchButton>
                 </div>
               )}
-              <div className={classes.searchWrapper} style={{ display: 'flex' }}>
+              <div style={{ display: 'flex' }}>
                 <UsesSistent>
                   <SearchBar
                     onSearch={(value) => {
@@ -1248,7 +1234,7 @@ function MesheryFilters({
                   <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
                 )}
               </div>
-            </div>
+            </GridWrapper>
             {!selectedFilter.show && viewType === 'table' && (
               <UsesSistent>
                 <ResponsiveDataTable
@@ -1259,7 +1245,6 @@ function MesheryFilters({
                   columnVisibility={columnVisibility}
                   // @ts-ignore
                   options={options}
-                  className={classes.muiRow}
                 />
               </UsesSistent>
             )}
@@ -1340,11 +1325,7 @@ const ImportModal = React.memo((props) => {
         open={true}
         closeModal={handleClose}
         headerIcon={
-          <Filter
-            fill="#fff"
-            style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-            className={undefined}
-          />
+          <Filter fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
         }
         title="Import Design"
         maxWidth="sm"
@@ -1369,11 +1350,7 @@ const PublishModal = React.memo((props) => {
       <SistentModal
         open={true}
         headerIcon={
-          <Filter
-            fill="#fff"
-            style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-            className={undefined}
-          />
+          <Filter fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
         }
         closeModal={handleClose}
         aria-label="catalog publish"
@@ -1407,4 +1384,4 @@ const mapStateToProps = (state) => {
 };
 
 // @ts-ignore
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(MesheryFilters));
+export default connect(mapStateToProps, mapDispatchToProps)(MesheryFilters);
