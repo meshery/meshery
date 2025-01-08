@@ -52,7 +52,6 @@ const View = (props) => {
   const { setView, resource, k8sConfig } = props;
   const { getResourceCleanData } = useResourceCleanData();
   const cleanData = getResourceCleanData({ resource: resource });
-  console.log('amit cleanData is here', cleanData);
 
   const ping = useKubernetesHook();
   const context = getK8sContextFromClusterId(resource.cluster_id, k8sConfig);
