@@ -19,6 +19,7 @@ import {
   IconButton,
   ResponsiveDataTable,
   Typography,
+  styled,
 } from '@layer5/sistent';
 import { NoSsr } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
@@ -30,7 +31,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import CustomToolbarSelect from './MesheryPatterns/CustomToolbarSelect';
 import AddIcon from '@mui/icons-material/AddCircleOutline';
 import React, { useEffect, useRef, useState } from 'react';
-import { UnControlled as CodeMirror } from 'react-codemirror2';
+// import { UnControlled as CodeMirror } from 'react-codemirror2';
 import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -61,8 +62,6 @@ import { EVENT_TYPES } from '../lib/event-types';
 import _ from 'lodash';
 import { getMeshModels } from '../api/meshmodel';
 import { modifyRJSFSchema } from '../utils/utils';
-import { ResponsiveDataTable } from '@layer5/sistent';
-import useStyles from '../assets/styles/general/tool.styles';
 import { Edit as EditIcon } from '@mui/icons-material';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
@@ -143,14 +142,6 @@ const CreateButton = styled(Box)(() => ({
   whiteSpace: 'nowrap',
 }));
 
-const NoDesignContainer = styled(Box)(() => ({
-  padding: '2rem',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  flexDirection: 'column',
-}));
-
 const AddIconStyled = styled(AddIcon)(() => ({
   paddingRight: '.35rem',
 }));
@@ -192,13 +183,6 @@ const FullScreenCodeMirror = styled(Box)(() => ({
     minHeight: '300px',
     height: '100%',
   },
-}));
-
-const AutoComplete = styled('div')(() => ({
-  width: '120px',
-  minWidth: '120px',
-  maxWidth: 150,
-  marginRight: 'auto',
 }));
 
 function TooltipIcon({ children, onClick, title, placement, disabled }) {
@@ -1560,7 +1544,7 @@ function MesheryPatterns({
                       catalogVisibility={catalogVisibility}
                       handleCatalogVisibility={handleCatalogVisibility}
                       classes={classes}
-                    /> 
+                    />
                     </StyledCatalogFilter>*/}
                   </div>
                 )}
