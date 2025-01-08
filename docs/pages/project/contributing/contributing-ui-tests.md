@@ -15,7 +15,7 @@ To automate functional integration and end-to-end testing Meshery uses [Playwri
 
 Before diving into Meshery's testing environment, certain prerequisites are necessary:
 
-- A verified account in your choosen provider which integrate with Meshery.
+- A verified account in your chosen provider which integrate with Meshery.
 - A compatible browser such as Chromium, Chrome, or Firefox.
 - Installations of Golang, NodeJS, and Makefiles for Native OS build (Optional for docker based build).
 - Kubernetes clusters (Required for connection to Kubernetes test cases)
@@ -24,9 +24,9 @@ Before diving into Meshery's testing environment, certain prerequisites are nece
 ## Setting up environment variable
 
 To run the tests successfully, three environment variables must be configured:  
-• `REMOTE_PROVIDER_USER_EMAIL`: The email associated with your account within your provider.  
-• `REMOTE_PROVIDER_USER_PASSWORD` : The password associated with your account within your provider.  
-• `PROVIDER_TOKEN`: Your provider token, can be generated from an account registered within your provider  
+• `REMOTE_PROVIDER_USER_EMAIL` (Required): The email associated with your account within your provider.  
+• `REMOTE_PROVIDER_USER_PASSWORD` (Required): The password associated with your account within your provider.  
+• `PROVIDER_TOKEN` (Optional): Your provider token, can be generated from an account registered within your provider  
 
 {% include alert.html
     type="info"
@@ -41,10 +41,10 @@ There are several tools to help you to working with environment variables locall
 
 There are a few ways to set up the Meshery UI and server, but for end-to-end testing, we aim to get as close to a production environment as possible. We know developers might need to make some tweaks for UI and Server. Rebuilding the whole project can take time, and we don’t support hot reload because it’s more for development than for end-to-end testing.
 
-{% include alert.html type="warning" title="Several Test may break" content='Some test cases required you to have kubernetes cluster and build meshery adapter as well, be aware of that. Which is out of scope for this documentation<ul><li><a href="https://docs.meshery.io/installation/kubernetes/minikube">Kubernetes Cluster</a>: Instalation of kubernetes cluster with Minikube.</li>
+{% include alert.html type="warning" title="Several Test may break" content='Some test cases required you to have kubernetes cluster and build meshery adapter as well, be aware of that. Which is out of scope for this documentation<ul><li><a href="https://docs.meshery.io/installation/kubernetes/minikube">Kubernetes Cluster</a>: Installation of kubernetes cluster with Minikube.</li>
 <li><a href="https://docs.meshery.io/installation/multiple-adapters">Meshery Adapters</a>: Using Multiple Adapters</li></ul>' %}
 
-### Native OS (Recommended)
+### Native OS Build (Recommended)
 
 This approach is very quick to build, but also dependent on your operating system, so you need to have all dependencies necessary to be able compile and running the server.
 
@@ -70,7 +70,7 @@ make server-binary
 
 There is also Meshery CLI which can help you run the UI and Server, for more detail, you go to [Meshery CLI documentation](https://docs.meshery.io/project/contributing/contributing-cli-guide#process)
 
-### Docker Based
+### Docker Based Build
 
 Alternatively, a Docker-based setup can be utilized, simplifying the process, and ensuring consistency across different environments. It is closer to the production environment than the native solution but slower in terms of build time.
 
@@ -86,11 +86,11 @@ make docker-testing-env-build
 make docker-testing-env
 ```
 
-## Setup playwright & Run the test cases
+## Setup playwright
 
 For playwrights, always try to use a native OS whenever possible. The Docker-based approach is intended only for unsupported OSes and is generally not recommended because it runs on top of Ubuntu images, which can be redundant if you already using Ubuntu or Windows.
 
-### Native OS (Recommended)
+### Playwright on Native OS (Recommended)
 
 Setup playwright:
 
@@ -98,13 +98,13 @@ Setup playwright:
 make test-setup-ui
 ```
 
-Run the test cases:
+Run the all project and test cases:
 
 ```bash
 make test-ui
 ```
 
-### Docker based
+### Playwright server on docker based image
 
 The first step is to pull the docker image from [Azure Container Registry](https://mcr.microsoft.com/en-us/product/playwright/tags) where the playwright stores their image using this command:
 
@@ -133,7 +133,78 @@ In the last step go to ui folder,
 cd ui;
 ```
 
-And run this command for running the test cases:
+## Run the test cases with Playwright CLI
+
+There are several options we can use to run the test cases, in CLI:
+
+To run playwright UI mode using the browser, you can add `--ui` in the cli, for example:
 ```bash
-PW_TEST_CONNECT_WS_ENDPOINT=ws://localhost:8080/ npx playwright test
+npx playwright test --ui
 ```
+
+If you are using playwright from docker, you can use `--ui-port=<playwright-docker-server>`, for example:
+```bash
+npx playwright test --ui-port=8080
+```
+
+To run playwright for specific project only, for example meshery-provider, you can run this command:
+```bash
+npx playwright test --ui --project=chromium-meshery-provider 
+```
+
+To run specific test, you can add the test file location, for example:
+```bash
+npx playwright test --ui --project=chromium-meshery-provider tests/e2e/service-mesh-performance.spec.js 
+```
+
+For more detail, you can read the [Playwright Cli docs](https://playwright.dev/docs/test-cli)
+
+
+## Testing Meshery & Local Provider 
+
+By default our test cases is running against both Meshery and Local Provider, we are utilizing playwright feature such as:
+
+- StorageState: In meshery [setup auth](https://github.com/meshery/meshery/blob/master/ui/tests/e2e/auth.setup.js), we have 2 storage state, which store a session for Meshery and Local provider.
+- Project: After the setup completes, it will run the project-based test depending on which storage state for the Local Provider and one for the Meshery Provider
+- Test Parameterize:  In the Local provider we are limiting some features to test against. For the missing features, we leverage this playwright feature to check or even skip the test. If it is not possible to run then you need to specify the `provider` directly from the test, and make sure the test is wrapped using:
+
+```javascript
+import { expect, test } from './fixtures/project';
+
+test('Random test', async ({ provider }) => {
+  if (provider === "Meshery") {
+    // Run this for testing Meshery provider
+  }
+
+  if (provider === "None") {
+    // Run this for testing Local provider
+  }
+});
+```
+
+## Testing Policy
+
+To maintain consistency across test cases, every new test will be tagged with `@unstable`. This will ensure that it appears with a warning icon rather than a failing icon in the test reporter comments on pull requests. For example:
+
+```javascript
+import { expect, test } from './fixtures/project';
+
+test('Random test',  { tag: '@unstable' }, async ({ provider }) => {
+  // Test cases here
+  // ...
+});
+```
+
+## Debugging Test on Github Actions
+
+We also storing test result on every PR in github actions, in case you need to debug it further:
+
+- Check the PR you are made, go to the bottom of PR directly above the comment
+- Wait until all github actions completed, and scroll until you see `Meshery UI and Server / UI end-to-end tests`  
+- Click details and it will redirect you to the actions workflow
+- Go to summary tab, scroll down until you see artifact, and check the artifact `playwright-report`
+- Download the artifact
+- Extract the file into a folder
+- Go to [Playwright Trace Page](https://trace.playwright.dev/)
+- From the test folder pick one folder which represents the test, you want to check
+- Upload the trace file

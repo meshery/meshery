@@ -49,6 +49,9 @@ var (
 	ErrUpdateComponentsCode       = "mesheryctl-1134"
 	ErrCSVFileNotFoundCode        = "mesheryctl-1135"
 	ErrReadCSVRowCode             = "mesheryctl-1136"
+	ErrMissingCommandsCode        = "mesheryctl-1137"
+	ErrKubernetesConnectivityCode = "mesheryctl-1138"
+	ErrKubernetesQueryCode        = "mesheryctl-1139"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -653,4 +656,16 @@ func ErrCSVFileNotFound(path string) error {
 }
 func ErrReadCSVRow(err error, obj string) error {
 	return errors.New(ErrReadCSVRowCode, errors.Alert, []string{"error reading csv ", obj}, []string{err.Error()}, []string{fmt.Sprintf("the %s of the csv is broken", obj)}, []string{fmt.Sprintf("verify the csv %s", obj)})
+}
+
+func ErrMissingCommands(err error) error {
+	return errors.New(ErrMissingCommandsCode, errors.Alert, []string{"Missing required commands"}, []string{err.Error()}, []string{"Required commands are not installed or not in PATH"}, []string{"Install the missing commands and ensure they are in PATH"})
+}
+
+func ErrKubernetesConnectivity(err error) error {
+	return errors.New(ErrKubernetesConnectivityCode, errors.Alert, []string{"Failed to connect to Kubernetes API server"}, []string{err.Error()}, []string{"Kubernetes API server is not reachable"}, []string{"Ensure your Kubernetes cluster is running and accessible"})
+}
+
+func ErrKubernetesQuery(err error) error {
+	return errors.New(ErrKubernetesQueryCode, errors.Alert, []string{"Failed to query Kubernetes API"}, []string{err.Error()}, []string{"Kubernetes API query failed"}, []string{"Ensure your Kubernetes cluster is running and accessible"})
 }

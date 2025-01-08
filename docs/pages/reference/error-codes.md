@@ -121,6 +121,9 @@ Troubleshooting guides to using Meshery's various features and components.
             {% elsif component[1].component_type == 'component' %}
                {% capture link %}meshery-server{% endcapture %}
             {% else %}
+            {% elsif component[1].component_type == 'library' %}
+               {% capture link %}meshkit{% endcapture %}
+            {% else %}
               {% capture link %}{{ component[1].component_name  | camelcase }}-{{ component[1].component_type }}{% endcapture %}      
             {% endif %}
             <tr>

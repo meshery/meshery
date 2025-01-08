@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core';
-import { Tooltip, Tabs, Tab } from '@material-ui/core';
+import { Tooltip } from '@material-ui/core';
 import KubernetesIcon from '../../../assets/icons/technology/kubernetes';
 
 import { withRouter } from 'next/router';
@@ -9,6 +9,8 @@ import ResourcesTable from './resources-table';
 import { Paper } from '@material-ui/core';
 import { Box } from '@material-ui/core';
 import { TabPanel } from '../tabpanel';
+import { Tab, Tabs } from '@layer5/sistent';
+import { UsesSistent } from '@/components/SistentWrapper';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -65,12 +67,6 @@ const styles = (theme) => ({
     justifyContent: 'space-between',
     paddingLeft: '1rem',
     maxWidth: '90%',
-  },
-  dashboardSection: {
-    backgroundColor: theme.palette.secondary.elevatedComponents,
-    padding: theme.spacing(2),
-    borderRadius: 4,
-    height: '100%',
   },
   cardHeader: { fontSize: theme.spacing(2) },
   card: {
@@ -136,37 +132,42 @@ const ResourcesSubMenu = (props) => {
     <>
       <div className={classes.wrapperClss}>
         <Paper className={classes.wrapperClss}>
-          <div className={classes.subMenuTab}>
+          <div>
             <Box sx={{ margin: '0 auto', width: '100%', maxWidth: { xs: 800, sm: 880, md: 1200 } }}>
-              <Tabs
-                value={getResourceCategoryIndex(selectedResource)}
-                className={classes.tabs}
-                onChange={(_e, v) => handleChangeSelectedResource(getResourceCategory(v))}
-                variant="scrollable"
-                scrollButtons="on"
-                indicatorColor="primary"
-                textColor="primary"
-                centered
-              >
-                {TABS.map((key, index) => (
-                  <Tooltip
-                    key={index}
-                    title={`${resource.tableConfig()[key].name}`}
-                    placement="top"
-                  >
-                    <Tab
+              <UsesSistent>
+                <Tabs
+                  value={getResourceCategoryIndex(selectedResource)}
+                  onChange={(_e, v) => handleChangeSelectedResource(getResourceCategory(v))}
+                  variant="scrollable"
+                  scrollButtons="on"
+                  indicatorColor="primary"
+                  textColor="primary"
+                  // centered
+                >
+                  {TABS.map((key, index) => (
+                    <Tooltip
                       key={index}
-                      value={index}
-                      label={
-                        <div className={classes.iconText}>
-                          <KubernetesIcon className={classes.iconText} width="22px" height="22px" />
-                          {resource.tableConfig()[key].name}
-                        </div>
-                      }
-                    />
-                  </Tooltip>
-                ))}
-              </Tabs>
+                      title={`${resource.tableConfig()[key].name}`}
+                      placement="top"
+                    >
+                      <Tab
+                        key={index}
+                        value={index}
+                        label={
+                          <div className={classes.iconText}>
+                            <KubernetesIcon
+                              className={classes.iconText}
+                              width="22px"
+                              height="22px"
+                            />
+                            {resource.tableConfig()[key].name}
+                          </div>
+                        }
+                      />
+                    </Tooltip>
+                  ))}
+                </Tabs>
+              </UsesSistent>
             </Box>
           </div>
         </Paper>

@@ -66,7 +66,7 @@ jobs:
         if: steps.filter.outputs.modified == 'true'
         uses: ruby/setup-ruby@v1.162.0
         with:
-          ruby-version: 3.2.2
+          ruby-version: 3.2.6
           bundler-cache: true
       - name: graphql-docs
         if: steps.filter.outputs.modified == 'true'
@@ -138,7 +138,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@master
         with:
-          go-version: "1.21"
+          go-version: "1.23"
       - name: goreleaser with tag
         uses: goreleaser/goreleaser-action@v6
         env:

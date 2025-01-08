@@ -1,3 +1,4 @@
+import { urlEncodeParams } from '@/utils/utils';
 import { api } from './index';
 import { ctxUrl } from '@/utils/multi-ctx';
 
@@ -12,17 +13,17 @@ export const designsApi = api
   .injectEndpoints({
     endpoints: (builder) => ({
       getPatterns: builder.query({
-        query: (queryArg) => ({
-          url: `pattern`,
-          params: {
+        query: (queryArg) => {
+          const params = urlEncodeParams({
             page: queryArg.page,
             pagesize: queryArg.pagesize,
             search: queryArg.search,
             order: queryArg.order,
             visibility: queryArg.visibility,
-          },
-          method: 'GET',
-        }),
+            populate: queryArg.populate,
+          });
+          return `pattern?${params}`;
+        },
         providesTags: () => [{ type: TAGS.DESIGNS }],
       }),
       deployPattern: builder.mutation({
@@ -117,6 +118,9 @@ export const designsApi = api
           body: queryArg.uploadBody,
         }),
       }),
+      downloadPatternFile: builder.query({
+        query: (queryArg) => `pattern/${queryArg.id}`,
+      }),
     }),
   });
 
@@ -132,4 +136,5 @@ export const {
   useUpdatePatternFileMutation,
   useUploadPatternFileMutation,
   useDeletePatternFileMutation,
+  useDownloadPatternFileQuery,
 } = designsApi;

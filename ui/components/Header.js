@@ -15,7 +15,7 @@ import Slide from '@material-ui/core/Slide';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { Button } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
-import { Search } from '@material-ui/icons';
+import { Edit, Search } from '@material-ui/icons';
 import { TextField } from '@material-ui/core';
 import { Paper } from '@material-ui/core';
 import { deleteKubernetesConfig } from './ConnectionWizard/helpers/kubernetesHelpers';
@@ -25,7 +25,7 @@ import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateK8SConfig, updateProgress, updateCapabilities } from '../lib/store';
 import { bindActionCreators } from 'redux';
 import _PromptComponent from './PromptComponent';
-import { iconMedium } from '../css/icons.styles';
+import { iconMedium, iconSmall } from '../css/icons.styles';
 import ExtensionSandbox from './ExtensionSandbox';
 import RemoteComponent from './RemoteComponent';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
@@ -35,7 +35,7 @@ import { useNotification, withNotify } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
-import { Checkbox, MenuIcon, OutlinedSettingsIcon } from '@layer5/sistent';
+import { Checkbox, MenuIcon, OutlinedSettingsIcon, Box, CustomTooltip } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { Colors } from '@/themes/app';
 import { CanShow } from '@/utils/can';
@@ -44,6 +44,8 @@ import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
 import { UsesSistent } from './SistentWrapper';
 import Router from 'next/router';
 import HeaderMenu from './HeaderMenu';
+import ConnectionModal from './Modals/ConnectionModal';
+import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -86,6 +88,12 @@ const styles = (theme) => ({
   },
   appBarOnDrawerClosed: {
     backgroundColor: theme.palette.secondary.mainBackground,
+  },
+  addClusterButtonClass: {
+    borderRadius: 5,
+    marginRight: '2rem',
+    width: '100%',
+    marginTop: '1rem',
   },
   toolbarOnDrawerClosed: {
     minHeight: 59,
@@ -205,6 +213,15 @@ const styles = (theme) => ({
       boxShadow: '0 0 10px orange, 0 0 60px orange,0 0 200px yellow, inset 0 0 80px yellow',
     },
   },
+  addButton: {
+    width: '100%',
+    whiteSpace: 'nowrap',
+    color: theme.palette.secondary.text,
+    margin: '0.5rem',
+  },
+  mesherySettingsEnvButtons: {
+    marginTop: '1rem',
+  },
 });
 
 async function loadActiveK8sContexts() {
@@ -240,6 +257,9 @@ const K8sContextConnectionChip_ = ({
   return (
     <div id={ctx.id} className={classes.chip}>
       <CustomTextTooltip
+        placement="left-end"
+        leaveDelay={200}
+        interactive={true}
         title={`Server: ${ctx.server},  Operator: ${formatToTitleCase(
           operatorState,
         )}, MeshSync: ${formatToTitleCase(meshSyncState)}, Broker: ${formatToTitleCase(natsState)}`}
@@ -331,6 +351,7 @@ function K8sContextMenu({
       (prev) => prev + (contexts.total_count ? contexts.total_count * 3.125 : 0),
     );
   }, []);
+  const [isConnectionOpenModal, setIsConnectionOpenModal] = React.useState(false);
 
   return (
     <>
@@ -422,18 +443,38 @@ function K8sContextMenu({
                   <div>
                     {contexts?.total_count ? (
                       <>
-                        <UsesSistent>
-                          <Checkbox
-                            checked={activeContexts.includes('all')}
-                            onChange={() =>
-                              activeContexts.includes('all')
-                                ? setActiveContexts([])
-                                : setActiveContexts('all')
-                            }
-                            color="primary"
-                          />
-                        </UsesSistent>
-                        <span style={{ fontWeight: 'bolder' }}>select all</span>
+                        <div
+                          style={{
+                            display: 'flex',
+                            justifyContent: 'space-between',
+                            alignItems: 'center',
+                          }}
+                        >
+                          <div>
+                            <UsesSistent>
+                              <Checkbox
+                                checked={activeContexts.includes('all')}
+                                onChange={() =>
+                                  activeContexts.includes('all')
+                                    ? setActiveContexts([])
+                                    : setActiveContexts('all')
+                                }
+                                color="primary"
+                              />
+                            </UsesSistent>
+                            <span style={{ fontWeight: 'bolder' }}>select all</span>
+                          </div>
+                          <CustomTooltip title="Configure Connections">
+                            <div>
+                              <IconButton
+                                size="small"
+                                onClick={() => setIsConnectionOpenModal(true)}
+                              >
+                                <Edit style={{ ...iconSmall }} />
+                              </IconButton>
+                            </div>
+                          </CustomTooltip>
+                        </div>
                       </>
                     ) : (
                       <Link href="/management/connections">
@@ -464,6 +505,11 @@ function K8sContextMenu({
                         />
                       );
                     })}
+                    {contexts?.contexts?.length > 0 && (
+                      <Box className={classes.mesherySettingsEnvButtons}>
+                        <MesherySettingsEnvButtons />
+                      </Box>
+                    )}
                   </div>
                 </Paper>
               </ClickAwayListener>
@@ -472,6 +518,12 @@ function K8sContextMenu({
         </Slide>
       </div>
       <_PromptComponent ref={deleteCtxtRef} />
+      <ConnectionModal
+        isOpenModal={isConnectionOpenModal}
+        setIsOpenModal={setIsConnectionOpenModal}
+        meshsyncControllerState={meshsyncControllerState}
+        connectionMetadataState={connectionMetadataState}
+      />
     </>
   );
 }

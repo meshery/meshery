@@ -578,7 +578,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
               )}
             </>
           )}
-          <div className={classes.viewSwitchButton} data-testid="open-search-performance-profiles">
+          <div className={classes.viewSwitchButton}>
             <UsesSistent>
               <SearchBar
                 onSearch={(value) => {
