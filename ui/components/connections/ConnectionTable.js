@@ -337,9 +337,9 @@ const ConnectionTable = ({
       let response = await modalRef.current.show({
         title: `Delete Connection`,
         subtitle: `Are you sure that you want to delete the connection?`,
-        options: ['Delete', 'Cancel'],
+        primaryOption: 'Delete',
         showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-        variant: PROMPT_VARIANTS.DANGER,
+        // variant: PROMPT_VARIANTS.DANGER,
       });
       if (response === 'Delete') {
         const requestBody = JSON.stringify({
@@ -355,9 +355,9 @@ const ConnectionTable = ({
       let response = await modalRef.current.show({
         title: `Delete Connections`,
         subtitle: `Are you sure that you want to delete the connections?`,
-        options: ['Delete', 'Cancel'],
+        primaryOption: 'Delete',
         showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-        variant: PROMPT_VARIANTS.DANGER,
+        // variant: PROMPT_VARIANTS.DANGER,
       });
       if (response === 'Delete') {
         // let bulkConnections = {}
@@ -401,8 +401,8 @@ const ConnectionTable = ({
       let response = await modalRef.current.show({
         title: `Flush MeshSync data for ${connection.metadata?.name} ?`,
         subtitle: `Are you sure to Flush MeshSync data for “${connection.metadata?.name}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
-        options: ['PROCEED', 'CANCEL'],
-        variant: PROMPT_VARIANTS.WARNING,
+        primaryOption: 'PROCEED',
+        // variant: PROMPT_VARIANTS.WARNING,
       });
       if (response === 'PROCEED') {
         updateProgress({ showProgress: true });
