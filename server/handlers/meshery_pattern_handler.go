@@ -1916,8 +1916,6 @@ func (h *Handler) GetMesheryPatternHandler(
 	var design patternV1beta1.PatternFile
 	err = encoding.Unmarshal([]byte(pattern.PatternFile), &design)
 
-	// err := encoding.Unmarshal([]byte(mesheryPattern.PatternFile), &v1alpha1PatternFile)
-
 	if err != nil {
 		err = ErrParsePattern(err)
 		h.log.Error(err)
