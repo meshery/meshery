@@ -37,8 +37,6 @@ If you are on macOS or Linux system, you can download, install, and run both `me
   </div>
 </pre>
 
-The script above downloads Meshery's command line interface, <code>mesheryctl</code>.
-
 {% include alert.html type="info" title="Meshery CLI" content="Meshery's command line interface, <code>mesheryctl</code>, can be installed in <a href='/installation/mesheryctl'>various ways</a>. In addition to <a href='/installation/linux-mac/bash'>Bash</a>, you can also use <a href='/installation/linux-mac/brew'>Brew</a> or <a href='/installation/windows/scoop'>Scoop</a> to install <code>mesheryctl</code>. Alternatively, <code>mesheryctl</code> is also available via <a href='https://github.com/meshery/meshery/releases/latest'>direct download</a>." %}
 
 ## 2. Access Meshery
@@ -89,6 +87,22 @@ You may now proceed to managed any cloud native infrastructure supported by Mesh
   <img class="center" style="width:min(100%,650px);" src="{{site.baseurl}}/assets/img/platforms/meshery-designs.png" />
 </a>
 
+# Explore Tutorials
+
+🧑‍🔬 Explore these tutorials to learn how to use Meshery for collaboratively managing infrastructure. 
+
+{% assign tutorials = site.pages | where: "category", "tutorials" %}
+
+{% assign items_grouped = tutorials | group_by: 'model' %}
+{% for group in items_grouped %}
+{% if group.name != "" %}
+**{{ group.name | capitalize }}**
+{% for item in group.items %}
+- [{{ item.title }}]({{ site.baseurl }}{{ item.url }})
+{% endfor %}
+{% endif %}
+{% endfor %}
+
 # Additional Guides
 
 <div class="section">
@@ -98,4 +112,3 @@ You may now proceed to managed any cloud native infrastructure supported by Mesh
         <li><a href="{{ site.baseurl }}/reference/mesheryctl/system/check">Mesheryctl system check</a></li> 
     </ul>
 </div>
-

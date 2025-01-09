@@ -1,4 +1,4 @@
-import { Chip, MenuItem, Tooltip, makeStyles, Avatar } from '@material-ui/core';
+import { Chip, MenuItem, makeStyles, Avatar } from '@material-ui/core';
 import classNames from 'classnames';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
@@ -12,6 +12,7 @@ import DisconnectIcon from '../../assets/icons/disconnect';
 import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 import { CONNECTION_STATES, CONTROLLER_STATES } from '../../utils/Enum';
 import theme from '../../themes/app';
+import { CustomTooltip } from '@layer5/sistent';
 
 const useChipStyles = makeStyles(() => ({
   Chip: {
@@ -75,11 +76,11 @@ export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, 
 
 export const TootltipWrappedConnectionChip = (props) => {
   return (
-    <Tooltip title={props.tooltip || props.title} placement="bottom">
-      <>
+    <CustomTooltip title={props.tooltip || props.title} placement="left">
+      <div>
         <_ConnectionChip {...props} />
-      </>
-    </Tooltip>
+      </div>
+    </CustomTooltip>
   );
 };
 const styles = makeStyles((theme) => ({
