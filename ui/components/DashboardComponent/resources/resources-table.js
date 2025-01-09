@@ -126,10 +126,14 @@ const ResourcesTable = (props) => {
         },
       },
       enableNestedDataAccess: '.',
-      onCellClick: (_, meta) =>
-        meta.columnName !== 'cluster_id' &&
-        switchView(SINGLE_VIEW, meshSyncResources[meta.rowIndex]),
-
+      onCellClick: (_, meta) => {
+        if (meta.columnName !== 'cluster_id') {
+          const currentResource = meshSyncResources[meta.rowIndex];
+          if (currentResource) {
+            switchView(SINGLE_VIEW, currentResource);
+          }
+        }
+      },
       expandableRowsOnClick: true,
       onTableChange: (action, tableState) => {
         const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
@@ -161,7 +165,7 @@ const ResourcesTable = (props) => {
         }
       },
     }),
-    [page, pageSize],
+    [page, pageSize, meshSyncResources],
   );
 
   const handleError = (action) => (error) => {
@@ -190,6 +194,7 @@ const ResourcesTable = (props) => {
               setView={setView}
               resource={selectedResource}
               classes={classes}
+              k8sConfig={k8sConfig}
             />
           </div>
         </Slide>

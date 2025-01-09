@@ -92,12 +92,6 @@ const meshmodelStyles = (theme) => ({
       backgroundColor: theme.palette.secondary.focused,
     },
   },
-  dashboardSection: {
-    padding: theme.spacing(2),
-    borderRadius: 4,
-    height: '100%',
-    overflowY: 'scroll',
-  },
   duplicatesModelStyle: {
     backgroundColor: theme.palette.secondary.focused,
   },

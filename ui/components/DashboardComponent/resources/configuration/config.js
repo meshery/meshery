@@ -156,8 +156,8 @@ export const ConfigurationTableConfig = (
         },
       ],
     },
-    Secrets: {
-      name: 'Secrets',
+    Secret: {
+      name: 'Secret',
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
