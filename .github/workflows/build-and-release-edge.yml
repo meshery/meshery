@@ -76,7 +76,7 @@ jobs:
         if: steps.filter.outputs.modified == 'true'
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2.2
+          ruby-version: 3.2.6
           bundler-cache: true
       - name: graphql-docs
         if: steps.filter.outputs.modified == 'true'

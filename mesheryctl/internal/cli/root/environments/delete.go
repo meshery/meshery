@@ -32,7 +32,7 @@ var deleteEnvironmentCmd = &cobra.Command{
 	Long:  `delete a new environments by providing the name and description of the environment`,
 	Example: `
 // delete a new environment
-mesheryctl exp environment delete [environmentId]
+mesheryctl environment delete [environmentId]
 // Documentation for environment can be found at:
 https://docs.layer5.io/cloud/spaces/environments/
 `,

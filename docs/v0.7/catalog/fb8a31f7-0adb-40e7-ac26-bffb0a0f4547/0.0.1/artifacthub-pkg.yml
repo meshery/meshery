@@ -1,0 +1,27 @@
+version: 0.0.1
+name: serving-t5-large-language-model-with-torchserve
+displayName: Serving T5 Large Language Model with TorchServe
+createdAt: "2024-03-07T06:08:26Z"
+description: |-
+    Deploy torchserve inference server with prepared T5 model and Client Application.
+
+    Manifests were tested against GKE Autopilot Kubernetes cluster.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/fb8a31f7-0adb-40e7-ac26-bffb0a0f4547/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "To configure HPA base on metrics from torchserve you need to:\n\nEnable Google Manager Prometheus or install OSS Prometheus.\nInstall Custom Metrics Adapter.\nApply pod-monitoring.yaml and hpa.yaml \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 62b081a5-1273-4c58-807f-b6be539275d0
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/fb8a31f7-0adb-40e7-ac26-bffb0a0f4547-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/fb8a31f7-0adb-40e7-ac26-bffb0a0f4547-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

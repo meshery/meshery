@@ -19,7 +19,7 @@ export const WorkloadTableConfig = (
 ) => {
   const ping = useKubernetesHook();
   return {
-    PODS: {
+    Pod: {
       name: 'Pod',
       colViews: [
         ['id', 'na'],
@@ -32,6 +32,8 @@ export const WorkloadTableConfig = (
         ['spec.attribute', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
+        ['status.attribute', 'm'],
+        ['spec.attribute', 'm'],
       ],
       columns: [
         {
@@ -83,23 +85,6 @@ export const WorkloadTableConfig = (
         },
         {
           name: 'status.attribute',
-          label: 'Phase',
-          options: {
-            sort: false,
-            setCellProps: () => ({ style: { paddingLeft: '0px' } }),
-            setCellHeaderProps: () => ({ style: { paddingLeft: '0px' } }),
-            customHeadRender: function CustomHead({ ...column }) {
-              return <DefaultTableCell columnData={column} />;
-            },
-            customBodyRender: function CustomBody(val) {
-              let attribute = JSON.parse(val);
-              let phase = attribute?.phase;
-              return <>{phase}</>;
-            },
-          },
-        },
-        {
-          name: 'status.attribute',
           label: 'Host IP',
           options: {
             sort: false,
@@ -135,6 +120,38 @@ export const WorkloadTableConfig = (
             sort: false,
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
+            },
+          },
+        },
+        {
+          name: 'status.attribute',
+          label: 'Restarts',
+          options: {
+            sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
+            customBodyRender: function CustomBody(value) {
+              const parsedStatus = JSON.parse(value);
+              const totalRestarts = parsedStatus?.containerStatuses?.reduce(
+                (sum, container) => sum + (container.restartCount || 0),
+                0,
+              );
+              return <>{totalRestarts || 0}</>;
+            },
+          },
+        },
+        {
+          name: 'spec.attribute',
+          label: 'Containers',
+          options: {
+            sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
+            customBodyRender: function CustomBody(value) {
+              const parsedSpec = JSON.parse(value);
+              return <>{parsedSpec.containers.length}</>;
             },
           },
         },
@@ -208,12 +225,13 @@ export const WorkloadTableConfig = (
         },
       ],
     },
-    DEPLOYMENT: {
+    Deployment: {
       name: 'Deployment',
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
         ['apiVersion', 's'],
+        ['status.attribute', 's'],
         ['status.attribute', 's'],
         ['spec.attribute', 's'],
         ['metadata.namespace', 'm'],
@@ -270,6 +288,26 @@ export const WorkloadTableConfig = (
                   onSort={() => sortColumn(index)}
                 />
               );
+            },
+          },
+        },
+        {
+          name: 'status.attribute',
+          label: 'Pods',
+          options: {
+            sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
+            customBodyRender: function CustomBody(val) {
+              const parsedStatus = JSON.parse(val);
+              const pods =
+                parsedStatus?.replicas === undefined
+                  ? parsedStatus?.availableReplicas?.toString()
+                  : `${
+                      parsedStatus?.availableReplicas?.toString() ?? '0'
+                    } / ${parsedStatus?.replicas?.toString()}`;
+              return <>{pods}</>;
             },
           },
         },
@@ -368,7 +406,7 @@ export const WorkloadTableConfig = (
         },
       ],
     },
-    DAEMONSETS: {
+    DaemonSet: {
       name: 'DaemonSet',
       colViews: [
         ['id', 'na'],
@@ -507,12 +545,13 @@ export const WorkloadTableConfig = (
         },
       ],
     },
-    STATEFULSETS: {
+    StatefulSet: {
       name: 'StatefulSet',
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
         ['apiVersion', 's'],
+        ['status.attribute', 's'],
         ['status.attribute', 's'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
@@ -568,6 +607,26 @@ export const WorkloadTableConfig = (
                   onSort={() => sortColumn(index)}
                 />
               );
+            },
+          },
+        },
+        {
+          name: 'status.attribute',
+          label: 'Pods',
+          options: {
+            sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
+            customBodyRender: function CustomBody(val) {
+              const parsedStatus = JSON.parse(val);
+              const pods =
+                parsedStatus?.replicas === undefined
+                  ? parsedStatus?.availableReplicas?.toString()
+                  : `${
+                      parsedStatus?.availableReplicas?.toString() ?? '0'
+                    } / ${parsedStatus?.replicas?.toString()}`;
+              return <>{pods}</>;
             },
           },
         },
@@ -644,7 +703,7 @@ export const WorkloadTableConfig = (
         },
       ],
     },
-    REPLICASETS: {
+    ReplicaSet: {
       name: 'ReplicaSet',
       colViews: [
         ['id', 'na'],
@@ -814,7 +873,7 @@ export const WorkloadTableConfig = (
         },
       ],
     },
-    REPLICATIONCONTROLLERS: {
+    ReplicationController: {
       name: 'ReplicationController',
       colViews: [
         ['id', 'na'],
@@ -967,7 +1026,7 @@ export const WorkloadTableConfig = (
         },
       ],
     },
-    JOBS: {
+    Job: {
       name: 'Job',
       colViews: [
         ['id', 'na'],
@@ -1088,7 +1147,7 @@ export const WorkloadTableConfig = (
         },
       ],
     },
-    CRONJOBS: {
+    CronJob: {
       name: 'CronJob',
       colViews: [
         ['id', 'na'],
