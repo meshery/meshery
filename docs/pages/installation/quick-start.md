@@ -97,7 +97,7 @@ You may now proceed to managed any cloud native infrastructure supported by Mesh
 {% assign items_grouped = tutorials | group_by: 'model' %}
 {% for group in items_grouped %}
   {% if group.name != "" %}
-  **{{ group.name | upcase }}**
+ <strong>{{ group.name | upcase }}></strong>
 
   {% capture tutorials %}
   {% for item in group.items %}
