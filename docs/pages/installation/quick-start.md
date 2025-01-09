@@ -87,7 +87,7 @@ You may now proceed to managed any cloud native infrastructure supported by Mesh
   <img class="center" style="width:min(100%,650px);" src="{{site.baseurl}}/assets/img/platforms/meshery-designs.png" />
 </a>
 
-# Next Steps
+# Explore Tutorials
 
 🧑‍🔬 Explore these tutorials to learn how to use Meshery for collaboratively managing infrastructure. 
 
@@ -95,13 +95,12 @@ You may now proceed to managed any cloud native infrastructure supported by Mesh
 
 {% assign items_grouped = tutorials | group_by: 'model' %}
 {% for group in items_grouped %}
-  {% if group.name != "" %}
-  <h2>{{ group.name | capitalize }} </h2>
-  
-    {% for item in group.items %}
-1. [{{ item.title }}]({{ site.baseurl }}{{ item.url }})
-    {% endfor %}
-  {% endif %}
+{% if group.name != "" %}
+**{{ group.name | capitalize }}**
+{% for item in group.items %}
+- [{{ item.title }}]({{ site.baseurl }}{{ item.url }})
+{% endfor %}
+{% endif %}
 {% endfor %}
 
 # Additional Guides
@@ -113,4 +112,3 @@ You may now proceed to managed any cloud native infrastructure supported by Mesh
         <li><a href="{{ site.baseurl }}/reference/mesheryctl/system/check">Mesheryctl system check</a></li> 
     </ul>
 </div>
-
