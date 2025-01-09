@@ -17,6 +17,7 @@ export const StorageTableConfig = (
   connectionMetadataState,
 ) => {
   const ping = useKubernetesHook();
+
   return {
     PersistentVolume: {
       name: 'PersistentVolume',
