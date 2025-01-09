@@ -21,7 +21,7 @@ See your deployment before you merge. Connect Kanvas to your GitHub repo and see
 
 See [Extension: Kanvas Snapshot](/extensions/snapshot) for more details.
 
-## <img src="{{ site.baseurl }}/assets/img/smp-dark-text-side.svg" className="image-left-no-shadow" alt="service mesh performance logo" style="width: 60%; max-width: 200px;vertical-align:middle" /> Service Mesh Performance GitHub Action
+## <img src="{{ site.baseurl }}/assets/img/smp-dark-text-side.svg" className="image-left-no-shadow" alt="service mesh performance logo" style="width: 60%; max-width: 200px;vertical-align:middle" /> Meshery Performance Analysis GitHub Action
 
 - See your performance regressions before you merge
 - Connect Performance Management to your GitHub repo and see changes pull request-to-pull request
@@ -32,11 +32,11 @@ See [Extension: Kanvas Snapshot](/extensions/snapshot) for more details.
 - Meshery includes your choice of load generator, so that you can meausure your way
 - Meshery packages all these features into an easy-to-use GitHub Action
 
-Measuring and managing the performance of a service mesh is key to efficient operation of any service mesh. Meshery is the canonical implementation of the Service Mesh Performance specification. You can choose from multiple load generators and use a highly configurable set of load profiles with variable tunable facets to run a performance test. Meshery packages all these features into an easy-to-use GitHub Action.
+Measuring and managing the performance of your infrastructure is key to efficient operation. <!-- Meshery is the canonical implementation of the Service Mesh Performance specification. --> You can choose from multiple load generators and use a highly configurable set of load profiles with variable tunable facets to run a performance test. Meshery packages all these features into an easy-to-use GitHub Action.
 
-<h3>Using Meshery's Service Mesh Performance GitHub Action</h3>
+<h3>Using Meshery's Performance Analysis GitHub Action</h3>
 
-The <a href="https://github.com/marketplace/actions/performance-testing-with-meshery">Service Mesh Performance GitHub Action</a> is available in the GitHub Marketplace.You can create your own performance profiles to run repeatable tests with Meshery. You can configure this action to trigger with each of your releases, on every pull request. or any GitHub workflow trigger event. A sample configuration of the action is shown below.
+The <a href="https://github.com/marketplace/actions/performance-testing-with-meshery">Meshery Performance Analysis GitHub Action</a> is available in the GitHub Marketplace. You can create your own performance profiles to run repeatable tests with Meshery. You can configure this action to trigger with each of your releases, on every pull request or any GitHub workflow trigger event. A sample configuration of the action is shown below.
 
 ```yaml
 name: Meshery SMP Action
