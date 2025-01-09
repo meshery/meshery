@@ -50,6 +50,33 @@ test.describe('Settings Page Tests', () => {
     verifyAdapterResBody(body);
   });
 
+  test('Aggregation Charts are displayed', async ({ page }) => {
+    await page.getByRole('tab', { name: 'Overview', exact: true }).click({ force: true });
+    await expect(
+      page.getByRole('heading', {
+        name: 'Models by Category',
+      }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByRole('heading', {
+        name: 'Registry',
+      }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByRole('heading', {
+        name: 'Connections',
+      }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByRole('heading', {
+        name: 'Configuration',
+      }),
+    ).toBeVisible();
+  });
+
   test('Connect to Meshery Istio Adapter and configure it', async ({ page }) => {
     // Navigate to 'Adapters' tab
     await page.getByRole('tab', { name: 'Adapters', exact: true }).click({ force: true });
