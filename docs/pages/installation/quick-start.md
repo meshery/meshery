@@ -89,19 +89,30 @@ You may now proceed to managed any cloud native infrastructure supported by Mesh
 
 # Explore Tutorials
 
-🧑‍🔬 Explore these tutorials to learn how to use Meshery for collaboratively managing infrastructure. 
+🧑‍🔬 Explore these tutorials to learn how to use Meshery for collaboratively managing infrastructure.
+
+<div class="section">
 
 {% assign tutorials = site.pages | where: "category", "tutorials" %}
-
 {% assign items_grouped = tutorials | group_by: 'model' %}
 {% for group in items_grouped %}
-{% if group.name != "" %}
-**{{ group.name | capitalize }}**
-{% for item in group.items %}
-- [{{ item.title }}]({{ site.baseurl }}{{ item.url }})
+  {% if group.name != "" %}
+ <strong>{{ group.name | upcase }}></strong>
+
+  {% capture tutorials %}
+  {% for item in group.items %}
+    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
+  {% endfor %}
+  {% endcapture %}
+
+  <ul style="list-style-type: circle;">
+  {{ tutorials }}
+  </ul>
+
+  {% endif %}
 {% endfor %}
-{% endif %}
-{% endfor %}
+
+</div>
 
 # Additional Guides
 
@@ -109,6 +120,6 @@ You may now proceed to managed any cloud native infrastructure supported by Mesh
     <ul>
         <li><a href="{{ site.baseurl }}/guides/troubleshooting/installation">Troubleshooting Meshery Installations</a></li>
         <li><a href="{{ site.baseurl }}/reference/error-codes">Meshery Error Code Reference</a></li>
-        <li><a href="{{ site.baseurl }}/reference/mesheryctl/system/check">Mesheryctl system check</a></li> 
+        <li><a href="{{ site.baseurl }}/reference/mesheryctl/system/check">mesheryctl system check</a></li> 
     </ul>
 </div>
