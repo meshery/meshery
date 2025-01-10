@@ -156,6 +156,5 @@ export const CustomResourceConfig = (
       ],
     };
   });
-  console.log('amit customResourceConfigs', customResourceConfigs);
   return customResourceConfigs;
 };

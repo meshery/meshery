@@ -13,8 +13,9 @@ import { camelcaseToSnakecase } from '../../../utils/utils';
 import { useSelector } from 'react-redux';
 import { UsesSistent } from '@/components/SistentWrapper';
 import { Slide } from '@material-ui/core';
+import { useRouter } from 'next/router';
 
-const ACTION_TYPES = {
+export const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
     name: 'FETCH_MESHSYNC_RESOURCES',
     error_msg: 'Failed to fetch meshsync resources',
@@ -50,10 +51,20 @@ const ResourcesTable = (props) => {
   };
 
   const tableConfig = submenu
-    ? resourceConfig(switchView, meshSyncResources, k8sConfig, connectionMetadataState)[
-        workloadType
-      ]
-    : resourceConfig(switchView, meshSyncResources, k8sConfig, connectionMetadataState);
+    ? resourceConfig(
+        switchView,
+        meshSyncResources,
+        k8sConfig,
+        connectionMetadataState,
+        selectedK8sContexts,
+      )[workloadType]
+    : resourceConfig(
+        switchView,
+        meshSyncResources,
+        k8sConfig,
+        connectionMetadataState,
+        selectedK8sContexts,
+      );
 
   const clusterIds = encodeURIComponent(
     JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig)),
@@ -65,13 +76,23 @@ const ResourcesTable = (props) => {
 
   const getMeshsyncResources = (page, pageSize, search, sortOrder) => {
     setLoading(true);
-    if (!search) search = '';
+    const { query } = router;
+    const resourceName =
+      query.resourceName ||
+      (query.resource === 'Node' && 'Node') ||
+      (query.resource === 'Namespace' && 'Namespace') ||
+      search;
+    const resourceCategory = query.resource || tableConfig.name;
+    const decodedClusterIds = JSON.parse(decodeURIComponent(clusterIds));
+    if (decodedClusterIds.length === 0) {
+      setLoading(false);
+      return;
+    }
+    if (!resourceName) search = '';
     if (!sortOrder) sortOrder = '';
     dataFetch(
-      `/api/system/meshsync/resources?kind=${
-        tableConfig.name
-      }&status=true&spec=true&annotations=true&labels=true&clusterIds=${clusterIds}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-        search,
+      `/api/system/meshsync/resources?kind=${resourceCategory}&status=true&spec=true&annotations=true&labels=true&clusterIds=${clusterIds}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
+        resourceName,
       )}&order=${encodeURIComponent(sortOrder)}`,
       {
         credentials: 'include',
@@ -83,6 +104,9 @@ const ResourcesTable = (props) => {
         setCount(res?.total_count || 0);
         setPageSize(res?.page_size || 0);
         setLoading(false);
+        if (query.resourceCategory && query.resourceName) {
+          switchView(SINGLE_VIEW, res?.resources[0]);
+        }
       },
       handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES),
     );
@@ -94,7 +118,7 @@ const ResourcesTable = (props) => {
     if (!loading) {
       getMeshsyncResources(page, pageSize, search, sortOrder);
     }
-  }, [page, pageSize, search, sortOrder]);
+  }, [page, pageSize, search, sortOrder, clusterIds]);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
     let showCols = updateVisibleColumns(tableConfig.colViews, width);
@@ -105,7 +129,18 @@ const ResourcesTable = (props) => {
     });
     return initialVisibility;
   });
-
+  const appendNameToQuery = (name) => {
+    const currentQuery = { ...router.query, resourceName: name };
+    router.push(
+      {
+        pathname: router.pathname,
+        query: currentQuery,
+      },
+      undefined,
+      { shallow: true },
+    );
+  };
+  const router = useRouter();
   const options = useMemo(
     () => ({
       filter: false,
@@ -131,6 +166,7 @@ const ResourcesTable = (props) => {
           const currentResource = meshSyncResources[meta.rowIndex];
           if (currentResource) {
             switchView(SINGLE_VIEW, currentResource);
+            appendNameToQuery(currentResource.metadata.name);
           }
         }
       },
