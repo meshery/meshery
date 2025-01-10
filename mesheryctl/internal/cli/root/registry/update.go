@@ -16,7 +16,6 @@ package registry
 
 import (
 	"bytes"
-	"encoding/csv"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -75,29 +74,47 @@ mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 enco
 		if err != nil {
 			return ErrUpdateRegistry(err, modelLocation)
 		}
+		utils.Log.Debugf("Logger created and set debug log level at %s",logFilePath )
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if csvDir != "" {
-			utils.Log.Info("Using local CSV directory: ", csvDir)
-			err := InvokeComponentsUpdateFromCSV()
-			if err != nil {
-				utils.Log.Error(err)
-				return err
-			}
-			return nil
-		}
+		info, err := os.Stat(modelLocation)
+    	if err != nil {
+    	    return fmt.Errorf("invalid --input path '%s': %w", modelLocation, err)
+    	}
+    	if !info.IsDir() {
+    	    return fmt.Errorf("--input path '%s' is not a directory", modelLocation)
+    	}
 
-		if spreadsheeetID != "" && spreadsheeetCred != "" {
-			utils.Log.Info("Using Google Sheet with ID: ", spreadsheeetID)
-			err := InvokeComponentsUpdateFromSheets()
-			if err != nil {
-				utils.Log.Error(err)
-				return err
-			}
-			return nil
-		}
-		return errors.New("please provide a Google Sheet or a local csv directory")
+		utils.Log.Debugf("Input Directory check completed with path  %s", modelLocation)
+
+	    parsedComponents := map[string]map[string][]utils.ComponentCSV{}
+
+	    if csvDir != "" {
+	        utils.Log.Info("Using local CSV directory: ", csvDir)
+	        parsedComponents, err = parseLocalCSVDirectory(csvDir)
+	        if err != nil {
+	            utils.Log.Error(err)
+	            return err
+	        }
+	    } else if spreadsheeetID != "" && spreadsheeetCred != "" {
+	        utils.Log.Info("Using Google Sheet with ID: ", spreadsheeetID)
+	        parsedComponents, err = parseFromGoogleSheet(spreadsheeetID, spreadsheeetCred, modelName)
+	        if err != nil {
+	            utils.Log.Error(err)
+	            return err
+	        }
+	    } else {
+	        return errors.New("please provide a Google Sheet or a local csv directory")
+	    }
+
+	    // Now we have a single map of components from either CSV or Sheets.
+	    err = InvokeComponentsUpdate(parsedComponents)
+	    if err != nil {
+	        utils.Log.Error(err)
+	        return err
+	    }
+	    return nil
 	},
 }
 var (
@@ -110,94 +127,25 @@ type compUpdateTracker struct {
 	version           string
 }
 
-func InvokeComponentsUpdateFromSheets() error {
-	utils.Log.UpdateLogOutput(logFile)
-
-	defer func() {
-		_ = logFile.Close()
-		utils.Log.UpdateLogOutput(os.Stdout)
-
-		// Additionally log the summary to the terminal
-		utils.Log.Info(fmt.Sprintf("Updated %d models and %d components", totalAggregateModel, totalAggregateComponents))
-		utils.Log.Info("refer ", logDirPath, " for detailed registry update logs")
-
-		totalAggregateModel = 0
-		totalAggregateComponents = 0
-	}()
-	modelToCompUpdateTracker := store.NewGenericThreadSafeStore[[]compUpdateTracker]()
-
-	srv, err := mutils.NewSheetSRV(spreadsheeetCred)
-	if err != nil {
-		return err
-	}
-	resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
-	if err != nil || resp.HTTPStatusCode != 200 {
-		return fmt.Errorf("failed to get google sheet: %w", err)
-	}
-
-	sheetGID = GetSheetIDFromTitle(resp, "Components")
-
-	url := GoogleSpreadSheetURL + spreadsheeetID
-	componentCSVHelper, err = utils.NewComponentCSVHelper(url, "Components", sheetGID, componentCSVFilePath)
-	if err != nil {
-		return err
-	}
-
-	err = componentCSVHelper.ParseComponentsSheet(modelName)
-	if err != nil {
-		err = ErrUpdateRegistry(err, modelLocation)
-		utils.Log.Error(err)
-		return nil
-	}
-
-	utils.Log.Info("Total Registrants: ", len(componentCSVHelper.Components))
-
-	err = updateRegistryComponents(componentCSVHelper.Components, modelToCompUpdateTracker)
-	if err != nil {
-		return err
-	}
-
-	logModelUpdateSummary(modelToCompUpdateTracker)
-	return nil
-}
-
-func InvokeComponentsUpdateFromCSV() error {
-	utils.Log.UpdateLogOutput(logFile)
-	defer func() {
-		_ = logFile.Close()
-		utils.Log.UpdateLogOutput(os.Stdout)
-		utils.Log.Info(fmt.Sprintf("Updated %d models and %d components", totalAggregateModel, totalAggregateComponents))
-		utils.Log.Info("refer ", logDirPath, " for detailed registry update logs")
-		totalAggregateModel = 0
-		totalAggregateComponents = 0
-	}()
-
-	modelToCompUpdateTracker := store.NewGenericThreadSafeStore[[]compUpdateTracker]()
-
-	// Parse local CSV files
-	localComponents, err := parseLocalCSVDirectory(csvDir)
-	if err != nil {
-		return err
-	}
-
-	utils.Log.Info("Total Registrants (from CSV): ", len(localComponents))
-
-	// Reuse the exact same iteration logic
-	err = updateRegistryComponents(localComponents, modelToCompUpdateTracker)
-	if err != nil {
-		return err
-	}
-
-	logModelUpdateSummary(modelToCompUpdateTracker)
-	return nil
-}
-
 func updateRegistryComponents(
 	components map[string]map[string][]utils.ComponentCSV,
 	modelToCompUpdateTracker *store.GenerticThreadSafeStore[[]compUpdateTracker],
 ) error {
-	pwd, _ := os.Getwd()
+	var modelLocPath string
+	if filepath.IsAbs(modelLocation) {
+	    // If user gave an absolute path, don't prepend pwd
+	    modelLocPath = modelLocation
+	} else {
+	    // If user gave a relative path, join with pwd
+	    pwd, _ := os.Getwd()
+	    modelLocPath = filepath.Join(pwd, modelLocation)
+	}
+    utils.Log.Debugf("looking for models at %v",modelLocPath)
 
+	modelFolders,err := os.ReadDir(modelLocPath)
+    if err!= nil {
+        return err
+    }
 	// var wg sync.WaitGroup
 	for registrant, model := range components {
 		if registrant == "" {
@@ -205,11 +153,30 @@ func updateRegistryComponents(
 		}
 
 		// Iterate all models
-		for modelName, components := range model {
-			availableComponentsPerModelPerVersion := 0
-			modelPath := filepath.Join(pwd, modelLocation, modelName)
-			utils.Log.Info("Starting to update components of model ", modelName)
+		for modelNameFromCSV, components := range model {
+            found := false;
+			var modelName string
+            //Search if directory name matches with model name provided in CSV.
+            for _,dir:=range modelFolders {
+                if dir.Name() == modelNameFromCSV {
+					utils.Log.Debugf("Found matching model from CSV at %s",filepath.Join(modelLocPath,dir.Name()) )
+                    modelName = dir.Name()
+                    found = true
+					break
+				}
+            }
+            if !found {
+				utils.Log.Warnf("No models found corresponding to %s ", modelNameFromCSV)
+				continue;
+            }
+			
+			utils.Log.Debugf("After Found Check at Model :%s Model path: %s",modelName, filepath.Join(modelLocPath, modelName))
 
+            availableComponentsPerModelPerVersion := 0
+			modelPath := filepath.Join(modelLocPath, modelName)
+			utils.Log.Debugf("Processing files inside model path %s",modelPath)
+			utils.Log.Info("Starting to update components of model ", modelName)
+           
 			modelContents, err := os.ReadDir(modelPath)
 			if err != nil {
 				err = ErrUpdateModel(err, modelName)
@@ -229,7 +196,9 @@ func updateRegistryComponents(
 					}
 
 					// A model can have components with multiple versions
-					versionPath := filepath.Join(modelPath, content.Name(), "v1.0.0") 
+					versionPath := filepath.Join(modelPath, content.Name(), "v1.0.0") // remove the hard coded definition version, add just for testing
+					utils.Log.Infof("Looking for components in %s", versionPath)
+
 					entries, _ := os.ReadDir(versionPath)
 					availableComponentsPerModelPerVersion += len(entries)
 
@@ -326,33 +295,37 @@ func parseLocalCSVDirectory(dirPath string) (map[string]map[string][]utils.Compo
 	localComps := make(map[string]map[string][]utils.ComponentCSV)
 	var allErrors []error
 
-	info, err := os.Stat(dirPath)
-	if err != nil {
-		return nil, fmt.Errorf("could not access csv directory '%s': %w", dirPath, err)
-	}
-	if !info.IsDir() {
-		return nil, fmt.Errorf("provided path is not a directory: %s", dirPath)
-	}
-
 	entries, err := os.ReadDir(dirPath)
-	if err != nil {
-		return nil, err
-	}
+    if err != nil {
+        return nil, err
+    }
 
 	for _, entry := range entries {
 		if entry.IsDir() {
-			// optionally recurse or skip
 			continue
 		}
 		if filepath.Ext(entry.Name()) == ".csv" {
 			csvPath := filepath.Join(dirPath, entry.Name())
-			fileComps, err := parseOneCSVFile(csvPath)
+			helper, err := utils.NewComponentCSVHelper("", "Components", 0, csvPath)
 			if err != nil {
-				allErrors = append(allErrors, err)
-				continue
+                allErrors = append(allErrors, err)
+                continue
+            }
+			parseErr := helper.ParseComponentsSheet(modelName)
+			utils.Log.Info("Parsed rows: ", len(helper.Components), " registrants from CSV path=", csvPath)
+			for r, mm := range helper.Components {
+			    utils.Log.Info("  Registrant: ", r, ", models = ", len(mm))
+			    for m, comps := range mm {
+			        utils.Log.Info("    model ", m, " => # of comps: ", len(comps))
+			    }
 			}
-			// Merge fileComps into localComps
-			for registrant, modelMap := range fileComps {
+
+            if parseErr != nil {
+                allErrors = append(allErrors, parseErr)
+                continue
+            }
+			// Merge
+			for registrant, modelMap := range helper.Components {
 				if _, ok := localComps[registrant]; !ok {
 					localComps[registrant] = make(map[string][]utils.ComponentCSV)
 				}
@@ -368,60 +341,53 @@ func parseLocalCSVDirectory(dirPath string) (map[string]map[string][]utils.Compo
 	return localComps, nil
 }
 
-// parseOneCSVFile reads a single CSV file, enforces the required columns, and returns
-// a nested map structure: map[registrant]map[modelName][]utils.ComponentInfo
-func parseOneCSVFile(csvPath string) (map[string]map[string][]utils.ComponentCSV, error) {
-	result := make(map[string]map[string][]utils.ComponentCSV)
+func parseFromGoogleSheet(sheetID, sheetCred, modelName string) (map[string]map[string][]utils.ComponentCSV, error) {
+    srv, err := mutils.NewSheetSRV(sheetCred)
+    if err != nil {
+        return nil, err
+    }
 
-	f, err := os.Open(csvPath)
-	if err != nil {
-		return nil, fmt.Errorf("failed to open CSV file '%s': %w", csvPath, err)
-	}
-	defer f.Close()
+    resp, err := srv.Spreadsheets.Get(sheetID).Fields().Do()
+    if err != nil || resp.HTTPStatusCode != 200 {
+        return nil, fmt.Errorf("failed to get google sheet: %w", err)
+    }
 
-	csvReader := csv.NewReader(f)
-	records, err := csvReader.ReadAll()
-	if err != nil {
-		return nil, fmt.Errorf("error reading CSV file '%s': %w", csvPath, err)
-	}
+    gid := GetSheetIDFromTitle(resp, "Components")
+    url := GoogleSpreadSheetURL + sheetID
+    helper, err := utils.NewComponentCSVHelper(url, "Components", gid, componentCSVFilePath)
+    if err != nil {
+        return nil, err
+    }
 
-	if len(records) < 2 {
-		return nil, fmt.Errorf("CSV file '%s' must have at least one header row and one data row", csvPath)
-	}
+    err = helper.ParseComponentsSheet(modelName)
+    if err != nil {
+        return nil, ErrUpdateRegistry(err, modelLocation)
+    }
 
-	header := records[0]
-	colIndex := map[string]int{}
-	for i, col := range header {
-		colIndex[col] = i
-	}
+    utils.Log.Info("Total Registrants: ", len(helper.Components))
+    return helper.Components, nil
+}
 
-	requiredCols := []string{"registrant", "model", "component"}
-	for _, rc := range requiredCols {
-		if _, ok := colIndex[rc]; !ok {
-			return nil, fmt.Errorf("missing required column '%s' in CSV file '%s'", rc, csvPath)
-		}
-	}
+func InvokeComponentsUpdate(comps map[string]map[string][]utils.ComponentCSV) error {
+    utils.Log.UpdateLogOutput(logFile)
+    defer func() {
+        _ = logFile.Close()
+        utils.Log.UpdateLogOutput(os.Stdout)
+        utils.Log.Info(fmt.Sprintf("Updated %d models and %d components", totalAggregateModel, totalAggregateComponents))
+        utils.Log.Info("refer ", logDirPath, " for detailed registry update logs")
+        totalAggregateModel = 0
+        totalAggregateComponents = 0
+    }()
 
-	for i, row := range records[1:] {
-		registrant := row[colIndex["registrant"]]
-		modelVal := row[colIndex["model"]]
-		compVal := row[colIndex["component"]]
-		if registrant == "" || modelVal == "" || compVal == "" {
-			return nil, fmt.Errorf("missing data in CSV file '%s', row number %d", csvPath, i+2)
-		}
+    modelToCompUpdateTracker := store.NewGenericThreadSafeStore[[]compUpdateTracker]()
 
-		if _, ok := result[registrant]; !ok {
-			result[registrant] = make(map[string][]utils.ComponentCSV)
-		}
-		result[registrant][modelVal] = append(
-			result[registrant][modelVal],
-			utils.ComponentCSV{
-				Component: compVal,
-			},
-		)
-	}
+    err := updateRegistryComponents(comps, modelToCompUpdateTracker)
+    if err != nil {
+        return err
+    }
 
-	return result, nil
+    logModelUpdateSummary(modelToCompUpdateTracker)
+    return nil
 }
 
 func init() {

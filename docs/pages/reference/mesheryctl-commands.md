@@ -686,7 +686,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
   </tr>
   {% assign command10 = site.data.mesheryctlcommands.cmds.registry %}
     <tr>
-      <td rowspan=14><a href="{{ site.baseurl }}/reference/mesheryctl/registry">{{ command10.name }}</a></td>
+      <td rowspan=15><a href="{{ site.baseurl }}/reference/mesheryctl/registry">{{ command10.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command10.description }}</td>

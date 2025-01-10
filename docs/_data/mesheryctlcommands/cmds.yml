@@ -853,8 +853,7 @@ registry:
           example: mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] --spreadsheet-id "1a2b3c4d5e6f7g8h9i0j"
         csv-dir:
           name: --csv-dir
-          description: (optional) Path to a local directory containing CSV files for model and component updates.   
-            CSV files must include columns:- `registrant`, `model`, `component`.  
+          description: (optional) Path to a local directory containing CSV files for model and component updates.    
             If both `--csv-dir` and a Spreadsheet are provided, CSV data takes precedence.
           usage: mesheryctl registry update --csv-dir [/path/to/csv-directory]
           example: mesheryctl registry update --csv-dir ./csvSample
