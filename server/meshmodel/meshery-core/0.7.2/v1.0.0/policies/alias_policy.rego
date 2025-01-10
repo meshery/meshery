@@ -43,6 +43,32 @@ is_alias_relationship(relationship) if {
 	lower(relationship.subType) == "alias"
 }
 
+component_alias(component_id) := alias if {
+	alias := input.aliases[component_id] 
+}
+
+
+#-------- Get Component Configuration -----------
+get_component_configuration(component,design) := configuration if {
+	alias := component_alias(component.id)
+	alias != null 
+
+	print("Alias is ==>",alias)
+
+	parent := component_declaration_by_id(design,alias.resolved_parent_id)
+	
+	configuration := object_get_nested(parent.configuration,alias.resolved_ref_field_path,null)
+}
+
+get_component_configuration(component,design) := configuration if {
+   component_alias(component.id) == null 
+   configuration := component.configuration
+
+   print("Configuration direct",configuration)
+}
+
+# ------------------------------------------------
+
 # Get the from component id
 from_component_id(relationship) := component if {
 	some selector in relationship.selectors
@@ -104,6 +130,7 @@ object_get_nested(obj, path, default_value) := current_value if {
 } else := default_value
 
 pop_last(arr) := array.slice(arr, 0, count(arr) - 1)
+pop_first(arr) := array.slice(arr,1,count(arr))
 
 array_endswith(arr, item) if {
 	arr[count(arr) - 1] == item
@@ -115,16 +142,18 @@ is_direct_reference(ref) if {
 	not array_endswith(ref, "_")
 }
 
-identify_alias_paths(from, to, component) := paths if {
+identify_alias_paths(from, to, component,design) := paths if {
 	ref := from.patch.mutatorRef[0]
 	not is_direct_reference(ref)
 	direct_ref := pop_last(ref)
 
-	print("Direct Ref", direct_ref)
+	print("Direct Ref", direct_ref,"pop",pop_first(direct_ref), "config", get_component_configuration(component,design),"v",object_get_nested(get_component_configuration(component,design), pop_first(direct_ref), []))
+
 
 	# remove nullish values
 	items := [item |
-		some item in object_get_nested(component, direct_ref, [])
+		some item in object_get_nested(get_component_configuration(component,design), pop_first(direct_ref), [])
+		print("item",item,"path",pop_first(direct_ref))
 		item != null
 	]
 
@@ -138,10 +167,10 @@ identify_alias_paths(from, to, component) := paths if {
 	#print("Paths", paths)
 }
 
-identify_alias_paths(from, to, component) := paths if {
+identify_alias_paths(from, to, component,design) := paths if {
 	ref := from.patch.mutatorRef[0]
 	is_direct_reference(ref)
-	value := object_get_nested(component, ref, null)
+	value := object_get_nested(get_component_configuration(component,design), pop_first(ref), null)
 	value != null
 	paths := [ref]
 }
@@ -152,7 +181,7 @@ identify_alias_relationships(component, relationship) := {rel |
 	some to in selector.allow.to # to is parent
 
 	# identify if alias can be created
-	identified_alias_paths := identify_alias_paths(from, to, component)
+	identified_alias_paths := identify_alias_paths(from, to, component,input)
 
 	#print("Identified Alias Paths", count(identified_alias_paths))
 
