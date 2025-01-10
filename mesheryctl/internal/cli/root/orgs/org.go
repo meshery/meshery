@@ -33,10 +33,6 @@ var (
 	name     string
 )
 
-type orgsStruct struct {
-	Orgs []models.Organization `json:"organizations"`
-}
-
 var OrgCmd = &cobra.Command{
 	Use:   "org",
 	Short: "List registered orgs",
@@ -80,8 +76,8 @@ var OrgCmd = &cobra.Command{
 			return nil
 		}
 
-		var orgs orgsStruct
-		err = json.Unmarshal(JsonData, &orgs)
+		var orgsPage models.OrganizationsPage
+		err = json.Unmarshal(JsonData, &orgsPage)
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
@@ -90,7 +86,7 @@ var OrgCmd = &cobra.Command{
 		var orgsData [][]string
 		columnNames := []string{"NAME", "ID", "CREATED-AT"}
 
-		for _, org := range orgs.Orgs {
+		for _, org := range orgsPage.Organizations {
 			orgsData = append(orgsData, []string{org.Name, org.ID.String(), org.CreatedAt.String()})
 		}
 
