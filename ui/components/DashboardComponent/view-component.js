@@ -134,10 +134,29 @@ const propertyFormatter = {
     return (
       <>
         {value.links.map((linkObj) => {
-          const { label, nodeName, namespace, serviceAccount } = linkObj;
-          const link = nodeName || namespace || serviceAccount;
-          if (!link) return null;
-          return <TextWithLinkFormatter key={label} title={label} value={link} />;
+          const { label, nodeName, namespace, serviceAccount, resourceCategory } = linkObj;
+          const name = nodeName || namespace || serviceAccount;
+          if (!name) return null;
+          return (
+            <TextWithLinkFormatter
+              key={label}
+              title={label}
+              value={name}
+              onClick={() => {
+                return value.router.push(
+                  {
+                    pathname: value.router.pathname,
+                    query: {
+                      resourceCategory: resourceCategory || label,
+                      resourceName: name,
+                    },
+                  },
+                  undefined,
+                  { shallow: true },
+                );
+              }}
+            />
+          );
         })}
       </>
     );
@@ -152,10 +171,11 @@ const propertyFormatter = {
     <KeyValueInRow
       Key={'Labels'}
       Value={<LabelFormatter data={value?.data} selectedLabels={[]} />}
+      showFold={true}
     />
   ),
   annotations: (value) => (
-    <KeyValueInRow Key={'Annotations'} Value={<StatusFormatter status={value} />} />
+    <KeyValueInRow Key={'Annotations'} Value={<StatusFormatter status={value} />} showFold={true} />
   ),
   totalCapacity: (value) => (
     <KeyValueInRow
