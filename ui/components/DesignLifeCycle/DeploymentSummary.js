@@ -9,6 +9,8 @@ import { ComponentIcon } from './common';
 import { Button } from '@layer5/sistent';
 import { ExternalLinkIcon } from '@layer5/sistent';
 import { UsesSistent } from '../SistentWrapper';
+import { openViewScopedToDesignInOperator, useIsOperatorEnabled } from '@/utils/utils';
+import { useRouter } from 'next/router';
 
 const StyledDetailBox = styled(Box)(({ theme, severityColor, bgOpacity }) => ({
   padding: theme.spacing(2),
@@ -54,7 +56,7 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
   const theme = useTheme();
   const eventStyle = SEVERITY_STYLE[event?.severity] || {};
   const errors = event.metadata?.error;
-
+  const router = useRouter()
   const componentsDetails = Object.values(event.metadata?.summary || {}).flatMap(
     (perComponentDetail) => {
       perComponentDetail = perComponentDetail?.flatMap ? perComponentDetail : [];
@@ -66,6 +68,8 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
       );
     },
   );
+
+  const is_operator_enabled = useIsOperatorEnabled();
 
   return (
     <Box>
@@ -79,11 +83,17 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
           text={event?.description || ''}
           style={{ color: theme.palette.text.default, textTransform: 'capitalize' }}
         />
-        {event?.metadata?.view_link && (
+        {is_operator_enabled && (
           <Button
             variant="contained"
             color="primary"
-            onClick={() => window.open(event.metadata?.view_link, '_blank')}
+            onClick={() =>
+              openViewScopedToDesignInOperator(
+                event?.metadata?.view_link,
+                event?.metadata?.design_id,
+                router
+              )
+            }
             style={{ gap: '0.25rem' }}
           >
             Open In Operator <ExternalLinkIcon fill={theme.palette.common.white} />
