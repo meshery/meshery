@@ -189,6 +189,7 @@ func (h *Handler) PatternFileHandler(
 		viewLink := fmt.Sprintf("%s/extension/meshmap?mode=operator&type=view&design_id=%s", serverURL, patternID)
 		description = fmt.Sprintf("%s.", description)
 		metadata["view_link"] = viewLink
+		metadata["design_name"] = patternFile.Name
 		metadata["design_id"] = patternID
 	}
 

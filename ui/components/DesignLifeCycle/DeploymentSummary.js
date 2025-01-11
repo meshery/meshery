@@ -89,7 +89,7 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
             color="primary"
             onClick={() =>
               openViewScopedToDesignInOperator(
-                event?.metadata?.view_link,
+                event?.metadata?.design_name,
                 event?.metadata?.design_id,
                 router
               )

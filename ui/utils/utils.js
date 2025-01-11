@@ -486,14 +486,15 @@ export const useIsOperatorEnabled = () => {
 }
 
 
-export const openViewScopedToDesignInOperator = (view_link,designId,router) => {
+export const openViewScopedToDesignInOperator = (designName,designId,router) => {
 
   if (isExtensionOpen()){
     console.log("extension is open publsing")
     mesheryEventBus.publish({
       type : "OPEN_VIEW_SCOPED_TO_DESIGN",
       data: {
-        design_id : designId
+        design_id : designId,
+        design_name: designName,
       }
     })
     return 
