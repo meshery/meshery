@@ -56,7 +56,7 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
   const theme = useTheme();
   const eventStyle = SEVERITY_STYLE[event?.severity] || {};
   const errors = event.metadata?.error;
-  const router = useRouter()
+  const router = useRouter();
   const componentsDetails = Object.values(event.metadata?.summary || {}).flatMap(
     (perComponentDetail) => {
       perComponentDetail = perComponentDetail?.flatMap ? perComponentDetail : [];
@@ -91,7 +91,7 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
               openViewScopedToDesignInOperator(
                 event?.metadata?.design_name,
                 event?.metadata?.design_id,
-                router
+                router,
               )
             }
             style={{ gap: '0.25rem' }}

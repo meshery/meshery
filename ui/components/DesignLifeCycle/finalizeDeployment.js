@@ -3,7 +3,6 @@ import { selectSelectedEnvs } from '@/store/slices/globalEnvironmentContext';
 import { useLegacySelector } from 'lib/store';
 const { Box, Typography, Stack, EnvironmentIcon, useTheme, styled } = require('@layer5/sistent');
 const { processDesign, CheckBoxField, StepHeading } = require('./common');
-const _ = require('lodash');
 import { isOperatorEnabled } from '@/utils/utils';
 
 const StyledSummaryItem = styled(Box)(({ theme }) => ({

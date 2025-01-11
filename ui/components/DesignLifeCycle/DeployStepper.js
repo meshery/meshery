@@ -66,7 +66,7 @@ export const FinishDeploymentStep = ({ perform_deployment, deployment_type, auto
   const [isDeploying, setIsDeploying] = useState(false);
   const [deployEvent, setDeployEvent] = useState();
   const [deployError, setDeployError] = useState(null);
-  const router = useRouter()
+  const router = useRouter();
 
   useEffect(() => {
     try {
@@ -86,13 +86,13 @@ export const FinishDeploymentStep = ({ perform_deployment, deployment_type, auto
         if (serverEvent.action === deployment_type) {
           setIsDeploying(false);
           setDeployEvent(serverEvent);
-          
-          if (
-            autoOpenView &&
-            serverEvent.severity == SEVERITY.SUCCESS 
-          ) {
-             
-             openViewScopedToDesignInOperator(serverEvent?.metadata?.design_name,serverEvent?.metadata?.design_id,router)
+
+          if (autoOpenView && serverEvent.severity == SEVERITY.SUCCESS) {
+            openViewScopedToDesignInOperator(
+              serverEvent?.metadata?.design_name,
+              serverEvent?.metadata?.design_id,
+              router,
+            );
           }
         }
       },
