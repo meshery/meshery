@@ -79,11 +79,7 @@ const HoneycombComponent = (props) => {
               ))}
             </Select>
             <StyledIconButton size="small" onClick={handleSortChange}>
-              <CustomTooltip
-                title={`Sort by Count (${
-                  sortDirection === SORT_DIRECTIONS.ASC ? 'Ascending' : 'Descending'
-                })`}
-              >
+              <CustomTooltip title={`Sort by Count`}>
                 {sortDirection === SORT_DIRECTIONS.ASC ? (
                   <ArrowUpwardIcon />
                 ) : (

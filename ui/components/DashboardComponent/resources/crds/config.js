@@ -1,22 +1,73 @@
 import React from 'react';
 import { timeAgo } from '../../../../utils/k8s-utils';
-import {  getK8sContextFromClusterId } from '@/utils/multi-ctx';
-import {  SINGLE_VIEW } from '../config';
+import { getK8sClusterIdsFromCtxId, getK8sContextFromClusterId } from '@/utils/multi-ctx';
+import { getAllCustromResourceDefinitionsKinds, SINGLE_VIEW } from '../config';
 import { Title } from '../../view';
 import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
 import { FormatId } from '@/components/DataFormatter';
+import { useGetMeshSyncResourceKindsQuery } from '@/rtk-query/meshsync';
 
 export const CustomResourceConfig = (
   switchView,
   meshSyncResources,
   k8sConfig,
   connectionMetadataState,
+  selectedK8sContexts,
 ) => {
+  console.log('amit selectedK8sContexts in CustomResourceConfig', selectedK8sContexts, k8sConfig);
   const ping = useKubernetesHook();
-  const customResources = [];
+  // const clusterIds = getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
+  // const isClusterIdsEmpty = clusterIds.size === 0 || clusterIds.length === 0;
+
+  // const { data: clusterSummary } = useGetMeshSyncResourceKindsQuery(
+  //   {
+  //     page: 0,
+  //     pagesize: 'all',
+  //     clusterIds: clusterIds,
+  //   },
+  //   {
+  //     skip: isClusterIdsEmpty,
+  //   },
+  // );
+  // const customResources = getAllCustromResourceDefinitionsKinds(clusterSummary?.kinds);
+  const customResources = [
+    'APDosLogConf',
+    'APIService',
+    'Alertmanager',
+    'Broker',
+    'CDPipeline',
+    'CiliumEndpoint',
+    'CiliumIdentity',
+    'CiliumNode',
+    'Component',
+    'Configuration',
+    'ElasticIPAddress',
+    'GatewayClass',
+    'HTTPScaledObject',
+    'HorizontalRunnerAutoscaler',
+    'Instance',
+    'InternetGateway',
+    'Issuer',
+    'KyvernoMonitor',
+    'MeshSync',
+    'NATGateway',
+    'PodMonitor',
+    'Prometheus',
+    'PrometheusRule',
+    'RouteTable',
+    'Runner',
+    'RunnerDeployment',
+    'ScaledObject',
+    'ServiceMonitor',
+    'Stage',
+    'Subnet',
+    'TargetGroupBinding',
+    'ThanosRuler',
+    'VPC',
+  ];
   const customResourceConfigs = {};
 
   customResources?.forEach((resource) => {
@@ -156,5 +207,6 @@ export const CustomResourceConfig = (
       ],
     };
   });
+  console.log('amit customResourceConfigs', customResourceConfigs);
   return customResourceConfigs;
 };
