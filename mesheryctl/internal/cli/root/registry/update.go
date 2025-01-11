@@ -38,7 +38,6 @@ var (
 	sheetGID                 int64
 	totalAggregateComponents int
 	logDirPath               = filepath.Join(mutils.GetHome(), ".meshery", "logs", "registry")
-	componentCSVHelper       *utils.ComponentCSVHelper
 )
 
 // This command is used for retreving the information of components based on the sheet. It updates the components with the actual values of the fetched for sheet.
@@ -88,7 +87,7 @@ mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 enco
 
 		utils.Log.Debugf("Input Directory check completed with path  %s", modelLocation)
 
-	    parsedComponents := map[string]map[string][]utils.ComponentCSV{}
+		var parsedComponents map[string]map[string][]utils.ComponentCSV
 
 	    if csvDir != "" {
 	        utils.Log.Info("Using local CSV directory: ", csvDir)
