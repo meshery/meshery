@@ -63,6 +63,10 @@ mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 enco
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
+		if csvDir == "" && (spreadsheeetID == "" || spreadsheeetCred == "") {
+            return errors.New("please provide a CSV directory or both spreadsheet-id and spreadsheet-cred")
+        }
+
 		err := os.MkdirAll(logDirPath, 0755)
 		if err != nil {
 			return ErrUpdateRegistry(err, modelLocation)
@@ -96,18 +100,15 @@ mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 enco
 	            utils.Log.Error(err)
 	            return err
 	        }
-	    } else if spreadsheeetID != "" && spreadsheeetCred != "" {
+	    } else {
 	        utils.Log.Info("Using Google Sheet with ID: ", spreadsheeetID)
 	        parsedComponents, err = parseFromGoogleSheet(spreadsheeetID, spreadsheeetCred, modelName)
 	        if err != nil {
 	            utils.Log.Error(err)
 	            return err
 	        }
-	    } else {
-	        return errors.New("please provide a Google Sheet or a local csv directory")
 	    }
 
-	    // Now we have a single map of components from either CSV or Sheets.
 	    err = InvokeComponentsUpdate(parsedComponents)
 	    if err != nil {
 	        utils.Log.Error(err)
@@ -141,10 +142,6 @@ func updateRegistryComponents(
 	}
     utils.Log.Debugf("looking for models at %v",modelLocPath)
 
-	modelFolders,err := os.ReadDir(modelLocPath)
-    if err!= nil {
-        return err
-    }
 	// var wg sync.WaitGroup
 	for registrant, model := range components {
 		if registrant == "" {
@@ -152,33 +149,22 @@ func updateRegistryComponents(
 		}
 
 		// Iterate all models
-		for modelNameFromCSV, components := range model {
-            found := false;
-			var modelName string
-            //Search if directory name matches with model name provided in CSV.
-            for _,dir:=range modelFolders {
-                if dir.Name() == modelNameFromCSV {
-					utils.Log.Debugf("Found matching model from CSV at %s",filepath.Join(modelLocPath,dir.Name()) )
-                    modelName = dir.Name()
-                    found = true
-					break
-				}
+		for modelNameFromCSV, comps := range model {
+            modelPath := filepath.Join(modelLocPath, modelNameFromCSV)
+            info, err := os.Stat(modelPath)
+            if err != nil || !info.IsDir() {
+                utils.Log.Warnf("No models found corresponding to %s", modelNameFromCSV)
+                continue
             }
-            if !found {
-				utils.Log.Warnf("No models found corresponding to %s ", modelNameFromCSV)
-				continue;
-            }
-			
-			utils.Log.Debugf("After Found Check at Model :%s Model path: %s",modelName, filepath.Join(modelLocPath, modelName))
+            utils.Log.Debugf("Found matching model from CSV at %s", modelPath)
 
             availableComponentsPerModelPerVersion := 0
-			modelPath := filepath.Join(modelLocPath, modelName)
 			utils.Log.Debugf("Processing files inside model path %s",modelPath)
-			utils.Log.Info("Starting to update components of model ", modelName)
+			utils.Log.Info("Starting to update components of model ", modelNameFromCSV)
            
 			modelContents, err := os.ReadDir(modelPath)
 			if err != nil {
-				err = ErrUpdateModel(err, modelName)
+				err = ErrUpdateModel(err, modelNameFromCSV)
 				utils.Log.Error(err)
 				continue
 			}
@@ -188,89 +174,88 @@ func updateRegistryComponents(
 			compUpdateArray := []compUpdateTracker{}
 			for _, content := range modelContents {
 				totalCompsUpdatedPerModelPerVersion := 0
+				if !content.IsDir() {
+                    continue
+                }
+				if utils.Contains(content.Name(), ExcludeDirs) != -1 {
+					continue
+				}
 
-				if content.IsDir() {
-					if utils.Contains(content.Name(), ExcludeDirs) != -1 {
+				versionPath := filepath.Join(modelPath, content.Name(), "v1.0.0") // remove the hard coded definition version, add just for testing
+				utils.Log.Infof("Looking for components in %s", versionPath)
+
+				entries, _ := os.ReadDir(versionPath)
+				availableComponentsPerModelPerVersion += len(entries)
+				
+				utils.Log.Info("Updating component of model ", modelNameFromCSV, " with version: ", content.Name())
+				for _, c := range comps {
+					compPath := filepath.Join(versionPath, "components", fmt.Sprintf("%s.json", c.Component))
+					componentByte, err := os.ReadFile(compPath)
+					if err != nil {
+						utils.Log.Error(ErrUpdateComponent(err, modelNameFromCSV, c.Component))
+						continue
+					}
+					componentDef := comp.ComponentDefinition{}
+					err = json.Unmarshal(componentByte, &componentDef)
+					if err != nil {
+						utils.Log.Error(ErrUpdateComponent(err, modelNameFromCSV, c.Component))
 						continue
 					}
 
-					// A model can have components with multiple versions
-					versionPath := filepath.Join(modelPath, content.Name(), "v1.0.0") // remove the hard coded definition version, add just for testing
-					utils.Log.Infof("Looking for components in %s", versionPath)
+					err = c.UpdateCompDefinition(&componentDef)
+					if err != nil {
+						utils.Log.Error(ErrUpdateComponent(err, modelNameFromCSV, c.Component))
+						continue
+					}
+					tmpFilePath := filepath.Join(versionPath, "components", "tmp_model.json")
 
-					entries, _ := os.ReadDir(versionPath)
-					availableComponentsPerModelPerVersion += len(entries)
+					// Ensure the temporary file is removed regardless of what happens
+					defer func() {
+						_ = os.Remove(tmpFilePath)
+					}()
 
-					utils.Log.Info("Updating component of model ", modelName, " with version: ", content.Name())
-
-					for _, component := range components {
-						compPath := filepath.Join(versionPath, "components", fmt.Sprintf("%s.json", component.Component))
-						componentByte, err := os.ReadFile(compPath)
+					if _, err := os.Stat(compPath); err == nil {
+						existingData, err := os.ReadFile(compPath)
 						if err != nil {
-							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
-							continue
-						}
-						componentDef := comp.ComponentDefinition{}
-						err = json.Unmarshal(componentByte, &componentDef)
-						if err != nil {
-							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
+							utils.Log.Error(err)
 							continue
 						}
 
-						err = component.UpdateCompDefinition(&componentDef)
+						err = mutils.WriteJSONToFile[comp.ComponentDefinition](tmpFilePath, componentDef)
 						if err != nil {
-							utils.Log.Error(ErrUpdateComponent(err, modelName, component.Component))
+							utils.Log.Error(err)
 							continue
 						}
-						tmpFilePath := filepath.Join(versionPath, "components", "tmp_model.json")
 
-						// Ensure the temporary file is removed regardless of what happens
-						defer func() {
-							_ = os.Remove(tmpFilePath)
-						}()
+						newData, err := os.ReadFile(tmpFilePath)
+						if err != nil {
+							utils.Log.Error(err)
+							continue
+						}
 
-						if _, err := os.Stat(compPath); err == nil {
-							existingData, err := os.ReadFile(compPath)
+						if bytes.Equal(existingData, newData) {
+							utils.Log.Info("No changes detected for ", componentDef.Component.Kind)
+							continue
+						} else {
+							err = mutils.WriteJSONToFile[comp.ComponentDefinition](compPath, componentDef)
 							if err != nil {
 								utils.Log.Error(err)
 								continue
 							}
+							totalCompsUpdatedPerModelPerVersion++
 
-							err = mutils.WriteJSONToFile[comp.ComponentDefinition](tmpFilePath, componentDef)
-							if err != nil {
-								utils.Log.Error(err)
-								continue
-							}
-
-							newData, err := os.ReadFile(tmpFilePath)
-							if err != nil {
-								utils.Log.Error(err)
-								continue
-							}
-
-							if bytes.Equal(existingData, newData) {
-								utils.Log.Info("No changes detected for ", componentDef.Component.Kind)
-								continue
-							} else {
-								err = mutils.WriteJSONToFile[comp.ComponentDefinition](compPath, componentDef)
-								if err != nil {
-									utils.Log.Error(err)
-									continue
-								}
-								totalCompsUpdatedPerModelPerVersion++
-
-							}
 						}
 					}
-
-					compUpdateArray = append(compUpdateArray, compUpdateTracker{
-						totalComps:        availableComponentsPerModelPerVersion,
-						totalCompsUpdated: totalCompsUpdatedPerModelPerVersion,
-						version:           content.Name(),
-					})
 				}
+
+				compUpdateArray = append(compUpdateArray, compUpdateTracker{
+					totalComps:        availableComponentsPerModelPerVersion,
+					totalCompsUpdated: totalCompsUpdatedPerModelPerVersion,
+					version:           content.Name(),
+				})
+				
 			}
-			modelToCompUpdateTracker.Set(modelName, compUpdateArray)
+			modelToCompUpdateTracker.Set(modelNameFromCSV, compUpdateArray)
 			utils.Log.Info("\n")
 		}
 
@@ -312,12 +297,6 @@ func parseLocalCSVDirectory(dirPath string) (map[string]map[string][]utils.Compo
             }
 			parseErr := helper.ParseComponentsSheet(modelName)
 			utils.Log.Info("Parsed rows: ", len(helper.Components), " registrants from CSV path=", csvPath)
-			for r, mm := range helper.Components {
-			    utils.Log.Info("  Registrant: ", r, ", models = ", len(mm))
-			    for m, comps := range mm {
-			        utils.Log.Info("    model ", m, " => # of comps: ", len(comps))
-			    }
-			}
 
             if parseErr != nil {
                 allErrors = append(allErrors, parseErr)
@@ -325,10 +304,12 @@ func parseLocalCSVDirectory(dirPath string) (map[string]map[string][]utils.Compo
             }
 			// Merge
 			for registrant, modelMap := range helper.Components {
+				utils.Log.Info("  Registrant: ", registrant, ", models = ", len(modelMap))
 				if _, ok := localComps[registrant]; !ok {
 					localComps[registrant] = make(map[string][]utils.ComponentCSV)
 				}
 				for modelName, comps := range modelMap {
+					utils.Log.Info("    model ", modelName, " => # of comps: ", len(comps))
 					localComps[registrant][modelName] = append(localComps[registrant][modelName], comps...)
 				}
 			}
