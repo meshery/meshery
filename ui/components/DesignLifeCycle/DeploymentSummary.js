@@ -1,13 +1,13 @@
 import { useGetComponentsByModelAndKindQuery } from '@/rtk-query/meshModel';
 import { NOTIFICATIONCOLORS } from '@/themes/index';
-import { Box, Stack, Typography, styled, useTheme } from '@layer5/sistent';
+import { Box, RenderMarkdown, Stack, Typography, styled, useTheme } from '@layer5/sistent';
 import { alpha } from '@mui/material';
 import { FormatStructuredData, TextWithLinks } from '../DataFormatter';
 import { SEVERITY_STYLE } from '../NotificationCenter/constants';
 import { ErrorMetadataFormatter } from '../NotificationCenter/metadata';
 import { ComponentIcon } from './common';
 import { Button } from '@layer5/sistent';
-import { ExternalLinkIcon } from '@layer5/sistent';
+import { ExternalLinkIcon,componentIcon } from '@layer5/sistent';
 import { UsesSistent } from '../SistentWrapper';
 import { openViewScopedToDesignInOperator, useIsOperatorEnabled } from '@/utils/utils';
 import { useRouter } from 'next/router';
@@ -20,11 +20,7 @@ const StyledDetailBox = styled(Box)(({ theme, severityColor, bgOpacity }) => ({
 }));
 
 const DeployementComponentFormatter = ({ componentDetail }) => {
-  const { data } = useGetComponentsByModelAndKindQuery({
-    model: componentDetail.Model || 'kubernetes',
-    component: componentDetail.Kind,
-  });
-  const componentDef = data?.components?.[0];
+
   return (
     <StyledDetailBox
       severityColor={
@@ -36,15 +32,21 @@ const DeployementComponentFormatter = ({ componentDetail }) => {
       flexDirection="column"
     >
       <Stack direction="row" spacing={2} alignItems={'center'}>
-        {componentDef?.metadata?.svgColor && (
           <ComponentIcon
-            iconSrc={`/${componentDef?.metadata?.svgColor}`}
+            iconSrc={componentIcon({
+              kind: componentDetail.Kind,
+              model: componentDetail.Model,
+              color: "color"
+            })}
             alt={componentDetail.Kind}
           />
-        )}
-        <Typography variant="textB1Regular" style={{ textTransform: 'capitalize' }}>
-          {componentDetail.Message}
+        {componentDetail.Success ?
+        <Typography variant="textB1Regular" >
+          Deployed  {componentDetail.Kind} "{componentDetail.CompName}" 
         </Typography>
+        : <RenderMarkdown content={componentDetail.Message} />
+        }
+          
       </Stack>
       {componentDetail.Error && <ErrorMetadataFormatter metadata={componentDetail.Error} />}
       {componentDetail.metadata && <FormatStructuredData data={componentDetail.metadata} />}
@@ -57,6 +59,8 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
   const eventStyle = SEVERITY_STYLE[event?.severity] || {};
   const errors = event.metadata?.error;
   const router = useRouter();
+
+  console.log("deployment event",event)
   const componentsDetails = Object.values(event.metadata?.summary || {}).flatMap(
     (perComponentDetail) => {
       perComponentDetail = perComponentDetail?.flatMap ? perComponentDetail : [];
@@ -68,6 +72,7 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
       );
     },
   );
+  console.log("component details",componentsDetails)
 
   const is_operator_enabled = useIsOperatorEnabled();
 
