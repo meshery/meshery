@@ -35,9 +35,11 @@ import { useNotification, withNotify } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
-import { Checkbox, MenuIcon, OutlinedSettingsIcon, Box, CustomTooltip } from '@layer5/sistent';
+import { Checkbox, MenuIcon, OutlinedSettingsIcon, Box, CustomTooltip, Typography } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { Colors } from '@/themes/app';
+import theme from '../themes/app';
+
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
@@ -284,7 +286,7 @@ const K8sContextConnectionChip_ = ({
               connectionMetadataState && connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                 ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
                 : '/static/img/kubernetes.svg'
-            } // chnage to use connection def
+            } // TODO: Make this a dyanmic referernce to the respective Connection's color SVG
             status={operatorState}
           />
         </div>
@@ -321,10 +323,28 @@ function K8sContextMenu({
 
   const handleKubernetesDelete = async (name, connectionID) => {
     let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
-      title: `Delete ${name} context ?`,
-      subtitle: `Are you sure you want to delete ${name} cluster from Meshery?`,
+      title: `Delete Kubernetes connection?`,
+      subtitle: (
+      <>
+      
+        <Typography variant="body">Are you sure you want to delete Kubernetes connection "${name}" and associated credential?</Typography>
+        <Typography variant="body2" sx={{ textAlign: 'left', marginTop: '1rem', cursor: 'pointer' }}>
+          
+        <details>
+          <summary sx={{ }}><strong>What does this mean?</strong></summary>
+          <div sx={{ backgroundColor: "#ff0000"}}>
+          <p> Deleting a connection administratively removes the cluster from Meshery's purview of management, which includes the removal of Meshery Operator from the cluster. Record of this Kubernetes connection and all associated data collected through MeshSync for this connection will be purged from Meshery's database. Note: By deleting this connection, you are not deleting the Kubernetes cluster itself.</p>
+          <p><strong>Reconnecting:</strong> You can always reconnect Meshery to the cluster again. By default, Meshery will automatically reconnect to the cluster when next presented with the same kubeconfig file / context. If you wish to prevent reconnection, *disconnect* this connection instead of *deleting* this connection.</p>
+          </div> 
+        </details>
+          
+        </Typography>
+        
+      </>
+      ),
       options: ['CONFIRM', 'CANCEL'],
       variant: PROMPT_VARIANTS.DANGER,
+      showInfoIcon: `Learn more about the [lifecycle of connections](https://docs.meshery.io/concepts/logical/connections) and what it means to delete a connection.`,
     });
     if (responseOfDeleteK8sCtx === 'CONFIRM') {
       const successCallback = async () => {
@@ -334,8 +354,9 @@ function K8sContextMenu({
         }
       };
       deleteKubernetesConfig(
-        successHandlerGenerator(notify, `Kubernetes config removed for ${name}`, successCallback),
-        errorHandlerGenerator(notify, `Not able to remove config for ${name}`),
+        successHandlerGenerator(notify, `Kubernetes connection "${name}" removed`, successCallback),
+        errorHandlerGenerator(notify, `Failed to remove Kubernetes connection "
+          ${name}"`),
         connectionID,
       );
     }
