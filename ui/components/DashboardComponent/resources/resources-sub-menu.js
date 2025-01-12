@@ -114,11 +114,21 @@ const ResourcesSubMenu = (props) => {
     handleChangeSelectedResource,
   } = props;
 
+  const resourceName = resource.tableConfig.name;
   if (!selectedResource) {
-    handleChangeSelectedResource(Object.keys(resource.tableConfig())[0]);
+    let resourceNames = Object.keys(resource.tableConfig());
+    if (resourceName === 'CustomResourceConfig') {
+      resourceNames = Object.keys(
+        resource.tableConfig(null, null, k8sConfig, null, selectedK8sContexts),
+      );
+    }
+    handleChangeSelectedResource(resourceNames[0]);
   }
 
-  const TABS = Object.keys(resource.tableConfig());
+  let TABS = Object.keys(resource.tableConfig());
+  if (resourceName === 'CustomResourceConfig') {
+    TABS = Object.keys(resource.tableConfig(null, null, k8sConfig, null, selectedK8sContexts));
+  }
 
   const getResourceCategoryIndex = (resourceCategory) => {
     return TABS.findIndex((resource) => resource === resourceCategory);
@@ -144,28 +154,30 @@ const ResourcesSubMenu = (props) => {
                   textColor="primary"
                   // centered
                 >
-                  {TABS.map((key, index) => (
-                    <Tooltip
-                      key={index}
-                      title={`${resource.tableConfig()[key].name}`}
-                      placement="top"
-                    >
-                      <Tab
-                        key={index}
-                        value={index}
-                        label={
-                          <div className={classes.iconText}>
-                            <KubernetesIcon
-                              className={classes.iconText}
-                              width="22px"
-                              height="22px"
-                            />
-                            {resource.tableConfig()[key].name}
-                          </div>
-                        }
-                      />
-                    </Tooltip>
-                  ))}
+                  {TABS.map((key, index) => {
+                    const title =
+                      resourceName === 'CustomResourceConfig'
+                        ? key
+                        : resource.tableConfig()[key].name;
+                    return (
+                      <Tooltip key={index} title={title} placement="top">
+                        <Tab
+                          key={index}
+                          value={index}
+                          label={
+                            <div className={classes.iconText}>
+                              <KubernetesIcon
+                                className={classes.iconText}
+                                width="22px"
+                                height="22px"
+                              />
+                              {title}
+                            </div>
+                          }
+                        />
+                      </Tooltip>
+                    );
+                  })}
                 </Tabs>
               </UsesSistent>
             </Box>

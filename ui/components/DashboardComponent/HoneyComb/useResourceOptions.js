@@ -6,7 +6,7 @@ export const useResourceOptions = () => {
     () => [
       { value: 'all', label: 'All Resources' },
       ...Object.entries(ResourceMenuConfig)
-        .filter(([_, resources]) => resources.length > 0)
+        .filter(([, resources]) => resources.length > 0)
         .map(([category]) => ({
           value: category.toLowerCase(),
           label: category,

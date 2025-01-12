@@ -1,7 +1,7 @@
 import React from 'react';
 import { timeAgo } from '../../../../utils/k8s-utils';
 import { getK8sClusterIdsFromCtxId, getK8sContextFromClusterId } from '@/utils/multi-ctx';
-import { getAllCustromResourceDefinitionsKinds, SINGLE_VIEW } from '../config';
+import { getAllCustomResourceDefinitionsKinds, SINGLE_VIEW } from '../config';
 import { Title } from '../../view';
 import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
@@ -17,57 +17,29 @@ export const CustomResourceConfig = (
   connectionMetadataState,
   selectedK8sContexts,
 ) => {
-  console.log('amit selectedK8sContexts in CustomResourceConfig', selectedK8sContexts, k8sConfig);
+  console.log('amit kutro CustomResourceConfig called with this', {
+    switchView,
+    meshSyncResources,
+    k8sConfig,
+    connectionMetadataState,
+    selectedK8sContexts,
+  });
   const ping = useKubernetesHook();
-  // const clusterIds = getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
-  // const isClusterIdsEmpty = clusterIds.size === 0 || clusterIds.length === 0;
+  const clusterIds = getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
+  const isClusterIdsEmpty = clusterIds.size === 0 || clusterIds.length === 0;
 
-  // const { data: clusterSummary } = useGetMeshSyncResourceKindsQuery(
-  //   {
-  //     page: 0,
-  //     pagesize: 'all',
-  //     clusterIds: clusterIds,
-  //   },
-  //   {
-  //     skip: isClusterIdsEmpty,
-  //   },
-  // );
-  // const customResources = getAllCustromResourceDefinitionsKinds(clusterSummary?.kinds);
-  const customResources = [
-    'APDosLogConf',
-    'APIService',
-    'Alertmanager',
-    'Broker',
-    'CDPipeline',
-    'CiliumEndpoint',
-    'CiliumIdentity',
-    'CiliumNode',
-    'Component',
-    'Configuration',
-    'ElasticIPAddress',
-    'GatewayClass',
-    'HTTPScaledObject',
-    'HorizontalRunnerAutoscaler',
-    'Instance',
-    'InternetGateway',
-    'Issuer',
-    'KyvernoMonitor',
-    'MeshSync',
-    'NATGateway',
-    'PodMonitor',
-    'Prometheus',
-    'PrometheusRule',
-    'RouteTable',
-    'Runner',
-    'RunnerDeployment',
-    'ScaledObject',
-    'ServiceMonitor',
-    'Stage',
-    'Subnet',
-    'TargetGroupBinding',
-    'ThanosRuler',
-    'VPC',
-  ];
+  const { data: clusterSummary } = useGetMeshSyncResourceKindsQuery(
+    {
+      page: 0,
+      pagesize: 'all',
+      clusterIds: clusterIds,
+    },
+    {
+      skip: isClusterIdsEmpty,
+    },
+  );
+  const customResources = getAllCustomResourceDefinitionsKinds(clusterSummary?.kinds);
+
   const customResourceConfigs = {};
 
   customResources?.forEach((resource) => {
