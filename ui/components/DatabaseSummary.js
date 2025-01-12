@@ -154,6 +154,7 @@ const DatabaseSummary = (props) => {
           <Button
             type="submit"
             variant="contained"
+            data-test="database-reset"
             color="primary"
             size="medium"
             disabled={!CAN(keys.RESET_DATABASE.action, keys.RESET_DATABASE.subject)}

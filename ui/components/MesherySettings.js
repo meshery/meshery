@@ -264,6 +264,7 @@ const MesherySettings = (props) => {
     <>
       {CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject) ? (
         <div sx={{ flexGrow: 1, maxWidth: '100%', height: 'auto' }}>
+<<<<<<< HEAD
           <UsesSistent>
             <StyledPaper square>
               <Tabs
@@ -336,6 +337,86 @@ const MesherySettings = (props) => {
               </Tabs>
             </StyledPaper>
           </UsesSistent>
+=======
+          <StyledPaper square>
+            <StyledTabs
+              value={tabVal}
+              onChange={handleChange('tabVal')}
+              variant={window.innerWidth < 900 ? 'scrollable' : 'fullWidth'}
+              scrollButtons="on"
+              indicatorColor="primary"
+              textColor="primary"
+              centered
+            >
+              <CustomTooltip title="Overview" placement="top" value={OVERVIEW}>
+                <StyledTab
+                  icon={
+                    <img
+                      src="/static/img/meshery-logo/meshery-logo.svg"
+                      alt="Meshery logo"
+                      height={32}
+                      width={32}
+                    />
+                  }
+                  label="Overview"
+                  // tab="Overview"
+                  value={OVERVIEW}
+                  // disabled={!CAN(keys.VIEW_OVERVIEW.action, keys.VIEW_OVERVIEW.subject)}
+                />
+              </CustomTooltip>
+              <CustomTooltip
+                title="Connect Meshery Adapters"
+                placement="top"
+                data-test="settings-tab-metrics"
+                value={ADAPTERS}
+              >
+                <StyledTab
+                  icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
+                  label="Adapters"
+                  data-cy="tabServiceMeshes"
+                  value={ADAPTERS}
+                  disabled={
+                    !CAN(
+                      keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
+                      keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.subject,
+                    )
+                  }
+                />
+              </CustomTooltip>
+              <CustomTooltip title="Configure Metrics backends" placement="top" value={METRICS}>
+                <StyledTab
+                  icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
+                  label="Metrics"
+                  data-test="settings-tab-metrics"
+                  // tab="tabMetrics"
+                  value={METRICS}
+                  disabled={!CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject)}
+                />
+              </CustomTooltip>
+              <CustomTooltip title="Registry" placement="top" value={REGISTRY}>
+                <StyledTab
+                  icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
+                  label="Registry"
+                  data-test="settings-tab-registry"
+                  // tab="registry"
+                  value={REGISTRY}
+                  disabled={!CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)}
+                />
+              </CustomTooltip>
+
+              <CustomTooltip title="Reset System" placement="top" value={RESET}>
+                <StyledTab
+                  icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
+                  label="Reset"
+                  data-test="settings-tab-reset"
+                  // tab="systemReset"
+                  value={RESET}
+                  // disabled={!CAN(keys.VIEW_SYSTEM_RESET.action, keys.VIEW_SYSTEM_RESET.subject)} TODO: uncomment when key get seeded
+                />
+              </CustomTooltip>
+            </StyledTabs>
+          </StyledPaper>
+>>>>>>> 513f64e8b5 (Added Data Test IDs in components for E2E Tests Verification)
           {tabVal === OVERVIEW && (
             <TabContainer>
               <NoSsr>
@@ -376,6 +457,7 @@ const MesherySettings = (props) => {
                 >
                   <Tab
                     value={GRAFANA}
+                    data-test="metrics-grafana"
                     label={
                       <IconText>
                         Grafana
@@ -385,6 +467,7 @@ const MesherySettings = (props) => {
                   />
                   <Tab
                     value={PROMETHEUS}
+                    data-test="metrics-prometheus"
                     label={
                       <IconText>
                         Prometheus

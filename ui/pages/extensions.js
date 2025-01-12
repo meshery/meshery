@@ -29,7 +29,12 @@ const MeshMapSignUpcard = ({ classes, hasAccessToMeshMap = false }) => {
   return (
     <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
       <div className={classes.card}>
-        <Typography className={classes.frontContent} variant="h5" component="div">
+        <Typography
+          className={classes.frontContent}
+          data-test="kanvas-heading"
+          variant="h5"
+          component="div"
+        >
           Kanvas
         </Typography>
 
@@ -44,6 +49,7 @@ const MeshMapSignUpcard = ({ classes, hasAccessToMeshMap = false }) => {
             <Button
               variant="contained"
               color="primary"
+              data-test="kanvas-signup-btn"
               disabled={hasAccessToMeshMap}
               className={classes.button}
               onClick={(e) => handleSignUp(e)}
@@ -68,7 +74,13 @@ const LogoStyles = () => ({
 });
 
 const MeshMapSnapShotLogo = withStyles(LogoStyles)(({ classes }) => {
-  return <img className={classes.img} src="/static/img/meshmap-snapshot-logo.svg" />;
+  return (
+    <img
+      className={classes.img}
+      data-test="kanvas-snapshot-image"
+      src="/static/img/meshmap-snapshot-logo.svg"
+    />
+  );
 });
 
 const MeshMapSnapShotCard = ({ classes, githubActionEnabled = false }) => {
@@ -80,11 +92,20 @@ const MeshMapSnapShotCard = ({ classes, githubActionEnabled = false }) => {
   return (
     <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
       <div className={classes.card}>
-        <Typography className={classes.frontContent} variant="h5" component="div">
+        <Typography
+          data-test="kanvas-snapshot-heading"
+          className={classes.frontContent}
+          variant="h5"
+          component="div"
+        >
           GitHub Action: Kanvas Snapshot
         </Typography>
 
-        <Typography className={classes.frontSideDescription} variant="body">
+        <Typography
+          data-test="kanvas-snapshot-description"
+          className={classes.frontSideDescription}
+          variant="body"
+        >
           <MeshMapSnapShotLogo />
           Connect Kanvas to your GitHub repo and see changes pull request-to-pull request. Get
           snapshots of your infrastructure directly in your PRs.
@@ -94,6 +115,7 @@ const MeshMapSnapShotCard = ({ classes, githubActionEnabled = false }) => {
             <Button
               variant="contained"
               color="primary"
+              data-test="kanvas-snapshot-enable-btn"
               disabled={githubActionEnabled}
               className={classes.button}
               onClick={(e) => handleEnable(e)}
@@ -133,7 +155,12 @@ const MesheryPerformanceAction = ({ classes, githubActionEnabled = false }) => {
   return (
     <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
       <div className={classes.card}>
-        <Typography className={classes.frontContent} variant="h5" component="div">
+        <Typography
+          className={classes.frontContent}
+          data-test="performance-analysis-heading"
+          variant="h5"
+          component="div"
+        >
           GitHub Action: Performance Analysis
         </Typography>
 
@@ -147,6 +174,7 @@ const MesheryPerformanceAction = ({ classes, githubActionEnabled = false }) => {
             <Button
               variant="contained"
               color="primary"
+              data-test="performance-analysis-enable-btn"
               disabled={githubActionEnabled}
               className={classes.button}
               onClick={(e) => handleEnable(e)}
@@ -173,7 +201,12 @@ const MesheryDockerExtension = ({ classes }) => {
   return (
     <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
       <div className={classes.card}>
-        <Typography className={classes.frontContent} variant="h5" component="div">
+        <Typography
+          className={classes.frontContent}
+          data-test="docker-extension-heading"
+          variant="h5"
+          component="div"
+        >
           Meshery Docker Extension
         </Typography>
 
@@ -188,6 +221,7 @@ const MesheryDockerExtension = ({ classes }) => {
             <Button
               variant="contained"
               color="primary"
+              data-test="docker-extension-download-btn"
               className={classes.button}
               onClick={(e) => handleDownload(e)}
             >
@@ -228,6 +262,7 @@ const MesheryDesignEmbedExtension = ({ classes }) => {
             <Button
               variant="contained"
               color="primary"
+              data-test="design-embed-learn-more-btn"
               className={classes.button}
               onClick={(e) => handleLearnMore(e)}
             >
@@ -315,7 +350,12 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
           <WrappedMesheryEmbedDesignExtension />
           <Grid item {...INITIAL_GRID_SIZE}>
             <div className={classes.card}>
-              <Typography className={classes.frontContent} variant="h5" component="div">
+              <Typography
+                className={classes.frontContent}
+                data-test="catalog-section-heading"
+                variant="h5"
+                component="div"
+              >
                 {'Meshery Catalog'}
               </Typography>
 
@@ -355,6 +395,7 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
                   <a
                     href="https://meshery.io/catalog"
                     target="_blank"
+                    data-test="catalog-link"
                     rel="noreferrer"
                     className={classes.link}
                   >
@@ -366,6 +407,7 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
                   <Switch
                     checked={catalogContent}
                     onChange={handleToggle}
+                    data-test="catalog-toggle-switch"
                     name="OperatorSwitch"
                     color="primary"
                     classes={{
