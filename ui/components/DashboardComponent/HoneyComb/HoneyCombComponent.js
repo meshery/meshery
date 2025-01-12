@@ -12,7 +12,7 @@ import {
 import { useRouter } from 'next/router';
 import { componentIcon } from '../charts/utils';
 import ConnectCluster from '../charts/ConnectCluster';
-import { generateDynamicURL } from '../resources/config';
+import { generateDynamicURL, getAllCustomResourceDefinitionsKinds } from '../resources/config';
 import {
   HoneycombRoot,
   IconWrapper,
@@ -36,7 +36,7 @@ const HoneycombComponent = (props) => {
 
   const groupOptions = useResourceOptions();
   const filteredKinds = useResourceFiltering(kinds, groupBy, sortDirection);
-
+  const crdsKinds = getAllCustomResourceDefinitionsKinds(kinds);
   const handleGroupChange = useCallback((e) => {
     setGroupBy(e.target.value);
   }, []);
@@ -100,34 +100,39 @@ const HoneycombComponent = (props) => {
                 defaultWidth={1024}
                 size={47}
                 items={filteredKinds}
-                renderItem={(item) => (
-                  <Hexagon
-                    onClick={() => {
-                      router.push(generateDynamicURL(item?.Kind));
-                    }}
-                  >
-                    <SelectedHexagon>
-                      <CustomTooltip title={item?.Kind || ''} placement="top">
-                        <IconWrapper>
-                          <img
-                            src={componentIcon({
-                              kind: item?.Kind?.toLowerCase(),
-                              color: 'color',
-                              model: 'kubernetes',
-                            })}
-                            width="40"
-                            height="40"
-                            onError={(event) => {
-                              event.target.src = '/static/img/kubernetes.svg';
-                            }}
-                            alt={item?.Kind || 'Resource Icon'}
-                          />
-                          <ResourceCount variant="subtitle1">{item.Count}</ResourceCount>
-                        </IconWrapper>
-                      </CustomTooltip>
-                    </SelectedHexagon>
-                  </Hexagon>
-                )}
+                renderItem={(item) => {
+                  const isCRD = crdsKinds.includes(item?.Kind);
+                  return (
+                    <Hexagon
+                      onClick={() => {
+                        router.push(generateDynamicURL(item?.Kind));
+                      }}
+                    >
+                      <SelectedHexagon>
+                        <CustomTooltip title={item?.Kind || ''} placement="top">
+                          <IconWrapper>
+                            <img
+                              src={componentIcon({
+                                kind: isCRD
+                                  ? 'customresourcedefinition'
+                                  : item?.Kind?.toLowerCase(),
+                                color: 'color',
+                                model: 'kubernetes',
+                              })}
+                              width="40"
+                              height="40"
+                              onError={(event) => {
+                                event.target.src = '/static/img/kubernetes.svg';
+                              }}
+                              alt={item?.Kind || 'Resource Icon'}
+                            />
+                            <ResourceCount variant="subtitle1">{item.Count}</ResourceCount>
+                          </IconWrapper>
+                        </CustomTooltip>
+                      </SelectedHexagon>
+                    </Hexagon>
+                  );
+                }}
               />
             ) : (
               <NoResourcesText variant="body1">
