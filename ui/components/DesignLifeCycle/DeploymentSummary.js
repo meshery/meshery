@@ -1,6 +1,5 @@
-import { useGetComponentsByModelAndKindQuery } from '@/rtk-query/meshModel';
 import { NOTIFICATIONCOLORS } from '@/themes/index';
-import { Box, RenderMarkdown, Stack, Typography, styled, useTheme } from '@layer5/sistent';
+import { Box,  Stack, Typography, styled, useTheme } from '@layer5/sistent';
 import { alpha } from '@mui/material';
 import { FormatStructuredData, TextWithLinks } from '../DataFormatter';
 import { SEVERITY_STYLE } from '../NotificationCenter/constants';
@@ -39,13 +38,13 @@ const DeployementComponentFormatter = ({ componentDetail }) => {
           })}
           alt={componentDetail.Kind}
         />
-        {componentDetail.Success ? (
           <Typography variant="textB1Regular">
-            Deployed {componentDetail.Kind} "{componentDetail.CompName}"
+           {componentDetail.Success 
+              ? `Deployed ${componentDetail.Kind} "${componentDetail.CompName}"`
+              : `Failed to deploy ${componentDetail.Kind} "${componentDetail.CompName}"`
+            }
           </Typography>
-        ) : (
-          <RenderMarkdown content={componentDetail.Message} />
-        )}
+          
       </Stack>
       {componentDetail.Error && <ErrorMetadataFormatter metadata={componentDetail.Error} />}
       {componentDetail.metadata && <FormatStructuredData data={componentDetail.metadata} />}
