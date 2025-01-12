@@ -17,13 +17,6 @@ export const CustomResourceConfig = (
   connectionMetadataState,
   selectedK8sContexts,
 ) => {
-  console.log('amit kutro CustomResourceConfig called with this', {
-    switchView,
-    meshSyncResources,
-    k8sConfig,
-    connectionMetadataState,
-    selectedK8sContexts,
-  });
   const ping = useKubernetesHook();
   const clusterIds = getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig);
   const isClusterIdsEmpty = clusterIds.size === 0 || clusterIds.length === 0;
@@ -179,6 +172,6 @@ export const CustomResourceConfig = (
       ],
     };
   });
-  console.log('amit customResourceConfigs', customResourceConfigs);
+
   return customResourceConfigs;
 };
