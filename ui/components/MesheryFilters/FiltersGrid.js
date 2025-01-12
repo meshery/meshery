@@ -156,7 +156,7 @@ function FiltersGrid({
   return (
     <div>
       {!selectedFilter.show && (
-        <Grid container spacing={3} style={{ padding: '1rem' }}>
+        <Grid container spacing={3}>
           {filters.map((filter) => (
             <FilterCardGridItem
               key={filter.id}

@@ -56,7 +56,7 @@ import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
 import InfoModal from './Modals/Information/InfoModal';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { SortableTableCell } from './connections/common/index.js';
+import { DefaultTableCell, SortableTableCell } from './connections/common/index.js';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from './General/error-404/index';
@@ -73,15 +73,12 @@ import {
 } from '@/rtk-query/filter';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import { ToolWrapper } from './Lifecycle/Workspaces';
 
-const GridWrapper = styled('div')(({ theme }) => ({
-  padding: theme.spacing(2),
-}));
-
-const TableHeader = styled(ResponsiveDataTable)(() => ({
-  fontWeight: 'bolder',
-  fontSize: 18,
-}));
+// const TableHeader = styled(Typography)(() => ({
+//   // fontWeight: 'bolder',
+//   // fontSize: 18,
+// }));
 
 const CreateButton = styled(Button)(() => ({
   width: 'fit-content',
@@ -123,9 +120,11 @@ const ActionsBox = styled(Box)(() => ({
 
 function TooltipIcon({ children, onClick, title }) {
   return (
-    <CustomTooltip title={title} placement="top" interactive>
-      <IconButton onClick={onClick}>{children}</IconButton>
-    </CustomTooltip>
+    <UsesSistent>
+      <CustomTooltip title={title} placement="top" interactive>
+        <IconButton onClick={onClick}>{children}</IconButton>
+      </CustomTooltip>
+    </UsesSistent>
   );
 }
 
@@ -825,12 +824,8 @@ function MesheryFilters({
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }) {
-          return (
-            <TableHeader key={index}>
-              <b>{column.label}</b>
-            </TableHeader>
-          );
+        customHeadRender: function CustomHead({ ...column }) {
+          return <DefaultTableCell columnData={column} />;
         },
       },
     },
@@ -841,12 +836,8 @@ function MesheryFilters({
         filter: false,
         sort: false,
         searchable: false,
-        customHeadRender: function CustomHead({ index, ...column }) {
-          return (
-            <TableHeader key={index}>
-              <b>{column.label}</b>
-            </TableHeader>
-          );
+        customHeadRender: function CustomHead({ ...column }) {
+          return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(_, tableMeta) {
           const rowData = filters[tableMeta.rowIndex];
@@ -1157,49 +1148,49 @@ function MesheryFilters({
 
   return (
     <>
-      <NoSsr>
-        {CAN(keys.VIEW_FILTERS.action, keys.VIEW_FILTERS.subject) ? (
-          <>
-            {selectedRowData && Object.keys(selectedRowData).length > 0 && (
-              <YAMLEditor
-                filter={selectedRowData}
-                onClose={resetSelectedRowData()}
-                onSubmit={handleSubmit}
-              />
-            )}
-            <GridWrapper>
-              {width < 600 && isSearchExpanded ? null : (
-                <div style={{ display: 'flex' }}>
-                  {!selectedFilter.show && (filters.length > 0 || viewType === 'table') && (
-                    <CreateButton>
-                      <div>
-                        <Button
-                          aria-label="Add Filter"
-                          variant="contained"
-                          color="primary"
-                          size="large"
-                          // @ts-ignore
-                          onClick={handleUploadImport}
-                          style={{ marginRight: '2rem' }}
-                          disabled={!CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject)}
-                        >
-                          <PublishIcon style={iconMedium} data-cy="import-button" />
-                          <BtnText> Import Filters </BtnText>
-                        </Button>
-                      </div>
-                    </CreateButton>
-                  )}
-                  <ViewSwitchButton style={{ jdisplay: 'flex' }}>
-                    {/* <CatalogFilter
+      <UsesSistent>
+        <NoSsr>
+          {CAN(keys.VIEW_FILTERS.action, keys.VIEW_FILTERS.subject) ? (
+            <>
+              {selectedRowData && Object.keys(selectedRowData).length > 0 && (
+                <YAMLEditor
+                  filter={selectedRowData}
+                  onClose={resetSelectedRowData()}
+                  onSubmit={handleSubmit}
+                />
+              )}
+              <ToolWrapper>
+                {width < 600 && isSearchExpanded ? null : (
+                  <div style={{ display: 'flex' }}>
+                    {!selectedFilter.show && (filters.length > 0 || viewType === 'table') && (
+                      <CreateButton>
+                        <div>
+                          <Button
+                            aria-label="Add Filter"
+                            variant="contained"
+                            color="primary"
+                            size="large"
+                            // @ts-ignore
+                            onClick={handleUploadImport}
+                            style={{ marginRight: '2rem' }}
+                            disabled={!CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject)}
+                          >
+                            <PublishIcon style={iconMedium} data-cy="import-button" />
+                            <BtnText> Import Filters </BtnText>
+                          </Button>
+                        </div>
+                      </CreateButton>
+                    )}
+                    <ViewSwitchButton style={{ jdisplay: 'flex' }}>
+                      {/* <CatalogFilter
                       catalogVisibility={catalogVisibility}
                       handleCatalogVisibility={handleCatalogVisibility}
                       classes={classes}
                     /> */}
-                  </ViewSwitchButton>
-                </div>
-              )}
-              <div style={{ display: 'flex' }}>
-                <UsesSistent>
+                    </ViewSwitchButton>
+                  </div>
+                )}
+                <div style={{ display: 'flex', alignItems: 'center' }}>
                   <SearchBar
                     onSearch={(value) => {
                       setSearch(value);
@@ -1228,15 +1219,13 @@ function MesheryFilters({
                       customToolsProps={{ columnVisibility, setColumnVisibility }}
                     />
                   )}
-                </UsesSistent>
 
-                {!selectedFilter.show && (
-                  <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
-                )}
-              </div>
-            </GridWrapper>
-            {!selectedFilter.show && viewType === 'table' && (
-              <UsesSistent>
+                  {!selectedFilter.show && (
+                    <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
+                  )}
+                </div>
+              </ToolWrapper>
+              {!selectedFilter.show && viewType === 'table' && (
                 <ResponsiveDataTable
                   data={filters}
                   columns={columns}
@@ -1246,50 +1235,48 @@ function MesheryFilters({
                   // @ts-ignore
                   options={options}
                 />
-              </UsesSistent>
-            )}
-            {!selectedFilter.show && viewType === 'grid' && (
-              // grid view
-              <FiltersGrid
-                filters={filters}
-                handleSubmit={handleSubmit}
-                canPublishFilter={canPublishFilter}
-                handlePublish={handlePublish}
-                handleUnpublishModal={handleUnpublishModal}
-                handleUploadImport={handleUploadImport}
-                handleClone={handleClone}
-                handleDownload={handleDownload}
-                uploadHandler={uploadHandler}
-                setSelectedFilter={setSelectedFilter}
-                selectedFilter={selectedFilter}
-                pages={Math.ceil(count / pageSize)}
-                setPage={setPage}
-                selectedPage={page}
-                publishModal={publishModal}
-                setPublishModal={setPublishModal}
-                publishSchema={publishSchema}
-                fetch={() => getFilters()}
-                handleInfoModal={handleInfoModal}
-              />
-            )}
-            {canPublishFilter &&
-              publishModal.open &&
-              CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject) && (
-                <PublishModal
-                  handleClose={handlePublishModalClose}
-                  title={publishModal.filter?.name}
-                  handleSubmit={handlePublish}
+              )}
+              {!selectedFilter.show && viewType === 'grid' && (
+                // grid view
+                <FiltersGrid
+                  filters={filters}
+                  handleSubmit={handleSubmit}
+                  canPublishFilter={canPublishFilter}
+                  handlePublish={handlePublish}
+                  handleUnpublishModal={handleUnpublishModal}
+                  handleUploadImport={handleUploadImport}
+                  handleClone={handleClone}
+                  handleDownload={handleDownload}
+                  uploadHandler={uploadHandler}
+                  setSelectedFilter={setSelectedFilter}
+                  selectedFilter={selectedFilter}
+                  pages={Math.ceil(count / pageSize)}
+                  setPage={setPage}
+                  selectedPage={page}
+                  publishModal={publishModal}
+                  setPublishModal={setPublishModal}
+                  publishSchema={publishSchema}
+                  fetch={() => getFilters()}
+                  handleInfoModal={handleInfoModal}
                 />
               )}
-            {importModal.open && CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject) && (
-              <ImportModal
-                handleClose={handleUploadImportClose}
-                handleImportFilter={handleImportFilter}
-              />
-            )}
-            {infoModal.open &&
-              CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject) && (
-                <UsesSistent>
+              {canPublishFilter &&
+                publishModal.open &&
+                CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject) && (
+                  <PublishModal
+                    handleClose={handlePublishModalClose}
+                    title={publishModal.filter?.name}
+                    handleSubmit={handlePublish}
+                  />
+                )}
+              {importModal.open && CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject) && (
+                <ImportModal
+                  handleClose={handleUploadImportClose}
+                  handleImportFilter={handleImportFilter}
+                />
+              )}
+              {infoModal.open &&
+                CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject) && (
                   <InfoModal
                     handlePublish={handlePublish}
                     infoModalOpen={true}
@@ -1302,14 +1289,14 @@ function MesheryFilters({
                     meshModels={meshModels}
                     patternFetcher={() => getFilters()}
                   />
-                </UsesSistent>
-              )}
-            <PromptComponent ref={modalRef} />
-          </>
-        ) : (
-          <DefaultError />
-        )}
-      </NoSsr>
+                )}
+              <PromptComponent ref={modalRef} />
+            </>
+          ) : (
+            <DefaultError />
+          )}
+        </NoSsr>
+      </UsesSistent>
     </>
   );
 }

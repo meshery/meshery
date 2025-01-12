@@ -10,7 +10,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/General/error-404';
 import MesheryPatterns from '@/components/MesheryPatterns';
-import { Paper } from '@layer5/sistent';
+// import { Paper } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
 
 function CatalogPage(props) {
@@ -25,17 +25,17 @@ function CatalogPage(props) {
           <title>Catalog | Meshery</title>
         </Head>
         {CAN(keys.VIEW_CATALOG.action, keys.VIEW_CATALOG.subject) || false ? (
-          <Paper sx={{ maxWidth: '90%', margin: 'auto', overflow: 'hidden' }}>
-            <MesheryPatterns
-              disableCreateImportDesignButton={true}
-              disableUniversalFilter={true}
-              initialFilters={{ visibility: VISIBILITY.PUBLISHED }}
-              hideVisibility={true}
-              pageTitle="Catalog"
-              arePatternsReadOnly={true}
-            />
-          </Paper>
+          // <Paper sx={{ maxWidth: '90%', margin: 'auto', overflow: 'hidden' }}>
+          <MesheryPatterns
+            disableCreateImportDesignButton={true}
+            disableUniversalFilter={true}
+            initialFilters={{ visibility: VISIBILITY.PUBLISHED }}
+            hideVisibility={true}
+            pageTitle="Catalog"
+            arePatternsReadOnly={true}
+          />
         ) : (
+          // </Paper>
           <DefaultError />
         )}
       </NoSsr>
