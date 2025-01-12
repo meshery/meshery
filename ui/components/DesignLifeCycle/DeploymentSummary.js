@@ -7,7 +7,7 @@ import { SEVERITY_STYLE } from '../NotificationCenter/constants';
 import { ErrorMetadataFormatter } from '../NotificationCenter/metadata';
 import { ComponentIcon } from './common';
 import { Button } from '@layer5/sistent';
-import { ExternalLinkIcon,componentIcon } from '@layer5/sistent';
+import { ExternalLinkIcon, componentIcon } from '@layer5/sistent';
 import { UsesSistent } from '../SistentWrapper';
 import { openViewScopedToDesignInOperator, useIsOperatorEnabled } from '@/utils/utils';
 import { useRouter } from 'next/router';
@@ -20,7 +20,6 @@ const StyledDetailBox = styled(Box)(({ theme, severityColor, bgOpacity }) => ({
 }));
 
 const DeployementComponentFormatter = ({ componentDetail }) => {
-
   return (
     <StyledDetailBox
       severityColor={
@@ -32,21 +31,21 @@ const DeployementComponentFormatter = ({ componentDetail }) => {
       flexDirection="column"
     >
       <Stack direction="row" spacing={2} alignItems={'center'}>
-          <ComponentIcon
-            iconSrc={componentIcon({
-              kind: componentDetail.Kind,
-              model: componentDetail.Model,
-              color: "color"
-            })}
-            alt={componentDetail.Kind}
-          />
-        {componentDetail.Success ?
-        <Typography variant="textB1Regular" >
-          Deployed  {componentDetail.Kind} "{componentDetail.CompName}" 
-        </Typography>
-        : <RenderMarkdown content={componentDetail.Message} />
-        }
-          
+        <ComponentIcon
+          iconSrc={componentIcon({
+            kind: componentDetail.Kind,
+            model: componentDetail.Model,
+            color: 'color',
+          })}
+          alt={componentDetail.Kind}
+        />
+        {componentDetail.Success ? (
+          <Typography variant="textB1Regular">
+            Deployed {componentDetail.Kind} "{componentDetail.CompName}"
+          </Typography>
+        ) : (
+          <RenderMarkdown content={componentDetail.Message} />
+        )}
       </Stack>
       {componentDetail.Error && <ErrorMetadataFormatter metadata={componentDetail.Error} />}
       {componentDetail.metadata && <FormatStructuredData data={componentDetail.metadata} />}

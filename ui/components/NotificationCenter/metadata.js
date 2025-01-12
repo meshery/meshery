@@ -224,7 +224,7 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
           {value.map((error, idx) => (
             <ListItem key={idx}>
               <Box>
-               <RenderMarkdown content={error} />
+                <RenderMarkdown content={error} />
               </Box>
             </ListItem>
           ))}
