@@ -32,14 +32,14 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// represents the mesheryctl exp environment view [orgId] subcommand.
+// represents the mesheryctl environment view [orgId] subcommand.
 var viewEnvironmentCmd = &cobra.Command{
 	Use:   "view",
 	Short: "view registered environmnents",
 	Long:  "view a environments registered in Meshery Server",
 	Example: `
 // View details of a specific environment
-mesheryctl exp environment view --orgID [orgId]
+mesheryctl environment view --orgID [orgId]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		orgIdFlag, _ := cmd.Flags().GetString("orgId")

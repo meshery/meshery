@@ -33,9 +33,15 @@ func (p prettifier) Prettify(m map[string]interface{}, isSchema bool) map[string
 
 /*
 This function is deprecated and will be removed in the future. Dont Rely on this function or prettification of schema
+Note: We are keeping this function for backward compatibility with older designs
 */
 func (p prettifier) DePrettify(m map[string]interface{}, isSchema bool) map[string]interface{} {
-	return m
+	res := ConvertMapInterfaceMapString(m, false, isSchema)
+	out, ok := res.(map[string]interface{})
+	if !ok {
+		fmt.Println("failed to cast")
+	}
+	return out
 
 }
 

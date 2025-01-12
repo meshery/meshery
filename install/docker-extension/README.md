@@ -5,8 +5,8 @@
 </picture></a><br /><br /></p>
 
 <p align="center">
-<a href="https://hub.docker.com/r/meshery/meshery" alt="Docker pulls">
-  <img src="https://img.shields.io/docker/pulls/meshery/meshery.svg" /></a>
+<a href="https://hub.docker.com/r/layer5/meshery" alt="Docker pulls">
+  <img src="https://img.shields.io/docker/pulls/layer5/meshery.svg" /></a>
 <a href="https://github.com/issues?utf8=✓&q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+label%3A%22help+wanted%22+" alt="GitHub issues by-label">
   <img src="https://img.shields.io/github/issues/layer5io/meshery/help%20wanted.svg?color=informational" /></a>
 <a href="https://github.com/meshery/meshery/blob/master/LICENSE" alt="LICENSE">
