@@ -35,7 +35,14 @@ import { useNotification, withNotify } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
-import { Checkbox, MenuIcon, OutlinedSettingsIcon, Box, CustomTooltip, Typography } from '@layer5/sistent';
+import {
+  Checkbox,
+  MenuIcon,
+  OutlinedSettingsIcon,
+  Box,
+  CustomTooltip,
+  Typography,
+} from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { Colors } from '@/themes/app';
 import theme from '../themes/app';
@@ -325,22 +332,39 @@ function K8sContextMenu({
     let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
       title: `Delete Kubernetes connection?`,
       subtitle: (
-      <>
-      
-        <Typography variant="body">Are you sure you want to delete Kubernetes connection "${name}" and associated credential?</Typography>
-        <Typography variant="body2" sx={{ textAlign: 'left', marginTop: '1rem', cursor: 'pointer' }}>
-          
-        <details>
-          <summary sx={{ }}><strong>What does this mean?</strong></summary>
-          <div sx={{ backgroundColor: "#ff0000"}}>
-          <p> Deleting a connection administratively removes the cluster from Meshery's purview of management, which includes the removal of Meshery Operator from the cluster. Record of this Kubernetes connection and all associated data collected through MeshSync for this connection will be purged from Meshery's database. Note: By deleting this connection, you are not deleting the Kubernetes cluster itself.</p>
-          <p><strong>Reconnecting:</strong> You can always reconnect Meshery to the cluster again. By default, Meshery will automatically reconnect to the cluster when next presented with the same kubeconfig file / context. If you wish to prevent reconnection, *disconnect* this connection instead of *deleting* this connection.</p>
-          </div> 
-        </details>
-          
-        </Typography>
-        
-      </>
+        <>
+          <Typography variant="body">
+            {' '}
+            Are you sure you want to delete Kubernetes connection &quot;{name}&quot; and associated
+            credential?
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{ textAlign: 'left', marginTop: '1rem', cursor: 'pointer' }}
+          >
+            <details>
+              <summary>
+                <strong>What does this mean?</strong>
+              </summary>
+              <div>
+                <p>
+                  Deleting a connection administratively removes the cluster from Meshery&apos;s
+                  purview of management, which includes the removal of Meshery Operator from the
+                  cluster. Record of this Kubernetes connection and all associated data collected
+                  through MeshSync for this connection will be purged from Meshery&apos;s database.
+                  Note: By deleting this connection, you are not deleting the Kubernetes cluster
+                  itself.
+                </p>
+                <p>
+                  <strong>Reconnecting:</strong> You can always reconnect Meshery to the cluster
+                  again. By default, Meshery will automatically reconnect to the cluster when next
+                  presented with the same kubeconfig file / context. If you wish to prevent
+                  reconnection, *disconnect* this connection instead of *deleting* this connection.
+                </p>
+              </div>
+            </details>
+          </Typography>
+        </>
       ),
       options: ['CONFIRM', 'CANCEL'],
       variant: PROMPT_VARIANTS.DANGER,
@@ -355,8 +379,11 @@ function K8sContextMenu({
       };
       deleteKubernetesConfig(
         successHandlerGenerator(notify, `Kubernetes connection "${name}" removed`, successCallback),
-        errorHandlerGenerator(notify, `Failed to remove Kubernetes connection "
-          ${name}"`),
+        errorHandlerGenerator(
+          notify,
+          `Failed to remove Kubernetes connection "
+          ${name}"`,
+        ),
         connectionID,
       );
     }
