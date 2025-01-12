@@ -110,7 +110,7 @@ function FiltersCard_({
             <div className={classes.lastRunText}>
               <div>
                 {updated_at ? (
-                  <Typography color="primary" variant="caption" style={{ fontStyle: 'italic' }}>
+                  <Typography variant="caption" style={{ fontStyle: 'italic' }}>
                     Modified On: <Moment format="LLL">{updated_at}</Moment>
                   </Typography>
                 ) : null}
@@ -252,7 +252,7 @@ function FiltersCard_({
               <div className={classes.lastRunText}>
                 <div>
                   {created_at ? (
-                    <Typography color="primary" variant="caption" style={{ fontStyle: 'italic' }}>
+                    <Typography variant="caption" style={{ fontStyle: 'italic' }}>
                       Created at: <Moment format="LLL">{created_at}</Moment>
                     </Typography>
                   ) : null}

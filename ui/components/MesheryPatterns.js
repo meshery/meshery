@@ -31,7 +31,7 @@ import SaveIcon from '@mui/icons-material/Save';
 import CustomToolbarSelect from './MesheryPatterns/CustomToolbarSelect';
 import AddIcon from '@mui/icons-material/AddCircleOutline';
 import React, { useEffect, useRef, useState } from 'react';
-// import { UnControlled as CodeMirror } from 'react-codemirror2';
+import { UnControlled as CodeMirror } from 'react-codemirror2';
 import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -113,11 +113,11 @@ const genericClickHandler = (ev, fn) => {
 //   },
 // }));
 
-const IconPatt = styled('div')(({ theme }) => ({
-  width: '24px',
-  height: '24px',
-  filter: theme.palette.secondary.brightness,
-}));
+// const IconPatt = styled('div')(({ theme }) => ({
+//   width: '24px',
+//   height: '24px',
+//   filter: theme.palette.secondary.brightness,
+// }));
 
 const ViewSwitchButton = styled(Box)(() => ({
   justifySelf: 'flex-end',
@@ -169,21 +169,23 @@ const YamlDialogTitleText = styled(Typography)(() => ({
   flexGrow: 1,
 }));
 
-const FullScreenCodeMirror = styled(Box)(() => ({
-  height: '100%',
-  '& .CodeMirror': {
-    minHeight: '300px',
-    height: '100%',
-  },
-}));
+// const FullScreenCodeMirror = styled(Box)(() => ({
+//   height: '100%',
+//   '& .CodeMirror': {
+//     minHeight: '300px',
+//     height: '100%',
+//   },
+// }));
 
 function TooltipIcon({ children, onClick, title, placement, disabled }) {
   return (
-    <CustomTooltip title={title} placement={placement} interactive>
-      <IconButton disabled={disabled} onClick={onClick}>
-        {children}
-      </IconButton>
-    </CustomTooltip>
+    <UsesSistent>
+      <CustomTooltip title={title} placement={placement} interactive>
+        <IconButton disabled={disabled} onClick={onClick}>
+          {children}
+        </IconButton>
+      </CustomTooltip>
+    </UsesSistent>
   );
 }
 
@@ -227,7 +229,7 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
       </YamlDialogTitle>
       <Divider variant="fullWidth" light />
       <DialogContent>
-        <FullScreenCodeMirror
+        <CodeMirror
           value={pattern.pattern_file}
           options={{
             theme: 'material',
@@ -1097,9 +1099,7 @@ function MesheryPatterns({
                   }}
                   disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                 >
-                  <IconPatt>
-                    <EditIcon fill="currentColor" />
-                  </IconPatt>
+                  <EditIcon fill="currentColor" />
                 </TooltipIcon>
               )}
               {visibility === VISIBILITY.PUBLISHED ? (
@@ -1112,9 +1112,7 @@ function MesheryPatterns({
                   }}
                   disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)}
                 >
-                  <IconPatt>
-                    <CloneIcon fill="currentColor" />
-                  </IconPatt>
+                  <CloneIcon fill="currentColor" />
                 </TooltipIcon>
               ) : (
                 <TooltipIcon
