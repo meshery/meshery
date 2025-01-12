@@ -59,8 +59,6 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
   const eventStyle = SEVERITY_STYLE[event?.severity] || {};
   const errors = event.metadata?.error;
   const router = useRouter();
-
-  console.log("deployment event",event)
   const componentsDetails = Object.values(event.metadata?.summary || {}).flatMap(
     (perComponentDetail) => {
       perComponentDetail = perComponentDetail?.flatMap ? perComponentDetail : [];
@@ -72,7 +70,6 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
       );
     },
   );
-  console.log("component details",componentsDetails)
 
   const is_operator_enabled = useIsOperatorEnabled();
 
