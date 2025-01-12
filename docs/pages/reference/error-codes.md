@@ -177,11 +177,14 @@ Troubleshooting guides to using Meshery's various features and components.
   <tbody class="tbl-body">
     {% for err_code in component[1].errors %}
       {% if err_code[1]["severity"] == "Fatal" %}
-        {% assign severity = "background-color: #FF0101; color: white;" %}
+        {% assign severity = "background-color: #FF0101; color: white; writing-mode: vertical-rl;
+text-orientation: mixed;" %}
       {% elsif err_code[1]["severity"] == "Alert" %}
-        {% assign severity = "background-color: #FEA400; color: white;" %}
+        {% assign severity = "background-color: #FEA400; color: white; writing-mode: vertical-rl;
+text-orientation: mixed;" %}
       {% else %}
-        {% assign severity = "background-color: transparent; color: black;" %}
+        {% assign severity = "background-color: transparent; color: black; writing-mode: vertical-rl;
+text-orientation: mixed;" %}
       {% endif %}
       <tr class="tbl-body-row hover-effect" onclick="toggle_visibility('{{ component[1].component_name }}-{{ err_code[1]["name"] }}-more-info');">
         <td style="{{ severity }}">{{ err_code[1]["severity"] }}</td>
