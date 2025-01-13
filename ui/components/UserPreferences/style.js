@@ -1,3 +1,5 @@
+import { FormControl, styled } from '@layer5/sistent';
+
 const styles = (theme) => ({
   orgSelect: {
     '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
@@ -37,21 +39,20 @@ const styles = (theme) => ({
     height: '100%',
     position: 'relative',
   },
-  formControlWrapper: {
-    padding: 20,
-    border: '1.5px solid #969696',
-    display: 'flex',
-    width: '70%',
-  },
-  formLabelWrapper: {
-    fontSize: 20,
-  },
-  formContainerWrapper: {
-    display: 'flex',
-    'flex-wrap': 'wrap',
-    'justify-content': 'space-evenly',
-    padding: 50,
-  },
 });
+
+export const FormGroupWrapper = styled(FormControl)(() => ({
+  padding: 20,
+  border: '1.5px solid #969696',
+  display: 'flex',
+  width: '70%',
+}));
+
+export const FormContainerWrapper = styled('div')(() => ({
+  display: 'flex',
+  flexWrap: 'wrap',
+  justifyContent: 'space-evenly',
+  padding: 50,
+}));
 
 export default styles;
