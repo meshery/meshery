@@ -15,6 +15,7 @@ export const ConfigurationTableConfig = (
   meshSyncResources,
   k8sConfig,
   connectionMetadataState,
+  workloadType,
 ) => {
   const ping = useKubernetesHook();
   return {
@@ -58,6 +59,7 @@ export const ConfigurationTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -195,6 +197,7 @@ export const ConfigurationTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -333,6 +336,7 @@ export const ConfigurationTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -453,6 +457,7 @@ export const ConfigurationTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -575,6 +580,7 @@ export const ConfigurationTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -741,6 +747,7 @@ export const ConfigurationTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -863,6 +870,7 @@ export const ConfigurationTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -1043,6 +1051,7 @@ export const ConfigurationTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -1163,6 +1172,7 @@ export const ConfigurationTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -1285,6 +1295,7 @@ export const ConfigurationTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -1420,6 +1431,7 @@ export const ConfigurationTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },

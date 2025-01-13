@@ -15,8 +15,10 @@ export const StorageTableConfig = (
   meshSyncResources,
   k8sConfig,
   connectionMetadataState,
+  workloadType,
 ) => {
   const ping = useKubernetesHook();
+
   return {
     PersistentVolume: {
       name: 'PersistentVolume',
@@ -61,6 +63,7 @@ export const StorageTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -238,6 +241,7 @@ export const StorageTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -405,6 +409,7 @@ export const StorageTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },

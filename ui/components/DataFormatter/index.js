@@ -256,7 +256,7 @@ export const SectionBody = ({ body, style = {} }) => {
     ></TextWithLinks>
   );
 };
-const ArrayFormatter = ({ items }) => {
+export const ArrayFormatter = ({ items }) => {
   const theme = useTheme();
   return (
     <ol

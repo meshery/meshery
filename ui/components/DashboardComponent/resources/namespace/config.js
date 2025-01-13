@@ -16,6 +16,7 @@ export const NamespaceTableConfig = (
   meshSyncResources,
   k8sConfig,
   connectionMetadataState,
+  workloadType,
 ) => {
   const ping = useKubernetesHook();
   return {
@@ -58,6 +59,7 @@ export const NamespaceTableConfig = (
                     : {}
                 }
                 value={value}
+                kind={workloadType}
               />
             );
           },
