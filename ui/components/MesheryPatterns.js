@@ -107,18 +107,6 @@ const genericClickHandler = (ev, fn) => {
   fn(ev);
 };
 
-// const StyledRow = styled(Box)(() => ({
-//   '& .MuiTableRow-root': {
-//     cursor: 'pointer',
-//   },
-// }));
-
-// const IconPatt = styled('div')(({ theme }) => ({
-//   width: '24px',
-//   height: '24px',
-//   filter: theme.palette.secondary.brightness,
-// }));
-
 const ViewSwitchButton = styled(Box)(() => ({
   justifySelf: 'flex-end',
   // paddingLeft: '1rem',
@@ -148,10 +136,6 @@ const SearchWrapper = styled(Box)(() => ({
   },
 }));
 
-// const CatalogFilter = styled(Box)(() => ({
-//   marginRight: '2rem',
-// }));
-
 const BtnText = styled('span')(() => ({
   display: 'block',
   '@media (max-width: 765px)': {
@@ -168,14 +152,6 @@ const YamlDialogTitle = styled(DialogTitle)(() => ({
 const YamlDialogTitleText = styled(Typography)(() => ({
   flexGrow: 1,
 }));
-
-// const FullScreenCodeMirror = styled(Box)(() => ({
-//   height: '100%',
-//   '& .CodeMirror': {
-//     minHeight: '300px',
-//     height: '100%',
-//   },
-// }));
 
 function TooltipIcon({ children, onClick, title, placement, disabled }) {
   return (

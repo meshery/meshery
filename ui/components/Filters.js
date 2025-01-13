@@ -75,11 +75,6 @@ import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { ToolWrapper } from './Lifecycle/Workspaces';
 
-// const TableHeader = styled(Typography)(() => ({
-//   // fontWeight: 'bolder',
-//   // fontSize: 18,
-// }));
-
 const CreateButton = styled(Button)(() => ({
   width: 'fit-content',
   alignSelf: 'flex-start',
