@@ -1,8 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core';
 import { Tooltip } from '@material-ui/core';
-import KubernetesIcon from '../../../assets/icons/technology/kubernetes';
-
 import { withRouter } from 'next/router';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import ResourcesTable from './resources-table';
@@ -11,6 +9,8 @@ import { Box } from '@material-ui/core';
 import { TabPanel } from '../tabpanel';
 import { Tab, Tabs } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
+import { iconMedium } from 'css/icons.styles';
+import GetKubernetesNodeIcon from '../utils';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -43,6 +43,7 @@ const styles = (theme) => ({
     display: 'flex',
     flexWrap: 'no-wrap',
     justifyContent: 'center',
+    gap: '1rem',
     alignItems: 'center',
     '& svg': {
       verticalAlign: 'middle',
@@ -112,13 +113,23 @@ const ResourcesSubMenu = (props) => {
     selectedK8sContexts,
     selectedResource,
     handleChangeSelectedResource,
+    CRDsKeys,
   } = props;
-
+  const isCRD = resource.tableConfig.name === 'CustomResourceConfig';
   if (!selectedResource) {
-    handleChangeSelectedResource(Object.keys(resource.tableConfig())[0]);
+    let resourceNames = Object.keys(resource.tableConfig());
+    if (isCRD) {
+      resourceNames = CRDsKeys;
+    }
+    handleChangeSelectedResource(resourceNames[0]);
   }
 
-  const TABS = Object.keys(resource.tableConfig());
+  let TABS;
+  if (isCRD) {
+    TABS = CRDsKeys;
+  } else {
+    TABS = Object.keys(resource.tableConfig());
+  }
 
   const getResourceCategoryIndex = (resourceCategory) => {
     return TABS.findIndex((resource) => resource === resourceCategory);
@@ -144,28 +155,23 @@ const ResourcesSubMenu = (props) => {
                   textColor="primary"
                   // centered
                 >
-                  {TABS.map((key, index) => (
-                    <Tooltip
-                      key={index}
-                      title={`${resource.tableConfig()[key].name}`}
-                      placement="top"
-                    >
-                      <Tab
-                        key={index}
-                        value={index}
-                        label={
-                          <div className={classes.iconText}>
-                            <KubernetesIcon
-                              className={classes.iconText}
-                              width="22px"
-                              height="22px"
-                            />
-                            {resource.tableConfig()[key].name}
-                          </div>
-                        }
-                      />
-                    </Tooltip>
-                  ))}
+                  {TABS.map((key, index) => {
+                    const title = isCRD ? key : resource.tableConfig()[key].name;
+                    return (
+                      <Tooltip key={index} title={title} placement="top">
+                        <Tab
+                          key={index}
+                          value={index}
+                          label={
+                            <div className={classes.iconText}>
+                              <GetKubernetesNodeIcon kind={key} isCRD={isCRD} size={iconMedium} />
+                              {title}
+                            </div>
+                          }
+                        />
+                      </Tooltip>
+                    );
+                  })}
                 </Tabs>
               </UsesSistent>
             </Box>

@@ -1,4 +1,4 @@
-import { styled } from '@layer5/sistent';
+import { IconButton, styled } from '@layer5/sistent';
 import { Typography } from '@layer5/sistent';
 
 export const DashboardSection = styled('div')(({ theme }) => ({
@@ -106,3 +106,25 @@ export const SkeletonHexagon = styled('div')(({ theme }) => ({
   alignItems: 'center',
   opacity: 0.5,
 }));
+
+export const HeaderContainer = styled('div')({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: '1rem',
+});
+
+export const ControlsContainer = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.5rem',
+});
+
+export const StyledIconButton = styled(IconButton)({
+  padding: '4px',
+});
+
+export const NoResourcesText = styled(Typography)({
+  textAlign: 'center',
+  marginTop: '2rem',
+});
