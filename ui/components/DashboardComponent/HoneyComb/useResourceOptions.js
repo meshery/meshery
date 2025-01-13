@@ -29,6 +29,8 @@ export const useResourceFiltering = (kinds, groupBy, sortDirection) => {
     if (!kinds) return [];
     const filteredKinds = filterKindsByGroup(kinds, groupBy);
 
+    if (!sortDirection) return filteredKinds;
+
     return sortKindsByCount(filteredKinds, sortDirection);
   }, [kinds, groupBy, sortDirection]);
 

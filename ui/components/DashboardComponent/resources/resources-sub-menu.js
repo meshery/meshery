@@ -112,22 +112,22 @@ const ResourcesSubMenu = (props) => {
     selectedK8sContexts,
     selectedResource,
     handleChangeSelectedResource,
+    CRDsKeys,
   } = props;
-
   const resourceName = resource.tableConfig.name;
   if (!selectedResource) {
     let resourceNames = Object.keys(resource.tableConfig());
     if (resourceName === 'CustomResourceConfig') {
-      resourceNames = Object.keys(
-        resource.tableConfig(null, null, k8sConfig, null, selectedK8sContexts),
-      );
+      resourceNames = CRDsKeys;
     }
     handleChangeSelectedResource(resourceNames[0]);
   }
 
-  let TABS = Object.keys(resource.tableConfig());
+  let TABS;
   if (resourceName === 'CustomResourceConfig') {
-    TABS = Object.keys(resource.tableConfig(null, null, k8sConfig, null, selectedK8sContexts));
+    TABS = CRDsKeys;
+  } else {
+    TABS = Object.keys(resource.tableConfig());
   }
 
   const getResourceCategoryIndex = (resourceCategory) => {

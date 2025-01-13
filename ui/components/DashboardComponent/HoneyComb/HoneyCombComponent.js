@@ -8,9 +8,9 @@ import {
   Typography,
   Select,
   MenuItem,
+  componentIcon,
 } from '@layer5/sistent';
 import { useRouter } from 'next/router';
-import { componentIcon } from '../charts/utils';
 import ConnectCluster from '../charts/ConnectCluster';
 import { generateDynamicURL, getAllCustomResourceDefinitionsKinds } from '../resources/config';
 import {
@@ -32,7 +32,7 @@ const HoneycombComponent = (props) => {
   const { kinds, isClusterLoading, isClusterIdsEmpty } = props;
   const router = useRouter();
   const [groupBy, setGroupBy] = useState('all');
-  const [sortDirection, setSortDirection] = useState(SORT_DIRECTIONS.DESC);
+  const [sortDirection, setSortDirection] = useState(null);
 
   const groupOptions = useResourceOptions();
   const filteredKinds = useResourceFiltering(kinds, groupBy, sortDirection);
