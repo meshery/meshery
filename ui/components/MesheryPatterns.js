@@ -109,10 +109,6 @@ const genericClickHandler = (ev, fn) => {
 
 const ViewSwitchButton = styled(Box)(() => ({
   justifySelf: 'flex-end',
-  // paddingLeft: '1rem',
-  // '@media (max-width: 1450px)': {
-  //   marginRight: '2rem',
-  // },
 }));
 
 const CreateButton = styled(Box)(() => ({

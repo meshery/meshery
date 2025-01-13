@@ -1165,9 +1165,7 @@ function MesheryFilters({
                             variant="contained"
                             color="primary"
                             size="large"
-                            // @ts-ignore
                             onClick={handleUploadImport}
-                            style={{ marginRight: '2rem' }}
                             disabled={!CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject)}
                           >
                             <PublishIcon style={iconMedium} data-cy="import-button" />
@@ -1227,7 +1225,6 @@ function MesheryFilters({
                   tableCols={tableCols}
                   updateCols={updateCols}
                   columnVisibility={columnVisibility}
-                  // @ts-ignore
                   options={options}
                 />
               )}
@@ -1365,5 +1362,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-// @ts-ignore
 export default connect(mapStateToProps, mapDispatchToProps)(MesheryFilters);
