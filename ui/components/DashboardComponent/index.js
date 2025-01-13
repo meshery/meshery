@@ -27,8 +27,15 @@ const styles = (theme) => ({
     marginLeft: theme.spacing(0.5),
   },
   iconText: {
-    display: 'inline',
-    verticalAlign: 'middle',
+    display: 'flex',
+    flexWrap: 'no-wrap',
+    justifyContent: 'center',
+    gap: '1rem',
+    alignItems: 'center',
+    '& svg': {
+      verticalAlign: 'middle',
+      marginRight: '.5rem',
+    },
   },
   backToPlay: { margin: theme.spacing(2) },
   link: { cursor: 'pointer' },
@@ -126,7 +133,7 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
     return ResourceCategoryTabs[index];
   };
   const { width } = useWindowDimensions();
-
+  let CRDsKeys = [];
   return (
     <>
       <UsesSistent>
@@ -167,33 +174,48 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
           <TabPanel value={resourceCategory} index={'Overview'}>
             <Overview />
           </TabPanel>
-          {Object.keys(ResourcesConfig).map((resource, idx) => (
-            <TabPanel value={resourceCategory} index={resource} key={resource}>
-              {ResourcesConfig[resource].submenu ? (
-                <ResourcesSubMenu
-                  key={idx}
-                  resource={ResourcesConfig[resource]}
-                  selectedResource={selectedResource}
-                  handleChangeSelectedResource={handleChangeSelectedResource}
-                  updateProgress={updateProgress}
-                  classes={classes}
-                  k8sConfig={k8sconfig}
-                  selectedK8sContexts={selectedK8sContexts}
-                />
-              ) : (
-                <ResourcesTable
-                  key={idx}
-                  workloadType={resource}
-                  classes={classes}
-                  k8sConfig={k8sconfig}
-                  selectedK8sContexts={selectedK8sContexts}
-                  resourceConfig={ResourcesConfig[resource].tableConfig}
-                  menu={ResourcesConfig[resource].submenu}
-                  updateProgress={updateProgress}
-                />
-              )}
-            </TabPanel>
-          ))}
+          {Object.keys(ResourcesConfig).map((resource, idx) => {
+            if (resource === 'CRDS') {
+              CRDsKeys = Object.keys(
+                ResourcesConfig[resource].tableConfig(
+                  null,
+                  null,
+                  k8sconfig,
+                  null,
+                  resource,
+                  selectedK8sContexts,
+                ),
+              );
+            }
+            return (
+              <TabPanel value={resourceCategory} index={resource} key={resource}>
+                {ResourcesConfig[resource].submenu ? (
+                  <ResourcesSubMenu
+                    key={idx}
+                    resource={ResourcesConfig[resource]}
+                    selectedResource={selectedResource}
+                    handleChangeSelectedResource={handleChangeSelectedResource}
+                    updateProgress={updateProgress}
+                    classes={classes}
+                    k8sConfig={k8sconfig}
+                    selectedK8sContexts={selectedK8sContexts}
+                    CRDsKeys={CRDsKeys}
+                  />
+                ) : (
+                  <ResourcesTable
+                    key={idx}
+                    workloadType={resource}
+                    classes={classes}
+                    k8sConfig={k8sconfig}
+                    selectedK8sContexts={selectedK8sContexts}
+                    resourceConfig={ResourcesConfig[resource].tableConfig}
+                    menu={ResourcesConfig[resource].submenu}
+                    updateProgress={updateProgress}
+                  />
+                )}
+              </TabPanel>
+            );
+          })}
         </WrapperContainer>
       </UsesSistent>
     </>

@@ -1,5 +1,4 @@
-import { Paper, styled } from '@layer5/sistent';
-import { Typography } from '@layer5/sistent';
+import { Typography, IconButton, Paper, styled } from '@layer5/sistent';
 
 export const DashboardSection = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
@@ -125,4 +124,26 @@ export const WrapperPaper = styled(Paper)({
   flexGrow: 1,
   maxWidth: '100vw',
   height: 'auto',
+});
+
+export const HeaderContainer = styled('div')({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: '1rem',
+});
+
+export const ControlsContainer = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.5rem',
+});
+
+export const StyledIconButton = styled(IconButton)({
+  padding: '4px',
+});
+
+export const NoResourcesText = styled(Typography)({
+  textAlign: 'center',
+  marginTop: '2rem',
 });
