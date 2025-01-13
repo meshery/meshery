@@ -13,7 +13,6 @@ import Overview from './overview';
 import KubernetesIcon from '../../assets/icons/technology/kubernetes';
 import MesheryIcon from './images/meshery-icon.js';
 import { TabPanel } from './tabpanel';
-// import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { iconLarge } from '../../css/icons.styles';
 import { useWindowDimensions } from '@/utils/dimension';
 import { Tab, Tabs, CustomTooltip } from '@layer5/sistent';
