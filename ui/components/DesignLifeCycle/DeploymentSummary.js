@@ -1,5 +1,5 @@
 import { NOTIFICATIONCOLORS } from '@/themes/index';
-import { Box,  Stack, Typography, styled, useTheme } from '@layer5/sistent';
+import { Box, Stack, Typography, styled, useTheme } from '@layer5/sistent';
 import { alpha } from '@mui/material';
 import { FormatStructuredData, TextWithLinks } from '../DataFormatter';
 import { SEVERITY_STYLE } from '../NotificationCenter/constants';
@@ -38,13 +38,11 @@ const DeployementComponentFormatter = ({ componentDetail }) => {
           })}
           alt={componentDetail.Kind}
         />
-          <Typography variant="textB1Regular">
-           {componentDetail.Success 
-              ? `Deployed ${componentDetail.Kind} "${componentDetail.CompName}"`
-              : `Failed to deploy ${componentDetail.Kind} "${componentDetail.CompName}"`
-            }
-          </Typography>
-          
+        <Typography variant="textB1Regular">
+          {componentDetail.Success
+            ? `Deployed ${componentDetail.Kind} "${componentDetail.CompName}"`
+            : `Failed to deploy ${componentDetail.Kind} "${componentDetail.CompName}"`}
+        </Typography>
       </Stack>
       {componentDetail.Error && <ErrorMetadataFormatter metadata={componentDetail.Error} />}
       {componentDetail.metadata && <FormatStructuredData data={componentDetail.metadata} />}
