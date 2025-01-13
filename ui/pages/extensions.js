@@ -15,11 +15,7 @@ import { useNotification } from '../utils/hooks/useNotification';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { LARGE_6_MED_12_GRID_STYLE } from '../css/grid.style';
-import {
-  CardContainer,
-  FrontSideDescription,
-  ImageWrapper,
-} from '../css/icons.styles';
+import { CardContainer, FrontSideDescription, ImageWrapper } from '../css/icons.styles';
 
 const INITIAL_GRID_SIZE = { lg: 6, md: 12, xs: 12 };
 

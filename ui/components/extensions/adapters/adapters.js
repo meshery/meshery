@@ -1,11 +1,7 @@
 import { isNil, isUndefined } from 'lodash';
 import { useEffect, useState } from 'react';
 import { withRouter } from 'next/router';
-import {
-  CardContainer,
-  FrontSideDescription,
-  ImageWrapper,
-} from '../../../css/icons.styles';
+import { CardContainer, FrontSideDescription, ImageWrapper } from '../../../css/icons.styles';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
