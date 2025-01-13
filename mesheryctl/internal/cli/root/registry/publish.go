@@ -36,6 +36,7 @@ var (
 	imgsOutputPath        string
 	models                = []utils.ModelCSV{}
 	components            = map[string]map[string][]utils.ComponentCSV{}
+	relationships         = []utils.RelationshipCSV{}
 	outputFormat          string
 )
 
@@ -105,6 +106,7 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 
 		modelCSVHelper := &utils.ModelCSVHelper{}
 		componentCSVHelper := &utils.ComponentCSVHelper{}
+		relationshipCSVHelper := &utils.RelationshipCSVHelper{}
 		GoogleSpreadSheetURL += sheetID
 
 		for _, v := range resp.Sheets {
@@ -131,11 +133,23 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 					utils.Log.Error(err)
 					return nil
 				}
+			case "Relationships":
+				relationshipCSVHelper, err = utils.NewRelationshipCSVHelper(GoogleSpreadSheetURL, v.Properties.Title, v.Properties.SheetId, relationshipCSVFilePath)
+				if err != nil {
+					utils.Log.Error(err)
+					return nil
+				}
+				err = relationshipCSVHelper.ParseRelationshipsSheet(modelName)
+				if err != nil {
+					utils.Log.Error(err)
+					return nil
+				}
 			}
 		}
 
 		models = modelCSVHelper.Models
 		components = componentCSVHelper.Components
+		relationships = relationshipCSVHelper.Relationships
 
 		switch system {
 		case "meshery":
@@ -210,6 +224,10 @@ func remoteProviderSystem() error {
 func websiteSystem() error {
 	var err error
 
+	relationshipMap := make(map[string][]utils.RelationshipCSV)
+	for _, rel := range relationships {
+		relationshipMap[rel.Model] = append(relationshipMap[rel.Model], rel)
+	}
 	docsJSON := "const data = ["
 	for _, model := range models {
 		comps, ok := components[model.Registrant][model.Model]
@@ -218,6 +236,11 @@ func websiteSystem() error {
 			comps = []utils.ComponentCSV{}
 		}
 
+		relnships, ok := relationshipMap[model.Model]
+		if !ok || len(relnships) == 0 {
+			utils.Log.Debug("no relationships found for ", model.Model)
+			relnships = []utils.RelationshipCSV{}
+		}
 		switch outputFormat {
 		case "mdx":
 			err := utils.GenerateMDXStyleDocs(model, comps, modelsOutputPath, imgsOutputPath) // creates mdx file
@@ -225,12 +248,12 @@ func websiteSystem() error {
 				log.Fatalln(fmt.Printf("Error generating layer5 docs for model %s: %v\n", model.Model, err.Error()))
 			}
 		case "md":
-			err := utils.GenerateMDStyleDocs(model, comps, modelsOutputPath, imgsOutputPath) // creates md file
+			err := utils.GenerateMDStyleDocs(model, comps, relnships, modelsOutputPath, imgsOutputPath) // creates md file
 			if err != nil {
 				log.Fatalln(fmt.Printf("Error generating meshery docs for model %s: %v\n", model.Model, err.Error()))
 			}
 		case "js":
-			docsJSON, err = utils.GenerateJSStyleDocs(model, docsJSON, imgsOutputPath) // json file
+			docsJSON, err = utils.GenerateJSStyleDocs(model, docsJSON, comps, relnships, modelsOutputPath, imgsOutputPath) // json file
 			if err != nil {
 				log.Fatalln(fmt.Printf("Error generating mesheryio docs for model %s: %v\n", model.Model, err.Error()))
 			}
