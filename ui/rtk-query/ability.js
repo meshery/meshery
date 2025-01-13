@@ -51,6 +51,7 @@ export const LoadSessionGuard = ({ children }) => {
           message={
             error.message || 'An error occurred while fetching your organization permissions'
           }
+          showImage={false}
         />
         <OrgSwitcher />
       </>

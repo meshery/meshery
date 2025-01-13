@@ -54,7 +54,7 @@ const customMessages = [
  * CustomErrorMessage component is used to display a custom error message when a page is not found.
  * @returns {JSX.Element} JSX.Element
  */
-function CustomErrorMessage({ message }) {
+function CustomErrorMessage({ message, showImage = true }) {
   const classes = styles();
   const [customMessage, setCustomMessage] = useState(customMessages[0]);
 
@@ -73,7 +73,9 @@ function CustomErrorMessage({ message }) {
             <div className={classes.errMessage}> {message || 'Page does not exist.'}</div>
           </Typography>
         </div>
-        <img src="/static/img/service-mesh.svg" alt="service meshed" className={classes.mesh} />
+        {showImage && (
+          <img src="/static/img/service-mesh.svg" alt="service meshed" className={classes.mesh} />
+        )}
         <Typography variant="body1">
           <p className={classes.helpMessage}>
             Start a conversation at Layer5 community{' '}
