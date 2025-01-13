@@ -712,7 +712,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
       {% endfor %}
 {% assign subcommand2 = command10.subcommands.update %}
 <tr>
-        <td rowspan=4><a href="{{ site.baseurl }}/reference/mesheryctl/registry/update">{{ subcommand2.name }}</a></td>
+        <td rowspan=5><a href="{{ site.baseurl }}/reference/mesheryctl/registry/update">{{ subcommand2.name }}</a></td>
         <td></td>
         <td>{{ subcommand2.description }}</td>
       </tr>
