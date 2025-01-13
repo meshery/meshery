@@ -325,6 +325,60 @@ func processCytoElementsWithPattern(eles []cytoscapejs.Element, callback func(sv
 	return nil
 }
 
+// getAllK8sResources extracts all Kubernetes resources from the provided YAML data.
+// It handles multi-document YAML files, processes "List" kinds to extract individual items,
+// and returns a slice of resource manifests as generic map[string]interface{} structures.
+func getAllK8sResources(data string, ignoreErrors bool) ([]map[string]interface{}, error) {
+	var K8sResources []map[string]interface{}
+	decoder := yaml.NewDecoder(bytes.NewBufferString(data))
+
+	for {
+		manifest := map[string]interface{}{}
+		err := decoder.Decode(manifest)
+		if err != nil {
+			if err == io.EOF {
+				break
+			}
+			return K8sResources, ErrParseK8sManifest(fmt.Errorf("kubernetes manifest is invalid: %v", err))
+		}
+
+		// Skip empty manifests
+		if len(manifest) == 0 {
+			continue
+		}
+
+		manifest = utils.RecursiveCastMapStringInterfaceToMapStringInterface(manifest)
+		if manifest == nil {
+			if ignoreErrors {
+				continue
+			}
+			return K8sResources, ErrParseK8sManifest(fmt.Errorf("failed to parse manifest into an internal representation"))
+		}
+
+		// If it's a List kind, expand it, otherwise add directly
+		kind, _ := mutils.Cast[string](manifest["kind"])
+		if kind == "List" {
+			if items, ok := manifest["items"].([]interface{}); ok {
+				for _, item := range items {
+					if itemMap, ok := item.(map[string]interface{}); ok {
+						K8sResources = append(K8sResources, itemMap)
+					}
+				}
+			}
+			continue
+		}
+
+		K8sResources = append(K8sResources, manifest)
+	}
+
+	return K8sResources, nil
+}
+
+// NewPatternFileFromK8sManifest converts Kubernetes manifests into a Meshery design pattern file.
+// It extracts all resources, processes each resource to generate component
+// definitions, and combines them into a design pattern. If `ignoreErrors` is true, it skips errors
+// during the creation of individual component definitions.
+//
 // Note: If modified, make sure this function always returns a meshkit error
 func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bool, reg *registry.RegistryManager) (pattern.PatternFile, error) {
 	if fileName == "" {
@@ -337,33 +391,17 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 		Components:    []*component.ComponentDefinition{},
 	}
 
-	buffer := bytes.NewBufferString(data)
-	decoder := yaml.NewDecoder(buffer)
-	for {
-		manifest := map[string]interface{}{}
+	allK8sResources, err := getAllK8sResources(data, ignoreErrors)
+	if err != nil {
+		return pattern, err
+	}
 
-		err := decoder.Decode(manifest)
-		if err != nil {
-			if err == io.EOF {
-				if len(pattern.Components) == 0 {
-					return pattern, ErrParseK8sManifest(fmt.Errorf("kubernetes manifest is empty"))
-				}
-				return pattern, nil
-			} else {
-				return pattern, ErrParseK8sManifest(fmt.Errorf("kubernetes manifest is empty"))
-			}
-		}
-		if len(manifest) == 0 {
-			continue
-		}
-		// Recursive casting
-		manifest = utils.RecursiveCastMapStringInterfaceToMapStringInterface(manifest)
-		if manifest == nil {
-			if ignoreErrors {
-				continue
-			}
-			return pattern, ErrParseK8sManifest(fmt.Errorf("failed to parse manifest into an internal representation"))
-		}
+	if len(allK8sResources) == 0 {
+		return pattern, ErrParseK8sManifest(fmt.Errorf("kubernetes manifest is empty"))
+	}
+
+	// Process each resource
+	for _, manifest := range allK8sResources {
 
 		declaration, err := createPatternDeclarationFromK8s(manifest, reg)
 		if err != nil {
@@ -376,6 +414,7 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 		pattern.Components = append(pattern.Components, &declaration)
 	}
 
+	return pattern, nil
 }
 
 func createPatternDeclarationFromK8s(manifest map[string]interface{}, regManager *registry.RegistryManager) (component.ComponentDefinition, error) {
