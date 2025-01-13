@@ -168,11 +168,6 @@ const Adapters = ({ updateProgress, classes }) => {
                     onChange={() => handleToggle(adapter, adapterId)}
                     name="OperatorSwitch"
                     color="primary"
-                    // classes={{
-                    //   switchBase: classes.switchBase,
-                    //   track: classes.track,
-                    //   checked: classes.checked,
-                    // }}
                   />
                 </div>
               </Grid>

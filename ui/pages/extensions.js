@@ -90,18 +90,17 @@ const MeshMapSnapShotCard = ({ classes, githubActionEnabled = false }) => {
             Connect Kanvas to your GitHub repo and see changes pull request-to-pull request. Get
             snapshots of your infrastructure directly in your PRs.
           </FrontSideDescription>
-          {
-            <div style={{ textAlign: 'right' }}>
-              <Button
-                variant="contained"
-                color="primary"
-                disabled={githubActionEnabled}
-                onClick={(e) => handleEnable(e)}
-              >
-                {githubActionEnabled ? 'Remove' : 'Enable'}
-              </Button>
-            </div>
-          }
+
+          <div style={{ textAlign: 'right' }}>
+            <Button
+              variant="contained"
+              color="primary"
+              disabled={githubActionEnabled}
+              onClick={(e) => handleEnable(e)}
+            >
+              {githubActionEnabled ? 'Remove' : 'Enable'}
+            </Button>
+          </div>
         </CardContainer>
       </Grid>
     </UsesSistent>
@@ -145,17 +144,16 @@ const MesheryPerformanceAction = ({ classes, githubActionEnabled = false }) => {
             Characterize the performance of your services using Meshery&apos;s performance analysis
             GitHub Action to benchmark and visually compare percentiles (e.g. P99) over time.
           </FrontSideDescription>
-          {
-            <div style={{ textAlign: 'right' }}>
-              <Button
-                variant="contained"
-                disabled={githubActionEnabled}
-                onClick={(e) => handleEnable(e)}
-              >
-                {githubActionEnabled ? 'Remove' : 'Enable'}
-              </Button>
-            </div>
-          }
+
+          <div style={{ textAlign: 'right' }}>
+            <Button
+              variant="contained"
+              disabled={githubActionEnabled}
+              onClick={(e) => handleEnable(e)}
+            >
+              {githubActionEnabled ? 'Remove' : 'Enable'}
+            </Button>
+          </div>
         </CardContainer>
       </Grid>
     </UsesSistent>
@@ -398,11 +396,6 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
                       onChange={handleToggle}
                       name="OperatorSwitch"
                       color="primary"
-                      // classes={{
-                      //   switchBase: classes.switchBase,
-                      //   track: classes.track,
-                      //   checked: classes.checked,
-                      // }}
                     />
                   </div>
                 </Grid>
