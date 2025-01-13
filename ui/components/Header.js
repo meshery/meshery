@@ -441,54 +441,36 @@ function K8sContextMenu({
                     />
                   </div>
                   <div>
-                    {contexts?.total_count ? (
-                      <>
-                        <div
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <div>
-                            <UsesSistent>
-                              <Checkbox
-                                checked={activeContexts.includes('all')}
-                                onChange={() =>
-                                  activeContexts.includes('all')
-                                    ? setActiveContexts([])
-                                    : setActiveContexts('all')
-                                }
-                                color="primary"
-                              />
-                            </UsesSistent>
-                            <span style={{ fontWeight: 'bolder' }}>select all</span>
-                          </div>
-                          <CustomTooltip title="Configure Connections">
-                            <div>
-                              <IconButton
-                                size="small"
-                                onClick={() => setIsConnectionOpenModal(true)}
-                              >
-                                <Edit style={{ ...iconSmall }} />
-                              </IconButton>
-                            </div>
-                          </CustomTooltip>
+                    {contexts?.contexts?.length === 0 && (
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <div>
+                          <UsesSistent>
+                            <Checkbox
+                              checked={activeContexts.includes('all')}
+                              onChange={() =>
+                                activeContexts.includes('all')
+                                  ? setActiveContexts([])
+                                  : setActiveContexts('all')
+                              }
+                              color="primary"
+                            />
+                          </UsesSistent>
+                          <span style={{ fontWeight: 'bolder' }}>select all</span>
                         </div>
-                      </>
-                    ) : (
-                      <Link href="/management/connections">
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          color="primary"
-                          size="large"
-                          style={{ margin: '0.5rem 0.5rem', whiteSpace: 'nowrap' }}
-                        >
-                          <AddIcon className={classes.AddIcon} style={iconMedium} />
-                          Connect Clusters
-                        </Button>
-                      </Link>
+                        <CustomTooltip title="Configure Connections">
+                          <div>
+                            <IconButton size="small" onClick={() => setIsConnectionOpenModal(true)}>
+                              <Edit style={{ ...iconSmall }} />
+                            </IconButton>
+                          </div>
+                        </CustomTooltip>
+                      </div>
                     )}
                     {contexts?.contexts?.map((ctx) => {
                       return (
@@ -505,11 +487,9 @@ function K8sContextMenu({
                         />
                       );
                     })}
-                    {contexts?.contexts?.length > 0 && (
-                      <Box className={classes.mesherySettingsEnvButtons}>
-                        <MesherySettingsEnvButtons />
-                      </Box>
-                    )}
+                    <Box className={classes.mesherySettingsEnvButtons}>
+                      <MesherySettingsEnvButtons />
+                    </Box>
                   </div>
                 </Paper>
               </ClickAwayListener>
