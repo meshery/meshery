@@ -8,7 +8,6 @@ import { iconXLarge } from 'css/icons.styles';
 import React from 'react';
 
 const GetKubernetesNodeIcon = ({ kind, isCRD, size }) => {
-  console.log('amit kind is here', { kind });
   return (
     <img
       src={componentIcon({

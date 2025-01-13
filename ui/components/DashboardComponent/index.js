@@ -4,7 +4,7 @@ import { bindActionCreators } from 'redux';
 import { useRouter, withRouter } from 'next/router';
 import { withStyles } from '@material-ui/core/styles';
 import { withNotify } from '../../utils/hooks/useNotification';
-import { Paper, Tabs } from '@material-ui/core';
+import { Paper } from '@material-ui/core';
 import { updateProgress } from '../../lib/store';
 import { ResourcesConfig } from './resources/config';
 import ResourcesTable from './resources/resources-table';
@@ -16,7 +16,7 @@ import { TabPanel } from './tabpanel';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { iconLarge } from '../../css/icons.styles';
 import { useWindowDimensions } from '@/utils/dimension';
-import { Tab } from '@layer5/sistent';
+import { Tab, Tabs } from '@layer5/sistent';
 import { UsesSistent } from '../SistentWrapper';
 
 const styles = (theme) => ({

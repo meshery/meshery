@@ -26,8 +26,6 @@ import {
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { useResourceOptions, useResourceFiltering, SORT_DIRECTIONS } from './useResourceOptions';
-import { FALLBACK_KUBERNETES_IMAGE_PATH, KUBERNETES } from '@/constants/common';
-import { iconXLarge } from 'css/icons.styles';
 import GetKubernetesNodeIcon from '../utils';
 
 const HoneycombComponent = (props) => {
