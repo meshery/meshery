@@ -1,8 +1,8 @@
-import { styled } from '@layer5/sistent';
+import { Paper, styled } from '@layer5/sistent';
 import { Typography } from '@layer5/sistent';
 
 export const DashboardSection = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#202020' : theme.palette.common.white,
+  backgroundColor: theme.palette.background.default,
   padding: theme.spacing(2),
   borderRadius: '4px',
   height: '100%',
@@ -106,3 +106,23 @@ export const SkeletonHexagon = styled('div')(({ theme }) => ({
   alignItems: 'center',
   opacity: 0.5,
 }));
+
+export const ErrorContainer = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(2),
+  textAlign: 'center',
+  backgroundColor: theme.palette.background.default,
+  marginTop: '1rem',
+  borderRadius: 4,
+}));
+
+export const WrapperContainer = styled('div')({
+  flexGrow: 1,
+  maxWidth: '100vw',
+  height: 'auto',
+});
+
+export const WrapperPaper = styled(Paper)({
+  flexGrow: 1,
+  maxWidth: '100vw',
+  height: 'auto',
+});
