@@ -14,6 +14,7 @@ export const SecurityTypesConfig = (
   meshSyncResources,
   k8sConfig,
   connectionMetadataState,
+  workloadType,
 ) => {
   const ping = useKubernetesHook();
   return {
@@ -53,6 +54,7 @@ export const SecurityTypesConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },

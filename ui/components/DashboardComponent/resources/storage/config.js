@@ -15,6 +15,7 @@ export const StorageTableConfig = (
   meshSyncResources,
   k8sConfig,
   connectionMetadataState,
+  workloadType,
 ) => {
   const ping = useKubernetesHook();
 
@@ -62,6 +63,7 @@ export const StorageTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },

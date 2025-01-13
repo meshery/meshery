@@ -16,6 +16,7 @@ export const NetWorkTableConfig = (
   meshSyncResources,
   k8sConfig,
   connectionMetadataState,
+  workloadType,
 ) => {
   const ping = useKubernetesHook();
   return {
@@ -64,6 +65,7 @@ export const NetWorkTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },

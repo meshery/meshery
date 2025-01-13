@@ -15,6 +15,7 @@ export const CustomResourceConfig = (
   meshSyncResources,
   k8sConfig,
   connectionMetadataState,
+  _workloadType,
   selectedK8sContexts,
 ) => {
   const ping = useKubernetesHook();
@@ -76,6 +77,7 @@ export const CustomResourceConfig = (
                       : {}
                   }
                   value={value}
+                  kind={'CRDS'}
                 />
               );
             },

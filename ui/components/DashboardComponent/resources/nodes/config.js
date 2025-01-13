@@ -16,6 +16,7 @@ export const NodeTableConfig = (
   meshSyncResources,
   k8sConfig,
   connectionMetadataState,
+  workloadType,
 ) => {
   const ping = useKubernetesHook();
   return {
@@ -62,6 +63,7 @@ export const NodeTableConfig = (
                     : {}
                 }
                 value={value}
+                kind={workloadType}
               />
             );
           },
