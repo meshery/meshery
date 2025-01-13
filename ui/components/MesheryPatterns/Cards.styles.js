@@ -82,7 +82,6 @@ const useStyles = makeStyles((theme) => ({
   iconPatt: {
     width: '24px',
     height: '24px',
-    marginRight: '5px',
   },
   iconDownload: {
     width: 'auto',
