@@ -2,11 +2,20 @@ import React, { useState } from 'react';
 import { ArrowBack } from '@material-ui/icons';
 import { TooltipIconButton } from '../../utils/TooltipButton';
 import { Paper, Typography } from '@material-ui/core';
-import { Box, ErrorBoundary, OperatorDataFormatter, useResourceCleanData } from '@layer5/sistent';
+import {
+  Box,
+  componentIcon,
+  ErrorBoundary,
+  OperatorDataFormatter,
+  useResourceCleanData,
+} from '@layer5/sistent';
 import { ALL_VIEW } from './resources/config';
-import GetNodeIcon from '../configuratorComponents/MeshModel/NodeIcon';
-import { JsonParse } from '../../utils/utils';
-import { FALLBACK_MESHERY_IMAGE_PATH } from '@/constants/common';
+import {
+  CUSTOM_RESOURCE_DEFINITION,
+  FALLBACK_KUBERNETES_IMAGE_PATH,
+  FALLBACK_MESHERY_IMAGE_PATH,
+  KUBERNETES,
+} from '@/constants/common';
 import { iconXLarge } from 'css/icons.styles';
 import { getK8sContextFromClusterId } from '@/utils/multi-ctx';
 import useKubernetesHook from '../hooks/useKubernetesHook';
@@ -106,7 +115,7 @@ const View = (props) => {
 
 export default View;
 
-export const Title = ({ onClick, data, value }) => {
+export const Title = ({ onClick, data, value, kind }) => {
   const [isHovered, setHovered] = useState(false);
   return (
     <TitleContainer
@@ -116,7 +125,19 @@ export const Title = ({ onClick, data, value }) => {
     >
       <TitleContent onClick={onClick}>
         <div>
-          <GetNodeIcon metadata={JsonParse(data)} />
+          <img
+            src={componentIcon({
+              kind: kind === 'CRDS' ? CUSTOM_RESOURCE_DEFINITION : kind?.toLowerCase(),
+              color: 'color',
+              model: KUBERNETES,
+            })}
+
+            onError={(event) => {
+              event.target.src = FALLBACK_KUBERNETES_IMAGE_PATH;
+            }}
+            alt={kind}
+            {...iconXLarge}
+          />
         </div>
         <Typography style={{ marginLeft: '0.50rem' }} variant="body2">
           {value}

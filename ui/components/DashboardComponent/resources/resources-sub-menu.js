@@ -9,8 +9,14 @@ import ResourcesTable from './resources-table';
 import { Paper } from '@material-ui/core';
 import { Box } from '@material-ui/core';
 import { TabPanel } from '../tabpanel';
-import { Tab, Tabs } from '@layer5/sistent';
+import { componentIcon, Tab, Tabs } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
+import {
+  CUSTOM_RESOURCE_DEFINITION,
+  FALLBACK_KUBERNETES_IMAGE_PATH,
+  KUBERNETES,
+} from '@/constants/common';
+import { iconMedium } from 'css/icons.styles';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -43,6 +49,7 @@ const styles = (theme) => ({
     display: 'flex',
     flexWrap: 'no-wrap',
     justifyContent: 'center',
+    gap: '1rem',
     alignItems: 'center',
     '& svg': {
       verticalAlign: 'middle',
@@ -114,17 +121,17 @@ const ResourcesSubMenu = (props) => {
     handleChangeSelectedResource,
     CRDsKeys,
   } = props;
-  const resourceName = resource.tableConfig.name;
+  const isCRD = resource.tableConfig.name === 'CustomResourceConfig';
   if (!selectedResource) {
     let resourceNames = Object.keys(resource.tableConfig());
-    if (resourceName === 'CustomResourceConfig') {
+    if (isCRD) {
       resourceNames = CRDsKeys;
     }
     handleChangeSelectedResource(resourceNames[0]);
   }
 
   let TABS;
-  if (resourceName === 'CustomResourceConfig') {
+  if (isCRD) {
     TABS = CRDsKeys;
   } else {
     TABS = Object.keys(resource.tableConfig());
@@ -155,10 +162,7 @@ const ResourcesSubMenu = (props) => {
                   // centered
                 >
                   {TABS.map((key, index) => {
-                    const title =
-                      resourceName === 'CustomResourceConfig'
-                        ? key
-                        : resource.tableConfig()[key].name;
+                    const title = isCRD ? key : resource.tableConfig()[key].name;
                     return (
                       <Tooltip key={index} title={title} placement="top">
                         <Tab
@@ -166,10 +170,17 @@ const ResourcesSubMenu = (props) => {
                           value={index}
                           label={
                             <div className={classes.iconText}>
-                              <KubernetesIcon
-                                className={classes.iconText}
-                                width="22px"
-                                height="22px"
+                              <img
+                                src={componentIcon({
+                                  kind: isCRD ? CUSTOM_RESOURCE_DEFINITION : key.toLowerCase(),
+                                  color: 'color',
+                                  model: KUBERNETES,
+                                })}
+                                onError={(event) => {
+                                  event.target.src = FALLBACK_KUBERNETES_IMAGE_PATH;
+                                }}
+                                alt={key}
+                                {...iconMedium}
                               />
                               {title}
                             </div>

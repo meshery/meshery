@@ -56,6 +56,7 @@ const ResourcesTable = (props) => {
         meshSyncResources,
         k8sConfig,
         connectionMetadataState,
+        workloadType,
         selectedK8sContexts,
       )[workloadType]
     : resourceConfig(
@@ -63,6 +64,7 @@ const ResourcesTable = (props) => {
         meshSyncResources,
         k8sConfig,
         connectionMetadataState,
+        workloadType,
         selectedK8sContexts,
       );
 

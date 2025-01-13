@@ -55,8 +55,15 @@ const styles = (theme) => ({
     marginLeft: theme.spacing(0.5),
   },
   iconText: {
-    display: 'inline',
-    verticalAlign: 'middle',
+    display: 'flex',
+    flexWrap: 'no-wrap',
+    justifyContent: 'center',
+    gap: '1rem',
+    alignItems: 'center',
+    '& svg': {
+      verticalAlign: 'middle',
+      marginRight: '.5rem',
+    },
   },
   backToPlay: { margin: theme.spacing(2) },
   link: { cursor: 'pointer' },
@@ -204,6 +211,7 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
                 null,
                 k8sconfig,
                 null,
+                resource,
                 selectedK8sContexts,
               ),
             );

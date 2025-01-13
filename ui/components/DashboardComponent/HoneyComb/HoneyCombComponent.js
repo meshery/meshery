@@ -27,6 +27,12 @@ import {
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { useResourceOptions, useResourceFiltering, SORT_DIRECTIONS } from './useResourceOptions';
+import {
+  CUSTOM_RESOURCE_DEFINITION,
+  FALLBACK_KUBERNETES_IMAGE_PATH,
+  KUBERNETES,
+} from '@/constants/common';
+import { iconXLarge } from 'css/icons.styles';
 
 const HoneycombComponent = (props) => {
   const { kinds, isClusterLoading, isClusterIdsEmpty } = props;
@@ -114,17 +120,16 @@ const HoneycombComponent = (props) => {
                             <img
                               src={componentIcon({
                                 kind: isCRD
-                                  ? 'customresourcedefinition'
+                                  ? CUSTOM_RESOURCE_DEFINITION
                                   : item?.Kind?.toLowerCase(),
                                 color: 'color',
-                                model: 'kubernetes',
+                                model: KUBERNETES,
                               })}
-                              width="40"
-                              height="40"
                               onError={(event) => {
-                                event.target.src = '/static/img/kubernetes.svg';
+                                event.target.src = FALLBACK_KUBERNETES_IMAGE_PATH;
                               }}
-                              alt={item?.Kind || 'Resource Icon'}
+                              alt={item?.Kind}
+                              {...iconXLarge}
                             />
                             <ResourceCount variant="subtitle1">{item.Count}</ResourceCount>
                           </IconWrapper>
