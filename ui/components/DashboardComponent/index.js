@@ -13,10 +13,9 @@ import Overview from './overview';
 import KubernetesIcon from '../../assets/icons/technology/kubernetes';
 import MesheryIcon from './images/meshery-icon.js';
 import { TabPanel } from './tabpanel';
-import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { iconLarge } from '../../css/icons.styles';
 import { useWindowDimensions } from '@/utils/dimension';
-import { Tab, Tabs } from '@layer5/sistent';
+import { Tab, Tabs, CustomTooltip } from '@layer5/sistent';
 import { UsesSistent } from '../SistentWrapper';
 
 const styles = (theme) => ({
@@ -180,7 +179,7 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
             >
               {ResourceCategoryTabs.map((resource, idx) => {
                 return (
-                  <CustomTextTooltip key={idx} title={`View ${resource}`} placement="top">
+                  <CustomTooltip key={idx} title={`View ${resource}`} placement="top">
                     <Tab
                       value={idx}
                       key={resource}
@@ -193,7 +192,7 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
                       }
                       label={resource}
                     />
-                  </CustomTextTooltip>
+                  </CustomTooltip>
                 );
               })}
             </Tabs>
