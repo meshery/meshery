@@ -5,7 +5,6 @@ import {
   CardContainer,
   FrontSideDescription,
   ImageWrapper,
-  extensionStyles as styles,
 } from '../../../css/icons.styles';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
@@ -193,4 +192,4 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-export default withStyles(styles)(connect(() => {}, mapDispatchToProps)(withRouter(Adapters)));
+export default withStyles()(connect(() => {}, mapDispatchToProps)(withRouter(Adapters)));

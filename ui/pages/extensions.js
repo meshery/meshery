@@ -19,7 +19,6 @@ import {
   CardContainer,
   FrontSideDescription,
   ImageWrapper,
-  extensionStyles as styles,
 } from '../css/icons.styles';
 
 const INITIAL_GRID_SIZE = { lg: 6, md: 12, xs: 12 };
@@ -263,11 +262,11 @@ const MesheryDesignEmbedExtension = ({ classes }) => {
   );
 };
 
-export const WrappedMeshMapSignupCard = withStyles(styles)(MeshMapSignUpcard);
-export const WrappedMeshMapSnapShopCard = withStyles(styles)(MeshMapSnapShotCard);
-export const WrappedMesheryPerformanceAction = withStyles(styles)(MesheryPerformanceAction);
-export const WrappedMesheryDockerExtension = withStyles(styles)(MesheryDockerExtension);
-export const WrappedMesheryEmbedDesignExtension = withStyles(styles)(MesheryDesignEmbedExtension);
+export const WrappedMeshMapSignupCard = withStyles()(MeshMapSignUpcard);
+export const WrappedMeshMapSnapShopCard = withStyles()(MeshMapSnapShotCard);
+export const WrappedMesheryPerformanceAction = withStyles()(MesheryPerformanceAction);
+export const WrappedMesheryDockerExtension = withStyles()(MesheryDockerExtension);
+export const WrappedMesheryEmbedDesignExtension = withStyles()(MesheryDesignEmbedExtension);
 const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => {
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({});
@@ -432,4 +431,4 @@ const mapDispatchToProps = (dispatch) => ({
   toggleCatalogContent: bindActionCreators(toggleCatalogContent, dispatch),
 });
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Extensions));
+export default withStyles()(connect(mapStateToProps, mapDispatchToProps)(Extensions));
