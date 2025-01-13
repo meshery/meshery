@@ -305,6 +305,7 @@ export const NetWorkTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -419,6 +420,7 @@ export const NetWorkTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -526,6 +528,7 @@ export const NetWorkTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -694,6 +697,7 @@ export const NetWorkTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -830,6 +834,7 @@ export const NetWorkTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },

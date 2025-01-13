@@ -8,7 +8,6 @@ import {
   Typography,
   Select,
   MenuItem,
-  componentIcon,
 } from '@layer5/sistent';
 import { useRouter } from 'next/router';
 import ConnectCluster from '../charts/ConnectCluster';
@@ -27,12 +26,9 @@ import {
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { useResourceOptions, useResourceFiltering, SORT_DIRECTIONS } from './useResourceOptions';
-import {
-  CUSTOM_RESOURCE_DEFINITION,
-  FALLBACK_KUBERNETES_IMAGE_PATH,
-  KUBERNETES,
-} from '@/constants/common';
+import { FALLBACK_KUBERNETES_IMAGE_PATH, KUBERNETES } from '@/constants/common';
 import { iconXLarge } from 'css/icons.styles';
+import GetKubernetesNodeIcon from '../utils';
 
 const HoneycombComponent = (props) => {
   const { kinds, isClusterLoading, isClusterIdsEmpty } = props;
@@ -117,20 +113,7 @@ const HoneycombComponent = (props) => {
                       <SelectedHexagon>
                         <CustomTooltip title={item?.Kind || ''} placement="top">
                           <IconWrapper>
-                            <img
-                              src={componentIcon({
-                                kind: isCRD
-                                  ? CUSTOM_RESOURCE_DEFINITION
-                                  : item?.Kind?.toLowerCase(),
-                                color: 'color',
-                                model: KUBERNETES,
-                              })}
-                              onError={(event) => {
-                                event.target.src = FALLBACK_KUBERNETES_IMAGE_PATH;
-                              }}
-                              alt={item?.Kind}
-                              {...iconXLarge}
-                            />
+                            <GetKubernetesNodeIcon kind={item?.Kind} isCRD={isCRD} />
                             <ResourceCount variant="subtitle1">{item.Count}</ResourceCount>
                           </IconWrapper>
                         </CustomTooltip>

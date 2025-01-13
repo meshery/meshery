@@ -81,9 +81,7 @@ const ResourcesTable = (props) => {
     const { query } = router;
     const resourceName =
       query.resourceName ||
-      (query.resource === 'Node' && 'Node') ||
-      (query.resource === 'Namespace' && 'Namespace') ||
-      search;
+      (['Node', 'Namespace'].includes(query.resource) ? query.resource : search);
     const resourceCategory = query.resource || tableConfig.name;
     const decodedClusterIds = JSON.parse(decodeURIComponent(clusterIds));
     if (decodedClusterIds.length === 0) {

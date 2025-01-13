@@ -1,22 +1,16 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core';
 import { Tooltip } from '@material-ui/core';
-import KubernetesIcon from '../../../assets/icons/technology/kubernetes';
-
 import { withRouter } from 'next/router';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import ResourcesTable from './resources-table';
 import { Paper } from '@material-ui/core';
 import { Box } from '@material-ui/core';
 import { TabPanel } from '../tabpanel';
-import { componentIcon, Tab, Tabs } from '@layer5/sistent';
+import { Tab, Tabs } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
-import {
-  CUSTOM_RESOURCE_DEFINITION,
-  FALLBACK_KUBERNETES_IMAGE_PATH,
-  KUBERNETES,
-} from '@/constants/common';
 import { iconMedium } from 'css/icons.styles';
+import GetKubernetesNodeIcon from '../utils';
 
 const styles = (theme) => ({
   wrapperClss: {
@@ -170,18 +164,7 @@ const ResourcesSubMenu = (props) => {
                           value={index}
                           label={
                             <div className={classes.iconText}>
-                              <img
-                                src={componentIcon({
-                                  kind: isCRD ? CUSTOM_RESOURCE_DEFINITION : key.toLowerCase(),
-                                  color: 'color',
-                                  model: KUBERNETES,
-                                })}
-                                onError={(event) => {
-                                  event.target.src = FALLBACK_KUBERNETES_IMAGE_PATH;
-                                }}
-                                alt={key}
-                                {...iconMedium}
-                              />
+                              <GetKubernetesNodeIcon kind={key} isCRD={isCRD} size={iconMedium} />
                               {title}
                             </div>
                           }

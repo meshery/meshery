@@ -241,6 +241,7 @@ export const StorageTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -408,6 +409,7 @@ export const StorageTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },

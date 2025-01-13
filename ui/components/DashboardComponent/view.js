@@ -2,20 +2,9 @@ import React, { useState } from 'react';
 import { ArrowBack } from '@material-ui/icons';
 import { TooltipIconButton } from '../../utils/TooltipButton';
 import { Paper, Typography } from '@material-ui/core';
-import {
-  Box,
-  componentIcon,
-  ErrorBoundary,
-  OperatorDataFormatter,
-  useResourceCleanData,
-} from '@layer5/sistent';
+import { Box, ErrorBoundary, OperatorDataFormatter, useResourceCleanData } from '@layer5/sistent';
 import { ALL_VIEW } from './resources/config';
-import {
-  CUSTOM_RESOURCE_DEFINITION,
-  FALLBACK_KUBERNETES_IMAGE_PATH,
-  FALLBACK_MESHERY_IMAGE_PATH,
-  KUBERNETES,
-} from '@/constants/common';
+import { FALLBACK_MESHERY_IMAGE_PATH } from '@/constants/common';
 import { iconXLarge } from 'css/icons.styles';
 import { getK8sContextFromClusterId } from '@/utils/multi-ctx';
 import useKubernetesHook from '../hooks/useKubernetesHook';
@@ -23,6 +12,7 @@ import { TootltipWrappedConnectionChip } from '../connections/ConnectionChip';
 import ResourceDetailFormatData, { JSONViewFormatter } from './view-component';
 import { styled } from '@mui/system';
 import { useRouter } from 'next/router';
+import GetKubernetesNodeIcon from './utils';
 
 const Container = styled('div')({
   margin: '1rem auto',
@@ -115,7 +105,7 @@ const View = (props) => {
 
 export default View;
 
-export const Title = ({ onClick, data, value, kind }) => {
+export const Title = ({ onClick, value, kind }) => {
   const [isHovered, setHovered] = useState(false);
   return (
     <TitleContainer
@@ -125,19 +115,7 @@ export const Title = ({ onClick, data, value, kind }) => {
     >
       <TitleContent onClick={onClick}>
         <div>
-          <img
-            src={componentIcon({
-              kind: kind === 'CRDS' ? CUSTOM_RESOURCE_DEFINITION : kind?.toLowerCase(),
-              color: 'color',
-              model: KUBERNETES,
-            })}
-
-            onError={(event) => {
-              event.target.src = FALLBACK_KUBERNETES_IMAGE_PATH;
-            }}
-            alt={kind}
-            {...iconXLarge}
-          />
+          <GetKubernetesNodeIcon kind={kind} isCRD={kind === 'CRDS'} />
         </div>
         <Typography style={{ marginLeft: '0.50rem' }} variant="body2">
           {value}

@@ -269,6 +269,7 @@ export const WorkloadTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -448,6 +449,7 @@ export const WorkloadTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -588,6 +590,7 @@ export const WorkloadTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -747,6 +750,7 @@ export const WorkloadTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -916,6 +920,7 @@ export const WorkloadTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -1067,6 +1072,7 @@ export const WorkloadTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -1190,6 +1196,7 @@ export const WorkloadTableConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },

@@ -165,6 +165,7 @@ export const SecurityTypesConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -306,6 +307,7 @@ export const SecurityTypesConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -416,6 +418,7 @@ export const SecurityTypesConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -526,6 +529,7 @@ export const SecurityTypesConfig = (
                       : {}
                   }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
