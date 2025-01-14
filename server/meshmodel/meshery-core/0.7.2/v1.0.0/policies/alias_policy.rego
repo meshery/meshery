@@ -51,17 +51,16 @@ component_alias(component_id) := alias if {
 #-------- Get Component Configuration -----------
 get_component_configuration(component,design) := configuration if {
 	alias := component_alias(component.id)
-	alias != null 
-
-	print("Alias is ==>",alias)
+	print("configuration from Alias is ==>",alias)
 
 	parent := component_declaration_by_id(design,alias.resolved_parent_id)
 	
-	configuration := object_get_nested(parent.configuration,alias.resolved_ref_field_path,null)
+	configuration := object_get_nested(parent,alias.resolved_ref_field_path,null)
+	print("Configuration got from Alias " ,configuration)
 }
 
 get_component_configuration(component,design) := configuration if {
-   component_alias(component.id) == null 
+   not component_alias(component.id)
    configuration := component.configuration
 
    print("Configuration direct",configuration)
