@@ -74,4 +74,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(UserPref));
+export default connect(mapStateToProps, mapDispatchToProps)(UserPref);

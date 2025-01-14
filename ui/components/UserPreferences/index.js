@@ -12,20 +12,16 @@ import {
   Tabs,
   Typography,
   Grid,
-  FormControl,
   FormGroup,
   FormControlLabel,
   Switch,
   IconButton,
-  Card,
   CardContent,
   CardHeader,
   Box,
-  styled,
 } from '@layer5/sistent';
 import NoSsr from '@material-ui/core/NoSsr';
 import { updateUser, updateProgress, toggleCatalogContent } from '../../lib/store';
-import { Paper } from '@material-ui/core';
 import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
 import SettingsCellIcon from '@material-ui/icons/SettingsCell';
 import ExtensionSandbox from '../ExtensionSandbox';
@@ -47,56 +43,9 @@ import {
 import { ThemeTogglerCore } from '@/themes/hooks';
 import { UsesSistent } from '../SistentWrapper';
 import { FormLabel } from '@mui/material';
-import { FormGroupWrapper } from './style';
-
-const StatsWrapper = styled(Paper)({
-  maxWidth: '100%',
-  height: 'auto',
-  borderTopLeftRadius: 0,
-  borderTopRightRadius: 0,
-  borderBottomLeftRadius: 3,
-  borderBottomRightRadius: 3,
-});
-
-const PaperRoot = styled(Paper)({
-  flexGrow: 1,
-  maxWidth: '100%',
-  marginLeft: 0,
-  borderTopLeftRadius: 3,
-  borderTopRightRadius: 3,
-});
-
-const RootContainer = styled('div')(({ theme }) => ({
-  width: '100%',
-  paddingLeft: theme.spacing(15),
-  paddingRight: theme.spacing(15),
-  paddingBottom: theme.spacing(10),
-  paddingTop: theme.spacing(5),
-}));
-
-const ProviderCard = styled(Card)(({ theme }) => ({
-  border: '1px solid rgba(0,179,159,0.3)',
-  margin: '20px 0px',
-  backgroundColor: theme.palette.type === 'dark' ? '#293B43' : '#C9DBE3',
-}));
+import { FormGroupWrapper, PaperRoot, ProviderCard, RootContainer, StatsWrapper } from './style';
 
 const styles = (theme) => ({
-  // tabs: {
-  //   width: '100%',
-  //   marginLeft: 0,
-  //   '& .MuiTabs-indicator': {
-  //     backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
-  //   },
-  // },
-  // tab: {
-  //   width: '42%',
-  //   // maxWidth: 'min(33%, 200px)',
-  //   // minWidth: '50px',
-  //   margin: 0,
-  //   '&.Mui-selected': {
-  //     color: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
-  //   },
-  // },
   icon: {
     display: 'inline',
     verticalAlign: 'text-top',
@@ -115,21 +64,8 @@ const styles = (theme) => ({
     'justify-content': 'space-evenly',
     padding: 50,
   },
-  // formGrp: {
-  //   padding: 20,
-  //   border: '1.5px solid #969696',
-  //   display: 'flex',
-  //   width: '70%',
-  // },
   formLegend: { fontSize: 20 },
   formLegendSmall: { fontSize: 16 },
-  // switchBase: {
-  //   color: '#647881',
-  //   '&$checked': { color: '#00b39f' },
-  //   '&$checked + $track': { backgroundColor: 'rgba(0,179,159,0.5)' },
-  // },
-  // track: { backgroundColor: 'rgba(100,120,129,0.5)' },
-  // checked: {},
   tabLabel: {
     [theme.breakpoints.up('sm')]: {
       fontSize: '1em',
@@ -175,11 +111,7 @@ const ThemeToggler = () => {
     return (
       <UsesSistent>
         <div>
-          <Switch
-            color="primary"
-            checked={mode === 'dark'}
-            onChange={toggleTheme}
-          />
+          <Switch color="primary" checked={mode === 'dark'} onChange={toggleTheme} />
           Dark Mode
         </div>
       </UsesSistent>
