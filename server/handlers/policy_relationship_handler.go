@@ -89,8 +89,9 @@ func ParseComponentToAlias(component component.ComponentDefinition, relationship
 
 	for _, relationship := range relationships {
 		alias, ok := parseRelationshipToAlias(*relationship)
+		fmt.Println("parseComponenttoalias ==> ", alias.AliasComponentId, component.Id)
 		if !ok {
-			return NonResolvedAlias{}, false
+			continue
 		}
 
 		if alias.AliasComponentId == component.Id {
@@ -132,7 +133,10 @@ func ResolveAlias(nonResolvedAlias NonResolvedAlias, currentNonResolved NonResol
 		}
 	}
 
-	return ResolveAlias(nonResolvedAlias, parentAlias, append(path, parentAlias.ImmediateRefFieldPath...), design)
+	// slicing from 1 to remove "configuration" prefix when building the resolved ref
+	// so we dont get something like configuration,spec,configuration , containers , _
+	// appending to aprentAlias.ImmediateReffiled , than path , because this a recursive function it will otherwise build the path in reverse
+	return ResolveAlias(nonResolvedAlias, parentAlias, append(parentAlias.ImmediateRefFieldPath, path[1:]...), design)
 }
 
 func ResolveAliasesInDesign(design pattern.PatternFile) map[string]interface{} {
