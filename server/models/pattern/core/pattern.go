@@ -397,7 +397,7 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 	}
 
 	if len(allK8sResources) == 0 {
-		return pattern, ErrParseK8sManifest(fmt.Errorf("kubernetes manifest is empty"))
+		return pattern, ErrParseK8sManifest(fmt.Errorf("Kubernetes manifest is empty"))
 	}
 
 	// Process each resource
