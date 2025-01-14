@@ -1,4 +1,4 @@
-import { Button } from '@material-ui/core';
+import { Button } from '@layer5/sistent';
 import { CustomTooltip, IconButton } from '@layer5/sistent';
 
 export default function TooltipButton({ children, onClick, title, variant, ...props }) {

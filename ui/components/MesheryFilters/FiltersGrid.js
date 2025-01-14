@@ -154,61 +154,61 @@ function FiltersGrid({
   };
 
   return (
-    <div>
-      {!selectedFilter.show && (
-        <Grid container spacing={3}>
-          {filters.map((filter) => (
-            <FilterCardGridItem
-              key={filter.id}
-              filter={filter}
-              yamlConfig={getYamlConfig(filter.filter_resource)}
-              handleClone={() => handleClone(filter.id, filter.name)}
-              handleDownload={handleDownload}
-              handleSubmit={handleSubmit}
-              setSelectedFilters={setSelectedFilter}
-              canPublishFilter={canPublishFilter}
-              handlePublishModal={() => handlePublishModal(filter)}
-              handleUnpublishModal={(e) => handleUnpublishModal(e, filter)()}
-              handleInfoModal={() => handleInfoModal(filter)}
-            />
-          ))}
-        </Grid>
-      )}
-      {!selectedFilter.show && filters.length === 0 && (
-        <Paper className={classes.noPaper}>
-          <div className={classes.noContainer}>
-            <Typography align="center" color="textSecondary" className={classes.noText}>
-              No Filters Found
-            </Typography>
-            <div>
-              <Button
-                aria-label="Add Application"
-                variant="contained"
-                color="primary"
-                disabled={!CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject)}
-                size="large"
-                // @ts-ignore
-                onClick={handleUploadImport}
-                style={{ marginRight: '2rem' }}
-              >
-                <PublishIcon className={classes.addIcon} />
-                Import Filter
-              </Button>
+    <UsesSistent>
+      <div>
+        {!selectedFilter.show && (
+          <Grid container spacing={3}>
+            {filters.map((filter) => (
+              <FilterCardGridItem
+                key={filter.id}
+                filter={filter}
+                yamlConfig={getYamlConfig(filter.filter_resource)}
+                handleClone={() => handleClone(filter.id, filter.name)}
+                handleDownload={handleDownload}
+                handleSubmit={handleSubmit}
+                setSelectedFilters={setSelectedFilter}
+                canPublishFilter={canPublishFilter}
+                handlePublishModal={() => handlePublishModal(filter)}
+                handleUnpublishModal={(e) => handleUnpublishModal(e, filter)()}
+                handleInfoModal={() => handleInfoModal(filter)}
+              />
+            ))}
+          </Grid>
+        )}
+        {!selectedFilter.show && filters.length === 0 && (
+          <Paper className={classes.noPaper}>
+            <div className={classes.noContainer}>
+              <Typography align="center" color="textSecondary" className={classes.noText}>
+                No Filters Found
+              </Typography>
+              <div>
+                <Button
+                  aria-label="Add Application"
+                  variant="contained"
+                  color="primary"
+                  disabled={!CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject)}
+                  size="large"
+                  // @ts-ignore
+                  onClick={handleUploadImport}
+                  style={{ marginRight: '2rem' }}
+                >
+                  <PublishIcon className={classes.addIcon} />
+                  Import Filter
+                </Button>
+              </div>
             </div>
+          </Paper>
+        )}
+        {filters.length ? (
+          <div className={classes.pagination}>
+            <Pagination
+              count={pages}
+              page={selectedPage + 1}
+              onChange={(_, page) => setPage(page - 1)}
+            />
           </div>
-        </Paper>
-      )}
-      {filters.length ? (
-        <div className={classes.pagination}>
-          <Pagination
-            count={pages}
-            page={selectedPage + 1}
-            onChange={(_, page) => setPage(page - 1)}
-          />
-        </div>
-      ) : null}
-      {canPublishFilter && publishModal.open && (
-        <UsesSistent>
+        ) : null}
+        {canPublishFilter && publishModal.open && (
           <SistentModal
             open={true}
             title={publishModal.filter?.name}
@@ -231,9 +231,9 @@ function FiltersGrid({
               helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
             />
           </SistentModal>
-        </UsesSistent>
-      )}
-    </div>
+        )}
+      </div>
+    </UsesSistent>
   );
 }
 

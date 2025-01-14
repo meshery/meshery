@@ -1,5 +1,4 @@
-import { Grid, Paper, Typography } from '@material-ui/core';
-import { Pagination } from '@material-ui/lab';
+import { Grid, Paper, Typography, Pagination } from '@layer5/sistent';
 import React, { useState } from 'react';
 import MesheryPatternCard from './MesheryPatternCard';
 import DesignConfigurator from '../configuratorComponents/MeshModel';
@@ -7,7 +6,6 @@ import { FILE_OPS } from '../../utils/Enum';
 import { EVENT_TYPES } from '../../lib/event-types';
 import useStyles from './Grid.styles';
 import { RJSFModalWrapper } from '../Modal';
-
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateProgress } from '../../lib/store';
@@ -196,55 +194,56 @@ function MesheryPatternGrid({
   };
 
   return (
-    <div>
-      {selectedPattern.show && (
-        <DesignConfigurator
-          pattern={selectedPattern.pattern}
-          show={setSelectedPattern}
-          onSubmit={handleSubmit}
-        />
-      )}
-      {!selectedPattern.show && (
-        <Grid container spacing={3}>
-          {patterns.map((pattern) => (
-            <PatternCardGridItem
-              key={pattern.id}
-              user={user}
-              pattern={pattern}
-              handleClone={() => handleClone(pattern.id, pattern.name)}
-              handleDeploy={(e) => {
-                openDeployModal(e, pattern.pattern_file, pattern.name, pattern.id);
-              }}
-              handleUnDeploy={(e) => {
-                openUndeployModal(e, pattern.pattern_file, pattern.name, pattern.id);
-              }}
-              handleDryRun={(e) =>
-                openDryRunModal(e, pattern.pattern_file, pattern.name, pattern.id)
-              }
-              handleVerify={(e) =>
-                openValidationModal(e, pattern.pattern_file, pattern.name, pattern.id)
-              }
-              handlePublishModal={() => handlePublishModal(pattern)}
-              handleUnpublishModal={(e) => handleUnpublishModal(e, pattern)()}
-              handleInfoModal={() => handleInfoModal(pattern)}
-              handleSubmit={handleSubmit}
-              handleDownload={(e) => handleDesignDownloadModal(e, pattern)}
-              setSelectedPatterns={setSelectedPattern}
-              hideVisibility={hideVisibility}
-              isReadOnly={arePatternsReadOnly}
-            />
-          ))}
-        </Grid>
-      )}
+    <UsesSistent>
+      <div>
+        {selectedPattern.show && (
+          <DesignConfigurator
+            pattern={selectedPattern.pattern}
+            show={setSelectedPattern}
+            onSubmit={handleSubmit}
+          />
+        )}
+        {!selectedPattern.show && (
+          <Grid container spacing={3}>
+            {patterns.map((pattern) => (
+              <PatternCardGridItem
+                key={pattern.id}
+                user={user}
+                pattern={pattern}
+                handleClone={() => handleClone(pattern.id, pattern.name)}
+                handleDeploy={(e) => {
+                  openDeployModal(e, pattern.pattern_file, pattern.name, pattern.id);
+                }}
+                handleUnDeploy={(e) => {
+                  openUndeployModal(e, pattern.pattern_file, pattern.name, pattern.id);
+                }}
+                handleDryRun={(e) =>
+                  openDryRunModal(e, pattern.pattern_file, pattern.name, pattern.id)
+                }
+                handleVerify={(e) =>
+                  openValidationModal(e, pattern.pattern_file, pattern.name, pattern.id)
+                }
+                handlePublishModal={() => handlePublishModal(pattern)}
+                handleUnpublishModal={(e) => handleUnpublishModal(e, pattern)()}
+                handleInfoModal={() => handleInfoModal(pattern)}
+                handleSubmit={handleSubmit}
+                handleDownload={(e) => handleDesignDownloadModal(e, pattern)}
+                setSelectedPatterns={setSelectedPattern}
+                hideVisibility={hideVisibility}
+                isReadOnly={arePatternsReadOnly}
+              />
+            ))}
+          </Grid>
+        )}
 
-      {!selectedPattern.show && patterns.length === 0 && (
-        <Paper className={classes.noPaper}>
-          <div className={classes.noContainer}>
-            <Typography align="center" color="textSecondary" className={classes.noText}>
-              No Designs Found
-            </Typography>
-            <div>
-              {/* <Button
+        {!selectedPattern.show && patterns.length === 0 && (
+          <Paper className={classes.noPaper}>
+            <div className={classes.noContainer}>
+              <Typography align="center" color="textSecondary" className={classes.noText}>
+                No Designs Found
+              </Typography>
+              <div>
+                {/* <Button
                   aria-label="Add Application"
                   variant="contained"
                   color="primary"
@@ -256,22 +255,21 @@ function MesheryPatternGrid({
                   <PublishIcon className={classes.addIcon} />
               Import Design
                 </Button> */}
+              </div>
             </div>
+          </Paper>
+        )}
+        {patterns.length ? (
+          <div className={classes.pagination}>
+            <Pagination
+              count={pages}
+              page={selectedPage + 1}
+              onChange={(_, page) => setPage(page - 1)}
+            />
           </div>
-        </Paper>
-      )}
-      {patterns.length ? (
-        <div className={classes.pagination}>
-          <Pagination
-            count={pages}
-            page={selectedPage + 1}
-            onChange={(_, page) => setPage(page - 1)}
-          />
-        </div>
-      ) : null}
+        ) : null}
 
-      {canPublishPattern && publishModal.open && (
-        <UsesSistent>
+        {canPublishPattern && publishModal.open && (
           <SistentModal
             open={true}
             title={publishModal.pattern?.name}
@@ -295,14 +293,14 @@ function MesheryPatternGrid({
               handleClose={handlePublishModalClose}
             />
           </SistentModal>
-        </UsesSistent>
-      )}
-      <ExportModal
-        downloadModal={downloadModal}
-        handleDownloadDialogClose={handleDownloadDialogClose}
-        handleDesignDownload={handleDownload}
-      />
-    </div>
+        )}
+        <ExportModal
+          downloadModal={downloadModal}
+          handleDownloadDialogClose={handleDownloadDialogClose}
+          handleDesignDownload={handleDownload}
+        />
+      </div>
+    </UsesSistent>
   );
 }
 
