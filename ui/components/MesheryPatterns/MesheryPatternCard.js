@@ -183,7 +183,7 @@ function MesheryPatternCard_({
                   title="Unpublish"
                   style={{
                     padding: '6px 9px',
-                    borderRadius: '8px'
+                    borderRadius: '8px',
                   }}
                   onClick={(ev) => genericClickHandler(ev, handleUnpublishModal)}
                   disabled={!CAN(keys.UNPUBLISH_DESIGN.action, keys.UNPUBLISH_DESIGN.subject)}
@@ -228,7 +228,7 @@ function MesheryPatternCard_({
                 onClick={handleDownload}
                 style={{
                   padding: '6px 9px',
-                  borderRadius: '8px'
+                  borderRadius: '8px',
                 }}
               >
                 <GetAppIcon fill={theme.palette.icon.default} data-cy="download-button" />
@@ -242,7 +242,7 @@ function MesheryPatternCard_({
                   onClick={(ev) => genericClickHandler(ev, setSelectedPatterns)}
                   style={{
                     padding: '6px 9px',
-                    borderRadius: '8px'
+                    borderRadius: '8px',
                   }}
                   disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                 >
@@ -261,7 +261,7 @@ function MesheryPatternCard_({
                   onClick={(ev) => genericClickHandler(ev, handleClone)}
                   style={{
                     padding: '6px 9px',
-                    borderRadius: '8px'
+                    borderRadius: '8px',
                   }}
                   disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)}
                 >
@@ -279,7 +279,7 @@ function MesheryPatternCard_({
                   disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                   style={{
                     padding: '6px 9px',
-                    borderRadius: '8px'
+                    borderRadius: '8px',
                   }}
                 >
                   <Edit style={{ fill: theme.palette.icon.default, ...iconMedium }} />
@@ -293,7 +293,7 @@ function MesheryPatternCard_({
                 onClick={(ev) => genericClickHandler(ev, handleInfoModal)}
                 style={{
                   padding: '6px 9px',
-                  borderRadius: '8px'
+                  borderRadius: '8px',
                 }}
                 disabled={!CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject)}
               >

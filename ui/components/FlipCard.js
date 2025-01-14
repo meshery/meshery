@@ -1,6 +1,8 @@
 //@ts-check
 import React, { useState, useRef, useEffect } from 'react';
 import { withStyles } from '@material-ui/core/styles';
+import { FlipCardWrapper, InnerCard } from './MesheryPatterns/style';
+import { UsesSistent } from './SistentWrapper';
 
 const styles = (theme) => ({
   card: {
@@ -17,7 +19,6 @@ const styles = (theme) => ({
     cursor: 'pointer',
   },
   content: { backfaceVisibility: 'hidden' },
-  frontContent: {},
   backContent: { transform: 'scale(-1, 1)', maxWidth: '50vw', wordBreak: 'break-word' },
 });
 
@@ -27,7 +28,7 @@ function GetChild(children, key) {
   return children[key];
 }
 
-function FlipCard({ classes, duration = 500, onClick, onShow, children }) {
+function FlipCard({ duration = 500, onClick, onShow, children }) {
   const [flipped, setFlipped] = useState(false);
   const [activeBack, setActiveBack] = useState(false);
 
@@ -54,33 +55,44 @@ function FlipCard({ classes, duration = 500, onClick, onShow, children }) {
   }, [flipped]);
 
   return (
-    <div
-      className={classes.card}
-      onClick={() => {
-        setFlipped((flipped) => !flipped);
-        onClick && onClick();
-        onShow && onShow();
-      }}
-    >
-      <div
-        className={classes.innerCard}
-        style={{
-          transform: flipped ? 'scale(-1,1)' : undefined,
-          transition: `transform ${duration}ms`,
-          transformOrigin: '50% 50% 10%',
+    <UsesSistent>
+      <FlipCardWrapper
+        onClick={() => {
+          setFlipped((flipped) => !flipped);
+          onClick && onClick();
+          onShow && onShow();
         }}
       >
-        {!activeBack ? (
-          <div className={`${classes.content} ${classes.frontContent}`}>
-            {React.isValidElement(Front) ? Front : null}
-          </div>
-        ) : (
-          <div className={`${classes.content} ${classes.backContent}`}>
-            {React.isValidElement(Back) ? Back : null}
-          </div>
-        )}
-      </div>
-    </div>
+        <InnerCard
+          style={{
+            transform: flipped ? 'scale(-1,1)' : undefined,
+            transition: `transform ${duration}ms`,
+            transformOrigin: '50% 50% 10%',
+          }}
+        >
+          {!activeBack ? (
+            <div
+              style={{
+                backfaceVisibility: 'hidden',
+              }}
+            >
+              {React.isValidElement(Front) ? Front : null}
+            </div>
+          ) : (
+            <div
+              style={{
+                backfaceVisibility: 'hidden',
+                transform: 'scale(-1, 1)',
+                maxWidth: '50vw',
+                wordBreak: 'break-word',
+              }}
+            >
+              {React.isValidElement(Back) ? Back : null}
+            </div>
+          )}
+        </InnerCard>
+      </FlipCardWrapper>
+    </UsesSistent>
   );
 }
 

@@ -15,7 +15,7 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { Modal as SistentModal } from '@layer5/sistent';
 import { UsesSistent } from '../SistentWrapper';
 import Pattern from '../../public/static/img/drawer-icons/pattern_svg';
-const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
+const INITIAL_GRID_SIZE = { xl: 6, md: 6, xs: 12 };
 
 function PatternCardGridItem({
   pattern,
@@ -38,52 +38,54 @@ function PatternCardGridItem({
   const [yaml, setYaml] = useState(pattern.pattern_file);
 
   return (
-    <Grid item {...gridProps}>
-      <MesheryPatternCard
-        id={pattern.id}
-        user={user}
-        name={pattern.name}
-        updated_at={pattern.updated_at}
-        created_at={pattern.created_at}
-        pattern_file={pattern.pattern_file}
-        requestFullSize={() => setGridProps({ xl: 12, md: 12, xs: 12 })}
-        requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
-        handleDeploy={handleDeploy}
-        handleVerify={handleVerify}
-        handleDryRun={handleDryRun}
-        handlePublishModal={handlePublishModal}
-        handleUnDeploy={handleUnDeploy}
-        handleUnpublishModal={handleUnpublishModal}
-        handleClone={handleClone}
-        handleInfoModal={handleInfoModal}
-        handleDownload={handleDownload}
-        deleteHandler={() =>
-          handleSubmit({
-            data: yaml,
-            id: pattern.id,
-            type: FILE_OPS.DELETE,
-            name: pattern.name,
-            catalog_data: pattern.catalog_data,
-          })
-        }
-        updateHandler={() =>
-          handleSubmit({
-            data: yaml,
-            id: pattern.id,
-            type: FILE_OPS.UPDATE,
-            name: pattern.name,
-            catalog_data: pattern.catalog_data,
-          })
-        }
-        setSelectedPatterns={() => setSelectedPatterns({ pattern: pattern, show: true })}
-        setYaml={setYaml}
-        description={pattern.description}
-        visibility={pattern.visibility}
-        pattern={pattern}
-        hideVisibility={hideVisibility}
-        isReadOnly={isReadOnly}
-      />
-    </Grid>
+    <UsesSistent>
+      <Grid item {...gridProps}>
+        <MesheryPatternCard
+          id={pattern.id}
+          user={user}
+          name={pattern.name}
+          updated_at={pattern.updated_at}
+          created_at={pattern.created_at}
+          pattern_file={pattern.pattern_file}
+          requestFullSize={() => setGridProps({ xl: 12, md: 12, xs: 12 })}
+          requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
+          handleDeploy={handleDeploy}
+          handleVerify={handleVerify}
+          handleDryRun={handleDryRun}
+          handlePublishModal={handlePublishModal}
+          handleUnDeploy={handleUnDeploy}
+          handleUnpublishModal={handleUnpublishModal}
+          handleClone={handleClone}
+          handleInfoModal={handleInfoModal}
+          handleDownload={handleDownload}
+          deleteHandler={() =>
+            handleSubmit({
+              data: yaml,
+              id: pattern.id,
+              type: FILE_OPS.DELETE,
+              name: pattern.name,
+              catalog_data: pattern.catalog_data,
+            })
+          }
+          updateHandler={() =>
+            handleSubmit({
+              data: yaml,
+              id: pattern.id,
+              type: FILE_OPS.UPDATE,
+              name: pattern.name,
+              catalog_data: pattern.catalog_data,
+            })
+          }
+          setSelectedPatterns={() => setSelectedPatterns({ pattern: pattern, show: true })}
+          setYaml={setYaml}
+          description={pattern.description}
+          visibility={pattern.visibility}
+          pattern={pattern}
+          hideVisibility={hideVisibility}
+          isReadOnly={isReadOnly}
+        />
+      </Grid>
+    </UsesSistent>
   );
 }
 
