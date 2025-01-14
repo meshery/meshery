@@ -153,7 +153,7 @@ Meshery documentation is built using the following components:
 - rbenv install version
 
   <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">rbenv install 3.2.2
+  <code class="clipboardjs">rbenv install 3.2.6
   </code>
   </div></pre>
 

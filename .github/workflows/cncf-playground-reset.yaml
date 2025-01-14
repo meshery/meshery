@@ -8,12 +8,12 @@ jobs:
   reset:
     name: reset
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
     - name: Cluster cleanup by running the cleanup script inside VM
       uses: appleboy/ssh-action@master
       with:
-          host: secrets.METAL_SERVER1
+          host: ${{ secrets.METAL_SERVER1 }}
           username: root
           key: ${{ secrets.METAL_SSH_KEY }}
           script: |
@@ -23,7 +23,7 @@ jobs:
 #   name: Reboot Metal servers
 #   needs: reset 
 #   if: github.repository == 'meshery/meshery'
-#   runs-on: ubuntu-latest 
+#   runs-on: ubuntu-24.04 
 #   steps:
 #       - name: Download and install Equinix Metal CLI
 #         run: |

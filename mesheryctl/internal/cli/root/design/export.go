@@ -232,7 +232,7 @@ func writeToFile(outputFilePath string, buf *bytes.Buffer) error {
 	if err != nil {
 		return err
 	}
-	utils.Log.Info("Design exported successfully to ", outputFilePath)
+	utils.Log.Info("Design exported to ", outputFilePath)
 	return nil
 }
 

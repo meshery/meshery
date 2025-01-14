@@ -1,0 +1,20 @@
+version: 0.0.1
+name: guestbook-app
+displayName: GuestBook App
+createdAt: "2023-08-05T19:43:28Z"
+description: The GuestBook App is a cloud-native application designed using Kubernetes as the underlying orchestration and management system. It consists of various services and components deployed within Kubernetes namespaces. The default namespace represents the main environment where the application operates. The frontend-cyrdx service is responsible for handling frontend traffic and is deployed as a Kubernetes service with a selector for the guestbook application and frontend tier. The frontend-fsfct deployment runs multiple replicas of the frontend component, which utilizes the gb-frontend image and exposes port 80. The guestbook namespace serves as a logical grouping for components related to the GuestBook App. The redis-follower-armov service handles follower Redis instances for the backend, while the redis-follower-nwlew deployment manages multiple replicas of the follower Redis container. The redis-leader-fhxla deployment represents the leader Redis container, and the redis-leader-vjtmi service exposes it as a Kubernetes service. These components work together to create a distributed and scalable architecture for the GuestBook App, leveraging Kubernetes for container orchestration and management.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/506ee560-e0cb-4a54-a2be-e1681ac956c0/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Networking should be properly configured to enable communication between the frontend and backend components of the app. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9bbbb782-2dd4-4ec3-86fd-0a769c0b98f9
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

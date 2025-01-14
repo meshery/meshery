@@ -1,0 +1,24 @@
+version: 0.0.1
+name: istio-operator
+displayName: Istio Operator
+createdAt: "2024-05-20T04:58:57Z"
+description: 'This YAML defines a Kubernetes Deployment for the Istio Operator within the istio-operator namespace. The deployment ensures a single replica of the Istio Operator pod is always running, which is managed by a service account named istio-operator. The deployment''s metadata includes the namespace and the deployment name. The pod selector matches pods with the label name: istio-operator, ensuring the correct pods are managed. The pod template specifies metadata and details for the containers, including the container name istio-operator and the image gcr.io/istio-testing/operator:1.5-dev, which runs the istio-operator command with the server argument.'
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/06ef6097-8f21-4a76-b025-0c9271168814/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Namespace Configuration: Ensure that the istio-operator namespace exists before applying this deployment. If the namespace is not present, the deployment will fail.\n\n2. Image Version: The image specified (gcr.io/istio-testing/operator:1.5-dev) is a development version. It is crucial to verify the stability and compatibility of this version for production environments. Using a stable release version is generally recommended.\n\n3. Resource Allocation: The resource limits and requests are set to specific values (200m CPU, 256Mi memory for limits; 50m CPU, 128Mi memory for requests). These values should be reviewed and adjusted based on the actual resource availability and requirements of your Kubernetes cluster to prevent resource contention or overallocation.\n\n4. Leader Election: The environment variables include LEADER_ELECTION_NAMESPACE which is derived from the pod's namespace. Ensure that the leader election mechanism is properly configured and that only one instance of the operator becomes the leader to avoid conflicts.\n\n5. Security Context: The deployment does not specify a security context for the container. It is advisable to review and define appropriate security contexts to enhance the security posture of the deployment, such as running the container as a non-root user. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 1cb30087-3787-4aad-8da8-addcb556ae17
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/06ef6097-8f21-4a76-b025-0c9271168814-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/06ef6097-8f21-4a76-b025-0c9271168814-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

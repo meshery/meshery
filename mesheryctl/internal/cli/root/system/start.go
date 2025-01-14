@@ -18,13 +18,14 @@ import (
 	"bufio"
 	"context"
 	"fmt"
-	"github.com/pkg/errors"
 	"os"
 	"os/exec"
 	"path"
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/pkg/errors"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants"
@@ -336,7 +337,7 @@ func start() error {
 		start.Stderr = os.Stderr
 
 		if err := start.Run(); err != nil {
-			return errors.Wrap(err, utils.SystemError("failed to run meshery server"))
+			return errors.Wrap(err, utils.SystemError("failed to run Meshery Server"))
 		}
 
 		checkFlag := 0 //flag to check
@@ -407,7 +408,7 @@ func start() error {
 			return err
 		}
 
-		log.Info("Starting Meshery...")
+		// log.Info("Starting Meshery...")
 
 		spinner := utils.CreateDefaultSpinner("Deploying Meshery on Kubernetes", "\nMeshery deployed on Kubernetes.")
 		spinner.Start()
@@ -423,7 +424,7 @@ func start() error {
 		}
 
 		// checking if Meshery is ready
-		time.Sleep(10 * time.Second) // sleeping 10 seconds to countermeasure time to apply helm charts
+		time.Sleep(20 * time.Second) // sleeping 10 seconds to countermeasure time to apply helm charts
 		ready, err := mesheryReadinessHealthCheck()
 		if err != nil {
 			log.Info(err)
@@ -432,7 +433,7 @@ func start() error {
 		spinner.Stop()
 
 		if !ready {
-			log.Info("\nFew Meshery pods have not come up yet.\nPlease check the status of the pods by executing “mesheryctl system status” and Meshery-UI endpoint with “mesheryctl system dashboard” before using meshery.")
+			log.Info("\nTimeout. Meshery pod(s) is not running, yet.\nCheck status of Meshery pod(s) by executing “mesheryctl system status`. Expose Meshery UI with `mesheryctl system dashboard` as needed.")
 			return nil
 		}
 		log.Info("Meshery is starting...")
@@ -498,13 +499,13 @@ func applyHelmCharts(kubeClient *meshkitkube.Client, currCtx *config.Context, me
 		DryRun:           dryRun,
 	})
 	if errServer != nil && errOperator != nil {
-		return fmt.Errorf("could not %s meshery server: %s\ncould not %s meshery-operator: %s", action, errServer.Error(), action, errOperator.Error())
+		return fmt.Errorf("could not %s Meshery Server: %s\ncould not %s meshery-operator: %s", action, errServer.Error(), action, errOperator.Error())
 	}
 	if errServer != nil {
-		return fmt.Errorf("%s success for operator but failed for meshery server: %s", action, errServer.Error())
+		return fmt.Errorf("%s success for Meshery Operator, but failed for Meshery Server: %s", action, errServer.Error())
 	}
 	if errOperator != nil {
-		return fmt.Errorf("%s success for meshery server but failed for meshery operator: %s", action, errOperator.Error())
+		return fmt.Errorf("%s success for Meshery Server, but failed for Meshery Operator: %s", action, errOperator.Error())
 	}
 	return nil
 }

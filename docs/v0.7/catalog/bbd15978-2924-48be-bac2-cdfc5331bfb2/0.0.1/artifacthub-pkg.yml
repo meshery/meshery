@@ -1,0 +1,20 @@
+version: 0.0.1
+name: bank-of-anthos
+displayName: Bank of Anthos
+createdAt: "2023-09-25T23:36:41Z"
+description: Bank of Anthos is a sample HTTP-based web app that simulates a bank's payment processing network, allowing users to create artificial bank accounts and complete transactions.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/bbd15978-2924-48be-bac2-cdfc5331bfb2/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Ensure enough resources are available on the cluster. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a550f4d6-d3bd-44f1-9b4c-167114452062
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

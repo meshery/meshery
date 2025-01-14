@@ -5,11 +5,13 @@ on:
       - "master"
     paths:
       - "**.go"
+      - "**.golden"
   pull_request:
     branches:
       - "master"
     paths:
       - "**.go"
+      - "**.golden"
   workflow_dispatch:
     inputs:
       logLevel:
@@ -21,7 +23,7 @@ jobs:
   golangci:
     strategy:
       matrix:
-        go: [1.21]
+        go: [1.23]
         os: [ubuntu-22.04]
     name: golangci-lint
     if: github.repository == 'meshery/meshery'
@@ -34,7 +36,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.59
+          version: v1.63
           args: --config=.golangci.yml --timeout=10m
   unit-tests:
     name: Unit tests
@@ -49,7 +51,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.23"
       - name: Run coverage
         run: go test --short ./... -race -coverprofile=coverage.txt -covermode=atomic
       - name: Upload coverage to Codecov
@@ -71,7 +73,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.23"
       - name: Install Docker Compose
         run: |
           sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose

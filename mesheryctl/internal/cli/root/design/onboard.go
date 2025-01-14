@@ -168,7 +168,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 		}
 
 		if res.StatusCode == 200 {
-			utils.Log.Info("design successfully onboarded")
+			utils.Log.Info("design onboarded")
 		}
 		utils.Log.Info(string(body))
 		return nil

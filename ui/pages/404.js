@@ -15,7 +15,7 @@ const Error = () => {
   return (
     <NoSsr>
       <Head>
-        <title>404 - Page Not Found</title>
+        <title>404 - Page Not Found </title>
       </Head>
       <CustomErrorMessage />
     </NoSsr>

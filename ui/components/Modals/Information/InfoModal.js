@@ -15,7 +15,11 @@ import moment from 'moment';
 import Application from '../../../public/static/img/drawer-icons/application_svg.js';
 import { useSnackbar } from 'notistack';
 import Filter from '../../../public/static/img/drawer-icons/filter_svg.js';
-import { PATTERN_ENDPOINT, FILTER_ENDPOINT } from '../../../constants/endpoints';
+import {
+  PATTERN_ENDPOINT,
+  FILTER_ENDPOINT,
+  MESHERY_CLOUD_PROD,
+} from '../../../constants/endpoints';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import axios from 'axios';
@@ -34,6 +38,8 @@ import {
   ModalButtonSecondary,
   ModalBody,
   VisibilityChipMenu,
+  Link,
+  Skeleton,
 } from '@layer5/sistent';
 import TooltipButton from '@/utils/TooltipButton';
 import { keys } from '@/utils/permission_constants';
@@ -148,7 +154,7 @@ const InfoModal_ = React.memo((props) => {
       .then(() => {
         setSaveFormLoading(false);
         notify({
-          message: `${selectedResource.name} data saved successfully`,
+          message: `${selectedResource.name} data saved`,
           event_type: EVENT_TYPES.SUCCESS,
         });
         patternFetcher()();
@@ -491,16 +497,16 @@ const OwnerChip = ({ userProfile }) => {
   const classes = useStyles();
   return (
     <Box style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-      <Avatar src={userProfile?.avatar_url} className={classes.chipIcon} />
-      <Typography>
-        {userProfile ? (
-          `${userProfile?.first_name} ${userProfile?.last_name}`
-        ) : (
-          <Box sx={{ display: 'flex' }}>
-            <CircularProgress color="inherit" size="1rem" />
-          </Box>
-        )}
-      </Typography>
+      {userProfile ? (
+        <>
+          <Link href={`${MESHERY_CLOUD_PROD}/user/${userProfile.id}`} rel="noopener noreferrer">
+            <Avatar src={userProfile.avatar_url} className={classes.chipIcon} />
+          </Link>
+          <Typography>{`${userProfile.first_name} ${userProfile.last_name}`}</Typography>
+        </>
+      ) : (
+        <Skeleton variant="circular" width={40} height={40} />
+      )}
     </Box>
   );
 };

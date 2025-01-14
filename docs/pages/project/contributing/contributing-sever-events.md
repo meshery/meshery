@@ -11,7 +11,6 @@ list: include
 
 Meshery incorporates an internal events publication mechanism that provides users with real-time updates on the processes occurring within the Meshery server when interacting with its endpoints. It ensures that users are kept in the loop regarding the ongoing activities within the API, and guides users towards future steps to resolve issues. This guide will provide step-by-step instructions on sending events from the server, including when to trigger events and what information to include.
 
-
 First, let's take a look at how the event object is constructed,
 
 <pre class="codeblock-pre">
@@ -28,11 +27,12 @@ First, let's take a look at how the event object is constructed,
                   .Build()
   </div>
  </pre>
+
 &nbsp;&nbsp;
 
-*Note: `events` is a package [github.com/meshery/meshkit/models/events](https://github.com/meshery/meshkit) from MeshKit containing source code of event related functionality*
+_Note: `events` is a package [github.com/meshery/meshkit/models/events](https://github.com/meshery/meshkit) from MeshKit containing source code of event related functionality_
 
-The event mechanism utilizes [builder pattern](https://en.wikipedia.org/wiki/Builder_pattern) to construct event objects, `events.NewEvent()` creates an instance of [EventBuilder](https://github.com/meshery/meshkit/blob/ea3c60907a1cd1902902a4113206579992772083/models/events/build.go#L9) type, which functions as a builder class for constructing [Event](https://github.com/meshery/meshkit/blob/ea3c60907a1cd1902902a4113206579992772083/models/events/events.go#L37) objects. 
+The event mechanism utilizes [builder pattern](https://en.wikipedia.org/wiki/Builder_pattern) to construct event objects, `events.NewEvent()` creates an instance of [EventBuilder](https://github.com/meshery/meshkit/blob/ea3c60907a1cd1902902a4113206579992772083/models/events/build.go#L9) type, which functions as a builder class for constructing [Event](https://github.com/meshery/meshkit/blob/ea3c60907a1cd1902902a4113206579992772083/models/events/events.go#L37) objects.
 
 - `ActedUpon(UUID)` : it takes [UUID](https://pkg.go.dev/github.com/gofrs/uuid#UUID) of the resource being provisioned on the server, and the events are associated with that resource.
 - `FromUser()` : it takes [UUID](https://pkg.go.dev/github.com/gofrs/uuid#UUID) of the user initiating the HTTP request to the server. This enables the server to publish events intended for that specific user in response.
@@ -40,13 +40,14 @@ The event mechanism utilizes [builder pattern](https://en.wikipedia.org/wiki/Bui
 - `WithCategory` : The string argument to specify under which category this event falls, For example, when a user is provisioning a Kubernetes connection, the specified category for the event is "connection.
 - `WithAction` : The string argument to specify the type of action the server is performing, for instance, when registering a Kubernetes connection, the action would be "register".
 
-*Note: categories and actions must be in snake case,*
-      example categories: **"signup_request", "github_artifacts"**.
-      example actions: **"remove_from_organization", "add_to_organization"**.
+_Note: categories and actions must be in snake case,_
+example categories: **"signup_request", "github_artifacts"**.
+example actions: **"remove_from_organization", "add_to_organization"**.
 
 - `WithSeverity`: it takes [EventSeverity](https://github.com/meshery/meshkit/blob/ea3c60907a1cd1902902a4113206579992772083/models/events/events.go#L75) (underlying type is string), to specify severity of the event to bring user's attention to the event accordingly.
 
-*Note: In certain conditions you must add some fields with specific  keys:*
+_Note: In certain conditions you must add some fields with specific keys:_
+
 - If the severity is "Error", include a field in Metadata using the key `err` with the corresponding error value.
 - When you want to add a link to meshery docs, include a field in Metadata using the key `doc` with the corresponding link value.
 
@@ -54,7 +55,23 @@ The event mechanism utilizes [builder pattern](https://en.wikipedia.org/wiki/Bui
 - `WithMetadata`: it takes a Map `map[string]interface{}` data structure containing any supplementary information that the developer/contributor deems essential for the user to be informed about.
 - `Build` : returns the [Event](https://github.com/meshery/meshkit/blob/ea3c60907a1cd1902902a4113206579992772083/models/events/events.go#L37) instance constructed upon the previously described functions and prepares it for publication through the [Broadcast](https://github.com/meshery/meshery/blob/1b5d78ed34648e0a91df8c2273026b930f748fbc/server/models/event_broadcast.go#L14), which is responsible for disseminating events.
 
+<a href="/assets/img/events-table.png">
+    <img src="/assets/img/events-table.png" alt="Event Schema" style="width:50%;">
+</a>
 
+## Event Persistence in Meshery
+
+Events in Meshery are persisted through two distinct mechanisms to ensure reliable event management. [Read more about providers](https://docs.meshery.io/extensibility/providers).
+
+### Local Event Storage
+
+The `provider.PersistEvent(event)` method stores all events in Meshery's local database. This method works identically for both Local and Remote providers, ensuring events are always accessible within your Meshery instance.
+
+### Remote Event Publishing
+
+The `provider.PublishEventToProvider(token, event)` method enables event synchronization with remote providers (like Meshery Cloud). For Local providers, this method is a no-op (does nothing), while Remote providers use it to send events to their remote services.
+
+To see it in action and gain a better understanding, you can explore the [design_engine_handler.go](https://github.com/meshery/meshery/blob/8810d2ae75f8c69d42dd8bd329446f8df24bf1/server/handlers/design_engine_handler.go#L193-L207) file.
 
 ## An Example in Code
 
@@ -101,8 +118,8 @@ func (h *Handler) KubernetesPingHandler(w http.ResponseWriter, req *http.Request
 }
  </div>
 </pre>
-&nbsp;&nbsp;
 
+&nbsp;&nbsp;
 
 In the given code block, the "resource" refers to the connection on which the server is performing the "ping" action. The "ActedUpon" field is supplied with the "connectionID" value obtained from the query parameter. `provider.GetK8sContext` returns the [K8sContext](https://github.com/meshery/meshery/blob/995ab671a12013088f874430cfa2c0f025b073d2/server/models/k8s_context.go#L26) object which serves as a representation of a Kubernetes context within the Meshery. if `provider.GetK8sContext` returns an error, the event is constructed with severity [Error](https://github.com/meshery/meshkit/blob/ea3c60907a1cd1902902a4113206579992772083/models/events/events.go#L18), description and enriched with metadata fields to provide the user with a complete context about the event.
 
@@ -112,44 +129,44 @@ after constructing the Event object using the Build function, event is stored in
 
 To gain a deeper understanding and examine events more closely, you can explore the source code files [k8config_handler.go](https://github.com/meshery/meshery/blob/master/server/handlers/k8sconfig_handler.go) and [design_engine_handler.go](https://github.com/meshery/meshery/blob/master/server/handlers/design_engine_handler.go) within the Meshery project's codebase.
 
-
 ## Sending Events to Meshery Server
 
 Meshery has two primary clients: Mesheryctl and Meshery UI. Both clients will produce multiple events throughout their lifecycle. Meshery Server is designed to accept these client-generated events and broadcast them using the [Broadcaster](https://github.com/meshery/meshery/blob/1b5d78ed34648e0a91df8c2273026b930f748fbc/server/models/event_broadcast.go#L14).
 
 Clients can send HTTP POST requests to [`api/events`](https://docs.meshery.io/reference/rest-apis#api-events) with the event encapsulated in a JSON request body. Upon receiving an event, the server processes, validates, and broadcasts it using the Broadcaster. This ensures that all relevant events generated by Mesheryctl and Meshery UI are effectively communicated and managed by the Meshery Server.
 
-### Example 
+### Example
 
 ```javascript
 async function sendClientEvent(clientId, eventPayload) {
-    // Create a new event
-    const event = {
-        category: "client_event",
-        action: "create",
-        severity: "info",
-        description: "Client event creation",
-        metadata: eventPayload
-    };
+  // Create a new event
+  const event = {
+    category: "client_event",
+    action: "create",
+    severity: "info",
+    description: "Client event creation",
+    metadata: eventPayload,
+  };
 
-    try {
-        // Send event to Meshery Server
-        const response = await fetch('http://localhost:9081/api/events', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(event)
-        });
+  try {
+    // Send event to Meshery Server
+    const response = await fetch("http://localhost:9081/api/events", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(event),
+    });
 
-        if (!response.ok) {
-            throw new Error(`Server returned non-200 status: ${response.status}`);
-        }
-
-        console.log('Event sent successfully');
-    } catch (error) {
-        console.error('Failed to send event:', error);
+    if (!response.ok) {
+      throw new Error(`Server returned non-200 status: ${response.status}`);
     }
+
+    console.log("Event sent successfully");
+  } catch (error) {
+    console.error("Failed to send event:", error);
+  }
 }
 
 sendClientEvent(clientId, eventPayload);
+```

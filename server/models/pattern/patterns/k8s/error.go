@@ -3,6 +3,8 @@ package k8s
 import (
 	"encoding/json"
 	"fmt"
+
+	"github.com/layer5io/meshkit/logger"
 	meshkitutils "github.com/layer5io/meshkit/utils/kubernetes"
 
 	"github.com/layer5io/meshery/server/helpers/utils"
@@ -35,6 +37,9 @@ func formatKubeStatusErrToMeshkitErr(status *[]byte, componentName string) error
 	}
 
 	st := string(kubeStatus.Status)
+
+	log, _ := logger.New("k8s", logger.Options{})
+	log.Debug(fmt.Sprintf("kubeStatus: (\"%s\")", st))
 
 	if kubeStatus.Details != nil {
 

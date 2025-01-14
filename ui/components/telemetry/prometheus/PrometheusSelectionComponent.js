@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import { NoSsr, TextField, Grid, Button, Chip, MenuItem } from '@material-ui/core';
+import { NoSsr } from '@mui/material';
+import { TextField, Grid, Button, Chip, MenuItem, styled } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Controlled as CodeMirror } from 'react-codemirror2';
@@ -10,19 +10,45 @@ import { trueRandom } from '../../../lib/trueRandom';
 import dataFetch from '../../../lib/data-fetch';
 import CodeIcon from '@material-ui/icons/Code';
 import Alert from '@material-ui/lab/Alert';
+import { UsesSistent } from '@/components/SistentWrapper';
 
-const promStyles = (theme) => ({
-  prometheusWrapper: { padding: theme.spacing(5) },
-  buttons: { display: 'flex', justifyContent: 'flex-end' },
-  button: { marginTop: theme.spacing(3) },
-  margin: { margin: theme.spacing(1) },
-  chartTitle: { textAlign: 'center' },
-  icon: { width: theme.spacing(2.5) },
-  alignRight: { textAlign: 'right', marginBottom: theme.spacing(2) },
-  formControl: { marginTop: theme.spacing(2), minWidth: window.innerWidth * 0.25 },
-  panelChips: { display: 'flex', flexWrap: 'wrap' },
-  panelChip: { margin: theme.spacing(0.25) },
-});
+const PrometheusContainer = styled('div')(({ theme }) => ({
+  padding: theme.spacing(5),
+}));
+
+const ButtonContainer = styled('div')(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  '& .actionButton': {
+    marginTop: theme.spacing(3),
+  },
+}));
+
+const AlignRight = styled('div')(({ theme }) => ({
+  textAlign: 'right',
+  marginBottom: theme.spacing(2),
+}));
+
+// const ChartTitle = styled('div')({
+//   textAlign: 'center',
+// });
+
+const PanelChipsContainer = styled('div')(({ theme }) => ({
+  display: 'flex',
+  flexWrap: 'wrap',
+  '& .chip': {
+    margin: theme.spacing(0.25),
+  },
+}));
+
+const StyledIcon = styled('img')(({ theme }) => ({
+  width: theme.spacing(2.5),
+}));
+
+const FormControlWrapper = styled('div')(({ theme }) => ({
+  marginTop: theme.spacing(2),
+  minWidth: window.innerWidth * 0.25,
+}));
 
 const dummyBoard = `
 {
@@ -267,28 +293,28 @@ class PrometheusSelectionComponent extends Component {
 
   render = () => {
     const self = this;
-    const { classes, prometheusURL, handlePrometheusChipDelete, handlePrometheusClick } =
-      this.props;
+    const { prometheusURL, handlePrometheusChipDelete, handlePrometheusClick } = this.props;
     const { panels, selectedPanels, grafanaBoard, templateVars, templateVarOptions } = this.state;
     return (
-      <NoSsr>
-        <React.Fragment>
-          <div className={classes.prometheusWrapper}>
-            <div className={classes.alignRight}>
+      <UsesSistent>
+        <NoSsr>
+          <PrometheusContainer>
+            <AlignRight>
               <Chip
                 label={prometheusURL}
                 onDelete={handlePrometheusChipDelete}
                 onClick={handlePrometheusClick}
                 key="prometh-key"
                 icon={
-                  <img
+                  <StyledIcon
                     src="/static/img/prometheus_logo_orange_circle.svg"
-                    className={classes.icon}
+                    alt="Prometheus"
                   />
                 }
                 variant="outlined"
               />
-            </div>
+            </AlignRight>
+
             <Grid container spacing={1}>
               <Grid item xs={12}>
                 <div style={{ padding: '20px', display: 'flex' }}>
@@ -335,29 +361,31 @@ class PrometheusSelectionComponent extends Component {
                   onChange={() => {}}
                 />
               </Grid>
+
               {templateVars.length > 0 &&
                 templateVars.map(({ name }, ind) => {
                   // if (ind === 0 || this.getSelectedTemplateVar(ind-1) !== ''){
+
                   if (ind === 0 || typeof this.getSelectedTemplateVar(ind - 1) !== 'undefined') {
                     return (
                       <Grid item xs={12} sm={4} key={ind}>
-                        <TextField
-                          select
-                          id={`template_var_${ind}`}
-                          name={`template_var_${ind}`}
-                          label={`Template variable: ${name}`}
-                          fullWidth
-                          value={this.getSelectedTemplateVar(ind)}
-                          margin="normal"
-                          variant="outlined"
-                          onChange={this.handleChange(`template_var_${ind}`)}
-                        >
-                          <MenuItem
-                            key={`tmplVarOpt__-___${ind}_${self.genRandomNumberForKey()}`}
-                            value=""
-                          />
-                          {templateVarOptions[ind] &&
-                            templateVarOptions[ind].map((opt) => (
+                        <FormControlWrapper>
+                          <TextField
+                            select
+                            id={`template_var_${ind}`}
+                            name={`template_var_${ind}`}
+                            label={`Template variable: ${name}`}
+                            fullWidth
+                            value={this.getSelectedTemplateVar(ind)}
+                            margin="normal"
+                            variant="outlined"
+                            onChange={this.handleChange(`template_var_${ind}`)}
+                          >
+                            <MenuItem
+                              key={`tmplVarOpt__-___${ind}_${self.genRandomNumberForKey()}`}
+                              value=""
+                            />
+                            {templateVarOptions[ind]?.map((opt) => (
                               <MenuItem
                                 key={`tmplVarOpt__-__${name}_${opt}_${ind}_${self.genRandomNumberForKey()}`}
                                 value={opt}
@@ -365,7 +393,8 @@ class PrometheusSelectionComponent extends Component {
                                 {opt}
                               </MenuItem>
                             ))}
-                        </TextField>
+                          </TextField>
+                        </FormControlWrapper>
                       </Grid>
                     );
                   }
@@ -395,7 +424,7 @@ class PrometheusSelectionComponent extends Component {
                     SelectProps={{
                       multiple: true,
                       renderValue: (selected) => (
-                        <div className={classes.panelChips}>
+                        <PanelChipsContainer>
                           {selected.map((value) => {
                             let selVal = '';
                             let panelId = '';
@@ -406,14 +435,10 @@ class PrometheusSelectionComponent extends Component {
                               }
                             });
                             return (
-                              <Chip
-                                key={`pl_--_${panelId}`}
-                                label={selVal}
-                                className={classes.panelChip}
-                              />
+                              <Chip key={`pl_--_${panelId}`} label={selVal} className="chip" />
                             );
                           })}
-                        </div>
+                        </PanelChipsContainer>
                       ),
                     }}
                   >
@@ -426,29 +451,29 @@ class PrometheusSelectionComponent extends Component {
                 </Grid>
               )}
             </Grid>
+
             {selectedPanels.length > 0 && (
-              <div className={classes.buttons}>
+              <ButtonContainer>
                 <Button
                   type="submit"
                   variant="contained"
                   color="primary"
                   size="large"
                   onClick={this.addSelectedBoardPanelConfig}
-                  className={classes.button}
+                  className="actionButton"
                 >
                   Add
                 </Button>
-              </div>
+              </ButtonContainer>
             )}
-          </div>
-        </React.Fragment>
-      </NoSsr>
+          </PrometheusContainer>
+        </NoSsr>
+      </UsesSistent>
     );
   };
 }
 
 PrometheusSelectionComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
   prometheusURL: PropTypes.string.isRequired,
   handlePrometheusClick: PropTypes.func.isRequired,
   handlePrometheusChipDelete: PropTypes.func.isRequired,
@@ -461,6 +486,4 @@ const mapDispatchToProps = (dispatch) => ({
 });
 const mapStateToProps = () => ({});
 
-export default withStyles(promStyles)(
-  connect(mapStateToProps, mapDispatchToProps)(PrometheusSelectionComponent),
-);
+export default connect(mapStateToProps, mapDispatchToProps)(PrometheusSelectionComponent);

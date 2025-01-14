@@ -56,7 +56,7 @@ export const CheckBoxField = ({
   checked,
   onChange,
   disabled = false,
-  helpText = 'Open in visualizer',
+  helpText = 'Open in Operator',
 }) => {
   const theme = useTheme();
   const color = disabled ? theme.palette.text.disabled : theme.palette.text.neutral.default;

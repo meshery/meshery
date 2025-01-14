@@ -376,7 +376,7 @@ Our projects are community-built and welcome collaboration. 👍 Be sure to see 
 
 <p>MeshMates are experienced Layer5 community members, who will help you learn your way around, discover live projects, and expand your community network. Connect with a Meshmate today!</p>
 
-Find out more on the <a href="https://layer5.io/community/meshmates">Layer5 community</a>. <br />
+Learn more about the <a href="https://layer5.io/community/meshmates">MeshMates</a> program. <br />
 
 </p>
 <br /><br />
@@ -388,10 +388,10 @@ Find out more on the <a href="https://layer5.io/community/meshmates">Layer5 comm
 <p>
 ✔️ <em><strong>Join</strong></em> any or all of the weekly meetings on <a href="https://meshery.io/calendar">community calendar</a>.<br />
 ✔️ <em><strong>Watch</strong></em> community <a href="https://www.youtube.com/Layer5io?sub_confirmation=1">meeting recordings</a>.<br />
-✔️ <em><strong>Fill-in</strong></em> a <a href="https://layer5.io/newcomers">community member form</a> to gain access to community resources.
+✔️ <em><strong>Fill-in</strong></em> a <a href="https://layer5.io/newcomers">member form</a> and gain access to community resources.
 <br />
-✔️ <em><strong>Discuss</strong></em> in the <a href="http://discuss.meshery.io">Community Forum</a>.<br />
-✔️ <em><strong>Explore more</strong></em> in the <a href="https://layer5.io/community/handbook">Community Handbook</a>.<br />
+✔️ <em><strong>Discuss</strong></em> in the <a href="http://discuss.meshery.io">community forum</a>.<br />
+✔️ <em><strong>Explore more</strong></em> in the <a href="https://layer5.io/community/handbook">community handbook</a>.<br />
 </p>
 </div><br /><br />
 <div>
@@ -406,7 +406,7 @@ Find out more on the <a href="https://layer5.io/community/meshmates">Layer5 comm
 </div>
 <br /><br />
 <p align="left">
-&nbsp;&nbsp;&nbsp;&nbsp; <i>Not sure where to start?</i> Grab an open issue with the <a href="https://github.com/issues?q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+org%3Ameshery+org%3Aservice-mesh-performance+org%3Aservice-mesh-patterns+label%3A%22help+wanted%22+">help-wanted label</a>.
+&nbsp;&nbsp;&nbsp;&nbsp; <i>Not sure where to start?</i> Grab an open issue with the <a href="https://github.com/issues?q=is%3Aopen+is%3Aissue+archived%3Afalse+org%3Alayer5io+org%3Ameshery+org%3Alayer5labs+org%3Aservice-mesh-performance+org%3Aservice-mesh-patterns+label%3A%22help+wanted%22+">help-wanted label</a>.
 </p>
 <br /><br />
 

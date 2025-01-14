@@ -1,0 +1,4 @@
+paths-ignore:
+  - docs/v0.*
+  - docs/assets/js/main.js
+  - docs/assets/js/search.js

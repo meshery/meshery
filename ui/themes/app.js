@@ -225,34 +225,6 @@ darkTheme = {
         color: '#00B39F',
       },
     },
-    MuiTabs: {
-      root: { marginLeft: darkTheme.spacing(1) },
-      indicator: {
-        height: 3,
-        backgroundColor: '#00B39F',
-        borderTopLeftRadius: 3,
-        borderTopRightRadius: 3,
-      },
-    },
-    MuiTab: {
-      root: {
-        textTransform: 'initial',
-        margin: '0 16px',
-        minWidth: 0,
-        // [darkTheme.breakpoints.up('md')]: {
-        //   minWidth: 0,
-        // },
-      },
-      labelContainer: {
-        padding: 0,
-        // [darkTheme.breakpoints.up('md')]: {
-        //   padding: 0,
-        // },
-      },
-      selected: {
-        color: '#00B39F !important',
-      },
-    },
     MuiPaper: {
       root: { backgroundColor: '#363636' },
       elevation2: {
@@ -477,30 +449,6 @@ theme = {
       label: {
         textTransform: 'initial',
         color: '#607d8b',
-      },
-    },
-    MuiTabs: {
-      root: { marginLeft: theme.spacing(1) },
-      indicator: {
-        height: 3,
-        borderTopLeftRadius: 3,
-        borderTopRightRadius: 3,
-      },
-    },
-    MuiTab: {
-      root: {
-        textTransform: 'initial',
-        margin: '0 16px',
-        minWidth: 0,
-        // [theme.breakpoints.up('md')]: {
-        //   minWidth: 0,
-        // },
-      },
-      labelContainer: {
-        padding: 0,
-        // [theme.breakpoints.up('md')]: {
-        //   padding: 0,
-        // },
       },
     },
     MuiIconButton: {

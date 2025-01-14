@@ -4,7 +4,7 @@ title: MeshSync
 permalink: concepts/architecture/meshsync
 type: components
 redirect_from: architecture/meshsync
-abstract: "Meshery offers support for Kubernetes cluster and cloud state synchronization with the help of MeshSync."
+abstract: "MeshSync ensures Meshery Server is continuously in-sync with the state of infrastructure under management."
 language: en
 display-title: "false"
 list: include
@@ -17,7 +17,7 @@ list: include
     <div style="flex: 4;">
         <h1>MeshSync</h1>
         <p>
-        Managed by the <a href="{{site.baseurl}}/concepts/architecture/operator">Meshery Operator</a>, MeshSync is a custom Kubernetes controller that provides tiered discovery and continual synchronization with Meshery Server as to the state of the Kubernetes clusters and their workloads.
+        Managed by the <a href="{{site.baseurl}}/concepts/architecture/operator">Meshery Operator</a>, MeshSync is a custom Kubernetes controller that provides tiered discovery and continual synchronization with Meshery Server as to the state of managed multi-cloud and cloud native infrastructure.
         </p>
     </div>
 </div>

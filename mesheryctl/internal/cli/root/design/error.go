@@ -53,7 +53,7 @@ func ErrDesignNotFound() error {
 }
 
 func ErrInvalidDesignFile(err error) error {
-	return errors.New(ErrInvalidDesignFileCode, errors.Fatal, []string{err.Error()}, []string{"Design appears invalid. Could not parse successfully"}, []string{"Design file provided is not valid"}, []string{"Please check that your design file is a valid yaml file"})
+	return errors.New(ErrInvalidDesignFileCode, errors.Fatal, []string{err.Error()}, []string{"Design appears invalid. Could not parse provided design"}, []string{"Design file provided is not valid"}, []string{"Please check that your design file is a valid yaml file"})
 }
 
 func ErrPatternInvalidNameOrID(err error) error {

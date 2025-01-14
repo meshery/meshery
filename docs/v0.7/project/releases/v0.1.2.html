@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+  <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+  <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  <meta name="ROBOTS" content="INDEX, FOLLOW" />
+
+  <link rel="alternate" type="application/rss&#43;xml" href="/index.xml" />
+
+  <link rel="shortcut icon" href="/assets/favicons/favicon.ico" />
+  <link rel="apple-touch-icon" href="/assets/favicons/apple-touch-icon.png" sizes="180x180" />
+  <link rel="icon" type="image/png" href="/assets/favicons/favicon-16x16.png" sizes="16x16" />
+  <link rel="icon" type="image/png" href="/assets/favicons/favicon-32x32.png" sizes="32x32" />
+  <link rel="icon" type="image/png" href="/assets/favicons/android-144x144.png" sizes="36x36" />
+  <link rel="icon" type="image/png" href="/assets/favicons/android-144x144.png" sizes="48x48" />
+  <link rel="icon" type="image/png" href="/assets/favicons/android-144x144.png" sizes="72x72" />
+  <link rel="icon" type="image/png" href="/assets/favicons/android-144x144.png" sizes="96x96" />
+  <link rel="icon" type="image/png" href="/assets/favicons/android-144x144.png" sizes="144x144" />
+  <link rel="icon" type="image/png" href="/assets/favicons/android-192x192.png" sizes="192x192" />
+
+  <title>V0.1.2 | Meshery</title>
+  <meta property="og:title" content="V0.1.2" />
+  <meta property="og:description"
+    content="As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.
+" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="http://localhost:4000" />
+  <meta property="og:site_name" content="http://localhost:4000" />
+  <meta property="og:image"
+    content="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/meshery-cncf-twitter.png" />
+
+  <meta itemprop="name" content="V0.1.2" />
+  <meta itemprop="description"
+    content="As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.
+" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="V0.1.2" />
+  <meta name="twitter:description"
+    content="As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.
+" />
+  <meta name="twitter:image"
+    content="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/meshery-cncf-twitter.png" />
+  
+    <!-- <link rel="stylesheet" href="/assets/css/palette.css" /> -->
+  <!-- <link rel="stylesheet" href="/assets/css/anchorjs.css" /> -->
+  <link rel="stylesheet" href="/assets/css/sass.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" />
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-PCGTC98C');</script>
+
+  <!-- End Google Tag Manager -->
+  
+  
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"
+    integrity="sha512-qzgd5cYSZcosqpzpn7zF2ZId8f/8CHmFKZ8j7mU4OUXTNRd5g+ZHBPsgKEwoqxCtdQvExE5LprwwPAgoicguNg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+
+  <!-- Anchorjs included for adding hover anchor links to headings -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
+  <script>
+    $(function () {
+      /** AnchorJS options and selector */
+      anchors.options = {
+        visible: "hover",
+        placement: "right",
+      };
+      anchors.add("h1, h2, h3, h4, h5");
+    });
+    // Function to handle anchor links
+    document.addEventListener('click', function (event) {
+      if (event.target.tagName === 'A' && event.target.getAttribute('href').startsWith('#')) {
+        window.location.hash = event.target.getAttribute('href');
+      }
+    });
+  </script>
+</head>
+ <header>
+  <nav class="js-navbar-scroll navbar">
+    <a class="navbar-brand" href="/">
+      <div class="navbar-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1703.46 182.75"><defs><style>.cls-1{fill:#00d3a9;}.cls-2{fill:#00b39f;}.cls-3{fill:#3c494f;}</style></defs><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path class="cls-1" d="M96,43.12V86.7l38.52-21.91Z"/><path class="cls-1" d="M96,95.82v43.92l38.87-21.9Z"/><path class="cls-2" d="M90.43,86.47v-43L52.38,64.91Z"/><path class="cls-2" d="M14,139.51a93,93,0,0,0,29.56,29.21v-46Z"/><path class="cls-2" d="M90.42,139.51V96.17L52.25,117.84Z"/><path class="cls-1" d="M49.08,166,87.72,144.3,49.08,122.4Z"/><path class="cls-2" d="M137.57,166.21V122.63L98.94,144.31Z"/><path class="cls-2" d="M175.4,134.5a89.15,89.15,0,0,0,10.94-39.13L146.07,118Z"/><path class="cls-1" d="M143.13,113.28,182,91.49,143.13,69.7Z"/><path class="cls-2" d="M137.56,60.23V17L99.15,38.56Z"/><path class="cls-2" d="M137.55,113.05V69.47L99,91.26Z"/><path class="cls-1" d="M49.08,69.36v44L88,91.26Z"/><path class="cls-2" d="M90.43,0a93.2,93.2,0,0,0-41,10.61l41,23Z"/><path class="cls-1" d="M49.08,16.65V60.46L88,38.56Z"/><path class="cls-2" d="M43.55,14A91.83,91.83,0,0,0,14,43.23L43.55,60V14Z"/><path class="cls-1" d="M137.32,10.84A94.71,94.71,0,0,0,96,0V34Z"/><path class="cls-1" d="M0,94.57a89.28,89.28,0,0,0,11.17,40.27l29.91-17Z"/><path class="cls-1" d="M11.17,47.91A90.17,90.17,0,0,0,0,88.06L41.08,64.91l-30-17Z"/><path class="cls-2" d="M49.47,172a93.47,93.47,0,0,0,41,10.61V149l-41,22.93Z"/><path class="cls-1" d="M172.46,43.35a93,93,0,0,0-29.33-29.09V60Z"/><path class="cls-1" d="M143.13,168.6a91.72,91.72,0,0,0,29.45-29.31l-29.45-16.66v46Z"/><path class="cls-2" d="M186.42,87.72A89.58,89.58,0,0,0,175.36,48L145.68,64.79Z"/><path class="cls-1" d="M96,182.75a93.24,93.24,0,0,0,41-10.61L96,148.87Z"/><path class="cls-2" d="M43.55,112.94V69.81L5.38,91.26Z"/><path class="cls-3" d="M784.8,56.17v92H889.85v-22h-83V104.6h63.94v-22H806.81V61.05h83v-22H784.8Z"/><path class="cls-3" d="M379.53,56.17v92H485v-22H402V104.6H465.9v-22H402V61.05H485v-22H379.53Z"/><path class="cls-3" d="M630.74,119.66a23.83,23.83,0,0,1-2.49,11,28.89,28.89,0,0,1-6.22,9,35.86,35.86,0,0,1-9.14,6.1,27.83,27.83,0,0,1-11.21,2.44H497.87V125.36H601.68a5.38,5.38,0,0,0,4.15-1.63,5.15,5.15,0,0,0,1.66-4.07v-9a5.15,5.15,0,0,0-1.66-4.07,5.38,5.38,0,0,0-4.15-1.63H526.94a25.15,25.15,0,0,1-11.22-2.44,29.55,29.55,0,0,1-9.13-6.11,34.86,34.86,0,0,1-6.23-8.95,23.86,23.86,0,0,1-2.49-11v-9a23.79,23.79,0,0,1,2.49-11,34.74,34.74,0,0,1,6.23-9,35.37,35.37,0,0,1,9.13-6.1,25.15,25.15,0,0,1,11.22-2.45h103.8v23.2H526.94a5.42,5.42,0,0,0-4.16,1.63A5.19,5.19,0,0,0,521.12,68v9A5.2,5.2,0,0,0,522.78,81a5.41,5.41,0,0,0,4.16,1.62h74.74a25.11,25.11,0,0,1,11.21,2.45,35.6,35.6,0,0,1,9.14,6.1,34.71,34.71,0,0,1,6.22,9,26.4,26.4,0,0,1,2.49,11Z"/><path class="cls-3" d="M770.68,148.15H749.51V105.42H666.87v42.73H645.7V82.22H749.51V39.07h21.17ZM666.87,72H645.7V39.48h21.17Z"/><path class="cls-3" d="M1073,77.33l-27.83-38.26h-27.82l44.43,65.53v43.55h22.43V104.6l44.43-65.53h-27.41Z"/><path class="cls-3" d="M927.64,59.83h56.89V83H938.85v20.76h10.38l40.28,44.77h27.41l-40.28-44.77h15.78a17.37,17.37,0,0,0,17.44-17.1V56.17a17.38,17.38,0,0,0-17.44-17.1H906.05V147.75h22Z"/><path class="cls-3" d="M360.43,57.39c-4.57-10.58-15.78-18.32-27.82-17.91H223.81V148.56h23.67V62.27c32.39,0,86.37-.4,87.62.41,8.3-2.44,2.49,82.22,4.15,85.07h23.67C361.67,140.42,365,62.27,360.43,57.39Z"/><path class="cls-3" d="M305.2,74.48H281.53v73.67H305.2Z"/><rect class="cls-3" x="1235.62" y="1.38" width="5" height="180"/><path class="cls-3" d="M1408,39.61c28.88,0,49.39,23.49,49.39,52.38s-20.51,52.38-49.39,52.38h-40.42a2.68,2.68,0,0,1-3-3V42.6a2.68,2.68,0,0,1,3-3H1408Zm0,94.89c23.34,0,39.21-19,39.21-42.51S1431.34,49.48,1408,49.48h-32.93v85Zm101.7,11.67A39.22,39.22,0,1,1,1549.07,107,38.9,38.9,0,0,1,1509.7,146.17Zm0-9.58A29.64,29.64,0,1,0,1480.22,107,29.2,29.2,0,0,0,1509.7,136.59ZM1633,120.43c2.09,0,3.29,1.34,2.39,3.44-5.24,13.32-18.86,22.3-34.72,22.3-22.6,0-39.37-17.06-39.37-39.21s16.77-39.22,39.37-39.22c15.86,0,29.33,9,34.72,22.3.9,2.1-.3,3.45-2.39,3.45h-4.35a3.76,3.76,0,0,1-3.59-2.25c-4.49-8.53-13.62-13.92-24.39-13.92a29.64,29.64,0,0,0,0,59.27c10.92,0,20-5.54,24.39-13.92a3.76,3.76,0,0,1,3.59-2.24Zm26.44-31.28c0,19,44,7.63,44,35.62,0,12.27-11.07,21.4-27.69,21.4-15.41,0-26-7.78-27.54-20.35-.15-2.1,1-3.15,3-3.15h3.89c1.79,0,2.69,1,3.14,2.85,1.35,8.23,9,11.07,17.51,11.07,9.43,0,17.81-3.44,17.81-11.82,0-19-44-7.64-44-35.62,0-12.28,11.08-21.41,26.19-21.41,14.07,0,24.55,7.79,26,20.36.15,2.09-1,3.14-3,3.14h-3.89c-1.8,0-2.69-1-3.14-2.84-1.35-8.23-8.83-11.08-16-11.08C1667.84,77.32,1659.46,80.77,1659.46,89.15Z"/></g></g></svg>
+      </div>
+      <div class="mobile">
+        <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 379.08 80.17"><defs><style>.cls-1{fill:#00d3a9;}.cls-2{fill:#00b39f;}.cls-3 {fill:var(--meshery-logo-text-fill);}</style></defs><polygon class="cls-1" points="41.26 18.9 41.26 38.04 57.86 28.43 41.26 18.9"/><polygon class="cls-1" points="41.26 42.05 41.26 61.29 58.01 51.71 41.26 42.05"/><polygon class="cls-2" points="38.87 37.91 38.87 19.06 22.48 28.45 38.87 37.91"/><path class="cls-2" d="M6,61.22A40.35,40.35,0,0,0,18.71,74V53.86Z"/><polygon class="cls-2" points="38.87 61.2 38.87 42.19 22.44 51.7 38.87 61.2"/><polygon class="cls-1" points="21.1 72.81 37.74 63.3 21.1 53.68 21.1 72.81"/><polygon class="cls-2" points="59.15 72.92 59.15 53.81 42.53 63.31 59.15 72.92"/><path class="cls-2" d="M75.42,59a39.88,39.88,0,0,0,4.71-17.18l-17.32,9.9Z"/><polygon class="cls-1" points="61.54 49.7 78.23 40.15 61.54 30.55 61.54 49.7"/><polygon class="cls-2" points="59.15 26.42 59.15 7.43 42.61 16.91 59.15 26.42"/><polygon class="cls-2" points="59.15 49.61 59.15 30.45 42.57 40.05 59.15 49.61"/><polygon class="cls-2" points="40.07 80.17 40.07 80.17 40.07 80.17 40.07 80.17"/><polygon class="cls-1" points="21.1 30.41 21.1 49.72 37.8 40.05 21.1 30.41"/><path class="cls-2" d="M38.87,0A40,40,0,0,0,21.28,4.65L38.87,14.77Z"/><polygon class="cls-1" points="21.1 7.31 21.1 26.49 37.81 16.91 21.1 7.31"/><path class="cls-2" d="M18.71,6.14A40.28,40.28,0,0,0,6,18.94l12.72,7.34Z"/><path class="cls-1" d="M59,4.74A40,40,0,0,0,41.26,0V14.93Z"/><path class="cls-1" d="M0,41.48A40,40,0,0,0,4.79,59.16L17.67,51.7Z"/><path class="cls-1" d="M4.79,21A40,40,0,0,0,0,38.58L17.69,28.45Z"/><path class="cls-2" d="M21.24,75.49a39.88,39.88,0,0,0,17.63,4.66V65.41Z"/><path class="cls-1" d="M74.17,19A40.24,40.24,0,0,0,61.54,6.21v20.1Z"/><path class="cls-1" d="M61.54,74A40.34,40.34,0,0,0,74.23,61.07L61.54,53.75Z"/><path class="cls-2" d="M80.13,38.48a39.88,39.88,0,0,0-4.76-17.42L62.64,28.43Z"/><path class="cls-1" d="M41.26,80.15a39.79,39.79,0,0,0,17.59-4.64L41.26,65.34Z"/><polygon class="cls-2" points="18.71 49.54 18.71 30.61 2.27 40.04 18.71 49.54"/><polygon class="cls-3" points="269.94 29.39 269.94 30.89 269.94 37.93 269.94 46.53 269.94 59.08 303.36 59.08 303.36 52.03 276.99 52.03 276.99 46.53 276.99 44.98 297.25 44.98 297.25 37.93 276.99 37.93 276.99 30.89 303.36 30.89 303.36 23.84 269.94 23.84 269.94 29.39"/><polygon class="cls-3" points="141.41 29.39 141.41 30.89 141.41 37.93 141.41 46.53 141.41 59.08 174.83 59.08 174.83 52.03 148.46 52.03 148.46 46.53 148.46 44.98 168.72 44.98 168.72 37.93 148.46 37.93 148.46 30.89 174.83 30.89 174.83 23.84 141.41 23.84 141.41 29.39"/><path class="cls-3" d="M221.08,49.87a8.74,8.74,0,0,1-.73,3.57,9,9,0,0,1-2,2.94,9.5,9.5,0,0,1-2.93,2,9,9,0,0,1-3.6.73h-33V51.66h33a1.78,1.78,0,0,0,1.79-1.79V47a1.76,1.76,0,0,0-.52-1.27,1.73,1.73,0,0,0-1.27-.51H188.09a8.74,8.74,0,0,1-3.57-.73,9.4,9.4,0,0,1-5-5,8.9,8.9,0,0,1-.73-3.57V33.09a9.11,9.11,0,0,1,.73-3.59,9.58,9.58,0,0,1,2-2.94,9.32,9.32,0,0,1,3-2,8.9,8.9,0,0,1,3.57-.72h33v7.47h-33a1.78,1.78,0,0,0-1.79,1.78V36a1.78,1.78,0,0,0,1.79,1.79h23.73a9.11,9.11,0,0,1,3.6.72,9.59,9.59,0,0,1,2.93,2,9.41,9.41,0,0,1,2,2.94,8.9,8.9,0,0,1,.73,3.59Z"/><path class="cls-3" d="M265.54,59.08h-6.73V45.22H232.6V59.08h-6.72V37.75h32.93V23.84h6.73ZM232.6,34.44h-6.72V23.84h6.72Z"/><polygon class="cls-3" points="361.45 36.17 352.64 23.84 343.83 23.84 357.93 44.98 357.93 59.08 364.98 59.08 364.98 44.98 379.08 23.84 370.38 23.84 361.45 36.17"/><path class="cls-3" d="M315.35,30.56h18.07v7.33H318.86v6.72h3.34L335,59.08h8.7L330.9,44.61h5a5.48,5.48,0,0,0,5.48-5.48V29.31a5.47,5.47,0,0,0-5.48-5.47H308.44V59.08h7.05Z"/><path class="cls-3" d="M136,59.08h-7.47V33.38a1.94,1.94,0,0,0-.16-.8,2.15,2.15,0,0,0-1.11-1.11,1.94,1.94,0,0,0-.8-.16H91.91V23.84h34.54a9.22,9.22,0,0,1,3.69.75,9.38,9.38,0,0,1,5.1,5.1,9.22,9.22,0,0,1,.75,3.69Zm-36.6,0H91.91V31.31l7.48-2Zm18.28,0h-7.48V35.22h7.48Z"/></svg>
+      </div>
+    </a>
+
+    <div id="main_navbar">
+      <ul class="navbar-nav">
+        <!-- 
+			<li class="nav-item">
+        <a class="nav-link" href="https://github.com/meshery/meshery" target="_blank"><span>GitHub</span></a>
+      </li>  -->
+
+        <!-- Internal links -->
+        
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="/installation/quick-start"
+            ><span>Quick Start</span></a
+          >
+        </li>
+        
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="https://meshery.io"
+            ><span>Website</span></a
+          >
+        </li>
+        
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="http://discuss.meshery.io/"
+            ><span>Discuss</span></a
+          >
+        </li>
+        
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="https://meshery.io/catalog"
+            ><span>Catalog</span></a
+          >
+        </li>
+        
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="https://meshery.io/blog"
+            ><span>Blog</span></a
+          >
+        </li>
+        
+        
+        <a href="https://play.meshery.io">
+          <div class="nav-btn">Playground</div>
+        </a>
+        <!--Version Selector -->
+        <select
+          onchange="window.location=this.value"
+          class="appearance-none flex-1 w-full px-0 py-1 placeholder-gray-900 tracking-wide focus:outline-none version-selector"
+          name="versioningSelection"
+          id="versioningSelection"
+        >
+          <!-- <option value="">Versions</option> -->
+           <!-- we get the version selected, and put it to the right option  --><option
+            
+            value="/"
+            class="nav-item mr-4 mb-2 mb-lg-0 text-black"
+          >
+            <span>latest</span>
+          </option>
+          <!-- we get the version selected, and put it to the right option  --><option
+            
+            value="/v0.6"
+            class="nav-item mr-4 mb-2 mb-lg-0 text-black"
+          >
+            <span>v0.6</span>
+          </option>
+          <!-- we get the version selected, and put it to the right option  --><option
+            
+            value="/v0.5"
+            class="nav-item mr-4 mb-2 mb-lg-0 text-black"
+          >
+            <span>v0.5</span>
+          </option>
+          <!-- we get the version selected, and put it to the right option  --><option
+            
+            value="/v0.4"
+            class="nav-item mr-4 mb-2 mb-lg-0 text-black"
+          >
+            <span>v0.4</span>
+          </option>
+          
+        </select>
+      </ul>
+    </div>
+
+    <div class="icon-container">
+      <button class="nav-toggle-btn nav-toggle-btn--main">
+        <svg
+          id="menu-nav-toggle-btn"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="feather feather-menu"
+        >
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <button class="nav-mode-icon" id="mode-toggle-btn" style="text-align: center">
+        <img class="nav-text" id="logo-dark-light" src="/assets/img/nav-icons/mode-toggle-icon-moon.png" 
+        data-logo-for-dark="/assets/img/nav-icons/mode-toggle-icon-moon.png"
+        data-logo-for-light="/assets/img/nav-icons/mode-toggle-icon-sun.png"
+        />
+      </button>
+    </div>
+
+    <!--Search Bar
+    <div class="navbar-nav d-none d-lg-block"><input type="search" class="form-control td-search-input" placeholder="&#xf002 Search this site…" aria-label="Search this site…" autocomplete="off"></div>-->
+
+    <!-- meshery-custom-begin
+	<div class="navbar-nav d-none d-lg-block">
+          <a class="gh-source" data-gh-source="github" href="https://github.com/meshery/meshery" title="Go to repository" data-md-state="done">
+          <div class="gh-source__repository">
+            <i class="fab fa fa-github fa-2x" style='padding-right:20px; float:left; margin-top:5px'></i>
+            meshery/meshery
+          <ul class="gh-source__facts"><li class="gh-source__fact" id='stars'></li><li id="forks" class="gh-source__fact"></li></ul></div></a>
+        </div>
+      </div>
+meshery-custom-end -->
+  </nav>
+</header>
+
+<!-- meshery-custom-begin
+<script>
+$(document).ready(function() {
+  var url = "https://api.github.com/search/repositories?q=meshery/meshery";
+  fetch(url, { 
+      headers: {"Accept":"application/vnd.github.preview"}
+  }).then(function(e) {
+    return e.json()
+  }).then(function(r) {
+     console.log(r.items[0])
+     stars = r.items[0]['stargazers_count']
+     forks = r.items[0]['forks_count']
+     $('#stars').text(stars + " Stars")
+     $('#forks').text(forks + " Forks")
+  });
+});
+</script>
+meshery-custom-end -->
+
+
+  <body class="td-section dark-mode">
+    <script>
+      if(localStorage.getItem("mode") == "light-mode")  {
+      document.body.classList.remove("dark-mode");
+      const allLogos = document.querySelectorAll("#logo-dark-light");
+      allLogos.forEach(e => e.src = e.dataset.logoForLight);
+  }
+    </script>
+    <!-- Google Tag Manager -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PCGTC98C"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager -->
+
+    <div class="flex-container">
+      <div class="left-container">
+        <div class="sidebar-container-wrapper">
+          <div class="sidebar-container"><div class="sidebar-menu">
+  <form class="sidebar__search-form">
+    <input
+      type="search"
+      class="sidebar__search-input"
+      id="sidebar-search-input"
+      placeholder="Search this site..."
+      aria-label="Search this site..."
+      autocomplete="off"
+    />
+  </form>
+  <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
+  <script type="text/javascript">
+    // <!--Ref: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView-->
+    // <!--Ref: https://stackoverflow.com/questions/11039885/scrollintoview-causing-the-whole-page-to-move-->
+    (() => {
+      window.addEventListener("load", function () {
+        let scrollElem = document.getElementsByClassName("sidebar-nav__section-link active").item(0);
+        if (scrollElem) {
+         scrollElem.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+        }
+        let activeSections = document.querySelectorAll(".sidebar-nav__section-link.active");
+      activeSections.forEach(function (activeSection) {
+        let parentCollapse = activeSection.closest(".collapse");
+        if (parentCollapse) {
+          parentCollapse.classList.add("show");
+        }
+      });
+    });
+  })();
+  </script>
+
+  <nav class="sidebar-nav" id="td-section-nav">
+    
+    <ul class="sidebar-nav__section">
+       
+
+      <li class="sidebar-nav__section-title">
+        <!-- Toggle button -->
+        <div class="toggle"  data-toggle="collapse" data-target="#section0" aria-expanded="false" aria-controls="section0"> ⇅ </div>
+        <a
+          href="/project/overview"  class="toggle"  data-toggle="collapse" data-target="#section0" aria-expanded="false" aria-controls="section0"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "
+          > 🗺 Overview & Installation
+        </a>
+  
+      
+          <ul class="td-sidebar-nav__section collapse" id="section0">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/project/faq"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >FAQs</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/installation/quick-start"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >🚀 Quick Start</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/installation"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Installation ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             <!--  section.links -->
+          </ul>
+       <!--  section.links -->
+    </li>
+  </ul> <!-- end of "sidebar-nav__section" -->
+  
+    <ul class="sidebar-nav__section">
+       
+
+      <li class="sidebar-nav__section-title">
+        <!-- Toggle button -->
+        <div class="toggle"  data-toggle="collapse" data-target="#section1" aria-expanded="false" aria-controls="section1"> ⇅ </div>
+        <a
+          href="/concepts"  class="toggle"  data-toggle="collapse" data-target="#section1" aria-expanded="false" aria-controls="section1"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "
+          > 🧠 Concepts
+        </a>
+  
+      
+          <ul class="td-sidebar-nav__section collapse" id="section1">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/concepts/architecture"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Architectural ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/concepts/logical"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Logical ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             <!--  section.links -->
+          </ul>
+       <!--  section.links -->
+    </li>
+  </ul> <!-- end of "sidebar-nav__section" -->
+  
+    <ul class="sidebar-nav__section">
+       
+
+      <li class="sidebar-nav__section-title">
+        <!-- Toggle button -->
+        <div class="toggle"  data-toggle="collapse" data-target="#section2" aria-expanded="false" aria-controls="section2"> ⇅ </div>
+        <a
+          href="/guides"  class="toggle"  data-toggle="collapse" data-target="#section2" aria-expanded="false" aria-controls="section2"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "
+          > 📚 Guides & Tutorials
+        </a>
+  
+      
+          <ul class="td-sidebar-nav__section collapse" id="section2">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/guides/infrastructure-management/overview"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >⚙️ Infrastructure Management ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/guides/configuration-management"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Configuring Kubernetes Infrastructure ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/guides/events-management"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Managing Events with Notification Center</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/guides/infrastructure-management/gitops-with-meshery"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >GitOps with Meshery</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/guides/performance-management"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Performance Management ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/guides/mesheryctl"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Using Meshery CLI Guides ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/guides/troubleshooting"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Troubleshooting Guides ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/guides/tutorials"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >🧑‍🔬 Tutorials ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             <!--  section.links -->
+          </ul>
+       <!--  section.links -->
+    </li>
+  </ul> <!-- end of "sidebar-nav__section" -->
+  
+    <ul class="sidebar-nav__section">
+       
+
+      <li class="sidebar-nav__section-title">
+        <!-- Toggle button -->
+        <div class="toggle"  data-toggle="collapse" data-target="#section3" aria-expanded="false" aria-controls="section3"> ⇅ </div>
+        <a
+          href="/extensibility"  class="toggle"  data-toggle="collapse" data-target="#section3" aria-expanded="false" aria-controls="section3"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "
+          > 🛠 Integrations & Extensions
+        </a>
+  
+      
+          <ul class="td-sidebar-nav__section collapse" id="section3">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/extensibility/api"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >APIs</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/extensibility/adapters"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Adapters ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/extensibility/integrations"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Integrations</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/extensibility/load-generators"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Load Generators</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/extensibility/providers"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Providers</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/extensibility/ui"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >UI Plugins</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/extensions"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >🦾 Extensions ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             <!--  section.links -->
+          </ul>
+       <!--  section.links -->
+    </li>
+  </ul> <!-- end of "sidebar-nav__section" -->
+  
+    <ul class="sidebar-nav__section">
+       
+
+      <li class="sidebar-nav__section-title">
+        <!-- Toggle button -->
+        <div class="toggle"  data-toggle="collapse" data-target="#section4" aria-expanded="false" aria-controls="section4"> ⇅ </div>
+        <a
+          href="/project"  class="toggle"  data-toggle="collapse" data-target="#section4" aria-expanded="false" aria-controls="section4"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "
+          > 🧑‍💻 Contributing & Community
+        </a>
+  
+      
+          <ul class="td-sidebar-nav__section collapse" id="section4">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/project/community"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Community</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/project/contributing"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Contributing ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             <!--  section.links -->
+          </ul>
+       <!--  section.links -->
+    </li>
+  </ul> <!-- end of "sidebar-nav__section" -->
+  
+    <ul class="sidebar-nav__section">
+       
+
+      <li class="sidebar-nav__section-title">
+        <!-- Toggle button -->
+        <div class="toggle"  data-toggle="collapse" data-target="#section5" aria-expanded="false" aria-controls="section5"> ⇅ </div>
+        <a
+          href="/reference"  class="toggle"  data-toggle="collapse" data-target="#section5" aria-expanded="false" aria-controls="section5"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "
+          > 📖 Reference
+        </a>
+  
+      
+          <ul class="td-sidebar-nav__section collapse" id="section5">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/reference/error-codes"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Error Code Reference</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/reference/permissions"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Permissions Keys Reference</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/extensibility/api"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >REST & GraphQL APIs ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/reference/mesheryctl"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >CLI Command Reference</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/reference/meshery-operator-crds"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Meshery Operator CRDs</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/project/releases"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Releases</a
+              >
+            </li>
+               <!-- end children -->
+                <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/project/security-vulnerabilities"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Vulnerabilities</a
+              >
+            </li>
+              <!-- end pageurl -->
+             <!--  section.links -->
+          </ul>
+       <!--  section.links -->
+    </li>
+  </ul> <!-- end of "sidebar-nav__section" -->
+  
+</nav>
+</div>
+</div>
+        </div>
+
+        <div class="icon-container">
+          <button class="nav-toggle-btn nav-toggle-btn--document">
+            <?xml version="1.0" encoding="utf-8"?>
+              <svg version="1.1" id="document-nav-toggle-btn" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                x="0px" y="0px" viewBox="0 0 10.7 18.7" style="enable-background:new 0 0 10.7 18.7;" xml:space="preserve">
+              <style type="text/css">
+                .st0{stroke:#000000;stroke-width:1.5;stroke-miterlimit:10;}
+              </style>
+              <path class="st0" d="M8.1,9.4L1,1.9C0.7,1.7,0.7,1.2,1,1c0.3-0.3,0.7-0.3,1,0c0,0,0,0,0,0l7.8,7.9c0.3,0.3,0.3,0.7,0,1l-7.8,7.9
+                c-0.3,0.3-0.7,0.3-1,0c0,0,0,0,0,0c-0.3-0.3-0.3-0.7,0-1L8.1,9.4z"/>
+              </svg>
+          </button>
+        </div>
+      </div>
+      <main class="main-container" role="main">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb spb-1">
+            <li class="breadcrumb-item active" aria-current="page"><div id="breadcrumbs">
+
+
+   <a href="/">home</a>
+
+
+  
+    / <a href="/project">project</a> 
+  
+
+  
+    / <a href="/project/releases">releases</a> 
+  
+
+  
+    / v0.1.2
+  
+
+</div>
+
+<!-- <a href="http://idratherbewriting.com" class="noCrossRef productSubtitle"> Home </a> > <a class="noCrossRef productSubtitle" href="http://localhost:4000">Learn API Doc</a> > v0.1.2 -->
+</li>
+          </ol>
+        </nav>
+        <div class="td-content">
+           <h1>Meshery v0.1.2</h1>
+
+<h4><a href="https://github.com/meshery/meshery/releases/tag/v0.1.2">Released</a> on June 20, 2019</h4>
+
+<p><strong>What’s new?</strong></p>
+
+<ul>
+  <li>
+    <p>Synchronization of browser local storage</p>
+  </li>
+  <li>
+    <p>Meshery in-memory session storage.</p>
+  </li>
+</ul>
+
+ 
+
+   
+           
+          <br/>
+
+
+        </div>
+      </main>
+      
+      <div class="content-table-wrapper">
+        <div class="content-table">
+          <div class="content-table__editable"><strong>Tools</strong>
+<a href="https://github.com/meshery/meshery/issues/new?assignees=&labels=area%2Fdocs%2C+framework%2Fjekyll&template=documentation.md&title=%5BDocs%5D" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i> Create doc issue</a>
+<a href="https://github.com/meshery/meshery/blob/master/docs/_releases/v0.1.2.md" rel="noopener" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/meshery/meshery/new/master/docs/_releases/v0.1.2.md?filename=change-me.md&value=---%0Atitle%3A+%22Long+Page+Title%22%0AlinkTitle%3A+%22Short+Nav+Title%22%0Aweight%3A+100%0Adescription%3A+%3E-%0A+++++Page+description+for+heading+and+indexes.%0A---%0A%0A%23%23+Heading%0A%0AEdit+this+template+to+create+your+new+page.%0A%0A%2A+Give+it+a+good+name%2C+ending+in+%60.md%60+-+e.g.+%60getting-started.md%60%0A%2A+Edit+the+%22front+matter%22+section+at+the+top+of+the+page+%28weight+controls+how+its+ordered+amongst+other+pages+in+the+same+directory%3B+lowest+number+first%29.%0A%2A+Add+a+good+commit+message+at+the+bottom+of+the+page+%28%3C80+characters%3B+use+the+extended+description+field+for+more+detail%29.%0A%2A+Create+a+new+branch+so+you+can+preview+your+new+file+and+request+a+review+via+Pull+Request.%0A" rel="noopener" target="_blank"><i class="fa fa-plus fa-fw"></i> Create new page</a>
+
+
+<!-- this will parse through the header fields and add a button to open
+     an issue / ask a question on Github. The editable field should be in
+     the post frontend matter, and refer to the label to open the issue for -->
+     
+</div>
+          <nav id="TableOfContents">
+            <strong>Contents</strong>
+            <ul>
+              <li>
+                <ul id="TOC">
+                  <!-- Links will be appended here-->
+                </ul>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      
+    </div>
+    <footer class="footer">
+  <!-- meshery-custom-begin"
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+
+<ul class="list-inline mb-0">
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="" aria-label="Twitter" data-original-title="Twitter">
+    <a class="text-white" target="_blank" href="https://twitter.com/https://twitter.com/mesheryio">
+      <i class="fab fa-twitter"></i>
+    </a>
+  </li>
+</ul>
+</div>
+<div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+<ul class="list-inline mb-0">
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="" aria-label="GitHub" data-original-title="GitHub">
+    <a class="text-white" target="_blank" href="https://github.com/meshery/meshery">
+      <i class="fab fa-github"></i>
+    </a>
+  </li>
+</ul>
+meshery-custom-end -->
+  <div class="text-white">&copy; 2025 The Meshery Authors</div>
+  
+
+  <!-- meshery-custom-begin -->
+
+  <div class="footer-icons-list">
+    <div class="footer-icons">
+      <a class="social__link social__link--forum" href="http://discuss.meshery.io" target="_blank" rel="noreferrer">
+        <img
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgLTEgMTA0IDEwNiI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiMyMzFmMjA7fS5jbHMtMntmaWxsOiNmZmY5YWU7fS5jbHMtM3tmaWxsOiMwMGFlZWY7fS5jbHMtNHtmaWxsOiMwMGE5NGY7fS5jbHMtNXtmaWxsOiNmMTVkMjI7fS5jbHMtNntmaWxsOiNlMzFiMjM7fTwvc3R5bGU+PC9kZWZzPjx0aXRsZT5EaXNjb3Vyc2VfbG9nbzwvdGl0bGU+PGcgaWQ9IkxheWVyXzIiPjxnIGlkPSJMYXllcl8zIj48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik01MS44NywwQzIzLjcxLDAsMCwyMi44MywwLDUxYzAsLjkxLDAsNTIuODEsMCw1Mi44MWw1MS44Ni0uMDVjMjguMTYsMCw1MS0yMy43MSw1MS01MS44N1M4MCwwLDUxLjg3LDBaIi8+PHBhdGggY2xhc3M9ImNscy0yIiBkPSJNNTIuMzcsMTkuNzRBMzEuNjIsMzEuNjIsMCwwLDAsMjQuNTgsNjYuNDFsLTUuNzIsMTguNEwzOS40LDgwLjE3YTMxLjYxLDMxLjYxLDAsMSwwLDEzLTYwLjQzWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTc3LjQ1LDMyLjEyYTMxLjYsMzEuNiwwLDAsMS0zOC4wNSw0OEwxOC44Niw4NC44MmwyMC45MS0yLjQ3QTMxLjYsMzEuNiwwLDAsMCw3Ny40NSwzMi4xMloiLz48cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik03MS42MywyNi4yOUEzMS42LDMxLjYsMCwwLDEsMzguOCw3OEwxOC44Niw4NC44MiwzOS40LDgwLjE3QTMxLjYsMzEuNiwwLDAsMCw3MS42MywyNi4yOVoiLz48cGF0aCBjbGFzcz0iY2xzLTUiIGQ9Ik0yNi40Nyw2Ny4xMWEzMS42MSwzMS42MSwwLDAsMSw1MS0zNUEzMS42MSwzMS42MSwwLDAsMCwyNC41OCw2Ni40MWwtNS43MiwxOC40WiIvPjxwYXRoIGNsYXNzPSJjbHMtNiIgZD0iTTI0LjU4LDY2LjQxQTMxLjYxLDMxLjYxLDAsMCwxLDcxLjYzLDI2LjI5YTMxLjYxLDMxLjYxLDAsMCwwLTQ5LDM5LjYzbC0zLjc2LDE4LjlaIi8+PC9nPjwvZz48L3N2Zz4="
+          alt="forum"
+        />
+        <span class="footer-icons-text">Community discussion forum</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link social__link--mail" href="https://meshery.io/subscribe" target="_blank" rel="noreferrer">
+        <img
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMjY1LjUgMTk5IiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAyNjUuNSAxOTkiPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+LnN0MHtmaWxsOiMwMGIzOWZ9PC9zdHlsZT48cGF0aCBkPSJNMjYwLjQsNjUuN2MyLTEuNiw1LTAuMSw1LDIuNHYxMDZjMCwxMy43LTExLjEsMjQuOS0yNC45LDI0LjlIMjQuOUMxMS4yLDE5OSwwLDE4Ny45LDAsMTc0LjF2LTEwNgljMC0yLjYsMy00LDUtMi40YzExLjYsOSwyNywyMC41LDc5LjksNTguOWMxMC45LDgsMjkuNCwyNC44LDQ3LjgsMjQuN2MxOC41LDAuMiwzNy4zLTE3LDQ3LjgtMjQuNwlDMjMzLjQsODYuMiwyNDguOCw3NC43LDI2MC40LDY1Ljd6IE0xMzIuNywxMzIuN2MxMiwwLjIsMjkuMy0xNS4xLDM4LjEtMjEuNWM2OC44LTQ5LjksNzQtNTQuMyw4OS45LTY2LjdjMy0yLjMsNC44LTYsNC44LTkuOHYtOS44CWMwLTEzLjctMTEuMS0yNC45LTI0LjktMjQuOUgyNC45QzExLjIsMCwwLDExLjEsMCwyNC45djkuOGMwLDMuOCwxLjgsNy40LDQuOCw5LjhjMTUuOSwxMi40LDIxLjEsMTYuOCw4OS45LDY2LjcJQzEwMy40LDExNy41LDEyMC43LDEzMi45LDEzMi43LDEzMi43TDEzMi43LDEzMi43eiIgY2xhc3M9InN0MCIvPjwvc3ZnPg=="
+          alt="mail"
+        />
+        <span class="footer-icons-text">Get connected with the community</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link social__link--slack" href=" https://slack.meshery.io/" target="_blank" rel="noreferrer">
+        <img
+          class="slack"
+          src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyNCAyNCIgaGVpZ2h0PSI1MTIiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjUxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtOC44NDMgMTIuNjUxYy0xLjM5MiAwLTIuNTIxIDEuMTI5LTIuNTIxIDIuNTIxdjYuMzA2YzAgMS4zOTIgMS4xMjkgMi41MjEgMi41MjEgMi41MjFzMi41MjEtMS4xMjkgMi41MjEtMi41MjF2LTYuMzA2Yy0uMDAxLTEuMzkyLTEuMTMtMi41MjEtMi41MjEtMi41MjF6IiBmaWxsPSIjZTkxZTYzIi8+PHBhdGggZD0ibS4wMTkgMTUuMTcyYzAgMS4zOTMgMS4xMyAyLjUyMyAyLjUyMyAyLjUyM3MyLjUyMy0xLjEzIDIuNTIzLTIuNTIzdi0yLjUyM2gtMi41MjFjLS4wMDEgMC0uMDAxIDAtLjAwMiAwLTEuMzkzIDAtMi41MjMgMS4xMy0yLjUyMyAyLjUyM3oiIGZpbGw9IiNlOTFlNjMiLz48cGF0aCBkPSJtOC44NDYtLjAwMWMtLjAwMSAwLS4wMDIgMC0uMDAzIDAtMS4zOTMgMC0yLjUyMyAxLjEzLTIuNTIzIDIuNTIzczEuMTMgMi41MjMgMi41MjMgMi41MjNoMi41MjF2LTIuNTIzYzAtLjAwMSAwLS4wMDMgMC0uMDA1LS4wMDEtMS4zOTEtMS4xMjgtMi41MTgtMi41MTgtMi41MTh6IiBmaWxsPSIjMDBiY2Q0Ii8+PHBhdGggZD0ibTIuNTI1IDExLjM3aDYuMzE4YzEuMzkzIDAgMi41MjMtMS4xMyAyLjUyMy0yLjUyM3MtMS4xMy0yLjUyMy0yLjUyMy0yLjUyM2gtNi4zMThjLTEuMzkzIDAtMi41MjMgMS4xMy0yLjUyMyAyLjUyM3MxLjEzIDIuNTIzIDIuNTIzIDIuNTIzeiIgZmlsbD0iIzAwYmNkNCIvPjxwYXRoIGQ9Im0yMS40NTcgNi4zMjNjLTEuMzkxIDAtMi41MTggMS4xMjctMi41MTggMi41MTh2LjAwNSAyLjUyM2gyLjUyMWMxLjM5MyAwIDIuNTIzLTEuMTMgMi41MjMtMi41MjNzLTEuMTMtMi41MjMtMi41MjMtMi41MjNjLS4wMDEgMC0uMDAyIDAtLjAwMyAweiIgZmlsbD0iIzRjYWY1MCIvPjxwYXRoIGQ9Im0xMi42NDEgMi41MjJ2Ni4zMjVjMCAxLjM5MiAxLjEyOSAyLjUyMSAyLjUyMSAyLjUyMXMyLjUyMS0xLjEyOSAyLjUyMS0yLjUyMXYtNi4zMjVjMC0xLjM5Mi0xLjEyOS0yLjUyMS0yLjUyMS0yLjUyMS0xLjM5MiAwLTIuNTIxIDEuMTI5LTIuNTIxIDIuNTIxeiIgZmlsbD0iIzRjYWY1MCIvPjxnIGZpbGw9IiNmZjk4MDAiPjxwYXRoIGQ9Im0xNy42ODIgMjEuNDc2YzAtMS4zOTItMS4xMjktMi41MjEtMi41MjEtMi41MjFoLTIuNTIxdjIuNTIzYy4wMDEgMS4zOTEgMS4xMjkgMi41MTkgMi41MjEgMi41MTlzMi41MjEtMS4xMjkgMi41MjEtMi41MjF6Ii8+PHBhdGggZD0ibTIxLjQ3OSAxMi42NDloLTYuMzE4Yy0xLjM5MyAwLTIuNTIzIDEuMTMtMi41MjMgMi41MjNzMS4xMyAyLjUyMyAyLjUyMyAyLjUyM2g2LjMxOGMxLjM5MyAwIDIuNTIzLTEuMTMgMi41MjMtMi41MjNzLTEuMTMtMi41MjMtMi41MjMtMi41MjN6Ii8+PC9nPjwvc3ZnPg=="
+          alt="slack"
+        />
+        <span class="footer-icons-text">Join the Meshery Slack</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link" href="https://meshery.io/calendar">
+        <svg fill="#666666" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18">
+          <path
+            d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"
+          />
+          <g stroke-linecap="undefined" stroke-linejoin="undefined">
+            <path d="M-3.468 8.168h-.033m25.313-4.242l-.063-.254M7.858 4.814v9.387" />
+            <path d="M1.833 9.507h12.051" />
+          </g>
+        </svg>
+        <span class="footer-icons-text">Subscribe to the community calendar</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link" href="https://twitter.com/mesheryio" target="_blank" rel="noreferrer">
+       <svg alt="twitter" class="twitter" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" version="1.1" height="1.8em"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" fill="#666666"></path></svg>
+       <span class="footer-icons-text">Follow on Twitter</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link" href="https://github.com/meshery" target="_blank" rel="noreferrer">
+        <img
+          class="github"
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMjc0LjEgMjY3LjMiIHhtbDpzcGFjZT0icHJlc2VydmUiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDI3NC4xIDI2Ny4zIj48cGF0aCBkPSJNMTM3LjEsMEM2MS40LDAsMCw2MS4zLDAsMTM2LjlDMCwxOTYsMzcuOCwyNDguNCw5My44LDI2N2M2LjgsMS4zLDkuMy0zLDkuMy02LjZjMC0zLjMtMC4xLTExLjktMC4yLTIzLjMJYy0zOC4xLDguMy00Ni4xLTE4LjQtNDYuMS0xOC40Yy02LjItMTUuOC0xNS4yLTIwLTE1LjItMjBjLTEyLjQtOC41LDAuOS04LjMsMC45LTguM2MxMy43LDEsMjEsMTQuMSwyMSwxNC4xCWMxMi4yLDIwLjksMzIuMSwxNC45LDM5LjksMTEuNGMxLjItOC45LDQuOC0xNC45LDguNy0xOC4zYy0zMC40LTMuNS02Mi40LTE1LjItNjIuNC02Ny43Yy0wLjItMTMuNiw0LjgtMjYuOCwxNC4xLTM2LjgJYy0xLjQtMy41LTYuMS0xNy40LDEuMy0zNi4zYzAsMCwxMS41LTMuNywzNy43LDE0YzExLjItMy4xLDIyLjctNC42LDM0LjMtNC42YzExLjYsMC4xLDIzLjEsMS42LDM0LjMsNC42CWMyNi4yLTE3LjcsMzcuNi0xNCwzNy42LTE0YzcuNSwxOC45LDIuOCwzMi44LDEuNCwzNi4zYzkuMywxMCwxNC4zLDIzLjIsMTQuMSwzNi44YzAsNTIuNi0zMiw2NC4yLTYyLjUsNjcuNgljNC45LDQuMiw5LjMsMTIuNiw5LjMsMjUuNGMwLDE4LjMtMC4yLDMzLjEtMC4yLDM3LjZjMCwzLjcsMi41LDcuOSw5LjQsNi42YzcxLjgtMjQsMTEwLjUtMTAxLjcsODYuNS0xNzMuNQlDMjQ4LjMsMzcuNywxOTYsMCwxMzcuMSwwTDEzNy4xLDB6Ii8+PC9zdmc+"
+          alt="github"
+        />
+        <span class="footer-icons-text">Contribute on GitHub</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link" href="https://www.linkedin.com/showcase/meshery/" target="_blank" rel="noreferrer">
+        <img
+          class="linkedin"
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnN2Z2pzPSJodHRwOi8vc3ZnanMuY29tL3N2Z2pzIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNTEyIDUxMiIgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHg9IjAiIHk9IjAiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxnPjxwYXRoIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbD0iIzA2OSIgZD0ibTQ3NS4wNzQyMTkgMGgtNDM4LjE0ODQzOGMtMjAuMzk0NTMxIDAtMzYuOTI1NzgxIDE2LjUzMTI1LTM2LjkyNTc4MSAzNi45MjU3ODF2NDM4LjE0ODQzOGMwIDIwLjM5NDUzMSAxNi41MzEyNSAzNi45MjU3ODEgMzYuOTI1NzgxIDM2LjkyNTc4MWg0MzguMTQ4NDM4YzIwLjM5NDUzMSAwIDM2LjkyNTc4MS0xNi41MzEyNSAzNi45MjU3ODEtMzYuOTI1Nzgxdi00MzguMTQ4NDM4YzAtMjAuMzk0NTMxLTE2LjUzMTI1LTM2LjkyNTc4MS0zNi45MjU3ODEtMzYuOTI1Nzgxem0tMjkzLjQ2NDg0NCAzODdoLTYyLjM0NzY1NnYtMTg3LjU3NDIxOWg2Mi4zNDc2NTZ6bS0zMS4xNzE4NzUtMjEzLjE4NzVoLS40MDYyNWMtMjAuOTIxODc1IDAtMzQuNDUzMTI1LTE0LjQwMjM0NC0zNC40NTMxMjUtMzIuNDAyMzQ0IDAtMTguNDA2MjUgMTMuOTQ1MzEzLTMyLjQxMDE1NiAzNS4yNzM0MzctMzIuNDEwMTU2IDIxLjMyODEyNiAwIDM0LjQ1MzEyNiAxNC4wMDM5MDYgMzQuODU5Mzc2IDMyLjQxMDE1NiAwIDE4LTEzLjUzMTI1IDMyLjQwMjM0NC0zNS4yNzM0MzggMzIuNDAyMzQ0em0yNTUuOTg0Mzc1IDIxMy4xODc1aC02Mi4zMzk4NDR2LTEwMC4zNDc2NTZjMC0yNS4yMTg3NS05LjAyNzM0My00Mi40MTc5NjktMzEuNTg1OTM3LTQyLjQxNzk2OS0xNy4yMjI2NTYgMC0yNy40ODA0NjkgMTEuNjAxNTYzLTMxLjk4ODI4MiAyMi44MDA3ODEtMS42NDg0MzcgNC4wMDc4MTMtMi4wNTA3ODEgOS42MDkzNzUtMi4wNTA3ODEgMTUuMjE0ODQ0djEwNC43NWgtNjIuMzQzNzVzLjgxNjQwNy0xNjkuOTc2NTYyIDAtMTg3LjU3NDIxOWg2Mi4zNDM3NXYyNi41NTg1OTRjOC4yODUxNTctMTIuNzgxMjUgMjMuMTA5Mzc1LTMwLjk2MDkzNyA1Ni4xODc1LTMwLjk2MDkzNyA0MS4wMTk1MzEgMCA3MS43NzczNDQgMjYuODA4NTkzIDcxLjc3NzM0NCA4NC40MjE4NzR6bTAgMCIgZGF0YS1vcmlnaW5hbD0iIzAwMDAwMCIvPjwvZz48L3N2Zz4="
+          alt="linkedin"
+        />
+        <span class="footer-icons-text">Connect on LinkedIn</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a
+        class="social__link"
+        href="https://www.youtube.com/Layer5io?sub_confirmation=1"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <img
+          class="youtube"
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgNTEyIDM1OC41IiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA1MTIgMzU4LjUiPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+LnN0MHtmaWxsOnJlZH0uc3Qxe2ZpbGw6I2ZmZn08L3N0eWxlPjxwYXRoIGQ9Ik01MDEuNSw1Ni4xYy01LjktMjEuOS0yMy4yLTM5LjItNDUuMS00NS4xQzQxNi4zLDAsMjU2LDAsMjU2LDBTOTUuNywwLDU1LjcsMTAuNQljLTIxLjUsNS45LTM5LjIsMjMuNi00NS4xLDQ1LjVDMCw5Ni4yLDAsMTc5LjIsMCwxNzkuMnMwLDgzLjUsMTAuNSwxMjMuMWM1LjksMjEuOSwyMy4yLDM5LjIsNDUuMSw0NS4xYzQwLjUsMTEsMjAwLjMsMTEsMjAwLjMsMTEJczE2MC4zLDAsMjAwLjMtMTAuNWMyMS45LTUuOSwzOS4yLTIzLjIsNDUuMS00NS4xQzUxMiwyNjIuNyw1MTIsMTc5LjcsNTEyLDE3OS43UzUxMi40LDk2LjIsNTAxLjUsNTYuMXoiIGNsYXNzPSJzdDAiLz48cGF0aCBkPSJNMjA1LDI1NmwxMzMuMy03Ni44TDIwNSwxMDIuNVYyNTZ6IiBjbGFzcz0ic3QxIi8+PC9zdmc+"
+          alt="youtube"
+        />
+        <span class="footer-icons-text">Watch community meeting recordings</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link" href="https://hub.docker.com/u/layer5/" target="_blank" rel="noreferrer">
+        <img
+          class="docker"
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgNDYwIDMyMi4xIiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA0NjAgMzIyLjEiPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+LnN0MHtmaWxsOiMwOTljZWN9PC9zdHlsZT48ZyBpZD0iX3gzOV83LWRvY2tlciI+PGc+PGc+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDMuMiIgeD0iMjA0IiB5PSI1Mi4zIiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDIuNyIgeD0iMjA0IiB5PSIxMDQuMSIgY2xhc3M9InN0MCIvPjxyZWN0IHdpZHRoPSI0Ny41IiBoZWlnaHQ9IjQzLjIiIHg9IjE0Ny45IiB5PSI1Mi4zIiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDIuNyIgeD0iMjYwLjIiIHk9IjEwNC4xIiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDMuNiIgeD0iMjA0IiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDMuMiIgeD0iOTEuNyIgeT0iNTIuMyIgY2xhc3M9InN0MCIvPjxyZWN0IHdpZHRoPSI0Ny41IiBoZWlnaHQ9IjQyLjciIHg9IjE0Ny45IiB5PSIxMDQuMSIgY2xhc3M9InN0MCIvPjxwYXRoIGQ9Ik00NTAuNCwxMjQuMWMtMTAuNC03LTM0LjItOS41LTUyLjUtNmMtMi40LTE3LjItMTItMzIuMy0yOS41LTQ1LjhsLTEwLjEtNi43bC02LjcsMTAuMSBjLTEzLjIsMjAtMTYuOCw1Mi45LTIuNyw3NC42Yy02LjMsMy40LTE4LjUsOC0zNC44LDcuN0gxLjhjLTYuMywzNi41LDQuMiw4My45LDMxLjYsMTE2LjVDNjAsMzA2LDEwMCwzMjIuMSwxNTIuMywzMjIuMSBjMTEzLjEsMCwxOTYuOS01Mi4xLDIzNi0xNDYuOGMxNS40LDAuMyw0OC42LDAuMSw2NS42LTMyLjVjMS4xLTEuOCw0LjctOS41LDYuMS0xMi4zTDQ1MC40LDEyNC4xeiIgY2xhc3M9InN0MCIvPjxwb2x5Z29uIHBvaW50cz0iODMuMiAxMDQuMSA4My4xIDEwNC4xIDM1LjcgMTA0LjEgMzUuNyAxNDYuOCA4My4yIDE0Ni44IiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDIuNyIgeD0iOTEuNyIgeT0iMTA0LjEiIGNsYXNzPSJzdDAiLz48L2c+PC9nPjwvZz48L3N2Zz4="
+          alt="docker"
+        />
+        <span class="footer-icons-text">Access Docker images</span>
+      </a>
+    </div>
+  </div>
+  <!-- meshery-custom-end -->
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+
+<script type="text/javascript" src="/assets/js/lightbox.js"></script>
+<link rel="stylesheet" href="/assets/css/lightbox.css" />
+<script type="module" src="https://md-block.verou.me/md-block.js"></script>
+
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/navbar.js"></script>
+
+ <script async src='https://www.google-analytics.com/analytics.js'></script>
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-00000000-0', 'auto');
+	ga('send', 'pageview');
+}
+</script>
+
+  </body>
+</html>
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+
+<script>
+$(document).ready(function() {
+
+    var toc = $('#TOC');
+
+    // Select each header
+    sections = $('.td-content h1');
+        $.each(sections, function(idx, v) {
+            section = $(v);
+            var div_id = $(section).attr('id');
+            if(!section.hasClass('noTOC')){
+               var div_text = section.text().split('¶')[0];
+              var parent = $("#" + div_id)
+              var content = '<li id="link_' + div_id + '" class="md-nav__item"><a class="md-nav__link" href="#' + div_id + '" title="' + div_text +'">' + div_text +'</a>asdf</li>';
+              $(document).find(toc).append(content);
+            }
+
+            // Add section code to subnavigation
+            var children = $('<nav class="md-nav"><ul class="md-nav__list"></nav></ul>')
+            var contenders = $("#" + div_id).nextUntil("h1");
+            $.each(contenders, function(idx, contender){
+               if( !$(contender).hasClass("noTOC") && ($(contender).is('h2') || $(contender).is('h3')) ) {
+                   var contender_id = $(contender).attr('id');
+                   var contender_text = $(contender).text().split('¶')[0];
+                   var content = '<li class="md-nav__item"><a class="md-nav__link" href="#' + contender_id + '" title="' + contender_text +'">' + contender_text +'</a></li>';
+                   children.append(content);
+                }
+             })
+             $("#link_" + div_id).append(children);
+        });
+        //added 'selected' tag to the first element of toc
+        $('.md-nav__link').first().addClass('selected');
+
+        $(window).scroll(function(e){
+          // Detect how far are we from the top of the page
+          let windowTop = $(this).scrollTop();
+          // Loop through every navigation menu item
+          $('.md-nav__link').each(function (event) {       
+              if (windowTop >= $($(this).attr('href')).offset().top - 100) {
+              // Remove 'selected' from previously highlighted menu items
+              $('.selected').removeClass('selected');
+              // Highlight the current menu item by adding 'selected' class
+              $(this).addClass('selected');
+          }
+          if($(window).scrollTop() + $(window).height() > $(document).height() - 10) {
+            $('.selected').removeClass('selected');
+              $(this).addClass('selected');
+          }
+        });
+      })
+      // Smooth scroll to target section when clicking on TOC link
+      $('a[href^="#"]').on('click', function(event) {
+        event.preventDefault();
+        var target = $(this.hash);
+        if (target.length) {
+          $('html, body').animate({
+          scrollTop: target.offset().top - 70
+          }, 1000);
+        }
+      });
+    });
+</script>
+

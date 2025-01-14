@@ -7,7 +7,7 @@ on:
 
 jobs:
   welcome:
-    runs-on: ubuntu-latest  # Specify the environment for the job
+    runs-on: ubuntu-24.04  # Specify the environment for the job
     if: ${{ 
       github.repository == 'meshery/meshery' &&
       github.event.action == 'opened' &&

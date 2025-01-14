@@ -1,20 +1,23 @@
 import React from 'react';
-import { NoSsr, Grid } from '@material-ui/core';
-
+import { NoSsr } from '@material-ui/core';
 import Popup from '../Popup';
 import { withStyles } from '@material-ui/core/styles';
 import { withRouter } from 'next/router';
 import { withNotify } from '../../utils/hooks/useNotification';
 import blue from '@material-ui/core/colors/blue';
-
-import DashboardMeshModelGraph from './charts/DashboardMeshModelGraph.js';
-import ConnectionStatsChart from './charts/ConnectionCharts.js';
-import MesheryConfigurationChart from './charts/MesheryConfigurationCharts.js';
-import { Provider } from 'react-redux';
+import { connect, Provider } from 'react-redux';
 import { store } from '@/store/index';
+import HoneycombComponent from './HoneyComb/HoneyCombComponent';
+import { useGetMeshSyncResourceKindsQuery } from '@/rtk-query/meshsync';
+import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
+import { bindActionCreators } from 'redux';
+import { setK8sContexts, updateProgress } from 'lib/store';
+import { UsesSistent } from '../SistentWrapper';
+import ConnectCluster from './charts/ConnectCluster';
+import { ErrorContainer, HoneycombRoot } from './style';
+import { ErrorIcon, Typography, useTheme } from '@layer5/sistent';
 
 const styles = (theme) => ({
-  rootClass: { backgroundColor: theme.palette.secondary.elevatedComponents2, marginTop: '1rem' },
   datatable: {
     boxShadow: 'none',
   },
@@ -77,34 +80,126 @@ const styles = (theme) => ({
     height: '100%',
     marginBottom: theme.spacing(2),
   },
+  errorContainer: {
+    padding: theme.spacing(2),
+    textAlign: 'center',
+    backgroundColor: theme.palette.secondary.elevatedComponents2,
+    marginTop: '1rem',
+    borderRadius: 4,
+  },
+  errorIcon: {
+    color: theme.palette.error.main,
+    fontSize: '3rem',
+    marginBottom: theme.spacing(1),
+  },
+  errorMessage: {
+    color: theme.palette.error.main,
+    marginBottom: theme.spacing(1),
+  },
 });
 
-const Overview = ({ classes }) => {
+const ErrorDisplay = ({ theme }) => (
+  <ErrorContainer>
+    <ErrorIcon fill={theme.palette.background.error.default} />
+    <Typography
+      variant="h6"
+      sx={{
+        color: theme.palette.text.error,
+      }}
+    >
+      Unable to fetch cluster data
+    </Typography>
+    <Typography variant="body1">
+      There was an error retrieving cluster information. Please check your connection and try again.
+    </Typography>
+  </ErrorContainer>
+);
+
+const Overview = ({ selectedK8sContexts, k8scontext }) => {
+  const clusterIds = getK8sClusterIdsFromCtxId(selectedK8sContexts, k8scontext);
+  const isClusterIdsEmpty = clusterIds.size === 0;
+  const theme = useTheme();
+
+  const {
+    data: clusterSummary,
+    isFetching,
+    isLoading,
+    isError,
+  } = useGetMeshSyncResourceKindsQuery(
+    {
+      page: 0,
+      pagesize: 'all',
+      clusterIds: clusterIds,
+    },
+    {
+      skip: isClusterIdsEmpty || clusterIds.length === 0,
+    },
+  );
+
+  if (clusterIds.length === 0) {
+    return (
+      <UsesSistent>
+        <div
+          style={{
+            background: theme.palette.background.default,
+            marginTop: '1rem',
+          }}
+        >
+          <HoneycombRoot>
+            <ConnectCluster message="No clusters available. Please connect your clusters to proceed." />
+          </HoneycombRoot>
+        </div>
+      </UsesSistent>
+    );
+  }
+
+  const isClusterLoading = isFetching || isLoading;
+
+  if (isError) {
+    return (
+      <NoSsr>
+        <UsesSistent>
+          <ErrorDisplay theme={theme} />
+        </UsesSistent>
+      </NoSsr>
+    );
+  }
+
   return (
     <NoSsr>
-      <Popup />
-      <Provider store={store}>
-        <div className={classes.rootClass}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={12}>
-              <DashboardMeshModelGraph classes={classes} />
-            </Grid>
-
-            <Grid item xs={12}>
-              <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                  <ConnectionStatsChart classes={classes} />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <MesheryConfigurationChart classes={classes} />
-                </Grid>
-              </Grid>
-            </Grid>
-          </Grid>
-        </div>
-      </Provider>
+      <UsesSistent>
+        <Popup />
+        <Provider store={store}>
+          <div
+            style={{
+              background: theme.palette.background.default,
+              marginTop: '1rem',
+            }}
+          >
+            <HoneycombComponent
+              kinds={clusterSummary?.kinds}
+              isClusterLoading={isClusterLoading}
+              isClusterIdsEmpty={isClusterIdsEmpty}
+            />
+          </div>
+        </Provider>
+      </UsesSistent>
     </NoSsr>
   );
 };
 
-export default withStyles(styles, { withTheme: true })(withRouter(withNotify(Overview)));
+const mapStateToProps = (state) => {
+  return {
+    selectedK8sContexts: state.get('selectedK8sContexts'),
+    k8scontext: state.get('k8sConfig'),
+  };
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  updateProgress: bindActionCreators(updateProgress, dispatch),
+  setK8sContexts: bindActionCreators(setK8sContexts, dispatch),
+});
+
+export default withStyles(styles, { withTheme: true })(
+  withRouter(withNotify(connect(mapStateToProps, mapDispatchToProps)(Overview))),
+);

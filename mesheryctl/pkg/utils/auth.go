@@ -332,7 +332,7 @@ func initiateRemoteProviderAuth(provider Provider) (string, error) {
 			return
 		}
 
-		fmt.Fprint(rw, "successfully logged in, you can close this window now")
+		fmt.Fprint(rw, "you have logged in, you can close this window now")
 		tokenChan <- token
 	})
 	if err != nil {

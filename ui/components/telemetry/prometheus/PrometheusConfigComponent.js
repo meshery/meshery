@@ -1,32 +1,36 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import { NoSsr, Grid, Button } from '@material-ui/core';
+import { NoSsr } from '@mui/material';
+import { Grid, Button, styled, useTheme } from '@layer5/sistent';
 import ReactSelectWrapper from '../../ReactSelectWrapper';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useEffect } from 'react';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '@/utils/Enum';
 import dataFetch from 'lib/data-fetch';
+import { UsesSistent } from '@/components/SistentWrapper';
 
-const promStyles = (theme) => ({
-  promRoot: {
+const StyledRoot = styled('div')(() => {
+  const theme = useTheme();
+  return {
     padding: theme.spacing(5),
-    backgroundColor: theme.palette.secondary.elevatedComponents,
+    backgroundColor: theme.palette.background.default,
     borderBottomLeftRadius: theme.spacing(1),
     borderBottomRightRadius: theme.spacing(1),
     marginTop: theme.spacing(2),
-  },
-  buttons: { display: 'flex', justifyContent: 'flex-end' },
-  button: {
-    marginTop: theme.spacing(3),
-    //   marginLeft: theme.spacing(1),
-  },
+  };
 });
+
+const ButtonContainer = styled('div')(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'flex-end',
+  '& .submitButton': {
+    marginTop: theme.spacing(3),
+  },
+}));
 
 // change this to display all connected prometheuses connecion and based on the selection updat tht erduc prom object
 const PrometheusConfigComponent = ({
-  classes,
   prometheusURL,
   urlError,
   handleChange,
@@ -50,9 +54,9 @@ const PrometheusConfigComponent = ({
   }, []);
 
   return (
-    <NoSsr>
-      <React.Fragment>
-        <div className={classes.promRoot}>
+    <UsesSistent>
+      <NoSsr>
+        <StyledRoot>
           <Grid container spacing={1}>
             <Grid item xs={12}>
               <ReactSelectWrapper
@@ -70,31 +74,30 @@ const PrometheusConfigComponent = ({
               />
             </Grid>
           </Grid>
-          <div className={classes.buttons}>
+          <ButtonContainer>
             <Button
               type="submit"
               variant="contained"
               color="primary"
               size="large"
               onClick={handlePrometheusConfigure}
-              className={classes.button}
+              className="submitButton"
               disabled={!CAN(keys.CONNECT_METRICS.action, keys.CONNECT_METRICS.subject)}
             >
               Submit
             </Button>
-          </div>
-        </div>
-      </React.Fragment>
-    </NoSsr>
+          </ButtonContainer>
+        </StyledRoot>
+      </NoSsr>
+    </UsesSistent>
   );
 };
 
 PrometheusConfigComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
   prometheusURL: PropTypes.object.isRequired,
   handleChange: PropTypes.func.isRequired,
   handlePrometheusConfigure: PropTypes.func.isRequired,
   options: PropTypes.array.isRequired,
 };
 
-export default withStyles(promStyles)(PrometheusConfigComponent);
+export default PrometheusConfigComponent;

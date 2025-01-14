@@ -963,6 +963,55 @@ components:
           usage: mesheryctl components view --output-format [json|yaml] --save [filepath]
           example: mesheryctl components view --save "bookInfo.yaml" --output-format yaml
 
+environment:
+  name: environment
+  description: Logical group related to connections and their credentials
+  usage: mesheryctl environment [command] [flags]
+  flags:
+  subcommands:
+    create:
+      name: create
+      description: create a new environments by providing the name and description of the environment
+      usage: mesheryctl environment create [flags]
+      example: mesheryctl
+      flags:
+        description:
+          name: -d, --description
+          description: description of the specified environment
+        name:
+          name: --name, -n
+          description: (optional) name of the environment
+        org:
+          name: -o, --orgId
+          description: organization id
+          usage: mesheryctl environment create --orgID [orgID] --name [name] --description [description]
+    delete:
+      name: delete
+      description: delete a new environments by providing the name and description of the environment
+      usage: mesheryctl environment delete [environmentId]
+    list:
+      name: list
+      description: list name of all registered environments
+      usage: mesheryctl environment list [flags]
+      flags:
+        org:
+          name: -o, --orgId
+          description: organization id
+          usage: mesheryctl environment list --orgID [orgId]
+    view:
+      name: view
+      description: view a environments registered in Meshery Server
+      usage: mesheryctl environment view [flags]
+      flags:
+        output-format:
+          name: -o, --output-format
+          description: (optional) format to display in [json|yaml] (default "yaml")
+        save:
+          name: -s, --save
+          description: (optional) save output as a JSON/YAML file
+          usage: mesheryctl environment view --output-format [json|yaml] --save [filepath]
+          example: mesheryctl environment view --save "bookInfo.yaml" --output-format yaml
+
 exp:
   connections:
     name: connections
@@ -992,54 +1041,7 @@ exp:
           count:
             name: --count
             description: (optional) Get the number of exp connections in total
-  environment:
-    name: environment
-    description: View list of environments and detail of environments
-    usage: mesheryctl exp environment [command] [flags]
-    flags:
-    subcommands:
-      create:
-        name: create
-        description: create a new environments by providing the name and description of the environment
-        usage: mesheryctl exp environment create [flags]
-        example: mesheryctl
-        flags:
-          description:
-            name: -d, --description
-            description: description of the environment
-          name:
-            name: --name, -n
-            description: (optional) name of the environment
-          org:
-            name: -o, --orgId
-            description: organization id
-            usage: mesheryctl exp environment create --orgID [orgID] --name [name] --description [description]
-      delete:
-        name: delete
-        description: delete a new environments by providing the name and description of the environment
-        usage: mesheryctl exp environment delete [environmentId]
-      list:
-        name: list
-        description: list name of all registered environments
-        usage: mesheryctl exp environment list [flags]
-        flags:
-          org:
-            name: -o, --orgId
-            description: organization id
-            usage: mesheryctl exp environment list --orgID [orgId]
-      view:
-        name: view
-        description: view a environments registered in Meshery Server
-        usage: mesheryctl exp environment view [flags]
-        flags:
-          output-format:
-            name: -o, --output-format
-            description: (optional) format to display in [json|yaml] (default "yaml")
-          save:
-            name: -s, --save
-            description: (optional) save output as a JSON/YAML file
-            usage: mesheryctl exp environment view --output-format [json|yaml] --save [filepath]
-            example: mesheryctl exp environment view --save "bookInfo.yaml" --output-format yaml
+  
   relationship:
     name: relationship
     description: View list of relationships and details of relationship

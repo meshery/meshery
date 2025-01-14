@@ -16,16 +16,16 @@ abstract: "A guide to Meshery's CLI: mesheryctl"
 
 Meshery CLI commands are categorized by function, which are:
 
-- `mesheryctl` - Global flags and CLI configuration
-- `mesheryctl system` - Meshery Lifecycle and Troubleshooting
-- `mesheryctl adapter` - Lifecycle & Configuration Management: provisioning and configuration best practices
-- `mesheryctl perf` - Performance Management: Workload and cloud native performance characterization
-- `mesheryctl design` - Design Patterns: Cloud native patterns and best practices
-- `mesheryctl filter` - Data Plane Intelligence: Registry and configuration of WebAssembly filters for Envoy
-- `mesheryctl model` - A unit of packaging to define managed infrastructure and their relationships, and details specifics of how to manage them.
-- `mesheryctl components` - Fundamental building block used to represent and define the infrastructure under management
-- `mesheryctl registry` - Model Database: Manage the state and contents of Meshery's internal registry of capabilities.
-- `mesheryctl exp` - Experimental features
+- [`mesheryctl`](#global-commands-and-flags) - Global flags and CLI configuration
+- [`mesheryctl system`](#meshery-lifecycle-management-and-troubleshooting) - Meshery Lifecycle and Troubleshooting
+- [`mesheryctl adapter`](#cloud-native-lifecycle-and-configuration-management) - Lifecycle & Configuration Management: provisioning and configuration best practices
+- [`mesheryctl perf`](#cloud-native-performance-management) - Performance Management: Workload and cloud native performance characterization
+- [`mesheryctl design`](#cloud-native-design-configuration-and-management) - Design Patterns: Cloud native patterns and best practices
+- [`mesheryctl filter`](#data-plane-intelligence) - Data Plane Intelligence: Registry and configuration of WebAssembly filters for Envoy
+- [`mesheryctl model`](#meshery-models) - A unit of packaging to define managed infrastructure and their relationships, and details specifics of how to manage them.
+- [`mesheryctl components`](#meshery-components) - Fundamental building block used to represent and define the infrastructure under management
+- [`mesheryctl registry`](#meshery-registry-management) - Model Database: Manage the state and contents of Meshery's internal registry of capabilities.
+- [`mesheryctl exp`](#experimental-featuresexp) - Experimental features
 
 
 ## Global Commands and Flags
@@ -802,6 +802,51 @@ Installation, troubleshooting and debugging of Meshery and its adapters
     {% for subcommand_hash in command13.subcommands %}{% assign subcomand = subcommand_hash[1] %}
       <tr>
         <td rowspan={{ subcomand.flags.size | plus:1 }} ><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command13.name }}/{{ subcomand.name }}">{{ subcomand.name }}</a></td>
+        <td></td>
+        <td>{{ subcomand.description }}</td>
+      </tr>
+      {% for flag_hash in subcomand.flags %}{% assign flag = flag_hash[1] %}
+        <tr>
+          <td>{{ flag.name }}</td>
+          <td>{{ flag.description }}</td>
+        </tr>
+      {% endfor %}
+    {% endfor %}
+</thead>
+</table>
+
+## Meshery Environment
+<table>
+<thead>
+  <tr>
+    <th>Command</th>
+    <th>Subcommand</th>
+    <th>Flag</th>
+    <th>Function</th>
+  </tr>
+  {% assign command14 = site.data.mesheryctlcommands.cmds.environment %}
+  {% assign subcommand_flag_count = 0 %}
+    {% for subcommand_hash in command14.subcommands %}
+      {% assign subcommand = subcommand_hash[1] %}
+      {% assign subcommand_flag_count = subcommand_flag_count | plus: subcommand.flags.size %}
+    {% endfor %}
+    {% assign total_rowspan = command14.subcommands.size | plus: subcommand_flag_count | plus: command14.flags.size | plus: 1 %}
+    <tr>
+      <td rowspan={{ total_rowspan }}><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command14.name }}">{{ command14.name }}</a></td>
+      <td></td>
+      <td></td>
+      <td>{{ command14.description }}</td>
+    </tr>
+    {% for flag_hash in command14.flags %}{% assign flag = flag_hash[1] %}
+      <tr>
+        <td></td>
+        <td>{{ flag.name }}</td>
+        <td>{{ flag.description }}</td>
+      </tr>
+    {% endfor %}
+    {% for subcommand_hash in command14.subcommands %}{% assign subcomand = subcommand_hash[1] %}
+      <tr>
+        <td rowspan={{ subcomand.flags.size | plus:1 }} ><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command14.name }}/{{ subcomand.name }}">{{ subcomand.name }}</a></td>
         <td></td>
         <td>{{ subcomand.description }}</td>
       </tr>

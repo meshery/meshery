@@ -13,7 +13,7 @@ permissions:
 jobs:
   action:
     if: ${{ github.event.label.name == 'issue/tweet' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check if organization maintainer
         uses: tspascoal/get-user-teams-membership@v2

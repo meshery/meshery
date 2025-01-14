@@ -23,6 +23,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/components"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/design"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/environments"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/experimental"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/filter"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/model"
@@ -116,6 +117,7 @@ func init() {
 		registry.RegistryCmd,
 		components.ComponentsCmd,
 		model.ModelCmd,
+		environments.EnvironmentCmd,
 	}
 
 	RootCmd.AddCommand(availableSubcommands...)

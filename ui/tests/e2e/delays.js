@@ -5,4 +5,4 @@ export const DYNAMIC_TIMEOUTS = {
 };
 
 export const SLOW_TEST_DURATION = 60 * 1000;
-export const BASE_TIMEOUT = 90 * 1000;
+export const BASE_TIMEOUT = 60 * 1000;

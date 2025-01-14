@@ -1,0 +1,27 @@
+version: 0.0.5
+name: k8's-cluster-overprovisioner-
+displayName: 'K8''s-Cluster-overprovisioner '
+createdAt: "2024-07-24T13:59:38Z"
+description: |-
+    This design provide a buffer for cluster autoscaling to allow overprovisioning of cluster nodes. This is desired when you have work loads that need to scale up quickly without waiting for the new cluster nodes to be created and join the cluster.
+
+    It works by creating a deployment that creates pods of a lower than default PriorityClass. These pods request resources from the cluster but don't actually consume any resources. These pods are then evicted allowing other normal pods to be created while also triggering a scale-up by the .
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/6b6e5bbd-1c8b-4aab-87be-b7b397f2aeed/0.0.5/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "get info from this https://github.com/kubernetes/autoscaler/blob/master/cluster-autoscaler/FAQ.md#how-can-i-configure-overprovisioning-with-cluster-autoscaler \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/6b6e5bbd-1c8b-4aab-87be-b7b397f2aeed-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/6b6e5bbd-1c8b-4aab-87be-b7b397f2aeed-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

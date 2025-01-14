@@ -3,7 +3,7 @@ import { selectSelectedEnvs } from '@/store/slices/globalEnvironmentContext';
 import { useLegacySelector } from 'lib/store';
 const { Box, Typography, Stack, EnvironmentIcon, useTheme, styled } = require('@layer5/sistent');
 const { processDesign, CheckBoxField, StepHeading } = require('./common');
-const _ = require('lodash');
+import { isOperatorEnabled } from '@/utils/utils';
 
 const StyledSummaryItem = styled(Box)(({ theme }) => ({
   borderRadius: '0.5rem',
@@ -19,11 +19,6 @@ const StyledEnvironment = styled(Box)(({ theme }) => ({
   color: theme.palette.text.neutral.default,
 }));
 
-const isVisualizerEnabled = (capabilitiesRegistry) => {
-  const navigatorExtension = _.get(capabilitiesRegistry, 'extensions.navigator') || [];
-  return navigatorExtension.some((ext) => ext.title === 'MeshMap');
-};
-
 export const FinalizeDeployment = ({ design, openInVisualizer, setOpenInVisualizer }) => {
   const { configurableComponents } = processDesign(design);
   const selectedEnvironments = useSelectorRtk(selectSelectedEnvs);
@@ -32,7 +27,8 @@ export const FinalizeDeployment = ({ design, openInVisualizer, setOpenInVisualiz
   const capabilitiesRegistry = useLegacySelector((state) => {
     return state.get('capabilitiesRegistry');
   });
-  const visualizerEnabled = isVisualizerEnabled(capabilitiesRegistry);
+
+  const visualizerEnabled = isOperatorEnabled(capabilitiesRegistry);
   const theme = useTheme();
   const palette = theme.palette;
   return (
@@ -81,9 +77,9 @@ export const FinalizeDeployment = ({ design, openInVisualizer, setOpenInVisualiz
       <Stack mt={3} gap={1}>
         {visualizerEnabled && (
           <CheckBoxField
-            label="Open in Visualizer"
+            label="Open in Operator"
             checked={openInVisualizer}
-            helpText="Opens the deployed design in visualizer"
+            helpText="Opens the deployed design in operator"
             onChange={() => setOpenInVisualizer(!openInVisualizer)}
           />
         )}

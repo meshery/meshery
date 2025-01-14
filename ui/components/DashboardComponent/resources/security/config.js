@@ -14,6 +14,7 @@ export const SecurityTypesConfig = (
   meshSyncResources,
   k8sConfig,
   connectionMetadataState,
+  workloadType,
 ) => {
   const ping = useKubernetesHook();
   return {
@@ -47,12 +48,8 @@ export const SecurityTypesConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -157,12 +154,8 @@ export const SecurityTypesConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -298,12 +291,8 @@ export const SecurityTypesConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -408,12 +397,8 @@ export const SecurityTypesConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -518,12 +503,8 @@ export const SecurityTypesConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },

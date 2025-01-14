@@ -12,8 +12,6 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import MUIDataTable from 'mui-datatables';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 import Moment from 'react-moment';
 import { withStyles } from '@material-ui/core/styles';
 import { updateResultsSelection, clearResultsSelection, updateProgress } from '../../lib/store';
@@ -35,6 +33,8 @@ import { TwitterShareButton, LinkedinShareButton, FacebookShareButton } from 're
 import subscribePerformanceProfiles from '../graphql/subscriptions/PerformanceResultSubscription';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
+import { Tab, Tabs } from '@layer5/sistent';
+import { UsesSistent } from '../SistentWrapper';
 
 const COL_MAPPING = {
   QPS: 3,
@@ -411,18 +411,12 @@ function ResultChart({ result, handleTabChange, tabValue }) {
         padding: '0.5rem',
       }}
     >
-      <Tabs
-        value={tabValue}
-        onChange={handleTabChange}
-        TabIndicatorProps={{
-          style: {
-            backgroundColor: '#00B39F',
-          },
-        }}
-      >
-        <Tab label="Performance Chart" />
-        <Tab label="Node Details" />
-      </Tabs>
+      <UsesSistent>
+        <Tabs value={tabValue} onChange={handleTabChange}>
+          <Tab label="Performance Chart" />
+          <Tab label="Node Details" />
+        </Tabs>
+      </UsesSistent>
 
       {tabValue == 0 ? (
         <div>

@@ -17,6 +17,7 @@ import clsx from 'clsx';
 import { useStyles, useFilterStyles } from './style';
 import { FILTERING_STATE, FILTER_EVENTS, filterReducer } from './state';
 import { getFilters, getCurrentFilterAndValue } from './utils';
+import { ExpandLess, ExpandMore } from '@mui/icons-material';
 
 const Filters = ({ filterStateMachine, dispatchFilterMachine, filterSchema }) => {
   const classes = useFilterStyles();
@@ -226,12 +227,28 @@ const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false, placehol
         handleFilter(getFilters(e.target.value, filterSchema));
         setAnchorEl(null);
       }
+      if (e.key == 'Escape') {
+        setAnchorEl(null);
+        //remove focus from the input field
+        setTimeout(() => {
+          document.activeElement.blur();
+        });
+      }
     };
+
     inputFieldRef?.current?.addEventListener('keydown', handleKeyDown);
     return () => {
       inputFieldRef?.current?.removeEventListener('keydown', handleKeyDown);
     };
   }, [inputFieldRef.current]);
+
+  const toggleSuggestions = () => {
+    if (isPopperOpen) {
+      setAnchorEl(null);
+    } else {
+      setAnchorEl(inputFieldRef.current);
+    }
+  };
 
   useEffect(() => {
     if (autoFilter && filteringState.state == FILTERING_STATE.SELECTING_FILTER) {
@@ -263,6 +280,14 @@ const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false, placehol
               <IconButton onClick={handleClear}>
                 {filteringState.state !== FILTERING_STATE.IDLE && (
                   <CrossCircleIcon fill={theme.palette.secondary.iconMain} />
+                )}
+              </IconButton>
+              <IconButton onClick={toggleSuggestions}>
+                {filteringState.state !== FILTERING_STATE.IDLE && !anchorEl && (
+                  <ExpandMore fill={theme.palette.secondary.iconMain} />
+                )}
+                {filteringState.state !== FILTERING_STATE.IDLE && anchorEl && (
+                  <ExpandLess fill={theme.palette.secondary.iconMain} />
                 )}
               </IconButton>
             </InputAdornment>

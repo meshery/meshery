@@ -1,21 +1,21 @@
 //@ts-check
 import React, { useState } from 'react';
-import { Divider, Grid, IconButton, Typography, Tooltip, Link, Avatar } from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
-import Fullscreen from '@material-ui/icons/Fullscreen';
-import Save from '@material-ui/icons/Save';
+import { Divider, Grid, IconButton, Typography, Tooltip, Link, Avatar } from '@layer5/sistent';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Fullscreen from '@mui/icons-material/Fullscreen';
+import Save from '@mui/icons-material/Save';
 import Moment from 'react-moment';
 import FlipCard from '../FlipCard';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
-import FullscreenExit from '@material-ui/icons/FullscreenExit';
+import FullscreenExit from '@mui/icons-material/FullscreenExit';
 import useStyles from '../MesheryPatterns/Cards.styles';
 import YAMLDialog from '../YamlDialog';
 import CloneIcon from '../../public/static/img/CloneIcon';
-import PublicIcon from '@material-ui/icons/Public';
+import PublicIcon from '@mui/icons-material/Public';
 import TooltipButton from '../../utils/TooltipButton.js';
 import { VISIBILITY } from '../../utils/Enum';
-import GetAppIcon from '@material-ui/icons/GetApp';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { Provider } from 'react-redux';
 import { store } from '../../store';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
@@ -110,7 +110,7 @@ function FiltersCard_({
             <div className={classes.lastRunText}>
               <div>
                 {updated_at ? (
-                  <Typography color="primary" variant="caption" style={{ fontStyle: 'italic' }}>
+                  <Typography variant="caption" style={{ fontStyle: 'italic' }}>
                     Modified On: <Moment format="LLL">{updated_at}</Moment>
                   </Typography>
                 ) : null}
@@ -252,7 +252,7 @@ function FiltersCard_({
               <div className={classes.lastRunText}>
                 <div>
                   {created_at ? (
-                    <Typography color="primary" variant="caption" style={{ fontStyle: 'italic' }}>
+                    <Typography variant="caption" style={{ fontStyle: 'italic' }}>
                       Created at: <Moment format="LLL">{created_at}</Moment>
                     </Typography>
                   ) : null}

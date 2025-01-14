@@ -19,6 +19,10 @@ filter_pending_relationships(rel, relationships) := rel if {
 	}
 }
 
+# scope for relationships to evaluate against
+# TODO: make this dynamic based on the models referenced in the design file
+relationships_to_evaluate_against := data.relationships
+
 # Main evaluation function that processes relationships and updates the design.
 evaluate := eval_results if {
 	# Iterate over relationships in the design file and resolve patches.
@@ -143,18 +147,115 @@ evaluate := eval_results if {
 		"value": final_rels_with_deletions,
 	}])
 
+	# New Evaluation Flow
+
+
+	design_file_to_evaluate := json.patch(input, [
+		{
+			"op": "replace",
+			"path": "/relationships",
+			"value": {rel | some rel in input.relationships},
+		},
+		{
+			"op": "replace",
+			"path": "/components",
+			"value": {comp | some comp in input.components},
+		},
+	])
+
+
+	#1. Validate Relationships
+	validated_rels := validate_relationships_phase(design_file_to_evaluate)
+
+	design_file_with_validated_rels := json.patch(design_file_to_evaluate, [{
+		"op": "replace",
+		"path": "/relationships",
+		"value":  validated_rels,
+	}])
+
+	
+	# 2. Identify relationships in the design file.
+	new_identified_rels := identify_relationships(design_file_with_validated_rels, relationships_to_evaluate_against)
+
+	print("New identified rels", count(new_identified_rels))
+	print("Validated rels", count(validated_rels))
+
+	#3. Actions
+
+	design_file_to_apply_actions := json.patch(design_file_with_validated_rels, [{
+		"op": "replace",
+		"path": "/relationships",
+		"value": new_identified_rels | validated_rels,
+	}])
+
+	print("All relationships", count(design_file_to_apply_actions.relationships))
+
+	actions_response := action_phase(design_file_to_apply_actions)
+
+	# Prepare the final design to return.
+	design_to_return := final_design_from_actions(
+		final_design_file,
+		actions_response,
+	)
+
 	# Prepare the evaluation results with updated design and trace information.
 	eval_results := {
-		"design": final_design_file,
+		"design": design_to_return,
 		"trace": {
 			"componentsUpdated": updated_declarations,
-			"componentsAdded": components_added,
-			"relationshipsAdded": relationships_added,
-			"relationshipsRemoved": relationships_deleted,
+			"componentsAdded": array_to_set(components_added) | actions_response.components_to_add,
+			"componentsRemoved": actions_response.components_to_delete,
+			"relationshipsAdded": array_to_set(relationships_added) | actions_response.relationships_to_add,
+			"relationshipsRemoved": array_to_set(relationships_deleted) | actions_response.relationships_to_delete,
 			"relationshipsUpdated": intermediate_rels,
 		},
 	}
 }
+
+# --- Post Processing Phase ---##
+delete_components(all_comps, comps_to_delete) := new_comps if {
+	count(comps_to_delete) > 0
+	ids_to_delete := { comp.id | some comp in comps_to_delete }
+	new_comps := {comp |
+		some comp in all_comps
+		not comp.id in ids_to_delete
+	}
+} else := all_comps
+
+delete_relationships(all_rels, rels_to_delete) := new_rels if {
+	count(rels_to_delete) > 0
+	ids_to_delete := {rel.id | some rel in rels_to_delete }
+	new_rels := {rel |
+		some rel in all_rels
+		not rel.id in ids_to_delete
+	}
+} else := all_rels
+
+final_design_from_actions(old_design, actions_response) := new_design if {
+	# Add new components to the design
+
+	with_new_components := array_to_set(old_design.components) | actions_response.components_to_add
+	final_components := delete_components(with_new_components, actions_response.components_to_delete)
+
+	# Add new relationships to the design
+	with_new_relationships := array_to_set(old_design.relationships) | actions_response.relationships_to_add
+	final_relationships := delete_relationships(with_new_relationships, actions_response.relationships_to_delete)
+
+	new_design := json.patch(old_design, [
+		{
+			"op": "replace",
+			"path": "/components",
+			"value": final_components,
+		},
+		{
+			"op": "replace",
+			"path": "/relationships",
+			"value": final_relationships,
+		},
+	])
+} else := old_design
+
+# ----------------------------------------------#
 
 # Returns the updated declaration if it exists; otherwise, returns the original declaration.
 filter_updated_declaration(declaration, updated_declarations) := obj.declaration if {

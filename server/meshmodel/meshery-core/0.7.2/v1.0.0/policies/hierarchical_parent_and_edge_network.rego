@@ -13,6 +13,9 @@ perform_eval(
 		{"kind": "hierarchical", "type": "parent"},
 		{"kind": "edge", "type": "non-binding"},
 	]
+	not_applicable_on_rels := [{"kind": "hierarchical", "type": "parent", "subType": "alias"}]
+
+	not {"kind": lower(relationship.kind), "type": lower(relationship.type), "subType": lower(relationship.subType)} in not_applicable_on_rels
 
 	{"kind": lower(relationship.kind), "type": lower(relationship.type)} in applicable_on_rels
 

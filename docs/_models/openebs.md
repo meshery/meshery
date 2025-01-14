@@ -118,6 +118,10 @@ components:
   colorIcon: assets/img/integrations/openebs/components/volume-snapshot/icons/color/volume-snapshot-color.svg
   whiteIcon: assets/img/integrations/openebs/components/volume-snapshot/icons/white/volume-snapshot-white.svg
   description: 
+- name: jaeger
+  colorIcon: assets/img/integrations/openebs/components/jaeger/icons/color/jaeger-color.svg
+  whiteIcon: assets/img/integrations/openebs/components/jaeger/icons/white/jaeger-white.svg
+  description: 
 featureList: [
   "Dynamic provisioning of persistent volumes",
   "Containerized storage controllers",

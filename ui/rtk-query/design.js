@@ -118,6 +118,9 @@ export const designsApi = api
           body: queryArg.uploadBody,
         }),
       }),
+      downloadPatternFile: builder.query({
+        query: (queryArg) => `pattern/${queryArg.id}`,
+      }),
     }),
   });
 
@@ -133,4 +136,5 @@ export const {
   useUpdatePatternFileMutation,
   useUploadPatternFileMutation,
   useDeletePatternFileMutation,
+  useDownloadPatternFileQuery,
 } = designsApi;

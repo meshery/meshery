@@ -243,6 +243,8 @@ func (h *Handler) handleRegistrationAndError(registrationHelper registration.Reg
 			addSuccessfulEntry(relationshipBytes, entity.RelationshipDefinition, response)
 			policies.SyncRelationship.Lock()
 			rego := policies.Rego{}
+
+			// reload the rego instance with latest relationships data
 			r, err := policies.NewRegoInstance(models.PoliciesPath, h.registryManager)
 			if err != nil {
 				h.log.Warn(ErrCreatingOPAInstance(err))

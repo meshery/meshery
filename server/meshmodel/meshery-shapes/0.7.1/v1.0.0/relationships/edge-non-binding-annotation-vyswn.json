@@ -54,7 +54,7 @@
         "from": [
           {
             "id": null,
-            "kind": "*",
+            "kind": null,
             "match": {},
             "model": {
               "category": {

@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { NoSsr, AppBar, Tabs, Tab } from '@material-ui/core';
-import { ErrorBoundary } from '@layer5/sistent';
+import { NoSsr, AppBar } from '@material-ui/core';
+import { ErrorBoundary, Tab, Tabs } from '@layer5/sistent';
 import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -17,6 +17,7 @@ import { useGetSchemaQuery } from '@/rtk-query/schema';
 import { withRouter } from 'next/router';
 import CustomErrorFallback from '../General/ErrorBoundary';
 import ConnectionTable from './ConnectionTable';
+import { UsesSistent } from '../SistentWrapper';
 
 /**
  * Parent Component for Connection Component
@@ -87,41 +88,43 @@ function Connections(props) {
     <NoSsr>
       {CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) ? (
         <>
-          <AppBar position="static" color="default" className={classes.appBar}>
-            <Tabs
-              value={tab}
-              className={classes.tabs}
-              onChange={(e, newTab) => {
-                e.stopPropagation();
-                setTab(newTab);
-              }}
-              indicatorColor="primary"
-              textColor="primary"
-              variant="fullWidth"
-              sx={{
-                height: '10%',
-              }}
-            >
-              <Tab
-                className={classes.tab}
-                label={
-                  <div className={classes.iconText}>
-                    <span style={{ marginRight: '0.3rem' }}>Connections</span>
-                    <ConnectionIcon width="20" height="20" />
-                  </div>
-                }
-              />
-              <Tab
-                className={classes.tab}
-                label={
-                  <div className={classes.iconText}>
-                    <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
-                    <MeshsyncIcon width="20" height="20" />
-                  </div>
-                }
-              />
-            </Tabs>
-          </AppBar>
+          <UsesSistent>
+            <AppBar position="static" color="default" className={classes.appBar}>
+              <Tabs
+                value={tab}
+                className={classes.tabs}
+                onChange={(e, newTab) => {
+                  e.stopPropagation();
+                  setTab(newTab);
+                }}
+                indicatorColor="primary"
+                textColor="primary"
+                variant="fullWidth"
+                sx={{
+                  height: '10%',
+                }}
+              >
+                <Tab
+                  className={classes.tab}
+                  label={
+                    <div className={classes.iconText}>
+                      <span style={{ marginRight: '0.3rem' }}>Connections</span>
+                      <ConnectionIcon width="20" height="20" />
+                    </div>
+                  }
+                />
+                <Tab
+                  className={classes.tab}
+                  label={
+                    <div className={classes.iconText}>
+                      <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
+                      <MeshsyncIcon width="20" height="20" />
+                    </div>
+                  }
+                />
+              </Tabs>
+            </AppBar>
+          </UsesSistent>
 
           {tab === 0 && CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) && (
             <ConnectionTable

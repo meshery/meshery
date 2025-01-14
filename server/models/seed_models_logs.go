@@ -174,7 +174,7 @@ func RegistryLog(log logger.Handler, handlerConfig *HandlerConfig, regManager *m
 
 	for _, host := range hosts {
 		eventBuilder := events.NewEvent().FromSystem(sysID).FromUser(sysID).WithCategory("entity").WithAction("get_summary")
-		successMessage := fmt.Sprintf("For registrant %s successfully imported", host.Kind)
+		successMessage := fmt.Sprintf("For registrant %s imported", host.Kind)
 		appendIfNonZero := func(value int64, label string) {
 			if value != 0 {
 				successMessage += fmt.Sprintf(" %d %s", value, label)

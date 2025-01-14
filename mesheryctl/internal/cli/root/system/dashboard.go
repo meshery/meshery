@@ -76,7 +76,10 @@ mesheryctl system dashboard --port-forward
 mesheryctl system dashboard --port-forward -p 9081
 
 // (optional) skip opening of MesheryUI in browser.
-mesheryctl system dashboard --skip-browser`,
+mesheryctl system dashboard --skip-browser
+
+Note: Meshery's web-based user interface is embedded in Meshery Server and is available as soon as Meshery starts. The location and port that Meshery UI is exposed varies depending upon your mode of deployment. See accessing \"Meshery UI\" for additional deployment-specific options: https://docs.meshery.io/installation/accessing-meshery-ui.`,
+
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// check if meshery is running or not
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
@@ -91,7 +94,7 @@ mesheryctl system dashboard --skip-browser`,
 		}
 		running, _ := utils.IsMesheryRunning(currCtx.GetPlatform())
 		if !running {
-			return errors.New(`meshery server is not running. run "mesheryctl system start" to start meshery`)
+			return errors.New("Meshery Server is not running. Please run `mesheryctl system start` to start Meshery Server.")
 		}
 
 		return nil
@@ -147,7 +150,7 @@ mesheryctl system dashboard --skip-browser`,
 					// TODO: consider falling back to an ephemeral port if defaultPort is taken
 					return ErrRunPortForward(err)
 				}
-				log.Info("Starting Port-forwarding for Meshery UI")
+				log.Info("Port-forwarding for Meshery UI...")
 
 				mesheryURL := portforward.URLFor("")
 
@@ -167,10 +170,10 @@ mesheryctl system dashboard --skip-browser`,
 				}()
 				log.Info(fmt.Sprintf("Forwarding port %v -> %v", options.podPort, localPort))
 				log.Info("Meshery UI available at: ", mesheryURL)
-				log.Info("Opening Meshery UI in the default browser.")
+				log.Info("Opening Meshery UI in default browser...")
 				err = utils.NavigateToBrowser(mesheryURL)
 				if err != nil {
-					log.Warn("Failed to open Meshery in browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
+					log.Warn("Opening Meshery UI in browser at " + currCtx.GetEndpoint() + ".")
 				}
 
 				<-portforward.GetStop()
@@ -224,10 +227,10 @@ mesheryctl system dashboard --skip-browser`,
 		}
 
 		if !skipBrowserFlag {
-			log.Info("Opening Meshery (" + currCtx.GetEndpoint() + ") in browser.")
+			log.Info("Opening Meshery UI in browser at " + currCtx.GetEndpoint() + ".")
 			err = utils.NavigateToBrowser(currCtx.GetEndpoint())
 			if err != nil {
-				log.Warn("Failed to open Meshery in your browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery.")
+				log.Warn("Failed to open Meshery UI in your browser, please point your browser to " + currCtx.GetEndpoint() + " to access Meshery UI.\n\nOr run `mesheryctl system dashboard --port-forward` to access Meshery UI via port-forwarding.")
 			}
 		} else {
 			log.Info("Meshery UI available at: ", currCtx.GetEndpoint())
