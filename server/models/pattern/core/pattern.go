@@ -339,7 +339,7 @@ func getAllK8sResources(data string, ignoreErrors bool) ([]map[string]interface{
 			if err == io.EOF {
 				break
 			}
-			return K8sResources, ErrParseK8sManifest(fmt.Errorf("kubernetes manifest is invalid: %v", err))
+			return K8sResources, ErrParseK8sManifest(fmt.Errorf("Kubernetes manifest is invalid: %v", err))
 		}
 
 		// Skip empty manifests
