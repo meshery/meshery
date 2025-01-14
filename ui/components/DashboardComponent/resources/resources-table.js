@@ -2,7 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import dataFetch from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
-import { CustomColumnVisibilityControl, ResponsiveDataTable, SearchBar } from '@layer5/sistent';
+import {
+  CustomColumnVisibilityControl,
+  ResponsiveDataTable,
+  SearchBar,
+  Slide,
+} from '@layer5/sistent';
 import useStyles from '../../../assets/styles/general/tool.styles';
 import View from '../view';
 import { ALL_VIEW, SINGLE_VIEW } from './config';
@@ -12,7 +17,6 @@ import { useWindowDimensions } from '../../../utils/dimension';
 import { camelcaseToSnakecase } from '../../../utils/utils';
 import { useSelector } from 'react-redux';
 import { UsesSistent } from '@/components/SistentWrapper';
-import { Slide } from '@material-ui/core';
 import { useRouter } from 'next/router';
 
 export const ACTION_TYPES = {
