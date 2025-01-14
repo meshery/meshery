@@ -39,7 +39,7 @@ func formatKubeStatusErrToMeshkitErr(status *[]byte, componentName string) error
 	st := string(kubeStatus.Status)
 
 	log, _ := logger.New("k8s", logger.Options{})
-	log.Info(fmt.Sprintf("kubeStatus: (\"%s\")", st))
+	log.Debug(fmt.Sprintf("kubeStatus: (\"%s\")", st))
 
 	if kubeStatus.Details != nil {
 
