@@ -13,7 +13,7 @@ import { ErrorBoundary as SistentErrorBoundary } from '@layer5/sistent';
 import { Provider } from 'react-redux';
 import { store } from '../../store';
 import { withStyles } from '@material-ui/core';
-import { Select, MenuItem} from '@layer5/sistent';
+import { Select, MenuItem } from '@layer5/sistent';
 import styles, { FormContainerWrapper, FormGroupWrapper } from './style';
 import theme from '../../themes/app';
 import { useGetCurrentAbilities } from '../../rtk-query/ability';
@@ -58,7 +58,7 @@ const SpacesPreferences = (props) => {
           {isOrgsSuccess && orgs && (
             <FormContainerWrapper>
               <FormGroupWrapper component="fieldset">
-                <FormLabel component="legend" sx={{fontSize: 20}}>
+                <FormLabel component="legend" sx={{ fontSize: 20 }}>
                   Spaces
                 </FormLabel>
                 <FormGroup>
