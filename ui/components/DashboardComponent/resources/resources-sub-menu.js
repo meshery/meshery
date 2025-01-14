@@ -7,6 +7,8 @@ import { TabPanel } from '../tabpanel';
 import { Box, CustomTooltip, Tab, Tabs } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
 import { WrapperContainer, WrapperPaper } from '../style';
+import GetKubernetesNodeIcon from '../utils';
+import { iconMedium } from 'css/icons.styles';
 
 const styles = (theme) => ({
   icon: {
