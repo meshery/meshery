@@ -8,13 +8,10 @@ import Toolbar from '@material-ui/core/Toolbar';
 import { withStyles } from '@material-ui/core/styles';
 import { connect, useSelector } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
-import Link from 'next/link';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
 import Slide from '@material-ui/core/Slide';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import { Button } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
 import { Edit, Search } from '@material-ui/icons';
 import { TextField } from '@material-ui/core';
 import { Paper } from '@material-ui/core';
@@ -489,54 +486,36 @@ function K8sContextMenu({
                     />
                   </div>
                   <div>
-                    {contexts?.total_count ? (
-                      <>
-                        <div
-                          style={{
-                            display: 'flex',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                          }}
-                        >
-                          <div>
-                            <UsesSistent>
-                              <Checkbox
-                                checked={activeContexts.includes('all')}
-                                onChange={() =>
-                                  activeContexts.includes('all')
-                                    ? setActiveContexts([])
-                                    : setActiveContexts('all')
-                                }
-                                color="primary"
-                              />
-                            </UsesSistent>
-                            <span style={{ fontWeight: 'bolder' }}>select all</span>
-                          </div>
-                          <CustomTooltip title="Configure Connections">
-                            <div>
-                              <IconButton
-                                size="small"
-                                onClick={() => setIsConnectionOpenModal(true)}
-                              >
-                                <Edit style={{ ...iconSmall }} />
-                              </IconButton>
-                            </div>
-                          </CustomTooltip>
+                    {contexts?.total_count && (
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <div>
+                          <UsesSistent>
+                            <Checkbox
+                              checked={activeContexts.includes('all')}
+                              onChange={() =>
+                                activeContexts.includes('all')
+                                  ? setActiveContexts([])
+                                  : setActiveContexts('all')
+                              }
+                              color="primary"
+                            />
+                          </UsesSistent>
+                          <span style={{ fontWeight: 'bolder' }}>select all</span>
                         </div>
-                      </>
-                    ) : (
-                      <Link href="/management/connections">
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          color="primary"
-                          size="large"
-                          style={{ margin: '0.5rem 0.5rem', whiteSpace: 'nowrap' }}
-                        >
-                          <AddIcon className={classes.AddIcon} style={iconMedium} />
-                          Connect Clusters
-                        </Button>
-                      </Link>
+                        <CustomTooltip title="Configure Connections">
+                          <div>
+                            <IconButton size="small" onClick={() => setIsConnectionOpenModal(true)}>
+                              <Edit style={{ ...iconSmall }} />
+                            </IconButton>
+                          </div>
+                        </CustomTooltip>
+                      </div>
                     )}
                     {contexts?.contexts?.map((ctx) => {
                       return (
@@ -553,11 +532,9 @@ function K8sContextMenu({
                         />
                       );
                     })}
-                    {contexts?.contexts?.length > 0 && (
-                      <Box className={classes.mesherySettingsEnvButtons}>
-                        <MesherySettingsEnvButtons />
-                      </Box>
-                    )}
+                    <Box className={classes.mesherySettingsEnvButtons}>
+                      <MesherySettingsEnvButtons />
+                    </Box>
                   </div>
                 </Paper>
               </ClickAwayListener>
