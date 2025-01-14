@@ -115,7 +115,7 @@ const ResourcesSubMenu = (props) => {
     handleChangeSelectedResource,
     CRDsKeys,
   } = props;
-  const isCRD = resource.tableConfig.name === 'CustomResourceConfig';
+  const isCRD = CRDsKeys.length > 0;
   if (!selectedResource) {
     let resourceNames = Object.keys(resource.tableConfig());
     if (isCRD) {
