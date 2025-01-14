@@ -67,6 +67,9 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 	},
 
 	RunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) == 0 {
+			return cmd.Help()
+		}
 		var wg sync.WaitGroup
 		cwd, _ = os.Getwd()
 		registryLocation = filepath.Join(cwd, outputLocation)
