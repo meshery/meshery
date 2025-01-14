@@ -352,7 +352,7 @@ func getAllK8sResources(data string, ignoreErrors bool) ([]map[string]interface{
 			if ignoreErrors {
 				continue
 			}
-			return K8sResources, ErrParseK8sManifest(fmt.Errorf("failed to parse manifest into an internal representation"))
+			return K8sResources, ErrParseK8sManifest(fmt.Errorf("failed to parse Kubernetes manifest into an internal representation"))
 		}
 
 		// If it's a List kind, expand it, otherwise add directly
