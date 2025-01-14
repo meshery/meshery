@@ -411,7 +411,7 @@ mesheryctl system start --provider Meshery
 		if err := start(); err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to start Meshery"))
 		}
-		if configureCluster != "" {
+		if configureCluster != "" && utils.TokenFlag == "" {
 			// authenticate the user if not already
 			log.Printf("Please login first to configure %s", configureCluster)
 			loginCmd.PersistentFlags().StringVarP(&providerFlag, "provider", "p", "", "login Meshery with specified provider")
