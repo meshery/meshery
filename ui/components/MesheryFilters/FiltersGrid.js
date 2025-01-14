@@ -1,6 +1,5 @@
 //@ts-check
-import { Grid, Paper, Typography, Button } from '@material-ui/core';
-import { Pagination } from '@material-ui/lab';
+import { Grid, Paper, Typography, Button, Pagination } from '@layer5/sistent';
 import React, { useState } from 'react';
 import FiltersCard from './FiltersCard';
 import { FILE_OPS } from '../../utils/Enum';
@@ -157,7 +156,7 @@ function FiltersGrid({
   return (
     <div>
       {!selectedFilter.show && (
-        <Grid container spacing={3} style={{ padding: '1rem' }}>
+        <Grid container spacing={3}>
           {filters.map((filter) => (
             <FilterCardGridItem
               key={filter.id}

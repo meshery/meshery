@@ -4,6 +4,7 @@ import { useGetUserKeysQuery } from './userKeys';
 import _ from 'lodash';
 import CustomErrorMessage from '@/components/ErrorPage';
 // import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
+import DefaultError from '@/components/General/error-404';
 import { DynamicFullScrrenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
 export const useGetUserAbilities = (org, skip) => {
   const { data, ...res } = useGetUserKeysQuery(
@@ -45,9 +46,15 @@ export const LoadSessionGuard = ({ children }) => {
 
   if (error) {
     return (
-      <CustomErrorMessage
-        message={error.message || 'An error occurred while fetching your organization permissions'}
-      />
+      <>
+        <DefaultError />
+        <CustomErrorMessage
+          message={
+            error.message || 'An error occurred while fetching your organization permissions'
+          }
+          showImage={false}
+        />
+      </>
     );
   }
 
