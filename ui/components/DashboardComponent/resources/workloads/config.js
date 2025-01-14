@@ -3,7 +3,6 @@ import { timeAgo } from '../../../../utils/k8s-utils';
 import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
 import { Title } from '../../view';
-
 import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
 import { ResizableCell } from '../../../../utils/utils';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
@@ -16,6 +15,7 @@ export const WorkloadTableConfig = (
   meshSyncResources,
   k8sConfig,
   connectionMetadataState,
+  workloadType,
 ) => {
   const ping = useKubernetesHook();
   return {
@@ -59,12 +59,8 @@ export const WorkloadTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -262,12 +258,8 @@ export const WorkloadTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -441,12 +433,8 @@ export const WorkloadTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -581,12 +569,8 @@ export const WorkloadTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -740,12 +724,8 @@ export const WorkloadTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -909,12 +889,8 @@ export const WorkloadTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -1060,12 +1036,8 @@ export const WorkloadTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -1183,12 +1155,8 @@ export const WorkloadTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },

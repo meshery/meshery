@@ -6,7 +6,6 @@ import { useContext } from 'react';
 import { isEmptyAtAllDepths } from '../../utils/objects';
 import CopyIcon from '../../assets/icons/CopyIcon';
 import { UsesSistent } from './../SistentWrapper';
-
 const FormatterContext = React.createContext({
   propertyFormatters: {},
 });
@@ -257,7 +256,7 @@ export const SectionBody = ({ body, style = {} }) => {
     ></TextWithLinks>
   );
 };
-const ArrayFormatter = ({ items }) => {
+export const ArrayFormatter = ({ items }) => {
   const theme = useTheme();
   return (
     <ol
