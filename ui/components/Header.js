@@ -39,7 +39,6 @@ import {
   Box,
   CustomTooltip,
   Typography,
-  useTheme,
   styled,
 } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
@@ -326,15 +325,13 @@ function K8sContextMenu({
     transform: showFullContextMenu ? `translateY(${transformProperty}%)` : 'translateY(0)',
   };
 
-  const StateTransitionDetails = styled(Box)(({theme}) => ({
-     backgroundColor: theme.palette.background.secondary,
-     padding:"1rem",
-     borderRadius: "0.5rem",
-     textAlign: 'left',
-  }))
+  const StateTransitionDetails = styled(Box)(({ theme }) => ({
+    backgroundColor: theme.palette.background.secondary,
+    padding: '1rem',
+    borderRadius: '0.5rem',
+    textAlign: 'left',
+  }));
   const handleKubernetesDelete = async (name, connectionID) => {
-
-
     let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
       title: `Delete Kubernetes connection?`,
       subtitle: (
@@ -345,28 +342,27 @@ function K8sContextMenu({
             credential?
           </Typography>
           <details>
-              <summary style={{textAlign: 'left', marginTop: '1rem', cursor: 'pointer'}} >
-                <strong>What does this mean?</strong>
-              </summary>
-              
-              <StateTransitionDetails>
-                <Typography variant="body2">
-                  Deleting a connection administratively removes the cluster from Meshery&apos;s
-                  purview of management, which includes the removal of Meshery Operator from the
-                  cluster. Record of this Kubernetes connection and all associated data collected
-                  through MeshSync for this connection will be purged from Meshery&apos;s database.
-                  Note: By deleting this connection, you are not deleting the Kubernetes cluster
-                  itself.
-                </Typography>
-                <Typography variant="body2" sx={{marginTop:"1rem"}}>
-                  <strong>Reconnecting:</strong> You can always reconnect Meshery to the cluster
-                  again. By default, Meshery will automatically reconnect to the cluster when next
-                  presented with the same kubeconfig file / context. If you wish to prevent
-                  reconnection, *disconnect* this connection instead of *deleting* this connection.
-                </Typography>
+            <summary style={{ textAlign: 'left', marginTop: '1rem', cursor: 'pointer' }}>
+              <strong>What does this mean?</strong>
+            </summary>
 
-              </StateTransitionDetails>
-         </details>
+            <StateTransitionDetails>
+              <Typography variant="body2">
+                Deleting a connection administratively removes the cluster from Meshery&apos;s
+                purview of management, which includes the removal of Meshery Operator from the
+                cluster. Record of this Kubernetes connection and all associated data collected
+                through MeshSync for this connection will be purged from Meshery&apos;s database.
+                Note: By deleting this connection, you are not deleting the Kubernetes cluster
+                itself.
+              </Typography>
+              <Typography variant="body2" sx={{ marginTop: '1rem' }}>
+                <strong>Reconnecting:</strong> You can always reconnect Meshery to the cluster
+                again. By default, Meshery will automatically reconnect to the cluster when next
+                presented with the same kubeconfig file / context. If you wish to prevent
+                reconnection, *disconnect* this connection instead of *deleting* this connection.
+              </Typography>
+            </StateTransitionDetails>
+          </details>
         </>
       ),
       options: ['CONFIRM', 'CANCEL'],
