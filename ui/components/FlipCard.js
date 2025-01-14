@@ -1,26 +1,7 @@
 //@ts-check
 import React, { useState, useRef, useEffect } from 'react';
-import { withStyles } from '@material-ui/core/styles';
 import { FlipCardWrapper, InnerCard } from './MesheryPatterns/style';
 import { UsesSistent } from './SistentWrapper';
-
-const styles = (theme) => ({
-  card: {
-    height: '100%',
-    backgroundColor: 'transparent',
-    perspective: theme.spacing(125),
-  },
-  innerCard: {
-    padding: theme.spacing(2),
-    borderRadius: theme.spacing(1),
-    transformStyle: 'preserve-3d',
-    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
-    backgroundColor: theme.palette.secondary.elevatedComponents,
-    cursor: 'pointer',
-  },
-  content: { backfaceVisibility: 'hidden' },
-  backContent: { transform: 'scale(-1, 1)', maxWidth: '50vw', wordBreak: 'break-word' },
-});
 
 function GetChild(children, key) {
   if (children.length != 2) throw Error('FlipCard requires exactly two child components');
@@ -96,5 +77,4 @@ function FlipCard({ duration = 500, onClick, onShow, children }) {
   );
 }
 
-// @ts-ignore
-export default withStyles(styles)(FlipCard);
+export default FlipCard;
