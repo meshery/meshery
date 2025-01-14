@@ -56,6 +56,14 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
+		spreadsheetID, _ := cmd.Flags().GetString("spreadsheet-id")
+		spreadsheetCred, _ := cmd.Flags().GetString("spreadsheet-cred")
+		// If required flags are missing, show help and exit cleanly
+		if spreadsheetID == "" || spreadsheetCred == "" {
+			_ = cmd.Help()
+			return fmt.Errorf("required flags \"spreadsheet-id\" and \"spreadsheet-cred\" not set")
+		}
+
 		err := os.MkdirAll(logDirPath, 0755)
 		if err != nil {
 			return ErrUpdateRegistry(err, modelLocation)
