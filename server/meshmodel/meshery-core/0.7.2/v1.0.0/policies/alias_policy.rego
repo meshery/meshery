@@ -156,7 +156,7 @@ identify_alias_paths(from, to, component,design) := paths if {
 		item != null
 	]
 
-	#print("Items", items)
+	print("Items", items,from.kind,to.kind)
 	count(items) > 0
 
 	paths := [path |
@@ -292,8 +292,7 @@ is_alias_relationship_valid(relationship, design_file) if {
 	ref := alias_ref_from_relationship(relationship)
 
 	#print("Is valid -> ref", ref,relationship.id)
-	value := object_get_nested(to_component, ref, null)
-
+	value := object_get_nested(get_component_configuration(to_component,design_file), pop_first(ref), null)
 	#print("Is valid -> value", value)
 	value != null
 }
