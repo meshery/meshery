@@ -1,5 +1,5 @@
-import { createTheme } from '@material-ui/core/styles';
-import createBreakpoints from '@material-ui/core/styles/createBreakpoints';
+import { createTheme } from "@mui/material";
+import { createBreakpoints } from "@mui/system";
 const breakpoints = createBreakpoints({});
 export const rjsfTheme = createTheme({
   palette: {
@@ -32,7 +32,7 @@ export const rjsfTheme = createTheme({
     MuiButton: {
       textSecondary: {
         color: '#00b39f',
-        '&:hover': '00b39f',
+        '&:hover': '#00b39f',
       },
     },
     MuiTextField: {

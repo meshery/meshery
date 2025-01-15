@@ -1,25 +1,20 @@
 import React, { useEffect } from 'react';
-import MuiAccordion from '@material-ui/core/Accordion';
-import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
-import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
 import DeleteIcon from '../../../../assets/icons/DeleteIcon';
-import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
-import { IconButton, makeStyles } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import { iconSmall } from '../../../../css/icons.styles';
+import { Accordion, AccordionDetails, AccordionSummary, IconButton } from '@layer5/sistent';
+import { AccordionHeading, AccordionRoot } from '../style';
+import { UsesSistent } from '@/components/SistentWrapper';
 
-const useStyles = makeStyles((theme) => ({
-  accordionRoot: {
-    width: '100%',
-    marginBottom: '0rem',
-  },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular,
-  },
-  typography: {
-    fontSize: '0.8rem',
-  },
+const useStyles = makeStyles(() => ({
+  // heading: {
+  //   fontSize: theme.typography.pxToRem(15),
+  //   fontWeight: theme.typography.fontWeightRegular,
+  // },
+  // typography: {
+  //   fontSize: '0.8rem',
+  // },
 }));
 
 export default function SimpleAccordion(props) {
@@ -38,31 +33,32 @@ export default function SimpleAccordion(props) {
   const accordionDetailsRef = React.useRef(null);
 
   return (
-    <div className={classes.accordionRoot}>
-      <MuiAccordion defaultExpanded elevation={0}>
-        <MuiAccordionSummary
-          expandIcon={<ExpandMoreIcon style={iconSmall} fill="gray" />}
-          aria-controls="panel1a-content"
-          id="panel1a-header"
-          style={{ backgroundColor: 'F7F7F7' }}
-        >
-          <Typography className={classes.heading}>
-            {props.heading?.charAt(0).toUpperCase() + props.heading?.slice(1)}{' '}
-          </Typography>
+    <UsesSistent>
+      <AccordionRoot>
+        <Accordion defaultExpanded elevation={0}>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon style={iconSmall} fill="gray" />}
+            aria-controls="panel1a-content"
+            id="panel1a-header"
+            style={{ backgroundColor: 'F7F7F7' }}
+          >
+            <AccordionHeading className={classes.heading}>
+              {props.heading?.charAt(0).toUpperCase() + props.heading?.slice(1)}{' '}
+            </AccordionHeading>
 
-          {props.childProps.hasRemove && (
-            <IconButton
-              style={{ padding: '0', iconSmall }}
-              // style={btnStyle, iconSmall}
-              disabled={props.childProps.disabled || props.childProps.readonly}
-              onClick={props.childProps.onDropIndexClick(props.childProps.index)}
-            >
-              <DeleteIcon fill="gray" style={iconSmall} />
-            </IconButton>
-          )}
-        </MuiAccordionSummary>
-        <MuiAccordionDetails ref={accordionDetailsRef}>{props.children}</MuiAccordionDetails>
-      </MuiAccordion>
-    </div>
+            {props.childProps.hasRemove && (
+              <IconButton
+                style={{ padding: '0', iconSmall }}
+                disabled={props.childProps.disabled || props.childProps.readonly}
+                onClick={props.childProps.onDropIndexClick(props.childProps.index)}
+              >
+                <DeleteIcon fill="gray" style={iconSmall} />
+              </IconButton>
+            )}
+          </AccordionSummary>
+          <AccordionDetails ref={accordionDetailsRef}>{props.children}</AccordionDetails>
+        </Accordion>
+      </AccordionRoot>
+    </UsesSistent>
   );
 }

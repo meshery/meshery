@@ -1,9 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import { Button, IconButton, Typography, withStyles } from '@material-ui/core';
+import { withStyles } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import SimpleAccordion from './Accordion';
 import { CustomTextTooltip } from '../CustomTextTooltip';
@@ -13,16 +10,10 @@ import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
 import pluralize from 'pluralize';
-const styles = () => ({
-  typography: {
-    fontSize: '0.8rem',
-  },
-  root: {
-    '& .MuiPaper-root': {
-      backgroundColor: '#f4f4f4',
-    },
-  },
-});
+import { Box, Button, Grid, IconButton, Paper, Typography } from '@layer5/sistent';
+import { ArrayFieldWrapper } from '../style';
+import { UsesSistent } from '@/components/SistentWrapper';
+
 function getTitleForItem(props) {
   const title = getTitle(props);
 
@@ -46,14 +37,16 @@ const ArrayFieldTemplate = (props) => {
   }
 };
 
-const ArrayFieldTitle = ({ title, classes }) => {
+const ArrayFieldTitle = ({ title }) => {
   if (!title) {
     return null;
   }
 
   return (
     <Typography
-      className={classes.typography}
+      sx={{
+        fontSize: '0.8rem',
+      }}
       variant="body1"
       style={{ fontWeight: 'bold', display: 'inline' }}
     >
@@ -161,7 +154,7 @@ const DefaultFixedArrayFieldTemplate = (props) => {
 const DefaultNormalArrayFieldTemplate = (props) => {
   const { classes, theme } = props;
   return (
-    <Paper className={classes.root} elevation={0}>
+    <ArrayFieldWrapper elevation={0}>
       <Box p={1}>
         <Grid
           item
@@ -247,8 +240,8 @@ const DefaultNormalArrayFieldTemplate = (props) => {
             })}
         </Grid>
       </Box>
-    </Paper>
+    </ArrayFieldWrapper>
   );
 };
 
-export default withStyles(styles, { withTheme: true })(ArrayFieldTemplate);
+export default withStyles({ withTheme: true })(ArrayFieldTemplate);

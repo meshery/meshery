@@ -1,4 +1,3 @@
-import { MuiThemeProvider, useTheme } from '@material-ui/core/styles';
 import { withTheme } from '@rjsf/core';
 import { Theme as MaterialUITheme } from '@rjsf/material-ui';
 import ajv8validator from '@rjsf/validator-ajv8';
@@ -19,8 +18,10 @@ import CustomTextAreaWidget from './RJSFCustomComponents/CustomTextAreaWidget';
 import CustomFileWidget from './RJSFCustomComponents/CustomFileWidget';
 import CustomURLWidget from './RJSFCustomComponents/CustomURLWidget';
 import CustomColorWidget from './RJSFCustomComponents/CustomColorWidget';
-import { ErrorBoundary } from '@layer5/sistent';
+import { ErrorBoundary, useTheme } from '@layer5/sistent';
 import CustomErrorFallback from '@/components/General/ErrorBoundary';
+import { UsesSistent } from '@/components/SistentWrapper';
+import { ThemeProvider } from '@mui/styles';
 
 const MuiRJSFForm = withTheme(MaterialUITheme);
 
@@ -73,50 +74,52 @@ function RJSFForm({
   }
 
   return (
-    <ErrorBoundary customFallback={CustomErrorFallback}>
-      {' '}
-      {/* Putting RJSF into error boundary, so that error can be catched.. */}
-      <MuiThemeProvider theme={globalTheme.palette.type === 'dark' ? darkRjsfTheme : rjsfTheme}>
-        <MuiRJSFForm
-          schema={schema.rjsfSchema}
-          idPrefix={jsonSchema?.title}
-          ref={formRef}
-          onChange={onChange}
-          formData={data}
-          extraErrors={extraErrors}
-          validator={validator || ajv8validator}
-          templates={{
-            ArrayFieldTemplate,
-            ObjectFieldTemplate,
-            WrapIfAdditionalTemplate,
-            BaseInputTemplate,
-            FieldTemplate: CustomFieldTemplate, // applying field template universally to every field type.
-            ...fieldTemplates,
-          }}
-          formContext={{ overrideFlag: override, CustomTextTooltip: CustomTextTooltip }}
-          uiSchema={_.merge(schema.uiSchema, uiSchema)}
-          widgets={{
-            // Custom components to be added here
-            TextWidget: CustomTextWidget,
-            DateTimeWidget: CustomDateTimeWidget,
-            SelectWidget,
-            ColorWidget: CustomColorWidget,
-            CheckboxWidget: CustomCheckboxWidget,
-            TextareaWidget: CustomTextAreaWidget,
-            FileWidget: CustomFileWidget,
-            URLWidget: CustomURLWidget,
-          }}
-          liveValidate={liveValidate}
-          showErrorList={false}
-          noHtml5Validate
-          transformErrors={transformErrors}
-          {...restProps}
-        >
-          {children}
-          <div></div>
-        </MuiRJSFForm>
-      </MuiThemeProvider>
-    </ErrorBoundary>
+    <UsesSistent>
+      <ErrorBoundary customFallback={CustomErrorFallback}>
+        {' '}
+        {/* Putting RJSF into error boundary, so that error can be catched.. */}
+        <ThemeProvider theme={globalTheme.palette.type === 'dark' ? darkRjsfTheme : rjsfTheme}>
+          <MuiRJSFForm
+            schema={schema.rjsfSchema}
+            idPrefix={jsonSchema?.title}
+            ref={formRef}
+            onChange={onChange}
+            formData={data}
+            extraErrors={extraErrors}
+            validator={validator || ajv8validator}
+            templates={{
+              ArrayFieldTemplate,
+              ObjectFieldTemplate,
+              WrapIfAdditionalTemplate,
+              BaseInputTemplate,
+              FieldTemplate: CustomFieldTemplate, // applying field template universally to every field type.
+              ...fieldTemplates,
+            }}
+            formContext={{ overrideFlag: override, CustomTextTooltip: CustomTextTooltip }}
+            uiSchema={_.merge(schema.uiSchema, uiSchema)}
+            widgets={{
+              // Custom components to be added here
+              TextWidget: CustomTextWidget,
+              DateTimeWidget: CustomDateTimeWidget,
+              SelectWidget,
+              ColorWidget: CustomColorWidget,
+              CheckboxWidget: CustomCheckboxWidget,
+              TextareaWidget: CustomTextAreaWidget,
+              FileWidget: CustomFileWidget,
+              URLWidget: CustomURLWidget,
+            }}
+            liveValidate={liveValidate}
+            showErrorList={false}
+            noHtml5Validate
+            transformErrors={transformErrors}
+            {...restProps}
+          >
+            {children}
+            <div></div>
+          </MuiRJSFForm>
+        </ThemeProvider>
+      </ErrorBoundary>
+    </UsesSistent>
   );
 }
 

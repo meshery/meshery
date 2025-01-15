@@ -1,9 +1,8 @@
 import React from 'react';
-import Grid from '@material-ui/core/Grid';
 import { canExpand } from '@rjsf/utils';
-import { CssBaseline, useTheme, withStyles } from '@material-ui/core';
+import { CssBaseline, withStyles } from '@material-ui/core';
 import AddIcon from '../../../../assets/icons/AddIcon';
-import { Box, IconButton, Typography } from '@material-ui/core';
+import { Box, Grid, IconButton, Typography, useTheme } from '@layer5/sistent';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
@@ -12,19 +11,20 @@ import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconMedium, iconSmall } from '../../../../css/icons.styles';
 import { calculateGrid } from '../helper';
+import { ObjectFieldGrid } from '../style';
 
 const styles = () => ({
-  objectFieldGrid: {
-    padding: '.5rem',
-    paddingTop: '0.7rem',
-    // backgroundColor: theme.palette.type === 'dark' ? '#363636' : '#ffffff',
-    width: '100%',
-    margin: '0px',
-  },
-  typography: {
-    fontFamily: 'inherit',
-    fontSize: 13,
-  },
+  // objectFieldGrid: {
+  //   padding: '.5rem',
+  //   paddingTop: '0.7rem',
+  //   // backgroundColor: theme.palette.type === 'dark' ? '#363636' : '#ffffff',
+  //   width: '100%',
+  //   margin: '0px',
+  // },
+  // typography: {
+  //   fontFamily: 'inherit',
+  //   fontSize: 13,
+  // },
 });
 /**
  * Get the raw errors from the error schema.
@@ -54,7 +54,7 @@ const ObjectFieldTemplate = ({
   schema,
   formData,
   onAddClick,
-  classes,
+  // classes,
   errorSchema,
 }) => {
   const additional = schema?.__additional_property; // check if the object is additional
@@ -115,7 +115,10 @@ const ObjectFieldTemplate = ({
           <Grid item mb={1} mt={1}>
             <Typography
               variant="body1"
-              className={classes.typography}
+              sx={{
+                fontFamily: 'inherit',
+                fontSize: 13,
+              }}
               style={{ fontWeight: 'bold', display: 'inline' }}
             >
               {title.charAt(0).toUpperCase() + title.slice(1)}{' '}
@@ -161,10 +164,9 @@ const ObjectFieldTemplate = ({
   };
 
   const Properties = (
-    <Grid
+    <ObjectFieldGrid
       container={true}
       spacing={2}
-      className={classes.objectFieldGrid}
       style={
         Object.keys(properties).length === 0 || schema['$schema']
           ? { border: 'none', ...(uiSchema['styles'] || {}) }
@@ -180,7 +182,7 @@ const ObjectFieldTemplate = ({
           </Grid>
         );
       })}
-    </Grid>
+    </ObjectFieldGrid>
   );
 
   const fieldTitle = uiSchema['ui:title'] || title;

@@ -6,7 +6,7 @@ import {
   MenuItem,
   TextField,
   InputLabel,
-} from '@material-ui/core';
+} from '@layer5/sistent';
 import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
 import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
 import { ERROR_COLOR } from '../../../../constants/colors';
@@ -65,113 +65,112 @@ export default function CustomSelectWidget({
 
   return (
     <>
-      {xRjsfGridArea && (
-        <InputLabel required={required} htmlFor={id}>
-          {labelValue(label, hideLabel || !label, false)}
-        </InputLabel>
-      )}
-      <TextField
-        id={id}
-        name={id}
-        value={isEmpty ? emptyValue : selectedIndexes}
-        required={required}
-        disabled={disabled || readonly}
-        autoFocus={autofocus}
-        placeholder={placeholder}
-        label={xRjsfGridArea ? '' : labelValue(label, hideLabel || !label, false)}
-        error={rawErrors?.length > 0}
-        onChange={_onChange}
-        onBlur={_onBlur}
-        onFocus={_onFocus}
-        InputProps={{
-          style: { paddingRight: '0px' },
-          endAdornment: (
-            <InputAdornment position="start" style={{ position: 'absolute', right: '1rem' }}>
-              {rawErrors?.length > 0 && (
-                <CustomTextTooltip
-                  bgColor={ERROR_COLOR}
-                  flag={formContext?.overrideFlag}
-                  title={rawErrors?.join('  ')}
-                  interactive={true}
-                >
-                  <IconButton component="span" size="small">
-                    <ErrorOutlineIcon
-                      width="14px"
-                      height="14px"
-                      fill={ERROR_COLOR}
-                      style={{ verticalAlign: 'middle', ...iconSmall }}
-                    />
-                  </IconButton>
-                </CustomTextTooltip>
-              )}
-              {schema?.description && (
-                <CustomTextTooltip
-                  flag={formContext?.overrideFlag}
-                  title={schema?.description}
-                  interactive={true}
-                >
-                  <IconButton component="span" size="small" style={{ marginRight: '4px' }}>
-                    <HelpOutlineIcon
-                      width="14px"
-                      height="14px"
-                      fill={theme.palette.type === 'dark' ? 'white' : 'gray'}
-                      style={{ verticalAlign: 'middle', ...iconSmall }}
-                    />
-                  </IconButton>
-                </CustomTextTooltip>
-              )}
-            </InputAdornment>
-          ),
-        }}
-        {...textFieldProps}
-        select
-        InputLabelProps={{
-          ...textFieldProps.InputLabelProps,
-          shrink: !isEmpty,
-        }}
-        SelectProps={{
-          ...textFieldProps.SelectProps,
-          renderValue: (selected) => {
-            if (multiple) {
-              return selected.map((index) => enumOptions[index].label).join(', ');
-            }
-            return enumOptions[selected].label;
-          },
-          multiple,
-          MenuProps: {
-            anchorOrigin: {
-              vertical: 'bottom',
-              horizontal: 'left',
+      <UsesSistent>
+        {xRjsfGridArea && (
+          <InputLabel required={required} htmlFor={id}>
+            {labelValue(label, hideLabel || !label, false)}
+          </InputLabel>
+        )}
+        <TextField
+          id={id}
+          name={id}
+          value={isEmpty ? emptyValue : selectedIndexes}
+          required={required}
+          disabled={disabled || readonly}
+          autoFocus={autofocus}
+          placeholder={placeholder}
+          style={{ width: '100%', marginTop: '7px' }}
+          label={xRjsfGridArea ? '' : labelValue(label, hideLabel || !label, false)}
+          error={rawErrors?.length > 0}
+          onChange={_onChange}
+          onBlur={_onBlur}
+          onFocus={_onFocus}
+          InputProps={{
+            style: { height: '40px', paddingRight: '0px' },
+            endAdornment: (
+              <InputAdornment position="start" style={{ position: 'absolute', right: '1rem' }}>
+                {rawErrors?.length > 0 && (
+                  <CustomTextTooltip
+                    bgColor={ERROR_COLOR}
+                    flag={formContext?.overrideFlag}
+                    title={rawErrors?.join('  ')}
+                    interactive={true}
+                  >
+                    <IconButton component="span" size="small">
+                      <ErrorOutlineIcon
+                        width="14px"
+                        height="14px"
+                        fill={ERROR_COLOR}
+                        style={{ verticalAlign: 'middle', ...iconSmall }}
+                      />
+                    </IconButton>
+                  </CustomTextTooltip>
+                )}
+                {schema?.description && (
+                  <CustomTextTooltip
+                    flag={formContext?.overrideFlag}
+                    title={schema?.description}
+                    interactive={true}
+                  >
+                    <IconButton component="span" size="small" style={{ marginRight: '4px' }}>
+                      <HelpOutlineIcon
+                        width="14px"
+                        height="14px"
+                        fill={theme.palette.type === 'dark' ? 'white' : 'gray'}
+                        style={{ verticalAlign: 'middle', ...iconSmall }}
+                      />
+                    </IconButton>
+                  </CustomTextTooltip>
+                )}
+              </InputAdornment>
+            ),
+          }}
+          {...textFieldProps}
+          select
+          InputLabelProps={{
+            ...textFieldProps.InputLabelProps,
+            shrink: !isEmpty,
+          }}
+          SelectProps={{
+            ...textFieldProps.SelectProps,
+            renderValue: (selected) => {
+              if (multiple) {
+                return selected.map((index) => enumOptions[index].label).join(', ');
+              }
+              return enumOptions[selected].label;
             },
-            transformOrigin: {
-              vertical: 'top',
-              horizontal: 'left',
-            },
-            getContentAnchorEl: null,
-            PaperProps: {
-              style: {
-                maxHeight: '400px',
+            multiple,
+            MenuProps: {
+              anchorOrigin: {
+                vertical: 'bottom',
+                horizontal: 'left',
+              },
+              transformOrigin: {
+                vertical: 'top',
+                horizontal: 'left',
+              },
+              getContentAnchorEl: null,
+              PaperProps: {
+                style: {
+                  maxHeight: '400px',
+                },
               },
             },
-          },
-        }}
-        aria-describedby={ariaDescribedByIds(id)}
-      >
-        {Array.isArray(enumOptions) &&
-          enumOptions.map(({ value, label }, i) => {
-            const disabled = Array.isArray(enumDisabled) && enumDisabled?.indexOf(value) !== -1;
-            return (
-              <MenuItem key={i} value={String(i)} disabled={disabled}>
-                {multiple && (
-                  <UsesSistent>
-                    <Checkbox checked={selectedIndexes?.indexOf(String(i)) !== -1} />
-                  </UsesSistent>
-                )}
-                <ListItemText primary={label} />
-              </MenuItem>
-            );
-          })}
-      </TextField>
+          }}
+          aria-describedby={ariaDescribedByIds(id)}
+        >
+          {Array.isArray(enumOptions) &&
+            enumOptions.map(({ value, label }, i) => {
+              const disabled = Array.isArray(enumDisabled) && enumDisabled?.indexOf(value) !== -1;
+              return (
+                <MenuItem key={i} value={String(i)} disabled={disabled}>
+                  {multiple && <Checkbox checked={selectedIndexes?.indexOf(String(i)) !== -1} />}
+                  <ListItemText primary={label} />
+                </MenuItem>
+              );
+            })}
+        </TextField>
+      </UsesSistent>
     </>
   );
 }

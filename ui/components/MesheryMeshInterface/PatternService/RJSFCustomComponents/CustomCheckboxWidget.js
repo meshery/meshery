@@ -1,4 +1,4 @@
-import { FormControlLabel, IconButton, useTheme } from '@material-ui/core';
+import { FormControlLabel, IconButton, useTheme } from '@layer5/sistent';
 import { labelValue, schemaRequiresTrueValue } from '@rjsf/utils';
 import React from 'react';
 import { CustomTextTooltip } from '../CustomTextTooltip';
@@ -27,9 +27,9 @@ export const CustomCheckboxWidget = (props) => {
 
   return (
     <>
-      <FormControlLabel
-        control={
-          <UsesSistent>
+      <UsesSistent>
+        <FormControlLabel
+          control={
             <Checkbox
               id={id}
               name={id}
@@ -39,30 +39,30 @@ export const CustomCheckboxWidget = (props) => {
               autoFocus={autofocus}
               onChange={_onChange}
             />
-          </UsesSistent>
-        }
-        label={
-          <>
-            {labelValue(label, hideLabel, required)}
-            {schema.description && (
-              <CustomTextTooltip
-                flag={props?.formContext?.overrideFlag}
-                title={schema?.description}
-                interactive={true}
-              >
-                <IconButton component="span" size="small">
-                  <HelpOutlineIcon
-                    width="14px"
-                    height="14px"
-                    fill={theme.palette.type === 'dark' ? 'white' : 'gray'}
-                    style={{ verticalAlign: 'middle', ...iconSmall }}
-                  />
-                </IconButton>
-              </CustomTextTooltip>
-            )}
-          </>
-        }
-      />
+          }
+          label={
+            <>
+              {labelValue(label, hideLabel, required)}
+              {schema.description && (
+                <CustomTextTooltip
+                  flag={props?.formContext?.overrideFlag}
+                  title={schema?.description}
+                  interactive={true}
+                >
+                  <IconButton component="span" size="small">
+                    <HelpOutlineIcon
+                      width="14px"
+                      height="14px"
+                      fill={theme.palette.mode === 'dark' ? 'white' : 'gray'}
+                      style={{ verticalAlign: 'middle', ...iconSmall }}
+                    />
+                  </IconButton>
+                </CustomTextTooltip>
+              )}
+            </>
+          }
+        />
+      </UsesSistent>
     </>
   );
 };
