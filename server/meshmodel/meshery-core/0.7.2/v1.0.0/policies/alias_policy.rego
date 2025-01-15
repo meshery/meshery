@@ -51,19 +51,19 @@ component_alias(component_id) := alias if {
 #-------- Get Component Configuration -----------
 get_component_configuration(component,design) := configuration if {
 	alias := component_alias(component.id)
-	print("configuration from Alias is ==>",alias)
+	# print("configuration from Alias is ==>",alias)
 
 	parent := component_declaration_by_id(design,alias.resolved_parent_id)
 	
 	configuration := object_get_nested(parent,alias.resolved_ref_field_path,null)
-	print("Configuration got from Alias " ,configuration)
+	# print("Configuration got from Alias " ,configuration)
 }
 
 get_component_configuration(component,design) := configuration if {
    not component_alias(component.id)
    configuration := component.configuration
 
-   print("Configuration direct",configuration)
+   # print("Configuration direct",configuration)
 }
 
 # ------------------------------------------------
@@ -146,13 +146,13 @@ identify_alias_paths(from, to, component,design) := paths if {
 	not is_direct_reference(ref)
 	direct_ref := pop_last(ref)
 
-	print("Direct Ref", direct_ref,"pop",pop_first(direct_ref), "config", get_component_configuration(component,design),"v",object_get_nested(get_component_configuration(component,design), pop_first(direct_ref), []))
+	# print("Direct Ref", direct_ref,"pop",pop_first(direct_ref), "config", get_component_configuration(component,design),"v",object_get_nested(get_component_configuration(component,design), pop_first(direct_ref), []))
 
 
 	# remove nullish values
 	items := [item |
 		some item in object_get_nested(get_component_configuration(component,design), pop_first(direct_ref), [])
-		print("item",item,"path",pop_first(direct_ref))
+		# print("item",item,"path",pop_first(direct_ref))
 		item != null
 	]
 
