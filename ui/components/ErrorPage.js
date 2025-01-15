@@ -35,7 +35,7 @@ const StyledLink = styled(Link)(({ theme }) => ({
  * CustomErrorMessage component is used to display a custom error message when a page is not found.
  * @returns {JSX.Element} JSX.Element
  */
-const CustomErrorMessage = ({ message }) => {
+const CustomErrorMessage = ({ message, showImage = true }) => {
   const [customMessage, setCustomMessage] = useState('Oh, no. Please pardon our meshy app.');
 
   useEffect(() => {
@@ -61,18 +61,20 @@ const CustomErrorMessage = ({ message }) => {
               {message || 'Page does not exist.'}
             </StyledTypographyH5>
           </Box>
-          <Box
-            component="img"
-            src="/static/img/service-mesh.svg"
-            alt="service meshed"
-            sx={{
-              display: 'block',
-              margin: 'auto',
-              mt: 3.125,
-              maxWidth: '50%',
-              height: '45%',
-            }}
-          />
+          {showImage && (
+            <Box
+              component="img"
+              src="/static/img/service-mesh.svg"
+              alt="service meshed"
+              sx={{
+                display: 'block',
+                margin: 'auto',
+                mt: 3.125,
+                maxWidth: '50%',
+                height: '45%',
+              }}
+            />
+          )}
           <StyledTypographyBody1 variant="body1">
             Start a conversation at Layer5 community{' '}
             <StyledLink href="http://discuss.meshery.io/c/meshery/5" target="_blank">
