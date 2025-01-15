@@ -1,5 +1,5 @@
-import { createTheme } from "@mui/material";
-import { createBreakpoints } from "@mui/system";
+import { createTheme } from '@mui/material';
+import { createBreakpoints } from '@mui/system';
 const breakpoints = createBreakpoints({});
 export const rjsfTheme = createTheme({
   palette: {
