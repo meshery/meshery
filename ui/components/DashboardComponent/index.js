@@ -4,7 +4,6 @@ import { bindActionCreators } from 'redux';
 import { useRouter, withRouter } from 'next/router';
 import { withStyles } from '@material-ui/core/styles';
 import { withNotify } from '../../utils/hooks/useNotification';
-import { Paper } from '@material-ui/core';
 import { updateProgress } from '../../lib/store';
 import { ResourcesConfig } from './resources/config';
 import ResourcesTable from './resources/resources-table';
@@ -17,36 +16,9 @@ import { iconLarge } from '../../css/icons.styles';
 import { useWindowDimensions } from '@/utils/dimension';
 import { Tab, Tabs, CustomTooltip } from '@layer5/sistent';
 import { UsesSistent } from '../SistentWrapper';
+import { WrapperContainer, WrapperPaper } from './style';
 
 const styles = (theme) => ({
-  wrapperClss: {
-    flexGrow: 1,
-    maxWidth: '100vw',
-    height: 'auto',
-  },
-  tab: {
-    width: 'max(6rem, 20%)',
-    margin: 0,
-    minWidth: 40,
-    paddingLeft: 0,
-    paddingRight: 0,
-    '&.Mui-selected': {
-      color: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
-    },
-  },
-  subMenuTab: {
-    backgroundColor: theme.palette.type === 'dark' ? '#212121' : '#f5f5f5',
-  },
-  tabs: {
-    width: '100%',
-    // flexGrow: 1,
-    '& .MuiTabs-indicator': {
-      backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
-    },
-    '& .MuiTab-fullWidth': {
-      // flexBasis: 'unset', // Remove flex-basis
-    },
-  },
   icon: {
     display: 'inline',
     verticalAlign: 'text-top',
@@ -163,9 +135,9 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
   let CRDsKeys = [];
   return (
     <>
-      <div className={classes.wrapperClss}>
-        <Paper square className={classes.wrapperClss}>
-          <UsesSistent>
+      <UsesSistent>
+        <WrapperContainer>
+          <WrapperPaper square>
             <Tabs
               value={getResourceCategoryIndex(resourceCategory)}
               indicatorColor="primary"
@@ -196,55 +168,55 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
                 );
               })}
             </Tabs>
-          </UsesSistent>
-        </Paper>
+          </WrapperPaper>
 
-        <TabPanel value={resourceCategory} index={'Overview'}>
-          <Overview />
-        </TabPanel>
-        {Object.keys(ResourcesConfig).map((resource, idx) => {
-          if (resource === 'CRDS') {
-            CRDsKeys = Object.keys(
-              ResourcesConfig[resource].tableConfig(
-                null,
-                null,
-                k8sconfig,
-                null,
-                resource,
-                selectedK8sContexts,
-              ),
+          <TabPanel value={resourceCategory} index={'Overview'}>
+            <Overview />
+          </TabPanel>
+          {Object.keys(ResourcesConfig).map((resource, idx) => {
+            if (resource === 'CRDS') {
+              CRDsKeys = Object.keys(
+                ResourcesConfig[resource].tableConfig(
+                  null,
+                  null,
+                  k8sconfig,
+                  null,
+                  resource,
+                  selectedK8sContexts,
+                ),
+              );
+            }
+            return (
+              <TabPanel value={resourceCategory} index={resource} key={resource}>
+                {ResourcesConfig[resource].submenu ? (
+                  <ResourcesSubMenu
+                    key={idx}
+                    resource={ResourcesConfig[resource]}
+                    selectedResource={selectedResource}
+                    handleChangeSelectedResource={handleChangeSelectedResource}
+                    updateProgress={updateProgress}
+                    classes={classes}
+                    k8sConfig={k8sconfig}
+                    selectedK8sContexts={selectedK8sContexts}
+                    CRDsKeys={CRDsKeys}
+                  />
+                ) : (
+                  <ResourcesTable
+                    key={idx}
+                    workloadType={resource}
+                    classes={classes}
+                    k8sConfig={k8sconfig}
+                    selectedK8sContexts={selectedK8sContexts}
+                    resourceConfig={ResourcesConfig[resource].tableConfig}
+                    menu={ResourcesConfig[resource].submenu}
+                    updateProgress={updateProgress}
+                  />
+                )}
+              </TabPanel>
             );
-          }
-          return (
-            <TabPanel value={resourceCategory} index={resource} key={resource}>
-              {ResourcesConfig[resource].submenu ? (
-                <ResourcesSubMenu
-                  key={idx}
-                  resource={ResourcesConfig[resource]}
-                  selectedResource={selectedResource}
-                  handleChangeSelectedResource={handleChangeSelectedResource}
-                  updateProgress={updateProgress}
-                  classes={classes}
-                  k8sConfig={k8sconfig}
-                  selectedK8sContexts={selectedK8sContexts}
-                  CRDsKeys={CRDsKeys}
-                />
-              ) : (
-                <ResourcesTable
-                  key={idx}
-                  workloadType={resource}
-                  classes={classes}
-                  k8sConfig={k8sconfig}
-                  selectedK8sContexts={selectedK8sContexts}
-                  resourceConfig={ResourcesConfig[resource].tableConfig}
-                  menu={ResourcesConfig[resource].submenu}
-                  updateProgress={updateProgress}
-                />
-              )}
-            </TabPanel>
-          );
-        })}
-      </div>
+          })}
+        </WrapperContainer>
+      </UsesSistent>
     </>
   );
 };

@@ -1,37 +1,16 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core';
-import { Tooltip } from '@material-ui/core';
 import { withRouter } from 'next/router';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import ResourcesTable from './resources-table';
-import { Paper } from '@material-ui/core';
-import { Box } from '@material-ui/core';
 import { TabPanel } from '../tabpanel';
-import { Tab, Tabs } from '@layer5/sistent';
+import { Box, CustomTooltip, Tab, Tabs } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
-import { iconMedium } from 'css/icons.styles';
+import { WrapperContainer, WrapperPaper } from '../style';
 import GetKubernetesNodeIcon from '../utils';
+import { iconMedium } from 'css/icons.styles';
 
 const styles = (theme) => ({
-  wrapperClss: {
-    flexGrow: 1,
-    maxWidth: '100%',
-    height: 'auto',
-  },
-  tab: {
-    minWidth: 40,
-    paddingLeft: 0,
-    paddingRight: 0,
-    '&.Mui-selected': {
-      color: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
-    },
-  },
-  tabs: {
-    width: '100%',
-    '& .MuiTabs-indicator': {
-      backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
-    },
-  },
   icon: {
     display: 'inline',
     verticalAlign: 'text-top',
@@ -56,11 +35,6 @@ const styles = (theme) => ({
     display: 'flex',
     justifyContent: 'center',
     marginTop: theme.spacing(2),
-  },
-  paper: {
-    maxWidth: '90%',
-    margin: 'auto',
-    overflow: 'hidden',
   },
   topToolbar: {
     marginBottom: '2rem',
@@ -115,7 +89,7 @@ const ResourcesSubMenu = (props) => {
     handleChangeSelectedResource,
     CRDsKeys,
   } = props;
-  const isCRD = resource.tableConfig.name === 'CustomResourceConfig';
+  const isCRD = CRDsKeys.length > 0;
   if (!selectedResource) {
     let resourceNames = Object.keys(resource.tableConfig());
     if (isCRD) {
@@ -141,11 +115,13 @@ const ResourcesSubMenu = (props) => {
 
   return (
     <>
-      <div className={classes.wrapperClss}>
-        <Paper className={classes.wrapperClss}>
-          <div>
-            <Box sx={{ margin: '0 auto', width: '100%', maxWidth: { xs: 800, sm: 880, md: 1200 } }}>
-              <UsesSistent>
+      <UsesSistent>
+        <WrapperContainer>
+          <WrapperPaper>
+            <div>
+              <Box
+                sx={{ margin: '0 auto', width: '100%', maxWidth: { xs: 800, sm: 880, md: 1200 } }}
+              >
                 <Tabs
                   value={getResourceCategoryIndex(selectedResource)}
                   onChange={(_e, v) => handleChangeSelectedResource(getResourceCategory(v))}
@@ -158,7 +134,7 @@ const ResourcesSubMenu = (props) => {
                   {TABS.map((key, index) => {
                     const title = isCRD ? key : resource.tableConfig()[key].name;
                     return (
-                      <Tooltip key={index} title={title} placement="top">
+                      <CustomTooltip key={index} title={title} placement="top">
                         <Tab
                           key={index}
                           value={index}
@@ -169,29 +145,29 @@ const ResourcesSubMenu = (props) => {
                             </div>
                           }
                         />
-                      </Tooltip>
+                      </CustomTooltip>
                     );
                   })}
                 </Tabs>
-              </UsesSistent>
-            </Box>
-          </div>
-        </Paper>
-        {TABS.map((key, index) => (
-          <TabPanel value={selectedResource} index={key} key={index}>
-            <ResourcesTable
-              key={index}
-              workloadType={key}
-              updateProgress={updateProgress}
-              classes={classes}
-              k8sConfig={k8sConfig}
-              resourceConfig={resource.tableConfig}
-              submenu={resource.submenu}
-              selectedK8sContexts={selectedK8sContexts}
-            />
-          </TabPanel>
-        ))}
-      </div>
+              </Box>
+            </div>
+          </WrapperPaper>
+          {TABS.map((key, index) => (
+            <TabPanel value={selectedResource} index={key} key={index}>
+              <ResourcesTable
+                key={index}
+                workloadType={key}
+                updateProgress={updateProgress}
+                classes={classes}
+                k8sConfig={k8sConfig}
+                resourceConfig={resource.tableConfig}
+                submenu={resource.submenu}
+                selectedK8sContexts={selectedK8sContexts}
+              />
+            </TabPanel>
+          ))}
+        </WrapperContainer>
+      </UsesSistent>
     </>
   );
 };
