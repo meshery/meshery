@@ -44,7 +44,7 @@ is_alias_relationship(relationship) if {
 }
 
 component_alias(component_id) := alias if {
-	alias := input.aliases[component_id] 
+	alias := input.metadata.resolvedAliases[component_id] 
 }
 
 
