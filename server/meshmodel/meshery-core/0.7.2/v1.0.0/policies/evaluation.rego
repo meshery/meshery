@@ -25,8 +25,6 @@ relationships_to_evaluate_against := data.relationships
 
 # Main evaluation function that processes relationships and updates the design.
 evaluate := eval_results if {
-
-    print("Input",input.aliases)
 	# Iterate over relationships in the design file and resolve patches.
 	resultant_patches := {patched_object |
 		some rel in rels_in_design_file
