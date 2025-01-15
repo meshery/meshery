@@ -90,17 +90,20 @@ const ResourcesSubMenu = (props) => {
     CRDsKeys,
   } = props;
   const isCRD = CRDsKeys.length > 0;
+  const CRDsModelName = isCRD && CRDsKeys.map((key) => key.model);
+  const CRDsKind = isCRD && CRDsKeys.map((key) => key.name);
+
   if (!selectedResource) {
     let resourceNames = Object.keys(resource.tableConfig());
     if (isCRD) {
-      resourceNames = CRDsKeys;
+      resourceNames = CRDsKind;
     }
     handleChangeSelectedResource(resourceNames[0]);
   }
 
   let TABS;
   if (isCRD) {
-    TABS = CRDsKeys;
+    TABS = CRDsKind;
   } else {
     TABS = Object.keys(resource.tableConfig());
   }
@@ -112,7 +115,6 @@ const ResourcesSubMenu = (props) => {
   const getResourceCategory = (index) => {
     return TABS[index];
   };
-
   return (
     <>
       <UsesSistent>
@@ -140,7 +142,11 @@ const ResourcesSubMenu = (props) => {
                           value={index}
                           label={
                             <div className={classes.iconText}>
-                              <GetKubernetesNodeIcon kind={key} size={iconMedium} />
+                              <GetKubernetesNodeIcon
+                                kind={key}
+                                model={CRDsModelName[index]}
+                                size={iconMedium}
+                              />
                               {title}
                             </div>
                           }
