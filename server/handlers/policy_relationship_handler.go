@@ -75,7 +75,6 @@ func ParseComponentToAlias(component component.ComponentDefinition, relationship
 
 	for _, relationship := range relationships {
 		alias, ok := parseRelationshipToAlias(*relationship)
-		fmt.Println("parseComponenttoalias ==> ", alias.AliasComponentId, component.Id)
 		if !ok {
 			continue
 		}
@@ -145,11 +144,6 @@ func ResolveAliasesInDesign(design pattern.PatternFile) map[string]pattern.Resol
 func (h *Handler) EvaluateDesign(
 	relationshipPolicyEvalPayload pattern.EvaluationRequest,
 ) (pattern.EvaluationResponse, error) {
-
-	// aliases := ResolveAliasesInDesign(relationshipPolicyEvalPayload.Design)
-	// r, _ := encoding.Marshal(aliases)
-
-	// fmt.Println("Aliases", string(r))
 
 	// evaluate specified relationship policies
 	// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
