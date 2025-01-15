@@ -42,17 +42,17 @@ const filterKindsByGroup = (kinds, groupBy) => {
 
   if (groupBy === 'crds') {
     const crdKinds = getAllCustomResourceDefinitionsKinds(kinds);
-    return kinds.filter((item) => crdKinds.includes(item.Kind));
+    return kinds.filter((item) => crdKinds.includes(item.kind));
   }
 
   const categoryKinds =
     ResourceMenuConfig[groupBy.charAt(0).toUpperCase() + groupBy.slice(1)] || [];
-  return kinds.filter((item) => categoryKinds.includes(item.Kind));
+  return kinds.filter((item) => categoryKinds.includes(item.kind));
 };
 
 const sortKindsByCount = (kinds, direction) => {
   return [...kinds].sort((a, b) => {
-    return direction === SORT_DIRECTIONS.ASC ? a.Count - b.Count : b.Count - a.Count;
+    return direction === SORT_DIRECTIONS.ASC ? a.count - b.count : b.count - a.count;
   });
 };
 

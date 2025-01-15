@@ -2,7 +2,14 @@ import React, { useState } from 'react';
 import { ArrowBack } from '@material-ui/icons';
 import { TooltipIconButton } from '../../utils/TooltipButton';
 import { Paper, Typography } from '@material-ui/core';
-import { Box, ErrorBoundary, OperatorDataFormatter, useResourceCleanData } from '@layer5/sistent';
+import {
+  Box,
+  CustomTooltip,
+  ErrorBoundary,
+  Link,
+  OperatorDataFormatter,
+  useResourceCleanData,
+} from '@layer5/sistent';
 import { ALL_VIEW } from './resources/config';
 import { FALLBACK_MESHERY_IMAGE_PATH } from '@/constants/common';
 import { iconXLarge } from 'css/icons.styles';
@@ -56,7 +63,8 @@ const View = (props) => {
   const cleanData = getResourceCleanData({ resource: resource, router: router });
   if (!resource) return null;
   const context = getK8sContextFromClusterId(resource.cluster_id, k8sConfig);
-
+  const modelLink = resource?.component_metadata?.model?.id;
+  const displayName = resource?.component_metadata?.model?.displayName;
   return (
     <Container>
       <Paper>
@@ -74,14 +82,20 @@ const View = (props) => {
               >
                 <ArrowBack />
               </TooltipIconButton>
-              <img
-                src={`/${resource.component_metadata?.styles?.svgColor}`}
-                alt={resource?.kind}
-                onError={(e) => {
-                  e.currentTarget.src = FALLBACK_MESHERY_IMAGE_PATH;
-                }}
-                {...iconXLarge}
-              />
+              <Link
+                href={`/settings?settingsCategory=Registry&tab=Models&selectedItemUUID=${modelLink}&searchText=${displayName}`}
+              >
+                <CustomTooltip title="View Model">
+                  <img
+                    src={`/${resource.component_metadata?.styles?.svgColor}`}
+                    alt={resource?.kind}
+                    onError={(e) => {
+                      e.currentTarget.src = FALLBACK_MESHERY_IMAGE_PATH;
+                    }}
+                    {...iconXLarge}
+                  />
+                </CustomTooltip>
+              </Link>
               <Typography variant="h6">{resource?.metadata?.name}</Typography>
             </HeaderLeft>
             <TootltipWrappedConnectionChip
@@ -105,7 +119,7 @@ const View = (props) => {
 
 export default View;
 
-export const Title = ({ onClick, value, kind }) => {
+export const Title = ({ onClick, value, kind, model }) => {
   const [isHovered, setHovered] = useState(false);
   return (
     <TitleContainer
@@ -115,7 +129,7 @@ export const Title = ({ onClick, value, kind }) => {
     >
       <TitleContent onClick={onClick}>
         <div>
-          <GetKubernetesNodeIcon kind={kind} isCRD={kind === 'CRDS'} />
+          <GetKubernetesNodeIcon kind={kind} model={model} />
         </div>
         <Typography style={{ marginLeft: '0.50rem' }} variant="body2">
           {value}

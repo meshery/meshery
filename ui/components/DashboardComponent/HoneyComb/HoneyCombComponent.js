@@ -101,18 +101,17 @@ const HoneycombComponent = (props) => {
                 size={47}
                 items={filteredKinds}
                 renderItem={(item) => {
-                  const isCRD = crdsKinds.includes(item?.Kind);
                   return (
                     <Hexagon
                       onClick={() => {
-                        router.push(generateDynamicURL(item?.Kind));
+                        router.push(generateDynamicURL(item?.kind));
                       }}
                     >
                       <SelectedHexagon>
-                        <CustomTooltip title={item?.Kind || ''} placement="top">
+                        <CustomTooltip title={item?.kind || ''} placement="top">
                           <IconWrapper>
-                            <GetKubernetesNodeIcon kind={item?.Kind} isCRD={isCRD} />
-                            <ResourceCount variant="subtitle1">{item.Count}</ResourceCount>
+                            <GetKubernetesNodeIcon kind={item?.kind} model={item?.model} />
+                            <ResourceCount variant="subtitle1">{item.count}</ResourceCount>
                           </IconWrapper>
                         </CustomTooltip>
                       </SelectedHexagon>

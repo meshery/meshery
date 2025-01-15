@@ -140,7 +140,7 @@ const ResourcesSubMenu = (props) => {
                           value={index}
                           label={
                             <div className={classes.iconText}>
-                              <GetKubernetesNodeIcon kind={key} isCRD={isCRD} size={iconMedium} />
+                              <GetKubernetesNodeIcon kind={key} size={iconMedium} />
                               {title}
                             </div>
                           }
