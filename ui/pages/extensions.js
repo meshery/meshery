@@ -2,9 +2,8 @@ import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { Button, Grid, Switch, Typography } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
-import { CatalogIcon } from '@layer5/sistent';
+import { Button, CatalogIcon, Grid, Switch, Typography, useTheme } from '@layer5/sistent';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import { UsesSistent } from '@/components/SistentWrapper';
 import { Adapters } from '../components/extensions';
@@ -16,7 +15,7 @@ import { useNotification } from '../utils/hooks/useNotification';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { LARGE_6_MED_12_GRID_STYLE } from '../css/grid.style';
-import { extensionStyles as styles } from '../css/icons.styles';
+import { CardContainer, FrontSideDescription, ImageWrapper } from '../css/icons.styles';
 
 const INITIAL_GRID_SIZE = { lg: 6, md: 12, xs: 12 };
 
@@ -27,61 +26,57 @@ const MeshMapSignUpcard = ({ classes, hasAccessToMeshMap = false }) => {
   };
 
   return (
-    <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
-      <div className={classes.card}>
-        <Typography
-          className={classes.frontContent}
-          data-test="kanvas-heading"
-          variant="h5"
-          component="div"
-        >
-          Kanvas
-        </Typography>
+    <UsesSistent>
+      <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
+        <CardContainer>
+          <Typography
+            className={classes.frontContent}
+            data-test="kanvas-heading"
+            variant="h5"
+            component="div"
+          >
+            Kanvas
+          </Typography>
 
-        <Typography className={classes.frontSideDescription} variant="body">
-          <img className={classes.img} src="/static/img/kanvas-icon-color.svg" />
-          Collaboratively design and manage your Kubernetes clusters, service mesh deployments, and
-          cloud native apps. Kanvas is now publicly available.{' '}
-          {!hasAccessToMeshMap && 'Sign-up today to for access!'}
-        </Typography>
-        {
-          <div style={{ textAlign: 'right' }}>
-            <Button
-              variant="contained"
-              color="primary"
-              data-test="kanvas-signup-btn"
-              disabled={hasAccessToMeshMap}
-              className={classes.button}
-              onClick={(e) => handleSignUp(e)}
-            >
-              {hasAccessToMeshMap ? 'Enabled' : 'Sign Up'}
-            </Button>
-          </div>
-        }
-      </div>
-    </Grid>
+          <FrontSideDescription variant="body">
+            <ImageWrapper src="/static/img/kanvas-icon-color.svg" />
+            Collaboratively design and manage your Kubernetes clusters, service mesh deployments,
+            and cloud native apps. Kanvas is now publicly available.{' '}
+            {!hasAccessToMeshMap && 'Sign-up today to for access!'}
+          </FrontSideDescription>
+          {
+            <div style={{ textAlign: 'right' }}>
+              <Button
+                variant="contained"
+                data-test="kanvas-signup-btn"
+                disabled={hasAccessToMeshMap}
+                onClick={(e) => handleSignUp(e)}
+              >
+                {hasAccessToMeshMap ? 'Enabled' : 'Sign Up'}
+              </Button>
+            </div>
+          }
+        </CardContainer>
+      </Grid>
+    </UsesSistent>
   );
 };
 
-const LogoStyles = () => ({
-  img: {
-    paddingRight: '1rem',
-    height: 'auto',
-    width: 'auto',
-    maxWidth: '220px',
-    maxHeight: '150px',
-  },
-});
-
-const MeshMapSnapShotLogo = withStyles(LogoStyles)(({ classes }) => {
+const MeshMapSnapShotLogo = () => {
   return (
     <img
-      className={classes.img}
+      style={{
+        paddingRight: '1rem',
+        height: 'auto',
+        width: 'auto',
+        maxWidth: '220px',
+        maxHeight: '150px',
+      }}
       data-test="kanvas-snapshot-image"
       src="/static/img/meshmap-snapshot-logo.svg"
     />
   );
-});
+};
 
 const MeshMapSnapShotCard = ({ classes, githubActionEnabled = false }) => {
   const handleEnable = (e) => {
@@ -90,58 +85,55 @@ const MeshMapSnapShotCard = ({ classes, githubActionEnabled = false }) => {
   };
 
   return (
-    <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
-      <div className={classes.card}>
-        <Typography
-          data-test="kanvas-snapshot-heading"
-          className={classes.frontContent}
-          variant="h5"
-          component="div"
-        >
-          GitHub Action: Kanvas Snapshot
-        </Typography>
+    <UsesSistent>
+      <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
+        <CardContainer>
+          <Typography
+            className={classes.frontContent}
+            data-test="kanvas-snapshot-heading"
+            variant="h5"
+            component="div"
+          >
+            GitHub Action: Kanvas Snapshot
+          </Typography>
 
-        <Typography
-          data-test="kanvas-snapshot-description"
-          className={classes.frontSideDescription}
-          variant="body"
-        >
-          <MeshMapSnapShotLogo />
-          Connect Kanvas to your GitHub repo and see changes pull request-to-pull request. Get
-          snapshots of your infrastructure directly in your PRs.
-        </Typography>
-        {
+          <FrontSideDescription data-test="kanvas-snapshot-description" variant="body">
+            <MeshMapSnapShotLogo />
+            Connect Kanvas to your GitHub repo and see changes pull request-to-pull request. Get
+            snapshots of your infrastructure directly in your PRs.
+          </FrontSideDescription>
+
           <div style={{ textAlign: 'right' }}>
             <Button
               variant="contained"
               color="primary"
               data-test="kanvas-snapshot-enable-btn"
               disabled={githubActionEnabled}
-              className={classes.button}
               onClick={(e) => handleEnable(e)}
             >
               {githubActionEnabled ? 'Remove' : 'Enable'}
             </Button>
           </div>
-        }
-      </div>
-    </Grid>
+        </CardContainer>
+      </Grid>
+    </UsesSistent>
   );
 };
 
-const MesheryPerformacneLogoStyles = () => ({
-  img: {
-    paddingRight: '1rem',
-    height: 'auto',
-    width: 'auto',
-    maxWidth: '120px',
-    maxHeight: '75px',
-  },
-});
-
-const MesheryPerformanceActionLogo = withStyles(MesheryPerformacneLogoStyles)(({ classes }) => {
-  return <img className={classes.img} src="/static/img/smp-dark.svg" />;
-});
+const MesheryPerformanceActionLogo = () => {
+  return (
+    <img
+      style={{
+        paddingRight: '1rem',
+        height: 'auto',
+        width: 'auto',
+        maxWidth: '120px',
+        maxHeight: '75px',
+      }}
+      src="/static/img/smp-dark.svg"
+    />
+  );
+};
 
 const MesheryPerformanceAction = ({ classes, githubActionEnabled = false }) => {
   const handleEnable = (e) => {
@@ -153,44 +145,54 @@ const MesheryPerformanceAction = ({ classes, githubActionEnabled = false }) => {
   };
 
   return (
-    <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
-      <div className={classes.card}>
-        <Typography
-          className={classes.frontContent}
-          data-test="performance-analysis-heading"
-          variant="h5"
-          component="div"
-        >
-          GitHub Action: Performance Analysis
-        </Typography>
+    <UsesSistent>
+      <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
+        <CardContainer>
+          <Typography
+            className={classes.frontContent}
+            data-test="performance-analysis-heading"
+            variant="h5"
+            component="div"
+          >
+            GitHub Action: Performance Analysis
+          </Typography>
 
-        <Typography className={classes.frontSideDescription} variant="body">
-          <MesheryPerformanceActionLogo />
-          Characterize the performance of your services using Meshery&apos;s performance analysis
-          GitHub Action to benchmark and visually compare percentiles (e.g. P99) over time.
-        </Typography>
-        {
+          <FrontSideDescription variant="body">
+            <MesheryPerformanceActionLogo />
+            Characterize the performance of your services using Meshery&apos;s performance analysis
+            GitHub Action to benchmark and visually compare percentiles (e.g. P99) over time.
+          </FrontSideDescription>
+
           <div style={{ textAlign: 'right' }}>
             <Button
               variant="contained"
-              color="primary"
               data-test="performance-analysis-enable-btn"
               disabled={githubActionEnabled}
-              className={classes.button}
               onClick={(e) => handleEnable(e)}
             >
               {githubActionEnabled ? 'Remove' : 'Enable'}
             </Button>
           </div>
-        }
-      </div>
-    </Grid>
+        </CardContainer>
+      </Grid>
+    </UsesSistent>
   );
 };
 
-const MesheryDockerExtensionLogo = withStyles(MesheryPerformacneLogoStyles)(({ classes }) => {
-  return <img className={classes.img} src="/static/img/docker.svg" />;
-});
+const MesheryDockerExtensionLogo = () => {
+  return (
+    <img
+      style={{
+        paddingRight: '1rem',
+        height: 'auto',
+        width: 'auto',
+        maxWidth: '120px',
+        maxHeight: '75px',
+      }}
+      src="/static/img/docker.svg"
+    />
+  );
+};
 
 const MesheryDockerExtension = ({ classes }) => {
   const handleDownload = (e) => {
@@ -199,44 +201,56 @@ const MesheryDockerExtension = ({ classes }) => {
   };
 
   return (
-    <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
-      <div className={classes.card}>
-        <Typography
-          className={classes.frontContent}
-          data-test="docker-extension-heading"
-          variant="h5"
-          component="div"
-        >
-          Meshery Docker Extension
-        </Typography>
+    <UsesSistent>
+      <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
+        <CardContainer>
+          <Typography
+            className={classes.frontContent}
+            data-test="docker-extension-heading"
+            variant="h5"
+            component="div"
+          >
+            Meshery Docker Extension
+          </Typography>
 
-        <Typography className={classes.frontSideDescription} variant="body">
-          <MesheryDockerExtensionLogo />
-          Connect Meshery to your Kubernetes cluster via Docker Desktop and let MeshSync discover
-          your clusters. Use Kanvas&apos;s no-code designer to collaboratively design and manage
-          your infrastructure with ready-made patterns from Meshery Catalog.
-        </Typography>
-        {
-          <div style={{ textAlign: 'right' }}>
-            <Button
-              variant="contained"
-              color="primary"
-              data-test="docker-extension-download-btn"
-              className={classes.button}
-              onClick={(e) => handleDownload(e)}
-            >
-              Download
-            </Button>
-          </div>
-        }
-      </div>
-    </Grid>
+          <FrontSideDescription variant="body">
+            <MesheryDockerExtensionLogo />
+            Connect Meshery to your Kubernetes cluster via Docker Desktop and let MeshSync discover
+            your clusters. Use Kanvas&apos;s no-code designer to collaboratively design and manage
+            your infrastructure with ready-made patterns from Meshery Catalog.
+          </FrontSideDescription>
+          {
+            <div style={{ textAlign: 'right' }}>
+              <Button
+                variant="contained"
+                color="primary"
+                data-test="docker-extension-download-btn"
+                onClick={(e) => handleDownload(e)}
+              >
+                Download
+              </Button>
+            </div>
+          }
+        </CardContainer>
+      </Grid>
+    </UsesSistent>
   );
 };
 
-const MesheryDesignEmbedLogo = withStyles(MesheryPerformacneLogoStyles)(({ classes }) => {
-  return <img className={classes.img} src="/static/img/meshmap.svg" />;
-});
+const MesheryDesignEmbedLogo = () => {
+  return (
+    <img
+      style={{
+        paddingRight: '1rem',
+        height: 'auto',
+        width: 'auto',
+        maxWidth: '120px',
+        maxHeight: '75px',
+      }}
+      src="/static/img/meshmap.svg"
+    />
+  );
+};
 
 const MesheryDesignEmbedExtension = ({ classes }) => {
   const handleLearnMore = (e) => {
@@ -245,41 +259,42 @@ const MesheryDesignEmbedExtension = ({ classes }) => {
   };
 
   return (
-    <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
-      <div className={classes.card}>
-        <Typography className={classes.frontContent} variant="h5" component="div">
-          Meshery Design Embed
-        </Typography>
+    <UsesSistent>
+      <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
+        <CardContainer>
+          <Typography className={classes.frontContent} variant="h5" component="div">
+            Meshery Design Embed
+          </Typography>
 
-        <Typography className={classes.frontSideDescription} variant="body">
-          <MesheryDesignEmbedLogo />
-          Meshery Design Embedding lets you export designs in an interactive format that seamlessly
-          integrates with websites, blogs, and platforms using HTML, CSS, and JavaScript, making it
-          easy to share with stakeholders.
-        </Typography>
-        {
-          <div style={{ textAlign: 'right' }}>
-            <Button
-              variant="contained"
-              color="primary"
-              data-test="design-embed-learn-more-btn"
-              className={classes.button}
-              onClick={(e) => handleLearnMore(e)}
-            >
-              Learn More
-            </Button>
-          </div>
-        }
-      </div>
-    </Grid>
+          <FrontSideDescription variant="body">
+            <MesheryDesignEmbedLogo />
+            Meshery Design Embedding lets you export designs in an interactive format that
+            seamlessly integrates with websites, blogs, and platforms using HTML, CSS, and
+            JavaScript, making it easy to share with stakeholders.
+          </FrontSideDescription>
+          {
+            <div style={{ textAlign: 'right' }}>
+              <Button
+                variant="contained"
+                color="primary"
+                data-test="design-embed-learn-more-btn"
+                onClick={(e) => handleLearnMore(e)}
+              >
+                Learn More
+              </Button>
+            </div>
+          }
+        </CardContainer>
+      </Grid>
+    </UsesSistent>
   );
 };
 
-export const WrappedMeshMapSignupCard = withStyles(styles)(MeshMapSignUpcard);
-export const WrappedMeshMapSnapShopCard = withStyles(styles)(MeshMapSnapShotCard);
-export const WrappedMesheryPerformanceAction = withStyles(styles)(MesheryPerformanceAction);
-export const WrappedMesheryDockerExtension = withStyles(styles)(MesheryDockerExtension);
-export const WrappedMesheryEmbedDesignExtension = withStyles(styles)(MesheryDesignEmbedExtension);
+export const WrappedMeshMapSignupCard = withStyles()(MeshMapSignUpcard);
+export const WrappedMeshMapSnapShopCard = withStyles()(MeshMapSnapShotCard);
+export const WrappedMesheryPerformanceAction = withStyles()(MesheryPerformanceAction);
+export const WrappedMesheryDockerExtension = withStyles()(MesheryDockerExtension);
+export const WrappedMesheryEmbedDesignExtension = withStyles()(MesheryDesignEmbedExtension);
 const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => {
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({});
@@ -336,96 +351,103 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
       setHasAccessToMeshMap(true);
   }, []);
 
+  const theme = useTheme();
+
   return (
-    <React.Fragment>
-      <Head>
-        <title>Extensions | Meshery</title>
-      </Head>
-      {CAN(keys.VIEW_EXTENSIONS.action, keys.VIEW_EXTENSIONS.subject) ? (
-        <Grid container spacing={1}>
-          <WrappedMeshMapSnapShopCard githubActionEnabled={false} />
-          <WrappedMesheryPerformanceAction githubActionEnabled={false} />
-          <WrappedMeshMapSignupCard hasAccessToMeshMap={hasAccessToMeshMap} />
-          <WrappedMesheryDockerExtension />
-          <WrappedMesheryEmbedDesignExtension />
-          <Grid item {...INITIAL_GRID_SIZE}>
-            <div className={classes.card}>
-              <Typography
-                className={classes.frontContent}
-                data-test="catalog-section-heading"
-                variant="h5"
-                component="div"
-              >
-                {'Meshery Catalog'}
-              </Typography>
-
-              <Typography className={classes.frontSideDescription} variant="body">
-                <UsesSistent>
-                  <CatalogIcon className={classes.img} />
-                </UsesSistent>
-                <div
-                  style={{
-                    display: 'inline',
-                    position: 'relative',
-                  }}
+    <UsesSistent>
+      <React.Fragment>
+        <Head>
+          <title>Extensions | Meshery</title>
+        </Head>
+        {CAN(keys.VIEW_EXTENSIONS.action, keys.VIEW_EXTENSIONS.subject) ? (
+          <Grid container spacing={1}>
+            <WrappedMeshMapSnapShopCard githubActionEnabled={false} />
+            <WrappedMesheryPerformanceAction githubActionEnabled={false} />
+            <WrappedMeshMapSignupCard hasAccessToMeshMap={hasAccessToMeshMap} />
+            <WrappedMesheryDockerExtension />
+            <WrappedMesheryEmbedDesignExtension />
+            <Grid item {...INITIAL_GRID_SIZE}>
+              <CardContainer>
+                <Typography
+                  className={classes.frontContent}
+                  data-test="catalog-section-heading"
+                  variant="h5"
+                  component="div"
                 >
-                  Enable access to the cloud native catalog, supporting design patterns, WebAssembly
-                  filters (<span style={{ fontStyle: 'italic' }}>soon</span>), and OPA policies (
-                  <span style={{ fontStyle: 'italic' }}>soon</span>). Import any catalog item and
-                  customize.
-                </div>
-              </Typography>
-
-              <Grid
-                container
-                spacing={2}
-                className={classes.grid}
-                direction="row"
-                justifyContent="space-between"
-                alignItems="baseline"
-                style={{
-                  position: 'absolute',
-                  paddingRight: '3rem',
-                  paddingLeft: '.5rem',
-                  bottom: '1.5rem',
-                }}
-              >
-                <Typography variant="subtitle2" style={{ fontStyle: 'italic' }}>
-                  Explore the{' '}
-                  <a
-                    href="https://meshery.io/catalog"
-                    target="_blank"
-                    data-test="catalog-link"
-                    rel="noreferrer"
-                    className={classes.link}
-                  >
-                    Meshery Catalog
-                  </a>
+                  {'Meshery Catalog'}
                 </Typography>
 
-                <div style={{ textAlign: 'right' }}>
-                  <Switch
-                    checked={catalogContent}
-                    onChange={handleToggle}
+                <FrontSideDescription variant="body">
+                  <CatalogIcon
                     data-test="catalog-toggle-switch"
-                    name="OperatorSwitch"
-                    color="primary"
-                    classes={{
-                      switchBase: classes.switchBase,
-                      track: classes.track,
-                      checked: classes.checked,
+                    style={{
+                      paddingRight: '1rem',
+                      height: '80px',
+                      width: '80px',
+                      flexShrink: 0,
                     }}
                   />
-                </div>
-              </Grid>
-            </div>
+
+                  <div
+                    style={{
+                      display: 'inline',
+                      position: 'relative',
+                    }}
+                  >
+                    Enable access to the cloud native catalog, supporting design patterns,
+                    WebAssembly filters (<span style={{ fontStyle: 'italic' }}>soon</span>), and OPA
+                    policies (<span style={{ fontStyle: 'italic' }}>soon</span>). Import any catalog
+                    item and customize.
+                  </div>
+                </FrontSideDescription>
+
+                <Grid
+                  container
+                  spacing={2}
+                  className={classes.grid}
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="baseline"
+                  style={{
+                    position: 'absolute',
+                    paddingRight: '3rem',
+                    paddingLeft: '.5rem',
+                    bottom: '1.5rem',
+                  }}
+                >
+                  <Typography variant="subtitle2" style={{ fontStyle: 'italic' }}>
+                    Explore the{' '}
+                    <a
+                      href="https://meshery.io/catalog"
+                      target="_blank"
+                      rel="noreferrer"
+                      style={{
+                        textDecoration: 'none',
+                        color: theme.palette.text.brand,
+                      }}
+                    >
+                      Meshery Catalog
+                    </a>
+                  </Typography>
+
+                  <div style={{ textAlign: 'right' }}>
+                    <Switch
+                      checked={catalogContent}
+                      onChange={handleToggle}
+                      name="OperatorSwitch"
+                      color="primary"
+                    />
+                  </div>
+                </Grid>
+              </CardContainer>
+            </Grid>
+            <Adapters />
           </Grid>
-          <Adapters />
-        </Grid>
-      ) : (
-        <DefaultError />
-      )}
-    </React.Fragment>
+        ) : (
+          <DefaultError />
+        )}
+      </React.Fragment>
+    </UsesSistent>
   );
 };
 
@@ -438,4 +460,4 @@ const mapDispatchToProps = (dispatch) => ({
   toggleCatalogContent: bindActionCreators(toggleCatalogContent, dispatch),
 });
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(Extensions));
+export default withStyles()(connect(mapStateToProps, mapDispatchToProps)(Extensions));
