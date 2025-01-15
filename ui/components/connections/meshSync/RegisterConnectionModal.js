@@ -58,18 +58,8 @@ const RegisterConnectionModal = ({
           closeModal={handleClose}
           aria-labelledby="form-dialog-title"
           maxWidth="md"
-          // style={{ zIndex: 9999 }}
-          // PaperProps={{
-          //   style: { borderRadius: 30 },
-          // }}
         >
-          <ModalBody
-          // style={{
-          //   padding: '0 1.5rem 1.5rem',
-          //   borderRadius: '28px',
-          //   border: `6px solid ${theme.palette.secondary.success}`,
-          // }}
-          >
+          <ModalBody>
             <CustomizedSteppers
               formConnectionIdRef
               onClose={handleClose}

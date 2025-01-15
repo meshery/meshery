@@ -30,18 +30,8 @@ const KUBERNETES = 'kubernetes';
 const MESHERY = 'meshery';
 
 const useKubernetesStyles = makeStyles((theme) => ({
-  // operationButton: {
-  //   [theme?.breakpoints?.down(1180)]: {
-  //     marginRight: '25px',
-  //   },
-  // },
   icon: { width: theme.spacing(2.5) },
   operatorIcon: { width: theme.spacing(2.5), filter: theme.palette.secondary.brightness },
-  // column: {
-  //   margin: theme.spacing(2),
-  //   padding: theme.spacing(2),
-  //   background: `${theme.palette.secondary.default}10`,
-  // },
   heading: { textAlign: 'center' },
   configBoxContainer: {
     [theme?.breakpoints?.down(1050)]: {
@@ -54,12 +44,6 @@ const useKubernetesStyles = makeStyles((theme) => ({
     },
   },
   clusterConfiguratorWrapper: { padding: theme.spacing(5), display: 'flex' },
-  // contentContainer: {
-  //   [theme?.breakpoints?.down(1050)]: {
-  //     flexDirection: 'column',
-  //   },
-  //   flexWrap: 'noWrap',
-  // },
   fileInputStyle: { display: 'none' },
   topToolbar: {
     margin: '1rem 0',
