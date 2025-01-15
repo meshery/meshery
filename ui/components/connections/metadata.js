@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, List, ListItem, ListItemText, Box } from '@layer5/sistent';
+import { Grid, List, ListItem, ListItemText, Box, styled } from '@layer5/sistent';
 import { makeStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -99,6 +99,12 @@ const DefaultPropertyFormatters = {
   last_updated: (value) => customDateFormatter('Last Updated', value),
 };
 
+const StyledListItemText = styled(ListItemText)(({ theme }) => ({
+  '& .MuiTypography-root.MuiTypography-body2': {
+    color: theme.palette.text.tertiary, // Use the secondary color from the theme
+  },
+}));
+
 const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, metadata }) => {
   const classes = useKubernetesStyles();
 
@@ -151,23 +157,23 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
               <Grid item xs={12} md={5}>
                 <List>
                   <ListItem>
-                    <ListItemText primary="Name" secondary={metadata.name} />
+                    <StyledListItemText primary="Name" secondary={metadata.name} />
                   </ListItem>
                   <ListItem>
-                    <ListItemText primary="K8s Version" secondary={metadata.version} />
+                    <StyledListItemText primary="K8s Version" secondary={metadata.version} />
                   </ListItem>
                 </List>
               </Grid>
               <Grid item xs={12} md={5}>
                 <List>
                   <ListItem>
-                    <ListItemText
+                    <StyledListItemText
                       primary="Created At"
                       secondary={<FormattedDate date={connection.created_at} />}
                     />
                   </ListItem>
                   <ListItem>
-                    <ListItemText
+                    <StyledListItemText
                       primary="Updated At"
                       secondary={<FormattedDate date={connection.updated_at} />}
                     />
@@ -177,7 +183,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
               <Grid item xs={12} md={5}>
                 <List>
                   <ListItem>
-                    <ListItemText
+                    <StyledListItemText
                       className={classes.text}
                       primary="Server"
                       secondary={<Link title={metadata.server}>{metadata.server}</Link>}
@@ -245,39 +251,39 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
               <Grid item xs={12} md={5}>
                 <List>
                   <ListItem>
-                    <ListItemText
+                    <StyledListItemText
                       primary="Operator State"
                       secondary={formatToTitleCase(operatorState)}
                     />
                   </ListItem>
                   <ListItem>
-                    <ListItemText primary="Operator Version" secondary={operatorVersion} />
+                    <StyledListItemText primary="Operator Version" secondary={operatorVersion} />
                   </ListItem>
                 </List>
               </Grid>
               <Grid item xs={12} md={5}>
                 <List>
                   <ListItem>
-                    <ListItemText
+                    <StyledListItemText
                       primary="MeshSync State"
                       secondary={formatToTitleCase(meshSyncState) || 'Undeployed'}
                     />
                   </ListItem>
                   <ListItem>
-                    <ListItemText primary="MeshSync Version" secondary={meshSyncVersion} />
+                    <StyledListItemText primary="MeshSync Version" secondary={meshSyncVersion} />
                   </ListItem>
                 </List>
               </Grid>
               <Grid item xs={12} md={5}>
                 <List>
                   <ListItem>
-                    <ListItemText
+                    <StyledListItemText
                       primary="NATS State"
                       secondary={formatToTitleCase(natsState) || 'Not Connected'}
                     />
                   </ListItem>
                   <ListItem>
-                    <ListItemText primary="NATS Version" secondary={natsVersion} />
+                    <StyledListItemText primary="NATS Version" secondary={natsVersion} />
                   </ListItem>
                 </List>
               </Grid>

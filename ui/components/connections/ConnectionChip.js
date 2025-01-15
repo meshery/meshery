@@ -206,12 +206,7 @@ const NotFoundStateChip = ({ value }) => {
 const Default = ({ value }) => {
   return (
     <MenuItem value={value}>
-      <DiscoveredChip
-        value={value}
-        component={StatusChip}
-        avatar={<ExploreIcon />}
-        label={value}
-      />
+      <DiscoveredChip value={value} component={StatusChip} avatar={<ExploreIcon />} label={value} />
     </MenuItem>
   );
 };
