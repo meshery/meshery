@@ -41,7 +41,7 @@ const filterKindsByGroup = (kinds, groupBy) => {
   if (groupBy === 'all') return [...kinds];
 
   if (groupBy === 'crds') {
-    const crdKinds = getAllCustomResourceDefinitionsKinds(kinds);
+    const crdKinds = getAllCustomResourceDefinitionsKinds(kinds).map((crd) => crd.kind);
     return kinds.filter((item) => crdKinds.includes(item.kind));
   }
 
