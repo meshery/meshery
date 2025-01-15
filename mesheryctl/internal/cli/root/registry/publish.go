@@ -80,10 +80,15 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 // Publishing to any website
 mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw path/to/models path/to/icons -o mdx
 	`,
-	RunE: func(cmd *cobra.Command, args []string) error {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+
 		if len(args) != 5 {
-			return cmd.Help()
+			return errors.New(utils.RegistryError("Missing Arguments - [ system, google sheet credential, sheet-id, models output path, imgs output path] are required\nUsage: \nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path]\nmesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]", "publish"))
 		}
+
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
 
 		system = args[0]
 		googleSheetCredential = args[1]
