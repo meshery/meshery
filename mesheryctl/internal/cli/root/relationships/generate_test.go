@@ -34,7 +34,7 @@ func TestExperimentalGenerate_CreateJsonFile(t *testing.T) {
 	}
 
 	// for testing, relative path is required in createJsonFile function
-	jsonFilePath := "../../../../../docs/_data/RelationshipsDataTest.json"
+	jsonFilePath := "./testdata/RelationshipDataTest.json"
 
 	err = createJsonFile(resp, jsonFilePath)
 	if err != nil {
@@ -68,11 +68,4 @@ func TestExperimentalGenerate_CreateJsonFile(t *testing.T) {
 	assert.JSONEqf(t, string(expectedRelationshipData), string(relationshipData), "Generated JSON data does not match expected data.\n Difference: %s", cmp.Diff(relationshipData, expectedRelationshipDataJson))
 
 	t.Log("Create JSON file test passed")
-
-	// remove the test file after running the test
-	err = os.Remove(jsonFilePath)
-	if err != nil {
-		t.Fatal("Error deleting file 'RelationshipDataTest.json': ", err)
-		return
-	}
 }
