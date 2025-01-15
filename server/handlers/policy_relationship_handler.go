@@ -17,7 +17,6 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 
-	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/models/events"
 
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
@@ -30,25 +29,12 @@ const (
 	suffix                        = "_relationship"
 )
 
-type NonResolvedAlias struct {
-	RelationshipId        uuid.UUID `json:"relationship_id"`
-	AliasComponentId      uuid.UUID `json:"alias_component_id"`
-	ImmediateParentId     uuid.UUID `json:"immediate_parent_id"`
-	ImmediateRefFieldPath []string  `json:"immediate_ref_field_path"`
-}
-
-type ResolvedAlias struct {
-	NonResolvedAlias
-	ResolvedParentId     uuid.UUID `json:"resolved_parent_id"`
-	ResolvedRefFieldPath []string  `json:"resolved_ref_field_path"`
-}
-
 const RELATIONSHIP_SUBTYPE_ALIAS = "alias"
 
 // Aliasses Are not resolved
-func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipDefinition) (NonResolvedAlias, bool) {
+func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipDefinition) (pattern.NonResolvedAlias, bool) {
 
-	alias := NonResolvedAlias{}
+	alias := pattern.NonResolvedAlias{}
 
 	if relationshipDeclaration.SubType != RELATIONSHIP_SUBTYPE_ALIAS {
 		return alias, false
@@ -85,7 +71,7 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 
 }
 
-func ParseComponentToAlias(component component.ComponentDefinition, relationships []*relationship.RelationshipDefinition) (NonResolvedAlias, bool) {
+func ParseComponentToAlias(component component.ComponentDefinition, relationships []*relationship.RelationshipDefinition) (pattern.NonResolvedAlias, bool) {
 
 	for _, relationship := range relationships {
 		alias, ok := parseRelationshipToAlias(*relationship)
@@ -99,7 +85,7 @@ func ParseComponentToAlias(component component.ComponentDefinition, relationship
 		}
 	}
 
-	return NonResolvedAlias{}, false
+	return pattern.NonResolvedAlias{}, false
 }
 
 // getComponentById retrieves a component from the design by its ID
@@ -112,10 +98,10 @@ func getComponentById(design pattern.PatternFile, id uuid.UUID) *component.Compo
 	return nil
 }
 
-func ResolveAlias(nonResolvedAlias NonResolvedAlias, currentNonResolved NonResolvedAlias, path []string, design pattern.PatternFile) ResolvedAlias {
+func ResolveAlias(nonResolvedAlias pattern.NonResolvedAlias, currentNonResolved pattern.NonResolvedAlias, path []string, design pattern.PatternFile) pattern.ResolvedAlias {
 	parentComponent := getComponentById(design, currentNonResolved.ImmediateParentId)
 	if parentComponent == nil {
-		return ResolvedAlias{
+		return pattern.ResolvedAlias{
 			NonResolvedAlias:     nonResolvedAlias,
 			ResolvedParentId:     currentNonResolved.ImmediateParentId,
 			ResolvedRefFieldPath: path,
@@ -126,7 +112,7 @@ func ResolveAlias(nonResolvedAlias NonResolvedAlias, currentNonResolved NonResol
 
 	if !ok {
 
-		return ResolvedAlias{
+		return pattern.ResolvedAlias{
 			NonResolvedAlias:     nonResolvedAlias,
 			ResolvedParentId:     currentNonResolved.ImmediateParentId,
 			ResolvedRefFieldPath: path,
@@ -139,9 +125,9 @@ func ResolveAlias(nonResolvedAlias NonResolvedAlias, currentNonResolved NonResol
 	return ResolveAlias(nonResolvedAlias, parentAlias, append(parentAlias.ImmediateRefFieldPath, path[1:]...), design)
 }
 
-func ResolveAliasesInDesign(design pattern.PatternFile) map[string]interface{} {
+func ResolveAliasesInDesign(design pattern.PatternFile) map[string]pattern.ResolvedAlias {
 
-	resolvedAliases := make(map[string]interface{})
+	resolvedAliases := make(map[string]pattern.ResolvedAlias)
 
 	for _, relationship := range design.Relationships {
 		nonResolvedalias, ok := parseRelationshipToAlias(*relationship)
@@ -160,17 +146,17 @@ func (h *Handler) EvaluateDesign(
 	relationshipPolicyEvalPayload pattern.EvaluationRequest,
 ) (pattern.EvaluationResponse, error) {
 
-	aliases := ResolveAliasesInDesign(relationshipPolicyEvalPayload.Design)
-	r, _ := encoding.Marshal(aliases)
+	// aliases := ResolveAliasesInDesign(relationshipPolicyEvalPayload.Design)
+	// r, _ := encoding.Marshal(aliases)
 
-	fmt.Println("Aliases", string(r))
+	// fmt.Println("Aliases", string(r))
 
 	// evaluate specified relationship policies
 	// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
 	evaluationResponse, err := h.Rego.RegoPolicyHandler(relationshipPolicyEvalPayload.Design,
-		aliases,
 		RelationshipPolicyPackageName,
 	)
+
 	if err != nil {
 		h.log.Debug(err)
 		// log an event
@@ -182,7 +168,11 @@ func (h *Handler) EvaluateDesign(
 
 	// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
 	_ = processEvaluationResponse(h.registryManager, relationshipPolicyEvalPayload, &evaluationResponse)
-
+	evaluatedAliases := ResolveAliasesInDesign(evaluationResponse.Design)
+	if evaluationResponse.Design.Metadata == nil {
+		evaluationResponse.Design.Metadata = &pattern.PatternFileMetadata{}
+	}
+	evaluationResponse.Design.Metadata.ResolvedAliases = evaluatedAliases
 	return evaluationResponse, nil
 }
 
