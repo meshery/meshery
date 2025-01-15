@@ -11,7 +11,7 @@ import {
 } from '@layer5/sistent';
 import { useRouter } from 'next/router';
 import ConnectCluster from '../charts/ConnectCluster';
-import { generateDynamicURL, getAllCustomResourceDefinitionsKinds } from '../resources/config';
+import { generateDynamicURL } from '../resources/config';
 import {
   HoneycombRoot,
   IconWrapper,
@@ -36,7 +36,6 @@ const HoneycombComponent = (props) => {
 
   const groupOptions = useResourceOptions();
   const filteredKinds = useResourceFiltering(kinds, groupBy, sortDirection);
-  const crdsKinds = getAllCustomResourceDefinitionsKinds(kinds);
   const handleGroupChange = useCallback((e) => {
     setGroupBy(e.target.value);
   }, []);
