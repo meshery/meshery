@@ -1,8 +1,7 @@
-import { styled } from '@layer5/sistent';
-import { Typography } from '@layer5/sistent';
+import { Typography, IconButton, Paper, styled } from '@layer5/sistent';
 
 export const DashboardSection = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#202020' : theme.palette.common.white,
+  backgroundColor: theme.palette.background.default,
   padding: theme.spacing(2),
   borderRadius: '4px',
   height: '100%',
@@ -106,3 +105,45 @@ export const SkeletonHexagon = styled('div')(({ theme }) => ({
   alignItems: 'center',
   opacity: 0.5,
 }));
+
+export const ErrorContainer = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(2),
+  textAlign: 'center',
+  backgroundColor: theme.palette.background.default,
+  marginTop: '1rem',
+  borderRadius: 4,
+}));
+
+export const WrapperContainer = styled('div')({
+  flexGrow: 1,
+  maxWidth: '100vw',
+  height: 'auto',
+});
+
+export const WrapperPaper = styled(Paper)({
+  flexGrow: 1,
+  maxWidth: '100vw',
+  height: 'auto',
+});
+
+export const HeaderContainer = styled('div')({
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: '1rem',
+});
+
+export const ControlsContainer = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '0.5rem',
+});
+
+export const StyledIconButton = styled(IconButton)({
+  padding: '4px',
+});
+
+export const NoResourcesText = styled(Typography)({
+  textAlign: 'center',
+  marginTop: '2rem',
+});
