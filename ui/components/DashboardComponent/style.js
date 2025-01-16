@@ -1,8 +1,7 @@
-import { IconButton, styled } from '@layer5/sistent';
-import { Typography } from '@layer5/sistent';
+import { Typography, IconButton, Paper, styled, Tab, Tabs, gray, charcoal } from '@layer5/sistent';
 
 export const DashboardSection = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#202020' : theme.palette.common.white,
+  backgroundColor: theme.palette.background.default,
   padding: theme.spacing(2),
   borderRadius: '4px',
   height: '100%',
@@ -107,6 +106,26 @@ export const SkeletonHexagon = styled('div')(({ theme }) => ({
   opacity: 0.5,
 }));
 
+export const ErrorContainer = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(2),
+  textAlign: 'center',
+  backgroundColor: theme.palette.background.default,
+  marginTop: '1rem',
+  borderRadius: 4,
+}));
+
+export const WrapperContainer = styled('div')({
+  flexGrow: 1,
+  maxWidth: '100vw',
+  height: 'auto',
+});
+
+export const WrapperPaper = styled(Paper)({
+  flexGrow: 1,
+  maxWidth: '100vw',
+  height: 'auto',
+});
+
 export const HeaderContainer = styled('div')({
   display: 'flex',
   justifyContent: 'space-between',
@@ -128,3 +147,13 @@ export const NoResourcesText = styled(Typography)({
   textAlign: 'center',
   marginTop: '2rem',
 });
+
+export const SecondaryTab = styled(Tab)(({ theme }) => ({
+  '&.Mui-selected': {
+    backgroundColor: theme.palette.mode === 'dark' ? gray[20] : charcoal[90],
+  },
+}));
+
+export const SecondaryTabs = styled(Tabs)(({ theme }) => ({
+  background: theme.palette.mode === 'dark' ? gray[20] : charcoal[90],
+}));

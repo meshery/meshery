@@ -2,7 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import dataFetch from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
-import { CustomColumnVisibilityControl, ResponsiveDataTable, SearchBar } from '@layer5/sistent';
+import {
+  CustomColumnVisibilityControl,
+  ResponsiveDataTable,
+  SearchBar,
+  Slide,
+} from '@layer5/sistent';
 import useStyles from '../../../assets/styles/general/tool.styles';
 import View from '../view';
 import { ALL_VIEW, SINGLE_VIEW } from './config';
@@ -12,7 +17,6 @@ import { useWindowDimensions } from '../../../utils/dimension';
 import { camelcaseToSnakecase } from '../../../utils/utils';
 import { useSelector } from 'react-redux';
 import { UsesSistent } from '@/components/SistentWrapper';
-import { Slide } from '@material-ui/core';
 import { useRouter } from 'next/router';
 
 export const ACTION_TYPES = {
@@ -104,7 +108,7 @@ const ResourcesTable = (props) => {
         setCount(res?.total_count || 0);
         setPageSize(res?.page_size || 0);
         setLoading(false);
-        if (query.resourceCategory && query.resourceName) {
+        if (query.resourceCategory && query.resourceName && res?.resources.length === 1) {
           switchView(SINGLE_VIEW, res?.resources[0]);
         }
       },
@@ -212,6 +216,7 @@ const ResourcesTable = (props) => {
       details: error.toString(),
     });
   };
+
   return (
     <>
       {view !== ALL_VIEW ? (
