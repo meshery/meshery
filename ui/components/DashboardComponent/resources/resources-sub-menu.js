@@ -88,11 +88,12 @@ const ResourcesSubMenu = (props) => {
     selectedResource,
     handleChangeSelectedResource,
     CRDsKeys,
+    isCRDS,
   } = props;
-  const isCRD = CRDsKeys.length > 0;
+
   if (!selectedResource) {
     let resourceNames;
-    if (isCRD) {
+    if (isCRDS) {
       resourceNames = CRDsKeys;
     } else {
       resourceNames = Object.keys(resource.tableConfig());
@@ -101,7 +102,7 @@ const ResourcesSubMenu = (props) => {
   }
 
   let TABS;
-  if (isCRD) {
+  if (isCRDS) {
     TABS = CRDsKeys;
   } else {
     TABS = Object.keys(resource.tableConfig());
@@ -135,17 +136,16 @@ const ResourcesSubMenu = (props) => {
                   scrollButtons="on"
                   indicatorColor="primary"
                   textColor="primary"
-                  // centered
                 >
                   {TABS.map((key, index) => {
-                    const title = isCRD ? key : resource.tableConfig()[key].name;
+                    const title = isCRDS ? key : resource.tableConfig()[key].name;
                     return (
                       <CustomTooltip key={`${key}-${index}`} title={title} placement="top">
                         <Tab
                           value={index}
                           label={
                             <div className={classes.iconText}>
-                              <GetKubernetesNodeIcon kind={key} isCRD={isCRD} size={iconMedium} />
+                              <GetKubernetesNodeIcon kind={key} isCRDS={isCRDS} size={iconMedium} />
                               {title}
                             </div>
                           }
