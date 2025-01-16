@@ -7,7 +7,7 @@ replace github.com/vektah/gqlparser/v2 => github.com/vektah/gqlparser/v2 v2.5.11
 require (
 	cuelang.org/go v0.11.1
 	fortio.org/fortio v1.66.2
-	github.com/99designs/gqlgen v0.17.63
+	github.com/99designs/gqlgen v0.17.45
 	github.com/Masterminds/semver/v3 v3.3.1
 	github.com/asaskevich/govalidator v0.0.0-20230301143203-a9d515a09cc2
 	github.com/briandowns/spinner v1.23.1
