@@ -55,9 +55,9 @@ const KeyValue = ({ property, value }) => {
 };
 
 const StyledTitle = styled('div')(({ theme }) => ({
-  fontSize: '18px',
+  fontSize: '1.25rem',
   fontFamily: theme.typography.fontFamily,
-  fontWeight: theme.typography.fontWeightBold,
+  textAlign: 'center',
 }));
 
 const RenderContents = ({
@@ -100,6 +100,8 @@ const RenderContents = ({
             borderRadius: '6px',
             backgroundColor: theme.palette.secondary.toolbarBg2,
             color: theme.palette.secondary.text,
+            margin: '0',
+            padding: '0',
           }}
         >
           <AccordionSummary
@@ -107,7 +109,10 @@ const RenderContents = ({
           >
             Advanced Details
           </AccordionSummary>
-          <AccordionDetails>
+          <AccordionDetails style={{
+            padding: '0',
+
+          }}>
             <ReactJson
               theme={reactJsonTheme(theme.palette.type)}
               name={false}
@@ -115,9 +120,10 @@ const RenderContents = ({
               iconStyle="circle"
               src={jsonData}
               style={{
-                fontSize: 'inherit',
+                fontSize: '.85rem',
                 minHeight: 'inherit',
                 padding: '1.1rem',
+                margin: '0rem',
               }}
               collapsed={1} // expanded upto 1 level
             />
