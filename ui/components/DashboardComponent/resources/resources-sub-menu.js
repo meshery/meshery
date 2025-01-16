@@ -4,9 +4,9 @@ import { withRouter } from 'next/router';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import ResourcesTable from './resources-table';
 import { TabPanel } from '../tabpanel';
-import { Box, CustomTooltip, Tab, Tabs } from '@layer5/sistent';
+import { Box, CustomTooltip } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
-import { WrapperContainer, WrapperPaper } from '../style';
+import { SecondaryTab, SecondaryTabs, WrapperContainer, WrapperPaper } from '../style';
 import GetKubernetesNodeIcon from '../utils';
 import { iconMedium } from 'css/icons.styles';
 
@@ -129,7 +129,7 @@ const ResourcesSubMenu = (props) => {
               <Box
                 sx={{ margin: '0 auto', width: '100%', maxWidth: { xs: 800, sm: 880, md: 1200 } }}
               >
-                <Tabs
+                <SecondaryTabs
                   value={getResourceCategoryIndex(selectedResource)}
                   onChange={(_e, v) => handleChangeSelectedResource(getResourceCategory(v))}
                   variant="scrollable"
@@ -141,7 +141,7 @@ const ResourcesSubMenu = (props) => {
                     const title = isCRDS ? key : resource.tableConfig()[key].name;
                     return (
                       <CustomTooltip key={`${key}-${index}`} title={title} placement="top">
-                        <Tab
+                        <SecondaryTab
                           value={index}
                           label={
                             <div className={classes.iconText}>
@@ -153,7 +153,7 @@ const ResourcesSubMenu = (props) => {
                       </CustomTooltip>
                     );
                   })}
-                </Tabs>
+                </SecondaryTabs>
               </Box>
             </div>
           </WrapperPaper>
