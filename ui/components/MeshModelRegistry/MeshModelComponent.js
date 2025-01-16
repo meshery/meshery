@@ -1664,8 +1664,8 @@ const TabBar = ({ animate, handleUploadImport, handleGenerateModel }) => {
           style={{ display: 'flex', visibility: `${animate ? 'visible' : 'hidden'}` }}
           disabled={false} //TODO: Need to make key for this component
         >
-          <AddIcon style={iconMedium} />&nbsp;
-          Generate
+          <AddIcon style={iconMedium} />
+          &nbsp; Generate
         </Button>
       </div>
       <DisableButton

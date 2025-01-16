@@ -91,9 +91,11 @@ const ResourcesSubMenu = (props) => {
   } = props;
   const isCRD = CRDsKeys.length > 0;
   if (!selectedResource) {
-    let resourceNames = Object.keys(resource.tableConfig());
+    let resourceNames;
     if (isCRD) {
       resourceNames = CRDsKeys;
+    } else {
+      resourceNames = Object.keys(resource.tableConfig());
     }
     handleChangeSelectedResource(resourceNames[0]);
   }
@@ -103,6 +105,10 @@ const ResourcesSubMenu = (props) => {
     TABS = CRDsKeys;
   } else {
     TABS = Object.keys(resource.tableConfig());
+  }
+
+  if (TABS.length > 0 && selectedResource && !TABS.includes(selectedResource)) {
+    handleChangeSelectedResource(TABS[0]);
   }
 
   const getResourceCategoryIndex = (resourceCategory) => {
@@ -134,9 +140,8 @@ const ResourcesSubMenu = (props) => {
                   {TABS.map((key, index) => {
                     const title = isCRD ? key : resource.tableConfig()[key].name;
                     return (
-                      <CustomTooltip key={index} title={title} placement="top">
+                      <CustomTooltip key={`${key}-${index}`} title={title} placement="top">
                         <Tab
-                          key={index}
                           value={index}
                           label={
                             <div className={classes.iconText}>
@@ -153,7 +158,7 @@ const ResourcesSubMenu = (props) => {
             </div>
           </WrapperPaper>
           {TABS.map((key, index) => (
-            <TabPanel value={selectedResource} index={key} key={index}>
+            <TabPanel value={selectedResource} index={key} key={`${key}-${index}`}>
               <ResourcesTable
                 key={index}
                 workloadType={key}
