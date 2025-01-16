@@ -57,7 +57,8 @@ const KeyValue = ({ property, value }) => {
 const StyledTitle = styled('div')(({ theme }) => ({
   fontSize: '1.25rem',
   fontFamily: theme.typography.fontFamily,
-  textAlign: 'center',
+  textAlign: 'left',
+  lineHeight: '1.3rem',
 }));
 
 const RenderContents = ({
@@ -198,22 +199,26 @@ const ModelContents = ({ modelDef }) => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', }}>
         <TitleWithImg displayName={modelDef.displayName} iconSrc={modelDef?.metadata?.svgColor} />
+        <div style={{ display: 'block'}}>
         {ExportAvailable ? (
           <Button
-            aria-label="Add Pattern"
+            aria-label="Export Model"
             variant="contained"
             color="primary"
             size="medium"
+            alt="Export Model to OCI Image"
             onClick={handleExport}
-            style={{ display: 'flex' }}
+            style={{ display: 'flex', width: '100%', marginBottom: '.25rem' }}
           >
             <DownloadIcon style={{ fontSize: '1.2rem' }} />
             Export
           </Button>
+          
         ) : null}
-        {isShowStatusSelector && <StatusChip entityData={modelDef} entityType="models" />}
+        {isShowStatusSelector && <StatusChip entityData={modelDef} entityType="models"/>}
+        </div>
       </div>
       <RenderContents
         metaDataLeft={metaDataLeft}
@@ -399,12 +404,12 @@ const Description = ({ description }) => (
 
 const TitleWithImg = ({ displayName, iconSrc }) => (
   <div style={{ display: 'flex', alignItems: 'center', flexBasis: '60%' }}>
-    {iconSrc && <img src={iconSrc} height="55px" width="55px" style={{ marginRight: '0.6rem' }} />}
+    {iconSrc && <img src={iconSrc} height="32px" width="32px" style={{ marginRight: '0.6rem' }} />}
     <StyledTitle>{displayName}</StyledTitle>
   </div>
 );
 
-// TODO: remove with styles and use either makestyle or styled component
+// TODO: remove with styles and use styled component
 const StatusChip = withStyles(styles)(({ classes, entityData, entityType }) => {
   const nextStatus = Object.values(REGISTRY_ITEM_STATES);
   const [updateEntityStatus] = useUpdateEntityStatusMutation();
