@@ -4,7 +4,6 @@ import { withRouter } from 'next/router';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import ResourcesTable from './resources-table';
 import { TabPanel } from '../tabpanel';
-import { CustomTooltip } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
 import { SecondaryTab, SecondaryTabs, WrapperContainer, WrapperPaper } from '../style';
 import GetKubernetesNodeIcon from '../utils';
