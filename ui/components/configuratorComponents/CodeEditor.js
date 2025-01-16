@@ -34,7 +34,6 @@ export const Icon = styled('div')({
 
 export default function CodeEditor({ yaml, saveCodeEditorChanges, fullWidth, onChange }) {
   const [scrollPos, setScrollPos] = useState(67);
-  // const classes = useStyles({ scrollPos: style, fullWidth });
 
   useEffect(() => {
     const handleScroll = () => setScrollPos(window.scrollY);

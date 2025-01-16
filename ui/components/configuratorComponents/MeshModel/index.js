@@ -1,5 +1,6 @@
 import {
   Avatar,
+  AvatarGroup,
   CircularProgress,
   FormControl,
   Grid,
@@ -13,7 +14,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import AppBarComponent from './styledComponents/AppBar';
 import DeleteIcon from '@material-ui/icons/Delete';
 import SaveIcon from '@material-ui/icons/Save';
-import { AvatarGroup, NoSsr } from '@mui/material';
+import { NoSsr } from '@mui/material';
 import { iconMedium } from '../../../css/icons.styles';
 import { useMeshModelComponents } from '../../../utils/hooks/useMeshModelComponents';
 import { getWebAdress } from '../../../utils/webApis';

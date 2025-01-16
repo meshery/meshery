@@ -17,8 +17,6 @@ import * as Types from '../MeshModel/hooks/types';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { UsesSistent } from '@/components/SistentWrapper';
-// import { isEmptyObj } from "../../utils/utils";
-// import PatternServiceForm from "./PatternServiceForm";
 
 export const AccordionRoot = styled('div')({
   width: '100%',
@@ -98,7 +96,6 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
                 formData={{}}
                 color={component?.styles?.primaryColor}
                 {...otherprops}
-                // @ts-ignore
                 schemaSet={schemaSet}
               />
             )}
