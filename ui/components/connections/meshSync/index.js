@@ -110,7 +110,7 @@ export default function MeshSyncTable(props) {
     order: sortOrder,
     clusterIds: getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig),
   });
-  const availableKinds = (clusterSummary?.kinds || []).map((kind) => kind.kind);
+  const availableKinds = (clusterSummary?.kinds || []).map((kind) => kind.Kind);
 
   const meshSyncResources = meshSyncData?.resources || [];
 

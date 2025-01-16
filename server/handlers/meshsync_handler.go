@@ -396,9 +396,9 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	}
 
 	var kindCounts []struct {
-		Kind  string `json:"kind"`
-		Model string `json:"model"`
-		Count int64  `json:"count"`
+		Kind  string
+		Model string
+		Count int64
 	}
 	var namespaces []string
 

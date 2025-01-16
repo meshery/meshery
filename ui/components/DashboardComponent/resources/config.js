@@ -105,7 +105,7 @@ export function generateDynamicURL(kind) {
 export const getAllCustomResourceDefinitionsKinds = (kinds) => {
   const resourceMenuArray = ['Node', 'Namespace', ..._.flatten(Object.values(ResourceMenuConfig))];
   const customResources = kinds?.filter((kind) => {
-    return !resourceMenuArray.includes(kind.kind);
+    return !resourceMenuArray.includes(kind.Kind);
   });
   return customResources ?? [];
 };

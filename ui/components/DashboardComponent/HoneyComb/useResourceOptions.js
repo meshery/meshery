@@ -41,18 +41,18 @@ const filterKindsByGroup = (kinds, groupBy) => {
   if (groupBy === 'all') return [...kinds];
 
   if (groupBy === 'crds') {
-    const crdKinds = getAllCustomResourceDefinitionsKinds(kinds).map((crd) => crd.kind);
-    return kinds.filter((item) => crdKinds.includes(item.kind));
+    const crdKinds = getAllCustomResourceDefinitionsKinds(kinds).map((crd) => crd.Kind);
+    return kinds.filter((item) => crdKinds.includes(item.Kind));
   }
 
   const categoryKinds =
     ResourceMenuConfig[groupBy.charAt(0).toUpperCase() + groupBy.slice(1)] || [];
-  return kinds.filter((item) => categoryKinds.includes(item.kind));
+  return kinds.filter((item) => categoryKinds.includes(item.Kind));
 };
 
 const sortKindsByCount = (kinds, direction) => {
   return [...kinds].sort((a, b) => {
-    return direction === SORT_DIRECTIONS.ASC ? a.count - b.count : b.count - a.count;
+    return direction === SORT_DIRECTIONS.ASC ? a.Count - b.Count : b.Count - a.Count;
   });
 };
 

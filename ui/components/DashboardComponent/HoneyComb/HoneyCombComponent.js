@@ -103,14 +103,14 @@ const HoneycombComponent = (props) => {
                   return (
                     <Hexagon
                       onClick={() => {
-                        router.push(generateDynamicURL(item?.kind));
+                        router.push(generateDynamicURL(item?.Kind));
                       }}
                     >
                       <SelectedHexagon>
-                        <CustomTooltip title={item?.kind || ''} placement="top">
+                        <CustomTooltip title={item?.Kind || ''} placement="top">
                           <IconWrapper>
-                            <GetKubernetesNodeIcon kind={item?.kind} model={item?.model} />
-                            <ResourceCount variant="subtitle1">{item.count}</ResourceCount>
+                            <GetKubernetesNodeIcon kind={item?.Kind} model={item?.Model} />
+                            <ResourceCount variant="subtitle1">{item.Count}</ResourceCount>
                           </IconWrapper>
                         </CustomTooltip>
                       </SelectedHexagon>
