@@ -110,10 +110,12 @@ const RenderContents = ({
           >
             Advanced Details
           </AccordionSummary>
-          <AccordionDetails style={{
-            padding: '0',
-            fontSize: '0.85rem',
-          }}>
+          <AccordionDetails
+            style={{
+              padding: '0',
+              fontSize: '0.85rem',
+            }}
+          >
             <ReactJson
               theme={reactJsonTheme(theme.palette.type)}
               name={false}
@@ -199,25 +201,24 @@ const ModelContents = ({ modelDef }) => {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <TitleWithImg displayName={modelDef.displayName} iconSrc={modelDef?.metadata?.svgColor} />
-        <div style={{ display: 'block'}}>
-        {ExportAvailable ? (
-          <Button
-            aria-label="Export Model"
-            variant="contained"
-            color="primary"
-            size="medium"
-            alt="Export Model to OCI Image"
-            onClick={handleExport}
-            style={{ display: 'flex', width: '100%', marginBottom: '.25rem' }}
-          >
-            <DownloadIcon style={{ fontSize: '1.2rem' }} />
-            Export
-          </Button>
-          
-        ) : null}
-        {isShowStatusSelector && <StatusChip entityData={modelDef} entityType="models"/>}
+        <div style={{ display: 'block' }}>
+          {ExportAvailable ? (
+            <Button
+              aria-label="Export Model"
+              variant="contained"
+              color="primary"
+              size="medium"
+              alt="Export Model to OCI Image"
+              onClick={handleExport}
+              style={{ display: 'flex', width: '100%', marginBottom: '.25rem' }}
+            >
+              <DownloadIcon style={{ fontSize: '1.2rem' }} />
+              Export
+            </Button>
+          ) : null}
+          {isShowStatusSelector && <StatusChip entityData={modelDef} entityType="models" />}
         </div>
       </div>
       <RenderContents
@@ -313,7 +314,7 @@ const RelationshipContents = ({ relationshipDef }) => {
   const metaDataLeft = {
     registrant: relationshipDef.model.registrant.name,
     modelName: relationshipDef.model?.displayName,
-    version: relationshipDef.schemaVersion,  
+    version: relationshipDef.schemaVersion,
   };
 
   const orderLeft = ['registrant', 'version'];
