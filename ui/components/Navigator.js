@@ -82,7 +82,6 @@ import { keys } from '@/utils/permission_constants';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import {
   ExpandMoreIcon,
-  // HiddenText,
   HideScrollbar,
   LinkContainer,
   ListIconSide,
@@ -95,7 +94,6 @@ import {
   NavigatorListItem,
   NavigatorListItemII,
   NavigatorListItemIII,
-  // PrimaryElement,
   RootDiv,
   SecondaryDivider,
   SideBarListItem,
@@ -104,12 +102,6 @@ import {
 } from './General/style';
 
 const styles = (theme) => ({
-  // root: {
-  //   '& svg': {
-  //     width: '1.21rem',
-  //     height: '1.21rem',
-  //   },
-  // },
   categoryHeader: {
     paddingTop: 16,
     paddingBottom: 16,
@@ -942,13 +934,6 @@ class Navigator_ extends React.Component {
                       depth={depth}
                       isDrawerCollapsed={isDrawerCollapsed}
                       isActive={isActive}
-                      // className={classNames(
-                      //   depth === 1 ? classes.nested1 : classes.nested2,
-                      //   classes.item,
-                      //   classes.itemActionable,
-                      //   path === hrefc && classes.itemActiveItem,
-                      //   isDrawerCollapsed && classes.noPadding,
-                      // )}
                       disabled={permissionc ? !CAN(permissionc.action, permissionc.subject) : false}
                     >
                       {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
@@ -992,14 +977,6 @@ class Navigator_ extends React.Component {
                         isDrawerCollapsed={isDrawerCollapsed}
                         isActive={isActive}
                         isShow={!showc}
-                        // className={classNames(
-                        //   depth === 1 ? classes.nested1 : classes.nested2,
-                        //   classes.item,
-                        //   classes.itemActionable,
-                        //   path === hrefc && classes.itemActiveItem,
-                        //   isDrawerCollapsed && classes.noPadding,
-                        //   !showc && classes.disabled,
-                        // )}
                         onClick={() => this.handleAdapterClick(idc, linkc)}
                         disabled={
                           permissionc ? !CAN(permissionc.action, permissionc.subject) : false
@@ -1046,13 +1023,7 @@ class Navigator_ extends React.Component {
           >
             <MainListIcon>{iconc} </MainListIcon>
           </CustomTooltip>
-          <SideBarText
-            drawerCollapsed={drawerCollapsed}
-            // className={drawerCollapsed ? classes.isHidden : classes.isDisplayed}
-            // classes={{ primary: classes.itemPrimary }}
-          >
-            {titlec}
-          </SideBarText>
+          <SideBarText drawerCollapsed={drawerCollapsed}>{titlec}</SideBarText>
         </LinkContainer>
       </UsesSistent>
     );
@@ -1225,12 +1196,6 @@ class Navigator_ extends React.Component {
                     button={!!link}
                     dense
                     key={childId}
-                    // className={classNames(
-                    //   classes.item,
-                    //   link ? classes.itemActionable : '',
-                    //   path === href && classes.itemActiveItem,
-                    //   !show && classes.disabled,
-                    // )}
                     link={!!link}
                     isActive={path === href}
                     isShow={!show}
