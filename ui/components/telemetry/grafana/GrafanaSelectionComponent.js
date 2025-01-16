@@ -385,16 +385,12 @@ GrafanaSelectionComponent.propTypes = {
   addSelectedBoardPanelConfig: PropTypes.func.isRequired,
   handleError: PropTypes.func.isRequired,
   updateProgress: PropTypes.func.isRequired, // Added for completeness
-  connectionID: PropTypes.string.isRequired, // Assuming connectionID is required
 };
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-const mapStateToProps = (state) => ({
-  grafanaBoards: state.grafanaBoards,
-  connectionID: state.connectionID,
-});
+const mapStateToProps = () => ({});
 
 export default connect(mapStateToProps, mapDispatchToProps)(GrafanaSelectionComponent);
