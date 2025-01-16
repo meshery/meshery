@@ -100,7 +100,7 @@ const RenderContents = ({
             borderRadius: '6px',
             backgroundColor: theme.palette.secondary.toolbarBg2,
             color: theme.palette.secondary.text,
-            margin: '0',
+            margin: '0 -1rem',
             padding: '0',
           }}
         >
@@ -111,7 +111,7 @@ const RenderContents = ({
           </AccordionSummary>
           <AccordionDetails style={{
             padding: '0',
-
+            fontSize: '0.85rem',
           }}>
             <ReactJson
               theme={reactJsonTheme(theme.palette.type)}
@@ -139,7 +139,9 @@ const ModelContents = ({ modelDef }) => {
     version: (value) => <KeyValue property="API Version" value={value} />,
     hostname: (value) => <KeyValue property="Registrant" value={value} />,
     components: (value) => <KeyValue property="Components" value={value} />,
-    subCategory: (value) => <KeyValue property="Sub Category" value={value} />,
+    subCategory: (value) => <KeyValue property="Sub-Category" value={value} />,
+    modelVersion: (value) => <KeyValue property="Model Version" value={value} />,
+    registrant: (value) => <KeyValue property="Registrant" value={value} />,
   };
 
   const getCompRelValue = () => {
@@ -162,9 +164,11 @@ const ModelContents = ({ modelDef }) => {
 
   const metaDataLeft = {
     version: modelDef?.model?.version,
+    modelVersion: modelDef?.model?.modelVersion,
     hostname: modelDef?.registrant?.hostname,
     components: getCompRelValue()?.components?.toString(),
     subCategory: modelDef?.model?.subCategory,
+    registrant: modelDef?.registrant?.name,
   };
 
   const orderLeft = ['version', 'hostname', 'components', 'subCategory'];
@@ -298,16 +302,16 @@ const ComponentContents = ({ componentDef }) => {
 const RelationshipContents = ({ relationshipDef }) => {
   const PropertyFormattersLeft = {
     version: (value) => <KeyValue property="API Version" value={value} />,
-    modelName: (value) => <KeyValue property="Model Name" value={value} />,
-    kind: (value) => <KeyValue property="Kind" value={value} />,
+    registrant: (value) => <KeyValue property="Registrant" value={value} />,
   };
 
   const metaDataLeft = {
-    version: relationshipDef.schemaVersion,
+    registrant: relationshipDef.model.registrant.name,
     modelName: relationshipDef.model?.displayName,
+    version: relationshipDef.schemaVersion,  
   };
 
-  const orderLeft = ['version', 'modelName'];
+  const orderLeft = ['registrant', 'version'];
   const orderdMetadataLeft = reorderObjectProperties(metaDataLeft, orderLeft);
 
   const PropertyFormattersRight = {
@@ -326,7 +330,7 @@ const RelationshipContents = ({ relationshipDef }) => {
   return (
     <div>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <StyledTitle>{relationshipDef?.subType}</StyledTitle>
+        <StyledTitle>{`${relationshipDef?.kind} :: ${relationshipDef.type} :: ${relationshipDef.subType}`}</StyledTitle>
         <Description description={relationshipDef?.metadata?.description} />
       </div>
       <RenderContents
