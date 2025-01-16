@@ -5,9 +5,11 @@ go 1.23.4
 replace (
 	github.com/docker/cli => github.com/docker/cli v23.0.6+incompatible
 	github.com/docker/docker => github.com/docker/docker v23.0.6+incompatible
+	github.com/vektah/gqlparser/v2 => github.com/vektah/gqlparser/v2 v2.5.11
 	// github.com/layer5io/meshkit v0.8.1 => ../meshkit
 	// github.com/meshery/schemas v0.7.40 => ../schemas
 	oras.land/oras-go v1.2.4 => oras.land/oras-go v1.2.3
+
 )
 
 require (
@@ -38,9 +40,9 @@ require (
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/jinzhu/copier v0.4.0
 	github.com/layer5io/gowrk2 v0.6.1
-	github.com/layer5io/meshery-operator v0.8.0
-	github.com/layer5io/meshkit v0.8.3
-	github.com/layer5io/meshsync v0.8.3
+	github.com/layer5io/meshery-operator v0.8.1
+	github.com/layer5io/meshkit v0.8.4
+	github.com/layer5io/meshsync v0.8.4
 	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.6.1
 	github.com/lib/pq v1.10.9
@@ -69,11 +71,11 @@ require (
 	google.golang.org/protobuf v1.36.1
 	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/gorm v1.25.12
-	k8s.io/api v0.32.0
-	k8s.io/apiextensions-apiserver v0.32.0
-	k8s.io/apimachinery v0.32.0
-	k8s.io/client-go v0.32.0
-	sigs.k8s.io/controller-runtime v0.16.3
+	k8s.io/api v0.32.1
+	k8s.io/apiextensions-apiserver v0.32.1
+	k8s.io/apimachinery v0.32.1
+	k8s.io/client-go v0.32.1
+	sigs.k8s.io/controller-runtime v0.20.0
 )
 
 require (
@@ -190,7 +192,7 @@ require (
 	github.com/golang-jwt/jwt/v5 v5.2.1 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
-	github.com/google/btree v1.1.2 // indirect
+	github.com/google/btree v1.1.3 // indirect
 	github.com/google/gnostic-models v0.6.8 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/go-containerregistry v0.17.0 // indirect
@@ -323,9 +325,9 @@ require (
 	gorm.io/driver/postgres v1.5.3 // indirect
 	gorm.io/driver/sqlite v1.5.4 // indirect
 	helm.sh/helm/v3 v3.14.3 // indirect
-	k8s.io/apiserver v0.32.0 // indirect
+	k8s.io/apiserver v0.32.1 // indirect
 	k8s.io/cli-runtime v0.32.0 // indirect
-	k8s.io/component-base v0.32.0 // indirect
+	k8s.io/component-base v0.32.1 // indirect
 	k8s.io/klog/v2 v2.130.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20241105132330-32ad38e42d3f // indirect
 	k8s.io/kubectl v0.32.0 // indirect
@@ -338,7 +340,3 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.4.2 // indirect
 	sigs.k8s.io/yaml v1.4.0 // indirect
 )
-
-replace github.com/vektah/gqlparser/v2 => github.com/vektah/gqlparser/v2 v2.5.11
-
-replace github.com/layer5io/meshkit => ../meshkit
