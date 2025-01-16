@@ -180,7 +180,8 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
             <Overview />
           </TabPanel>
           {Object.keys(ResourcesConfig).map((resource, idx) => {
-            if (resource === 'CRDS') {
+            const isCRDS = resource === 'CRDS';
+            if (isCRDS) {
               CRDsKeys = Object.keys(
                 ResourcesConfig[resource].tableConfig(
                   null,
@@ -205,6 +206,7 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
                     k8sConfig={k8sconfig}
                     selectedK8sContexts={selectedK8sContexts}
                     CRDsKeys={CRDsKeys}
+                    isCRDS={isCRDS}
                   />
                 ) : (
                   <ResourcesTable
