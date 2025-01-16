@@ -4005,11 +4005,11 @@ func (l *RemoteProvider) GetConnectionByIDAndKind(token string, connectionID uui
 		return nil, http.StatusInternalServerError, ErrFetch(err, "connection", http.StatusInternalServerError)
 	}
 	if resp.StatusCode == http.StatusOK {
-		var conn connections.Connection
-		if err = json.Unmarshal(bdr, &conn); err != nil {
+		connectionPage := &connections.ConnectionPage{}
+		if err = json.Unmarshal(bdr, connectionPage); err != nil {
 			return nil, http.StatusInternalServerError, ErrUnmarshal(err, "connection")
 		}
-		return &conn, resp.StatusCode, nil
+		return connectionPage.Connections[0], resp.StatusCode, nil
 	}
 
 	l.Log.Debug(string(bdr))
