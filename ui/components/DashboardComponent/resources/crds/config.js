@@ -38,9 +38,9 @@ export const CustomResourceConfig = (
   const customResourceConfigs = {};
 
   customResources?.forEach((resource) => {
-    customResourceConfigs[resource?.kind] = {
-      name: resource?.kind,
-      model: resource?.model, // model is used to identify the resource image
+    customResourceConfigs[resource?.Kind] = {
+      name: resource?.Kind,
+      model: resource?.Model, // model is used to identify the resource image
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
@@ -74,8 +74,8 @@ export const CustomResourceConfig = (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   value={value}
-                  kind={resource?.kind}
-                  model={resource?.model}
+                  kind={resource?.Kind}
+                  model={resource?.Model}
                 />
               );
             },

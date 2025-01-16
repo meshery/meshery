@@ -92,7 +92,6 @@ const ResourcesSubMenu = (props) => {
   } = props;
   const CRDsModelName = isCRDS && CRDsKeys.map((key) => key.model);
   const CRDsKind = isCRDS && CRDsKeys.map((key) => key.name);
-  
   if (!selectedResource) {
     let resourceNames;
     if (isCRDS) {
@@ -105,7 +104,7 @@ const ResourcesSubMenu = (props) => {
 
   let TABS;
   if (isCRDS) {
-    TABS = CRDsKeys;
+    TABS = CRDsKind;
   } else {
     TABS = Object.keys(resource.tableConfig());
   }
@@ -135,38 +134,28 @@ const ResourcesSubMenu = (props) => {
                 indicatorColor="primary"
                 textColor="primary"
               >
-                <Tabs
-                  value={getResourceCategoryIndex(selectedResource)}
-                  onChange={(_e, v) => handleChangeSelectedResource(getResourceCategory(v))}
-                  variant="scrollable"
-                  scrollButtons="on"
-                  indicatorColor="primary"
-                  textColor="primary"
-                  // centered
-                >
-                  {TABS.map((key, index) => {
-                    const title = isCRD ? key : resource.tableConfig()[key].name;
-                    return (
-                      <CustomTooltip key={index} title={title} placement="top">
-                        <Tab
-                          key={index}
-                          value={index}
-                          label={
-                            <div className={classes.iconText}>
-                              <GetKubernetesNodeIcon
-                                kind={key}
-                                model={CRDsModelName[index]}
-                                size={iconMedium}
-                              />
-                              {title}
-                            </div>
-                          }
-                        />
-                      </CustomTooltip>
-                    );
-                  })}
-                </Tabs>
-              </Box>
+                {TABS.map((key, index) => {
+                  const title = isCRDS ? key : resource.tableConfig()[key].name;
+                  return (
+                    <CustomTooltip key={index} title={title} placement="top">
+                      <SecondaryTab
+                        key={index}
+                        value={index}
+                        label={
+                          <div className={classes.iconText}>
+                            <GetKubernetesNodeIcon
+                              kind={key}
+                              model={CRDsModelName[index]}
+                              size={iconMedium}
+                            />
+                            {title}
+                          </div>
+                        }
+                      />
+                    </CustomTooltip>
+                  );
+                })}
+              </SecondaryTabs>
             </div>
           </WrapperPaper>
           {TABS.map((key, index) => (

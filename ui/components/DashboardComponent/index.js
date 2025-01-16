@@ -187,7 +187,7 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
             let CRDsKeys = [];
             const isCRDS = resource === 'CRDS';
             if (isCRDS) {
-              const TableValue = Object.keys(
+              const TableValue = Object.values(
                 ResourcesConfig[resource].tableConfig(
                   null,
                   null,

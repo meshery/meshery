@@ -4,13 +4,15 @@ import { iconXLarge } from 'css/icons.styles';
 import React from 'react';
 
 const GetKubernetesNodeIcon = ({ kind, size, model }) => {
+  const imgSrc = componentIcon({
+    kind: kind?.toLowerCase(),
+    color: 'color',
+    model: model ? model : KUBERNETES,
+  });
+
   return (
     <img
-      src={componentIcon({
-        kind: kind?.toLowerCase(),
-        color: 'color',
-        model: model ? model : KUBERNETES,
-      })}
+      src={imgSrc}
       onError={(event) => {
         event.target.src = FALLBACK_KUBERNETES_IMAGE_PATH;
       }}
