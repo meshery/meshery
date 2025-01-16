@@ -88,21 +88,28 @@ const ResourcesSubMenu = (props) => {
     selectedResource,
     handleChangeSelectedResource,
     CRDsKeys,
+    isCRDS,
   } = props;
-  const isCRD = CRDsKeys.length > 0;
+
   if (!selectedResource) {
-    let resourceNames = Object.keys(resource.tableConfig());
-    if (isCRD) {
+    let resourceNames;
+    if (isCRDS) {
       resourceNames = CRDsKeys;
+    } else {
+      resourceNames = Object.keys(resource.tableConfig());
     }
     handleChangeSelectedResource(resourceNames[0]);
   }
 
   let TABS;
-  if (isCRD) {
+  if (isCRDS) {
     TABS = CRDsKeys;
   } else {
     TABS = Object.keys(resource.tableConfig());
+  }
+
+  if (TABS.length > 0 && selectedResource && !TABS.includes(selectedResource)) {
+    handleChangeSelectedResource(TABS[0]);
   }
 
   const getResourceCategoryIndex = (resourceCategory) => {
@@ -129,18 +136,16 @@ const ResourcesSubMenu = (props) => {
                   scrollButtons="on"
                   indicatorColor="primary"
                   textColor="primary"
-                  // centered
                 >
                   {TABS.map((key, index) => {
-                    const title = isCRD ? key : resource.tableConfig()[key].name;
+                    const title = isCRDS ? key : resource.tableConfig()[key].name;
                     return (
-                      <CustomTooltip key={index} title={title} placement="top">
+                      <CustomTooltip key={`${key}-${index}`} title={title} placement="top">
                         <SecondaryTab
-                          key={index}
                           value={index}
                           label={
                             <div className={classes.iconText}>
-                              <GetKubernetesNodeIcon kind={key} isCRD={isCRD} size={iconMedium} />
+                              <GetKubernetesNodeIcon kind={key} isCRDS={isCRDS} size={iconMedium} />
                               {title}
                             </div>
                           }
@@ -153,7 +158,7 @@ const ResourcesSubMenu = (props) => {
             </div>
           </WrapperPaper>
           {TABS.map((key, index) => (
-            <TabPanel value={selectedResource} index={key} key={index}>
+            <TabPanel value={selectedResource} index={key} key={`${key}-${index}`}>
               <ResourcesTable
                 key={index}
                 workloadType={key}

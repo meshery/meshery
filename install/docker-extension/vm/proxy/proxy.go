@@ -26,7 +26,7 @@ var upgrader = websocket.Upgrader{
 
 const AuthenticatedMsg = "Authenticated"
 const UnauthenticatedMsg = "Unauthenticated"
-const InitiationSuccessful = "Successfully Initiated ws connection"
+const InitiationSuccessful = "Initiated ws connection"
 
 // Hop-by-hop headers. These are removed when sent to the backend.
 // http://www.w3.org/Protocols/rfc2616/rfc2616-sec13.html
