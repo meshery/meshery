@@ -137,22 +137,20 @@ const ResourcesSubMenu = (props) => {
                 {TABS.map((key, index) => {
                   const title = isCRDS ? key : resource.tableConfig()[key].name;
                   return (
-                    <CustomTooltip key={index} title={title} placement="top">
-                      <SecondaryTab
-                        key={index}
-                        value={index}
-                        label={
-                          <div className={classes.iconText}>
-                            <GetKubernetesNodeIcon
-                              kind={key}
-                              model={CRDsModelName[index]}
-                              size={iconMedium}
-                            />
-                            {title}
-                          </div>
-                        }
-                      />
-                    </CustomTooltip>
+                    <SecondaryTab
+                      key={index}
+                      value={index}
+                      label={
+                        <div className={classes.iconText}>
+                          <GetKubernetesNodeIcon
+                            kind={key}
+                            model={CRDsModelName[index]}
+                            size={iconMedium}
+                          />
+                          {title}
+                        </div>
+                      }
+                    />
                   );
                 })}
               </SecondaryTabs>
