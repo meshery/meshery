@@ -37,12 +37,12 @@ const styles = (theme) => ({
     },
   },
   statusChip: {
-    minWidth: '145px !important',
-    width: '100% !important',
-    display: 'flex !important',
-    justifyContent: 'flex-start !important',
+    minWidth: '145px',
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'flex-start',
     textTransform: 'capitalize',
-    borderRadius: '0 !important',
+    borderRadius: '2px',
     padding: '6px 8px',
     '& .MuiChip-label': {
       paddingTop: '3px',
