@@ -102,11 +102,6 @@ import {
 } from './General/style';
 
 const styles = (theme) => ({
-  categoryHeader: {
-    paddingTop: 16,
-    paddingBottom: 16,
-  },
-  categoryHeaderPrimary: { color: theme.palette.common.white },
   item: {
     paddingTop: 4,
     paddingBottom: 4,
@@ -126,39 +121,7 @@ const styles = (theme) => ({
     width: '100%',
     height: '30px',
   },
-
-  itemActionable: { '&:hover': { backgroundColor: 'rgb(0, 187, 166, 0.5)' } },
-  itemActiveItem: {
-    color: '#4fc3f7',
-    fill: '#4fc3f7',
-  },
-  itemPrimary: {
-    color: 'inherit',
-    fontSize: theme.typography.fontSize,
-    '&$textDense': { fontSize: theme.typography.fontSize },
-  },
-  textDense: {},
-  divider: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
   settingsIcon: { marginLeft: theme.spacing(2) },
-  listIcon: {
-    minWidth: theme.spacing(3.5),
-    paddingTop: theme.spacing(0.5),
-    textAlign: 'center',
-    display: 'inline-table',
-    paddingRight: theme.spacing(0.5),
-    marginLeft: theme.spacing(0.8),
-  },
-  listIcon1: {
-    minWidth: theme.spacing(3.5),
-    paddingTop: theme.spacing(0.5),
-    textAlign: 'center',
-    display: 'inline-table',
-    paddingRight: theme.spacing(0.5),
-    opacity: 0.5,
-  },
   listIconSlack: {
     minWidth: theme.spacing(3.5),
     paddingTop: theme.spacing(0.5),
@@ -168,18 +131,8 @@ const styles = (theme) => ({
     paddingRight: theme.spacing(0.5),
     opacity: 0.5,
   },
-  nested1: { paddingLeft: theme.spacing(3) },
-  nested2: { paddingLeft: theme.spacing(5) },
   icon: { width: theme.spacing(2.5) },
   istioIcon: { width: theme.spacing(1.8) },
-  isHidden: {
-    opacity: 0,
-    transition: 'opacity 200ms ease-in-out',
-  },
-  isDisplayed: {
-    opacity: 1,
-    transition: 'opacity 200ms ease-in-out',
-  },
   sidebarCollapsed: {
     transition: theme.transitions.create('width', {
       easing: theme.transitions.easing.sharp,
@@ -242,10 +195,6 @@ const styles = (theme) => ({
     '&:hover': { opacity: 1 },
     '&:focus': { opacity: 1 },
   },
-  noPadding: {
-    paddingLeft: '16px',
-    paddingRight: '16px',
-  },
   drawerIcons: {
     height: '1.21rem',
     width: '1.21rem',
@@ -290,21 +239,12 @@ const styles = (theme) => ({
     transform: 'translateX(3px)',
     '&:hover': { color: '#4fc3f7' },
   },
-  collapsed: { transform: 'rotate(180deg) translateX(-0.8px)' },
   collapsedHelpButton: {
     height: '1.45rem',
     marginTop: '-4px',
     transform: 'translateX(0px)',
   },
   rightTranslate: { transform: 'translateX(0.5px)' },
-  hideScrollbar: {
-    overflow: 'hidden auto',
-    'scrollbar-width': 'none',
-    '-ms-overflow-style': 'none',
-    '&::-webkit-scrollbar': {
-      display: 'none',
-    },
-  },
   disabled: disabledStyle,
   disableLogo: disabledStyleWithOutOpacity,
   cursorNotAllowed: cursorNotAllowed,
@@ -680,12 +620,7 @@ class Navigator_ extends React.Component {
               />
             </MainListIcon>
           </CustomTooltip>
-          <SideBarText
-            drawerCollapsed={drawerCollapsed}
-            // classes={{ primary: classes.itemPrimary }}
-          >
-            {name}
-          </SideBarText>
+          <SideBarText drawerCollapsed={drawerCollapsed}>{name}</SideBarText>
         </LinkContainer>
       </UsesSistent>
     );
@@ -970,6 +905,7 @@ class Navigator_ extends React.Component {
                   return (
                     <div key={idc} className={!showc ? classes.cursorNotAllowed : null}>
                       <NavigatorListItemIII
+                        component="a"
                         data-cy={idc}
                         button
                         key={idc}
@@ -1010,7 +946,7 @@ class Navigator_ extends React.Component {
    * @return {JSX.Element} content
    */
   linkContent(iconc, titlec, hrefc, linkc, drawerCollapsed) {
-    // const { classes } = this.props;
+    const { classes } = this.props;
     let linkContent = (
       <UsesSistent>
         <LinkContainer>

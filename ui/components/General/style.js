@@ -113,11 +113,7 @@ export const NavigatorListItem = styled(ListItem, {
   shouldForwardProp: (prop) =>
     prop !== 'depth' && prop !== 'isDrawerCollapsed' && prop !== 'isActive',
 })(({ theme, depth, isDrawerCollapsed, isActive }) => ({
-  paddingLeft: isDrawerCollapsed
-    ? theme.spacing(2) // Equivalent to 16px when collapsed
-    : depth === 1
-    ? theme.spacing(3) // 24px for depth 1
-    : '',
+  paddingLeft: isDrawerCollapsed ? theme.spacing(2) : depth === 1 ? theme.spacing(3) : '',
   paddingRight: isDrawerCollapsed ? '16px' : '',
   color: isActive ? '#4fc3f7' : 'rgba(255, 255, 255, 0.7)',
   fill: isActive ? '#4fc3f7' : '#fff',
@@ -139,9 +135,9 @@ export const NavigatorListItemII = styled(ListItem, {
     prop !== 'depth' && prop !== 'isDrawerCollapsed' && prop !== 'isActive',
 })(({ theme, depth, isDrawerCollapsed, isActive }) => ({
   paddingLeft: isDrawerCollapsed
-    ? theme.spacing(2) // Equivalent to 16px when collapsed
+    ? theme.spacing(2)
     : depth === 1
-    ? theme.spacing(3) // 24px for depth 1
+    ? theme.spacing(3)
     : theme.spacing(5),
   paddingRight: isDrawerCollapsed ? '16px' : '',
   color: isActive ? '#4fc3f7' : 'rgba(255, 255, 255, 0.7)',
@@ -164,9 +160,9 @@ export const NavigatorListItemIII = styled(ListItem, {
     prop !== 'depth' && prop !== 'isDrawerCollapsed' && prop !== 'isActive' && prop !== 'isShow',
 })(({ theme, depth, isDrawerCollapsed, isActive, isShow }) => ({
   paddingLeft: isDrawerCollapsed
-    ? theme.spacing(2) // Equivalent to 16px when collapsed
+    ? theme.spacing(2)
     : depth === 1
-    ? theme.spacing(3) // 24px for depth 1
+    ? theme.spacing(3)
     : theme.spacing(5),
   paddingRight: isDrawerCollapsed ? '16px' : '',
   color: isActive ? '#4fc3f7' : 'rgba(255, 255, 255, 0.7)',
@@ -210,6 +206,12 @@ export const SideBarText = styled(ListItemText)(({ drawerCollapsed }) => ({
   transition: drawerCollapsed ? 'opacity 200ms ease-in-out' : 'opacity 200ms ease-in-out',
   // color: '#fff',
   fontSize: '14px',
+  '& .MuiListItemText-primary': {
+    fontSize: '14px',
+  },
+  '& .MuiTypography-root': {
+    fontSize: '14px',
+  },
 }));
 
 export const PrimaryElement = styled(SideBarText)(({ theme }) => ({
@@ -220,7 +222,7 @@ export const PrimaryElement = styled(SideBarText)(({ theme }) => ({
 export const RootDiv = styled('div', {
   shouldForwardProp: (prop) => prop !== 'show',
 })(({ show }) => ({
-  cursor: show ? '' : 'not-allowed', // Apply cursor styles conditionally
+  cursor: show ? '' : 'not-allowed',
   '& svg': {
     width: '1.21rem',
     height: '1.21rem',
@@ -245,13 +247,13 @@ export const ExpandMoreIcon = styled(FontAwesomeIcon, {
   shouldForwardProp: (prop) =>
     prop !== 'isCollapsed' && prop !== 'isDrawerCollapsed' && prop !== 'hasChildren',
 })(({ isCollapsed, isDrawerCollapsed, hasChildren }) => ({
-  opacity: isDrawerCollapsed || !hasChildren ? 0 : 0, // Handle conditional opacity
+  opacity: isDrawerCollapsed || !hasChildren ? 0 : 0,
   cursor: 'pointer',
   transform: isCollapsed ? 'rotate(180deg) translateX(-0.8px)' : 'translateX(3px)', // Rotate if collapsed
   transition: 'transform 200ms ease-in-out', // Smooth rotation animation
   '&:hover': {
     opacity: 1,
-    color: '#4fc3f7', // Hover color
+    color: '#4fc3f7',
   },
 }));
 
