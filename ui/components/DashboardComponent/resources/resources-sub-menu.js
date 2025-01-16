@@ -4,9 +4,9 @@ import { withRouter } from 'next/router';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import ResourcesTable from './resources-table';
 import { TabPanel } from '../tabpanel';
-import { Box, CustomTooltip, Tab, Tabs } from '@layer5/sistent';
+import { CustomTooltip } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
-import { WrapperContainer, WrapperPaper } from '../style';
+import { SecondaryTab, SecondaryTabs, WrapperContainer, WrapperPaper } from '../style';
 import GetKubernetesNodeIcon from '../utils';
 import { iconMedium } from 'css/icons.styles';
 
@@ -88,24 +88,30 @@ const ResourcesSubMenu = (props) => {
     selectedResource,
     handleChangeSelectedResource,
     CRDsKeys,
+    isCRDS,
   } = props;
-  const isCRD = CRDsKeys.length > 0;
-  const CRDsModelName = isCRD && CRDsKeys.map((key) => key.model);
-  const CRDsKind = isCRD && CRDsKeys.map((key) => key.name);
-
+  const CRDsModelName = isCRDS && CRDsKeys.map((key) => key.model);
+  const CRDsKind = isCRDS && CRDsKeys.map((key) => key.name);
+  
   if (!selectedResource) {
-    let resourceNames = Object.keys(resource.tableConfig());
-    if (isCRD) {
+    let resourceNames;
+    if (isCRDS) {
       resourceNames = CRDsKind;
+    } else {
+      resourceNames = Object.keys(resource.tableConfig());
     }
     handleChangeSelectedResource(resourceNames[0]);
   }
 
   let TABS;
-  if (isCRD) {
-    TABS = CRDsKind;
+  if (isCRDS) {
+    TABS = CRDsKeys;
   } else {
     TABS = Object.keys(resource.tableConfig());
+  }
+
+  if (TABS.length > 0 && selectedResource && !TABS.includes(selectedResource)) {
+    handleChangeSelectedResource(TABS[0]);
   }
 
   const getResourceCategoryIndex = (resourceCategory) => {
@@ -121,8 +127,13 @@ const ResourcesSubMenu = (props) => {
         <WrapperContainer>
           <WrapperPaper>
             <div>
-              <Box
-                sx={{ margin: '0 auto', width: '100%', maxWidth: { xs: 800, sm: 880, md: 1200 } }}
+              <SecondaryTabs
+                value={getResourceCategoryIndex(selectedResource)}
+                onChange={(_e, v) => handleChangeSelectedResource(getResourceCategory(v))}
+                variant="scrollable"
+                scrollButtons="on"
+                indicatorColor="primary"
+                textColor="primary"
               >
                 <Tabs
                   value={getResourceCategoryIndex(selectedResource)}
@@ -159,7 +170,7 @@ const ResourcesSubMenu = (props) => {
             </div>
           </WrapperPaper>
           {TABS.map((key, index) => (
-            <TabPanel value={selectedResource} index={key} key={index}>
+            <TabPanel value={selectedResource} index={key} key={`${key}-${index}`}>
               <ResourcesTable
                 key={index}
                 workloadType={key}

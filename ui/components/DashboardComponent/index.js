@@ -137,6 +137,9 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
 
   const { width } = useWindowDimensions();
 
+  if (!ResourceCategoryTabs.includes(resourceCategory)) {
+    changeResourceTab('Overview');
+  }
   return (
     <>
       <UsesSistent>
@@ -154,9 +157,12 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
             >
               {ResourceCategoryTabs.map((resource, idx) => {
                 return (
-                  <CustomTooltip key={idx} title={`View ${resource}`} placement="top">
+                  <CustomTooltip
+                    key={`${resource}-${idx}`}
+                    title={`View ${resource}`}
+                    placement="top"
+                  >
                     <Tab
-                      value={idx}
                       key={resource}
                       icon={
                         resource === 'Overview' ? (
@@ -179,8 +185,9 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
 
           {Object.keys(ResourcesConfig).map((resource, idx) => {
             let CRDsKeys = [];
-            if (resource === 'CRDS') {
-              const TableValue = Object.values(
+            const isCRDS = resource === 'CRDS';
+            if (isCRDS) {
+              const TableValue = Object.keys(
                 ResourcesConfig[resource].tableConfig(
                   null,
                   null,
@@ -194,7 +201,7 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
             }
 
             return (
-              <TabPanel value={resourceCategory} index={resource} key={resource}>
+              <TabPanel value={resourceCategory} index={resource} key={`${resource}-${idx}`}>
                 {ResourcesConfig[resource].submenu ? (
                   <ResourcesSubMenu
                     key={idx}
@@ -206,6 +213,7 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
                     k8sConfig={k8sconfig}
                     selectedK8sContexts={selectedK8sContexts}
                     CRDsKeys={CRDsKeys}
+                    isCRDS={isCRDS}
                   />
                 ) : (
                   <ResourcesTable
