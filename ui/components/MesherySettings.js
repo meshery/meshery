@@ -7,12 +7,12 @@ import { bindActionCreators } from 'redux';
 import {
   CustomTooltip,
   AppBar,
-  Paper,
+  // Paper,
   Typography,
   styled,
-  useTheme,
   Tabs,
   Tab,
+  Paper,
 } from '@layer5/sistent';
 import DashboardMeshModelGraph from './DashboardComponent/charts/DashboardMeshModelGraph';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -52,35 +52,13 @@ import { store } from '../store';
 import MesheryConfigurationChart from './DashboardComponent/charts/MesheryConfigurationCharts';
 import ConnectionStatsChart from './DashboardComponent/charts/ConnectionCharts';
 import { UsesSistent } from './SistentWrapper';
+import { SecondaryTab, SecondaryTabs } from './DashboardComponent/style';
 
 const StyledPaper = styled(Paper)(() => ({
   flexGrow: 1,
   maxWidth: '100%',
   height: 'auto',
 }));
-
-// const StyledTabs = styled(Tabs)(() => {
-//   const theme = useTheme();
-//   return {
-//     width: '100%',
-//     '& .MuiTabs-indicator': {
-//       backgroundColor: theme.palette.mode === 'dark' ? '#00B39F' : theme.palette.primary.main,
-//     },
-//   };
-// });
-
-const StyledTab = styled(Tab)(() => {
-  const theme = useTheme();
-  return {
-    width: '25%',
-    minWidth: 40,
-    paddingLeft: 0,
-    paddingRight: 0,
-    '&.Mui-selected': {
-      color: theme.palette.mode === 'dark' ? '#00B39F' : theme.palette.primary.main,
-    },
-  };
-});
 
 const IconText = styled('div')(() => ({
   display: 'inline',
@@ -263,8 +241,8 @@ const MesherySettings = (props) => {
   return (
     <>
       {CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject) ? (
-        <div sx={{ flexGrow: 1, maxWidth: '100%', height: 'auto' }}>
-          <UsesSistent>
+        <UsesSistent>
+          <div sx={{ flexGrow: 1, maxWidth: '100%', height: 'auto' }}>
             <StyledPaper square>
               <Tabs
                 value={tabVal}
@@ -325,7 +303,7 @@ const MesherySettings = (props) => {
                 </CustomTooltip>
 
                 <CustomTooltip title="Reset System" placement="top" value={RESET}>
-                  <StyledTab
+                  <Tab
                     icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
                     label="Reset"
                     // tab="systemReset"
@@ -335,107 +313,108 @@ const MesherySettings = (props) => {
                 </CustomTooltip>
               </Tabs>
             </StyledPaper>
-          </UsesSistent>
-          {tabVal === OVERVIEW && (
-            <TabContainer>
-              <NoSsr>
-                <Provider store={store}>
-                  <RootClass>
-                    <DashboardMeshModelGraph />
-                    <Grid container spacing={2}>
-                      <Grid item xs={12} md={6}>
-                        <ConnectionStatsChart />
-                      </Grid>
-                      <Grid item xs={12} md={6}>
-                        <MesheryConfigurationChart />
-                      </Grid>
-                    </Grid>
-                  </RootClass>
-                </Provider>
-              </NoSsr>
-            </TabContainer>
-          )}
-          {tabVal === ADAPTERS &&
-            CAN(
-              keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
-              keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.subject,
-            ) && (
+
+            {tabVal === OVERVIEW && (
               <TabContainer>
-                <MeshAdapterConfigComponent />
+                <NoSsr>
+                  <Provider store={store}>
+                    <RootClass>
+                      <DashboardMeshModelGraph />
+                      <Grid container spacing={2}>
+                        <Grid item xs={12} md={6}>
+                          <ConnectionStatsChart />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                          <MesheryConfigurationChart />
+                        </Grid>
+                      </Grid>
+                    </RootClass>
+                  </Provider>
+                </NoSsr>
               </TabContainer>
             )}
-          {tabVal === METRICS && CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject) && (
-            <TabContainer>
-              <AppBar position="static" color="default">
-                <Tabs
-                  value={subTabVal}
-                  onChange={handleChange('subTabVal')}
-                  indicatorColor="primary"
-                  textColor="primary"
-                  variant="fullWidth"
-                >
-                  <Tab
-                    value={GRAFANA}
-                    label={
-                      <IconText>
-                        Grafana
-                        <StyledIcon src="/static/img/grafana_icon.svg" />
-                      </IconText>
-                    }
-                  />
-                  <Tab
-                    value={PROMETHEUS}
-                    label={
-                      <IconText>
-                        Prometheus
-                        <StyledIcon src="/static/img/prometheus_logo_orange_circle.svg" />
-                      </IconText>
-                    }
-                  />
-                </Tabs>
-              </AppBar>
-              {subTabVal === GRAFANA && (
+            {tabVal === ADAPTERS &&
+              CAN(
+                keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
+                keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.subject,
+              ) && (
                 <TabContainer>
-                  <GrafanaComponent
-                    scannedGrafana={state.scannedGrafana}
-                    isMeshConfigured={state.isMeshConfigured}
-                  />
+                  <MeshAdapterConfigComponent />
                 </TabContainer>
               )}
-              {subTabVal === PROMETHEUS && (
-                <TabContainer>
-                  <PrometheusComponent
-                    scannedPrometheus={state.scannedPrometheus}
-                    isMeshConfigured={state.isMeshConfigured}
-                  />
-                </TabContainer>
-              )}
-            </TabContainer>
-          )}
-          {tabVal === REGISTRY && CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject) && (
-            <TabContainer>
+            {tabVal === METRICS && CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject) && (
+              <TabContainer>
+                <AppBar position="static" color="default">
+                  <SecondaryTabs
+                    value={subTabVal}
+                    onChange={handleChange('subTabVal')}
+                    indicatorColor="primary"
+                    textColor="primary"
+                    variant="fullWidth"
+                  >
+                    <SecondaryTab
+                      value={GRAFANA}
+                      label={
+                        <IconText>
+                          Grafana
+                          <StyledIcon src="/static/img/grafana_icon.svg" />
+                        </IconText>
+                      }
+                    />
+                    <SecondaryTab
+                      value={PROMETHEUS}
+                      label={
+                        <IconText>
+                          Prometheus
+                          <StyledIcon src="/static/img/prometheus_logo_orange_circle.svg" />
+                        </IconText>
+                      }
+                    />
+                  </SecondaryTabs>
+                </AppBar>
+                {subTabVal === GRAFANA && (
+                  <TabContainer>
+                    <GrafanaComponent
+                      scannedGrafana={state.scannedGrafana}
+                      isMeshConfigured={state.isMeshConfigured}
+                    />
+                  </TabContainer>
+                )}
+                {subTabVal === PROMETHEUS && (
+                  <TabContainer>
+                    <PrometheusComponent
+                      scannedPrometheus={state.scannedPrometheus}
+                      isMeshConfigured={state.isMeshConfigured}
+                    />
+                  </TabContainer>
+                )}
+              </TabContainer>
+            )}
+            {tabVal === REGISTRY && CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject) && (
               <TabContainer>
                 <TabContainer>
-                  <MeshModelComponent
-                    modelsCount={state.modelsCount}
-                    componentsCount={state.componentsCount}
-                    relationshipsCount={state.relationshipsCount}
-                    registrantCount={state.registrantCount}
-                    settingsRouter={settingsRouter}
-                  />
+                  <TabContainer>
+                    <MeshModelComponent
+                      modelsCount={state.modelsCount}
+                      componentsCount={state.componentsCount}
+                      relationshipsCount={state.relationshipsCount}
+                      registrantCount={state.registrantCount}
+                      settingsRouter={settingsRouter}
+                    />
+                  </TabContainer>
                 </TabContainer>
               </TabContainer>
-            </TabContainer>
-          )}
+            )}
 
-          {tabVal === RESET && (
-            <TabContainer>
-              <DatabaseSummary promptRef={systemResetPromptRef} />
-            </TabContainer>
-          )}
-          {backToPlay}
-          <PromptComponent ref={systemResetPromptRef} />
-        </div>
+            {tabVal === RESET && (
+              <TabContainer>
+                <DatabaseSummary promptRef={systemResetPromptRef} />
+              </TabContainer>
+            )}
+            {backToPlay}
+            <PromptComponent ref={systemResetPromptRef} />
+          </div>
+        </UsesSistent>
       ) : (
         <DefaultError />
       )}
