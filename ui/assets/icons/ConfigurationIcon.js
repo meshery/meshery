@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 const ConfigurationIcon = (props) => {
   return (
@@ -7,13 +7,13 @@ const ConfigurationIcon = (props) => {
       data-name="Layer 2"
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 64 64"
-      width={props.width ? props.width : "24px"}
-      height={props.height ? props.height : "24px"}
-      fill={props.fill ? props.fill : "currentColor"}
+      width={props.width ? props.width : '24px'}
+      height={props.height ? props.height : '24px'}
+      fill={props.fill}
       onClick={props.onClick}
       className={props.className}
-      color={props.color ? props.color : "unset"}
-      fontSize={props.fontSize ? props.fontSize : "unset"}
+      color={props.color ? props.color : 'unset'}
+      fontSize={props.fontSize ? props.fontSize : 'unset'}
       style={{ ...props.style }}
     >
       <path d="M58.17,44.55a9.57,9.57,0,0,0-9.75-2.34L21.79,15.58c2.35-6.79-3.95-13.91-11-12.4a1,1,0,0,0-.79.88,1,1,0,0,0,.28.81l4,4L13.1,13.1,8.83,14.24l-4-4A1.1,1.1,0,0,0,4.06,10a1,1,0,0,0-.88.79c-1.55,7,5.7,13.41,12.42,11L42.21,48.42c-2.36,6.79,4,13.91,11,12.4a1,1,0,0,0,.79-.88,1,1,0,0,0-.28-.81l-4-4L50.9,50.9l4.27-1.14,4,4a1.29,1.29,0,0,0,.71.3h0a1,1,0,0,0,1-.81A9.59,9.59,0,0,0,58.17,44.55Z" />
@@ -24,4 +24,3 @@ const ConfigurationIcon = (props) => {
 };
 
 export default ConfigurationIcon;
-
