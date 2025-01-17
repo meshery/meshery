@@ -339,7 +339,6 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 	decoder := yaml.NewDecoder(bytes.NewBufferString(data))
 	resourceCount := 0
 
-	// process multiple yaml docs separtaed by '---'
 	for {
 		manifest := map[string]interface{}{}
 		err := decoder.Decode(manifest)
@@ -384,8 +383,8 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 			continue
 		}
 
-		// Process single manifest
 		resourceCount++
+		// Process single manifest
 		declaration, err := createPatternDeclarationFromK8s(manifest, reg)
 		if err != nil {
 			if ignoreErrors {
