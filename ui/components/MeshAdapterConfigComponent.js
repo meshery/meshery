@@ -188,6 +188,17 @@ const MeshAdapterConfigComponent = (props) => {
     if (typeof newValue !== 'undefined') {
       setMeshLocationURL(newValue);
       setMeshLocationURLError(false);
+      
+      // If this is a newly created option, add it to the adapter URLs list
+      if (newValue && newValue.__isNew__) {
+        setSetAdapterURLs((prevOptions) => [
+          ...prevOptions,
+          {
+            value: newValue.value,
+            label: newValue.value
+          }
+        ]);
+      }
     }
   };
   const handleDeployPortChange = (newValue) => {
