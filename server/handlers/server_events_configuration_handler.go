@@ -68,20 +68,7 @@ func (h *Handler) ServerEventConfigurationHandler(w http.ResponseWriter, req *ht
 // Responses:
 //
 //	200: LogLevelResponse       Successfully updated log level
-//	     Example Response:
-//	     {
-//	       "status": "success",
-//	       "event_log_level": "debug",
-//	       "available_levels": ["panic", "fatal", "error", "warn", "info", "debug", "trace"]
-//	     }
-//
 //	400: LogLevelResponse       Invalid log level provided
-//	     Example Response:
-//	     {
-//	       "status": "error",
-//	       "event_log_level": "info",
-//	       "available_levels": ["panic", "fatal", "error", "warn", "info", "debug", "trace"]
-//	     }
 func (h *Handler) ServerEventConfigurationSet(w http.ResponseWriter, req *http.Request,
 	prefObj *models.Preference, user *models.User, provider models.Provider) {
 
