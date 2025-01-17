@@ -241,6 +241,7 @@ export const HideScrollbar = styled(List)(() => ({
 export const SecondaryDivider = styled(Divider)(({ theme }) => ({
   marginTop: theme.spacing(1),
   marginBottom: theme.spacing(1),
+  borderColor: '#404854',
 }));
 
 export const ExpandMoreIcon = styled(FontAwesomeIcon, {
