@@ -17,6 +17,7 @@ package registry
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -56,14 +57,14 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
-		spreadsheetID, _ := cmd.Flags().GetString("spreadsheet-id")
-		spreadsheetCred, _ := cmd.Flags().GetString("spreadsheet-cred")
-		// If required flags are missing, show help and exit cleanly
-		if spreadsheetID == "" || spreadsheetCred == "" {
-			_ = cmd.Help()
-			return fmt.Errorf("required flags \"spreadsheet-id\" and \"spreadsheet-cred\" not set")
+		spreadsheetIDFlag, _ := cmd.Flags().GetString("spreadsheet-id")
+		spreadsheetCredFlag, _ := cmd.Flags().GetString("spreadsheet-cred")
+		if spreadsheetIDFlag != "" && spreadsheetCredFlag == "" {
+			return errors.New(utils.RegistryError("Spreadsheet Credentials are required\nUsage: \nmesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred $CRED\nmesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred $CRED --model \"[model-name]\"", "update"))
 		}
-
+		if spreadsheetIDFlag == "" || spreadsheetCredFlag == "" {
+			return errors.New(utils.RegistryError("[ Spreadsheet ID and Spreadsheet Cred] isn't specified", "update"))
+		}
 		err := os.MkdirAll(logDirPath, 0755)
 		if err != nil {
 			return ErrUpdateRegistry(err, modelLocation)
@@ -77,7 +78,9 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-
+		if len(args) == 0 {
+			return cmd.Help()
+		}
 		srv, err := mutils.NewSheetSRV(spreadsheeetCred)
 		if err != nil {
 			utils.Log.Error(ErrUpdateRegistry(err, modelLocation))
