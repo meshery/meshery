@@ -4,9 +4,9 @@ import { withRouter } from 'next/router';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import ResourcesTable from './resources-table';
 import { TabPanel } from '../tabpanel';
-import { Box, CustomTooltip, Tab, Tabs } from '@layer5/sistent';
+import { CustomTooltip } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
-import { WrapperContainer, WrapperPaper } from '../style';
+import { SecondaryTab, SecondaryTabs, WrapperContainer, WrapperPaper } from '../style';
 import GetKubernetesNodeIcon from '../utils';
 import { iconMedium } from 'css/icons.styles';
 
@@ -88,11 +88,12 @@ const ResourcesSubMenu = (props) => {
     selectedResource,
     handleChangeSelectedResource,
     CRDsKeys,
+    isCRDS,
   } = props;
-  const isCRD = CRDsKeys.length > 0;
+
   if (!selectedResource) {
     let resourceNames;
-    if (isCRD) {
+    if (isCRDS) {
       resourceNames = CRDsKeys;
     } else {
       resourceNames = Object.keys(resource.tableConfig());
@@ -101,7 +102,7 @@ const ResourcesSubMenu = (props) => {
   }
 
   let TABS;
-  if (isCRD) {
+  if (isCRDS) {
     TABS = CRDsKeys;
   } else {
     TABS = Object.keys(resource.tableConfig());
@@ -125,36 +126,31 @@ const ResourcesSubMenu = (props) => {
         <WrapperContainer>
           <WrapperPaper>
             <div>
-              <Box
-                sx={{ margin: '0 auto', width: '100%', maxWidth: { xs: 800, sm: 880, md: 1200 } }}
+              <SecondaryTabs
+                value={getResourceCategoryIndex(selectedResource)}
+                onChange={(_e, v) => handleChangeSelectedResource(getResourceCategory(v))}
+                variant="scrollable"
+                scrollButtons="on"
+                indicatorColor="primary"
+                textColor="primary"
               >
-                <Tabs
-                  value={getResourceCategoryIndex(selectedResource)}
-                  onChange={(_e, v) => handleChangeSelectedResource(getResourceCategory(v))}
-                  variant="scrollable"
-                  scrollButtons="on"
-                  indicatorColor="primary"
-                  textColor="primary"
-                  // centered
-                >
-                  {TABS.map((key, index) => {
-                    const title = isCRD ? key : resource.tableConfig()[key].name;
-                    return (
-                      <CustomTooltip key={`${key}-${index}`} title={title} placement="top">
-                        <Tab
-                          value={index}
-                          label={
-                            <div className={classes.iconText}>
-                              <GetKubernetesNodeIcon kind={key} isCRD={isCRD} size={iconMedium} />
-                              {title}
-                            </div>
-                          }
-                        />
-                      </CustomTooltip>
-                    );
-                  })}
-                </Tabs>
-              </Box>
+                {TABS.map((key, index) => {
+                  const title = isCRDS ? key : resource.tableConfig()[key].name;
+                  return (
+                    <CustomTooltip key={`${key}-${index}`} title={title} placement="top">
+                      <SecondaryTab
+                        value={index}
+                        label={
+                          <div className={classes.iconText}>
+                            <GetKubernetesNodeIcon kind={key} isCRDS={isCRDS} size={iconMedium} />
+                            {title}
+                          </div>
+                        }
+                      />
+                    </CustomTooltip>
+                  );
+                })}
+              </SecondaryTabs>
             </div>
           </WrapperPaper>
           {TABS.map((key, index) => (

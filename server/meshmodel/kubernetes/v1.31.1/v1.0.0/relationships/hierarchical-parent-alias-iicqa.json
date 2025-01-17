@@ -89,7 +89,8 @@
               "mutatorRef": [
                 [
                   "configuration",
-                  "spec"
+                  "spec",
+                  "template"
                 ]
               ]
             }
@@ -138,8 +139,7 @@
                 [
                   "configuration",
                   "spec",
-                  "template",
-                  "spec"
+                  "template"
                 ]
               ]
             }
