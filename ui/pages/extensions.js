@@ -31,7 +31,7 @@ const MeshMapSignUpcard = ({ classes, hasAccessToMeshMap = false }) => {
         <CardContainer>
           <Typography
             className={classes.frontContent}
-            data-test="kanvas-heading"
+            data-testid="kanvas-signup-heading"
             variant="h5"
             component="div"
           >
@@ -48,7 +48,7 @@ const MeshMapSignUpcard = ({ classes, hasAccessToMeshMap = false }) => {
             <div style={{ textAlign: 'right' }}>
               <Button
                 variant="contained"
-                data-test="kanvas-signup-btn"
+                data-testid="kanvas-signup-btn"
                 disabled={hasAccessToMeshMap}
                 onClick={(e) => handleSignUp(e)}
               >
@@ -72,7 +72,7 @@ const MeshMapSnapShotLogo = () => {
         maxWidth: '220px',
         maxHeight: '150px',
       }}
-      data-test="kanvas-snapshot-image"
+      data-testid="kanvas-snapshot-image"
       src="/static/img/meshmap-snapshot-logo.svg"
     />
   );
@@ -90,14 +90,14 @@ const MeshMapSnapShotCard = ({ classes, githubActionEnabled = false }) => {
         <CardContainer>
           <Typography
             className={classes.frontContent}
-            data-test="kanvas-snapshot-heading"
+            data-testid="kanvas-snapshot-heading"
             variant="h5"
             component="div"
           >
             GitHub Action: Kanvas Snapshot
           </Typography>
 
-          <FrontSideDescription data-test="kanvas-snapshot-description" variant="body">
+          <FrontSideDescription data-testid="kanvas-snapshot-description" variant="body">
             <MeshMapSnapShotLogo />
             Connect Kanvas to your GitHub repo and see changes pull request-to-pull request. Get
             snapshots of your infrastructure directly in your PRs.
@@ -107,7 +107,7 @@ const MeshMapSnapShotCard = ({ classes, githubActionEnabled = false }) => {
             <Button
               variant="contained"
               color="primary"
-              data-test="kanvas-snapshot-enable-btn"
+              data-testid="kanvas-snapshot-enable-btn"
               disabled={githubActionEnabled}
               onClick={(e) => handleEnable(e)}
             >
@@ -150,7 +150,7 @@ const MesheryPerformanceAction = ({ classes, githubActionEnabled = false }) => {
         <CardContainer>
           <Typography
             className={classes.frontContent}
-            data-test="performance-analysis-heading"
+            data-testid="performance-analysis-heading"
             variant="h5"
             component="div"
           >
@@ -166,7 +166,7 @@ const MesheryPerformanceAction = ({ classes, githubActionEnabled = false }) => {
           <div style={{ textAlign: 'right' }}>
             <Button
               variant="contained"
-              data-test="performance-analysis-enable-btn"
+              data-testid="performance-analysis-enable-btn"
               disabled={githubActionEnabled}
               onClick={(e) => handleEnable(e)}
             >
@@ -206,7 +206,7 @@ const MesheryDockerExtension = ({ classes }) => {
         <CardContainer>
           <Typography
             className={classes.frontContent}
-            data-test="docker-extension-heading"
+            data-testid="docker-extension-heading"
             variant="h5"
             component="div"
           >
@@ -224,7 +224,7 @@ const MesheryDockerExtension = ({ classes }) => {
               <Button
                 variant="contained"
                 color="primary"
-                data-test="docker-extension-download-btn"
+                data-testid="docker-extension-download-btn"
                 onClick={(e) => handleDownload(e)}
               >
                 Download
@@ -277,7 +277,7 @@ const MesheryDesignEmbedExtension = ({ classes }) => {
               <Button
                 variant="contained"
                 color="primary"
-                data-test="design-embed-learn-more-btn"
+                data-testid="design-embed-learn-more-btn"
                 onClick={(e) => handleLearnMore(e)}
               >
                 Learn More
@@ -370,7 +370,7 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
               <CardContainer>
                 <Typography
                   className={classes.frontContent}
-                  data-test="catalog-section-heading"
+                  data-testid="catalog-section-heading"
                   variant="h5"
                   component="div"
                 >
@@ -379,7 +379,7 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
 
                 <FrontSideDescription variant="body">
                   <CatalogIcon
-                    data-test="catalog-toggle-switch"
+                    data-testid="catalog-toggle-switch"
                     style={{
                       paddingRight: '1rem',
                       height: '80px',
