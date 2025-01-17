@@ -17,20 +17,6 @@ export const useStyles = makeStyles((theme) => ({
     width: '45rem',
     maxWidth: '95vw',
   },
-  notificationButton: {
-    height: '100%',
-    '&:hover': {
-      color: theme.palette.secondary.whiteIcon,
-    },
-  },
-  notificationDrawer: {
-    backgroundColor: theme.palette.secondary.drawer,
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    boxShadow: theme.shadows[2],
-    zIndex: 1205,
-  },
   drawerButton: {
     padding: '0.45rem',
     margin: '0.2rem',
@@ -41,18 +27,7 @@ export const useStyles = makeStyles((theme) => ({
       color: theme.palette.secondary.dark,
     },
   },
-  fullView: {
-    right: 0,
-    transition: '0.3s ease-in-out !important',
-  },
-  peekView: {
-    right: '-42.8rem',
-    transition: '0.3s ease-in-out !important',
-  },
 
-  container: {
-    padding: '1.25rem',
-  },
   header: {
     display: 'flex',
     gap: '0.5rem',
