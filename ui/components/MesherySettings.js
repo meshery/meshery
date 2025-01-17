@@ -293,7 +293,7 @@ const MesherySettings = (props) => {
                 </CustomTooltip>
                 <CustomTooltip
                   title="Connect Meshery Adapters"
-                  data-test="settings-tab-metrics"
+                  data-testid="settings-tab-adapters"
                   placement="top"
                   value={ADAPTERS}
                 >
@@ -314,7 +314,7 @@ const MesherySettings = (props) => {
                   <Tab
                     icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
                     label="Metrics"
-                    data-test="settings-tab-metrics"
+                    data-testid="settings-tab-metrics"
                     // tab="tabMetrics"
                     value={METRICS}
                     disabled={!CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject)}
@@ -324,7 +324,7 @@ const MesherySettings = (props) => {
                   <Tab
                     icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
                     label="Registry"
-                    data-test="settings-tab-registry"
+                    data-testid="settings-tab-registry"
                     // tab="registry"
                     value={REGISTRY}
                     disabled={!CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)}
@@ -335,7 +335,7 @@ const MesherySettings = (props) => {
                   <StyledTab
                     icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
                     label="Reset"
-                    data-test="settings-tab-reset"
+                    data-testid="settings-tab-reset"
                     // tab="systemReset"
                     value={RESET}
                     // disabled={!CAN(keys.VIEW_SYSTEM_RESET.action, keys.VIEW_SYSTEM_RESET.subject)} TODO: uncomment when key get seeded
@@ -384,7 +384,7 @@ const MesherySettings = (props) => {
                 >
                   <Tab
                     value={GRAFANA}
-                    data-test="metrics-grafana"
+                    data-testid="metrics-tab-grafana"
                     label={
                       <IconText>
                         Grafana
@@ -394,7 +394,7 @@ const MesherySettings = (props) => {
                   />
                   <Tab
                     value={PROMETHEUS}
-                    data-test="metrics-prometheus"
+                    data-testid="metrics-tab-prometheus"
                     label={
                       <IconText>
                         Prometheus
