@@ -108,7 +108,7 @@ const ResourcesTable = (props) => {
         setCount(res?.total_count || 0);
         setPageSize(res?.page_size || 0);
         setLoading(false);
-        if (query.resourceCategory && query.resourceName) {
+        if (query.resourceCategory && query.resourceName && res?.resources.length === 1) {
           switchView(SINGLE_VIEW, res?.resources[0]);
         }
       },
@@ -216,6 +216,7 @@ const ResourcesTable = (props) => {
       details: error.toString(),
     });
   };
+
   return (
     <>
       {view !== ALL_VIEW ? (

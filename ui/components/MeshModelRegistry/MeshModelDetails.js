@@ -55,9 +55,10 @@ const KeyValue = ({ property, value }) => {
 };
 
 const StyledTitle = styled('div')(({ theme }) => ({
-  fontSize: '18px',
+  fontSize: '1.25rem',
   fontFamily: theme.typography.fontFamily,
-  fontWeight: theme.typography.fontWeightBold,
+  textAlign: 'left',
+  lineHeight: '1.3rem',
 }));
 
 const RenderContents = ({
@@ -100,6 +101,8 @@ const RenderContents = ({
             borderRadius: '6px',
             backgroundColor: theme.palette.secondary.toolbarBg2,
             color: theme.palette.secondary.text,
+            margin: '0 -1rem',
+            padding: '0',
           }}
         >
           <AccordionSummary
@@ -107,7 +110,12 @@ const RenderContents = ({
           >
             Advanced Details
           </AccordionSummary>
-          <AccordionDetails>
+          <AccordionDetails
+            style={{
+              padding: '0',
+              fontSize: '0.85rem',
+            }}
+          >
             <ReactJson
               theme={reactJsonTheme(theme.palette.type)}
               name={false}
@@ -115,9 +123,10 @@ const RenderContents = ({
               iconStyle="circle"
               src={jsonData}
               style={{
-                fontSize: 'inherit',
+                fontSize: '.85rem',
                 minHeight: 'inherit',
                 padding: '1.1rem',
+                margin: '0rem',
               }}
               collapsed={1} // expanded upto 1 level
             />
@@ -133,7 +142,9 @@ const ModelContents = ({ modelDef }) => {
     version: (value) => <KeyValue property="API Version" value={value} />,
     hostname: (value) => <KeyValue property="Registrant" value={value} />,
     components: (value) => <KeyValue property="Components" value={value} />,
-    subCategory: (value) => <KeyValue property="Sub Category" value={value} />,
+    subCategory: (value) => <KeyValue property="Sub-Category" value={value} />,
+    modelVersion: (value) => <KeyValue property="Model Version" value={value} />,
+    registrant: (value) => <KeyValue property="Registrant" value={value} />,
   };
 
   const getCompRelValue = () => {
@@ -156,9 +167,11 @@ const ModelContents = ({ modelDef }) => {
 
   const metaDataLeft = {
     version: modelDef?.model?.version,
+    modelVersion: modelDef?.model?.modelVersion,
     hostname: modelDef?.registrant?.hostname,
     components: getCompRelValue()?.components?.toString(),
     subCategory: modelDef?.model?.subCategory,
+    registrant: modelDef?.registrant?.name,
   };
 
   const orderLeft = ['version', 'hostname', 'components', 'subCategory'];
@@ -190,20 +203,23 @@ const ModelContents = ({ modelDef }) => {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <TitleWithImg displayName={modelDef.displayName} iconSrc={modelDef?.metadata?.svgColor} />
-        {ExportAvailable ? (
-          <Button
-            aria-label="Add Pattern"
-            variant="contained"
-            color="primary"
-            size="medium"
-            onClick={handleExport}
-            style={{ display: 'flex' }}
-          >
-            <DownloadIcon style={{ fontSize: '1.2rem' }} />
-            Export
-          </Button>
-        ) : null}
-        {isShowStatusSelector && <StatusChip entityData={modelDef} entityType="models" />}
+        <div style={{ display: 'block' }}>
+          {ExportAvailable ? (
+            <Button
+              aria-label="Export Model"
+              variant="contained"
+              color="primary"
+              size="medium"
+              alt="Export Model to OCI Image"
+              onClick={handleExport}
+              style={{ display: 'flex', width: '100%', marginBottom: '.25rem' }}
+            >
+              <DownloadIcon style={{ fontSize: '1.2rem' }} />
+              Export
+            </Button>
+          ) : null}
+          {isShowStatusSelector && <StatusChip entityData={modelDef} entityType="models" />}
+        </div>
       </div>
       <RenderContents
         metaDataLeft={metaDataLeft}
@@ -292,16 +308,16 @@ const ComponentContents = ({ componentDef }) => {
 const RelationshipContents = ({ relationshipDef }) => {
   const PropertyFormattersLeft = {
     version: (value) => <KeyValue property="API Version" value={value} />,
-    modelName: (value) => <KeyValue property="Model Name" value={value} />,
-    kind: (value) => <KeyValue property="Kind" value={value} />,
+    registrant: (value) => <KeyValue property="Registrant" value={value} />,
   };
 
   const metaDataLeft = {
-    version: relationshipDef.schemaVersion,
+    registrant: relationshipDef.model.registrant.name,
     modelName: relationshipDef.model?.displayName,
+    version: relationshipDef.schemaVersion,
   };
 
-  const orderLeft = ['version', 'modelName'];
+  const orderLeft = ['registrant', 'version'];
   const orderdMetadataLeft = reorderObjectProperties(metaDataLeft, orderLeft);
 
   const PropertyFormattersRight = {
@@ -320,7 +336,7 @@ const RelationshipContents = ({ relationshipDef }) => {
   return (
     <div>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <StyledTitle>{relationshipDef?.subType}</StyledTitle>
+        <StyledTitle>{`${relationshipDef?.kind} :: ${relationshipDef.type} :: ${relationshipDef.subType}`}</StyledTitle>
         <Description description={relationshipDef?.metadata?.description} />
       </div>
       <RenderContents
@@ -389,12 +405,12 @@ const Description = ({ description }) => (
 
 const TitleWithImg = ({ displayName, iconSrc }) => (
   <div style={{ display: 'flex', alignItems: 'center', flexBasis: '60%' }}>
-    {iconSrc && <img src={iconSrc} height="55px" width="55px" style={{ marginRight: '0.6rem' }} />}
+    {iconSrc && <img src={iconSrc} height="32px" width="32px" style={{ marginRight: '0.6rem' }} />}
     <StyledTitle>{displayName}</StyledTitle>
   </div>
 );
 
-// TODO: remove with styles and use either makestyle or styled component
+// TODO: remove with styles and use styled component
 const StatusChip = withStyles(styles)(({ classes, entityData, entityType }) => {
   const nextStatus = Object.values(REGISTRY_ITEM_STATES);
   const [updateEntityStatus] = useUpdateEntityStatusMutation();

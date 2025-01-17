@@ -1,33 +1,54 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import { NoSsr, TextField, Grid, Button, Chip, MenuItem } from '@material-ui/core';
+import { NoSsr } from '@mui/material';
+import { TextField, Grid, Button, Chip, MenuItem, useTheme, styled, Box } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dataFetch from '../../../lib/data-fetch';
 import { updateProgress } from '../../../lib/store';
 import { trueRandom } from '../../../lib/trueRandom';
+import { UsesSistent } from '@/components/SistentWrapper';
 
-const grafanaStyles = (theme) => ({
-  grafanaRoot: {
+const GrafanaRoot = styled(Box)(() => {
+  const theme = useTheme();
+  return {
     padding: theme.spacing(5),
     backgroundColor: theme.palette.secondary.elevatedComponents,
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
-  },
-  buttons: { display: 'flex', justifyContent: 'flex-end' },
-  button: {
-    marginTop: theme.spacing(3),
-    //   marginLeft: theme.spacing(1),
-  },
-  margin: { margin: theme.spacing(1) },
-  chartTitle: { textAlign: 'center' },
-  icon: { width: theme.spacing(2.5) },
-  alignRight: { textAlign: 'right', marginBottom: theme.spacing(2) },
-  formControl: { marginTop: theme.spacing(2), minWidth: window.innerWidth * 0.25 },
-  panelChips: { display: 'flex', flexWrap: 'wrap' },
-  panelChip: { margin: theme.spacing(0.25) },
+  };
 });
+
+const ButtonContainer = styled(Box)({
+  display: 'flex',
+  justifyContent: 'flex-end',
+});
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  marginTop: theme.spacing(3),
+}));
+
+const AlignRight = styled(Box)(({ theme }) => ({
+  textAlign: 'right',
+  marginBottom: theme.spacing(2),
+}));
+
+const GrafanaIcon = styled('img')(({ theme }) => ({
+  width: theme.spacing(2.5),
+}));
+
+const PanelChips = styled(Box)({
+  display: 'flex',
+  flexWrap: 'wrap',
+});
+
+const StyledChip = styled(Chip)(({ theme }) => ({
+  margin: theme.spacing(0.25),
+}));
+
+const StyledTextField = styled(TextField)(({ theme }) => ({
+  margin: theme.spacing(1),
+}));
 
 class GrafanaSelectionComponent extends Component {
   constructor(props) {
@@ -119,7 +140,6 @@ class GrafanaSelectionComponent extends Component {
         )}`; // accounts for the last 24hrs
       }
       this.props.updateProgress({ showProgress: true });
-      const self = this;
       dataFetch(
         queryURL,
         { credentials: 'include' },
@@ -163,7 +183,7 @@ class GrafanaSelectionComponent extends Component {
         (error) => {
           templateVarOptions[ind] = [templateVars[ind].Value];
           this.setState({ templateVarOptions });
-          self.props.handleError(error);
+          this.props.handleError(error);
         },
       );
     }
@@ -205,10 +225,8 @@ class GrafanaSelectionComponent extends Component {
 
   genRandomNumberForKey = () => Math.floor(trueRandom() * 1000 + 1);
 
-  render = () => {
-    const self = this;
+  render() {
     const {
-      classes,
       grafanaBoardSearch,
       grafanaURL,
       handleGrafanaBoardSearchChange,
@@ -224,83 +242,78 @@ class GrafanaSelectionComponent extends Component {
       templateVarOptions,
     } = this.state;
     return (
-      <NoSsr>
-        <React.Fragment>
-          <div className={classes.grafanaRoot}>
-            <div className={classes.alignRight}>
-              <Chip
+      <UsesSistent>
+        <NoSsr>
+          <GrafanaRoot>
+            <AlignRight>
+              <StyledChip
                 label={grafanaURL}
                 onDelete={handleGrafanaChipDelete}
                 onClick={handleGrafanaClick}
-                icon={<img src="/static/img/grafana_icon.svg" className={classes.icon} />}
+                icon={<GrafanaIcon src="/static/img/grafana_icon.svg" />}
                 key="graf-key"
                 variant="outlined"
               />
-            </div>
+            </AlignRight>
             <Grid container spacing={1}>
               <Grid item xs={12} sm={6}>
-                <TextField
+                <StyledTextField
                   id="grafanaBoardSearch"
                   name="grafanaBoardSearch"
                   label="Board Search"
                   fullWidth
                   value={grafanaBoardSearch}
-                  margin="normal"
                   variant="outlined"
-                  onChange={handleGrafanaBoardSearchChange('grafanaBoardSearch')} // this event will be sent to the parent
+                  onChange={handleGrafanaBoardSearchChange('grafanaBoardSearch')}
                 />
               </Grid>
               <Grid item xs={12} sm={6}>
-                <TextField
+                <StyledTextField
                   select
                   id="grafanaBoard"
                   name="grafanaBoard"
                   label="Board"
                   fullWidth
                   value={grafanaBoard}
-                  margin="normal"
                   variant="outlined"
                   onChange={this.handleChange('grafanaBoard')}
                 >
-                  {grafanaBoards &&
-                    grafanaBoards.map((board) => (
-                      <MenuItem key={`bd_---_${board.uri}`} value={board.uri}>
-                        {board.title}
-                      </MenuItem>
-                    ))}
-                </TextField>
+                  {grafanaBoards?.map((board) => (
+                    <MenuItem key={`bd_---_${board.uri}`} value={board.uri}>
+                      {board.title}
+                    </MenuItem>
+                  ))}
+                </StyledTextField>
               </Grid>
+
               {templateVars.length > 0 &&
                 templateVars.map(({ name }, ind) => {
-                  // if (ind === 0 || this.getSelectedTemplateVar(ind-1) !== ''){
                   if (ind === 0 || typeof this.getSelectedTemplateVar(ind - 1) !== 'undefined') {
                     return (
                       <Grid item xs={12} sm={4} key={ind}>
-                        <TextField
+                        <StyledTextField
                           select
                           id={`template_var_${ind}`}
                           name={`template_var_${ind}`}
                           label={`Template variable: ${name}`}
                           fullWidth
                           value={this.getSelectedTemplateVar(ind)}
-                          margin="normal"
                           variant="outlined"
                           onChange={this.handleChange(`template_var_${ind}`)}
                         >
                           <MenuItem
-                            key={`tmplVarOpt__-___${ind}_${self.genRandomNumberForKey()}`}
+                            key={`tmplVarOpt__-___${ind}_${this.genRandomNumberForKey()}`}
                             value=""
                           />
-                          {templateVarOptions[ind] &&
-                            templateVarOptions[ind].map((opt) => (
-                              <MenuItem
-                                key={`tmplVarOpt__-__${name}_${opt}_${ind}_${self.genRandomNumberForKey()}`}
-                                value={opt}
-                              >
-                                {opt}
-                              </MenuItem>
-                            ))}
-                        </TextField>
+                          {templateVarOptions[ind]?.map((opt) => (
+                            <MenuItem
+                              key={`tmplVarOpt__-__${name}_${opt}_${ind}_${this.genRandomNumberForKey()}`}
+                              value={opt}
+                            >
+                              {opt}
+                            </MenuItem>
+                          ))}
+                        </StyledTextField>
                       </Grid>
                     );
                   }
@@ -308,20 +321,19 @@ class GrafanaSelectionComponent extends Component {
                 })}
 
               <Grid item xs={12}>
-                <TextField
+                <StyledTextField
                   select
                   id="panels"
                   name="panels"
                   label="Panels"
                   fullWidth
                   value={selectedPanels}
-                  margin="normal"
                   variant="outlined"
                   onChange={this.handleChange('selectedPanels')}
                   SelectProps={{
                     multiple: true,
                     renderValue: (selected) => (
-                      <div className={classes.panelChips}>
+                      <PanelChips>
                         {selected.map((value) => {
                           let selVal = '';
                           let panelId = '';
@@ -331,15 +343,9 @@ class GrafanaSelectionComponent extends Component {
                               panelId = panel.id;
                             }
                           });
-                          return (
-                            <Chip
-                              key={`pl_--_${panelId}`}
-                              label={selVal}
-                              className={classes.panelChip}
-                            />
-                          );
+                          return <StyledChip key={`pl_--_${panelId}`} label={selVal} />;
                         })}
-                      </div>
+                      </PanelChips>
                     ),
                   }}
                 >
@@ -348,44 +354,43 @@ class GrafanaSelectionComponent extends Component {
                       {panel.title}
                     </MenuItem>
                   ))}
-                </TextField>
+                </StyledTextField>
               </Grid>
             </Grid>
-            <div className={classes.buttons}>
-              <Button
+
+            <ButtonContainer>
+              <StyledButton
                 type="submit"
                 variant="contained"
                 color="primary"
                 size="large"
                 onClick={this.addSelectedBoardPanelConfig}
-                className={classes.button}
               >
                 Add
-              </Button>
-            </div>
-          </div>
-        </React.Fragment>
-      </NoSsr>
+              </StyledButton>
+            </ButtonContainer>
+          </GrafanaRoot>
+        </NoSsr>
+      </UsesSistent>
     );
-  };
+  }
 }
 
 GrafanaSelectionComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
   grafanaURL: PropTypes.string.isRequired,
-  // grafanaBoards: PropTypes.array.isRequired,
+  //grafanaBoards: PropTypes.array.isRequired,
   handleGrafanaBoardSearchChange: PropTypes.func.isRequired,
   handleGrafanaChipDelete: PropTypes.func.isRequired,
   handleGrafanaClick: PropTypes.func.isRequired,
   addSelectedBoardPanelConfig: PropTypes.func.isRequired,
   handleError: PropTypes.func.isRequired,
+  updateProgress: PropTypes.func.isRequired, // Added for completeness
 };
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
+
 const mapStateToProps = () => ({});
 
-export default withStyles(grafanaStyles)(
-  connect(mapStateToProps, mapDispatchToProps)(GrafanaSelectionComponent),
-);
+export default connect(mapStateToProps, mapDispatchToProps)(GrafanaSelectionComponent);

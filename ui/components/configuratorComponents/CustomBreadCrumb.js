@@ -1,41 +1,40 @@
-import { ClickAwayListener, withStyles } from '@material-ui/core';
+import { ClickAwayListener, styled } from '@layer5/sistent';
 import React, { useEffect, useState } from 'react';
+import { UsesSistent } from '../SistentWrapper';
 
-const styles = (theme) => ({
-  designWrapper: {
-    width: '100%',
-    color: '#fff',
-    position: 'fixed',
-    top: 80,
-    // left: 0,
-    backgroundColor: theme.palette.type === 'dark' ? '#222222' : '#477E96',
-    zIndex: '1',
-    marginLeft: '4px',
-    padding: '4px 50px',
-    transform: 'translateX(-40px)',
-  },
-  span: {
-    // marginLeft: 300,
-    color: '#fff',
-    fontStyle: 'italic',
-    '&:hover': {
-      cursor: 'pointer',
-      textDecoration: 'underline',
-    },
-  },
-  input: {
-    background: 'transparent',
-    border: 'none',
-    color: '#fff',
+export const DesignerWrapper = styled('div')(({ theme }) => ({
+  width: '100%',
+  color: '#fff',
+  position: 'fixed',
+  top: 80,
+  backgroundColor: theme.palette.mode === 'dark' ? '#222222' : '#477E96', // `theme.palette.mode` is used for dark/light mode
+  zIndex: 1,
+  marginLeft: '4px',
+  padding: '4px 50px',
+  transform: 'translateX(-40px)',
+}));
+
+export const StyledSpan = styled('span')(() => ({
+  color: '#fff',
+  fontStyle: 'italic',
+  '&:hover': {
+    cursor: 'pointer',
     textDecoration: 'underline',
-    '&:focus': {
-      outline: 'none',
-      border: 'none',
-    },
   },
-});
+}));
 
-function CustomBreadCrumb({ title, onBack, titleChangeHandler, classes }) {
+export const StyledInput = styled('input')(() => ({
+  background: 'transparent',
+  border: 'none',
+  color: '#fff',
+  textDecoration: 'underline',
+  '&:focus': {
+    outline: 'none',
+    border: 'none',
+  },
+}));
+
+function CustomBreadCrumb({ title, onBack, titleChangeHandler }) {
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(title);
 
@@ -56,23 +55,21 @@ function CustomBreadCrumb({ title, onBack, titleChangeHandler, classes }) {
   };
 
   return (
-    <div className={classes.designWrapper}>
-      {'> '}
-      <span className={classes.span} onClick={onBack}>
-        Designs
-      </span>
-      {' > '}
+    <UsesSistent>
+      <DesignerWrapper>
+        {'> '}
+        <StyledSpan onClick={onBack}>Designs</StyledSpan>
+        {' > '}
 
-      {editing ? (
-        <ClickAwayListener onClickAway={() => setEditing(false)}>
-          <input className={classes.input} value={name} onChange={handleInputChange} autoFocus />
-        </ClickAwayListener>
-      ) : (
-        <span className={classes.span} onClick={() => setEditing(true)}>
-          {title}
-        </span>
-      )}
-    </div>
+        {editing ? (
+          <ClickAwayListener onClickAway={() => setEditing(false)}>
+            <StyledInput value={name} onChange={handleInputChange} autoFocus />
+          </ClickAwayListener>
+        ) : (
+          <StyledSpan onClick={() => setEditing(true)}>{title}</StyledSpan>
+        )}
+      </DesignerWrapper>
+    </UsesSistent>
   );
 }
-export default withStyles(styles)(CustomBreadCrumb);
+export default CustomBreadCrumb;

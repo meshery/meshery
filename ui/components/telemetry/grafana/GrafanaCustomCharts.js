@@ -1,8 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { NoSsr } from '@mui/material';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import GrafanaDateRangePicker from './GrafanaDateRangePicker';
+import { ExpansionPanel, ExpansionPanelSummary } from '../../ExpansionPanels';
+import GrafanaCustomChart from './GrafanaCustomChart';
 import {
-  NoSsr,
   Grid,
   ExpansionPanelDetails,
   Typography,
@@ -12,38 +15,57 @@ import {
   DialogContent,
   DialogTitle,
   Chip,
-} from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import GrafanaDateRangePicker from './GrafanaDateRangePicker';
-import { ExpansionPanel, ExpansionPanelSummary } from '../../ExpansionPanels';
-import GrafanaCustomChart from './GrafanaCustomChart';
+  styled,
+  useTheme,
+} from '@layer5/sistent';
+import { UsesSistent } from '@/components/SistentWrapper';
 
-const grafanaStyles = (theme) => ({
-  grafanaRoot: { width: '100%' },
-  column: { flex: '1' },
-  heading: { fontSize: theme.typography.pxToRem(15) },
-  secondaryHeading: {
+const GrafanaRoot = styled('div')({
+  width: '100%',
+});
+
+const Column = styled('div')({
+  flex: '1',
+});
+
+const StyledHeading = styled(Typography)(({ theme }) => ({
+  fontSize: theme.typography.pxToRem(15),
+}));
+
+const SecondaryHeading = styled(Typography)(() => {
+  const theme = useTheme();
+  return {
     fontSize: theme.typography.pxToRem(15),
     color: theme.palette.text.secondary,
-  },
-  dateRangePicker: {
+  };
+});
+
+const DateRangePickerContainer = styled('div')({
+  display: 'flex',
+  justifyContent: 'flex-end',
+});
+
+const ChartsHeaderOptions = styled('div')(() => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginBottom: '1rem',
+  marginTop: '1rem',
+}));
+
+const StyledIcon = styled('img')(({ theme }) => ({
+  width: theme.spacing(2.5),
+}));
+
+const StyledChip = styled(Chip)({
+  width: '100%',
+});
+
+const StyledDialogTitle = styled(DialogTitle)({
+  '& > *': {
     display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  chartsHeaderOptions: {
-    display: 'flex',
-    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: '1rem',
-    marginTop: '1rem',
-  },
-  icon: { width: theme.spacing(2.5) },
-  dialogTitle: {
-    '&>*': {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-    },
+    justifyContent: 'space-between',
   },
 });
 
@@ -97,13 +119,11 @@ class GrafanaCustomCharts extends Component {
   };
 
   GrafanaChip(grafanaURL) {
-    const { classes } = this.props;
     return (
-      <Chip
+      <StyledChip
         label={grafanaURL}
         onClick={() => window.open(grafanaURL)}
-        icon={<img src="/static/img/grafana_icon.svg" className={classes.icon} />}
-        className={classes.chip}
+        icon={<StyledIcon src="/static/img/grafana_icon.svg" />}
         variant="outlined"
       />
     );
@@ -122,7 +142,7 @@ class GrafanaCustomCharts extends Component {
       chartDialogPanelData,
       sparkline,
     } = this.state;
-    const { classes, boardPanelConfigs, boardPanelData } = this.props;
+    const { boardPanelConfigs, boardPanelData } = this.props;
     const { grafanaURL, grafanaAPIKey, prometheusURL, connectionID } = this.props;
     const { enableGrafanaChip } = this.props;
     // we are now proxying. . .
@@ -130,40 +150,14 @@ class GrafanaCustomCharts extends Component {
     //   grafanaURL = grafanaURL.substring(0, grafanaURL.length - 1);
     // }
     return (
-      <NoSsr>
-        <React.Fragment>
-          <div className={classes.grafanaRoot}>
-            {!(boardPanelData && boardPanelData !== null) && (
-              <div className={classes.chartsHeaderOptions}>
-                {enableGrafanaChip && <div>{this.GrafanaChip(grafanaURL)}</div>}
-                <div className={classes.dateRangePicker}>
-                  <GrafanaDateRangePicker
-                    from={from}
-                    startDate={startDate}
-                    to={to}
-                    endDate={endDate}
-                    liveTail={liveTail}
-                    refresh={refresh}
-                    updateDateRange={this.updateDateRange}
-                  />
-                </div>
-              </div>
-            )}
-            <Dialog
-              fullWidth
-              maxWidth="md"
-              open={chartDialogOpen}
-              onClose={this.chartDialogClose()}
-              aria-labelledby="max-width-dialog-title"
-            >
-              <DialogTitle classes={{ root: classes.dialogTitle }} id="max-width-dialog-title">
-                <div>{chartDialogPanel.title}</div>
-                {!(
-                  chartDialogPanelData &&
-                  chartDialogPanelData !== null &&
-                  Object.keys(chartDialogPanelData).length > 0
-                ) ? (
-                  <div className={classes.dateRangePicker}>
+      <UsesSistent>
+        <NoSsr>
+          <React.Fragment>
+            <GrafanaRoot>
+              {!(boardPanelData && boardPanelData !== null) && (
+                <ChartsHeaderOptions>
+                  {enableGrafanaChip && <div>{this.GrafanaChip(grafanaURL)}</div>}
+                  <DateRangePickerContainer>
                     <GrafanaDateRangePicker
                       from={from}
                       startDate={startDate}
@@ -173,116 +167,145 @@ class GrafanaCustomCharts extends Component {
                       refresh={refresh}
                       updateDateRange={this.updateDateRange}
                     />
-                  </div>
-                ) : (
-                  <div></div>
-                )}
-              </DialogTitle>
-              <DialogContent>
-                <GrafanaCustomChart
-                  board={chartDialogBoard}
-                  panel={chartDialogPanel}
-                  handleChartDialogOpen={this.handleChartDialogOpen}
-                  grafanaURL={grafanaURL}
-                  grafanaAPIKey={grafanaAPIKey}
-                  prometheusURL={prometheusURL}
-                  from={from}
-                  startDate={startDate}
-                  to={to}
-                  endDate={endDate}
-                  liveTail={liveTail}
-                  refresh={refresh}
-                  templateVars={chartDialogBoard.templateVars}
-                  updateDateRange={this.updateDateRange}
-                  inDialog
-                  connectionID={connectionID}
-                  // testUUID={testUUID} // this is just a dialog, we dont want this series too to be persisted
-                  panelData={
-                    chartDialogPanelData && chartDialogPanelData !== null
-                      ? chartDialogPanelData
-                      : {}
-                  }
-                />
-              </DialogContent>
-              <DialogActions>
-                <Button onClick={this.chartDialogClose()} color="primary">
-                  Close
-                </Button>
-              </DialogActions>
-            </Dialog>
+                  </DateRangePickerContainer>
+                </ChartsHeaderOptions>
+              )}
 
-            {boardPanelConfigs.map((config, ind) => (
-              // <ExpansionPanel defaultExpanded={ind === 0?true:false}>
-              <ExpansionPanel key={ind} square defaultExpanded={ind === 0}>
-                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                  <div className={classes.column}>
-                    <Typography variant="subtitle1" gutterBottom>
-                      {config.board && config.board.title
-                        ? config.board.title
-                        : config.title
-                        ? config.title
-                        : ''}
-                    </Typography>
-                  </div>
-                  {config.templateVars && config.templateVars.length > 0 && (
-                    <div className={classes.column}>
-                      <Typography variant="subtitle2">
-                        {`Template variables: ${config.templateVars.join(' ')}`}
-                      </Typography>
-                    </div>
+              <Dialog
+                fullWidth
+                maxWidth="md"
+                open={chartDialogOpen}
+                onClose={this.chartDialogClose()}
+                aria-labelledby="max-width-dialog-title"
+              >
+                <StyledDialogTitle id="max-width-dialog-title">
+                  <div>{chartDialogPanel.title}</div>
+                  {!(
+                    chartDialogPanelData &&
+                    chartDialogPanelData !== null &&
+                    Object.keys(chartDialogPanelData).length > 0
+                  ) ? (
+                    <DateRangePickerContainer>
+                      <GrafanaDateRangePicker
+                        from={from}
+                        startDate={startDate}
+                        to={to}
+                        endDate={endDate}
+                        liveTail={liveTail}
+                        refresh={refresh}
+                        updateDateRange={this.updateDateRange}
+                      />
+                    </DateRangePickerContainer>
+                  ) : (
+                    <div></div>
                   )}
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
-                  <Grid container spacing={3}>
-                    {config.panels.map(
-                      (panel, i) => (
-                        // if(panel.type === 'graph'){
-                        <Grid key={`grafana-chart-${i}`} item xs={12} lg={sparkline ? 12 : 6}>
-                          <GrafanaCustomChart
-                            connectionID={connectionID}
-                            board={config}
-                            sparkline={sparkline}
-                            panel={panel}
-                            handleChartDialogOpen={this.handleChartDialogOpen}
-                            grafanaURL={grafanaURL}
-                            grafanaAPIKey={grafanaAPIKey}
-                            prometheusURL={prometheusURL}
-                            from={from}
-                            startDate={startDate}
-                            to={to}
-                            endDate={endDate}
-                            liveTail={liveTail}
-                            refresh={refresh}
-                            templateVars={config.templateVars}
-                            updateDateRange={this.updateDateRange}
-                            inDialog={false}
-                            testUUID={config.testUUID ? config.testUUID : ''}
-                            panelData={
-                              boardPanelData &&
-                              boardPanelData !== null &&
-                              boardPanelData[ind] &&
-                              boardPanelData[ind] !== null
-                                ? boardPanelData[ind]
-                                : {}
-                            }
-                          />
-                        </Grid>
-                      ),
-                      // } else return '';
+                </StyledDialogTitle>
+                <DialogContent>
+                  <GrafanaCustomChart
+                    board={chartDialogBoard}
+                    panel={chartDialogPanel}
+                    handleChartDialogOpen={this.handleChartDialogOpen}
+                    grafanaURL={grafanaURL}
+                    grafanaAPIKey={grafanaAPIKey}
+                    prometheusURL={prometheusURL}
+                    from={from}
+                    startDate={startDate}
+                    to={to}
+                    endDate={endDate}
+                    liveTail={liveTail}
+                    refresh={refresh}
+                    templateVars={chartDialogBoard.templateVars}
+                    updateDateRange={this.updateDateRange}
+                    inDialog
+                    connectionID={connectionID}
+                    // testUUID={testUUID} // this is just a dialog, we dont want this series too to be persisted
+                    panelData={
+                      chartDialogPanelData && chartDialogPanelData !== null
+                        ? chartDialogPanelData
+                        : {}
+                    }
+                  />
+                </DialogContent>
+                <DialogActions>
+                  <Button onClick={this.chartDialogClose()} color="primary">
+                    Close
+                  </Button>
+                </DialogActions>
+              </Dialog>
+
+              {boardPanelConfigs.map((config, ind) => (
+                // <ExpansionPanel defaultExpanded={ind === 0?true:false}>
+                <ExpansionPanel key={ind} square defaultExpanded={ind === 0}>
+                  <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                    <Column>
+                      <StyledHeading variant="subtitle1" gutterBottom>
+                        {config.board && config.board.title
+                          ? config.board.title
+                          : config.title
+                          ? config.title
+                          : ''}
+                      </StyledHeading>
+                    </Column>
+                    {config.templateVars && config.templateVars.length > 0 && (
+                      <Column>
+                        <SecondaryHeading variant="subtitle2">
+                          {`Template variables: ${config.templateVars.join(' ')}`}
+                        </SecondaryHeading>
+                      </Column>
                     )}
-                  </Grid>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
-            ))}
-          </div>
-        </React.Fragment>
-      </NoSsr>
+                  </ExpansionPanelSummary>
+                  <ExpansionPanelDetails>
+                    <Grid container spacing={3}>
+                      {config.panels.map(
+                        (panel, i) => (
+                          // if(panel.type === 'graph'){
+
+                          <Grid key={`grafana-chart-${i}`} item xs={12} lg={sparkline ? 12 : 6}>
+                            <GrafanaCustomChart
+                              connectionID={connectionID}
+                              board={config}
+                              sparkline={sparkline}
+                              panel={panel}
+                              handleChartDialogOpen={this.handleChartDialogOpen}
+                              grafanaURL={grafanaURL}
+                              grafanaAPIKey={grafanaAPIKey}
+                              prometheusURL={prometheusURL}
+                              from={from}
+                              startDate={startDate}
+                              to={to}
+                              endDate={endDate}
+                              liveTail={liveTail}
+                              refresh={refresh}
+                              templateVars={config.templateVars}
+                              updateDateRange={this.updateDateRange}
+                              inDialog={false}
+                              testUUID={config.testUUID ? config.testUUID : ''}
+                              panelData={
+                                boardPanelData &&
+                                boardPanelData !== null &&
+                                boardPanelData[ind] &&
+                                boardPanelData[ind] !== null
+                                  ? boardPanelData[ind]
+                                  : {}
+                              }
+                            />
+                          </Grid>
+                        ),
+                        // } else return '';
+                      )}
+                    </Grid>
+                  </ExpansionPanelDetails>
+                </ExpansionPanel>
+              ))}
+            </GrafanaRoot>
+          </React.Fragment>
+        </NoSsr>
+      </UsesSistent>
     );
   }
 }
 
 GrafanaCustomCharts.propTypes = {
-  classes: PropTypes.object.isRequired,
   // grafanaURL: PropTypes.string.isRequired,
   // grafanaAPIKey: PropTypes.string.isRequired,
   boardPanelConfigs: PropTypes.array.isRequired,
@@ -290,4 +313,4 @@ GrafanaCustomCharts.propTypes = {
   // boardPanelData:
 };
 
-export default withStyles(grafanaStyles)(GrafanaCustomCharts);
+export default GrafanaCustomCharts;

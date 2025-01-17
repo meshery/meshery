@@ -1,16 +1,6 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import {
-  NoSsr,
-  IconButton,
-  Card,
-  CardContent,
-  CardHeader,
-  Tooltip,
-  LinearProgress,
-  Box,
-} from '@material-ui/core';
+import { NoSsr } from '@mui/material';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import moment from 'moment';
@@ -20,27 +10,47 @@ import CachedIcon from '@material-ui/icons/Cached';
 import dataFetch from '../../../lib/data-fetch';
 import { updateProgress } from '../../../lib/store';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
-
 import bb, { area, line } from 'billboard.js';
+import {
+  IconButton,
+  Card,
+  CardContent,
+  CardHeader,
+  Tooltip,
+  LinearProgress,
+  Box,
+  styled,
+} from '@layer5/sistent';
+import { UsesSistent } from '../../SistentWrapper';
 
-const grafanaStyles = (theme) => ({
-  chart: { width: '100%' },
-  column: { flex: '1' },
-  heading: { fontSize: theme.typography.pxToRem(15) },
-  secondaryHeading: { fontSize: theme.typography.pxToRem(15), color: theme.palette.text.secondary },
-  dateRangePicker: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    marginRight: theme.spacing(1),
-    marginBottom: theme.spacing(2),
-  },
-  cardHeader: { fontSize: theme.spacing(2), width: '100%' },
-  cardHeaderIcon: { fontSize: theme.spacing(2) },
-  card: { height: '100%', width: '100%' },
-  sparklineCardContent: { display: 'grid', gap: ' 0.5rem' },
-  cardContent: { height: '100%', width: '100%' },
-  error: { color: '#D32F2F' },
+const StyledCard = styled(Card)(() => ({
+  height: '100%',
+  width: '100%',
+}));
+
+const StyledCardContent = styled(CardContent)(() => ({
+  height: '100%',
+  width: '100%',
+}));
+
+// const StyledSparklineContent = styled('div')({
+//   display: 'grid',
+//   gap: '0.5rem',
+// });
+
+const ChartContainer = styled('div')({
+  width: '100%',
 });
+
+const HeaderIcon = styled(IconButton)(({ theme }) => ({
+  '& svg': {
+    fontSize: theme.spacing(2),
+  },
+}));
+
+const ErrorText = styled('span')(({ theme }) => ({
+  color: theme.palette.error.default,
+}));
 
 const grafanaDateRangeToDate = (dt, startDate) => {
   const dto = new Date();
@@ -779,7 +789,7 @@ class GrafanaCustomChart extends Component {
   };
 
   render() {
-    const { classes, board, panel, inDialog, handleChartDialogOpen, panelData } = this.props;
+    const { board, panel, inDialog, handleChartDialogOpen, panelData } = this.props;
     const { error, errorCount, chartData } = this.state;
     const self = this;
 
@@ -799,28 +809,28 @@ class GrafanaCustomChart extends Component {
       clearInterval(self.interval); // clearing the interval to prevent further calls to get chart data
       loadingBar = null;
       reloadButton = (
-        <IconButton
-          key="Relaod"
-          aria-label="reloadButton the Chart"
+        <HeaderIcon
+          key="Reload"
+          aria-label="reload the Chart"
           color="inherit"
           onClick={() => self.configChartData()}
         >
-          <CachedIcon className={classes.cardHeaderIcon} />
-        </IconButton>
+          <CachedIcon />
+        </HeaderIcon>
       );
     }
 
     const iconComponent = (
       <div>
         {reloadButton}
-        <IconButton
+        <HeaderIcon
           key="chartDialog"
           aria-label="Open chart in a dialog"
           color="inherit"
           onClick={() => handleChartDialogOpen(board, panel, panelData)}
         >
-          <OpenInNewIcon className={classes.cardHeaderIcon} />
-        </IconButton>
+          <OpenInNewIcon />
+        </HeaderIcon>
       </div>
     );
 
@@ -829,51 +839,55 @@ class GrafanaCustomChart extends Component {
       mainChart = <GrafanaCustomGaugeChart data={chartData} panel={panel} error={error} />;
     } else {
       mainChart = (
-        <div>
-          <div ref={(ch) => (self.chartRef = ch)} className={classes.chart} />
-        </div>
+        <ChartContainer>
+          <div ref={(ch) => (self.chartRef = ch)} />
+        </ChartContainer>
       );
     }
-    // if (this.state.sparkline){
-    //   return (
-    //     <NoSsr>
+    //  if (this.state.sparkline){
+    //    return (
+    //       <NoSsr>
     //       {loadingBar}
-    //       <div className={classes.sparklineCardContent}>
+    //       <StyledSparklineContent>
     //         <div>{panel.title}</div>
     //         <div>{mainChart}</div>
     //         <div>{iconComponent}</div>
-    //       </div>
+    //       </StyledSparklineContent>
     //     </NoSsr>
     //   )
     // }
     return (
-      <NoSsr>
-        {loadingBar}
-        <Card className={classes.card}>
-          {!inDialog && (
-            <CardHeader
-              disableTypography
-              avatar={
-                error && (
-                  <Tooltip title="There was an error communicating with the server" placement="top">
-                    <WarningIcon className={classes.error} />
-                  </Tooltip>
-                )
-              }
-              title={panel.title}
-              action={iconComponent}
-              className={classes.cardHeader}
-            />
-          )}
-          <CardContent className={classes.cardContent}>{mainChart}</CardContent>
-        </Card>
-      </NoSsr>
+      <UsesSistent>
+        <NoSsr>
+          {loadingBar}
+          <StyledCard>
+            {!inDialog && (
+              <CardHeader
+                disableTypography
+                avatar={
+                  error && (
+                    <Tooltip
+                      title="There was an error communicating with the server"
+                      placement="top"
+                    >
+                      <WarningIcon component={ErrorText} />
+                    </Tooltip>
+                  )
+                }
+                title={panel.title}
+                action={iconComponent}
+                sx={{ fontSize: (theme) => theme.spacing(2), width: '100%' }}
+              />
+            )}
+            <StyledCardContent>{mainChart}</StyledCardContent>
+          </StyledCard>
+        </NoSsr>
+      </UsesSistent>
     );
   }
 }
 
 GrafanaCustomChart.propTypes = {
-  classes: PropTypes.object.isRequired,
   grafanaURL: PropTypes.string.isRequired,
   connectionID: PropTypes.string.isRequired,
   // grafanaAPIKey: PropTypes.string.isRequired,
@@ -889,4 +903,4 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-export default withStyles(grafanaStyles)(connect(null, mapDispatchToProps)(GrafanaCustomChart));
+export default connect(null, mapDispatchToProps)(GrafanaCustomChart);

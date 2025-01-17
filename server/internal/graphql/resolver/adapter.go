@@ -61,7 +61,7 @@ func (r *Resolver) changeAdapterStatus(ctx context.Context, _ models.Provider, t
 		r.Log.Info("Failed to " + operation + " adapter")
 		r.Log.Error(err)
 	} else {
-		r.Log.Info("Successfully " + operation + "ed adapter")
+		r.Log.Info(operation + "ed adapter")
 	}
 
 	return model.StatusProcessing, nil

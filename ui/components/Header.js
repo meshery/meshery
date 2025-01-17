@@ -488,7 +488,7 @@ function K8sContextMenu({
                     />
                   </div>
                   <div>
-                    {contexts?.total_count && (
+                    {contexts?.total_count > 0 && (
                       <div
                         style={{
                           display: 'flex',

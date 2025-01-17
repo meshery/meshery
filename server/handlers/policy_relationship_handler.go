@@ -29,6 +29,117 @@ const (
 	suffix                        = "_relationship"
 )
 
+const RELATIONSHIP_SUBTYPE_ALIAS = "alias"
+
+// Aliasses Are not resolved
+func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipDefinition) (pattern.NonResolvedAlias, bool) {
+
+	alias := pattern.NonResolvedAlias{}
+
+	if relationshipDeclaration.SubType != RELATIONSHIP_SUBTYPE_ALIAS {
+		return alias, false
+	}
+
+	selectors := *relationshipDeclaration.Selectors
+
+	if len(selectors) == 0 {
+		return alias, false
+	}
+
+	selector := selectors[0]
+	fromSet := selector.Allow.From
+	toSet := selector.Allow.To
+
+	if len(fromSet) == 0 || len(toSet) == 0 {
+		return alias, false
+	}
+
+	from := fromSet[0]
+	to := toSet[0]
+	mutatedRefs := *from.Patch.MutatedRef
+
+	if len(mutatedRefs) == 0 {
+		return alias, false
+	}
+
+	alias.ImmediateParentId = *to.Id
+	alias.AliasComponentId = *from.Id
+	alias.RelationshipId = relationshipDeclaration.Id
+	alias.ImmediateRefFieldPath = mutatedRefs[0]
+
+	return alias, true
+
+}
+
+func ParseComponentToAlias(component component.ComponentDefinition, relationships []*relationship.RelationshipDefinition) (pattern.NonResolvedAlias, bool) {
+
+	for _, relationship := range relationships {
+		alias, ok := parseRelationshipToAlias(*relationship)
+		if !ok {
+			continue
+		}
+
+		if alias.AliasComponentId == component.Id {
+			return alias, true
+		}
+	}
+
+	return pattern.NonResolvedAlias{}, false
+}
+
+// getComponentById retrieves a component from the design by its ID
+func getComponentById(design pattern.PatternFile, id uuid.UUID) *component.ComponentDefinition {
+	for _, comp := range design.Components {
+		if comp.Id == id {
+			return comp
+		}
+	}
+	return nil
+}
+
+func ResolveAlias(nonResolvedAlias pattern.NonResolvedAlias, currentNonResolved pattern.NonResolvedAlias, path []string, design pattern.PatternFile) pattern.ResolvedAlias {
+	parentComponent := getComponentById(design, currentNonResolved.ImmediateParentId)
+	if parentComponent == nil {
+		return pattern.ResolvedAlias{
+			NonResolvedAlias:     nonResolvedAlias,
+			ResolvedParentId:     currentNonResolved.ImmediateParentId,
+			ResolvedRefFieldPath: path,
+		}
+	}
+
+	parentAlias, ok := ParseComponentToAlias(*parentComponent, design.Relationships)
+
+	if !ok {
+
+		return pattern.ResolvedAlias{
+			NonResolvedAlias:     nonResolvedAlias,
+			ResolvedParentId:     currentNonResolved.ImmediateParentId,
+			ResolvedRefFieldPath: path,
+		}
+	}
+
+	// slicing from 1 to remove "configuration" prefix when building the resolved ref
+	// so we dont get something like configuration,spec,configuration , containers , _
+	// appending to aprentAlias.ImmediateReffiled , than path , because this a recursive function it will otherwise build the path in reverse
+	return ResolveAlias(nonResolvedAlias, parentAlias, append(parentAlias.ImmediateRefFieldPath, path[1:]...), design)
+}
+
+func ResolveAliasesInDesign(design pattern.PatternFile) map[string]pattern.ResolvedAlias {
+
+	resolvedAliases := make(map[string]pattern.ResolvedAlias)
+
+	for _, relationship := range design.Relationships {
+		nonResolvedalias, ok := parseRelationshipToAlias(*relationship)
+		if ok {
+			resolvedAlias := ResolveAlias(nonResolvedalias, nonResolvedalias, nonResolvedalias.ImmediateRefFieldPath, design)
+			resolvedAliases[resolvedAlias.AliasComponentId.String()] = resolvedAlias
+		}
+	}
+
+	return resolvedAliases
+
+}
+
 // Helper method to make design evaluation based on the relationship policies.
 func (h *Handler) EvaluateDesign(
 	relationshipPolicyEvalPayload pattern.EvaluationRequest,
@@ -39,6 +150,7 @@ func (h *Handler) EvaluateDesign(
 	evaluationResponse, err := h.Rego.RegoPolicyHandler(relationshipPolicyEvalPayload.Design,
 		RelationshipPolicyPackageName,
 	)
+
 	if err != nil {
 		h.log.Debug(err)
 		// log an event
@@ -50,7 +162,11 @@ func (h *Handler) EvaluateDesign(
 
 	// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
 	_ = processEvaluationResponse(h.registryManager, relationshipPolicyEvalPayload, &evaluationResponse)
-
+	evaluatedAliases := ResolveAliasesInDesign(evaluationResponse.Design)
+	if evaluationResponse.Design.Metadata == nil {
+		evaluationResponse.Design.Metadata = &pattern.PatternFileMetadata{}
+	}
+	evaluationResponse.Design.Metadata.ResolvedAliases = evaluatedAliases
 	return evaluationResponse, nil
 }
 
