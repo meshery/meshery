@@ -22,7 +22,6 @@ import {
   MaintainanceChip,
   NotFoundChip,
   RegisteredChip,
-  StatusChip,
 } from './styles';
 import { iconMedium } from 'css/icons.styles';
 import { UsesSistent } from '../SistentWrapper';
@@ -79,7 +78,6 @@ const DiscoveredStateChip = ({ value }) => {
   return (
     <MenuItem value={value}>
       <DiscoveredChip
-        component={StatusChip}
         avatar={<ExploreIcon />}
         label={value}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
@@ -95,7 +93,6 @@ const RegisteredStateChip = ({ value }) => {
       <RegisteredChip
         avatar={<AssignmentTurnedInIcon />}
         label={value}
-        component={StatusChip}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       {/* <HelpToolTip classes={classes} value="2-registered" /> */}
@@ -109,7 +106,6 @@ const ConnectedStateChip = ({ value }) => {
       <ConnectedChip
         avatar={<CheckCircleIcon />}
         label={value}
-        component={StatusChip}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       {/* <HelpToolTip classes={classes} value="3-connected" /> */}
@@ -123,7 +119,6 @@ const DisconnectedStateChip = ({ value }) => {
       <DisconnectedChip
         avatar={<DisconnectIcon fill={notificationColors.lightwarning} width={24} height={24} />}
         label={value}
-        component={StatusChip}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
     </MenuItem>
@@ -137,7 +132,6 @@ const IgnoredStateChip = ({ value }) => {
       <IgnoredChip
         avatar={<RemoveCircleIcon />}
         label={value}
-        component={StatusChip}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       {/* <HelpToolTip classes={classes} value="4-ignored" /> */}
@@ -151,7 +145,6 @@ const DeletedStateChip = ({ value }) => {
       <DeletedChip
         avatar={<DeleteForeverIcon />}
         label={value}
-        component={StatusChip}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       {/* <HelpToolTip classes={classes} value="7-deleted" /> */}
@@ -165,7 +158,6 @@ const MaintainanceStateChip = ({ value }) => {
       <MaintainanceChip
         avatar={<HandymanIcon />}
         label={value}
-        component={StatusChip}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       {/* <HelpToolTip classes={classes} value="7-deleted" /> */}
@@ -179,7 +171,6 @@ const NotFoundStateChip = ({ value }) => {
       <NotFoundChip
         avatar={<NotInterestedRoundedIcon />}
         label={value}
-        component={StatusChip}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       {/* <HelpToolTip classes={classes} value="7-deleted" /> */}
@@ -206,7 +197,7 @@ const NotFoundStateChip = ({ value }) => {
 const Default = ({ value }) => {
   return (
     <MenuItem value={value}>
-      <DiscoveredChip value={value} component={StatusChip} avatar={<ExploreIcon />} label={value} />
+      <DiscoveredChip value={value} avatar={<ExploreIcon />} label={value} />
     </MenuItem>
   );
 };
@@ -235,5 +226,5 @@ function getStatusChip(status) {
 }
 
 export const ConnectionStateChip = ({ status }) => {
-  return <UsesSistent>{getStatusChip(status)};</UsesSistent>;
+  return <UsesSistent>{getStatusChip(status)}</UsesSistent>;
 };

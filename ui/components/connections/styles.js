@@ -259,7 +259,7 @@ export const ChipWrapper = styled(Chip)({
   border: '1px solid rgba(255, 255, 255, 0.23)',
 });
 
-export const StatusChip = styled(Chip)({
+const baseChipStyles = {
   minWidth: '142px !important',
   maxWidth: 'max-content !important',
   display: 'flex !important',
@@ -276,9 +276,10 @@ export const StatusChip = styled(Chip)({
   '&:hover': {
     boxShadow: '0px 1px 2px 0px rgba(0, 0, 0, 0.25)',
   },
-});
+};
 
 export const DiscoveredChip = styled(Chip)(() => ({
+  ...baseChipStyles,
   '& .MuiChip-label': {
     color: notificationColors.info,
   },
@@ -289,6 +290,7 @@ export const DiscoveredChip = styled(Chip)(() => ({
 }));
 
 export const DeletedChip = styled(Chip)(({ theme }) => ({
+  ...baseChipStyles,
   '& .MuiChip-label': {
     color: theme.palette.background.error.default,
   },
@@ -299,6 +301,7 @@ export const DeletedChip = styled(Chip)(({ theme }) => ({
 }));
 
 export const RegisteredChip = styled(Chip)(({ theme }) => ({
+  ...baseChipStyles,
   '& .MuiChip-label': {
     color: theme.palette.mode === 'dark' ? '#86B2C6' : '#477E96',
   },
@@ -309,6 +312,7 @@ export const RegisteredChip = styled(Chip)(({ theme }) => ({
 }));
 
 export const ConnectedChip = styled(Chip)(({ theme }) => ({
+  ...baseChipStyles,
   '& .MuiChip-label': {
     color: theme.palette.background.success.default,
   },
@@ -319,6 +323,7 @@ export const ConnectedChip = styled(Chip)(({ theme }) => ({
 }));
 
 export const IgnoredChip = styled(Chip)(({ theme }) => ({
+  ...baseChipStyles,
   '& .MuiChip-label': {
     color: theme.palette.mode === 'dark' ? '#9FAFB6' : '#51636B',
   },
@@ -329,6 +334,7 @@ export const IgnoredChip = styled(Chip)(({ theme }) => ({
 }));
 
 export const DisconnectedChip = styled(Chip)(({ theme }) => ({
+  ...baseChipStyles,
   '& .MuiChip-label': {
     color: theme.palette.background.warning.default,
   },
@@ -339,6 +345,7 @@ export const DisconnectedChip = styled(Chip)(({ theme }) => ({
 }));
 
 export const NotFoundChip = styled(Chip)(({ theme }) => ({
+  ...baseChipStyles,
   '& .MuiChip-label': {
     color: theme.palette.text.disabled,
   },
@@ -349,6 +356,7 @@ export const NotFoundChip = styled(Chip)(({ theme }) => ({
 }));
 
 export const MaintainanceChip = styled(Chip)(() => ({
+  ...baseChipStyles,
   '& .MuiChip-label': {
     color: notificationColors.lightwarning,
   },
