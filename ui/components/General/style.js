@@ -244,17 +244,21 @@ export const SecondaryDivider = styled(Divider)(({ theme }) => ({
 }));
 
 export const ExpandMoreIcon = styled(FontAwesomeIcon, {
-  shouldForwardProp: (prop) =>
-    prop !== 'isCollapsed' && prop !== 'isDrawerCollapsed' && prop !== 'hasChildren',
-})(({ isCollapsed, isDrawerCollapsed, hasChildren }) => ({
-  opacity: isDrawerCollapsed || !hasChildren ? 0 : 0,
+  shouldForwardProp: (prop) => prop !== 'isCollapsed' && prop !== 'hasChildren',
+})(({ isCollapsed, hasChildren }) => ({
+  opacity: 0,
   cursor: 'pointer',
+  display: hasChildren ? 'inline-block' : 'none',
   transform: isCollapsed ? 'rotate(180deg) translateX(-0.8px)' : 'translateX(3px)', // Rotate if collapsed
   transition: 'transform 200ms ease-in-out', // Smooth rotation animation
   '&:hover': {
     opacity: 1,
     color: '#4fc3f7',
   },
+}));
+
+export const ChevronIcon = styled(FontAwesomeIcon)(({ theme }) => ({
+  color: theme.palette.icon.default,
 }));
 
 export const MainListIcon = styled(ListItemIcon)(({ theme }) => ({

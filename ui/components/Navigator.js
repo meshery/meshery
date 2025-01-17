@@ -10,7 +10,6 @@ import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import HelpIcon from '@material-ui/icons/Help';
-import DashboardIcon from '@material-ui/icons/Dashboard';
 import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
 import ExtensionIcon from '../public/static/img/drawer-icons/extensions_svg';
@@ -81,6 +80,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import {
+  ChevronIcon,
   ExpandMoreIcon,
   HideScrollbar,
   LinkContainer,
@@ -100,6 +100,7 @@ import {
   SideBarText,
   StyledListItem,
 } from './General/style';
+import DashboardIcon from '@/assets/icons/DashboardIcon';
 
 const styles = (theme) => ({
   item: {
@@ -1311,13 +1312,15 @@ class Navigator_ extends React.Component {
           }
           onClick={this.toggleMiniDrawer}
         >
-          <FontAwesomeIcon
-            icon={faAngleLeft}
-            fixedWidth
-            size="2x"
-            style={{ margin: '0.75rem 0.2rem ', width: '0.8rem', verticalAlign: 'middle' }}
-            alt="Sidebar collapse toggle icon"
-          />
+          <UsesSistent>
+            <ChevronIcon
+              icon={faAngleLeft}
+              fixedWidth
+              size="2x"
+              style={{ margin: '0.75rem 0.2rem ', width: '0.8rem', verticalAlign: 'middle' }}
+              alt="Sidebar collapse toggle icon"
+            />
+          </UsesSistent>
         </div>
       </div>
     );
