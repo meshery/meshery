@@ -25,7 +25,6 @@ const styles = () => ({
     fontSize: 16,
   },
   paper: {
-    zIndex: 9999,
     width: '100%',
     position: 'absolute',
   },
@@ -169,6 +168,10 @@ class ReactSelectWrapper extends React.Component {
       menuPortal: (base) => ({
         ...base,
         zIndex: 9999,
+      }),
+      menuList: (base) => ({
+        ...base,
+        maxHeight: '180px',
       }),
     };
 
