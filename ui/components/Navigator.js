@@ -946,7 +946,6 @@ class Navigator_ extends React.Component {
    * @return {JSX.Element} content
    */
   linkContent(iconc, titlec, hrefc, linkc, drawerCollapsed) {
-    const { classes } = this.props;
     let linkContent = (
       <UsesSistent>
         <LinkContainer>
