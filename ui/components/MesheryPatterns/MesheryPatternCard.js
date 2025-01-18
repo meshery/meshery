@@ -223,7 +223,7 @@ function MesheryPatternCard_({
               />
               <TooltipButton
                 title="Download"
-                variant="outlined"
+                variant="contained"
                 color="primary"
                 onClick={handleDownload}
                 style={{
@@ -237,7 +237,7 @@ function MesheryPatternCard_({
               {visibility === VISIBILITY.PRIVATE ? (
                 <TooltipButton
                   title="Design"
-                  variant="outlined"
+                  variant="contained"
                   color="primary"
                   onClick={(ev) => genericClickHandler(ev, setSelectedPatterns)}
                   style={{
@@ -256,7 +256,7 @@ function MesheryPatternCard_({
               ) : (
                 <TooltipButton
                   title="Clone"
-                  variant="outlined"
+                  variant="contained"
                   color="primary"
                   onClick={(ev) => genericClickHandler(ev, handleClone)}
                   style={{
@@ -273,7 +273,7 @@ function MesheryPatternCard_({
               {userCanEdit && (
                 <TooltipButton
                   title="Edit In Configurator"
-                  variant="outlined"
+                  variant="contained"
                   color="primary"
                   onClick={(ev) => genericClickHandler(ev, editInConfigurator)}
                   disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
@@ -288,7 +288,7 @@ function MesheryPatternCard_({
               )}
               <TooltipButton
                 title="Pattern Information"
-                variant="outlined"
+                variant="contained"
                 color="primary"
                 onClick={(ev) => genericClickHandler(ev, handleInfoModal)}
                 style={{

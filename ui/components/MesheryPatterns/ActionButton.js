@@ -36,7 +36,7 @@ export default function ActionButton({ defaultActionClick, options }) {
     <UsesSistent>
       <React.Fragment>
         <ButtonGroup
-          variant="contained"
+          variant="outlined"
           style={{ boxShadow: 'none' }}
           ref={anchorRef}
           aria-label="Button group with a nested menu"
@@ -47,7 +47,7 @@ export default function ActionButton({ defaultActionClick, options }) {
               borderRadius: '8px',
             }}
             onClick={defaultActionClick}
-            variant="contained"
+            variant="outlined"
           >
             Action
           </Button>
@@ -58,7 +58,7 @@ export default function ActionButton({ defaultActionClick, options }) {
             }}
             size="small"
             onClick={handleToggle}
-            variant="contained"
+            variant="outlined"
           >
             <ArrowDropDownIcon />
           </Button>

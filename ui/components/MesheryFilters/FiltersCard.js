@@ -136,7 +136,7 @@ function FiltersCard_({
             <CatalogCardButtons>
               {canPublishFilter && visibility !== VISIBILITY.PUBLISHED ? (
                 <TooltipButton
-                  variant="contained"
+                  variant="outlined"
                   title="Publish"
                   style={{
                     padding: '6px 9px',
@@ -150,7 +150,7 @@ function FiltersCard_({
                 </TooltipButton>
               ) : (
                 <TooltipButton
-                  variant="contained"
+                  variant="outlined"
                   title="Unpublish"
                   style={{
                     padding: '6px 9px',
@@ -167,9 +167,13 @@ function FiltersCard_({
               )}
               <TooltipButton
                 title="Download"
-                variant="outlined"
+                variant="contained"
                 color="primary"
                 onClick={handleDownload}
+                style={{
+                  padding: '6px 9px',
+                  borderRadius: '8px',
+                }}
                 disabled={
                   !CAN(keys.DOWNLOAD_A_WASM_FILTER.action, keys.DOWNLOAD_A_WASM_FILTER.subject)
                 }
@@ -181,8 +185,12 @@ function FiltersCard_({
               {visibility === VISIBILITY.PUBLISHED ? (
                 <TooltipButton
                   title="Clone"
-                  variant="outlined"
+                  variant="contained"
                   color="primary"
+                  style={{
+                    padding: '6px 9px',
+                    borderRadius: '8px',
+                  }}
                   onClick={(ev) => genericClickHandler(ev, handleClone)}
                   disabled={!CAN(keys.CLONE_WASM_FILTER.action, keys.CLONE_WASM_FILTER.subject)}
                 >
@@ -192,7 +200,7 @@ function FiltersCard_({
               ) : null}
               <TooltipButton
                 title="Filter Information"
-                variant="outlined"
+                variant="contained"
                 color="primary"
                 onClick={(ev) => genericClickHandler(ev, handleInfoModal)}
                 style={{

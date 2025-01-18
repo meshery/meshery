@@ -12,7 +12,7 @@ import { Modal as SistentModal } from '@layer5/sistent';
 import { UsesSistent } from '../SistentWrapper';
 import Filter from '../../public/static/img/drawer-icons/filter_svg.js';
 
-const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
+const INITIAL_GRID_SIZE = { xl: 6, md: 6, xs: 12 };
 
 function FilterCardGridItem({
   filter,
