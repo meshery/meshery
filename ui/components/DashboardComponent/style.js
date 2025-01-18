@@ -1,4 +1,4 @@
-import { Typography, IconButton, Paper, styled } from '@layer5/sistent';
+import { Typography, IconButton, Paper, styled, Tab, Tabs, gray, charcoal } from '@layer5/sistent';
 
 export const DashboardSection = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
@@ -147,3 +147,13 @@ export const NoResourcesText = styled(Typography)({
   textAlign: 'center',
   marginTop: '2rem',
 });
+
+export const SecondaryTab = styled(Tab)(({ theme }) => ({
+  '&.Mui-selected': {
+    backgroundColor: theme.palette.mode === 'dark' ? gray[20] : charcoal[90],
+  },
+}));
+
+export const SecondaryTabs = styled(Tabs)(({ theme }) => ({
+  background: theme.palette.mode === 'dark' ? gray[20] : charcoal[90],
+}));
