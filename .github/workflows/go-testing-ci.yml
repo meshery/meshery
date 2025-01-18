@@ -5,11 +5,13 @@ on:
       - "master"
     paths:
       - "**.go"
+      - "**.golden"
   pull_request:
     branches:
       - "master"
     paths:
       - "**.go"
+      - "**.golden"
   workflow_dispatch:
     inputs:
       logLevel:
@@ -34,7 +36,7 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.59
+          version: v1.63
           args: --config=.golangci.yml --timeout=10m
   unit-tests:
     name: Unit tests

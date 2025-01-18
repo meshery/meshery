@@ -31,6 +31,9 @@ Some examples include:
   - Examples: Different charts (metrics), debug (log viewer), distributed trace explorers.
 - **Reporting**
   - Examples: Using Meshery's GraphQL server to compose new dashboards.
+- **Server Event Management**
+  - Examples: Local event storage in database
+  - Examples: Remote event synchronization (Remote providers only)
 
 <a href="{{ site.baseurl }}/assets/img/providers/provider_screenshot_new.png">
 <img src="{{ site.baseurl }}/assets/img/providers/provider_screenshot_new.png" width="50%" /></a>
@@ -48,16 +51,7 @@ There are two types of providers defined in Meshery, `local` and `remote`.
 
 The use of a Remote Provider, puts Meshery into multi-user mode and requires user authentication. This provides security for the public-facing Meshery UI as the remote provider enforces identity with authentication and authorization. You should also use a remote provider when your use of Meshery is ongoing or used in a team environment (used by multiple people). This can be seen when using Meshery Playground, where a user is prompted to login through the _Layer5 Meshery Cloud_ remote provider. Visit [Meshery Playground](https://playground.meshery.io/) to experience this.
 
-#### Event Visibility in Remote Providers
-
-Meshery's extensibility framework for remote providers currently does not include automatic propagation of events persisted locally by `provider.PersistEvent(event)`. To address this limitation, remote providers could be enhanced to optionally subscribe to and process server events. This would involve:
-
-- **Provider-Specific Event Handling**: Allowing remote providers to define the types of events they wish to consume, ensuring tailored integration for different provider use cases.
-- **Event Subscription APIs**: Introducing APIs that enable remote providers to subscribe to server events dynamically, improving their ability to offer real-time insights and actions based on event data.
-
-These enhancements would strengthen the integration between Meshery and its remote providers, making the platform more adaptable to varied deployment needs.
-
-A specific remote provider can be enforced in a Meshery instance by passing the name of the provider with the env variable `PROVIDER`.  
+A specific remote provider can be enforced in a Meshery instance by passing the name of the provider with the env variable `PROVIDER`.
 
 Name: **"Meshery"** (default)
 
@@ -66,6 +60,7 @@ Name: **"Meshery"** (default)
 - Save environment setup.
 - Retrieve performance test results.
 - Retrieve conformance test results.
+- Events are stored locally and can be published to remote provider. [Read more about server events](https://docs.meshery.io/project/contributing/contributing-server-events)
 - Free to use.
 
 ### Local Provider
@@ -79,6 +74,7 @@ Name: **“None”**
 - Environment setup not saved.
 - No performance test result history.
 - No conformance test result history.
+- Server events are stored locally in database. [Read more about server events](https://docs.meshery.io/project/contributing/contributing-server-events)
 - Free to use.
 
 ### Design Principles: Meshery Remote Provider Framework

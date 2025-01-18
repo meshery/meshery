@@ -344,14 +344,16 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	if asDesign {
 		rawDesign := ConvertToPatternFile(resources, true) // strip schema
 		resources = []model.KubernetesResource{}           // clear resources to save memory
-		evalResponse, error := h.Rego.RegoPolicyHandler(rawDesign, RelationshipPolicyPackageName)
+		// evalResponse, error := h.Rego.RegoPolicyHandler(rawDesign, RelationshipPolicyPackageName)
+		evalResponse, error := h.EvaluateDesign(pattern.EvaluationRequest{
+			Design: rawDesign,
+		})
+
 		if error != nil {
 			design = rawDesign
 			h.log.Error(fmt.Errorf("Error evaluating design: %v", error))
 		} else {
-			// if there is error in evaluation, return the raw design (without any relationships)
-			design = rawDesign
-			design.Relationships = evalResponse.Design.Relationships // only add relationships
+			design = evalResponse.Design // use the evaluated design
 		}
 
 	}
@@ -395,6 +397,7 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 
 	var kindCounts []struct {
 		Kind  string
+		Model string
 		Count int64
 	}
 	var namespaces []string
@@ -403,8 +406,9 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	kindsQuery := provider.GetGenericPersister().
 		Model(&model.KubernetesResource{}).
 		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resources.id = kubernetes_resource_object_meta.id").
-		Select("kind, count(*) as count").
-		Group("kind")
+		Select("kind, model, count(*) as count").
+		Group("kind, model").
+		Having("model IS NOT NULL")
 
 	kindsQuery = filterByClusters(kindsQuery, clusterIds)
 	kindsQuery = filterByNamespaces(kindsQuery, namespaceScope)
