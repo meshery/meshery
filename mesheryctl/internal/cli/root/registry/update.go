@@ -57,13 +57,16 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 
+		if len(args) == 0 {
+			return errors.New(utils.RegistryError("no arguments provided\nUsage: \nmesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred $CRED\nmesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred $CRED --model \"[model-name]\"", "update"))
+		}
 		spreadsheetIDFlag, _ := cmd.Flags().GetString("spreadsheet-id")
 		spreadsheetCredFlag, _ := cmd.Flags().GetString("spreadsheet-cred")
-		if spreadsheetIDFlag != "" && spreadsheetCredFlag == "" {
-			return errors.New(utils.RegistryError("Spreadsheet Credentials are required\nUsage: \nmesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred $CRED\nmesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred $CRED --model \"[model-name]\"", "update"))
-		}
 		if spreadsheetIDFlag == "" || spreadsheetCredFlag == "" {
 			return errors.New(utils.RegistryError("[ Spreadsheet ID and Spreadsheet Cred] isn't specified", "update"))
+		}
+		if spreadsheetIDFlag != "" && spreadsheetCredFlag == "" {
+			return errors.New(utils.RegistryError("Spreadsheet Credentials are required\nUsage: \nmesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred $CRED\nmesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred $CRED --model \"[model-name]\"", "update"))
 		}
 		err := os.MkdirAll(logDirPath, 0755)
 		if err != nil {
@@ -78,9 +81,7 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) == 0 {
-			return cmd.Help()
-		}
+
 		srv, err := mutils.NewSheetSRV(spreadsheeetCred)
 		if err != nil {
 			utils.Log.Error(ErrUpdateRegistry(err, modelLocation))
