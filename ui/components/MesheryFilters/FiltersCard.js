@@ -178,7 +178,7 @@ function FiltersCard_({
                   !CAN(keys.DOWNLOAD_A_WASM_FILTER.action, keys.DOWNLOAD_A_WASM_FILTER.subject)
                 }
               >
-                <GetAppIcon fill={theme.palette.icon.default} style={iconMedium} />
+                <GetAppIcon fill={theme.palette.background.constant.white} style={iconMedium} />
                 <span className={classes.btnText}>Download</span>
               </TooltipButton>
 
@@ -194,7 +194,7 @@ function FiltersCard_({
                   onClick={(ev) => genericClickHandler(ev, handleClone)}
                   disabled={!CAN(keys.CLONE_WASM_FILTER.action, keys.CLONE_WASM_FILTER.subject)}
                 >
-                  <CloneIcon fill={theme.palette.icon.default} style={iconMedium} />
+                  <CloneIcon fill={theme.palette.background.constant.white} style={iconMedium} />
                   <span className={classes.cloneBtnText}>Clone</span>
                 </TooltipButton>
               ) : null}
@@ -211,7 +211,10 @@ function FiltersCard_({
                   !CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject)
                 }
               >
-                <InfoOutlinedIcon fill={theme.palette.icon.default} style={iconMedium} />
+                <InfoOutlinedIcon
+                  fill={theme.palette.background.constant.white}
+                  style={iconMedium}
+                />
                 <span className={classes.btnText}> Info </span>
               </TooltipButton>
             </CatalogCardButtons>

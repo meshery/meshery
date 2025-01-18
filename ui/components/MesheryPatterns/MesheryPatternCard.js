@@ -231,7 +231,10 @@ function MesheryPatternCard_({
                   borderRadius: '8px',
                 }}
               >
-                <GetAppIcon fill={theme.palette.icon.default} data-cy="download-button" />
+                <GetAppIcon
+                  fill={theme.palette.background.constant.white}
+                  data-cy="download-button"
+                />
                 <span className={classes.btnText}> Download </span>
               </TooltipButton>
               {visibility === VISIBILITY.PRIVATE ? (
@@ -265,7 +268,7 @@ function MesheryPatternCard_({
                   }}
                   disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)}
                 >
-                  <CloneIcon fill={theme.palette.icon.default} style={iconMedium} />
+                  <CloneIcon fill={theme.palette.background.constant.white} style={iconMedium} />
                   <span className={classes.cloneBtnText}> Clone </span>
                 </TooltipButton>
               )}
@@ -282,7 +285,7 @@ function MesheryPatternCard_({
                     borderRadius: '8px',
                   }}
                 >
-                  <Edit style={{ fill: theme.palette.icon.default, ...iconMedium }} />
+                  <Edit style={{ fill: theme.palette.background.constant.white, ...iconMedium }} />
                   <span className={classes.cloneBtnText}> Edit </span>
                 </TooltipButton>
               )}
@@ -297,7 +300,9 @@ function MesheryPatternCard_({
                 }}
                 disabled={!CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject)}
               >
-                <InfoOutlinedIcon style={{ fill: theme.palette.icon.default, ...iconMedium }} />
+                <InfoOutlinedIcon
+                  style={{ fill: theme.palette.background.constant.white, ...iconMedium }}
+                />
                 <span className={classes.btnText}> Info </span>
               </TooltipButton>
             </CatalogCardButtons>
@@ -394,7 +399,7 @@ function MesheryPatternCard_({
                       disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                       onClick={(ev) => genericClickHandler(ev, updateHandler)}
                     >
-                      <Save fill={theme.palette.icon.default} />
+                      <Save fill={theme.palette.background.constant.white} />
                     </IconButton>
                   </CustomTooltip>
 
@@ -404,7 +409,7 @@ function MesheryPatternCard_({
                       disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
                       onClick={(ev) => genericClickHandler(ev, deleteHandler)}
                     >
-                      <DeleteIcon fill={theme.palette.icon.default} />
+                      <DeleteIcon fill={theme.palette.background.constant.white} />
                     </IconButton>
                   </CustomTooltip>
                 </UpdateDeleteButtons>
