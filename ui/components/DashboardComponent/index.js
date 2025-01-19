@@ -4,7 +4,6 @@ import { bindActionCreators } from 'redux';
 import { useRouter, withRouter } from 'next/router';
 import { withStyles } from '@material-ui/core/styles';
 import { withNotify } from '../../utils/hooks/useNotification';
-import { Paper } from '@material-ui/core';
 import { updateProgress } from '../../lib/store';
 import { ResourcesConfig } from './resources/config';
 import ResourcesTable from './resources/resources-table';
@@ -13,41 +12,14 @@ import Overview from './overview';
 import KubernetesIcon from '../../assets/icons/technology/kubernetes';
 import MesheryIcon from './images/meshery-icon.js';
 import { TabPanel } from './tabpanel';
-import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { iconLarge } from '../../css/icons.styles';
 import { useWindowDimensions } from '@/utils/dimension';
-import { Tab, Tabs } from '@layer5/sistent';
+import { Tab, Tabs, CustomTooltip } from '@layer5/sistent';
 import { UsesSistent } from '../SistentWrapper';
+import { WrapperContainer, WrapperPaper } from './style';
+import _ from 'lodash';
 
 const styles = (theme) => ({
-  wrapperClss: {
-    flexGrow: 1,
-    maxWidth: '100vw',
-    height: 'auto',
-  },
-  tab: {
-    width: 'max(6rem, 20%)',
-    margin: 0,
-    minWidth: 40,
-    paddingLeft: 0,
-    paddingRight: 0,
-    '&.Mui-selected': {
-      color: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
-    },
-  },
-  subMenuTab: {
-    backgroundColor: theme.palette.type === 'dark' ? '#212121' : '#f5f5f5',
-  },
-  tabs: {
-    width: '100%',
-    // flexGrow: 1,
-    '& .MuiTabs-indicator': {
-      backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
-    },
-    '& .MuiTab-fullWidth': {
-      // flexBasis: 'unset', // Remove flex-basis
-    },
-  },
   icon: {
     display: 'inline',
     verticalAlign: 'text-top',
@@ -55,8 +27,15 @@ const styles = (theme) => ({
     marginLeft: theme.spacing(0.5),
   },
   iconText: {
-    display: 'inline',
-    verticalAlign: 'middle',
+    display: 'flex',
+    flexWrap: 'no-wrap',
+    justifyContent: 'center',
+    gap: '1rem',
+    alignItems: 'center',
+    '& svg': {
+      verticalAlign: 'middle',
+      marginRight: '.5rem',
+    },
   },
   backToPlay: { margin: theme.spacing(2) },
   link: { cursor: 'pointer' },
@@ -111,6 +90,7 @@ const styles = (theme) => ({
     cursor: 'pointer',
   },
 });
+
 const useDashboardRouter = () => {
   const router = useRouter();
   const { query, push: pushRoute, route } = router;
@@ -142,6 +122,7 @@ const useDashboardRouter = () => {
 };
 
 const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
+
 const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updateProgress }) => {
   const { resourceCategory, changeResourceTab, selectedResource, handleChangeSelectedResource } =
     useDashboardRouter();
@@ -153,13 +134,17 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
   const getResourceCategory = (index) => {
     return ResourceCategoryTabs[index];
   };
+
   const { width } = useWindowDimensions();
 
+  if (!ResourceCategoryTabs.includes(resourceCategory)) {
+    changeResourceTab('Overview');
+  }
   return (
     <>
-      <div className={classes.wrapperClss}>
-        <Paper square className={classes.wrapperClss}>
-          <UsesSistent>
+      <UsesSistent>
+        <WrapperContainer>
+          <WrapperPaper square>
             <Tabs
               value={getResourceCategoryIndex(resourceCategory)}
               indicatorColor="primary"
@@ -169,13 +154,15 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
               variant={width < 1280 ? 'scrollable' : 'fullWidth'}
               scrollButtons="on"
               textColor="primary"
-              // centered
             >
               {ResourceCategoryTabs.map((resource, idx) => {
                 return (
-                  <CustomTextTooltip key={idx} title={`View ${resource}`} placement="top">
+                  <CustomTooltip
+                    key={`${resource}-${idx}`}
+                    title={`View ${resource}`}
+                    placement="top"
+                  >
                     <Tab
-                      value={idx}
                       key={resource}
                       icon={
                         resource === 'Overview' ? (
@@ -186,44 +173,65 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
                       }
                       label={resource}
                     />
-                  </CustomTextTooltip>
+                  </CustomTooltip>
                 );
               })}
             </Tabs>
-          </UsesSistent>
-        </Paper>
+          </WrapperPaper>
 
-        <TabPanel value={resourceCategory} index={'Overview'}>
-          <Overview />
-        </TabPanel>
-        {Object.keys(ResourcesConfig).map((resource, idx) => (
-          <TabPanel value={resourceCategory} index={resource} key={resource}>
-            {ResourcesConfig[resource].submenu ? (
-              <ResourcesSubMenu
-                key={idx}
-                resource={ResourcesConfig[resource]}
-                selectedResource={selectedResource}
-                handleChangeSelectedResource={handleChangeSelectedResource}
-                updateProgress={updateProgress}
-                classes={classes}
-                k8sConfig={k8sconfig}
-                selectedK8sContexts={selectedK8sContexts}
-              />
-            ) : (
-              <ResourcesTable
-                key={idx}
-                workloadType={resource}
-                classes={classes}
-                k8sConfig={k8sconfig}
-                selectedK8sContexts={selectedK8sContexts}
-                resourceConfig={ResourcesConfig[resource].tableConfig}
-                menu={ResourcesConfig[resource].submenu}
-                updateProgress={updateProgress}
-              />
-            )}
+          <TabPanel value={resourceCategory} index={'Overview'}>
+            <Overview />
           </TabPanel>
-        ))}
-      </div>
+
+          {Object.keys(ResourcesConfig).map((resource, idx) => {
+            let CRDsKeys = [];
+            const isCRDS = resource === 'CRDS';
+            if (isCRDS) {
+              const TableValue = Object.values(
+                ResourcesConfig[resource].tableConfig(
+                  null,
+                  null,
+                  k8sconfig,
+                  null,
+                  resource,
+                  selectedK8sContexts,
+                ),
+              );
+              CRDsKeys = TableValue.map((item) => _.pick(item, ['name', 'model']));
+            }
+
+            return (
+              <TabPanel value={resourceCategory} index={resource} key={`${resource}-${idx}`}>
+                {ResourcesConfig[resource].submenu ? (
+                  <ResourcesSubMenu
+                    key={idx}
+                    resource={ResourcesConfig[resource]}
+                    selectedResource={selectedResource}
+                    handleChangeSelectedResource={handleChangeSelectedResource}
+                    updateProgress={updateProgress}
+                    classes={classes}
+                    k8sConfig={k8sconfig}
+                    selectedK8sContexts={selectedK8sContexts}
+                    CRDsKeys={CRDsKeys}
+                    isCRDS={isCRDS}
+                  />
+                ) : (
+                  <ResourcesTable
+                    key={idx}
+                    workloadType={resource}
+                    classes={classes}
+                    k8sConfig={k8sconfig}
+                    selectedK8sContexts={selectedK8sContexts}
+                    resourceConfig={ResourcesConfig[resource].tableConfig}
+                    menu={ResourcesConfig[resource].submenu}
+                    updateProgress={updateProgress}
+                  />
+                )}
+              </TabPanel>
+            );
+          })}
+        </WrapperContainer>
+      </UsesSistent>
     </>
   );
 };

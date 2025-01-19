@@ -8,7 +8,7 @@ Meshery Adapter for Linkerd
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| Layer5 Authors | <community@layer5.io> |  |
+| Meshery Authors | <community@layer5.io> |  |
 | aisuko | <urakiny@gmail.com> |  |
 | leecalcote | <lee.calcote@layer5.io> |  |
 

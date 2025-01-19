@@ -1,32 +1,44 @@
 import React, { useEffect } from 'react';
-import { NoSsr } from '@material-ui/core';
-import makeStyles from '@material-ui/styles/makeStyles';
-
+import { Box, styled, useTheme } from '@layer5/sistent';
 import bb, { gauge } from 'billboard.js';
+import { UsesSistent } from '@/components/SistentWrapper';
+import { NoSsr } from '@mui/material';
 
-const useStyles = makeStyles({
-  '@global': { '.bb-chart-arcs-background': { fill: '#e0e0e0', stroke: 'none' } },
-  grRoot: { width: '100%', height: '75%', minHeight: '18rem' },
-  error: {
-    color: '#D32F2F',
+const ChartRoot = styled(Box)(() => ({
+  width: '100%',
+  height: '75%',
+  minHeight: '18rem',
+  '& .bb-chart-arcs-background': {
+    fill: '#e0e0e0',
+    stroke: 'none',
+  },
+}));
+
+const ErrorMessage = styled(Box)(() => {
+  const theme = useTheme();
+  return {
+    color: theme.palette.error.main,
     width: '100%',
     textAlign: 'center',
     fontSize: '12px',
-    // fontFamily: 'Helvetica Nueue',
     fontWeight: 'bold',
-  },
-  title: {
-    fontSize: '12px',
-    color: '#666666',
-    // fontFamily: 'Helvetica Nueue',
-    fontWeight: 'bold',
-    textAlign: 'center',
-    width: '100%',
-  },
+  };
 });
+
+// const ChartTitle = styled(Box)(() => {
+//   const theme = useTheme();
+//   return {
+//     fontSize: '12px',
+//     color: theme.palette.text.secondary,
+//     fontWeight: 'bold',
+//     textAlign: 'center',
+//     width: '100%',
+//   };
+// });
 
 export default function GrafanaCustomGaugeChart(props) {
   let chartRef = null;
+
   const configChartData = () => {
     const { panel, data } = props;
 
@@ -38,16 +50,19 @@ export default function GrafanaCustomGaugeChart(props) {
         units = ` ${panel.format}`;
       }
     }
+
     let min = 0;
     let max = 100;
     if (panel.gauge) {
       if (panel.gauge.minValue) min = panel.gauge.minValue;
       if (panel.gauge.maxValue) max = panel.gauge.maxValue;
     }
+
     let colors = [];
     if (panel.colors) {
       colors = panel.colors;
     }
+
     let thresholds = [];
     if (panel.thresholds) {
       thresholds = panel.thresholds.split(',').map((t) => parseFloat(t.trim()));
@@ -63,40 +78,31 @@ export default function GrafanaCustomGaugeChart(props) {
 
     if (chartRef && chartRef !== null) {
       self.chart = bb.generate({
-        // oninit: function(args){
-        //   console.log(JSON.stringify(args));
-        // },
         bindto: chartRef,
-        data: { columns: [[glabel, gdata]], type: gauge() },
+        data: {
+          columns: [[glabel, gdata]],
+          type: gauge(),
+        },
         gauge: {
           min,
           max,
-          // units,
           label: {
-            // show: glabel && glabel !== '',
             format(value) {
               return value + units;
             },
             extents() {
-              // return (isMax ? "Max:" : "Min:") + value;
               return '';
             },
           },
-          //    width: 39 // for adjusting arc thickness
         },
         color: {
-          pattern: colors, // the three color levels for the percentage values.
+          pattern: colors,
           threshold: {
-            //            unit: 'value', // percentage is default
-            //            max: 200, // 100 is default
             values: thresholds,
           },
         },
         legend: { show: false },
         tooltip: { show: false },
-        // size: {
-        //   height: '100%',
-        // }
       });
     }
   };
@@ -104,17 +110,18 @@ export default function GrafanaCustomGaugeChart(props) {
   useEffect(() => {
     configChartData();
   });
-  const { error } = props;
-  const classes = useStyles();
 
-  // const {chartData, options} = this.state;
+  const { error } = props;
+
   return (
-    <NoSsr>
-      {/* <div className={classes.title}>{panel.title}</div> */}
-      <div className={classes.error}>
-        {error && 'There was an error communicating with the server'}
-      </div>
-      <div ref={(ch) => (chartRef = ch)} className={classes.grRoot} />
-    </NoSsr>
+    <UsesSistent>
+      <NoSsr>
+        <Box>
+          {/* <ChartTitle>{props.panel?.title}</ChartTitle> */}
+          <ErrorMessage>{error && 'There was an error communicating with the server'}</ErrorMessage>
+          <ChartRoot ref={(ch) => (chartRef = ch)} />
+        </Box>
+      </NoSsr>
+    </UsesSistent>
   );
 }

@@ -1,9 +1,15 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import ResponsiveHoneycomb from './ResponsiveHoneycomb';
 import Hexagon from './Hexagon';
-import { CustomTooltip, ErrorBoundary, Skeleton, Typography } from '@layer5/sistent';
+import {
+  CustomTooltip,
+  ErrorBoundary,
+  Skeleton,
+  Typography,
+  Select,
+  MenuItem,
+} from '@layer5/sistent';
 import { useRouter } from 'next/router';
-import { componentIcon } from '../charts/utils';
 import ConnectCluster from '../charts/ConnectCluster';
 import { generateDynamicURL } from '../resources/config';
 import {
@@ -12,11 +18,33 @@ import {
   ResourceCount,
   SelectedHexagon,
   SkeletonHexagon,
+  HeaderContainer,
+  ControlsContainer,
+  NoResourcesText,
+  StyledIconButton,
 } from '../style';
+import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import { useResourceOptions, useResourceFiltering, SORT_DIRECTIONS } from './useResourceOptions';
+import GetKubernetesNodeIcon from '../utils';
 
 const HoneycombComponent = (props) => {
   const { kinds, isClusterLoading, isClusterIdsEmpty } = props;
   const router = useRouter();
+  const [groupBy, setGroupBy] = useState('all');
+  const [sortDirection, setSortDirection] = useState(null);
+
+  const groupOptions = useResourceOptions();
+  const filteredKinds = useResourceFiltering(kinds, groupBy, sortDirection);
+  const handleGroupChange = useCallback((e) => {
+    setGroupBy(e.target.value);
+  }, []);
+
+  const handleSortChange = useCallback(() => {
+    setSortDirection((prev) =>
+      prev === SORT_DIRECTIONS.ASC ? SORT_DIRECTIONS.DESC : SORT_DIRECTIONS.ASC,
+    );
+  }, []);
 
   const renderLoadingSkeleton = () => {
     const loadingItems = Array(40).fill({ Kind: 'loading' });
@@ -39,51 +67,61 @@ const HoneycombComponent = (props) => {
   return (
     <ErrorBoundary>
       <HoneycombRoot>
-        <Typography variant="h6">Cluster Resource Overview</Typography>
+        <HeaderContainer>
+          <Typography variant="h6">Cluster Resource Overview</Typography>
+          <ControlsContainer>
+            <Select value={groupBy} onChange={handleGroupChange} size="small">
+              {groupOptions.map((option) => (
+                <MenuItem key={option.value} value={option.value}>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </Select>
+            <StyledIconButton size="small" onClick={handleSortChange}>
+              <CustomTooltip title={`Sort by Count`}>
+                {sortDirection === SORT_DIRECTIONS.ASC ? (
+                  <ArrowUpwardIcon />
+                ) : (
+                  <ArrowDownwardIcon />
+                )}
+              </CustomTooltip>
+            </StyledIconButton>
+          </ControlsContainer>
+        </HeaderContainer>
         {isClusterLoading || isClusterIdsEmpty ? (
           renderLoadingSkeleton()
         ) : !kinds ? (
           <ConnectCluster message="No workloads found in your cluster(s)." />
         ) : (
           <>
-            {Array.isArray(kinds) && kinds.length > 0 && (
-              <>
-                {!isClusterLoading && (
-                  <ResponsiveHoneycomb
-                    defaultWidth={1024}
-                    size={47}
-                    items={kinds}
-                    renderItem={(item) => (
-                      <Hexagon
-                        onClick={() => {
-                          router.push(generateDynamicURL(item?.Kind));
-                        }}
-                      >
-                        <SelectedHexagon>
-                          <CustomTooltip title={item?.Kind || ''} placement="top">
-                            <IconWrapper>
-                              <img
-                                src={componentIcon({
-                                  kind: item?.Kind?.toLowerCase(),
-                                  color: 'color',
-                                  model: 'kubernetes',
-                                })}
-                                width="40"
-                                height="40"
-                                onError={(event) => {
-                                  event.target.src = '/static/img/kubernetes.svg';
-                                }}
-                                alt={item?.Kind || 'Resource Icon'}
-                              />
-                              <ResourceCount variant="subtitle1">{item.Count}</ResourceCount>
-                            </IconWrapper>
-                          </CustomTooltip>
-                        </SelectedHexagon>
-                      </Hexagon>
-                    )}
-                  />
-                )}
-              </>
+            {Array.isArray(filteredKinds) && filteredKinds.length > 0 ? (
+              <ResponsiveHoneycomb
+                defaultWidth={1024}
+                size={47}
+                items={filteredKinds}
+                renderItem={(item) => {
+                  return (
+                    <Hexagon
+                      onClick={() => {
+                        router.push(generateDynamicURL(item?.Kind));
+                      }}
+                    >
+                      <SelectedHexagon>
+                        <CustomTooltip title={item?.Kind || ''} placement="top">
+                          <IconWrapper>
+                            <GetKubernetesNodeIcon kind={item?.Kind} model={item?.Model} />
+                            <ResourceCount variant="subtitle1">{item.Count}</ResourceCount>
+                          </IconWrapper>
+                        </CustomTooltip>
+                      </SelectedHexagon>
+                    </Hexagon>
+                  );
+                }}
+              />
+            ) : (
+              <NoResourcesText variant="body1">
+                No resources found for the selected group
+              </NoResourcesText>
             )}
           </>
         )}
