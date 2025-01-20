@@ -7,7 +7,6 @@ import {
   Typography,
   Chip,
   Button,
-  Badge,
   CircularProgress,
   Box,
   useTheme,
@@ -35,10 +34,10 @@ import {
   NotificationContainer,
   SeverityChips,
   SideList,
+  StyledBadge,
   StyledNotificationDrawer,
   Title,
   TitleBellIcon,
-  useNavNotificationIconStyles,
   useStyles,
 } from './notificationCenter.style';
 import {
@@ -152,14 +151,15 @@ const NavbarNotificationIcon = () => {
       : null;
   const currentSeverityStyle = currentTopSeverity ? SEVERITY_STYLE[currentTopSeverity] : null;
   const topSeverityCount = getSeverityCount(count_by_severity_level, currentTopSeverity);
-  const classes = useNavNotificationIconStyles({
-    badgeColor: currentSeverityStyle?.color,
-  });
   if (currentTopSeverity) {
     return (
-      <Badge id="notification-badge" badgeContent={topSeverityCount} className={classes.root}>
+      <StyledBadge
+        id="notification-badge"
+        badgeContent={topSeverityCount}
+        badgeColor={currentSeverityStyle?.color}
+      >
         <currentSeverityStyle.icon {...iconMedium} fill="#fff" />
-      </Badge>
+      </StyledBadge>
     );
   }
   return <BellIcon className={iconMedium} fill="#fff" />;

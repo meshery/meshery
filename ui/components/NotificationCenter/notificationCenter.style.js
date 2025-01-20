@@ -1,5 +1,5 @@
 import { makeStyles } from '@material-ui/core';
-import { Box, Button, Drawer, Grid, IconButton, Typography, styled } from '@layer5/sistent';
+import { Badge, Box, Button, Drawer, Grid, IconButton, Typography, styled } from '@layer5/sistent';
 import { alpha } from '@mui/material';
 
 export const DarkBackdrop = styled('div')(({ open }) => ({
@@ -279,10 +279,8 @@ export const GridItem = styled(Grid)(() => ({
   justifyContent: 'center',
 }));
 
-export const useNavNotificationIconStyles = makeStyles(() => ({
-  root: (props) => ({
-    '& .MuiBadge-badge': {
-      backgroundColor: props.badgeColor,
-    },
-  }),
+export const StyledBadge = styled(Badge)(({ badgeColor }) => ({
+  '& .MuiBadge-badge': {
+    backgroundColor: badgeColor,
+  },
 }));
