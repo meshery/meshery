@@ -16,6 +16,7 @@ type MeshSyncResourcesAPIResponse struct {
 type MeshSyncResourcesSummaryAPIResponse struct {
 	Kinds []struct {
 		Kind  string
+		Model string
 		Count int64
 	} `json:"kinds"`
 	Namespaces []string                   `json:"namespaces"`

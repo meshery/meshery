@@ -7,7 +7,6 @@ import Head from 'next/head';
 import { promisifiedDataFetch } from '../../lib/data-fetch';
 import { ctxUrl } from '../../utils/multi-ctx';
 import React, { useEffect, useState } from 'react';
-import { Paper } from '@layer5/sistent';
 import { NoSsr } from '@mui/material';
 
 const UserPref = (props) => {
@@ -47,15 +46,8 @@ const UserPref = (props) => {
           <Head>
             <title>Preferences | Meshery</title>
           </Head>
-          <Paper
-            sx={{
-              maxWidth: '90%',
-              margin: 'auto',
-              overflow: 'hidden',
-            }}
-          >
-            <UserPreferences anonymousStats={anonymousStats} perfResultStats={perfResultStats} />
-          </Paper>
+
+          <UserPreferences anonymousStats={anonymousStats} perfResultStats={perfResultStats} />
         </NoSsr>
       )}
     </>
