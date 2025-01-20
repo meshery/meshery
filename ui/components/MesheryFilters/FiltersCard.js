@@ -1,6 +1,15 @@
 //@ts-check
 import React, { useState } from 'react';
-import { Divider, Grid, IconButton, Typography, Tooltip, Link, Avatar } from '@layer5/sistent';
+import {
+  Divider,
+  Grid,
+  IconButton,
+  Typography,
+  Tooltip,
+  Link,
+  Avatar,
+  useTheme,
+} from '@layer5/sistent';
 import DeleteIcon from '@mui/icons-material/Delete';
 import Fullscreen from '@mui/icons-material/Fullscreen';
 import Save from '@mui/icons-material/Save';
@@ -8,7 +17,11 @@ import Moment from 'react-moment';
 import FlipCard from '../FlipCard';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import FullscreenExit from '@mui/icons-material/FullscreenExit';
-import useStyles from '../MesheryPatterns/Cards.styles';
+import useStyles, {
+  BottomContainer,
+  CatalogCardButtons,
+  UpdateDeleteButtons,
+} from '../MesheryPatterns/Cards.styles';
 import YAMLDialog from '../YamlDialog';
 import CloneIcon from '../../public/static/img/CloneIcon';
 import PublicIcon from '@mui/icons-material/Public';
@@ -26,6 +39,7 @@ import { VisibilityChipMenu } from '@layer5/sistent';
 import { VIEW_VISIBILITY } from '../Modals/Information/InfoModal';
 import { Public, Lock } from '@mui/icons-material';
 import { UsesSistent } from '../SistentWrapper';
+import { iconMedium } from 'css/icons.styles';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
@@ -64,6 +78,7 @@ function FiltersCard_({
   const catalogContentKeys = Object.keys(description);
   const catalogContentValues = Object.values(description);
   const classes = useStyles();
+  const theme = useTheme();
 
   return (
     <UsesSistent>
@@ -95,7 +110,7 @@ function FiltersCard_({
               <Typography variant="h6" component="div">
                 {name}
               </Typography>
-              <div className={classes.visibilityChip}>
+              <div>
                 <VisibilityChipMenu
                   value={visibility}
                   onChange={() => {}}
@@ -107,7 +122,7 @@ function FiltersCard_({
                 />
               </div>{' '}
             </div>
-            <div className={classes.lastRunText}>
+            <div style={{ marginRight: '0.5rem' }}>
               <div>
                 {updated_at ? (
                   <Typography variant="caption" style={{ fontStyle: 'italic' }}>
@@ -117,30 +132,36 @@ function FiltersCard_({
               </div>
             </div>
           </div>
-          <div className={classes.bottomPart}>
-            <div className={classes.cardButtons}>
+          <BottomContainer>
+            <CatalogCardButtons>
               {canPublishFilter && visibility !== VISIBILITY.PUBLISHED ? (
                 <TooltipButton
-                  variant="contained"
+                  variant="outlined"
                   title="Publish"
-                  className={classes.testsButton}
+                  style={{
+                    padding: '6px 9px',
+                    borderRadius: '8px',
+                  }}
                   onClick={(ev) => genericClickHandler(ev, handlePublishModal)}
                   disabled={!CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject)}
                 >
-                  <PublicIcon className={classes.iconPatt} />
+                  <PublicIcon style={iconMedium} />
                   <span className={classes.btnText}> Publish </span>
                 </TooltipButton>
               ) : (
                 <TooltipButton
-                  variant="contained"
+                  variant="outlined"
                   title="Unpublish"
-                  className={classes.testsButton}
+                  style={{
+                    padding: '6px 9px',
+                    borderRadius: '8px',
+                  }}
                   onClick={(ev) => genericClickHandler(ev, handleUnpublishModal)}
                   disabled={
                     !CAN(keys.UNPUBLISH_WASM_FILTER.action, keys.UNPUBLISH_WASM_FILTER.subject)
                   }
                 >
-                  <PublicIcon className={classes.iconPatt} />
+                  <PublicIcon style={iconMedium} />
                   <span className={classes.btnText}> Unpublish </span>
                 </TooltipButton>
               )}
@@ -149,11 +170,15 @@ function FiltersCard_({
                 variant="contained"
                 color="primary"
                 onClick={handleDownload}
+                style={{
+                  padding: '6px 9px',
+                  borderRadius: '8px',
+                }}
                 disabled={
                   !CAN(keys.DOWNLOAD_A_WASM_FILTER.action, keys.DOWNLOAD_A_WASM_FILTER.subject)
                 }
               >
-                <GetAppIcon fill="#ffffff" className={classes.iconDownload} />
+                <GetAppIcon fill={theme.palette.background.constant.white} style={iconMedium} />
                 <span className={classes.btnText}>Download</span>
               </TooltipButton>
 
@@ -162,10 +187,14 @@ function FiltersCard_({
                   title="Clone"
                   variant="contained"
                   color="primary"
+                  style={{
+                    padding: '6px 9px',
+                    borderRadius: '8px',
+                  }}
                   onClick={(ev) => genericClickHandler(ev, handleClone)}
                   disabled={!CAN(keys.CLONE_WASM_FILTER.action, keys.CLONE_WASM_FILTER.subject)}
                 >
-                  <CloneIcon fill="#ffffff" className={classes.iconPatt} />
+                  <CloneIcon fill={theme.palette.background.constant.white} style={iconMedium} />
                   <span className={classes.cloneBtnText}>Clone</span>
                 </TooltipButton>
               ) : null}
@@ -174,16 +203,22 @@ function FiltersCard_({
                 variant="contained"
                 color="primary"
                 onClick={(ev) => genericClickHandler(ev, handleInfoModal)}
-                className={classes.testsButton}
+                style={{
+                  padding: '6px 9px',
+                  borderRadius: '8px',
+                }}
                 disabled={
                   !CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject)
                 }
               >
-                <InfoOutlinedIcon style={{ fill: '#fff' }} className={classes.iconPatt} />
+                <InfoOutlinedIcon
+                  fill={theme.palette.background.constant.white}
+                  style={iconMedium}
+                />
                 <span className={classes.btnText}> Info </span>
               </TooltipButton>
-            </div>
-          </div>
+            </CatalogCardButtons>
+          </BottomContainer>
         </>
 
         {/* BACK PART */}
@@ -249,7 +284,7 @@ function FiltersCard_({
             </Grid>
 
             <Grid item xs={8}>
-              <div className={classes.lastRunText}>
+              <div style={{ marginRight: '0.5rem' }}>
                 <div>
                   {created_at ? (
                     <Typography variant="caption" style={{ fontStyle: 'italic' }}>
@@ -261,14 +296,14 @@ function FiltersCard_({
             </Grid>
 
             <Grid item xs={12}>
-              <div className={classes.updateDeleteButtons}>
+              <UpdateDeleteButtons>
                 {/* Save button */}
                 <Tooltip title="Save" arrow interactive placement="bottom">
                   <IconButton
                     disabled={!CAN(keys.EDIT_WASM_FILTER.action, keys.EDIT_WASM_FILTER.subject)}
                     onClick={(ev) => genericClickHandler(ev, updateHandler)}
                   >
-                    <Save color="primary" />
+                    <Save fill={theme.palette.icon.default} />
                   </IconButton>
                 </Tooltip>
 
@@ -278,10 +313,10 @@ function FiltersCard_({
                     disabled={!CAN(keys.DELETE_WASM_FILTER.action, keys.DELETE_WASM_FILTER.subject)}
                     onClick={(ev) => genericClickHandler(ev, deleteHandler)}
                   >
-                    <DeleteIcon color="primary" />
+                    <DeleteIcon fill={theme.palette.icon.default} />
                   </IconButton>
                 </Tooltip>
-              </div>
+              </UpdateDeleteButtons>
             </Grid>
           </Grid>
         </>
