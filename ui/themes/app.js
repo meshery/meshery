@@ -598,6 +598,9 @@ export const styles = (theme) => ({
   mainContent: {
     flex: 1,
     padding: '48px 36px 24px',
+    [theme.breakpoints.down('sm')]: {
+      padding: '24px 16px 16px',
+    },
   },
   footer: {
     backgroundColor: '#fff',
