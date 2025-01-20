@@ -47,14 +47,14 @@ export const PaneSection = styled('div')(() => {
   };
 });
 
-const AlreadyConfigured = styled('div')(({ theme }) => ({
+const AlreadyConfigured = styled('div')({
   textAlign: 'center',
   height: '100%',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
   flexDirection: 'column',
-}));
+});
 
 const MesheryPlayComponent = (props) => {
   const { meshAdapters } = props;
