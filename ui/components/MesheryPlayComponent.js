@@ -49,7 +49,11 @@ export const PaneSection = styled('div')(() => {
 
 const AlreadyConfigured = styled('div')(({ theme }) => ({
   textAlign: 'center',
-  padding: theme.spacing(20),
+  height: '100%',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  flexDirection: 'column',
 }));
 
 const MesheryPlayComponent = (props) => {
