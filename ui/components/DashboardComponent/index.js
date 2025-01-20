@@ -17,6 +17,7 @@ import { useWindowDimensions } from '@/utils/dimension';
 import { Tab, Tabs, CustomTooltip } from '@layer5/sistent';
 import { UsesSistent } from '../SistentWrapper';
 import { WrapperContainer, WrapperPaper } from './style';
+import _ from 'lodash';
 
 const styles = (theme) => ({
   icon: {
@@ -89,6 +90,7 @@ const styles = (theme) => ({
     cursor: 'pointer',
   },
 });
+
 const useDashboardRouter = () => {
   const router = useRouter();
   const { query, push: pushRoute, route } = router;
@@ -120,6 +122,7 @@ const useDashboardRouter = () => {
 };
 
 const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
+
 const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updateProgress }) => {
   const { resourceCategory, changeResourceTab, selectedResource, handleChangeSelectedResource } =
     useDashboardRouter();
@@ -131,8 +134,12 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
   const getResourceCategory = (index) => {
     return ResourceCategoryTabs[index];
   };
+
   const { width } = useWindowDimensions();
-  let CRDsKeys = [];
+
+  if (!ResourceCategoryTabs.includes(resourceCategory)) {
+    changeResourceTab('Overview');
+  }
   return (
     <>
       <UsesSistent>
@@ -147,13 +154,15 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
               variant={width < 1280 ? 'scrollable' : 'fullWidth'}
               scrollButtons="on"
               textColor="primary"
-              // centered
             >
               {ResourceCategoryTabs.map((resource, idx) => {
                 return (
-                  <CustomTooltip key={idx} title={`View ${resource}`} placement="top">
+                  <CustomTooltip
+                    key={`${resource}-${idx}`}
+                    title={`View ${resource}`}
+                    placement="top"
+                  >
                     <Tab
-                      value={idx}
                       key={resource}
                       icon={
                         resource === 'Overview' ? (
@@ -173,9 +182,12 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
           <TabPanel value={resourceCategory} index={'Overview'}>
             <Overview />
           </TabPanel>
+
           {Object.keys(ResourcesConfig).map((resource, idx) => {
-            if (resource === 'CRDS') {
-              CRDsKeys = Object.keys(
+            let CRDsKeys = [];
+            const isCRDS = resource === 'CRDS';
+            if (isCRDS) {
+              const TableValue = Object.values(
                 ResourcesConfig[resource].tableConfig(
                   null,
                   null,
@@ -185,9 +197,11 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
                   selectedK8sContexts,
                 ),
               );
+              CRDsKeys = TableValue.map((item) => _.pick(item, ['name', 'model']));
             }
+
             return (
-              <TabPanel value={resourceCategory} index={resource} key={resource}>
+              <TabPanel value={resourceCategory} index={resource} key={`${resource}-${idx}`}>
                 {ResourcesConfig[resource].submenu ? (
                   <ResourcesSubMenu
                     key={idx}
@@ -199,6 +213,7 @@ const DashboardComponent = ({ classes, k8sconfig, selectedK8sContexts, updatePro
                     k8sConfig={k8sconfig}
                     selectedK8sContexts={selectedK8sContexts}
                     CRDsKeys={CRDsKeys}
+                    isCRDS={isCRDS}
                   />
                 ) : (
                   <ResourcesTable

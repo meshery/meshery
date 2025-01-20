@@ -4,9 +4,8 @@ import { withRouter } from 'next/router';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import ResourcesTable from './resources-table';
 import { TabPanel } from '../tabpanel';
-import { Box, CustomTooltip, Tab, Tabs } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
-import { WrapperContainer, WrapperPaper } from '../style';
+import { SecondaryTab, SecondaryTabs, WrapperContainer, WrapperPaper } from '../style';
 import GetKubernetesNodeIcon from '../utils';
 import { iconMedium } from 'css/icons.styles';
 
@@ -88,21 +87,29 @@ const ResourcesSubMenu = (props) => {
     selectedResource,
     handleChangeSelectedResource,
     CRDsKeys,
+    isCRDS,
   } = props;
-  const isCRD = CRDsKeys.length > 0;
+  const CRDsModelName = isCRDS && CRDsKeys.map((key) => key.model);
+  const CRDsKind = isCRDS && CRDsKeys.map((key) => key.name);
   if (!selectedResource) {
-    let resourceNames = Object.keys(resource.tableConfig());
-    if (isCRD) {
-      resourceNames = CRDsKeys;
+    let resourceNames;
+    if (isCRDS) {
+      resourceNames = CRDsKind;
+    } else {
+      resourceNames = Object.keys(resource.tableConfig());
     }
     handleChangeSelectedResource(resourceNames[0]);
   }
 
   let TABS;
-  if (isCRD) {
-    TABS = CRDsKeys;
+  if (isCRDS) {
+    TABS = CRDsKind;
   } else {
     TABS = Object.keys(resource.tableConfig());
+  }
+
+  if (TABS.length > 0 && selectedResource && !TABS.includes(selectedResource)) {
+    handleChangeSelectedResource(TABS[0]);
   }
 
   const getResourceCategoryIndex = (resourceCategory) => {
@@ -112,48 +119,44 @@ const ResourcesSubMenu = (props) => {
   const getResourceCategory = (index) => {
     return TABS[index];
   };
-
   return (
     <>
       <UsesSistent>
         <WrapperContainer>
           <WrapperPaper>
             <div>
-              <Box
-                sx={{ margin: '0 auto', width: '100%', maxWidth: { xs: 800, sm: 880, md: 1200 } }}
+              <SecondaryTabs
+                value={getResourceCategoryIndex(selectedResource)}
+                onChange={(_e, v) => handleChangeSelectedResource(getResourceCategory(v))}
+                variant="scrollable"
+                scrollButtons="on"
+                indicatorColor="primary"
+                textColor="primary"
               >
-                <Tabs
-                  value={getResourceCategoryIndex(selectedResource)}
-                  onChange={(_e, v) => handleChangeSelectedResource(getResourceCategory(v))}
-                  variant="scrollable"
-                  scrollButtons="on"
-                  indicatorColor="primary"
-                  textColor="primary"
-                  // centered
-                >
-                  {TABS.map((key, index) => {
-                    const title = isCRD ? key : resource.tableConfig()[key].name;
-                    return (
-                      <CustomTooltip key={index} title={title} placement="top">
-                        <Tab
-                          key={index}
-                          value={index}
-                          label={
-                            <div className={classes.iconText}>
-                              <GetKubernetesNodeIcon kind={key} isCRD={isCRD} size={iconMedium} />
-                              {title}
-                            </div>
-                          }
-                        />
-                      </CustomTooltip>
-                    );
-                  })}
-                </Tabs>
-              </Box>
+                {TABS.map((key, index) => {
+                  const title = isCRDS ? key : resource.tableConfig()[key].name;
+                  return (
+                    <SecondaryTab
+                      key={index}
+                      value={index}
+                      label={
+                        <div className={classes.iconText}>
+                          <GetKubernetesNodeIcon
+                            kind={key}
+                            model={CRDsModelName[index]}
+                            size={iconMedium}
+                          />
+                          {title}
+                        </div>
+                      }
+                    />
+                  );
+                })}
+              </SecondaryTabs>
             </div>
           </WrapperPaper>
           {TABS.map((key, index) => (
-            <TabPanel value={selectedResource} index={key} key={index}>
+            <TabPanel value={selectedResource} index={key} key={`${key}-${index}`}>
               <ResourcesTable
                 key={index}
                 workloadType={key}

@@ -11,7 +11,7 @@ import {
 } from '@layer5/sistent';
 import { useRouter } from 'next/router';
 import ConnectCluster from '../charts/ConnectCluster';
-import { generateDynamicURL, getAllCustomResourceDefinitionsKinds } from '../resources/config';
+import { generateDynamicURL } from '../resources/config';
 import {
   HoneycombRoot,
   IconWrapper,
@@ -36,7 +36,6 @@ const HoneycombComponent = (props) => {
 
   const groupOptions = useResourceOptions();
   const filteredKinds = useResourceFiltering(kinds, groupBy, sortDirection);
-  const crdsKinds = getAllCustomResourceDefinitionsKinds(kinds);
   const handleGroupChange = useCallback((e) => {
     setGroupBy(e.target.value);
   }, []);
@@ -101,7 +100,6 @@ const HoneycombComponent = (props) => {
                 size={47}
                 items={filteredKinds}
                 renderItem={(item) => {
-                  const isCRD = crdsKinds.includes(item?.Kind);
                   return (
                     <Hexagon
                       onClick={() => {
@@ -111,7 +109,7 @@ const HoneycombComponent = (props) => {
                       <SelectedHexagon>
                         <CustomTooltip title={item?.Kind || ''} placement="top">
                           <IconWrapper>
-                            <GetKubernetesNodeIcon kind={item?.Kind} isCRD={isCRD} />
+                            <GetKubernetesNodeIcon kind={item?.Kind} model={item?.Model} />
                             <ResourceCount variant="subtitle1">{item.Count}</ResourceCount>
                           </IconWrapper>
                         </CustomTooltip>
