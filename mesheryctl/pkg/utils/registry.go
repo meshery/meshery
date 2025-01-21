@@ -147,7 +147,12 @@ func GenerateJSStyleDocs(model ModelCSV, docsJSON string, components []Component
 	}
 
 	parts := strings.Split(modelPath, "meshery.io")
-	modelCollections := filepath.Join(parts[0], "meshery.io", "collections", "_catalog", "models")
+	modelCollections := filepath.Join(parts[0], "meshery.io", "collections", "_models", modelName)
+
+	err = os.MkdirAll(modelCollections, 0777)
+	if err != nil {
+		return "", err
+	}
 	mdDir, _ := filepath.Abs(filepath.Join(modelCollections))
 
 	_imgOutputPath := filepath.Join(imgsOutputPath, "components")
