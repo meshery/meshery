@@ -468,6 +468,8 @@ category: integrations
 		)
 	} else if outputFor == "mesheryio" {
 		template = `---
+layout: single-page-model
+item-type: model
 name: %s
 subtitle: %s
 colorIcon: /assets/images/integration/%s/icons/color/%s-color.svg
