@@ -274,8 +274,14 @@ h4[id],
 h5[id],
 h6[id] {
   margin-top: calc(-1 * var(--navbar-height) / 2);
+  padding-top: calc(var(--navbar-height) / 2);
 }
 
-h1 {
-  display: contents;
+.alert h1[id],
+.alert h2[id],
+.alert h3[id],
+.alert h4[id],
+.alert h5[id],
+.alert h6[id] {
+  padding-top: 0;
 }
