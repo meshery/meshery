@@ -14,6 +14,12 @@ components:
   colorIcon: assets/img/integrations/keda-http-scaler/components/http-scaled-object/icons/color/http-scaled-object-color.svg
   whiteIcon: assets/img/integrations/keda-http-scaler/components/http-scaled-object/icons/white/http-scaled-object-white.svg
   description: 
+components-count: 1
+relationships: 
+- type: "Non Binding"
+  kind: "Edge"
+  description: "A KEDA HTTPScaledObject is a Kubernetes custom resource definition (CRD) used in conjunction with the KEDA HTTP Add-on to enable the automatic scaling of your HTTP-based applications based on incoming HTTP traffic. This means your application can dynamically adjust the number of replicas (pods) running to handle varying workloads efficiently."
+relationship-count: 1
 featureList: [
   "Scales based on HTTP requests and metrics",
   "Integrates with various ingress controllers",

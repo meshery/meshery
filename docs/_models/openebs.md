@@ -122,6 +122,9 @@ components:
   colorIcon: assets/img/integrations/openebs/components/jaeger/icons/color/jaeger-color.svg
   whiteIcon: assets/img/integrations/openebs/components/jaeger/icons/white/jaeger-white.svg
   description: 
+components-count: 28
+relationships: 
+relationship-count: 0
 featureList: [
   "Dynamic provisioning of persistent volumes",
   "Containerized storage controllers",

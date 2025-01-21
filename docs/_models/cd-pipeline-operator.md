@@ -18,6 +18,9 @@ components:
   colorIcon: assets/img/integrations/cd-pipeline-operator/components/stage/icons/color/stage-color.svg
   whiteIcon: assets/img/integrations/cd-pipeline-operator/components/stage/icons/white/stage-white.svg
   description: 
+components-count: 2
+relationships: 
+relationship-count: 0
 featureList: [
   "Provides a pre-defined set of CI/CD patterns and tools.",
   "Allows shortening the time that is passed before an active development.",

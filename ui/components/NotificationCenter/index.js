@@ -1,23 +1,20 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import IconButton from '@material-ui/core/IconButton';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
 import {
-  Drawer,
   Divider,
   ClickAwayListener,
   Typography,
-  alpha,
   Chip,
   Button,
-  Badge,
   CircularProgress,
   Box,
   useTheme,
   Tooltip,
   Checkbox,
   Collapse,
-} from '@material-ui/core';
+  IconButton,
+} from '@layer5/sistent';
 import Filter from './filter';
 import BellIcon from '../../assets/icons/BellIcon.js';
 import { iconMedium } from '../../css/icons.styles';
@@ -28,10 +25,21 @@ import {
   STATUS,
   STATUS_STYLE,
 } from './constants';
-import classNames from 'classnames';
 import Notification from './notification';
 import { store } from '../../store';
-import { DarkBackdrop, useNavNotificationIconStyles, useStyles } from './notificationCenter.style';
+import {
+  Container,
+  DarkBackdrop,
+  NotificationButton,
+  NotificationContainer,
+  SeverityChips,
+  SideList,
+  StyledBadge,
+  StyledNotificationDrawer,
+  Title,
+  TitleBellIcon,
+  useStyles,
+} from './notificationCenter.style';
 import {
   closeNotificationCenter,
   loadEvents,
@@ -61,6 +69,8 @@ import { operationsCenterActor } from 'machines/operationsCenter';
 import { useSelectorRtk } from '@/store/hooks';
 import { ErrorBoundary } from '@layer5/sistent';
 import CustomErrorFallback from '../General/ErrorBoundary';
+import { alpha } from '@mui/material';
+import { UsesSistent } from '../SistentWrapper';
 
 export const NotificationCenterContext = React.createContext({
   drawerAnchorEl: null,
@@ -98,7 +108,7 @@ const getSeverityCount = (count_by_severity_level, severity) => {
 };
 
 const EmptyState = () => {
-  const theme = useTheme().palette.secondary;
+  const theme = useTheme();
   return (
     <Box
       sx={{
@@ -110,7 +120,7 @@ const EmptyState = () => {
         marginY: '5rem',
       }}
     >
-      <DoneIcon height="10rem" width="8rem" fill={theme.icon2} />
+      <DoneIcon height="10rem" width="8rem" fill={theme.palette.icon.secondary} />
       <Typography variant="h6" style={{ margin: 'auto', color: theme.icon2 }}>
         {' '}
         No notifications to show{' '}
@@ -141,14 +151,15 @@ const NavbarNotificationIcon = () => {
       : null;
   const currentSeverityStyle = currentTopSeverity ? SEVERITY_STYLE[currentTopSeverity] : null;
   const topSeverityCount = getSeverityCount(count_by_severity_level, currentTopSeverity);
-  const classes = useNavNotificationIconStyles({
-    badgeColor: currentSeverityStyle?.color,
-  });
   if (currentTopSeverity) {
     return (
-      <Badge id="notification-badge" badgeContent={topSeverityCount} className={classes.root}>
+      <StyledBadge
+        id="notification-badge"
+        badgeContent={topSeverityCount}
+        badgeColor={currentSeverityStyle?.color}
+      >
         <currentSeverityStyle.icon {...iconMedium} fill="#fff" />
-      </Badge>
+      </StyledBadge>
     );
   }
   return <BellIcon className={iconMedium} fill="#fff" />;
@@ -166,7 +177,7 @@ const NotificationCountChip = ({
   const selectedSeverity = useSelector(selectSeverity);
   const darkColor = notificationStyle?.darkColor || notificationStyle?.color;
   const chipStyles = {
-    fill: theme.palette.type === 'dark' ? darkColor : notificationStyle?.color,
+    fill: theme.palette.mode === 'dark' ? darkColor : notificationStyle?.color,
     height: '20px',
     width: '20px',
   };
@@ -222,35 +233,37 @@ const Header = ({ handleFilter, handleClose }) => {
   };
 
   return (
-    <div className={classNames(classes.container, classes.header)}>
-      <div className={classes.title}>
-        <div className={classes.titleBellIcon} onClick={handleClose}>
-          <BellIcon height="30" width="30" fill="#fff" />
-        </div>
-        <Typography variant="h6"> Notifications</Typography>
-      </div>
-      <div className={classes.severityChips}>
-        {Object.values(SEVERITY).map((severity) => (
+    <UsesSistent>
+      <NotificationContainer>
+        <Title>
+          <TitleBellIcon onClick={handleClose}>
+            <BellIcon height="30" width="30" fill="#fff" />
+          </TitleBellIcon>
+          <Typography variant="h6"> Notifications</Typography>
+        </Title>
+        <SeverityChips>
+          {Object.values(SEVERITY).map((severity) => (
+            <NotificationCountChip
+              key={severity}
+              severity={severity}
+              classes={classes}
+              handleClick={() => onClickSeverity(severity)}
+              notificationStyle={SEVERITY_STYLE[severity]}
+              type={`Unread ${severity}(s)`}
+              count={getSeverityCount(count_by_severity_level, severity)}
+            />
+          ))}
           <NotificationCountChip
-            key={severity}
-            severity={severity}
             classes={classes}
-            handleClick={() => onClickSeverity(severity)}
-            notificationStyle={SEVERITY_STYLE[severity]}
-            type={`Unread ${severity}(s)`}
-            count={getSeverityCount(count_by_severity_level, severity)}
+            notificationStyle={STATUS_STYLE[STATUS.READ]}
+            handleClick={() => onClickStatus(STATUS.READ)}
+            type={STATUS.READ}
+            severity={STATUS.READ}
+            count={read_count}
           />
-        ))}
-        <NotificationCountChip
-          classes={classes}
-          notificationStyle={STATUS_STYLE[STATUS.READ]}
-          handleClick={() => onClickStatus(STATUS.READ)}
-          type={STATUS.READ}
-          severity={STATUS.READ}
-          count={read_count}
-        />
-      </div>
-    </div>
+        </SeverityChips>
+      </NotificationContainer>
+    </UsesSistent>
   );
 };
 
@@ -504,7 +517,6 @@ const NotificationCenterDrawer = () => {
     dispatch(closeNotificationCenter());
     setAnchorEl(null);
   };
-  const classes = useStyles();
   // const { showFullNotificationCenter } = props;
   const open = Boolean(anchorEl) || isNotificationCenterOpen;
   const handleFilter = async (filters) => {
@@ -533,23 +545,20 @@ const NotificationCenterDrawer = () => {
     <>
       <DarkBackdrop open={isNotificationCenterOpen} />
       <ClickAwayListener onClickAway={clickwayHandler}>
-        <Drawer
+        <StyledNotificationDrawer
           anchor="right"
           variant="persistent"
           open={open}
           ref={drawerRef}
+          isNotificationCenterOpen={isNotificationCenterOpen}
           BackdropComponent={<DarkBackdrop open={isNotificationCenterOpen} />}
-          classes={{
-            paper: classes.notificationDrawer,
-            paperAnchorRight: isNotificationCenterOpen ? classes.fullView : classes.peekView,
-          }}
         >
           <div>
             <div>
-              <div className={classes.sidelist}>
+              <SideList>
                 <Header handleFilter={handleFilter} handleClose={handleClose}></Header>
                 <Divider light />
-                <div className={classes.container}>
+                <Container>
                   <Filter handleFilter={handleFilter}></Filter>
                   <CurrentFilterView handleFilter={handleFilter} />
                   <BulkActions />
@@ -563,18 +572,17 @@ const NotificationCenterDrawer = () => {
                       hasMore={hasMore}
                     />
                   )}
-                </div>
-              </div>
+                </Container>
+              </SideList>
             </div>
           </div>
-        </Drawer>
+        </StyledNotificationDrawer>
       </ClickAwayListener>
     </>
   );
 };
 
 const NotificationDrawerButton_ = () => {
-  const classes = useStyles();
   const { setDrawerAnchor, toggleButtonRef } = useContext(NotificationCenterContext);
   const dispatch = useDispatch();
   const handleToggle = () => {
@@ -582,9 +590,8 @@ const NotificationDrawerButton_ = () => {
   };
   return (
     <div ref={toggleButtonRef}>
-      <IconButton
+      <NotificationButton
         id="notification-button"
-        className={classes.notificationButton}
         color="inherit"
         onClick={handleToggle}
         onMouseOver={(e) => {
@@ -597,7 +604,7 @@ const NotificationDrawerButton_ = () => {
         }}
       >
         <NavbarNotificationIcon />
-      </IconButton>
+      </NotificationButton>
     </div>
   );
 };
@@ -619,11 +626,13 @@ const NotificationCenter = (props) => {
 
   return (
     <NoSsr>
-      <ErrorBoundary customFallback={CustomErrorFallback}>
-        <Provider store={store}>
-          <NotificationCenterDrawer {...props} />
-        </Provider>
-      </ErrorBoundary>
+      <UsesSistent>
+        <ErrorBoundary customFallback={CustomErrorFallback}>
+          <Provider store={store}>
+            <NotificationCenterDrawer {...props} />
+          </Provider>
+        </ErrorBoundary>
+      </UsesSistent>
     </NoSsr>
   );
 };

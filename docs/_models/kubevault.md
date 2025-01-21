@@ -86,6 +86,9 @@ components:
   colorIcon: assets/img/integrations/kubevault/components/recommendation/icons/color/recommendation-color.svg
   whiteIcon: assets/img/integrations/kubevault/components/recommendation/icons/white/recommendation-white.svg
   description: 
+components-count: 19
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates Vault deployment and configuration",
   "Provides a Kubernetes-native interface for Vault",

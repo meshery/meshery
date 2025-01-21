@@ -34,6 +34,9 @@ components:
   colorIcon: assets/img/integrations/fluentbit-operator/components/fluent-bit/icons/color/fluent-bit-color.svg
   whiteIcon: assets/img/integrations/fluentbit-operator/components/fluent-bit/icons/white/fluent-bit-white.svg
   description: 
+components-count: 6
+relationships: 
+relationship-count: 0
 featureList: [
   "Fluent Bit Management: Deploy and destroy Fluent Bit DaemonSet automatically.",
   "Fluentd Management: Deploy and destroy Fluentd StatefulSet automatically.",

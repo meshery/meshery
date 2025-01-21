@@ -42,6 +42,9 @@ components:
   colorIcon: assets/img/integrations/kubeflow/components/auth-code/icons/color/auth-code-color.svg
   whiteIcon: assets/img/integrations/kubeflow/components/auth-code/icons/white/auth-code-white.svg
   description: 
+components-count: 8
+relationships: 
+relationship-count: 0
 featureList: [
   "Make deployments of machine learning (ML) workflows on Kubernetes simple, portable and scalable. ",
   "Design and manage you the machine learning toolkit for Kubernetes",

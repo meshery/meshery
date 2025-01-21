@@ -170,6 +170,9 @@ components:
   colorIcon: assets/img/integrations/contrail-analytics/components/thanos-ruler/icons/color/thanos-ruler-color.svg
   whiteIcon: assets/img/integrations/contrail-analytics/components/thanos-ruler/icons/white/thanos-ruler-white.svg
   description: 
+components-count: 40
+relationships: 
+relationship-count: 0
 featureList: [
   "Invite anyone to review and make changes to your private designs.",
   "Supports various network protocols",

@@ -50,6 +50,9 @@ components:
   colorIcon: assets/img/integrations/datadog-operator/components/datadog-dashboard/icons/color/datadog-dashboard-color.svg
   whiteIcon: assets/img/integrations/datadog-operator/components/datadog-dashboard/icons/white/datadog-dashboard-white.svg
   description: 
+components-count: 10
+relationships: 
+relationship-count: 0
 featureList: [
   "Seamlessly aggregates metrics and events across the full devops stack.",
   "Monitor, troubleshoot, and optimize application performance.",

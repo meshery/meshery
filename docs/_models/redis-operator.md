@@ -26,6 +26,9 @@ components:
   colorIcon: assets/img/integrations/redis-operator/components/redis/icons/color/redis-color.svg
   whiteIcon: assets/img/integrations/redis-operator/components/redis/icons/white/redis-white.svg
   description: 
+components-count: 4
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates Redis cluster deployment and scaling",
   "Backup and recovery functionality",
