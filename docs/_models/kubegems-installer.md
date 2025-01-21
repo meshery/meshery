@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/kubegems-installer/components/plugin/icons/color/plugin-color.svg
   whiteIcon: assets/img/integrations/kubegems-installer/components/plugin/icons/white/plugin-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Automated installation of Kubegems",
   "Easy configuration of Kubegems settings",

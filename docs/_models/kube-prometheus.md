@@ -50,6 +50,9 @@ components:
   colorIcon: assets/img/integrations/kube-prometheus/components/thanos-ruler/icons/color/thanos-ruler-color.svg
   whiteIcon: assets/img/integrations/kube-prometheus/components/thanos-ruler/icons/white/thanos-ruler-white.svg
   description: 
+components-count: 10
+relationships: 
+relationship-count: 0
 featureList: [
   "Simplifies Prometheus deployment on Kubernetes",
   "Provides a pre-configured monitoring stack",

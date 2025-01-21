@@ -10,6 +10,9 @@ integrations-category: Cloud Native Network
 integrations-subcategory: Service Proxy
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Handles HTTP and HTTPS traffic",
   "High performance and scalability",

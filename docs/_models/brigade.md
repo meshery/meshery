@@ -10,6 +10,9 @@ integrations-category: App Definition and Development
 integrations-subcategory: Continuous Integration & Delivery
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Designed to quickly and efficently handle large volumes of events.",
   "Offers full management of user and service account authorization/authentication.",

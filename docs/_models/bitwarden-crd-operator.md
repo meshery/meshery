@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/bitwarden-crd-operator/components/registry-credential/icons/color/registry-credential-color.svg
   whiteIcon: assets/img/integrations/bitwarden-crd-operator/components/registry-credential/icons/white/registry-credential-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Provides a declarative API for Bitwarden",
   "Integrates with Kubernetes resources",

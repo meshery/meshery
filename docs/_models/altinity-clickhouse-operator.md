@@ -26,6 +26,9 @@ components:
   colorIcon: assets/img/integrations/altinity-clickhouse-operator/components/click-house-operator-configuration/icons/color/click-house-operator-configuration-color.svg
   whiteIcon: assets/img/integrations/altinity-clickhouse-operator/components/click-house-operator-configuration/icons/white/click-house-operator-configuration-white.svg
   description: 
+components-count: 4
+relationships: 
+relationship-count: 0
 featureList: [
   "Create ClickHouse clusters defined as custom resources.",
   "Customize storage provisioning (VolumeClaim templates)",

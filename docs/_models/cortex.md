@@ -10,6 +10,9 @@ integrations-category: Observability and Analysis
 integrations-subcategory: Metrics
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Durably store data for longer than the lifetime of any single machine, and use this data for long term capacity planning.",
   "Makes your PromQL queries blazin' fast through aggressive parallelization and caching.",

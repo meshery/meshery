@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/postgres-operator/components/postgres-team/icons/color/postgres-team-color.svg
   whiteIcon: assets/img/integrations/postgres-operator/components/postgres-team/icons/white/postgres-team-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates PostgreSQL deployment and scaling",
   "Manages PostgreSQL configuration",

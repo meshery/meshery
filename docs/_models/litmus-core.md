@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/litmus-core/components/chaos-experiment/icons/color/chaos-experiment-color.svg
   whiteIcon: assets/img/integrations/litmus-core/components/chaos-experiment/icons/white/chaos-experiment-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates chaos experiments",
   "Simulates various failure scenarios",
