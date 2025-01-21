@@ -241,6 +241,102 @@ GitHub release tags will contain a semantic version number. Semantic version num
 
 Documentation of Meshery releases contains a table of releases and release notes and should be updated with each release.
 
+# Meshery Release Documents and Release Lead Responsibilities
+
+## Meshery Release Documents
+
+Meshery uses several types of release documents to standardize the purpose, style, and structure of release information. These documents are crucial for maintaining clear communication about changes, updates, and new features in Meshery releases.
+
+### Types of Release Documents
+
+- **Changelogs**
+  - Comprehensive list of all changes since the prior release
+  - Generated automatically by tools like ReleaseDrafter
+  - Contains detailed, technical information
+
+- **Release Notes**
+  - Curated, bulleted list of highlights
+  - Summarized and categorized in human-readable format
+  - Includes some engineering terminology and issue references
+  - Based on ReleaseDrafter output, but human-summarized and refined
+
+- **Release Announcement**
+  - Human-written summary highlighting significant items
+  - Includes caveats (e.g., incompatibility on upgrade)
+  - Provides links to other information sources (upgrade guide, feature blogs, full bug fix list)
+  - Contains graphics and links to in-depth documentation
+  - Distributed via #announcements Slack channel and public mailing list (for stable releases)
+
+- **User and Upgrade Docs**
+  - How-to guides for new features
+  - Updates to user-facing documentation
+  - Includes Upgrade Guide updates for version-to-version considerations
+
+- **Feature-functionality Blogs**
+  - In-depth reviews of new or significantly augmented functionality
+  - Explains the what, why, and how of new features
+
+## Meshery Release Lead Responsibilities
+
+The Meshery Release Lead plays a crucial role in coordinating and executing the release process. Their responsibilities span approximately 5 months per release cycle.
+
+### Pre-Release Phase (1 month)
+
+- **Release Planning**
+  - Schedule and organize release planning meetings
+  - Define and communicate release timelines
+  - Coordinate with development, testing, and documentation teams
+
+- **Feature Management**
+  - Oversee feature implementation and prioritization
+  - Ensure all planned features are completed or properly deferred
+
+- **Quality Assurance**
+  - Coordinate with QA team to ensure thorough testing
+  - Address and prioritize bug fixes
+
+- **Documentation Preparation**
+  - Ensure all new features and changes are properly documented
+  - Oversee the creation and updating of release notes
+
+- **Release Build Preparation**
+  - Manage the creation of release branches
+  - Oversee the release build process
+  - Coordinate with DevOps for deployment preparations
+
+### Active Maintenance Phase (6 months)
+
+- **Ongoing Releases**
+  - Manage minor releases every 3 weeks
+  - Coordinate vulnerability fix integrations
+  - Oversee cherry-pick decisions for backports
+
+- **Monitoring and Issue Resolution**
+  - Monitor for release blockers
+  - Coordinate resolution of critical issues
+
+- **Communication**
+  - Lead weekly Meshery build and release meetings
+  - Provide regular status updates to the community
+
+- **Documentation Updates**
+  - Ensure documentation remains current throughout the maintenance phase
+  - Oversee updates to user guides and upgrade instructions
+
+- **End-of-Life Procedures**
+  - Manage the process for deprecating the release
+  - Ensure proper handover to the next release cycle
+
+### Release Manager Qualifications and Selection
+
+- Must be an active community member for at least 3 months
+- Approved by majority vote of current maintainers
+- At least one release manager must meet requirements for vulnerability-related access
+
+To volunteer as a Meshery Release Lead, interested individuals should contact a current maintainer or self-nominate.
+
+This structured approach to release documentation and management ensures consistency, clarity, and efficiency in Meshery's release process, facilitating better communication with users and smoother project development.
+
 ### Automated Releases
 
 Releases are manually triggered by a member of the release team publishing a release. Release names and release tags need to be assigned by the publishing team member. GitHub Action workflows will trigger and take care of running the required steps and publishing all artifacts (e.g., binary and docker images).
