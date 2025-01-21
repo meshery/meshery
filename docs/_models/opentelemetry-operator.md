@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/opentelemetry-operator/components/op-amp-bridge/icons/color/op-amp-bridge-color.svg
   whiteIcon: assets/img/integrations/opentelemetry-operator/components/op-amp-bridge/icons/white/op-amp-bridge-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates OpenTelemetry deployment and configuration",
   "Simplifies tracing, metrics, and logging",

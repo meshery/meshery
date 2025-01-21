@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/vald/components/vald-mirror-target/icons/color/vald-mirror-target-color.svg
   whiteIcon: assets/img/integrations/vald/components/vald-mirror-target/icons/white/vald-mirror-target-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "High-performance vector search",
   "Approximate nearest neighbor (ANN) search",

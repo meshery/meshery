@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { timeAgo } from '../../../../utils/k8s-utils';
 import { getK8sClusterIdsFromCtxId, getK8sContextFromClusterId } from '@/utils/multi-ctx';
 import { getAllCustomResourceDefinitionsKinds, SINGLE_VIEW } from '../config';
@@ -32,13 +32,15 @@ export const CustomResourceConfig = (
       skip: isClusterIdsEmpty,
     },
   );
-  const customResources = getAllCustomResourceDefinitionsKinds(clusterSummary?.kinds);
-
+  const customResources = useMemo(() => {
+    return getAllCustomResourceDefinitionsKinds(clusterSummary?.kinds);
+  }, [clusterSummary?.kinds]);
   const customResourceConfigs = {};
 
   customResources?.forEach((resource) => {
-    customResourceConfigs[resource] = {
-      name: resource,
+    customResourceConfigs[resource?.Kind] = {
+      name: resource?.Kind,
+      model: resource?.Model, // model is used to identify the resource image
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
@@ -72,7 +74,8 @@ export const CustomResourceConfig = (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
                   value={value}
-                  kind={'CRDS'}
+                  kind={resource?.Kind}
+                  model={resource?.Model}
                 />
               );
             },

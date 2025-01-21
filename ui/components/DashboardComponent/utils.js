@@ -1,20 +1,18 @@
-import {
-  CUSTOM_RESOURCE_DEFINITION,
-  FALLBACK_KUBERNETES_IMAGE_PATH,
-  KUBERNETES,
-} from '@/constants/common';
+import { FALLBACK_KUBERNETES_IMAGE_PATH, KUBERNETES } from '@/constants/common';
 import { componentIcon } from '@layer5/sistent';
 import { iconXLarge } from 'css/icons.styles';
 import React from 'react';
 
-const GetKubernetesNodeIcon = ({ kind, isCRD, size }) => {
+const GetKubernetesNodeIcon = ({ kind, size, model }) => {
+  const imgSrc = componentIcon({
+    kind: kind?.toLowerCase(),
+    color: 'color',
+    model: model ? model : KUBERNETES,
+  });
+
   return (
     <img
-      src={componentIcon({
-        kind: isCRD ? CUSTOM_RESOURCE_DEFINITION : kind?.toLowerCase(),
-        color: 'color',
-        model: KUBERNETES,
-      })}
+      src={imgSrc}
       onError={(event) => {
         event.target.src = FALLBACK_KUBERNETES_IMAGE_PATH;
       }}

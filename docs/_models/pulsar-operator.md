@@ -26,6 +26,9 @@ components:
   colorIcon: assets/img/integrations/pulsar-operator/components/zoo-keeper-cluster/icons/color/zoo-keeper-cluster-color.svg
   whiteIcon: assets/img/integrations/pulsar-operator/components/zoo-keeper-cluster/icons/white/zoo-keeper-cluster-white.svg
   description: 
+components-count: 4
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates Pulsar deployment and scaling",
   "Manages Pulsar configuration",

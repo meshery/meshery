@@ -5,11 +5,14 @@ subtitle: Collaborative and visual infrastructure as design for Linkerd
 image: /assets/img/integrations/linkerd/icons/color/linkerd-color.svg
 permalink: extensibility/integrations/linkerd
 docURL: https://docs.meshery.io/extensibility/adapters/linkerd
-description: 
+description: git://github.com/meshery/meshery-linkerd/master/templates/meshmodel/components/stable-2.9.5
 integrations-category: Cloud Native Network
 integrations-subcategory: Service Mesh
-registrant: meshery
+registrant: GitHub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Visually configure and operate Linkerd with real-time topology",
   "Use Linkerd best practice designs and templates",

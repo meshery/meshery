@@ -30,6 +30,9 @@ components:
   colorIcon: assets/img/integrations/aws-route53-controller/components/health-check/icons/color/health-check-color.svg
   whiteIcon: assets/img/integrations/aws-route53-controller/components/health-check/icons/white/health-check-white.svg
   description: 
+components-count: 5
+relationships: 
+relationship-count: 0
 featureList: [
   "Route end users to your site reliably with globally-dispersed Domain Name System (DNS) servers and automatic scaling.",
   "Set up your DNS routing in minutes with domain name registration and straightforward visual traffic flow tools.",

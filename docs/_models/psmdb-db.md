@@ -26,6 +26,9 @@ components:
   colorIcon: assets/img/integrations/psmdb-db/components/percona-server-mongo-db/icons/color/percona-server-mongo-db-color.svg
   whiteIcon: assets/img/integrations/psmdb-db/components/percona-server-mongo-db/icons/white/percona-server-mongo-db-white.svg
   description: 
+components-count: 4
+relationships: 
+relationship-count: 0
 featureList: [
   "High-performance MongoDB database",
   "Enhanced security and monitoring features",

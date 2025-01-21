@@ -1665,7 +1665,7 @@ const TabBar = ({ animate, handleUploadImport, handleGenerateModel }) => {
           disabled={false} //TODO: Need to make key for this component
         >
           <AddIcon style={iconMedium} />
-          Generate
+          &nbsp; Generate
         </Button>
       </div>
       <DisableButton

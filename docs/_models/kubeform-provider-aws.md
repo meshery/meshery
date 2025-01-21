@@ -186,6 +186,9 @@ components:
   colorIcon: assets/img/integrations/kubeform-provider-aws/components/proxy-target/icons/color/proxy-target-color.svg
   whiteIcon: assets/img/integrations/kubeform-provider-aws/components/proxy-target/icons/white/proxy-target-white.svg
   description: 
+components-count: 44
+relationships: 
+relationship-count: 0
 featureList: [
   "Native Kubernetes support.
 

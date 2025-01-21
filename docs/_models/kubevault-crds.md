@@ -82,6 +82,9 @@ components:
   colorIcon: assets/img/integrations/kubevault-crds/components/vault-server/icons/color/vault-server-color.svg
   whiteIcon: assets/img/integrations/kubevault-crds/components/vault-server/icons/white/vault-server-white.svg
   description: 
+components-count: 18
+relationships: 
+relationship-count: 0
 featureList: [
   "Enables declarative Vault management",
   "Defines Vault resources in Kubernetes",
