@@ -472,7 +472,6 @@ name: %s
 subtitle: %s
 colorIcon: /assets/images/integration/%s/icons/color/%s-color.svg
 whiteIcon: /assets/images/integration/%s/icons/white/%s-white.svg
-permalink: extensibility/integrations/%s
 docURL: %s
 description: %s
 category: %s
@@ -494,7 +493,6 @@ howItWorksDetails: "%s"
 		markdown = fmt.Sprintf(template,
 			m.ModelDisplayName,
 			m.PageSubtTitle,
-			formattedName,
 			formattedName,
 			formattedName,
 			formattedName,
