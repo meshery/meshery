@@ -102,6 +102,9 @@ components:
   colorIcon: assets/img/integrations/chaos/components/remote-cluster/icons/color/remote-cluster-color.svg
   whiteIcon: assets/img/integrations/chaos/components/remote-cluster/icons/white/remote-cluster-white.svg
   description: 
+components-count: 23
+relationships: 
+relationship-count: 0
 featureList: [
   "Simulates various failure scenarios",
   "Tests application resilience",

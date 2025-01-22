@@ -30,6 +30,9 @@ components:
   colorIcon: assets/img/integrations/aws-ecs-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-ecs-controller/components/field-export/icons/white/field-export-white.svg
   description: 
+components-count: 5
+relationships: 
+relationship-count: 0
 featureList: [
   "Simplifies container deployment and management",
   "Integrates with other AWS services",

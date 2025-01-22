@@ -18,6 +18,9 @@ components:
   colorIcon: assets/img/integrations/whereabouts/components/overlapping-range-ip-reservation/icons/color/overlapping-range-ip-reservation-color.svg
   whiteIcon: assets/img/integrations/whereabouts/components/overlapping-range-ip-reservation/icons/white/overlapping-range-ip-reservation-white.svg
   description: 
+components-count: 2
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates IP address allocation",
   "Supports IPv4 and IPv6",

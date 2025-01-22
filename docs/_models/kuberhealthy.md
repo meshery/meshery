@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/kuberhealthy/components/kuberhealthy-state/icons/color/kuberhealthy-state-color.svg
   whiteIcon: assets/img/integrations/kuberhealthy/components/kuberhealthy-state/icons/white/kuberhealthy-state-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Periodically runs health checks",
   "Reports cluster health status",

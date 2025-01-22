@@ -58,6 +58,12 @@ components:
   colorIcon: assets/img/integrations/nginx-ingress/components/virtual-server/icons/color/virtual-server-color.svg
   whiteIcon: assets/img/integrations/nginx-ingress/components/virtual-server/icons/white/virtual-server-white.svg
   description: 
+components-count: 12
+relationships: 
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. E.g Secret->Pod, ConfigMaps->Deployment, etc..."
+relationship-count: 1
 featureList: [
   "Exposes Kubernetes services to the internet",
   "Routes traffic based on rules and policies",

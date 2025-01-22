@@ -25,6 +25,7 @@ import (
 	isql "github.com/layer5io/meshery/server/internal/sql"
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshery/server/models/pattern/core"
 	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
 	patternutils "github.com/layer5io/meshery/server/models/pattern/utils"
@@ -49,6 +50,7 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
+	patternV1beta1 "github.com/meshery/schemas/models/v1beta1/pattern"
 	"gopkg.in/yaml.v2"
 )
 
@@ -1909,6 +1911,33 @@ func (h *Handler) GetMesheryPatternHandler(
 		}
 		pattern.PatternFile = patternFileStr
 	}
+
+	// deprettify pattern for backward compatibility with older designs which had the configuration in prettified format
+	var design patternV1beta1.PatternFile
+	err = encoding.Unmarshal([]byte(pattern.PatternFile), &design)
+
+	if err != nil {
+		err = ErrParsePattern(err)
+		h.log.Error(err)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	for _, component := range design.Components {
+		component.Configuration = core.Format.DePrettify(component.Configuration, false)
+	}
+
+	patternBytes, err := encoding.Marshal(design)
+	pattern.PatternFile = string(patternBytes)
+	// done deprettifying
+
+	if err != nil {
+		h.log.Error(err)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	// done deprettifying
 
 	rw.Header().Set("Content-Type", "application/json")
 	if err := json.NewEncoder(rw).Encode(pattern); err != nil {

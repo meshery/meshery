@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/porter/components/eip/icons/color/eip-color.svg
   whiteIcon: assets/img/integrations/porter/components/eip/icons/white/eip-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Packages applications as bundles for distribution",
   "Simplifies application installation and management",

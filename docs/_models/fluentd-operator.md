@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/fluentd-operator/components/fluentd-config/icons/color/fluentd-config-color.svg
   whiteIcon: assets/img/integrations/fluentd-operator/components/fluentd-config/icons/white/fluentd-config-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Fluent Operator provides great flexibility in building a logging layer based on Fluent Bit and Fluentd.",
   "Fluentd Management: Deploy and destroy Fluentd StatefulSet automatically.",

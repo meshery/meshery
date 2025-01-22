@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/amd-gpu/components/node-feature-group/icons/color/node-feature-group-color.svg
   whiteIcon: assets/img/integrations/amd-gpu/components/node-feature-group/icons/white/node-feature-group-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Enables GPU acceleration for Kubernetes workloads",
   "Supports various AMD GPU models",

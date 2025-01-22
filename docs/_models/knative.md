@@ -86,6 +86,9 @@ components:
   colorIcon: assets/img/integrations/knative/components/service/icons/color/service-color.svg
   whiteIcon: assets/img/integrations/knative/components/service/icons/white/service-white.svg
   description: 
+components-count: 19
+relationships: 
+relationship-count: 0
 featureList: [
   "Provides building blocks for serverless",
   "Simplifies event-driven architecture",

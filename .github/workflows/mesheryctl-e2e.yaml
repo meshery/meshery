@@ -26,15 +26,20 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        k8s_version: ['v1.29.2', 'v1.31.1']
+        k8s_version: ['v1.31.4', 'v1.32.0']
         platform: ['docker', 'kubernetes']
     steps:
       - name: Setup Kubernetes
-        uses: manusa/actions-setup-minikube@v2.11.0
+        uses: manusa/actions-setup-minikube@v2.13.0
         with:
-          minikube version: 'v1.34.0'
+          minikube version: 'v1.33.0'
           kubernetes version: ${{ matrix.k8s_version }}
           driver: docker
+      - run: |
+          mkdir -p $HOME/.kube
+          mkdir -p $HOME/.minikube
+          sudo chown -R $USER $HOME/.kube
+          sudo chown -R $USER $HOME/.minikube
 
       - name: Run minikube tunnel
         run: |
@@ -80,13 +85,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        k8s_version: ['v1.29.2', 'v1.28.7']
+        k8s_version: ['v1.31.4', 'v1.32.0']
         platform: ['docker', 'kubernetes']
     steps:
       - name: Setup Kubernetes
-        uses: manusa/actions-setup-minikube@v2.10.0
+        uses: manusa/actions-setup-minikube@v2.11.0
         with:
-          minikube version: 'v1.32.0'
+          minikube version: 'v1.34.0'
           kubernetes version: ${{ matrix.k8s_version }}
           driver: docker
 

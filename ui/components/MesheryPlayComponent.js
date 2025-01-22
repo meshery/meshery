@@ -10,6 +10,8 @@ import {
   Typography,
   styled,
   useTheme,
+  gray,
+  charcoal,
 } from '@layer5/sistent';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';
@@ -39,16 +41,20 @@ const PlayRoot = styled('div')(({ theme }) => ({
 export const PaneSection = styled('div')(() => {
   const theme = useTheme();
   return {
-    backgroundColor: theme.palette.text?.default,
+    backgroundColor: theme.palette.mode === 'dark' ? gray[20] : charcoal[90],
     padding: theme.spacing(2.5),
     borderRadius: 4,
   };
 });
 
-const AlreadyConfigured = styled('div')(({ theme }) => ({
+const AlreadyConfigured = styled('div')({
   textAlign: 'center',
-  padding: theme.spacing(20),
-}));
+  height: '100%',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  flexDirection: 'column',
+});
 
 const MesheryPlayComponent = (props) => {
   const { meshAdapters } = props;
@@ -148,19 +154,21 @@ const MesheryPlayComponent = (props) => {
   if (meshAdapters.size === 0) {
     return (
       <NoSsr>
-        <AlreadyConfigured>
-          <Typography variant="h6">Adapter Unavailable</Typography>
-          <Typography variant="subtitle1">Connect Meshery Adapter(s) in Settings</Typography>
-          <StyledButton
-            variant="contained"
-            color="primary"
-            size="large"
-            onClick={handleConfigure}
-            startIcon={<StyledIcon />}
-          >
-            Configure Settings
-          </StyledButton>
-        </AlreadyConfigured>
+        <UsesSistent>
+          <AlreadyConfigured>
+            <Typography variant="h6">Adapter Unavailable</Typography>
+            <Typography variant="subtitle1">Connect Meshery Adapter(s) in Settings</Typography>
+            <StyledButton
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={handleConfigure}
+              startIcon={<StyledIcon />}
+            >
+              Configure Settings
+            </StyledButton>
+          </AlreadyConfigured>
+        </UsesSistent>
       </NoSsr>
     );
   }
@@ -212,6 +220,9 @@ const MesheryPlayComponent = (props) => {
                     <MenuItem
                       key={`${ada.adapter_location}_${new Date().getTime()}`}
                       value={ada.adapter_location}
+                      sx={{
+                        display: 'flex',
+                      }}
                     >
                       {pickImage(ada)}
                       <Typography variant="body1" sx={{ ml: 1 }}>

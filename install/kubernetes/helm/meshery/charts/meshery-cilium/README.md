@@ -10,7 +10,7 @@ Meshery Adapter for Cilium chart.
 | ---- | ------ | --- |
 | aisuko | <urakiny@gmail.com> |  |
 | leecalcote | <leecalcote@gmail.com> |  |
-| Layer5 Authors | <community@layer5.io> |  |
+| Meshery Authors | <community@layer5.io> |  |
 
 ## Values
 

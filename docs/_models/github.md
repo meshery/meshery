@@ -10,6 +10,9 @@ integrations-category: App Definition and Development
 integrations-subcategory: Source Version Control
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Pipeline your cloud native infrastructure as code changes with GitOps",
   "Integrate Meshery into your GitHub workflow",

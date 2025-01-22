@@ -206,6 +206,9 @@ components:
   colorIcon: assets/img/integrations/kuma/components/mesh-tls/icons/color/mesh-tls-color.svg
   whiteIcon: assets/img/integrations/kuma/components/mesh-tls/icons/white/mesh-tls-white.svg
   description: 
+components-count: 49
+relationships: 
+relationship-count: 0
 featureList: [
   "Lightweight and flexible service mesh",
   "Supports multiple data planes",

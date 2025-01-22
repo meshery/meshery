@@ -1426,6 +1426,9 @@ components:
   colorIcon: assets/img/integrations/k8s-config-connector/components/secure-source-manager-repository/icons/color/secure-source-manager-repository-color.svg
   whiteIcon: assets/img/integrations/k8s-config-connector/components/secure-source-manager-repository/icons/white/secure-source-manager-repository-white.svg
   description: 
+components-count: 354
+relationships: 
+relationship-count: 0
 featureList: [
   "Provides a wide range of cloud services",
   "Integrates with Kubernetes",

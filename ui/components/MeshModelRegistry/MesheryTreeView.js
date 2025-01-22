@@ -279,7 +279,7 @@ const RelationshipTree = ({
                 key={index}
                 nodeId={`${idForKind}.${relationship.id}`}
                 data-id={`${idForKind}.${relationship.id}`}
-                labelText={relationship.subType}
+                labelText={`${relationship.subType} (${relationship.model.name})`}
                 onClick={() => {
                   setShowDetailsData({
                     type: RELATIONSHIPS,

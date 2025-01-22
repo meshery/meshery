@@ -5,11 +5,13 @@ on:
       - "master"
     paths:
       - "**.go"
+      - "**.golden"
   pull_request:
     branches:
       - "master"
     paths:
       - "**.go"
+      - "**.golden"
   workflow_dispatch:
     inputs:
       logLevel:

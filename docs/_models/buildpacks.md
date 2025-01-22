@@ -10,6 +10,9 @@ integrations-category: App Definition and Development
 integrations-subcategory: Application Definition & Image Build
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Transform application source code into OCI images.",
   "Enable for swift rebasing of images and modular control over images.",

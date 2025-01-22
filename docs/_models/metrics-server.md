@@ -10,6 +10,9 @@ integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
 registrant: GitHub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Fast autoscaling, collecting metrics every 15 seconds.",
   "Resource efficiency, using 1 mili core of CPU and 2 MB of memory for each node in a cluster.",

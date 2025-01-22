@@ -16,6 +16,7 @@ export const NamespaceTableConfig = (
   meshSyncResources,
   k8sConfig,
   connectionMetadataState,
+  workloadType,
 ) => {
   const ping = useKubernetesHook();
   return {
@@ -23,7 +24,7 @@ export const NamespaceTableConfig = (
     colViews: [
       ['id', 'na'],
       ['metadata.name', 'xs'],
-      ['apiVersion', 'm'],
+      ['apiVersion', 'na'],
       ['cluster_id', 'xs'],
       ['metadata.creationTimestamp', 'l'],
       ['status.attribute', 'm'],
@@ -52,12 +53,8 @@ export const NamespaceTableConfig = (
             return (
               <Title
                 onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                data={
-                  meshSyncResources[tableMeta.rowIndex]
-                    ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                    : {}
-                }
                 value={value}
+                kind={workloadType}
               />
             );
           },

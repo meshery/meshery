@@ -378,6 +378,9 @@ components:
   colorIcon: assets/img/integrations/crossplane-provider-openstack/components/site-connection-v2/icons/color/site-connection-v2-color.svg
   whiteIcon: assets/img/integrations/crossplane-provider-openstack/components/site-connection-v2/icons/white/site-connection-v2-white.svg
   description: 
+components-count: 92
+relationships: 
+relationship-count: 0
 featureList: [
   "Provides declarative API for OpenStack",
   "Simplifies OpenStack resource management",

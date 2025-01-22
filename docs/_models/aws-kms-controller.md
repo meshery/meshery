@@ -30,6 +30,9 @@ components:
   colorIcon: assets/img/integrations/aws-kms-controller/components/key/icons/color/key-color.svg
   whiteIcon: assets/img/integrations/aws-kms-controller/components/key/icons/white/key-white.svg
   description: 
+components-count: 5
+relationships: 
+relationship-count: 0
 featureList: [
   "Secure key management",
   "Encrypts data at rest and in transit",

@@ -1,11 +1,11 @@
-import { AppBar, styled } from '@material-ui/core';
+import { AppBar, styled } from '@layer5/sistent';
 
 const AppBarComponent = styled(AppBar)(({ theme }) => {
   return {
     marginBottom: 16,
-    backgroundColor: theme.palette.secondary.appBar,
+    backgroundColor: theme.palette.mode === 'dark' ? '#363636' : '#fff',
     borderRadius: '8px',
-    color: theme.palette.secondary.text,
+    color: theme.palette.text.default,
   };
 });
 

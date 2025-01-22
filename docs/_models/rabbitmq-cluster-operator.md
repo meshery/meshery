@@ -66,6 +66,9 @@ components:
   colorIcon: assets/img/integrations/rabbitmq-cluster-operator/components/operator-policy/icons/color/operator-policy-color.svg
   whiteIcon: assets/img/integrations/rabbitmq-cluster-operator/components/operator-policy/icons/white/operator-policy-white.svg
   description: 
+components-count: 14
+relationships: 
+relationship-count: 0
 featureList: [
   "Automated RabbitMQ cluster deployment and scaling",
   "High availability configuration",

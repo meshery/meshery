@@ -10,6 +10,9 @@ integrations-category: App Definition and Development
 integrations-subcategory: Application Definition & Image Build
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Restore order to your microservices and infrastructure and enables your product teams to ship high-quality code quickly — without compromising autonomy.",
   "Unifies all your infrastructure tooling, services, and documentation to create a streamlined development environment from end to end.",

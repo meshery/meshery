@@ -38,6 +38,9 @@ components:
   colorIcon: assets/img/integrations/apisix-ingress-controller/components/apisix-global-rule/icons/color/apisix-global-rule-color.svg
   whiteIcon: assets/img/integrations/apisix-ingress-controller/components/apisix-global-rule/icons/white/apisix-global-rule-white.svg
   description: 
+components-count: 7
+relationships: 
+relationship-count: 0
 featureList: [
   "The Apache APISIX Dashboard is designed to make it as easy as possible for users to operate through a frontend interface.",
   "The Apache APISIX dashboard is flexible to User demands.",

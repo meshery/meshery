@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/posthog/components/click-house-operator-configuration/icons/color/click-house-operator-configuration-color.svg
   whiteIcon: assets/img/integrations/posthog/components/click-house-operator-configuration/icons/white/click-house-operator-configuration-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Event tracking and analysis",
   "User behavior insights",

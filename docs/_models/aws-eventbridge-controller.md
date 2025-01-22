@@ -34,6 +34,9 @@ components:
   colorIcon: assets/img/integrations/aws-eventbridge-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-eventbridge-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+components-count: 6
+relationships: 
+relationship-count: 0
 featureList: [
   "Amazon EventBridge Event Bus is a serverless event bus that helps you receive, filter, transform, route, and deliver events.",
   "Amazon EventBridge Pipes is a serverless point-to-point integration resource that helps you connect event producers to event consumers with optional filtering, enrichment, and transformation capabilities.",

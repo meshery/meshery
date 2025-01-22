@@ -10,6 +10,9 @@ integrations-category: Provisioning
 integrations-subcategory: Security & Compliance
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Keylime is a remote boot attestation and runtime integrity validation framework for edge computing devices.",
   "Ensures secure boot and runtime integrity",

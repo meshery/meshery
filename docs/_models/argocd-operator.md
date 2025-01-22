@@ -30,6 +30,9 @@ components:
   colorIcon: assets/img/integrations/argocd-operator/components/app-project/icons/color/app-project-color.svg
   whiteIcon: assets/img/integrations/argocd-operator/components/app-project/icons/white/app-project-white.svg
   description: 
+components-count: 5
+relationships: 
+relationship-count: 0
 featureList: [
   "Declarative continuous delivery with a fully-loaded UI.",
   "Application definitions, configurations, and environments can be declarative and version controlled.",

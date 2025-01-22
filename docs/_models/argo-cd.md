@@ -26,6 +26,15 @@ components:
   colorIcon: assets/img/integrations/argo-cd/components/app-project/icons/color/app-project-color.svg
   whiteIcon: assets/img/integrations/argo-cd/components/app-project/icons/white/app-project-white.svg
   description: 
+components-count: 4
+relationships: 
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A parent-child relationship implies the requirement of the parent component before the child component can be created. For example, a Namespace in Kubernetes can be a parent of Pods within that Namespace. Similarly, in Argo CD, an AppProject represents a logical grouping of Applications. Applications and ApplicationSets reference their AppProject by name."
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "A parent-child relationship implies the requirement of the parent component before the child component can be created. For example, a Namespace in Kubernetes can be a parent of Pods within that Namespace. Similarly, in Argo CD, an AppProject represents a logical grouping of Applications. Applications and ApplicationSets reference their AppProject by name."
+relationship-count: 2
 featureList: [
   "Gain mastery over Argo as a workflow engine for Kubernetes",
   "Design application definitions using the intuitive, context-aware visual designer, MeshMap.",

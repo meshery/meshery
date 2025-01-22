@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/aws-cloudwatch-controller/components/metric-alarm/icons/color/metric-alarm-color.svg
   whiteIcon: assets/img/integrations/aws-cloudwatch-controller/components/metric-alarm/icons/white/metric-alarm-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Provides you with data and actionable insights to monitor your applications, respond to system-wide performance changes, and optimize resource utilization.",
   "Collects monitoring and operational data in the form of logs, metrics, and traces.",

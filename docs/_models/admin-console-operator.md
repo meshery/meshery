@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/admin-console-operator/components/admin-console/icons/color/admin-console-color.svg
   whiteIcon: assets/img/integrations/admin-console-operator/components/admin-console/icons/white/admin-console-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Deployed and configured CI/CD toolset (Jenkins, Gerrit, Nexus, SonarQube)",
   "Kubernetes native approach (CRD, CR) to declare CI/CD pipelines",

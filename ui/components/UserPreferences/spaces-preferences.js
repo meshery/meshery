@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
-import { FormGroup, FormControlLabel, Grid } from '@material-ui/core';
+import { FormGroup, FormControlLabel, Grid } from '@layer5/sistent';
 import NoSsr from '@material-ui/core/NoSsr';
 import { setOrganization, setKeys } from '../../lib/store';
 import { EVENT_TYPES } from '../../lib/event-types';
@@ -13,10 +13,12 @@ import { ErrorBoundary as SistentErrorBoundary } from '@layer5/sistent';
 import { Provider } from 'react-redux';
 import { store } from '../../store';
 import { withStyles } from '@material-ui/core';
-import { Select, MenuItem, FormControl, FormLabel } from '@material-ui/core';
-import styles from './style';
+import { Select, MenuItem } from '@layer5/sistent';
+import styles, { FormContainerWrapper, FormGroupWrapper } from './style';
 import theme from '../../themes/app';
 import { useGetCurrentAbilities } from '../../rtk-query/ability';
+import { UsesSistent } from '../SistentWrapper';
+import { FormLabel } from '@mui/material';
 
 const SpacesPreferences = (props) => {
   const {
@@ -52,47 +54,53 @@ const SpacesPreferences = (props) => {
   return (
     <NoSsr>
       <>
-        {isOrgsSuccess && orgs && (
-          <div className={classes.formContainerWrapper}>
-            <FormControl component="fieldset" className={classes.formControlWrapper}>
-              <FormLabel component="legend" className={classes.formLabelWrapper}>
-                Spaces
-              </FormLabel>
-              <FormGroup>
-                <FormControlLabel
-                  key="SpacesPreferences"
-                  control={
-                    <Grid container spacing={1} alignItems="flex-end">
-                      <Grid item xs={12} data-cy="mesh-adapter-url">
-                        <Select
-                          value={organization.id}
-                          onChange={handleOrgSelect}
-                          SelectDisplayProps={{ style: { display: 'flex', padding: '10px' } }}
-                          className={classes.orgSelect}
-                        >
-                          {orgs?.map((org) => {
-                            return (
-                              <MenuItem key={org.id} value={org.id} className={classes.selectItem}>
-                                <div className={classes.orgIconWrapper}>
-                                  <OrgIcon
-                                    width="24"
-                                    height="24"
-                                    secondaryFill={theme.palette.darkSlateGray}
-                                  />
-                                </div>
-                                <span className={classes.org}>{org.name}</span>
-                              </MenuItem>
-                            );
-                          })}
-                        </Select>
+        <UsesSistent>
+          {isOrgsSuccess && orgs && (
+            <FormContainerWrapper>
+              <FormGroupWrapper component="fieldset">
+                <FormLabel component="legend" sx={{ fontSize: 20 }}>
+                  Spaces
+                </FormLabel>
+                <FormGroup>
+                  <FormControlLabel
+                    key="SpacesPreferences"
+                    control={
+                      <Grid container spacing={1} alignItems="flex-end">
+                        <Grid item xs={12} data-cy="mesh-adapter-url">
+                          <Select
+                            value={organization.id}
+                            onChange={handleOrgSelect}
+                            SelectDisplayProps={{ style: { display: 'flex', padding: '10px' } }}
+                            className={classes.orgSelect}
+                          >
+                            {orgs?.map((org) => {
+                              return (
+                                <MenuItem
+                                  key={org.id}
+                                  value={org.id}
+                                  className={classes.selectItem}
+                                >
+                                  <div className={classes.orgIconWrapper}>
+                                    <OrgIcon
+                                      width="24"
+                                      height="24"
+                                      secondaryFill={theme.palette.darkSlateGray}
+                                    />
+                                  </div>
+                                  <span className={classes.org}>{org.name}</span>
+                                </MenuItem>
+                              );
+                            })}
+                          </Select>
+                        </Grid>
                       </Grid>
-                    </Grid>
-                  }
-                />
-              </FormGroup>
-            </FormControl>
-          </div>
-        )}
+                    }
+                  />
+                </FormGroup>
+              </FormGroupWrapper>
+            </FormContainerWrapper>
+          )}
+        </UsesSistent>
       </>
     </NoSsr>
   );

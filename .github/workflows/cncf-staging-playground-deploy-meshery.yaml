@@ -6,7 +6,7 @@ jobs:
     cncf-staging-playground-rollout:
         name: Update Meshery on CNCF staging playground
         if: github.repository == 'meshery/meshery'
-        runs-on: ubuntu-latest 
+        runs-on: ubuntu-24.04 
         steps:
         - name: Upgrade Meshery Helm Release
           uses: appleboy/ssh-action@v1.0.3

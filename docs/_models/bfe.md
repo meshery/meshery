@@ -10,6 +10,9 @@ integrations-category: Cloud Native Network
 integrations-subcategory: Service Proxy
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "BFE has a builtin plugin framework that makes it possible to develop new features rapidly by writing plugins.",
   "BFE is designed to provide every tenant a dedicated share of the instance. Each tenant&ldquos configuration is isolated and remains invisible to other tenants",

@@ -10,6 +10,9 @@ integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Provides a standardized format for metrics",
   "Simplifies metrics collection and monitoring",

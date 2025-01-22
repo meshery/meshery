@@ -26,6 +26,9 @@ components:
   colorIcon: assets/img/integrations/aks-appgw-fe/components/azure-pod-identity-exception/icons/color/azure-pod-identity-exception-color.svg
   whiteIcon: assets/img/integrations/aks-appgw-fe/components/azure-pod-identity-exception/icons/white/azure-pod-identity-exception-white.svg
   description: 
+components-count: 4
+relationships: 
+relationship-count: 0
 featureList: [
   "URL routing and cookie-based affinity
 ",

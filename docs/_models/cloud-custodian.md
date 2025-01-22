@@ -10,6 +10,9 @@ integrations-category: Provisioning
 integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Invite anyone to review and make changes to your private designs.",
   "Provide high performance traffic serving that can scale to millions of requests per second.",

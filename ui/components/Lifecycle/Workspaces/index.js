@@ -61,9 +61,10 @@ export const CreateButtonWrapper = styled('div')({
 export const ToolWrapper = styled('div')(() => {
   const theme = useTheme();
   return {
-    marginBottom: '3rem',
+    marginBottom: '1rem',
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     backgroundColor:
       theme.palette.mode === 'dark'
         ? theme.palette.text.inverse

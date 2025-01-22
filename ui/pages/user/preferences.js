@@ -1,5 +1,4 @@
 import UserPreferences from '../../components/UserPreferences';
-import { NoSsr, Paper, withStyles } from '@material-ui/core';
 import { updatepagepath, updatepagetitle } from '../../lib/store';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -8,8 +7,7 @@ import Head from 'next/head';
 import { promisifiedDataFetch } from '../../lib/data-fetch';
 import { ctxUrl } from '../../utils/multi-ctx';
 import React, { useEffect, useState } from 'react';
-
-const styles = { paper: { maxWidth: '90%', margin: 'auto', overflow: 'hidden' } };
+import { NoSsr } from '@mui/material';
 
 const UserPref = (props) => {
   const [anonymousStats, setAnonymousStats] = useState(undefined);
@@ -48,9 +46,8 @@ const UserPref = (props) => {
           <Head>
             <title>Preferences | Meshery</title>
           </Head>
-          <Paper className={props.classes.paper}>
-            <UserPreferences anonymousStats={anonymousStats} perfResultStats={perfResultStats} />
-          </Paper>
+
+          <UserPreferences anonymousStats={anonymousStats} perfResultStats={perfResultStats} />
         </NoSsr>
       )}
     </>
@@ -69,4 +66,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(UserPref));
+export default connect(mapStateToProps, mapDispatchToProps)(UserPref);

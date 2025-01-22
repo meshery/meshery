@@ -66,6 +66,9 @@ components:
   colorIcon: assets/img/integrations/fluent-operator/components/parser/icons/color/parser-color.svg
   whiteIcon: assets/img/integrations/fluent-operator/components/parser/icons/white/parser-white.svg
   description: 
+components-count: 14
+relationships: 
+relationship-count: 0
 featureList: [
   "Fluentd decouples data sources from backend systems by providing a unified logging layer in between.",
   "Fluentds 500+ plugins connect it to many data sources and outputs while keeping its core simple.",

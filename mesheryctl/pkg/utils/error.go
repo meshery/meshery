@@ -189,6 +189,10 @@ func RegistryError(msg string, cmd string) string {
 	switch cmd {
 	case "publish":
 		return formatError(msg, cmdRegistryPublish)
+	case "generate":
+		return formatError(msg, cmdRegistryGenerate)
+	case "update":
+		return formatError(msg, cmdRegistryUpdate)
 	default:
 		return formatError(msg, cmdRegistry)
 	}
@@ -333,6 +337,12 @@ func formatError(msg string, cmd cmdType) string {
 		return formatUsageDetails(msg, modelViewURL)
 	case cmdRegistry:
 		return formatUsageDetails(msg, registryUsageURL)
+	case cmdRegistryPublish:
+		return formatUsageDetails(msg, registryPublishURL)
+	case cmdRegistryGenerate:
+		return formatUsageDetails(msg, registryGenerateURL)
+	case cmdRegistryUpdate:
+		return formatUsageDetails(msg, registryUpdateURL)
 	case cmdEnvironment:
 		return formatUsageDetails(msg, environmentUsageURL)
 	case cmdEnvironmentCreate:

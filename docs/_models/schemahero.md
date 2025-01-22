@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/schemahero/components/broker/icons/color/broker-color.svg
   whiteIcon: assets/img/integrations/schemahero/components/broker/icons/white/broker-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Log collection from Kubernetes pods",
   "Log filtering and transformation",

@@ -46,6 +46,9 @@ components:
   colorIcon: assets/img/integrations/loki-simple-scalable/components/pod-logs/icons/color/pod-logs-color.svg
   whiteIcon: assets/img/integrations/loki-simple-scalable/components/pod-logs/icons/white/pod-logs-white.svg
   description: 
+components-count: 9
+relationships: 
+relationship-count: 0
 featureList: [
   "Easy deployment and configuration",
   "Scalable architecture",

@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/katib/components/trial/icons/color/trial-color.svg
   whiteIcon: assets/img/integrations/katib/components/trial/icons/white/trial-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates hyperparameter tuning and NAS",
   "Supports various search algorithms",

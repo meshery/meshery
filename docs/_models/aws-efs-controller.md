@@ -30,6 +30,9 @@ components:
   colorIcon: assets/img/integrations/aws-efs-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-efs-controller/components/field-export/icons/white/field-export-white.svg
   description: 
+components-count: 5
+relationships: 
+relationship-count: 0
 featureList: [
   "Scalable and elastic file storage",
   "Supports NFS and SMB protocols",

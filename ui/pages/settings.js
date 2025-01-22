@@ -6,14 +6,7 @@ import Head from 'next/head';
 import { bindActionCreators } from 'redux';
 import { getPath } from '../lib/path';
 import React, { useEffect } from 'react';
-import { Paper, styled } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
-
-const PaperStyle = styled(Paper)(() => ({
-  maxWidth: '90%',
-  margin: 'auto',
-  overflow: 'hidden',
-}));
 
 function Settings(props) {
   useEffect(() => {
@@ -27,9 +20,8 @@ function Settings(props) {
         <Head>
           <title>Settings | Meshery</title>
         </Head>
-        <PaperStyle>
-          <MesherySettings />
-        </PaperStyle>
+
+        <MesherySettings />
       </NoSsr>
     </UsesSistent>
   );

@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/ps-operator/components/percona-server-my-sql/icons/color/percona-server-my-sql-color.svg
   whiteIcon: assets/img/integrations/ps-operator/components/percona-server-my-sql/icons/white/percona-server-my-sql-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "High-performance MySQL database",
   "Manages backups, restores, and upgrades",

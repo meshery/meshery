@@ -46,6 +46,9 @@ components:
   colorIcon: assets/img/integrations/cloudnative-pg/components/subscription/icons/color/subscription-color.svg
   whiteIcon: assets/img/integrations/cloudnative-pg/components/subscription/icons/white/subscription-white.svg
   description: 
+components-count: 9
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates PostgreSQL deployment and management",
   "High availability and disaster recovery",
