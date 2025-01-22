@@ -1,4 +1,4 @@
-import { Typography, IconButton, Paper, styled } from '@layer5/sistent';
+import { Typography, IconButton, Paper, styled, Tab, Tabs, gray, charcoal } from '@layer5/sistent';
 
 export const DashboardSection = styled('div')(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
@@ -114,11 +114,14 @@ export const ErrorContainer = styled(Paper)(({ theme }) => ({
   borderRadius: 4,
 }));
 
-export const WrapperContainer = styled('div')({
+export const WrapperContainer = styled('div')(({ theme }) => ({
   flexGrow: 1,
+  [theme.breakpoints.down('sm')]: {
+    maxWidth: '80vw',
+  },
   maxWidth: '100vw',
   height: 'auto',
-});
+}));
 
 export const WrapperPaper = styled(Paper)({
   flexGrow: 1,
@@ -126,18 +129,28 @@ export const WrapperPaper = styled(Paper)({
   height: 'auto',
 });
 
-export const HeaderContainer = styled('div')({
+export const HeaderContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
   marginBottom: '1rem',
-});
+  flexDirection: 'row',
+  [theme.breakpoints.down('sm')]: {
+    flexDirection: 'column',
+    gap: '1rem',
+    alignItems: 'stretch',
+    width: '100%',
+  },
+}));
 
-export const ControlsContainer = styled('div')({
+export const ControlsContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: '0.5rem',
-});
+  [theme.breakpoints.down('sm')]: {
+    alignSelf: 'flex-end',
+  },
+}));
 
 export const StyledIconButton = styled(IconButton)({
   padding: '4px',
@@ -147,3 +160,13 @@ export const NoResourcesText = styled(Typography)({
   textAlign: 'center',
   marginTop: '2rem',
 });
+
+export const SecondaryTab = styled(Tab)(({ theme }) => ({
+  '&.Mui-selected': {
+    backgroundColor: theme.palette.mode === 'dark' ? gray[20] : charcoal[90],
+  },
+}));
+
+export const SecondaryTabs = styled(Tabs)(({ theme }) => ({
+  background: theme.palette.mode === 'dark' ? gray[20] : charcoal[90],
+}));

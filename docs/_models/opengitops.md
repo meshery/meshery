@@ -10,6 +10,9 @@ integrations-category: App Definition and Development
 integrations-subcategory: Continuous Integration & Delivery
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Declarative infrastructure as code",
   "Version control and collaboration",

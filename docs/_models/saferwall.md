@@ -74,6 +74,9 @@ components:
   colorIcon: assets/img/integrations/saferwall/components/couchbase-user/icons/color/couchbase-user-color.svg
   whiteIcon: assets/img/integrations/saferwall/components/couchbase-user/icons/white/couchbase-user-white.svg
   description: 
+components-count: 16
+relationships: 
+relationship-count: 0
 featureList: [
   "Vulnerability scanning of container images",
   "Malware detection",

@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/chaosblade-operator/components/chaos-blade/icons/color/chaos-blade-color.svg
   whiteIcon: assets/img/integrations/chaosblade-operator/components/chaos-blade/icons/white/chaos-blade-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Improves the fault tolerance of distributed systems.",
   "Ensures business continuity during the process of enterprises going to cloud or moving to cloud native systems.",

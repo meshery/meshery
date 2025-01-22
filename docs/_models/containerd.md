@@ -10,6 +10,9 @@ integrations-category: Runtime
 integrations-subcategory: Container Runtime
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Implements a chunk-based content-addressable filesystem on top of a called RAFS (Registry Acceleration File System) format.",
   "Improves the current OCI image specification.",

@@ -132,7 +132,7 @@
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "polygon",
-   "shape-polygon-points": "-0.23 0 -0.92 -1 -0.54 -1 0 -0.31 0.54 -1 0.92 -1 0.23 0 0.92 1 0.46 1 0 0.31 -0.54 1 -0.92 1 -0.92 1",
+   "shape-polygon-points": "-1.00 1.00 -0.31 0.00 -1.00 -1.00 -0.54 -1.00 0.00 -0.23 0.54 -1.00 1.00 -1.00 0.31 0.00 1.00 1.00 0.46 1.00 0.00 0.23 -0.54 1.00",
    "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M2 2H12.5067L20 12.6533L27.5067 2H38L25.2533 20L38 38H27.5067L20 27.3467L12.5067 38H2L14 20L2 2Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",
    "svgComplete": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e \u003cpath d=\"M2 2H12.5067L20 12.6533L27.5067 2H38L25.2533 20L38 38H27.5067L20 27.3467L12.5067 38H2L14 20L2 2Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e \u003c/svg\u003e",
    "svgWhite": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M2 2H12.5067L20 12.6533L27.5067 2H38L25.2533 20L38 38H27.5067L20 27.3467L12.5067 38H2L14 20L2 2Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",

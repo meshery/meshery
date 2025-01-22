@@ -44,6 +44,7 @@ import { ThemeTogglerCore } from '@/themes/hooks';
 import { UsesSistent } from '../SistentWrapper';
 import { FormLabel } from '@mui/material';
 import { FormGroupWrapper, PaperRoot, ProviderCard, RootContainer, StatsWrapper } from './style';
+import { SecondaryTab, SecondaryTabs } from '../DashboardComponent/style';
 
 const styles = (theme) => ({
   icon: {
@@ -664,7 +665,7 @@ const UserPreference = (props) => {
           {tabVal === 1 && <MesherySettingsPerformanceComponent />}
           {tabVal === 2 && userPrefs && providerType !== 'local' && (
             <>
-              <Tabs
+              <SecondaryTabs
                 value={value}
                 onChange={handleValChange}
                 variant={width < 600 ? 'scrollable' : 'fullWidth'}
@@ -675,12 +676,12 @@ const UserPreference = (props) => {
                 centered
               >
                 <CustomTooltip title="Details" placement="top">
-                  <Tab label={<span className={props.classes.tabLabel}>Details</span>} />
+                  <SecondaryTab label={<span className={props.classes.tabLabel}>Details</span>} />
                 </CustomTooltip>
                 <CustomTooltip title="Plugins" placement="top">
-                  <Tab label={<span className={props.classes.tabLabel}>Plugins</span>} />
+                  <SecondaryTab label={<span className={props.classes.tabLabel}>Plugins</span>} />
                 </CustomTooltip>
-              </Tabs>
+              </SecondaryTabs>
               <StatsWrapper>
                 {value === 0 && <RemoteProviderInfoTab />}
 

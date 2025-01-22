@@ -42,6 +42,9 @@ components:
   colorIcon: assets/img/integrations/vineyard/components/vineyardd/icons/color/vineyardd-color.svg
   whiteIcon: assets/img/integrations/vineyard/components/vineyardd/icons/white/vineyardd-white.svg
   description: 
+components-count: 8
+relationships: 
+relationship-count: 0
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

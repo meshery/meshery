@@ -18,6 +18,9 @@ components:
   colorIcon: assets/img/integrations/vald-helm-operator/components/vald-release/icons/color/vald-release-color.svg
   whiteIcon: assets/img/integrations/vald-helm-operator/components/vald-release/icons/white/vald-release-white.svg
   description: 
+components-count: 2
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates Vald deployment and management",
   "Manages Vald configuration",
