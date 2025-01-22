@@ -1,4 +1,5 @@
 package relationship_evaluation_policy
+import rego.v1
 
 # ----------- Module Alias Policy ------------------------------------------------------------------------
 # This module is responsible for evaluating alias relationships.
@@ -35,7 +36,6 @@ package relationship_evaluation_policy
 #        - Remove the alias component from the design file.
 #        - Remove the aliased configuration from the parent component.
 
-import rego.v1
 
 is_alias_relationship(relationship) if {
 	lower(relationship.kind) == "hierarchical"
@@ -45,47 +45,6 @@ is_alias_relationship(relationship) if {
 
 component_alias(component_id) := alias if {
 	alias := input.metadata.resolvedAliases[component_id] 
-}
-
-
-#-------- Get Component Configuration -----------
-get_component_configuration(component,design) := configuration if {
-	alias := component_alias(component.id)
-	# print("configuration from Alias is ==>",alias)
-
-	parent := component_declaration_by_id(design,alias.resolved_parent_id)
-	
-	configuration := object_get_nested(parent,alias.resolved_ref_field_path,null)
-	# print("Configuration got from Alias " ,configuration)
-}
-
-get_component_configuration(component,design) := configuration if {
-   not component_alias(component.id)
-   configuration := component.configuration
-
-   # print("Configuration direct",configuration)
-}
-
-# ------------------------------------------------
-
-# Get the from component id
-from_component_id(relationship) := component if {
-	some selector in relationship.selectors
-	some from in selector.allow.from
-	component := from.id
-}
-
-# Get the to component id
-to_component_id(relationship) := component if {
-	some selector in relationship.selectors
-	some to in selector.allow.to
-	component := to.id
-}
-
-# Get the component declaration by id
-component_declaration_by_id(design_file, id) := component if {
-	some component in design_file.components
-	component.id == id
 }
 
 alias_ref_from_relationship(relationship) := ref if {
@@ -116,73 +75,19 @@ identify_relationships(design_file, relationships_in_scope) := eval_results if {
 
 }
 
-new_uuid(seed) := id if {
-	now := format_int(time.now_ns(), 10)
-	id := uuid.rfc4122(sprintf("%s%s", [seed, now]))
-}
-
-object_get_nested(obj, path, default_value) := current_value if {
-	stringfied_path := [sprintf("%v", [v]) | some v in path]
-	[current_path, current_value] := walk(obj)
-	stringfied_current_path := [sprintf("%v", [v]) | some v in current_path]
-	stringfied_current_path == stringfied_path
-} else := default_value
-
-pop_last(arr) := array.slice(arr, 0, count(arr) - 1)
-pop_first(arr) := array.slice(arr,1,count(arr))
-
-array_endswith(arr, item) if {
-	arr[count(arr) - 1] == item
-}
-
-# check if the reference is a direct reference or an array reference
-# if the reference is a direct reference then it should not end with _
-is_direct_reference(ref) if {
-	not array_endswith(ref, "_")
-}
-
-identify_alias_paths(from, to, component,design) := paths if {
-	ref := from.patch.mutatorRef[0]
-	not is_direct_reference(ref)
-	direct_ref := pop_last(ref)
-
-	# print("Direct Ref", direct_ref,"pop",pop_first(direct_ref), "config", get_component_configuration(component,design),"v",object_get_nested(get_component_configuration(component,design), pop_first(direct_ref), []))
-
-
-	# remove nullish values
-	items := [item |
-		some item in object_get_nested(get_component_configuration(component,design), pop_first(direct_ref), [])
-		# print("item",item,"path",pop_first(direct_ref))
-		item != null
-	]
-
-	print("Items", items,from.kind,to.kind)
-	count(items) > 0
-
-	paths := [path |
-		some index in numbers.range(0, count(items) - 1)
-		path := array.concat(direct_ref, [sprintf("%d", [index])])
-	]
-	#print("Paths", paths)
-}
-
-identify_alias_paths(from, to, component,design) := paths if {
-	ref := from.patch.mutatorRef[0]
-	is_direct_reference(ref)
-	value := object_get_nested(get_component_configuration(component,design), pop_first(ref), null)
-	value != null
-	paths := [ref]
-}
-
+ 
 identify_alias_relationships(component, relationship) := {rel |
 	some selector in relationship.selectors
 	some from in selector.allow.from # from is child or alias
 	some to in selector.allow.to # to is parent
 
 	# identify if alias can be created
-	identified_alias_paths := identify_alias_paths(from, to, component,input)
+	# identified_alias_paths := identify_alias_paths(from, to, component,input)
 
-	#print("Identified Alias Paths", count(identified_alias_paths))
+    array_items := get_array_aware_configuration_for_component_at_path(from.patch.mutatorRef[0], component,input)
+	identified_alias_paths := array_items.paths
+
+	# print("Identified Alias Paths", identified_alias_paths)
 
 	count(identified_alias_paths) > 0 # if alias paths are present then alias can be created
 
