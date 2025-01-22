@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/aperture-agent/components/agent/icons/color/agent-color.svg
   whiteIcon: assets/img/integrations/aperture-agent/components/agent/icons/white/agent-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Collects and analyzes telemetry data",
   "Provides traffic control and shaping",

@@ -42,6 +42,9 @@ components:
   colorIcon: assets/img/integrations/camel-k/components/pipe/icons/color/pipe-color.svg
   whiteIcon: assets/img/integrations/camel-k/components/pipe/icons/white/pipe-white.svg
   description: 
+components-count: 8
+relationships: 
+relationship-count: 0
 featureList: [
   "Define routing and mediation rules in a variety of domain-specific languages.",
   "Enables easier integration with all kinds of transport or messaging models.",

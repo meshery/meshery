@@ -10,6 +10,9 @@ integrations-category: App Definition and Development
 integrations-subcategory: Streaming & Messaging
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Provides SDKs for Go, JavaScript, Java, C#, Ruby, PHP, PowerShell, Rust, and Python that can be used to build event routers, tracing systems, and other tools.",
   "Simplifies event declaration and delivery across services, platforms, and beyond.",

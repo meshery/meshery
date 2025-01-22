@@ -18,6 +18,9 @@ components:
   colorIcon: assets/img/integrations/ingress-azure/components/azure-ingress-prohibited-target/icons/color/azure-ingress-prohibited-target-color.svg
   whiteIcon: assets/img/integrations/ingress-azure/components/azure-ingress-prohibited-target/icons/white/azure-ingress-prohibited-target-white.svg
   description: 
+components-count: 2
+relationships: 
+relationship-count: 0
 featureList: [
   "Exposes Kubernetes services to the internet",
   "Load balancing and traffic routing",

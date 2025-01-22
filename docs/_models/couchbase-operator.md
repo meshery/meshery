@@ -74,6 +74,9 @@ components:
   colorIcon: assets/img/integrations/couchbase-operator/components/couchbase-user/icons/color/couchbase-user-color.svg
   whiteIcon: assets/img/integrations/couchbase-operator/components/couchbase-user/icons/white/couchbase-user-white.svg
   description: 
+components-count: 16
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates Couchbase cluster deployment",
   "Manages Couchbase configuration",

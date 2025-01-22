@@ -62,6 +62,9 @@ components:
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-ns-isolation-policy/icons/color/pulsar-ns-isolation-policy-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-ns-isolation-policy/icons/white/pulsar-ns-isolation-policy-white.svg
   description: 
+components-count: 13
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates Pulsar resource management",
   "Simplifies Pulsar configuration",

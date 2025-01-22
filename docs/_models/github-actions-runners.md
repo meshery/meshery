@@ -30,6 +30,9 @@ components:
   colorIcon: assets/img/integrations/github-actions-runners/components/runner-set/icons/color/runner-set-color.svg
   whiteIcon: assets/img/integrations/github-actions-runners/components/runner-set/icons/white/runner-set-white.svg
   description: 
+components-count: 5
+relationships: 
+relationship-count: 0
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

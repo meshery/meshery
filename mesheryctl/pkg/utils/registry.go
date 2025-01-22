@@ -47,6 +47,7 @@ func GetIndexForRegisterCol(cols []string, shouldRegister string) int {
 }
 
 func GenerateMDXStyleDocs(model ModelCSV, components []ComponentCSV, modelPath, imgPath string) error {
+	// ../layer5/src/collections/integrations ../layer5/src/collections/integrations
 	modelName := utils.FormatName(model.Model)
 	// create dir for model
 	modelDir, _ := filepath.Abs(filepath.Join("../", modelPath, modelName))
@@ -104,9 +105,12 @@ func GenerateMDXStyleDocs(model ModelCSV, components []ComponentCSV, modelPath, 
 	return nil
 }
 
-func GenerateJSStyleDocs(model ModelCSV, docsJSON, imgPath string) (string, error) {
+func GenerateJSStyleDocs(model ModelCSV, docsJSON string, components []ComponentCSV, relationships []RelationshipCSV, modelPath, imgPath string) (string, error) {
+	// ../../meshery.io/integrations ../meshery.io/assets/images/integration
 	modelName := utils.FormatName(model.Model)
-
+	componentsCount := len(components)
+	relationshipsCount := len(relationships)
+	// ./../meshery.io/integrations ../meshery.io/assets/images/integration
 	iconDir := filepath.Join(filepath.Join(strings.Split(imgPath, "/")[1:]...), modelName) // "../images", "integrations"
 
 	// generate data.js file
@@ -142,13 +146,47 @@ func GenerateJSStyleDocs(model ModelCSV, docsJSON, imgPath string) (string, erro
 		return "", err
 	}
 
+	parts := strings.Split(modelPath, "meshery.io")
+	modelCollections := filepath.Join(parts[0], "meshery.io", "collections", "_models", modelName)
+
+	err = os.MkdirAll(modelCollections, 0777)
+	if err != nil {
+		return "", err
+	}
+	mdDir, _ := filepath.Abs(filepath.Join(modelCollections))
+
+	_imgOutputPath := filepath.Join(imgsOutputPath, "components")
+	_iconsSubDir := filepath.Join(filepath.Join(strings.Split(imgPath, "meshery.io/")[1:]...), modelName, "components")
+	componentMetadata, err := CreateComponentsMetadataAndCreateSVGsForMDStyle(model, components, _imgOutputPath, _iconsSubDir)
+	if err != nil {
+		return "", err
+	}
+	relationshipMetadata, err := CreateRelationshipsMetadata(model, relationships)
+	if err != nil {
+		return "", err
+	}
+
+	// generate markdown file
+	md := model.CreateMarkDownForMDStyle(componentMetadata, relationshipMetadata, componentsCount, relationshipsCount, "mesheryio")
+	file, err := os.Create(filepath.Join(mdDir, modelName+".md"))
+	if err != nil {
+		return "", err
+	}
+	defer file.Close()
+
+	_, err = io.WriteString(file, md)
+	if err != nil {
+		return "", err
+	}
+
 	return docsJSON, nil
 }
 
-func GenerateMDStyleDocs(model ModelCSV, components []ComponentCSV, modelPath, imgPath string) error {
+func GenerateMDStyleDocs(model ModelCSV, components []ComponentCSV, relationships []RelationshipCSV, modelPath, imgPath string) error {
 
 	modelName := utils.FormatName(model.Model)
-
+	componentsCount := len(components)
+	relationshipsCount := len(relationships)
 	// dir for markdown
 	modelsOutputPath, _ := filepath.Abs(filepath.Join("../", modelPath))
 	mdDir := filepath.Join(modelsOutputPath) // path, "pages", "integrations"
@@ -196,9 +234,13 @@ func GenerateMDStyleDocs(model ModelCSV, components []ComponentCSV, modelPath, i
 	if err != nil {
 		return err
 	}
+	relationshipMetadata, err := CreateRelationshipsMetadata(model, relationships)
+	if err != nil {
+		return err
+	}
 
 	// generate markdown file
-	md := model.CreateMarkDownForMDStyle(componentMetadata)
+	md := model.CreateMarkDownForMDStyle(componentMetadata, relationshipMetadata, componentsCount, relationshipsCount, "mesherydocs")
 	file, err := os.Create(filepath.Join(mdDir, modelName+".md"))
 	if err != nil {
 		return err

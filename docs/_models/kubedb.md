@@ -154,6 +154,9 @@ components:
   colorIcon: assets/img/integrations/kubedb/components/cassandra-version/icons/color/cassandra-version-color.svg
   whiteIcon: assets/img/integrations/kubedb/components/cassandra-version/icons/white/cassandra-version-white.svg
   description: 
+components-count: 36
+relationships: 
+relationship-count: 0
 featureList: [
   "KubeDB simplifies many of the difficult or tedious management tasks of running a production grade databases on private and public clouds. Maintain one stack for all your stateless and stateful applications and simplify the operational complexity.",
   "Standard Kubernetes is all you need. If you can run Kubernetes, you can provision and manage databases using KubeDB. Use standard Kubernetes CLI and API to provision and manage databases.",
