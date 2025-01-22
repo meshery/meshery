@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/scheduler-plugins/components/node-resource-topology/icons/color/node-resource-topology-color.svg
   whiteIcon: assets/img/integrations/scheduler-plugins/components/node-resource-topology/icons/white/node-resource-topology-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Custom pod placement rules",
   "Priority-based scheduling",

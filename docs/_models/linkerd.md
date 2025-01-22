@@ -10,6 +10,9 @@ integrations-category: Cloud Native Network
 integrations-subcategory: Service Mesh
 registrant: GitHub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Visually configure and operate Linkerd with real-time topology",
   "Use Linkerd best practice designs and templates",

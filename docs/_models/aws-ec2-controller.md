@@ -78,6 +78,9 @@ components:
   colorIcon: assets/img/integrations/aws-ec2-controller/components/vpc-endpoint-service-configuration/icons/color/vpc-endpoint-service-configuration-color.svg
   whiteIcon: assets/img/integrations/aws-ec2-controller/components/vpc-endpoint-service-configuration/icons/white/vpc-endpoint-service-configuration-white.svg
   description: 
+components-count: 17
+relationships: 
+relationship-count: 0
 featureList: [
   "Optimized CPU Configurations",
   "High Packet-Per-Second Performance and Low Latency with Enhanced Networking",

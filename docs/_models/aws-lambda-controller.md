@@ -46,6 +46,9 @@ components:
   colorIcon: assets/img/integrations/aws-lambda-controller/components/version/icons/color/version-color.svg
   whiteIcon: assets/img/integrations/aws-lambda-controller/components/version/icons/white/version-white.svg
   description: 
+components-count: 9
+relationships: 
+relationship-count: 0
 featureList: [
   "Run code for virtually any type of application or backend service. ",
   "Write Lambda functions in your favorite language ",

@@ -26,6 +26,9 @@ components:
   colorIcon: assets/img/integrations/aws-emrcontainers-controller/components/field-export/icons/color/field-export-color.svg
   whiteIcon: assets/img/integrations/aws-emrcontainers-controller/components/field-export/icons/white/field-export-white.svg
   description: 
+components-count: 4
+relationships: 
+relationship-count: 0
 featureList: [
   "Runs Spark, Hive, and Presto on Kubernetes",
   "Integrates with other AWS services",

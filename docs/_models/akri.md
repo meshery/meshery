@@ -18,6 +18,9 @@ components:
   colorIcon: assets/img/integrations/akri/components/instance/icons/color/instance-color.svg
   whiteIcon: assets/img/integrations/akri/components/instance/icons/white/instance-white.svg
   description: 
+components-count: 2
+relationships: 
+relationship-count: 0
 featureList: [
   "Expose heterogeneous leaf devices as resources in a Kubernetes cluster",
   "It is made for the edge and handles the dynamic appearance and disappearance of leaf devices.",

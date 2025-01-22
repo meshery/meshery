@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/kubegems-models/components/model-deployment/icons/color/model-deployment-color.svg
   whiteIcon: assets/img/integrations/kubegems-models/components/model-deployment/icons/white/model-deployment-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Anomaly detection in Kubernetes clusters",
   "Predictive scaling for Kubernetes applications",

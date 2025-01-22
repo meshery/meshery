@@ -86,6 +86,9 @@ components:
   colorIcon: assets/img/integrations/azureorkestra/components/rate-limit/icons/color/rate-limit-color.svg
   whiteIcon: assets/img/integrations/azureorkestra/components/rate-limit/icons/white/rate-limit-white.svg
   description: 
+components-count: 19
+relationships: 
+relationship-count: 0
 featureList: [
   "Simplifies complex deployment workflows",
   "Provides a unified control plane for hybrid environments",
