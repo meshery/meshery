@@ -1,4 +1,4 @@
-package relationship_evaluation_policy
+package core_utils
 import rego.v1
 
 #--- General datastructures and algorithm  utils
@@ -28,6 +28,12 @@ array_endswith(arr, item) if {
 
 #-------- Get Component Configuration -----------
 
+
+component_alias(component_id) := alias if {
+	alias := input.metadata.resolvedAliases[component_id] 
+}
+
+
 get_component_configuration(component,design) := configuration if {
 	alias := component_alias(component.id)
 	# print("configuration from Alias is ==>",alias)
@@ -47,18 +53,14 @@ get_component_configuration(component,design) := configuration if {
 
 # ------------------------------------------------
 
-# Get the from component id
+# Get the from component id ( assumes only one selector and from in declaration)
 from_component_id(relationship) := component if {
-	some selector in relationship.selectors
-	some from in selector.allow.from
-	component := from.id
+    component := relationship.selectors[0].from[0].id
 }
 
-# Get the to component id
+# Get the to component id ( assumes only one selector and from in declaration)
 to_component_id(relationship) := component if {
-	some selector in relationship.selectors
-	some to in selector.allow.to
-	component := to.id
+    component := relationship.selectors[0].to[0].id
 }
 
 # Get the component declaration by id
