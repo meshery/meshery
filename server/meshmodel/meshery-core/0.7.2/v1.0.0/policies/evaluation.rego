@@ -1,6 +1,7 @@
 package relationship_evaluation_policy
 
 import rego.v1
+import data.eval
 
 # Should be loaded always
 # This is the first file that is executed that is this is the entry point of the policy
@@ -25,6 +26,21 @@ relationships_to_evaluate_against := data.relationships
 
 # Main evaluation function that processes relationships and updates the design.
 evaluate := eval_results if {
+
+
+relationship_policy_identifiers := [{
+		"kind":"hierarchical",
+		"type":"sibling",
+		"subtype":"matchlabels"
+	},
+	
+{
+		"kind":"hierarchical",
+		"type":"parent",
+		"subtype":"alias"
+	}
+		]
+
 	# Iterate over relationships in the design file and resolve patches.
 	resultant_patches := {patched_object |
 		some rel in rels_in_design_file
@@ -165,7 +181,10 @@ evaluate := eval_results if {
 
 
 	#1. Validate Relationships
-	validated_rels := validate_relationships_phase(design_file_to_evaluate)
+	validated_rels :=  union({rels|
+		some identifier in relationship_policy_identifiers
+		rels := eval.validate_relationships_phase(design_file_to_evaluate,identifier)
+	})
 
 	design_file_with_validated_rels := json.patch(design_file_to_evaluate, [{
 		"op": "replace",
@@ -175,7 +194,10 @@ evaluate := eval_results if {
 
 	
 	# 2. Identify relationships in the design file.
-	new_identified_rels := identify_relationships(design_file_with_validated_rels, relationships_to_evaluate_against)
+	new_identified_rels := union({rels |
+		some identifier in relationship_policy_identifiers
+		rels := eval.identify_relationships(design_file_with_validated_rels, relationships_to_evaluate_against,identifier)
+	})
 
 	print("New identified rels", count(new_identified_rels))
 	print("Validated rels", count(validated_rels))
@@ -190,7 +212,17 @@ evaluate := eval_results if {
 
 	print("All relationships", count(design_file_to_apply_actions.relationships))
 
-	actions_response := action_phase(design_file_to_apply_actions)
+	actions := union({actions| 
+	  some identifier in relationship_policy_identifiers
+	  actions := eval.action_phase(design_file_to_apply_actions,identifier)
+	  print("actions from",identifier,count(actions.relationships_to_add))
+	})
+
+	print("actions",actions)
+
+	actions_response := trace_from_actions(actions)
+
+	print("Actions trace",actions_response)
 
 	# Prepare the final design to return.
 	design_to_return := final_design_from_actions(
@@ -209,6 +241,25 @@ evaluate := eval_results if {
 			"relationshipsRemoved": array_to_set(relationships_deleted) | actions_response.relationships_to_delete,
 			"relationshipsUpdated": intermediate_rels,
 		},
+	}
+}
+
+trace_from_actions(response) := {	
+   "components_to_add" : {action.value | 
+	  some action in response 
+	  action.op == "add_component"
+	},
+	"components_to_delete" : {action.value | 
+	  some action in response 
+	  action.op == "delete_component"
+	},
+	"relationships_to_delete" : {action.value | 
+	  some action in response 
+	  action.op == "delete_relationship"
+	},
+	"relationships_to_add" : {action.value | 
+	  some action in response 
+	  action.op == "add_relationship"
 	}
 }
 

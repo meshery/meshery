@@ -1,5 +1,30 @@
-package relationship_evaluation_policy
+package eval
+
 import rego.v1
+
+# policies/alias_policy.rego:65: rego_type_error: undefined function is_relationship_feasible_to
+# ../meshmodel/meshery-core/0.7.2/v1.0.0/policies/alias_policy.rego:88: rego_type_error: undefined function get_array_aware_configuration_for_component_at_path
+# ../meshmodel/meshery-core/0.7.2/v1.0.0/policies/alias_policy.rego:110: rego_type_error: undefined function new_uuid
+# ../meshmodel/meshery-core/0.7.2/v1.0.0/policies/alias_policy.rego:146: rego_type_error: undefined function new_uuid
+# ../meshmodel/meshery-core/0.7.2/v1.0.0/policies/alias_policy.rego:179: rego_type_error: undefined function from_component_id
+# ../meshmodel/meshery-core/0.7.2/v1.0.0/policies/alias_policy.rego:179: rego_type_error: undefined function component_declaration_by_id
+# ../meshmodel/meshery-core/0.7.2/v1.0.0/policies/alias_policy.rego:185: rego_type_error: undefined function to_component_id
+# ../meshmodel/meshery-core/0.7.2/v1.0.0/policies/alias_policy.rego:185: rego_type_error: undefined function component_declaration_by_id
+# ../meshmodel/meshery-core/0.7.2/v1.0.0/policies/alias_policy.rego:195: rego_type_error: undefined function get_component_configuration
+# ../meshmodel/meshery-core/0.7.2/v1.0.0/policies/alias_policy.rego:195: rego_type_error: undefined function pop_first
+
+import data.core_utils.get_array_aware_configuration_for_component_at_path
+import data.core_utils.new_uuid
+import data.core_utils.from_component_id
+import data.core_utils.component_declaration_by_id
+import data.core_utils.to_component_id
+import data.core_utils.get_component_configuration
+import data.core_utils.pop_first
+import data.core_utils.object_get_nested
+import data.core_utils.component_alias
+import data.feasibility_evaluation_utils.is_relationship_feasible_to
+import data.feasibility_evaluation_utils.is_relationship_feasible_from
+
 
 # ----------- Module Alias Policy ------------------------------------------------------------------------
 # This module is responsible for evaluating alias relationships.
@@ -42,19 +67,25 @@ is_alias_relationship(relationship) if {
 	lower(relationship.type) == "parent"
 	lower(relationship.subType) == "alias"
 }
-
-component_alias(component_id) := alias if {
-	alias := input.metadata.resolvedAliases[component_id] 
-}
-
 alias_ref_from_relationship(relationship) := ref if {
 	some selector in relationship.selectors
 	some from in selector.allow.from
 	ref := from.patch.mutatorRef[0]
 }
 
-identify_relationships(design_file, relationships_in_scope) := eval_results if {
-	eval_results := union({new_relationships |
+is_alias_policy_identifier(relationship_policy_identifier) if {
+  relationship_policy_identifier == {
+	"kind":"hierarchical",
+	"type":"parent",
+	"subtype":"alias"
+  }
+}
+
+identify_relationships(design_file, relationships_in_scope,relationship_policy_identifier) := eval_results if {
+
+       is_alias_policy_identifier(relationship_policy_identifier)
+	
+		eval_results := union({new_relationships |
 		some relationship in relationships_in_scope
 
 		is_alias_relationship(relationship)
@@ -168,12 +199,6 @@ alias_relationship_already_exists(design_file, relationship) := existing_rel if 
 	to.id == new_to.id
 }
 
-is_relationship_feasible_to(component, relationship) := to if {
-	some selector in relationship.selectors
-	some to in selector.allow.to
-	is_relationship_feasible(to, component.component.kind)
-}
-
 ## Validate
 
 # validate relationship and return the updated relationship
@@ -220,14 +245,16 @@ validate_relationship(relationship, design_file) := updated_relationship if {
 }
 
 # validate all relationships in the design file
-validate_relationships_phase(design_file) := {validated |
+validate_relationships_phase(design_file,relationship_policy_identifier) := {validated |
+    is_alias_policy_identifier(relationship_policy_identifier)
 	some rel in design_file.relationships
+	is_alias_relationship(rel)
 	validated := validate_relationship(rel, design_file)
 }
 
 ## Action Phase
 
-add_components_action(design_file, alias_relationships) := {component |
+alias_components_to_add(design_file, alias_relationships) := {action |
 	some relationship in alias_relationships
 	relationship.status == "pending"
 	some selector in relationship.selectors
@@ -238,15 +265,25 @@ add_components_action(design_file, alias_relationships) := {component |
 		"component": {"kind": from.kind},
 		"model": from.model,
 	}
+
+	action := {
+		"op":"add_component",
+		"value":component
+	}
 }
 
-remove_components_action(design_file, alias_relationships) := {component |
+alias_components_to_remove(design_file, alias_relationships) := {action |
 	some relationship in alias_relationships
 	relationship.status == "deleted"
 	some selector in relationship.selectors
 	some from in selector.allow.from
 
 	component := component_declaration_by_id(design_file, from.id)
+
+	action := {
+		"op":"delete_component",
+		"value":component
+	}
 }
 
 # action response {
@@ -257,14 +294,17 @@ remove_components_action(design_file, alias_relationships) := {component |
 #   relationships_deleted : list of relationships deleted
 #   relationships_updated : list of relationships updated
 # }
-action_phase(design_file) := result if {
+action_phase(design_file,relationship_policy_identifier) := result if {
+
+    is_alias_policy_identifier(relationship_policy_identifier)
+
 	alias_relationships := {rel |
 		some rel in design_file.relationships
 		is_alias_relationship(rel)
 	}
 
-	components_added := add_components_action(design_file, alias_relationships)
-	relationships_added := {rel |
+	components_to_add := alias_components_to_add(design_file, alias_relationships)
+	relationships_to_add := {action |
 		some alias_rel in alias_relationships
 		alias_rel.status == "pending"
 		rel := json.patch(alias_rel, [{
@@ -272,31 +312,29 @@ action_phase(design_file) := result if {
 			"path": "/status",
 			"value": "approved",
 		}])
+		action := {
+			"op":"add_relationship",
+			"value":rel
+		}
 	}
 
 	# Relationships that are deleted already at the validation phase
-	relationships_deleted := {alias_rel |
+	relationships_to_delete := {action |
 		some alias_rel in alias_relationships
 		alias_rel.status == "deleted"
+
+		action:= {
+			"op":"delete_relationship",
+			"value":alias_rel
+		}
 	}
+	components_to_delete := alias_components_to_remove(design_file,alias_relationships)
+	
+	# print("Relationships Deleted by alias policy", count(relationships_deleted))
 
-	print("Relationships Deleted by alias policy", count(relationships_deleted))
 
-	component_deleted := remove_components_action(design_file, alias_relationships)
+	# print("Components added", count(components_added))
 
-	print("Components added", count(components_added))
+	result := components_to_add | components_to_delete | relationships_to_add | relationships_to_delete 
 
-	result := {
-		"components_to_add": components_added,
-		"components_to_delete": component_deleted,
-		"updates": {},
-		"relationships_to_add": relationships_added,
-		"relationships_to_delete": relationships_deleted,
-	}
-} else := {
-	"components_to_add": {},
-	"components_to_delete": {},
-	"updates": {},
-	"relationships_to_add": {},
-	"relationships_to_delete": {},
-}
+} 
