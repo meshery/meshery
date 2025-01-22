@@ -3,7 +3,8 @@
   background: var(--background-grey);
   box-shadow: var(--box-shadow-primary);
   z-index: 9;
-  height: fit-content;
+  height: 70vh;
+  overflow-y: scroll;
   top: calc(var(--navbar-height) + 5rem);
   position: sticky;
   margin: 0 0 0 auto;
