@@ -1,6 +1,6 @@
 package eval
-import rego.v1
 
+import rego.v1
 
 import data.core_utils
 import data.core_utils.new_uuid
@@ -14,15 +14,19 @@ import data.core_utils.component_alias
 import data.feasibility_evaluation_utils.is_relationship_feasible_to
 import data.feasibility_evaluation_utils.is_relationship_feasible_from
 
-#subtype matchlabels
+# Notes :
+# these policies take advantage of set comprehensions to weedout duplicates at any stage
+# so replacing them with array comprehensions will cause duplicacy issue
+# subtype: matchlabels
+# in each eval phase check the identifier matches 
+# whenerever going through all relationships in desing always check if it matches the kind,type,subtype for the policy 
+# because the relationships are never scoped down by default
+# use partial rules for all of the exported eval stages so they dont conflict with others
 
 is_matchlabel_relationship(relationship) if {
 	lower(relationship.kind) == "hierarchical"
 	lower(relationship.type) == "sibling" 
 }
-
-
-
 
 # returns set {
 # 	{
@@ -43,8 +47,6 @@ identify_matchlabels(design_file, relationship) := all_match_labels if {
 		# print("is alias rel", component)
 		is_relationship_feasible_from(component, relationship)
 		is_relationship_feasible_to(other_component,relationship)
-		
-
 
 		some field,value in component.configuration.metadata.labels 
 		some field2,value2 in other_component.configuration.metadata.labels 
@@ -52,7 +54,7 @@ identify_matchlabels(design_file, relationship) := all_match_labels if {
         field == field2
 		value == value2 
 
-		print("matching fields",field,value)
+		# print("matching fields",field,value)
         components := {component,other_component}
 
 		pair := {
@@ -62,8 +64,27 @@ identify_matchlabels(design_file, relationship) := all_match_labels if {
 		}
 	}
 
-	all_match_labels := field_pairs 
+    # merges the pairs into single groups on n components for each matching field ,value
+    #  set comprehenshion to weed out duplicate matchlabels
+	all_match_labels := {
+		{
+		  "field":pair.field,
+		  "value" : pair.value,
+		  "components": get_components_merged(pair.field,pair.value,field_pairs)
+		} | 
 
+		some pair in field_pairs
+	}
+
+}
+
+# merges the pairs into single groups on n components for each matching field ,value
+# set comprehension to weed out duplicates in components
+get_components_merged(field,value,field_pairs) := { component |
+   some pair in field_pairs 
+   pair.field == field
+   pair.value == value 
+   some component in pair.components 
 }
 
 is_match_labels_policy_identifier(relationship_policy_identifier) if {	
@@ -76,28 +97,18 @@ is_match_labels_policy_identifier(relationship_policy_identifier) if {
 
 identify_relationships(design_file, relationships_in_scope,relationship_policy_identifier) := eval_results if {
 
-    print("identifier",relationship_policy_identifier)
     is_match_labels_policy_identifier(relationship_policy_identifier)
-	print("evaluatine matchlabels")
-
-
 	
 	eval_results := {new_relationship |
 		some relationship in relationships_in_scope
 
-
      	is_matchlabel_relationship(relationship)
-
 			
         identified_map := identify_matchlabels(design_file,relationship)
-
-		
-
-		# print("identified_map",identified_map)
-
 		some match_label in identified_map 
 
-		from_selectors := [from_selector | 
+        # these need to be set comprehensions to automatically weed out duplicated declarations
+		from_selectors := {from_selector | 
           some component in match_label.components
 		  from_selector := {
 		    "id" : component.id,
@@ -108,10 +119,11 @@ identify_relationships(design_file, relationships_in_scope,relationship_policy_i
 			  "mutatorRef": [[match_label.field]]
 			}
 		  }
-		]
+		}
 
 		selector_declaration := {
 			"allow": {
+			    # from and to both need to be defined for the visualization
 				"from": from_selectors,
 				"to": from_selectors,
 			},
@@ -130,7 +142,9 @@ identify_relationships(design_file, relationships_in_scope,relationship_policy_i
 			{
 				"op":"replace",
 				"path":"/id",
-				"value": new_uuid({selector_declaration,relationship})
+				# use relationship_policy_identifier instead of relationship as seed to prevent duplicate 
+				# relationships being created (due to duplicate registered relationships)
+				"value": new_uuid({selector_declaration,relationship_policy_identifier}) 
 			},
 			{
 				"op":"replace",
@@ -138,11 +152,7 @@ identify_relationships(design_file, relationships_in_scope,relationship_policy_i
 				"value":"pending"
 			}
 		])
-
-		# print("new_relationship",new_relationship )
-
-        
-	}
+    }
 
 	print("Identify match rels Eval results", count(eval_results))
 
@@ -150,6 +160,9 @@ identify_relationships(design_file, relationships_in_scope,relationship_policy_i
 
 
 # validate all relationships in the design file
+# as matchlabels are stateless and have no sideeffects on the design , we just delete
+# all the matchlabel relationships in validate phase and reidentify at next stage . this helps
+# to bypass any expensive validation at this stage as we are eitherway going to do that at identication stage
 validate_relationships_phase(design_file,relationship_policy_identifier) := {validated |
     is_match_labels_policy_identifier(relationship_policy_identifier)
 	some rel in design_file.relationships
@@ -165,8 +178,8 @@ validate_relationships_phase(design_file,relationship_policy_identifier) := {val
 action_phase(design_file,relationship_policy_identifier) := result if {
   
     is_match_labels_policy_identifier(relationship_policy_identifier)
-	print("action phase matchlabels")
-    result := { action | 
+
+    relationships_to_add := { action | 
 		  some rel in design_file.relationships
      	  is_matchlabel_relationship(rel)
 		  rel.status == "pending"
@@ -181,7 +194,8 @@ action_phase(design_file,relationship_policy_identifier) := result if {
 			"value":rel_to_add
 		}
 	}
-	|{ action |
+
+	relationships_to_delete := { action |
 	   some rel in design_file.relationships 
        is_matchlabel_relationship(rel)
 	   rel.status == "deleted"
@@ -190,13 +204,10 @@ action_phase(design_file,relationship_policy_identifier) := result if {
 		"value":rel
 	   }
 	}
+
+	result := relationships_to_add | relationships_to_delete
 }
 
 
 
 	
-
-#Notes 
-# in each eval phase check the identifier matches 
-# whenerever going through all relationships in desing always check if it matches the kind,type,subtype for the policy 
-# because the relationships are never scoped down by default
