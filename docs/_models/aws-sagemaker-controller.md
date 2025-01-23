@@ -110,6 +110,9 @@ components:
   colorIcon: assets/img/integrations/aws-sagemaker-controller/components/inference-component/icons/color/inference-component-color.svg
   whiteIcon: assets/img/integrations/aws-sagemaker-controller/components/inference-component/icons/white/inference-component-white.svg
   description: 
+components-count: 25
+relationships: 
+relationship-count: 0
 featureList: [
   "Choice of ML tools",
   "Repeatable and responsible ML workflows",

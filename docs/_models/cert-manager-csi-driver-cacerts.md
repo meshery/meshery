@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/cert-manager-csi-driver-cacerts/components/issuer/icons/color/issuer-color.svg
   whiteIcon: assets/img/integrations/cert-manager-csi-driver-cacerts/components/issuer/icons/white/issuer-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates CA certificate management",
   "Integrates with cert-manager",

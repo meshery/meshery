@@ -26,6 +26,9 @@ components:
   colorIcon: assets/img/integrations/cni-hostnic/components/ip-pool/icons/color/ip-pool-color.svg
   whiteIcon: assets/img/integrations/cni-hostnic/components/ip-pool/icons/white/ip-pool-white.svg
   description: 
+components-count: 4
+relationships: 
+relationship-count: 0
 featureList: [
   "Enables attaching multiple network interfaces to pods.",
   "You can create a multi-homed pod that has multiple interfaces.",

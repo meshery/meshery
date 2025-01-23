@@ -10,6 +10,9 @@ integrations-category: Observability and Analysis
 integrations-subcategory: Tracing
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Traces requests across distributed systems",
   "Identifies performance bottlenecks",
