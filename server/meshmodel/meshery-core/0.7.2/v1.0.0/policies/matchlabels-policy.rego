@@ -163,15 +163,20 @@ identify_relationships(design_file, relationships_in_scope,relationship_policy_i
 # as matchlabels are stateless and have no sideeffects on the design , we just delete
 # all the matchlabel relationships in validate phase and reidentify at next stage . this helps
 # to bypass any expensive validation at this stage as we are eitherway going to do that at identication stage
-validate_relationships_phase(design_file,relationship_policy_identifier) := {validated |
+validate_relationships_phase(design_file,relationship_policy_identifier) := result if {
+	
     is_match_labels_policy_identifier(relationship_policy_identifier)
-	some rel in design_file.relationships
-	is_matchlabel_relationship(rel)
-	validated := json.patch(rel,[{
-		    "op":"replace",
-			"path":"/status",
-			"value":"deleted"	
-	}])
+	
+    result := {validated |
+		some rel in design_file.relationships
+		is_matchlabel_relationship(rel)
+		validated := json.patch(rel,[{
+			    "op":"replace",
+				"path":"/status",
+				"value":"deleted"	
+		}])
+  }
+
 }
 
 
