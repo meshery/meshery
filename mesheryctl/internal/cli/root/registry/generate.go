@@ -67,7 +67,7 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 		if len(args) == 0 {
 			return errors.New(utils.RegistryError(errorMsg, "generate"))
 		}
-		
+
 		spreadsheetIdFlag, _ := cmd.Flags().GetString("spreadsheet-id")
 		registrantDefFlag, _ := cmd.Flags().GetString("registrant-def")
 		directory, _ := cmd.Flags().GetString("directory")
