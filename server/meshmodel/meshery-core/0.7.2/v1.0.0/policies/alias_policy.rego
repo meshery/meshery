@@ -244,12 +244,14 @@ validate_relationship(relationship, design_file) := updated_relationship if {
 	}])
 }
 
-# validate all relationships in the design file
-validate_relationships_phase(design_file,relationship_policy_identifier) := {validated |
+# validate all relationships in the design file ( use partial rule so it doesnt conflict with other policies)
+validate_relationships_phase_(design_file,relationship_policy_identifier) := result if  {
+  result := {validated |
     is_alias_policy_identifier(relationship_policy_identifier)
 	some rel in design_file.relationships
 	is_alias_relationship(rel)
 	validated := validate_relationship(rel, design_file)
+  }
 }
 
 ## Action Phase
