@@ -1,4 +1,3 @@
-// @ts-nocheck
 import React, { useEffect, useState, useRef } from 'react';
 import Moment from 'react-moment';
 import { bindActionCreators } from 'redux';
