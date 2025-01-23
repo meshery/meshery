@@ -31,11 +31,11 @@ array_endswith(arr, item) if {
 
 # truncate_set restricts a set to a maximum number of elements
 #
-# Note: It's legal to define the same function twice in Rego, 
-# but with a crucial caveat: the function definitions must have different 
+# Note: It's legal to define the same function twice in Rego,
+# but with a crucial caveat: the function definitions must have different
 # arguments or conditions. This is how Rego implements function overloading.
 # Rego will evaluate the conditions and use the appropriate definition based
-# on the input. 
+# on the input.
 #
 # Args:
 #   s: The input set to be limited
@@ -141,7 +141,7 @@ get_array_aware_configuration_for_component_at_path(ref, component, design) := r
 	# print("Paths", paths)
 }
 
-# get_array_aware_configuration_for_component_at_path returns the configuration for a component at a given path. If the path is an array reference, it returns the configuration for each element in the array. Otherwise, it returns the configuration for the path. 
+# get_array_aware_configuration_for_component_at_path returns the configuration for a component at a given path. If the path is an array reference, it returns the configuration for each element in the array. Otherwise, it returns the configuration for the path.
 get_array_aware_configuration_for_component_at_path(ref, component, design) := result if {
 	is_direct_reference(ref)
 	value := object_get_nested(get_component_configuration(component, design), pop_first(ref), null)

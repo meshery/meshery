@@ -4,7 +4,7 @@ import data.eval
 import rego.v1
 
 # METADATA
-# entrypoint: true 
+# entrypoint: true
 # description: "Evaluates relationships in the design file and updates the design file with the results.
 # Flow that the policy follows from evaluation to final trace:
 # 1. Evaluate relationships in the design file

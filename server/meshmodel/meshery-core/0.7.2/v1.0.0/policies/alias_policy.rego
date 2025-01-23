@@ -28,9 +28,9 @@ import data.feasibility_evaluation_utils
 #    - Selector configuration that specifies:
 #      • 'from': The child (alias) component
 #      • 'to': The parent component being referenced
-#    - Single-item mutatorRef/mutatedRef array where index[0] points to 
+#    - Single-item mutatorRef/mutatedRef array where index[0] points to
 #      the child component field acting as the alias
-#    
+#
 #    Note: New relationships start with "pending" status
 #
 # 3. Actions
@@ -44,7 +44,6 @@ import data.feasibility_evaluation_utils
 #    Deleted Relationships:
 #    - Remove alias component from design file
 #    - Clean up aliased configuration in parent component
-
 
 # It is unlikely, that Meshery has a use case for supporting relationship.type == "child" aliases in the future.
 is_alias_relationship(relationship) if {

@@ -1,8 +1,8 @@
 package eval
 
-import rego.v1
 import data.core_utils
 import data.feasibility_evaluation_utils
+import rego.v1
 
 # Notes :
 # these policies take advantage of set comprehensions to weedout duplicates at any stage
