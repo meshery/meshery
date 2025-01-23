@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/nirmata-aws-adapter/components/aws-config/icons/color/aws-config-color.svg
   whiteIcon: assets/img/integrations/nirmata-aws-adapter/components/aws-config/icons/white/aws-config-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates certificate issuance and renewal",
   "Integrates with Venafi Trust Protection Platform",

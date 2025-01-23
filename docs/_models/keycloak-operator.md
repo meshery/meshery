@@ -74,6 +74,9 @@ components:
   colorIcon: assets/img/integrations/keycloak-operator/components/cluster-keycloak-realm/icons/color/cluster-keycloak-realm-color.svg
   whiteIcon: assets/img/integrations/keycloak-operator/components/cluster-keycloak-realm/icons/white/cluster-keycloak-realm-white.svg
   description: 
+components-count: 16
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates Keycloak deployment and management",
   "Simplifies Keycloak configuration",

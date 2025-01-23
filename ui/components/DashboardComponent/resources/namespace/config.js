@@ -24,7 +24,7 @@ export const NamespaceTableConfig = (
     colViews: [
       ['id', 'na'],
       ['metadata.name', 'xs'],
-      ['apiVersion', 'm'],
+      ['apiVersion', 'na'],
       ['cluster_id', 'xs'],
       ['metadata.creationTimestamp', 'l'],
       ['status.attribute', 'm'],

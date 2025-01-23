@@ -46,6 +46,9 @@ components:
   colorIcon: assets/img/integrations/nginx-service-mesh/components/rate-limit/icons/color/rate-limit-color.svg
   whiteIcon: assets/img/integrations/nginx-service-mesh/components/rate-limit/icons/white/rate-limit-white.svg
   description: 
+components-count: 9
+relationships: 
+relationship-count: 0
 featureList: [
   "Manages service-to-service communication",
   "Provides traffic routing and observability",

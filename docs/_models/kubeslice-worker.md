@@ -42,6 +42,9 @@ components:
   colorIcon: assets/img/integrations/kubeslice-worker/components/cluster-spiffeid/icons/color/cluster-spiffeid-color.svg
   whiteIcon: assets/img/integrations/kubeslice-worker/components/cluster-spiffeid/icons/white/cluster-spiffeid-white.svg
   description: 
+components-count: 8
+relationships: 
+relationship-count: 0
 featureList: [
   "KubeSlice enables Kubernetes pods and services to communicate seamlessly across clusters, clouds, edges, and data centers by creating logical application boundaries known as Slices.",
   "It combines network, application, and deployment services in a framework to accelerate application deployment in a multi-cluster, multi-tenant environment.",

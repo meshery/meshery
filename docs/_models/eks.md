@@ -10,6 +10,9 @@ integrations-category: Orchestration & Management
 integrations-subcategory: Scheduling & Orchestration
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Save and share AKS configuration templates",
   "Ensure multi-tenancy enforcement",

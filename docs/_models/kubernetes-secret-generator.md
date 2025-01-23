@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/kubernetes-secret-generator/components/string-secret/icons/color/string-secret-color.svg
   whiteIcon: assets/img/integrations/kubernetes-secret-generator/components/string-secret/icons/white/string-secret-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Create secrets for Kubernetes applications",
   "Manage secrets securely",

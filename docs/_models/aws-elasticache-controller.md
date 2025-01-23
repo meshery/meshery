@@ -46,6 +46,9 @@ components:
   colorIcon: assets/img/integrations/aws-elasticache-controller/components/cache-cluster/icons/color/cache-cluster-color.svg
   whiteIcon: assets/img/integrations/aws-elasticache-controller/components/cache-cluster/icons/white/cache-cluster-white.svg
   description: 
+components-count: 9
+relationships: 
+relationship-count: 0
 featureList: [
   "Fully managed Redis and Memcached",
   "Add a cache to your relational database",

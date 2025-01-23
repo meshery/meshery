@@ -24,7 +24,7 @@ export const WorkloadTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['status.attribute', 's'],
         ['status.attribute', 's'],
         ['status.attribute', 'm'],
@@ -226,7 +226,7 @@ export const WorkloadTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['status.attribute', 's'],
         ['status.attribute', 's'],
         ['spec.attribute', 's'],
@@ -403,7 +403,7 @@ export const WorkloadTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['spec.attribute', 's'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
@@ -538,7 +538,7 @@ export const WorkloadTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['status.attribute', 's'],
         ['status.attribute', 's'],
         ['metadata.namespace', 'm'],
@@ -692,7 +692,7 @@ export const WorkloadTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['spec.attribute', 's'],
         ['status.attribute', 's'],
         ['status.attribute', 'm'],
@@ -858,7 +858,7 @@ export const WorkloadTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['spec.attribute', 's'],
         ['status.attribute', 's'],
         ['metadata.namespace', 'm'],
@@ -1007,7 +1007,7 @@ export const WorkloadTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
@@ -1124,7 +1124,7 @@ export const WorkloadTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['spec.attribute', 's'],
         ['spec.attribute', 's'],
         ['metadata.namespace', 'm'],

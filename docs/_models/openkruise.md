@@ -82,6 +82,9 @@ components:
   colorIcon: assets/img/integrations/openkruise/components/pod-unavailable-budget/icons/color/pod-unavailable-budget-color.svg
   whiteIcon: assets/img/integrations/openkruise/components/pod-unavailable-budget/icons/white/pod-unavailable-budget-white.svg
   description: 
+components-count: 18
+relationships: 
+relationship-count: 0
 featureList: [
   "Manages advanced workload types (e.g., SidecarSets, BroadcastJobs)",
   "Advanced scheduling and deployment strategies",

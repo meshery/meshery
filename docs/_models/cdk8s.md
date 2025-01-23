@@ -10,6 +10,9 @@ integrations-category: Provisioning
 integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Defines Kubernetes applications and reusable abstractions using familiar programming languages.",
   "Simplify application workflows.",

@@ -26,6 +26,9 @@ components:
   colorIcon: assets/img/integrations/clusterpedia/components/pedia-cluster-lifecycle/icons/color/pedia-cluster-lifecycle-color.svg
   whiteIcon: assets/img/integrations/clusterpedia/components/pedia-cluster-lifecycle/icons/white/pedia-cluster-lifecycle-white.svg
   description: 
+components-count: 4
+relationships: 
+relationship-count: 0
 featureList: [
   "Invite anyone to review and make changes to your private designs.",
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",

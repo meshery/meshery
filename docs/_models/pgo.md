@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/pgo/components/pg-admin/icons/color/pg-admin-color.svg
   whiteIcon: assets/img/integrations/pgo/components/pg-admin/icons/white/pg-admin-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates PostgreSQL deployment and management",
   "High availability and disaster recovery",

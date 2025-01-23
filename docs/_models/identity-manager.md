@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/identity-manager/components/workload-identity/icons/color/workload-identity-color.svg
   whiteIcon: assets/img/integrations/identity-manager/components/workload-identity/icons/white/workload-identity-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "User authentication and authorization",
   "Identity federation",

@@ -1254,6 +1254,9 @@ components:
   colorIcon: assets/img/integrations/aws/components/aws-storage-gateway/icons/color/aws-storage-gateway-color.svg
   whiteIcon: assets/img/integrations/aws/components/aws-storage-gateway/icons/white/aws-storage-gateway-white.svg
   description: 
+components-count: 311
+relationships: 
+relationship-count: 0
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

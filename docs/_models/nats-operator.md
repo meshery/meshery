@@ -18,6 +18,9 @@ components:
   colorIcon: assets/img/integrations/nats-operator/components/nats-service-role/icons/color/nats-service-role-color.svg
   whiteIcon: assets/img/integrations/nats-operator/components/nats-service-role/icons/white/nats-service-role-white.svg
   description: 
+components-count: 2
+relationships: 
+relationship-count: 0
 featureList: [
   "With true multi-tenancy, securely isolate message topics",
   "Bring your own NATS server",

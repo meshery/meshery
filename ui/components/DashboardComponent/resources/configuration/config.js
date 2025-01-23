@@ -24,7 +24,7 @@ export const ConfigurationTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['data', 's'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
@@ -158,7 +158,7 @@ export const ConfigurationTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
@@ -292,7 +292,7 @@ export const ConfigurationTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
@@ -408,7 +408,7 @@ export const ConfigurationTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
@@ -524,7 +524,7 @@ export const ConfigurationTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['spec.attribute', 'm'],
         ['status.attribute', 'm'],
         ['metadata.namespace', 'm'],
@@ -688,7 +688,7 @@ export const ConfigurationTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
@@ -804,7 +804,7 @@ export const ConfigurationTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['spec.attribute', 'm'],
         ['status.attribute', 'm'],
         ['metadata.namespace', 'm'],
@@ -982,7 +982,7 @@ export const ConfigurationTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 'm'],
+        ['apiVersion', 'na'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
@@ -1098,7 +1098,7 @@ export const ConfigurationTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 'm'],
+        ['apiVersion', 'na'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
@@ -1214,7 +1214,7 @@ export const ConfigurationTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['spec.attribute', 'm'],
         ['status.attribute', 'm'],
         ['metadata.namespace', 'm'],
@@ -1347,7 +1347,7 @@ export const ConfigurationTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 'm'],
+        ['apiVersion', 'na'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],

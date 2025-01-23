@@ -7,8 +7,9 @@ import {
   MenuItem,
   MenuList,
   ClickAwayListener,
-} from '@material-ui/core';
+} from '@layer5/sistent';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { UsesSistent } from '../SistentWrapper';
 
 export default function ActionButton({ defaultActionClick, options }) {
   const [open, setOpen] = React.useState(false);
@@ -32,55 +33,72 @@ export default function ActionButton({ defaultActionClick, options }) {
   };
 
   return (
-    <React.Fragment>
-      <ButtonGroup
-        variant="contained"
-        style={{ boxShadow: 'none' }}
-        ref={anchorRef}
-        aria-label="Button group with a nested menu"
-      >
-        <Button onClick={defaultActionClick} variant="contained">
-          Action
-        </Button>
-        <Button size="small" onClick={handleToggle} variant="contained">
-          <ArrowDropDownIcon />
-        </Button>
-      </ButtonGroup>
-      <Popper
-        sx={{
-          zIndex: 1,
-        }}
-        open={open}
-        anchorEl={anchorRef.current}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'left',
-        }}
-      >
-        <Paper>
-          <ClickAwayListener onClickAway={handleClose}>
-            <MenuList id="split-button-menu" autoFocusItem>
-              {options.map((option, index) => (
-                <MenuItem
-                  disabled={option.disabled}
-                  key={option}
-                  onClick={(event) => {
-                    handleMenuItemClick(event);
-                    option.onClick(event, index);
-                  }}
-                >
-                  <div style={{ marginRight: '0.5rem' }}>{option.icon}</div>
-                  {option.label}
-                </MenuItem>
-              ))}
-            </MenuList>
-          </ClickAwayListener>
-        </Paper>
-      </Popper>
-    </React.Fragment>
+    <UsesSistent>
+      <React.Fragment>
+        <ButtonGroup
+          variant="outlined"
+          style={{ boxShadow: 'none' }}
+          ref={anchorRef}
+          aria-label="Button group with a nested menu"
+        >
+          <Button
+            sx={{
+              padding: '6px 9px',
+              borderRadius: '8px',
+            }}
+            onClick={defaultActionClick}
+            variant="outlined"
+          >
+            Action
+          </Button>
+          <Button
+            sx={{
+              padding: '6px 9px',
+              borderRadius: '8px',
+            }}
+            size="small"
+            onClick={handleToggle}
+            variant="outlined"
+          >
+            <ArrowDropDownIcon />
+          </Button>
+        </ButtonGroup>
+        <Popper
+          sx={{
+            zIndex: 1,
+          }}
+          open={open}
+          anchorEl={anchorRef.current}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+          transformOrigin={{
+            vertical: 'top',
+            horizontal: 'left',
+          }}
+        >
+          <Paper>
+            <ClickAwayListener onClickAway={handleClose}>
+              <MenuList id="split-button-menu" autoFocusItem>
+                {options.map((option, index) => (
+                  <MenuItem
+                    disabled={option.disabled}
+                    key={option}
+                    onClick={(event) => {
+                      handleMenuItemClick(event);
+                      option.onClick(event, index);
+                    }}
+                  >
+                    <div style={{ marginRight: '0.5rem' }}>{option.icon}</div>
+                    {option.label}
+                  </MenuItem>
+                ))}
+              </MenuList>
+            </ClickAwayListener>
+          </Paper>
+        </Popper>
+      </React.Fragment>
+    </UsesSistent>
   );
 }

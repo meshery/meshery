@@ -30,6 +30,9 @@ components:
   colorIcon: assets/img/integrations/cloudbees-previews/components/git-repository/icons/color/git-repository-color.svg
   whiteIcon: assets/img/integrations/cloudbees-previews/components/git-repository/icons/white/git-repository-white.svg
   description: 
+components-count: 5
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates preview environment creation",
   "Enables isolated testing and development",

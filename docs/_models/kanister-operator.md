@@ -26,6 +26,9 @@ components:
   colorIcon: assets/img/integrations/kanister-operator/components/repository-server/icons/color/repository-server-color.svg
   whiteIcon: assets/img/integrations/kanister-operator/components/repository-server/icons/white/repository-server-white.svg
   description: 
+components-count: 4
+relationships: 
+relationship-count: 0
 featureList: [
   "Encapsulate key data management tasks in blueprints that allow uniform operations at scale.",
   "Customize blueprints to fit specific needs of your environment and workload without starting from scratch.",

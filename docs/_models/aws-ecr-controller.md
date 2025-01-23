@@ -26,6 +26,9 @@ components:
   colorIcon: assets/img/integrations/aws-ecr-controller/components/repository/icons/color/repository-color.svg
   whiteIcon: assets/img/integrations/aws-ecr-controller/components/repository/icons/white/repository-white.svg
   description: 
+components-count: 4
+relationships: 
+relationship-count: 0
 featureList: [
   "OCI and Docker support",
   "Public container image and artifact gallery

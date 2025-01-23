@@ -18,6 +18,9 @@ components:
   colorIcon: assets/img/integrations/flyte-sandbox/components/spark-application/icons/color/spark-application-color.svg
   whiteIcon: assets/img/integrations/flyte-sandbox/components/spark-application/icons/white/spark-application-white.svg
   description: 
+components-count: 2
+relationships: 
+relationship-count: 0
 featureList: [
   "Provides a hands-on learning environment",
   "Simplifies Flyte exploration and testing",

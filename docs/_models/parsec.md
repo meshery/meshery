@@ -10,6 +10,9 @@ integrations-category: Security & Compliance
 integrations-subcategory: Security & Compliance
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Low-latency remote desktop access",
   "High-quality video and audio streaming",

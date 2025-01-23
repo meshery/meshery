@@ -729,8 +729,6 @@ class MesheryApp extends App {
       );
     });
 
-    const canShowNav = !this.state.isFullScreenMode && uiConfig?.components?.navigator !== false;
-
     return (
       <LoadingScreen message={randomLoadingMessage} isLoading={this.state.isLoading}>
         <DynamicComponentProvider>
@@ -741,32 +739,15 @@ class MesheryApp extends App {
                   <LoadSessionGuard>
                     <div className={classes.root}>
                       <CssBaseline />
-                      {canShowNav && (
-                        <nav
-                          className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer}
-                          data-testid="navigation"
-                          id="left-navigation-bar"
-                          style={{ height: '100%', overflow: 'visible' }}
-                        >
-                          <Hidden smUp implementation="js">
-                            <Navigator
-                              variant="temporary"
-                              open={this.state.mobileOpen}
-                              onClose={this.handleDrawerToggle}
-                              onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
-                              isDrawerCollapsed={isDrawerCollapsed}
-                              updateExtensionType={this.updateExtensionType}
-                            />
-                          </Hidden>
-                          <Hidden xsDown implementation="css">
-                            <Navigator
-                              onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
-                              isDrawerCollapsed={isDrawerCollapsed}
-                              updateExtensionType={this.updateExtensionType}
-                            />
-                          </Hidden>
-                        </nav>
-                      )}
+                      <NavigationBar
+                        isDrawerCollapsed={isDrawerCollapsed}
+                        classes={classes}
+                        mobileOpen={this.state.mobileOpen}
+                        handleDrawerToggle={this.handleDrawerToggle}
+                        handleCollapseDrawer={this.handleCollapseDrawer}
+                        isFullScreenMode={this.state.isFullScreenMode}
+                        updateExtensionType={this.updateExtensionType}
+                      />
                       <div className={classes.appContent}>
                         <SnackbarProvider
                           anchorOrigin={{
@@ -907,3 +888,54 @@ export default withStyles(styles)(
     deserializeState: (state) => fromJS(state),
   })(MesheryAppWrapper),
 );
+
+const NavigationBar = ({
+  isDrawerCollapsed,
+  classes,
+  mobileOpen,
+  handleDrawerToggle,
+  handleCollapseDrawer,
+  isFullScreenMode,
+  updateExtensionType,
+}) => {
+  const theme = useTheme();
+  const canShowNav = !isFullScreenMode && uiConfig?.components?.navigator !== false;
+
+  if (!canShowNav) {
+    return null;
+  }
+
+  return (
+    <nav
+      className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer}
+      data-testid="navigation"
+      id="left-navigation-bar"
+      style={{
+        height: '100%',
+        overflow: 'visible',
+        paddingRight: '4rem',
+        [theme.breakpoints.up('xs')]: {
+          paddingRight: '0',
+        },
+      }}
+    >
+      <Hidden smUp implementation="js">
+        <Navigator
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          onCollapseDrawer={(open = null) => handleCollapseDrawer(open)}
+          isDrawerCollapsed={isDrawerCollapsed}
+          updateExtensionType={updateExtensionType}
+        />
+      </Hidden>
+      <Hidden xsDown implementation="css">
+        <Navigator
+          onCollapseDrawer={(open = null) => handleCollapseDrawer(open)}
+          isDrawerCollapsed={isDrawerCollapsed}
+          updateExtensionType={updateExtensionType}
+        />
+      </Hidden>
+    </nav>
+  );
+};

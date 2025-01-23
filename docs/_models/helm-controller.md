@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/helm-controller/components/helm-chart/icons/color/helm-chart-color.svg
   whiteIcon: assets/img/integrations/helm-controller/components/helm-chart/icons/white/helm-chart-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Manages Helm chart releases",
   "Simplifies Helm chart upgrades and rollbacks",

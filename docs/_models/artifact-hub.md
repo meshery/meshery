@@ -10,6 +10,9 @@ integrations-category: App Definition and Development
 integrations-subcategory: Application Definition & Image Build
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Discover, install and publish packages and configurations.",
   "Explore content like Helm charts schemas and templates in an interactive way.",

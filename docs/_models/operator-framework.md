@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/operator-framework/components/cluster-extension/icons/color/cluster-extension-color.svg
   whiteIcon: assets/img/integrations/operator-framework/components/cluster-extension/icons/white/cluster-extension-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Defines custom resources for operators",
   "Enables declarative configuration",

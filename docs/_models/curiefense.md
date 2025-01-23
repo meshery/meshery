@@ -58,6 +58,9 @@ components:
   colorIcon: assets/img/integrations/curiefense/components/istio-operator/icons/color/istio-operator-color.svg
   whiteIcon: assets/img/integrations/curiefense/components/istio-operator/icons/white/istio-operator-white.svg
   description: 
+components-count: 12
+relationships: 
+relationship-count: 0
 featureList: [
   "Protects all forms of web traffic, services, and APIs.",
   "Includes bot management, WAF, application-layer DDoS protection, session profiling, advanced rate limiting, and much more.",

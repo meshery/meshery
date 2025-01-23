@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/grafana-ui-server/components/grafana-dashboard/icons/color/grafana-dashboard-color.svg
   whiteIcon: assets/img/integrations/grafana-ui-server/components/grafana-dashboard/icons/white/grafana-dashboard-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Centralize the analysis, visualization, and alerting for all of your data with Grafana.",
   "Meshery discovers your Grafana servers. Easily import existing Grafana dashboards and panels into Meshery",

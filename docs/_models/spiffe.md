@@ -10,6 +10,9 @@ integrations-category: Security & Compliance
 integrations-subcategory: Key Management
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Design and apply policy for node and workload attestation.",
   "Configure your signing framework for securely issuing and renewing SVIDs.",

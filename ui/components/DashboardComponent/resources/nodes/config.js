@@ -24,7 +24,7 @@ export const NodeTableConfig = (
     colViews: [
       ['id', 'na'],
       ['metadata.name', 'xs'],
-      ['apiVersion', 's'],
+      ['apiVersion', 'na'],
       ['status.attribute', 'm'],
       ['status.attribute', 'm'],
       ['cluster_id', 'xs'],

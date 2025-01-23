@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/kubevault-metrics/components/metrics-configuration/icons/color/metrics-configuration-color.svg
   whiteIcon: assets/img/integrations/kubevault-metrics/components/metrics-configuration/icons/white/metrics-configuration-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Exposes KubeVault and Vault metrics to Prometheus",
   "Enables monitoring of Vault health and performance",

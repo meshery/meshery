@@ -30,6 +30,9 @@ components:
   colorIcon: assets/img/integrations/actions-runner-controller/components/runner-set/icons/color/runner-set-color.svg
   whiteIcon: assets/img/integrations/actions-runner-controller/components/runner-set/icons/white/runner-set-white.svg
   description: 
+components-count: 5
+relationships: 
+relationship-count: 0
 featureList: [
   "Deploy self hosted runners on Kubernetes cluster with a simple set of commands.",
   "Auto scale runners based on demand.",

@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/rabbitmq-operator/components/rabbitmq-cluster/icons/color/rabbitmq-cluster-color.svg
   whiteIcon: assets/img/integrations/rabbitmq-operator/components/rabbitmq-cluster/icons/white/rabbitmq-cluster-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates RabbitMQ deployment and management",
   "Configuration management",

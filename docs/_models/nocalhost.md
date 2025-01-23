@@ -10,6 +10,9 @@ integrations-category: App Definition and Development
 integrations-subcategory: Application Definition & Image Build
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Provides local development environments",
   "Synchronizes code changes to Kubernetes in real-time",

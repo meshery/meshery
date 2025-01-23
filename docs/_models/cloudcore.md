@@ -42,6 +42,9 @@ components:
   colorIcon: assets/img/integrations/cloudcore/components/rule-endpoint/icons/color/rule-endpoint-color.svg
   whiteIcon: assets/img/integrations/cloudcore/components/rule-endpoint/icons/white/rule-endpoint-white.svg
   description: 
+components-count: 8
+relationships: 
+relationship-count: 0
 featureList: [
   "Simplifies cloud-native application development",
   "Provides a unified platform for development and operations",

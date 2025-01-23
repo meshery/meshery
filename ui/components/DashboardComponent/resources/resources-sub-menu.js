@@ -4,7 +4,6 @@ import { withRouter } from 'next/router';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import ResourcesTable from './resources-table';
 import { TabPanel } from '../tabpanel';
-import { CustomTooltip } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
 import { SecondaryTab, SecondaryTabs, WrapperContainer, WrapperPaper } from '../style';
 import GetKubernetesNodeIcon from '../utils';
@@ -90,11 +89,12 @@ const ResourcesSubMenu = (props) => {
     CRDsKeys,
     isCRDS,
   } = props;
-
+  const CRDsModelName = isCRDS && CRDsKeys.map((key) => key.model);
+  const CRDsKind = isCRDS && CRDsKeys.map((key) => key.name);
   if (!selectedResource) {
     let resourceNames;
     if (isCRDS) {
-      resourceNames = CRDsKeys;
+      resourceNames = CRDsKind;
     } else {
       resourceNames = Object.keys(resource.tableConfig());
     }
@@ -103,7 +103,7 @@ const ResourcesSubMenu = (props) => {
 
   let TABS;
   if (isCRDS) {
-    TABS = CRDsKeys;
+    TABS = CRDsKind;
   } else {
     TABS = Object.keys(resource.tableConfig());
   }
@@ -119,7 +119,6 @@ const ResourcesSubMenu = (props) => {
   const getResourceCategory = (index) => {
     return TABS[index];
   };
-
   return (
     <>
       <UsesSistent>
@@ -137,17 +136,20 @@ const ResourcesSubMenu = (props) => {
                 {TABS.map((key, index) => {
                   const title = isCRDS ? key : resource.tableConfig()[key].name;
                   return (
-                    <CustomTooltip key={`${key}-${index}`} title={title} placement="top">
-                      <SecondaryTab
-                        value={index}
-                        label={
-                          <div className={classes.iconText}>
-                            <GetKubernetesNodeIcon kind={key} isCRDS={isCRDS} size={iconMedium} />
-                            {title}
-                          </div>
-                        }
-                      />
-                    </CustomTooltip>
+                    <SecondaryTab
+                      key={index}
+                      value={index}
+                      label={
+                        <div className={classes.iconText}>
+                          <GetKubernetesNodeIcon
+                            kind={key}
+                            model={CRDsModelName[index]}
+                            size={iconMedium}
+                          />
+                          {title}
+                        </div>
+                      }
+                    />
                   );
                 })}
               </SecondaryTabs>

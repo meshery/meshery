@@ -105,7 +105,7 @@ const View = (props) => {
 
 export default View;
 
-export const Title = ({ onClick, value, kind }) => {
+export const Title = ({ onClick, value, kind, model }) => {
   const [isHovered, setHovered] = useState(false);
   return (
     <TitleContainer
@@ -115,7 +115,7 @@ export const Title = ({ onClick, value, kind }) => {
     >
       <TitleContent onClick={onClick}>
         <div>
-          <GetKubernetesNodeIcon kind={kind} isCRD={kind === 'CRDS'} />
+          <GetKubernetesNodeIcon kind={kind} model={model} />
         </div>
         <Typography style={{ marginLeft: '0.50rem' }} variant="body2">
           {value}

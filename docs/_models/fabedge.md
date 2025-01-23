@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/fabedge/components/community/icons/color/community-color.svg
   whiteIcon: assets/img/integrations/fabedge/components/community/icons/white/community-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Simplifies network management at the edge",
   "Provides secure and reliable connectivity",

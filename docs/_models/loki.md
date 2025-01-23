@@ -42,6 +42,9 @@ components:
   colorIcon: assets/img/integrations/loki/components/pod-logs/icons/color/pod-logs-color.svg
   whiteIcon: assets/img/integrations/loki/components/pod-logs/icons/white/pod-logs-white.svg
   description: 
+components-count: 8
+relationships: 
+relationship-count: 0
 featureList: [
   "Log aggregation and storage",
   "Multi-tenancy",
