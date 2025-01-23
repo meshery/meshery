@@ -397,6 +397,7 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 
 	var kindCounts []struct {
 		Kind  string
+		Model string
 		Count int64
 	}
 	var namespaces []string
@@ -405,8 +406,9 @@ func (h *Handler) GetMeshSyncResourcesSummary(rw http.ResponseWriter, r *http.Re
 	kindsQuery := provider.GetGenericPersister().
 		Model(&model.KubernetesResource{}).
 		Joins("JOIN kubernetes_resource_object_meta ON kubernetes_resources.id = kubernetes_resource_object_meta.id").
-		Select("kind, count(*) as count").
-		Group("kind")
+		Select("kind, model, count(*) as count").
+		Group("kind, model").
+		Having("model IS NOT NULL")
 
 	kindsQuery = filterByClusters(kindsQuery, clusterIds)
 	kindsQuery = filterByNamespaces(kindsQuery, namespaceScope)

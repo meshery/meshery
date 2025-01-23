@@ -38,6 +38,9 @@ components:
   colorIcon: assets/img/integrations/metallb/components/service-l2status/icons/color/service-l2status-color.svg
   whiteIcon: assets/img/integrations/metallb/components/service-l2status/icons/white/service-l2status-white.svg
   description: 
+components-count: 7
+relationships: 
+relationship-count: 0
 featureList: [
   "Provides external IP addresses to Kubernetes services",
   "Supports Layer 2 and Layer 3 load balancing",

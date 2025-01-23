@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/aws-mq-controller/components/broker/icons/color/broker-color.svg
   whiteIcon: assets/img/integrations/aws-mq-controller/components/broker/icons/white/broker-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Reliable and scalable message brokering",
   "Supports various messaging protocols",

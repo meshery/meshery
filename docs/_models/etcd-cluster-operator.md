@@ -30,6 +30,9 @@ components:
   colorIcon: assets/img/integrations/etcd-cluster-operator/components/etcd-restore/icons/color/etcd-restore-color.svg
   whiteIcon: assets/img/integrations/etcd-cluster-operator/components/etcd-restore/icons/white/etcd-restore-white.svg
   description: 
+components-count: 5
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates etcd cluster deployment and management",
   "Provides backup and restore functionality",

@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/postgres-with-operator/components/kubegres/icons/color/kubegres-color.svg
   whiteIcon: assets/img/integrations/postgres-with-operator/components/kubegres/icons/white/kubegres-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Provides a comprehensive PostgreSQL solution",
   "Simplifies PostgreSQL management",

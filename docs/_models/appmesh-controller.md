@@ -38,6 +38,9 @@ components:
   colorIcon: assets/img/integrations/appmesh-controller/components/virtual-service/icons/color/virtual-service-color.svg
   whiteIcon: assets/img/integrations/appmesh-controller/components/virtual-service/icons/white/virtual-service-white.svg
   description: 
+components-count: 7
+relationships: 
+relationship-count: 0
 featureList: [
   "Keep revision history and audit trail of all configuration changes",
   "Use MeshMap&lsquo;s visual designer to explore your App Mesh configuration",

@@ -30,6 +30,9 @@ components:
   colorIcon: assets/img/integrations/pg-db/components/pgpolicy/icons/color/pgpolicy-color.svg
   whiteIcon: assets/img/integrations/pg-db/components/pgpolicy/icons/white/pgpolicy-white.svg
   description: 
+components-count: 5
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates PostgreSQL deployment and management",
   "High availability and disaster recovery",

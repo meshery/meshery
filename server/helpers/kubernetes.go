@@ -86,8 +86,8 @@ func FetchKubernetesNodes(kubeconfig []byte, contextName string, log logger.Hand
 		node.OperatingSystem = nodeInfo.OperatingSystem
 		log.Debug("Kubelet version: ", nodeInfo.KubeletVersion)
 		node.KubeletVersion = nodeInfo.KubeletVersion
-		log.Debug("Kubeproxy version: ", nodeInfo.KubeProxyVersion)
-		node.KubeProxyVersion = nodeInfo.KubeProxyVersion
+		log.Debug("Kubeproxy version: ", nodeInfo.KubeletVersion)
+		node.KubeProxyVersion = nodeInfo.KubeletVersion
 		log.Debug("Container runtime version: ", nodeInfo.ContainerRuntimeVersion)
 		node.ContainerRuntimeVersion = nodeInfo.ContainerRuntimeVersion
 		log.Debug("Architecture: ", nodeInfo.Architecture)

@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/flagger/components/alert-provider/icons/color/alert-provider-color.svg
   whiteIcon: assets/img/integrations/flagger/components/alert-provider/icons/white/alert-provider-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Canary (progressive traffic shifting), A/B Testing (HTTP headers and cookies traffic routing), Blue/Green (traffic switching and mirroring)",
   "Flagger was designed to give developers confidence in automating production releases with progressive delivery techniques.",

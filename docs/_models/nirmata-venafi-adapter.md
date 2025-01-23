@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/nirmata-venafi-adapter/components/image-key/icons/color/image-key-color.svg
   whiteIcon: assets/img/integrations/nirmata-venafi-adapter/components/image-key/icons/white/image-key-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates certificate issuance and renewal",
   "Integrates with Venafi Trust Protection Platform",

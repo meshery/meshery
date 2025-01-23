@@ -26,6 +26,9 @@ components:
   colorIcon: assets/img/integrations/awx-operator/components/awx-mesh-ingress/icons/color/awx-mesh-ingress-color.svg
   whiteIcon: assets/img/integrations/awx-operator/components/awx-mesh-ingress/icons/white/awx-mesh-ingress-white.svg
   description: 
+components-count: 4
+relationships: 
+relationship-count: 0
 featureList: [
   "Keep revision history and audit trail of all configuration changes",
   "Use MeshMap&lsquo;s visual designer to explore your App Mesh configuration",

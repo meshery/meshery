@@ -79,13 +79,13 @@ func TestDesignCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?search=kumatest",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=kumatest",
 					Response:     "design.view.kuma.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?page_size=10000",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&page_size=10000",
 					Response:     "view.design.api.response.golden",
 					ResponseCode: 200,
 				},
@@ -106,13 +106,13 @@ func TestDesignCmd(t *testing.T) {
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?page_size=10000",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&page_size=10000",
 					Response:     "view.design.api.response.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?search=4o7fbc9b-708d-4396-84b8-e2ba37c1adcc",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=4o7fbc9b-708d-4396-84b8-e2ba37c1adcc",
 					Response:     "design.id.view.golden",
 					ResponseCode: 200,
 				},
@@ -128,13 +128,13 @@ func TestDesignCmd(t *testing.T) {
 			URLs: []utils.MockURL{
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?search=test-view",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&search=test-view",
 					Response:     "design.view.invalid.golden",
 					ResponseCode: 200,
 				},
 				{
 					Method:       "GET",
-					URL:          testContext.BaseURL + "/api/pattern?page_size=10000",
+					URL:          testContext.BaseURL + "/api/pattern?populate=pattern_file&page_size=10000",
 					Response:     "view.design.api.response.golden",
 					ResponseCode: 200,
 				},

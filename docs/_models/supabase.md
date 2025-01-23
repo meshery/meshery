@@ -58,6 +58,9 @@ components:
   colorIcon: assets/img/integrations/supabase/components/kong-custom-entity/icons/color/kong-custom-entity-color.svg
   whiteIcon: assets/img/integrations/supabase/components/kong-custom-entity/icons/white/kong-custom-entity-white.svg
   description: 
+components-count: 12
+relationships: 
+relationship-count: 0
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

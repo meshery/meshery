@@ -58,6 +58,9 @@ components:
   colorIcon: assets/img/integrations/knative-serving/components/image/icons/color/image-color.svg
   whiteIcon: assets/img/integrations/knative-serving/components/image/icons/white/image-white.svg
   description: 
+components-count: 12
+relationships: 
+relationship-count: 0
 featureList: [
   "Auto-scaling based on demand",
   "Request-based routing",

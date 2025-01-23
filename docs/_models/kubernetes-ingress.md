@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/kubernetes-ingress/components/global/icons/color/global-color.svg
   whiteIcon: assets/img/integrations/kubernetes-ingress/components/global/icons/white/global-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "High-performance load balancing and routing",
   "Supports various protocols",

@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/sidekick/components/sidekick/icons/color/sidekick-color.svg
   whiteIcon: assets/img/integrations/sidekick/components/sidekick/icons/white/sidekick-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates sidecar injection and management",
   "Supports various sidecar patterns",

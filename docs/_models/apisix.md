@@ -38,6 +38,9 @@ components:
   colorIcon: assets/img/integrations/apisix/components/apisix-upstream/icons/color/apisix-upstream-color.svg
   whiteIcon: assets/img/integrations/apisix/components/apisix-upstream/icons/white/apisix-upstream-white.svg
   description: 
+components-count: 7
+relationships: 
+relationship-count: 0
 featureList: [
   "Dynamic routing and load balancing",
   "Authentication and authorization",

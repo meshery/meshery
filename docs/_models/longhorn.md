@@ -10,6 +10,9 @@ integrations-category: Cloud Native Storage
 integrations-subcategory: Cloud Native Storage
 registrant: Github
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Provides persistent storage for Kubernetes",
   "Distributed block storage",

@@ -10,6 +10,9 @@ integrations-category: Provisioning
 integrations-subcategory: Container Registry
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "JFrog Distribution is a centralized platform that lets you provision software release distribution",
   "Structured platform to distribute release binaries as a single coherent release bundle.",

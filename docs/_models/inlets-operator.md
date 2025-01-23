@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/inlets-operator/components/tunnel/icons/color/tunnel-color.svg
   whiteIcon: assets/img/integrations/inlets-operator/components/tunnel/icons/white/tunnel-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Exposes local services to the internet",
   "Secure tunneling",

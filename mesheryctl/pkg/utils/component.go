@@ -337,6 +337,26 @@ func CreateComponentsMetadataAndCreateSVGsForMDXStyle(model ModelCSV, components
 	return componentMetadata, nil
 }
 
+func CreateRelationshipsMetadata(model ModelCSV, relationships []RelationshipCSV) (string, error) {
+
+	relationshipMetadata := ""
+	for _, relnship := range relationships {
+		relationshipTemplate := `
+- type: "%s"
+  kind: "%s"
+  description: "%s"`
+
+		relnshipType := relnship.Type
+		relnshipKind := relnship.KIND
+		relnshipDescription := relnship.Description
+
+		relationshipMetadata += fmt.Sprintf(relationshipTemplate, relnshipType, relnshipKind, relnshipDescription)
+
+	}
+	return relationshipMetadata, nil
+
+}
+
 func CreateComponentsMetadataAndCreateSVGsForMDStyle(model ModelCSV, components []ComponentCSV, path, svgDir string) (string, error) {
 	err := os.MkdirAll(filepath.Join(path), 0777)
 	if err != nil {

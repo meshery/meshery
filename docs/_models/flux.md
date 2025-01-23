@@ -30,6 +30,9 @@ components:
   colorIcon: assets/img/integrations/flux/components/oci-repository/icons/color/oci-repository-color.svg
   whiteIcon: assets/img/integrations/flux/components/oci-repository/icons/white/oci-repository-white.svg
   description: 
+components-count: 5
+relationships: 
+relationship-count: 0
 featureList: [
   "Synchronizes Kubernetes state with Git",
   "Continuous reconciliation",

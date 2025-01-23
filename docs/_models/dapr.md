@@ -30,6 +30,12 @@ components:
   colorIcon: assets/img/integrations/dapr/components/subscription/icons/color/subscription-color.svg
   whiteIcon: assets/img/integrations/dapr/components/subscription/icons/white/subscription-white.svg
   description: 
+components-count: 5
+relationships: 
+- type: "Parent"
+  kind: "Hierarchical"
+  description: "This relationship defines how various Dapr components (HTTPEndpoint, Resiliency, Configuration, and Subscription) are applied to a sidecar container running daprd. It represents a hierarchical inventory relationship where the child components (Dapr resources) patch the configuration of the parent component (sidecar container)."
+relationship-count: 1
 featureList: [
   "Helps you write resilient and secured microservices.",
   "Provides you with APIs that abstract away the complexity of common challenges developers encounter regularly when building distributed applications.",

@@ -10,6 +10,9 @@ integrations-category: Provisioning
 integrations-subcategory: Database
 registrant: GitHub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Rook orchestrates the Ceph storage solution, with a specialized Kubernetes Operator to automate management.",
   "Invite anyone to review and make changes to your private designs.",

@@ -42,6 +42,9 @@ components:
   colorIcon: assets/img/integrations/couchbase-monitor-stack/components/thanos-ruler/icons/color/thanos-ruler-color.svg
   whiteIcon: assets/img/integrations/couchbase-monitor-stack/components/thanos-ruler/icons/white/thanos-ruler-white.svg
   description: 
+components-count: 8
+relationships: 
+relationship-count: 0
 featureList: [
   "Centralized monitoring and alerting",
   "Integration with Prometheus and Grafana",

@@ -34,6 +34,9 @@ components:
   colorIcon: assets/img/integrations/aws-sns-controller/components/topic/icons/color/topic-color.svg
   whiteIcon: assets/img/integrations/aws-sns-controller/components/topic/icons/white/topic-white.svg
   description: 
+components-count: 6
+relationships: 
+relationship-count: 0
 featureList: [
   "Message fanout: Each account can support 100,000 Standard topics and each topic supports up to 12.5M subscriptions.",
   "Amazon SNS supports VPC Endpoints (VPCE) via AWS PrivateLink.",

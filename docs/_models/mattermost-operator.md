@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/mattermost-operator/components/mattermost/icons/color/mattermost-color.svg
   whiteIcon: assets/img/integrations/mattermost-operator/components/mattermost/icons/white/mattermost-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates Mattermost deployment and management",
   "Simplifies configuration and updates",

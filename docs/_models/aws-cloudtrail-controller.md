@@ -26,6 +26,9 @@ components:
   colorIcon: assets/img/integrations/aws-cloudtrail-controller/components/trail/icons/color/trail-color.svg
   whiteIcon: assets/img/integrations/aws-cloudtrail-controller/components/trail/icons/white/trail-white.svg
   description: 
+components-count: 4
+relationships: 
+relationship-count: 0
 featureList: [
   "Data events that capture data plane actions within a resource, such as reading or writing an Amazon S3 object.",
   "Configuration items from AWS Config that capture resource configuration history and resource compliance history as evaluated by AWS Config rules.",

@@ -18,6 +18,9 @@ components:
   colorIcon: assets/img/integrations/cass-operator/components/cassandra-task/icons/color/cassandra-task-color.svg
   whiteIcon: assets/img/integrations/cass-operator/components/cassandra-task/icons/white/cassandra-task-white.svg
   description: 
+components-count: 2
+relationships: 
+relationship-count: 0
 featureList: [
   "Manages Cassandra configuration",
   "Provides backup and restore functionality",

@@ -111,7 +111,7 @@ func (a *AdaptersTracker) DeployAdapter(ctx context.Context, adapter models.Adap
 		}
 
 		for netName := range mesheryNetworkSettings.Networks {
-			nets, err := cli.NetworkList(ctx, types.NetworkListOptions{})
+			nets, err := cli.NetworkList(ctx, network.ListOptions{})
 			if err != nil {
 				return ErrDeployingAdapterInDocker(err)
 			}

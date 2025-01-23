@@ -38,6 +38,9 @@ components:
   colorIcon: assets/img/integrations/tenant-operator/components/tenant/icons/color/tenant-color.svg
   whiteIcon: assets/img/integrations/tenant-operator/components/tenant/icons/white/tenant-white.svg
   description: 
+components-count: 7
+relationships: 
+relationship-count: 0
 featureList: [
   "Isolates tenants within a Kubernetes cluster",
   "Enforces resource quotas for tenants",

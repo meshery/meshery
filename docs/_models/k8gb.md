@@ -18,6 +18,9 @@ components:
   colorIcon: assets/img/integrations/k8gb/components/gslb/icons/color/gslb-color.svg
   whiteIcon: assets/img/integrations/k8gb/components/gslb/icons/white/gslb-white.svg
   description: 
+components-count: 2
+relationships: 
+relationship-count: 0
 featureList: [
   "Provides a security benchmark for Kubernetes",
   "Identifies misconfigurations and vulnerabilities",

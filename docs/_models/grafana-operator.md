@@ -58,6 +58,9 @@ components:
   colorIcon: assets/img/integrations/grafana-operator/components/grafana-notification-policy/icons/color/grafana-notification-policy-color.svg
   whiteIcon: assets/img/integrations/grafana-operator/components/grafana-notification-policy/icons/white/grafana-notification-policy-white.svg
   description: 
+components-count: 12
+relationships: 
+relationship-count: 0
 featureList: [
   "Centralize the analysis, visualization, and alerting for all of your data with Grafana.",
   "Meshery discovers your Grafana servers. Easily import existing Grafana dashboards and panels into Meshery",

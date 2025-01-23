@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/kubegems/components/app-project/icons/color/app-project-color.svg
   whiteIcon: assets/img/integrations/kubegems/components/app-project/icons/white/app-project-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Unified multi-cluster management",
   "Observability and monitoring",

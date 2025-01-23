@@ -38,6 +38,9 @@ components:
   colorIcon: assets/img/integrations/keda/components/cluster-cloud-event-source/icons/color/cluster-cloud-event-source-color.svg
   whiteIcon: assets/img/integrations/keda/components/cluster-cloud-event-source/icons/white/cluster-cloud-event-source-white.svg
   description: 
+components-count: 7
+relationships: 
+relationship-count: 0
 featureList: [
   "Scales applications based on various metrics",
   "Integrates with external event sources",

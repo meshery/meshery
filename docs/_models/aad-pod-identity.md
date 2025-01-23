@@ -26,6 +26,9 @@ components:
   colorIcon: assets/img/integrations/aad-pod-identity/components/azure-pod-identity-exception/icons/color/azure-pod-identity-exception-color.svg
   whiteIcon: assets/img/integrations/aad-pod-identity/components/azure-pod-identity-exception/icons/white/azure-pod-identity-exception-white.svg
   description: 
+components-count: 4
+relationships: 
+relationship-count: 0
 featureList: [
   "Use Azure Active Directory pod-managed identities in Azure Kubernetes Service.",
   "A maximum of 200 pod-managed identities are allowed for a cluster.",

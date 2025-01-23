@@ -30,6 +30,9 @@ components:
   colorIcon: assets/img/integrations/istio-operator/components/istio-operator/icons/color/istio-operator-color.svg
   whiteIcon: assets/img/integrations/istio-operator/components/istio-operator/icons/white/istio-operator-white.svg
   description: 
+components-count: 5
+relationships: 
+relationship-count: 0
 featureList: [
   "Enable and enforce mutual TLS between your clusters",
   "Analyze Istio Destination Rules",

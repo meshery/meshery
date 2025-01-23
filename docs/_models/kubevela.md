@@ -58,6 +58,9 @@ components:
   colorIcon: assets/img/integrations/kubevela/components/package/icons/color/package-color.svg
   whiteIcon: assets/img/integrations/kubevela/components/package/icons/white/package-white.svg
   description: 
+components-count: 12
+relationships: 
+relationship-count: 0
 featureList: [
   "Application-centric approach",
   "Infrastructure-agnostic",

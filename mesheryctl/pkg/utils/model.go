@@ -412,10 +412,12 @@ func (m ModelCSV) CreateJSONItem(iconDir string) string {
 	return json
 }
 
-func (m ModelCSV) CreateMarkDownForMDStyle(componentsMetadata string) string {
+func (m ModelCSV) CreateMarkDownForMDStyle(componentsMetadata, relationshipMetadata string, componentsCount, relationshipsCount int, outputFor string) string {
 	formattedName := utils.FormatName(m.Model)
+	var template, markdown string
 
-	var template string = `---
+	if outputFor == "mesherydocs" {
+		template = `---
 layout: integration
 title: %s
 subtitle: %s
@@ -427,6 +429,9 @@ integrations-category: %s
 integrations-subcategory: %s
 registrant: %s
 components: %v
+components-count: %d
+relationships: %v
+relationship-count: %d
 featureList: [
   "%s",
   "%s",
@@ -440,24 +445,76 @@ type: extensibility
 category: integrations
 ---
 `
-	markdown := fmt.Sprintf(template,
-		m.ModelDisplayName,
-		m.PageSubtTitle,
-		formattedName,
-		formattedName,
-		formattedName,
-		m.DocsURL,
-		m.Description,
-		m.Category,
-		m.SubCategory,
-		m.Registrant,
-		componentsMetadata,
-		m.Feature1,
-		m.Feature2,
-		m.Feature3,
-		m.HowItWorks,
-		m.HowItWorksDetails,
-	)
+		markdown = fmt.Sprintf(template,
+			m.ModelDisplayName,
+			m.PageSubtTitle,
+			formattedName,
+			formattedName,
+			formattedName,
+			m.DocsURL,
+			m.Description,
+			m.Category,
+			m.SubCategory,
+			m.Registrant,
+			componentsMetadata,
+			componentsCount,
+			relationshipMetadata,
+			relationshipsCount,
+			m.Feature1,
+			m.Feature2,
+			m.Feature3,
+			m.HowItWorks,
+			m.HowItWorksDetails,
+		)
+	} else if outputFor == "mesheryio" {
+		template = `---
+layout: single-page-model
+item-type: model
+name: %s
+subtitle: %s
+colorIcon: /assets/images/integration/%s/icons/color/%s-color.svg
+whiteIcon: /assets/images/integration/%s/icons/white/%s-white.svg
+docURL: %s
+description: %s
+category: %s
+subcategory: %s
+registrant: %s
+components: %v
+componentsCount: %d
+relationships: %v
+relationshipsCount: %d
+featureList: [
+  "%s",
+  "%s",
+  "%s"
+]
+howItWorks: "%s"
+howItWorksDetails: "%s"
+---
+`
+		markdown = fmt.Sprintf(template,
+			m.ModelDisplayName,
+			m.PageSubtTitle,
+			formattedName,
+			formattedName,
+			formattedName,
+			formattedName,
+			m.DocsURL,
+			m.Description,
+			m.Category,
+			m.SubCategory,
+			m.Registrant,
+			componentsMetadata,
+			componentsCount,
+			relationshipMetadata,
+			relationshipsCount,
+			m.Feature1,
+			m.Feature2,
+			m.Feature3,
+			m.HowItWorks,
+			m.HowItWorksDetails,
+		)
+	}
 
 	markdown = strings.ReplaceAll(markdown, "\r", "\n")
 

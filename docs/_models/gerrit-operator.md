@@ -38,6 +38,9 @@ components:
   colorIcon: assets/img/integrations/gerrit-operator/components/gerrit/icons/color/gerrit-color.svg
   whiteIcon: assets/img/integrations/gerrit-operator/components/gerrit/icons/white/gerrit-white.svg
   description: 
+components-count: 7
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates Gerrit deployment and management",
   "Integrates with Git repositories",

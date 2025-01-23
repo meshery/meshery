@@ -86,6 +86,9 @@ components:
   colorIcon: assets/img/integrations/ambassador/components/rate-limit/icons/color/rate-limit-color.svg
   whiteIcon: assets/img/integrations/ambassador/components/rate-limit/icons/white/rate-limit-white.svg
   description: 
+components-count: 19
+relationships: 
+relationship-count: 0
 featureList: [
   "Kubernetes-native API gateway",
   "Supports various protocols",

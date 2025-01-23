@@ -50,6 +50,9 @@ components:
   colorIcon: assets/img/integrations/elasticsearch-operator/components/stack-config-policy/icons/color/stack-config-policy-color.svg
   whiteIcon: assets/img/integrations/elasticsearch-operator/components/stack-config-policy/icons/white/stack-config-policy-white.svg
   description: 
+components-count: 10
+relationships: 
+relationship-count: 0
 featureList: [
   "Scalable search and analytics",
   "Full-text search and indexing",

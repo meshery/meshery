@@ -230,6 +230,9 @@ components:
   colorIcon: assets/img/integrations/kong-mesh/components/mesh-tls/icons/color/mesh-tls-color.svg
   whiteIcon: assets/img/integrations/kong-mesh/components/mesh-tls/icons/white/mesh-tls-white.svg
   description: 
+components-count: 55
+relationships: 
+relationship-count: 0
 featureList: [
   "Built on top of Envoy with 50+ observability charts out of the box, you can collect metrics, traces and logs of all L4-L7 traffic.",
   "Integrate with Kong Ingress Controller to implement authentication, transformations, and other functionalities across Kubernetes clusters with zero downtime.",

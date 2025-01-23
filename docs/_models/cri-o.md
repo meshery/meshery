@@ -10,6 +10,9 @@ integrations-category: Runtime
 integrations-subcategory: Container Runtime
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Supports multiple image formats including the existing Docker image format.",
   "Container image management (managing image layers, overlay filesystems, etc).",

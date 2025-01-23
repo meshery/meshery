@@ -10,6 +10,9 @@ integrations-category: Orchestration & Management
 integrations-subcategory: Service Proxy
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "High-performance proxy and load balancer",
   "Extensible with filters and plugins",

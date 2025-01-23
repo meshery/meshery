@@ -62,6 +62,9 @@ components:
   colorIcon: assets/img/integrations/kube-ui-server/components/resource-outline-filter/icons/color/resource-outline-filter-color.svg
   whiteIcon: assets/img/integrations/kube-ui-server/components/resource-outline-filter/icons/white/resource-outline-filter-white.svg
   description: 
+components-count: 13
+relationships: 
+relationship-count: 0
 featureList: [
   "WhoAmI service returns the user info of the user making the api call.",
   "PodView resource exposes actual resource usage by a Pod. The resource usage information is read from Prometheus.",

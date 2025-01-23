@@ -10,6 +10,9 @@ integrations-category: Provisioning
 integrations-subcategory: Key Management
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Identities for all workloads in your hybrid environment.",
   "Authorization and identity provider solution for your Kubernetes clusters.",

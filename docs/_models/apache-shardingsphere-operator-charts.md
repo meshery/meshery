@@ -34,6 +34,9 @@ components:
   colorIcon: assets/img/integrations/apache-shardingsphere-operator-charts/components/storage-provider/icons/color/storage-provider-color.svg
   whiteIcon: assets/img/integrations/apache-shardingsphere-operator-charts/components/storage-provider/icons/white/storage-provider-white.svg
   description: 
+components-count: 6
+relationships: 
+relationship-count: 0
 featureList: [
   "ShardingSphere provides a distributed database solution based on the underlying database, which can scale computing and storage horizontally.",
   "With a hybrid engine based on XA and BASE transactions, ShardingSphere provides distributed transaction capabilities on top of standalone databases, enabling data security across underlying data sources.",

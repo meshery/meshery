@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/kusk-gateway/components/api/icons/color/api-color.svg
   whiteIcon: assets/img/integrations/kusk-gateway/components/api/icons/white/api-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Rapidly prototype your APIs by mocking your API responses",
   " Protect your endpoints with automatic request and response validations",

@@ -18,6 +18,9 @@ components:
   colorIcon: assets/img/integrations/armory-spinnaker-operator/components/spinnaker-service/icons/color/spinnaker-service-color.svg
   whiteIcon: assets/img/integrations/armory-spinnaker-operator/components/spinnaker-service/icons/white/spinnaker-service-white.svg
   description: 
+components-count: 2
+relationships: 
+relationship-count: 0
 featureList: [
   "Stop using Halyard commands: just kubectl apply your Spinnaker configuration.",
   "Expose Spinnaker to the outside world (via LoadBalancer).",

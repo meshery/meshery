@@ -25,7 +25,7 @@ export const StorageTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['spec.attribute', 's'],
         ['spec.attribute', 's'],
         ['spec.attribute', 's'],
@@ -199,7 +199,7 @@ export const StorageTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['spec.attribute', 's'],
         ['spec.attribute', 's'],
         ['status.attribute', 'm'],
@@ -365,7 +365,7 @@ export const StorageTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
       ],

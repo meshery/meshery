@@ -46,6 +46,9 @@ components:
   colorIcon: assets/img/integrations/pg-operator/components/pg-upgrade/icons/color/pg-upgrade-color.svg
   whiteIcon: assets/img/integrations/pg-operator/components/pg-upgrade/icons/white/pg-upgrade-white.svg
   description: 
+components-count: 9
+relationships: 
+relationship-count: 0
 featureList: [
   "Create and manage highly available, enterprise-ready MySQL, PostgreSQL, and MongoDB clusters on Kubernetes.",
   "Percona Operators include backup/restore, high availability, replication, sharding, logging features and more.",

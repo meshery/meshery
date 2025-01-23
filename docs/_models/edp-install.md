@@ -142,6 +142,9 @@ components:
   colorIcon: assets/img/integrations/edp-install/components/quick-link/icons/color/quick-link-color.svg
   whiteIcon: assets/img/integrations/edp-install/components/quick-link/icons/white/quick-link-white.svg
   description: 
+components-count: 33
+relationships: 
+relationship-count: 0
 featureList: [
   "Simplifies EDP installation on Kubernetes",
   "Provides pre-configured EDP components",
