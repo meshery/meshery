@@ -38,7 +38,7 @@ is_matchlabel_relationship(relationship) if {
 # 	{
 # 		field,
 # 		value,
-# 		component
+# 		components
 # 	}
 # }
 identify_matchlabels(design_file, relationship) := all_match_labels if {

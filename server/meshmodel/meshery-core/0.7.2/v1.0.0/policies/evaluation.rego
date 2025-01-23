@@ -215,14 +215,14 @@ relationship_policy_identifiers := [{
 	actions := union({actions| 
 	  some identifier in relationship_policy_identifiers
 	  actions := eval.action_phase(design_file_to_apply_actions,identifier)
-	  print("actions from",identifier,count(actions.relationships_to_add))
+	  # print("actions from",identifier,count(actions.relationships_to_add))
 	})
 
-	print("actions",actions)
+	# print("actions",actions)
 
 	actions_response := trace_from_actions(actions)
 
-	print("Actions trace",actions_response)
+	# print("Actions trace",actions_response)
 
 	# Prepare the final design to return.
 	design_to_return := final_design_from_actions(
