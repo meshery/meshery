@@ -497,7 +497,7 @@ const ConnectionTable = ({
       subtitle: `Are you sure that you want to transition the connection status to ${e.target.value.toUpperCase()}?`,
       primaryOption: 'Confirm',
       showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-      // variant: PROMPT_VARIANTS.CONFIRMATION,
+      variant: PROMPT_VARIANTS.WARNING,
     });
     if (response === 'Confirm') {
       const requestBody = JSON.stringify({
