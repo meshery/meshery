@@ -18,6 +18,9 @@ components:
   colorIcon: assets/img/integrations/devfile/components/dev-workspace-template/icons/color/dev-workspace-template-color.svg
   whiteIcon: assets/img/integrations/devfile/components/dev-workspace-template/icons/white/dev-workspace-template-white.svg
   description: 
+components-count: 2
+relationships: 
+relationship-count: 0
 featureList: [
   "Development environments are quick to create, can be thrown away at will, and can be easily re-created when needed.",
   "Mechanism for teams to share configurations across projects, and provide a single source of truth throughout the application lifecycle.",

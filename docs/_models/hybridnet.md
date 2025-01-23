@@ -74,6 +74,9 @@ components:
   colorIcon: assets/img/integrations/hybridnet/components/network-policy/icons/color/network-policy-color.svg
   whiteIcon: assets/img/integrations/hybridnet/components/network-policy/icons/white/network-policy-white.svg
   description: 
+components-count: 16
+relationships: 
+relationship-count: 0
 featureList: [
   "Flexible network configuration",
   "Supports both overlay and underlay networks",

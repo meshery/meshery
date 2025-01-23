@@ -8,7 +8,7 @@ Meshery Adapter for NGINX Service Mesh.
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| Layer5 Authors | <community@layer5.io> |  |
+| Meshery Authors | <community@layer5.io> |  |
 | darrenlau | <panyuenlau@gmail.com> |  |
 | leecalcote | <lee.calcote@layer5.io> |  |
 

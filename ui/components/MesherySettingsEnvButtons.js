@@ -217,6 +217,7 @@ const MesherySettingsEnvButtons = () => {
           <Typography
             style={{
               paddingLeft: '4px',
+              width: 'max-content',
               marginRight: '4px',
             }}
             data-testid={testIDs('addCluster')}

@@ -1,3 +1,4 @@
+import { styled } from '@layer5/sistent';
 import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
@@ -9,16 +10,6 @@ const useStyles = makeStyles((theme) => ({
   //   backgroundColor:
   //     theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#396679',
   // },
-  cardButtons: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    marginTop: '50px',
-    height: '100%',
-    gap: '.5rem',
-  },
-  testsButton: {
-    padding: '6px 9px',
-  },
   perfResultsContainer: {
     marginTop: '0.5rem',
   },
@@ -32,21 +23,11 @@ const useStyles = makeStyles((theme) => ({
     minHeight: '6rem',
     position: 'relative',
   },
-  updateDeleteButtons: {
-    width: 'fit-content',
-    margin: '10 0 0 auto',
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-  },
   yamlDialogTitle: {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  // yamlDialogTitleText: {
-  //   flexGrow: 1,
-  // },
   fullScreenCodeMirror: {
     height: '100%',
     width: '100%',
@@ -66,15 +47,6 @@ const useStyles = makeStyles((theme) => ({
   visibilityChip: {
     width: '3.8rem',
   },
-  bottomPart: {
-    display: 'flex',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    marginTop: '1rem',
-  },
-  lastRunText: {
-    marginRight: '0.5rem',
-  },
   cardHeaderRight: {
     display: 'flex',
     alignItems: 'center',
@@ -82,7 +54,6 @@ const useStyles = makeStyles((theme) => ({
   iconPatt: {
     width: '24px',
     height: '24px',
-    marginRight: '5px',
   },
   iconDownload: {
     width: 'auto',
@@ -145,6 +116,29 @@ const useStyles = makeStyles((theme) => ({
     height: '20px',
     marginRight: '5px',
   },
+}));
+
+export const UpdateDeleteButtons = styled('div')(() => ({
+  width: 'fit-content',
+  margin: '10 0 0 auto',
+  position: 'absolute',
+  right: 0,
+  bottom: 0,
+}));
+
+export const BottomContainer = styled('div')(() => ({
+  display: 'flex',
+  justifyContent: 'flex-start',
+  alignItems: 'center',
+  marginTop: '1rem',
+}));
+
+export const CatalogCardButtons = styled('div')(() => ({
+  display: 'flex',
+  flexWrap: 'wrap',
+  marginTop: '50px',
+  height: '100%',
+  gap: '.5rem',
 }));
 
 export default useStyles;
