@@ -403,7 +403,7 @@ const ConnectionTable = ({
         title: `Flush MeshSync data for ${connection.metadata?.name} ?`,
         subtitle: `Are you sure to Flush MeshSync data for “${connection.metadata?.name}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
         primaryOption: 'PROCEED',
-        variant: 'warning',
+        variant: PROMPT_VARIANTS.WARNING,
       });
       if (response === 'PROCEED') {
         updateProgress({ showProgress: true });

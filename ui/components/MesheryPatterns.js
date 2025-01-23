@@ -1289,7 +1289,7 @@ function MesheryPatterns({
         toBeDeleted.length,
         toBeDeleted.map((p) => ' ' + p.name),
       );
-      if (response.toLowerCase() === 'yes') {
+      if (response.toLowerCase() === 'DELETE') {
         deletePatterns({ patterns: toBeDeleted });
       }
       // if (response.toLowerCase() === "no")
