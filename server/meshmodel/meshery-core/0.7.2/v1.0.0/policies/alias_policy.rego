@@ -2,17 +2,6 @@ package eval
 
 import rego.v1
 
-# policies/alias_policy.rego:65: rego_type_error: undefined function is_relationship_feasible_to
-# ../meshmodel/meshery-core/0.7.2/v1.0.0/policies/alias_policy.rego:88: rego_type_error: undefined function get_array_aware_configuration_for_component_at_path
-# ../meshmodel/meshery-core/0.7.2/v1.0.0/policies/alias_policy.rego:110: rego_type_error: undefined function new_uuid
-# ../meshmodel/meshery-core/0.7.2/v1.0.0/policies/alias_policy.rego:146: rego_type_error: undefined function new_uuid
-# ../meshmodel/meshery-core/0.7.2/v1.0.0/policies/alias_policy.rego:179: rego_type_error: undefined function from_component_id
-# ../meshmodel/meshery-core/0.7.2/v1.0.0/policies/alias_policy.rego:179: rego_type_error: undefined function component_declaration_by_id
-# ../meshmodel/meshery-core/0.7.2/v1.0.0/policies/alias_policy.rego:185: rego_type_error: undefined function to_component_id
-# ../meshmodel/meshery-core/0.7.2/v1.0.0/policies/alias_policy.rego:185: rego_type_error: undefined function component_declaration_by_id
-# ../meshmodel/meshery-core/0.7.2/v1.0.0/policies/alias_policy.rego:195: rego_type_error: undefined function get_component_configuration
-# ../meshmodel/meshery-core/0.7.2/v1.0.0/policies/alias_policy.rego:195: rego_type_error: undefined function pop_first
-
 import data.core_utils.get_array_aware_configuration_for_component_at_path
 import data.core_utils.new_uuid
 import data.core_utils.from_component_id
