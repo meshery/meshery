@@ -77,8 +77,13 @@ component_declaration_by_id(design_file, id) := component if {
 is_direct_reference(ref) if {
 	not array_endswith(ref, "_")
 } 
+
+configuration_for_component_at_path(path,component,design) := result if {	
+   result := object_get_nested(get_component_configuration(component,design), pop_first(path),null)
+}
+
 get_array_aware_configuration_for_component_at_path(ref, component,design) := result if {
-    print("ref",ref)
+    # print("ref",ref)
 	not is_direct_reference(ref)
 	direct_ref := pop_last(ref)
 

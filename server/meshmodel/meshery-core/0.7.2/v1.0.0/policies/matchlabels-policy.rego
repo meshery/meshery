@@ -9,6 +9,7 @@ import data.core_utils.component_declaration_by_id
 import data.core_utils.to_component_id
 import data.core_utils.get_component_configuration
 import data.core_utils.pop_first
+import data.core_utils.configuration_for_component_at_path
 import data.core_utils.object_get_nested
 import data.core_utils.component_alias
 import data.feasibility_evaluation_utils.is_relationship_feasible_to
@@ -45,11 +46,14 @@ identify_matchlabels(design_file, relationship) := all_match_labels if {
 		component.id != other_component.id
 
 		# print("is alias rel", component)
-		is_relationship_feasible_from(component, relationship)
+		from := is_relationship_feasible_from(component, relationship)
 		is_relationship_feasible_to(other_component,relationship)
 
-		some field,value in component.configuration.metadata.labels 
-		some field2,value2 in other_component.configuration.metadata.labels 
+		path := from.match.refs[0]
+		
+		# print("from mutator",path,configuration_for_component_at_path(path, component,design_file))
+		some field,value in configuration_for_component_at_path(path, component,design_file)
+		some field2,value2 in configuration_for_component_at_path(path, other_component,design_file)
 
         field == field2
 		value == value2 
