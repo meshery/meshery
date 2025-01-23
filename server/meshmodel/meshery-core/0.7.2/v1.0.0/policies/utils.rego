@@ -9,6 +9,11 @@ new_uuid(seed) := id if {
 	id := uuid.rfc4122(sprintf("%s%s", [seed, now]))
 }
 
+# is deterministic in eval
+static_uuid(seed) := id if {
+	id := uuid.rfc4122(sprintf("%s%s", [seed]))
+}
+
 object_get_nested(obj, path, default_value) := current_value if {
 	stringfied_path := [sprintf("%v", [v]) | some v in path]
 	[current_path, current_value] := walk(obj)

@@ -4,6 +4,7 @@ import rego.v1
 
 import data.core_utils
 import data.core_utils.new_uuid
+import data.core_utils.static_uuid
 import data.core_utils.from_component_id
 import data.core_utils.component_declaration_by_id
 import data.core_utils.to_component_id
@@ -148,7 +149,7 @@ identify_relationships(design_file, relationships_in_scope,relationship_policy_i
 				"path":"/id",
 				# use relationship_policy_identifier instead of relationship as seed to prevent duplicate 
 				# relationships being created (due to duplicate registered relationships)
-				"value": new_uuid({selector_declaration,relationship_policy_identifier}) 
+				"value": static_uuid({selector_declaration,relationship_policy_identifier}) 
 			},
 			{
 				"op":"replace",
