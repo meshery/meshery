@@ -3,9 +3,14 @@ package relationship_evaluation_policy
 import data.eval
 import rego.v1
 
-# Should be loaded always
-# This is the first file that is executed that is this is the entry point of the policy
-# The flow that the policy follows from evaluation to final trace
+# METADATA
+# entrypoint: true 
+# description: "Evaluates relationships in the design file and updates the design file with the results.
+# Flow that the policy follows from evaluation to final trace:
+# 1. Evaluate relationships in the design file
+# 2. Identify relationships in the design file
+# 3. Perform actions based on the identified relationships
+# 4. Prepare the final design to return"
 default rels_in_design_file := []
 
 # Loads relationships from the design file if any exist.
@@ -21,7 +26,7 @@ filter_pending_relationships(rel, relationships) := rel if {
 }
 
 # scope for relationships to evaluate against
-# TODO: make this dynamic based on the models referenced in the design file
+# NEEDS IMPROVEMENT: make this dynamic based on the models referenced in the design file
 relationships_to_evaluate_against := data.relationships
 
 # Main evaluation function that processes relationships and updates the design.

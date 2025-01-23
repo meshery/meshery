@@ -2,53 +2,51 @@ package eval
 
 import rego.v1
 
-import data.core_utils.component_alias
-import data.core_utils.component_declaration_by_id
-import data.core_utils.from_component_id
-import data.core_utils.get_array_aware_configuration_for_component_at_path
-import data.core_utils.get_component_configuration
-import data.core_utils.new_uuid
-import data.core_utils.object_get_nested
-import data.core_utils.pop_first
-import data.core_utils.to_component_id
-import data.feasibility_evaluation_utils.is_relationship_feasible_from
-import data.feasibility_evaluation_utils.is_relationship_feasible_to
+import data.core_utils
+import data.feasibility_evaluation_utils
 
-# ----------- Module Alias Policy ------------------------------------------------------------------------
-# This module is responsible for evaluating alias relationships.
-# Alias relationships occur when a component serves as an alias
-# to a field in another component.
-# Example: A Container acts as an alias to the field `spec.containers[x]`
-# in a Pod (where `x` is the index of the container in the Pod).
+# Module: Alias Relationship Evaluator
 #
-# 1. Validation of Alias Relationships:
-#    - A previously approved alias relationship remains valid if:
-#        - The path it aliases still exists in the parent component.
-#        - The child alias component is still present.
-#    - The alias relationship becomes invalid if:
-#        - The child component is missing (e.g., the user deleted the container component inside the Pod).
-#        - The aliased configuration in the parent is missing
-#          (e.g., the user deleted the `containers` field in the Pod).
+# Purpose: Manages relationships where one component references (aliases) a field in another component.
 #
-# 2. Identification of Alias Relationships:
-#    - An alias relationship exists if fields in the component are defined as aliases in the relationship block.
-#    - The alias relationship is identified by the presence of a selector where:
-#        - `from` specifies the child component.
-#        - `to` specifies the parent component.
-#    - The `mutatorRef`/`mutatedRef` must be a single-item array,
-#      where the item at index `0` points to the field in the child component that acts as an alias to the parent.
-#    - Newly identified relationships have a status of **pending**.
+# Example: In Kubernetes, a Container component might alias the field `spec.containers[x]` within a Pod component, where 'x' represents the container's index in the Pod's array.
 #
-# 3. Action Phase:
-#    - For each pending relationship:
-#        - Add the alias component to the design file (if not already present).
-#        - Update the status of the relationship to **approved**.
-#    - For approved relationships:
-#        - No action is required.
-#    - For deleted relationships:
-#        - Remove the alias component from the design file.
-#        - Remove the aliased configuration from the parent component.
+# Process Flow:
+#
+# 1. Validation
+#    Valid relationships require:
+#    ✓ Parent component still contains the referenced path
+#    ✓ Child (alias) component still exists
+#
+#    Relationships become invalid when:
+#    ✗ Child component is removed (e.g., Container deleted from Pod)
+#    ✗ Referenced field is removed (e.g., `containers` array removed from Pod spec)
+#
+# 2. Identification
+#    Alias relationships are detected by:
+#    - Component fields marked as aliases in relationship block
+#    - Selector configuration that specifies:
+#      • 'from': The child (alias) component
+#      • 'to': The parent component being referenced
+#    - Single-item mutatorRef/mutatedRef array where index[0] points to 
+#      the child component field acting as the alias
+#    
+#    Note: New relationships start with "pending" status
+#
+# 3. Actions
+#    New  Relationships:
+#    + Add alias component to design file (if missing)
+#    + Update relationship status to "approved"
+#
+#    Approved Relationships:
+#    • No action needed (maintain current state)
+#
+#    Deleted Relationships:
+#    - Remove alias component from design file
+#    - Clean up aliased configuration in parent component
 
+
+# It is unlikely, that Meshery has a use case for supporting relationship.type == "child" aliases in the future.
 is_alias_relationship(relationship) if {
 	lower(relationship.kind) == "hierarchical"
 	lower(relationship.type) == "parent"
@@ -89,7 +87,7 @@ identify_relationships(design_file, relationships_in_scope, relationship_policy_
 			not alias_relationship_already_exists(design_file, rel)
 		}
 	})
-	#print("Identify alias rels Eval results", count(eval_results))
+	# print("Identify alias rels Eval results", count(eval_results))
 
 }
 
@@ -195,22 +193,22 @@ is_alias_relationship_valid(relationship, design_file) if {
 	from_component := component_declaration_by_id(design_file, from_component_id(relationship))
 	from_component != null
 
-	#print("Is valid -> from_component", from_component)
+	# print("Is valid -> from_component", from_component)
 
 	# check if the to component is still present
 	to_component := component_declaration_by_id(design_file, to_component_id(relationship))
 	to_component != null
 
-	#print("Is valid -> to_component", to_component)
+	# print("Is valid -> to_component", to_component)
 
 	# check if the path in the to component is still present
 
 	ref := alias_ref_from_relationship(relationship)
 
-	#print("Is valid -> ref", ref,relationship.id)
+	# print("Is valid -> ref", ref,relationship.id)
 	value := object_get_nested(get_component_configuration(to_component, design_file), pop_first(ref), null)
 
-	#print("Is valid -> value", value)
+	# print("Is valid -> value", value)
 	value != null
 }
 
