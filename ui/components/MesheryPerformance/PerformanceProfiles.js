@@ -21,6 +21,7 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import {
   CustomColumnVisibilityControl,
   Modal,
+  PROMPT_VARIANTS,
   ResponsiveDataTable,
   SearchBar,
 } from '@layer5/sistent';
@@ -224,7 +225,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
       subtitle: `Are you sure you want to delete ${count > 1 ? 'these' : 'this'} ${
         count ? count : ''
       } performance profile${count > 1 ? 's' : ''}?`,
-      variant: 'error',
+      variant: PROMPT_VARIANTS.DANGER,
       primaryOption: 'DELETE',
     });
     return response;
@@ -487,7 +488,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
 
     onRowsDelete: async function handleDeleteRow(row) {
       let response = await showModal(Object.keys(row.lookup).length);
-      if (response === 'CONFIRM') {
+      if (response === 'DELETE') {
         const pids = Object.keys(row.lookup).map((idx) => testProfiles[idx]?.id);
         pids.forEach((pid) => handleDelete(pid));
       } else {

@@ -8,6 +8,7 @@ import {
   Grid,
   Box,
   styled,
+  PROMPT_VARIANTS,
 } from '@layer5/sistent';
 import React from 'react';
 import { useRef } from 'react';
@@ -119,6 +120,7 @@ const MesherySettingsEnvButtons = () => {
           />
         </>
       ),
+      variant: PROMPT_VARIANTS.SUCCESS,
       primaryOption: 'OK',
     });
   };
@@ -166,7 +168,7 @@ const MesherySettingsEnvButtons = () => {
         </>
       ),
       primaryOption: 'IMPORT',
-      variant: 'success',
+      variant: PROMPT_VARIANTS.SUCCESS,
       showInfoIcon:
         'If your config has not been autodetected, you can manually upload your kubeconfig file (or any number of kubeconfig files). By default, Meshery will attempt to connect to and deploy Meshery Operator to each reachable context contained in the imported kubeconfig files. [See Managing Kubernetes Clusters for more information](https://docs.meshery.io/installation/kubernetes).',
     });

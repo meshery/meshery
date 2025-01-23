@@ -22,6 +22,7 @@ import {
   SearchBar,
   UniversalFilter,
   ResponsiveDataTable,
+  PROMPT_VARIANTS,
 } from '@layer5/sistent';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import { getVisibilityColums } from '../../utils/utils';
@@ -337,11 +338,11 @@ const ConnectionTable = ({
       let response = await modalRef.current.show({
         title: `Delete Connection`,
         subtitle: `Are you sure that you want to delete the connection?`,
-        primaryOption: 'Delete',
+        primaryOption: 'DELETE',
         showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-        // variant: PROMPT_VARIANTS.DANGER,
+        variant: PROMPT_VARIANTS.DANGER,
       });
-      if (response === 'Delete') {
+      if (response === 'DELETE') {
         const requestBody = JSON.stringify({
           [connectionId]: CONNECTION_STATES.DELETED,
         });
@@ -355,11 +356,11 @@ const ConnectionTable = ({
       let response = await modalRef.current.show({
         title: `Delete Connections`,
         subtitle: `Are you sure that you want to delete the connections?`,
-        primaryOption: 'Delete',
+        primaryOption: 'DELETE',
         showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-        // variant: PROMPT_VARIANTS.DANGER,
+        variant: PROMPT_VARIANTS.DANGER,
       });
-      if (response === 'Delete') {
+      if (response === 'DELETE') {
         // let bulkConnections = {}
         // selected.data.map(({ index }) => {
         //   bulkConnections = {
@@ -402,7 +403,7 @@ const ConnectionTable = ({
         title: `Flush MeshSync data for ${connection.metadata?.name} ?`,
         subtitle: `Are you sure to Flush MeshSync data for “${connection.metadata?.name}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
         primaryOption: 'PROCEED',
-        // variant: PROMPT_VARIANTS.WARNING,
+        variant: 'warning',
       });
       if (response === 'PROCEED') {
         updateProgress({ showProgress: true });

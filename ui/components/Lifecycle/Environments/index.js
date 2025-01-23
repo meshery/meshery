@@ -29,6 +29,7 @@ import {
   Grid,
   Typography,
   SearchBar,
+  PROMPT_VARIANTS,
 } from '@layer5/sistent';
 import ConnectionIcon from '../../../assets/icons/Connection';
 import { TRANSFER_COMPONENT } from '../../../utils/Enum';
@@ -302,7 +303,7 @@ const Environments = () => {
       showInfoIcon: `Deleting an environment does not delete any resources (e.g. connections) currently contained with the environment.
       Resources that belong to others environments will continue to belong to those other environments.
       Learn more about the behavior of [lifecycle of environments and their resources](https://docs.meshery.io/concepts/logical/environments) in Meshery Docs.`,
-      variant: 'error',
+      variant: PROMPT_VARIANTS.DANGER,
     });
     if (response === 'DELETE') {
       handleDeleteEnvironment(environment.id);
@@ -346,7 +347,7 @@ const Environments = () => {
       title: `Delete Environment(s) ?`,
       subtitle: `Do you want to delete ${selectedEnvironments.length} environment(s) ?`,
       primaryOption: 'DELETE',
-      variant: 'error',
+      variant: PROMPT_VARIANTS.DANGER,
     });
     if (response === 'DELETE') {
       handleBulkDeleteEnv();

@@ -406,14 +406,14 @@ const MesherySettings = (props) => {
               </TabContainer>
             )}
 
-          {tabVal === RESET && (
-            <TabContainer>
-              <DatabaseSummary promptRef={systemResetPromptRef} />
-            </TabContainer>
-          )}
-          {backToPlay}
-          <_PromptComponent ref={systemResetPromptRef} />
-        </div>
+            {tabVal === RESET && (
+              <TabContainer>
+                <DatabaseSummary promptRef={systemResetPromptRef} />
+              </TabContainer>
+            )}
+            {backToPlay}
+            <_PromptComponent ref={systemResetPromptRef} />
+          </div>
         </UsesSistent>
       ) : (
         <DefaultError />

@@ -40,6 +40,7 @@ import {
   CustomTooltip,
   Typography,
   styled,
+  PROMPT_VARIANTS,
 } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { Colors } from '@/themes/app';
@@ -366,7 +367,7 @@ function K8sContextMenu({
         </>
       ),
       primaryOption: 'CONFIRM',
-      variant: 'error',
+      variant: PROMPT_VARIANTS.DANGER,
       showInfoIcon: `Learn more about the [lifecycle of connections](https://docs.meshery.io/concepts/logical/connections) and what it means to delete a connection.`,
     });
     if (responseOfDeleteK8sCtx === 'CONFIRM') {

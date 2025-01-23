@@ -23,6 +23,7 @@ import {
   SearchBar,
   styled,
   useTheme,
+  PROMPT_VARIANTS,
 } from '@layer5/sistent';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import { useEffect, useRef, useState } from 'react';
@@ -431,7 +432,7 @@ const Workspaces = ({ organization }) => {
       title: `Delete workspace ?`,
       subtitle: deleteWorkspaceModalContent(workspace.name),
       primaryOption: 'DELETE',
-      variant: 'error',
+      variant: PROMPT_VARIANTS.DANGER,
     });
     if (response === 'DELETE') {
       handleDeleteWorkspace(workspace.id, workspace.name);

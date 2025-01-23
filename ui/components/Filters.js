@@ -51,6 +51,7 @@ import {
   Button,
   Box,
   styled,
+  PROMPT_VARIANTS,
 } from '@layer5/sistent';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
@@ -923,8 +924,8 @@ function MesheryFilters({
       subtitle: `Are you sure you want to delete ${count > 1 ? 'these' : 'this'} ${
         count ? count : ''
       } filter${count > 1 ? 's' : ''}?`,
-      primaryOption: 'Yes',
-      variant: 'error',
+      primaryOption: 'Delete',
+      variant: PROMPT_VARIANTS.DANGER,
     });
     return response;
   }
@@ -1280,14 +1281,14 @@ function MesheryFilters({
                     meshModels={meshModels}
                     patternFetcher={() => getFilters()}
                   />
-              )}
-            <_PromptComponent ref={modalRef} />
-          </>
-        ) : (
-          <DefaultError />
-        )}
-      </NoSsr>
-    </UsesSistent>
+                )}
+              <_PromptComponent ref={modalRef} />
+            </>
+          ) : (
+            <DefaultError />
+          )}
+        </NoSsr>
+      </UsesSistent>
     </>
   );
 }

@@ -15,6 +15,7 @@ import { store } from '../store';
 import { useGetDatabaseSummaryQuery } from '@/rtk-query/system';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { PROMPT_VARIANTS } from '@layer5/sistent';
 
 const styles = (theme) => ({
   textCenter: {
@@ -72,7 +73,7 @@ const DatabaseSummary = (props) => {
         title: 'Reset Meshery Database?',
         subtitle: 'Are you sure that you want to purge all data?',
         primaryOption: 'RESET',
-        variant: 'error',
+        variant: PROMPT_VARIANTS.DANGER,
       });
       if (responseOfResetDatabase === 'RESET') {
         props.updateProgress({ showProgress: true });
