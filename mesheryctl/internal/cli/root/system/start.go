@@ -56,8 +56,6 @@ var (
 )
 
 func getContexts(configFile string) ([]string, error) {
-	client := &http.Client{}
-
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
 		utils.Log.Error(err)
@@ -72,7 +70,7 @@ func getContexts(configFile string) ([]string, error) {
 		return nil, ErrUploadFileParams(err)
 	}
 
-	res, err := client.Do(req)
+	res, err := utils.MakeRequest(req)
 	if err != nil {
 		return nil, utils.ErrRequestResponse(err)
 	}
@@ -89,8 +87,7 @@ func getContexts(configFile string) ([]string, error) {
 	}
 
 	if results == nil {
-		errstr := "Error unmarshalling the context info, check " + configFile + " file"
-		return nil, errors.New(errstr)
+		return nil, ErrK8sContext(err, configFile)
 	}
 
 	var contextNames []string
@@ -147,7 +144,7 @@ mesheryctl system config aks --token auth.json
 // Configure Meshery to connect to AKS cluster (if session is logged in using login subcommand)
 mesheryctl system config aks
 	`,
-	Args: func(cmd *cobra.Command, args []string) error {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) >= 1 {
 			return errors.New("more than one config name provided")
 		}
@@ -217,7 +214,7 @@ mesheryctl system config eks --token auth.json
 // Configure Meshery to connect to EKS cluster (if session is logged in using login subcommand)
 mesheryctl system config eks
 	`,
-	Args: func(cmd *cobra.Command, args []string) error {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) >= 1 {
 			return errors.New("more than one config name provided")
 		}

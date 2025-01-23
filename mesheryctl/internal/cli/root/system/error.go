@@ -55,6 +55,7 @@ const (
 	ErrValidProviderCode                 = "mesheryctl-1087"
 	ErrUnmarshallConfigCode              = "mesheryctl-1088"
 	ErrUploadFileParamsCode              = "mesheryctl-1089"
+	ErrK8sContextCode                    = "mesheryctl-1140"
 )
 
 var (
@@ -336,4 +337,14 @@ func ErrUploadFileParams(err error) error {
 		[]string{"Unable to upload parameters from config file with provided context"},
 		[]string{"Ensure you have a strong network connection and the right configuration set in your Meshconfig file." + FormatErrorReference()})
 
+}
+
+func ErrK8sContext(err error, configFile string) error {
+	return errors.New(
+		ErrK8sContextCode,
+		errors.Alert,
+		[]string{"Invalid config struct"},
+		[]string{err.Error()},
+		[]string{"Error unmarshalling the context info, check", configFile, "file"},
+		[]string{"Ensure the context info is correctly set in the config file"})
 }
