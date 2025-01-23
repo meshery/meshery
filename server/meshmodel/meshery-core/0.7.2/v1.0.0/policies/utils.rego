@@ -28,6 +28,32 @@ array_endswith(arr, item) if {
 	arr[count(arr) - 1] == item
 }
 
+
+# truncate_set restricts a set to a maximum number of elements
+# 
+# Args:
+#   s: The input set to be limited
+#   max_length: Maximum number of elements to keep
+# 
+# Returns:
+#   A set containing up to max_length elements from the original set
+# 
+# Behavior:
+#   - If the input set is smaller than or equal to max_length, returns the original set
+#   - If the input set is larger than max_length, returns a set with only the first max_length elements
+truncate_set(s, max_length) := result if {
+    arr := [x | x := s[_]]
+    
+    count(arr) <= max_length
+    result := s
+}
+
+truncate_set(s, max_length) := result if {
+    arr := [x | x := s[_]]
+    count(arr) > max_length
+    result := {arr[i] | i < max_length}
+}
+
 #----------- 
 
 

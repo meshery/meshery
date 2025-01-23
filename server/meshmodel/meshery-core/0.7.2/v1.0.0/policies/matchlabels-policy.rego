@@ -10,6 +10,7 @@ import data.core_utils.component_declaration_by_id
 import data.core_utils.to_component_id
 import data.core_utils.get_component_configuration
 import data.core_utils.pop_first
+import data.core_utils.truncate_set
 import data.core_utils.configuration_for_component_at_path
 import data.core_utils.object_get_nested
 import data.core_utils.component_alias
@@ -24,6 +25,9 @@ import data.feasibility_evaluation_utils.is_relationship_feasible_from
 # whenerever going through all relationships in desing always check if it matches the kind,type,subtype for the policy 
 # because the relationships are never scoped down by default
 # use partial rules for all of the exported eval stages so they dont conflict with others
+
+MAX_MATCHLABELS := 20
+
 
 is_matchlabel_relationship(relationship) if {
 	lower(relationship.kind) == "hierarchical"
@@ -109,8 +113,10 @@ identify_relationships(design_file, relationships_in_scope,relationship_policy_i
 
      	is_matchlabel_relationship(relationship)
 			
-        identified_map := identify_matchlabels(design_file,relationship)
-		some match_label in identified_map 
+        # limit matchlabel relationships 
+        identified_matchlabels := truncate_set(identify_matchlabels(design_file,relationship),MAX_MATCHLABELS)
+		some match_label in identified_matchlabels
+
 
         # these need to be set comprehensions to automatically weed out duplicated declarations
 		from_selectors := {from_selector | 
