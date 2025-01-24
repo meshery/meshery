@@ -40,7 +40,6 @@
     "@layer5/sistent": "^0.14.145",
     "@material-ui/core": "^4.12.4",
     "@material-ui/icons": "^4.11.3",
-    "@material-ui/lab": "^4.0.0-alpha.61",
     "@mui/icons-material": "^5.15.11",
     "@mui/lab": "^5.0.0-alpha.135",
     "@mui/material": "^5.15.11",

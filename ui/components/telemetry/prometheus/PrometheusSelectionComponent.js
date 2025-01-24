@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@mui/material';
+import { NoSsr, Alert } from '@mui/material';
 import { TextField, Grid, Button, Chip, MenuItem, styled } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -9,7 +9,6 @@ import { updateProgress } from '../../../lib/store';
 import { trueRandom } from '../../../lib/trueRandom';
 import dataFetch from '../../../lib/data-fetch';
 import CodeIcon from '@material-ui/icons/Code';
-import Alert from '@material-ui/lab/Alert';
 import { UsesSistent } from '@/components/SistentWrapper';
 
 const PrometheusContainer = styled('div')(({ theme }) => ({

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Grid, Box } from '@material-ui/core';
-import { Alert, AlertTitle } from '@material-ui/lab';
+import { Alert, AlertTitle } from '@mui/material';
 import { ConnectAppContent, FinishContent, SelectRepositoryContent } from './constants';
 import Router, { useRouter } from 'next/router';
 import { useTheme } from '@material-ui/core';

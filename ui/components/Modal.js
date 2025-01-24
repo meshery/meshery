@@ -16,7 +16,7 @@ import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
 import { ArrowDropDown } from '@material-ui/icons';
 import { getSchema } from './MesheryMeshInterface/PatternService/helper';
 import { Snackbar } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
+import { Alert } from '@mui/material';
 import { ModalBody, ModalFooter, PrimaryActionButtons } from '@layer5/sistent';
 
 const useStyles = makeStyles((theme) => ({

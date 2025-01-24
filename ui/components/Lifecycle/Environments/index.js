@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { Pagination, PaginationItem } from '@material-ui/lab';
+import { Pagination, PaginationItem } from '@layer5/sistent';
 import { withRouter } from 'next/router';
 import { debounce } from 'lodash';
 import { Delete } from '@material-ui/icons';
@@ -78,7 +78,7 @@ const Environments = () => {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [disableTranferButton, setDisableTranferButton] = useState(true);
 
-  const pageSize = 10;
+  const pageSize = 2;
   const connectionPageSize = 25;
 
   const modalRef = useRef(null);
@@ -534,11 +534,6 @@ const Environments = () => {
                   <Pagination
                     count={Math.ceil(environmentsData?.total_count / pageSize)}
                     page={page + 1}
-                    sx={{
-                      backgroundColor: 'white',
-                      borderRadius: '1rem',
-                      padding: '0.5rem',
-                    }}
                     onChange={debounce((_, page) => setPage(page - 1), 150)}
                     boundaryCount={3}
                     renderItem={(item) => (
