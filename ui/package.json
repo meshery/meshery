@@ -134,7 +134,7 @@
     "node-polyfill-webpack-plugin": "^4.0.0",
     "nodemon": "^2.0.20",
     "nyc": "^15.1.0",
-    "prettier": "^3.0.3",
+    "prettier": "^3.4.2",
     "relay-compiler": "^18.1.0",
     "start-server-and-test": "^2.0.5",
     "webpack": "^5.95.0",
