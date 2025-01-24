@@ -12,9 +12,8 @@ import {
   Tooltip,
   Typography,
 } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
 import { withStyles } from '@material-ui/core/styles';
-import { Search } from '@material-ui/icons';
+import { Search } from '@mui/icons-material';
 import { connect } from 'react-redux';
 import { setK8sContexts, updateProgress } from '../lib/store';
 import { errorHandlerGenerator, successHandlerGenerator } from './ConnectionWizard/helpers/common';
@@ -22,9 +21,6 @@ import { pingKubernetes } from './ConnectionWizard/helpers/kubernetesHelpers';
 import { getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import { bindActionCreators } from 'redux';
 import { useEffect, useState } from 'react';
-import DoneAllIcon from '@material-ui/icons/DoneAll';
-import RemoveDoneIcon from '@mui/icons-material/RemoveDone';
-import DoneIcon from '@material-ui/icons/Done';
 import { iconMedium, iconSmall } from '../css/icons.styles';
 import { RoundedTriangleShape } from './shapes/RoundedTriangle';
 import { notificationColors } from '../themes/app';
@@ -38,7 +34,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { K8sContextConnectionChip } from './Header';
 import { useFilterK8sContexts } from './hooks/useKubernetesHook';
-import { Tab, Tabs } from '@layer5/sistent';
+import { Tab, Tabs, CloseIcon, DoneAllIcon, DoneIcon, RemoveDoneIcon } from '@layer5/sistent';
 import { UsesSistent } from './SistentWrapper';
 
 const styles = (theme) => ({

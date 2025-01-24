@@ -12,7 +12,7 @@ import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
 import Slide from '@material-ui/core/Slide';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import { Edit, Search } from '@material-ui/icons';
+import { Edit, Search } from '@mui/icons-material';
 import { TextField } from '@material-ui/core';
 import { Paper } from '@material-ui/core';
 import { deleteKubernetesConfig } from './ConnectionWizard/helpers/kubernetesHelpers';

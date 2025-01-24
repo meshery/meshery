@@ -4,7 +4,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Pagination, PaginationItem } from '@layer5/sistent';
 import { withRouter } from 'next/router';
 import { debounce } from 'lodash';
-import { Delete } from '@material-ui/icons';
+import { Delete } from '@mui/icons-material';
 import { NoSsr } from '@mui/material';
 import { ToolWrapper, CreateButtonWrapper, BulkActionWrapper } from '../Workspaces/index.js';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';

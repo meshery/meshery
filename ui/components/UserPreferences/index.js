@@ -22,8 +22,8 @@ import {
 } from '@layer5/sistent';
 import NoSsr from '@material-ui/core/NoSsr';
 import { updateUser, updateProgress, toggleCatalogContent } from '../../lib/store';
-import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
-import SettingsCellIcon from '@material-ui/icons/SettingsCell';
+import SettingsRemoteIcon from '@mui/icons-material/SettingsRemote';
+import SettingsCellIcon from '@mui/icons-material/SettingsCell';
 import ExtensionSandbox from '../ExtensionSandbox';
 import RemoteComponent from '../RemoteComponent';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';

@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import MenuIcon from '@material-ui/icons/Menu';
+import MenuIcon from '@mui/icons-material/Menu';
 import { useRouter } from 'next/router';
 import { Provider, connect } from 'react-redux';
 import { store } from '../store';
