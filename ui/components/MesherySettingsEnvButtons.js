@@ -9,7 +9,7 @@ import {
   Box,
   styled,
   PROMPT_VARIANTS,
-  } from '@layer5/sistent';
+} from '@layer5/sistent';
 import React from 'react';
 import { useRef } from 'react';
 import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';

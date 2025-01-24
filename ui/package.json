@@ -50,7 +50,7 @@
     "@redux-devtools/extension": "^3.2.3",
     "@reduxjs/toolkit": "^1.9.5",
     "@rjsf/core": "^5.8.1",
-    "@rjsf/material-ui": "^5.23.2",
+    "@rjsf/mui": "^5.23.2",
     "@rjsf/utils": "^5.15.1",
     "@rjsf/validator-ajv8": "^5.8.1",
     "@uiw/react-md-editor": "^3.14.4",
