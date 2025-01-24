@@ -15,6 +15,7 @@
 package registry
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -62,6 +63,26 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
 		// TODO: Include a prerequisite check to confirm that this command IS being the executED from within a fork of the Meshery repo, and is being executed at the root of that fork.
+		const errorMsg = "[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory ] isn't specified\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nRun 'mesheryctl registry generate --help' to see detailed help message"
+
+		spreadsheetIdFlag, _ := cmd.Flags().GetString("spreadsheet-id")
+		registrantDefFlag, _ := cmd.Flags().GetString("registrant-def")
+		directory, _ := cmd.Flags().GetString("directory")
+
+		if spreadsheetIdFlag == "" && registrantDefFlag == "" && directory == "" {
+			return errors.New(utils.RegistryError(errorMsg, "generate"))
+		}
+
+		spreadsheetCredFlag, _ := cmd.Flags().GetString("spreadsheet-cred")
+		registrantCredFlag, _ := cmd.Flags().GetString("registrant-cred")
+
+		if spreadsheetIdFlag != "" && spreadsheetCredFlag == "" {
+			return errors.New(utils.RegistryError("Spreadsheet Credentials is required\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nRun 'mesheryctl registry generate --help'", "generate"))
+		}
+
+		if registrantDefFlag != "" && registrantCredFlag == "" {
+			return errors.New(utils.RegistryError("Registrant Credentials is required\n\nUsage: mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]\nRun 'mesheryctl registry generate --help'", "generate"))
+		}
 
 		return nil
 	},

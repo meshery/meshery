@@ -21,13 +21,14 @@ import PlayArrowIcon from '@material-ui/icons/PlayArrow';
 import {
   CustomColumnVisibilityControl,
   Modal,
+  PROMPT_VARIANTS,
   ResponsiveDataTable,
   SearchBar,
 } from '@layer5/sistent';
 import MesheryPerformanceComponent from './index';
 import PerformanceProfileGrid from './PerformanceProfileGrid';
 import PerformanceResults from './PerformanceResults';
-import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
+import _PromptComponent from '../PromptComponent';
 import ViewSwitch from '../ViewSwitch';
 import { UsesSistent } from '../SistentWrapper';
 
@@ -225,7 +226,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
         count ? count : ''
       } performance profile${count > 1 ? 's' : ''}?`,
       variant: PROMPT_VARIANTS.DANGER,
-      options: ['Yes', 'No'],
+      primaryOption: 'DELETE',
     });
     return response;
   }
@@ -487,11 +488,10 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
 
     onRowsDelete: async function handleDeleteRow(row) {
       let response = await showModal(Object.keys(row.lookup).length);
-      if (response === 'Yes') {
+      if (response === 'DELETE') {
         const pids = Object.keys(row.lookup).map((idx) => testProfiles[idx]?.id);
         pids.forEach((pid) => handleDelete(pid));
-      }
-      if (response === 'No') {
+      } else {
         fetchTestProfiles(page, pageSize, search, sortOrder);
       }
     },
@@ -674,7 +674,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
         </UsesSistent>
       </div>
 
-      <PromptComponent ref={modalRef} />
+      <_PromptComponent ref={modalRef} />
     </>
   );
 }

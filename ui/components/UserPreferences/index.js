@@ -107,12 +107,19 @@ const styles = (theme) => ({
   },
 });
 
-const ThemeToggler = () => {
+const ThemeToggler = ({ handleUpdateUserPref }) => {
   const Component = ({ mode, toggleTheme }) => {
     return (
       <UsesSistent>
         <div>
-          <Switch color="primary" checked={mode === 'dark'} onChange={toggleTheme} />
+          <Switch 
+            color="primary" 
+            checked={mode === 'dark'} 
+            onChange={() => {
+              toggleTheme();
+              handleUpdateUserPref(mode === 'dark' ? 'light' : 'dark');
+            }} 
+          />
           Dark Mode
         </div>
       </UsesSistent>
@@ -647,15 +654,9 @@ const UserPreference = (props) => {
                   </FormLabel>
 
                   <FormGroup>
-                    <FormControlLabel
-                      key="ThemePreference"
-                      control={
-                        <ThemeToggler
-                          handleUpdateUserPref={handleUpdateUserPref}
-                          classes={props.classes}
-                        />
-                      }
-                      labelPlacement="end"
+                    <ThemeToggler
+                      handleUpdateUserPref={handleUpdateUserPref}
+                      classes={props.classes}
                     />
                   </FormGroup>
                 </FormGroupWrapper>
