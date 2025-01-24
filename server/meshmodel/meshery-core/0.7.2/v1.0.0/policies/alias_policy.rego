@@ -1,91 +1,55 @@
-package relationship_evaluation_policy
-
-# ----------- Module Alias Policy ------------------------------------------------------------------------
-# This module is responsible for evaluating alias relationships.
-# Alias relationships occur when a component serves as an alias
-# to a field in another component.
-# Example: A Container acts as an alias to the field `spec.containers[x]`
-# in a Pod (where `x` is the index of the container in the Pod).
-#
-# 1. Validation of Alias Relationships:
-#    - A previously approved alias relationship remains valid if:
-#        - The path it aliases still exists in the parent component.
-#        - The child alias component is still present.
-#    - The alias relationship becomes invalid if:
-#        - The child component is missing (e.g., the user deleted the container component inside the Pod).
-#        - The aliased configuration in the parent is missing
-#          (e.g., the user deleted the `containers` field in the Pod).
-#
-# 2. Identification of Alias Relationships:
-#    - An alias relationship exists if fields in the component are defined as aliases in the relationship block.
-#    - The alias relationship is identified by the presence of a selector where:
-#        - `from` specifies the child component.
-#        - `to` specifies the parent component.
-#    - The `mutatorRef`/`mutatedRef` must be a single-item array,
-#      where the item at index `0` points to the field in the child component that acts as an alias to the parent.
-#    - Newly identified relationships have a status of **pending**.
-#
-# 3. Action Phase:
-#    - For each pending relationship:
-#        - Add the alias component to the design file (if not already present).
-#        - Update the status of the relationship to **approved**.
-#    - For approved relationships:
-#        - No action is required.
-#    - For deleted relationships:
-#        - Remove the alias component from the design file.
-#        - Remove the aliased configuration from the parent component.
+package eval
 
 import rego.v1
 
+import data.core_utils
+import data.feasibility_evaluation_utils
+
+# Module: Alias Relationship Evaluator
+#
+# Purpose: Manages relationships where one component references (aliases) a field in another component.
+#
+# Example: In Kubernetes, a Container component might alias the field `spec.containers[x]` within a Pod component, where 'x' represents the container's index in the Pod's array.
+#
+# Process Flow:
+#
+# 1. Validation
+#    Valid relationships require:
+#    ✓ Parent component still contains the referenced path
+#    ✓ Child (alias) component still exists
+#
+#    Relationships become invalid when:
+#    ✗ Child component is removed (e.g., Container deleted from Pod)
+#    ✗ Referenced field is removed (e.g., `containers` array removed from Pod spec)
+#
+# 2. Identification
+#    Alias relationships are detected by:
+#    - Component fields marked as aliases in relationship block
+#    - Selector configuration that specifies:
+#      • 'from': The child (alias) component
+#      • 'to': The parent component being referenced
+#    - Single-item mutatorRef/mutatedRef array where index[0] points to
+#      the child component field acting as the alias
+#
+#    Note: New relationships start with "pending" status
+#
+# 3. Actions
+#    New  Relationships:
+#    + Add alias component to design file (if missing)
+#    + Update relationship status to "approved"
+#
+#    Approved Relationships:
+#    • No action needed (maintain current state)
+#
+#    Deleted Relationships:
+#    - Remove alias component from design file
+#    - Clean up aliased configuration in parent component
+
+# It is unlikely, that Meshery has a use case for supporting relationship.type == "child" aliases in the future.
 is_alias_relationship(relationship) if {
 	lower(relationship.kind) == "hierarchical"
 	lower(relationship.type) == "parent"
 	lower(relationship.subType) == "alias"
-}
-
-component_alias(component_id) := alias if {
-	alias := input.metadata.resolvedAliases[component_id] 
-}
-
-
-#-------- Get Component Configuration -----------
-get_component_configuration(component,design) := configuration if {
-	alias := component_alias(component.id)
-	# print("configuration from Alias is ==>",alias)
-
-	parent := component_declaration_by_id(design,alias.resolved_parent_id)
-	
-	configuration := object_get_nested(parent,alias.resolved_ref_field_path,null)
-	# print("Configuration got from Alias " ,configuration)
-}
-
-get_component_configuration(component,design) := configuration if {
-   not component_alias(component.id)
-   configuration := component.configuration
-
-   # print("Configuration direct",configuration)
-}
-
-# ------------------------------------------------
-
-# Get the from component id
-from_component_id(relationship) := component if {
-	some selector in relationship.selectors
-	some from in selector.allow.from
-	component := from.id
-}
-
-# Get the to component id
-to_component_id(relationship) := component if {
-	some selector in relationship.selectors
-	some to in selector.allow.to
-	component := to.id
-}
-
-# Get the component declaration by id
-component_declaration_by_id(design_file, id) := component if {
-	some component in design_file.components
-	component.id == id
 }
 
 alias_ref_from_relationship(relationship) := ref if {
@@ -94,7 +58,17 @@ alias_ref_from_relationship(relationship) := ref if {
 	ref := from.patch.mutatorRef[0]
 }
 
-identify_relationships(design_file, relationships_in_scope) := eval_results if {
+is_alias_policy_identifier(relationship_policy_identifier) if {
+	relationship_policy_identifier == {
+		"kind": "hierarchical",
+		"type": "parent",
+		"subtype": "alias",
+	}
+}
+
+identify_relationships(design_file, relationships_in_scope, relationship_policy_identifier) := eval_results if {
+	is_alias_policy_identifier(relationship_policy_identifier)
+
 	eval_results := union({new_relationships |
 		some relationship in relationships_in_scope
 
@@ -112,66 +86,8 @@ identify_relationships(design_file, relationships_in_scope) := eval_results if {
 			not alias_relationship_already_exists(design_file, rel)
 		}
 	})
-	#print("Identify alias rels Eval results", count(eval_results))
+	# print("Identify alias rels Eval results", count(eval_results))
 
-}
-
-new_uuid(seed) := id if {
-	now := format_int(time.now_ns(), 10)
-	id := uuid.rfc4122(sprintf("%s%s", [seed, now]))
-}
-
-object_get_nested(obj, path, default_value) := current_value if {
-	stringfied_path := [sprintf("%v", [v]) | some v in path]
-	[current_path, current_value] := walk(obj)
-	stringfied_current_path := [sprintf("%v", [v]) | some v in current_path]
-	stringfied_current_path == stringfied_path
-} else := default_value
-
-pop_last(arr) := array.slice(arr, 0, count(arr) - 1)
-pop_first(arr) := array.slice(arr,1,count(arr))
-
-array_endswith(arr, item) if {
-	arr[count(arr) - 1] == item
-}
-
-# check if the reference is a direct reference or an array reference
-# if the reference is a direct reference then it should not end with _
-is_direct_reference(ref) if {
-	not array_endswith(ref, "_")
-}
-
-identify_alias_paths(from, to, component,design) := paths if {
-	ref := from.patch.mutatorRef[0]
-	not is_direct_reference(ref)
-	direct_ref := pop_last(ref)
-
-	# print("Direct Ref", direct_ref,"pop",pop_first(direct_ref), "config", get_component_configuration(component,design),"v",object_get_nested(get_component_configuration(component,design), pop_first(direct_ref), []))
-
-
-	# remove nullish values
-	items := [item |
-		some item in object_get_nested(get_component_configuration(component,design), pop_first(direct_ref), [])
-		# print("item",item,"path",pop_first(direct_ref))
-		item != null
-	]
-
-	print("Items", items,from.kind,to.kind)
-	count(items) > 0
-
-	paths := [path |
-		some index in numbers.range(0, count(items) - 1)
-		path := array.concat(direct_ref, [sprintf("%d", [index])])
-	]
-	#print("Paths", paths)
-}
-
-identify_alias_paths(from, to, component,design) := paths if {
-	ref := from.patch.mutatorRef[0]
-	is_direct_reference(ref)
-	value := object_get_nested(get_component_configuration(component,design), pop_first(ref), null)
-	value != null
-	paths := [ref]
 }
 
 identify_alias_relationships(component, relationship) := {rel |
@@ -180,9 +96,12 @@ identify_alias_relationships(component, relationship) := {rel |
 	some to in selector.allow.to # to is parent
 
 	# identify if alias can be created
-	identified_alias_paths := identify_alias_paths(from, to, component,input)
+	# identified_alias_paths := identify_alias_paths(from, to, component,input)
 
-	#print("Identified Alias Paths", count(identified_alias_paths))
+	array_items := get_array_aware_configuration_for_component_at_path(from.patch.mutatorRef[0], component, input)
+	identified_alias_paths := array_items.paths
+
+	# print("Identified Alias Paths", identified_alias_paths)
 
 	count(identified_alias_paths) > 0 # if alias paths are present then alias can be created
 
@@ -263,12 +182,6 @@ alias_relationship_already_exists(design_file, relationship) := existing_rel if 
 	to.id == new_to.id
 }
 
-is_relationship_feasible_to(component, relationship) := to if {
-	some selector in relationship.selectors
-	some to in selector.allow.to
-	is_relationship_feasible(to, component.component.kind)
-}
-
 ## Validate
 
 # validate relationship and return the updated relationship
@@ -279,21 +192,22 @@ is_alias_relationship_valid(relationship, design_file) if {
 	from_component := component_declaration_by_id(design_file, from_component_id(relationship))
 	from_component != null
 
-	#print("Is valid -> from_component", from_component)
+	# print("Is valid -> from_component", from_component)
 
 	# check if the to component is still present
 	to_component := component_declaration_by_id(design_file, to_component_id(relationship))
 	to_component != null
 
-	#print("Is valid -> to_component", to_component)
+	# print("Is valid -> to_component", to_component)
 
 	# check if the path in the to component is still present
 
 	ref := alias_ref_from_relationship(relationship)
 
-	#print("Is valid -> ref", ref,relationship.id)
-	value := object_get_nested(get_component_configuration(to_component,design_file), pop_first(ref), null)
-	#print("Is valid -> value", value)
+	# print("Is valid -> ref", ref,relationship.id)
+	value := object_get_nested(get_component_configuration(to_component, design_file), pop_first(ref), null)
+
+	# print("Is valid -> value", value)
 	value != null
 }
 
@@ -314,15 +228,20 @@ validate_relationship(relationship, design_file) := updated_relationship if {
 	}])
 }
 
-# validate all relationships in the design file
-validate_relationships_phase(design_file) := {validated |
-	some rel in design_file.relationships
-	validated := validate_relationship(rel, design_file)
+# validate all relationships in the design file ( use partial rule so it doesnt conflict with other policies)
+validate_relationships_phase(design_file, relationship_policy_identifier) := result if {
+	is_alias_policy_identifier(relationship_policy_identifier)
+
+	result := {validated |
+		some rel in design_file.relationships
+		is_alias_relationship(rel)
+		validated := validate_relationship(rel, design_file)
+	}
 }
 
 ## Action Phase
 
-add_components_action(design_file, alias_relationships) := {component |
+alias_components_to_add(design_file, alias_relationships) := {action |
 	some relationship in alias_relationships
 	relationship.status == "pending"
 	some selector in relationship.selectors
@@ -333,15 +252,25 @@ add_components_action(design_file, alias_relationships) := {component |
 		"component": {"kind": from.kind},
 		"model": from.model,
 	}
+
+	action := {
+		"op": "add_component",
+		"value": component,
+	}
 }
 
-remove_components_action(design_file, alias_relationships) := {component |
+alias_components_to_remove(design_file, alias_relationships) := {action |
 	some relationship in alias_relationships
 	relationship.status == "deleted"
 	some selector in relationship.selectors
 	some from in selector.allow.from
 
 	component := component_declaration_by_id(design_file, from.id)
+
+	action := {
+		"op": "delete_component",
+		"value": component,
+	}
 }
 
 # action response {
@@ -352,14 +281,16 @@ remove_components_action(design_file, alias_relationships) := {component |
 #   relationships_deleted : list of relationships deleted
 #   relationships_updated : list of relationships updated
 # }
-action_phase(design_file) := result if {
+action_phase(design_file, relationship_policy_identifier) := result if {
+	is_alias_policy_identifier(relationship_policy_identifier)
+
 	alias_relationships := {rel |
 		some rel in design_file.relationships
 		is_alias_relationship(rel)
 	}
 
-	components_added := add_components_action(design_file, alias_relationships)
-	relationships_added := {rel |
+	components_to_add := alias_components_to_add(design_file, alias_relationships)
+	relationships_to_add := {action |
 		some alias_rel in alias_relationships
 		alias_rel.status == "pending"
 		rel := json.patch(alias_rel, [{
@@ -367,31 +298,27 @@ action_phase(design_file) := result if {
 			"path": "/status",
 			"value": "approved",
 		}])
+		action := {
+			"op": "add_relationship",
+			"value": rel,
+		}
 	}
 
 	# Relationships that are deleted already at the validation phase
-	relationships_deleted := {alias_rel |
+	relationships_to_delete := {action |
 		some alias_rel in alias_relationships
 		alias_rel.status == "deleted"
+
+		action := {
+			"op": "delete_relationship",
+			"value": alias_rel,
+		}
 	}
+	components_to_delete := alias_components_to_remove(design_file, alias_relationships)
 
-	print("Relationships Deleted by alias policy", count(relationships_deleted))
+	# print("Relationships Deleted by alias policy", count(relationships_deleted))
 
-	component_deleted := remove_components_action(design_file, alias_relationships)
+	# print("Components added", count(components_added))
 
-	print("Components added", count(components_added))
-
-	result := {
-		"components_to_add": components_added,
-		"components_to_delete": component_deleted,
-		"updates": {},
-		"relationships_to_add": relationships_added,
-		"relationships_to_delete": relationships_deleted,
-	}
-} else := {
-	"components_to_add": {},
-	"components_to_delete": {},
-	"updates": {},
-	"relationships_to_add": {},
-	"relationships_to_delete": {},
+	result := ((components_to_add | components_to_delete) | relationships_to_add) | relationships_to_delete
 }
