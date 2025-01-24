@@ -181,8 +181,8 @@ const ConnectionTable = ({
     kind: selectedFilter
       ? JSON.stringify([selectedFilter])
       : kindFilter
-      ? JSON.stringify([kindFilter])
-      : '',
+        ? JSON.stringify([kindFilter])
+        : '',
   });
   const {
     data: environmentsResponse,
