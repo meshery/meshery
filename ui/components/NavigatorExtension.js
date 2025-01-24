@@ -30,7 +30,7 @@ import { getComponentsinFile, generateValidatePayload } from '../utils/utils';
 import UploadImport from './UploadImport';
 import InfoModal from '../components/Modals/Information/InfoModal';
 import ConfigurationSubscription from '../components/graphql/subscriptions/ConfigurationSubscription';
-import PromptComponent from './PromptComponent';
+import _PromptComponent from './PromptComponent';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import { useNotification } from '../utils/hooks/useNotification';
 import Modal, { RJSFModalWrapper } from './Modal';
@@ -148,7 +148,7 @@ function NavigatorExtension({
           ExportModal,
           GenericRJSFModal: Modal,
           RJSFModalWrapper: RJSFModalWrapper,
-          PromptComponent,
+          _PromptComponent,
           generateValidatePayload,
           capabilitiesRegistry,
           CapabilitiesRegistryClass: CapabilitiesRegistry,

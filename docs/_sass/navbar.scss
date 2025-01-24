@@ -266,13 +266,3 @@ html {
   padding: 0;
   margin-top: var(--navbar-height);
 }
-
-h1[id],
-h2[id],
-h3[id],
-h4[id],
-h5[id],
-h6[id] {
-  margin-top: calc(-1 * var(--navbar-height) / 2);
-  padding-top: calc(var(--navbar-height) / 2);
-}
