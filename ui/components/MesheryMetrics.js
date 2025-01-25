@@ -56,6 +56,7 @@ function MesheryMetrics({
       </Typography>
       <Button
         aria-label="Add Grafana Charts"
+        data-testid="configure-metrics-button"
         variant="contained"
         color="primary"
         size="large"

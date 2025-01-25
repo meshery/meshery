@@ -75,6 +75,7 @@ function GrafanaConfigComponent({
                     }))}
                     value={grafanaURL}
                     label="Grafana Base URL"
+                    data-testid="grafana-base-url"
                     error={urlError}
                     placeholder="Address of Grafana Server"
                     noOptionsMessage="No Grafana servers discovered"
@@ -85,6 +86,7 @@ function GrafanaConfigComponent({
                 <TextField
                   id="grafanaAPIKey"
                   name="grafanaAPIKey"
+                  data-testid="grafana-api-key"
                   label="API Key"
                   fullWidth
                   value={grafanaAPIKey}

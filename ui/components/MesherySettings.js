@@ -269,7 +269,12 @@ const MesherySettings = (props) => {
                     // disabled={!CAN(keys.VIEW_OVERVIEW.action, keys.VIEW_OVERVIEW.subject)}
                   />
                 </CustomTooltip>
-                <CustomTooltip title="Connect Meshery Adapters" placement="top" value={ADAPTERS}>
+                <CustomTooltip
+                  title="Connect Meshery Adapters"
+                  data-testid="settings-tab-adapters"
+                  placement="top"
+                  value={ADAPTERS}
+                >
                   <Tab
                     icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
                     label="Adapters"
@@ -287,6 +292,7 @@ const MesherySettings = (props) => {
                   <Tab
                     icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
                     label="Metrics"
+                    data-testid="settings-tab-metrics"
                     // tab="tabMetrics"
                     value={METRICS}
                     disabled={!CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject)}
@@ -296,6 +302,7 @@ const MesherySettings = (props) => {
                   <Tab
                     icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
                     label="Registry"
+                    data-testid="settings-tab-registry"
                     // tab="registry"
                     value={REGISTRY}
                     disabled={!CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)}
@@ -306,6 +313,7 @@ const MesherySettings = (props) => {
                   <Tab
                     icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
                     label="Reset"
+                    data-testid="settings-tab-reset"
                     // tab="systemReset"
                     value={RESET}
                     // disabled={!CAN(keys.VIEW_SYSTEM_RESET.action, keys.VIEW_SYSTEM_RESET.subject)} TODO: uncomment when key get seeded
