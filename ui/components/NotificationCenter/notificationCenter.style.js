@@ -1,6 +1,5 @@
-import { makeStyles } from '@material-ui/core';
 import { Badge, Box, Button, Drawer, Grid, IconButton, Typography, styled } from '@layer5/sistent';
-import { alpha } from '@mui/material';
+import { alpha } from '@mui/system';
 
 export const DarkBackdrop = styled('div')(({ open }) => ({
   position: 'fixed',
@@ -11,69 +10,6 @@ export const DarkBackdrop = styled('div')(({ open }) => ({
   backgroundColor: 'rgba(0, 0, 0, 0.5)', // Adjust the opacity as needed
   display: open ? 'block' : 'none', // Show only when anchored to mobile
   zIndex: '1202', // Ensure it's behind the container
-}));
-export const useStyles = makeStyles((theme) => ({
-  sidelist: {
-    width: '45rem',
-    maxWidth: '95vw',
-  },
-  drawerButton: {
-    padding: '0.45rem',
-    margin: '0.2rem',
-    backgroundColor: theme.palette.secondary.dark,
-    color: '#FFFFFF',
-    '&:hover': {
-      backgroundColor: '#FFFFFF',
-      color: theme.palette.secondary.dark,
-    },
-  },
-
-  header: {
-    display: 'flex',
-    gap: '0.5rem',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    height: '5.65rem',
-    flexWrap: 'wrap',
-    background: theme.palette.secondary.headerColor,
-  },
-  title: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-  },
-  titleBellIcon: {
-    width: '2.25rem',
-    height: '2.25rem',
-    borderRadius: '100%',
-    backgroundColor: 'black',
-    display: 'flex',
-    padding: '0.2rem',
-    justifyContent: 'center',
-    alignItems: 'center',
-    cursor: 'pointer',
-  },
-  // Aggregrate Level Chips
-  severityChip: {
-    borderRadius: '0.25rem',
-    display: 'flex',
-    gap: '0.45rem',
-    justifyContent: 'start',
-    alignItems: 'center',
-    fontSize: '.95rem',
-    fontWeight: 600,
-    cursor: 'pointer',
-  },
-  // Aggregrate Level Chips
-  severityChips: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: '0.75rem',
-    alignItems: 'center',
-  },
-  notification: {
-    margin: theme.spacing(0.5, 1),
-  },
 }));
 
 export const SideList = styled('div')(() => ({
@@ -248,7 +184,17 @@ export const Expanded = styled(Grid)(({ theme }) => ({
     padding: '0.5rem',
   },
 }));
-
+export const StyledAvatarStack = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '0',
+  '& .MuiAvatar-root': {
+    width: '2rem',
+    height: '2rem',
+    border: `0.05rem solid ${theme.palette.text.default}`,
+  },
+}));
 export const ActorAvatar = styled(Grid)(() => ({
   display: 'flex',
   justifyContent: 'center',
@@ -276,9 +222,41 @@ export const Message = styled(Typography)(() => ({
 export const GridItem = styled(Grid)(() => ({
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center',
+  justifyContent: 'start',
+  gap: '0.25rem',
 }));
-
+export const MenuPaper = styled(Box)(({ theme }) => ({
+  color: theme.palette.icon.secondary,
+  boxShadow: theme.shadows[4],
+  borderRadius: '0.25rem',
+  paddingInline: '0.5rem',
+  paddingBlock: '0.25rem',
+  width: '12.5rem',
+}));
+export const MenuList = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  flexDirection: 'column',
+  gridGap: '0.5rem',
+  marginBlock: '0.5rem',
+  borderRadius: '0.25rem',
+  backgroundColor: theme.palette.mode === 'dark' ? '#303030' : '#F0F0F0',
+  '&:hover': {
+    backgroundColor: alpha(theme.palette.text.brand, 0.25),
+  },
+}));
+export const MenuListItem = styled(Box)(() => ({
+  display: 'flex',
+  gridGap: '0.5rem',
+  alignItems: 'center',
+  justifyContent: 'space-around',
+}));
+export const SocialListItem = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  backgroundColor: alpha(theme.palette.background?.surfaces, 0.25),
+  alignItems: 'center',
+  justifyContent: 'space-around',
+  padding: '.65rem',
+}));
 export const StyledBadge = styled(Badge)(({ badgeColor }) => ({
   '& .MuiBadge-badge': {
     backgroundColor: badgeColor,
