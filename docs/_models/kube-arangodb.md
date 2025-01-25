@@ -86,6 +86,9 @@ components:
   colorIcon: assets/img/integrations/kube-arangodb/components/arango-scheduler-pod/icons/color/arango-scheduler-pod-color.svg
   whiteIcon: assets/img/integrations/kube-arangodb/components/arango-scheduler-pod/icons/white/arango-scheduler-pod-white.svg
   description: 
+components-count: 19
+relationships: 
+relationship-count: 0
 featureList: [
   "Automated deployment and management of ArangoDB on Kubernetes",
   "Scaling and high availability of ArangoDB",

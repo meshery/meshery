@@ -10,6 +10,9 @@ integrations-category: Provisioning
 integrations-subcategory: Automation & Configuration
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Centrally manage your toolchain with versioned code, and keep track of every change.",
   "No reinvention of the wheels. Simply create a plugin, and connect any tools you like with DevStream.",

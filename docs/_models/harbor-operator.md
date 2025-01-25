@@ -34,6 +34,9 @@ components:
   colorIcon: assets/img/integrations/harbor-operator/components/user/icons/color/user-color.svg
   whiteIcon: assets/img/integrations/harbor-operator/components/user/icons/white/user-white.svg
   description: 
+components-count: 6
+relationships: 
+relationship-count: 0
 featureList: [
   "Content signing and validation",
   "Security and vulnerability analysis",

@@ -97,6 +97,10 @@ Meshery interfaces with providers through a Go interface. The Provider implement
 
 Meshery keeps the implementation of Remote Providers separate so that they are brought in through a separate process and injected into Meshery at runtime (OR) change the way the code works to make the Providers invoke Meshery.
 
+### Verifying Compatibility With Golang Version Update
+
+When Meshery is updated to a newer version of Golang, extension providers need to ensure their integrations remain compatible with the updated version. Changes in the Golang version can lead to compatibility issues, so it’s important to update your extension to align with Meshery’s new environment. For a detailed guide on how to verify and address any compatibility issues, refer to this [guide on verifying compatibility](./verify-compatibility).
+
 ### Remote Provider Extension Points
 
 Interwoven into Meshery’s web-based user interface are a variety of extension points. Each extension point is carefully carved out to afford a seamless user experience. Each extension point is identified by a name and type. The following Meshery UI extension points are available:

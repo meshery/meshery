@@ -8,11 +8,12 @@ import {
   Grid,
   Box,
   styled,
+  PROMPT_VARIANTS,
 } from '@layer5/sistent';
 import React from 'react';
 import { useRef } from 'react';
 import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
-import PromptComponent from './PromptComponent';
+import _PromptComponent from './PromptComponent';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateProgress } from '../lib/store';
@@ -119,7 +120,8 @@ const MesherySettingsEnvButtons = () => {
           />
         </>
       ),
-      options: ['OK'],
+      variant: PROMPT_VARIANTS.SUCCESS,
+      primaryOption: 'OK',
     });
   };
 
@@ -165,7 +167,8 @@ const MesherySettingsEnvButtons = () => {
           </div>
         </>
       ),
-      options: ['IMPORT', 'CANCEL'],
+      primaryOption: 'IMPORT',
+      variant: PROMPT_VARIANTS.SUCCESS,
       showInfoIcon:
         'If your config has not been autodetected, you can manually upload your kubeconfig file (or any number of kubeconfig files). By default, Meshery will attempt to connect to and deploy Meshery Operator to each reachable context contained in the imported kubeconfig files. [See Managing Kubernetes Clusters for more information](https://docs.meshery.io/installation/kubernetes).',
     });
@@ -216,6 +219,7 @@ const MesherySettingsEnvButtons = () => {
           <Typography
             style={{
               paddingLeft: '4px',
+              width: 'max-content',
               marginRight: '4px',
             }}
             data-testid={testIDs('addCluster')}
@@ -224,7 +228,7 @@ const MesherySettingsEnvButtons = () => {
           </Typography>
         </Button>
       </UsesSistent>
-      <PromptComponent ref={ref} />
+      <_PromptComponent ref={ref} />
     </div>
   );
 };

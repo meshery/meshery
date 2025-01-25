@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from 'react';
-import { connect } from 'react-redux';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { Pagination, PaginationItem } from '@material-ui/lab';
@@ -12,10 +11,10 @@ import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import EnvironmentCard from './environment-card';
 import EnvironmentIcon from '../../../assets/icons/Environment';
 import { EVENT_TYPES } from '../../../lib/event-types';
-import { updateProgress } from '../../../lib/store';
+import { updateProgress, useLegacySelector } from '../../../lib/store';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { RJSFModalWrapper } from '../../Modal';
-import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
+import _PromptComponent from '../../PromptComponent';
 import { EmptyState } from '../General';
 import {
   Modal as SisitentModal,
@@ -30,6 +29,7 @@ import {
   Grid,
   Typography,
   SearchBar,
+  PROMPT_VARIANTS,
 } from '@layer5/sistent';
 import ConnectionIcon from '../../../assets/icons/Connection';
 import { TRANSFER_COMPONENT } from '../../../utils/Enum';
@@ -52,7 +52,10 @@ const ACTION_TYPES = {
   EDIT: 'edit',
 };
 
-const Environments = ({ organization }) => {
+const Environments = () => {
+  const organization = useLegacySelector((state) =>
+    state.get('organization')?.toJS ? state.get('organization').toJS() : state.get('organization'),
+  );
   const [environmentModal, setEnvironmentModal] = useState({
     open: false,
     schema: {},
@@ -296,7 +299,7 @@ const Environments = ({ organization }) => {
     let response = await modalRef.current.show({
       title: `Delete "${environment.name}" environment?`,
       subtitle: deleteEnvironmentModalContent(environment.name),
-      options: ['DELETE', 'CANCEL'],
+      primaryOption: 'DELETE',
       showInfoIcon: `Deleting an environment does not delete any resources (e.g. connections) currently contained with the environment.
       Resources that belong to others environments will continue to belong to those other environments.
       Learn more about the behavior of [lifecycle of environments and their resources](https://docs.meshery.io/concepts/logical/environments) in Meshery Docs.`,
@@ -343,7 +346,7 @@ const Environments = ({ organization }) => {
     let response = await modalRef.current.show({
       title: `Delete Environment(s) ?`,
       subtitle: `Do you want to delete ${selectedEnvironments.length} environment(s) ?`,
-      options: ['DELETE', 'CANCEL'],
+      primaryOption: 'DELETE',
       variant: PROMPT_VARIANTS.DANGER,
     });
     if (response === 'DELETE') {
@@ -636,7 +639,7 @@ const Environments = ({ organization }) => {
                 />
               </ModalFooter>
             </SisitentModal>
-            <PromptComponent ref={modalRef} />
+            <_PromptComponent ref={modalRef} />
           </>
         ) : (
           <DefaultError />
@@ -644,13 +647,6 @@ const Environments = ({ organization }) => {
       </NoSsr>
     </UsesSistent>
   );
-};
-
-const mapStateToProps = (state) => {
-  const organization = state.get('organization');
-  return {
-    organization,
-  };
 };
 
 const EnvironmentsPageWithErrorBoundary = (props) => {
@@ -663,4 +659,4 @@ const EnvironmentsPageWithErrorBoundary = (props) => {
   );
 };
 
-export default connect(mapStateToProps)(withRouter(EnvironmentsPageWithErrorBoundary));
+export default withRouter(EnvironmentsPageWithErrorBoundary);

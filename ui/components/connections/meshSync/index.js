@@ -116,7 +116,7 @@ export default function MeshSyncTable(props) {
 
   let colViews = [
     ['metadata.name', 'xs'],
-    ['apiVersion', 'xs'],
+    ['apiVersion', 'na'],
     ['kind', 'm'],
     ['cluster_id', 'na'],
     ['pattern_resources', 'na'],

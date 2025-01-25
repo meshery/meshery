@@ -54,6 +54,9 @@ components:
   colorIcon: assets/img/integrations/cilium/components/cilium-node/icons/color/cilium-node-color.svg
   whiteIcon: assets/img/integrations/cilium/components/cilium-node/icons/white/cilium-node-white.svg
   description: 
+components-count: 11
+relationships: 
+relationship-count: 0
 featureList: [
   "Ensure Cilium Service Mesh daemonset operation",
   "Define microservice isolation using eBPF",

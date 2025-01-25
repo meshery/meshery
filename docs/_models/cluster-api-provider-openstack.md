@@ -38,6 +38,9 @@ components:
   colorIcon: assets/img/integrations/cluster-api-provider-openstack/components/open-stack-server/icons/color/open-stack-server-color.svg
   whiteIcon: assets/img/integrations/cluster-api-provider-openstack/components/open-stack-server/icons/white/open-stack-server-white.svg
   description: 
+components-count: 7
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates Kubernetes cluster provisioning",
   "Supports various OpenStack distributions",

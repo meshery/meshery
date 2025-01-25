@@ -58,6 +58,33 @@ components:
   colorIcon: assets/img/integrations/aws-rds-controller/components/db-cluster-snapshot/icons/color/db-cluster-snapshot-color.svg
   whiteIcon: assets/img/integrations/aws-rds-controller/components/db-cluster-snapshot/icons/white/db-cluster-snapshot-white.svg
   description: 
+components-count: 12
+relationships: 
+- type: "Parent"
+  kind: "Hierarchical"
+  description: ""
+- type: "Non Binding"
+  kind: "Edge"
+  description: ""
+- type: "Parent"
+  kind: "Hierarchical"
+  description: ""
+- type: "Binding"
+  kind: "Edge"
+  description: ""
+- type: "Non Binding"
+  kind: "Edge"
+  description: ""
+- type: "Non Binding"
+  kind: "Edge"
+  description: ""
+- type: "Non Binding"
+  kind: "Edge"
+  description: ""
+- type: "Binding"
+  kind: "Edge"
+  description: ""
+relationship-count: 8
 featureList: [
   "Amazon RDS integrates with AWS Config to support compliance and enhance security by recording and auditing changes to the configuration of your DB instance",
   "Amazon Aurora supports quick, efficient cloning operations, where entire multi-terabyte database clusters can be cloned in minutes.",

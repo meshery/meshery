@@ -10,6 +10,9 @@ integrations-category: Platform
 integrations-subcategory: Operating System
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Provides the foundation for Kubernetes' containerization and networking",
   "Offers flexibility and customization for different hardware and software configurations",

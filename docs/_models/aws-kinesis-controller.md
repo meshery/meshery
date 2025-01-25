@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/aws-kinesis-controller/components/stream/icons/color/stream-color.svg
   whiteIcon: assets/img/integrations/aws-kinesis-controller/components/stream/icons/white/stream-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Collects, processes, and analyzes streaming data",
   "Scalable and durable",

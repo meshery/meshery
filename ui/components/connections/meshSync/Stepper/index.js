@@ -1,7 +1,5 @@
 import * as React from 'react';
-import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
-import { ColorlibConnector, useStyles, useColorlibStepIconStyles } from '../../../Connect/styles';
+import { useColorlibStepIconStyles } from '../../../Connect/styles';
 import TipsCarousel from '../../../General/TipsCarousel';
 import {
   ConnectionStepperTips,
@@ -9,8 +7,9 @@ import {
   registerConnectionIcons,
   registerConnectionSteps,
 } from './constants';
-import Stepper from '@material-ui/core/Stepper';
 import clsx from 'clsx';
+import { Step } from '@mui/material';
+import { ColorlibConnector, CustomLabelStyle, StepperContainer } from '../../styles';
 
 function StepperIcon(props) {
   const classes = useColorlibStepIconStyles();
@@ -50,7 +49,6 @@ export default function CustomizedSteppers({
     steps: registerConnectionSteps,
   };
   const { stepContent, stepIcons, steps } = stepData;
-  const classes = useStyles();
   const [activeStep, setActiveStep] = React.useState(0);
 
   React.useEffect(() => {
@@ -81,23 +79,21 @@ export default function CustomizedSteppers({
   return (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
       <div style={{ display: 'flex', justifyContent: 'center' }}>
-        <Stepper
+        <StepperContainer
           alternativeLabel
           activeStep={activeStep}
           connector={<ColorlibConnector />}
-          classes={{ root: classes.stepperContainer }}
         >
           {steps.map((label) => (
             <Step key={label}>
-              <StepLabel
+              <CustomLabelStyle
                 StepIconComponent={(props) => <StepperIcon {...props} stepIcons={stepIcons} />}
-                classes={{ label: classes.customLabelStyle }}
               >
                 {label}
-              </StepLabel>
+              </CustomLabelStyle>
             </Step>
           ))}
-        </Stepper>
+        </StepperContainer>
       </div>
       <div
         style={{

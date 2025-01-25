@@ -29,6 +29,40 @@ const verifyAdapterResBody = (body) => {
 
 test.describe('Settings Page Tests', () => {
   test.beforeEach(async ({ page }) => {
+    await page.goto(`${ENV.MESHERY_SERVER_URL}/settings`);
+  });
+
+  test('Aggregation Charts are displayed', async ({ page }) => {
+    await expect(
+      page.getByRole('heading', {
+        name: 'Models by Category',
+      }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByRole('heading', {
+        name: 'Registry',
+      }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByRole('heading', {
+        name: 'Connections',
+        exact: true,
+      }),
+    ).toBeVisible();
+
+    await expect(
+      page.getByRole('heading', {
+        name: 'Configuration',
+      }),
+    ).toBeVisible();
+  });
+
+  test('Connect to Meshery Istio Adapter and configure it', async ({ page }) => {
+    // Navigate to 'Adapters' tab
+    await page.getByRole('tab', { name: 'Adapters', exact: true }).click({ force: true });
+
     const meshAdapterReq = page.waitForRequest(
       (request) =>
         request.url() === `${ENV.MESHERY_SERVER_URL}/api/system/adapters` &&
@@ -39,20 +73,6 @@ test.describe('Settings Page Tests', () => {
         response.url() === `${ENV.MESHERY_SERVER_URL}/api/system/adapters` &&
         response.status() === 200,
     );
-
-    // Visit Settings Page
-    await page.goto(`${ENV.MESHERY_SERVER_URL}/settings`);
-
-    // Verify requests and responses expected on initial page load
-    await meshAdapterReq;
-    const res = await meshAdapterRes;
-    const body = await res.json();
-    verifyAdapterResBody(body);
-  });
-
-  test('Connect to Meshery Istio Adapter and configure it', async ({ page }) => {
-    // Navigate to 'Adapters' tab
-    await page.getByRole('tab', { name: 'Adapters', exact: true }).click({ force: true });
 
     const meshManageReq = page.waitForRequest(
       (request) =>
@@ -78,10 +98,13 @@ test.describe('Settings Page Tests', () => {
     await page.getByRole('button', { name: 'Connect', exact: true }).click();
 
     // Verify requests and responses
+    await meshAdapterReq;
+    const adapterRes = await meshAdapterRes;
+    verifyAdapterResBody(await adapterRes.json());
+
     await meshManageReq;
-    const res = await meshManageRes;
-    const body = await res.json();
-    verifyAdapterResBody(body);
+    const manageRes = await meshManageRes;
+    verifyAdapterResBody(await manageRes.json());
 
     // Verify success notification
     await expect(page.getByText('Adapter was configured!')).toBeVisible();
