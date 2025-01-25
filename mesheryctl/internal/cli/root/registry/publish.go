@@ -100,13 +100,12 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 		// move to meshkit
 		srv, err := meshkitUtils.NewSheetSRV(googleSheetCredential)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return errors.New(utils.RegistryError("Invalid JWT Token: Ensure the provided token is a base64-encoded, valid Google Spreadsheets API token.", "publish"))
 		}
 		resp, err := srv.Spreadsheets.Get(sheetID).Fields().Do()
 		if err != nil || resp.HTTPStatusCode != 200 {
-			utils.Log.Error(err)
-			return nil
+			errMsg := fmt.Sprintf("Fetch Google Spreadsheets did not succeed. with error: %v", err)
+			return errors.New(utils.RegistryError(errMsg, "publish"))
 		}
 
 		modelCSVHelper := &utils.ModelCSVHelper{}
