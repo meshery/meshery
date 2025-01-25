@@ -17,14 +17,14 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY ui/package.json ui/package-lock.json ./
 ENV HUSKY=0
-RUN npm ci --omit=dev --legacy-peer-deps --ignore-scripts
-
+RUN npm ci --omit=dev --legacy-peer-deps --ignore-scripts && \
+    npm ci --save-dev eslint@^8.0.0 eslint-config-next@^13.1.2 @next/eslint-plugin-next@^13.1.2 eslint-config-prettier@^9.1.0 eslint-plugin-prettier@^5.2.1 eslint-plugin-react@^7.37.2
 FROM base-node AS meshery-ui-provider-deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY provider-ui/package.json provider-ui/package-lock.json ./
-RUN npm ci --omit=dev --legacy-peer-deps
-
+RUN npm ci --omit=dev --legacy-peer-deps --ignore-scripts && \
+    npm ci --save-dev eslint@^8.0.0 eslint-config-next@^13.1.2 @next/eslint-plugin-next@^13.1.2 eslint-config-prettier@^9.1.0 eslint-plugin-prettier@^5.2.1 eslint-plugin-react@^7.37.2
 # Build NextJS Application
 FROM base-node AS meshery-ui-builder
 WORKDIR /app
