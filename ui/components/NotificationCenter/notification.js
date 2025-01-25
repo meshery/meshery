@@ -8,13 +8,12 @@ import {
   Slide,
   Tooltip,
   Typography,
-  styled,
   useTheme,
   Checkbox,
 } from '@layer5/sistent';
 import {
-  MenuList,
-  MenuListItem,
+  OptionList,
+  OptionListItem,
   MenuPaper,
   SocialListItem,
   ListButton,
@@ -23,10 +22,11 @@ import {
   GridItem,
   Message,
   StyledAvatarStack,
+  Root,
+  Summary,
 } from './notificationCenter.style';
 import { UsesSistent } from '../SistentWrapper';
 import { Popover } from '@mui/material';
-import { alpha } from '@mui/system';
 
 import { SEVERITY, SEVERITY_STYLE, STATUS } from './constants';
 import { iconLarge, iconMedium } from '../../css/icons.styles';
@@ -54,20 +54,6 @@ import UnreadIcon from '../../assets/icons/UnreadIcon';
 import { FormattedMetadata } from './metadata';
 
 import { truncate } from 'lodash';
-
-const Root = styled('div')(({ notificationcolor, status }) => ({
-  width: '100%',
-  borderRadius: '0.25rem',
-  border: `0.1rem solid ${notificationcolor}`,
-  borderLeftWidth: status === STATUS.UNREAD ? '0.5rem' : '0.1rem',
-  marginBlock: '0.5rem',
-}));
-const Summary = styled(Grid)(({ notificationcolor }) => ({
-  paddingBlock: '0.5rem',
-  paddingInline: '0.25rem',
-  cursor: 'pointer',
-  backgroundColor: alpha(notificationcolor, 0.2),
-}));
 
 export const eventPreventDefault = (e) => {
   e.preventDefault();
@@ -160,15 +146,15 @@ const BasicMenu = ({ event }) => {
           }}
         >
           <MenuPaper>
-            <MenuList>
-              <MenuListItem sx={{ width: '100%' }}>
+            <OptionList>
+              <OptionListItem sx={{ width: '100%' }}>
                 <ListButton onClick={toggleSocialShare}>
                   <ShareIcon {...iconMedium} fill={theme.palette.icon.secondary} />
                   <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
                     Share
                   </Typography>
                 </ListButton>
-              </MenuListItem>
+              </OptionListItem>
               <Collapse in={isSocialShareOpen}>
                 <SocialListItem>
                   <FacebookShareButton url={'https://meshery.io'} quote={event.description || ''}>
@@ -182,7 +168,7 @@ const BasicMenu = ({ event }) => {
                   </TwitterShareButton>
                 </SocialListItem>
               </Collapse>
-            </MenuList>
+            </OptionList>
 
             <DeleteEvent event={event} />
             <ChangeStatus event={event} />
@@ -203,7 +189,7 @@ export const DeleteEvent = ({ event }) => {
   };
   return (
     <UsesSistent>
-      <MenuList>
+      <OptionList>
         <ListButton onClick={handleDelete}>
           <DeleteIcon {...iconMedium} fill={theme.palette.icon.secondary} />
           <Typography variant="body1" sx={{ marginLeft: '0.5rem' }}>
@@ -211,7 +197,7 @@ export const DeleteEvent = ({ event }) => {
             Delete{' '}
           </Typography>
         </ListButton>
-      </MenuList>
+      </OptionList>
     </UsesSistent>
   );
 };
@@ -226,7 +212,7 @@ export const ChangeStatus = ({ event }) => {
   };
   return (
     <UsesSistent>
-      <MenuList>
+      <OptionList>
         <ListButton onClick={updateStatus}>
           {newStatus === STATUS.READ ? (
             <ReadIcon {...iconMedium} fill={theme.palette.icon.secondary} />
@@ -238,7 +224,7 @@ export const ChangeStatus = ({ event }) => {
             Mark as {newStatus}{' '}
           </Typography>
         </ListButton>
-      </MenuList>
+      </OptionList>
     </UsesSistent>
   );
 };

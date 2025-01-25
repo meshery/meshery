@@ -1,6 +1,6 @@
 import { Badge, Box, Button, Drawer, Grid, IconButton, Typography, styled } from '@layer5/sistent';
 import { alpha } from '@mui/system';
-
+import { STATUS } from './constants';
 export const DarkBackdrop = styled('div')(({ open }) => ({
   position: 'fixed',
   top: 0,
@@ -16,7 +16,9 @@ export const SideList = styled('div')(() => ({
   width: '45rem',
   maxWidth: '95vw',
 }));
-
+export const StyledSubtitle = styled(Typography)(() => ({
+  textTransform: 'capitalize',
+}));
 export const NotificationButton = styled(IconButton)(() => ({
   height: '100%',
   '&:hover': {
@@ -202,13 +204,6 @@ export const ActorAvatar = styled(Grid)(() => ({
   paddingTop: '1rem',
 }));
 
-export const Summary = styled(Grid)(({ props }) => ({
-  paddingBlock: '0.5rem',
-  paddingInline: '0.25rem',
-  cursor: 'pointer',
-  backgroundColor: alpha(props.notificationColor, 0.2),
-}));
-
 export const Message = styled(Typography)(() => ({
   overflow: 'hidden',
   textOverflow: 'ellipsis',
@@ -233,7 +228,7 @@ export const MenuPaper = styled(Box)(({ theme }) => ({
   paddingBlock: '0.25rem',
   width: '12.5rem',
 }));
-export const MenuList = styled(Box)(({ theme }) => ({
+export const OptionList = styled(Box)(({ theme }) => ({
   display: 'flex',
   flexDirection: 'column',
   gridGap: '0.5rem',
@@ -244,7 +239,7 @@ export const MenuList = styled(Box)(({ theme }) => ({
     backgroundColor: alpha(theme.palette.text.brand, 0.25),
   },
 }));
-export const MenuListItem = styled(Box)(() => ({
+export const OptionListItem = styled(Box)(() => ({
   display: 'flex',
   gridGap: '0.5rem',
   alignItems: 'center',
@@ -261,4 +256,18 @@ export const StyledBadge = styled(Badge)(({ badgeColor }) => ({
   '& .MuiBadge-badge': {
     backgroundColor: badgeColor,
   },
+}));
+
+export const Root = styled('div')(({ notificationcolor, status }) => ({
+  width: '100%',
+  borderRadius: '0.25rem',
+  border: `0.1rem solid ${notificationcolor}`,
+  borderLeftWidth: status === STATUS.UNREAD ? '0.5rem' : '0.1rem',
+  marginBlock: '0.5rem',
+}));
+export const Summary = styled(Grid)(({ notificationcolor }) => ({
+  paddingBlock: '0.5rem',
+  paddingInline: '0.25rem',
+  cursor: 'pointer',
+  backgroundColor: alpha(notificationcolor, 0.2),
 }));

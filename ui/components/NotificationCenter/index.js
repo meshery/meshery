@@ -40,6 +40,7 @@ import {
   StyledNotificationDrawer,
   Title,
   TitleBellIcon,
+  StyledSubtitle,
 } from './notificationCenter.style';
 import {
   closeNotificationCenter,
@@ -464,10 +465,10 @@ const CurrentFilterView = ({ handleFilter }) => {
                 paddingTop: '.35rem',
               }}
             >
-              <Typography variant="subtitle2" sx={{ textTransform: 'capitalize' }}>
+              <StyledSubtitle variant="subtitle2" sx={{ textTransform: 'capitalize' }}>
                 {' '}
                 {key}:
-              </Typography>
+              </StyledSubtitle>
               <Chips value={value} type={key} />
             </div>
           );

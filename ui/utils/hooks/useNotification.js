@@ -1,10 +1,9 @@
 /* eslint-disable no-unused-vars */
 //NOTE: This file is being refactored to use the new notification center
-import { IconButton } from '@material-ui/core';
-import { ToggleButtonGroup } from '@mui/material';
+import { IconButton, ToggleButtonGroup } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { iconMedium } from '../../css/icons.styles';
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch } from 'react-redux';
 import moment from 'moment';
 import { v4 } from 'uuid';
