@@ -104,7 +104,7 @@ mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwiz
 		}
 		resp, err := srv.Spreadsheets.Get(sheetID).Fields().Do()
 		if err != nil || resp.HTTPStatusCode != 200 {
-			errMsg := fmt.Sprintf("Fetch Google Spreadsheets did not succeed. with error: %v", err)
+			errMsg := fmt.Sprintf("Request to Google Spreadsheet did not succeed.\n\nReturned error: %s", err.Error())
 			return errors.New(utils.RegistryError(errMsg, "publish"))
 		}
 
