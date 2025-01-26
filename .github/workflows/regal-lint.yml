@@ -1,18 +1,17 @@
-name: Run Regal Lint Checks & format Rego files
+name: Run Regal Lint Check & format Rego files
 on:
   pull_request:
     branches:
       - "*"
     paths:
       - "**.rego"
-
 jobs:
   rego-checks:
     runs-on: ubuntu-24.04
     permissions:
       contents: write
     steps:
-      - name: Checkout code
+      - name: Check out repository code
         uses: actions/checkout@v4
 
       - name: Setup OPA
