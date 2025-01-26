@@ -53,7 +53,7 @@ mesheryctl exp connections delete [connection_id]
 
 		// Check if the response status code is 200
 		if resp.StatusCode == http.StatusOK {
-			utils.Log.Info("Connection deleted successfully")
+			utils.Log.Info("Connection deleted")
 			return nil
 		}
 

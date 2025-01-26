@@ -1,0 +1,24 @@
+version: 0.0.1
+name: design-with-validation-errors
+displayName: Design With Validation Errors
+createdAt: "2024-06-28T06:26:49Z"
+description: Design with proper validation
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/0d8d6d6d-362f-49e3-9a88-2d7e6aa20542/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Nothing specific \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: e7f3c5e0-4c15-470b-b012-67ff1ce9ed25
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/0d8d6d6d-362f-49e3-9a88-2d7e6aa20542-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/0d8d6d6d-362f-49e3-9a88-2d7e6aa20542-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

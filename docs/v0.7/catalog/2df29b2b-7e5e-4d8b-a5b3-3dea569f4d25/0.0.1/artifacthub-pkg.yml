@@ -1,0 +1,20 @@
+version: 0.0.1
+name: wordpress-and-mysql-with-persistent-volume-on-kubernetes
+displayName: WordPress and MySQL with Persistent Volume on Kubernetes
+createdAt: "2023-04-15T05:13:11Z"
+description: This design includes a WordPress site and a MySQL database using Minikube. Both applications use PersistentVolumes and PersistentVolumeClaims to store data.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/2df29b2b-7e5e-4d8b-a5b3-3dea569f4d25/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Warning: This deployment is not suitable for production use cases, as it uses single instance WordPress and MySQL Pods. Consider using WordPress Helm Chart to deploy WordPress in production. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: b7b7de05-4f68-4663-8249-15301cc0eb80
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

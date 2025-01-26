@@ -15,13 +15,16 @@
 package registry
 
 import (
+	"errors"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"sync"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	mutils "github.com/layer5io/meshkit/utils"
+	"github.com/sirupsen/logrus"
 
 	"github.com/spf13/cobra"
 	"google.golang.org/api/sheets/v4"
@@ -49,7 +52,7 @@ var generateCmd = &cobra.Command{
 	Long:  "Prerequisite: Excecute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under `/server/models/<model-name>`.",
 	Example: `
 // Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
-./mesheryctl registry generate --spreadsheet-id "1t0OqpPI_TRNwNB4Rm8yBRIG_LwaDtAiVmozYlg9FE-k" --spreadsheet-cred $CRED
+mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred $CRED
 // Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
 mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
 // Generate a specific Model from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
@@ -60,6 +63,26 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
 		// TODO: Include a prerequisite check to confirm that this command IS being the executED from within a fork of the Meshery repo, and is being executed at the root of that fork.
+		const errorMsg = "[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory ] isn't specified\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nRun 'mesheryctl registry generate --help' to see detailed help message"
+
+		spreadsheetIdFlag, _ := cmd.Flags().GetString("spreadsheet-id")
+		registrantDefFlag, _ := cmd.Flags().GetString("registrant-def")
+		directory, _ := cmd.Flags().GetString("directory")
+
+		if spreadsheetIdFlag == "" && registrantDefFlag == "" && directory == "" {
+			return errors.New(utils.RegistryError(errorMsg, "generate"))
+		}
+
+		spreadsheetCredFlag, _ := cmd.Flags().GetString("spreadsheet-cred")
+		registrantCredFlag, _ := cmd.Flags().GetString("registrant-cred")
+
+		if spreadsheetIdFlag != "" && spreadsheetCredFlag == "" {
+			return errors.New(utils.RegistryError("Spreadsheet Credentials is required\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nRun 'mesheryctl registry generate --help'", "generate"))
+		}
+
+		if registrantDefFlag != "" && registrantCredFlag == "" {
+			return errors.New(utils.RegistryError("Registrant Credentials is required\n\nUsage: mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]\nRun 'mesheryctl registry generate --help'", "generate"))
+		}
 
 		return nil
 	},
@@ -101,13 +124,39 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 				return fmt.Errorf("both ModelCSV and ComponentCSV files must be present in the directory")
 			}
 		}
+		err = os.MkdirAll(logDirPath, 0755)
+		if err != nil {
+			return ErrUpdateRegistry(err, modelLocation)
+		}
+		utils.Log.SetLevel(logrus.DebugLevel)
+		logFilePath := filepath.Join(logDirPath, "model-generation.log")
+		logFile, err = os.Create(logFilePath)
+		if err != nil {
+			return err
+		}
 
-		err = utils.InvokeGenerationFromSheet(&wg, registryLocation, sheetGID, componentSpredsheetGID, spreadsheeetID, modelName, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath, relationshipSpredsheetGID)
+		utils.LogError.SetLevel(logrus.ErrorLevel)
+		logErrorFilePath := filepath.Join(logDirPath, "registry-errors.log")
+		errorLogFile, err = os.Create(logErrorFilePath)
+		if err != nil {
+			return err
+		}
+		multiWriter := io.MultiWriter(os.Stdout, logFile)
+		multiErrorWriter := io.MultiWriter(os.Stdout, errorLogFile)
+
+		utils.Log.UpdateLogOutput(multiWriter)
+		utils.LogError.UpdateLogOutput(multiErrorWriter)
+		err = utils.InvokeGenerationFromSheet(&wg, registryLocation, sheetGID, componentSpredsheetGID, spreadsheeetID, modelName, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath, relationshipSpredsheetGID, srv)
 		if err != nil {
 			// meshkit
 			utils.LogError.Error(err)
 			return nil
 		}
+		_ = logFile.Close()
+		_ = errorLogFile.Close()
+
+		utils.Log.UpdateLogOutput(os.Stdout)
+		utils.LogError.UpdateLogOutput(os.Stdout)
 		return err
 	},
 }

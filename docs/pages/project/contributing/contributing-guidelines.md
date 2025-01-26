@@ -23,19 +23,19 @@ These guidelines are a collection of principles and conventions that need to be 
 
 Commands should be designed in such a way that they are intuitive. Users should ideally be able to understand what a command is used for without having to extensively go through the documentation.
 
-For example, `mesheryctl pattern apply -f <pattern name>` requires no further clarification as it is evident that the command will apply the pattern specified.
+For example, `mesheryctl design apply -f <design name>` requires no further clarification as it is evident that the command will apply the pattern specified.
 
-Consistency is key when designing intuitive interfaces. Although `mesheryctl perf run -f <performance profile name>` may sound more intuitive, users who are experienced in using the CLI will prefer the consistant verb `apply` over `run`. This will also ensure a consistent command language making memorizing easier. Consistency should also be enforced when chaining commands and using flags.
+Consistency is key when designing intuitive interfaces. Although `mesheryctl perf run -f <performance profile name>` may sound more intuitive, users who are experienced in using the CLI will prefer the consistent verb `apply` over `run`. This will also ensure a consistent command language making memorizing easier. Consistency should also be enforced when chaining commands and using flags.
 
-For example, if `mesheryctl pattern` has a `list` and `view` command and has an `-all` and `--output` flag, then, similar commands like `mesheryctl perf` should also support the same commands and flags and provide a consistent user experience.
+For example, if `mesheryctl design` has a `list` and `view` command and has an `-all` and `--output` flag, then, similar commands like `mesheryctl perf` should also support the same commands and flags and provide a consistent user experience.
 
-### Rational defaults overriden with flags
+### Rational defaults overridden with flags
 
 Default behaviour should be optimised for what users will need to do most of the time.
 
-These assumed defaults should be easily overriden by the user with flags.
+These assumed defaults should be easily overridden by the user with flags.
 
-For example, `mesheryctl system context create <context name>` assumes a default platform for the created context. But this can be easily overriden with the `--platform` flag.
+For example, `mesheryctl system context create <context name>` assumes a default platform for the created context. But this can be easily overridden with the `--platform` flag.
 
 ### User Experience: GUI vs CLI
 

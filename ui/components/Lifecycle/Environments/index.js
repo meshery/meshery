@@ -1,25 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Grid, NoSsr, Typography, Box } from '@material-ui/core';
-import { connect } from 'react-redux';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { withStyles } from '@material-ui/core/styles';
 import { Pagination, PaginationItem } from '@material-ui/lab';
 import { withRouter } from 'next/router';
 import { debounce } from 'lodash';
 import { Delete } from '@material-ui/icons';
-import classNames from 'classnames';
-
+import { NoSsr } from '@mui/material';
+import { ToolWrapper, CreateButtonWrapper, BulkActionWrapper } from '../Workspaces/index.js';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import EnvironmentCard from './environment-card';
 import EnvironmentIcon from '../../../assets/icons/Environment';
 import { EVENT_TYPES } from '../../../lib/event-types';
-import { updateProgress } from '../../../lib/store';
+import { updateProgress, useLegacySelector } from '../../../lib/store';
 import { useNotification } from '../../../utils/hooks/useNotification';
-import useStyles from '../../../assets/styles/general/tool.styles';
-import SearchBar from '../../../utils/custom-search';
 import { RJSFModalWrapper } from '../../Modal';
-import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
+import _PromptComponent from '../../PromptComponent';
 import { EmptyState } from '../General';
 import {
   Modal as SisitentModal,
@@ -30,6 +25,11 @@ import {
   createAndEditEnvironmentSchema,
   createAndEditEnvironmentUiSchema,
   ErrorBoundary,
+  Button,
+  Grid,
+  Typography,
+  SearchBar,
+  PROMPT_VARIANTS,
 } from '@layer5/sistent';
 import ConnectionIcon from '../../../assets/icons/Connection';
 import { TRANSFER_COMPONENT } from '../../../utils/Enum';
@@ -42,7 +42,6 @@ import {
   useUpdateEnvironmentMutation,
   useDeleteEnvironmentMutation,
 } from '../../../rtk-query/environments';
-import styles from './styles';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '../../General/error-404/index';
@@ -53,7 +52,10 @@ const ACTION_TYPES = {
   EDIT: 'edit',
 };
 
-const Environments = ({ organization, classes }) => {
+const Environments = () => {
+  const organization = useLegacySelector((state) =>
+    state.get('organization')?.toJS ? state.get('organization').toJS() : state.get('organization'),
+  );
   const [environmentModal, setEnvironmentModal] = useState({
     open: false,
     schema: {},
@@ -81,7 +83,6 @@ const Environments = ({ organization, classes }) => {
 
   const modalRef = useRef(null);
   const { notify } = useNotification();
-  const StyleClass = useStyles();
 
   const {
     data: environmentsData,
@@ -298,7 +299,7 @@ const Environments = ({ organization, classes }) => {
     let response = await modalRef.current.show({
       title: `Delete "${environment.name}" environment?`,
       subtitle: deleteEnvironmentModalContent(environment.name),
-      options: ['DELETE', 'CANCEL'],
+      primaryOption: 'DELETE',
       showInfoIcon: `Deleting an environment does not delete any resources (e.g. connections) currently contained with the environment.
       Resources that belong to others environments will continue to belong to those other environments.
       Learn more about the behavior of [lifecycle of environments and their resources](https://docs.meshery.io/concepts/logical/environments) in Meshery Docs.`,
@@ -345,7 +346,7 @@ const Environments = ({ organization, classes }) => {
     let response = await modalRef.current.show({
       title: `Delete Environment(s) ?`,
       subtitle: `Do you want to delete ${selectedEnvironments.length} environment(s) ?`,
-      options: ['DELETE', 'CANCEL'],
+      primaryOption: 'DELETE',
       variant: PROMPT_VARIANTS.DANGER,
     });
     if (response === 'DELETE') {
@@ -442,127 +443,131 @@ const Environments = ({ organization, classes }) => {
   };
 
   return (
-    <NoSsr>
-      {CAN(keys.VIEW_ENVIRONMENTS.action, keys.VIEW_ENVIRONMENTS.subject) ? (
-        <>
-          <div className={StyleClass.toolWrapper} style={{ marginBottom: '20px', display: 'flex' }}>
-            <div className={classes.createButtonWrapper}>
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.CREATE)}
-                style={{
-                  padding: '8px',
-                  borderRadius: 5,
-                  marginRight: '2rem',
-                }}
-                disabled={!CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject)}
-                data-cy="btnResetDatabase"
-              >
-                <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
-                <Typography
-                  style={{
-                    paddingLeft: '4px',
-                    marginRight: '4px',
-                  }}
-                >
-                  Create
-                </Typography>
-              </Button>
-            </div>
-            <SearchBar
-              onSearch={(value) => {
-                setSearch(value);
-              }}
-              placeholder="Search Environments..."
-              expanded={isSearchExpanded}
-              setExpanded={setIsSearchExpanded}
-            />
-          </div>
-          {selectedEnvironments.length > 0 && (
-            <Box className={classNames(classes.bulkActionWrapper, StyleClass.toolWrapper)}>
-              <Typography>
-                {selectedEnvironments.length > 1
-                  ? `${selectedEnvironments.length} environments selected`
-                  : `${selectedEnvironments.length} environment selected`}
-              </Typography>
-              <Button className={classes.iconButton}>
-                <Delete
-                  style={{ color: 'red', margin: '0 2px' }}
-                  onClick={handleBulkDeleteEnvironmentConfirm}
-                  disabled={
-                    selectedEnvironments.length > 0
-                      ? !CAN(keys.DELETE_ENVIRONMENT.action, keys.DELETE_ENVIRONMENT.subject)
-                      : true
-                  }
-                />
-              </Button>
-            </Box>
-          )}
-          {environments.length > 0 ? (
-            <>
-              <Grid container spacing={2} sx={{ marginTop: '10px' }}>
-                {environments.map((environment) => (
-                  <Grid item xs={12} md={6} key={environment.id}>
-                    <EnvironmentCard
-                      classes={classes}
-                      environmentDetails={environment}
-                      selectedEnvironments={selectedEnvironments}
-                      onEdit={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.EDIT, environment)}
-                      onDelete={(e) => handleDeleteEnvironmentConfirm(e, environment)}
-                      onSelect={(e) => handleBulkSelect(e, environment.id)}
-                      onAssignConnection={(e) => handleonAssignConnectionModalOpen(e, environment)}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-              <Grid
-                container
-                sx={{ padding: '2rem 0' }}
-                style={{ marginTop: '20px' }}
-                flex
-                justifyContent="center"
-                spacing={2}
-              >
-                <Pagination
-                  count={Math.ceil(environmentsData?.total_count / pageSize)}
-                  page={page + 1}
+    <UsesSistent>
+      <NoSsr>
+        {CAN(keys.VIEW_ENVIRONMENTS.action, keys.VIEW_ENVIRONMENTS.subject) ? (
+          <>
+            <ToolWrapper>
+              <CreateButtonWrapper>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.CREATE)}
                   sx={{
-                    backgroundColor: 'white',
-                    borderRadius: '1rem',
-                    padding: '0.5rem',
+                    padding: '8px',
+                    borderRadius: 2,
+                    marginRight: '2rem',
                   }}
-                  onChange={debounce((_, page) => setPage(page - 1), 150)}
-                  boundaryCount={3}
-                  renderItem={(item) => (
-                    <PaginationItem
-                      slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
-                      {...item}
-                    />
-                  )}
-                />
-              </Grid>
-            </>
-          ) : (
-            <EmptyState
-              icon={
-                <EnvironmentIcon
-                  height="6rem"
-                  width="6rem"
-                  fill="#808080"
-                  secondaryFill="#979797"
-                />
-              }
-              message="No environment available"
-              pointerLabel="Click “Create” to establish your first environment."
-            />
-          )}
-          {(CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject) ||
-            CAN(keys.EDIT_ENVIRONMENT.action, keys.EDIT_ENVIRONMENT.subject)) &&
-            environmentModal.open && (
-              <UsesSistent>
+                  disabled={!CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject)}
+                  data-cy="btnResetDatabase"
+                >
+                  <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
+                  <Typography
+                    sx={{
+                      paddingLeft: '4px',
+                      marginRight: '4px',
+                    }}
+                  >
+                    Create
+                  </Typography>
+                </Button>
+              </CreateButtonWrapper>
+              <SearchBar
+                onSearch={(value) => {
+                  setSearch(value);
+                }}
+                placeholder="Search Environments..."
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
+              />
+            </ToolWrapper>
+            {selectedEnvironments.length > 0 && (
+              <BulkActionWrapper>
+                <Typography>
+                  {selectedEnvironments.length > 1
+                    ? `${selectedEnvironments.length} environments selected`
+                    : `${selectedEnvironments.length} environment selected`}
+                </Typography>
+                <Button>
+                  <Delete
+                    sx={{ color: 'red', margin: '0 2px' }}
+                    onClick={handleBulkDeleteEnvironmentConfirm}
+                    disabled={
+                      selectedEnvironments.length > 0
+                        ? !CAN(keys.DELETE_ENVIRONMENT.action, keys.DELETE_ENVIRONMENT.subject)
+                        : true
+                    }
+                  />
+                </Button>
+              </BulkActionWrapper>
+            )}
+            {environments.length > 0 ? (
+              <>
+                <Grid container spacing={2} sx={{ marginTop: '10px' }}>
+                  {environments.map((environment) => (
+                    <Grid item xs={12} md={6} key={environment.id}>
+                      <EnvironmentCard
+                        // classes={classes}
+                        environmentDetails={environment}
+                        selectedEnvironments={selectedEnvironments}
+                        onEdit={(e) =>
+                          handleEnvironmentModalOpen(e, ACTION_TYPES.EDIT, environment)
+                        }
+                        onDelete={(e) => handleDeleteEnvironmentConfirm(e, environment)}
+                        onSelect={(e) => handleBulkSelect(e, environment.id)}
+                        onAssignConnection={(e) =>
+                          handleonAssignConnectionModalOpen(e, environment)
+                        }
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+                <Grid
+                  container
+                  sx={{ padding: '2rem 0', marginTop: '20px' }}
+                  flex
+                  justifyContent="center"
+                  spacing={2}
+                >
+                  <Pagination
+                    count={Math.ceil(environmentsData?.total_count / pageSize)}
+                    page={page + 1}
+                    sx={{
+                      backgroundColor: 'white',
+                      borderRadius: '1rem',
+                      padding: '0.5rem',
+                    }}
+                    onChange={debounce((_, page) => setPage(page - 1), 150)}
+                    boundaryCount={3}
+                    renderItem={(item) => (
+                      <PaginationItem
+                        slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
+                        {...item}
+                      />
+                    )}
+                  />
+                </Grid>
+              </>
+            ) : (
+              <EmptyState
+                icon={
+                  <EnvironmentIcon
+                    height="6rem"
+                    width="6rem"
+                    fill="#808080"
+                    secondaryFill="#979797"
+                  />
+                  // TODO: replace all fill and secondary fill hex values with sistent tokens
+                }
+                message="No environment available"
+                pointerLabel="Click “Create” to establish your first environment."
+              />
+            )}
+            {(CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject) ||
+              CAN(keys.EDIT_ENVIRONMENT.action, keys.EDIT_ENVIRONMENT.subject)) &&
+              environmentModal.open && (
                 <SisitentModal
                   open={environmentModal.open}
                   closeModal={handleEnvironmentModalClose}
@@ -583,9 +588,7 @@ const Environments = ({ organization, classes }) => {
                     handleClose={handleEnvironmentModalClose}
                   />
                 </SisitentModal>
-              </UsesSistent>
-            )}
-          <UsesSistent>
+              )}
             <SisitentModal
               open={assignConnectionModal}
               closeModal={handleonAssignConnectionModalClose}
@@ -636,21 +639,14 @@ const Environments = ({ organization, classes }) => {
                 />
               </ModalFooter>
             </SisitentModal>
-          </UsesSistent>
-          <PromptComponent ref={modalRef} />
-        </>
-      ) : (
-        <DefaultError />
-      )}
-    </NoSsr>
+            <_PromptComponent ref={modalRef} />
+          </>
+        ) : (
+          <DefaultError />
+        )}
+      </NoSsr>
+    </UsesSistent>
   );
-};
-
-const mapStateToProps = (state) => {
-  const organization = state.get('organization');
-  return {
-    organization,
-  };
 };
 
 const EnvironmentsPageWithErrorBoundary = (props) => {
@@ -663,6 +659,4 @@ const EnvironmentsPageWithErrorBoundary = (props) => {
   );
 };
 
-export default withStyles(styles)(
-  connect(mapStateToProps)(withRouter(EnvironmentsPageWithErrorBoundary)),
-);
+export default withRouter(EnvironmentsPageWithErrorBoundary);

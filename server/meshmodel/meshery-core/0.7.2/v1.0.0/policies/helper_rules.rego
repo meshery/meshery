@@ -2,33 +2,49 @@ package relationship_evaluation_policy
 
 import rego.v1
 
-# Should be loaded always
-# contains all the helper functions that are used in the policy
+# Contains all the helper functions used in the policy.
+
+set_to_array(set) := [val |
+	some val in set
+]
+
+array_to_set(arr) := {val |
+	some val in arr
+}
+
+# Checks if object 'x' has key 'k'.
 has_key(x, k) if {
 	x[k]
 }
 
+# Retrieves a declaration with a specific id from the design file.
 declaration_with_id(design_file, id) := result if {
 	declarations := design_file.components
 	some declaration in declarations
-
 	declaration.id == id
 	result = declaration
 }
 
+# Resolves the path in an array, handling wildcards for arrays.
 resolve_path(arr, mutated) := path if {
+	# Check if the array contains a wildcard '_'.
 	arr_contains(arr, "_")
 	index := array_path_position(arr)
 
+	# Split the path at the wildcard position.
 	prefix_path := array.slice(arr, 0, index)
 	suffix_path := array.slice(arr, index + 1, count(arr))
 
+	# Get the value to patch based on the prefix path.
 	value_to_patch := object.get(mutated, prefix_path, "")
 
+	# Determine the index to patch in the array.
 	index_to_patch := array_index_to_patch(count(value_to_patch))
 
+	# Construct the intermediate path with the determined index.
 	intermediate_path := array.concat(prefix_path, [index_to_patch])
 
+	# Combine the intermediate path with the suffix path.
 	path = array.concat(intermediate_path, suffix_path)
 }
 
@@ -37,21 +53,22 @@ resolve_path(arr, mutated) := path if {
 	path = arr
 }
 
+# Determines the index to patch in an array field.
 array_index_to_patch(no_of_elements) := index if {
 	no_of_elements == 0
 
-	# 0 based array indexing is followed
+	# If the array is empty, start at index 0.
 	index = "0"
 }
 
 array_index_to_patch(no_of_elements) := index if {
 	not no_of_elements == 0
 
-	# 0 based array indexing is followed
+	# Use the last index in the array.
 	index = format_int(no_of_elements - 1, 10)
 }
 
-# update this to return multiple paths
+# Checks if an array contains a specific key.
 arr_contains(arr, key) if {
 	some element in arr
 	key == element
@@ -66,18 +83,18 @@ array_path_position(arr_path) := index if {
 	arr_path[index] == "_"
 }
 
+# Checks if two objects have matching values.
 match_object(o1, o2) if {
 	o1_values := {val |
 		some val in o1
 	}
-
 	o2_values := {val |
 		some val in o2
 	}
-
 	o1_values == o2_values
 } else := false
 
+# Formats a JSON path, converting numeric strings to numbers.
 format_json_path(path) := [fp |
 	some p in path
 
@@ -86,12 +103,14 @@ format_json_path(path) := [fp |
 	fp := format_path(p)
 ]
 
+# Converts a string to a number if it represents a numeric value.
 format_path(s) := result if {
 	regex.match(`^[0-9]+$`, s)
 	is_string(s)
 	result := to_number(s)
 } else := s
 
+# Groups objects by their declaration id.
 group_by_id(objects) := {obj |
 	some val in objects
 	grouped_objects := [p |
@@ -99,7 +118,6 @@ group_by_id(objects) := {obj |
 		o.declaration_id == val.declaration_id
 		some p in o.patches
 	]
-
 	obj := {
 		"declaration_id": val.declaration_id,
 		"declaration": val.declaration,
@@ -107,6 +125,7 @@ group_by_id(objects) := {obj |
 	}
 }
 
+# Extracts components from declarations based on selectors.
 extract_components(declarations, selectors) := {declaration.id: declaration |
 	selector := selectors[_]
 	declaration := declarations[_]
@@ -114,9 +133,9 @@ extract_components(declarations, selectors) := {declaration.id: declaration |
 	component := declaration
 }
 
+# Extracts components of a specific type from declarations.
 extract_components_by_type(declarations, selector) := {result |
 	some declaration in declarations
-
 	is_relationship_feasible(selector, declaration.component.kind)
 	result := declaration
 }
@@ -124,6 +143,12 @@ extract_components_by_type(declarations, selector) := {result |
 # TODO: Add checks for
 # 1. when operators/regex are used in the version fields
 # 2. deny selctor
+
+is_relationship_feasible_from(fromComponent, relationship) := from if {
+	some selector in relationship.selectors
+	some from in selector.allow.from
+	is_relationship_feasible(from, fromComponent.component.kind)
+}
 
 is_relationship_feasible(selector, comp_type) if {
 	selector.kind == "*"
@@ -133,6 +158,7 @@ is_relationship_feasible(selector, comp_type) if {
 	selector.kind == comp_type
 }
 
+# Extracts values from a component based on reference paths.
 extract_values(component, refs) := [component_value |
 	some ref in refs
 	path := resolve_path(ref, component)

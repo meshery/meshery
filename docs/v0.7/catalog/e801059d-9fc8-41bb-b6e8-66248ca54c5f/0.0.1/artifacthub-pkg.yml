@@ -1,0 +1,20 @@
+version: 0.0.1
+name: catalog-design2
+displayName: Catalog Design2
+createdAt: "2023-02-22T04:33:21Z"
+description: Design contains k8s resources like deployment, service
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/e801059d-9fc8-41bb-b6e8-66248ca54c5f/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "There is no caveats \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: d7b56d0c-1fa7-4895-b9c2-ebbfd070f4c8
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

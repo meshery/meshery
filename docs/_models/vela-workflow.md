@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/vela-workflow/components/workflow/icons/color/workflow-color.svg
   whiteIcon: assets/img/integrations/vela-workflow/components/workflow/icons/white/workflow-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Orchestrates CI/CD workflows",
   "Integrates with various tools and plugins",

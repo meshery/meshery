@@ -106,7 +106,7 @@ export default function useDesignLifecycle() {
       .then((data) => {
         setDesignId(data[0].id);
         notify({
-          message: `"${designJson.name}" saved successfully`,
+          message: `"${designJson.name}" saved`,
           event_type: EVENT_TYPES.SUCCESS,
         });
       })
@@ -132,7 +132,7 @@ export default function useDesignLifecycle() {
         method: 'POST',
       });
       notify({
-        message: `"${designJson.name}" updated successfully`,
+        message: `"${designJson.name}" updated`,
         event_type: EVENT_TYPES.SUCCESS,
       });
     } catch (err) {

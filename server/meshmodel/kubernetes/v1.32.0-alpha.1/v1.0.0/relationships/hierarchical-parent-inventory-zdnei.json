@@ -8,7 +8,8 @@
       "primaryColor": "",
       "svgColor": "",
       "svgWhite": ""
-    }
+    },
+    "isAnnotation": false
   },
   "model": {
     "category": {
@@ -147,7 +148,7 @@
       }
     }
   ],
-  "subType": "inventory",
+  "subType": "alias",
   "status": "enabled",
   "type": "parent",
   "version": "v1.0.0"

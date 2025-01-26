@@ -1,11 +1,11 @@
 import * as React from 'react';
-import { Tooltip, Typography, Grid, Box, IconButton, useTheme } from '@material-ui/core';
+import { CustomTooltip, Typography, Grid, Box, IconButton, useTheme } from '@layer5/sistent';
 import { Launch as LaunchIcon } from '@material-ui/icons';
 import _ from 'lodash';
 import { useContext } from 'react';
 import { isEmptyAtAllDepths } from '../../utils/objects';
 import CopyIcon from '../../assets/icons/CopyIcon';
-
+import { UsesSistent } from './../SistentWrapper';
 const FormatterContext = React.createContext({
   propertyFormatters: {},
 });
@@ -55,7 +55,7 @@ export const formatDateTime = (date) => {
  */
 export const FormattedDate = ({ date }) => {
   return (
-    <Tooltip title={formatDateTime(date)} placement="top">
+    <CustomTooltip title={formatDateTime(date)} placement="top">
       <div>
         <SectionBody
           body={formatDate(date)}
@@ -64,7 +64,7 @@ export const FormattedDate = ({ date }) => {
           }}
         ></SectionBody>
       </div>
-    </Tooltip>
+    </CustomTooltip>
   );
 };
 
@@ -85,22 +85,22 @@ export const FormatId = ({ id }) => {
   const truncatedId = _.truncate(id, { length: 15 });
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-      <Tooltip title={id} placement="top">
+      <CustomTooltip title={id} placement="top">
         <Typography
           variant="body2"
           style={{
             cursor: 'pointer',
-            color: theme.palette.secondary.text,
+            color: theme.palette.text.tertiary,
           }}
         >
           {truncatedId}
         </Typography>
-      </Tooltip>
-      <Tooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
+      </CustomTooltip>
+      <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
         <IconButton onClick={copyToClipboard} style={{ padding: '0.25rem' }}>
           <CopyIcon width="1rem" height="1rem" />
         </IconButton>
-      </Tooltip>
+      </CustomTooltip>
     </Box>
   );
 };
@@ -127,7 +127,7 @@ export const Link = ({ href, title }) => {
         color: 'inherit',
         textDecorationLine: 'underline',
         cursor: 'pointer',
-        marginBottom: '0.5rem',
+        marginBottom: '0.75rem',
       }}
     >
       {title}
@@ -189,7 +189,6 @@ export const KeyValue = ({ Key, Value }) => {
         alignItems: 'flex-start',
         gap: '0.25rem',
         flexWrap: 'wrap',
-        marginBottom: '1.5rem',
         fontFamily: 'Qanelas Soft, sans-serif',
       }}
     >
@@ -197,19 +196,23 @@ export const KeyValue = ({ Key, Value }) => {
         body={Key.replaceAll('_', ' ')}
         style={{
           textTransform: 'capitalize',
-          color: theme.palette.text.primary,
+          overflow: 'hidden',
+          whiteSpace: 'nowrap',
+          color: theme.palette.text.default,
         }}
       />
+
       {React.isValidElement(Value) ? (
         Value
       ) : (
         <SectionBody
           body={Value}
           style={{
-            color: theme.palette.text.secondary,
+            color: theme.palette.text.tertiary,
             textOverflow: 'ellipsis',
             wordBreak: 'break-all',
-            whiteSpace: 'pre-line',
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
           }}
         />
       )}
@@ -217,28 +220,28 @@ export const KeyValue = ({ Key, Value }) => {
   );
 };
 
-export const SectionHeading = ({ children, ...props }) => {
+export const SectionHeading = ({ children, isLevel, ...props }) => {
   const level = useContext(LevelContext);
-  const fontSize = Math.max(0.9, 1.3 - 0.1 * level) + 'rem';
-  const margin = Math.max(0.25, 0.55 - 0.15 * level) + 'rem';
+  const fontSize = isLevel ? Math.max(0.9, 1.3 - 0.1 * level) + 'rem' : '1rem';
+  const margin = isLevel ? Math.max(0.25, 0.55 - 0.15 * level) + 'rem' : 'inherit';
 
   return (
-    <Typography
-      variant="h7"
-      style={{
-        fontWeight: 'bold !important',
-        textTransform: 'capitalize',
-        marginBottom: margin,
-        wordBreak: 'break-all',
-        fontSize,
-      }}
-      {...props}
-    >
-      {children}
-    </Typography>
+    <div style={{ marginBlock: margin }}>
+      <Typography
+        variant="body1"
+        style={{
+          fontWeight: 'bold !important',
+          textTransform: 'capitalize',
+          wordBreak: 'break-all',
+          fontSize,
+        }}
+        {...props}
+      >
+        {children}
+      </Typography>
+    </div>
   );
 };
-
 export const SectionBody = ({ body, style = {} }) => {
   const theme = useTheme();
   return (
@@ -246,19 +249,25 @@ export const SectionBody = ({ body, style = {} }) => {
       variant="body1"
       style={{
         wordWrap: 'break-word',
-        color: theme.palette.text.secondary,
+        color: theme.palette.text.tertiary,
         ...style,
       }}
       text={body}
     ></TextWithLinks>
   );
 };
-
-const ArrayFormatter = ({ items }) => {
+export const ArrayFormatter = ({ items }) => {
+  const theme = useTheme();
   return (
-    <ol style={{ paddingInline: '0.75rem', paddingBlock: '0.25rem', margin: '0rem' }}>
+    <ol
+      style={{
+        paddingInline: '1rem',
+        paddingBlock: '0.25rem',
+        margin: '0rem',
+      }}
+    >
       {items.map((item) => (
-        <li key={item}>
+        <li key={item} style={{ color: theme.palette.text.tertiary }}>
           <Level>
             <DynamicFormatter data={item} />
           </Level>
@@ -278,12 +287,14 @@ export function reorderObjectProperties(obj, order) {
   return { ...orderedProperties, ...remainingProperties };
 }
 
-const DynamicFormatter = ({ data, uiSchema }) => {
+const DynamicFormatter = ({ data, uiSchema, isLevel = true }) => {
   const { propertyFormatters } = useContext(FormatterContext);
   const level = useContext(LevelContext);
+
   if (_.isString(data)) {
     return <SectionBody body={data}></SectionBody>;
   }
+
   if (_.isArray(data)) {
     return <ArrayFormatter items={data} />;
   }
@@ -293,16 +304,29 @@ const DynamicFormatter = ({ data, uiSchema }) => {
       if (!title.trim() || !data || _.isEmpty(data)) {
         return null;
       }
+
       if (propertyFormatters?.[title]) {
         return (
-          <Grid item key={title} sm={12} {...(uiSchema?.[title] || {})}>
+          <Grid key={title} sm={12} {...(uiSchema?.[title] || {})}>
             {propertyFormatters[title](data, data)}
           </Grid>
         );
       }
+
       if (typeof data == 'string') {
         return (
-          <Grid item key={title} sm={12} {...(uiSchema?.[title] || {})}>
+          <Grid
+            item
+            key={title}
+            sm={12}
+            {...(uiSchema?.[title] || {})}
+            spacing={3}
+            style={{
+              marginBlock: '0.4rem',
+              maxWidth: title !== 'age' && 'fit-content',
+              marginRight: '1rem',
+            }}
+          >
             <KeyValue key={title} Key={title} Value={data} />
           </Grid>
         );
@@ -318,7 +342,9 @@ const DynamicFormatter = ({ data, uiSchema }) => {
             marginBlock: '0.25rem',
           }}
         >
-          <SectionHeading level={level}>{title}</SectionHeading>
+          <SectionHeading level={level} isLevel={isLevel}>
+            {title}
+          </SectionHeading>
           <Level>
             <DynamicFormatter level={level + 1} data={data} />
           </Level>
@@ -330,13 +356,13 @@ const DynamicFormatter = ({ data, uiSchema }) => {
   return null;
 };
 
-export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema }) => {
+export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema, isLevel }) => {
   if (!data || isEmptyAtAllDepths(data)) {
     return null;
   }
 
   return (
-    <>
+    <UsesSistent>
       <FormatterContext.Provider
         value={{
           propertyFormatters: propertyFormatters,
@@ -347,11 +373,12 @@ export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema }
           style={{
             wordBreak: 'break-word',
             overflowWrap: 'break-word',
+            gap: '0.3rem 1rem',
           }}
         >
-          <DynamicFormatter data={data} uiSchema={uiSchema} />
+          <DynamicFormatter data={data} uiSchema={uiSchema} isLevel={isLevel} />
         </Grid>
       </FormatterContext.Provider>
-    </>
+    </UsesSistent>
   );
 };

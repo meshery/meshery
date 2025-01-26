@@ -21,9 +21,9 @@ import {
   Typography,
   DeleteIcon,
   SearchBar,
-  ErrorBoundary,
   styled,
   useTheme,
+  PROMPT_VARIANTS,
 } from '@layer5/sistent';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import { useEffect, useRef, useState } from 'react';
@@ -43,7 +43,7 @@ import { updateProgress } from '../../../lib/store';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import WorkspaceCard from './workspace-card';
 import { RJSFModalWrapper } from '../../Modal';
-import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
+import _PromptComponent from '../../PromptComponent';
 import { debounce } from 'lodash';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import EnvironmentIcon from '../../../assets/icons/Environment';
@@ -62,9 +62,10 @@ export const CreateButtonWrapper = styled('div')({
 export const ToolWrapper = styled('div')(() => {
   const theme = useTheme();
   return {
-    marginBottom: '3rem',
+    marginBottom: '1rem',
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
     backgroundColor:
       theme.palette.mode === 'dark'
         ? theme.palette.text.inverse
@@ -430,7 +431,7 @@ const Workspaces = ({ organization }) => {
     let response = await ref.current.show({
       title: `Delete workspace ?`,
       subtitle: deleteWorkspaceModalContent(workspace.name),
-      options: ['DELETE', 'CANCEL'],
+      primaryOption: 'DELETE',
       variant: PROMPT_VARIANTS.DANGER,
     });
     if (response === 'DELETE') {
@@ -610,10 +611,10 @@ const Workspaces = ({ organization }) => {
   };
 
   return (
-    <NoSsr>
-      {CAN(keys.VIEW_WORKSPACE.action, keys.VIEW_WORKSPACE.subject) ? (
-        <>
-          <UsesSistent>
+    <UsesSistent>
+      <NoSsr>
+        {CAN(keys.VIEW_WORKSPACE.action, keys.VIEW_WORKSPACE.subject) ? (
+          <>
             <ToolWrapper>
               <CreateButtonWrapper>
                 <Button
@@ -652,83 +653,81 @@ const Workspaces = ({ organization }) => {
                 setExpanded={setIsSearchExpanded}
               />
             </ToolWrapper>
-          </UsesSistent>
-          {selectedWorkspaces.length > 0 && (
-            <BulkActionWrapper>
-              <Typography>
-                {selectedWorkspaces.length > 1
-                  ? `${selectedWorkspaces.length} workspaces selected`
-                  : `${selectedWorkspaces.length} workspace selected`}
-              </Typography>
-              <Button>
-                <DeleteIcon
-                  fill={theme.palette.text.default}
-                  onClick={handleDeleteWorkspacesModalOpen}
-                  disabled={
-                    CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject) &&
-                    selectedWorkspaces.length > 0
-                      ? false
-                      : true
-                  }
-                />
-              </Button>
-            </BulkActionWrapper>
-          )}
-          {workspaces.length > 0 ? (
-            <>
-              <Grid container spacing={2} sx={{ marginTop: '10px' }}>
-                {workspaces.map((workspace) => (
-                  <Grid item xs={12} md={6} key={workspace.id}>
-                    <WorkspaceCard
-                      workspaceDetails={workspace}
-                      onEdit={(e) => handleWorkspaceModalOpen(e, ACTION_TYPES.EDIT, workspace)}
-                      onDelete={(e) => handleDeleteWorkspaceConfirm(e, workspace)}
-                      onSelect={(e) => handleBulkSelect(e, workspace.id)}
-                      selectedWorkspaces={selectedWorkspaces}
-                      onAssignEnvironment={(e) => handleAssignEnvironmentModalOpen(e, workspace)}
-                      onAssignDesign={(e) => handleAssignDesignModalOpen(e, workspace)}
-                    />
-                  </Grid>
-                ))}
-              </Grid>
-              <Grid
-                container
-                sx={{ padding: '2rem 0', marginTop: '20px' }}
-                flex
-                justifyContent="center"
-                spacing={2}
-              >
-                <Pagination
-                  count={Math.ceil(workspacesData?.total_count / pageSize)}
-                  page={page + 1}
-                  sx={{
-                    backgroundColor: 'white',
-                    borderRadius: '1rem',
-                    padding: '0.5rem',
-                  }}
-                  onChange={debounce((_, page) => setPage(page - 1), 150)}
-                  boundaryCount={3}
-                  renderItem={(item) => (
-                    <PaginationItem
-                      slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
-                      {...item}
-                    />
-                  )}
-                />
-              </Grid>
-            </>
-          ) : (
-            <EmptyState
-              icon={<WorkspaceIcon height="6rem" width="6rem" fill="#808080" />}
-              message="No workspace available"
-              pointerLabel="Click “Create” to establish your first workspace."
-            />
-          )}
-          {(actionType === ACTION_TYPES.CREATE
-            ? CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)
-            : CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)) &&
-            workspaceModal.open && (
-              <UsesSistent>
+            {selectedWorkspaces.length > 0 && (
+              <BulkActionWrapper>
+                <Typography>
+                  {selectedWorkspaces.length > 1
+                    ? `${selectedWorkspaces.length} workspaces selected`
+                    : `${selectedWorkspaces.length} workspace selected`}
+                </Typography>
+                <Button>
+                  <DeleteIcon
+                    fill={theme.palette.text.default}
+                    onClick={handleDeleteWorkspacesModalOpen}
+                    disabled={
+                      CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject) &&
+                      selectedWorkspaces.length > 0
+                        ? false
+                        : true
+                    }
+                  />
+                </Button>
+              </BulkActionWrapper>
+            )}
+            {workspaces.length > 0 ? (
+              <>
+                <Grid container spacing={2} sx={{ marginTop: '10px' }}>
+                  {workspaces.map((workspace) => (
+                    <Grid item xs={12} md={6} key={workspace.id}>
+                      <WorkspaceCard
+                        workspaceDetails={workspace}
+                        onEdit={(e) => handleWorkspaceModalOpen(e, ACTION_TYPES.EDIT, workspace)}
+                        onDelete={(e) => handleDeleteWorkspaceConfirm(e, workspace)}
+                        onSelect={(e) => handleBulkSelect(e, workspace.id)}
+                        selectedWorkspaces={selectedWorkspaces}
+                        onAssignEnvironment={(e) => handleAssignEnvironmentModalOpen(e, workspace)}
+                        onAssignDesign={(e) => handleAssignDesignModalOpen(e, workspace)}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+                <Grid
+                  container
+                  sx={{ padding: '2rem 0', marginTop: '20px' }}
+                  flex
+                  justifyContent="center"
+                  spacing={2}
+                >
+                  <Pagination
+                    count={Math.ceil(workspacesData?.total_count / pageSize)}
+                    page={page + 1}
+                    sx={{
+                      backgroundColor: 'white',
+                      borderRadius: '1rem',
+                      padding: '0.5rem',
+                    }}
+                    onChange={debounce((_, page) => setPage(page - 1), 150)}
+                    boundaryCount={3}
+                    renderItem={(item) => (
+                      <PaginationItem
+                        slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
+                        {...item}
+                      />
+                    )}
+                  />
+                </Grid>
+              </>
+            ) : (
+              <EmptyState
+                icon={<WorkspaceIcon height="6rem" width="6rem" fill="#808080" />}
+                message="No workspace available"
+                pointerLabel="Click “Create” to establish your first workspace."
+              />
+            )}
+            {(actionType === ACTION_TYPES.CREATE
+              ? CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)
+              : CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)) &&
+              workspaceModal.open && (
                 <SisitentModal
                   open={workspaceModal.open}
                   closeModal={handleWorkspaceModalClose}
@@ -747,9 +746,7 @@ const Workspaces = ({ organization }) => {
                     handleClose={handleWorkspaceModalClose}
                   />
                 </SisitentModal>
-              </UsesSistent>
-            )}
-          <UsesSistent>
+              )}
             <SisitentModal
               open={assignEnvironmentModal}
               closeModal={handleAssignEnvironmentModalClose}
@@ -849,20 +846,20 @@ const Workspaces = ({ organization }) => {
                 />
               </ModalFooter>
             </SisitentModal>
-          </UsesSistent>
-          <GenericModal
-            open={deleteWorkspacesModal}
-            handleClose={handleDeleteWorkspacesModalClose}
-            title={'Delete Workspace'}
-            body={`Do you want to delete ${selectedWorkspaces.length} workspace(s) ?`}
-            action={handleBulkDeleteWorkspace}
-          />
-          <PromptComponent ref={ref} />
-        </>
-      ) : (
-        <DefaultError />
-      )}
-    </NoSsr>
+            <GenericModal
+              open={deleteWorkspacesModal}
+              handleClose={handleDeleteWorkspacesModalClose}
+              title={'Delete Workspace'}
+              body={`Do you want to delete ${selectedWorkspaces.length} workspace(s) ?`}
+              action={handleBulkDeleteWorkspace}
+            />
+            <_PromptComponent ref={ref} />
+          </>
+        ) : (
+          <DefaultError />
+        )}
+      </NoSsr>
+    </UsesSistent>
   );
 };
 
@@ -876,9 +873,7 @@ const mapStateToProps = (state) => {
 const WorkspacesPageWithErrorBoundary = (props) => {
   return (
     <NoSsr>
-      <ErrorBoundary>
-        <Workspaces {...props} />
-      </ErrorBoundary>
+      <Workspaces {...props} />
     </NoSsr>
   );
 };

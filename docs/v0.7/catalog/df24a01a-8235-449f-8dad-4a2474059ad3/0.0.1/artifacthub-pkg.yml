@@ -1,0 +1,22 @@
+version: 0.0.1
+name: amazon-web-services-iot-architecture-diagram
+displayName: Amazon Web Services IoT Architecture Diagram
+createdAt: "2023-12-19T13:02:10Z"
+description: This comprehensive IoT architecture harnesses the power of Amazon Web Services (AWS) to create a robust and scalable Internet of Things (IoT) ecosystem
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/df24a01a-8235-449f-8dad-4a2474059ad3/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "It cannot be deployed because the nodes used to create the diagram are shapes and not components. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 79089163-7195-4727-9be4-7254a673ed46
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/df24a01a-8235-449f-8dad-4a2474059ad3.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

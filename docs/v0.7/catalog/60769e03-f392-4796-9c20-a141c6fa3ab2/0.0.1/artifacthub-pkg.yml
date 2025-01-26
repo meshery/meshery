@@ -1,0 +1,24 @@
+version: 0.0.1
+name: install-traefik-as-ingress-controller
+displayName: Install-Traefik-as-ingress-controller
+createdAt: "2024-03-02T06:45:09Z"
+description: This design creates a ServiceAccount, DaemonSet, Service, ClusterRole, and ClusterRoleBinding resources for Traefik. The DaemonSet ensures that a single Traefik instance is deployed on each node in the cluster, facilitating load balancing and routing of incoming traffic. The Service allows external traffic to reach Traefik, while the ClusterRole and ClusterRoleBinding provide the necessary permissions for Traefik to interact with Kubernetes resources such as services, endpoints, and ingresses. Overall, this setup enables Traefik to efficiently manage ingress traffic within the Kubernetes environment, providing features like routing, load balancing, and SSL termination.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/60769e03-f392-4796-9c20-a141c6fa3ab2/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "-Resource Utilization: Ensure monitoring and scalability to manage resource consumption across nodes, especially in large clusters.\n\n-Security Measures: Implement strict access controls and firewall rules to protect Traefik's admin port (8080) from unauthorized access.\n\n-Configuration Complexity: Understand Traefik's configuration intricacies for routing rules and SSL termination to avoid misconfigurations.\n\n-Compatibility Testing: Regularly test Traefik's compatibility with Kubernetes and other cluster components before upgrading versions.\n\n-High Availability Setup: Employ strategies like pod anti-affinity rules to ensure Traefik's availability and uptime.\n\n-Performance Optimization: Conduct performance tests to minimize latency and overhead introduced by Traefik in the data path. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9cb4bfce-ad8f-4a8e-8647-bb138fa07e7f
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/60769e03-f392-4796-9c20-a141c6fa3ab2-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/60769e03-f392-4796-9c20-a141c6fa3ab2-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

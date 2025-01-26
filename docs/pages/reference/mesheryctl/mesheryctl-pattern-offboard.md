@@ -10,7 +10,7 @@ command: pattern
 subcommand: offboard
 ---
 
-# mesheryctl pattern offboard
+# mesheryctl design offboard
 
 Offboard pattern
 
@@ -19,7 +19,7 @@ Offboard pattern
 Offboard pattern will trigger undeploy of pattern
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern offboard [flags]
+mesheryctl design offboard [flags]
 
 </div>
 </pre> 
@@ -29,7 +29,7 @@ mesheryctl pattern offboard [flags]
 Offboard pattern by providing file path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern offboard -f [filepath]
+mesheryctl design offboard -f [filepath]
 
 </div>
 </pre> 

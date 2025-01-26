@@ -2,6 +2,8 @@ import { alpha } from '@material-ui/core';
 import { Colors } from '../../themes/app';
 import { CONNECTION_STATES } from '../../utils/Enum';
 import { notificationColors } from '../../themes';
+import { Chip, Grid, styled } from '@layer5/sistent';
+import { StepConnector, StepLabel, Stepper } from '@mui/material';
 
 const styles = (theme) => ({
   grid: { padding: theme.spacing(2) },
@@ -37,12 +39,12 @@ const styles = (theme) => ({
     },
   },
   statusChip: {
-    minWidth: '145px !important',
-    width: '100% !important',
-    display: 'flex !important',
-    justifyContent: 'flex-start !important',
+    minWidth: '145px',
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'flex-start',
     textTransform: 'capitalize',
-    borderRadius: '0 !important',
+    borderRadius: '2px',
     padding: '6px 8px',
     '& .MuiChip-label': {
       paddingTop: '3px',
@@ -119,6 +121,11 @@ const styles = (theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  addClusterButtonClass: {
+    borderRadius: 5,
+    marginRight: '2rem',
+    padding: '8px',
   },
   list: {
     display: 'flex',
@@ -236,6 +243,176 @@ const styles = (theme) => ({
     },
   },
 });
+
+export const ChipWrapper = styled(Chip)({
+  width: '13rem',
+  maxWidth: '13rem',
+  minWidth: '9rem',
+  textAlign: 'left',
+  cursor: 'pointer',
+  '& .MuiChip-label': {
+    flexGrow: 1,
+  },
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  border: '1px solid rgba(255, 255, 255, 0.23)',
+});
+
+const baseChipStyles = {
+  minWidth: '142px !important',
+  maxWidth: 'max-content !important',
+  display: 'flex !important',
+  justifyContent: 'flex-start !important',
+  borderRadius: '3px !important',
+  padding: '6px 8px',
+  '& .MuiChip-label': {
+    paddingTop: '3px',
+    fontWeight: '400',
+  },
+  '& .MuiSvgIcon-root': {
+    marginLeft: '0px !important',
+  },
+  '&:hover': {
+    boxShadow: '0px 1px 2px 0px rgba(0, 0, 0, 0.25)',
+  },
+};
+
+export const DiscoveredChip = styled(Chip)(() => ({
+  ...baseChipStyles,
+  '& .MuiChip-label': {
+    color: notificationColors.info,
+  },
+  background: `${notificationColors.info}30 !important`,
+  '& .MuiSvgIcon-root': {
+    color: `${notificationColors.info} !important`,
+  },
+}));
+
+export const DeletedChip = styled(Chip)(({ theme }) => ({
+  ...baseChipStyles,
+  '& .MuiChip-label': {
+    color: theme.palette.background.error.default,
+  },
+  background: `${theme.palette.background.error.default}30 !important`,
+  '& .MuiSvgIcon-root': {
+    color: `${theme.palette.background.error.default} !important`,
+  },
+}));
+
+export const RegisteredChip = styled(Chip)(({ theme }) => ({
+  ...baseChipStyles,
+  '& .MuiChip-label': {
+    color: theme.palette.mode === 'dark' ? '#86B2C6' : '#477E96',
+  },
+  background: `${theme.palette.mode === 'dark' ? '#86B2C6' : '#477E96'}30 !important`,
+  '& .MuiSvgIcon-root': {
+    color: `${theme.palette.mode === 'dark' ? '#86B2C6' : '#477E96'} !important`,
+  },
+}));
+
+export const ConnectedChip = styled(Chip)(({ theme }) => ({
+  ...baseChipStyles,
+  '& .MuiChip-label': {
+    color: theme.palette.background.success.default,
+  },
+  background: `${theme.palette.background.success.default}30 !important`,
+  '& .MuiSvgIcon-root': {
+    color: `${theme.palette.background.success.default} !important`,
+  },
+}));
+
+export const IgnoredChip = styled(Chip)(({ theme }) => ({
+  ...baseChipStyles,
+  '& .MuiChip-label': {
+    color: theme.palette.mode === 'dark' ? '#9FAFB6' : '#51636B',
+  },
+  background: `${theme.palette.mode === 'dark' ? '#9FAFB6' : '#51636B'}30 !important`,
+  '& .MuiSvgIcon-root': {
+    color: `${theme.palette.mode === 'dark' ? '#9FAFB6' : '#51636B'} !important`,
+  },
+}));
+
+export const DisconnectedChip = styled(Chip)(({ theme }) => ({
+  ...baseChipStyles,
+  '& .MuiChip-label': {
+    color: theme.palette.background.warning.default,
+  },
+  background: `${theme.palette.background.warning.default}30 !important`,
+  '& .MuiSvgIcon-root': {
+    color: `${theme.palette.background.warning.default} !important`,
+  },
+}));
+
+export const NotFoundChip = styled(Chip)(({ theme }) => ({
+  ...baseChipStyles,
+  '& .MuiChip-label': {
+    color: theme.palette.text.disabled,
+  },
+  background: `${theme.palette.background.disabled}30 !important`,
+  '& .MuiSvgIcon-root': {
+    color: `${theme.palette.icon.default} !important`,
+  },
+}));
+
+export const MaintainanceChip = styled(Chip)(() => ({
+  ...baseChipStyles,
+  '& .MuiChip-label': {
+    color: notificationColors.lightwarning,
+  },
+  background: `${notificationColors.lightwarning}30 !important`,
+  '& .MuiSvgIcon-root': {
+    color: `${notificationColors.lightwarning} !important`,
+  },
+}));
+
+export const ColumnWrapper = styled('div')(({ theme }) => ({
+  margin: theme.spacing(2),
+  padding: theme.spacing(2),
+  background: `${theme.palette.background.secondary}10`,
+}));
+
+export const OperationButton = styled(Grid)(({ theme }) => ({
+  [theme?.breakpoints?.down(1180)]: {
+    marginRight: '25px',
+  },
+}));
+
+export const ContentContainer = styled(Grid)(({ theme }) => ({
+  [theme?.breakpoints?.down(1050)]: {
+    flexDirection: 'column',
+  },
+  flexWrap: 'noWrap',
+}));
+
+export const StepperContainer = styled(Stepper)(() => ({
+  width: '80%',
+  marginTop: '2rem',
+  ['@media (max-width:780px)']: {
+    width: 'auto',
+    marginTop: '1rem',
+  },
+}));
+
+export const CustomLabelStyle = styled(StepLabel)(() => ({
+  fontSize: '0.875rem',
+  ['@media (max-width:500px)']: {
+    fontSize: '0.7rem',
+  },
+}));
+
+export const ColorlibConnector = styled(StepConnector)(({ theme }) => ({
+  alternativeLabel: { top: 22 },
+  active: { '& $line': { background: '#00B39F', transition: 'all 1s ease-in' } },
+  completed: { '& $line': { background: '#00B39F', transition: 'all 1s ease-in' } },
+  line: {
+    height: 3,
+    border: 0,
+    backgroundColor: theme.palette.mode === 'dark' ? '#303030' : '#eaeaf0',
+    borderRadius: 1,
+    transition: 'all 0.5s ease-out ',
+  },
+}));
 
 export default styles;
 

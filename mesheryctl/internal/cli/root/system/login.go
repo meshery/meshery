@@ -80,7 +80,7 @@ mesheryctl system login -p Meshery
 			return nil
 		}
 
-		log.Println("successfully authenticated")
+		log.Println("authenticated")
 
 		token, err := mctlCfg.GetTokenForContext(mctlCfg.GetCurrentContextName())
 		if err != nil {

@@ -27,6 +27,10 @@ apply_patch(design_file, mutator_object, to_mutate_object) := result if {
 		update_value := object.get(mutating_declaration, format_json_path(resolved_mutator_path), null)
 
 		update_value != null
+
+		existing_value := object.get(declaration_to_mutate, format_json_path(resolved_mutated_path), null)
+
+		not value_already_exists(update_value, existing_value)
 		patch_object := {
 			"op": "add",
 			"path": resolved_mutated_path,
@@ -92,3 +96,19 @@ contains_mutator_selector(selector) if {
 contains_mutated_selector(selector) if {
 	selector.patch.mutatedRef
 }
+
+value_already_exists(update_value, existing_value) if {
+	existing_value != null
+	is_custom_array(existing_value)
+	update_value in existing_value
+}
+
+value_already_exists(update_value, existing_value) if {
+	existing_value != null
+	not is_custom_array(existing_value)
+	existing_value == update_value
+}
+
+is_custom_array(x) if {
+	type_name(x) == "array"
+} else := false

@@ -1,0 +1,709 @@
+name: aws-otel-collector
+version: 0.0.18
+services:
+  NodeGroupInventoryWallet:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn:
+    - aws-otel-collector-cnqqn
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: NodeGroupInventoryWallet
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 6dd4cabd-7f56-4b07-9e22-5ee4db1f482f
+        label: NodeGroupInventoryWallet
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: null
+          description: ""
+          displayName: Meshery Core
+          hostID: 26e64aa8-2d86-57bd-92b3-2a73160d27b4
+          id: 3e2db384-d3af-5fac-8af2-684fc3c29446
+          metadata:
+            isAnnotation: false
+            subCategory: App Definition and Development
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          model:
+            version: 0.7.1
+          name: meshery-core
+          registrant:
+            hostname: artifacthub
+          relationships: null
+          schemaVersion: core.meshery.io/v1beta1
+          status: enabled
+          subCategory: App Definition and Development
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: |-
+            {
+              "designer": {
+                "pass-events-to": "parent",
+                "edit": {
+                  "config": false,
+                  "copy": false,
+                  "delete": false,
+                  "duplicate": false,
+                  "reset-styles": false,
+                  "resolve": false,
+                  "lock": false,
+                  "shape": {
+                    "convert-shape": false
+                  },
+                  "style": false
+                },
+                "label": {
+                  "edit": false,
+                  "show": false,
+                  "sync-with-config-property": "none"
+                }
+              }
+            }
+          defaultData: '{"label":""}'
+          genealogy: parent
+          hasInvalidSchema: true
+          isAnnotation: true
+          primaryColor: '#00B39F'
+          secondaryColor: '#00D3A9'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.1
+            border-style: dashed
+            border-width: 0
+            data:
+              label: ""
+            height: 30px
+            width: 30px
+            z-index: 1003
+          styles: '{"height":"30px","width":"30px", "background-image":"none","border-width":0,"border-style":"dashed","background-opacity":0.1}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/anchornode-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/white/anchornode-white.svg
+        parent: a982cdc8-8152-4947-a417-22a23634f44a
+        position:
+          posX: 530
+          posY: 439
+        whiteboardData: {}
+    type: NodeGroupInventoryWallet
+    version: 0.7.1
+  aws-otel-collector-axdps:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: aws-otel-collector
+    namespace: ""
+    settings:
+      role Ref:
+        api Group: rbac.authorization.k8s.io
+        kind: ClusterRole
+        name: aws-otel-collector
+      subjects:
+      - kind: ServiceAccount
+        name: aws-otel-collector
+        namespace: default
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: b561a9bd-5fc7-4b77-92bc-02ad04c7661f
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            height: 25px
+            width: 25px
+            x: "7"
+            "y": "7"
+            z-index: 3
+          styles: '{"height":"25px","width":"25px","x":"7", "y":"7"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrolebinding-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrolebinding-white.svg
+        position:
+          posX: 90
+          posY: 150
+        whiteboardData:
+          style:
+            height: 10.5
+            width: 10.5
+            z-index: 1000
+    type: ClusterRoleBinding
+    version: ""
+  aws-otel-collector-cnqqn:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: aws-otel-collector
+      app.kubernetes.io/version: v0.33.1
+      helm.sh/chart: aws-otel-collector-0.2.0
+    model: kubernetes
+    name: aws-otel-collector
+    namespace: default
+    settings:
+      namesapce: default
+      spec:
+        selector:
+          match Labels:
+            app.kubernetes.io/name: aws-otel-collector
+        template:
+          metadata:
+            labels:
+              app.kubernetes.io/name: aws-otel-collector
+          spec:
+            containers:
+            - command:
+              - /awscollector
+              - --config=/conf/otel-agent-config.yaml
+              env:
+              - name: K8S_NODE_NAME
+                value From:
+                  field Ref:
+                    field Path: spec.nodeName
+              - name: HOST_IP
+                value From:
+                  field Ref:
+                    field Path: status.hostIP
+              - name: HOST_NAME
+                value From:
+                  field Ref:
+                    field Path: spec.nodeName
+              - name: K8S_NAMESPACE
+                value From:
+                  field Ref:
+                    field Path: metadata.namespace
+              env From:
+              - config Map Ref:
+                  name: aws-otel-collector
+              image: public.ecr.aws/aws-observability/aws-otel-collector:v0.33.1
+              image Pull Policy: IfNotPresent
+              name: aws-otel-collector
+              resources:
+                limits:
+                  cpu: 200m
+                  memory: 200Mi
+                requests:
+                  cpu: 200m
+                  memory: 200Mi
+              volume Mounts:
+              - mount Path: /rootfs
+                name: rootfs
+                read Only: true
+              - mount Path: /var/run/docker.sock
+                name: dockersock
+                read Only: true
+              - mount Path: /run/containerd/containerd.sock
+                name: containerdsock
+              - mount Path: /var/lib/docker
+                name: varlibdocker
+                read Only: true
+              - mount Path: /sys
+                name: sys
+                read Only: true
+              - mount Path: /dev/disk
+                name: devdisk
+                read Only: true
+              - mount Path: /conf
+                name: otel-agent-config-vol
+            service Account Name: aws-otel-collector
+            volumes:
+            - config Map:
+                items:
+                - key: otel-agent-config
+                  path: otel-agent-config.yaml
+                name: aws-otel-collector
+              name: otel-agent-config-vol
+            - host Path:
+                path: /
+              name: rootfs
+            - host Path:
+                path: /var/run/docker.sock
+              name: dockersock
+            - host Path:
+                path: /var/lib/docker
+              name: varlibdocker
+            - host Path:
+                path: /run/containerd/containerd.sock
+              name: containerdsock
+            - host Path:
+                path: /sys
+              name: sys
+            - host Path:
+                path: /dev/disk/
+              name: devdisk
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: a982cdc8-8152-4947-a417-22a23634f44a
+        meshmodel-metadata:
+          capabilities: |2-
+             {
+              "designer": {
+                "edit": {
+                  "shape": {
+                    "convert-shape": false
+                  }
+                }
+              }
+            }
+          defaultData: ""
+          genealogy: parent
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: circle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            background-opacity: 0.5
+            border-width: 2
+            z-index: 3
+          styles: '{"border-width":2,"background-opacity":0.5}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/daemonset-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/daemonset-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/daemonset-white.svg
+        position:
+          posX: 530
+          posY: 439
+        whiteboardData:
+          style: {}
+    type: DaemonSet
+    version: ""
+  aws-otel-collector-ehzfc:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: aws-otel-collector
+      app.kubernetes.io/version: v0.33.1
+      helm.sh/chart: aws-otel-collector-0.2.0
+    model: kubernetes
+    name: aws-otel-collector
+    namespace: default
+    settings:
+      image Pull Secrets: []
+      secrets: []
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 64b0984f-ee02-4da8-a444-8e7a056d9425
+            metadata:
+              binded_by: b561a9bd-5fc7-4b77-92bc-02ad04c7661f
+            source: 838e6e37-09ae-43e1-a72a-ad0a28da924b
+            subType: Permission
+            target: 6d6e3c43-b86e-44a6-ba86-e9e40db567ca
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 6d6e3c43-b86e-44a6-ba86-e9e40db567ca
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: bottom-round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides: ""
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/serviceaccount-white.svg
+        position:
+          posX: 130
+          posY: 190
+        whiteboardData:
+          style: {}
+    type: ServiceAccount
+    version: ""
+  aws-otel-collector-jkqhp:
+    annotations: {}
+    apiVersion: v1
+    dependsOn:
+    - NodeGroupInventoryWallet
+    id: null
+    isAnnotation: null
+    labels:
+      app.kubernetes.io/managed-by: Helm
+      app.kubernetes.io/name: aws-otel-collector
+      app.kubernetes.io/version: v0.33.1
+      helm.sh/chart: aws-otel-collector-0.2.0
+    model: kubernetes
+    name: aws-otel-collector
+    namespace: default
+    settings:
+      data:
+        otel-agent-config: |
+          extensions:
+            health_check:
+
+          receivers:
+            awscontainerinsightreceiver:
+              add_full_pod_name_metric_label: true
+
+          processors:
+            batch/metrics:
+              timeout: 60s
+
+          exporters:
+            awsemf:
+              namespace: ContainerInsights
+              log_group_name: '/aws/containerinsights/{ClusterName}/performance'
+              log_stream_name: '{NodeName}'
+              resource_to_telemetry_conversion:
+                enabled: true
+              dimension_rollup_option: NoDimensionRollup
+              parse_json_encoded_attr_values: [Sources, kubernetes]
+              metric_declarations:
+                - dimensions: [[PodName, Namespace, ClusterName]]
+                  metric_name_selectors:
+                    - pod_cpu_utilization
+                    - pod_memory_utilization
+                    - pod_number_of_running_containers
+                    - pod_number_of_container_restarts
+                - dimensions: [[FullPodName, Namespace, ClusterName]]
+                  metric_name_selectors:
+                    - pod_cpu_utilization
+                    - pod_memory_utilization
+
+          service:
+            pipelines:
+              metrics:
+                receivers: [awscontainerinsightreceiver]
+                processors: [batch/metrics]
+                exporters: [awsemf]
+
+            extensions: [health_check]
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: f69ae608-5896-4b65-ad3a-808d77878c98
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          parentId: a982cdc8-8152-4947-a417-22a23634f44a
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: bottom-round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            z-index: 1004
+          styles: ""
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/configmap-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/configmap-white.svg
+        parent: 6dd4cabd-7f56-4b07-9e22-5ee4db1f482f
+        position:
+          posX: 530
+          posY: 430
+        whiteboardData:
+          style: {}
+    type: ConfigMap
+    version: ""
+  aws-otel-collector-lpmld:
+    annotations: {}
+    apiVersion: rbac.authorization.k8s.io/v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: aws-otel-collector
+    namespace: ""
+    settings:
+      rules:
+      - api Groups:
+        - ""
+        resources:
+        - pods
+        - nodes
+        - endpoints
+        verbs:
+        - list
+        - watch
+        - get
+      - api Groups:
+        - apps
+        resources:
+        - replicasets
+        verbs:
+        - list
+        - watch
+        - get
+      - api Groups:
+        - batch
+        resources:
+        - jobs
+        verbs:
+        - list
+        - watch
+      - api Groups:
+        - ""
+        resources:
+        - nodes/proxy
+        verbs:
+        - get
+      - api Groups:
+        - ""
+        resources:
+        - nodes/stats
+        - configmaps
+        - events
+        verbs:
+        - create
+        - get
+      - api Groups:
+        - ""
+        resources:
+        - configmaps
+        verbs:
+        - update
+      - api Groups:
+        - ""
+        resource Names:
+        - otel-container-insight-clusterleader
+        resources:
+        - configmaps
+        verbs:
+        - get
+        - update
+        - create
+      - api Groups:
+        - coordination.k8s.io
+        resources:
+        - leases
+        verbs:
+        - create
+        - get
+        - update
+      - api Groups:
+        - coordination.k8s.io
+        resource Names:
+        - otel-container-insight-clusterleader
+        resources:
+        - leases
+        verbs:
+        - get
+        - update
+        - create
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 64b0984f-ee02-4da8-a444-8e7a056d9425
+            metadata:
+              binded_by: b561a9bd-5fc7-4b77-92bc-02ad04c7661f
+            source: 838e6e37-09ae-43e1-a72a-ad0a28da924b
+            subType: Permission
+            target: 6d6e3c43-b86e-44a6-ba86-e9e40db567ca
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 838e6e37-09ae-43e1-a72a-ad0a28da924b
+        meshmodel-metadata:
+          capabilities: ""
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: false
+          isCustomResource: false
+          isModelAnnotation: "FALSE"
+          isNamespaced: false
+          logoURL: Created by Meshery Authors
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            height: 22px
+            width: 22px
+            x: "8.5"
+            "y": "7.5"
+            z-index: 1001
+          styles: '{"height":"22px", "width":"22px", "x":"8.5", "y":"7.5"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/clusterrole-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/clusterrole-white.svg
+        position:
+          posX: 70
+          posY: 130
+        whiteboardData:
+          style: {}
+    type: ClusterRole
+    version: ""
+  comment-hn:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery-core
+    name: comment-hn
+    namespace: ""
+    settings:
+      lastUpdated: "2024-06-03T18:20:37.787Z"
+      status: false
+      user Messages: []
+      usersMessages:
+      - avatarUrl: https://pbs.twimg.com/profile_images/880205475643441152/V_vhfnzb_400x400.jpg
+        firstName: Lee
+        lastName: Calcote
+        message: "Looking good so far, @[Deepak Reddy](9222bde1-64c6-4fb2-971a-3402d5ae2fd9)
+          \U0001F44D"
+        timestamp: "2024-06-03T18:20:37.787Z"
+        userid: 090e7114-509a-4046-81f1-9c5fb8daf724
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: c4759bcb-9e9a-4b72-97a2-ca5652b76ecf
+        label: Comment
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          components: null
+          description: ""
+          displayName: Meshery Core
+          hostID: 26e64aa8-2d86-57bd-92b3-2a73160d27b4
+          id: 3e2db384-d3af-5fac-8af2-684fc3c29446
+          metadata:
+            isAnnotation: false
+            subCategory: App Definition and Development
+            svgColor: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+            svgComplete: ""
+            svgWhite: ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg
+          model:
+            version: 0.7.1
+          name: meshery-core
+          registrant:
+            hostname: artifacthub
+          relationships: null
+          schemaVersion: core.meshery.io/v1beta1
+          status: enabled
+          subCategory: App Definition and Development
+          version: v1.0.0
+        meshmodel-metadata:
+          capabilities: '{"designer":{"edit":{"config":true}}}'
+          defaultData: ""
+          genealogy: ""
+          isAnnotation: true
+          primaryColor: '#FFDE00'
+          secondaryColor: '#FFDE00'
+          shape: tag
+          shapePolygonPoints: ""
+          status: enabled
+          styleOverrides:
+            height: 22px
+            width: 22px
+            x: 1.5px
+            "y": 7.5px
+            z-index: 1002
+          styles: '{"height":"22px","width":"22px","x":"1.5px","y":"7.5px"}'
+          subCategory: ""
+          svgColor: ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery-core/color/comment-color.svg
+        position:
+          posX: 130
+          posY: 110
+        whiteboardData: {}
+    type: Comment
+    version: 0.7.1

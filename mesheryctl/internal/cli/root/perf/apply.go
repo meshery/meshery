@@ -338,7 +338,7 @@ mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-gene
 		}
 		log.Debug(string(data))
 
-		log.Info("Test Completed Successfully!")
+		log.Info("Test Completed!")
 		return nil
 	},
 }

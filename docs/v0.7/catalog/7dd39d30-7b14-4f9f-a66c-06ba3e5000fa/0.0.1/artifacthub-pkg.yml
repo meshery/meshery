@@ -1,0 +1,33 @@
+version: 0.0.1
+name: example-edge-permission-relationship
+displayName: Example Edge-Permission Relationship
+createdAt: "2024-02-08T11:12:08Z"
+description: |-
+    The design showcases the operational dynamics of the Edge-Permission relationship. To engage with its functionality, adhere to the sequential steps below:
+    1. Duplicate this design by cloning it.
+    2. Modify the name of the service account.
+    Upon completion, you'll notice that the connection visually represented by the edge vanishes, and the ClusterRoleBinding (CRB) is disassociated from both the ClusterRole (CR) and Service Account (SA).
+    To restore this relationship, you can either,
+    1. Drag the CRB from the CR to the SA, then release the mouse click. This action triggers the recreation of the relationship, as the relationship constraints get satisfied.
+    2. Or, revert the name of the SA. This automatically recreates the relationship, as the relationship constraints get satisfied.
+
+    These are a few of the ways to experience this relationship.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/7dd39d30-7b14-4f9f-a66c-06ba3e5000fa/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "NA \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: b6467d0a-f11e-4614-9eb2-ab80c4f1c58d
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/7dd39d30-7b14-4f9f-a66c-06ba3e5000fa-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/7dd39d30-7b14-4f9f-a66c-06ba3e5000fa-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

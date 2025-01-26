@@ -3,537 +3,6 @@
     "component_name": "meshkit",
     "component_type": "library",
     "errors": {
-      "1001": {
-        "name": "ErrGetCrdNamesCode",
-        "code": "1001",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error getting crd names",
-        "probable_cause": "Could not execute kubeopenapi-jsonschema correctly",
-        "suggested_remediation": "Make sure the binary is valid and correct\nMake sure the filter passed is correct"
-      },
-      "1002": {
-        "name": "ErrGetSchemasCode",
-        "code": "1002",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error getting schemas",
-        "probable_cause": "Schemas Json could not be produced from given crd.",
-        "suggested_remediation": "Make sure the filter passed is correct"
-      },
-      "1003": {
-        "name": "ErrGetAPIVersionCode",
-        "code": "1003",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error getting api version",
-        "probable_cause": "Api version could not be parsed",
-        "suggested_remediation": "Make sure the filter passed is correct"
-      },
-      "1004": {
-        "name": "ErrGetAPIGroupCode",
-        "code": "1004",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error getting api group",
-        "probable_cause": "Api group could not be parsed",
-        "suggested_remediation": "Make sure the filter passed is correct"
-      },
-      "1005": {
-        "name": "ErrPopulatingYamlCode",
-        "code": "1005",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error populating yaml",
-        "probable_cause": "Yaml could not be populated with the returned manifests",
-        "suggested_remediation": ""
-      },
-      "1006": {
-        "name": "ErrAbsentFilterCode",
-        "code": "1006",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error with passed filters",
-        "probable_cause": "ItrFilter or ItrSpecFilter is either not passed or empty",
-        "suggested_remediation": "Pass the correct ItrFilter and ItrSpecFilter"
-      },
-      "11010": {
-        "name": "ErrNoneDatabaseCode",
-        "code": "11010",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "No Database selected",
-        "probable_cause": "database name is empty",
-        "suggested_remediation": "Input a name for the database"
-      },
-      "11011": {
-        "name": "ErrDatabaseOpenCode",
-        "code": "11011",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to open database",
-        "probable_cause": "Database is unreachable",
-        "suggested_remediation": "Make sure your database is reachable"
-      },
-      "11012": {
-        "name": "ErrSQLMapUnmarshalJSONCode",
-        "code": "11012",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "failed to unmarshal json",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11013": {
-        "name": "ErrSQLMapUnmarshalTextCode",
-        "code": "11013",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "failed to unmarshal text",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11014": {
-        "name": "ErrSQLMapMarshalValueCode",
-        "code": "11014",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "failed to marshal value",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11015": {
-        "name": "ErrSQLMapUnmarshalScannedCode",
-        "code": "11015",
-        "severity": "",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11016": {
-        "name": "ErrSQLMapInvalidScanCode",
-        "code": "11016",
-        "severity": "",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11017": {
-        "name": "ErrClosingDatabaseConnectionCode",
-        "code": "11017",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "failed to close database connection",
-        "probable_cause": "Invalid database instance passed.",
-        "suggested_remediation": "Make sure the DB handler has a valid database instance."
-      },
-      "11021": {
-        "name": "ErrApplyManifestCode",
-        "code": "11021",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error Applying manifest",
-        "probable_cause": "Manifest could be invalid",
-        "suggested_remediation": "Make sure manifest yaml is valid"
-      },
-      "11022": {
-        "name": "ErrServiceDiscoveryCode",
-        "code": "11022",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error Discovering service",
-        "probable_cause": "Network not reachable to the service",
-        "suggested_remediation": "Make sure the endpoint is reachable"
-      },
-      "11023": {
-        "name": "ErrApplyHelmChartCode",
-        "code": "11023",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error applying helm chart",
-        "probable_cause": "Chart could be invalid",
-        "suggested_remediation": "Make sure to apply valid chart"
-      },
-      "11024": {
-        "name": "ErrNewKubeClientCode",
-        "code": "11024",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error creating kubernetes clientset",
-        "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
-        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
-      },
-      "11025": {
-        "name": "ErrNewDynClientCode",
-        "code": "11025",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error creating dynamic client",
-        "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
-        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
-      },
-      "11026": {
-        "name": "ErrNewDiscoveryCode",
-        "code": "11026",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error creating discovery client",
-        "probable_cause": "Discovery resource is invalid or doesnt exist",
-        "suggested_remediation": "Makes sure the you input valid resource for discovery"
-      },
-      "11027": {
-        "name": "ErrNewInformerCode",
-        "code": "11027",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error creating informer client",
-        "probable_cause": "Informer is invalid or doesnt exist",
-        "suggested_remediation": "Makes sure the you input valid resource for the informer"
-      },
-      "11028": {
-        "name": "ErrEndpointNotFoundCode",
-        "code": "11028",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unable to discover an endpoint",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11029": {
-        "name": "ErrInvalidAPIServerCode",
-        "code": "11029",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Invalid API Server URL",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11030": {
-        "name": "ErrLoadConfigCode",
-        "code": "11030",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error loading kubernetes config",
-        "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
-        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
-      },
-      "11031": {
-        "name": "ErrValidateConfigCode",
-        "code": "11031",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Validation failed in the kubernetes config",
-        "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
-        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
-      },
-      "11036": {
-        "name": "ErrSelectorBasedMapCode",
-        "code": "11036",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11037": {
-        "name": "ErrProtocolBasedMapCode",
-        "code": "11037",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11038": {
-        "name": "ErrLableBasedMapCode",
-        "code": "11038",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11039": {
-        "name": "ErrPortParsingCode",
-        "code": "11039",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11040": {
-        "name": "ErrGenerateServiceCode",
-        "code": "11040",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11041": {
-        "name": "ErrConstructingRestHelperCode",
-        "code": "11041",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11042": {
-        "name": "ErrCreatingServiceCode",
-        "code": "11042",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11043": {
-        "name": "ErrUnmarshalCode",
-        "code": "11043",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unmarshal unknown error: %s",
-        "probable_cause": "Invalid object format",
-        "suggested_remediation": "Make sure to input a valid JSON object"
-      },
-      "11044": {
-        "name": "ErrUnmarshalInvalidCode",
-        "code": "11044",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unmarshal invalid error for type: ",
-        "probable_cause": "Invalid object format",
-        "suggested_remediation": "Make sure to input a valid JSON object"
-      },
-      "11045": {
-        "name": "ErrUnmarshalSyntaxCode",
-        "code": "11045",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unmarshal syntax error at offest: ",
-        "probable_cause": "Invalid object format",
-        "suggested_remediation": "Make sure to input a valid JSON object"
-      },
-      "11046": {
-        "name": "ErrUnmarshalTypeCode",
-        "code": "11046",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unmarshal type error at key: %s. Error: %s",
-        "probable_cause": "Invalid object format",
-        "suggested_remediation": "Make sure to input a valid JSON object"
-      },
-      "11047": {
-        "name": "ErrUnmarshalUnsupportedTypeCode",
-        "code": "11047",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unmarshal unsupported type error at key: ",
-        "probable_cause": "Invalid object format",
-        "suggested_remediation": "Make sure to input a valid JSON object"
-      },
-      "11048": {
-        "name": "ErrUnmarshalUnsupportedValueCode",
-        "code": "11048",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Unmarshal unsupported value error at key: ",
-        "probable_cause": "Invalid object format",
-        "suggested_remediation": "Make sure to input a valid JSON object"
-      },
-      "11049": {
-        "name": "ErrMarshalCode",
-        "code": "11049",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Marshal error, Description: %s",
-        "probable_cause": "Invalid object format",
-        "suggested_remediation": "Make sure to input a valid JSON object"
-      },
-      "11050": {
-        "name": "ErrGetBoolCode",
-        "code": "11050",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error while getting Boolean value for key: %s, error: %s",
-        "probable_cause": "Not a valid boolean",
-        "suggested_remediation": "Make sure it is a boolean"
-      },
-      "11051": {
-        "name": "ErrInvalidProtocolCode",
-        "code": "11051",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "invalid protocol: only http, https and file are valid protocols",
-        "probable_cause": "Network protocol is incorrect",
-        "suggested_remediation": "Make sure to specify the right network protocol"
-      },
-      "11052": {
-        "name": "ErrRemoteFileNotFoundCode",
-        "code": "11052",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "remote file not found at",
-        "probable_cause": "File doesnt exist in the location\nFile name is incorrect",
-        "suggested_remediation": "Make sure to input the right file name and location"
-      },
-      "11053": {
-        "name": "ErrReadingRemoteFileCode",
-        "code": "11053",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "error reading remote file",
-        "probable_cause": "File doesnt exist in the location\nFile name is incorrect",
-        "suggested_remediation": "Make sure to input the right file name and location"
-      },
-      "11054": {
-        "name": "ErrReadingLocalFileCode",
-        "code": "11054",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "error reading local file",
-        "probable_cause": "File doesnt exist in the location\nFile name is incorrect",
-        "suggested_remediation": "Make sure to input the right file name and location"
-      },
-      "11056": {
-        "name": "ErrViperCode",
-        "code": "11056",
-        "severity": "Fatal",
-        "long_description": "",
-        "short_description": "Viper configuration initialization failed",
-        "probable_cause": "Viper is crashing",
-        "suggested_remediation": "Make sure viper is configured properly"
-      },
-      "11057": {
-        "name": "ErrInMemCode",
-        "code": "11057",
-        "severity": "Fatal",
-        "long_description": "",
-        "short_description": "InMem configuration initialization failed",
-        "probable_cause": "In memory map is crashing",
-        "suggested_remediation": "Make sure map is configured properly"
-      },
-      "11058": {
-        "name": "ErrPodHasNoLabelsCode",
-        "code": "11058",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "the pod has no labels and cannot be exposed",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11059": {
-        "name": "ErrServiceHasNoSelectorsCode",
-        "code": "11059",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "the service has no pod selector set",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11060": {
-        "name": "ErrInvalidDeploymentNoSelectorsLabelsCode",
-        "code": "11060",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "the deployment has no labels or selectors and cannot be exposed",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11061": {
-        "name": "ErrInvalidDeploymentNoSelectorsCode",
-        "code": "11061",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "invalid deployment: no selectors, therefore cannot be exposed",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11062": {
-        "name": "ErrInvalidReplicaNoSelectorsLabelsCode",
-        "code": "11062",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "the replica set has no labels or selectors and cannot be exposed",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11063": {
-        "name": "ErrInvalidReplicaSetNoSelectorsCode",
-        "code": "11063",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "invalid replicaset: no selectors, therefore cannot be exposed",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11064": {
-        "name": "ErrNoPortsFoundForHeadlessResourceCode",
-        "code": "11064",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "no ports found for the non headless resource",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11065": {
-        "name": "ErrUnknownSessionAffinityErrCode",
-        "code": "11065",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "unknown session affinity:",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11066": {
-        "name": "ErrMatchExpressionsConvertionErrCode",
-        "code": "11066",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "couldn't convert expressions - to map-based selector format",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11067": {
-        "name": "ErrFailedToExtractPodSelectorErrCode",
-        "code": "11067",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "cannot extract pod selector from ",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11068": {
-        "name": "ErrFailedToExtractPortsCode",
-        "code": "11068",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "cannot extract ports from ",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11069": {
-        "name": "ErrFailedToExtractProtocolsErrCode",
-        "code": "11069",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "cannot extract protocols from ",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
-      "11070": {
-        "name": "ErrCannotExposeObjectErrCode",
-        "code": "11070",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "cannot expose a ",
-        "probable_cause": "",
-        "suggested_remediation": ""
-      },
       "11071": {
         "name": "ErrControllerCode",
         "code": "11071",
@@ -543,23 +12,1391 @@
         "probable_cause": "",
         "suggested_remediation": ""
       },
-      "11072": {
+      "11118": {
+        "name": "ErrConnectCode",
+        "code": "11118",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Connection to broker failed",
+        "probable_cause": "Endpoint might not be reachable",
+        "suggested_remediation": "Make sure the NATS endpoint is reachable"
+      },
+      "11119": {
+        "name": "ErrEncodedConnCode",
+        "code": "11119",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Encoding connection failed with broker",
+        "probable_cause": "Endpoint might not be reachable",
+        "suggested_remediation": "Make sure the NATS endpoint is reachable"
+      },
+      "11120": {
+        "name": "ErrPublishCode",
+        "code": "11120",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Publish failed",
+        "probable_cause": "NATS is unhealthy",
+        "suggested_remediation": "Make sure NATS is up and running"
+      },
+      "11121": {
+        "name": "ErrPublishRequestCode",
+        "code": "11121",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Publish request failed",
+        "probable_cause": "NATS is unhealthy",
+        "suggested_remediation": "Make sure NATS is up and running"
+      },
+      "11122": {
+        "name": "ErrQueueSubscribeCode",
+        "code": "11122",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Subscription failed",
+        "probable_cause": "NATS is unhealthy",
+        "suggested_remediation": "Make sure NATS is up and running"
+      },
+      "11123": {
+        "name": "ErrEmptyConfigCode",
+        "code": "11123",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Config not initialized",
+        "probable_cause": "Viper is crashing",
+        "suggested_remediation": "Make sure viper is configured properly"
+      },
+      "11124": {
+        "name": "ErrViperCode",
+        "code": "11124",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "Viper configuration initialization failed",
+        "probable_cause": "Viper is crashing",
+        "suggested_remediation": "Make sure viper is configured properly"
+      },
+      "11125": {
+        "name": "ErrInMemCode",
+        "code": "11125",
+        "severity": "Fatal",
+        "long_description": "",
+        "short_description": "InMem configuration initialization failed",
+        "probable_cause": "In memory map is crashing",
+        "suggested_remediation": "Make sure map is configured properly"
+      },
+      "11126": {
+        "name": "ErrNoneDatabaseCode",
+        "code": "11126",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "No Database selected",
+        "probable_cause": "database name is empty",
+        "suggested_remediation": "Input a name for the database"
+      },
+      "11127": {
+        "name": "ErrDatabaseOpenCode",
+        "code": "11127",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to open database",
+        "probable_cause": "Database is unreachable",
+        "suggested_remediation": "Make sure your database is reachable"
+      },
+      "11128": {
+        "name": "ErrSQLMapUnmarshalJSONCode",
+        "code": "11128",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to unmarshal json",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11129": {
+        "name": "ErrSQLMapUnmarshalTextCode",
+        "code": "11129",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to unmarshal text",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11130": {
+        "name": "ErrSQLMapMarshalValueCode",
+        "code": "11130",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to marshal value",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11131": {
+        "name": "ErrSQLMapUnmarshalScannedCode",
+        "code": "11131",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to unmarshal scanned data",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11132": {
+        "name": "ErrSQLMapInvalidScanCode",
+        "code": "11132",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "invalid data type: expected []byte",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11133": {
+        "name": "ErrClosingDatabaseConnectionCode",
+        "code": "11133",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to close database connection",
+        "probable_cause": "Invalid database instance passed.",
+        "suggested_remediation": "Make sure the DB handler has a valid database instance."
+      },
+      "11134": {
+        "name": "ErrGetChartUrlCode",
+        "code": "11134",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not get the chart url for this ArtifactHub package",
+        "probable_cause": "",
+        "suggested_remediation": "make sure that the package exists"
+      },
+      "11135": {
+        "name": "ErrGetAhPackageCode",
+        "code": "11135",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not get the ArtifactHub package with the given name",
+        "probable_cause": "",
+        "suggested_remediation": "make sure that the package exists"
+      },
+      "11136": {
+        "name": "ErrComponentGenerateCode",
+        "code": "11136",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "failed to generate components for the package",
+        "probable_cause": "",
+        "suggested_remediation": "Make sure that the package is compatible"
+      },
+      "11137": {
+        "name": "ErrGetAllHelmPackagesCode",
+        "code": "11137",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not get HELM packages from Artifacthub",
+        "probable_cause": "",
+        "suggested_remediation": "make sure that the artifacthub API service is available"
+      },
+      "11138": {
+        "name": "ErrUnsupportedRegistrantCode",
+        "code": "11138",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unsupported registrant",
+        "probable_cause": "Select from one of the supported registrants",
+        "suggested_remediation": "Check docs for the list of supported registrants"
+      },
+      "11139": {
+        "name": "ErrGenerateGitHubPackageCode",
+        "code": "11139",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "invalid sourceurl provided\nrepository might be private",
+        "suggested_remediation": "provided sourceURL according to the format\nprovide approparite credentials to clone a private repository"
+      },
+      "11140": {
+        "name": "ErrInvalidGitHubSourceURLCode",
+        "code": "11140",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "sourceURL provided might be invalid\nprovided repo/version tag does not exist",
+        "suggested_remediation": "ensure source url follows the format: git://<owner>/<repositoryname>/<branch>/<version>/<path from the root of repository>"
+      },
+      "11141": {
+        "name": "ErrGetControllerStatusCode",
+        "code": "11141",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error getting the status of the meshery controller",
+        "probable_cause": "Controller may not be healthy or not deployed",
+        "suggested_remediation": "Make sure the controller is deployed and healthy"
+      },
+      "11142": {
+        "name": "ErrDeployControllerCode",
+        "code": "11142",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error deploying Meshery Operator",
+        "probable_cause": "Meshery Server could not connect to the Kubernetes cluster. Meshery Operator  was not deployed\nInsufficient file permission to read kubeconfig",
+        "suggested_remediation": "Verify that the available kubeconfig is accessible by Meshery Server - verify sufficient file permissions (only needs read permission)"
+      },
+      "11143": {
+        "name": "ErrGetControllerPublicEndpointCode",
+        "code": "11143",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not get the public endpoint of the controller",
+        "probable_cause": "Client configuration may not be valid",
+        "suggested_remediation": "Make sure the client configuration is valid"
+      },
+      "11144": {
+        "name": "ErrPrepareForEvalCode",
+        "code": "11144",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error preparing for evaluation",
+        "probable_cause": "query might be empty\nrego store provided without associated transaction\nuncommitted transaction",
+        "suggested_remediation": "please provide the transaction for the loaded store"
+      },
+      "11145": {
+        "name": "ErrEvalCode",
+        "code": "11145",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error evaluating policy for the given input",
+        "probable_cause": "The policy query is invalid, see: https://github.com/open-policy-agent/opa/blob/main/rego/resultset.go (Allowed func)",
+        "suggested_remediation": "please provide a valid non-empty query"
+      },
+      "11147": {
+        "name": "ErrAppendingLayerCode",
+        "code": "11147",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "appending content to artifact failed",
+        "probable_cause": "layer is not compatible with the base image",
+        "suggested_remediation": "Try using a different base image\nuse a different media type for the layer"
+      },
+      "11148": {
+        "name": "ErrReadingFileCode",
+        "code": "11148",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "reading file failed",
+        "probable_cause": "failed to read the file\nInsufficient permissions",
+        "suggested_remediation": "Try using a different file\ncheck if appropriate read permissions are given to the file"
+      },
+      "11149": {
+        "name": "ErrUnSupportedLayerTypeCode",
+        "code": "11149",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unsupported layer type",
+        "probable_cause": "layer type is not supported",
+        "suggested_remediation": "Try using a different layer type"
+      },
+      "11150": {
+        "name": "ErrGettingLayerCode",
+        "code": "11150",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "getting layer failed",
+        "probable_cause": "failed to get the layer",
+        "suggested_remediation": "Try using a different layer\ncheck if OCI image is not malformed"
+      },
+      "11151": {
+        "name": "ErrCompressingLayerCode",
+        "code": "11151",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "compressing layer failed",
+        "probable_cause": "failed to compress the layer",
+        "suggested_remediation": "Try using a different layer\ncheck if layers are compatible with the base image"
+      },
+      "11152": {
+        "name": "ErrUnTaringLayerCode",
+        "code": "11152",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "untaring layer failed",
+        "probable_cause": "failed to untar the layer",
+        "suggested_remediation": "Try using a different layer\ncheck if image is not malformed"
+      },
+      "11153": {
+        "name": "ErrGettingImageCode",
+        "code": "11153",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "getting image failed",
+        "probable_cause": "failed to get the image",
+        "suggested_remediation": "Try using a different image\ncheck if image is not malformed"
+      },
+      "11154": {
+        "name": "ErrValidatingImageCode",
+        "code": "11154",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "validating image failed",
+        "probable_cause": "failed to validate the image",
+        "suggested_remediation": "Try using a different image\ncheck if image is not malformed"
+      },
+      "11155": {
+        "name": "ErrCrdGenerateCode",
+        "code": "11155",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not generate component with the given CRD",
+        "probable_cause": "",
+        "suggested_remediation": "Verify CRD has valid schema."
+      },
+      "11156": {
+        "name": "ErrDefinitionCode",
+        "code": "11156",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not get definition for the given CRD",
+        "probable_cause": "",
+        "suggested_remediation": "Verify CRD has valid schema."
+      },
+      "11157": {
+        "name": "ErrGetSchemaCode",
+        "code": "11157",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11158": {
+        "name": "ErrUpdateSchemaCode",
+        "code": "11158",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to update schema properties for ",
+        "probable_cause": "Incorrect type assertion\nSelector.Unquoted might have been invoked on non-string label\nerror during conversion from cue.Selector to string",
+        "suggested_remediation": "Ensure correct type assertion\nPerform appropriate conversion from cue.Selector to string\nVerify CRD has valid schema"
+      },
+      "11159": {
+        "name": "ErrUnmarshalCode",
+        "code": "11159",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11160": {
+        "name": "ErrUnmarshalInvalidCode",
+        "code": "11160",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11161": {
+        "name": "ErrUnmarshalSyntaxCode",
+        "code": "11161",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11162": {
+        "name": "ErrUnmarshalTypeCode",
+        "code": "11162",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11163": {
+        "name": "ErrUnmarshalUnsupportedTypeCode",
+        "code": "11163",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11164": {
+        "name": "ErrUnmarshalUnsupportedValueCode",
+        "code": "11164",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11165": {
+        "name": "ErrMarshalCode",
+        "code": "11165",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Marshal error, Description: %s",
+        "probable_cause": "Invalid object format",
+        "suggested_remediation": "Make sure to input a valid JSON object"
+      },
+      "11166": {
+        "name": "ErrGetBoolCode",
+        "code": "11166",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while getting Boolean value for key: %s, error: %s",
+        "probable_cause": "Not a valid boolean",
+        "suggested_remediation": "Make sure it is a boolean"
+      },
+      "11167": {
+        "name": "ErrInvalidProtocolCode",
+        "code": "11167",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "invalid protocol: only http, https and file are valid protocols",
+        "probable_cause": "Network protocol is incorrect",
+        "suggested_remediation": "Make sure to specify the right network protocol"
+      },
+      "11168": {
+        "name": "ErrRemoteFileNotFoundCode",
+        "code": "11168",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "remote file not found at",
+        "probable_cause": "File doesnt exist in the location\nFile name is incorrect",
+        "suggested_remediation": "Make sure to input the right file name and location"
+      },
+      "11169": {
+        "name": "ErrReadingRemoteFileCode",
+        "code": "11169",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error reading remote file",
+        "probable_cause": "File doesnt exist in the location\nFile name is incorrect",
+        "suggested_remediation": "Make sure to input the right file name and location"
+      },
+      "11170": {
+        "name": "ErrReadingLocalFileCode",
+        "code": "11170",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error reading local file",
+        "probable_cause": "File does not exist in the location (~/.kube/config)\nFile is absent. Filename is not 'config'.\nInsufficient permissions to read file",
+        "suggested_remediation": "Verify that the available kubeconfig is accessible by Meshery Server - verify sufficient file permissions (only needs read permission)."
+      },
+      "11171": {
+        "name": "ErrReadFileCode",
+        "code": "11171",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error reading file",
+        "probable_cause": "Insufficient permissions",
+        "suggested_remediation": "Verify that file exist at the provided location\nVerify sufficient file permissions."
+      },
+      "11172": {
+        "name": "ErrWriteFileCode",
+        "code": "11172",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error writing file",
+        "probable_cause": "Insufficient write permissions",
+        "suggested_remediation": "Verify that file exist at the provided location\nVerify sufficient file permissions."
+      },
+      "11173": {
+        "name": "ErrGettingLatestReleaseTagCode",
+        "code": "11173",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not fetch latest stable release from github",
+        "probable_cause": "Failed to make GET request to github\nInvalid response received on github.com/<org>/<repo>/releases/stable",
+        "suggested_remediation": "Make sure Github is reachable\nMake sure a valid response is available on github.com/<org>/<repo>/releases/stable"
+      },
+      "11174": {
+        "name": "ErrMissingFieldCode",
+        "code": "11174",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Missing field or property with name: ",
+        "probable_cause": "Invalid manifest",
+        "suggested_remediation": "Make sure that the concerned data type has all the required fields/values."
+      },
+      "11175": {
+        "name": "ErrExpectedTypeMismatchCode",
+        "code": "11175",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Expected the type to be: ",
+        "probable_cause": "Invalid manifest",
+        "suggested_remediation": "Make sure that the value provided in the manifest has the needed type."
+      },
+      "11176": {
+        "name": "ErrJsonToCueCode",
+        "code": "11176",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not convert given json object into a CUE Value",
+        "probable_cause": "Invalid json object",
+        "suggested_remediation": "Make sure that the given value is a valid JSON"
+      },
+      "11177": {
+        "name": "ErrYamlToCueCode",
+        "code": "11177",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not convert given yaml object into a CUE Value",
+        "probable_cause": "Invalid yaml",
+        "suggested_remediation": "Make sure that the given value is a valid YAML"
+      },
+      "11178": {
+        "name": "ErrJsonSchemaToCueCode",
+        "code": "11178",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not convert given JsonSchema into a CUE Value",
+        "probable_cause": "Invalid jsonschema",
+        "suggested_remediation": "Make sure that the given value is a valid JSONSCHEMA"
+      },
+      "11179": {
+        "name": "ErrCueLookupCode",
+        "code": "11179",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not lookup the given path in the CUE value",
+        "probable_cause": "",
+        "suggested_remediation": "make sure that the path is a valid cue expression and is correct\nmake sure that there exists a field with the given path\nmake sure that the given root value is correct"
+      },
+      "11180": {
+        "name": "ErrTypeCastCode",
+        "code": "11180",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "invaid type assertion requested",
+        "probable_cause": "The interface type is not compatible with the request type cast",
+        "suggested_remediation": "use correct data type for type casting"
+      },
+      "11181": {
+        "name": "ErrCreateFileCode",
+        "code": "11181",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "invalid path provided\ninsufficient permissions",
+        "suggested_remediation": "provide a valid path\nretry by using an absolute path\ncheck for sufficient permissions for the user"
+      },
+      "11182": {
+        "name": "ErrCreateDirCode",
+        "code": "11182",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "invalid path provided\ninsufficient permissions",
+        "suggested_remediation": "provide a valid path\nretry by using an absolute path\ncheck for sufficient permissions for the user"
+      },
+      "11183": {
+        "name": "ErrDecodeYamlCode",
+        "code": "11183",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11184": {
+        "name": "ErrExtractTarXZCode",
+        "code": "11184",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The gzip might be corrupt",
+        "suggested_remediation": ""
+      },
+      "11185": {
+        "name": "ErrExtractZipCode",
+        "code": "11185",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The zip might be corrupt",
+        "suggested_remediation": ""
+      },
+      "11186": {
+        "name": "ErrReadDirCode",
+        "code": "11186",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "error reading directory",
+        "probable_cause": "Insufficient permissions",
+        "suggested_remediation": "Verify that directory exist at the provided location\nVerify sufficient directory read permission."
+      },
+      "11188": {
+        "name": "ErrLoadHelmChartCode",
+        "code": "11188",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "chart might have been deleted\ninsufficient permissions to read the chart",
+        "suggested_remediation": "provide correct path to the chart directory/file\nensure sufficient/correct permission to the chart directory/file"
+      },
+      "11189": {
+        "name": "ErrGetDescriberFuncCode",
+        "code": "11189",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11190": {
+        "name": "ErrApplyManifestCode",
+        "code": "11190",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11191": {
+        "name": "ErrServiceDiscoveryCode",
+        "code": "11191",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11192": {
+        "name": "ErrApplyHelmChartCode",
+        "code": "11192",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11193": {
+        "name": "ErrNewKubeClientCode",
+        "code": "11193",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11194": {
+        "name": "ErrNewDynClientCode",
+        "code": "11194",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11195": {
+        "name": "ErrNewDiscoveryCode",
+        "code": "11195",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11196": {
+        "name": "ErrNewInformerCode",
+        "code": "11196",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11197": {
+        "name": "ErrEndpointNotFoundCode",
+        "code": "11197",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to discover an endpoint",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11198": {
+        "name": "ErrInvalidAPIServerCode",
+        "code": "11198",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid API Server URL",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11199": {
+        "name": "ErrLoadConfigCode",
+        "code": "11199",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11200": {
+        "name": "ErrValidateConfigCode",
+        "code": "11200",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11201": {
+        "name": "ErrCreatingHelmIndexCode",
+        "code": "11201",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while creating Helm Index",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11202": {
+        "name": "ErrEntryWithAppVersionNotExistsCode",
+        "code": "11202",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Entry for the app version does not exist",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11203": {
+        "name": "ErrHelmRepositoryNotFoundCode",
+        "code": "11203",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Helm repo not found",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11204": {
+        "name": "ErrEntryWithChartVersionNotExistsCode",
+        "code": "11204",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Entry for the chart version does not exist",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11206": {
+        "name": "ErrGettingResourceCode",
+        "code": "11206",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11207": {
+        "name": "ErrTraverserCode",
+        "code": "11207",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11208": {
+        "name": "ErrResourceCannotBeExposedCode",
+        "code": "11208",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "resource type %s cannot be exposed: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11209": {
+        "name": "ErrSelectorBasedMapCode",
+        "code": "11209",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11210": {
+        "name": "ErrProtocolBasedMapCode",
+        "code": "11210",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11211": {
+        "name": "ErrLableBasedMapCode",
+        "code": "11211",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11212": {
+        "name": "ErrPortParsingCode",
+        "code": "11212",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11213": {
+        "name": "ErrGenerateServiceCode",
+        "code": "11213",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11214": {
+        "name": "ErrConstructingRestHelperCode",
+        "code": "11214",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11215": {
+        "name": "ErrCreatingServiceCode",
+        "code": "11215",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11216": {
+        "name": "ErrPodHasNoLabelsCode",
+        "code": "11216",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "the pod has no labels and cannot be exposed",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11217": {
+        "name": "ErrServiceHasNoSelectorsCode",
+        "code": "11217",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "the service has no pod selector set",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11218": {
+        "name": "ErrInvalidDeploymentNoSelectorsLabelsCode",
+        "code": "11218",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "the deployment has no labels or selectors and cannot be exposed",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11219": {
+        "name": "ErrInvalidDeploymentNoSelectorsCode",
+        "code": "11219",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "invalid deployment: no selectors, therefore cannot be exposed",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11220": {
+        "name": "ErrInvalidReplicaNoSelectorsLabelsCode",
+        "code": "11220",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "the replica set has no labels or selectors and cannot be exposed",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11221": {
+        "name": "ErrInvalidReplicaSetNoSelectorsCode",
+        "code": "11221",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "invalid replicaset: no selectors, therefore cannot be exposed",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11222": {
+        "name": "ErrNoPortsFoundForHeadlessResourceCode",
+        "code": "11222",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "no ports found for the non headless resource",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11223": {
+        "name": "ErrUnknownSessionAffinityErrCode",
+        "code": "11223",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unknown session affinity:",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11224": {
+        "name": "ErrMatchExpressionsConvertionErrCode",
+        "code": "11224",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "couldn't convert expressions - to map-based selector format",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11225": {
+        "name": "ErrFailedToExtractPodSelectorErrCode",
+        "code": "11225",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "cannot extract pod selector from ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11226": {
+        "name": "ErrFailedToExtractPortsCode",
+        "code": "11226",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "cannot extract ports from ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11227": {
+        "name": "ErrFailedToExtractProtocolsErrCode",
+        "code": "11227",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "cannot extract protocols from ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11228": {
+        "name": "ErrCannotExposeObjectErrCode",
+        "code": "11228",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "cannot expose a ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11229": {
+        "name": "ErrCvrtKomposeCode",
+        "code": "11229",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error converting the docker compose file into kubernetes manifests",
+        "probable_cause": "Could not convert docker-compose file into kubernetes manifests",
+        "suggested_remediation": "Make sure the docker-compose file is valid\n"
+      },
+      "11230": {
+        "name": "ErrValidateDockerComposeFileCode",
+        "code": "11230",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid docker compose file",
+        "probable_cause": "",
+        "suggested_remediation": "Make sure that the compose file is valid,\nMake sure that the schema is valid"
+      },
+      "11231": {
+        "name": "ErrIncompatibleVersionCode",
+        "code": "11231",
+        "severity": "Alert",
+        "long_description": "This docker compose file is invalid since it's version is incompatible.",
+        "short_description": "This version of docker compose file is not compatible.",
+        "probable_cause": "docker compose file with version greater than 3.3 is probably being used",
+        "suggested_remediation": "Make sure that the compose file has version less than or equal to 3.3,\n"
+      },
+      "11232": {
+        "name": "ErrNoVersionCode",
+        "code": "11232",
+        "severity": "Alert",
+        "long_description": "Version field not found",
+        "short_description": "version not found in the docker compose file",
+        "probable_cause": "Since the Docker Compose specification does not mandate the version field from version 3 onwards, most sources do not provide them.",
+        "suggested_remediation": "Make sure that the compose file has version specified,\nAdd any version less than or equal to 3.3 if you cannot get the exact version from the source"
+      },
+      "11233": {
+        "name": "ErrGetCrdNamesCode",
+        "code": "11233",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error getting crd names",
+        "probable_cause": "Could not execute kubeopenapi-jsonschema correctly",
+        "suggested_remediation": "Make sure the binary is valid and correct\nMake sure the filter passed is correct"
+      },
+      "11234": {
+        "name": "ErrGetSchemasCode",
+        "code": "11234",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error getting schemas",
+        "probable_cause": "Schemas Json could not be produced from given crd.",
+        "suggested_remediation": "Make sure the filter passed is correct"
+      },
+      "11235": {
+        "name": "ErrGetAPIVersionCode",
+        "code": "11235",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error getting api version",
+        "probable_cause": "Api version could not be parsed",
+        "suggested_remediation": "Make sure the filter passed is correct"
+      },
+      "11236": {
+        "name": "ErrGetAPIGroupCode",
+        "code": "11236",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error getting api group",
+        "probable_cause": "Api group could not be parsed",
+        "suggested_remediation": "Make sure the filter passed is correct"
+      },
+      "11237": {
+        "name": "ErrPopulatingYamlCode",
+        "code": "11237",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error populating yaml",
+        "probable_cause": "Yaml could not be populated with the returned manifests",
+        "suggested_remediation": ""
+      },
+      "11238": {
+        "name": "ErrAbsentFilterCode",
+        "code": "11238",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error with passed filters",
+        "probable_cause": "ItrFilter or ItrSpecFilter is either not passed or empty",
+        "suggested_remediation": "Pass the correct ItrFilter and ItrSpecFilter"
+      },
+      "11239": {
+        "name": "ErrCreatingDirectoryCode",
+        "code": "11239",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "could not create directory",
+        "probable_cause": "proper file permissions were not set",
+        "suggested_remediation": "check the appropriate file permissions"
+      },
+      "11240": {
+        "name": "ErrGetResourceIdentifierCode",
+        "code": "11240",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error extracting the resource identifier name",
+        "probable_cause": "Could not extract the value with the given filter configuration",
+        "suggested_remediation": "Make sure to input a valid manifest\nMake sure to provide the right filter configurations\nMake sure the filters are appropriate for the given manifest"
+      },
+      "11241": {
         "name": "ErrInvalidSizeFileCode",
-        "code": "11072",
+        "code": "11241",
         "severity": "Alert",
         "long_description": "Could not read the file while walking the repo",
         "short_description": "",
         "probable_cause": "Given file size is either 0 or exceeds the limit of 50 MB",
         "suggested_remediation": ""
       },
-      "11073": {
+      "11242": {
         "name": "ErrCloningRepoCode",
-        "code": "11073",
+        "code": "11242",
         "severity": "Alert",
         "long_description": "",
         "short_description": "could not clone the repo",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "11244": {
+        "name": "ErrFileNotFoundCode",
+        "code": "11244",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": "Try using a different file\ncheck if file exists"
+      },
+      "11250": {
+        "name": "ErrUnmarshalUnsupportedTypeCode",
+        "code": "11250",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11251": {
+        "name": "ErrUnmarshalUnsupportedValueCode",
+        "code": "11251",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11252": {
+        "name": "ErrChartUrlEmptyCode",
+        "code": "11252",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11253": {
+        "name": "ErrNoPackageFoundCode",
+        "code": "11253",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11254": {
+        "name": "ErrUnknownKindCode",
+        "code": "11254",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unsupported connection kind detected",
+        "probable_cause": "The component's registrant is not supported by the version of server you are running",
+        "suggested_remediation": "Try upgrading to latest available version"
+      },
+      "11255": {
+        "name": "ErrUnknownHostCode",
+        "code": "11255",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11256": {
+        "name": "ErrEmptySchemaCode",
+        "code": "11256",
+        "severity": "Alert",
+        "long_description": "Empty schema for the component",
+        "short_description": "Empty schema for the component",
+        "probable_cause": "The schema is empty for the component.",
+        "suggested_remediation": "For the particular component the schema is empty. Use the docs or discussion forum for more details  "
+      },
+      "11257": {
+        "name": "ErrMarshalingRegisteryAttemptsCode",
+        "code": "11257",
+        "severity": "Alert",
+        "long_description": "Error marshaling RegisterAttempts to JSON: ",
+        "short_description": "Error marshaling RegisterAttempts to JSON",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11258": {
+        "name": "ErrWritingRegisteryAttemptsCode",
+        "code": "11258",
+        "severity": "Alert",
+        "long_description": "Error writing RegisteryAttempts JSON data to file:",
+        "short_description": "Error writing RegisteryAttempts JSON data to file",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11259": {
+        "name": "ErrRegisteringEntityCode",
+        "code": "11259",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Entity might be missing a required schema or have invalid json / yaml.",
+        "suggested_remediation": "Check `server/cmd/registery_attempts.json` for further details."
+      },
+      "11260": {
+        "name": "ErrUnknownHostInMapCode",
+        "code": "11260",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11261": {
+        "name": "ErrCreatingUserDataDirectoryCode",
+        "code": "11261",
+        "severity": "Fatal",
+        "long_description": "Unable to create the directory for storing user data at: ",
+        "short_description": "Unable to create the directory for storing user data at: ",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11262": {
+        "name": "ErrGetByIdCode",
+        "code": "11262",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11263": {
+        "name": "ErrSeekFailedCode",
+        "code": "11263",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Unable to reset the position within the OCI data.",
+        "probable_cause": "The function attempted to move to the start of the data but failed. This could happen if the data is corrupted or not in the expected format.",
+        "suggested_remediation": "Ensure the input data is a valid OCI archive and try again. Check if the data is compressed correctly and is not corrupted."
+      },
+      "11264": {
+        "name": "ErrCreateLayerCode",
+        "code": "11264",
+        "severity": "Alert",
+        "long_description": "An error occurred while creating the layer for the image.",
+        "short_description": "Failed to create layer",
+        "probable_cause": "Possible issues with file system, incorrect layer type, or other IO errors.",
+        "suggested_remediation": "Check the file system permissions and paths.\nEnsure the layer type is correct.\nCheck for any underlying IO errors."
+      },
+      "11265": {
+        "name": "ErrSavingImageCode",
+        "code": "11265",
+        "severity": "Alert",
+        "long_description": "An error occurred while saving the image.",
+        "short_description": "Failed to save image",
+        "probable_cause": "Possible issues with file system, insufficient disk space, , other IO errors.",
+        "suggested_remediation": "Check the file system permissions and available disk space.\nEnsure the file path is correct and accessible.\nCheck for any underlying IO errors."
+      },
+      "11266": {
+        "name": "ErrInvalidVersionCode",
+        "code": "11266",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "invalid/incompatible semver version",
+        "probable_cause": "version history for the content has been tampered outside meshery",
+        "suggested_remediation": "rolllback to one of the previous version"
+      },
+      "11267": {
+        "name": "ErrDirPkgUnitParseFailCode",
+        "code": "11267",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "The directory might not have a valid model definition\nMight be some internal issues while walking the file tree",
+        "suggested_remediation": "Make sure that there is a valid model definition present in the directory. Meshery's registration pipeline currently does not support nested models, therefore the behaviour might be unexpected if it contains nested models.\nIf there is an internal error, please try again after some time"
+      },
+      "11268": {
+        "name": "ErrGetEntityCode",
+        "code": "11268",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Could not parse the given data into any Meshery entity",
+        "probable_cause": "Entity definition might not be in accordance with it's corresponding schema\nMight be an invalid/unsupported schemaVersion",
+        "suggested_remediation": "Ensure that the definition given is in accordance with it's schema\nEnsure that the schemaVersion used is valid and is supported by Meshery"
+      },
+      "11269": {
+        "name": "ErrRegisterEntityCode",
+        "code": "11269",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11270": {
+        "name": "ErrImportFailureCode",
+        "code": "11270",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Entity definition might not be in accordance with schema\nEntity version might not be supported by Meshery",
+        "suggested_remediation": "See the registration logs (found at $HOME/.meshery/logs/registry/registry-logs.log) to find out which Entity failed to be imported with more specific error information."
+      },
+      "11271": {
+        "name": "ErrMissingRegistrantCode",
+        "code": "11271",
+        "severity": "Alert",
+        "long_description": "Meshery models are always registered in context of a registrant.",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": "Make sure that the registrant information is present in the model definition"
+      },
+      "11272": {
+        "name": "ErrSeedingComponentsCode",
+        "code": "11272",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to register the given models into meshery's registry",
+        "probable_cause": "Given models may not be in accordance with Meshery's schema\nInternal(OS level) error while reading files",
+        "suggested_remediation": "Make sure the models being seeded are valid in accordance with Meshery's schema\nIf it is an internal error, please try again after some time"
+      },
+      "11273": {
+        "name": "ErrInvalidSchemaVersionCode",
+        "code": "11273",
+        "severity": "Alert",
+        "long_description": "The `schemaVersion` key is either empty or has an incorrect value.",
+        "short_description": "Invalid schema version",
+        "probable_cause": "The schema is not of type 'relationship', 'component', 'model' , 'policy'.",
+        "suggested_remediation": "Verify that `schemaVersion` key should be either `relationships.meshery.io`, `component.meshery.io`, `model.meshery.io` or `policy.meshery.io`."
+      },
+      "11274": {
+        "name": "ErrFileWalkDirCode",
+        "code": "11274",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while walking through directory",
+        "probable_cause": "",
+        "suggested_remediation": "Verify that the correct directory path is provided."
+      },
+      "11275": {
+        "name": "ErrRelPathCode",
+        "code": "11275",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error determining relative path",
+        "probable_cause": "The user might not have sufficient permission.",
+        "suggested_remediation": "Verify the provided directory path is correct and if the user has sufficent permission."
+      },
+      "11276": {
+        "name": "ErrCopyFileCode",
+        "code": "11276",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error copying file",
+        "probable_cause": "The file might be corrupted.",
+        "suggested_remediation": "Verify the integrity of the file and try again."
+      },
+      "11277": {
+        "name": "ErrCloseFileCode",
+        "code": "11277",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error closing file",
+        "probable_cause": "The user might not have sufficient permission.",
+        "suggested_remediation": "Check for issues with file permissions or disk space and try again."
+      },
+      "11278": {
+        "name": "ErrOpenFileCode",
+        "code": "11278",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "unable to open file: ",
+        "probable_cause": "The file does not exist in the location",
+        "suggested_remediation": "Make sure to upload the correct file"
+      },
+      "11279": {
+        "name": "ErrGoogleJwtInvalidCode",
+        "code": "11279",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid JWT credentials",
+        "probable_cause": "Invalid JWT credentials",
+        "suggested_remediation": "Make sure to provide valid JWT credentials"
+      },
+      "11280": {
+        "name": "ErrGoogleSheetSRVCode",
+        "code": "11280",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while creating Google Sheets Service",
+        "probable_cause": "Issue happened with Google Sheets Service",
+        "suggested_remediation": "Make you provide valid JWT credentials and Spreadsheet ID"
       }
     }
   }

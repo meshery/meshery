@@ -1,0 +1,22 @@
+version: 0.0.1
+name: zookeeper-cluster
+displayName: ZooKeeper Cluster
+createdAt: "2023-11-10T04:31:17Z"
+description: '  This StatefulSet will create three Pods, each running a ZooKeeper server container. The Pods will be named my-zookeeper-cluster-0, my-zookeeper-cluster-1, and my-zookeeper-cluster-2. The volumeMounts section of the spec tells the Pods to mount the PersistentVolumeClaim my-zookeeper-cluster-pvc to the /zookeeper/data directory. This will ensure that the ZooKeeper data is persistent and stored across restarts.'
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/fde9c2da-e402-4f53-b7cd-02036ac65043/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. The storage for a given Pod must either be provisioned by a PersistentVolume Provisioner based on the requested storage class, or pre-provisioned by an admin.\n2. Deleting and/or scaling a StatefulSet down will not delete the volumes associated with the StatefulSet. This is done to ensure data safety, which is generally more valuable than an automatic purge of all related StatefulSet resources.\n3. StatefulSets currently require a Headless Service to be responsible for the network identity of the Pods. You are responsible for creating this Service.\n4. StatefulSets do not provide any guarantees on the termination of pods when a StatefulSet is deleted. To achieve ordered and graceful termination of the pods in the StatefulSet, it is possible to scale the StatefulSet down to 0 prior to deletion.\n5. When using Rolling Updates with the default Pod Management Policy (OrderedReady), it's possible to get into a broken state that requires manual intervention to repair. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: b6467d0a-f11e-4614-9eb2-ab80c4f1c58d
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/fde9c2da-e402-4f53-b7cd-02036ac65043.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

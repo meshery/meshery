@@ -54,7 +54,7 @@ Use either Meshery UI or CLI to interact with the Registry. Meshery UI offers a 
 
 ### Model Generation
 
-The process of generating a Model (and its entities) is a multi-step process and does not require use of Meshery Server. The process begins with the sourcing of the model information from an authoratitive source: a Registrant. Registrants are responsible for providing all the necessary information to Meshery to generate the model.
+The process of generating a Model (and its entities) is a multi-step process and does not require use of Meshery Server. The process begins with the sourcing of the model information from an authoritative source: a Registrant. Registrants are responsible for providing all the necessary information to Meshery to generate the model.
 
 #### Using Meshery CLI to Generate Models
 

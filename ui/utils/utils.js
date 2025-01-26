@@ -8,6 +8,9 @@ import { APPLICATION, DESIGN, FILTER } from '../constants/navigator';
 import { Tooltip } from '@mui/material';
 import jsyaml from 'js-yaml';
 import yaml from 'js-yaml';
+import { useLegacySelector } from '../lib/store';
+import { mesheryExtensionRoute } from '../pages/_app';
+import { mesheryEventBus } from './eventBus';
 
 /**
  * Check if an object is empty
@@ -442,4 +445,55 @@ export const getDesignVersion = (design) => {
       console.error('Version is not available for this design: ', error);
     }
   }
+};
+
+export const urlEncodeParams = (params) => {
+  const urlSearchParams = new URLSearchParams();
+
+  Object.entries(params).forEach(([key, value]) => {
+    if (_.isNil(value)) {
+      return;
+    }
+    if (Array.isArray(value)) {
+      value.forEach((val) => urlSearchParams.append(key, val));
+    } else {
+      urlSearchParams.append(key, value);
+    }
+  });
+
+  return urlSearchParams.toString();
+};
+
+export function isExtensionOpen() {
+  return window.location.pathname.startsWith(mesheryExtensionRoute);
+}
+
+export const isOperatorEnabled = (capabilitiesRegistry) => {
+  const navigatorExtension = _.get(capabilitiesRegistry, 'extensions.navigator') || [];
+  return navigatorExtension.some((ext) => ext.title === 'Kanvas');
+};
+
+export const useIsOperatorEnabled = () => {
+  const capabilitiesRegistry = useLegacySelector((state) => {
+    return state.get('capabilitiesRegistry');
+  });
+
+  return isOperatorEnabled(capabilitiesRegistry);
+};
+
+export const openViewScopedToDesignInOperator = (designName, designId, router) => {
+  if (isExtensionOpen()) {
+    console.log('extension is open publsing');
+    mesheryEventBus.publish({
+      type: 'OPEN_VIEW_SCOPED_TO_DESIGN',
+      data: {
+        design_id: designId,
+        design_name: designName,
+      },
+    });
+    return;
+  }
+
+  router.push(`/extension/meshmap?mode=operator&type=view&design_id=${designId}`);
+  // window.open(view_link, '_blank');
 };

@@ -93,7 +93,7 @@ const ExportModal = (props) => {
     {
       title: 'OCI Image',
       icon: <OCIImageIcon width={'30'} height="30" />,
-      onClick: (e) => handleDesignDownload(e, downloadModal.content, null, 'export=OCI Image'),
+      onClick: (e) => handleDesignDownload(e, downloadModal.content, null, 'oci=true'),
       description:
         'Download the design as an OCI Image, that can be pushed to a container registry. This is a lossless export.',
     },

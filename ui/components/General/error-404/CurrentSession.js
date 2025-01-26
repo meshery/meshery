@@ -10,12 +10,13 @@ import {
 } from './styles';
 import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
-import ErrorBoundary from '../../ErrorBoundary';
 import { Provider } from 'react-redux';
 import { store } from '../../../store';
 import NoSsr from '@material-ui/core/NoSsr';
 import OrgIcon from 'assets/icons/OrgIcon';
 import { useTheme } from '@material-ui/core/styles';
+import { ErrorBoundary } from '@layer5/sistent';
+import CustomErrorFallback from '../ErrorBoundary';
 
 const CurrentSessionInfo = (props) => {
   const theme = useTheme();
@@ -74,10 +75,7 @@ const CurrentSessionInfo = (props) => {
 const CurrentSessionInfoWithErrorBoundary = (props) => {
   return (
     <NoSsr>
-      <ErrorBoundary
-        FallbackComponent={() => null}
-        onError={(e) => console.error('Error in Spaces Prefs Component', e)}
-      >
+      <ErrorBoundary customFallback={CustomErrorFallback}>
         <Provider store={store}>
           <CurrentSessionInfo {...props} />
         </Provider>

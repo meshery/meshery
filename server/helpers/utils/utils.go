@@ -1,9 +1,7 @@
 package utils
 
 import (
-	"crypto/md5"
 	"database/sql/driver"
-	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -13,7 +11,6 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
-	"sync"
 
 	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/utils"
@@ -138,15 +135,9 @@ func IsClosed[K any](ch chan K) bool {
 
 const UI = "../../ui/public/static/img/meshmodels" //Relative to cmd/main.go
 var UISVGPaths = make([]string, 1)
-var hashCheckSVG = make(map[string]string)
-var mx sync.Mutex
 
-func writeHashCheckSVG(key string, val string) {
-	mx.Lock()
-	hashCheckSVG[key] = val
-	mx.Unlock()
-}
 func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename string) (svgColorPath, svgWhitePath, svgCompletePath string) {
+
 	filename = strings.ToLower(filename)
 	successCreatingDirectory := false
 	defer func() {
@@ -163,13 +154,6 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 		}
 		successCreatingDirectory = true
 
-		hash := md5.Sum([]byte(svgColor))
-		hashString := hex.EncodeToString(hash[:])
-		pathsvg := hashCheckSVG[hashString]
-		if pathsvg != "" { // the image has already been loaded, point the component to that path
-			svgColorPath = pathsvg
-			goto White
-		}
 		f, err := os.Create(filepath.Join(path, filename+"-color.svg"))
 		if err != nil {
 			fmt.Println(err)
@@ -181,10 +165,9 @@ func writeSVGHelper(svgColor, svgWhite, svgComplete string, dirname, filename st
 			return
 		}
 		svgColorPath = getRelativePathForAPI(filepath.Join(dirname, "color", filename+"-color.svg")) //Replace the actual SVG with path to SVG
-		writeHashCheckSVG(hashString, svgColor)
 
 	}
-White:
+
 	if svgWhite != "" {
 		path := filepath.Join(UI, dirname, "white")
 		err := os.MkdirAll(path, 0777)
@@ -194,13 +177,6 @@ White:
 		}
 		successCreatingDirectory = true
 
-		hash := md5.Sum([]byte(svgWhite))
-		hashString := hex.EncodeToString(hash[:])
-		pathsvg := hashCheckSVG[hashString]
-		if pathsvg != "" { // the image has already been loaded, point the component to that path
-			svgWhitePath = pathsvg
-			goto Complete
-		}
 		f, err := os.Create(filepath.Join(path, filename+"-white.svg"))
 		if err != nil {
 			fmt.Println(err)
@@ -212,10 +188,8 @@ White:
 			return
 		}
 		svgWhitePath = getRelativePathForAPI(filepath.Join(dirname, "white", filename+"-white.svg")) //Replace the actual SVG with path to SVG
-		writeHashCheckSVG(hashString, svgWhite)
 
 	}
-Complete:
 	if svgComplete != "" {
 		path := filepath.Join(UI, dirname, "complete")
 		err := os.MkdirAll(path, 0777)
@@ -225,13 +199,6 @@ Complete:
 		}
 		successCreatingDirectory = true
 
-		hash := md5.Sum([]byte(svgComplete))
-		hashString := hex.EncodeToString(hash[:])
-		pathsvg := hashCheckSVG[hashString]
-		if pathsvg != "" { // the image has already been loaded, point the component to that path
-			svgCompletePath = pathsvg
-			return
-		}
 		f, err := os.Create(filepath.Join(path, filename+"-complete.svg"))
 		if err != nil {
 			fmt.Println(err)
@@ -243,7 +210,6 @@ Complete:
 			return
 		}
 		svgCompletePath = getRelativePathForAPI(filepath.Join(dirname, "complete", filename+"-complete.svg")) //Replace the actual SVG with path to SVG
-		writeHashCheckSVG(hashString, svgComplete)
 
 	}
 	return

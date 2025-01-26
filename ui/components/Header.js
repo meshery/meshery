@@ -8,14 +8,11 @@ import Toolbar from '@material-ui/core/Toolbar';
 import { withStyles } from '@material-ui/core/styles';
 import { connect, useSelector } from 'react-redux';
 import NoSsr from '@material-ui/core/NoSsr';
-import Link from 'next/link';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
 import Slide from '@material-ui/core/Slide';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import { Button } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import { Search } from '@material-ui/icons';
+import { Edit, Search } from '@material-ui/icons';
 import { TextField } from '@material-ui/core';
 import { Paper } from '@material-ui/core';
 import { deleteKubernetesConfig } from './ConnectionWizard/helpers/kubernetesHelpers';
@@ -24,8 +21,8 @@ import { _ConnectionChip } from './connections/ConnectionChip';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateK8SConfig, updateProgress, updateCapabilities } from '../lib/store';
 import { bindActionCreators } from 'redux';
-import PromptComponent, { PROMPT_VARIANTS } from './PromptComponent';
-import { iconMedium } from '../css/icons.styles';
+import _PromptComponent from './PromptComponent';
+import { iconMedium, iconSmall } from '../css/icons.styles';
 import ExtensionSandbox from './ExtensionSandbox';
 import RemoteComponent from './RemoteComponent';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
@@ -35,15 +32,27 @@ import { useNotification, withNotify } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
-import { Checkbox, MenuIcon, OutlinedSettingsIcon } from '@layer5/sistent';
+import {
+  Checkbox,
+  MenuIcon,
+  OutlinedSettingsIcon,
+  Box,
+  CustomTooltip,
+  Typography,
+  styled,
+  PROMPT_VARIANTS,
+} from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { Colors } from '@/themes/app';
+
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
 import { UsesSistent } from './SistentWrapper';
 import Router from 'next/router';
 import HeaderMenu from './HeaderMenu';
+import ConnectionModal from './Modals/ConnectionModal';
+import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 
 const lightColor = 'rgba(255, 255, 255, 0.7)';
 const styles = (theme) => ({
@@ -86,6 +95,12 @@ const styles = (theme) => ({
   },
   appBarOnDrawerClosed: {
     backgroundColor: theme.palette.secondary.mainBackground,
+  },
+  addClusterButtonClass: {
+    borderRadius: 5,
+    marginRight: '2rem',
+    width: '100%',
+    marginTop: '1rem',
   },
   toolbarOnDrawerClosed: {
     minHeight: 59,
@@ -205,6 +220,15 @@ const styles = (theme) => ({
       boxShadow: '0 0 10px orange, 0 0 60px orange,0 0 200px yellow, inset 0 0 80px yellow',
     },
   },
+  addButton: {
+    width: '100%',
+    whiteSpace: 'nowrap',
+    color: theme.palette.secondary.text,
+    margin: '0.5rem',
+  },
+  mesherySettingsEnvButtons: {
+    marginTop: '1rem',
+  },
 });
 
 async function loadActiveK8sContexts() {
@@ -240,6 +264,9 @@ const K8sContextConnectionChip_ = ({
   return (
     <div id={ctx.id} className={classes.chip}>
       <CustomTextTooltip
+        placement="left-end"
+        leaveDelay={200}
+        interactive={true}
         title={`Server: ${ctx.server},  Operator: ${formatToTitleCase(
           operatorState,
         )}, MeshSync: ${formatToTitleCase(meshSyncState)}, Broker: ${formatToTitleCase(natsState)}`}
@@ -264,7 +291,7 @@ const K8sContextConnectionChip_ = ({
               connectionMetadataState && connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                 ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
                 : '/static/img/kubernetes.svg'
-            } // chnage to use connection def
+            } // TODO: Make this a dyanmic referernce to the respective Connection's color SVG
             status={operatorState}
           />
         </div>
@@ -299,12 +326,49 @@ function K8sContextMenu({
     transform: showFullContextMenu ? `translateY(${transformProperty}%)` : 'translateY(0)',
   };
 
+  const StateTransitionDetails = styled(Box)(({ theme }) => ({
+    backgroundColor: theme.palette.background.secondary,
+    padding: '1rem',
+    borderRadius: '0.5rem',
+    textAlign: 'left',
+  }));
   const handleKubernetesDelete = async (name, connectionID) => {
     let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
-      title: `Delete ${name} context ?`,
-      subtitle: `Are you sure you want to delete ${name} cluster from Meshery?`,
-      options: ['CONFIRM', 'CANCEL'],
+      title: `Delete Kubernetes connection?`,
+      subtitle: (
+        <>
+          <Typography variant="body">
+            {' '}
+            Are you sure you want to delete Kubernetes connection &quot;{name}&quot; and associated
+            credential?
+          </Typography>
+          <details>
+            <summary style={{ textAlign: 'left', marginTop: '1rem', cursor: 'pointer' }}>
+              <strong>What does this mean?</strong>
+            </summary>
+
+            <StateTransitionDetails>
+              <Typography variant="body2">
+                Deleting a connection administratively removes the cluster from Meshery&apos;s
+                purview of management, which includes the removal of Meshery Operator from the
+                cluster. Record of this Kubernetes connection and all associated data collected
+                through MeshSync for this connection will be purged from Meshery&apos;s database.
+                Note: By deleting this connection, you are not deleting the Kubernetes cluster
+                itself.
+              </Typography>
+              <Typography variant="body2" sx={{ marginTop: '1rem' }}>
+                <strong>Reconnecting:</strong> You can always reconnect Meshery to the cluster
+                again. By default, Meshery will automatically reconnect to the cluster when next
+                presented with the same kubeconfig file / context. If you wish to prevent
+                reconnection, *disconnect* this connection instead of *deleting* this connection.
+              </Typography>
+            </StateTransitionDetails>
+          </details>
+        </>
+      ),
+      primaryOption: 'CONFIRM',
       variant: PROMPT_VARIANTS.DANGER,
+      showInfoIcon: `Learn more about the [lifecycle of connections](https://docs.meshery.io/concepts/logical/connections) and what it means to delete a connection.`,
     });
     if (responseOfDeleteK8sCtx === 'CONFIRM') {
       const successCallback = async () => {
@@ -314,8 +378,12 @@ function K8sContextMenu({
         }
       };
       deleteKubernetesConfig(
-        successHandlerGenerator(notify, `Kubernetes config removed for ${name}`, successCallback),
-        errorHandlerGenerator(notify, `Not able to remove config for ${name}`),
+        successHandlerGenerator(notify, `Kubernetes connection "${name}" removed`, successCallback),
+        errorHandlerGenerator(
+          notify,
+          `Failed to remove Kubernetes connection "
+          ${name}"`,
+        ),
         connectionID,
       );
     }
@@ -331,6 +399,7 @@ function K8sContextMenu({
       (prev) => prev + (contexts.total_count ? contexts.total_count * 3.125 : 0),
     );
   }, []);
+  const [isConnectionOpenModal, setIsConnectionOpenModal] = React.useState(false);
 
   return (
     <>
@@ -420,34 +489,36 @@ function K8sContextMenu({
                     />
                   </div>
                   <div>
-                    {contexts?.total_count ? (
-                      <>
-                        <UsesSistent>
-                          <Checkbox
-                            checked={activeContexts.includes('all')}
-                            onChange={() =>
-                              activeContexts.includes('all')
-                                ? setActiveContexts([])
-                                : setActiveContexts('all')
-                            }
-                            color="primary"
-                          />
-                        </UsesSistent>
-                        <span style={{ fontWeight: 'bolder' }}>select all</span>
-                      </>
-                    ) : (
-                      <Link href="/management/connections">
-                        <Button
-                          type="submit"
-                          variant="contained"
-                          color="primary"
-                          size="large"
-                          style={{ margin: '0.5rem 0.5rem', whiteSpace: 'nowrap' }}
-                        >
-                          <AddIcon className={classes.AddIcon} style={iconMedium} />
-                          Connect Clusters
-                        </Button>
-                      </Link>
+                    {contexts?.total_count > 0 && (
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <div>
+                          <UsesSistent>
+                            <Checkbox
+                              checked={activeContexts.includes('all')}
+                              onChange={() =>
+                                activeContexts.includes('all')
+                                  ? setActiveContexts([])
+                                  : setActiveContexts('all')
+                              }
+                              color="primary"
+                            />
+                          </UsesSistent>
+                          <span style={{ fontWeight: 'bolder' }}>select all</span>
+                        </div>
+                        <CustomTooltip title="Configure Connections">
+                          <div>
+                            <IconButton size="small" onClick={() => setIsConnectionOpenModal(true)}>
+                              <Edit style={{ ...iconSmall }} />
+                            </IconButton>
+                          </div>
+                        </CustomTooltip>
+                      </div>
                     )}
                     {contexts?.contexts?.map((ctx) => {
                       return (
@@ -464,6 +535,9 @@ function K8sContextMenu({
                         />
                       );
                     })}
+                    <Box className={classes.mesherySettingsEnvButtons}>
+                      <MesherySettingsEnvButtons />
+                    </Box>
                   </div>
                 </Paper>
               </ClickAwayListener>
@@ -471,7 +545,13 @@ function K8sContextMenu({
           </div>
         </Slide>
       </div>
-      <PromptComponent ref={deleteCtxtRef} />
+      <_PromptComponent ref={deleteCtxtRef} />
+      <ConnectionModal
+        isOpenModal={isConnectionOpenModal}
+        setIsOpenModal={setIsConnectionOpenModal}
+        meshsyncControllerState={meshsyncControllerState}
+        connectionMetadataState={connectionMetadataState}
+      />
     </>
   );
 }
@@ -583,7 +663,7 @@ class Header extends React.PureComponent {
                     />
                   </div>
 
-                  <div data-test="settings-button" aria-describedby={abilityUpdated}>
+                  <div data-testid="settings-button" aria-describedby={abilityUpdated}>
                     <CanShow Key={keys.VIEW_SETTINGS}>
                       <IconButton onClick={() => Router.push('/settings')} color="inherit">
                         <OutlinedSettingsIcon
@@ -598,7 +678,7 @@ class Header extends React.PureComponent {
                     </CanShow>
                   </div>
 
-                  <div data-test="notification-button">
+                  <div data-testid="notification-button">
                     <NotificationDrawerButton />
                   </div>
 

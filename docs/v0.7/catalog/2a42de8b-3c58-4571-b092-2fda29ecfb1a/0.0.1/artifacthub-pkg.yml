@@ -1,0 +1,22 @@
+version: 0.0.1
+name: prometheus-operator-crd-cluster-roles
+displayName: prometheus-operator-crd-cluster-roles
+createdAt: "2023-12-15T16:40:27Z"
+description: prometheus operator crd cluster roles
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/2a42de8b-3c58-4571-b092-2fda29ecfb1a/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "prometheus operator crd cluster roles \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 54a58e68-8c83-4683-a84e-4cf8d3256649
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/2a42de8b-3c58-4571-b092-2fda29ecfb1a.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

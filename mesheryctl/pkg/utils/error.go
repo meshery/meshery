@@ -44,11 +44,14 @@ var (
 	ErrClearLineCode              = "mesheryctl-1120"
 	ErrUpdateToSheetCode          = "mesheryctl-1129"
 	ErrUpdateRelationshipFileCode = "mesheryctl-1130"
-	ErrGenerateModelCode          = "replace_me"
-	ErrGenerateComponentCode      = "replace_me"
-	ErrUpdateComponentCode        = "replace_me"
-	ErrCSVFileNotFoundCode        = "replace_me"
-	ErrReadCSVRowCode             = "replace_me"
+	ErrGeneratesModelCode         = "mesheryctl-1132"
+	ErrGeneratesComponentCode     = "mesheryctl-1133"
+	ErrUpdateComponentsCode       = "mesheryctl-1134"
+	ErrCSVFileNotFoundCode        = "mesheryctl-1135"
+	ErrReadCSVRowCode             = "mesheryctl-1136"
+	ErrMissingCommandsCode        = "mesheryctl-1137"
+	ErrKubernetesConnectivityCode = "mesheryctl-1138"
+	ErrKubernetesQueryCode        = "mesheryctl-1139"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -186,6 +189,10 @@ func RegistryError(msg string, cmd string) string {
 	switch cmd {
 	case "publish":
 		return formatError(msg, cmdRegistryPublish)
+	case "generate":
+		return formatError(msg, cmdRegistryGenerate)
+	case "update":
+		return formatError(msg, cmdRegistryUpdate)
 	default:
 		return formatError(msg, cmdRegistry)
 	}
@@ -330,6 +337,12 @@ func formatError(msg string, cmd cmdType) string {
 		return formatUsageDetails(msg, modelViewURL)
 	case cmdRegistry:
 		return formatUsageDetails(msg, registryUsageURL)
+	case cmdRegistryPublish:
+		return formatUsageDetails(msg, registryPublishURL)
+	case cmdRegistryGenerate:
+		return formatUsageDetails(msg, registryGenerateURL)
+	case cmdRegistryUpdate:
+		return formatUsageDetails(msg, registryUpdateURL)
 	case cmdEnvironment:
 		return formatUsageDetails(msg, environmentUsageURL)
 	case cmdEnvironmentCreate:
@@ -494,7 +507,7 @@ func ErrFailReqStatus(statusCode int, obj string) error {
 		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
 }
 func ErrGenerateModel(err error, modelName string) error {
-	return errors.New(ErrGenerateModelCode, errors.Alert, []string{fmt.Sprintf("error generating model: %s", modelName)}, []string{fmt.Sprintf("Error generating model: %s\n %s", modelName, err.Error())}, []string{"Registrant used for the model is not supported", "Verify the model's source URL.", "Failed to create a local directory in the filesystem for this model."}, []string{"Ensure that each kind of registrant used is a supported kind.", "Ensure correct model source URL is provided and properly formatted.", "Ensure sufficient permissions to allow creation of model directory."})
+	return errors.New(ErrGeneratesModelCode, errors.Alert, []string{fmt.Sprintf("error generating model: %s", modelName)}, []string{fmt.Sprintf("Error generating model: %s\n %s", modelName, err.Error())}, []string{"Registrant used for the model is not supported", "Verify the model's source URL.", "Failed to create a local directory in the filesystem for this model."}, []string{"Ensure that each kind of registrant used is a supported kind.", "Ensure correct model source URL is provided and properly formatted.", "Ensure sufficient permissions to allow creation of model directory."})
 }
 func ErrMarshalIndent(err error) error {
 	return errors.New(ErrMarshalIndentCode, errors.Alert,
@@ -643,14 +656,26 @@ func ErrClearLine(err error) error {
 		[]string{"Check if the required clear commands ('clear' or 'cls') are available in the system's PATH"})
 }
 func ErrGenerateComponent(err error, modelName, compName string) error {
-	return errors.New(ErrGenerateComponentCode, errors.Alert, []string{"error generating comp %s of model %s", compName, modelName}, []string{err.Error()}, []string{}, []string{})
+	return errors.New(ErrGeneratesComponentCode, errors.Alert, []string{"error generating comp %s of model %s", compName, modelName}, []string{err.Error()}, []string{}, []string{})
 }
 func ErrUpdateComponent(err error, modelName, compName string) error {
-	return errors.New(ErrUpdateComponentCode, errors.Alert, []string{fmt.Sprintf("error updating component %s of model %s ", compName, modelName)}, []string{err.Error()}, []string{"Component does not exist", "Component definition is corrupted"}, []string{"Ensure existence of component, check for typo in component name", "Regenerate corrupted component"})
+	return errors.New(ErrUpdateComponentsCode, errors.Alert, []string{fmt.Sprintf("error updating component %s of model %s ", compName, modelName)}, []string{err.Error()}, []string{"Component does not exist", "Component definition is corrupted"}, []string{"Ensure existence of component, check for typo in component name", "Regenerate corrupted component"})
 }
 func ErrCSVFileNotFound(path string) error {
 	return errors.New(ErrCSVFileNotFoundCode, errors.Alert, []string{"error reading csv file", path}, []string{fmt.Sprintf("inside the directory %s either the model csv or component csv is missing or they are not of write format", path)}, []string{"Either or both model csv or component csv are absent, the csv is not of correct template"}, []string{fmt.Sprintf("verify both the csv are present in the directory:%s", path), "verify the csv template"})
 }
 func ErrReadCSVRow(err error, obj string) error {
 	return errors.New(ErrReadCSVRowCode, errors.Alert, []string{"error reading csv ", obj}, []string{err.Error()}, []string{fmt.Sprintf("the %s of the csv is broken", obj)}, []string{fmt.Sprintf("verify the csv %s", obj)})
+}
+
+func ErrMissingCommands(err error) error {
+	return errors.New(ErrMissingCommandsCode, errors.Alert, []string{"Missing required commands"}, []string{err.Error()}, []string{"Required commands are not installed or not in PATH"}, []string{"Install the missing commands and ensure they are in PATH"})
+}
+
+func ErrKubernetesConnectivity(err error) error {
+	return errors.New(ErrKubernetesConnectivityCode, errors.Alert, []string{"Failed to connect to Kubernetes API server"}, []string{err.Error()}, []string{"Kubernetes API server is not reachable"}, []string{"Ensure your Kubernetes cluster is running and accessible"})
+}
+
+func ErrKubernetesQuery(err error) error {
+	return errors.New(ErrKubernetesQueryCode, errors.Alert, []string{"Failed to query Kubernetes API"}, []string{err.Error()}, []string{"Kubernetes API query failed"}, []string{"Ensure your Kubernetes cluster is running and accessible"})
 }

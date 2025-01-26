@@ -1,0 +1,26 @@
+version: 0.0.1490
+name: '[tutorial]---comments'
+displayName: '[Tutorial] - Comments'
+createdAt: "2024-10-30T15:12:49Z"
+description: |+
+    This design helps users understand how to utilise the comments feature.Kanvas’s Designer offers enables you to place comments “inline” with your infrastructure as code. Use comments to offer feedback to team members, take detailed design notes, capture helpful tips for your team members, and include justification as to your infrastructure and application configuration decisions. Pay it forward to your future self by leaving comments for reference later.
+
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/508efffb-d106-4593-af7b-0b85e1a59822/0.0.1490/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "You can add comments in three convenient ways:\n\n- Commenting via the Activity Toolbar\n- Commenting via Context-Click in Kanvas\n- Commenting via drag-and-drop from the Dock\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: ff1f8398-e501-4bb2-817f-80edffd0d37b
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/508efffb-d106-4593-af7b-0b85e1a59822-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/508efffb-d106-4593-af7b-0b85e1a59822-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

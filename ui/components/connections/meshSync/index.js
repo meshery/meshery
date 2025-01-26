@@ -58,7 +58,7 @@ export default function MeshSyncTable(props) {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('');
+  const [sortOrder, setSortOrder] = useState(null);
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [selectedKind, setSelectedKind] = useState('');
 
@@ -103,20 +103,20 @@ export default function MeshSyncTable(props) {
       });
     }
   }
-  const { data: allKinds } = useGetMeshSyncResourceKindsQuery({
+  const { data: clusterSummary } = useGetMeshSyncResourceKindsQuery({
     page: page,
     pagesize: 'all',
     search: search,
     order: sortOrder,
-    clusterIds: JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig)),
+    clusterIds: getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig),
   });
-  const availableKinds = allKinds?.kinds || [];
+  const availableKinds = (clusterSummary?.kinds || []).map((kind) => kind.Kind);
 
   const meshSyncResources = meshSyncData?.resources || [];
 
   let colViews = [
     ['metadata.name', 'xs'],
-    ['apiVersion', 'xs'],
+    ['apiVersion', 'na'],
     ['kind', 'm'],
     ['cluster_id', 'na'],
     ['pattern_resources', 'na'],

@@ -10,6 +10,8 @@ import {
   useTheme,
   styled,
   EnvironmentIcon,
+  IconButton,
+  CustomTooltip,
 } from '@layer5/sistent';
 import { Loading, StepHeading } from './common';
 import { K8sContextConnectionChip } from '../Header';
@@ -23,9 +25,9 @@ import {
   selectSelectedK8sConnections,
 } from '@/store/slices/globalEnvironmentContext';
 import { useSelectorRtk, useDispatchRtk } from '@/store/hooks';
-import Link from 'next/link';
 import { Button } from '@layer5/sistent';
 import { AddIcon } from '@layer5/sistent';
+import { Edit } from '@material-ui/icons';
 
 export const DeploymentTargetContext = createContext({
   meshsyncControllerState: null,
@@ -127,31 +129,30 @@ const EnvironmentCard = ({ environment }) => {
   );
 };
 
-export const EnvironmentsEmptyState = ({ message }) => {
+export const EnvironmentsEmptyState = ({ message, onButtonClick }) => {
   const theme = useTheme();
   return (
     <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-      <EnvironmentIcon height={100} width={100} />
+      <EnvironmentIcon height={100} width={100} fill={theme.palette.icon.default} />
       <Typography color={theme.palette.text.neutral.default} variant="textB2SemiBold">
         {message || 'No environments found'}
       </Typography>
 
-      <Link href="/management/environments">
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          style={{ margin: '0.6rem 0.6rem', whiteSpace: 'nowrap' }}
-        >
-          <AddIcon fill={theme.palette.background.constant.white} />
-          Add Environments
-        </Button>
-      </Link>
+      <Button
+        type="submit"
+        variant="contained"
+        color="primary"
+        onClick={onButtonClick}
+        style={{ margin: '0.6rem 0.6rem', whiteSpace: 'nowrap' }}
+      >
+        <AddIcon fill={theme.palette.background.constant.white} />
+        Add Environments
+      </Button>
     </Box>
   );
 };
 
-export const SelectTargetEnvironments = () => {
+export const SelectTargetEnvironments = ({ setIsEnvrionmentModalOpen }) => {
   const organization = useContext(DeploymentTargetContext).organization;
   const { data, isLoading, isError } = useGetEnvironmentsQuery({ orgId: organization.id });
   const environments = data?.environments || [];
@@ -165,10 +166,26 @@ export const SelectTargetEnvironments = () => {
 
   return (
     <Stack gap={2}>
-      <StepHeading>Identify Deployment Targets</StepHeading>
-
+      <Box display={'flex'} justifyContent={'space-between'} alignItems={'center'}>
+        <StepHeading>Identify Deployment Targets</StepHeading>
+        {environments.length > 0 && (
+          <CustomTooltip title="Configure Environments">
+            <div>
+              <IconButton
+                onClick={() => setIsEnvrionmentModalOpen(true)}
+                aria-label="edit-environments"
+              >
+                <Edit />
+              </IconButton>
+            </div>
+          </CustomTooltip>
+        )}
+      </Box>
       {environments.length === 0 && (
-        <EnvironmentsEmptyState message="No environments found. Add a new environment." />
+        <EnvironmentsEmptyState
+          message="No environments found. Add a new environment."
+          onButtonClick={() => setIsEnvrionmentModalOpen(true)}
+        />
       )}
 
       <Stack spacing={2}>

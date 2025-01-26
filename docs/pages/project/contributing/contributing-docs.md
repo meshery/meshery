@@ -147,13 +147,21 @@ Meshery documentation is built using the following components:
   </code>
   </div></pre>
 
+{% include alert.html type="info" title="Note" content="After installing rbenv, you need to install the ruby-build plugin to use the <code>rbenv install</code> command. This step is necessary for both package manager and manual installations of rbenv." %}
 
+- Install ruby-build as an rbenv plugin
+
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
+  </code>
+  </div></pre>
+  
 #### Install Ruby
 
 - rbenv install version
 
   <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">rbenv install 3.2.2
+  <code class="clipboardjs">rbenv install 3.2.6
   </code>
   </div></pre>
 
@@ -285,6 +293,30 @@ The `Gemfile.lock` will be updated automatically once the `make docs` command is
   </div></pre>
 
 You should be able to access the site on port `4000`. If you want to access it in your localhost read the [docs for port-forwarding using ssh](https://www.gitpod.io/docs/configure/workspaces/ports#local-port-forwarding-via-ssh).
+
+### Using Github Codespaces
+
+- Ensure you have an account on <a href="https://www.github.com/" class="meshery-light">Github</a>
+- Open your forked Meshery repository on GitHub.
+- Click on the "**Code**" button of your forked repository it will give you the option to open the project in Gituhub Codespaces.
+
+{% include alert.html type="dark" title="About Github Codespaces" content="Github Codespaces will automatically clone and open the repository for you in a browser-based version of Visual Studio Code. It comes with pre-installed tools which are quiet helpful to spin up the development environment for <a href='https://github.com/meshery/meshery'>Meshery.</a>" %}
+
+- After opening the project on Github Codespaces, change to the docs directory.
+  
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">cd docs
+  </code>
+  </div></pre>
+
+- Serve the code locally.
+  
+  <pre class="codeblock-pre"><div class="codeblock">
+  <code class="clipboardjs">make docs
+  </code>
+  </div></pre>
+
+You should be able to access the site on port `4000`. If you want to access it in your localhost just click the `code` button on your forked repository and select open with Visual Studio Code under your Github Codespace this will launch a Github Codespace instance in your local machine and connects with the remote Github Codespace environment after that run `cd docs` then `make docs` and it will start the development server on port `4000`.
 
 ### Make Necessary Changes
 - Make changes as required based on the issue you are solving.

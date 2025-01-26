@@ -7,7 +7,6 @@ import useStyles, {
   ActionContainer,
   CreatAtContainer,
   CopyLinkButton,
-  VisibilityTag,
   ResourceName,
 } from './styles';
 import { iconMedium, iconSmall } from '../../../css/icons.styles';
@@ -16,7 +15,11 @@ import moment from 'moment';
 import Application from '../../../public/static/img/drawer-icons/application_svg.js';
 import { useSnackbar } from 'notistack';
 import Filter from '../../../public/static/img/drawer-icons/filter_svg.js';
-import { PATTERN_ENDPOINT, FILTER_ENDPOINT } from '../../../constants/endpoints';
+import {
+  PATTERN_ENDPOINT,
+  FILTER_ENDPOINT,
+  MESHERY_CLOUD_PROD,
+} from '../../../constants/endpoints';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import axios from 'axios';
@@ -26,7 +29,6 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Provider } from 'react-redux';
 import { store } from '../../../store';
 import { useGetUserByIdQuery } from '../../../rtk-query/user.js';
-import { ErrorBoundary } from '../../General/ErrorBoundary';
 import { getUnit8ArrayForDesign } from '@/utils/utils';
 import ServiceMesheryIcon from '@/assets/icons/ServiceMesheryIcon';
 import {
@@ -35,17 +37,24 @@ import {
   ModalButtonPrimary,
   ModalButtonSecondary,
   ModalBody,
+  VisibilityChipMenu,
+  Link,
+  Skeleton,
 } from '@layer5/sistent';
 import TooltipButton from '@/utils/TooltipButton';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import { filterEmptyFields } from '@/utils/objects';
-import { VIEW_VISIBILITY, VisibilityMenu } from '@/components/VisibilityMenu';
 import { Lock, Public } from '@material-ui/icons';
 
 const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';
 const PATTERN_PLURAL = 'patterns';
+
+export const VIEW_VISIBILITY = {
+  PUBLIC: 'public',
+  PRIVATE: 'private',
+};
 
 const InfoModal_ = React.memo((props) => {
   const {
@@ -145,7 +154,7 @@ const InfoModal_ = React.memo((props) => {
       .then(() => {
         setSaveFormLoading(false);
         notify({
-          message: `${selectedResource.name} data saved successfully`,
+          message: `${selectedResource.name} data saved`,
           event_type: EVENT_TYPES.SUCCESS,
         });
         patternFetcher()();
@@ -276,7 +285,7 @@ const InfoModal_ = React.memo((props) => {
   const isPublished = selectedResource?.visibility === 'published';
   const [imageError, setImageError] = useState(false);
   const version = getDesignVersion(selectedResource);
-
+  const canChangeVisibility = !isPublished && isOwner;
   const handleError = () => {
     setImageError(true);
   };
@@ -397,22 +406,18 @@ const InfoModal_ = React.memo((props) => {
                     className={classes.text}
                     style={{ display: 'flex', marginRight: '2rem' }}
                   >
-                    {!isPublished && isOwner ? (
-                      <VisibilityMenu
-                        value={visibility}
-                        onChange={(value) => {
-                          setVisibility(value);
-                          setDataIsUpdated(value != selectedResource?.visibility);
-                        }}
-                        enabled={true}
-                        options={[
-                          [VIEW_VISIBILITY.PUBLIC, Public],
-                          [VIEW_VISIBILITY.PRIVATE, Lock],
-                        ]}
-                      />
-                    ) : (
-                      <VisibilityTag>{selectedResource?.visibility}</VisibilityTag>
-                    )}
+                    <VisibilityChipMenu
+                      value={visibility}
+                      onChange={(value) => {
+                        setVisibility(value);
+                        setDataIsUpdated(value != selectedResource?.visibility);
+                      }}
+                      enabled={canChangeVisibility}
+                      options={[
+                        [VIEW_VISIBILITY.PUBLIC, Public],
+                        [VIEW_VISIBILITY.PRIVATE, Lock],
+                      ]}
+                    />
                   </Typography>
                 </Grid>
                 {dataName === APPLICATION_PLURAL && formSchema ? null : (
@@ -492,30 +497,25 @@ const OwnerChip = ({ userProfile }) => {
   const classes = useStyles();
   return (
     <Box style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-      <Avatar src={userProfile?.avatar_url} className={classes.chipIcon} />
-      <Typography>
-        {userProfile ? (
-          `${userProfile?.first_name} ${userProfile?.last_name}`
-        ) : (
-          <Box sx={{ display: 'flex' }}>
-            <CircularProgress color="inherit" size="1rem" />
-          </Box>
-        )}
-      </Typography>
+      {userProfile ? (
+        <>
+          <Link href={`${MESHERY_CLOUD_PROD}/user/${userProfile.id}`} rel="noopener noreferrer">
+            <Avatar src={userProfile.avatar_url} className={classes.chipIcon} />
+          </Link>
+          <Typography>{`${userProfile.first_name} ${userProfile.last_name}`}</Typography>
+        </>
+      ) : (
+        <Skeleton variant="circular" width={40} height={40} />
+      )}
     </Box>
   );
 };
 
 const InfoModal = (props) => {
   return (
-    <ErrorBoundary
-      FallbackComponent={() => null}
-      onError={(e) => console.error('Error in Info modal', e)}
-    >
-      <Provider store={store}>
-        <InfoModal_ {...props} />
-      </Provider>
-    </ErrorBoundary>
+    <Provider store={store}>
+      <InfoModal_ {...props} />
+    </Provider>
   );
 };
 

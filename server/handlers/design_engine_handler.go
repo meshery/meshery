@@ -139,9 +139,14 @@ func (h *Handler) PatternFileHandler(
 	patternFile.Id = patternID
 	// Generate the pattern file object
 	description := fmt.Sprintf("%sed design '%s'", action, patternFile.Name)
+
 	if isDryRun {
-		action = "verify"
-		description = fmt.Sprintf("%sed design '%s'", action, patternFile.Name)
+		action = "dry-run"
+		description = fmt.Sprintf("Dry Run completed for design '%s'", patternFile.Name)
+	}
+
+	if action == "deploy" {
+		description = fmt.Sprintf("Deployment completed for design '%s'", patternFile.Name)
 	}
 
 	opts := &core.ProcessPatternOptions{
@@ -186,12 +191,20 @@ func (h *Handler) PatternFileHandler(
 	serverURL, _ := r.Context().Value(models.MesheryServerURL).(string)
 
 	if action == "deploy" {
-		viewLink := fmt.Sprintf("%s/extension/meshmap?mode=visualize&design=%s", serverURL, patternID)
+		viewLink := fmt.Sprintf("%s/extension/meshmap?mode=operator&type=view&design_id=%s", serverURL, patternID)
 		description = fmt.Sprintf("%s.", description)
 		metadata["view_link"] = viewLink
+		metadata["design_name"] = patternFile.Name
+		metadata["design_id"] = patternID
 	}
 
-	event := eventBuilder.WithSeverity(events.Success).WithDescription(description).WithMetadata(metadata).Build()
+	var event *events.Event
+	if action == "deploy" || action == "dry-run" {
+		event = eventBuilder.WithSeverity(events.Informational).WithDescription(description).WithMetadata(metadata).Build()
+	} else {
+		event = eventBuilder.WithSeverity(events.Success).WithDescription(description).WithMetadata(metadata).Build()
+	}
+
 	_ = provider.PersistEvent(event)
 	go func() {
 		h.config.EventBroadcaster.Publish(userID, event)

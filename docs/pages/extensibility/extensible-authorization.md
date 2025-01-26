@@ -12,7 +12,7 @@ Meshery features an extensible authorization system that offers the ability to d
 
 ## Authorization Keys
 
-The extensible authorization system consistes of a large set of keys. Each key uniquely represents a specific capability, for example, the ability to view a [Connection](/concepts/logical/connections), edit or delete a Connection. With the help of these keys, the system evaluates the permissions during runtime and renders UI both helping offer a secure management system and a customizable user experience.
+The extensible authorization system consists of a large set of keys. Each key uniquely represents a specific capability, for example, the ability to view a [Connection](/concepts/logical/connections), edit or delete a Connection. With the help of these keys, the system evaluates the permissions during runtime and renders UI both helping offer a secure management system and a customizable user experience.
 
 {% include alert.html type="info" title="Note" content="The extensible authorization system is available to both Local and Remote Providers. Depending upon your chosen <a href='/extensibility/providers'>Remote Provider</a>, keys, clustering of them, assigning them to user groups, not just individual users or to user roles may be offered." %}
 

@@ -1,0 +1,24 @@
+version: 0.0.1
+name: simple-mysql-pod
+displayName: Simple MySQL Pod
+createdAt: "2024-04-10T14:42:56Z"
+description: Testing patterns
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/68a67a3a-eb39-472e-8d9c-a3b34fa23a71/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "None \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 7dde79fb-2778-4a66-9ce5-6772bafe8df8
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/68a67a3a-eb39-472e-8d9c-a3b34fa23a71-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/68a67a3a-eb39-472e-8d9c-a3b34fa23a71-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

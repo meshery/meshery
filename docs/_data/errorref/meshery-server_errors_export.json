@@ -2168,7 +2168,7 @@
         "code": "1241",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Connection to DataBase does not exist",
+        "short_description": "Connection to database does not exist",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -2347,8 +2347,8 @@
         "name": "ErrTokenClaimsCode",
         "code": "1261",
         "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error occurred while prasing claims",
+        "long_description": "JWTs are encoded and signed, ensuring the integrity and authenticity of the claims they contain.",
+        "short_description": "Error occurred while parsing JWT claims",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -2492,7 +2492,7 @@
         "code": "1277",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "minimum one test endpoint needs to be specified",
+        "short_description": "Minimum one test endpoint needs to be specified",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -2501,7 +2501,7 @@
         "code": "1278",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "specify valid Loadgenerator",
+        "short_description": "specify valid load generator",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -2845,7 +2845,7 @@
         "long_description": "",
         "short_description": "Failed to create design service from Manifest",
         "probable_cause": "Invalid Manifest\nMeshery doesn't identifies the Resource mentioned in the Manifest",
-        "suggested_remediation": "Check if all of the meshery adapters are running\nCheck if Meshery has successfully identified and registered Kubernetes components"
+        "suggested_remediation": "Check if all of the meshery adapters are running\nCheck if Meshery has identified and registered Kubernetes components"
       },
       "1317": {
         "name": "ErrPatternFromCytoscapeCode",
@@ -2900,15 +2900,6 @@
         "short_description": "unable to marshal yaml \\\"%s\\",
         "probable_cause": "Object has invalid yaml format",
         "suggested_remediation": "Make sure to input a valid yaml object"
-      },
-      "1323": {
-        "name": "ErrCreatingOPAInstanceCode",
-        "code": "1323",
-        "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error creating OPA Instance.",
-        "probable_cause": "Unable to create OPA instance, policies will not be evaluated.",
-        "suggested_remediation": "Ensure relationships are registered"
       },
       "1324": {
         "name": "ErrEventStreamingNotSupportedCode",
@@ -3287,6 +3278,33 @@
         "short_description": "No tar file found inside OCI image",
         "probable_cause": "The OCI image does not contain a ziped file.",
         "suggested_remediation": "Verify that the OCI image contains a ziped file."
+      },
+      "1366": {
+        "name": "ErrFileTypeCode",
+        "code": "1366",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error: \n is not a valid file type",
+        "probable_cause": "The provided file type is wrong",
+        "suggested_remediation": "Verify the file type"
+      },
+      "1367": {
+        "name": "ErrCreatingOPAInstanceCode",
+        "code": "1367",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error creating OPA Instance.",
+        "probable_cause": "Unable to create OPA instance, policies will not be evaluated.",
+        "suggested_remediation": "Ensure relationships are registered"
+      },
+      "1368": {
+        "name": "ErrStatusCodeCode",
+        "code": "1368",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Request was not successful",
+        "probable_cause": "The server might be down or temporarily unavailable.\nThere could be network connectivity issues between the client and the server.\nThe API endpoint might be misconfigured, or the server is experiencing high load.",
+        "suggested_remediation": "Check if the server is online and operational.\nVerify network connectivity and ensure there are no firewalls or DNS issues blocking the request.\nConfirm the API endpoint is correct and functional."
       }
     }
   }

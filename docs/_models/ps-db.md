@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/ps-db/components/percona-server-my-sql/icons/color/percona-server-my-sql-color.svg
   whiteIcon: assets/img/integrations/ps-db/components/percona-server-my-sql/icons/white/percona-server-my-sql-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "A fully compatible, enhanced, and open source drop-in replacement for any MySQL database.",
   "Percona Operators include backup/restore, high availability, replication, sharding, logging features and more.",

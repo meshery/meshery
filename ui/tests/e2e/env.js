@@ -19,27 +19,17 @@ if (process.env.CI) {
   } else if (!USER_EMAIL || !USER_PASSWORD) {
     core.setFailed("You're either email or password is empty");
   }
-
-  if (!PROVIDER_TOKEN) {
-    core.setFailed(
-      'Token is required, please provide token from Meshery Cloud Provider https://staging-cloud.layer5.io/security/tokens',
-    );
-  }
 } else {
   if (!USER_EMAIL && !USER_PASSWORD) {
     console.warn('Using default email and password on auth');
   } else if (!USER_EMAIL || !USER_PASSWORD) {
     throw new Error('You are email or password is empty');
   }
-
-  if (!PROVIDER_TOKEN) {
-    throw new Error(
-      'Token is required, please provide token from Meshery Cloud Provider https://cloud.layer5.io/security/tokens',
-    );
-  }
 }
 
-const AUTHFILE = 'playwright/.auth/user.json';
+const AUTHFILELOCALPROVIDER = 'playwright/.auth/user-local-provider.json';
+
+const AUTHFILEMESHERYPROVIDER = 'playwright/.auth/user-meshery-provider.json';
 
 export const ENV = {
   MESHERY_SERVER_URL,
@@ -47,5 +37,6 @@ export const ENV = {
   REMOTE_PROVIDER_URL,
   REMOTE_PROVIDER_USER,
   PROVIDER_TOKEN,
-  AUTHFILE,
+  AUTHFILELOCALPROVIDER,
+  AUTHFILEMESHERYPROVIDER,
 };

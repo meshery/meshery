@@ -1,0 +1,20 @@
+version: 0.0.1
+name: pod-multi-containers
+displayName: Pod Multi Containers
+createdAt: "2024-01-17T06:03:28Z"
+description: '"Pod Multi Containers" design facilitates the deployment of Kubernetes Pods that consist of multiple containers, each serving a distinct role within a single cohesive unit.'
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/17c46515-50ef-436c-9383-451e13348ddd/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "No caveats \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a7b465ad-21eb-4f3f-9c84-56de76aebe62
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

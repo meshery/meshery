@@ -8,10 +8,9 @@ import { EVENT_TYPES } from 'lib/event-types';
 import { useNotification } from 'utils/hooks/useNotification';
 import { useGetOrgsQuery } from 'rtk-query/organization';
 import OrgIcon from 'assets/icons/OrgIcon';
-import ErrorBoundary from '../../ErrorBoundary';
 import { Provider } from 'react-redux';
 import { store } from '../../../store';
-import { FormControl, FormGroup, MenuItem } from '@layer5/sistent';
+import { ErrorBoundary, FormControl, FormGroup, MenuItem } from '@layer5/sistent';
 import {
   OrgName,
   StyledSelect,
@@ -21,6 +20,7 @@ import {
 } from './styles';
 import theme from 'themes/app';
 import { useGetCurrentAbilities } from 'rtk-query/ability';
+import CustomErrorFallback from '../ErrorBoundary';
 
 const OrgSwitcher = (props) => {
   const {
@@ -114,10 +114,7 @@ const mapStateToProps = (state) => {
 const OrgSwitcherWithErrorBoundary = (props) => {
   return (
     <NoSsr>
-      <ErrorBoundary
-        FallbackComponent={() => null}
-        onError={(e) => console.error('Error in Spaces Prefs Component', e)}
-      >
+      <ErrorBoundary customFallback={CustomErrorFallback}>
         <Provider store={store}>
           <OrgSwitcher {...props} />
         </Provider>

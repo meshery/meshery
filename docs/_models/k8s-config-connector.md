@@ -1402,6 +1402,33 @@ components:
   colorIcon: assets/img/integrations/k8s-config-connector/components/gke-hub-feature/icons/color/gke-hub-feature-color.svg
   whiteIcon: assets/img/integrations/k8s-config-connector/components/gke-hub-feature/icons/white/gke-hub-feature-white.svg
   description: 
+- name: privileged-access-manager-entitlement
+  colorIcon: assets/img/integrations/k8s-config-connector/components/privileged-access-manager-entitlement/icons/color/privileged-access-manager-entitlement-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/privileged-access-manager-entitlement/icons/white/privileged-access-manager-entitlement-white.svg
+  description: 
+- name: workstation-cluster
+  colorIcon: assets/img/integrations/k8s-config-connector/components/workstation-cluster/icons/color/workstation-cluster-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/workstation-cluster/icons/white/workstation-cluster-white.svg
+  description: 
+- name: discovery-engine-data-store
+  colorIcon: assets/img/integrations/k8s-config-connector/components/discovery-engine-data-store/icons/color/discovery-engine-data-store-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/discovery-engine-data-store/icons/white/discovery-engine-data-store-white.svg
+  description: 
+- name: kms-autokey-config
+  colorIcon: assets/img/integrations/k8s-config-connector/components/kms-autokey-config/icons/color/kms-autokey-config-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/kms-autokey-config/icons/white/kms-autokey-config-white.svg
+  description: 
+- name: kms-key-handle
+  colorIcon: assets/img/integrations/k8s-config-connector/components/kms-key-handle/icons/color/kms-key-handle-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/kms-key-handle/icons/white/kms-key-handle-white.svg
+  description: 
+- name: secure-source-manager-repository
+  colorIcon: assets/img/integrations/k8s-config-connector/components/secure-source-manager-repository/icons/color/secure-source-manager-repository-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/secure-source-manager-repository/icons/white/secure-source-manager-repository-white.svg
+  description: 
+components-count: 354
+relationships: 
+relationship-count: 0
 featureList: [
   "Provides a wide range of cloud services",
   "Integrates with Kubernetes",

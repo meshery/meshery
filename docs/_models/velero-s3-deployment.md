@@ -54,6 +54,9 @@ components:
   colorIcon: assets/img/integrations/velero-s3-deployment/components/backup/icons/color/backup-color.svg
   whiteIcon: assets/img/integrations/velero-s3-deployment/components/backup/icons/white/backup-white.svg
   description: 
+components-count: 11
+relationships: 
+relationship-count: 0
 featureList: [
   "Backs up Kubernetes resources to S3",
   "Restores Kubernetes resources from S3",

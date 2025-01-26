@@ -27,7 +27,7 @@ jobs:
     - name: Setup Go
       uses: actions/setup-go@master
       with:
-        go-version: "1.21"
+        go-version: "1.23"
     - name: Go mod sync utility
       run: cd meshery-extensions;make graphql-sync;
 
@@ -46,7 +46,7 @@ jobs:
         commit_message: 'Upgrading go.mod in response to meshery/meshery'
         branch: master
   notify-via-email:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
       - sync
     if: ${{ always() && contains(needs.*.result, 'failure') }}

@@ -88,7 +88,10 @@ const (
 	modelListURL                   = docsBaseURL + "reference/mesheryctl/system/model/list"
 	modelImportURl                 = docsBaseURL + "reference/mesheryctl/system/model/import"
 	modelViewURL                   = docsBaseURL + "reference/mesheryctl/system/model/view"
-	registryUsageURL               = docsBaseURL + "reference/mesheryctl/system/registry"
+	registryUsageURL               = docsBaseURL + "reference/mesheryctl/registry"
+	registryPublishURL             = docsBaseURL + "reference/mesheryctl/registry/publish"
+	registryGenerateURL            = docsBaseURL + "reference/mesheryctl/registry/generate"
+	registryUpdateURL              = docsBaseURL + "reference/mesheryctl/registry/update"
 	relationshipUsageURL           = docsBaseURL + "reference/mesheryctl/relationships"
 	cmdRelationshipGenerateDocsURL = docsBaseURL + "reference/mesheryctl/relationships/generate"
 	relationshipViewURL            = docsBaseURL + "reference/mesheryctl/relationships/view"
@@ -156,8 +159,10 @@ const (
 	cmdModelList                cmdType = "model list"
 	cmdModelImport              cmdType = "model import"
 	cmdModelView                cmdType = "model view"
-	cmdRegistryPublish          cmdType = "registry publish"
 	cmdRegistry                 cmdType = "regisry"
+	cmdRegistryPublish          cmdType = "registry publish"
+	cmdRegistryGenerate         cmdType = "registry generate"
+	cmdRegistryUpdate           cmdType = "registry update"
 	cmdConnection               cmdType = "connection"
 	cmdConnectionList           cmdType = "connection list"
 	cmdConnectionDelete         cmdType = "connection delete"
@@ -647,7 +652,11 @@ func StringInSlice(str string, slice []string) bool {
 
 // GetID returns a array of IDs from meshery server endpoint /api/{configurations}
 func GetID(mesheryServerUrl, configuration string) ([]string, error) {
-	url := mesheryServerUrl + "/api/" + configuration + "?page_size=10000"
+	url := mesheryServerUrl + "/api/" + configuration + "?"
+	if configuration == "pattern" {
+		url += "populate=pattern_file&"
+	}
+	url += "page_size=10000"
 	configType := configuration + "s"
 	var idList []string
 	req, err := NewRequest("GET", url, nil)

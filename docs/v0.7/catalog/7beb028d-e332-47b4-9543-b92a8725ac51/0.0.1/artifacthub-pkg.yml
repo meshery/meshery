@@ -1,0 +1,20 @@
+version: 0.0.1
+name: bookinfo-app-w/o-kubernetes
+displayName: BookInfo App w/o Kubernetes
+createdAt: "2023-06-09T07:56:41Z"
+description: 'The Bookinfo application is a collection of microservices that work together to display information about a book. The main microservice is called productpage, which fetches data from the details and reviews microservices to populate the book''s page. The details microservice contains specific information about the book, such as its ISBN and number of pages. The reviews microservice contains reviews of the book and also makes use of the ratings microservice to retrieve ranking information for each review. The reviews microservice has three different versions: v1, v2, and v3. In v1, the microservice does not interact with the ratings service. In v2, it calls the ratings service and displays the rating using black stars, ranging from 1 to 5. In v3, it also calls the ratings service but displays the rating using red stars, again ranging from 1 to 5. These different versions allow for flexibility and experimentation with different ways of presenting the books ratings to users.'
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/7beb028d-e332-47b4-9543-b92a8725ac51/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Users need to ensure that their cluster is properly configured with Istio, including the installation of the necessary components and enabling sidecar injection for the microservices. Ensure that Meshery Adapter for Istio service mesh is installed properly for easy installation/registration of Istio's MeshModels with Meshery Server. Another consideration is the resource requirements of the application. The Bookinfo application consists of multiple microservices, each running as a separate container. Users should carefully assess the resource needs of the application and ensure that their cluster has sufficient capacity to handle the workload. This includes considering factors such as CPU, memory, and network bandwidth requirements. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a550f4d6-d3bd-44f1-9b4c-167114452062
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

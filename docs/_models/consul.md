@@ -134,6 +134,9 @@ components:
   colorIcon: assets/img/integrations/consul/components/tcp-route/icons/color/tcp-route-color.svg
   whiteIcon: assets/img/integrations/consul/components/tcp-route/icons/white/tcp-route-white.svg
   description: 
+components-count: 31
+relationships: 
+relationship-count: 0
 featureList: [
   "Visualize the topology of your Consul service mesh deployment",
   "Analyze Consul Connects configuration",

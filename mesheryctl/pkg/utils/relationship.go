@@ -26,18 +26,19 @@ type RelationshipCSVHelper struct {
 }
 
 type RelationshipCSV struct {
-	RowIndex     int    `json:"-" csv:"-"`
-	Model        string `json:"Model" csv:"Model"`
-	Version      string `json:"Version" csv:"Version"`
-	KIND         string `json:"kind" csv:"kind"`
-	Type         string `json:"type" csv:"type"`
-	SubType      string `json:"subType" csv:"subType"`
-	Description  string `json:"metadata.description" csv:"metadata.description"`
-	IsAnnotation string `json:"metadata.isAnnotation" csv:"metadata.isAnnotation"`
-	Styles       string `json:"metadata.styles" csv:"metadata.styles"`
-	EvalPolicy   string `json:"evalPolicy" csv:"evalPolicy"`
-	Selector     string `json:"selector" csv:"selector"`
-	Filename     string `json:"filename" csv:"filename"`
+	RowIndex          int    `json:"-" csv:"-"`
+	Model             string `json:"Model" csv:"Model"`
+	Version           string `json:"Version" csv:"Version"`
+	KIND              string `json:"kind" csv:"kind"`
+	Type              string `json:"type" csv:"type"`
+	SubType           string `json:"subType" csv:"subType"`
+	PublishToRegistry string `json:"PublishToRegistry" csv:"PublishToRegistry"`
+	Description       string `json:"metadata.description" csv:"metadata.description"`
+	IsAnnotation      string `json:"metadata.isAnnotation" csv:"metadata.isAnnotation"`
+	Styles            string `json:"metadata.styles" csv:"metadata.styles"`
+	EvalPolicy        string `json:"evalPolicy" csv:"evalPolicy"`
+	Selector          string `json:"selector" csv:"selector"`
+	Filename          string `json:"filename" csv:"filename"`
 }
 
 func NewRelationshipCSVHelper(sheetURL, spreadsheetName string, spreadsheetID int64, localCsvPath string) (*RelationshipCSVHelper, error) {
@@ -150,8 +151,15 @@ func ProcessRelationships(relationshipCSVHelper *RelationshipCSVHelper, spreadsh
 				Name:  relationship.Model,
 				Model: model.Model{Version: version},
 			}
-			status := _rel.Enabled
-			rel.Status = &status
+
+			if utils.ReplaceSpacesAndConvertToLowercase(relationship.PublishToRegistry) == "false" {
+				status := _rel.Ignored
+				rel.Status = &status
+			} else {
+				status := _rel.Enabled
+				rel.Status = &status
+			}
+
 			var styles _rel.RelationshipDefinitionMetadataStyles
 
 			if relationship.Styles != "" {

@@ -14,7 +14,7 @@ jobs:
     cncf-playground-rollout:
         name: Update Meshery on CNCF playground
         if: github.repository == 'meshery/meshery'
-        runs-on: ubuntu-latest 
+        runs-on: ubuntu-24.04 
         steps:
         - name: Pull latest images and restart containers
           uses: appleboy/ssh-action@master
@@ -24,7 +24,9 @@ jobs:
               key: ${{ secrets.METAL_SSH_KEY }}
               script: |
                 cd meshery
+                git restore .
                 git pull
+                docker system prune --force
                 docker compose -f install/playground/docker/docker-compose.yaml pull
                 docker compose -f install/playground/docker/docker-compose.yaml down
                 docker compose -f install/playground/docker/docker-compose.yaml up -d --remove-orphans

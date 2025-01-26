@@ -33,7 +33,7 @@ mesheryctl registry generate [flags]
 Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-./mesheryctl registry generate --spreadsheet-id "1t0OqpPI_TRNwNB4Rm8yBRIG_LwaDtAiVmozYlg9FE-k" --spreadsheet-cred $CRED
+mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred $CRED
 
 </div>
 </pre> 

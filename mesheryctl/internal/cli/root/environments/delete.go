@@ -1,4 +1,4 @@
-// Copyright 2024 Layer5, Inc.
+// Copyright Meshery Authorsayer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -32,7 +32,7 @@ var deleteEnvironmentCmd = &cobra.Command{
 	Long:  `delete a new environments by providing the name and description of the environment`,
 	Example: `
 // delete a new environment
-mesheryctl exp environment delete [environmentId]
+mesheryctl environment delete [environmentId]
 // Documentation for environment can be found at:
 https://docs.layer5.io/cloud/spaces/environments/
 `,
@@ -70,7 +70,7 @@ https://docs.layer5.io/cloud/spaces/environments/
 
 		// Check if the response status code is 200
 		if resp.StatusCode == http.StatusOK {
-			utils.Log.Info("Connection deleted successfully")
+			utils.Log.Info("Connection deleted")
 			return nil
 		}
 

@@ -75,12 +75,12 @@ var GenerateRelationshipDocsCmd = &cobra.Command{
 		}
 
 		// If no error, fetch the data from the sheet
-		err = createJsonFile(resp)
+		err = createJsonFile(resp, "../docs/_data/RelationshipsData.json")
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
 		}
-		utils.Log.Info("Relationships data generated successfully in docs/_data/RelationshipsData.json")
+		utils.Log.Info("Relationships data generated in docs/_data/RelationshipsData.json")
 		return nil
 	},
 }
@@ -88,7 +88,7 @@ var GenerateRelationshipDocsCmd = &cobra.Command{
 func init() {
 	GenerateRelationshipDocsCmd.PersistentFlags().StringVarP(&sheetID, "sheetId", "s", "", "Google Sheet ID")
 }
-func createJsonFile(resp *sheets.ValueRange) error {
+func createJsonFile(resp *sheets.ValueRange, jsonFilePath string) error {
 
 	var customResp []CustomValueRange
 
@@ -120,7 +120,7 @@ func createJsonFile(resp *sheets.ValueRange) error {
 		return nil
 	}
 
-	jsonFile, err := os.Create("../docs/_data/RelationshipsData.json")
+	jsonFile, err := os.Create(jsonFilePath)
 	if err != nil {
 		utils.Log.Error(err)
 		return nil

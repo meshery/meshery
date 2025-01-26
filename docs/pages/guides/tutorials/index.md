@@ -20,7 +20,7 @@ redirect_from: guides/tutorials/
   <h2>{{ group.name | capitalize }} </h2>
   
     {% for item in group.items %}
-0. [{{ item.title }}]({{ site.baseurl }}{{ item.url }})
+1. [{{ item.title }}]({{ site.baseurl }}{{ item.url }})
     {% endfor %}
   {% endif %}
 {% endfor %}

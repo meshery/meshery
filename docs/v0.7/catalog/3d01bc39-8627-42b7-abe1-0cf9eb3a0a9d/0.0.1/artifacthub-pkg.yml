@@ -1,0 +1,20 @@
+version: 0.0.1
+name: cryptomb-tls-handshake-acceleration-for-istio
+displayName: CryptoMB-TLS-handshake-acceleration-for-Istio
+createdAt: "2023-08-03T17:24:09Z"
+description: Envoy uses BoringSSL as the default TLS library. BoringSSL supports setting private key methods for offloading asynchronous private key operations, and Envoy implements a private key provider framework to allow creation of Envoy extensions which handle TLS handshakes private key operations (signing and decryption) using the BoringSSL hooks.\\\\n\\\\nCryptoMB private key provider is an Envoy extension which handles BoringSSL TLS RSA operations using Intel AVX-512 multi-buffer acceleration. When a new handshake happens, BoringSSL invokes the private key provider to request the cryptographic operation, and then the control returns to Envoy. The RSA requests are gathered in a buffer. When the buffer is full or the timer expires, the private key provider invokes Intel AVX-512 processing of the buffer. When processing is done, Envoy is notified that the cryptographic operation is done and that it may continue with the handshakes.\\\\nEnvoy uses BoringSSL as the default TLS library. BoringSSL supports setting private key methods for offloading asynchronous private key operations, and Envoy implements a private key provider framework to allow creation of Envoy extensions which handle TLS handshakes private key operations (signing and decryption) using the BoringSSL hooks.\\\\n\\\\nCryptoMB private key provider is an Envoy extension which handles BoringSSL TLS RSA operations using Intel AVX-512 multi-buffer acceleration. When a new handshake happens, BoringSSL invokes the private key provider to request the cryptographic operation, and then the control returns to Envoy. The RSA requests are gathered in a buffer. When the buffer is full or the timer expires, the private key provider invokes Intel AVX-512 processing of the buffer. When processing is done, Envoy is notified that the cryptographic operation is done and that it may continue with the handshakes.\\\\n\\\\n\\\\n
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/3d01bc39-8627-42b7-abe1-0cf9eb3a0a9d/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "None \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: b6467d0a-f11e-4614-9eb2-ab80c4f1c58d
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

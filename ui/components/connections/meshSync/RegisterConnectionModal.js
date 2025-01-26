@@ -1,13 +1,12 @@
 import React from 'react';
-import { DialogContent, Dialog } from '@material-ui/core';
-
-import theme from '../../../themes/app.js';
+import { Modal, ModalBody } from '@layer5/sistent';
 import CustomizedSteppers from './Stepper/index.js';
 
 import { useCancelConnectionRegisterMutation } from '@/rtk-query/connection.js';
 import { useDeleteMeshsyncResourceMutation } from '@/rtk-query/meshsync.js';
 import { useNotification } from '@/utils/hooks/useNotification.js';
 import { EVENT_TYPES } from 'lib/event-types.js';
+import { UsesSistent } from '@/components/SistentWrapper.js';
 
 const RegisterConnectionModal = ({
   openRegistrationModal,
@@ -39,7 +38,7 @@ const RegisterConnectionModal = ({
       .unwrap()
       .then(() => {
         notify({
-          message: 'Connection registered successfully!',
+          message: 'Connection registered!',
           event_type: EVENT_TYPES.SUCCESS,
         });
       })
@@ -52,35 +51,27 @@ const RegisterConnectionModal = ({
   };
 
   return (
-    <div style={{ marginBottom: '1rem' }}>
-      <Dialog
-        open={openRegistrationModal}
-        onClose={handleClose}
-        aria-labelledby="form-dialog-title"
-        maxWidth="md"
-        style={{ zIndex: 9999 }}
-        PaperProps={{
-          style: { borderRadius: 30 },
-        }}
-      >
-        <DialogContent
-          style={{
-            padding: '0 1.5rem 1.5rem',
-            borderRadius: '28px',
-            border: `6px solid ${theme.palette.secondary.success}`,
-          }}
+    <UsesSistent>
+      <div style={{ marginBottom: '1rem' }}>
+        <Modal
+          open={openRegistrationModal}
+          closeModal={handleClose}
+          aria-labelledby="form-dialog-title"
+          maxWidth="md"
         >
-          <CustomizedSteppers
-            formConnectionIdRef
-            onClose={handleClose}
-            connectionData={connectionData}
-            sharedData={sharedData}
-            setSharedData={setSharedData}
-            handleRegistrationComplete={handleRegistrationComplete}
-          />
-        </DialogContent>
-      </Dialog>
-    </div>
+          <ModalBody>
+            <CustomizedSteppers
+              formConnectionIdRef
+              onClose={handleClose}
+              connectionData={connectionData}
+              sharedData={sharedData}
+              setSharedData={setSharedData}
+              handleRegistrationComplete={handleRegistrationComplete}
+            />
+          </ModalBody>
+        </Modal>
+      </div>
+    </UsesSistent>
   );
 };
 

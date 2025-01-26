@@ -18,18 +18,6 @@ export const CopyLinkButton = styled(Button)(({ theme }) => ({
   color: theme.palette.secondary.primaryModalText,
 }));
 
-export const VisibilityTag = styled(`div`)(({ theme }) => ({
-  border: `0.5px solid ${theme.palette.secondary.textMain}`,
-  color: theme.palette.secondary.textMain,
-  borderRadius: '0.2rem',
-  paddingInline: '0.2rem',
-  paddingBlock: '0.2rem',
-  fontSize: '0.7rem',
-  textTransform: 'uppercase',
-  textAlign: 'center',
-  marginLeft: '0.5rem',
-}));
-
 export const ResourceName = styled(Typography)(() => ({
   fontFamily: 'Qanelas Soft, sans-serif',
   textAlign: 'left',

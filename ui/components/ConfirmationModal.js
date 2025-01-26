@@ -8,8 +8,6 @@ import {
   DialogContentText,
   DialogTitle,
   IconButton,
-  Tab,
-  Tabs,
   TextField,
   Tooltip,
   Typography,
@@ -40,6 +38,8 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { K8sContextConnectionChip } from './Header';
 import { useFilterK8sContexts } from './hooks/useKubernetesHook';
+import { Tab, Tabs } from '@layer5/sistent';
+import { UsesSistent } from './SistentWrapper';
 
 const styles = (theme) => ({
   dialogBox: {},
@@ -351,88 +351,86 @@ function ConfirmationMsg(props) {
             </div>
           </DialogTitle>
           {/* <Paper square className={classes.paperRoot}> */}
-          <Tabs
-            value={validationBody ? tabVal : tabVal === 2 ? 1 : 0}
-            variant="scrollable"
-            scrollButtons="auto"
-            indicatorColor="primary"
-            textColor="primary"
-            className={classes.tabs}
-            centered
-          >
-            {!!validationBody && (
+          <UsesSistent>
+            <Tabs
+              value={validationBody ? tabVal : tabVal === 2 ? 1 : 0}
+              variant="scrollable"
+              scrollButtons="auto"
+              indicatorColor="primary"
+              textColor="primary"
+              centered
+            >
+              {!!validationBody && (
+                <Tab
+                  data-cy="validate-btn-modal"
+                  onClick={(event) => handleTabValChange(event, 0)}
+                  label={
+                    <div style={{ display: 'flex' }}>
+                      <DoneIcon
+                        style={{ margin: '2px', paddingRight: '2px', ...iconSmall }}
+                        fontSize="small"
+                      />
+                      <span className={classes.tabLabel}>Validate</span>
+                      {errors?.validationError > 0 && (
+                        <div className={classes.triangleContainer}>
+                          <RoundedTriangleShape
+                            color={notificationColors.warning}
+                          ></RoundedTriangleShape>
+                          <div
+                            className={classes.triangleNumberSingleDigit}
+                            style={errors.validationError > 10 ? { left: '25%' } : {}}
+                          >
+                            {errors.validationError}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  }
+                  disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.resource)}
+                />
+              )}
               <Tab
-                data-cy="validate-btn-modal"
-                className={classes.tab}
-                onClick={(event) => handleTabValChange(event, 0)}
+                disabled={
+                  !CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) ||
+                  (CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) && disabled)
+                }
+                data-cy="Undeploy-btn-modal"
+                onClick={(event) => handleTabValChange(event, 1)}
                 label={
                   <div style={{ display: 'flex' }}>
-                    <DoneIcon
+                    <div style={{ margin: '2px', paddingRight: '2px' }}>
+                      {' '}
+                      <RemoveDoneIcon style={iconSmall} width="20" height="20" />{' '}
+                    </div>{' '}
+                    <span className={classes.tabLabel}>Undeploy</span>{' '}
+                  </div>
+                }
+              />
+              <Tab
+                disabled={
+                  !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) ||
+                  (CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) && disabled)
+                }
+                data-cy="deploy-btn-modal"
+                onClick={(event) => handleTabValChange(event, 2)}
+                label={
+                  <div style={{ display: 'flex' }}>
+                    <DoneAllIcon
                       style={{ margin: '2px', paddingRight: '2px', ...iconSmall }}
                       fontSize="small"
                     />
-                    <span className={classes.tabLabel}>Validate</span>
-                    {errors?.validationError > 0 && (
-                      <div className={classes.triangleContainer}>
-                        <RoundedTriangleShape
-                          color={notificationColors.warning}
-                        ></RoundedTriangleShape>
-                        <div
-                          className={classes.triangleNumberSingleDigit}
-                          style={errors.validationError > 10 ? { left: '25%' } : {}}
-                        >
-                          {errors.validationError}
-                        </div>
+                    <span className={classes.tabLabel}>Deploy</span>
+                    {errors?.deploymentError > 0 && (
+                      <div className={classes.octagonContainer}>
+                        <RedOctagonSvg fill={notificationColors.darkRed}></RedOctagonSvg>
+                        <div className={classes.octagonText}>{errors.deploymentError}</div>
                       </div>
                     )}
                   </div>
                 }
-                disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.resource)}
               />
-            )}
-            <Tab
-              disabled={
-                !CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) ||
-                (CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject) && disabled)
-              }
-              data-cy="Undeploy-btn-modal"
-              className={classes.tab}
-              onClick={(event) => handleTabValChange(event, 1)}
-              label={
-                <div style={{ display: 'flex' }}>
-                  <div style={{ margin: '2px', paddingRight: '2px' }}>
-                    {' '}
-                    <RemoveDoneIcon style={iconSmall} width="20" height="20" />{' '}
-                  </div>{' '}
-                  <span className={classes.tabLabel}>Undeploy</span>{' '}
-                </div>
-              }
-            />
-            <Tab
-              disabled={
-                !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) ||
-                (CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject) && disabled)
-              }
-              data-cy="deploy-btn-modal"
-              className={classes.tab}
-              onClick={(event) => handleTabValChange(event, 2)}
-              label={
-                <div style={{ display: 'flex' }}>
-                  <DoneAllIcon
-                    style={{ margin: '2px', paddingRight: '2px', ...iconSmall }}
-                    fontSize="small"
-                  />
-                  <span className={classes.tabLabel}>Deploy</span>
-                  {errors?.deploymentError > 0 && (
-                    <div className={classes.octagonContainer}>
-                      <RedOctagonSvg fill={notificationColors.darkRed}></RedOctagonSvg>
-                      <div className={classes.octagonText}>{errors.deploymentError}</div>
-                    </div>
-                  )}
-                </div>
-              }
-            />
-          </Tabs>
+            </Tabs>
+          </UsesSistent>
 
           {(tabVal === ACTIONS.DEPLOY || tabVal === ACTIONS.UNDEPLOY) && (
             <DialogContent>

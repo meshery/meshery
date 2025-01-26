@@ -1,0 +1,3079 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+  <script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+  <head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Hugo 0.55.6" />
+
+  <meta name="ROBOTS" content="INDEX, FOLLOW" />
+
+  <link rel="alternate" type="application/rss&#43;xml" href="/index.xml" />
+
+  <link rel="shortcut icon" href="/assets/favicons/favicon.ico" />
+  <link rel="apple-touch-icon" href="/assets/favicons/apple-touch-icon.png" sizes="180x180" />
+  <link rel="icon" type="image/png" href="/assets/favicons/favicon-16x16.png" sizes="16x16" />
+  <link rel="icon" type="image/png" href="/assets/favicons/favicon-32x32.png" sizes="32x32" />
+  <link rel="icon" type="image/png" href="/assets/favicons/android-144x144.png" sizes="36x36" />
+  <link rel="icon" type="image/png" href="/assets/favicons/android-144x144.png" sizes="48x48" />
+  <link rel="icon" type="image/png" href="/assets/favicons/android-144x144.png" sizes="72x72" />
+  <link rel="icon" type="image/png" href="/assets/favicons/android-144x144.png" sizes="96x96" />
+  <link rel="icon" type="image/png" href="/assets/favicons/android-144x144.png" sizes="144x144" />
+  <link rel="icon" type="image/png" href="/assets/favicons/android-192x192.png" sizes="192x192" />
+
+  <title>Kubernetes | Meshery</title>
+  <meta property="og:title" content="Kubernetes" />
+  <meta property="og:description"
+    content="As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.
+" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="http://localhost:4000" />
+  <meta property="og:site_name" content="http://localhost:4000" />
+  <meta property="og:image"
+    content="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/meshery-cncf-twitter.png" />
+
+  <meta itemprop="name" content="Kubernetes" />
+  <meta itemprop="description"
+    content="As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.
+" />
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Kubernetes" />
+  <meta name="twitter:description"
+    content="As a self-service engineering platform, Meshery enables collaborative design and operation of cloud native infrastructure.
+" />
+  <meta name="twitter:image"
+    content="https://raw.githubusercontent.com/meshery/meshery/master/docs/assets/img/meshery-cncf-twitter.png" />
+  
+    <!-- <link rel="stylesheet" href="/assets/css/palette.css" /> -->
+  <!-- <link rel="stylesheet" href="/assets/css/anchorjs.css" /> -->
+  <link rel="stylesheet" href="/assets/css/sass.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/all.css" />
+
+  <!-- Google Tag Manager -->
+  <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-PCGTC98C');</script>
+
+  <!-- End Google Tag Manager -->
+  
+  
+  <script src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"
+    integrity="sha512-qzgd5cYSZcosqpzpn7zF2ZId8f/8CHmFKZ8j7mU4OUXTNRd5g+ZHBPsgKEwoqxCtdQvExE5LprwwPAgoicguNg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+
+  <!-- Anchorjs included for adding hover anchor links to headings -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.2.2/anchor.min.js"></script>
+  <script>
+    $(function () {
+      /** AnchorJS options and selector */
+      anchors.options = {
+        visible: "hover",
+        placement: "right",
+      };
+      anchors.add("h1, h2, h3, h4, h5");
+    });
+    // Function to handle anchor links
+    document.addEventListener('click', function (event) {
+      if (event.target.tagName === 'A' && event.target.getAttribute('href').startsWith('#')) {
+        window.location.hash = event.target.getAttribute('href');
+      }
+    });
+  </script>
+</head>
+ <header>
+  <nav class="js-navbar-scroll navbar">
+    <a class="navbar-brand" href="/">
+      <div class="navbar-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1703.46 182.75"><defs><style>.cls-1{fill:#00d3a9;}.cls-2{fill:#00b39f;}.cls-3{fill:#3c494f;}</style></defs><g id="Layer_2" data-name="Layer 2"><g id="Layer_1-2" data-name="Layer 1"><path class="cls-1" d="M96,43.12V86.7l38.52-21.91Z"/><path class="cls-1" d="M96,95.82v43.92l38.87-21.9Z"/><path class="cls-2" d="M90.43,86.47v-43L52.38,64.91Z"/><path class="cls-2" d="M14,139.51a93,93,0,0,0,29.56,29.21v-46Z"/><path class="cls-2" d="M90.42,139.51V96.17L52.25,117.84Z"/><path class="cls-1" d="M49.08,166,87.72,144.3,49.08,122.4Z"/><path class="cls-2" d="M137.57,166.21V122.63L98.94,144.31Z"/><path class="cls-2" d="M175.4,134.5a89.15,89.15,0,0,0,10.94-39.13L146.07,118Z"/><path class="cls-1" d="M143.13,113.28,182,91.49,143.13,69.7Z"/><path class="cls-2" d="M137.56,60.23V17L99.15,38.56Z"/><path class="cls-2" d="M137.55,113.05V69.47L99,91.26Z"/><path class="cls-1" d="M49.08,69.36v44L88,91.26Z"/><path class="cls-2" d="M90.43,0a93.2,93.2,0,0,0-41,10.61l41,23Z"/><path class="cls-1" d="M49.08,16.65V60.46L88,38.56Z"/><path class="cls-2" d="M43.55,14A91.83,91.83,0,0,0,14,43.23L43.55,60V14Z"/><path class="cls-1" d="M137.32,10.84A94.71,94.71,0,0,0,96,0V34Z"/><path class="cls-1" d="M0,94.57a89.28,89.28,0,0,0,11.17,40.27l29.91-17Z"/><path class="cls-1" d="M11.17,47.91A90.17,90.17,0,0,0,0,88.06L41.08,64.91l-30-17Z"/><path class="cls-2" d="M49.47,172a93.47,93.47,0,0,0,41,10.61V149l-41,22.93Z"/><path class="cls-1" d="M172.46,43.35a93,93,0,0,0-29.33-29.09V60Z"/><path class="cls-1" d="M143.13,168.6a91.72,91.72,0,0,0,29.45-29.31l-29.45-16.66v46Z"/><path class="cls-2" d="M186.42,87.72A89.58,89.58,0,0,0,175.36,48L145.68,64.79Z"/><path class="cls-1" d="M96,182.75a93.24,93.24,0,0,0,41-10.61L96,148.87Z"/><path class="cls-2" d="M43.55,112.94V69.81L5.38,91.26Z"/><path class="cls-3" d="M784.8,56.17v92H889.85v-22h-83V104.6h63.94v-22H806.81V61.05h83v-22H784.8Z"/><path class="cls-3" d="M379.53,56.17v92H485v-22H402V104.6H465.9v-22H402V61.05H485v-22H379.53Z"/><path class="cls-3" d="M630.74,119.66a23.83,23.83,0,0,1-2.49,11,28.89,28.89,0,0,1-6.22,9,35.86,35.86,0,0,1-9.14,6.1,27.83,27.83,0,0,1-11.21,2.44H497.87V125.36H601.68a5.38,5.38,0,0,0,4.15-1.63,5.15,5.15,0,0,0,1.66-4.07v-9a5.15,5.15,0,0,0-1.66-4.07,5.38,5.38,0,0,0-4.15-1.63H526.94a25.15,25.15,0,0,1-11.22-2.44,29.55,29.55,0,0,1-9.13-6.11,34.86,34.86,0,0,1-6.23-8.95,23.86,23.86,0,0,1-2.49-11v-9a23.79,23.79,0,0,1,2.49-11,34.74,34.74,0,0,1,6.23-9,35.37,35.37,0,0,1,9.13-6.1,25.15,25.15,0,0,1,11.22-2.45h103.8v23.2H526.94a5.42,5.42,0,0,0-4.16,1.63A5.19,5.19,0,0,0,521.12,68v9A5.2,5.2,0,0,0,522.78,81a5.41,5.41,0,0,0,4.16,1.62h74.74a25.11,25.11,0,0,1,11.21,2.45,35.6,35.6,0,0,1,9.14,6.1,34.71,34.71,0,0,1,6.22,9,26.4,26.4,0,0,1,2.49,11Z"/><path class="cls-3" d="M770.68,148.15H749.51V105.42H666.87v42.73H645.7V82.22H749.51V39.07h21.17ZM666.87,72H645.7V39.48h21.17Z"/><path class="cls-3" d="M1073,77.33l-27.83-38.26h-27.82l44.43,65.53v43.55h22.43V104.6l44.43-65.53h-27.41Z"/><path class="cls-3" d="M927.64,59.83h56.89V83H938.85v20.76h10.38l40.28,44.77h27.41l-40.28-44.77h15.78a17.37,17.37,0,0,0,17.44-17.1V56.17a17.38,17.38,0,0,0-17.44-17.1H906.05V147.75h22Z"/><path class="cls-3" d="M360.43,57.39c-4.57-10.58-15.78-18.32-27.82-17.91H223.81V148.56h23.67V62.27c32.39,0,86.37-.4,87.62.41,8.3-2.44,2.49,82.22,4.15,85.07h23.67C361.67,140.42,365,62.27,360.43,57.39Z"/><path class="cls-3" d="M305.2,74.48H281.53v73.67H305.2Z"/><rect class="cls-3" x="1235.62" y="1.38" width="5" height="180"/><path class="cls-3" d="M1408,39.61c28.88,0,49.39,23.49,49.39,52.38s-20.51,52.38-49.39,52.38h-40.42a2.68,2.68,0,0,1-3-3V42.6a2.68,2.68,0,0,1,3-3H1408Zm0,94.89c23.34,0,39.21-19,39.21-42.51S1431.34,49.48,1408,49.48h-32.93v85Zm101.7,11.67A39.22,39.22,0,1,1,1549.07,107,38.9,38.9,0,0,1,1509.7,146.17Zm0-9.58A29.64,29.64,0,1,0,1480.22,107,29.2,29.2,0,0,0,1509.7,136.59ZM1633,120.43c2.09,0,3.29,1.34,2.39,3.44-5.24,13.32-18.86,22.3-34.72,22.3-22.6,0-39.37-17.06-39.37-39.21s16.77-39.22,39.37-39.22c15.86,0,29.33,9,34.72,22.3.9,2.1-.3,3.45-2.39,3.45h-4.35a3.76,3.76,0,0,1-3.59-2.25c-4.49-8.53-13.62-13.92-24.39-13.92a29.64,29.64,0,0,0,0,59.27c10.92,0,20-5.54,24.39-13.92a3.76,3.76,0,0,1,3.59-2.24Zm26.44-31.28c0,19,44,7.63,44,35.62,0,12.27-11.07,21.4-27.69,21.4-15.41,0-26-7.78-27.54-20.35-.15-2.1,1-3.15,3-3.15h3.89c1.79,0,2.69,1,3.14,2.85,1.35,8.23,9,11.07,17.51,11.07,9.43,0,17.81-3.44,17.81-11.82,0-19-44-7.64-44-35.62,0-12.28,11.08-21.41,26.19-21.41,14.07,0,24.55,7.79,26,20.36.15,2.09-1,3.14-3,3.14h-3.89c-1.8,0-2.69-1-3.14-2.84-1.35-8.23-8.83-11.08-16-11.08C1667.84,77.32,1659.46,80.77,1659.46,89.15Z"/></g></g></svg>
+      </div>
+      <div class="mobile">
+        <svg id="Layer_1" data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 379.08 80.17"><defs><style>.cls-1{fill:#00d3a9;}.cls-2{fill:#00b39f;}.cls-3 {fill:var(--meshery-logo-text-fill);}</style></defs><polygon class="cls-1" points="41.26 18.9 41.26 38.04 57.86 28.43 41.26 18.9"/><polygon class="cls-1" points="41.26 42.05 41.26 61.29 58.01 51.71 41.26 42.05"/><polygon class="cls-2" points="38.87 37.91 38.87 19.06 22.48 28.45 38.87 37.91"/><path class="cls-2" d="M6,61.22A40.35,40.35,0,0,0,18.71,74V53.86Z"/><polygon class="cls-2" points="38.87 61.2 38.87 42.19 22.44 51.7 38.87 61.2"/><polygon class="cls-1" points="21.1 72.81 37.74 63.3 21.1 53.68 21.1 72.81"/><polygon class="cls-2" points="59.15 72.92 59.15 53.81 42.53 63.31 59.15 72.92"/><path class="cls-2" d="M75.42,59a39.88,39.88,0,0,0,4.71-17.18l-17.32,9.9Z"/><polygon class="cls-1" points="61.54 49.7 78.23 40.15 61.54 30.55 61.54 49.7"/><polygon class="cls-2" points="59.15 26.42 59.15 7.43 42.61 16.91 59.15 26.42"/><polygon class="cls-2" points="59.15 49.61 59.15 30.45 42.57 40.05 59.15 49.61"/><polygon class="cls-2" points="40.07 80.17 40.07 80.17 40.07 80.17 40.07 80.17"/><polygon class="cls-1" points="21.1 30.41 21.1 49.72 37.8 40.05 21.1 30.41"/><path class="cls-2" d="M38.87,0A40,40,0,0,0,21.28,4.65L38.87,14.77Z"/><polygon class="cls-1" points="21.1 7.31 21.1 26.49 37.81 16.91 21.1 7.31"/><path class="cls-2" d="M18.71,6.14A40.28,40.28,0,0,0,6,18.94l12.72,7.34Z"/><path class="cls-1" d="M59,4.74A40,40,0,0,0,41.26,0V14.93Z"/><path class="cls-1" d="M0,41.48A40,40,0,0,0,4.79,59.16L17.67,51.7Z"/><path class="cls-1" d="M4.79,21A40,40,0,0,0,0,38.58L17.69,28.45Z"/><path class="cls-2" d="M21.24,75.49a39.88,39.88,0,0,0,17.63,4.66V65.41Z"/><path class="cls-1" d="M74.17,19A40.24,40.24,0,0,0,61.54,6.21v20.1Z"/><path class="cls-1" d="M61.54,74A40.34,40.34,0,0,0,74.23,61.07L61.54,53.75Z"/><path class="cls-2" d="M80.13,38.48a39.88,39.88,0,0,0-4.76-17.42L62.64,28.43Z"/><path class="cls-1" d="M41.26,80.15a39.79,39.79,0,0,0,17.59-4.64L41.26,65.34Z"/><polygon class="cls-2" points="18.71 49.54 18.71 30.61 2.27 40.04 18.71 49.54"/><polygon class="cls-3" points="269.94 29.39 269.94 30.89 269.94 37.93 269.94 46.53 269.94 59.08 303.36 59.08 303.36 52.03 276.99 52.03 276.99 46.53 276.99 44.98 297.25 44.98 297.25 37.93 276.99 37.93 276.99 30.89 303.36 30.89 303.36 23.84 269.94 23.84 269.94 29.39"/><polygon class="cls-3" points="141.41 29.39 141.41 30.89 141.41 37.93 141.41 46.53 141.41 59.08 174.83 59.08 174.83 52.03 148.46 52.03 148.46 46.53 148.46 44.98 168.72 44.98 168.72 37.93 148.46 37.93 148.46 30.89 174.83 30.89 174.83 23.84 141.41 23.84 141.41 29.39"/><path class="cls-3" d="M221.08,49.87a8.74,8.74,0,0,1-.73,3.57,9,9,0,0,1-2,2.94,9.5,9.5,0,0,1-2.93,2,9,9,0,0,1-3.6.73h-33V51.66h33a1.78,1.78,0,0,0,1.79-1.79V47a1.76,1.76,0,0,0-.52-1.27,1.73,1.73,0,0,0-1.27-.51H188.09a8.74,8.74,0,0,1-3.57-.73,9.4,9.4,0,0,1-5-5,8.9,8.9,0,0,1-.73-3.57V33.09a9.11,9.11,0,0,1,.73-3.59,9.58,9.58,0,0,1,2-2.94,9.32,9.32,0,0,1,3-2,8.9,8.9,0,0,1,3.57-.72h33v7.47h-33a1.78,1.78,0,0,0-1.79,1.78V36a1.78,1.78,0,0,0,1.79,1.79h23.73a9.11,9.11,0,0,1,3.6.72,9.59,9.59,0,0,1,2.93,2,9.41,9.41,0,0,1,2,2.94,8.9,8.9,0,0,1,.73,3.59Z"/><path class="cls-3" d="M265.54,59.08h-6.73V45.22H232.6V59.08h-6.72V37.75h32.93V23.84h6.73ZM232.6,34.44h-6.72V23.84h6.72Z"/><polygon class="cls-3" points="361.45 36.17 352.64 23.84 343.83 23.84 357.93 44.98 357.93 59.08 364.98 59.08 364.98 44.98 379.08 23.84 370.38 23.84 361.45 36.17"/><path class="cls-3" d="M315.35,30.56h18.07v7.33H318.86v6.72h3.34L335,59.08h8.7L330.9,44.61h5a5.48,5.48,0,0,0,5.48-5.48V29.31a5.47,5.47,0,0,0-5.48-5.47H308.44V59.08h7.05Z"/><path class="cls-3" d="M136,59.08h-7.47V33.38a1.94,1.94,0,0,0-.16-.8,2.15,2.15,0,0,0-1.11-1.11,1.94,1.94,0,0,0-.8-.16H91.91V23.84h34.54a9.22,9.22,0,0,1,3.69.75,9.38,9.38,0,0,1,5.1,5.1,9.22,9.22,0,0,1,.75,3.69Zm-36.6,0H91.91V31.31l7.48-2Zm18.28,0h-7.48V35.22h7.48Z"/></svg>
+      </div>
+    </a>
+
+    <div id="main_navbar">
+      <ul class="navbar-nav">
+        <!-- 
+			<li class="nav-item">
+        <a class="nav-link" href="https://github.com/meshery/meshery" target="_blank"><span>GitHub</span></a>
+      </li>  -->
+
+        <!-- Internal links -->
+        
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="/installation/quick-start"
+            ><span>Quick Start</span></a
+          >
+        </li>
+        
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="https://meshery.io"
+            ><span>Website</span></a
+          >
+        </li>
+        
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="http://discuss.meshery.io/"
+            ><span>Discuss</span></a
+          >
+        </li>
+        
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="https://meshery.io/catalog"
+            ><span>Catalog</span></a
+          >
+        </li>
+        
+        <li class="nav-item">
+          <a
+            class="nav-link"
+            href="https://meshery.io/blog"
+            ><span>Blog</span></a
+          >
+        </li>
+        
+        
+        <a href="https://play.meshery.io">
+          <div class="nav-btn">Playground</div>
+        </a>
+        <!--Version Selector -->
+        <select
+          onchange="window.location=this.value"
+          class="appearance-none flex-1 w-full px-0 py-1 placeholder-gray-900 tracking-wide focus:outline-none version-selector"
+          name="versioningSelection"
+          id="versioningSelection"
+        >
+          <!-- <option value="">Versions</option> -->
+           <!-- we get the version selected, and put it to the right option  --><option
+            
+            value="/"
+            class="nav-item mr-4 mb-2 mb-lg-0 text-black"
+          >
+            <span>latest</span>
+          </option>
+          <!-- we get the version selected, and put it to the right option  --><option
+            
+            value="/v0.6"
+            class="nav-item mr-4 mb-2 mb-lg-0 text-black"
+          >
+            <span>v0.6</span>
+          </option>
+          <!-- we get the version selected, and put it to the right option  --><option
+            
+            value="/v0.5"
+            class="nav-item mr-4 mb-2 mb-lg-0 text-black"
+          >
+            <span>v0.5</span>
+          </option>
+          <!-- we get the version selected, and put it to the right option  --><option
+            
+            value="/v0.4"
+            class="nav-item mr-4 mb-2 mb-lg-0 text-black"
+          >
+            <span>v0.4</span>
+          </option>
+          
+        </select>
+      </ul>
+    </div>
+
+    <div class="icon-container">
+      <button class="nav-toggle-btn nav-toggle-btn--main">
+        <svg
+          id="menu-nav-toggle-btn"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="feather feather-menu"
+        >
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+      <button class="nav-mode-icon" id="mode-toggle-btn" style="text-align: center">
+        <img class="nav-text" id="logo-dark-light" src="/assets/img/nav-icons/mode-toggle-icon-moon.png" 
+        data-logo-for-dark="/assets/img/nav-icons/mode-toggle-icon-moon.png"
+        data-logo-for-light="/assets/img/nav-icons/mode-toggle-icon-sun.png"
+        />
+      </button>
+    </div>
+
+    <!--Search Bar
+    <div class="navbar-nav d-none d-lg-block"><input type="search" class="form-control td-search-input" placeholder="&#xf002 Search this site…" aria-label="Search this site…" autocomplete="off"></div>-->
+
+    <!-- meshery-custom-begin
+	<div class="navbar-nav d-none d-lg-block">
+          <a class="gh-source" data-gh-source="github" href="https://github.com/meshery/meshery" title="Go to repository" data-md-state="done">
+          <div class="gh-source__repository">
+            <i class="fab fa fa-github fa-2x" style='padding-right:20px; float:left; margin-top:5px'></i>
+            meshery/meshery
+          <ul class="gh-source__facts"><li class="gh-source__fact" id='stars'></li><li id="forks" class="gh-source__fact"></li></ul></div></a>
+        </div>
+      </div>
+meshery-custom-end -->
+  </nav>
+</header>
+
+<!-- meshery-custom-begin
+<script>
+$(document).ready(function() {
+  var url = "https://api.github.com/search/repositories?q=meshery/meshery";
+  fetch(url, { 
+      headers: {"Accept":"application/vnd.github.preview"}
+  }).then(function(e) {
+    return e.json()
+  }).then(function(r) {
+     console.log(r.items[0])
+     stars = r.items[0]['stargazers_count']
+     forks = r.items[0]['forks_count']
+     $('#stars').text(stars + " Stars")
+     $('#forks').text(forks + " Forks")
+  });
+});
+</script>
+meshery-custom-end -->
+
+
+  <body class="td-section dark-mode">
+    <script>
+      if(localStorage.getItem("mode") == "light-mode")  {
+      document.body.classList.remove("dark-mode");
+      const allLogos = document.querySelectorAll("#logo-dark-light");
+      allLogos.forEach(e => e.src = e.dataset.logoForLight);
+  }
+    </script>
+    <!-- Google Tag Manager -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PCGTC98C"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager -->
+
+    <div class="flex-container">
+      <div class="left-container">
+        <div class="sidebar-container-wrapper">
+          <div class="sidebar-container"><div class="sidebar-menu">
+  <form class="sidebar__search-form">
+    <input
+      type="search"
+      class="sidebar__search-input"
+      id="sidebar-search-input"
+      placeholder="Search this site..."
+      aria-label="Search this site..."
+      autocomplete="off"
+    />
+  </form>
+  <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
+  <script type="text/javascript">
+    // <!--Ref: https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView-->
+    // <!--Ref: https://stackoverflow.com/questions/11039885/scrollintoview-causing-the-whole-page-to-move-->
+    (() => {
+      window.addEventListener("load", function () {
+        let scrollElem = document.getElementsByClassName("sidebar-nav__section-link active").item(0);
+        if (scrollElem) {
+         scrollElem.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start" });
+        }
+        let activeSections = document.querySelectorAll(".sidebar-nav__section-link.active");
+      activeSections.forEach(function (activeSection) {
+        let parentCollapse = activeSection.closest(".collapse");
+        if (parentCollapse) {
+          parentCollapse.classList.add("show");
+        }
+      });
+    });
+  })();
+  </script>
+
+  <nav class="sidebar-nav" id="td-section-nav">
+    
+    <ul class="sidebar-nav__section">
+       
+
+      <li class="sidebar-nav__section-title">
+        <!-- Toggle button -->
+        <div class="toggle"  data-toggle="collapse" data-target="#section0" aria-expanded="false" aria-controls="section0"> ⇅ </div>
+        <a
+          href="/project/overview"  class="toggle"  data-toggle="collapse" data-target="#section0" aria-expanded="false" aria-controls="section0"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "
+          > 🗺 Overview & Installation
+        </a>
+  
+      
+          <ul class="td-sidebar-nav__section collapse" id="section0">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/project/faq"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >FAQs</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/installation/quick-start"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >🚀 Quick Start</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/installation"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Installation ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             <!--  section.links -->
+          </ul>
+       <!--  section.links -->
+    </li>
+  </ul> <!-- end of "sidebar-nav__section" -->
+  
+    <ul class="sidebar-nav__section">
+       
+
+      <li class="sidebar-nav__section-title">
+        <!-- Toggle button -->
+        <div class="toggle"  data-toggle="collapse" data-target="#section1" aria-expanded="false" aria-controls="section1"> ⇅ </div>
+        <a
+          href="/concepts"  class="toggle"  data-toggle="collapse" data-target="#section1" aria-expanded="false" aria-controls="section1"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "
+          > 🧠 Concepts
+        </a>
+  
+      
+          <ul class="td-sidebar-nav__section collapse" id="section1">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/concepts/architecture"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Architectural ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/concepts/logical"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Logical ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             <!--  section.links -->
+          </ul>
+       <!--  section.links -->
+    </li>
+  </ul> <!-- end of "sidebar-nav__section" -->
+  
+    <ul class="sidebar-nav__section">
+       
+
+      <li class="sidebar-nav__section-title">
+        <!-- Toggle button -->
+        <div class="toggle"  data-toggle="collapse" data-target="#section2" aria-expanded="false" aria-controls="section2"> ⇅ </div>
+        <a
+          href="/guides"  class="toggle"  data-toggle="collapse" data-target="#section2" aria-expanded="false" aria-controls="section2"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "
+          > 📚 Guides & Tutorials
+        </a>
+  
+      
+          <ul class="td-sidebar-nav__section collapse" id="section2">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/guides/infrastructure-management/overview"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >⚙️ Infrastructure Management ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/guides/configuration-management"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Configuring Kubernetes Infrastructure ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/guides/events-management"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Managing Events with Notification Center</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/guides/infrastructure-management/gitops-with-meshery"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >GitOps with Meshery</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/guides/performance-management"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Performance Management ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/guides/mesheryctl"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Using Meshery CLI Guides ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/guides/troubleshooting"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Troubleshooting Guides ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/guides/tutorials"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >🧑‍🔬 Tutorials ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             <!--  section.links -->
+          </ul>
+       <!--  section.links -->
+    </li>
+  </ul> <!-- end of "sidebar-nav__section" -->
+  
+    <ul class="sidebar-nav__section">
+       
+
+      <li class="sidebar-nav__section-title">
+        <!-- Toggle button -->
+        <div class="toggle"  data-toggle="collapse" data-target="#section3" aria-expanded="false" aria-controls="section3"> ⇅ </div>
+        <a
+          href="/extensibility"  class="toggle"  data-toggle="collapse" data-target="#section3" aria-expanded="false" aria-controls="section3"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "
+          > 🛠 Integrations & Extensions
+        </a>
+  
+      
+          <ul class="td-sidebar-nav__section collapse" id="section3">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/extensibility/api"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >APIs</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/extensibility/adapters"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Adapters ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/extensibility/integrations"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Integrations</a
+              >
+            </li>
+               <!-- end children -->
+                <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/extensibility/load-generators"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Load Generators</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/extensibility/providers"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Providers</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/extensibility/ui"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >UI Plugins</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/extensions"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >🦾 Extensions ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             <!--  section.links -->
+          </ul>
+       <!--  section.links -->
+    </li>
+  </ul> <!-- end of "sidebar-nav__section" -->
+  
+    <ul class="sidebar-nav__section">
+       
+
+      <li class="sidebar-nav__section-title">
+        <!-- Toggle button -->
+        <div class="toggle"  data-toggle="collapse" data-target="#section4" aria-expanded="false" aria-controls="section4"> ⇅ </div>
+        <a
+          href="/project"  class="toggle"  data-toggle="collapse" data-target="#section4" aria-expanded="false" aria-controls="section4"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "
+          > 🧑‍💻 Contributing & Community
+        </a>
+  
+      
+          <ul class="td-sidebar-nav__section collapse" id="section4">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/project/community"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Community</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/project/contributing"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Contributing ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             <!--  section.links -->
+          </ul>
+       <!--  section.links -->
+    </li>
+  </ul> <!-- end of "sidebar-nav__section" -->
+  
+    <ul class="sidebar-nav__section">
+       
+
+      <li class="sidebar-nav__section-title">
+        <!-- Toggle button -->
+        <div class="toggle"  data-toggle="collapse" data-target="#section5" aria-expanded="false" aria-controls="section5"> ⇅ </div>
+        <a
+          href="/reference"  class="toggle"  data-toggle="collapse" data-target="#section5" aria-expanded="false" aria-controls="section5"
+          class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section "
+          > 📖 Reference
+        </a>
+  
+      
+          <ul class="td-sidebar-nav__section collapse" id="section5">
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/reference/error-codes"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Error Code Reference</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/reference/permissions"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Permissions Keys Reference</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/extensibility/api"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >REST & GraphQL APIs ↆ</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/reference/mesheryctl"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >CLI Command Reference</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/reference/meshery-operator-crds"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Meshery Operator CRDs</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/project/releases"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Releases</a
+              >
+            </li>
+              <!-- end pageurl -->
+             
+            <li class="sidebar-nav__section-link ">
+              <a
+                href="/project/security-vulnerabilities"
+                class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section"
+                >Vulnerabilities</a
+              >
+            </li>
+              <!-- end pageurl -->
+             <!--  section.links -->
+          </ul>
+       <!--  section.links -->
+    </li>
+  </ul> <!-- end of "sidebar-nav__section" -->
+  
+</nav>
+</div>
+</div>
+        </div>
+
+        <div class="icon-container">
+          <button class="nav-toggle-btn nav-toggle-btn--document">
+            <?xml version="1.0" encoding="utf-8"?>
+              <svg version="1.1" id="document-nav-toggle-btn" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                x="0px" y="0px" viewBox="0 0 10.7 18.7" style="enable-background:new 0 0 10.7 18.7;" xml:space="preserve">
+              <style type="text/css">
+                .st0{stroke:#000000;stroke-width:1.5;stroke-miterlimit:10;}
+              </style>
+              <path class="st0" d="M8.1,9.4L1,1.9C0.7,1.7,0.7,1.2,1,1c0.3-0.3,0.7-0.3,1,0c0,0,0,0,0,0l7.8,7.9c0.3,0.3,0.3,0.7,0,1l-7.8,7.9
+                c-0.3,0.3-0.7,0.3-1,0c0,0,0,0,0,0c-0.3-0.3-0.3-0.7,0-1L8.1,9.4z"/>
+              </svg>
+          </button>
+        </div>
+      </div>
+      <main class="main-container" role="main">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb spb-1">
+            <li class="breadcrumb-item active" aria-current="page"><div id="breadcrumbs">
+
+
+   <a href="/">home</a>
+
+
+  
+    / <a href="/extensibility">extensibility</a> 
+  
+
+  
+    / <a href="/extensibility/integrations">integrations</a> 
+  
+
+  
+    / kubernetes
+  
+
+</div>
+
+<!-- <a href="http://idratherbewriting.com" class="noCrossRef productSubtitle"> Home </a> > <a class="noCrossRef productSubtitle" href="http://localhost:4000">Learn API Doc</a> > kubernetes -->
+</li>
+          </ol>
+        </nav>
+        <div class="td-content">
+          
+          <h1>Kubernetes</h1>
+           The easiest way to get a production-grade Kubernetes cluster up and running
+
+
+
+<!-- components -->
+<div>
+    <section class="Compheading">
+        
+        <h3>
+            Components ( 76 )
+        </h3>
+        <p>The Meshery model for Kubernetes supports the following components.</p>
+        
+    </section>
+
+    <section class="componentsSection">
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/namespace/icons/color/namespace-color.svg" alt="namespace" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/namespace/icons/white/namespace-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/namespace/icons/color/namespace-color.svg" />
+            </div>
+            <p class="Compitems">namespace</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/service/icons/color/service-color.svg" alt="service" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/service/icons/white/service-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/service/icons/color/service-color.svg" />
+            </div>
+            <p class="Compitems">service</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/pod/icons/color/pod-color.svg" alt="pod" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/pod/icons/white/pod-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/pod/icons/color/pod-color.svg" />
+            </div>
+            <p class="Compitems">pod</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/node/icons/color/node-color.svg" alt="node" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/node/icons/white/node-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/node/icons/color/node-color.svg" />
+            </div>
+            <p class="Compitems">node</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/deployment/icons/color/deployment-color.svg" alt="deployment" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/deployment/icons/white/deployment-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/deployment/icons/color/deployment-color.svg" />
+            </div>
+            <p class="Compitems">deployment</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/secret/icons/color/secret-color.svg" alt="secret" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/secret/icons/white/secret-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/secret/icons/color/secret-color.svg" />
+            </div>
+            <p class="Compitems">secret</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/cron-job/icons/color/cron-job-color.svg" alt="cron-job" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/cron-job/icons/white/cron-job-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/cron-job/icons/color/cron-job-color.svg" />
+            </div>
+            <p class="Compitems">cron-job</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/daemon-set/icons/color/daemon-set-color.svg" alt="daemon-set" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/daemon-set/icons/white/daemon-set-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/daemon-set/icons/color/daemon-set-color.svg" />
+            </div>
+            <p class="Compitems">daemon-set</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/cluster-role/icons/color/cluster-role-color.svg" alt="cluster-role" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/cluster-role/icons/white/cluster-role-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/cluster-role/icons/color/cluster-role-color.svg" />
+            </div>
+            <p class="Compitems">cluster-role</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/cluster-role-binding/icons/color/cluster-role-binding-color.svg" alt="cluster-role-binding" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/cluster-role-binding/icons/white/cluster-role-binding-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/cluster-role-binding/icons/color/cluster-role-binding-color.svg" />
+            </div>
+            <p class="Compitems">cluster-role-binding</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/api-service/icons/color/api-service-color.svg" alt="api-service" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/api-service/icons/white/api-service-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/api-service/icons/color/api-service-color.svg" />
+            </div>
+            <p class="Compitems">api-service</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/authorization-policy/icons/color/authorization-policy-color.svg" alt="authorization-policy" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/authorization-policy/icons/white/authorization-policy-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/authorization-policy/icons/color/authorization-policy-color.svg" />
+            </div>
+            <p class="Compitems">authorization-policy</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/binding/icons/color/binding-color.svg" alt="binding" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/binding/icons/white/binding-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/binding/icons/color/binding-color.svg" />
+            </div>
+            <p class="Compitems">binding</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/broker/icons/color/broker-color.svg" alt="broker" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/broker/icons/white/broker-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/broker/icons/color/broker-color.svg" />
+            </div>
+            <p class="Compitems">broker</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/container/icons/color/container-color.svg" alt="container" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/container/icons/white/container-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/container/icons/color/container-color.svg" />
+            </div>
+            <p class="Compitems">container</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/custom-resource-definition/icons/color/custom-resource-definition-color.svg" alt="custom-resource-definition" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/custom-resource-definition/icons/white/custom-resource-definition-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/custom-resource-definition/icons/color/custom-resource-definition-color.svg" />
+            </div>
+            <p class="Compitems">custom-resource-definition</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/cluster-trust-bundle/icons/color/cluster-trust-bundle-color.svg" alt="cluster-trust-bundle" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/cluster-trust-bundle/icons/white/cluster-trust-bundle-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/cluster-trust-bundle/icons/color/cluster-trust-bundle-color.svg" />
+            </div>
+            <p class="Compitems">cluster-trust-bundle</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/csi-driver/icons/color/csi-driver-color.svg" alt="csi-driver" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/csi-driver/icons/white/csi-driver-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/csi-driver/icons/color/csi-driver-color.svg" />
+            </div>
+            <p class="Compitems">csi-driver</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/csi-node/icons/color/csi-node-color.svg" alt="csi-node" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/csi-node/icons/white/csi-node-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/csi-node/icons/color/csi-node-color.svg" />
+            </div>
+            <p class="Compitems">csi-node</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/csi-storage-capacity/icons/color/csi-storage-capacity-color.svg" alt="csi-storage-capacity" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/csi-storage-capacity/icons/white/csi-storage-capacity-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/csi-storage-capacity/icons/color/csi-storage-capacity-color.svg" />
+            </div>
+            <p class="Compitems">csi-storage-capacity</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/certificate-signing-request/icons/color/certificate-signing-request-color.svg" alt="certificate-signing-request" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/certificate-signing-request/icons/white/certificate-signing-request-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/certificate-signing-request/icons/color/certificate-signing-request-color.svg" />
+            </div>
+            <p class="Compitems">certificate-signing-request</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/component-status/icons/color/component-status-color.svg" alt="component-status" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/component-status/icons/white/component-status-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/component-status/icons/color/component-status-color.svg" />
+            </div>
+            <p class="Compitems">component-status</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/config-map/icons/color/config-map-color.svg" alt="config-map" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/config-map/icons/white/config-map-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/config-map/icons/color/config-map-color.svg" />
+            </div>
+            <p class="Compitems">config-map</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/controller-revision/icons/color/controller-revision-color.svg" alt="controller-revision" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/controller-revision/icons/white/controller-revision-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/controller-revision/icons/color/controller-revision-color.svg" />
+            </div>
+            <p class="Compitems">controller-revision</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/endpoint-slice/icons/color/endpoint-slice-color.svg" alt="endpoint-slice" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/endpoint-slice/icons/white/endpoint-slice-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/endpoint-slice/icons/color/endpoint-slice-color.svg" />
+            </div>
+            <p class="Compitems">endpoint-slice</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/endpoints/icons/color/endpoints-color.svg" alt="endpoints" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/endpoints/icons/white/endpoints-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/endpoints/icons/color/endpoints-color.svg" />
+            </div>
+            <p class="Compitems">endpoints</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/event/icons/color/event-color.svg" alt="event" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/event/icons/white/event-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/event/icons/color/event-color.svg" />
+            </div>
+            <p class="Compitems">event</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/flow-schema/icons/color/flow-schema-color.svg" alt="flow-schema" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/flow-schema/icons/white/flow-schema-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/flow-schema/icons/color/flow-schema-color.svg" />
+            </div>
+            <p class="Compitems">flow-schema</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/horizontal-pod-autoscaler/icons/color/horizontal-pod-autoscaler-color.svg" alt="horizontal-pod-autoscaler" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/horizontal-pod-autoscaler/icons/white/horizontal-pod-autoscaler-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/horizontal-pod-autoscaler/icons/color/horizontal-pod-autoscaler-color.svg" />
+            </div>
+            <p class="Compitems">horizontal-pod-autoscaler</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/ingress/icons/color/ingress-color.svg" alt="ingress" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/ingress/icons/white/ingress-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/ingress/icons/color/ingress-color.svg" />
+            </div>
+            <p class="Compitems">ingress</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/ingress-class/icons/color/ingress-class-color.svg" alt="ingress-class" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/ingress-class/icons/white/ingress-class-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/ingress-class/icons/color/ingress-class-color.svg" />
+            </div>
+            <p class="Compitems">ingress-class</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/ip-address/icons/color/ip-address-color.svg" alt="ip-address" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/ip-address/icons/white/ip-address-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/ip-address/icons/color/ip-address-color.svg" />
+            </div>
+            <p class="Compitems">ip-address</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/job/icons/color/job-color.svg" alt="job" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/job/icons/white/job-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/job/icons/color/job-color.svg" />
+            </div>
+            <p class="Compitems">job</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/kubernetes-connection/icons/color/kubernetes-connection-color.svg" alt="kubernetes-connection" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/kubernetes-connection/icons/white/kubernetes-connection-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/kubernetes-connection/icons/color/kubernetes-connection-color.svg" />
+            </div>
+            <p class="Compitems">kubernetes-connection</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/kubernetes-credential/icons/color/kubernetes-credential-color.svg" alt="kubernetes-credential" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/kubernetes-credential/icons/white/kubernetes-credential-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/kubernetes-credential/icons/color/kubernetes-credential-color.svg" />
+            </div>
+            <p class="Compitems">kubernetes-credential</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/limit-range/icons/color/limit-range-color.svg" alt="limit-range" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/limit-range/icons/white/limit-range-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/limit-range/icons/color/limit-range-color.svg" />
+            </div>
+            <p class="Compitems">limit-range</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/lease/icons/color/lease-color.svg" alt="lease" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/lease/icons/white/lease-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/lease/icons/color/lease-color.svg" />
+            </div>
+            <p class="Compitems">lease</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/local-subject-access-review/icons/color/local-subject-access-review-color.svg" alt="local-subject-access-review" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/local-subject-access-review/icons/white/local-subject-access-review-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/local-subject-access-review/icons/color/local-subject-access-review-color.svg" />
+            </div>
+            <p class="Compitems">local-subject-access-review</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/mutating-webhook-configuration/icons/color/mutating-webhook-configuration-color.svg" alt="mutating-webhook-configuration" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/mutating-webhook-configuration/icons/white/mutating-webhook-configuration-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/mutating-webhook-configuration/icons/color/mutating-webhook-configuration-color.svg" />
+            </div>
+            <p class="Compitems">mutating-webhook-configuration</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/network-policy/icons/color/network-policy-color.svg" alt="network-policy" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/network-policy/icons/white/network-policy-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/network-policy/icons/color/network-policy-color.svg" />
+            </div>
+            <p class="Compitems">network-policy</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/node-metrics/icons/color/node-metrics-color.svg" alt="node-metrics" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/node-metrics/icons/white/node-metrics-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/node-metrics/icons/color/node-metrics-color.svg" />
+            </div>
+            <p class="Compitems">node-metrics</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/persistent-volume/icons/color/persistent-volume-color.svg" alt="persistent-volume" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/persistent-volume/icons/white/persistent-volume-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/persistent-volume/icons/color/persistent-volume-color.svg" />
+            </div>
+            <p class="Compitems">persistent-volume</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/persistent-volume-claim/icons/color/persistent-volume-claim-color.svg" alt="persistent-volume-claim" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/persistent-volume-claim/icons/white/persistent-volume-claim-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/persistent-volume-claim/icons/color/persistent-volume-claim-color.svg" />
+            </div>
+            <p class="Compitems">persistent-volume-claim</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/pod-disruption-budget/icons/color/pod-disruption-budget-color.svg" alt="pod-disruption-budget" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/pod-disruption-budget/icons/white/pod-disruption-budget-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/pod-disruption-budget/icons/color/pod-disruption-budget-color.svg" />
+            </div>
+            <p class="Compitems">pod-disruption-budget</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/pod-metrics/icons/color/pod-metrics-color.svg" alt="pod-metrics" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/pod-metrics/icons/white/pod-metrics-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/pod-metrics/icons/color/pod-metrics-color.svg" />
+            </div>
+            <p class="Compitems">pod-metrics</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/pod-scheduling-context/icons/color/pod-scheduling-context-color.svg" alt="pod-scheduling-context" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/pod-scheduling-context/icons/white/pod-scheduling-context-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/pod-scheduling-context/icons/color/pod-scheduling-context-color.svg" />
+            </div>
+            <p class="Compitems">pod-scheduling-context</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/pod-template/icons/color/pod-template-color.svg" alt="pod-template" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/pod-template/icons/white/pod-template-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/pod-template/icons/color/pod-template-color.svg" />
+            </div>
+            <p class="Compitems">pod-template</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/priority-class/icons/color/priority-class-color.svg" alt="priority-class" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/priority-class/icons/white/priority-class-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/priority-class/icons/color/priority-class-color.svg" />
+            </div>
+            <p class="Compitems">priority-class</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/priority-level-configuration/icons/color/priority-level-configuration-color.svg" alt="priority-level-configuration" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/priority-level-configuration/icons/white/priority-level-configuration-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/priority-level-configuration/icons/color/priority-level-configuration-color.svg" />
+            </div>
+            <p class="Compitems">priority-level-configuration</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/replica-set/icons/color/replica-set-color.svg" alt="replica-set" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/replica-set/icons/white/replica-set-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/replica-set/icons/color/replica-set-color.svg" />
+            </div>
+            <p class="Compitems">replica-set</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/replication-controller/icons/color/replication-controller-color.svg" alt="replication-controller" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/replication-controller/icons/white/replication-controller-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/replication-controller/icons/color/replication-controller-color.svg" />
+            </div>
+            <p class="Compitems">replication-controller</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/resource-class/icons/color/resource-class-color.svg" alt="resource-class" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/resource-class/icons/white/resource-class-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/resource-class/icons/color/resource-class-color.svg" />
+            </div>
+            <p class="Compitems">resource-class</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/resource-claim/icons/color/resource-claim-color.svg" alt="resource-claim" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/resource-claim/icons/white/resource-claim-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/resource-claim/icons/color/resource-claim-color.svg" />
+            </div>
+            <p class="Compitems">resource-claim</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/resource-claim-template/icons/color/resource-claim-template-color.svg" alt="resource-claim-template" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/resource-claim-template/icons/white/resource-claim-template-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/resource-claim-template/icons/color/resource-claim-template-color.svg" />
+            </div>
+            <p class="Compitems">resource-claim-template</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/resource-quota/icons/color/resource-quota-color.svg" alt="resource-quota" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/resource-quota/icons/white/resource-quota-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/resource-quota/icons/color/resource-quota-color.svg" />
+            </div>
+            <p class="Compitems">resource-quota</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/role/icons/color/role-color.svg" alt="role" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/role/icons/white/role-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/role/icons/color/role-color.svg" />
+            </div>
+            <p class="Compitems">role</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/role-binding/icons/color/role-binding-color.svg" alt="role-binding" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/role-binding/icons/white/role-binding-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/role-binding/icons/color/role-binding-color.svg" />
+            </div>
+            <p class="Compitems">role-binding</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/runtime-class/icons/color/runtime-class-color.svg" alt="runtime-class" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/runtime-class/icons/white/runtime-class-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/runtime-class/icons/color/runtime-class-color.svg" />
+            </div>
+            <p class="Compitems">runtime-class</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/subject-access-review/icons/color/subject-access-review-color.svg" alt="subject-access-review" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/subject-access-review/icons/white/subject-access-review-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/subject-access-review/icons/color/subject-access-review-color.svg" />
+            </div>
+            <p class="Compitems">subject-access-review</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/self-subject-access-review/icons/color/self-subject-access-review-color.svg" alt="self-subject-access-review" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/self-subject-access-review/icons/white/self-subject-access-review-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/self-subject-access-review/icons/color/self-subject-access-review-color.svg" />
+            </div>
+            <p class="Compitems">self-subject-access-review</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/self-subject-rules-review/icons/color/self-subject-rules-review-color.svg" alt="self-subject-rules-review" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/self-subject-rules-review/icons/white/self-subject-rules-review-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/self-subject-rules-review/icons/color/self-subject-rules-review-color.svg" />
+            </div>
+            <p class="Compitems">self-subject-rules-review</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/self-subject-review/icons/color/self-subject-review-color.svg" alt="self-subject-review" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/self-subject-review/icons/white/self-subject-review-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/self-subject-review/icons/color/self-subject-review-color.svg" />
+            </div>
+            <p class="Compitems">self-subject-review</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/service-account/icons/color/service-account-color.svg" alt="service-account" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/service-account/icons/white/service-account-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/service-account/icons/color/service-account-color.svg" />
+            </div>
+            <p class="Compitems">service-account</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/service-cidr/icons/color/service-cidr-color.svg" alt="service-cidr" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/service-cidr/icons/white/service-cidr-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/service-cidr/icons/color/service-cidr-color.svg" />
+            </div>
+            <p class="Compitems">service-cidr</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/service-api/icons/color/service-api-color.svg" alt="service-api" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/service-api/icons/white/service-api-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/service-api/icons/color/service-api-color.svg" />
+            </div>
+            <p class="Compitems">service-api</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/stateful-set/icons/color/stateful-set-color.svg" alt="stateful-set" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/stateful-set/icons/white/stateful-set-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/stateful-set/icons/color/stateful-set-color.svg" />
+            </div>
+            <p class="Compitems">stateful-set</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/storage-class/icons/color/storage-class-color.svg" alt="storage-class" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/storage-class/icons/white/storage-class-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/storage-class/icons/color/storage-class-color.svg" />
+            </div>
+            <p class="Compitems">storage-class</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/storage-version/icons/color/storage-version-color.svg" alt="storage-version" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/storage-version/icons/white/storage-version-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/storage-version/icons/color/storage-version-color.svg" />
+            </div>
+            <p class="Compitems">storage-version</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/token-review/icons/color/token-review-color.svg" alt="token-review" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/token-review/icons/white/token-review-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/token-review/icons/color/token-review-color.svg" />
+            </div>
+            <p class="Compitems">token-review</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/token-request/icons/color/token-request-color.svg" alt="token-request" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/token-request/icons/white/token-request-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/token-request/icons/color/token-request-color.svg" />
+            </div>
+            <p class="Compitems">token-request</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/validating-admission-policy/icons/color/validating-admission-policy-color.svg" alt="validating-admission-policy" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/validating-admission-policy/icons/white/validating-admission-policy-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/validating-admission-policy/icons/color/validating-admission-policy-color.svg" />
+            </div>
+            <p class="Compitems">validating-admission-policy</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/validating-admission-policy-binding/icons/color/validating-admission-policy-binding-color.svg" alt="validating-admission-policy-binding" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/validating-admission-policy-binding/icons/white/validating-admission-policy-binding-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/validating-admission-policy-binding/icons/color/validating-admission-policy-binding-color.svg" />
+            </div>
+            <p class="Compitems">validating-admission-policy-binding</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/validating-webhook-configuration/icons/color/validating-webhook-configuration-color.svg" alt="validating-webhook-configuration" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/validating-webhook-configuration/icons/white/validating-webhook-configuration-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/validating-webhook-configuration/icons/color/validating-webhook-configuration-color.svg" />
+            </div>
+            <p class="Compitems">validating-webhook-configuration</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/volume/icons/color/volume-color.svg" alt="volume" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/volume/icons/white/volume-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/volume/icons/color/volume-color.svg" />
+            </div>
+            <p class="Compitems">volume</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/volume-attachment/icons/color/volume-attachment-color.svg" alt="volume-attachment" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/volume-attachment/icons/white/volume-attachment-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/volume-attachment/icons/color/volume-attachment-color.svg" />
+            </div>
+            <p class="Compitems">volume-attachment</p>
+        </div>
+        
+        
+        
+        <div class="maincontainer">
+            <div class="componentimg">
+                <img id="logo-dark-light" src="/assets/img/integrations/kubernetes/components/volume-attribute-class/icons/color/volume-attribute-class-color.svg" alt="volume-attribute-class" onerror="handleImageError(this)" data-logo-for-dark="/assets/img/integrations/kubernetes/components/volume-attribute-class/icons/white/volume-attribute-class-white.svg"
+                data-logo-for-light="/assets/img/integrations/kubernetes/components/volume-attribute-class/icons/color/volume-attribute-class-color.svg" />
+            </div>
+            <p class="Compitems">volume-attribute-class</p>
+        </div>
+        
+        
+    </section>
+</div>
+<!-- components end -->
+
+
+
+
+
+  
+
+
+<h2>What are Meshery Models and Components?</h2>
+
+<p>Meshery Models and Components represent the fundamental building blocks of your infrastructure. Use them to define the structure and configuration of your infrastructure and deployments by incorporating their use into a Design. Think of Designs as blueprints or templates that encapsulate everything from network configurations to service definitions.</p>
+
+<h6 class="integration">Learn more about <a href="/concepts/logical/models">Models</a>, <a href="/concepts/logical/components">Components</a>, <a href="/concepts/logical/relationships">Relationships</a>, and <a href="/concepts/logical/designs">Designs</a></h6>
+
+<h2>What is the Meshery Registry</h2>
+
+The Meshery Registry is a vital component within Meshery, serving as a centralized repository for managing a diverse range of cloud and cloud native resources. It stores and organizes crucial information such as models, categories, components, and relationships, enabling efficient interaction and utilization of these resources within the Meshery ecosystem. You can conveniently access and manage registry data through Meshery UI, and through Meshery CLI (<a href="/reference/mesheryctl/#meshery-registry-management">mesheryctl registry</a>).
+
+<h6 class="integration">Learn more about the <a href="/concepts/logical/registry">Registry</a></h6>
+
+
+<section>
+    <h3 id="related-designs-header">Designs containing Kubernetes</h3>
+    
+    <ul>
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/02413809-9fbf-4649-ae22-3d0947d264c6" target="_blank" >Example Labels and Annotations</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/08379ae3-cd9e-4b55-a190-91a47a1ff638" target="_blank" >Fault-tolerant batch workloads on GKE</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/0a2d8c39-df40-490b-94b7-75d0fb7fc207" target="_blank" >default-ns</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/0aa86dd0-415c-4bf8-ae76-832560470b74" target="_blank" >Run DaemonSet on GKE Autopilot</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/104be089-dae0-4d09-be70-c1d121673119" target="_blank" >mTLS-handshake-acceleration-for-Istio</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/114c94c9-052b-46a2-86fe-4cdd2e88c746" target="_blank" >my first app design</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/189a3e71-8be9-4e64-9fed-150a9b1060de" target="_blank" >Resilient Web App</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/1d2ca262-3d69-4bfd-86ff-61b3c9162881" target="_blank" >Istio HTTP Header Filter (Clone)</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/1d3b05ee-7c11-4c01-be93-81c3bb1b6524" target="_blank" >Emojivoto Application</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/1e202a65-7d80-48cd-842c-32f1910866b6" target="_blank" >enhance-flask-app</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/1f3c7dcd-e49a-4bf7-985a-661d6c64d8d7" target="_blank" >doks-nginx-deployment</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/1f79b0c6-2efe-4ee9-b08c-e1bd07a3926b" target="_blank" >Example Edge-Network Relationship </a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/22e28213-8c94-49d5-b104-3b7feee84b5e" target="_blank" >voting_app</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/2512c0cb-385d-40de-b1f5-bc4a67131538" target="_blank" >my-sql-with-cinder-vol-plugin</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/2649785a-6cb1-4671-b625-a790ac375043" target="_blank" >Persistence-volume-claim</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/27454352-6b1b-426e-830e-683b8c34b94e" target="_blank" >Edge-Binding-Permissions-Relationship</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/28715e69-c6c1-4f96-bfa2-05113b00bae0" target="_blank" >CryptoMB-TLS-handshake-acceleration-for-Istio</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/2d0a36b9-8170-4076-8aea-4fa6b28caf31" target="_blank" >Match-Labels-Relationship</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/3255f170-e2b1-48e8-bbed-40d4e0198a90" target="_blank" >Hierarchical-Parent-Inventory-Relationship</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/3546d0d4-ba6e-4c7e-9661-853ade11847f" target="_blank" >Wordpress and MySql on Kubernetes</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/36f6c6df-7a99-420f-8d4d-fe0b2dffa5f9" target="_blank" >Prometheus-monitoring-ns</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/37422db6-b585-4b1a-baaa-d307d33d5ebf" target="_blank" >Edge-mount-relationship</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/397e88c7-38d9-4499-85b2-73696f0b195a" target="_blank" >Edge-Firewall-relationship</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/3b2a210d-77b4-4267-bc8e-bc32758edf76" target="_blank" >meshery-cilium-deployment</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/3d01bc39-8627-42b7-abe1-0cf9eb3a0a9d" target="_blank" >CryptoMB-TLS-handshake-acceleration-for-Istio</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/3e3c169a-c252-4b71-8667-62dd6ed085be" target="_blank" >guest_book</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/3fd06d85-e516-4eae-b7b6-474231b6d48d" target="_blank" >Sample Template - Relationship Diagram</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/4032a5c3-d081-429b-9087-2b9bdaa7396b" target="_blank" >Mount(Pod -> PersistentVolume)</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/4cc2bbfb-6bb9-4981-a21f-e52955d92a9d" target="_blank" >NGINX deployment</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/58fda714-eaa4-490f-b228-b8bcfe3a1e47" target="_blank" >Example Edge-Firewall Relationship</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/59e0f642-3249-46c3-9436-9e873b8eef56" target="_blank" >prometheus.yaml</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/5eeaef1f-9c17-4b52-b0bb-3e488ad15a2c" target="_blank" >Meshery v0.6.73</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/6370ffcd-13a6-4a65-b426-30f1e63dc381" target="_blank" >Hierarchical  Parent  Relationship</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/66f483b2-5ca5-457a-b149-46a661468c34" target="_blank" >webserver</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/69844b4a-d60d-4705-b255-edf2dbde0f5a" target="_blank" >the-new-stack</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/69afafc0-f0a6-4c6c-beae-c96956b40a4f" target="_blank" >RuntimeClass</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/6da8edb1-cba2-4c81-b9d6-00dfb0386ad1" target="_blank" >Wordpress Deployment</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/7656ade4-9934-4b51-b182-2e04ca70522e" target="_blank" >Adobe Flex-in-a-Box Architecture</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/7b717cb2-24a1-4f4a-976e-ef1c9a982696" target="_blank" >All relationships</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/7d5f9d34-3bbc-4b31-a940-0a4f8583d4ac" target="_blank" >GuestBook App</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/7dd39d30-7b14-4f9f-a66c-06ba3e5000fa" target="_blank" >Example Edge-Permission Relationship</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/8652b112-80d7-4fde-bc87-9d2dbd4327cc" target="_blank" >Pod Volume Mount SubPath-expr</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/86545f65-1034-437a-ac9b-ed85fe4dcdc8" target="_blank" >Pod Life Cycle</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/89b838d2-b2f4-4377-98fd-855dd84c6958" target="_blank" >bookInfoPatternIstio.yaml</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/8b041687-3c09-4cfd-8613-cf326a54e1b2" target="_blank" >JAX 'Hello World' using NVIDIA GPUs A100-80GB on GKE</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/8ce06bfa-a917-44e5-b670-15c74ec177c0" target="_blank" >marblerun</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/8f7e1431-3885-4ebf-9ef7-d2ec64bd4eb5" target="_blank" >EC2-CONTROLLER-DESIGN</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/90ae7d59-1eba-4ce5-b029-d14f79f1895f" target="_blank" >Edge Permission Relationship</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/96cc39d9-de6a-4339-96bf-096d09d9d7bd" target="_blank" >Running ZooKeeper, A Distributed System Coordinator</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/9815d6cf-ef6d-49fa-99a7-97e935af67c4" target="_blank" >fluentd-kubernetes-aws</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/9d3b33bf-eaf6-4d06-9dd6-64aa725ab383" target="_blank" >Serve an LLM with multiple GPUs in GKE </a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/9f358588-ba37-4ebe-852d-df4dd0c71ecb" target="_blank" >Hierarchical-Parent-Inventory-Relationship</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/a6386080-a64e-4c1f-89b6-224c356841c1" target="_blank" >CryptoMB.yml</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/a71de4f9-bae8-4ccd-97a9-e05c4435ad82" target="_blank" >test design</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/a7c1ed4b-0b4b-4614-afba-8d23082e27c3" target="_blank" >Fortio Server</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/a7fdc9a5-4668-4e80-8580-1a557e68106e" target="_blank" >Edge-Network-Relationship: Service to Deployment</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/a88ae43c-4a3c-4c57-b839-b1101e20f842" target="_blank" >Kubernetes Service for Product Page App</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/b2b05f54-fd48-44f5-bf2d-308761874d59" target="_blank" >Exploring Kubernetes Pods With Meshery</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/bbd15978-2924-48be-bac2-cdfc5331bfb2" target="_blank" >Bank of Anthos</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/be8c9e9e-1a74-4c5a-b128-235364399410" target="_blank" >Hierarchical Inventory Relationship</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/c288c409-3ca4-4b20-86a2-c9a28c58f986" target="_blank" >Guestbook App (All-in-One)</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/cca2fb89-48e1-419d-8e1b-e69e1e12931a" target="_blank" >EC2-INSTANCES</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/d6a40cd8-3c13-4920-a96c-b6278836565e" target="_blank" >[Tutorial] Simple MySQL Pod</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/d86c6005-fa0b-4f74-bb66-7e3e47cbc846" target="_blank" >App-graph</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/ddf8a9f1-5fd0-4bda-b074-7dc9ceb1dd43" target="_blank" >Istio BookInfo Application</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/df959bcd-09c8-40b1-bf58-47ad6be30cd7" target="_blank" >EC2-CONTROLLER</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/e76bb526-8e8a-4f15-9dfe-df369bef344d" target="_blank" >Hierarchical-Parent-Wallet-Relationship</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/e801059d-9fc8-41bb-b6e8-66248ca54c5f" target="_blank" >Catalog Design2</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/e8f285f5-e7a5-4e4a-b8b1-2f7d3667c0f5" target="_blank" >api-backend</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/ea07d238-15f4-4693-afe2-e413b3b93d6f" target="_blank" >MySQL installation with cinder volume plugin</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/ead48885-d494-4dfd-a53a-ddc7b05ee761" target="_blank" >glasskube-operator</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/ec343550-04ea-440f-b17e-5de2c171194a" target="_blank" >Network(Service -> Endpoint)</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/ec6a41d2-d2bd-4089-b1c2-72a5c76b9313" target="_blank" >hello-app</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/f129b08a-c024-441b-ba56-577c4f67665f" target="_blank" >CryptoMB.yml</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/f26e8729-1de7-477c-b6d1-ce704ad29aef" target="_blank" >Deployment Web</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/f60a00b8-2038-48cc-9f44-818ffac4987f" target="_blank" >Redis Leader Deployment</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/f90ecf87-6ca5-4d32-8ecf-f67cb20e3061" target="_blank" >k8s Deployment-2</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/fb0315e9-e6e5-4120-9a2f-b479ac2d2180" target="_blank" >senthil-app-new</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/fb8a31f7-0adb-40e7-ac26-bffb0a0f4547" target="_blank" >Serving T5 Large Language Model with TorchServe</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/fe260015-147d-487a-9e2c-44cbff354f60" target="_blank" >Kubernetes Deployment with Azure File Storage</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/0194ff83-0a43-4b83-9c75-b8f0f32da6b7" target="_blank" >Pod Readiness</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/2d54f372-10e5-4c4e-8d23-b9c35c68ce98" target="_blank" >Robot Shop Sample App</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/3c3439a0-d215-4a71-aa47-13a5f2d007b7" target="_blank" >prometheus_kubernetes</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/464b4f2a-78d8-4034-915a-612475f757d2" target="_blank" >Thanos Query Design</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/4fe5b8f3-d8c7-487c-9860-bc7cb8674d48" target="_blank" >Prometheus dummy exporter</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/5b755f6d-92fa-4616-aeb8-7c932baf3bc0" target="_blank" >prometheus-opencost-exporter</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/5f7a16fe-00bb-43e0-b752-05913156535d" target="_blank" >Relationship Master Design</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/6036b918-a3c7-4b16-9da1-8727909ab2be" target="_blank" >ELK stack</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/661bf5e6-cf42-4804-8a74-f7fe651b8bb4" target="_blank" >Azure Monitor Containers</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/88794a57-f0f7-4ff6-9192-54ab7241ded8" target="_blank" >Azure-monitor-containers</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/9144ecb9-36e3-4b82-9725-b5e1b60d565a" target="_blank" >Aws Cloudwatch Agent for Cluster Metrics</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/abf90eeb-9cd9-4186-b9e4-118946f35ac4" target="_blank" >Untitled Design</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/cce763fc-508a-4d3d-95da-0cfcf722d7cf" target="_blank" >instana-agent-for-Kubernetes</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/fe3bf101-18ec-4a7e-86bb-3f69a53b1e5f" target="_blank" >Pod Liveness</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/17c46515-50ef-436c-9383-451e13348ddd" target="_blank" >Pod Multi Containers</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/3460a23b-e14d-49ba-9e6f-4d25afe14f98" target="_blank" >Postgres Deployment</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/8ba59757-4ae6-4568-be5c-32e32fe51031" target="_blank" >Pod Priviledged Simple</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/95cb2be3-4052-45d9-9156-34fd4b8fe17e" target="_blank" >Pod Resource Memory Request Limit</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/d223427e-1f46-4390-8fc9-51e499c44b7d" target="_blank" >Kubernetes Global  Balancer</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/d6d78cdd-6bc8-4cb9-8ed3-c392e6152576" target="_blank" >Limit Range</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/e0989a1d-1aa1-49cb-9eb4-a963f61fd328" target="_blank" >Configure a Pod to Use a ConfigMap</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/05ff8dbb-2552-4a23-a6a8-318fe412bf30" target="_blank" >Pod Resource Request</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/19b4edf1-a88c-4255-9544-ea7268c9b466" target="_blank" >Hello WASM</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/1fa80124-d38d-41d1-a768-0fcb7cdae31e" target="_blank" >HorizontalPodAutoscaler</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/33307744-8085-4f09-9dda-28666c6bb8c1" target="_blank" >rabbitmq-cluster-operator</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/35ecff6c-41f5-400b-92c4-f959dd23ee15" target="_blank" >Autoscaling based on Metrics in GKE</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/6b6e5bbd-1c8b-4aab-87be-b7b397f2aeed" target="_blank" >K8's-Cluster-overprovisioner </a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/6d4bb838-2a05-447e-bba4-b59104ace089" target="_blank" >Redis_using_configmap</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/755b64db-59c5-41a3-896b-788aa579de41" target="_blank" >Pod Resource Limit</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/7607aeb0-3248-4c89-8a63-22ccd8d9cf79" target="_blank" >Nginx Deployment</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/792f17b4-08f5-4654-8c10-3628fd56ac03" target="_blank" >ElasticSearch</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/7fae3c13-8807-4134-a35b-3c531fa21e4e" target="_blank" >Pod Node Affinity</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/855884db-267b-4357-8e8e-cf189ec971a5" target="_blank" >Redis master deployment</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/ae801c1f-8134-4f48-bc2e-d97c14f6a99c" target="_blank" >ISCSI pod creation</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/c0db1f13-46e8-481f-b5b5-27b6d2e0b74d" target="_blank" >gke-online-serving-single-gpu</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/ec728414-5dd9-48a0-9be4-2ca0dffa1f2c" target="_blank" >iscsi</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/ff84d220-d1ea-44ee-8473-a44b972ff85b" target="_blank" >Pod Resource Memory Request Limit</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/2a42de8b-3c58-4571-b092-2fda29ecfb1a" target="_blank" >prometheus-operator-crd-cluster-roles</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/3fe52f86-0214-4813-9d23-727f2e57469b" target="_blank" >Serve an LLM using multi-host TPUs on GKE</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/571a79c9-01c5-4c4b-b8c6-c3f0b2f2415f" target="_blank" >Browerless Chrome</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/b991c21e-5147-4aa9-bb8d-fce2b37bb3c3" target="_blank" >GlusterFS Service</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/e2d3f5c8-3ff8-4756-8848-0c9b5797bec2" target="_blank" >Pod Service Account Token</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/ea75ea93-1f5a-4c85-8efd-0d862599fbed" target="_blank" >Pods Image Pull Policy</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/57f4628b-798e-4f72-be0e-03b42683b27b" target="_blank" >Understanding the difference between Edge Relationships</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/58fc14c4-1ba6-41b6-8dd0-ed1dabd87215" target="_blank" >Service Internal Traffic Policy</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/60769e03-f392-4796-9c20-a141c6fa3ab2" target="_blank" >Install-Traefik-as-ingress-controller</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/7b2e40b0-3cc8-4da3-bccd-b66bc6cd206a" target="_blank" >Network policy</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/9b677af7-478c-48d4-83a5-9b20d5094007" target="_blank" >istio-ingress-service-web-api-v1-only</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/bb80642c-2179-4817-b0b7-6d0e28151f9a" target="_blank" >nginx-deployment</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/f732b20e-08a0-4db0-9977-90b9009ced09" target="_blank" >External-Dns for Kubernetes</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/107f4fc2-0655-4d00-be3d-164947159647" target="_blank" >Hello Kubernetes Tutorial</a> 
+    </li>
+    
+    
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/081aa52c-7921-48dd-b81e-03f4ebfc70b5" target="_blank" >Minecraft App</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/0b6b1ff8-cb2e-41d4-baff-e0a053f7e4d9" target="_blank" >Apache Airflow</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/307373c2-a096-4b52-841e-fc18c3a5d17f" target="_blank" >Redis PHP Guestbook</a> 
+    </li>
+    
+    
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/45d7d037-52a2-457b-a670-06526c4f814b" target="_blank" >mongoDB-Sample-app</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/57b9de8d-2ab3-4d18-9314-11125e63e551" target="_blank" >Pod Volumes Projected</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/57f7230d-015b-4892-9042-cd1ea97fcb30" target="_blank" >Kubernetes Metrics Server Configuration</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/623a0154-3c09-4e52-9c87-fa8abeda2fe7" target="_blank" >Pod Volume Mount SubPath</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/6482df99-27aa-4a51-9aab-92d2a2a9d0ca" target="_blank" >Node Problem Detector</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/6a0492fd-73b2-496d-9c5f-278c00d3a5ca" target="_blank" >My first k8s app</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/7182c6f4-fe51-496f-8890-72ce45e36079" target="_blank" >Nodejs-kubernetes-microservices</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/736a8f97-c3f8-4481-888a-1eff27414caa" target="_blank" >node-feature-discovery</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/85d5a84d-85e1-492d-98c7-6a365c00cc1b" target="_blank" >MySQL Deployment</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/b319f0f5-2abd-4f33-b134-824b5ac3ba2d" target="_blank" >Persistent Volume</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/b7bdd606-40a0-4849-a58e-d89af0d9688a" target="_blank" >replication controller</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/ce4eb460-b6c0-429d-befb-88cf2f1f883f" target="_blank" >Consul on kubernetes</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/d20a6041-ed06-454a-9d69-739ebaed4651" target="_blank" >Simple Kubernetes Pod</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/f176d529-767d-485b-a68d-79db3f6e8dd2" target="_blank" >Multi tenancy Virtual Cluster   </a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/f970dc8a-137e-49cc-a53e-362a924bf726" target="_blank" >aws-k8s-cni.yaml</a> 
+    </li>
+    
+    
+    
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/fde9c2da-e402-4f53-b7cd-02036ac65043" target="_blank" >ZooKeeper Cluster</a> 
+    </li>
+    
+    
+</ul>
+</section>
+
+
+
+
+
+  <h2>Related Models in <b>Orchestration & Management</b></h2>
+
+
+
+
+
+
+<ul>
+  
+    
+    <li><a href="/extensibility/integrations/wasmcloud">Wasmcloud</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/aperture-controller">Aperture Controller</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/aws-eks-controller">AWS Elastic Kubernetes Service</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/awx-operator">AWX Operator</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/cluster-api-provider-openstack">OpenStack (Cluster API Provider)</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/clusterpedia">Clusterpedia</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/coredns">Coredns</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/crossplane-provider-openstack">OpenStack (Crossplane)</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/crossplane">Crossplane</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/eks">AWS Elastic Kubernetes Service</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/envoy">Envoy</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/etcd-cluster-operator">Etcd Cluster Operator</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/k8gb">K8GB</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/k8s-config-connector">Google Cloud Platform</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/karmada">Karmada</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/keda-http-scaler">KEDA HTTP Scaler</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/keda">KEDA</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/kommander">Kommander</a>
+      
+    </li>
+    
+  
+    
+  
+    
+    <li><a href="/extensibility/integrations/kured">Kured</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/kusk-gateway">Kusk Gateway</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/meshery-core">Meshery Core</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/open-cluster-management">Open Cluster Management</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/scheduler-plugins">Scheduler Plugins</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/volcano">Volcano</a>
+      
+    </li>
+    
+  
+    
+    <li><a href="/extensibility/integrations/aperture-agent">Aperture Agent</a>
+      
+    </li>
+    
+  
+</ul>
+
+
+<script>
+    function handleImageError(image) {
+        image.onerror = null;
+        image.src = '/assets/img/integrations/kubernetes/icons/color/kubernetes-color.svg';
+    }
+    const designLinks = document.querySelectorAll('.design-link');
+    if (designLinks.length === 0) {
+        document.getElementById('related-designs-header').style.display = 'none';
+    }
+
+</script>   
+           
+          <br/>
+
+
+        </div>
+      </main>
+      
+      <div class="content-table-wrapper">
+        <div class="content-table">
+          <div class="content-table__editable"><strong>Tools</strong>
+<a href="https://github.com/meshery/meshery/issues/new?assignees=&labels=area%2Fdocs%2C+framework%2Fjekyll&template=documentation.md&title=%5BDocs%5D" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i> Create doc issue</a>
+<a href="https://github.com/meshery/meshery/blob/master/docs/_models/kubernetes.md" rel="noopener" target="_blank"><i class="fa fa-edit fa-fw"></i> Edit this page</a>
+<a href="https://github.com/meshery/meshery/new/master/docs/_models/kubernetes.md?filename=change-me.md&value=---%0Atitle%3A+%22Long+Page+Title%22%0AlinkTitle%3A+%22Short+Nav+Title%22%0Aweight%3A+100%0Adescription%3A+%3E-%0A+++++Page+description+for+heading+and+indexes.%0A---%0A%0A%23%23+Heading%0A%0AEdit+this+template+to+create+your+new+page.%0A%0A%2A+Give+it+a+good+name%2C+ending+in+%60.md%60+-+e.g.+%60getting-started.md%60%0A%2A+Edit+the+%22front+matter%22+section+at+the+top+of+the+page+%28weight+controls+how+its+ordered+amongst+other+pages+in+the+same+directory%3B+lowest+number+first%29.%0A%2A+Add+a+good+commit+message+at+the+bottom+of+the+page+%28%3C80+characters%3B+use+the+extended+description+field+for+more+detail%29.%0A%2A+Create+a+new+branch+so+you+can+preview+your+new+file+and+request+a+review+via+Pull+Request.%0A" rel="noopener" target="_blank"><i class="fa fa-plus fa-fw"></i> Create new page</a>
+
+
+<!-- this will parse through the header fields and add a button to open
+     an issue / ask a question on Github. The editable field should be in
+     the post frontend matter, and refer to the label to open the issue for -->
+     
+</div>
+          <nav id="TableOfContents">
+            <strong>Contents</strong>
+            <ul>
+              <li>
+                <ul id="TOC">
+                  <!-- Links will be appended here-->
+                </ul>
+              </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      
+    </div>
+    <footer class="footer">
+  <!-- meshery-custom-begin"
+      <div class="col-6 col-sm-4 text-xs-center order-sm-2">
+
+<ul class="list-inline mb-0">
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="" aria-label="Twitter" data-original-title="Twitter">
+    <a class="text-white" target="_blank" href="https://twitter.com/https://twitter.com/mesheryio">
+      <i class="fab fa-twitter"></i>
+    </a>
+  </li>
+</ul>
+</div>
+<div class="col-6 col-sm-4 text-right text-xs-center order-sm-3">
+<ul class="list-inline mb-0">
+  <li class="list-inline-item mx-2 h3" data-toggle="tooltip" data-placement="top" title="" aria-label="GitHub" data-original-title="GitHub">
+    <a class="text-white" target="_blank" href="https://github.com/meshery/meshery">
+      <i class="fab fa-github"></i>
+    </a>
+  </li>
+</ul>
+meshery-custom-end -->
+  <div class="text-white">&copy; 2025 The Meshery Authors</div>
+  
+
+  <!-- meshery-custom-begin -->
+
+  <div class="footer-icons-list">
+    <div class="footer-icons">
+      <a class="social__link social__link--forum" href="http://discuss.meshery.io" target="_blank" rel="noreferrer">
+        <img
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgLTEgMTA0IDEwNiI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiMyMzFmMjA7fS5jbHMtMntmaWxsOiNmZmY5YWU7fS5jbHMtM3tmaWxsOiMwMGFlZWY7fS5jbHMtNHtmaWxsOiMwMGE5NGY7fS5jbHMtNXtmaWxsOiNmMTVkMjI7fS5jbHMtNntmaWxsOiNlMzFiMjM7fTwvc3R5bGU+PC9kZWZzPjx0aXRsZT5EaXNjb3Vyc2VfbG9nbzwvdGl0bGU+PGcgaWQ9IkxheWVyXzIiPjxnIGlkPSJMYXllcl8zIj48cGF0aCBjbGFzcz0iY2xzLTEiIGQ9Ik01MS44NywwQzIzLjcxLDAsMCwyMi44MywwLDUxYzAsLjkxLDAsNTIuODEsMCw1Mi44MWw1MS44Ni0uMDVjMjguMTYsMCw1MS0yMy43MSw1MS01MS44N1M4MCwwLDUxLjg3LDBaIi8+PHBhdGggY2xhc3M9ImNscy0yIiBkPSJNNTIuMzcsMTkuNzRBMzEuNjIsMzEuNjIsMCwwLDAsMjQuNTgsNjYuNDFsLTUuNzIsMTguNEwzOS40LDgwLjE3YTMxLjYxLDMxLjYxLDAsMSwwLDEzLTYwLjQzWiIvPjxwYXRoIGNsYXNzPSJjbHMtMyIgZD0iTTc3LjQ1LDMyLjEyYTMxLjYsMzEuNiwwLDAsMS0zOC4wNSw0OEwxOC44Niw4NC44MmwyMC45MS0yLjQ3QTMxLjYsMzEuNiwwLDAsMCw3Ny40NSwzMi4xMloiLz48cGF0aCBjbGFzcz0iY2xzLTQiIGQ9Ik03MS42MywyNi4yOUEzMS42LDMxLjYsMCwwLDEsMzguOCw3OEwxOC44Niw4NC44MiwzOS40LDgwLjE3QTMxLjYsMzEuNiwwLDAsMCw3MS42MywyNi4yOVoiLz48cGF0aCBjbGFzcz0iY2xzLTUiIGQ9Ik0yNi40Nyw2Ny4xMWEzMS42MSwzMS42MSwwLDAsMSw1MS0zNUEzMS42MSwzMS42MSwwLDAsMCwyNC41OCw2Ni40MWwtNS43MiwxOC40WiIvPjxwYXRoIGNsYXNzPSJjbHMtNiIgZD0iTTI0LjU4LDY2LjQxQTMxLjYxLDMxLjYxLDAsMCwxLDcxLjYzLDI2LjI5YTMxLjYxLDMxLjYxLDAsMCwwLTQ5LDM5LjYzbC0zLjc2LDE4LjlaIi8+PC9nPjwvZz48L3N2Zz4="
+          alt="forum"
+        />
+        <span class="footer-icons-text">Community discussion forum</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link social__link--mail" href="https://meshery.io/subscribe" target="_blank" rel="noreferrer">
+        <img
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMjY1LjUgMTk5IiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCAyNjUuNSAxOTkiPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+LnN0MHtmaWxsOiMwMGIzOWZ9PC9zdHlsZT48cGF0aCBkPSJNMjYwLjQsNjUuN2MyLTEuNiw1LTAuMSw1LDIuNHYxMDZjMCwxMy43LTExLjEsMjQuOS0yNC45LDI0LjlIMjQuOUMxMS4yLDE5OSwwLDE4Ny45LDAsMTc0LjF2LTEwNgljMC0yLjYsMy00LDUtMi40YzExLjYsOSwyNywyMC41LDc5LjksNTguOWMxMC45LDgsMjkuNCwyNC44LDQ3LjgsMjQuN2MxOC41LDAuMiwzNy4zLTE3LDQ3LjgtMjQuNwlDMjMzLjQsODYuMiwyNDguOCw3NC43LDI2MC40LDY1Ljd6IE0xMzIuNywxMzIuN2MxMiwwLjIsMjkuMy0xNS4xLDM4LjEtMjEuNWM2OC44LTQ5LjksNzQtNTQuMyw4OS45LTY2LjdjMy0yLjMsNC44LTYsNC44LTkuOHYtOS44CWMwLTEzLjctMTEuMS0yNC45LTI0LjktMjQuOUgyNC45QzExLjIsMCwwLDExLjEsMCwyNC45djkuOGMwLDMuOCwxLjgsNy40LDQuOCw5LjhjMTUuOSwxMi40LDIxLjEsMTYuOCw4OS45LDY2LjcJQzEwMy40LDExNy41LDEyMC43LDEzMi45LDEzMi43LDEzMi43TDEzMi43LDEzMi43eiIgY2xhc3M9InN0MCIvPjwvc3ZnPg=="
+          alt="mail"
+        />
+        <span class="footer-icons-text">Get connected with the community</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link social__link--slack" href=" https://slack.meshery.io/" target="_blank" rel="noreferrer">
+        <img
+          class="slack"
+          src="data:image/svg+xml;base64,PHN2ZyBlbmFibGUtYmFja2dyb3VuZD0ibmV3IDAgMCAyNCAyNCIgaGVpZ2h0PSI1MTIiIHZpZXdCb3g9IjAgMCAyNCAyNCIgd2lkdGg9IjUxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJtOC44NDMgMTIuNjUxYy0xLjM5MiAwLTIuNTIxIDEuMTI5LTIuNTIxIDIuNTIxdjYuMzA2YzAgMS4zOTIgMS4xMjkgMi41MjEgMi41MjEgMi41MjFzMi41MjEtMS4xMjkgMi41MjEtMi41MjF2LTYuMzA2Yy0uMDAxLTEuMzkyLTEuMTMtMi41MjEtMi41MjEtMi41MjF6IiBmaWxsPSIjZTkxZTYzIi8+PHBhdGggZD0ibS4wMTkgMTUuMTcyYzAgMS4zOTMgMS4xMyAyLjUyMyAyLjUyMyAyLjUyM3MyLjUyMy0xLjEzIDIuNTIzLTIuNTIzdi0yLjUyM2gtMi41MjFjLS4wMDEgMC0uMDAxIDAtLjAwMiAwLTEuMzkzIDAtMi41MjMgMS4xMy0yLjUyMyAyLjUyM3oiIGZpbGw9IiNlOTFlNjMiLz48cGF0aCBkPSJtOC44NDYtLjAwMWMtLjAwMSAwLS4wMDIgMC0uMDAzIDAtMS4zOTMgMC0yLjUyMyAxLjEzLTIuNTIzIDIuNTIzczEuMTMgMi41MjMgMi41MjMgMi41MjNoMi41MjF2LTIuNTIzYzAtLjAwMSAwLS4wMDMgMC0uMDA1LS4wMDEtMS4zOTEtMS4xMjgtMi41MTgtMi41MTgtMi41MTh6IiBmaWxsPSIjMDBiY2Q0Ii8+PHBhdGggZD0ibTIuNTI1IDExLjM3aDYuMzE4YzEuMzkzIDAgMi41MjMtMS4xMyAyLjUyMy0yLjUyM3MtMS4xMy0yLjUyMy0yLjUyMy0yLjUyM2gtNi4zMThjLTEuMzkzIDAtMi41MjMgMS4xMy0yLjUyMyAyLjUyM3MxLjEzIDIuNTIzIDIuNTIzIDIuNTIzeiIgZmlsbD0iIzAwYmNkNCIvPjxwYXRoIGQ9Im0yMS40NTcgNi4zMjNjLTEuMzkxIDAtMi41MTggMS4xMjctMi41MTggMi41MTh2LjAwNSAyLjUyM2gyLjUyMWMxLjM5MyAwIDIuNTIzLTEuMTMgMi41MjMtMi41MjNzLTEuMTMtMi41MjMtMi41MjMtMi41MjNjLS4wMDEgMC0uMDAyIDAtLjAwMyAweiIgZmlsbD0iIzRjYWY1MCIvPjxwYXRoIGQ9Im0xMi42NDEgMi41MjJ2Ni4zMjVjMCAxLjM5MiAxLjEyOSAyLjUyMSAyLjUyMSAyLjUyMXMyLjUyMS0xLjEyOSAyLjUyMS0yLjUyMXYtNi4zMjVjMC0xLjM5Mi0xLjEyOS0yLjUyMS0yLjUyMS0yLjUyMS0xLjM5MiAwLTIuNTIxIDEuMTI5LTIuNTIxIDIuNTIxeiIgZmlsbD0iIzRjYWY1MCIvPjxnIGZpbGw9IiNmZjk4MDAiPjxwYXRoIGQ9Im0xNy42ODIgMjEuNDc2YzAtMS4zOTItMS4xMjktMi41MjEtMi41MjEtMi41MjFoLTIuNTIxdjIuNTIzYy4wMDEgMS4zOTEgMS4xMjkgMi41MTkgMi41MjEgMi41MTlzMi41MjEtMS4xMjkgMi41MjEtMi41MjF6Ii8+PHBhdGggZD0ibTIxLjQ3OSAxMi42NDloLTYuMzE4Yy0xLjM5MyAwLTIuNTIzIDEuMTMtMi41MjMgMi41MjNzMS4xMyAyLjUyMyAyLjUyMyAyLjUyM2g2LjMxOGMxLjM5MyAwIDIuNTIzLTEuMTMgMi41MjMtMi41MjNzLTEuMTMtMi41MjMtMi41MjMtMi41MjN6Ii8+PC9nPjwvc3ZnPg=="
+          alt="slack"
+        />
+        <span class="footer-icons-text">Join the Meshery Slack</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link" href="https://meshery.io/calendar">
+        <svg fill="#666666" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 18">
+          <path
+            d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"
+          />
+          <g stroke-linecap="undefined" stroke-linejoin="undefined">
+            <path d="M-3.468 8.168h-.033m25.313-4.242l-.063-.254M7.858 4.814v9.387" />
+            <path d="M1.833 9.507h12.051" />
+          </g>
+        </svg>
+        <span class="footer-icons-text">Subscribe to the community calendar</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link" href="https://twitter.com/mesheryio" target="_blank" rel="noreferrer">
+       <svg alt="twitter" class="twitter" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" version="1.1" height="1.8em"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" fill="#666666"></path></svg>
+       <span class="footer-icons-text">Follow on Twitter</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link" href="https://github.com/meshery" target="_blank" rel="noreferrer">
+        <img
+          class="github"
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMjc0LjEgMjY3LjMiIHhtbDpzcGFjZT0icHJlc2VydmUiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDI3NC4xIDI2Ny4zIj48cGF0aCBkPSJNMTM3LjEsMEM2MS40LDAsMCw2MS4zLDAsMTM2LjlDMCwxOTYsMzcuOCwyNDguNCw5My44LDI2N2M2LjgsMS4zLDkuMy0zLDkuMy02LjZjMC0zLjMtMC4xLTExLjktMC4yLTIzLjMJYy0zOC4xLDguMy00Ni4xLTE4LjQtNDYuMS0xOC40Yy02LjItMTUuOC0xNS4yLTIwLTE1LjItMjBjLTEyLjQtOC41LDAuOS04LjMsMC45LTguM2MxMy43LDEsMjEsMTQuMSwyMSwxNC4xCWMxMi4yLDIwLjksMzIuMSwxNC45LDM5LjksMTEuNGMxLjItOC45LDQuOC0xNC45LDguNy0xOC4zYy0zMC40LTMuNS02Mi40LTE1LjItNjIuNC02Ny43Yy0wLjItMTMuNiw0LjgtMjYuOCwxNC4xLTM2LjgJYy0xLjQtMy41LTYuMS0xNy40LDEuMy0zNi4zYzAsMCwxMS41LTMuNywzNy43LDE0YzExLjItMy4xLDIyLjctNC42LDM0LjMtNC42YzExLjYsMC4xLDIzLjEsMS42LDM0LjMsNC42CWMyNi4yLTE3LjcsMzcuNi0xNCwzNy42LTE0YzcuNSwxOC45LDIuOCwzMi44LDEuNCwzNi4zYzkuMywxMCwxNC4zLDIzLjIsMTQuMSwzNi44YzAsNTIuNi0zMiw2NC4yLTYyLjUsNjcuNgljNC45LDQuMiw5LjMsMTIuNiw5LjMsMjUuNGMwLDE4LjMtMC4yLDMzLjEtMC4yLDM3LjZjMCwzLjcsMi41LDcuOSw5LjQsNi42YzcxLjgtMjQsMTEwLjUtMTAxLjcsODYuNS0xNzMuNQlDMjQ4LjMsMzcuNywxOTYsMCwxMzcuMSwwTDEzNy4xLDB6Ii8+PC9zdmc+"
+          alt="github"
+        />
+        <span class="footer-icons-text">Contribute on GitHub</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link" href="https://www.linkedin.com/showcase/meshery/" target="_blank" rel="noreferrer">
+        <img
+          class="linkedin"
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnN2Z2pzPSJodHRwOi8vc3ZnanMuY29tL3N2Z2pzIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNTEyIDUxMiIgd2lkdGg9IjUxMiIgaGVpZ2h0PSI1MTIiIHg9IjAiIHk9IjAiIHZlcnNpb249IjEuMSIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHhtbDpzcGFjZT0icHJlc2VydmUiPjxnPjxwYXRoIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgZmlsbD0iIzA2OSIgZD0ibTQ3NS4wNzQyMTkgMGgtNDM4LjE0ODQzOGMtMjAuMzk0NTMxIDAtMzYuOTI1NzgxIDE2LjUzMTI1LTM2LjkyNTc4MSAzNi45MjU3ODF2NDM4LjE0ODQzOGMwIDIwLjM5NDUzMSAxNi41MzEyNSAzNi45MjU3ODEgMzYuOTI1NzgxIDM2LjkyNTc4MWg0MzguMTQ4NDM4YzIwLjM5NDUzMSAwIDM2LjkyNTc4MS0xNi41MzEyNSAzNi45MjU3ODEtMzYuOTI1Nzgxdi00MzguMTQ4NDM4YzAtMjAuMzk0NTMxLTE2LjUzMTI1LTM2LjkyNTc4MS0zNi45MjU3ODEtMzYuOTI1Nzgxem0tMjkzLjQ2NDg0NCAzODdoLTYyLjM0NzY1NnYtMTg3LjU3NDIxOWg2Mi4zNDc2NTZ6bS0zMS4xNzE4NzUtMjEzLjE4NzVoLS40MDYyNWMtMjAuOTIxODc1IDAtMzQuNDUzMTI1LTE0LjQwMjM0NC0zNC40NTMxMjUtMzIuNDAyMzQ0IDAtMTguNDA2MjUgMTMuOTQ1MzEzLTMyLjQxMDE1NiAzNS4yNzM0MzctMzIuNDEwMTU2IDIxLjMyODEyNiAwIDM0LjQ1MzEyNiAxNC4wMDM5MDYgMzQuODU5Mzc2IDMyLjQxMDE1NiAwIDE4LTEzLjUzMTI1IDMyLjQwMjM0NC0zNS4yNzM0MzggMzIuNDAyMzQ0em0yNTUuOTg0Mzc1IDIxMy4xODc1aC02Mi4zMzk4NDR2LTEwMC4zNDc2NTZjMC0yNS4yMTg3NS05LjAyNzM0My00Mi40MTc5NjktMzEuNTg1OTM3LTQyLjQxNzk2OS0xNy4yMjI2NTYgMC0yNy40ODA0NjkgMTEuNjAxNTYzLTMxLjk4ODI4MiAyMi44MDA3ODEtMS42NDg0MzcgNC4wMDc4MTMtMi4wNTA3ODEgOS42MDkzNzUtMi4wNTA3ODEgMTUuMjE0ODQ0djEwNC43NWgtNjIuMzQzNzVzLjgxNjQwNy0xNjkuOTc2NTYyIDAtMTg3LjU3NDIxOWg2Mi4zNDM3NXYyNi41NTg1OTRjOC4yODUxNTctMTIuNzgxMjUgMjMuMTA5Mzc1LTMwLjk2MDkzNyA1Ni4xODc1LTMwLjk2MDkzNyA0MS4wMTk1MzEgMCA3MS43NzczNDQgMjYuODA4NTkzIDcxLjc3NzM0NCA4NC40MjE4NzR6bTAgMCIgZGF0YS1vcmlnaW5hbD0iIzAwMDAwMCIvPjwvZz48L3N2Zz4="
+          alt="linkedin"
+        />
+        <span class="footer-icons-text">Connect on LinkedIn</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a
+        class="social__link"
+        href="https://www.youtube.com/Layer5io?sub_confirmation=1"
+        target="_blank"
+        rel="noreferrer"
+      >
+        <img
+          class="youtube"
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgNTEyIDM1OC41IiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA1MTIgMzU4LjUiPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+LnN0MHtmaWxsOnJlZH0uc3Qxe2ZpbGw6I2ZmZn08L3N0eWxlPjxwYXRoIGQ9Ik01MDEuNSw1Ni4xYy01LjktMjEuOS0yMy4yLTM5LjItNDUuMS00NS4xQzQxNi4zLDAsMjU2LDAsMjU2LDBTOTUuNywwLDU1LjcsMTAuNQljLTIxLjUsNS45LTM5LjIsMjMuNi00NS4xLDQ1LjVDMCw5Ni4yLDAsMTc5LjIsMCwxNzkuMnMwLDgzLjUsMTAuNSwxMjMuMWM1LjksMjEuOSwyMy4yLDM5LjIsNDUuMSw0NS4xYzQwLjUsMTEsMjAwLjMsMTEsMjAwLjMsMTEJczE2MC4zLDAsMjAwLjMtMTAuNWMyMS45LTUuOSwzOS4yLTIzLjIsNDUuMS00NS4xQzUxMiwyNjIuNyw1MTIsMTc5LjcsNTEyLDE3OS43UzUxMi40LDk2LjIsNTAxLjUsNTYuMXoiIGNsYXNzPSJzdDAiLz48cGF0aCBkPSJNMjA1LDI1NmwxMzMuMy03Ni44TDIwNSwxMDIuNVYyNTZ6IiBjbGFzcz0ic3QxIi8+PC9zdmc+"
+          alt="youtube"
+        />
+        <span class="footer-icons-text">Watch community meeting recordings</span>
+      </a>
+    </div>
+
+    <div class="footer-icons">
+      <a class="social__link" href="https://hub.docker.com/u/layer5/" target="_blank" rel="noreferrer">
+        <img
+          class="docker"
+          src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiBpZD0iTGF5ZXJfMSIgeD0iMCIgeT0iMCIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgNDYwIDMyMi4xIiB4bWw6c3BhY2U9InByZXNlcnZlIiBzdHlsZT0iZW5hYmxlLWJhY2tncm91bmQ6bmV3IDAgMCA0NjAgMzIyLjEiPjxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+LnN0MHtmaWxsOiMwOTljZWN9PC9zdHlsZT48ZyBpZD0iX3gzOV83LWRvY2tlciI+PGc+PGc+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDMuMiIgeD0iMjA0IiB5PSI1Mi4zIiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDIuNyIgeD0iMjA0IiB5PSIxMDQuMSIgY2xhc3M9InN0MCIvPjxyZWN0IHdpZHRoPSI0Ny41IiBoZWlnaHQ9IjQzLjIiIHg9IjE0Ny45IiB5PSI1Mi4zIiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDIuNyIgeD0iMjYwLjIiIHk9IjEwNC4xIiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDMuNiIgeD0iMjA0IiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDMuMiIgeD0iOTEuNyIgeT0iNTIuMyIgY2xhc3M9InN0MCIvPjxyZWN0IHdpZHRoPSI0Ny41IiBoZWlnaHQ9IjQyLjciIHg9IjE0Ny45IiB5PSIxMDQuMSIgY2xhc3M9InN0MCIvPjxwYXRoIGQ9Ik00NTAuNCwxMjQuMWMtMTAuNC03LTM0LjItOS41LTUyLjUtNmMtMi40LTE3LjItMTItMzIuMy0yOS41LTQ1LjhsLTEwLjEtNi43bC02LjcsMTAuMSBjLTEzLjIsMjAtMTYuOCw1Mi45LTIuNyw3NC42Yy02LjMsMy40LTE4LjUsOC0zNC44LDcuN0gxLjhjLTYuMywzNi41LDQuMiw4My45LDMxLjYsMTE2LjVDNjAsMzA2LDEwMCwzMjIuMSwxNTIuMywzMjIuMSBjMTEzLjEsMCwxOTYuOS01Mi4xLDIzNi0xNDYuOGMxNS40LDAuMyw0OC42LDAuMSw2NS42LTMyLjVjMS4xLTEuOCw0LjctOS41LDYuMS0xMi4zTDQ1MC40LDEyNC4xeiIgY2xhc3M9InN0MCIvPjxwb2x5Z29uIHBvaW50cz0iODMuMiAxMDQuMSA4My4xIDEwNC4xIDM1LjcgMTA0LjEgMzUuNyAxNDYuOCA4My4yIDE0Ni44IiBjbGFzcz0ic3QwIi8+PHJlY3Qgd2lkdGg9IjQ3LjUiIGhlaWdodD0iNDIuNyIgeD0iOTEuNyIgeT0iMTA0LjEiIGNsYXNzPSJzdDAiLz48L2c+PC9nPjwvZz48L3N2Zz4="
+          alt="docker"
+        />
+        <span class="footer-icons-text">Access Docker images</span>
+      </a>
+    </div>
+  </div>
+  <!-- meshery-custom-end -->
+</footer>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/clipboard@1/dist/clipboard.min.js"></script>
+
+<script type="text/javascript" src="/assets/js/lightbox.js"></script>
+<link rel="stylesheet" href="/assets/css/lightbox.css" />
+<script type="module" src="https://md-block.verou.me/md-block.js"></script>
+
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+<script src="/assets/js/main.js"></script>
+<script src="/assets/js/navbar.js"></script>
+
+ <script async src='https://www.google-analytics.com/analytics.js'></script>
+<script type="application/javascript">
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+	ga('create', 'UA-00000000-0', 'auto');
+	ga('send', 'pageview');
+}
+</script>
+
+  </body>
+</html>
+<script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+
+<script>
+$(document).ready(function() {
+
+    var toc = $('#TOC');
+
+    // Select each header
+    sections = $('.td-content h1');
+        $.each(sections, function(idx, v) {
+            section = $(v);
+            var div_id = $(section).attr('id');
+            if(!section.hasClass('noTOC')){
+               var div_text = section.text().split('¶')[0];
+              var parent = $("#" + div_id)
+              var content = '<li id="link_' + div_id + '" class="md-nav__item"><a class="md-nav__link" href="#' + div_id + '" title="' + div_text +'">' + div_text +'</a>asdf</li>';
+              $(document).find(toc).append(content);
+            }
+
+            // Add section code to subnavigation
+            var children = $('<nav class="md-nav"><ul class="md-nav__list"></nav></ul>')
+            var contenders = $("#" + div_id).nextUntil("h1");
+            $.each(contenders, function(idx, contender){
+               if( !$(contender).hasClass("noTOC") && ($(contender).is('h2') || $(contender).is('h3')) ) {
+                   var contender_id = $(contender).attr('id');
+                   var contender_text = $(contender).text().split('¶')[0];
+                   var content = '<li class="md-nav__item"><a class="md-nav__link" href="#' + contender_id + '" title="' + contender_text +'">' + contender_text +'</a></li>';
+                   children.append(content);
+                }
+             })
+             $("#link_" + div_id).append(children);
+        });
+        //added 'selected' tag to the first element of toc
+        $('.md-nav__link').first().addClass('selected');
+
+        $(window).scroll(function(e){
+          // Detect how far are we from the top of the page
+          let windowTop = $(this).scrollTop();
+          // Loop through every navigation menu item
+          $('.md-nav__link').each(function (event) {       
+              if (windowTop >= $($(this).attr('href')).offset().top - 100) {
+              // Remove 'selected' from previously highlighted menu items
+              $('.selected').removeClass('selected');
+              // Highlight the current menu item by adding 'selected' class
+              $(this).addClass('selected');
+          }
+          if($(window).scrollTop() + $(window).height() > $(document).height() - 10) {
+            $('.selected').removeClass('selected');
+              $(this).addClass('selected');
+          }
+        });
+      })
+      // Smooth scroll to target section when clicking on TOC link
+      $('a[href^="#"]').on('click', function(event) {
+        event.preventDefault();
+        var target = $(this.hash);
+        if (target.length) {
+          $('html, body').animate({
+          scrollTop: target.offset().top - 70
+          }, 1000);
+        }
+      });
+    });
+</script>
+

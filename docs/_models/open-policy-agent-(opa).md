@@ -62,6 +62,17 @@ components:
   colorIcon: assets/img/integrations/open-policy-agent-(opa)/components/sync-set/icons/color/sync-set-color.svg
   whiteIcon: assets/img/integrations/open-policy-agent-(opa)/components/sync-set/icons/white/sync-set-white.svg
   description: 
+- name: config-pod-status
+  colorIcon: assets/img/integrations/open-policy-agent-(opa)/components/config-pod-status/icons/color/config-pod-status-color.svg
+  whiteIcon: assets/img/integrations/open-policy-agent-(opa)/components/config-pod-status/icons/white/config-pod-status-white.svg
+  description: 
+- name: config-pod-status
+  colorIcon: assets/img/integrations/open-policy-agent-(opa)/components/config-pod-status/icons/color/config-pod-status-color.svg
+  whiteIcon: assets/img/integrations/open-policy-agent-(opa)/components/config-pod-status/icons/white/config-pod-status-white.svg
+  description: 
+components-count: 15
+relationships: 
+relationship-count: 0
 featureList: [
   "Policy-based control for Kubernetes",
   "Unifies policy enforcement across the stack",

@@ -1,5 +1,5 @@
 import React from 'react';
-import { timeAgo } from '../../../../utils/k8s-utils';
+import { getStatus, timeAgo } from '../../../../utils/k8s-utils';
 import { SINGLE_VIEW } from '../config';
 
 import { Title } from '../../view';
@@ -16,6 +16,7 @@ export const NamespaceTableConfig = (
   meshSyncResources,
   k8sConfig,
   connectionMetadataState,
+  workloadType,
 ) => {
   const ping = useKubernetesHook();
   return {
@@ -23,9 +24,10 @@ export const NamespaceTableConfig = (
     colViews: [
       ['id', 'na'],
       ['metadata.name', 'xs'],
-      ['apiVersion', 'm'],
+      ['apiVersion', 'na'],
       ['cluster_id', 'xs'],
       ['metadata.creationTimestamp', 'l'],
+      ['status.attribute', 'm'],
     ],
     columns: [
       {
@@ -51,12 +53,8 @@ export const NamespaceTableConfig = (
             return (
               <Title
                 onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                data={
-                  meshSyncResources[tableMeta.rowIndex]
-                    ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                    : {}
-                }
                 value={value}
+                kind={workloadType}
               />
             );
           },
@@ -123,6 +121,20 @@ export const NamespaceTableConfig = (
           customBodyRender: function CustomBody(value) {
             let time = timeAgo(value);
             return <>{time}</>;
+          },
+        },
+      },
+      {
+        name: 'status.attribute',
+        label: 'Status',
+        options: {
+          sort: false,
+          customHeadRender: function CustomHead({ ...column }) {
+            return <DefaultTableCell columnData={column} />;
+          },
+          customBodyRender: function CustomBody(val) {
+            const phase = getStatus(val);
+            return <>{phase}</>;
           },
         },
       },

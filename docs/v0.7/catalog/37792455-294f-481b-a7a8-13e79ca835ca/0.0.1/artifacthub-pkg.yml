@@ -1,0 +1,27 @@
+version: 0.0.1
+name: aws-cloudfront-controller
+displayName: AWS cloudfront controller
+createdAt: "2024-05-19T13:39:32Z"
+description: |-
+    This YAML file defines a Kubernetes Deployment for the ack-cloudfront-controller, a component responsible for managing AWS CloudFront resources in a Kubernetes environment. The Deployment specifies that one replica of the pod should be maintained (replicas: 1). Metadata labels are provided for identification and management purposes, such as app.kubernetes.io/name, app.kubernetes.io/instance, and others, to ensure proper categorization and management by Helm. The pod template section within the Deployment spec outlines the desired state of the pods, including the container's configuration.
+
+    The container, named controller, uses the ack-cloudfront-controller:latest image and will run a binary (./bin/controller) with specific arguments to configure its operation, such as AWS region, endpoint URL, logging level, and resource tags. Environment variables are defined to provide necessary configuration values to the container. The container exposes an HTTP port (8080) and includes liveness and readiness probes to monitor and manage its health, ensuring the application is running properly and is ready to serve traffic.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/37792455-294f-481b-a7a8-13e79ca835ca/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Environment Variables:\nVerify that the environment variables such as AWS_REGION, AWS_ENDPOINT_URL, and ACK_LOG_LEVEL are correctly set according to your AWS environment and logging preferences. Incorrect values could lead to improper functioning or failure of the controller.\n\n2. Secrets Management:\nIf AWS credentials are required, make sure the AWS_SHARED_CREDENTIALS_FILE and AWS_PROFILE environment variables are correctly configured and the referenced Kubernetes secret exists. Missing or misconfigured secrets can prevent the controller from authenticating with AWS.\n\n3. Resource Requests and Limits:\nReview and adjust the resource requests and limits to match the expected workload and available cluster resources. Insufficient resources can lead to performance issues, while overly generous requests can waste cluster resources.\n\n4. Probes Configuration:\nThe liveness and readiness probes are configured with specific paths and ports. Ensure that these endpoints are correctly implemented in the application. Misconfigured probes can result in the pod being killed or marked as unready. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 1cb30087-3787-4aad-8da8-addcb556ae17
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/37792455-294f-481b-a7a8-13e79ca835ca-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/37792455-294f-481b-a7a8-13e79ca835ca-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

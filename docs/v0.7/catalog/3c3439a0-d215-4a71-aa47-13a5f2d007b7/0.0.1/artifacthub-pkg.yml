@@ -1,0 +1,20 @@
+version: 0.0.1
+name: prometheus_kubernetes
+displayName: prometheus_kubernetes
+createdAt: "2024-03-01T05:58:24Z"
+description: This outlines a configuration for deploying Prometheus to monitor Kubernetes clusters effectively. It focuses on setting up Prometheus to collect and store metrics from various Kubernetes components such as nodes, pods, and services.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/3c3439a0-d215-4a71-aa47-13a5f2d007b7/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Prometheus can consume significant CPU and memory resources, especially when monitoring large-scale Kubernetes clusters with numerous pods and services. Careful resource allocation and monitoring are essential to prevent performance degradation or cluster instability. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

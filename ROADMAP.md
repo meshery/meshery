@@ -68,7 +68,6 @@ Milestones on Meshery's high-level roadmap:
 
 **Server**
 
-- [Server] workflow engine, policy (crud)
 - [Server] Environments and multi-cluster k8s support
 - [Server] Initial GCP and AWS support
 - [Server] messaging framework and notification center
@@ -91,66 +90,66 @@ Milestones on Meshery's high-level roadmap:
 
 **Lifecycle Management**
 
-- [?] Component generator for direct Chart or Manifest (Operatorhub)
-- [?] SQLite → Postgres (spec)
-- [?] GitOps: Expand Flux and ArgoCD Integrations
-- [?] Relationship Coverage for All Components 
-- [?] Model import/export
-- [?] GCP and AWS as platforms, Components
+- [Server/UI] Robust Model Generator
+- [Server/UI] 25% coverage of Relationships all Models
+- [Server/UI] Model Import/Export, OCI, Extensible
+- [Server] Initial GCP and AWS as Models
+- [Server] Initial Environments and Workspaces
 Code coverage goal: 25%
-
-- [Server] - Environments and Workspaces
-- [MeshSync] - Configurable and Tiered Discovery
-- [MeshSync] - Composite Fingerprints
-- [CLI] [?] Meshconfig: Support for multi-cluster (spec)
-
-- [CLI] [?] Support for command:
-connection, credential
-**Performance Management**
-
-- [Adapter] - Distributed Performance Testing
-- [Server/UI] Multiple Telemetry Providers and Custom Boards ([spec](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_5_21))
-- [Server/UI] User-defined Dashboards and Metrics ([spec](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.gcb74201a11_0_119))
 
 **Configuration Management**
 
 - [Server] Component Generator: Direct Chart or Manifest (Operatorhub)
 - [Server] Registry: Model import/export; OCI
-- [CLI] [Aadhitya A.] Support for commands: 
-- [CLI] model, component, relationship
+- [CLI] Support for commands: model, component, releationship, registry, environment, connection, credential
 
 **Extensibility**
 
-- [UI] - Extensible Authorization
+- [UI] Extensible Authorization
+- [CLI] Helm Kanvas Snapshot
+- [CLI] kubectl MeshSync Snapshot
 
 **General / Maintenance**
 
-- [UI] Operations Center (for Workflows)
 - [UI] Finalize State Management
 - [UI] Support for Material UI v5
-- [CLI] `system report` - diagnostics reporting
-- [CLI] [?] Refactor `system config` for AKS (spec)
-- [CLI] [?] Refactor `system config` for EKS (spec)
-- [CLI] [?] Full migration from Apps to Designs
-[?] Code coverage goal: 90%
+- [CLI] Deprecate: Full migration from Apps to Designs
 - [CLI] Mesheryctl Code coverage goal: 50%
 
 ### [v0.9.0](../../milestone/6)
 
+- [Server] Extensible Policies
+- [Server] GitOps: PR as an Action, Expand Flux and ArgoCD Integrations
+- [Server] Advanced Environments and Workspaces
+- [Server] Initial Azure as Model and ASO Integration
+- [Server] Advanced GCP and AWS as Connections
 - [CLI] Mesheryctl Code coverage goal: 60%
-- [Server] - Extensible Policies
-- [Server] - Configuration Insights and Recommendations
+
+**Extensibility**
+
+- [CLI] kubectl Kanvas Snapshot
+
+### [v1.0.0](../../milestone/7)
 
 **Lifecycle Management**
 
-- [Server] Multi-cluster meshconfig support
-
-### [v1.0.0](../../milestone/7)
+- [MeshSync] Configurable and Tiered Discovery
+- [MeshSync] Composite Fingerprints
 
 **General / Maintenance**
 
 - [System] hardening, release process, integration tests, user acceptance testing
-- [Server] Direct GCP and AWS support
+- [Server] Correlated Events
+- [UI] Operations Center (for Workflows)
+- [Server] Configuration Insights and Recommendations
+- [Server] Workflow Engine, policy (crud)
+- SQLite → Postgres (spec)
+
+**Performance Management**
+
+- [Adapter] - Distributed Performance Testing
+- [Server/UI] Multiple Telemetry Providers and Custom Boards ([spec](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.g1044af767ce_5_21))
+- [Server/UI] User-defined Dashboards and Metrics ([spec](https://docs.google.com/presentation/d/1SQMfyu5shjpGKlYONdVzOtd7UYTgLWBcgUvHMLCZ2tY/edit#slide=id.gcb74201a11_0_119))
 
 ### [v1.1.0](../../milestone/8)
 
@@ -160,6 +159,7 @@ connection, credential
 - [Server] Generative AI Configuration Analysis
 - [Server] Notification Providers: Slack, CloudEvents, Teams
 - [Server] Code coverage goal: 70%
+- [CLI] Meshconfig: Support for multi-cluster (spec)
 
 **Extensibility**
 
@@ -173,7 +173,8 @@ connection, credential
 
 
 **CLI**
-
+- [CLI] Multi-cluster meshconfig support
+- [CLI] `system report` - diagnostics reporting
 - [CLI] Refactoring `system config` for AKS, EKS
 - [CLI] gRPC (streaming of status and events)
 - [CLI] Colorizing output

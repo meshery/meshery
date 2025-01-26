@@ -18,6 +18,9 @@ components:
   colorIcon: assets/img/integrations/aws-elasticsearchservice-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-elasticsearchservice-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+components-count: 2
+relationships: 
+relationship-count: 0
 featureList: [
   "Scalable search and analytics",
   "Easy to deploy and manage",

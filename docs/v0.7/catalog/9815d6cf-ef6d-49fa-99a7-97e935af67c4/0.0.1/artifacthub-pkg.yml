@@ -1,0 +1,20 @@
+version: 0.0.1
+name: fluentd-kubernetes-aws
+displayName: fluentd-kubernetes-aws
+createdAt: "2024-06-06T05:51:32Z"
+description: "Fluentd is utilized as a robust log forwarding and aggregation solution, essential for collecting, processing, and forwarding logs from various sources within Kubernetes pods to AWS-based storage or analytics services. \n\nThis design focuses on integrating Fluentd seamlessly into Kubernetes to enhance observability and troubleshoot application issues effectively. Key considerations include setting up Fluentd DaemonSets to ensure it runs on every node, configuring filters and parsers to handle different log formats, and directing logs to Amazon S3, CloudWatch Logs, or Elasticsearch for storage and analysis. Proper resource allocation, such as CPU and memory requests and limits, is established to optimize Fluentd performance without impacting other applications. Security measures, including role-based access controls and encryption, are implemented to protect sensitive log data."
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/9815d6cf-ef6d-49fa-99a7-97e935af67c4/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Continuous monitoring and scaling strategies are employed to maintain Fluentd's availability and responsiveness as Kubernetes workloads evolve. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

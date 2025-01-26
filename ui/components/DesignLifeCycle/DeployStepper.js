@@ -38,6 +38,9 @@ import { capitalize } from 'lodash';
 import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
 import { DeploymentSummaryFormatter } from './DeploymentSummary';
 import { SEVERITY } from '../NotificationCenter/constants';
+import EnvironmentModal from '../Modals/EnvironmentModal';
+import { openViewScopedToDesignInOperator } from '@/utils/utils';
+import { useRouter } from 'next/router';
 
 export const ValidateContent = {
   btnText: 'Next',
@@ -63,6 +66,7 @@ export const FinishDeploymentStep = ({ perform_deployment, deployment_type, auto
   const [isDeploying, setIsDeploying] = useState(false);
   const [deployEvent, setDeployEvent] = useState();
   const [deployError, setDeployError] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
     try {
@@ -82,12 +86,13 @@ export const FinishDeploymentStep = ({ perform_deployment, deployment_type, auto
         if (serverEvent.action === deployment_type) {
           setIsDeploying(false);
           setDeployEvent(serverEvent);
-          if (
-            autoOpenView &&
-            serverEvent.severity == SEVERITY.SUCCESS &&
-            serverEvent?.metadata?.view_url
-          ) {
-            window.open(serverEvent.metadata.view_url, '_blank');
+
+          if (autoOpenView && serverEvent.severity == SEVERITY.SUCCESS) {
+            openViewScopedToDesignInOperator(
+              serverEvent?.metadata?.design_name,
+              serverEvent?.metadata?.design_id,
+              router,
+            );
           }
         }
       },
@@ -123,11 +128,16 @@ const SelectTargetStep = () => {
     state.get('connectionMetadataState'),
   );
   const meshsyncControllerState = useLegacySelector((state) => state.get('controllerState'));
+  const [isEnvrionmentModalOpen, setIsEnvrionmentModalOpen] = useState(false);
   return (
     <DeploymentTargetContext.Provider
       value={{ connectionMetadataState, meshsyncControllerState, organization }}
     >
-      <SelectTargetEnvironments organization={organization} />
+      <SelectTargetEnvironments setIsEnvrionmentModalOpen={setIsEnvrionmentModalOpen} />
+      <EnvironmentModal
+        isOpenModal={isEnvrionmentModalOpen}
+        setIsOpenModal={setIsEnvrionmentModalOpen}
+      />
     </DeploymentTargetContext.Provider>
   );
 };
@@ -187,7 +197,7 @@ export const UpdateDeploymentStepper = ({
 }) => {
   const [includeDependencies, setIncludeDependencies] = useState(false);
   const [bypassDryRun, setBypassDryRun] = useState(false);
-  const [openInVisualizer, setOpenInVisualizer] = useState(false);
+  const [openInOperator, setOpenInOperator] = useState(false);
 
   const selectedEnvironments = useSelectorRtk(selectSelectedEnvs);
   const selectedEnvCount = Object.keys(selectedEnvironments).length;
@@ -264,8 +274,8 @@ export const UpdateDeploymentStepper = ({
             <FinalizeDeployment
               design={design}
               deployment_type={deployment_type}
-              openInVisualizer={openInVisualizer}
-              setOpenInVisualizer={setOpenInVisualizer}
+              openInVisualizer={openInOperator}
+              setOpenInVisualizer={setOpenInOperator}
             />
           </StepContent>
         ),
@@ -282,7 +292,7 @@ export const UpdateDeploymentStepper = ({
               design={design}
               deployment_type={deployment_type}
               perform_deployment={actionFunction}
-              autoOpenView={openInVisualizer}
+              autoOpenView={openInOperator}
             />{' '}
           </StepContent>
         ),
@@ -330,7 +340,7 @@ export const UpdateDeploymentStepper = ({
   return (
     <>
       <ModalBody style={{ padding: 0 }}>
-        <Box style={{ maxWidth: '40rem' }}>
+        <Box>
           <CustomizedStepper {...deployStepper} ContentWrapper={StepWrapper}>
             {deployStepper.activeStepComponent}
           </CustomizedStepper>
