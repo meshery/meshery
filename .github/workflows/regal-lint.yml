@@ -1,4 +1,4 @@
-name: Run Regal Lint Check & format Rego files
+name: Run Regal Lint Check
 on:
   pull_request:
     branches:
