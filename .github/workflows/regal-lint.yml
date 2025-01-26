@@ -37,4 +37,3 @@ jobs:
 
       - name: Lint
         run: regal lint --config-file ./policies/wasm/policies/.regal/config.yaml --format github ./server/meshmodel  
-        
