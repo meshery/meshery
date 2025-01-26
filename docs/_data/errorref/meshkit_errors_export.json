@@ -1379,6 +1379,24 @@
         "short_description": "unable to open file: ",
         "probable_cause": "The file does not exist in the location",
         "suggested_remediation": "Make sure to upload the correct file"
+      },
+      "11279": {
+        "name": "ErrGoogleJwtInvalidCode",
+        "code": "11279",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid JWT credentials",
+        "probable_cause": "Invalid JWT credentials",
+        "suggested_remediation": "Make sure to provide valid JWT credentials"
+      },
+      "11280": {
+        "name": "ErrGoogleSheetSRVCode",
+        "code": "11280",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while creating Google Sheets Service",
+        "probable_cause": "Issue happened with Google Sheets Service",
+        "suggested_remediation": "Make you provide valid JWT credentials and Spreadsheet ID"
       }
     }
   }
