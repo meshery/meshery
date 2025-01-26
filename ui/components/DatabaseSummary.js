@@ -11,11 +11,11 @@ import { EVENT_TYPES } from '../lib/event-types';
 import ResponsiveDataTable from '../utils/data-table';
 import SearchBar from '../utils/custom-search';
 import useStyles from '../assets/styles/general/tool.styles';
-import { PROMPT_VARIANTS } from './PromptComponent';
 import { store } from '../store';
 import { useGetDatabaseSummaryQuery } from '@/rtk-query/system';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { PROMPT_VARIANTS } from '@layer5/sistent';
 
 const styles = (theme) => ({
   textCenter: {
@@ -72,7 +72,7 @@ const DatabaseSummary = (props) => {
       let responseOfResetDatabase = await props.promptRef.current.show({
         title: 'Reset Meshery Database?',
         subtitle: 'Are you sure that you want to purge all data?',
-        options: ['RESET', 'CANCEL'],
+        primaryOption: 'RESET',
         variant: PROMPT_VARIANTS.DANGER,
       });
       if (responseOfResetDatabase === 'RESET') {
@@ -154,6 +154,7 @@ const DatabaseSummary = (props) => {
           <Button
             type="submit"
             variant="contained"
+            data-testid="database-reset-button"
             color="primary"
             size="medium"
             disabled={!CAN(keys.RESET_DATABASE.action, keys.RESET_DATABASE.subject)}
