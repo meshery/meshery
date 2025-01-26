@@ -2168,7 +2168,7 @@
         "code": "1241",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "Connection to DataBase does not exist",
+        "short_description": "Connection to database does not exist",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -2347,8 +2347,8 @@
         "name": "ErrTokenClaimsCode",
         "code": "1261",
         "severity": "Alert",
-        "long_description": "",
-        "short_description": "Error occurred while prasing claims",
+        "long_description": "JWTs are encoded and signed, ensuring the integrity and authenticity of the claims they contain.",
+        "short_description": "Error occurred while parsing JWT claims",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -2492,7 +2492,7 @@
         "code": "1277",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "minimum one test endpoint needs to be specified",
+        "short_description": "Minimum one test endpoint needs to be specified",
         "probable_cause": "",
         "suggested_remediation": ""
       },
@@ -2501,7 +2501,7 @@
         "code": "1278",
         "severity": "Alert",
         "long_description": "",
-        "short_description": "specify valid Loadgenerator",
+        "short_description": "specify valid load generator",
         "probable_cause": "",
         "suggested_remediation": ""
       },
