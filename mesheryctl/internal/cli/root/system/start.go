@@ -652,8 +652,7 @@ func start() error {
 		//connection to docker-client
 		cli, err := dockerCmd.NewAPIClientFromFlags(cliflags.NewClientOptions(), dockerCfg)
 		if err != nil {
-			utils.Log.Error(ErrCreatingDockerClient(err))
-			return err
+			return ErrCreatingDockerClient(err)
 		}
 		containers, err := cli.ContainerList(context.Background(), container.ListOptions{
 			Filters: filters.NewArgs(),
