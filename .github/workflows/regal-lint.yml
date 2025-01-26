@@ -1,16 +1,35 @@
-name: Run Regal Lint Check
+name: Run Regal Lint Checks & format Rego files
 on:
   pull_request:
     branches:
       - "*"
     paths:
       - "**.rego"
+
 jobs:
-  lint-rego:
+  rego-checks:
     runs-on: ubuntu-24.04
+    permissions:
+      contents: write
     steps:
-      - name: Check out repository code
+      - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Setup OPA
+        uses: open-policy-agent/setup-opa@v2
+        with:
+          version: 1.0.1
+
+      - name: Auto-format Rego files
+        run: opa fmt --write .  # Formats ALL Rego files in repo
+
+      - name: Re-add formatted files
+        run: |
+          if ! git diff --quiet; then
+            git add -u  # Stage only modified tracked files
+            echo "::warning::Rego files were reformatted - please review changes"
+            exit 1  # Fail the build to notify about formatting changes
+          fi
 
       - name: Setup Regal
         uses: StyraInc/setup-regal@v1
