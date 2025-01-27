@@ -8,7 +8,6 @@ import {
   SearchBar,
   Slide,
 } from '@layer5/sistent';
-import useStyles from '../../../assets/styles/general/tool.styles';
 import View from '../view';
 import { ALL_VIEW, SINGLE_VIEW } from './config';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
@@ -18,6 +17,7 @@ import { camelcaseToSnakecase } from '../../../utils/utils';
 import { useSelector } from 'react-redux';
 import { UsesSistent } from '@/components/SistentWrapper';
 import { useRouter } from 'next/router';
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 
 export const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -75,8 +75,6 @@ const ResourcesTable = (props) => {
   const clusterIds = encodeURIComponent(
     JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig)),
   );
-
-  const StyleClass = useStyles();
 
   const { notify } = useNotification();
 
@@ -241,10 +239,7 @@ const ResourcesTable = (props) => {
         </Slide>
       ) : (
         <div>
-          <div
-            className={StyleClass.toolWrapper}
-            style={{ marginBottom: '5px', marginTop: '1rem' }}
-          >
+          <ToolWrapper style={{ marginBottom: '5px', marginTop: '1rem' }}>
             <div className={classes.createButton}>{/* <MesherySettingsEnvButtons /> */}</div>
             <UsesSistent>
               <div
@@ -270,7 +265,7 @@ const ResourcesTable = (props) => {
                 />
               </div>
             </UsesSistent>
-          </div>
+          </ToolWrapper>
           <UsesSistent>
             <ResponsiveDataTable
               data={meshSyncResources}
