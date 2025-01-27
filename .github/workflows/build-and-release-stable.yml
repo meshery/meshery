@@ -176,8 +176,8 @@ jobs:
     name: Playground Deploy Delay
     runs-on: ubuntu-20.04
     steps:
-      - name: Delay Playground Deployment #"Delay for 13 minutes to allow Remote Provider to update their extensions"
-        run: sleep 300
+      - name: Delay Playground Deployment # Delay for 13 minutes to allow Remote Provider to update their extensions
+        run: sleep 780
   email-meshery-release-notes-workflow:
     needs:
       - build
