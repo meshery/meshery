@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { styled, Grid, Table, Typography } from '@mui/material';
-import { NoSsr, Grid, Table, Typography } from '@mui/material';
+import { styled, Grid, Table, Typography } from '@layer5/sistent';
+import { NoSsr, TableRow, TableCell, TableBody } from '@mui/material';
 import MesheryChartDialog from './MesheryChartDialog';
 
 const StyledTableRow = styled(TableRow)(() => ({
