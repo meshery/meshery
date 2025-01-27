@@ -21,8 +21,8 @@ import { EVENT_TYPES } from '../lib/event-types';
 import ResponsiveDataTable from '../utils/data-table';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
-import useStyles from '../assets/styles/general/tool.styles';
 import { CustomColumnVisibilityControl } from '@layer5/sistent';
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 
 const styles = (theme) => ({
   muiRow: {
@@ -51,7 +51,6 @@ const MesheryCredentialComponent = ({ updateProgress, classes, connectionMetadat
   const [credentialName, setCredentialName] = useState(null);
   const { notify } = useNotification();
   const { width } = useWindowDimensions();
-  const StyleClass = useStyles();
 
   useEffect(() => {
     fetchCredential();
@@ -406,7 +405,7 @@ const MesheryCredentialComponent = ({ updateProgress, classes, connectionMetadat
   }
   return (
     <div style={{ display: 'table', tableLayout: 'fixed', width: '100%' }}>
-      <div className={StyleClass.toolWrapper} style={customInlineStyle}>
+      <ToolWrapper style={customInlineStyle}>
         <div>
           {/* TODO: Uncomment this when schema spec is ready to support various credential */}
           {/* <Button
@@ -444,7 +443,7 @@ const MesheryCredentialComponent = ({ updateProgress, classes, connectionMetadat
             customToolsProps={{ columnVisibility, setColumnVisibility }}
           />
         </div>
-      </div>
+      </ToolWrapper>
       <ResponsiveDataTable
         columns={columns}
         data={credentials}

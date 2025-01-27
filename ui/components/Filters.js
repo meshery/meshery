@@ -74,7 +74,7 @@ import {
 } from '@/rtk-query/filter';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
-import { ToolWrapper } from './Lifecycle/Workspaces';
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 
 const CreateButton = styled(Button)(() => ({
   width: 'fit-content',

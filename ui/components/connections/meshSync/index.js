@@ -10,10 +10,10 @@ import {
   SearchBar,
   UniversalFilter,
 } from '@layer5/sistent';
-import useStyles from '../../../assets/styles/general/tool.styles';
 import { MeshSyncDataFormatter } from '../metadata';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { DefaultTableCell, SortableTableCell } from '../common';
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import {
   JsonParse,
   camelcaseToSnakecase,
@@ -58,7 +58,6 @@ export default function MeshSyncTable(props) {
     metadata: {},
     kind: '',
   });
-  const StyleClass = useStyles();
   const { width } = useWindowDimensions();
 
   const icons = {
@@ -535,7 +534,7 @@ export default function MeshSyncTable(props) {
 
   return (
     <>
-      <div className={StyleClass.toolWrapper} style={{ marginBottom: '5px', marginTop: '-30px' }}>
+      <ToolWrapper style={{ marginBottom: '5px', marginTop: '-30px' }}>
         <div className={classes.createButton}>{/* <MesherySettingsEnvButtons /> */}</div>
         <UsesSistent>
           <div
@@ -569,7 +568,7 @@ export default function MeshSyncTable(props) {
             />
           </div>
         </UsesSistent>
-      </div>
+      </ToolWrapper>
       <UsesSistent>
         <ResponsiveDataTable
           data={meshSyncResources}

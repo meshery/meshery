@@ -14,6 +14,7 @@ import {
   Typography,
   withStyles,
 } from '@material-ui/core';
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import AddIcon from '@mui/icons-material/AddCircleOutline';
 import EditIcon from '@mui/icons-material/Edit';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
@@ -36,7 +37,6 @@ import { updateProgress } from '../../lib/store';
 import { EVENT_TYPES } from '../../lib/event-types';
 import fetchPerformanceProfiles from '../graphql/queries/PerformanceProfilesQuery';
 import subscribePerformanceProfiles from '../graphql/subscriptions/PerformanceProfilesSubscription';
-import useStyles from '../../assets/styles/general/tool.styles';
 import { iconMedium } from '../../css/icons.styles';
 
 import { useDeletePerformanceProfileMutation } from '@/rtk-query/performance-profile';
@@ -133,7 +133,6 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
     ('grid'),
   );
   const modalRef = useRef(null);
-  const StyleClass = useStyles();
 
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
@@ -554,7 +553,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
   return (
     <>
       <div className={classes.pageContainer}>
-        <div className={StyleClass.toolWrapper}>
+        <ToolWrapper>
           {width < 550 && isSearchExpanded ? null : (
             <>
               {(testProfiles.length > 0 || viewType == 'table') && (
@@ -601,7 +600,7 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
             </UsesSistent>
             <ViewSwitch view={viewType} changeView={setViewType} />
           </div>
-        </div>
+        </ToolWrapper>
         {viewType === 'grid' ? (
           <PerformanceProfileGrid
             profiles={testProfiles}
