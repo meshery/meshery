@@ -14,10 +14,10 @@ test.describe('Extensions Section Tests', () => {
   test('Verify Kanvas Snapshot using data-testid', async ({ page }) => {
     // Verify heading using data-testid
     await expect(page.getByTestId('kanvas-snapshot-heading')).toBeVisible();
-    
+
     // Verify description using data-testid
     await expect(page.getByTestId('kanvas-snapshot-description')).toBeVisible();
-    
+
     // Verify enable button using data-testid
     const enableButton = page.getByTestId('kanvas-snapshot-enable-btn');
     await expect(enableButton).toBeVisible();
@@ -30,7 +30,7 @@ test.describe('Extensions Section Tests', () => {
   test('Verify Performance Analysis Details', async ({ page }) => {
     // Verify heading using data-testid
     await expect(page.getByTestId('performance-analysis-heading')).toBeVisible();
-    
+
     // Verify enable button using data-testid
     const performanceEnableButton = page.getByTestId('performance-analysis-enable-btn');
     await expect(performanceEnableButton).toBeVisible();
