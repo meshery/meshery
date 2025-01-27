@@ -1,5 +1,4 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import {
   Typography,
   Button,
@@ -8,62 +7,59 @@ import {
   DialogContent,
   DialogTitle,
   IconButton,
-} from '@material-ui/core';
-import CloseIcon from '@mui/icons-material/Close';
-import Slide from '@material-ui/core/Slide';
+  Slide,
+  CloseIcon,
+  styled,
+} from '@layer5/sistent';
 
-const styles = makeStyles((theme) => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(2),
-  },
-  closeButton: {
-    position: 'absolute',
-    color: theme.palette.common.white,
-    right: theme.spacing(1),
-    top: theme.spacing(1),
-    transform: 'rotate(-90deg)',
-    '&:hover': {
-      transform: 'rotate(90deg)',
-      transition: 'all .3s ease-in',
-    },
-  },
-  dialogTitle: {
-    textAlign: 'center',
-    backgroundColor: '#252E31',
-    color: theme.palette.common.white,
-  },
-  imgWrapper: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: '2rem',
-  },
-  insideImgWrapper: {
-    padding: '0rem 0.5rem',
-    content:
-      theme.palette.type === 'dark'
-        ? "url('/static/img/meshery-logo-text.svg')"
-        : "url('/static/img/meshery-logo-light-text.svg')",
-  },
-  insideImgWrapperLogo: {
-    padding: '0rem 0.5rem',
-  },
-  installButton: {
-    marginBottom: '1rem',
-  },
-  p: {
-    margin: '1rem auto',
+const DialogTitleStyled = styled(DialogTitle)(({ theme }) => ({
+  margin: 0,
+  padding: theme.spacing(2),
+  textAlign: 'center',
+  backgroundColor: '#252E31',
+  color: theme.palette.common.white,
+}));
+
+const CloseButton = styled(IconButton)(({ theme }) => ({
+  position: 'absolute',
+  color: theme.palette.common.white,
+  right: theme.spacing(1),
+  top: theme.spacing(1),
+  transform: 'rotate(-90deg)',
+  '&:hover': {
+    transform: 'rotate(90deg)',
+    transition: 'all .3s ease-in',
   },
 }));
+
+const ImgWrapper = styled('div')({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  padding: '2rem',
+});
+
+const InsideImgWrapper = styled('img')(({ theme }) => ({
+  padding: '0rem 0.5rem',
+  content:
+    theme.palette.mode === 'dark'
+      ? "url('/static/img/meshery-logo-text.svg')"
+      : "url('/static/img/meshery-logo-light-text.svg')",
+}));
+
+const InsideImgWrapperLogo = styled('img')({
+  padding: '0rem 0.5rem',
+});
+
+const InstallButton = styled(Button)({
+  marginBottom: '1rem',
+});
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
 export default function PlaygroundMeshDeploy(props) {
-  const classes = styles();
-
   const handlePage = (e) => {
     window.open('https://meshery.io/#getting-started', '_blank');
     e.stopPropagation();
@@ -77,22 +73,17 @@ export default function PlaygroundMeshDeploy(props) {
         onClose={props.closeForm}
         TransitionComponent={Transition}
       >
-        <DialogTitle id="customized-dialog-title" className={classes.dialogTitle}>
+        <DialogTitleStyled id="customized-dialog-title">
           <Typography variant="h6">The Cloud Native Playground</Typography>
-          <IconButton aria-label="close" className={classes.closeButton} onClick={props.closeForm}>
+          <CloseButton aria-label="close" onClick={props.closeForm}>
             <CloseIcon />
-          </IconButton>
-        </DialogTitle>
+          </CloseButton>
+        </DialogTitleStyled>
         <DialogContent>
-          <div className={classes.imgWrapper}>
-            <img
-              className={classes.insideImgWrapperLogo}
-              width="20%"
-              height="20%"
-              src="/static/img/meshery-logo.png"
-            />
-            <img className={classes.insideImgWrapper} width="50%" height="50%" />
-          </div>
+          <ImgWrapper>
+            <InsideImgWrapperLogo width="20%" height="20%" src="/static/img/meshery-logo.png" />
+            <InsideImgWrapper width="50%" height="50%" />
+          </ImgWrapper>
           <Typography gutterBottom>
             Meshery Playground gives you hands-on experience with designing cloud native systems -
             from your browser - using every CNCF project. Choose a{' '}
@@ -108,16 +99,10 @@ export default function PlaygroundMeshDeploy(props) {
             deploy your own instance of Meshery.
           </Typography>
         </DialogContent>
-        <DialogActions style={{ display: 'flex', justifyContent: 'center' }}>
-          <Button
-            className={classes.installButton}
-            size="large"
-            variant="contained"
-            color="primary"
-            onClick={(e) => handlePage(e)}
-          >
+        <DialogActions sx={{ display: 'flex', justifyContent: 'center' }}>
+          <InstallButton size="large" variant="contained" color="primary" onClick={handlePage}>
             Install Meshery
-          </Button>
+          </InstallButton>
         </DialogActions>
       </Dialog>
     </div>

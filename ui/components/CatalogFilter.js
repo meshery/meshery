@@ -1,7 +1,6 @@
-import { Button } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { iconMedium } from '../css/icons.styles';
-import { OutlinedVisibilityOnIcon, OutlinedVisibilityOffIcon } from '@layer5/sistent';
+import { OutlinedVisibilityOnIcon, OutlinedVisibilityOffIcon, Button } from '@layer5/sistent';
 
 function CatalogFilter({ catalogVisibility, handleCatalogVisibility, hideCatalog, classes }) {
   return (

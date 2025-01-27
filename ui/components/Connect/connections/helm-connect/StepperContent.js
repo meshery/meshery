@@ -1,9 +1,8 @@
 import React from 'react';
-import { Button, Grid, Box } from '@material-ui/core';
+import { Button, Grid, Box, useTheme } from '@layer5/sistent';
 import { Alert, AlertTitle } from '@mui/material';
 import { ConnectAppContent, FinishContent, SelectRepositoryContent } from './constants';
 import Router, { useRouter } from 'next/router';
-import { useTheme } from '@material-ui/core';
 import { useNotification } from '../../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../../lib/event-types';
 import { generateSelectedHelmRepo, addStatusToCharts } from './utils';
