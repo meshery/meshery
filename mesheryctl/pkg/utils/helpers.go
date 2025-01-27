@@ -1310,5 +1310,16 @@ func IsValidUrl(path string) bool {
 	if err != nil {
 		return false
 	}
+	if u.Scheme == "ftp" && u.Path == "" {
+		return false
+	}
 	return u.Scheme != "" && u.Host != ""
+}
+
+func IsDirectory(path string) (bool, error) {
+	info, err := os.Stat(path)
+	if err != nil {
+		return false, err
+	}
+	return info.IsDir(), nil
 }
