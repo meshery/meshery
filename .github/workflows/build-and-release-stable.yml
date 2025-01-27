@@ -190,11 +190,15 @@ jobs:
   call-cncf-playground-rollout:
     needs:
       - build
-    name: Deploy CNCF Playground
-    uses: meshery/meshery/.github/workflows/cncf-playground-deploy-meshery.yaml@master
-    with:
-      image: layer5/meshery:playground-${GITHUB_REF/refs\/tags\//}
-    secrets: inherit
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Delay Playground Deployment #"Delay for 13 minutes to allow Remote Provider to update their extensions"
+        run: sleep 780
+      - name: Deploy CNCF Playground
+        uses: meshery/meshery/.github/workflows/cncf-playground-deploy-meshery.yaml@master
+        with:
+          image: layer5/meshery:playground-${GITHUB_REF/refs\/tags\//}
+          secrets: inherit
   email-on-failure:
     needs: [update-rest-api-docs, update-graphql-docs, build, ctlrelease, call-dde-release-workflow, call-helm-chart-releaser, email-meshery-release-notes-workflow, call-cncf-playground-rollout]
     if: ${{ failure() }}
