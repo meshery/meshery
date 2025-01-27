@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Button, Typography, Container, withStyles } from '@material-ui/core/';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
 const styles = () => ({
   container: {

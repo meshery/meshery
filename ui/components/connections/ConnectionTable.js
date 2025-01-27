@@ -28,7 +28,7 @@ import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import { getVisibilityColums } from '../../utils/utils';
 import useStyles from '../../assets/styles/general/tool.styles';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { updateProgress, useLegacySelector } from '../../lib/store';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
@@ -181,8 +181,8 @@ const ConnectionTable = ({
     kind: selectedFilter
       ? JSON.stringify([selectedFilter])
       : kindFilter
-      ? JSON.stringify([kindFilter])
-      : '',
+        ? JSON.stringify([kindFilter])
+        : '',
   });
   const {
     data: environmentsResponse,

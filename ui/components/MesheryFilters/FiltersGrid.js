@@ -3,7 +3,7 @@ import { Grid, Paper, Typography, Button, Pagination } from '@layer5/sistent';
 import React, { useState } from 'react';
 import FiltersCard from './FiltersCard';
 import { FILE_OPS } from '../../utils/Enum';
-import PublishIcon from '@material-ui/icons/Publish';
+import PublishIcon from '@mui/icons-material/Publish';
 import useStyles from '../MesheryPatterns/Grid.styles';
 import { RJSFModalWrapper } from '../Modal';
 import CAN from '@/utils/can';

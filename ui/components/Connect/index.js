@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateProgress } from '../../lib/store';
 import { Provider } from 'react-redux';
-import NoSsr from '@material-ui/core/NoSsr';
+import NoSsr from '@mui/material/NoSsr';
 import { store } from '../../store';
 import { ErrorBoundary } from '@layer5/sistent';
 import CustomErrorFallback from '../General/ErrorBoundary';

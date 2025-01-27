@@ -23,7 +23,6 @@ Models are units of packaging for Meshery's logical object representation. Model
 
 {% include alert.html title="Creating your own models" type="light" content="If you would like to create your own, augment existing models, or contribute new models, please refer to the <a href='/project/contributing/contributing-models'>Contributing to Models</a> guide." %}
 
-
 See [Contributing to Models](/project/contributing/contributing-models).
 
 As a cloud native manager that provides a comprehensive set of tools for managing multi-cloud and cloud native applications and infrastructure, Meshery needs object models that can granularly characterize a wide range of systems under management from simple applications to complex microservices architectures and their infrastructure. This document describes the Meshery Model and its constituent set of entities  used to represent and manage cloud and cloud native systems.
@@ -33,6 +32,15 @@ Using Meshery Models, users can define and manage cloud-native systems, includin
 ### Model Portability and Your Intellectual Property
 
 Each model (package) can be imported and exported from Meshery Server as OCI-compatible images. This makes models portable, abstracts their complexity, and encapsulates intellectual property that you might have created while designing your own models. Model packages are versioned and bundle any number of components, relationships, policies, connections, and credentials.
+
+Models are stored in Meshery's [registry](/concepts/logical/registry) where they can be:
+
+- Discovered and reused by teams
+- Versioned and tagged
+- Shared publicly or kept private
+- Extended and customized
+
+The registry provides a central location for managing and distributing your infrastructure models.
 
 Every entity type is implemented by a [registrant]({{site.baseurl}}/concepts/logical/registry). Without registrants and models, Meshery can't manage any kind of infrastructure.
 
@@ -99,7 +107,16 @@ Meshery provides a relationship evaluation algorithm to ensure desired behavior 
 
 ![Versioning Models](/assets/img/concepts/logical/versioning-meshery-entities.svg)
 
-
 ## Summary
 
 A Model serves as a unit of packaging for Meshery's logical object representation. Models encompass a structured framework that defines the components, relationships, policies, and other elements that constitute a system or application under Meshery's management. Models offer a way to encapsulate the complexities of diverse systems and provide a standardized representation for management and interaction.
+
+Models are a powerful way to define, package and share your infrastructure configurations in Meshery. They provide a consistent, portable format for managing cloud native systems while enabling reuse and collaboration across teams.
+
+By using models, you can:
+
+- Define infrastructure in a standardized way
+- Package related resources together
+- Share and reuse configurations
+- Track changes through versioning
+- Extend and customize for your needs

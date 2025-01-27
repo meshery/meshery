@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { updateProgress } from '../lib/store';
-import { Button, Typography, withStyles } from '@material-ui/core';
+import { Button, Typography } from '@layer5/sistent';
 import { Provider, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -17,34 +17,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { PROMPT_VARIANTS } from '@layer5/sistent';
 
-const styles = (theme) => ({
-  textCenter: {
-    textAlign: 'center',
-  },
-  textEnd: {
-    textAlign: 'end',
-  },
-  gapBottom: {
-    paddingBottom: '0.5rem',
-  },
-  DBBtn: {
-    margin: theme.spacing(0.5),
-    padding: theme.spacing(1),
-    borderRadius: 5,
-    backgroundColor: '#8F1F00',
-    '&:hover': {
-      backgroundColor: '#B32700',
-    },
-  },
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: theme.spacing(2),
-  },
-});
-
 const DatabaseSummary = (props) => {
-  const { classes } = props;
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchText, setSearchText] = useState('');
@@ -155,14 +128,16 @@ const DatabaseSummary = (props) => {
             type="submit"
             variant="contained"
             data-testid="database-reset-button"
-            color="primary"
+            color="error"
+            style={{
+              backgroundColor: '#8F1F00',
+            }}
             size="medium"
             disabled={!CAN(keys.RESET_DATABASE.action, keys.RESET_DATABASE.subject)}
             onClick={handleResetDatabase()}
-            className={classes.DBBtn}
             data-cy="btnResetDatabase"
           >
-            <Typography align="center" variant="subtitle2">
+            <Typography variant="subtitle2" sx={{ textAlign: 'center' }}>
               {' '}
               RESET DATABASE{' '}
             </Typography>
@@ -209,6 +184,4 @@ const DatabaseSummaryTable = (props) => {
   );
 };
 
-export default withStyles(styles, { withTheme: true })(
-  connect(mapStateToProps, mapDispatchToProps)(DatabaseSummaryTable),
-);
+export default connect(mapStateToProps, mapDispatchToProps)(DatabaseSummaryTable);
