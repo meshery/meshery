@@ -23,8 +23,8 @@ test.describe('Extensions Section Tests', () => {
     await expect(enableButton).toBeVisible();
     await expect(enableButton).toBeDisabled();
 
-    // Verify snapshot logo
-    await expect(page.locator('img[src="/static/img/meshmap-snapshot-logo.svg"]')).toBeVisible();
+    // Verify snapshot logo using data-testid
+    await expect(page.getByTestId('kanvas-snapshot-image')).toBeVisible();
   });
 
   test('Verify Performance Analysis Details', async ({ page }) => {
@@ -66,6 +66,8 @@ test.describe('Extensions Section Tests', () => {
   });
 
   test('Verify Meshery Design Embed Details', async ({ page, context }) => {
+    await expect(page.getByTestId('design-embed-learn-more-btn')).toBeVisible();
+
     const [newPage] = await Promise.all([
       context.waitForEvent('page'),
       page.getByTestId('design-embed-learn-more-btn').click(),
@@ -78,6 +80,9 @@ test.describe('Extensions Section Tests', () => {
   test('Verify Meshery Catalog Section Details', async ({ page, context }) => {
     // Verify Catalog section heading using data-testid
     await expect(page.getByTestId('catalog-section-heading')).toBeVisible();
+
+    // Verify catalog toggle switch using data-testid
+    await expect(page.getByTestId('catalog-toggle-switch')).toBeVisible();
 
     // First verify the toggle button functionality
     const toggleButton = page
