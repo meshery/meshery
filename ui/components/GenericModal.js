@@ -1,6 +1,7 @@
 // @ts-check
 import React from 'react';
-import { Modal, Backdrop, Fade } from '@material-ui/core';
+import { Fade } from '@mui/material';
+import { Modal, Backdrop } from '@layer5/sistent';
 
 /**
  *

@@ -19,10 +19,10 @@ import { updateProgress } from '../lib/store';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import ResponsiveDataTable from '../utils/data-table';
-import CustomColumnVisibilityControl from '../utils/custom-column';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
 import useStyles from '../assets/styles/general/tool.styles';
+import { CustomColumnVisibilityControl } from '@layer5/sistent';
 
 const styles = (theme) => ({
   muiRow: {
@@ -439,6 +439,7 @@ const MesheryCredentialComponent = ({ updateProgress, classes, connectionMetadat
 
           } */}
           <CustomColumnVisibilityControl
+            id="ref"
             columns={columns}
             customToolsProps={{ columnVisibility, setColumnVisibility }}
           />
