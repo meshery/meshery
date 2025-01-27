@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { createRef, useCallback, useEffect } from 'react';
 import Slider from 'react-slick';
-import { Grid } from '@material-ui/core';
+import { Grid2 } from '@mui/material';
 // const VerticalCarousel = ({
 //   item,
 //   setActiveIndex
@@ -72,13 +72,11 @@ const VerticalCarousel = ({ handleAfterSlideChange, slides, sliderRef }) => {
   };
 
   return (
-    <>
-      <Grid item id="carousel-div" xs={8}>
-        <Slider {...settings} ref={sliderRef}>
-          {slides}{' '}
-        </Slider>
-      </Grid>
-    </>
+    <Grid2 item id="carousel-div" xs={8}>
+      <Slider {...settings} ref={sliderRef}>
+        {slides}{' '}
+      </Slider>
+    </Grid2>
   );
 };
 
