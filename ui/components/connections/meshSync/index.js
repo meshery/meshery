@@ -1,17 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  TableCell,
-  Tooltip,
-  TableContainer,
-  Table,
-  Grid,
-  TableRow,
-  FormControl,
-  Select,
-  MenuItem,
-  Chip,
-} from '@material-ui/core';
-import Moment from 'react-moment';
+import { Tooltip, Grid, FormControl, Select, MenuItem, Chip, CustomTooltip } from '@layer5/sistent';
+import { TableCell, TableContainer, TableRow, Table } from '@mui/material';
+import { formatDate } from '../../DataFormatter';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import {
@@ -116,7 +106,7 @@ export default function MeshSyncTable(props) {
 
   let colViews = [
     ['metadata.name', 'xs'],
-    ['apiVersion', 'xs'],
+    ['apiVersion', 'na'],
     ['kind', 'm'],
     ['cluster_id', 'na'],
     ['pattern_resources', 'na'],
@@ -253,19 +243,13 @@ export default function MeshSyncTable(props) {
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(value) {
+          const renderValue = formatDate(value);
           return (
-            <Tooltip
-              title={
-                <Moment startOf="day" format="LLL">
-                  {value}
-                </Moment>
-              }
-              placement="top"
-              arrow
-              interactive
-            >
-              <Moment format="LL">{value}</Moment>
-            </Tooltip>
+            <UsesSistent>
+              <CustomTooltip title={renderValue} placement="top" arrow interactive>
+                {renderValue}
+              </CustomTooltip>
+            </UsesSistent>
           );
         },
       },
@@ -295,7 +279,7 @@ export default function MeshSyncTable(props) {
               ? false
               : true;
           return (
-            <>
+            <UsesSistent>
               <FormControl className={classes.chipFormControl}>
                 <Select
                   labelId="demo-simple-select-label"
@@ -354,7 +338,7 @@ export default function MeshSyncTable(props) {
                   ))}
                 </Select>
               </FormControl>
-            </>
+            </UsesSistent>
           );
         },
       },

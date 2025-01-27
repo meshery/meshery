@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/pravega/components/zookeeper-cluster/icons/color/zookeeper-cluster-color.svg
   whiteIcon: assets/img/integrations/pravega/components/zookeeper-cluster/icons/white/zookeeper-cluster-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

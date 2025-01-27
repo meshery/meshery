@@ -12,7 +12,7 @@ import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
 import Slide from '@material-ui/core/Slide';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import { Edit, Search } from '@material-ui/icons';
+import { Edit, Search } from '@mui/icons-material';
 import { TextField } from '@material-ui/core';
 import { Paper } from '@material-ui/core';
 import { deleteKubernetesConfig } from './ConnectionWizard/helpers/kubernetesHelpers';
@@ -21,7 +21,7 @@ import { _ConnectionChip } from './connections/ConnectionChip';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateK8SConfig, updateProgress, updateCapabilities } from '../lib/store';
 import { bindActionCreators } from 'redux';
-import PromptComponent, { PROMPT_VARIANTS } from './PromptComponent';
+import _PromptComponent from './PromptComponent';
 import { iconMedium, iconSmall } from '../css/icons.styles';
 import ExtensionSandbox from './ExtensionSandbox';
 import RemoteComponent from './RemoteComponent';
@@ -40,6 +40,7 @@ import {
   CustomTooltip,
   Typography,
   styled,
+  PROMPT_VARIANTS,
 } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { Colors } from '@/themes/app';
@@ -365,7 +366,7 @@ function K8sContextMenu({
           </details>
         </>
       ),
-      options: ['CONFIRM', 'CANCEL'],
+      primaryOption: 'CONFIRM',
       variant: PROMPT_VARIANTS.DANGER,
       showInfoIcon: `Learn more about the [lifecycle of connections](https://docs.meshery.io/concepts/logical/connections) and what it means to delete a connection.`,
     });
@@ -544,7 +545,7 @@ function K8sContextMenu({
           </div>
         </Slide>
       </div>
-      <PromptComponent ref={deleteCtxtRef} />
+      <_PromptComponent ref={deleteCtxtRef} />
       <ConnectionModal
         isOpenModal={isConnectionOpenModal}
         setIsOpenModal={setIsConnectionOpenModal}

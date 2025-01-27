@@ -34,6 +34,9 @@ components:
   colorIcon: assets/img/integrations/tinkerbell/components/task/icons/color/task-color.svg
   whiteIcon: assets/img/integrations/tinkerbell/components/task/icons/white/task-white.svg
   description: 
+components-count: 6
+relationships: 
+relationship-count: 0
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

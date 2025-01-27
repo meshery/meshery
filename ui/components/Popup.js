@@ -1,6 +1,5 @@
-import { Button, Grid, IconButton, Typography, styled } from '@layer5/sistent';
+import { Button, Grid, IconButton, Typography, styled, useTheme } from '@layer5/sistent';
 import { UsesSistent } from './SistentWrapper';
-import { useTheme } from '@material-ui/core';
 import CloseIcon from '@mui/icons-material/Close';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -118,7 +117,7 @@ export function MesheryExtensionEarlyAccessCard({
   const { push } = useRouter();
   const theme = useTheme();
   const popupImageSrc =
-    theme.palette.type === 'dark' ? '/static/img/aws.svg' : '/static/img/aws-light.svg';
+    theme.palette.mode === 'dark' ? '/static/img/aws.svg' : '/static/img/aws-light.svg';
 
   const handleButtonClick = (e) => {
     if (buttonText === signUpText) {

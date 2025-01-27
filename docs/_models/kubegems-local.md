@@ -30,6 +30,9 @@ components:
   colorIcon: assets/img/integrations/kubegems-local/components/tenant/icons/color/tenant-color.svg
   whiteIcon: assets/img/integrations/kubegems-local/components/tenant/icons/white/tenant-white.svg
   description: 
+components-count: 5
+relationships: 
+relationship-count: 0
 featureList: [
   "Test Kubegems features locally",
   "Develop and debug Kubegems extensions",

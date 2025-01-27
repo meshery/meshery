@@ -34,6 +34,9 @@ components:
   colorIcon: assets/img/integrations/thanos-operator/components/thanos-peer/icons/color/thanos-peer-color.svg
   whiteIcon: assets/img/integrations/thanos-operator/components/thanos-peer/icons/white/thanos-peer-white.svg
   description: 
+components-count: 6
+relationships: 
+relationship-count: 0
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

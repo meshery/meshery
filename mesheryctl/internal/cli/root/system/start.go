@@ -352,58 +352,58 @@ func start() error {
 		//connection to docker-client
 		cli, err := dockerCmd.NewAPIClientFromFlags(cliflags.NewClientOptions(), dockerCfg)
 		if err != nil {
-			utils.Log.Error(ErrCreatingDockerClient(err))
-			return err
-			containers, err := cli.ContainerList(context.Background(), container.ListOptions{
-				Filters: filters.NewArgs(),
-			})
-			//fetch the list of containers
+			return ErrCreatingDockerClient(err)
+		}
+		containers, err := cli.ContainerList(context.Background(), container.ListOptions{
+			Filters: filters.NewArgs(),
+		})
+		//fetch the list of containers
+		if err != nil {
+			return errors.Wrap(err, utils.SystemError("failed to fetch the list of containers"))
+		}
+
+		var mockEndpoint *meshkitutils.MockOptions
+		mockEndpoint = nil
+
+		res := meshkitutils.TcpCheck(&endpoint, mockEndpoint)
+		if res {
+			return errors.New("the endpoint is not accessible")
+		}
+
+		//check for container meshery_meshery_1 running status
+		for _, container := range containers {
+			if container.Names[0] == "/meshery_meshery_1" {
+				//check flag to check successful deployment
+				checkFlag = 0
+				break
+			}
+
+			checkFlag = 1
+		}
+
+		//if meshery_meshery_1 failed to start showing logs
+		//code for logs
+		if checkFlag == 1 {
+			log.Info("Starting Meshery logging . . .")
+			cmdlog := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "logs", "-f")
+			cmdReader, err := cmdlog.StdoutPipe()
 			if err != nil {
-				return errors.Wrap(err, utils.SystemError("failed to fetch the list of containers"))
+				return errors.Wrap(err, utils.SystemError("failed to create stdout pipe"))
 			}
-
-			var mockEndpoint *meshkitutils.MockOptions
-			mockEndpoint = nil
-
-			res := meshkitutils.TcpCheck(&endpoint, mockEndpoint)
-			if res {
-				return errors.New("the endpoint is not accessible")
+			scanner := bufio.NewScanner(cmdReader)
+			go func() {
+				for scanner.Scan() {
+					log.Println(scanner.Text())
+				}
+			}()
+			if err := cmdlog.Start(); err != nil {
+				return errors.Wrap(err, utils.SystemError("failed to start logging"))
 			}
-
-			//check for container meshery_meshery_1 running status
-			for _, container := range containers {
-				if container.Names[0] == "/meshery_meshery_1" {
-					//check flag to check successful deployment
-					checkFlag = 0
-					break
-				}
-
-				checkFlag = 1
-			}
-
-			//if meshery_meshery_1 failed to start showing logs
-			//code for logs
-			if checkFlag == 1 {
-				log.Info("Starting Meshery logging . . .")
-				cmdlog := exec.Command("docker-compose", "-f", utils.DockerComposeFile, "logs", "-f")
-				cmdReader, err := cmdlog.StdoutPipe()
-				if err != nil {
-					return errors.Wrap(err, utils.SystemError("failed to create stdout pipe"))
-				}
-				scanner := bufio.NewScanner(cmdReader)
-				go func() {
-					for scanner.Scan() {
-						log.Println(scanner.Text())
-					}
-				}()
-				if err := cmdlog.Start(); err != nil {
-					return errors.Wrap(err, utils.SystemError("failed to start logging"))
-				}
-				if err := cmdlog.Wait(); err != nil {
-					return errors.Wrap(err, utils.SystemError("failed to wait for command to execute"))
-				}
+			if err := cmdlog.Wait(); err != nil {
+				return errors.Wrap(err, utils.SystemError("failed to wait for command to execute"))
 			}
 		}
+
 	case "kubernetes":
 		kubeClient, err := meshkitkube.New([]byte(""))
 		if err != nil {

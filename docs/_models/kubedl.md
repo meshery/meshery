@@ -66,6 +66,9 @@ components:
   colorIcon: assets/img/integrations/kubedl/components/xg-boost-job/icons/color/xg-boost-job-color.svg
   whiteIcon: assets/img/integrations/kubedl/components/xg-boost-job/icons/white/xg-boost-job-white.svg
   description: 
+components-count: 14
+relationships: 
+relationship-count: 0
 featureList: [
   "Simplifies DL job submission and management",
   "Scales DL workloads across multiple nodes",

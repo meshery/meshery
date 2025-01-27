@@ -1,7 +1,7 @@
 import { NoSsr } from '@mui/material';
 import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
-import { Pagination, PaginationItem } from '@material-ui/lab';
+import { Pagination, PaginationItem } from '@layer5/sistent';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DesignsIcon from '../../../assets/icons/DesignIcon';
@@ -23,6 +23,7 @@ import {
   SearchBar,
   styled,
   useTheme,
+  PROMPT_VARIANTS,
 } from '@layer5/sistent';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import { useEffect, useRef, useState } from 'react';
@@ -42,7 +43,7 @@ import { updateProgress } from '../../../lib/store';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import WorkspaceCard from './workspace-card';
 import { RJSFModalWrapper } from '../../Modal';
-import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
+import _PromptComponent from '../../PromptComponent';
 import { debounce } from 'lodash';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import EnvironmentIcon from '../../../assets/icons/Environment';
@@ -430,7 +431,7 @@ const Workspaces = ({ organization }) => {
     let response = await ref.current.show({
       title: `Delete workspace ?`,
       subtitle: deleteWorkspaceModalContent(workspace.name),
-      options: ['DELETE', 'CANCEL'],
+      primaryOption: 'DELETE',
       variant: PROMPT_VARIANTS.DANGER,
     });
     if (response === 'DELETE') {
@@ -700,11 +701,6 @@ const Workspaces = ({ organization }) => {
                   <Pagination
                     count={Math.ceil(workspacesData?.total_count / pageSize)}
                     page={page + 1}
-                    sx={{
-                      backgroundColor: 'white',
-                      borderRadius: '1rem',
-                      padding: '0.5rem',
-                    }}
                     onChange={debounce((_, page) => setPage(page - 1), 150)}
                     boundaryCount={3}
                     renderItem={(item) => (
@@ -852,7 +848,7 @@ const Workspaces = ({ organization }) => {
               body={`Do you want to delete ${selectedWorkspaces.length} workspace(s) ?`}
               action={handleBulkDeleteWorkspace}
             />
-            <PromptComponent ref={ref} />
+            <_PromptComponent ref={ref} />
           </>
         ) : (
           <DefaultError />

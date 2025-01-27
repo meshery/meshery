@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
 import { withStyles } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
+import AddIcon from '@mui/icons-material/Add';
 import SimpleAccordion from './Accordion';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
@@ -12,7 +12,7 @@ import { iconSmall } from '../../../../css/icons.styles';
 import pluralize from 'pluralize';
 import { Box, Button, Grid, IconButton, Paper, Typography } from '@layer5/sistent';
 import { ArrayFieldWrapper } from '../style';
-import { UsesSistent } from '@/components/SistentWrapper';
+// import { UsesSistent } from '@/components/SistentWrapper';
 
 function getTitleForItem(props) {
   const title = getTitle(props);

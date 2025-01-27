@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { NoSsr, Paper, withStyles } from '@material-ui/core';
+import { Paper } from '@layer5/sistent';
+import { NoSsr } from '@mui/material';
 import MesheryResults from '../../components/MesheryResults';
 import { updatepagepath } from '../../lib/store';
 import { connect } from 'react-redux';
@@ -7,9 +8,7 @@ import { bindActionCreators } from 'redux';
 import Head from 'next/head';
 import { getPath } from '../../lib/path';
 
-const styles = { paper: { maxWidth: '90%', margin: 'auto', overflow: 'hidden' } };
-
-function Results({ classes, updatepagepath }) {
+function Results({ updatepagepath }) {
   useEffect(() => {
     updatepagepath({ path: getPath() });
   }, [updatepagepath]);
@@ -19,7 +18,7 @@ function Results({ classes, updatepagepath }) {
       <Head>
         <title>Performance Test Results | Meshery</title>
       </Head>
-      <Paper className={classes.paper}>
+      <Paper>
         <MesheryResults />
       </Paper>
     </NoSsr>
@@ -30,4 +29,4 @@ const mapDispatchToProps = (dispatch) => ({
   updatepagepath: bindActionCreators(updatepagepath, dispatch),
 });
 
-export default withStyles(styles)(connect(null, mapDispatchToProps)(Results));
+export default connect(null, mapDispatchToProps)(Results);

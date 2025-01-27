@@ -42,6 +42,9 @@ components:
   colorIcon: assets/img/integrations/mysql-operator/components/mysql-user/icons/color/mysql-user-color.svg
   whiteIcon: assets/img/integrations/mysql-operator/components/mysql-user/icons/white/mysql-user-white.svg
   description: 
+components-count: 8
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates MySQL deployment and scaling",
   "Manages backups, restores, and upgrades",

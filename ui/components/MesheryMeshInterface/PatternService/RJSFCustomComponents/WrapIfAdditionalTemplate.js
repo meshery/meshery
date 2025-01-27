@@ -1,5 +1,5 @@
 import React from 'react';
-import DeleteIcon from '@material-ui/icons/Delete';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { ADDITIONAL_PROPERTY_FLAG } from '@rjsf/utils';
 import { iconMedium } from '../../../../css/icons.styles';
 import { FormControl, Grid, IconButton, Input, InputLabel } from '@layer5/sistent';

@@ -23,7 +23,7 @@ export const SecurityTypesConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
       ],
@@ -126,7 +126,7 @@ export const SecurityTypesConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
       ],
@@ -263,7 +263,7 @@ export const SecurityTypesConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
       ],
@@ -369,7 +369,7 @@ export const SecurityTypesConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
       ],
@@ -475,7 +475,7 @@ export const SecurityTypesConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
       ],
