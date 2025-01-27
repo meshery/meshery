@@ -1,8 +1,7 @@
-import VisibilityIcon from '@material-ui/icons/Visibility';
-import VisibilityOffIcon from '@material-ui/icons/VisibilityOff';
 import { Button } from '@material-ui/core';
 import PropTypes from 'prop-types';
 import { iconMedium } from '../css/icons.styles';
+import { OutlinedVisibilityOnIcon, OutlinedVisibilityOffIcon } from '@layer5/sistent';
 
 function CatalogFilter({ catalogVisibility, handleCatalogVisibility, hideCatalog, classes }) {
   return (
@@ -20,9 +19,9 @@ function CatalogFilter({ catalogVisibility, handleCatalogVisibility, hideCatalog
           color="primary"
         >
           {catalogVisibility ? (
-            <VisibilityIcon style={iconMedium} />
+            <OutlinedVisibilityOnIcon style={iconMedium} />
           ) : (
-            <VisibilityOffIcon style={iconMedium} />
+            <OutlinedVisibilityOffIcon style={iconMedium} />
           )}
           <span className={classes.btnText} style={{ marginLeft: '4px' }}>
             {' '}

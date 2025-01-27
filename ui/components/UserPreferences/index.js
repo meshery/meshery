@@ -22,8 +22,8 @@ import {
 } from '@layer5/sistent';
 import NoSsr from '@material-ui/core/NoSsr';
 import { updateUser, updateProgress, toggleCatalogContent } from '../../lib/store';
-import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
-import SettingsCellIcon from '@material-ui/icons/SettingsCell';
+import SettingsRemoteIcon from '@mui/icons-material/SettingsRemote';
+import SettingsCellIcon from '@mui/icons-material/SettingsCell';
 import ExtensionSandbox from '../ExtensionSandbox';
 import RemoteComponent from '../RemoteComponent';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
@@ -112,13 +112,13 @@ const ThemeToggler = ({ handleUpdateUserPref }) => {
     return (
       <UsesSistent>
         <div>
-          <Switch 
-            color="primary" 
-            checked={mode === 'dark'} 
+          <Switch
+            color="primary"
+            checked={mode === 'dark'}
             onChange={() => {
               toggleTheme();
               handleUpdateUserPref(mode === 'dark' ? 'light' : 'dark');
-            }} 
+            }}
           />
           Dark Mode
         </div>
@@ -449,8 +449,8 @@ const UserPreference = (props) => {
                               ? '#3D4F57'
                               : '#293B43'
                             : index % 2 === 0
-                            ? '#E7EFF3'
-                            : '#C9DBE3',
+                              ? '#E7EFF3'
+                              : '#C9DBE3',
                       }}
                     >
                       <Typography variant="body1">{capability.feature}</Typography>
@@ -467,8 +467,8 @@ const UserPreference = (props) => {
                               ? '#3D4F57'
                               : '#293B43'
                             : index % 2 === 0
-                            ? '#E7EFF3'
-                            : '#C9DBE3',
+                              ? '#E7EFF3'
+                              : '#C9DBE3',
                       }}
                     >
                       <Typography variant="body1">{capability.endpoint}</Typography>

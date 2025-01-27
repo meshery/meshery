@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars, no-undef  */
 import { FormGroup, TextField, InputAdornment, MenuItem, Grid } from '@material-ui/core/';
-import BackupIcon from '@material-ui/icons/Backup';
+import BackupIcon from '@mui/icons-material/Backup';
 import { useState } from 'react';
 import { fetchContexts, submitConfig } from '../helpers/kubernetesHelpers';
 import { useNotification } from '../../../utils/hooks/useNotification';

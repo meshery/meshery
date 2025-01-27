@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, withStyles } from '@material-ui/core';
 import Link from 'next/link';
 import { iconMedium } from '../../css/icons.styles';
-import AddIcon from '@material-ui/icons/AddCircleOutline';
+import AddIcon from '@mui/icons-material/AddCircleOutline';
 
 const style = (theme) => ({
   addIcon: {

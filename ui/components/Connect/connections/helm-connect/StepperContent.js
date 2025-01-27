@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Grid, Box } from '@material-ui/core';
-import { Alert, AlertTitle } from '@material-ui/lab';
+import { Alert, AlertTitle } from '@mui/material';
 import { ConnectAppContent, FinishContent, SelectRepositoryContent } from './constants';
 import Router, { useRouter } from 'next/router';
 import { useTheme } from '@material-ui/core';
@@ -18,7 +18,7 @@ import { useGetSchemaQuery } from '../../../../rtk-query/schema';
 import StepperContent from '../../stepper/StepperContentWrapper';
 import RJSFWrapper from '../../../MesheryMeshInterface/PatternService/RJSF_wrapper';
 import debounce from 'lodash/debounce';
-import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import { selectCompSchema } from '../../../RJSFUtils/common';
 
 export const ConnectApp = ({ handleNext, setSharedData }) => {
