@@ -4,10 +4,7 @@ export const ToolWrapper = styled(Box)(({ theme }) => ({
   marginBottom: '3rem',
   display: 'flex',
   justifyContent: 'space-between',
-  backgroundColor:
-    theme.palette.mode === 'dark'
-      ? theme.palette.text.inverse
-      : theme.palette.background.constant?.white,
+  backgroundColor: theme.palette.background.card,
   boxShadow: '0px 2px 4px -1px rgba(0,0,0,0.2)',
   height: '4rem',
   padding: '0.68rem',
@@ -21,10 +18,8 @@ export const MeshModelToolbar = styled(Box, {
 })(({ theme, isAnimated }) => ({
   display: 'flex',
   justifyContent: 'space-between',
-  backgroundColor:
-    theme.palette.mode === 'dark'
-      ? theme.palette.text.inverse
-      : theme.palette.background.constant?.white,
+  backgroundColor: theme.palette.background.card,
+
   boxShadow: '0px 2px 4px -1px rgba(0,0,0,0.2)',
   height: isAnimated ? '4rem' : '0rem',
   padding: isAnimated ? '0.68rem' : '0rem',
@@ -38,10 +33,8 @@ export const MeshModelToolbar = styled(Box, {
 export const MainContainer = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'isAnimated',
 })(({ theme, isAnimated }) => ({
-  backgroundColor:
-    theme.palette.mode === 'dark'
-      ? theme.palette.text.inverse
-      : theme.palette.background.constant?.white,
+  backgroundColor: theme.palette.background.card,
+
   height: isAnimated ? '73vh' : '25rem',
   display: 'flex',
   position: 'relative',
@@ -102,10 +95,7 @@ export const CardStyle = styled(Box, {
     marginTop: '0.7rem',
   }),
   ...(isSelected && {
-    backgroundColor:
-      theme.palette.mode === 'dark'
-        ? theme.palette.text.inverse
-        : theme.palette.background.constant?.white,
+    backgroundColor: theme.palette.background.card,
   }),
   [theme.breakpoints.down('md')]: {
     ...(!isAnimated && {
@@ -169,10 +159,8 @@ export const TreeContainer = styled(Box)(({ theme }) => ({
 export const TreeWrapper = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'isAnimated',
 })(({ theme, isAnimated }) => ({
-  backgroundColor:
-    theme.palette.mode === 'dark'
-      ? theme.palette.text.inverse
-      : theme.palette.background.constant?.white,
+  backgroundColor: theme.palette.background.card,
+
   display: 'flex',
   gap: '1rem',
   padding: '1rem',
