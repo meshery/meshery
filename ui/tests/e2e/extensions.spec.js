@@ -11,49 +11,52 @@ test.describe('Extensions Section Tests', () => {
     await extensionsNav.click();
   });
 
-  test('Verify Kanvas Snapshot details', async ({ page }) => {
-    await expect(
-      page.locator('.MuiTypography-h5:has-text("GitHub Action: Kanvas Snapshot")'),
-    ).toBeVisible();
+  test('Verify Kanvas Snapshot using data-testid', async ({ page }) => {
+    // Verify heading using data-testid
+    await expect(page.getByTestId('kanvas-snapshot-heading')).toBeVisible();
+    
+    // Verify description using data-testid
+    await expect(page.getByTestId('kanvas-snapshot-description')).toBeVisible();
+    
+    // Verify enable button using data-testid
+    const enableButton = page.getByTestId('kanvas-snapshot-enable-btn');
+    await expect(enableButton).toBeVisible();
+    await expect(enableButton).toBeDisabled();
 
-    // Verify the "Enable" button
-    const enableButton = page.locator('.MuiButton-label:has-text("Enable")').first();
-    await enableButton.click();
-
-    await expect(page.locator('img[src*="meshmap-snapshot-logo"]')).toBeVisible();
+    // Verify snapshot logo
+    await expect(page.locator('img[src="/static/img/meshmap-snapshot-logo.svg"]')).toBeVisible();
   });
 
   test('Verify Performance Analysis Details', async ({ page }) => {
-    await expect(
-      page.locator('.MuiTypography-h5:has-text("GitHub Action: Performance Analysis")'),
-    ).toBeVisible();
-
-    const performanceEnableButton = page.locator('.MuiButton-label:has-text("Enable")').nth(1);
+    // Verify heading using data-testid
+    await expect(page.getByTestId('performance-analysis-heading')).toBeVisible();
+    
+    // Verify enable button using data-testid
+    const performanceEnableButton = page.getByTestId('performance-analysis-enable-btn');
     await expect(performanceEnableButton).toBeVisible();
+    await expect(performanceEnableButton).toBeDisabled();
   });
 
-  // Kanvas Component Tests
   test('Verify Kanvas Details', async ({ page, context }) => {
-    await expect(page.locator('.MuiTypography-h5:has-text("Kanvas")').first()).toBeVisible();
+    // Verify Kanvas heading using data-testid
+    await expect(page.getByTestId('kanvas-signup-heading')).toBeVisible();
 
     const [newPage] = await Promise.all([
       context.waitForEvent('page'),
-      page.locator('.MuiButton-label:has-text("Sign Up")').click(),
+      page.getByTestId('kanvas-signup-btn').click(),
     ]);
 
     await expect(newPage).toHaveURL('https://docs.layer5.io/kanvas/');
     await newPage.close();
   });
 
-  // Meshery Docker Extension Tests
   test('Verify Meshery Docker Extension Details', async ({ page, context }) => {
-    await expect(
-      page.locator('.MuiTypography-h5:has-text("Meshery Docker Extension")'),
-    ).toBeVisible();
+    // Verify Docker Extension heading using data-testid
+    await expect(page.getByTestId('docker-extension-heading')).toBeVisible();
 
     const [newPage] = await Promise.all([
       context.waitForEvent('page'),
-      page.locator('.MuiButton-label:has-text("Download")').click(),
+      page.getByTestId('docker-extension-download-btn').click(),
     ]);
 
     await expect(newPage).toHaveURL(
@@ -65,7 +68,7 @@ test.describe('Extensions Section Tests', () => {
   test('Verify Meshery Design Embed Details', async ({ page, context }) => {
     const [newPage] = await Promise.all([
       context.waitForEvent('page'),
-      page.locator('.MuiButton-label:has-text("Learn More")').click(),
+      page.getByTestId('design-embed-learn-more-btn').click(),
     ]);
 
     await expect(newPage).toHaveURL('https://docs.layer5.io/kanvas/designer/embedding-designs/');
@@ -73,6 +76,9 @@ test.describe('Extensions Section Tests', () => {
   });
 
   test('Verify Meshery Catalog Section Details', async ({ page, context }) => {
+    // Verify Catalog section heading using data-testid
+    await expect(page.getByTestId('catalog-section-heading')).toBeVisible();
+
     // First verify the toggle button functionality
     const toggleButton = page
       .locator(
@@ -86,7 +92,7 @@ test.describe('Extensions Section Tests', () => {
     await toggleButton.click();
     await expect(toggleButton).toBeChecked(!initialState);
 
-    // Verify the Meshert Catalog Link
+    // Verify the Meshery Catalog Link
     const catalogLink = page.locator('a[href="https://meshery.io/catalog"]');
     const [newPage] = await Promise.all([context.waitForEvent('page'), catalogLink.click()]);
 
@@ -95,7 +101,6 @@ test.describe('Extensions Section Tests', () => {
     await newPage.close();
   });
 
-  // Meshery Adapter for Istio Section Tests
   test('Verify Meshery Adapter for Istio Section', async ({ page, context }) => {
     // Find the Istio section container to scope our selectors
     const istioSection = page.locator('div', {
