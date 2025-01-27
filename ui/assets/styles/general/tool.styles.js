@@ -1,7 +1,7 @@
 import { styled, Box, tabMenu } from '@layer5/sistent';
 
 export const ToolWrapper = styled(Box)(({ theme }) => ({
-  marginBottom: '3rem',
+  marginBottom: '2rem',
   display: 'flex',
   justifyContent: 'space-between',
   backgroundColor: theme.palette.background.card,

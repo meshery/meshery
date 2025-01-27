@@ -1072,11 +1072,11 @@ const ConnectionTable = ({
   }, [environmentsError, connectionError, isEnvironmentsSuccess]);
   return (
     <>
-      <ToolWrapper style={{ marginBottom: '5px', marginTop: '-30px' }}>
-        <div className={classes.createButton}>
-          <MesherySettingsEnvButtons />
-        </div>
-        <UsesSistent>
+      <UsesSistent>
+        <ToolWrapper style={{ marginBottom: '5px', marginTop: '-30px' }}>
+          <div className={classes.createButton}>
+            <MesherySettingsEnvButtons />
+          </div>
           <div
             className={classes.searchAndView}
             style={{
@@ -1108,8 +1108,8 @@ const ConnectionTable = ({
               customToolsProps={{ columnVisibility, setColumnVisibility }}
             />
           </div>
-        </UsesSistent>
-      </ToolWrapper>
+        </ToolWrapper>
+      </UsesSistent>
       <UsesSistent>
         <ResponsiveDataTable
           data={connections}
