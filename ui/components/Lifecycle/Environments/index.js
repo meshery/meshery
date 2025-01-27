@@ -6,7 +6,9 @@ import { withRouter } from 'next/router';
 import { debounce } from 'lodash';
 import { Delete } from '@mui/icons-material';
 import { NoSsr } from '@mui/material';
-import { ToolWrapper, CreateButtonWrapper, BulkActionWrapper } from '../Workspaces/index.js';
+import { CreateButtonWrapper, BulkActionWrapper } from '../Workspaces/index.js';
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
+
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import EnvironmentCard from './environment-card';
 import EnvironmentIcon from '../../../assets/icons/Environment';
