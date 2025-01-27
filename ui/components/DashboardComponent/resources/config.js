@@ -5,6 +5,8 @@ import { StorageTableConfig } from './storage/config';
 import { WorkloadTableConfig } from './workloads/config';
 import { NamespaceTableConfig } from './namespace/config';
 import { NodeTableConfig } from './nodes/config';
+import { CustomResourceConfig } from './crds/config';
+import _ from 'lodash';
 
 export const ResourcesConfig = {
   Node: {
@@ -35,14 +37,18 @@ export const ResourcesConfig = {
     tableConfig: StorageTableConfig,
     submenu: true,
   },
+  CRDS: {
+    tableConfig: CustomResourceConfig,
+    submenu: true,
+  },
 };
 
 export const ALL_VIEW = 'all';
 export const SINGLE_VIEW = 'single';
 
-const ResourceMenuConfig = {
+export const ResourceMenuConfig = {
   Node: [],
-  Namespace: ['Namespace'],
+  Namespace: [],
   Workload: [
     'Pod',
     'Deployment',
@@ -66,7 +72,7 @@ const ResourceMenuConfig = {
     'Leases',
     'MutatingWebhookConfiguration',
   ],
-  Network: ['Service', 'Endpoints', 'Ingress', 'IngressClass', 'NetworkPoliciy'],
+  Network: ['Service', 'Endpoints', 'EndpointSlice', 'Ingress', 'IngressClass', 'NetworkPoliciy'],
   Security: ['ServiceAccount', 'ClusterRole', 'Role', 'ClusterRoleBinding', 'RoleBinding'],
   Storage: ['PersistentVolume', 'PersistentVolumeClaim', 'StorageClass'],
 };
@@ -88,8 +94,18 @@ export function generateDynamicURL(kind) {
       resource = kind;
       break;
     }
+    resourceCategory = 'CRDS';
+    resource = kind;
   }
 
   // Construct the URL based on the found category and resource
   return `?resourceCategory=${resourceCategory}&resource=${resource}`;
 }
+
+export const getAllCustomResourceDefinitionsKinds = (kinds) => {
+  const resourceMenuArray = ['Node', 'Namespace', ..._.flatten(Object.values(ResourceMenuConfig))];
+  const customResources = kinds?.filter((kind) => {
+    return !resourceMenuArray.includes(kind.Kind);
+  });
+  return customResources ?? [];
+};

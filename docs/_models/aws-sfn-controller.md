@@ -26,6 +26,9 @@ components:
   colorIcon: assets/img/integrations/aws-sfn-controller/components/state-machine/icons/color/state-machine-color.svg
   whiteIcon: assets/img/integrations/aws-sfn-controller/components/state-machine/icons/white/state-machine-white.svg
   description: 
+components-count: 4
+relationships: 
+relationship-count: 0
 featureList: [
   "Step Functions is based on state machines and tasks.",
   "Supports Catch and Retry statements",

@@ -10,6 +10,9 @@ integrations-category: Runtime
 integrations-subcategory: Container Runtime
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Securely isolates sensitive workloads",
   "Protects data in use and at rest",

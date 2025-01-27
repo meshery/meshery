@@ -16,7 +16,7 @@ import {
   LinkedinIcon,
   FacebookIcon,
 } from 'react-share';
-import ReplyIcon from '@material-ui/icons/Reply';
+import ReplyIcon from '@mui/icons-material/Reply';
 import IconButton from '@material-ui/core/IconButton';
 import Paper from '@material-ui/core/Paper';
 import { ClickAwayListener, Fade, Popper } from '@material-ui/core';

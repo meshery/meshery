@@ -10,6 +10,9 @@ integrations-category: Platform
 integrations-subcategory: Kubernetes
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Single binary distribution",
   "Low resource footprint",

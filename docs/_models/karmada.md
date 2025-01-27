@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/karmada/components/karmada/icons/color/karmada-color.svg
   whiteIcon: assets/img/integrations/karmada/components/karmada/icons/white/karmada-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Simplifies multi-cluster management",
   "Provides a unified control plane",

@@ -71,7 +71,7 @@ import { useRef } from 'react';
 import { updateProgress } from 'lib/store';
 import ModelIcon from '@/assets/icons/ModelIcon';
 import { iconMedium } from '../../css/icons.styles';
-import AddIcon from '@material-ui/icons/AddCircleOutline';
+import AddIcon from '@mui/icons-material/AddCircleOutline';
 import LanOutlinedIcon from '@mui/icons-material/LanOutlined';
 const meshmodelStyles = (theme) => ({
   wrapperClss: {
@@ -1665,7 +1665,7 @@ const TabBar = ({ animate, handleUploadImport, handleGenerateModel }) => {
           disabled={false} //TODO: Need to make key for this component
         >
           <AddIcon style={iconMedium} />
-          Generate
+          &nbsp; Generate
         </Button>
       </div>
       <DisableButton

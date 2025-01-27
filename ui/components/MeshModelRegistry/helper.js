@@ -113,8 +113,18 @@ export const removeDuplicateVersions = (data) => {
 };
 
 /**
- * Function takes theme type and returns the theme object
- * @param {object} - theme type
+ * To style JSON viewing in react-json-tree.
+ * Refer to base-16 theme styling guidelines for more info.
+ * https://github.com/chriskempson/base16/blob/main/styling.md
+ * @type {Object}
+ * @property {string} base00 - BACKGROUND_COLOR
+ * @property {string} base02 - OBJECT_OUTLINE_COLOR
+ * @property {string} base04 - OBJECT_DETAILS_COLOR
+ * @property {string} base07 - OBJECT_KEY_COLOR
+ * @property {string} base09 - ITEM_STRING_COLOR, DATE_COLOR, STRING_COLOR
+ * @property {string} base0A - SYMBOL_COLOR, FUNCTION_COLOR, UNDEFINED_COLOR, NULL_COLOR
+ * @property {string} base0D - ITEM_STRING_EXPANDED_COLOR, ARROW_COLOR
+ * @property {string} base0E - BOOLEAN_COLOR, NUMBER_COLOR
  */
 export const reactJsonTheme = (themeType) => ({
   base00: themeType === 'dark' ? '#303030' : '#ffffff',

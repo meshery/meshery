@@ -22,17 +22,18 @@ import {
   SearchBar,
   UniversalFilter,
   ResponsiveDataTable,
+  PROMPT_VARIANTS,
 } from '@layer5/sistent';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import { getVisibilityColums } from '../../utils/utils';
 import useStyles from '../../assets/styles/general/tool.styles';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { updateProgress, useLegacySelector } from '../../lib/store';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { iconMedium } from '../../css/icons.styles';
-import PromptComponent, { PROMPT_VARIANTS } from '../PromptComponent';
+import _PromptComponent from '../PromptComponent';
 import resetDatabase from '../graphql/queries/ResetDatabaseQuery';
 import classNames from 'classnames';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
@@ -180,8 +181,8 @@ const ConnectionTable = ({
     kind: selectedFilter
       ? JSON.stringify([selectedFilter])
       : kindFilter
-      ? JSON.stringify([kindFilter])
-      : '',
+        ? JSON.stringify([kindFilter])
+        : '',
   });
   const {
     data: environmentsResponse,
@@ -337,11 +338,11 @@ const ConnectionTable = ({
       let response = await modalRef.current.show({
         title: `Delete Connection`,
         subtitle: `Are you sure that you want to delete the connection?`,
-        options: ['Delete', 'Cancel'],
+        primaryOption: 'DELETE',
         showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
         variant: PROMPT_VARIANTS.DANGER,
       });
-      if (response === 'Delete') {
+      if (response === 'DELETE') {
         const requestBody = JSON.stringify({
           [connectionId]: CONNECTION_STATES.DELETED,
         });
@@ -355,11 +356,11 @@ const ConnectionTable = ({
       let response = await modalRef.current.show({
         title: `Delete Connections`,
         subtitle: `Are you sure that you want to delete the connections?`,
-        options: ['Delete', 'Cancel'],
+        primaryOption: 'DELETE',
         showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
         variant: PROMPT_VARIANTS.DANGER,
       });
-      if (response === 'Delete') {
+      if (response === 'DELETE') {
         // let bulkConnections = {}
         // selected.data.map(({ index }) => {
         //   bulkConnections = {
@@ -401,7 +402,7 @@ const ConnectionTable = ({
       let response = await modalRef.current.show({
         title: `Flush MeshSync data for ${connection.metadata?.name} ?`,
         subtitle: `Are you sure to Flush MeshSync data for “${connection.metadata?.name}”? Fresh MeshSync data will be repopulated for this context, if MeshSync is actively running on this cluster.`,
-        options: ['PROCEED', 'CANCEL'],
+        primaryOption: 'PROCEED',
         variant: PROMPT_VARIANTS.WARNING,
       });
       if (response === 'PROCEED') {
@@ -476,7 +477,7 @@ const ConnectionTable = ({
       .unwrap()
       .then(() => {
         notify({
-          message: `Connection status updated successfully`,
+          message: `Connection status updated`,
           event_type: EVENT_TYPES.SUCCESS,
         });
       })
@@ -494,9 +495,9 @@ const ConnectionTable = ({
     let response = await modalRef.current.show({
       title: `Connection Status Transition`,
       subtitle: `Are you sure that you want to transition the connection status to ${e.target.value.toUpperCase()}?`,
-      options: ['Confirm', 'Cancel'],
+      primaryOption: 'Confirm',
       showInfoIcon: `Learn more about the [lifecycle of connections and the behavior of state transitions](https://docs.meshery.io/concepts/logical/connections) in Meshery Docs.`,
-      // variant: PROMPT_VARIANTS.CONFIRMATION,
+      variant: PROMPT_VARIANTS.WARNING,
     });
     if (response === 'Confirm') {
       const requestBody = JSON.stringify({
@@ -1121,7 +1122,7 @@ const ConnectionTable = ({
           columnVisibility={columnVisibility}
         />
       </UsesSistent>
-      <PromptComponent ref={modalRef} />
+      <_PromptComponent ref={modalRef} />
       <Popover
         open={open}
         anchorEl={anchorEl}

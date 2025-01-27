@@ -1,11 +1,11 @@
-import MomentUtils from '@date-io/moment';
 import { NoSsr, Typography } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Hidden from '@material-ui/core/Hidden';
 import { ThemeProvider, withStyles } from '@material-ui/core/styles';
-import { CheckCircle, Error, Info, Warning } from '@material-ui/icons';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 // import 'billboard.js/dist/theme/insight.min.css';
 import 'billboard.js/dist/theme/dark.min.css';
 // import 'billboard.js/dist/billboard. min.css';
@@ -125,8 +125,8 @@ const Footer = ({ classes, capabilitiesRegistry, handleL5CommunityClick }) => {
         capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
           ? classes.playgFooter
           : theme.palette.type === 'dark'
-          ? classes.footerDark
-          : classes.footer
+            ? classes.footerDark
+            : classes.footer
       }
     >
       <Typography
@@ -729,8 +729,6 @@ class MesheryApp extends App {
       );
     });
 
-    const canShowNav = !this.state.isFullScreenMode && uiConfig?.components?.navigator !== false;
-
     return (
       <LoadingScreen message={randomLoadingMessage} isLoading={this.state.isLoading}>
         <DynamicComponentProvider>
@@ -741,32 +739,15 @@ class MesheryApp extends App {
                   <LoadSessionGuard>
                     <div className={classes.root}>
                       <CssBaseline />
-                      {canShowNav && (
-                        <nav
-                          className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer}
-                          data-testid="navigation"
-                          id="left-navigation-bar"
-                          style={{ height: '100%', overflow: 'visible' }}
-                        >
-                          <Hidden smUp implementation="js">
-                            <Navigator
-                              variant="temporary"
-                              open={this.state.mobileOpen}
-                              onClose={this.handleDrawerToggle}
-                              onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
-                              isDrawerCollapsed={isDrawerCollapsed}
-                              updateExtensionType={this.updateExtensionType}
-                            />
-                          </Hidden>
-                          <Hidden xsDown implementation="css">
-                            <Navigator
-                              onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
-                              isDrawerCollapsed={isDrawerCollapsed}
-                              updateExtensionType={this.updateExtensionType}
-                            />
-                          </Hidden>
-                        </nav>
-                      )}
+                      <NavigationBar
+                        isDrawerCollapsed={isDrawerCollapsed}
+                        classes={classes}
+                        mobileOpen={this.state.mobileOpen}
+                        handleDrawerToggle={this.handleDrawerToggle}
+                        handleCollapseDrawer={this.handleCollapseDrawer}
+                        isFullScreenMode={this.state.isFullScreenMode}
+                        updateExtensionType={this.updateExtensionType}
+                      />
                       <div className={classes.appContent}>
                         <SnackbarProvider
                           anchorOrigin={{
@@ -813,7 +794,7 @@ class MesheryApp extends App {
                                 padding: this.props.extensionType === 'navigator' && '0px',
                               }}
                             >
-                              <MuiPickersUtilsProvider utils={MomentUtils}>
+                              <LocalizationProvider dateAdapter={AdapterMoment}>
                                 <ErrorBoundary customFallback={CustomErrorFallback}>
                                   <Component
                                     pageContext={this.pageContext}
@@ -824,7 +805,7 @@ class MesheryApp extends App {
                                     {...pageProps}
                                   />
                                 </ErrorBoundary>
-                              </MuiPickersUtilsProvider>
+                              </LocalizationProvider>
                             </main>
                           </NotificationCenterProvider>
                         </SnackbarProvider>
@@ -888,9 +869,9 @@ const MesheryAppWrapper = (props) => {
             <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
             <title>Meshery</title>
           </Head>
-          <MuiPickersUtilsProvider utils={MomentUtils}>
+          <LocalizationProvider dateAdapter={AdapterMoment}>
             <MesheryWithRedux {...props} />
-          </MuiPickersUtilsProvider>
+          </LocalizationProvider>
         </Provider>
       </Provider>
     </Provider>
@@ -907,3 +888,54 @@ export default withStyles(styles)(
     deserializeState: (state) => fromJS(state),
   })(MesheryAppWrapper),
 );
+
+const NavigationBar = ({
+  isDrawerCollapsed,
+  classes,
+  mobileOpen,
+  handleDrawerToggle,
+  handleCollapseDrawer,
+  isFullScreenMode,
+  updateExtensionType,
+}) => {
+  const theme = useTheme();
+  const canShowNav = !isFullScreenMode && uiConfig?.components?.navigator !== false;
+
+  if (!canShowNav) {
+    return null;
+  }
+
+  return (
+    <nav
+      className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer}
+      data-testid="navigation"
+      id="left-navigation-bar"
+      style={{
+        height: '100%',
+        overflow: 'visible',
+        paddingRight: '4rem',
+        [theme.breakpoints.up('xs')]: {
+          paddingRight: '0',
+        },
+      }}
+    >
+      <Hidden smUp implementation="js">
+        <Navigator
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          onCollapseDrawer={(open = null) => handleCollapseDrawer(open)}
+          isDrawerCollapsed={isDrawerCollapsed}
+          updateExtensionType={updateExtensionType}
+        />
+      </Hidden>
+      <Hidden xsDown implementation="css">
+        <Navigator
+          onCollapseDrawer={(open = null) => handleCollapseDrawer(open)}
+          isDrawerCollapsed={isDrawerCollapsed}
+          updateExtensionType={updateExtensionType}
+        />
+      </Hidden>
+    </nav>
+  );
+};

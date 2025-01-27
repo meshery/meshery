@@ -188,6 +188,16 @@ const MeshAdapterConfigComponent = (props) => {
     if (typeof newValue !== 'undefined') {
       setMeshLocationURL(newValue);
       setMeshLocationURLError(false);
+      // If this is a newly created option, add it to the adapter URLs list
+      if (newValue && newValue.__isNew__) {
+        setSetAdapterURLs((prevOptions) => [
+          ...prevOptions,
+          {
+            value: newValue.value,
+            label: newValue.value,
+          },
+        ]);
+      }
     }
   };
   const handleDeployPortChange = (newValue) => {
@@ -485,6 +495,7 @@ const MeshAdapterConfigComponent = (props) => {
               <Button
                 type="submit"
                 variant="contained"
+                data-testid="adapter-undeploy-button"
                 color="primary"
                 size="large"
                 onClick={handleAdapterUndeploy}
@@ -501,6 +512,7 @@ const MeshAdapterConfigComponent = (props) => {
               <Button
                 type="submit"
                 variant="contained"
+                data-testid="adapter-connect-button"
                 color="primary"
                 size="large"
                 onClick={handleSubmit}
@@ -520,6 +532,7 @@ const MeshAdapterConfigComponent = (props) => {
                 value={selectedAvailableAdapter}
                 // placeholder={'Mesh Adapter URL'}
                 label="Available Adapters"
+                data-testid="adapters-available-label"
                 error={selectedAvailableAdapterError}
               />
             </Grid>
@@ -540,6 +553,7 @@ const MeshAdapterConfigComponent = (props) => {
                 <Button
                   type="submit"
                   variant="contained"
+                  data-testid="adapter-deploy-button"
                   color="primary"
                   size="large"
                   onClick={handleAdapterDeploy}

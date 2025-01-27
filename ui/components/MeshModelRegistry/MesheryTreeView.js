@@ -12,7 +12,7 @@ import StyledTreeItem from './StyledTreeItem';
 import { useRouter } from 'next/router';
 import { getFilteredDataForDetailsComponent, groupRelationshipsByKind } from './helper';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import _ from 'lodash';
 import CollapseAllIcon from '@/assets/icons/CollapseAll';
 import ExpandAllIcon from '@/assets/icons/ExpandAll';
@@ -279,7 +279,7 @@ const RelationshipTree = ({
                 key={index}
                 nodeId={`${idForKind}.${relationship.id}`}
                 data-id={`${idForKind}.${relationship.id}`}
-                labelText={relationship.subType}
+                labelText={`${relationship.subType} (${relationship.model.name})`}
                 onClick={() => {
                   setShowDetailsData({
                     type: RELATIONSHIPS,
