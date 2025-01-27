@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import MenuIcon from '@material-ui/icons/Menu';
+import MenuIcon from '@mui/icons-material/Menu';
 import { useRouter } from 'next/router';
 import { Provider, connect } from 'react-redux';
 import { store } from '../store';
@@ -11,9 +11,10 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { NavigationNavbar } from '@layer5/sistent';
-import { Popover, IconButton } from '@material-ui/core';
+import { NavigationNavbar, IconButton } from '@layer5/sistent';
+import { Popover } from '@mui/material';
 import theme from '@/themes/app';
+import { UsesSistent } from './SistentWrapper';
 
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
@@ -152,7 +153,7 @@ const HeaderMenu = (props) => {
   const id = open ? 'menu-popover' : undefined;
 
   return (
-    <div>
+    <UsesSistent>
       <IconButton
         aria-describedby={id}
         onClick={handleClick}
@@ -189,7 +190,7 @@ const HeaderMenu = (props) => {
           }}
         />
       </Popover>
-    </div>
+    </UsesSistent>
   );
 };
 

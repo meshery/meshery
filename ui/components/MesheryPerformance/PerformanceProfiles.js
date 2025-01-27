@@ -14,9 +14,9 @@ import {
   Typography,
   withStyles,
 } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/AddCircleOutline';
-import EditIcon from '@material-ui/icons/Edit';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
+import AddIcon from '@mui/icons-material/AddCircleOutline';
+import EditIcon from '@mui/icons-material/Edit';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 
 import {
   CustomColumnVisibilityControl,

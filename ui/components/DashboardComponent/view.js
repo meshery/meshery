@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowBack } from '@material-ui/icons';
+import { ArrowBack } from '@mui/icons-material';
 import { TooltipIconButton } from '../../utils/TooltipButton';
 import { Paper, Typography } from '@material-ui/core';
 import { Box, ErrorBoundary, OperatorDataFormatter, useResourceCleanData } from '@layer5/sistent';
@@ -70,7 +70,6 @@ const View = (props) => {
                   router.back();
                   setView(ALL_VIEW);
                 }}
-                style={{ color: 'inherit' }}
               >
                 <ArrowBack />
               </TooltipIconButton>

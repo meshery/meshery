@@ -1,7 +1,7 @@
 import { NoSsr } from '@mui/material';
 import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
-import { Pagination, PaginationItem } from '@material-ui/lab';
+import { Pagination, PaginationItem } from '@layer5/sistent';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DesignsIcon from '../../../assets/icons/DesignIcon';
@@ -701,11 +701,6 @@ const Workspaces = ({ organization }) => {
                   <Pagination
                     count={Math.ceil(workspacesData?.total_count / pageSize)}
                     page={page + 1}
-                    sx={{
-                      backgroundColor: 'white',
-                      borderRadius: '1rem',
-                      padding: '0.5rem',
-                    }}
                     onChange={debounce((_, page) => setPage(page - 1), 150)}
                     boundaryCount={3}
                     renderItem={(item) => (
