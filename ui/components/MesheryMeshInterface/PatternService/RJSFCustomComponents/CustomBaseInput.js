@@ -12,7 +12,6 @@ import { CustomTextTooltip } from '../CustomTextTooltip';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
-// import { makeStyles } from '@material-ui/styles';
 import { CustomInputLabel } from '../style';
 import { UsesSistent } from '@/components/SistentWrapper';
 
@@ -45,7 +44,7 @@ const BaseInput = (props) => {
       <UsesSistent>
         <div key={props.id} style={xRjsfGridArea ? {} : style}>
           {xRjsfGridArea && (
-            <InputLabel htmlFor={props.id} required={isRequired}>
+            <InputLabel htmlFor={props.id} sx={{ fontSize: '0.8rem' }} required={isRequired}>
               {prettifiedName}
             </InputLabel>
           )}
@@ -56,7 +55,7 @@ const BaseInput = (props) => {
             overrideFlag={props.formContext.overrideFlag}
             type={props.options?.inputType}
             key={props.id}
-            style={{ width: '100%' }}
+            style={{ width: '100%', fontSize: '0.8rem' }}
             disabled={props?.disabled || props?.readonly}
             value={
               props.options?.inputType === 'file'

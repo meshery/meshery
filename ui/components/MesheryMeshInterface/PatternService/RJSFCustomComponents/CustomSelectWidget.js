@@ -67,7 +67,7 @@ export default function CustomSelectWidget({
     <>
       <UsesSistent>
         {xRjsfGridArea && (
-          <InputLabel required={required} htmlFor={id}>
+          <InputLabel sx={{ fontSize: '0.8rem' }} required={required} htmlFor={id}>
             {labelValue(label, hideLabel || !label, false)}
           </InputLabel>
         )}
@@ -79,7 +79,7 @@ export default function CustomSelectWidget({
           disabled={disabled || readonly}
           autoFocus={autofocus}
           placeholder={placeholder}
-          style={{ width: '100%', marginTop: '7px' }}
+          style={{ width: '100%', marginTop: '7px', fontSize: '0.8rem' }}
           label={xRjsfGridArea ? '' : labelValue(label, hideLabel || !label, false)}
           error={rawErrors?.length > 0}
           onChange={_onChange}

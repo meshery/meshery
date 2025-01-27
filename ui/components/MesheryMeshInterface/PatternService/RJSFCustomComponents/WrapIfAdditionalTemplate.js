@@ -29,7 +29,7 @@ const WrapIfAdditionalTemplate = ({
     <Grid container key={`${id}-key`} alignItems="center" spacing={2} className={classNames}>
       <Grid item xs>
         <FormControl fullWidth={true} required={required}>
-          <InputLabel>{keyLabel}</InputLabel>
+          <InputLabel sx={{ fontSize: '0.8rem' }}>{keyLabel}</InputLabel>
           <Input
             autoFocus={true}
             defaultValue={value}

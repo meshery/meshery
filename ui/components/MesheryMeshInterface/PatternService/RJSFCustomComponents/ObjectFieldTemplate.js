@@ -1,6 +1,6 @@
 import React from 'react';
 import { canExpand } from '@rjsf/utils';
-import { CssBaseline, withStyles } from '@material-ui/core';
+import { CssBaseline } from '@material-ui/core';
 import AddIcon from '../../../../assets/icons/AddIcon';
 import { Box, Grid, IconButton, Typography, useTheme } from '@layer5/sistent';
 import { CustomTextTooltip } from '../CustomTextTooltip';
@@ -13,19 +13,6 @@ import { iconMedium, iconSmall } from '../../../../css/icons.styles';
 import { calculateGrid } from '../helper';
 import { ObjectFieldGrid } from '../style';
 
-const styles = () => ({
-  // objectFieldGrid: {
-  //   padding: '.5rem',
-  //   paddingTop: '0.7rem',
-  //   // backgroundColor: theme.palette.type === 'dark' ? '#363636' : '#ffffff',
-  //   width: '100%',
-  //   margin: '0px',
-  // },
-  // typography: {
-  //   fontFamily: 'inherit',
-  //   fontSize: 13,
-  // },
-});
 /**
  * Get the raw errors from the error schema.
  * @param {Object} errorSchema error schema.
@@ -54,7 +41,6 @@ const ObjectFieldTemplate = ({
   schema,
   formData,
   onAddClick,
-  // classes,
   errorSchema,
 }) => {
   const additional = schema?.__additional_property; // check if the object is additional
@@ -206,4 +192,4 @@ const ObjectFieldTemplate = ({
   );
 };
 
-export default withStyles(styles)(ObjectFieldTemplate);
+export default ObjectFieldTemplate;

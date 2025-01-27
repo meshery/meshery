@@ -1,21 +1,16 @@
 import React, { useEffect } from 'react';
 import DeleteIcon from '../../../../assets/icons/DeleteIcon';
 import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
-import { makeStyles } from '@material-ui/core';
 import { iconSmall } from '../../../../css/icons.styles';
-import { Accordion, AccordionDetails, AccordionSummary, IconButton } from '@layer5/sistent';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  IconButton,
+  useTheme,
+} from '@layer5/sistent';
 import { AccordionHeading, AccordionRoot } from '../style';
 import { UsesSistent } from '@/components/SistentWrapper';
-
-const useStyles = makeStyles(() => ({
-  // heading: {
-  //   fontSize: theme.typography.pxToRem(15),
-  //   fontWeight: theme.typography.fontWeightRegular,
-  // },
-  // typography: {
-  //   fontSize: '0.8rem',
-  // },
-}));
 
 export default function SimpleAccordion(props) {
   useEffect(() => {
@@ -29,7 +24,7 @@ export default function SimpleAccordion(props) {
   }, []);
   // React Hook useEffect has an unnecessary dependency: 'accordionDetailsRef.current'. Either exclude it or remove the dependency array. Mutable values like 'accordionDetailsRef.current' aren't valid dependencies because mutating them doesn't re-render the component.
 
-  const classes = useStyles();
+  const theme = useTheme();
   const accordionDetailsRef = React.useRef(null);
 
   return (
@@ -42,7 +37,12 @@ export default function SimpleAccordion(props) {
             id="panel1a-header"
             style={{ backgroundColor: 'F7F7F7' }}
           >
-            <AccordionHeading className={classes.heading}>
+            <AccordionHeading
+              sx={{
+                fontSize: theme.typography.pxToRem(15),
+                fontWeight: theme.typography.fontWeightRegular,
+              }}
+            >
               {props.heading?.charAt(0).toUpperCase() + props.heading?.slice(1)}{' '}
             </AccordionHeading>
 

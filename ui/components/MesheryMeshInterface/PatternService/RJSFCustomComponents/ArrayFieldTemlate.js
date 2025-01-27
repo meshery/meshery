@@ -44,11 +44,8 @@ const ArrayFieldTitle = ({ title }) => {
 
   return (
     <Typography
-      sx={{
-        fontSize: '0.8rem',
-      }}
       variant="body1"
-      style={{ fontWeight: 'bold', display: 'inline' }}
+      style={{ fontWeight: 'bold', display: 'inline', fontSize: '0.8rem' }}
     >
       {title.charAt(0).toUpperCase() + title.slice(1)}
     </Typography>
