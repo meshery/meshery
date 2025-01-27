@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import { NoSsr } from '@mui/material';
-
 import {
   Divider,
   ClickAwayListener,
@@ -149,8 +148,8 @@ const NavbarNotificationIcon = () => {
     getSeverityCount(count_by_severity_level, SEVERITY.ERROR) > 0
       ? SEVERITY.ERROR
       : getSeverityCount(count_by_severity_level, SEVERITY.WARNING) > 0
-      ? SEVERITY.WARNING
-      : null;
+        ? SEVERITY.WARNING
+        : null;
   const currentSeverityStyle = currentTopSeverity ? SEVERITY_STYLE[currentTopSeverity] : null;
   const topSeverityCount = getSeverityCount(count_by_severity_level, currentTopSeverity);
   if (currentTopSeverity) {

@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 import { IconButton } from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@mui/icons-material/Close';
 import { EVENT_TYPES } from '../../../lib/event-types';
 
 /**

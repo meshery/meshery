@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NoSsr } from '@material-ui/core';
+import { NoSsr } from '@mui/material';
 import { Typography, Link, Box, styled } from '@layer5/sistent';
 import { UsesSistent } from './SistentWrapper';
 

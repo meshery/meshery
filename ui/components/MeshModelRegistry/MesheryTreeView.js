@@ -12,7 +12,7 @@ import StyledTreeItem from './StyledTreeItem';
 import { useRouter } from 'next/router';
 import { getFilteredDataForDetailsComponent, groupRelationshipsByKind } from './helper';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import _ from 'lodash';
 import CollapseAllIcon from '@/assets/icons/CollapseAll';
 import ExpandAllIcon from '@/assets/icons/ExpandAll';

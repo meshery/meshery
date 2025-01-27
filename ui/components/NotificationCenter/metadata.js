@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Grid, Box, List, ListItem, RenderMarkdown } from '@layer5/sistent';
-import { Launch as LaunchIcon } from '@material-ui/icons';
+import { Launch as LaunchIcon } from '@mui/icons-material';
 import {
   FormatStructuredData,
   SectionBody,

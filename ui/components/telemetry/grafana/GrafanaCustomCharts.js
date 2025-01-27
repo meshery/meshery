@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@mui/material';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
 import { ExpansionPanel, ExpansionPanelSummary } from '../../ExpansionPanels';
 import GrafanaCustomChart from './GrafanaCustomChart';
@@ -242,8 +242,8 @@ class GrafanaCustomCharts extends Component {
                         {config.board && config.board.title
                           ? config.board.title
                           : config.title
-                          ? config.title
-                          : ''}
+                            ? config.title
+                            : ''}
                       </StyledHeading>
                     </Column>
                     {config.templateVars && config.templateVars.length > 0 && (

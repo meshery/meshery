@@ -6,11 +6,11 @@ import {
   SimCard,
   SupervisedUserCircle,
   TouchApp,
-} from '@material-ui/icons';
-import ExploreIcon from '@material-ui/icons/Explore';
-import FileCopyIcon from '@material-ui/icons/FileCopy';
-import ListAltIcon from '@material-ui/icons/ListAlt';
-import LockIcon from '@material-ui/icons/Lock';
+} from '@mui/icons-material';
+import ExploreIcon from '@mui/icons-material/Explore';
+import FileCopyIcon from '@mui/icons-material/FileCopy';
+import ListAltIcon from '@mui/icons-material/ListAlt';
+import LockIcon from '@mui/icons-material/Lock';
 import React from 'react';
 
 /**
