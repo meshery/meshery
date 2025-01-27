@@ -10,9 +10,11 @@ redirect_from:
 - concepts/models
 ---
 
-Models are units of packaging for Meshery's logical object representation. Models (packages) are versioned and bundle any number of components, relationships, policies, connections and credentials. Meshery's internal object model is designed to provide a consistent and extensible way of capturing and characterizing the resources (applications, services, and infrastructure) under Meshery's management. Models serve as an exportable package (OCI-compatible image) to define managed infrastructure, their relationships, and details specifics of how they are to be managed.
+Models are units of packaging for definitions of Meshery's logical object representations. Each model is versioned and encompasses a collection of components, relationships, policies, connections, and credentials. Meshery's internal object model provides a consistent and extensible way of capturing and characterizing the resources (applications, services, and infrastructure) under Meshery's management. Each model is versioned and bundles definitions of any number of components, relationships, policies, connections and credentials. Additionally, models can be exported as OCI-compatible images, defining the managed infrastructure, their interrelationships, and specific management details.
 
 ## Key aspects of Meshery Models
+
+Models serve as the foundational packaging units for Meshery's logical object representations. Each model is versioned and encompasses a collection of components, relationships, policies, connections, and credentials. Designed for consistency and extensibility, Meshery's internal object model effectively captures and characterizes the resources—such as applications, services, and infrastructure—under its management. Additionally, models can be exported as OCI-compatible images, defining the managed infrastructure, their interrelationships, and specific management details.
 
 * **Logical Representation:** Models offer a logical representation of entities under Meshery's management, abstracting away system-specific details.
 * **Packaging:** Model packages can be imported and exported as OCI-compatible images, ensuring portability and encapsulation of intellectual property.
@@ -35,10 +37,10 @@ Each model (package) can be imported and exported from Meshery Server as OCI-com
 
 Models are stored in Meshery's [registry](/concepts/logical/registry) where they can be:
 
-- Discovered and reused by teams
-- Versioned and tagged
-- Shared publicly or kept private
-- Extended and customized
+* Discovered and reused by teams
+* Versioned and tagged
+* Shared publicly or kept private
+* Extended and customized
 
 The registry provides a central location for managing and distributing your infrastructure models.
 
