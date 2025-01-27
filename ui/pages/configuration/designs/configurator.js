@@ -1,19 +1,11 @@
 import React, { useEffect } from 'react';
-import { NoSsr, withStyles } from '@material-ui/core';
+import { NoSsr } from '@mui/material';
 import { updatebetabadge, updatepagepath, updatepagetitle } from '../../../lib/store';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Head from 'next/head';
 import { getPath } from '../../../lib/path';
 import DesignConfigurator from '../../../components/configuratorComponents/MeshModel';
-
-const styles = {
-  paper: {
-    maxWidth: '90%',
-    margin: 'auto',
-    overflow: 'hidden',
-  },
-};
 
 function DesignConfiguratorPage({ updatepagepath, updatepagetitle, updatebetabadge }) {
   useEffect(() => {
@@ -38,4 +30,4 @@ const mapDispatchToProps = (dispatch) => ({
   updatebetabadge: bindActionCreators(updatebetabadge, dispatch),
 });
 
-export default withStyles(styles)(connect(null, mapDispatchToProps)(DesignConfiguratorPage));
+export default connect(null, mapDispatchToProps)(DesignConfiguratorPage);
