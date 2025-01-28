@@ -719,9 +719,14 @@ class Navigator_ extends React.Component {
                       depth={depth}
                       isDrawerCollapsed={isDrawerCollapsed}
                       isActive={isActive}
+                      onClick={() => {
+                        if (linkc && hrefc) {
+                          this.props.router.push(hrefc);
+                        }
+                      }}
                       disabled={permissionc ? !CAN(permissionc.action, permissionc.subject) : false}
                     >
-                      {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
+                      {this.linkContent(iconc, titlec, hrefc, false, isDrawerCollapsed)}
                     </NavigatorListItemII>
                     {this.renderChildren(idname, childrenc, depth + 1)}
                   </div>
@@ -732,6 +737,7 @@ class Navigator_ extends React.Component {
         </UsesSistent>
       );
     }
+
     if (idname == LIFECYCLE) {
       if (children && children.length > 0) {
         return (
@@ -763,12 +769,17 @@ class Navigator_ extends React.Component {
                         isDrawerCollapsed={isDrawerCollapsed}
                         isActive={isActive}
                         isShow={!showc}
-                        onClick={() => this.handleAdapterClick(idc, linkc)}
+                        onClick={() => {
+                          this.handleAdapterClick(idc, linkc);
+                          if (linkc && hrefc) {
+                            this.props.router.push(hrefc);
+                          }
+                        }}
                         disabled={
                           permissionc ? !CAN(permissionc.action, permissionc.subject) : false
                         }
                       >
-                        {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
+                        {this.linkContent(iconc, titlec, hrefc, false, isDrawerCollapsed)}{' '}
                       </NavigatorListItemIII>
                       {this.renderChildren(idname, childrenc, depth + 1)}
                     </div>
@@ -806,13 +817,14 @@ class Navigator_ extends React.Component {
             disableHoverListener={!drawerCollapsed}
             disableTouchListener={!drawerCollapsed}
           >
-            <MainListIcon>{iconc} </MainListIcon>
+            <MainListIcon>{iconc}</MainListIcon>
           </CustomTooltip>
           <SideBarText drawerCollapsed={drawerCollapsed}>{titlec}</SideBarText>
         </LinkContainer>
       </UsesSistent>
     );
-    if (linkc) {
+
+    if (linkc && hrefc) {
       linkContent = <Link href={hrefc}>{linkContent}</Link>;
     }
     return linkContent;

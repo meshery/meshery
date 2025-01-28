@@ -112,6 +112,77 @@ export const NavigatorList = styled(List)({
   padding: 0,
 });
 
+export const NavigatorListItem = styled(ListItem, {
+  shouldForwardProp: (prop) =>
+    prop !== 'depth' && prop !== 'isDrawerCollapsed' && prop !== 'isActive',
+})(({ theme, depth, isDrawerCollapsed, isActive }) => ({
+  paddingLeft: isDrawerCollapsed ? theme.spacing(2) : '',
+  paddingRight: isDrawerCollapsed ? '16px' : '',
+  color: isActive ? '#4fc3f7' : 'rgba(255, 255, 255, 0.7)',
+  fill: isActive ? '#4fc3f7' : '#fff',
+  '&:hover': {
+    backgroundColor: 'rgba(0, 187, 166, 0.5)',
+    '& $expandMoreIcon': {
+      opacity: 1,
+      transition: 'opacity 200ms ease-in',
+    },
+  },
+  paddingTop: 4,
+  paddingBottom: 4,
+  // color: 'rgba(255, 255, 255, 0.7)',
+  // fill: '#fff',
+}));
+
+export const NavigatorListItemII = styled(ListItem, {
+  shouldForwardProp: (prop) =>
+    prop !== 'depth' && prop !== 'isDrawerCollapsed' && prop !== 'isActive',
+})(({ theme, depth, isDrawerCollapsed, isActive }) => ({
+  paddingLeft: isDrawerCollapsed
+    ? theme.spacing(2)
+    : depth === 1
+      ? theme.spacing(3)
+      : theme.spacing(5),
+  paddingRight: isDrawerCollapsed ? '16px' : '',
+  color: isActive ? '#4fc3f7' : 'rgba(255, 255, 255, 0.7)',
+  fill: isActive ? '#4fc3f7' : '#fff',
+  '&:hover': {
+    backgroundColor: 'rgba(0, 187, 166, 0.5)',
+    '& $expandMoreIcon': {
+      opacity: 1,
+      transition: 'opacity 200ms ease-in',
+    },
+  },
+  paddingTop: 4,
+  paddingBottom: 4,
+  // color: 'rgba(255, 255, 255, 0.7)',
+  // fill: '#fff',
+}));
+
+export const NavigatorListItemIII = styled(ListItem, {
+  shouldForwardProp: (prop) =>
+    prop !== 'depth' && prop !== 'isDrawerCollapsed' && prop !== 'isActive' && prop !== 'isShow',
+})(({ theme, depth, isDrawerCollapsed, isActive, isShow }) => ({
+  paddingLeft: isDrawerCollapsed
+    ? theme.spacing(2)
+    : depth === 1
+      ? theme.spacing(3)
+      : theme.spacing(5),
+  paddingRight: isDrawerCollapsed ? '16px' : '',
+  color: isActive ? '#4fc3f7' : 'rgba(255, 255, 255, 0.7)',
+  fill: isActive ? '#4fc3f7' : '#fff',
+  '&:hover': {
+    backgroundColor: 'rgba(0, 187, 166, 0.5)',
+    '& $expandMoreIcon': {
+      opacity: 1,
+      transition: 'opacity 200ms ease-in',
+    },
+  },
+  paddingTop: 4,
+  paddingBottom: 4,
+  pointerEvents: isShow ? 'none' : 'auto',
+  opacity: isShow ? 0.5 : '',
+}));
+
 export const SideBarListItem = styled(ListItem, {
   shouldForwardProp: (prop) => prop !== 'link' && prop !== 'isActive' && prop !== 'isShow',
 })(({ link, isActive, isShow }) => ({
@@ -146,6 +217,11 @@ export const SideBarText = styled(ListItemText)(({ drawerCollapsed }) => ({
   },
 }));
 
+export const PrimaryElement = styled(SideBarText)(({ theme }) => ({
+  color: 'inherit',
+  fontSize: theme.typography.fontSize,
+  '&$textDense': { fontSize: theme.typography.fontSize },
+}));
 export const RootDiv = styled('div', {
   shouldForwardProp: (prop) => prop !== 'show',
 })(({ show }) => ({
@@ -221,6 +297,13 @@ export const ListIconSide = styled(ListItemIcon)(({ theme }) => ({
   },
 }));
 
+export const HiddenText = styled(ListItemText)(({ drawerCollapsed }) => ({
+  opacity: drawerCollapsed ? 0 : 1,
+  color: '#fff',
+  fontSize: '14px',
+  transition: drawerCollapsed ? 'opacity 200ms ease-in-out' : 'opacity 200ms ease-in-out',
+}));
+
 export const LinkContainer = styled('div')(() => ({
   display: 'flex',
   alignItems: 'center',
@@ -228,6 +311,30 @@ export const LinkContainer = styled('div')(() => ({
   width: '100%',
   height: '30px',
 }));
+
+export const NavigatorDrawer = styled(Drawer, {
+  shouldForwardProp: (prop) => prop !== 'isCollapsed',
+})(({ theme, isCollapsed }) => ({
+  width: isCollapsed ? theme.spacing(8) + 4 : 256,
+  flexShrink: 0,
+  whiteSpace: 'nowrap',
+  boxSizing: 'border-box',
+  '& .MuiDrawer-paper': {
+    background: '#263238',
+    width: isCollapsed ? theme.spacing(8) + 4 : 256,
+    transition: theme.transitions.create('width', {
+      easing: theme.transitions.easing.sharp,
+      duration: theme.transitions.duration.enteringScreen,
+    }),
+    overflowX: 'hidden',
+  },
+}));
+
+export const NavigatorWrapper = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  height: '100%',
+});
 
 export const NavigatorHelpIcons = styled(ButtonGroup, {
   shouldForwardProp: (prop) => prop !== 'isCollapsed',
