@@ -533,58 +533,54 @@ export default function MeshSyncTable(props) {
   }, []);
 
   return (
-    <>
+    <UsesSistent>
       <ToolWrapper style={{ marginBottom: '5px', marginTop: '-30px' }}>
         <div className={classes.createButton}>{/* <MesherySettingsEnvButtons /> */}</div>
-        <UsesSistent>
-          <div
-            className={classes.searchAndView}
-            style={{
-              display: 'flex',
-              borderRadius: '0.5rem 0.5rem 0 0',
+        <div
+          className={classes.searchAndView}
+          style={{
+            display: 'flex',
+            borderRadius: '0.5rem 0.5rem 0 0',
+          }}
+        >
+          <SearchBar
+            onSearch={(value) => {
+              setSearch(value);
             }}
-          >
-            <SearchBar
-              onSearch={(value) => {
-                setSearch(value);
-              }}
-              expanded={isSearchExpanded}
-              setExpanded={setIsSearchExpanded}
-              placeholder="Search Connections..."
-            />
+            expanded={isSearchExpanded}
+            setExpanded={setIsSearchExpanded}
+            placeholder="Search Connections..."
+          />
 
-            <UniversalFilter
-              id="ref"
-              filters={filters}
-              selectedFilters={selectedFilters}
-              setSelectedFilters={setSelectedFilters}
-              handleApplyFilter={handleApplyFilter}
-            />
+          <UniversalFilter
+            id="ref"
+            filters={filters}
+            selectedFilters={selectedFilters}
+            setSelectedFilters={setSelectedFilters}
+            handleApplyFilter={handleApplyFilter}
+          />
 
-            <CustomColumnVisibilityControl
-              id="ref"
-              columns={getVisibilityColums(columns)}
-              customToolsProps={{ columnVisibility, setColumnVisibility }}
-            />
-          </div>
-        </UsesSistent>
+          <CustomColumnVisibilityControl
+            id="ref"
+            columns={getVisibilityColums(columns)}
+            customToolsProps={{ columnVisibility, setColumnVisibility }}
+          />
+        </div>
       </ToolWrapper>
-      <UsesSistent>
-        <ResponsiveDataTable
-          data={meshSyncResources}
-          columns={columns}
-          options={options}
-          className={classes.muiRow}
-          tableCols={tableCols}
-          updateCols={updateCols}
-          columnVisibility={columnVisibility}
-        />
-      </UsesSistent>
+      <ResponsiveDataTable
+        data={meshSyncResources}
+        columns={columns}
+        options={options}
+        className={classes.muiRow}
+        tableCols={tableCols}
+        updateCols={updateCols}
+        columnVisibility={columnVisibility}
+      />
       <RegisterConnectionModal
         handleRegistrationModalClose={handleRegistrationModalClose}
         openRegistrationModal={openRegistrationModal}
         connectionData={registerConnection}
       />
-    </>
+    </UsesSistent>
   );
 }

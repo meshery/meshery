@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
 import { ArrowBack } from '@mui/icons-material';
 import { TooltipIconButton } from '../../utils/TooltipButton';
-import { Paper, Typography } from '@material-ui/core';
-import { Box, ErrorBoundary, OperatorDataFormatter, useResourceCleanData } from '@layer5/sistent';
+import {
+  Box,
+  ErrorBoundary,
+  OperatorDataFormatter,
+  useResourceCleanData,
+  Paper,
+  Typography,
+} from '@layer5/sistent';
 import { ALL_VIEW } from './resources/config';
 import { FALLBACK_MESHERY_IMAGE_PATH } from '@/constants/common';
 import { iconXLarge } from 'css/icons.styles';
