@@ -5,6 +5,59 @@ table {
   overflow-x: auto;
   width: 100%;
 }
+
+@media (max-width: 576px) {
+  .tbl,
+  .tbl thead,
+  .tbl tbody,
+  .tbl th,
+  .tbl td,
+  .tbl tr {
+    display: block;
+    margin: auto;
+  }
+  .tbl-head {
+    padding-right: 0 !important;
+    padding-left: 0 !important;
+  }
+  .tbl thead tr {
+    display: none; /* Hide headers */
+  }
+
+  .tbl tr {
+    margin-bottom: 1rem;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .tbl td {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+  }
+
+  .tbl td:before {
+    content: attr(data-label);
+    flex: 1;
+    font-weight: bold;
+    text-transform: capitalize;
+  }
+  code {
+    max-width: 200px;
+  }
+  .severity_class {
+    writing-mode: horizontal-tb !important;
+  }
+  .tbl-hidden-row td {
+    display: flex;
+    flex-direction: column;
+    align-items: normal;
+  }
+  .tbl-body-row {
+    width: fit-content;
+  }
+}
+
 .table,
 .td-box .row.section > table,
 .td-content > table {
@@ -25,7 +78,7 @@ table td {
   border: 1px solid #dddddd;
   padding: 8px;
   text-align: left;
-  max-width: 300px;
+  max-width: 325px;
   word-wrap: break-word;
 }
 table td img {
