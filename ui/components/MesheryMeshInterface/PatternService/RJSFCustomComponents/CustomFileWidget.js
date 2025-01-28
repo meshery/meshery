@@ -40,6 +40,7 @@ const CustomFileWidget = (props) => {
             position: 'absolute',
             bottom: '10px',
             left: '6rem',
+            fontSize: '0.8rem',
             backgroundColor: Colors.keppelGreen,
           }}
         >
