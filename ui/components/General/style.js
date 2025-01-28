@@ -10,6 +10,7 @@ import {
   ListItemText,
   styled,
   Drawer,
+  charcoal,
 } from '@layer5/sistent';
 import { disabledStyleWithOutOpacity } from '../../css/disableComponent.styles';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -54,17 +55,17 @@ export const ToolBarButtonContainer = styled('span')(() => ({
 
 export const StyledListItem = styled(ListItem, {
   shouldForwardProp: (prop) => prop !== 'disableLogo',
-})(({ disableLogo }) => ({
+})(({ disableLogo, theme }) => ({
   cursor: 'pointer',
-  backgroundColor: '#263238',
+  backgroundColor: charcoal[30],
   boxShadow: '0 -1px 0 #404854 inset',
   paddingTop: '1.325rem',
   paddingBottom: '1.325rem',
   position: 'sticky',
   top: 0,
   zIndex: 5,
-  color: 'rgba(255, 255, 255, 0.7)',
-  fill: '#fff',
+  color: theme.palette.background.constant.disabled,
+  fill: theme.palette.background.constant.white,
   ...(disableLogo && {
     ...disabledStyleWithOutOpacity,
   }),
@@ -117,8 +118,10 @@ export const NavigatorListItem = styled(ListItem, {
 })(({ theme, isDrawerCollapsed, isActive }) => ({
   paddingLeft: isDrawerCollapsed ? theme.spacing(2) : '',
   paddingRight: isDrawerCollapsed ? '16px' : '',
-  color: isActive ? '#4fc3f7' : 'rgba(255, 255, 255, 0.7)',
-  fill: isActive ? '#4fc3f7' : '#fff',
+  color: isActive
+    ? theme.palette.background.brand.default
+    : theme.palette.background.constant.disabled,
+  fill: isActive ? theme.palette.background.brand.default : '#fff',
   '&:hover': {
     backgroundColor: 'rgba(0, 187, 166, 0.5)',
     '& $expandMoreIcon': {
@@ -128,8 +131,6 @@ export const NavigatorListItem = styled(ListItem, {
   },
   paddingTop: 4,
   paddingBottom: 4,
-  // color: 'rgba(255, 255, 255, 0.7)',
-  // fill: '#fff',
 }));
 
 export const NavigatorListItemII = styled(ListItem, {
@@ -142,8 +143,10 @@ export const NavigatorListItemII = styled(ListItem, {
       ? theme.spacing(3)
       : theme.spacing(5),
   paddingRight: isDrawerCollapsed ? '16px' : '',
-  color: isActive ? '#4fc3f7' : 'rgba(255, 255, 255, 0.7)',
-  fill: isActive ? '#4fc3f7' : '#fff',
+  color: isActive
+    ? theme.palette.background.brand.default
+    : theme.palette.background.constant.disabled,
+  fill: isActive ? theme.palette.background.brand.default : '#fff',
   '&:hover': {
     backgroundColor: 'rgba(0, 187, 166, 0.5)',
     '& $expandMoreIcon': {
@@ -153,8 +156,6 @@ export const NavigatorListItemII = styled(ListItem, {
   },
   paddingTop: 4,
   paddingBottom: 4,
-  // color: 'rgba(255, 255, 255, 0.7)',
-  // fill: '#fff',
 }));
 
 export const NavigatorListItemIII = styled(ListItem, {
@@ -167,8 +168,10 @@ export const NavigatorListItemIII = styled(ListItem, {
       ? theme.spacing(3)
       : theme.spacing(5),
   paddingRight: isDrawerCollapsed ? '16px' : '',
-  color: isActive ? '#4fc3f7' : 'rgba(255, 255, 255, 0.7)',
-  fill: isActive ? '#4fc3f7' : '#fff',
+  color: isActive
+    ? theme.palette.background.brand.default
+    : theme.palette.background.constant.disabled,
+  fill: isActive ? theme.palette.background.brand.default : '#fff',
   '&:hover': {
     backgroundColor: 'rgba(0, 187, 166, 0.5)',
     '& $expandMoreIcon': {
@@ -184,9 +187,11 @@ export const NavigatorListItemIII = styled(ListItem, {
 
 export const SideBarListItem = styled(ListItem, {
   shouldForwardProp: (prop) => prop !== 'link' && prop !== 'isActive' && prop !== 'isShow',
-})(({ link, isActive, isShow }) => ({
-  color: isActive ? '#4fc3f7' : 'rgba(255, 255, 255, 0.7)',
-  fill: isActive ? '#4fc3f7' : '#fff',
+})(({ link, isActive, isShow, theme }) => ({
+  color: isActive
+    ? theme.palette.background.brand.default
+    : theme.palette.background.constant.disabled,
+  fill: isActive ? theme.palette.background.brand.default : '#fff',
   '&:hover': {
     ...(link && {
       backgroundColor: 'rgba(0, 187, 166, 0.5)', // Only applies when link is true
@@ -206,7 +211,6 @@ export const SideBarListItem = styled(ListItem, {
 export const SideBarText = styled(ListItemText)(({ drawerCollapsed }) => ({
   opacity: drawerCollapsed ? 0 : 1,
   transition: drawerCollapsed ? 'opacity 200ms ease-in-out' : 'opacity 200ms ease-in-out',
-  // color: '#fff',
   fontSize: '14px',
   '& .MuiListItemText-primary': {
     fontSize: '14px',
@@ -283,7 +287,7 @@ export const ListIconSide = styled(ListItemIcon)(({ theme }) => ({
   display: 'inline-table',
   paddingRight: theme.spacing(0.5),
   marginLeft: theme.spacing(0.8),
-  color: '#fff',
+  color: theme.palette.background.constant.white,
   opacity: '0.7',
   transition: 'opacity 200ms linear',
   '&:hover': {
@@ -298,7 +302,7 @@ export const ListIconSide = styled(ListItemIcon)(({ theme }) => ({
 
 export const HiddenText = styled(ListItemText)(({ drawerCollapsed }) => ({
   opacity: drawerCollapsed ? 0 : 1,
-  color: '#fff',
+  color: theme.palette.background.constant.white,
   fontSize: '14px',
   transition: drawerCollapsed ? 'opacity 200ms ease-in-out' : 'opacity 200ms ease-in-out',
 }));
@@ -309,24 +313,6 @@ export const LinkContainer = styled('div')(() => ({
   justifyContent: 'center',
   width: '100%',
   height: '30px',
-}));
-
-export const NavigatorDrawer = styled(Drawer, {
-  shouldForwardProp: (prop) => prop !== 'isCollapsed',
-})(({ theme, isCollapsed }) => ({
-  width: isCollapsed ? theme.spacing(8) + 4 : 256,
-  flexShrink: 0,
-  whiteSpace: 'nowrap',
-  boxSizing: 'border-box',
-  '& .MuiDrawer-paper': {
-    background: '#263238',
-    width: isCollapsed ? theme.spacing(8) + 4 : 256,
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-    overflowX: 'hidden',
-  },
 }));
 
 export const NavigatorWrapper = styled('div')({
@@ -395,19 +381,19 @@ export const NavigatorLink = styled('span')({
   height: '30px',
 });
 
-export const HelpListItem = styled(ListItem)({
+export const HelpListItem = styled(ListItem)(({ theme }) => ({
   paddingLeft: 0,
   paddingTop: 4,
   paddingBottom: 4,
-  color: 'rgba(255, 255, 255, 0.7)',
-  fill: '#fff',
+  color: theme.palette.background.constant.disabled,
+  fill: theme.palette.background.constant.white,
   '&:hover': {
     '& $expandMoreIcon': {
       opacity: 1,
       transition: 'opacity 200ms ease-in',
     },
   },
-});
+}));
 
 export const HelpButton = styled(IconButton, {
   shouldForwardProp: (prop) => prop !== 'isCollapsed',
@@ -452,6 +438,6 @@ export const SidebarDrawer = styled(Drawer, {
         : theme.transitions.duration.enteringScreen,
     }),
     overflowX: 'hidden',
-    background: '#263238',
+    background: charcoal[30],
   },
 }));
