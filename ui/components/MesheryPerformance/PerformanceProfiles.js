@@ -3,7 +3,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import Moment from 'react-moment';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-
 import {
   Button,
   IconButton,
@@ -14,10 +13,10 @@ import {
   Typography,
   withStyles,
 } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/AddCircleOutline';
-import EditIcon from '@material-ui/icons/Edit';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
+import AddIcon from '@mui/icons-material/AddCircleOutline';
+import EditIcon from '@mui/icons-material/Edit';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import {
   CustomColumnVisibilityControl,
   Modal,
@@ -31,14 +30,11 @@ import PerformanceResults from './PerformanceResults';
 import _PromptComponent from '../PromptComponent';
 import ViewSwitch from '../ViewSwitch';
 import { UsesSistent } from '../SistentWrapper';
-
 import { updateProgress } from '../../lib/store';
 import { EVENT_TYPES } from '../../lib/event-types';
 import fetchPerformanceProfiles from '../graphql/queries/PerformanceProfilesQuery';
 import subscribePerformanceProfiles from '../graphql/subscriptions/PerformanceProfilesSubscription';
-import useStyles from '../../assets/styles/general/tool.styles';
 import { iconMedium } from '../../css/icons.styles';
-
 import { useDeletePerformanceProfileMutation } from '@/rtk-query/performance-profile';
 import { useNotification } from '@/utils/hooks/useNotification';
 import ReusableTooltip from '../reusable-tooltip';
@@ -133,7 +129,6 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
     ('grid'),
   );
   const modalRef = useRef(null);
-  const StyleClass = useStyles();
 
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
@@ -554,33 +549,33 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
   return (
     <>
       <div className={classes.pageContainer}>
-        <div className={StyleClass.toolWrapper}>
-          {width < 550 && isSearchExpanded ? null : (
-            <>
-              {(testProfiles.length > 0 || viewType == 'table') && (
-                <div className={classes.addButton}>
-                  <Button
-                    aria-label="Add Performance Profile"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    onClick={() => setProfileForModal({})}
-                    disabled={
-                      !CAN(
-                        keys.ADD_PERFORMANCE_PROFILE.action,
-                        keys.ADD_PERFORMANCE_PROFILE.subject,
-                      )
-                    }
-                  >
-                    <AddIcon style={iconMedium} className={classes.addIcon} />
-                    <span className={classes.btnText}> Add Performance Profile </span>
-                  </Button>
-                </div>
-              )}
-            </>
-          )}
-          <div className={classes.viewSwitchButton}>
-            <UsesSistent>
+        <UsesSistent>
+          <ToolWrapper>
+            {width < 550 && isSearchExpanded ? null : (
+              <>
+                {(testProfiles.length > 0 || viewType == 'table') && (
+                  <div className={classes.addButton}>
+                    <Button
+                      aria-label="Add Performance Profile"
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      onClick={() => setProfileForModal({})}
+                      disabled={
+                        !CAN(
+                          keys.ADD_PERFORMANCE_PROFILE.action,
+                          keys.ADD_PERFORMANCE_PROFILE.subject,
+                        )
+                      }
+                    >
+                      <AddIcon style={iconMedium} className={classes.addIcon} />
+                      <span className={classes.btnText}> Add Performance Profile </span>
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
+            <div className={classes.viewSwitchButton}>
               <SearchBar
                 onSearch={(value) => {
                   setSearch(value);
@@ -598,10 +593,11 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
                   customToolsProps={{ columnVisibility, setColumnVisibility }}
                 />
               )}
-            </UsesSistent>
-            <ViewSwitch view={viewType} changeView={setViewType} />
-          </div>
-        </div>
+              <ViewSwitch view={viewType} changeView={setViewType} />
+            </div>
+          </ToolWrapper>
+        </UsesSistent>
+
         {viewType === 'grid' ? (
           <PerformanceProfileGrid
             profiles={testProfiles}

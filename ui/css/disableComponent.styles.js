@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core';
+import { makeStyles } from '@mui/styles';
 
 const opacity = 0.5;
 
@@ -6,6 +6,7 @@ export const disabledStyle = {
   pointerEvents: 'none',
   opacity,
 };
+
 export const disabledStyleWithOutOpacity = {
   pointerEvents: 'none',
 };

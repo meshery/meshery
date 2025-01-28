@@ -10,13 +10,13 @@ import {
 } from '@material-ui/core';
 import { Dialog, DialogActions, makeStyles } from '@material-ui/core';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
-import CloseIcon from '@material-ui/icons/Close';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import CloseIcon from '@mui/icons-material/Close';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
-import { ArrowDropDown } from '@material-ui/icons';
+import { ArrowDropDown } from '@mui/icons-material';
 import { getSchema } from './MesheryMeshInterface/PatternService/helper';
 import { Snackbar } from '@material-ui/core';
-import { Alert } from '@material-ui/lab';
+import { Alert } from '@mui/material';
 import { ModalBody, ModalFooter, PrimaryActionButtons } from '@layer5/sistent';
 
 const useStyles = makeStyles((theme) => ({

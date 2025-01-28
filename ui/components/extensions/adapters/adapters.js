@@ -2,7 +2,6 @@ import { isNil, isUndefined } from 'lodash';
 import { useEffect, useState } from 'react';
 import { withRouter } from 'next/router';
 import { CardContainer, FrontSideDescription, ImageWrapper } from '../../../css/icons.styles';
-import { withStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateProgress } from '../../../lib/store';
@@ -15,7 +14,7 @@ import { EVENT_TYPES } from '../../../lib/event-types';
 import { Grid, Switch, Typography, useTheme } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
 
-const Adapters = ({ updateProgress, classes }) => {
+const Adapters = ({ updateProgress }) => {
   // States.
   const [availableAdapters, setAvailableAdapters] = useState(adaptersList);
 
@@ -118,7 +117,7 @@ const Adapters = ({ updateProgress, classes }) => {
         {Object.entries(availableAdapters).map(([adapterId, adapter]) => (
           <Grid item {...LARGE_6_MED_12_GRID_STYLE} key={adapterId}>
             <CardContainer>
-              <Typography className={classes.frontContent} variant="h5" component="div">
+              <Typography variant="h5" component="div">
                 Meshery Adapter for {adapter.name}
               </Typography>
 
@@ -137,7 +136,6 @@ const Adapters = ({ updateProgress, classes }) => {
               <Grid
                 container
                 spacing={2}
-                className={classes.grid}
                 direction="row"
                 justifyContent="space-between"
                 alignItems="baseline"
@@ -183,4 +181,4 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-export default withStyles()(connect(() => {}, mapDispatchToProps)(withRouter(Adapters)));
+export default connect(() => {}, mapDispatchToProps)(withRouter(Adapters));

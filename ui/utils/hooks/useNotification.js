@@ -1,14 +1,12 @@
 /* eslint-disable no-unused-vars */
 //NOTE: This file is being refactored to use the new notification center
-import { IconButton } from '@material-ui/core';
-import { ToggleButtonGroup } from '@mui/material';
+
+import { IconButton, ToggleButtonGroup } from '@layer5/sistent';
 import { useSnackbar } from 'notistack';
 import { iconMedium } from '../../css/icons.styles';
-import CloseIcon from '@material-ui/icons/Close';
-import { useDispatch } from 'react-redux';
+import CloseIcon from '@mui/icons-material/Close';
 import moment from 'moment';
 import { v4 } from 'uuid';
-import { NOTIFICATION_STATUS } from '../../lib/event-types';
 import { store as rtkStore } from '../../store/index';
 import { toggleNotificationCenter } from '../../store/slices/events';
 import { NOTIFICATION_CENTER_TOGGLE_CLASS } from '../../components/NotificationCenter/constants';

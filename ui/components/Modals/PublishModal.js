@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../Modal';
-import PublicIcon from '@material-ui/icons/Public';
+import PublicIcon from '@mui/icons-material/Public';
 import _ from 'lodash';
 import { getMeshModels } from '../../api/meshmodel';
 import { modifyRJSFSchema } from '../../utils/utils';

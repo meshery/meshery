@@ -1,14 +1,9 @@
 /* eslint-disable react/display-name */
 import React, { useEffect, useRef, useState } from 'react';
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@mui/icons-material/Close';
 import PatternIcon from '../../../assets/icons/Pattern';
-import { Typography, IconButton, Button, Grid, Avatar, Tooltip, Box } from '@material-ui/core';
-import useStyles, {
-  ActionContainer,
-  CreatAtContainer,
-  CopyLinkButton,
-  ResourceName,
-} from './styles';
+import { Typography, IconButton, Button, Grid, Avatar, Tooltip, Box } from '@layer5/sistent';
+import { ActionContainer, CreatAtContainer, CopyLinkButton, ResourceName } from './styles';
 import { iconMedium, iconSmall } from '../../../css/icons.styles';
 import { getDesignVersion, getSharableCommonHostAndprotocolLink } from '../../../utils/utils';
 import moment from 'moment';
@@ -45,7 +40,7 @@ import TooltipButton from '@/utils/TooltipButton';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import { filterEmptyFields } from '@/utils/objects';
-import { Lock, Public } from '@material-ui/icons';
+import { Lock, Public } from '@mui/icons-material';
 
 const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';
@@ -79,7 +74,6 @@ const InfoModal_ = React.memo((props) => {
   const [saveFormLoading, setSaveFormLoading] = useState(false);
   const [uiSchema, setUiSchema] = useState({});
   const { notify } = useNotification();
-  const classes = useStyles();
   const formatDate = (date) => {
     return moment(date).utc().format('MMMM Do YYYY');
   };
@@ -339,16 +333,9 @@ const InfoModal_ = React.memo((props) => {
                   />
                 )}
               </Button>
-              <ResourceName className={classes.resourceName} variant="subtitle1">
-                {selectedResource?.name}
-              </ResourceName>
+              <ResourceName variant="subtitle1">{selectedResource?.name}</ResourceName>
               <Grid item xs={12} style={{ marginTop: '1rem' }}>
-                <Typography
-                  style={{ whiteSpace: 'nowrap' }}
-                  gutterBottom
-                  variant="subtitle1"
-                  className={classes.text}
-                >
+                <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom variant="subtitle1">
                   <CreatAtContainer isBold={true}>Created</CreatAtContainer>
                   <CreatAtContainer isBold={false}>
                     {formatDate(selectedResource?.created_at)}
@@ -356,12 +343,7 @@ const InfoModal_ = React.memo((props) => {
                 </Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography
-                  style={{ whiteSpace: 'nowrap' }}
-                  gutterBottom
-                  variant="subtitle1"
-                  className={classes.text}
-                >
+                <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom variant="subtitle1">
                   <CreatAtContainer isBold={true}>Updated</CreatAtContainer>
                   <CreatAtContainer idBold={false}>
                     {formatDate(selectedResource?.updated_at)}
@@ -370,12 +352,7 @@ const InfoModal_ = React.memo((props) => {
               </Grid>
               {version === '' ? null : (
                 <Grid item xs={12}>
-                  <Typography
-                    style={{ whiteSpace: 'nowrap' }}
-                    gutterBottom
-                    variant="subtitle1"
-                    className={classes.text}
-                  >
+                  <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom variant="subtitle1">
                     <CreatAtContainer isBold={true}>Version</CreatAtContainer>
                     <CreatAtContainer isBold={false}>{version}</CreatAtContainer>
                   </Typography>
@@ -398,12 +375,11 @@ const InfoModal_ = React.memo((props) => {
                 <Grid
                   item
                   xs={dataName === APPLICATION_PLURAL ? 12 : 6}
-                  className={classes.visibilityGridItem}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
                 >
                   <Typography
                     gutterBottom
                     variant="subtitle1"
-                    className={classes.text}
                     style={{ display: 'flex', marginRight: '2rem' }}
                   >
                     <VisibilityChipMenu
@@ -421,7 +397,14 @@ const InfoModal_ = React.memo((props) => {
                   </Typography>
                 </Grid>
                 {dataName === APPLICATION_PLURAL && formSchema ? null : (
-                  <Grid item className={classes.rjsfInfoModalForm}>
+                  <Grid
+                    item
+                    style={{
+                      marginLeft: '-1rem',
+                      marginTop: '-1rem',
+                      maxWidth: '39rem',
+                    }}
+                  >
                     <RJSFWrapper
                       formData={formStateRef.current}
                       jsonSchema={{
@@ -455,7 +438,6 @@ const InfoModal_ = React.memo((props) => {
               data-testid="publish-button"
               variant="outlined"
               onClick={handlePublishController}
-              className={classes.copyButton}
               disabled={
                 !isPublished
                   ? false
@@ -470,7 +452,6 @@ const InfoModal_ = React.memo((props) => {
             <ModalButtonPrimary
               variant="contained"
               color="primary"
-              className={classes.submitButton}
               onClick={handleSubmit}
               disabled={
                 (isCatalogDataEqual && !dataIsUpdated) ||
@@ -494,13 +475,12 @@ const InfoModal_ = React.memo((props) => {
 });
 
 const OwnerChip = ({ userProfile }) => {
-  const classes = useStyles();
   return (
     <Box style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
       {userProfile ? (
         <>
           <Link href={`${MESHERY_CLOUD_PROD}/user/${userProfile.id}`} rel="noopener noreferrer">
-            <Avatar src={userProfile.avatar_url} className={classes.chipIcon} />
+            <Avatar src={userProfile.avatar_url} />
           </Link>
           <Typography>{`${userProfile.first_name} ${userProfile.last_name}`}</Typography>
         </>

@@ -1,24 +1,12 @@
 import React from 'react';
-import useStyles from '../../assets/styles/general/tool.styles';
+import { DetailsContainer, Segment, FullWidth } from '@/assets/styles/general/tool.styles';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import { FormatStructuredData, reorderObjectProperties } from '../DataFormatter';
-import {
-  FormControl,
-  Select,
-  MenuItem,
-  Chip,
-  CircularProgress,
-  useTheme,
-  Paper,
-  Button,
-} from '@material-ui/core';
+import { FormControl, Select, MenuItem, CircularProgress, useTheme, Button } from '@layer5/sistent';
 import DownloadIcon from '@mui/icons-material/Download';
-import { withStyles } from '@material-ui/core/styles';
-import styles from '../connections/styles';
 import { REGISTRY_ITEM_STATES, REGISTRY_ITEM_STATES_TO_TRANSITION_MAP } from '../../utils/Enum';
-import classNames from 'classnames';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+// import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+// import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import {
   useUpdateEntityStatusMutation,
   useGetComponentsQuery,
@@ -70,43 +58,36 @@ const RenderContents = ({
   orderRight,
   jsonData,
 }) => {
-  const StyleClass = useStyles();
   const theme = useTheme();
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      <div className={StyleClass.segment}>
-        <div
-          className={StyleClass.fullWidth}
-          style={{ display: 'flex', flexDirection: 'column', paddingRight: '1rem' }}
-        >
+      <Segment>
+        <FullWidth style={{ display: 'flex', flexDirection: 'column', paddingRight: '1rem' }}>
           <FormatStructuredData
             data={reorderObjectProperties(metaDataLeft, orderLeft)}
             propertyFormatters={PropertyFormattersLeft}
             order={orderLeft}
           />
-        </div>
-
-        <div className={StyleClass.fullWidth} style={{ display: 'flex', flexDirection: 'column' }}>
+        </FullWidth>
+        <FullWidth style={{ display: 'flex', flexDirection: 'column' }}>
           <FormatStructuredData
             data={reorderObjectProperties(metaDataRight, orderRight)}
             propertyFormatters={PropertyFormattersRight}
             order={orderRight}
           />
-        </div>
-      </div>
-
+        </FullWidth>
+      </Segment>
       {jsonData && (
         <Accordion
           style={{
             borderRadius: '6px',
-            backgroundColor: theme.palette.secondary.toolbarBg2,
-            color: theme.palette.secondary.text,
+            color: theme.palette.text.default,
             margin: '0 -1rem',
             padding: '0',
           }}
         >
           <AccordionSummary
-            expandIcon={<ExpandMoreIcon style={{ fill: theme.palette.secondary.text }} />}
+            expandIcon={<ExpandMoreIcon style={{ fill: theme.palette.text.default }} />}
           >
             Advanced Details
           </AccordionSummary>
@@ -117,7 +98,7 @@ const RenderContents = ({
             }}
           >
             <ReactJson
-              theme={reactJsonTheme(theme.palette.type)}
+              theme={reactJsonTheme(theme.palette.mode)}
               name={false}
               displayDataTypes={false}
               iconStyle="circle"
@@ -410,8 +391,7 @@ const TitleWithImg = ({ displayName, iconSrc }) => (
   </div>
 );
 
-// TODO: remove with styles and use styled component
-const StatusChip = withStyles(styles)(({ classes, entityData, entityType }) => {
+const StatusChip = ({ entityData, entityType }) => {
   const nextStatus = Object.values(REGISTRY_ITEM_STATES);
   const [updateEntityStatus] = useUpdateEntityStatusMutation();
   const { data: modelData, isSuccess } = useGetMeshModelsQuery({
@@ -433,16 +413,13 @@ const StatusChip = withStyles(styles)(({ classes, entityData, entityType }) => {
     });
   };
 
-  const icons = {
-    [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.IGNORED]: () => <RemoveCircleIcon />,
-    [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.ENABLED]: () => <AssignmentTurnedInIcon />,
-  };
+  // const icons = {
+  //   [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.IGNORED]: () => <RemoveCircleIcon />,
+  //   [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.ENABLED]: () => <AssignmentTurnedInIcon />,
+  // };
 
   return (
-    <FormControl
-      className={classes.chipFormControl}
-      style={{ minWidth: '0%', flexDirection: 'inherit' }}
-    >
+    <FormControl style={{ flexDirection: 'inherit', minWidth: '100%' }}>
       {isSuccess ? (
         <Select
           labelId="entity-status-select-label"
@@ -452,7 +429,12 @@ const StatusChip = withStyles(styles)(({ classes, entityData, entityType }) => {
           defaultValue={data?.status}
           onClick={(e) => e.stopPropagation()}
           onChange={(e) => handleStatusChange(e)}
-          className={classes.statusSelect}
+          sx={{
+            '& .MuiSelect-select': {
+              p: '0.5rem !important',
+              pr: '2rem !important',
+            },
+          }}
           disableUnderline
           disabled={!isSuccess} // Disable the select when isSuccess is false
           MenuProps={{
@@ -472,19 +454,13 @@ const StatusChip = withStyles(styles)(({ classes, entityData, entityType }) => {
           {nextStatus.map((status) => (
             <MenuItem
               disabled={status === data?.status}
-              style={{ padding: '0', display: status === data?.status ? 'none' : 'flex' }}
+              style={{ display: status === data?.status ? 'none' : 'flex' }}
               value={status}
               key={status}
             >
-              <Chip
-                className={classNames(classes.statusChip, classes[status])}
-                avatar={icons[status] ? icons[status]() : ''}
-                label={
-                  status === data?.status
-                    ? status
-                    : REGISTRY_ITEM_STATES_TO_TRANSITION_MAP?.[status] || status
-                }
-              />
+              {status === data?.status
+                ? status
+                : REGISTRY_ITEM_STATES_TO_TRANSITION_MAP?.[status] || status}
             </MenuItem>
           ))}
         </Select>
@@ -493,11 +469,10 @@ const StatusChip = withStyles(styles)(({ classes, entityData, entityType }) => {
       )}
     </FormControl>
   );
-});
+};
 
 const MeshModelDetails = ({ view, showDetailsData }) => {
   const theme = useTheme();
-  const StyleClass = useStyles();
   const isEmptyDetails =
     Object.keys(showDetailsData.data).length === 0 || showDetailsData.type === 'none';
 
@@ -524,11 +499,9 @@ const MeshModelDetails = ({ view, showDetailsData }) => {
 
   return (
     <UsesSistent>
-      <Paper
-        className={isEmptyDetails ? StyleClass.emptyDetailsContainer : StyleClass.detailsContainer}
-      >
+      <DetailsContainer isEmpty={isEmptyDetails}>
         {isEmptyDetails ? renderEmptyDetails() : getContent(showDetailsData.type)}
-      </Paper>
+      </DetailsContainer>
     </UsesSistent>
   );
 };

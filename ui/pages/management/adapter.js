@@ -1,4 +1,4 @@
-import { NoSsr } from '@material-ui/core';
+import { NoSsr } from '@mui/material';
 import Head from 'next/head';
 import { withRouter } from 'next/router';
 import React from 'react';

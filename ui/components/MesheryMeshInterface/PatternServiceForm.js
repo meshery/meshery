@@ -1,7 +1,7 @@
 // @ts-check
 import { AppBar, IconButton, makeStyles, Toolbar, Tooltip } from '@material-ui/core';
-import { Delete, HelpOutline } from '@material-ui/icons';
-import SettingsIcon from '@material-ui/icons/Settings';
+import { Delete, HelpOutline } from '@mui/icons-material';
+import SettingsIcon from '@mui/icons-material/Settings';
 import React, { useEffect } from 'react';
 import { iconSmall } from '../../css/icons.styles';
 import { pSBCr } from '../../utils/lightenOrDarkenColor';

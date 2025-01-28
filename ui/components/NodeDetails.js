@@ -1,8 +1,6 @@
 import React from 'react';
-import { NoSsr, TableCell } from '@material-ui/core';
-// import { createTheme } from '@material-ui/core/styles';
+import { NoSsr, TableCell, TableSortLabel } from '@mui/material';
 import MUIDataTable from 'mui-datatables';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
 
 function NodeDetails(props) {
   const chartData = props.result;

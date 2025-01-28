@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
-import React, { createRef, useCallback, useEffect } from 'react';
+import React from 'react';
 import Slider from 'react-slick';
-import { Grid } from '@material-ui/core';
+import { Grid } from '@layer5/sistent';
 // const VerticalCarousel = ({
 //   item,
 //   setActiveIndex
