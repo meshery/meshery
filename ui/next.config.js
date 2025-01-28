@@ -3,9 +3,9 @@ const removeImports = require('next-remove-imports')();
 const nextConfig = removeImports({
   reactStrictMode: false,
   compiler: {
-    relay: require("./relay.config"),
+    relay: require('./relay.config'),
   },
-  exportPathMap: function() {
+  exportPathMap: function () {
     return {
       '/404': { page: '/404' },
       '/configuration/filters': { page: '/configuration/filters' },
@@ -22,8 +22,7 @@ const nextConfig = removeImports({
       '/performance': { page: '/performance' },
       '/performance/profiles': { page: '/performance/profiles' },
       '/settings': { page: '/settings' },
-      '/system/connections': { page: '/system/connections' },
-      '/user/preferences': { page: '/user/preferences' }
+      '/user/preferences': { page: '/user/preferences' },
     };
   },
   //  exportPathMap: function (pathMap) {
@@ -40,13 +39,12 @@ const nextConfig = removeImports({
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,
-      "remote-component.config.js": __dirname + "/remote-component.config.js"
+      'remote-component.config.js': __dirname + '/remote-component.config.js',
     };
-    config.output.webassemblyModuleFilename = 'static/[modulehash].wasm',
-      config.experiments = { asyncWebAssembly: true, layers: true }
+    (config.output.webassemblyModuleFilename = 'static/[modulehash].wasm'),
+      (config.experiments = { asyncWebAssembly: true, layers: true });
     return config;
-  }
-})
+  },
+});
 
-module.exports = nextConfig
-
+module.exports = nextConfig;
