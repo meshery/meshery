@@ -1,6 +1,5 @@
-import { withStyles } from '@material-ui/core';
 import React, { useState, useEffect, useCallback } from 'react';
-import { Button, Radio, FormControl, FormLabel, RadioGroup, MenuItem } from '@material-ui/core';
+import { Radio, FormLabel } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
 import { getUnit8ArrayDecodedFile } from '../../utils/utils';
@@ -36,7 +35,7 @@ import {
   useLazyGetRegistrantsQuery,
   useImportMeshModelMutation,
 } from '@/rtk-query/meshModel';
-import NoSsr from '@material-ui/core/NoSsr';
+import NoSsr from '@mui/material/NoSsr';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 import _ from 'lodash';
 import {
@@ -58,6 +57,10 @@ import {
   Checkbox,
   ComponentIcon,
   Typography,
+  Button,
+  FormControl,
+  RadioGroup,
+  MenuItem,
 } from '@layer5/sistent';
 import BrushIcon from '@mui/icons-material/Brush';
 import CategoryIcon from '@mui/icons-material/Category';
@@ -71,29 +74,6 @@ import ModelIcon from '@/assets/icons/ModelIcon';
 import { iconMedium } from '../../css/icons.styles';
 import AddIcon from '@mui/icons-material/AddCircleOutline';
 import LanOutlinedIcon from '@mui/icons-material/LanOutlined';
-const meshmodelStyles = (theme) => ({
-  wrapperClss: {
-    flexGrow: 1,
-    maxWidth: '100%',
-    height: 'auto',
-  },
-  tab: {
-    minWidth: 40,
-    paddingLeft: 0,
-    paddingRight: 0,
-    '&.Mui-selected': {
-      color: theme.palette.secondary.focused,
-    },
-  },
-  tabs: {
-    '& .MuiTabs-indicator': {
-      backgroundColor: theme.palette.secondary.focused,
-    },
-  },
-  duplicatesModelStyle: {
-    backgroundColor: theme.palette.secondary.focused,
-  },
-});
 
 const useMeshModelComponentRouter = () => {
   const router = useRouter();
@@ -1691,4 +1671,4 @@ const MeshModelComponent = (props) => {
     </NoSsr>
   );
 };
-export default withStyles(meshmodelStyles)(MeshModelComponent);
+export default MeshModelComponent;
