@@ -254,7 +254,6 @@ const MesherySettingsPerformanceComponent = (props) => {
               color="primary"
               size="large"
               onClick={handleSubmit}
-              sx={{ marginTop: theme.spacing(3), marginLeft: theme.spacing(1) }}
               disabled={blockRunTest}
             >
               <SaveOutlinedIcon style={{ marginRight: '3px' }} />

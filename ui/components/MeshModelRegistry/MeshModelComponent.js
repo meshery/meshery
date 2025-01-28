@@ -1,14 +1,6 @@
 import { withStyles } from '@material-ui/core';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  Paper,
-  Button,
-  Radio,
-  FormControl,
-  FormLabel,
-  RadioGroup,
-  MenuItem,
-} from '@material-ui/core';
+import { Button, Radio, FormControl, FormLabel, RadioGroup, MenuItem } from '@material-ui/core';
 import UploadIcon from '@mui/icons-material/Upload';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
 import { getUnit8ArrayDecodedFile } from '../../utils/utils';
@@ -22,8 +14,14 @@ import {
   PROMETHEUS,
 } from '../../constants/navigator';
 import DescriptionIcon from '@mui/icons-material/Description';
-// import { SORT } from '../../constants/endpoints';
-import useStyles from '../../assets/styles/general/tool.styles';
+import {
+  MeshModelToolbar,
+  MainContainer,
+  InnerContainer,
+  CardStyle,
+  TreeWrapper,
+  DetailsContainer,
+} from '@/assets/styles/general/tool.styles';
 import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
 import { toLower } from 'lodash';
@@ -160,7 +158,6 @@ const MeshModelComponent_ = ({
   });
   const [searchText, setSearchText] = useState(searchQuery);
   const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
-  const StyleClass = useStyles();
   const [view, setView] = useState(OVERVIEW);
   const [convert, setConvert] = useState(false);
   const [importSchema, setImportSchema] = useState({});
@@ -628,14 +625,8 @@ const MeshModelComponent_ = ({
         <SistentModal maxWidth="sm" {...urlModal}></SistentModal>
         <SistentModal maxWidth="sm" {...csvModal}></SistentModal>
       </UsesSistent>
-      <div
-        className={`${StyleClass.mainContainer} ${animate ? StyleClass.mainContainerAnimate : ''}`}
-      >
-        <div
-          className={`${StyleClass.innerContainer} ${
-            animate ? StyleClass.innerContainerAnimate : ''
-          }`}
-        >
+      <MainContainer isAnimated={animate}>
+        <InnerContainer isAnimated={animate}>
           <TabCard
             label="Models"
             count={modelsCount}
@@ -664,17 +655,12 @@ const MeshModelComponent_ = ({
             animate={animate}
             onClick={() => handleTabClick(REGISTRANTS)}
           />
-        </div>
+        </InnerContainer>
         {convert && (
-          <div
-            className={`${StyleClass.treeWrapper} ${convert ? StyleClass.treeWrapperAnimate : ''}`}
-          >
-            <Paper
-              className={StyleClass.detailsContainer}
+          <TreeWrapper isAnimated={convert}>
+            <DetailsContainer
+              isEmpty={!resourcesDetail.length}
               style={{
-                display: 'flex',
-                alignItems: resourcesDetail.length === 0 ? 'center' : '',
-                justifyContent: resourcesDetail.length === 0 ? 'center' : '',
                 padding: '0.6rem',
                 overflow: 'hidden',
               }}
@@ -703,15 +689,15 @@ const MeshModelComponent_ = ({
                   [RELATIONSHIPS]: relationshipsRes.isFetching,
                 }}
               />
-            </Paper>
+            </DetailsContainer>
             <MeshModelDetails
               view={view}
               setShowDetailsData={setShowDetailsData}
               showDetailsData={showDetailsData}
             />
-          </div>
+          </TreeWrapper>
         )}
-      </div>
+      </MainContainer>
     </div>
   );
 };
@@ -1627,12 +1613,8 @@ CsvStepper.displayName = 'CsvStepper';
 UrlStepper.displayName = 'Create';
 
 const TabBar = ({ animate, handleUploadImport, handleGenerateModel }) => {
-  const StyleClass = useStyles();
-
   return (
-    <div
-      className={`${StyleClass.meshModelToolbar} ${animate ? StyleClass.toolWrapperAnimate : ''}`}
-    >
+    <MeshModelToolbar isAnimated={animate}>
       <div
         style={{
           display: 'flex',
@@ -1679,20 +1661,13 @@ const TabBar = ({ animate, handleUploadImport, handleGenerateModel }) => {
       >
         Ignore
       </DisableButton>
-    </div>
+    </MeshModelToolbar>
   );
 };
 
 const TabCard = ({ label, count, active, onClick, animate }) => {
-  const StyleClass = useStyles();
   return (
-    <Paper
-      elevation={3}
-      className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
-        active ? StyleClass.activeTab : ''
-      }`}
-      onClick={onClick}
-    >
+    <CardStyle isAnimated={animate} isSelected={active} elevation={3} onClick={onClick}>
       <span
         style={{
           fontWeight: `${animate ? 'normal' : 'bold'}`,
@@ -1703,7 +1678,7 @@ const TabCard = ({ label, count, active, onClick, animate }) => {
         {animate ? `(${count})` : `${count}`}
       </span>
       {label}
-    </Paper>
+    </CardStyle>
   );
 };
 
