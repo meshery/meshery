@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
 import { Avatar } from '@layer5/sistent';
-import IconButton from '@material-ui/core/IconButton';
 import NoSsr from '@material-ui/core/NoSsr';
 import Link from 'next/link';
 import { Provider, connect } from 'react-redux';
@@ -12,7 +11,7 @@ import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidato
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import { Button } from '@material-ui/core';
-
+import { IconButtonAvatar } from './Header.styles';
 /**
  * Extension Point: Avatar behavior for User Modes
  * Insert custom logic here to handle Single User mode, Anonymous User mode, Multi User mode behavior.
@@ -60,7 +59,7 @@ const User = (props) => {
     setAccount(ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account));
   }
 
-  const { color, iconButtonClassName, avatarClassName } = props;
+  const { color } = props;
 
   const source = new URL('/api/user/token', window.location.origin);
   const sourceURL = btoa(source.toString());
@@ -82,18 +81,12 @@ const User = (props) => {
     <div>
       <NoSsr>
         <div data-testid="profile-button">
-          <IconButton
-            color={color}
-            className={iconButtonClassName}
-            aria-haspopup="true"
-            onClick={goToProfile}
-          >
+          <IconButtonAvatar color={color} aria-haspopup="true" onClick={goToProfile}>
             <Avatar
-              className={avatarClassName}
               src={isGetUserSuccess ? userData?.avatar_url : null}
               imgProps={{ referrerPolicy: 'no-referrer' }}
             />
-          </IconButton>
+          </IconButtonAvatar>
         </div>
       </NoSsr>
     </div>
