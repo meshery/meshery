@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 import React, { useEffect, useRef, useState } from 'react';
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@mui/icons-material/Close';
 import PatternIcon from '../../../assets/icons/Pattern';
 import { Typography, IconButton, Button, Grid, Avatar, Tooltip, Box } from '@material-ui/core';
 import useStyles, {
@@ -45,7 +45,7 @@ import TooltipButton from '@/utils/TooltipButton';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import { filterEmptyFields } from '@/utils/objects';
-import { Lock, Public } from '@material-ui/icons';
+import { Lock, Public } from '@mui/icons-material';
 
 const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';

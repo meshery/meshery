@@ -89,12 +89,12 @@ get_component_configuration(component, design) := configuration if {
 
 # Get the from component id ( assumes only one selector and from in declaration)
 from_component_id(relationship) := component if {
-	component := relationship.selectors[0].from[0].id
+	component := relationship.selectors[0].allow.from[0].id
 }
 
 # Get the to component id ( assumes only one selector and from in declaration)
 to_component_id(relationship) := component if {
-	component := relationship.selectors[0].to[0].id
+	component := relationship.selectors[0].allow.to[0].id
 }
 
 # Get the component declaration by id

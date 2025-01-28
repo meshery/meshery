@@ -1,5 +1,5 @@
 import React from 'react';
-import useStyles from '../../assets/styles/general/tool.styles';
+import { DetailsContainer, Segment, FullWidth } from '@/assets/styles/general/tool.styles';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import { FormatStructuredData, reorderObjectProperties } from '../DataFormatter';
 import {
@@ -9,7 +9,6 @@ import {
   Chip,
   CircularProgress,
   useTheme,
-  Paper,
   Button,
 } from '@material-ui/core';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -70,31 +69,25 @@ const RenderContents = ({
   orderRight,
   jsonData,
 }) => {
-  const StyleClass = useStyles();
   const theme = useTheme();
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      <div className={StyleClass.segment}>
-        <div
-          className={StyleClass.fullWidth}
-          style={{ display: 'flex', flexDirection: 'column', paddingRight: '1rem' }}
-        >
+      <Segment>
+        <FullWidth style={{ display: 'flex', flexDirection: 'column', paddingRight: '1rem' }}>
           <FormatStructuredData
             data={reorderObjectProperties(metaDataLeft, orderLeft)}
             propertyFormatters={PropertyFormattersLeft}
             order={orderLeft}
           />
-        </div>
-
-        <div className={StyleClass.fullWidth} style={{ display: 'flex', flexDirection: 'column' }}>
+        </FullWidth>
+        <FullWidth style={{ display: 'flex', flexDirection: 'column' }}>
           <FormatStructuredData
             data={reorderObjectProperties(metaDataRight, orderRight)}
             propertyFormatters={PropertyFormattersRight}
             order={orderRight}
           />
-        </div>
-      </div>
-
+        </FullWidth>
+      </Segment>
       {jsonData && (
         <Accordion
           style={{
@@ -497,7 +490,6 @@ const StatusChip = withStyles(styles)(({ classes, entityData, entityType }) => {
 
 const MeshModelDetails = ({ view, showDetailsData }) => {
   const theme = useTheme();
-  const StyleClass = useStyles();
   const isEmptyDetails =
     Object.keys(showDetailsData.data).length === 0 || showDetailsData.type === 'none';
 
@@ -524,11 +516,9 @@ const MeshModelDetails = ({ view, showDetailsData }) => {
 
   return (
     <UsesSistent>
-      <Paper
-        className={isEmptyDetails ? StyleClass.emptyDetailsContainer : StyleClass.detailsContainer}
-      >
+      <DetailsContainer isEmpty={isEmptyDetails}>
         {isEmptyDetails ? renderEmptyDetails() : getContent(showDetailsData.type)}
-      </Paper>
+      </DetailsContainer>
     </UsesSistent>
   );
 };

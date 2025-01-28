@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
-import { Autocomplete } from '@material-ui/lab';
+import { Autocomplete } from '@mui/material';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import { URLValidator } from '../../utils/URLValidator';
@@ -24,10 +24,10 @@ import {
 } from '@material-ui/core';
 import { CustomTooltip, ModalBody, ModalFooter } from '@layer5/sistent';
 import TextField from '@material-ui/core/TextField';
-import GetAppIcon from '@material-ui/icons/GetApp';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import HelpOutlineOutlinedIcon from '@material-ui/icons/HelpOutlineOutlined';
-import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
+import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import {
   updateLoadTestData,
   updateStaticPrometheusBoardConfig,
@@ -54,7 +54,7 @@ import { useSavePerformanceProfileMutation } from '@/rtk-query/performance-profi
 import { useGetMeshQuery } from '@/rtk-query/mesh';
 import { useLegacySelector, useLegacyDispatch } from '../../lib/store';
 import { Box } from '@mui/material';
-import { ArrowBack } from '@material-ui/icons';
+import { ArrowBack } from '@mui/icons-material';
 
 // =============================== HELPER FUNCTIONS ===========================
 

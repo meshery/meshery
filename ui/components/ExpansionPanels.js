@@ -1,14 +1,17 @@
-import MuiExpansionPanel from '@material-ui/core/ExpansionPanel';
-import MuiExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
-import { withStyles } from '@material-ui/core';
+import { styled, Accordion, AccordionSummary } from '@layer5/sistent';
 
-export const ExpansionPanel = withStyles({
-  root: { border: '1px solid rgba(0,0,0,.125)' },
-  expanded: { margin: 'auto' },
-})(MuiExpansionPanel);
+export const ExpansionPanel = styled(Accordion)({
+  border: '1px solid rgba(0,0,0,.125)',
+  '&.Mui-expanded': {
+    margin: 'auto',
+  },
+});
 
-export const ExpansionPanelSummary = withStyles({
-  root: { borderBottom: '1px solid rgba(0,0,0,.125)' },
-  content: { '&$expanded': { margin: '12px 0' } },
-  expanded: {},
-})((props) => <MuiExpansionPanelSummary {...props} />);
+export const ExpansionPanelSummary = styled(AccordionSummary)({
+  borderBottom: '1px solid rgba(0,0,0,.125)',
+  '& .MuiAccordionSummary-content': {
+    '&.Mui-expanded': {
+      margin: '12px 0',
+    },
+  },
+});

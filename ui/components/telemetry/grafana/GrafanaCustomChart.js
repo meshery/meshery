@@ -4,9 +4,9 @@ import { NoSsr } from '@mui/material';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import moment from 'moment';
-import OpenInNewIcon from '@material-ui/icons/OpenInNewOutlined';
-import WarningIcon from '@material-ui/icons/Warning';
-import CachedIcon from '@material-ui/icons/Cached';
+import OpenInNewIcon from '@mui/icons-material/OpenInNewOutlined';
+import WarningIcon from '@mui/icons-material/Warning';
+import CachedIcon from '@mui/icons-material/Cached';
 import dataFetch from '../../../lib/data-fetch';
 import { updateProgress } from '../../../lib/store';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
@@ -660,8 +660,8 @@ class GrafanaCustomChart extends Component {
     const linked = this.state.sparkline
       ? false
       : !inDialog
-      ? { name: board && board.title ? board.title : '' }
-      : false;
+        ? { name: board && board.title ? board.title : '' }
+        : false;
 
     let shouldDisplayLegend = Object.keys(this.datasetIndex).length <= 10;
     if (panel.type !== 'graph') {

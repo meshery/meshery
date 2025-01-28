@@ -24,11 +24,11 @@ import {
   ResponsiveDataTable,
   PROMPT_VARIANTS,
 } from '@layer5/sistent';
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import { getVisibilityColums } from '../../utils/utils';
-import useStyles from '../../assets/styles/general/tool.styles';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { updateProgress, useLegacySelector } from '../../lib/store';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
@@ -132,7 +132,6 @@ const ConnectionTable = ({
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const modalRef = useRef(null);
-  const StyleClass = useStyles();
 
   const filters = {
     status: {
@@ -181,8 +180,8 @@ const ConnectionTable = ({
     kind: selectedFilter
       ? JSON.stringify([selectedFilter])
       : kindFilter
-      ? JSON.stringify([kindFilter])
-      : '',
+        ? JSON.stringify([kindFilter])
+        : '',
   });
   const {
     data: environmentsResponse,
@@ -1073,11 +1072,11 @@ const ConnectionTable = ({
   }, [environmentsError, connectionError, isEnvironmentsSuccess]);
   return (
     <>
-      <div className={StyleClass.toolWrapper} style={{ marginBottom: '5px', marginTop: '-30px' }}>
-        <div className={classes.createButton}>
-          <MesherySettingsEnvButtons />
-        </div>
-        <UsesSistent>
+      <UsesSistent>
+        <ToolWrapper style={{ marginBottom: '5px', marginTop: '-30px' }}>
+          <div className={classes.createButton}>
+            <MesherySettingsEnvButtons />
+          </div>
           <div
             className={classes.searchAndView}
             style={{
@@ -1109,8 +1108,8 @@ const ConnectionTable = ({
               customToolsProps={{ columnVisibility, setColumnVisibility }}
             />
           </div>
-        </UsesSistent>
-      </div>
+        </ToolWrapper>
+      </UsesSistent>
       <UsesSistent>
         <ResponsiveDataTable
           data={connections}

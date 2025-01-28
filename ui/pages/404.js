@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import CustomErrorMessage from '../components/ErrorPage';
-import { NoSsr } from '@material-ui/core';
+import { NoSsr } from '@mui/material';
 import { updatepagepath } from '../lib/store';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';

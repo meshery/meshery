@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { toggleDrawer } from '../lib/store';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-// import { CircularProgress, Typography } from "@material-ui/core";
 import normalizeURI from '../utils/normalizeURI';
 import dataFetch from '../lib/data-fetch';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';

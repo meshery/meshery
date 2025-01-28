@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { iconMedium } from '../../css/icons.styles';
-import AddIcon from '@material-ui/icons/AddCircleOutline';
+import AddIcon from '@mui/icons-material/AddCircleOutline';
 import { Button, useTheme } from '@layer5/sistent';
 
 function ConnectClustersBtn() {

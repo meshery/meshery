@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { LinearProgress } from '@material-ui/core';
+import { LinearProgress } from '@mui/material';
 import React, { useEffect, useRef } from 'react';
 import { useSnackbar } from 'notistack';
 

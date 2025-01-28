@@ -1,5 +1,5 @@
 import React from 'react';
-import SvgIcon from '@material-ui/core/SvgIcon';
+import SvgIcon from '@mui/material/SvgIcon';
 
 const icons = (completed, active) => {
   return {
@@ -315,8 +315,8 @@ const icons = (completed, active) => {
                 !active && !completed
                   ? '#3C494E'
                   : active && !completed
-                  ? 'url(#paint0_linear)'
-                  : 'white'
+                    ? 'url(#paint0_linear)'
+                    : 'white'
               }
             />
           </g>

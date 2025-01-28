@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 /* eslint-disable no-unused-vars */
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@mui/icons-material/Close';
 import { withStyles, Typography, Grid, Chip, IconButton } from '@material-ui/core/';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';

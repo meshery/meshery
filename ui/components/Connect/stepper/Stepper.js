@@ -1,12 +1,10 @@
 import * as React from 'react';
-import Step from '@material-ui/core/Step';
-import StepLabel from '@material-ui/core/StepLabel';
 import { ColorlibConnector, useStyles, useColorlibStepIconStyles } from '../styles';
 import { useRouter } from 'next/router';
 import TipsCarousel from '../../General/TipsCarousel';
 import { ConnectionStepperTips } from '../connections/helm-connect/constants'; //TODO: move this to common
-import Stepper from '@material-ui/core/Stepper';
 import clsx from 'clsx';
+import { Step, Stepper, StepLabel } from '@mui/material';
 
 function StepperIcon(props) {
   const classes = useColorlibStepIconStyles();

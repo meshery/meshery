@@ -1,19 +1,8 @@
 /* eslint-disable */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
-import { Autocomplete } from '@material-ui/lab';
-import {
-  NoSsr,
-  Tooltip,
-  CircularProgress,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Button,
-  TextField,
-  Grid,
-} from '@material-ui/core';
+import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
+import { Autocomplete, NoSsr, Radio } from '@mui/material';
 import dataFetch from '../lib/data-fetch';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -24,7 +13,16 @@ import { withNotify } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import theme from '@/themes/app';
 import { styled } from '@mui/styles';
-import { FormControl } from '@layer5/sistent';
+import {
+  FormControl,
+  CircularProgress,
+  RadioGroup,
+  FormControlLabel,
+  TextField,
+  Grid,
+  Button,
+  CustomTooltip,
+} from '@layer5/sistent';
 
 const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
 
@@ -187,7 +185,8 @@ const MesherySettingsPerformanceComponent = (props) => {
               />
             </Grid>
             <Grid item xs={12} lg={4}>
-              <Tooltip
+              <CustomTooltip
+                placement="top"
                 title={"Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."}
               >
                 <Autocomplete
@@ -210,7 +209,7 @@ const MesherySettingsPerformanceComponent = (props) => {
                     <TextField {...params} label="Duration*" variant="outlined" />
                   )}
                 />
-              </Tooltip>
+              </CustomTooltip>
             </Grid>
             <Grid item xs={12} lg={4}>
               <FormControlWrapper component="loadGenerator">
@@ -255,7 +254,6 @@ const MesherySettingsPerformanceComponent = (props) => {
               color="primary"
               size="large"
               onClick={handleSubmit}
-              sx={{ marginTop: theme.spacing(3), marginLeft: theme.spacing(1) }}
               disabled={blockRunTest}
             >
               <SaveOutlinedIcon style={{ marginRight: '3px' }} />

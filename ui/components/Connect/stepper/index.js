@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import CustomizedSteppers from './Stepper';
 import { useStyles } from '../styles';
 import { helmStepContent, helmStepIcons, helmSteps } from '../connections/helm-connect/constants';
-import { Paper, Box } from '@material-ui/core';
+import { Paper, Box } from '@layer5/sistent';
 
 function ConnectionStepper({ connectionType }) {
   const classes = useStyles();

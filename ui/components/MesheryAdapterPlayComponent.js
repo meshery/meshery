@@ -27,9 +27,9 @@ import {
 } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 import NoSsr from '@material-ui/core/NoSsr';
-import AddIcon from '@material-ui/icons/Add';
-import DeleteIcon from '@material-ui/icons/Delete';
-import PlayIcon from '@material-ui/icons/PlayArrow';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import PlayIcon from '@mui/icons-material/PlayArrow';
 import MUIDataTable from 'mui-datatables';
 import { withRouter } from 'next/router';
 import PropTypes from 'prop-types';

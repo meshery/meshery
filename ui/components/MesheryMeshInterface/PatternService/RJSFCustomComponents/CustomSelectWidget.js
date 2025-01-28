@@ -7,8 +7,8 @@ import {
   TextField,
   InputLabel,
 } from '@material-ui/core';
-import HelpOutlineIcon from '@material-ui/icons/HelpOutline';
-import ErrorOutlineIcon from '@material-ui/icons/ErrorOutline';
+import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
 import theme from '../../../../themes/app';

@@ -2,18 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
 import { connect, Provider } from 'react-redux';
-import { NoSsr } from '@material-ui/core';
+import { NoSsr } from '@mui/material';
 import { bindActionCreators } from 'redux';
-import {
-  CustomTooltip,
-  AppBar,
-  // Paper,
-  Typography,
-  styled,
-  Tabs,
-  Tab,
-  Paper,
-} from '@layer5/sistent';
+import { CustomTooltip, AppBar, Typography, styled, Tabs, Tab, Paper, Grid } from '@layer5/sistent';
 import DashboardMeshModelGraph from './DashboardComponent/charts/DashboardMeshModelGraph';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faPoll, faDatabase, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
@@ -45,7 +36,6 @@ import {
   PROMETHEUS,
   OVERVIEW,
 } from '@/constants/navigator';
-import Grid from '@material-ui/core/Grid';
 import { removeDuplicateVersions } from './MeshModelRegistry/helper';
 import DefaultError from './General/error-404';
 import { store } from '../store';

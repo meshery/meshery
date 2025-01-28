@@ -14,7 +14,7 @@ import React from 'react';
 import { useRef } from 'react';
 import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
 import _PromptComponent from './PromptComponent';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateProgress } from '../lib/store';
 import { useNotification } from '../utils/hooks/useNotification';

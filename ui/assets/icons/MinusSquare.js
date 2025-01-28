@@ -1,5 +1,5 @@
 import React from 'react';
-import SvgIcon from '@material-ui/core/SvgIcon';
+import { SvgIcon } from '@mui/material';
 
 export function MinusSquare(props) {
   return (
@@ -11,4 +11,3 @@ export function MinusSquare(props) {
 }
 
 export default MinusSquare;
-

@@ -101,8 +101,7 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 		if csvDirectory == "" {
 			srv, err = mutils.NewSheetSRV(spreadsheeetCred)
 			if err != nil {
-				utils.LogError.Error(ErrUpdateRegistry(err, modelLocation))
-				return nil
+				return errors.New(utils.RegistryError("Invalid JWT Token: Ensure the provided token is a base64-encoded, valid Google Spreadsheets API token.", "generate"))
 			}
 
 			resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
