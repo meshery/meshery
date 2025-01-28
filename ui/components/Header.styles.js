@@ -1,4 +1,4 @@
-import { styled, AppBar, Toolbar, Paper, MenuIcon, IconButton } from '@layer5/sistent';
+import { styled, AppBar, Toolbar, Paper, MenuIcon, IconButton, darkTeal } from '@layer5/sistent';
 
 export const HeaderAppBar = styled(AppBar, {
   shouldForwardProp: (prop) => prop !== 'isDrawerCollapsed',
@@ -20,7 +20,7 @@ export const StyledToolbar = styled(Toolbar, {
   padding: 16,
   paddingLeft: isDrawerCollapsed ? 0 : 34,
   paddingRight: 34,
-  backgroundColor: theme.palette.background.card,
+  backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.card : darkTeal.main,
   boxShadow: `3px 0px 4px ${theme.palette.background.brand.default}`,
   ...(isDrawerCollapsed
     ? {
