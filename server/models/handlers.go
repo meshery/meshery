@@ -5,8 +5,10 @@ import (
 
 	"time"
 
-	"github.com/layer5io/meshery/server/models/meshmodel"
-	"github.com/layer5io/meshkit/utils/events"
+	// "github.com/layer5io/meshery/server/models/meshmodel"
+	// "github.com/layer5io/meshkit/utils/events"
+	"github.com/octocamocoder47/meshery/server/models/meshmodel"
+	"github.com/octocamocoder47/meshkit/utils/events"
 )
 
 // HandlerInterface defines the methods a Handler should define
@@ -122,6 +124,10 @@ type HandlerInterface interface {
 	GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, r *http.Request)
+
+	GetMeshmodelSubCategories(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelSubCategoriesByName(rw http.ResponseWriter, r *http.Request)
+
 	ValidationHandler(rw http.ResponseWriter, r *http.Request)
 	MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelModels(rw http.ResponseWriter, r *http.Request)

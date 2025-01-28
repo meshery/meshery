@@ -1,10 +1,13 @@
 package models
 
 import (
-	models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
-	"github.com/layer5io/meshkit/models/meshmodel/entity"
+	// models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	// "github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/model"
+
+	models "github.com/octocamocoder47/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/octocamocoder47/meshkit/models/meshmodel/entity"
 )
 
 // API response model for meshmodel models API
@@ -74,6 +77,14 @@ type MeshmodelCategoriesAPIResponse struct {
 	PageSize   int             `json:"page_size"`
 	Count      int64           `json:"total_count"`
 	Categories []entity.Entity `json:"categories"`
+}
+
+// API response model for meshmodel subCategories API
+type MeshmodelSubCategoriesAPIResponse struct {
+	Page       int             `json:"page"`
+	PageSize   int             `json:"page_size"`
+	Count      int64           `json:"total_count"`
+	SubCategories []entity.Entity `json:"sub_categories"`
 }
 
 // API response model for meshmodel relationships API

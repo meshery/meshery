@@ -17,9 +17,13 @@ import (
 	"github.com/gorilla/mux"
 	mesheryctlUtils "github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
-	"github.com/layer5io/meshery/server/helpers"
-	"github.com/layer5io/meshery/server/helpers/utils"
-	"github.com/layer5io/meshery/server/models"
+	// "github.com/layer5io/meshery/server/helpers"
+	// "github.com/layer5io/meshery/server/helpers/utils"
+	// "github.com/layer5io/meshery/server/models"
+	"github.com/octocamocoder47/meshery/server/helpers"
+	"github.com/octocamocoder47/meshery/server/helpers/utils"
+	"github.com/octocamocoder47/meshery/server/models"
+
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/events"
 
@@ -29,15 +33,18 @@ import (
 
 	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
-	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
+	schemav1beta1 "github.com/octocamocoder47/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	_model "github.com/meshery/schemas/models/v1beta1/model"
 
-	"github.com/layer5io/meshkit/models/meshmodel/entity"
-	"github.com/layer5io/meshkit/models/meshmodel/registry"
+	// "github.com/layer5io/meshkit/models/meshmodel/entity"
+	// "github.com/layer5io/meshkit/models/meshmodel/registry"
+	// regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 
-	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
+	"github.com/octocamocoder47/meshkit/models/meshmodel/entity"
+	"github.com/octocamocoder47/meshkit/models/meshmodel/registry"
+	regv1beta1 "github.com/octocamocoder47/meshkit/models/meshmodel/registry/v1beta1"
 )
 
 /**Meshmodel endpoints **/
@@ -434,6 +441,114 @@ func (h *Handler) GetMeshmodelCategoriesByName(rw http.ResponseWriter, r *http.R
 		PageSize:   int(pgSize),
 		Count:      count,
 		Categories: categories,
+	}
+
+	if err := enc.Encode(res); err != nil {
+		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+	}
+}
+
+// swagger:route GET /api/meshmodels/subcategories GetMeshmodelSubCategories idGetMeshmodelSubCategories
+// Handle GET request for getting all meshmodel sub-categories
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?sort={[asc/desc]}``` Default behavior is asc
+//
+// ```?search={sub_categoryName}``` If search is non empty then a greedy search is performed
+//
+// ```?page={page-number}``` Default page number is 1
+//
+// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+// responses:
+//
+//	200: []meshmodelSubCategoriesResponseWrapper
+func (h *Handler) GetMeshmodelSubCategories(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	filter := &regv1beta1.SubCategoryFilter{
+		Limit:   limit,
+		Offset:  offset,
+		OrderOn: order,
+		Sort:    sort,
+	}
+	if search != "" {
+		filter.Greedy = true
+		filter.Name = search
+	}
+
+	scategories, count, _, _ := h.registryManager.GetEntities(filter)
+
+	var pgSize int64
+
+	if limit == 0 {
+		pgSize = count
+	} else {
+		pgSize = int64(limit)
+	}
+
+	res := models.MeshmodelSubCategoriesAPIResponse{
+		Page:       page,
+		PageSize:   int(pgSize),
+		Count:      count,
+		SubCategories: scategories,
+	}
+
+	if err := enc.Encode(res); err != nil {
+		h.log.Error(ErrGetMeshModels(err)) //TODO: Add appropriate meshkit error
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+	}
+}
+
+
+// swagger:route GET /api/meshmodels/subcategories/{sub_category} GetMeshmodelSubCategoriesByName idGetMeshmodelSubCategoriesByName
+// Handle GET request for getting all meshmodel sub-categories of a given name
+//
+// ```?order={field}``` orders on the passed field
+//
+// ```?sort={[asc/desc]}``` Default behavior is asc
+//
+// ```?page={page-number}``` Default page number is 1
+//
+// ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+//
+// ```?search={[true/false]}``` If search is true then a greedy search is performed
+// responses:
+//
+//	200: []meshmodelSubCategoriesResponseWrapper
+func (h *Handler) GetMeshmodelSubCategoriesByName(rw http.ResponseWriter, r *http.Request) {
+	rw.Header().Add("Content-Type", "application/json")
+	enc := json.NewEncoder(rw)
+	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	name := mux.Vars(r)["sub_category"]
+	var greedy bool
+	if search == "true" {
+		greedy = true
+	}
+	scategories, count, _, _ := h.registryManager.GetEntities(&regv1beta1.SubCategoryFilter{
+		Name:    name,
+		Limit:   limit,
+		Greedy:  greedy,
+		Offset:  offset,
+		OrderOn: order,
+		Sort:    sort,
+	})
+
+	var pgSize int64
+
+	if limit == 0 {
+		pgSize = count
+	} else {
+		pgSize = int64(limit)
+	}
+
+	res := models.MeshmodelSubCategoriesAPIResponse{
+		Page:       page,
+		PageSize:   int(pgSize),
+		Count:      count,
+		SubCategories: scategories,
 	}
 
 	if err := enc.Encode(res); err != nil {
