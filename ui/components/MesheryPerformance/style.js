@@ -19,3 +19,10 @@ export const ResultContainer = styled('div')(() => ({
     alignItems: 'center',
   },
 }));
+
+export const PaginationWrapper = styled('div')(() => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginTop: '2rem',
+}));
