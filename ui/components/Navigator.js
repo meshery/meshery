@@ -1,16 +1,13 @@
 import React from 'react';
-import classNames from 'classnames';
-import { withStyles } from '@material-ui/core/styles';
-import NoSsr from '@material-ui/core/NoSsr';
+import NoSsr from '@mui/material/NoSsr';
 import RemoveIcon from '@mui/icons-material/Remove';
-import Zoom from '@material-ui/core/Zoom';
+import Zoom from '@mui/material/Zoom';
 import Link from 'next/link';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import HelpIcon from '@mui/icons-material/Help';
-import DashboardIcon from '@mui/icons-material/Dashboard';
 import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
 import ExtensionIcon from '../public/static/img/drawer-icons/extensions_svg';
@@ -40,26 +37,18 @@ import {
   updateCapabilities,
 } from '../lib/store';
 import {
-  ButtonGroup,
-  IconButton,
   CatalogIcon,
   CustomTooltip,
-  // ListItemText,
   ListItemIcon,
   Grow,
   ListItem,
   List,
-  Drawer,
   Collapse,
 } from '@layer5/sistent';
 import { UsesSistent } from './SistentWrapper';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import dataFetch from '../lib/data-fetch';
-import {
-  cursorNotAllowed,
-  disabledStyle,
-  disabledStyleWithOutOpacity,
-} from '../css/disableComponent.styles';
+import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import {
   DESIGN,
@@ -100,157 +89,15 @@ import {
   SideBarListItem,
   SideBarText,
   StyledListItem,
+  NavigatorLink,
+  NavigatorHelpIcons,
+  HelpListItem,
+  HelpButton,
+  ChevronButtonWrapper,
+  FixedSidebarFooter,
+  SidebarDrawer,
 } from './General/style';
 import DashboardIcon from '@/assets/icons/DashboardIcon';
-
-const styles = (theme) => ({
-  item: {
-    paddingTop: 4,
-    paddingBottom: 4,
-    color: 'rgba(255, 255, 255, 0.7)',
-    fill: '#fff',
-    '&:hover': {
-      '& $expandMoreIcon': {
-        opacity: 1,
-        transition: 'opacity 200ms ease-in',
-      },
-    },
-  },
-  link: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    height: '30px',
-  },
-  settingsIcon: { marginLeft: theme.spacing(2) },
-  listIconSlack: {
-    minWidth: theme.spacing(3.5),
-    paddingTop: theme.spacing(0.5),
-    textAlign: 'center',
-    display: 'inline-table',
-    marginLeft: theme.spacing(-0.1),
-    paddingRight: theme.spacing(0.5),
-    opacity: 0.5,
-  },
-  icon: { width: theme.spacing(2.5) },
-  istioIcon: { width: theme.spacing(1.8) },
-  sidebarCollapsed: {
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    overflowX: 'hidden',
-    width: theme.spacing(8) + 4,
-  },
-  sidebarExpanded: {
-    width: '256px',
-    overflowX: 'hidden',
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  fixedSidebarFooter: {
-    display: 'flex',
-    flexDirection: 'column',
-    marginTop: 'auto',
-    marginBottom: '0.5rem',
-  },
-  collapseButtonWrapper: {
-    boxShadow:
-      '0.5px 0px 0px 0px rgb(0 0 0 / 20%), 1.5px 0px 0px 0px rgb(0 0 0 / 14%), 2.5px 1px 3px 0px rgb(0 0 0 / 12%)',
-    borderRadius: '0 5px 5px 0',
-    position: 'fixed',
-    cursor: 'pointer',
-    display: 'flex',
-    justifyContent: 'center',
-    bottom: '12%',
-    left: '257px',
-    zIndex: '1400',
-    width: 'auto',
-    transition: 'left 195ms',
-    '&:hover': {
-      opacity: 1,
-      background: 'transparent',
-    },
-    '&:focus': {
-      opacity: 1,
-      background: 'transparent',
-    },
-  },
-  collapseButtonWrapperRotated: {
-    backgroundColor: '#515b60',
-    color: '#ffffff',
-    position: 'fixed',
-    borderRadius: '0 5px 5px 0',
-    cursor: 'pointer',
-    bottom: '12%',
-    left: '49px',
-    zIndex: '1400',
-    width: 'auto',
-    transition: 'left 225ms',
-    transform: 'rotate(180deg)',
-    display: 'flex',
-    justifyContent: 'center',
-
-    '&:hover': { opacity: 1 },
-    '&:focus': { opacity: 1 },
-  },
-  drawerIcons: {
-    height: '1.21rem',
-    width: '1.21rem',
-    fontSize: '1.21rem',
-  },
-  avatarGroup: { '& .MuiAvatarGroup-avatar': { border: 'none' } },
-  marginLeft: {
-    padding: '5px',
-    '& > li': {
-      padding: '0',
-    },
-  },
-  rightMargin: { marginRight: 8 },
-  btnGrpMarginRight: {
-    marginRight: 4,
-    alignItems: 'center',
-  },
-  helpIcon: {
-    color: '#fff',
-    opacity: '0.7',
-    transition: 'opacity 200ms linear',
-    '&:hover': {
-      opacity: 1,
-      background: 'transparent',
-    },
-    '&:focus': {
-      opacity: 1,
-      background: 'transparent',
-    },
-  },
-  extraPadding: {
-    // paddingTop : 4,
-    // paddingBottom : 4,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  restrictPointer: { pointerEvents: 'none' },
-  expandMoreIcon: {
-    opacity: 0,
-    cursor: 'pointer',
-    transform: 'translateX(3px)',
-    '&:hover': { color: '#4fc3f7' },
-  },
-  collapsedHelpButton: {
-    height: '1.45rem',
-    marginTop: '-4px',
-    transform: 'translateX(0px)',
-  },
-  rightTranslate: { transform: 'translateX(0.5px)' },
-  disabled: disabledStyle,
-  disableLogo: disabledStyleWithOutOpacity,
-  cursorNotAllowed: cursorNotAllowed,
-});
 
 const drawerIconsStyle = { height: '1.21rem', width: '1.21rem', fontSize: '1.45rem', ...iconSmall };
 const externalLinkIconStyle = { width: '1.11rem', fontSize: '1.11rem' };
@@ -592,8 +439,6 @@ class Navigator_ extends React.Component {
   }
 
   extensionPointContent(icon, href, name, drawerCollapsed) {
-    const { classes } = this.props;
-
     let content = (
       <UsesSistent>
         <LinkContainer data-cy={name}>
@@ -629,13 +474,17 @@ class Navigator_ extends React.Component {
 
     if (href) {
       content = (
-        <Link href={href}>
-          <span
-            className={classNames(classes.link)}
-            onClick={() => this.props.updateExtensionType('navigator')}
-          >
-            {content}
-          </span>
+        <Link
+          href={href}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            height: '30px',
+          }}
+        >
+          <span onClick={() => this.props.updateExtensionType('navigator')}>{content}</span>
         </Link>
       );
     }
@@ -769,16 +618,15 @@ class Navigator_ extends React.Component {
    */
   pickIcon(aName, href) {
     aName = aName.toLowerCase();
-    const { classes } = this.props;
     let image = '/static/img/meshery-logo.png';
     let filter =
       window.location.pathname === href
         ? 'invert(50%) sepia(78%) saturate(2392%) hue-rotate(160deg) brightness(93%) contrast(101%)'
         : '';
-    let logoIcon = <img src={image} className={classes.icon} />;
+    let logoIcon = <img src={image} style={{ width: '20px' }} />;
     if (aName) {
       image = '/static/img/' + aName + '-light.svg';
-      logoIcon = <img src={image} className={classes.icon} style={{ filter: filter }} />;
+      logoIcon = <img src={image} style={{ filter: filter, width: '20px' }} />;
     }
     return logoIcon;
   }
@@ -841,7 +689,7 @@ class Navigator_ extends React.Component {
    * @returns {JSX.Element}
    */
   renderChildren(idname, children, depth) {
-    const { classes, isDrawerCollapsed } = this.props;
+    const { isDrawerCollapsed } = this.props;
     const { path } = this.state;
 
     if (idname != LIFECYCLE && children && children.length > 0) {
@@ -905,7 +753,7 @@ class Navigator_ extends React.Component {
                   }
                   const isActive = path === hrefc;
                   return (
-                    <div key={idc} className={!showc ? classes.cursorNotAllowed : null}>
+                    <div key={idc} style={!showc ? cursorNotAllowed : null}>
                       <NavigatorListItemIII
                         component="a"
                         data-cy={idc}
@@ -1062,7 +910,7 @@ class Navigator_ extends React.Component {
   }
 
   render() {
-    const { classes, isDrawerCollapsed } = this.props;
+    const { isDrawerCollapsed } = this.props;
     const { path, showHelperButton, navigatorComponents } = this.state;
     this.updatenavigatorComponentsMenus();
 
@@ -1102,8 +950,6 @@ class Navigator_ extends React.Component {
                 />
               </>
             )}
-
-            {/* <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span> */}
           </StyledListItem>
         </UsesSistent>
       </div>
@@ -1148,7 +994,7 @@ class Navigator_ extends React.Component {
                     disabled={permission ? !CAN(permission.action, permission.subject) : false}
                   >
                     <Link href={link ? href : ''}>
-                      <div data-cy={childId} className={classNames(classes.link)}>
+                      <NavigatorLink data-cy={childId}>
                         <CustomTooltip
                           title={childId}
                           placement="right"
@@ -1179,7 +1025,7 @@ class Navigator_ extends React.Component {
                           )}
                         </CustomTooltip>
                         <SideBarText drawerCollapsed={isDrawerCollapsed}>{title}</SideBarText>
-                      </div>
+                      </NavigatorLink>
                     </Link>
                     <ExpandMoreIcon
                       icon={faCaretDown}
@@ -1211,16 +1057,15 @@ class Navigator_ extends React.Component {
     );
     const HelpIcons = (
       <UsesSistent>
-        <ButtonGroup
+        <NavigatorHelpIcons
+          isCollapsed={isDrawerCollapsed}
           size="large"
-          className={!isDrawerCollapsed ? classes.marginLeft : classes.btnGrpMarginRight}
           orientation={isDrawerCollapsed ? 'vertical' : 'horizontal'}
         >
           {externlinks.map(({ id, icon, title, href }, index) => {
             return (
-              <ListItem
+              <HelpListItem
                 key={id}
-                className={classes.item}
                 style={isDrawerCollapsed && !showHelperButton ? { display: 'none' } : {}}
               >
                 <Grow
@@ -1231,10 +1076,11 @@ class Navigator_ extends React.Component {
                     href={href}
                     target="_blank"
                     rel="noreferrer"
-                    className={classNames(
-                      classes.link,
-                      isDrawerCollapsed ? classes.extraPadding : '',
-                    )}
+                    style={
+                      isDrawerCollapsed
+                        ? { display: 'flex', alignItems: 'center', justifyContent: 'center' }
+                        : {}
+                    }
                   >
                     <CustomTextTooltip
                       title={title}
@@ -1244,26 +1090,33 @@ class Navigator_ extends React.Component {
                     </CustomTextTooltip>
                   </a>
                 </Grow>
-              </ListItem>
+              </HelpListItem>
             );
           })}
-          <ListItem
-            className={classes.rightMargin}
-            style={!isDrawerCollapsed ? { display: 'none' } : { marginLeft: '4px' }}
-          >
+          <ListItem>
             <CustomTextTooltip title="Help" placement={isDrawerCollapsed ? 'right' : 'top'}>
-              <IconButton
-                className={isDrawerCollapsed ? classes.collapsedHelpButton : classes.rightTranslate}
-                onClick={this.toggleSpacing}
-              >
+              <HelpButton isCollapsed={isDrawerCollapsed} onClick={this.toggleSpacing}>
                 <HelpIcon
-                  className={classes.helpIcon}
-                  style={{ fontSize: '1.45rem', ...iconSmall }}
+                  style={{
+                    fontSize: '1.45rem',
+                    ...iconSmall,
+                    color: '#fff',
+                    opacity: '0.7',
+                    transition: 'opacity 200ms linear',
+                    '&:hover': {
+                      opacity: 1,
+                      background: 'transparent',
+                    },
+                    '&:focus': {
+                      opacity: 1,
+                      background: 'transparent',
+                    },
+                  }}
                 />
-              </IconButton>
+              </HelpButton>
             </CustomTextTooltip>
           </ListItem>
-        </ButtonGroup>
+        </NavigatorHelpIcons>
       </UsesSistent>
     );
     const Version = (
@@ -1295,10 +1148,8 @@ class Navigator_ extends React.Component {
     );
 
     const Chevron = (
-      <div
-        className={classNames(
-          isDrawerCollapsed ? classes.collapseButtonWrapperRotated : classes.collapseButtonWrapper,
-        )}
+      <ChevronButtonWrapper
+        isCollapsed={isDrawerCollapsed}
         style={
           this.state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER])
             ? {}
@@ -1323,32 +1174,20 @@ class Navigator_ extends React.Component {
             />
           </UsesSistent>
         </div>
-      </div>
+      </ChevronButtonWrapper>
     );
 
     return (
       <NoSsr>
-        <Drawer
-          sx={{
-            '.MuiDrawer-paper': {
-              background: '#263238',
-            },
-          }}
-          variant="permanent"
-          className={isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded}
-          classes={{
-            paper: isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded,
-          }}
-          style={{ height: '100%' }}
-        >
+        <SidebarDrawer isCollapsed={isDrawerCollapsed} variant="permanent">
           {Title}
           {Menu}
-          <div className={classes.fixedSidebarFooter}>
+          <FixedSidebarFooter>
             {Chevron}
             {HelpIcons}
             {Version}
-          </div>
-        </Drawer>
+          </FixedSidebarFooter>
+        </SidebarDrawer>
       </NoSsr>
     );
   }
@@ -1383,9 +1222,10 @@ const mapStateToProps = (state) => {
   };
 };
 
-export const NavigatorWithRedux = withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(Navigator_)),
-);
+export const NavigatorWithRedux = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withRouter(Navigator_));
 
 export const Navigator = NavigatorWithRedux;
 
