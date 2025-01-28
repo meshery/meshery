@@ -21,9 +21,7 @@ const nextConfig = removeImports({
       '/management/workspaces': { page: '/management/workspaces' },
       '/performance': { page: '/performance' },
       '/performance/profiles': { page: '/performance/profiles' },
-      '/performance/results': { page: '/performance/results' },
       '/settings': { page: '/settings' },
-      '/smi_results': { page: '/smi_results' },
       '/system/connections': { page: '/system/connections' },
       '/user/preferences': { page: '/user/preferences' }
     };
