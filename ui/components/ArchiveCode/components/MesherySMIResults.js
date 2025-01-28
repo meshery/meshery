@@ -6,10 +6,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import MUIDataTable from 'mui-datatables';
 import Moment from 'react-moment';
-import { updateProgress } from '../lib/store';
-import dataFetch from '../lib/data-fetch';
-import { withNotify } from '../utils/hooks/useNotification';
-import { EVENT_TYPES } from '../lib/event-types';
+import { updateProgress } from '../../../lib/store';
+import dataFetch from '../../../lib/data-fetch';
+import { withNotify } from '../../../utils/hooks/useNotification';
+import { EVENT_TYPES } from '../../../lib/event-types';
 
 const styles = (theme) => ({
   grid: { padding: theme.spacing(2) },
