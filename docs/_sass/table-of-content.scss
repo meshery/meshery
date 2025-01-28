@@ -3,7 +3,8 @@
   background: var(--background-grey);
   box-shadow: var(--box-shadow-primary);
   z-index: 9;
-  height: fit-content;
+  height: 70vh;
+  overflow-y: scroll;
   top: calc(var(--navbar-height) + 5rem);
   position: sticky;
   margin: 0 0 0 auto;
@@ -81,6 +82,9 @@
         text-decoration: none;
       }
     }
+    .active {
+      color: var(--sidenav-hover);
+    }
     & ul {
       font-size: .9rem;
       padding-inline-start: 0px;
@@ -89,7 +93,7 @@
         list-style: none !important;
 
         & a {
-          color: var(--color-secondary-medium) !important;
+          color: var(--color-secondary-medium);
 
           &:hover {
             color: var(--color-secondary-dark) !important;
