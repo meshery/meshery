@@ -113,9 +113,8 @@ export const NavigatorList = styled(List)({
 });
 
 export const NavigatorListItem = styled(ListItem, {
-  shouldForwardProp: (prop) =>
-    prop !== 'depth' && prop !== 'isDrawerCollapsed' && prop !== 'isActive',
-})(({ theme, depth, isDrawerCollapsed, isActive }) => ({
+  shouldForwardProp: (prop) => prop !== 'isDrawerCollapsed' && prop !== 'isActive',
+})(({ theme, isDrawerCollapsed, isActive }) => ({
   paddingLeft: isDrawerCollapsed ? theme.spacing(2) : '',
   paddingRight: isDrawerCollapsed ? '16px' : '',
   color: isActive ? '#4fc3f7' : 'rgba(255, 255, 255, 0.7)',
