@@ -54,6 +54,9 @@ components:
   colorIcon: assets/img/integrations/aws-apigatewayv2-controller/components/domain-name/icons/color/domain-name-color.svg
   whiteIcon: assets/img/integrations/aws-apigatewayv2-controller/components/domain-name/icons/white/domain-name-white.svg
   description: 
+components-count: 11
+relationships: 
+relationship-count: 0
 featureList: [
   "Handles API requests and responses",
   "Supports RESTful and WebSocket APIs",

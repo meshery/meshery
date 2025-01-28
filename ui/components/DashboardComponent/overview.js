@@ -1,6 +1,5 @@
 import React from 'react';
-import { NoSsr, Typography, Paper } from '@material-ui/core';
-import ErrorIcon from '@material-ui/icons/Error';
+import { NoSsr } from '@material-ui/core';
 import Popup from '../Popup';
 import { withStyles } from '@material-ui/core/styles';
 import { withRouter } from 'next/router';
@@ -15,10 +14,10 @@ import { bindActionCreators } from 'redux';
 import { setK8sContexts, updateProgress } from 'lib/store';
 import { UsesSistent } from '../SistentWrapper';
 import ConnectCluster from './charts/ConnectCluster';
-import { HoneycombRoot } from './style';
+import { ErrorContainer, HoneycombRoot } from './style';
+import { ErrorIcon, Typography, useTheme } from '@layer5/sistent';
 
 const styles = (theme) => ({
-  rootClass: { backgroundColor: theme.palette.secondary.elevatedComponents2, marginTop: '1rem' },
   datatable: {
     boxShadow: 'none',
   },
@@ -99,21 +98,27 @@ const styles = (theme) => ({
   },
 });
 
-const ErrorDisplay = ({ classes }) => (
-  <Paper className={classes.errorContainer}>
-    <ErrorIcon className={classes.errorIcon} />
-    <Typography variant="h6" className={classes.errorMessage}>
+const ErrorDisplay = ({ theme }) => (
+  <ErrorContainer>
+    <ErrorIcon fill={theme.palette.background.error.default} />
+    <Typography
+      variant="h6"
+      sx={{
+        color: theme.palette.text.error,
+      }}
+    >
       Unable to fetch cluster data
     </Typography>
     <Typography variant="body1">
       There was an error retrieving cluster information. Please check your connection and try again.
     </Typography>
-  </Paper>
+  </ErrorContainer>
 );
 
-const Overview = ({ classes, selectedK8sContexts, k8scontext }) => {
+const Overview = ({ selectedK8sContexts, k8scontext }) => {
   const clusterIds = getK8sClusterIdsFromCtxId(selectedK8sContexts, k8scontext);
   const isClusterIdsEmpty = clusterIds.size === 0;
+  const theme = useTheme();
 
   const {
     data: clusterSummary,
@@ -134,7 +139,12 @@ const Overview = ({ classes, selectedK8sContexts, k8scontext }) => {
   if (clusterIds.length === 0) {
     return (
       <UsesSistent>
-        <div className={classes.rootClass}>
+        <div
+          style={{
+            background: theme.palette.background.default,
+            marginTop: '1rem',
+          }}
+        >
           <HoneycombRoot>
             <ConnectCluster message="No clusters available. Please connect your clusters to proceed." />
           </HoneycombRoot>
@@ -148,7 +158,9 @@ const Overview = ({ classes, selectedK8sContexts, k8scontext }) => {
   if (isError) {
     return (
       <NoSsr>
-        <ErrorDisplay classes={classes} />
+        <UsesSistent>
+          <ErrorDisplay theme={theme} />
+        </UsesSistent>
       </NoSsr>
     );
   }
@@ -158,7 +170,12 @@ const Overview = ({ classes, selectedK8sContexts, k8scontext }) => {
       <UsesSistent>
         <Popup />
         <Provider store={store}>
-          <div className={classes.rootClass}>
+          <div
+            style={{
+              background: theme.palette.background.default,
+              marginTop: '1rem',
+            }}
+          >
             <HoneycombComponent
               kinds={clusterSummary?.kinds}
               isClusterLoading={isClusterLoading}

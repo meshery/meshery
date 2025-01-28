@@ -1,11 +1,15 @@
 import React, { useState } from 'react';
-import { ArrowBack } from '@material-ui/icons';
+import { ArrowBack } from '@mui/icons-material';
 import { TooltipIconButton } from '../../utils/TooltipButton';
-import { Paper, Typography } from '@material-ui/core';
-import { Box, ErrorBoundary, OperatorDataFormatter, useResourceCleanData } from '@layer5/sistent';
+import {
+  Box,
+  ErrorBoundary,
+  OperatorDataFormatter,
+  useResourceCleanData,
+  Paper,
+  Typography,
+} from '@layer5/sistent';
 import { ALL_VIEW } from './resources/config';
-import GetNodeIcon from '../configuratorComponents/MeshModel/NodeIcon';
-import { JsonParse } from '../../utils/utils';
 import { FALLBACK_MESHERY_IMAGE_PATH } from '@/constants/common';
 import { iconXLarge } from 'css/icons.styles';
 import { getK8sContextFromClusterId } from '@/utils/multi-ctx';
@@ -13,6 +17,8 @@ import useKubernetesHook from '../hooks/useKubernetesHook';
 import { TootltipWrappedConnectionChip } from '../connections/ConnectionChip';
 import ResourceDetailFormatData, { JSONViewFormatter } from './view-component';
 import { styled } from '@mui/system';
+import { useRouter } from 'next/router';
+import GetKubernetesNodeIcon from './utils';
 
 const Container = styled('div')({
   margin: '1rem auto',
@@ -50,10 +56,11 @@ const TitleContent = styled('div')({
 
 const View = (props) => {
   const { setView, resource, k8sConfig } = props;
-  const { getResourceCleanData } = useResourceCleanData();
-  const cleanData = getResourceCleanData({ resource: resource });
-
   const ping = useKubernetesHook();
+  const { getResourceCleanData } = useResourceCleanData();
+  const router = useRouter();
+  const cleanData = getResourceCleanData({ resource: resource, router: router });
+  if (!resource) return null;
   const context = getK8sContextFromClusterId(resource.cluster_id, k8sConfig);
 
   return (
@@ -65,8 +72,10 @@ const View = (props) => {
               <TooltipIconButton
                 title="Back"
                 placement="left"
-                onClick={() => setView(ALL_VIEW)}
-                style={{ color: 'inherit' }}
+                onClick={() => {
+                  router.back();
+                  setView(ALL_VIEW);
+                }}
               >
                 <ArrowBack />
               </TooltipIconButton>
@@ -101,7 +110,7 @@ const View = (props) => {
 
 export default View;
 
-export const Title = ({ onClick, data, value }) => {
+export const Title = ({ onClick, value, kind, model }) => {
   const [isHovered, setHovered] = useState(false);
   return (
     <TitleContainer
@@ -111,7 +120,7 @@ export const Title = ({ onClick, data, value }) => {
     >
       <TitleContent onClick={onClick}>
         <div>
-          <GetNodeIcon metadata={JsonParse(data)} />
+          <GetKubernetesNodeIcon kind={kind} model={model} />
         </div>
         <Typography style={{ marginLeft: '0.50rem' }} variant="body2">
           {value}

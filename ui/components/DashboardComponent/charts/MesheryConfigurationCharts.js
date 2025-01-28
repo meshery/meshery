@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Box, IconButton, Typography } from '@material-ui/core';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';
-import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
-import { InfoOutlined } from '@material-ui/icons';
+import { InfoOutlined } from '@mui/icons-material';
 import { useGetPatternsQuery } from '@/rtk-query/design';
 import { useGetFiltersQuery } from '@/rtk-query/filter';
 import CAN from '@/utils/can';
@@ -15,10 +13,13 @@ import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
+import { UsesSistent } from '@/components/SistentWrapper';
+import { Box, IconButton, Typography, useTheme } from '@layer5/sistent';
 
 export default function MesheryConfigurationChart() {
   const router = useRouter();
   const [chartData, setChartData] = useState([]);
+  const theme = useTheme();
 
   const { data: patternsData, error: patternsError } = useGetPatternsQuery({
     page: 0,
@@ -76,53 +77,57 @@ export default function MesheryConfigurationChart() {
   };
 
   return (
-    <Link
-      href="/configuration/designs"
-      style={{
-        pointerEvents: !CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject) ? 'none' : 'auto',
-      }}
-    >
-      <DashboardSection>
-        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography variant="h6" gutterBottom>
-            Configuration
-          </Typography>
-          <div onClick={(e) => e.stopPropagation()}>
-            <CustomTextTooltip
-              placement="left"
-              interactive={true}
-              variant="standard"
-              leaveDelay={200}
-              title={`Meshery Designs are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured. [Learn more](https://docs.meshery.io/concepts/logical/designs)`}
-            >
-              <IconButton disableRipple={true} disableFocusRipple={true}>
-                <InfoOutlined
-                  color={theme.palette.secondary.iconMain}
-                  style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
-                />
-              </IconButton>
-            </CustomTextTooltip>
+    <UsesSistent>
+      <Link
+        href="/configuration/designs"
+        style={{
+          pointerEvents: !CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject)
+            ? 'none'
+            : 'auto',
+        }}
+      >
+        <DashboardSection>
+          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Typography variant="h6" gutterBottom>
+              Configuration
+            </Typography>
+            <div onClick={(e) => e.stopPropagation()}>
+              <CustomTextTooltip
+                placement="left"
+                interactive={true}
+                variant="standard"
+                leaveDelay={200}
+                title={`Meshery Designs are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured. [Learn more](https://docs.meshery.io/concepts/logical/designs)`}
+              >
+                <IconButton disableRipple={true} disableFocusRipple={true}>
+                  <InfoOutlined
+                    color={theme.palette.icon.default}
+                    style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                  />
+                </IconButton>
+              </CustomTextTooltip>
+            </div>
           </div>
-        </div>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            alignContent: 'center',
-            height: '100%',
-          }}
-        >
-          {chartData.length > 0 ? (
-            <BBChart options={chartOptions} />
-          ) : (
-            <ConnectCluster message={'No connections found in your clusters'} />
-          )}
-        </Box>
-      </DashboardSection>
-    </Link>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              alignContent: 'center',
+              height: '100%',
+            }}
+          >
+            {chartData.length > 0 ? (
+              <BBChart options={chartOptions} />
+            ) : (
+              <ConnectCluster message={'No connections found in your clusters'} />
+            )}
+          </Box>
+        </DashboardSection>
+      </Link>
+    </UsesSistent>
   );
 }

@@ -2,7 +2,7 @@ table {
   border-collapse: collapse;
   font-size: 1rem;
   display: block;
-  overflow-x: auto; 
+  overflow-x: auto;
   width: 100%;
 }
 .table,
@@ -13,9 +13,9 @@ table {
   background-color: transparent;
 }
 
-table th { 
+table th {
   font-weight: bold;
-  background-color: var(--color-primary-dark); 
+  background-color: var(--color-primary-dark);
   border: 1px solid #dddddd;
   padding: 8px;
   text-align: left;
@@ -25,8 +25,10 @@ table td {
   border: 1px solid #dddddd;
   padding: 8px;
   text-align: left;
+  max-width: 300px;
+  word-wrap: break-word;
 }
-table td img{
+table td img {
   text-align: center;
   max-width: 2rem;
 }
@@ -513,11 +515,12 @@ table.tablesorter th.headerSortUp {
   background-color: rgb(244, 244, 244) !important ;
 }
 
-td.details, .hidden-details > td {
+td.details,
+.hidden-details > td {
   background-color: var(--color-primary-dark) !important;
 }
 
-tr.test-details td:not(:first-child):hover{
+tr.test-details td:not(:first-child):hover {
   background-color: var(--test-detail-data-color) !important;
   cursor: pointer;
 }

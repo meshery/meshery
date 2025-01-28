@@ -153,6 +153,12 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache
       - name: Docker edge build & tag
         if: startsWith(github.ref, 'refs/tags/') != true && success()
         env:
@@ -203,7 +209,7 @@ jobs:
   garphql_validate:
     name: Validate GraphQL schema
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out code
         uses: actions/checkout@v4

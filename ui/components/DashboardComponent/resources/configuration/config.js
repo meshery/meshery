@@ -15,6 +15,7 @@ export const ConfigurationTableConfig = (
   meshSyncResources,
   k8sConfig,
   connectionMetadataState,
+  workloadType,
 ) => {
   const ping = useKubernetesHook();
   return {
@@ -23,7 +24,7 @@ export const ConfigurationTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['data', 's'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
@@ -52,12 +53,8 @@ export const ConfigurationTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -161,7 +158,7 @@ export const ConfigurationTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
@@ -189,12 +186,8 @@ export const ConfigurationTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -299,7 +292,7 @@ export const ConfigurationTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
@@ -327,12 +320,8 @@ export const ConfigurationTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -419,7 +408,7 @@ export const ConfigurationTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
@@ -447,12 +436,8 @@ export const ConfigurationTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -539,7 +524,7 @@ export const ConfigurationTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['spec.attribute', 'm'],
         ['status.attribute', 'm'],
         ['metadata.namespace', 'm'],
@@ -569,12 +554,8 @@ export const ConfigurationTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -707,7 +688,7 @@ export const ConfigurationTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
@@ -735,12 +716,8 @@ export const ConfigurationTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -827,7 +804,7 @@ export const ConfigurationTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['spec.attribute', 'm'],
         ['status.attribute', 'm'],
         ['metadata.namespace', 'm'],
@@ -857,12 +834,8 @@ export const ConfigurationTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -1009,7 +982,7 @@ export const ConfigurationTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 'm'],
+        ['apiVersion', 'na'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
@@ -1037,12 +1010,8 @@ export const ConfigurationTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -1129,7 +1098,7 @@ export const ConfigurationTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 'm'],
+        ['apiVersion', 'na'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
@@ -1157,12 +1126,8 @@ export const ConfigurationTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -1249,7 +1214,7 @@ export const ConfigurationTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['spec.attribute', 'm'],
         ['status.attribute', 'm'],
         ['metadata.namespace', 'm'],
@@ -1279,12 +1244,8 @@ export const ConfigurationTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -1386,7 +1347,7 @@ export const ConfigurationTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 'm'],
+        ['apiVersion', 'na'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
@@ -1414,12 +1375,8 @@ export const ConfigurationTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },

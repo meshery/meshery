@@ -42,6 +42,9 @@ components:
   colorIcon: assets/img/integrations/aws-iam-controller/components/open-id-connect-provider/icons/color/open-id-connect-provider-color.svg
   whiteIcon: assets/img/integrations/aws-iam-controller/components/open-id-connect-provider/icons/white/open-id-connect-provider-white.svg
   description: 
+components-count: 8
+relationships: 
+relationship-count: 0
 featureList: [
   "Manage per-account access or scale access across AWS accounts and applications",
   "Set, verify, and right-size permissions toward least privilege",

@@ -1,8 +1,10 @@
 ---
 layout: default
 title: Catalog
-permalink: concepts/catalog
-redirect_from: catalog
+permalink: concepts/architecture/catalog
+redirect_from: 
+ - catalog
+ - concepts/catalog
 type: components
 abstract: Browsing and using cloud native patterns
 language: en

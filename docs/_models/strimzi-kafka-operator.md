@@ -54,6 +54,9 @@ components:
   colorIcon: assets/img/integrations/strimzi-kafka-operator/components/kafka-node-pool/icons/color/kafka-node-pool-color.svg
   whiteIcon: assets/img/integrations/strimzi-kafka-operator/components/kafka-node-pool/icons/white/kafka-node-pool-white.svg
   description: 
+components-count: 11
+relationships: 
+relationship-count: 0
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

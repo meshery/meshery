@@ -1,124 +1,59 @@
 import React from 'react';
-import { withStyles } from '@material-ui/core';
-import { Tooltip } from '@material-ui/core';
-import KubernetesIcon from '../../../assets/icons/technology/kubernetes';
-
 import { withRouter } from 'next/router';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import ResourcesTable from './resources-table';
-import { Paper } from '@material-ui/core';
-import { Box } from '@material-ui/core';
 import { TabPanel } from '../tabpanel';
-import { Tab, Tabs } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
+import { SecondaryTab, SecondaryTabs, WrapperContainer, WrapperPaper } from '../style';
+import GetKubernetesNodeIcon from '../utils';
+import { iconMedium } from 'css/icons.styles';
+import { styled } from '@layer5/sistent';
 
-const styles = (theme) => ({
-  wrapperClss: {
-    flexGrow: 1,
-    maxWidth: '100%',
-    height: 'auto',
-  },
-  tab: {
-    minWidth: 40,
-    paddingLeft: 0,
-    paddingRight: 0,
-    '&.Mui-selected': {
-      color: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
-    },
-  },
-  tabs: {
-    width: '100%',
-    '& .MuiTabs-indicator': {
-      backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
-    },
-  },
-  icon: {
-    display: 'inline',
-    verticalAlign: 'text-top',
-    width: theme.spacing(1.75),
-    marginLeft: theme.spacing(0.5),
-  },
-
-  iconText: {
-    display: 'flex',
-    flexWrap: 'no-wrap',
-    justifyContent: 'center',
-    alignItems: 'center',
-    '& svg': {
-      verticalAlign: 'middle',
-      marginRight: '.5rem',
-    },
-  },
-  backToPlay: { margin: theme.spacing(2) },
-  link: { cursor: 'pointer' },
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: theme.spacing(2),
-  },
-  paper: {
-    maxWidth: '90%',
-    margin: 'auto',
-    overflow: 'hidden',
-  },
-  topToolbar: {
-    marginBottom: '2rem',
-    display: 'flex',
-    justifyContent: 'space-between',
-    paddingLeft: '1rem',
-    maxWidth: '90%',
-  },
-  cardHeader: { fontSize: theme.spacing(2) },
-  card: {
-    height: '100%',
-    marginTop: theme.spacing(2),
-  },
-  cardContent: { height: '100%' },
-  boxWrapper: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'end',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    height: '60vh',
-    borderRadius: 0,
-    color: 'white',
-    ['@media (max-width: 455px)']: {
-      width: '100%',
-    },
-    zIndex: 5,
-  },
-  box: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-    width: 300,
-    height: 300,
-    backgroundColor: theme.palette.secondary.dark,
-    border: '0px solid #000',
-    boxShadow: theme.shadows[5],
-    margin: theme.spacing(2),
-    cursor: 'pointer',
+const DashboardIconText = styled('div')({
+  display: 'flex',
+  flexWrap: 'no-wrap',
+  justifyContent: 'center',
+  gap: '1rem',
+  alignItems: 'center',
+  '& svg': {
+    verticalAlign: 'middle',
+    marginRight: '.5rem',
   },
 });
 
 const ResourcesSubMenu = (props) => {
   const {
-    classes,
     updateProgress,
     k8sConfig,
     resource,
     selectedK8sContexts,
     selectedResource,
     handleChangeSelectedResource,
+    CRDsKeys,
+    isCRDS,
   } = props;
-
+  const CRDsModelName = isCRDS && CRDsKeys.map((key) => key.model);
+  const CRDsKind = isCRDS && CRDsKeys.map((key) => key.name);
   if (!selectedResource) {
-    handleChangeSelectedResource(Object.keys(resource.tableConfig())[0]);
+    let resourceNames;
+    if (isCRDS) {
+      resourceNames = CRDsKind;
+    } else {
+      resourceNames = Object.keys(resource.tableConfig());
+    }
+    handleChangeSelectedResource(resourceNames[0]);
   }
 
-  const TABS = Object.keys(resource.tableConfig());
+  let TABS;
+  if (isCRDS) {
+    TABS = CRDsKind;
+  } else {
+    TABS = Object.keys(resource.tableConfig());
+  }
+
+  if (TABS.length > 0 && selectedResource && !TABS.includes(selectedResource)) {
+    handleChangeSelectedResource(TABS[0]);
+  }
 
   const getResourceCategoryIndex = (resourceCategory) => {
     return TABS.findIndex((resource) => resource === resourceCategory);
@@ -127,67 +62,58 @@ const ResourcesSubMenu = (props) => {
   const getResourceCategory = (index) => {
     return TABS[index];
   };
-
   return (
     <>
-      <div className={classes.wrapperClss}>
-        <Paper className={classes.wrapperClss}>
-          <div>
-            <Box sx={{ margin: '0 auto', width: '100%', maxWidth: { xs: 800, sm: 880, md: 1200 } }}>
-              <UsesSistent>
-                <Tabs
-                  value={getResourceCategoryIndex(selectedResource)}
-                  onChange={(_e, v) => handleChangeSelectedResource(getResourceCategory(v))}
-                  variant="scrollable"
-                  scrollButtons="on"
-                  indicatorColor="primary"
-                  textColor="primary"
-                  // centered
-                >
-                  {TABS.map((key, index) => (
-                    <Tooltip
-                      key={index}
-                      title={`${resource.tableConfig()[key].name}`}
-                      placement="top"
-                    >
-                      <Tab
-                        key={index}
-                        value={index}
-                        label={
-                          <div className={classes.iconText}>
-                            <KubernetesIcon
-                              className={classes.iconText}
-                              width="22px"
-                              height="22px"
-                            />
-                            {resource.tableConfig()[key].name}
-                          </div>
-                        }
-                      />
-                    </Tooltip>
-                  ))}
-                </Tabs>
-              </UsesSistent>
-            </Box>
-          </div>
-        </Paper>
-        {TABS.map((key, index) => (
-          <TabPanel value={selectedResource} index={key} key={index}>
-            <ResourcesTable
-              key={index}
-              workloadType={key}
-              updateProgress={updateProgress}
-              classes={classes}
-              k8sConfig={k8sConfig}
-              resourceConfig={resource.tableConfig}
-              submenu={resource.submenu}
-              selectedK8sContexts={selectedK8sContexts}
-            />
-          </TabPanel>
-        ))}
-      </div>
+      <UsesSistent>
+        <WrapperContainer>
+          <WrapperPaper>
+            <SecondaryTabs
+              value={getResourceCategoryIndex(selectedResource)}
+              onChange={(_e, v) => handleChangeSelectedResource(getResourceCategory(v))}
+              variant="scrollable"
+              scrollButtons="on"
+              indicatorColor="primary"
+              textColor="primary"
+              centered={true}
+            >
+              {TABS.map((key, index) => {
+                const title = isCRDS ? key : resource.tableConfig()[key].name;
+                return (
+                  <SecondaryTab
+                    key={index}
+                    value={index}
+                    label={
+                      <DashboardIconText>
+                        <GetKubernetesNodeIcon
+                          kind={key}
+                          model={CRDsModelName[index]}
+                          size={iconMedium}
+                        />
+                        {title}
+                      </DashboardIconText>
+                    }
+                  />
+                );
+              })}
+            </SecondaryTabs>
+          </WrapperPaper>
+          {TABS.map((key, index) => (
+            <TabPanel value={selectedResource} index={key} key={`${key}-${index}`}>
+              <ResourcesTable
+                key={index}
+                workloadType={key}
+                updateProgress={updateProgress}
+                k8sConfig={k8sConfig}
+                resourceConfig={resource.tableConfig}
+                submenu={resource.submenu}
+                selectedK8sContexts={selectedK8sContexts}
+              />
+            </TabPanel>
+          ))}
+        </WrapperContainer>
+      </UsesSistent>
     </>
   );
 };
 
-export default withStyles(styles, { withTheme: true })(withRouter(withNotify(ResourcesSubMenu)));
+export default withRouter(withNotify(ResourcesSubMenu));

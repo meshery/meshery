@@ -2,8 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 import dataFetch from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
-import { CustomColumnVisibilityControl, ResponsiveDataTable, SearchBar } from '@layer5/sistent';
-import useStyles from '../../../assets/styles/general/tool.styles';
+import {
+  CustomColumnVisibilityControl,
+  ResponsiveDataTable,
+  SearchBar,
+  Slide,
+} from '@layer5/sistent';
 import View from '../view';
 import { ALL_VIEW, SINGLE_VIEW } from './config';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
@@ -12,9 +16,10 @@ import { useWindowDimensions } from '../../../utils/dimension';
 import { camelcaseToSnakecase } from '../../../utils/utils';
 import { useSelector } from 'react-redux';
 import { UsesSistent } from '@/components/SistentWrapper';
-import { Slide } from '@material-ui/core';
+import { useRouter } from 'next/router';
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 
-const ACTION_TYPES = {
+export const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
     name: 'FETCH_MESHSYNC_RESOURCES',
     error_msg: 'Failed to fetch meshsync resources',
@@ -22,15 +27,8 @@ const ACTION_TYPES = {
 };
 
 const ResourcesTable = (props) => {
-  const {
-    classes,
-    updateProgress,
-    k8sConfig,
-    resourceConfig,
-    submenu,
-    workloadType,
-    selectedK8sContexts,
-  } = props;
+  const { updateProgress, k8sConfig, resourceConfig, submenu, workloadType, selectedK8sContexts } =
+    props;
   const [meshSyncResources, setMeshSyncResources] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
@@ -50,28 +48,46 @@ const ResourcesTable = (props) => {
   };
 
   const tableConfig = submenu
-    ? resourceConfig(switchView, meshSyncResources, k8sConfig, connectionMetadataState)[
-        workloadType
-      ]
-    : resourceConfig(switchView, meshSyncResources, k8sConfig, connectionMetadataState);
+    ? resourceConfig(
+        switchView,
+        meshSyncResources,
+        k8sConfig,
+        connectionMetadataState,
+        workloadType,
+        selectedK8sContexts,
+      )[workloadType]
+    : resourceConfig(
+        switchView,
+        meshSyncResources,
+        k8sConfig,
+        connectionMetadataState,
+        workloadType,
+        selectedK8sContexts,
+      );
 
   const clusterIds = encodeURIComponent(
     JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig)),
   );
 
-  const StyleClass = useStyles();
-
   const { notify } = useNotification();
 
   const getMeshsyncResources = (page, pageSize, search, sortOrder) => {
     setLoading(true);
-    if (!search) search = '';
+    const { query } = router;
+    const resourceName =
+      query.resourceName ||
+      (['Node', 'Namespace'].includes(query.resource) ? query.resource : search);
+    const resourceCategory = query.resource || tableConfig.name;
+    const decodedClusterIds = JSON.parse(decodeURIComponent(clusterIds));
+    if (decodedClusterIds.length === 0) {
+      setLoading(false);
+      return;
+    }
+    if (!resourceName) search = '';
     if (!sortOrder) sortOrder = '';
     dataFetch(
-      `/api/system/meshsync/resources?kind=${
-        tableConfig.name
-      }&status=true&spec=true&annotations=true&labels=true&clusterIds=${clusterIds}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
-        search,
+      `/api/system/meshsync/resources?kind=${resourceCategory}&status=true&spec=true&annotations=true&labels=true&clusterIds=${clusterIds}&page=${page}&pagesize=${pageSize}&search=${encodeURIComponent(
+        resourceName,
       )}&order=${encodeURIComponent(sortOrder)}`,
       {
         credentials: 'include',
@@ -83,6 +99,9 @@ const ResourcesTable = (props) => {
         setCount(res?.total_count || 0);
         setPageSize(res?.page_size || 0);
         setLoading(false);
+        if (query.resourceCategory && query.resourceName && res?.resources.length === 1) {
+          switchView(SINGLE_VIEW, res?.resources[0]);
+        }
       },
       handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES),
     );
@@ -94,7 +113,7 @@ const ResourcesTable = (props) => {
     if (!loading) {
       getMeshsyncResources(page, pageSize, search, sortOrder);
     }
-  }, [page, pageSize, search, sortOrder]);
+  }, [page, pageSize, search, sortOrder, clusterIds]);
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
     let showCols = updateVisibleColumns(tableConfig.colViews, width);
@@ -105,7 +124,18 @@ const ResourcesTable = (props) => {
     });
     return initialVisibility;
   });
-
+  const appendNameToQuery = (name) => {
+    const currentQuery = { ...router.query, resourceName: name };
+    router.push(
+      {
+        pathname: router.pathname,
+        query: currentQuery,
+      },
+      undefined,
+      { shallow: true },
+    );
+  };
+  const router = useRouter();
   const options = useMemo(
     () => ({
       filter: false,
@@ -131,6 +161,7 @@ const ResourcesTable = (props) => {
           const currentResource = meshSyncResources[meta.rowIndex];
           if (currentResource) {
             switchView(SINGLE_VIEW, currentResource);
+            appendNameToQuery(currentResource.metadata.name);
           }
         }
       },
@@ -176,6 +207,7 @@ const ResourcesTable = (props) => {
       details: error.toString(),
     });
   };
+
   return (
     <>
       {view !== ALL_VIEW ? (
@@ -193,55 +225,41 @@ const ResourcesTable = (props) => {
               type={`${tableConfig.name}`}
               setView={setView}
               resource={selectedResource}
-              classes={classes}
               k8sConfig={k8sConfig}
             />
           </div>
         </Slide>
       ) : (
-        <div>
-          <div
-            className={StyleClass.toolWrapper}
-            style={{ marginBottom: '5px', marginTop: '1rem' }}
-          >
-            <div className={classes.createButton}>{/* <MesherySettingsEnvButtons /> */}</div>
-            <UsesSistent>
-              <div
-                className={classes.searchAndView}
-                style={{
-                  display: 'flex',
-                  borderRadius: '0.5rem 0.5rem 0 0',
+        <>
+          <ToolWrapper style={{ marginBottom: '5px', marginTop: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'end', width: '100%' }}>
+              <SearchBar
+                onSearch={(value) => {
+                  setSearch(value);
                 }}
-              >
-                <SearchBar
-                  onSearch={(value) => {
-                    setSearch(value);
-                  }}
-                  expanded={isSearchExpanded}
-                  setExpanded={setIsSearchExpanded}
-                  placeholder={`Search ${tableConfig.name}...`}
-                />
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
+                placeholder={`Search ${tableConfig.name}...`}
+              />
 
-                <CustomColumnVisibilityControl
-                  id="ref"
-                  columns={tableConfig.columns}
-                  customToolsProps={{ columnVisibility, setColumnVisibility }}
-                />
-              </div>
-            </UsesSistent>
-          </div>
+              <CustomColumnVisibilityControl
+                id="ref"
+                columns={tableConfig.columns}
+                customToolsProps={{ columnVisibility, setColumnVisibility }}
+              />
+            </div>
+          </ToolWrapper>
           <UsesSistent>
             <ResponsiveDataTable
               data={meshSyncResources}
               columns={tableConfig.columns}
               options={options}
-              className={classes.muiRow}
               tableCols={tableCols}
               updateCols={updateCols}
               columnVisibility={columnVisibility}
             />
           </UsesSistent>
-        </div>
+        </>
       )}
     </>
   );

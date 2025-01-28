@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NoSsr } from '@material-ui/core';
+import { NoSsr } from '@mui/material';
 
 let ReactCountdownClock;
 if (typeof window !== 'undefined') {

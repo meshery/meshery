@@ -10,6 +10,9 @@ integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Native support for PromQL",
   "Create custom charts with your own Prometheus queries",

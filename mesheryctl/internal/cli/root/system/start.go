@@ -34,9 +34,10 @@ import (
 
 	dockerCmd "github.com/docker/cli/cli/command"
 	cliconfig "github.com/docker/cli/cli/config"
+	dockerconfig "github.com/docker/cli/cli/config"
 	cliflags "github.com/docker/cli/cli/flags"
-	"github.com/docker/docker/api/types"
-	dockerconfig "github.com/docker/docker/cli/config"
+	"github.com/docker/docker/api/types/container"
+	"github.com/docker/docker/api/types/filters"
 
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
@@ -351,11 +352,12 @@ func start() error {
 		//connection to docker-client
 		cli, err := dockerCmd.NewAPIClientFromFlags(cliflags.NewClientOptions(), dockerCfg)
 		if err != nil {
-			utils.Log.Error(ErrCreatingDockerClient(err))
-			return err
+			return ErrCreatingDockerClient(err)
 		}
-
-		containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{})
+		containers, err := cli.ContainerList(context.Background(), container.ListOptions{
+			Filters: filters.NewArgs(),
+		})
+		//fetch the list of containers
 		if err != nil {
 			return errors.Wrap(err, utils.SystemError("failed to fetch the list of containers"))
 		}

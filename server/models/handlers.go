@@ -63,6 +63,10 @@ type HandlerInterface interface {
 	GetSystemDatabase(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	ResetSystemDatabase(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 
+	ServerEventConfigurationHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	ServerEventConfigurationGet(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+	ServerEventConfigurationSet(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
+
 	FetchSmiResultsHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	FetchSingleSmiResultHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)
 	MeshAdapterConfigHandler(w http.ResponseWriter, req *http.Request, prefObj *Preference, user *User, provider Provider)

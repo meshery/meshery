@@ -135,9 +135,28 @@ const propertyFormatter = {
       <>
         {value.links.map((linkObj) => {
           const { label, nodeName, namespace, serviceAccount } = linkObj;
-          const link = nodeName || namespace || serviceAccount;
-          if (!link) return null;
-          return <TextWithLinkFormatter key={label} title={label} value={link} />;
+          const name = nodeName || namespace || serviceAccount;
+          if (!name) return null;
+          return (
+            <TextWithLinkFormatter
+              key={label}
+              title={label}
+              value={name}
+              // onClick={() => {
+              //   return value.router.push(
+              //     {
+              //       pathname: value.router.pathname,
+              //       query: {
+              //         resourceCategory: resourceCategory || label,
+              //         resourceName: name,
+              //       },
+              //     },
+              //     undefined,
+              //     { shallow: true },
+              //   );
+              // }}
+            />
+          );
         })}
       </>
     );

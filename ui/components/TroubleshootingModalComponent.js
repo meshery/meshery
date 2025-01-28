@@ -1,12 +1,12 @@
 import * as React from 'react';
 import Typography from '@material-ui/core/Typography';
 import { Modal } from '@material-ui/core';
-import InfoIcon from '@material-ui/icons/Info';
+import InfoIcon from '@mui/icons-material/Info';
 import Accordion from '@material-ui/core/Accordion';
 import AccordionDetails from '@material-ui/core/AccordionDetails';
 import AccordionSummary from '@material-ui/core/AccordionSummary';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import CloseIcon from '@material-ui/icons/Close';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import CloseIcon from '@mui/icons-material/Close';
 import { makeStyles, Paper } from '@material-ui/core';
 import { IconButton } from '@material-ui/core';
 

@@ -70,6 +70,9 @@ components:
   colorIcon: assets/img/integrations/stackgres-operator/components/sg-stream/icons/color/sg-stream-color.svg
   whiteIcon: assets/img/integrations/stackgres-operator/components/sg-stream/icons/white/sg-stream-white.svg
   description: 
+components-count: 15
+relationships: 
+relationship-count: 0
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

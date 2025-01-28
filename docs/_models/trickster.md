@@ -34,6 +34,9 @@ components:
   colorIcon: assets/img/integrations/trickster/components/trickster-tracing-config/icons/color/trickster-tracing-config-color.svg
   whiteIcon: assets/img/integrations/trickster/components/trickster-tracing-config/icons/white/trickster-tracing-config-white.svg
   description: 
+components-count: 6
+relationships: 
+relationship-count: 0
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

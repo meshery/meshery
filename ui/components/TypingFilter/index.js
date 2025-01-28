@@ -1,26 +1,24 @@
 import {
   ClickAwayListener,
   Divider,
-  Fade,
   IconButton,
   InputAdornment,
   List,
   Popper,
-  TextField,
-  Typography,
   useTheme,
-} from '@material-ui/core';
+} from '@layer5/sistent';
+import { Description, DropDown, InputField, Item, Label, Root } from './style';
+import { UsesSistent } from '../SistentWrapper';
+import { Fade } from '@mui/material';
 import ContentFilterIcon from '../../assets/icons/ContentFilterIcon';
 import { useEffect, useReducer, useRef, useState } from 'react';
 import CrossCircleIcon from '../../assets/icons/CrossCircleIcon';
-import clsx from 'clsx';
-import { useStyles, useFilterStyles } from './style';
+
 import { FILTERING_STATE, FILTER_EVENTS, filterReducer } from './state';
 import { getFilters, getCurrentFilterAndValue } from './utils';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 
 const Filters = ({ filterStateMachine, dispatchFilterMachine, filterSchema }) => {
-  const classes = useFilterStyles();
   const selectFilter = (filter) => {
     dispatchFilterMachine({
       type: FILTER_EVENTS.SELECT,
@@ -37,28 +35,17 @@ const Filters = ({ filterStateMachine, dispatchFilterMachine, filterSchema }) =>
   return (
     <List>
       {matchingFilters.length == 0 && (
-        <div className={classes.item}>
-          <Typography variant="body1" className={classes.label}>
-            Sorry we dont currently support this filter
-          </Typography>
-        </div>
+        <Item>
+          <Label variant="body1">Sorry we dont currently support this filter</Label>
+        </Item>
       )}
       {matchingFilters.map((filter) => {
         return (
           <>
-            <div
-              key={filter.value}
-              className={classes.item}
-              disableGutters
-              onClick={() => selectFilter(filter.value)}
-            >
-              <Typography variant="body1" className={classes.label}>
-                {filter.value}:
-              </Typography>
-              <Typography variant="body1" className={classes.description}>
-                {filter.description}
-              </Typography>
-            </div>
+            <Item key={filter.value} disableGutters onClick={() => selectFilter(filter.value)}>
+              <Label variant="body1">{filter.value}:</Label>
+              <Description variant="body1">{filter.description}</Description>
+            </Item>
             <Divider light />
           </>
         );
@@ -68,8 +55,6 @@ const Filters = ({ filterStateMachine, dispatchFilterMachine, filterSchema }) =>
 };
 
 const FilterValueSuggestions = ({ filterStateMachine, dispatchFilterMachine, filterSchema }) => {
-  const classes = useFilterStyles();
-
   const selectValue = (value) => {
     dispatchFilterMachine({
       type: FILTER_EVENTS.SELECT,
@@ -85,25 +70,16 @@ const FilterValueSuggestions = ({ filterStateMachine, dispatchFilterMachine, fil
   return (
     <List>
       {suggestions.length == 0 && (
-        <div className={classes.item}>
-          <Typography variant="body1" className={classes.label}>
-            No results available
-          </Typography>
-        </div>
+        <Item>
+          <Label variant="body1">No results available</Label>
+        </Item>
       )}
       {suggestions.map((value) => {
         return (
           <>
-            <div
-              key={value.value}
-              className={classes.item}
-              disableGutters
-              onClick={() => selectValue(value)}
-            >
-              <Typography variant="body1" className={classes.description}>
-                {value}
-              </Typography>
-            </div>
+            <Item key={value.value} disableGutters onClick={() => selectValue(value)}>
+              <Description variant="body1">{value}</Description>
+            </Item>
             <Divider light />
           </>
         );
@@ -163,7 +139,6 @@ const FilterValueSuggestions = ({ filterStateMachine, dispatchFilterMachine, fil
  */
 const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false, placeholder }) => {
   const theme = useTheme();
-  const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const isPopperOpen = Boolean(anchorEl);
   const inputFieldRef = useRef(null);
@@ -257,85 +232,85 @@ const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false, placehol
   }, [filteringState.state]);
 
   return (
-    <div className={clsx(classes.root, 'mui-fixed')}>
-      <TextField
-        ref={inputFieldRef}
-        variant="outlined"
-        placeholder={placeholder}
-        fullWidth
-        size="small"
-        className={classes.input}
-        value={filteringState.context.value}
-        onChange={handleFilterChange}
-        onFocus={handleFocus}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              {' '}
-              <ContentFilterIcon fill={theme.palette.secondary.iconMain} />{' '}
-            </InputAdornment>
-          ),
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton onClick={handleClear}>
-                {filteringState.state !== FILTERING_STATE.IDLE && (
-                  <CrossCircleIcon fill={theme.palette.secondary.iconMain} />
-                )}
-              </IconButton>
-              <IconButton onClick={toggleSuggestions}>
-                {filteringState.state !== FILTERING_STATE.IDLE && !anchorEl && (
-                  <ExpandMore fill={theme.palette.secondary.iconMain} />
-                )}
-                {filteringState.state !== FILTERING_STATE.IDLE && anchorEl && (
-                  <ExpandLess fill={theme.palette.secondary.iconMain} />
-                )}
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-      />
+    <UsesSistent>
+      <Root className="mui-fixed">
+        <InputField
+          ref={inputFieldRef}
+          variant="outlined"
+          placeholder={placeholder}
+          fullWidth
+          size="small"
+          value={filteringState.context.value}
+          onChange={handleFilterChange}
+          onFocus={handleFocus}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                {' '}
+                <ContentFilterIcon fill={theme.palette.secondary.iconMain} />{' '}
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton onClick={handleClear}>
+                  {filteringState.state !== FILTERING_STATE.IDLE && (
+                    <CrossCircleIcon fill={theme.palette.secondary.iconMain} />
+                  )}
+                </IconButton>
+                <IconButton onClick={toggleSuggestions}>
+                  {filteringState.state !== FILTERING_STATE.IDLE && !anchorEl && (
+                    <ExpandMore fill={theme.palette.secondary.iconMain} />
+                  )}
+                  {filteringState.state !== FILTERING_STATE.IDLE && anchorEl && (
+                    <ExpandLess fill={theme.palette.secondary.iconMain} />
+                  )}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
+        />
 
-      <Popper
-        open={filteringState.state != FILTERING_STATE.IDLE && isPopperOpen}
-        anchorEl={inputFieldRef.current}
-        placement="bottom-start"
-        style={{ zIndex: 2000 }}
-        transition
-        className="mui-fixed"
-      >
-        {({ TransitionProps }) => {
-          return (
-            <Fade {...TransitionProps} timeout={100}>
-              <ClickAwayListener onKeydown onClickAway={handleClickAway}>
-                <div
-                  className={classes.dropDown}
-                  style={{
-                    maxHeight: '20rem',
-                    overflowY: 'auto',
-                    width: inputFieldRef.current ? inputFieldRef.current.clientWidth : 0,
-                  }}
-                >
-                  {filteringState.state == FILTERING_STATE.SELECTING_FILTER && (
-                    <Filters
-                      filterStateMachine={filteringState}
-                      dispatchFilterMachine={dispatch}
-                      filterSchema={filterSchema}
-                    />
-                  )}
-                  {filteringState.state == FILTERING_STATE.SELECTING_VALUE && (
-                    <FilterValueSuggestions
-                      filterStateMachine={filteringState}
-                      dispatchFilterMachine={dispatch}
-                      filterSchema={filterSchema}
-                    />
-                  )}
+        <Popper
+          open={filteringState.state != FILTERING_STATE.IDLE && isPopperOpen}
+          anchorEl={inputFieldRef.current}
+          placement="bottom-start"
+          style={{ zIndex: 2000 }}
+          transition
+          className="mui-fixed"
+        >
+          {({ TransitionProps }) => {
+            return (
+              <Fade {...TransitionProps} timeout={100}>
+                <div>
+                  <ClickAwayListener onKeydown onClickAway={handleClickAway}>
+                    <DropDown
+                      style={{
+                        width: inputFieldRef.current ? inputFieldRef.current.clientWidth : 0,
+                      }}
+                    >
+                      {filteringState.state == FILTERING_STATE.SELECTING_FILTER && (
+                        <Filters
+                          filterStateMachine={filteringState}
+                          dispatchFilterMachine={dispatch}
+                          filterSchema={filterSchema}
+                        />
+                      )}
+                      {filteringState.state == FILTERING_STATE.SELECTING_VALUE && (
+                        <FilterValueSuggestions
+                          filterStateMachine={filteringState}
+                          dispatchFilterMachine={dispatch}
+                          filterSchema={filterSchema}
+                        />
+                      )}
+                    </DropDown>
+                  </ClickAwayListener>
                 </div>
-              </ClickAwayListener>
-            </Fade>
-          );
-        }}
-      </Popper>
-    </div>
+              </Fade>
+            );
+          }}
+        </Popper>
+      </Root>
+    </UsesSistent>
   );
 };
 

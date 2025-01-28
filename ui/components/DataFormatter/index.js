@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { Tooltip, Typography, Grid, Box, IconButton, useTheme } from '@material-ui/core';
-import { Launch as LaunchIcon } from '@material-ui/icons';
+import { CustomTooltip, Typography, Grid, Box, IconButton, useTheme } from '@layer5/sistent';
+import { Launch as LaunchIcon } from '@mui/icons-material';
 import _ from 'lodash';
 import { useContext } from 'react';
 import { isEmptyAtAllDepths } from '../../utils/objects';
@@ -55,7 +55,7 @@ export const formatDateTime = (date) => {
  */
 export const FormattedDate = ({ date }) => {
   return (
-    <Tooltip title={formatDateTime(date)} placement="top">
+    <CustomTooltip title={formatDateTime(date)} placement="top">
       <div>
         <SectionBody
           body={formatDate(date)}
@@ -64,7 +64,7 @@ export const FormattedDate = ({ date }) => {
           }}
         ></SectionBody>
       </div>
-    </Tooltip>
+    </CustomTooltip>
   );
 };
 
@@ -85,22 +85,22 @@ export const FormatId = ({ id }) => {
   const truncatedId = _.truncate(id, { length: 15 });
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-      <Tooltip title={id} placement="top">
+      <CustomTooltip title={id} placement="top">
         <Typography
           variant="body2"
           style={{
             cursor: 'pointer',
-            color: theme.palette.secondary.text,
+            color: theme.palette.text.tertiary,
           }}
         >
           {truncatedId}
         </Typography>
-      </Tooltip>
-      <Tooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
+      </CustomTooltip>
+      <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
         <IconButton onClick={copyToClipboard} style={{ padding: '0.25rem' }}>
           <CopyIcon width="1rem" height="1rem" />
         </IconButton>
-      </Tooltip>
+      </CustomTooltip>
     </Box>
   );
 };
@@ -198,7 +198,7 @@ export const KeyValue = ({ Key, Value }) => {
           textTransform: 'capitalize',
           overflow: 'hidden',
           whiteSpace: 'nowrap',
-          color: theme.palette.text.primary,
+          color: theme.palette.text.default,
         }}
       />
 
@@ -208,7 +208,7 @@ export const KeyValue = ({ Key, Value }) => {
         <SectionBody
           body={Value}
           style={{
-            color: theme.palette.text.secondary,
+            color: theme.palette.text.tertiary,
             textOverflow: 'ellipsis',
             wordBreak: 'break-all',
             overflow: 'hidden',
@@ -249,14 +249,14 @@ export const SectionBody = ({ body, style = {} }) => {
       variant="body1"
       style={{
         wordWrap: 'break-word',
-        color: theme.palette.text.secondary,
+        color: theme.palette.text.tertiary,
         ...style,
       }}
       text={body}
     ></TextWithLinks>
   );
 };
-const ArrayFormatter = ({ items }) => {
+export const ArrayFormatter = ({ items }) => {
   const theme = useTheme();
   return (
     <ol
@@ -267,7 +267,7 @@ const ArrayFormatter = ({ items }) => {
       }}
     >
       {items.map((item) => (
-        <li key={item} style={{ color: theme.palette.text.secondary }}>
+        <li key={item} style={{ color: theme.palette.text.tertiary }}>
           <Level>
             <DynamicFormatter data={item} />
           </Level>

@@ -102,6 +102,9 @@ components:
   colorIcon: assets/img/integrations/chaos-mesh/components/workflow/icons/color/workflow-color.svg
   whiteIcon: assets/img/integrations/chaos-mesh/components/workflow/icons/white/workflow-white.svg
   description: 
+components-count: 23
+relationships: 
+relationship-count: 0
 featureList: [
   "Injects various types of failures into systems",
   "Simulates real-world scenarios",

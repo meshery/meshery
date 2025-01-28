@@ -1,18 +1,11 @@
-import {
-  Chip,
-  IconButton,
-  TableCell,
-  TableSortLabel,
-  Tooltip,
-  withStyles,
-} from '@material-ui/core';
+import { TableCell, TableSortLabel } from '@mui/material';
+import { Chip, IconButton, Tooltip } from '@layer5/sistent';
+import { styled } from '@mui/material/styles';
 import React, { useEffect, useState } from 'react';
 import Modal from './Modal';
 import { CONNECTION_KINDS, CON_OPS } from '../utils/Enum';
 import dataFetch from '../lib/data-fetch';
-// import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
-// import EditIcon from '@material-ui/icons/Edit';
-import DeleteIcon from '@material-ui/icons/Delete';
+import DeleteIcon from '@mui/icons-material/Delete';
 import Moment from 'react-moment';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { connect } from 'react-redux';
@@ -21,25 +14,31 @@ import { updateProgress } from '../lib/store';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import ResponsiveDataTable from '../utils/data-table';
-import CustomColumnVisibilityControl from '../utils/custom-column';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
-import useStyles from '../assets/styles/general/tool.styles';
+import { CustomColumnVisibilityControl } from '@layer5/sistent';
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 
-const styles = (theme) => ({
-  muiRow: {
-    marginTop: theme.spacing(1.5),
-  },
-  iconPatt: {
-    width: '24px',
-    height: '24px',
-    filter: theme.palette.secondary.brightness,
+const CredentialIcon = styled('img')(({ theme }) => ({
+  width: '24px',
+  height: '24px',
+  filter: theme.palette.secondary.brightness,
+}));
+
+const ActionContainer = styled('div')({
+  display: 'flex',
+  alignItems: 'center',
+});
+
+const CustomTableCell = styled(TableCell)({
+  '& .MuiTableSortLabel-root': {
+    fontWeight: 'bold',
   },
 });
 
 const schema_array = ['prometheus', 'grafana', 'kubernetes'];
 
-const MesheryCredentialComponent = ({ updateProgress, classes, connectionMetadataState }) => {
+const MesheryCredentialComponent = ({ updateProgress, connectionMetadataState }) => {
   const [credentials, setCredentials] = useState([]);
   const [formData, setFormData] = useState({});
   const [loading, setLoading] = useState(true);
@@ -53,22 +52,10 @@ const MesheryCredentialComponent = ({ updateProgress, classes, connectionMetadat
   const [credentialName, setCredentialName] = useState(null);
   const { notify } = useNotification();
   const { width } = useWindowDimensions();
-  const StyleClass = useStyles();
 
   useEffect(() => {
     fetchCredential();
   }, []);
-
-  // const handleOpen = (ev) => (data, type, id) => {
-  //   ev.stopPropagation();
-  //   data && setCredentialType(data?.type);
-  //   setCredModal({
-  //     open: true,
-  //     data: data?.secret || null,
-  //     actionType: type,
-  //     id: id,
-  //   });
-  // };
 
   const schemaChangeHandler = (type) => {
     setCredentialType(type);
@@ -125,24 +112,21 @@ const MesheryCredentialComponent = ({ updateProgress, classes, connectionMetadat
   const getCredentialsIcon = (type) => {
     switch (type) {
       case 'prometheus':
-        return (
-          <img src="/static/img/prometheus_logo_orange_circle.svg" className={classes.iconPatt} />
-        );
+        return <CredentialIcon src="/static/img/prometheus_logo_orange_circle.svg" />;
       case 'grafana':
-        return <img src="/static/img/grafana_icon.svg" className={classes.iconPatt} />;
+        return <CredentialIcon src="/static/img/grafana_icon.svg" />;
       case 'kubernetes':
         return (
-          <img
+          <CredentialIcon
             src={
               connectionMetadataState
                 ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                 : ''
             }
-            className={classes.iconPatt}
           />
         );
       default:
-        return;
+        return null;
     }
   };
 
@@ -164,14 +148,14 @@ const MesheryCredentialComponent = ({ updateProgress, classes, connectionMetadat
         searchable: true,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
+            <CustomTableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel
                 active={column.sortDirection != null}
                 direction={column.sortDirection || 'asc'}
               >
-                <b>{column.label}</b>
+                {column.label}
               </TableSortLabel>
-            </TableCell>
+            </CustomTableCell>
           );
         },
       },
@@ -185,14 +169,14 @@ const MesheryCredentialComponent = ({ updateProgress, classes, connectionMetadat
         searchable: true,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
+            <CustomTableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel
                 active={column.sortDirection != null}
                 direction={column.sortDirection || 'asc'}
               >
-                <b>{column.label}</b>
+                {column.label}
               </TableSortLabel>
-            </TableCell>
+            </CustomTableCell>
           );
         },
         customBodyRender: function CustomBody(_, tableMeta) {
@@ -218,14 +202,14 @@ const MesheryCredentialComponent = ({ updateProgress, classes, connectionMetadat
         sortDescFirst: true,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
+            <CustomTableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel
                 active={column.sortDirection != null}
                 direction={column.sortDirection || 'asc'}
               >
-                <b>{column.label}</b>
+                {column.label}
               </TableSortLabel>
-            </TableCell>
+            </CustomTableCell>
           );
         },
         customBodyRender: function CustomBody(value) {
@@ -243,14 +227,14 @@ const MesheryCredentialComponent = ({ updateProgress, classes, connectionMetadat
         sortDescFirst: true,
         customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
+            <CustomTableCell key={index} onClick={() => sortColumn(index)}>
               <TableSortLabel
                 active={column.sortDirection != null}
                 direction={column.sortDirection || 'asc'}
               >
-                <b>{column.label}</b>
+                {column.label}
               </TableSortLabel>
-            </TableCell>
+            </CustomTableCell>
           );
         },
         customBodyRender: function CustomBody(value) {
@@ -266,33 +250,22 @@ const MesheryCredentialComponent = ({ updateProgress, classes, connectionMetadat
         sort: false,
         searchable: false,
         customHeadRender: function CustomHead({ index, ...column }) {
-          return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
-            </TableCell>
-          );
+          return <CustomTableCell key={index}>{column.label}</CustomTableCell>;
         },
         customBodyRender: (_, tableMeta) => {
           const rowData = credentials[tableMeta.rowIndex];
           return (
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              {/* <Tooltip key={`edit_credential-${tableMeta.rowIndex}`} title="Edit Credential">
-                <IconButton
-                  aria-label="edit"
-                  onClick={(ev) => handleOpen(ev)(rowData, 'update', rowData['id'])}
-                >
-                  <EditIcon />
-                </IconButton>
-              </Tooltip> */}
+            <ActionContainer>
               <Tooltip key={`delete_credential-${tableMeta.rowIndex}`} title="Delete Credential">
                 <IconButton
                   aria-label="delete"
                   onClick={() => handleSubmit({ type: 'delete', id: rowData['id'] })}
+                  size="large"
                 >
                   <DeleteIcon />
                 </IconButton>
               </Tooltip>
-            </div>
+            </ActionContainer>
           );
         },
       },
@@ -408,7 +381,7 @@ const MesheryCredentialComponent = ({ updateProgress, classes, connectionMetadat
   }
   return (
     <div style={{ display: 'table', tableLayout: 'fixed', width: '100%' }}>
-      <div className={StyleClass.toolWrapper} style={customInlineStyle}>
+      <ToolWrapper style={customInlineStyle}>
         <div>
           {/* TODO: Uncomment this when schema spec is ready to support various credential */}
           {/* <Button
@@ -441,16 +414,16 @@ const MesheryCredentialComponent = ({ updateProgress, classes, connectionMetadat
 
           } */}
           <CustomColumnVisibilityControl
+            id="ref"
             columns={columns}
             customToolsProps={{ columnVisibility, setColumnVisibility }}
           />
         </div>
-      </div>
+      </ToolWrapper>
       <ResponsiveDataTable
         columns={columns}
         data={credentials}
         options={options}
-        className={classes.muiRow}
         tableCols={tableCols}
         updateCols={updateCols}
         columnVisibility={columnVisibility}
@@ -483,6 +456,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(MesheryCredentialComponent),
-);
+export default connect(mapStateToProps, mapDispatchToProps)(MesheryCredentialComponent);
