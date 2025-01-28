@@ -30,12 +30,12 @@ export default function MyApp(props) {
           sx={{ display : "flex", flexDirection : "column", minHeight : "100vh" }}
         >
           <Box sx={{ display : "flex", flexGrow : 1 }}>
-            <Box sx={{ display : "flex", flex : 1, flexDirection : "column" }}>
+            <Box sx={{ display : "flex", flex : 1, flexDirection : "column", background : "#202020"}}>
               <Box
                 sx={{
                   flex : 1,
                   padding : "48px 36px 24px",
-                  background : "#eaeff1",
+                  
                 }}
               >
                 <Paper>

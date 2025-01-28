@@ -9,6 +9,7 @@ import {
   MenuProviderDisabled,
   CustomDialogActions,
   LearnMore,
+  CustomTypography,
 } from "./Provider.style";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
@@ -123,7 +124,7 @@ export default function Provider() {
 
   return (
     <ProviderLayout>
-      <MesheryLogo src="/provider/static/img/meshery-logo/meshery-logo-light-text.png" alt="logo" />
+      <MesheryLogo src="/provider/static/img/meshery-logo/meshery-logo-white-text.png" alt="logo" />
       <CustomDiv>
         {availableProviders !== "" && (
           <Fragment>
@@ -224,8 +225,8 @@ export default function Provider() {
         disableScrollLock={true}
         data-cy="providers-modal"
       >
-        <CustomDialogTitle id="customized-dialog-title" onClose={handleModalClose} style={{ background : "#eee" }}>
-          <b>Choosing a Provider</b>
+        <CustomDialogTitle id="customized-dialog-title" onClose={handleModalClose} style={{ background : "#eee"}}>
+          <CustomTypography>Choosing a Provider</CustomTypography>
         </CustomDialogTitle>
         <DialogContent dividers>
           <DialogContentText id="customized-dialog-content">

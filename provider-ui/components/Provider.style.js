@@ -2,6 +2,7 @@ import { styled } from '@mui/material/styles'
 import MenuItem from '@mui/material/MenuItem'
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
+import Typography from '@mui/material/Typography'
 
 export const CustomDiv = styled('div')(({ theme }) => ({
   width : '60%',
@@ -9,6 +10,19 @@ export const CustomDiv = styled('div')(({ theme }) => ({
   marginRight : 'auto',
   marginTop : theme.spacing(3)
 }))
+
+export const CustomTypography = styled(Typography)(({ theme }) => ({
+  '@font-face': {
+    fontFamily: "Qanelas Soft",
+    src: "url('/provider/static/fonts/qanelas-soft/QanelasSoftRegular.otf') format('opentype')",
+  },
+  fontWeight: 400,
+  fontStyle : "normal",
+  fontSize : "1.5rem",
+  lineHeight : "2rem",
+  letterSpacing : "0.01em",
+  color : "#222",
+})) 
 
 export const MesheryLogo = styled('img')(({ theme }) => ({
   width : theme.spacing(50),
