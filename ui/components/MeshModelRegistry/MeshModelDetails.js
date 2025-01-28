@@ -24,7 +24,6 @@ import {
   StyledKeyValuePropertyDiv,
   StyledKeyValueProperty,
 } from './MeshModel.style';
-import { ConnectionStateChip } from '../connections/ConnectionChip';
 const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
 
 const ExportAvailable = true;
@@ -414,13 +413,13 @@ const StatusChip = ({ entityData, entityType }) => {
     });
   };
 
-  const icons = {
-    [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.IGNORED]: () => <RemoveCircleIcon />,
-    [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.ENABLED]: () => <AssignmentTurnedInIcon />,
-  };
+  // const icons = {
+  //   [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.IGNORED]: () => <RemoveCircleIcon />,
+  //   [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.ENABLED]: () => <AssignmentTurnedInIcon />,
+  // };
 
   return (
-    <FormControl style={{ minWidth: '0%', flexDirection: 'inherit', minWidth: '100%' }}>
+    <FormControl style={{ flexDirection: 'inherit', minWidth: '100%' }}>
       {isSuccess ? (
         <Select
           labelId="entity-status-select-label"
