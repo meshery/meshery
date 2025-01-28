@@ -28,7 +28,6 @@ export const DropDown = styled('div')(({ theme }) => ({
   overflowY: 'auto',
 }));
 export const Item = styled('div')(({ theme }) => ({
-  fontFamily: 'Qanelas Soft, sans-serif',
   display: 'flex',
   gap: '0.3rem',
   margin: '0.3rem',

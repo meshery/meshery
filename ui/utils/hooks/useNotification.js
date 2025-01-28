@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 //NOTE: This file is being refactored to use the new notification center
-import { IconButton, ToggleButtonGroup } from '@mui/material';
+
+import { IconButton, ToggleButtonGroup } from '@layer5/sistent';
 import { useSnackbar } from 'notistack';
 import { iconMedium } from '../../css/icons.styles';
 import CloseIcon from '@mui/icons-material/Close';
