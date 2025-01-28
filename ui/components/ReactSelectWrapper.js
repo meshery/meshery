@@ -25,7 +25,6 @@ const styles = () => ({
     fontSize: 16,
   },
   paper: {
-    zIndex: 9999,
     width: '100%',
     position: 'absolute',
   },
@@ -166,12 +165,22 @@ class ReactSelectWrapper extends React.Component {
         color: theme.palette.text.primary,
         '& input': { font: 'inherit' },
       }),
+      menuPortal: (base) => ({
+        ...base,
+        zIndex: 9999,
+      }),
+      menuList: (base) => ({
+        ...base,
+        maxHeight: '180px',
+      }),
     };
 
     return (
       <div className={classes.root}>
         <NoSsr>
           <CreateSelect
+            menuPortalTarget={document.body}
+            menuPosition="fixed"
             classes={classes}
             styles={selectStyles}
             textFieldProps={{ label, InputLabelProps: { shrink: true }, error }}
