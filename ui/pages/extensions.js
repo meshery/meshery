@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import Head from 'next/head';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { withStyles } from '@material-ui/core/styles';
 import { Button, CatalogIcon, Grid, Switch, Typography, useTheme } from '@layer5/sistent';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import { UsesSistent } from '@/components/SistentWrapper';
@@ -19,7 +18,7 @@ import { CardContainer, FrontSideDescription, ImageWrapper } from '../css/icons.
 
 const INITIAL_GRID_SIZE = { lg: 6, md: 12, xs: 12 };
 
-const MeshMapSignUpcard = ({ classes, hasAccessToMeshMap = false }) => {
+const MeshMapSignUpcard = ({ hasAccessToMeshMap = false }) => {
   const handleSignUp = (e) => {
     window.open('https://docs.layer5.io/kanvas', '_blank');
     e.stopPropagation();
@@ -29,12 +28,7 @@ const MeshMapSignUpcard = ({ classes, hasAccessToMeshMap = false }) => {
     <UsesSistent>
       <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
         <CardContainer>
-          <Typography
-            className={classes.frontContent}
-            data-testid="kanvas-signup-heading"
-            variant="h5"
-            component="div"
-          >
+          <Typography data-testid="kanvas-signup-heading" variant="h5" component="div">
             Kanvas
           </Typography>
 
@@ -78,7 +72,7 @@ const MeshMapSnapShotLogo = () => {
   );
 };
 
-const MeshMapSnapShotCard = ({ classes, githubActionEnabled = false }) => {
+const MeshMapSnapShotCard = ({ githubActionEnabled = false }) => {
   const handleEnable = (e) => {
     window.open('https://cloud.layer5.io/connect/github/new/', '_blank');
     e.stopPropagation();
@@ -88,12 +82,7 @@ const MeshMapSnapShotCard = ({ classes, githubActionEnabled = false }) => {
     <UsesSistent>
       <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
         <CardContainer>
-          <Typography
-            className={classes.frontContent}
-            data-testid="kanvas-snapshot-heading"
-            variant="h5"
-            component="div"
-          >
+          <Typography data-testid="kanvas-snapshot-heading" variant="h5" component="div">
             GitHub Action: Kanvas Snapshot
           </Typography>
 
@@ -135,7 +124,7 @@ const MesheryPerformanceActionLogo = () => {
   );
 };
 
-const MesheryPerformanceAction = ({ classes, githubActionEnabled = false }) => {
+const MesheryPerformanceAction = ({ githubActionEnabled = false }) => {
   const handleEnable = (e) => {
     window.open(
       'https://github.com/marketplace/actions/performance-testing-with-meshery',
@@ -148,12 +137,7 @@ const MesheryPerformanceAction = ({ classes, githubActionEnabled = false }) => {
     <UsesSistent>
       <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
         <CardContainer>
-          <Typography
-            className={classes.frontContent}
-            data-testid="performance-analysis-heading"
-            variant="h5"
-            component="div"
-          >
+          <Typography data-testid="performance-analysis-heading" variant="h5" component="div">
             GitHub Action: Performance Analysis
           </Typography>
 
@@ -194,7 +178,7 @@ const MesheryDockerExtensionLogo = () => {
   );
 };
 
-const MesheryDockerExtension = ({ classes }) => {
+const MesheryDockerExtension = () => {
   const handleDownload = (e) => {
     window.open('https://hub.docker.com/extensions/meshery/docker-extension-meshery', '_blank');
     e.stopPropagation();
@@ -204,12 +188,7 @@ const MesheryDockerExtension = ({ classes }) => {
     <UsesSistent>
       <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
         <CardContainer>
-          <Typography
-            className={classes.frontContent}
-            data-testid="docker-extension-heading"
-            variant="h5"
-            component="div"
-          >
+          <Typography data-testid="docker-extension-heading" variant="h5" component="div">
             Meshery Docker Extension
           </Typography>
 
@@ -252,7 +231,7 @@ const MesheryDesignEmbedLogo = () => {
   );
 };
 
-const MesheryDesignEmbedExtension = ({ classes }) => {
+const MesheryDesignEmbedExtension = () => {
   const handleLearnMore = (e) => {
     window.open('https://docs.layer5.io/kanvas/designer/embedding-designs/', '_blank');
     e.stopPropagation();
@@ -262,7 +241,7 @@ const MesheryDesignEmbedExtension = ({ classes }) => {
     <UsesSistent>
       <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
         <CardContainer>
-          <Typography className={classes.frontContent} variant="h5" component="div">
+          <Typography variant="h5" component="div">
             Meshery Design Embed
           </Typography>
 
@@ -290,12 +269,12 @@ const MesheryDesignEmbedExtension = ({ classes }) => {
   );
 };
 
-export const WrappedMeshMapSignupCard = withStyles()(MeshMapSignUpcard);
-export const WrappedMeshMapSnapShopCard = withStyles()(MeshMapSnapShotCard);
-export const WrappedMesheryPerformanceAction = withStyles()(MesheryPerformanceAction);
-export const WrappedMesheryDockerExtension = withStyles()(MesheryDockerExtension);
-export const WrappedMesheryEmbedDesignExtension = withStyles()(MesheryDesignEmbedExtension);
-const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => {
+export const WrappedMeshMapSignupCard = MeshMapSignUpcard;
+export const WrappedMeshMapSnapShopCard = MeshMapSnapShotCard;
+export const WrappedMesheryPerformanceAction = MesheryPerformanceAction;
+export const WrappedMesheryDockerExtension = MesheryDockerExtension;
+export const WrappedMesheryEmbedDesignExtension = MesheryDesignEmbedExtension;
+const Extensions = ({ toggleCatalogContent, capabilitiesRegistry }) => {
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({});
   const [hasAccessToMeshMap, setHasAccessToMeshMap] = useState(false);
@@ -368,12 +347,7 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
             <WrappedMesheryEmbedDesignExtension />
             <Grid item {...INITIAL_GRID_SIZE}>
               <CardContainer>
-                <Typography
-                  className={classes.frontContent}
-                  data-testid="catalog-section-heading"
-                  variant="h5"
-                  component="div"
-                >
+                <Typography data-testid="catalog-section-heading" variant="h5" component="div">
                   {'Meshery Catalog'}
                 </Typography>
 
@@ -404,7 +378,6 @@ const Extensions = ({ classes, toggleCatalogContent, capabilitiesRegistry }) => 
                 <Grid
                   container
                   spacing={2}
-                  className={classes.grid}
                   direction="row"
                   justifyContent="space-between"
                   alignItems="baseline"
@@ -460,4 +433,4 @@ const mapDispatchToProps = (dispatch) => ({
   toggleCatalogContent: bindActionCreators(toggleCatalogContent, dispatch),
 });
 
-export default withStyles()(connect(mapStateToProps, mapDispatchToProps)(Extensions));
+export default connect(mapStateToProps, mapDispatchToProps)(Extensions);

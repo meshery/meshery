@@ -6,7 +6,7 @@ import {
   Typography,
   styled,
 } from '@layer5/sistent';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { isEmpty } from 'lodash';
 import React from 'react';
 import { getMeshModelComponent } from '../../../api/meshmodel';

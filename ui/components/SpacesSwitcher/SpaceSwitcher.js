@@ -13,13 +13,11 @@ import {
   styled,
   TextField,
   Typography,
-  withStyles,
   Select,
 } from '@material-ui/core';
 import { setKeys, setOrganization, setWorkspace } from '../../lib/store';
 import { connect, Provider } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import styles from './../UserPreferences/style';
 import { store } from '../../store';
 import { withRouter } from 'next/router';
 import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
@@ -27,10 +25,10 @@ import { iconXLarge } from 'css/icons.styles';
 import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { useGetCurrentAbilities } from '@/rtk-query/ability';
 import theme from '@/themes/app';
-// import WorkspaceOutlinedIcon from '@/assets/icons/WorkspaceOutlined';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
 import { UsesSistent } from '../SistentWrapper';
 import _ from 'lodash';
+
 export const SlideInMenu = styled('div')(() => ({
   width: 0,
   overflow: 'hidden',
@@ -346,6 +344,4 @@ const mapDispatchToProps = (dispatch) => ({
   setKeys: bindActionCreators(setKeys, dispatch),
 });
 
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(SpaceSwitcher)),
-);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(SpaceSwitcher));
