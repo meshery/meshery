@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
-import NoSsr from '@mui/material';
+import { NoSsr } from '@mui/material';
 import {
   Divider,
   ClickAwayListener,
@@ -33,12 +33,13 @@ import {
   NotificationButton,
   NotificationContainer,
   SeverityChips,
+  SeverityChip,
   SideList,
   StyledBadge,
   StyledNotificationDrawer,
   Title,
   TitleBellIcon,
-  useStyles,
+  StyledSubtitle,
 } from './notificationCenter.style';
 import {
   closeNotificationCenter,
@@ -69,7 +70,7 @@ import { operationsCenterActor } from 'machines/operationsCenter';
 import { useSelectorRtk } from '@/store/hooks';
 import { ErrorBoundary } from '@layer5/sistent';
 import CustomErrorFallback from '../General/ErrorBoundary';
-import { alpha } from '@mui/material';
+import { alpha } from '@mui/system';
 import { UsesSistent } from '../SistentWrapper';
 
 export const NotificationCenterContext = React.createContext({
@@ -121,7 +122,7 @@ const EmptyState = () => {
       }}
     >
       <DoneIcon height="10rem" width="8rem" fill={theme.palette.icon.secondary} />
-      <Typography variant="h6" style={{ margin: 'auto', color: theme.icon2 }}>
+      <Typography variant="h6" sx={{ margin: 'auto', color: theme.icon2 }}>
         {' '}
         No notifications to show{' '}
       </Typography>
@@ -165,14 +166,7 @@ const NavbarNotificationIcon = () => {
   return <BellIcon className={iconMedium} fill="#fff" />;
 };
 
-const NotificationCountChip = ({
-  classes,
-  notificationStyle,
-  count,
-  type,
-  handleClick,
-  severity,
-}) => {
+const NotificationCountChip = ({ notificationStyle, count, type, handleClick, severity }) => {
   const theme = useTheme();
   const selectedSeverity = useSelector(selectSeverity);
   const darkColor = notificationStyle?.darkColor || notificationStyle?.color;
@@ -194,10 +188,10 @@ const NotificationCountChip = ({
         }}
         onClick={handleClick}
       >
-        <div className={classes.severityChip}>
+        <SeverityChip>
           {<notificationStyle.icon {...chipStyles} />}
           <span>{count}</span>
-        </div>
+        </SeverityChip>
       </Button>
     </Tooltip>
   );
@@ -218,7 +212,7 @@ const Header = ({ handleFilter, handleClose }) => {
   } = useGetEventsSummaryQuery({
     status: STATUS.READ,
   });
-  const classes = useStyles();
+
   const onClickSeverity = (severity) => {
     handleFilter({
       severity: [severity],
@@ -246,7 +240,6 @@ const Header = ({ handleFilter, handleClose }) => {
             <NotificationCountChip
               key={severity}
               severity={severity}
-              classes={classes}
               handleClick={() => onClickSeverity(severity)}
               notificationStyle={SEVERITY_STYLE[severity]}
               type={`Unread ${severity}(s)`}
@@ -254,7 +247,6 @@ const Header = ({ handleFilter, handleClose }) => {
             />
           ))}
           <NotificationCountChip
-            classes={classes}
             notificationStyle={STATUS_STYLE[STATUS.READ]}
             handleClick={() => onClickStatus(STATUS.READ)}
             type={STATUS.READ}
@@ -341,7 +333,7 @@ const BulkActions = () => {
 
   return (
     <Box
-      style={{
+      sx={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -352,7 +344,7 @@ const BulkActions = () => {
         <Checkbox checked={areAllEventsChecked} color="primary" onChange={handleCheckboxChange} />
       </Box>
       <Collapse in={checkedEvents.length > 0}>
-        <Box style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           <BulkActionButton
             tooltip="Delete selected notifications"
             Icon={DeleteIcon}
@@ -440,13 +432,13 @@ const CurrentFilterView = ({ handleFilter }) => {
   const Chips = ({ type, value }) => {
     if (typeof value === 'string') {
       return (
-        <Chip label={value} style={{ paddingTop: '0rem' }} onDelete={() => onDelete(type, value)} />
+        <Chip label={value} sx={{ paddingTop: '0rem' }} onDelete={() => onDelete(type, value)} />
       );
     }
 
     if (_.isArray(value) && value.length > 0) {
       return (
-        <div style={{ display: 'flex', gap: '0.2rem' }}>
+        <div sx={{ display: 'flex', gap: '0.2rem' }}>
           {value.map((item) => (
             <Chip key={item} label={item} onDelete={() => onDelete(type, item)} />
           ))}
@@ -464,7 +456,7 @@ const CurrentFilterView = ({ handleFilter }) => {
           return (
             <div
               key={key}
-              style={{
+              sx={{
                 display: 'flex',
                 gap: '0.3rem',
                 alignItems: 'center',
@@ -472,10 +464,10 @@ const CurrentFilterView = ({ handleFilter }) => {
                 paddingTop: '.35rem',
               }}
             >
-              <Typography variant="subtitle2" style={{ textTransform: 'capitalize' }}>
+              <StyledSubtitle variant="subtitle2" sx={{ textTransform: 'capitalize' }}>
                 {' '}
                 {key}:
-              </Typography>
+              </StyledSubtitle>
               <Chips value={value} type={key} />
             </div>
           );

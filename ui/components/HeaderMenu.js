@@ -11,10 +11,11 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { NavigationNavbar, IconButton } from '@layer5/sistent';
+import { NavigationNavbar } from '@layer5/sistent';
 import { Popover } from '@mui/material';
 import theme from '@/themes/app';
 import { UsesSistent } from './SistentWrapper';
+import { IconButtonAvatar } from './Header.styles';
 
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
@@ -154,14 +155,9 @@ const HeaderMenu = (props) => {
 
   return (
     <UsesSistent>
-      <IconButton
-        aria-describedby={id}
-        onClick={handleClick}
-        color={props.color}
-        className={props.iconButtonClassName}
-      >
+      <IconButtonAvatar aria-describedby={id} onClick={handleClick} color={props.color}>
         <MenuIcon />
-      </IconButton>
+      </IconButtonAvatar>
 
       <Popover
         id={id}

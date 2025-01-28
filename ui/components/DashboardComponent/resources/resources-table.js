@@ -8,7 +8,6 @@ import {
   SearchBar,
   Slide,
 } from '@layer5/sistent';
-import useStyles from '../../../assets/styles/general/tool.styles';
 import View from '../view';
 import { ALL_VIEW, SINGLE_VIEW } from './config';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
@@ -18,6 +17,7 @@ import { camelcaseToSnakecase } from '../../../utils/utils';
 import { useSelector } from 'react-redux';
 import { UsesSistent } from '@/components/SistentWrapper';
 import { useRouter } from 'next/router';
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 
 export const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -27,15 +27,8 @@ export const ACTION_TYPES = {
 };
 
 const ResourcesTable = (props) => {
-  const {
-    classes,
-    updateProgress,
-    k8sConfig,
-    resourceConfig,
-    submenu,
-    workloadType,
-    selectedK8sContexts,
-  } = props;
+  const { updateProgress, k8sConfig, resourceConfig, submenu, workloadType, selectedK8sContexts } =
+    props;
   const [meshSyncResources, setMeshSyncResources] = useState([]);
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(0);
@@ -75,8 +68,6 @@ const ResourcesTable = (props) => {
   const clusterIds = encodeURIComponent(
     JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sConfig)),
   );
-
-  const StyleClass = useStyles();
 
   const { notify } = useNotification();
 
@@ -234,55 +225,41 @@ const ResourcesTable = (props) => {
               type={`${tableConfig.name}`}
               setView={setView}
               resource={selectedResource}
-              classes={classes}
               k8sConfig={k8sConfig}
             />
           </div>
         </Slide>
       ) : (
-        <div>
-          <div
-            className={StyleClass.toolWrapper}
-            style={{ marginBottom: '5px', marginTop: '1rem' }}
-          >
-            <div className={classes.createButton}>{/* <MesherySettingsEnvButtons /> */}</div>
-            <UsesSistent>
-              <div
-                className={classes.searchAndView}
-                style={{
-                  display: 'flex',
-                  borderRadius: '0.5rem 0.5rem 0 0',
+        <>
+          <ToolWrapper style={{ marginBottom: '5px', marginTop: '1rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'end', width: '100%' }}>
+              <SearchBar
+                onSearch={(value) => {
+                  setSearch(value);
                 }}
-              >
-                <SearchBar
-                  onSearch={(value) => {
-                    setSearch(value);
-                  }}
-                  expanded={isSearchExpanded}
-                  setExpanded={setIsSearchExpanded}
-                  placeholder={`Search ${tableConfig.name}...`}
-                />
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
+                placeholder={`Search ${tableConfig.name}...`}
+              />
 
-                <CustomColumnVisibilityControl
-                  id="ref"
-                  columns={tableConfig.columns}
-                  customToolsProps={{ columnVisibility, setColumnVisibility }}
-                />
-              </div>
-            </UsesSistent>
-          </div>
+              <CustomColumnVisibilityControl
+                id="ref"
+                columns={tableConfig.columns}
+                customToolsProps={{ columnVisibility, setColumnVisibility }}
+              />
+            </div>
+          </ToolWrapper>
           <UsesSistent>
             <ResponsiveDataTable
               data={meshSyncResources}
               columns={tableConfig.columns}
               options={options}
-              className={classes.muiRow}
               tableCols={tableCols}
               updateCols={updateCols}
               columnVisibility={columnVisibility}
             />
           </UsesSistent>
-        </div>
+        </>
       )}
     </>
   );

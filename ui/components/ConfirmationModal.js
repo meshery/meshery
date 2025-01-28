@@ -11,7 +11,7 @@ import {
   TextField,
   Tooltip,
   Typography,
-} from '@material-ui/core';
+} from '@layer5/sistent';
 import { withStyles } from '@material-ui/core/styles';
 import { Search } from '@mui/icons-material';
 import { connect } from 'react-redux';

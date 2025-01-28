@@ -10,7 +10,7 @@ import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import ResponsiveDataTable from '../utils/data-table';
 import SearchBar from '../utils/custom-search';
-import useStyles from '../assets/styles/general/tool.styles';
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { store } from '../store';
 import { useGetDatabaseSummaryQuery } from '@/rtk-query/system';
 import CAN from '@/utils/can';
@@ -22,7 +22,6 @@ const DatabaseSummary = (props) => {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [searchText, setSearchText] = useState('');
   const { notify } = useNotification();
-  const StyleClass = useStyles();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const handleError = (msg) => (error) => {
@@ -122,8 +121,8 @@ const DatabaseSummary = (props) => {
 
   return (
     <>
-      <div className={StyleClass.toolWrapper} style={customInlineStyle}>
-        <div>
+      <ToolWrapper style={customInlineStyle}>
+        <div style={{ display: 'flex' }}>
           <Button
             type="submit"
             variant="contained"
@@ -153,7 +152,7 @@ const DatabaseSummary = (props) => {
             placeholder="Search"
           />
         </div>
-      </div>
+      </ToolWrapper>
       <ResponsiveDataTable
         data={databaseSummary?.tables}
         options={table_options}
