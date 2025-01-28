@@ -5,8 +5,8 @@ import { FormatStructuredData, reorderObjectProperties } from '../DataFormatter'
 import { FormControl, Select, MenuItem, CircularProgress, useTheme, Button } from '@layer5/sistent';
 import DownloadIcon from '@mui/icons-material/Download';
 import { REGISTRY_ITEM_STATES, REGISTRY_ITEM_STATES_TO_TRANSITION_MAP } from '../../utils/Enum';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+// import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+// import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import {
   useUpdateEntityStatusMutation,
   useGetComponentsQuery,
@@ -429,9 +429,10 @@ const StatusChip = ({ entityData, entityType }) => {
           defaultValue={data?.status}
           onClick={(e) => e.stopPropagation()}
           onChange={(e) => handleStatusChange(e)}
-          style={{
-            '& .MuiSelect-select.MuiSelect-select': {
-              padding: '0 !important',
+          sx={{
+            '& .MuiSelect-select': {
+              p: '0.5rem !important',
+              pr: '2rem !important',
             },
           }}
           disableUnderline
@@ -453,7 +454,7 @@ const StatusChip = ({ entityData, entityType }) => {
           {nextStatus.map((status) => (
             <MenuItem
               disabled={status === data?.status}
-              style={{ display: status === data?.status ? 'none' : 'flex', padding: '0.5rem' }}
+              style={{ display: status === data?.status ? 'none' : 'flex' }}
               value={status}
               key={status}
             >
