@@ -2,20 +2,9 @@ import React from 'react';
 import { DetailsContainer, Segment, FullWidth } from '@/assets/styles/general/tool.styles';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import { FormatStructuredData, reorderObjectProperties } from '../DataFormatter';
-import {
-  FormControl,
-  Select,
-  MenuItem,
-  Chip,
-  CircularProgress,
-  useTheme,
-  Button,
-} from '@material-ui/core';
+import { FormControl, Select, MenuItem, CircularProgress, useTheme, Button } from '@layer5/sistent';
 import DownloadIcon from '@mui/icons-material/Download';
-import { withStyles } from '@material-ui/core/styles';
-import styles from '../connections/styles';
 import { REGISTRY_ITEM_STATES, REGISTRY_ITEM_STATES_TO_TRANSITION_MAP } from '../../utils/Enum';
-import classNames from 'classnames';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import {
@@ -35,6 +24,7 @@ import {
   StyledKeyValuePropertyDiv,
   StyledKeyValueProperty,
 } from './MeshModel.style';
+import { ConnectionStateChip } from '../connections/ConnectionChip';
 const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
 
 const ExportAvailable = true;
@@ -92,14 +82,13 @@ const RenderContents = ({
         <Accordion
           style={{
             borderRadius: '6px',
-            backgroundColor: theme.palette.secondary.toolbarBg2,
-            color: theme.palette.secondary.text,
+            color: theme.palette.text.default,
             margin: '0 -1rem',
             padding: '0',
           }}
         >
           <AccordionSummary
-            expandIcon={<ExpandMoreIcon style={{ fill: theme.palette.secondary.text }} />}
+            expandIcon={<ExpandMoreIcon style={{ fill: theme.palette.text.default }} />}
           >
             Advanced Details
           </AccordionSummary>
@@ -110,7 +99,7 @@ const RenderContents = ({
             }}
           >
             <ReactJson
-              theme={reactJsonTheme(theme.palette.type)}
+              theme={reactJsonTheme(theme.palette.mode)}
               name={false}
               displayDataTypes={false}
               iconStyle="circle"
@@ -403,8 +392,7 @@ const TitleWithImg = ({ displayName, iconSrc }) => (
   </div>
 );
 
-// TODO: remove with styles and use styled component
-const StatusChip = withStyles(styles)(({ classes, entityData, entityType }) => {
+const StatusChip = ({ entityData, entityType }) => {
   const nextStatus = Object.values(REGISTRY_ITEM_STATES);
   const [updateEntityStatus] = useUpdateEntityStatusMutation();
   const { data: modelData, isSuccess } = useGetMeshModelsQuery({
@@ -432,10 +420,7 @@ const StatusChip = withStyles(styles)(({ classes, entityData, entityType }) => {
   };
 
   return (
-    <FormControl
-      className={classes.chipFormControl}
-      style={{ minWidth: '0%', flexDirection: 'inherit' }}
-    >
+    <FormControl style={{ minWidth: '0%', flexDirection: 'inherit', minWidth: '100%' }}>
       {isSuccess ? (
         <Select
           labelId="entity-status-select-label"
@@ -445,7 +430,11 @@ const StatusChip = withStyles(styles)(({ classes, entityData, entityType }) => {
           defaultValue={data?.status}
           onClick={(e) => e.stopPropagation()}
           onChange={(e) => handleStatusChange(e)}
-          className={classes.statusSelect}
+          style={{
+            '& .MuiSelect-select.MuiSelect-select': {
+              padding: '0 !important',
+            },
+          }}
           disableUnderline
           disabled={!isSuccess} // Disable the select when isSuccess is false
           MenuProps={{
@@ -465,19 +454,13 @@ const StatusChip = withStyles(styles)(({ classes, entityData, entityType }) => {
           {nextStatus.map((status) => (
             <MenuItem
               disabled={status === data?.status}
-              style={{ padding: '0', display: status === data?.status ? 'none' : 'flex' }}
+              style={{ display: status === data?.status ? 'none' : 'flex', padding: '0.5rem' }}
               value={status}
               key={status}
             >
-              <Chip
-                className={classNames(classes.statusChip, classes[status])}
-                avatar={icons[status] ? icons[status]() : ''}
-                label={
-                  status === data?.status
-                    ? status
-                    : REGISTRY_ITEM_STATES_TO_TRANSITION_MAP?.[status] || status
-                }
-              />
+              {status === data?.status
+                ? status
+                : REGISTRY_ITEM_STATES_TO_TRANSITION_MAP?.[status] || status}
             </MenuItem>
           ))}
         </Select>
@@ -486,7 +469,7 @@ const StatusChip = withStyles(styles)(({ classes, entityData, entityType }) => {
       )}
     </FormControl>
   );
-});
+};
 
 const MeshModelDetails = ({ view, showDetailsData }) => {
   const theme = useTheme();
