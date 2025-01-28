@@ -300,7 +300,7 @@ export const ListIconSide = styled(ListItemIcon)(({ theme }) => ({
   },
 }));
 
-export const HiddenText = styled(ListItemText)(({ drawerCollapsed }) => ({
+export const HiddenText = styled(ListItemText)(({ drawerCollapsed, theme }) => ({
   opacity: drawerCollapsed ? 0 : 1,
   color: theme.palette.background.constant.white,
   fontSize: '14px',
