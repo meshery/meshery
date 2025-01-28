@@ -5,7 +5,7 @@ import { bindActionCreators } from 'redux';
 import ConnectionWizardNew from '../../components/Connect/index.js';
 import { updatepagepath, updatepagetitle } from '../../lib/store';
 import { getPath } from '../../lib/path';
-import { NoSsr } from '@material-ui/core';
+import { NoSsr } from '@mui/material';
 
 const ConnectionWizard = (props) => {
   useEffect(() => {

@@ -1,17 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  TableCell,
-  Tooltip,
-  TableContainer,
-  Table,
-  Grid,
-  TableRow,
-  FormControl,
-  Select,
-  MenuItem,
-  Chip,
-} from '@material-ui/core';
-import Moment from 'react-moment';
+import { Tooltip, Grid, FormControl, Select, MenuItem, Chip, CustomTooltip } from '@layer5/sistent';
+import { TableCell, TableContainer, TableRow, Table } from '@mui/material';
+import { formatDate } from '../../DataFormatter';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import {
@@ -20,10 +10,10 @@ import {
   SearchBar,
   UniversalFilter,
 } from '@layer5/sistent';
-import useStyles from '../../../assets/styles/general/tool.styles';
 import { MeshSyncDataFormatter } from '../metadata';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { DefaultTableCell, SortableTableCell } from '../common';
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import {
   JsonParse,
   camelcaseToSnakecase,
@@ -68,7 +58,6 @@ export default function MeshSyncTable(props) {
     metadata: {},
     kind: '',
   });
-  const StyleClass = useStyles();
   const { width } = useWindowDimensions();
 
   const icons = {
@@ -253,19 +242,13 @@ export default function MeshSyncTable(props) {
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(value) {
+          const renderValue = formatDate(value);
           return (
-            <Tooltip
-              title={
-                <Moment startOf="day" format="LLL">
-                  {value}
-                </Moment>
-              }
-              placement="top"
-              arrow
-              interactive
-            >
-              <Moment format="LL">{value}</Moment>
-            </Tooltip>
+            <UsesSistent>
+              <CustomTooltip title={renderValue} placement="top" arrow interactive>
+                {renderValue}
+              </CustomTooltip>
+            </UsesSistent>
           );
         },
       },
@@ -295,7 +278,7 @@ export default function MeshSyncTable(props) {
               ? false
               : true;
           return (
-            <>
+            <UsesSistent>
               <FormControl className={classes.chipFormControl}>
                 <Select
                   labelId="demo-simple-select-label"
@@ -354,7 +337,7 @@ export default function MeshSyncTable(props) {
                   ))}
                 </Select>
               </FormControl>
-            </>
+            </UsesSistent>
           );
         },
       },
@@ -551,7 +534,7 @@ export default function MeshSyncTable(props) {
 
   return (
     <>
-      <div className={StyleClass.toolWrapper} style={{ marginBottom: '5px', marginTop: '-30px' }}>
+      <ToolWrapper style={{ marginBottom: '5px', marginTop: '-30px' }}>
         <div className={classes.createButton}>{/* <MesherySettingsEnvButtons /> */}</div>
         <UsesSistent>
           <div
@@ -585,7 +568,7 @@ export default function MeshSyncTable(props) {
             />
           </div>
         </UsesSistent>
-      </div>
+      </ToolWrapper>
       <UsesSistent>
         <ResponsiveDataTable
           data={meshSyncResources}

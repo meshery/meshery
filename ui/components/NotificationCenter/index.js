@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
-import NoSsr from '@material-ui/core/NoSsr';
+import { NoSsr } from '@mui/material';
 import {
   Divider,
   ClickAwayListener,

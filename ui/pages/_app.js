@@ -1,11 +1,11 @@
-import MomentUtils from '@date-io/moment';
 import { NoSsr, Typography } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Hidden from '@material-ui/core/Hidden';
 import { ThemeProvider, withStyles } from '@material-ui/core/styles';
-import { CheckCircle, Error, Info, Warning } from '@material-ui/icons';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 // import 'billboard.js/dist/theme/insight.min.css';
 import 'billboard.js/dist/theme/dark.min.css';
 // import 'billboard.js/dist/billboard. min.css';
@@ -794,7 +794,7 @@ class MesheryApp extends App {
                                 padding: this.props.extensionType === 'navigator' && '0px',
                               }}
                             >
-                              <MuiPickersUtilsProvider utils={MomentUtils}>
+                              <LocalizationProvider dateAdapter={AdapterMoment}>
                                 <ErrorBoundary customFallback={CustomErrorFallback}>
                                   <Component
                                     pageContext={this.pageContext}
@@ -805,7 +805,7 @@ class MesheryApp extends App {
                                     {...pageProps}
                                   />
                                 </ErrorBoundary>
-                              </MuiPickersUtilsProvider>
+                              </LocalizationProvider>
                             </main>
                           </NotificationCenterProvider>
                         </SnackbarProvider>
@@ -869,9 +869,9 @@ const MesheryAppWrapper = (props) => {
             <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
             <title>Meshery</title>
           </Head>
-          <MuiPickersUtilsProvider utils={MomentUtils}>
+          <LocalizationProvider dateAdapter={AdapterMoment}>
             <MesheryWithRedux {...props} />
-          </MuiPickersUtilsProvider>
+          </LocalizationProvider>
         </Provider>
       </Provider>
     </Provider>

@@ -1,18 +1,34 @@
 //@ts-check
 import React from 'react';
-import { Typography, Button } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/AddCircleOutline';
+import { Typography, Button, styled } from '@layer5/sistent';
+import AddIcon from '@mui/icons-material/AddCircleOutline';
 import GrafanaCustomCharts from './telemetry/grafana/GrafanaCustomCharts';
-import { makeStyles } from '@material-ui/core/styles';
 import { iconMedium } from '../css/icons.styles';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 
-const useStyles = makeStyles(() => ({
-  addIcon: {
+const MetricsConfigButton = styled(Button)({
+  '& .MuiSvgIcon-root': {
     paddingRight: '.35rem',
   },
-}));
+});
+
+const MetricsContainer = styled('div')({
+  padding: '2rem',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  flexDirection: 'column',
+});
+
+const MetricsTitle = styled(Typography)({
+  margin: '0 0 2.5rem 0',
+});
+
+const NoMetricsText = styled(Typography)({
+  fontSize: '1.5rem',
+  marginBottom: '2rem',
+});
 
 function MesheryMetrics({
   boardConfigs = [],
@@ -20,15 +36,13 @@ function MesheryMetrics({
   grafanaAPIKey = '',
   handleGrafanaChartAddition,
 }) {
-  const classes = useStyles();
   if (boardConfigs?.length)
     return (
       <>
-        <Typography align="center" variant="h6" style={{ margin: '0 0 2.5rem 0' }}>
+        <MetricsTitle align="center" variant="h6">
           Service Mesh Metrics
-        </Typography>
+        </MetricsTitle>
         <GrafanaCustomCharts
-          // @ts-ignore
           enableGrafanaChip
           boardPanelConfigs={boardConfigs || []}
           grafanaURL={grafanaURL || ''}
@@ -38,23 +52,11 @@ function MesheryMetrics({
     );
 
   return (
-    <div
-      style={{
-        padding: '2rem',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'column',
-      }}
-    >
-      <Typography
-        style={{ fontSize: '1.5rem', marginBottom: '2rem' }}
-        align="center"
-        color="textSecondary"
-      >
+    <MetricsContainer>
+      <NoMetricsText align="center" color="text.secondary">
         No Metrics Configurations Found
-      </Typography>
-      <Button
+      </NoMetricsText>
+      <MetricsConfigButton
         aria-label="Add Grafana Charts"
         data-testid="configure-metrics-button"
         variant="contained"
@@ -63,10 +65,10 @@ function MesheryMetrics({
         onClick={() => handleGrafanaChartAddition()}
         disabled={!CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject)}
       >
-        <AddIcon className={classes.addIcon} style={iconMedium} />
+        <AddIcon style={iconMedium} />
         Configure Metrics
-      </Button>
-    </div>
+      </MetricsConfigButton>
+    </MetricsContainer>
   );
 }
 

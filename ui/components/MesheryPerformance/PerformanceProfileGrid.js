@@ -1,9 +1,9 @@
-//@ts-check
 import { Grid } from '@material-ui/core';
-import { Pagination } from '@material-ui/lab';
 import React, { useState } from 'react';
 import PerformanceCard from './PerformanceCard';
 import { makeStyles } from '@material-ui/core/styles';
+import { Pagination } from '@layer5/sistent';
+import { UsesSistent } from '../SistentWrapper';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
@@ -62,7 +62,7 @@ function PerformanceProfileGrid({
 }) {
   const classes = useStyles();
   return (
-    <div>
+    <UsesSistent>
       <Grid container spacing={2} style={{ padding: '1rem' }}>
         {profiles.map((profile) => (
           <PerformanceCardGridItem
@@ -79,7 +79,7 @@ function PerformanceProfileGrid({
           <Pagination count={pages} onChange={(_, page) => setPage(page - 1)} />
         </div>
       ) : null}
-    </div>
+    </UsesSistent>
   );
 }
 

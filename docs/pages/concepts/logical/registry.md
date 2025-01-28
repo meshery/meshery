@@ -9,16 +9,17 @@ display-title: "false"
 list: include
 
 ---
+
 # Meshery Registry: A Central Hub for Capabilities
 
 The Meshery Registry is a vital component within Meshery, serving as a centralized repository for managing a diverse range of cloud and cloud native resources. It stores and organizes crucial information such as models, categories, components, and relationships, enabling efficient interaction and utilization of these resources within the Meshery ecosystem. You can conveniently [access and manage registry data](#interacting-with-the-meshery-registry) through Meshery UI, and through Meshery CLI ([mesheryctl registry]({{site.baseurl}}/reference/mesheryctl/#meshery-registry-management)).
 
-As the central repository for all capabilities known to Meshery, contains various entities.
+As the central repository for all capabilities known to Meshery, the registry contains various entities.
 
 <details>
   <summary>Contents of the Registry</summary>
   <br /><br />
-  <a href="../models">Models</a>: Blueprints defining configurations for interacting with cloud-native infrastructure. They consist of operations, components, relationships, and policies.
+  <a href="../models">Models</a>: Blueprints defining configurations for interacting with cloud native infrastructure. They consist of operations, components, relationships, and policies.
   <ul>
     <li><a href="../components">Components</a>: Reusable building blocks for depicting capabilities defined within models.</li>
     <li><a href="../relationships">Relationships</a>: Define the nature of connections between components within a model, describing how they interact and depend on each other.</li>
