@@ -13,15 +13,15 @@ export const HeaderAppBar = styled(AppBar, {
     : {}),
 }));
 
-export const HeaderToolbar = styled(Toolbar, {
+export const StyledToolbar = styled(Toolbar, {
   shouldForwardProp: (prop) => prop !== 'isDrawerCollapsed',
 })(({ theme, isDrawerCollapsed }) => ({
-  minHeight: isDrawerCollapsed ? 59 : 58,
-  padding: theme.spacing(2),
+  minHeight: 59,
+  padding: 16,
   paddingLeft: isDrawerCollapsed ? 0 : 34,
   paddingRight: 34,
-  backgroundColor: theme.palette.secondary.mainBackground,
-  boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
+  backgroundColor: theme.palette.background.card,
+  boxShadow: `3px 0px 4px ${theme.palette.background.brand.default}`,
   ...(isDrawerCollapsed
     ? {
         [theme.breakpoints.down('xs')]: {

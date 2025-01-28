@@ -47,7 +47,6 @@ import ConnectionModal from './Modals/ConnectionModal';
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
 import {
   HeaderAppBar,
-  HeaderToolbar,
   UserContainer,
   PageTitleWrapper,
   CBadgeContainer,
@@ -56,6 +55,7 @@ import {
   MenuIconButton,
   UserSpan,
   CBadge,
+  StyledToolbar,
 } from './Header.styles';
 
 async function loadActiveK8sContexts() {
@@ -420,6 +420,7 @@ class Header extends React.PureComponent {
   render() {
     const { title, onDrawerToggle, isBeta, onDrawerCollapse, abilityUpdated } = this.props;
     const loaderType = 'circular';
+
     return (
       <NoSsr>
         <UsesSistent>
@@ -429,7 +430,7 @@ class Header extends React.PureComponent {
             position="sticky"
             isDrawerCollapsed={onDrawerCollapse}
           >
-            <HeaderToolbar isDrawerCollapsed={onDrawerCollapse}>
+            <StyledToolbar isDrawerCollapsed={onDrawerCollapse}>
               <Grid container alignItems="center">
                 <Hidden smUp>
                   <Grid item style={{ display: 'none' }}>
@@ -502,7 +503,7 @@ class Header extends React.PureComponent {
                   </UserSpan>
                 </Grid>
               </Grid>
-            </HeaderToolbar>
+            </StyledToolbar>
           </HeaderAppBar>
         </UsesSistent>
       </NoSsr>
