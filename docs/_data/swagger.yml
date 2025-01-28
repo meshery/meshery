@@ -863,6 +863,44 @@ paths:
                 - GetMeshmodelCategoriesByName
             summary: Handle GET request for getting all meshmodel categories of a given name
             operationId: idGetMeshmodelCategoriesByName
+    /api/meshmodels/subcategories:
+        get:
+            description: |-
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?search={sub_categoryName}``` If search is non empty then a greedy search is performed
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            tags:
+                - GetMeshmodelSubCategories
+            summary: Handle GET request for getting all meshmodel sub-categories
+            operationId: idGetMeshmodelSubCategories
+            responses:
+                "200":
+                    description: Returns meshmodel sub-categories
+    /api/meshmodels/subcategories/{sub_category}:
+        get:
+            responses:
+                "200":
+                    description: Returns meshmodel sub-categories
+            description: |-
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+            tags:
+                - GetMeshmodelSubCategoriesByName
+            summary: Handle GET request for getting all meshmodel categories of a given name
+            operationId: idGetMeshmodelSubCategoriesByName
     /api/filter/deploy:
         post:
             description: Deploy an attached filter file with the request

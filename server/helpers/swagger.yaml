@@ -774,6 +774,44 @@ paths:
             summary: Handle GET request for getting all meshmodel categories of a given name
             tags:
                 - GetMeshmodelCategoriesByName
+    /api/meshmodels/subcategories:
+        get:
+            description: |-
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?search={sub_categoryName}``` If search is non empty then a greedy search is performed
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+            operationId: idGetMeshmodelSubCategories
+            responses:
+                "200":
+                    $ref: '#/responses/meshmodelSubCategoriesResponseWrapper'
+            summary: Handle GET request for getting all meshmodel sub-categories
+            tags:
+                - GetMeshmodelSubCategories
+    /api/meshmodels/subcategories/{sub_category}:
+        get:
+            description: |-
+                ```?order={field}``` orders on the passed field
+
+                ```?sort={[asc/desc]}``` Default behavior is asc
+
+                ```?page={page-number}``` Default page number is 1
+
+                ```?pagesize={pagesize}``` Default pagesize is 25. To return all results: ```pagesize=all```
+
+                ```?search={[true/false]}``` If search is true then a greedy search is performed
+            operationId: idGetMeshmodelSubCategoriesByName
+            responses:
+                "200":
+                    $ref: '#/responses/meshmodelSubCategoriesResponseWrapper'
+            summary: Handle GET request for getting all meshmodel sub-categories of a given name
+            tags:
+                - GetMeshmodelSubCategoriesByName
     /api/meshmodels/categories/{category}/components:
         get:
             description: |-
