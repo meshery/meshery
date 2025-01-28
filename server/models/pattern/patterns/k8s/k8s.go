@@ -35,12 +35,7 @@ func Deploy(kubeClient *meshkube.Client, comp component.ComponentDefinition, isD
 	})
 
 	if err != nil {
-		if isErrKubeStatusErr(err) {
-			status, _ := json.Marshal(err)
-			return formatKubeStatusErrToMeshkitErr(&status, comp.DisplayName)
-		} else {
-			return meshkube.ErrApplyManifest(err)
-		}
+		return meshkube.ErrApplyManifest(err)
 	}
 	return nil
 }
