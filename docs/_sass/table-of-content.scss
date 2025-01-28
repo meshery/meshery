@@ -82,6 +82,9 @@
         text-decoration: none;
       }
     }
+    .active {
+      color: var(--sidenav-hover);
+    }
     & ul {
       font-size: .9rem;
       padding-inline-start: 0px;
@@ -90,7 +93,7 @@
         list-style: none !important;
 
         & a {
-          color: var(--color-secondary-medium) !important;
+          color: var(--color-secondary-medium);
 
           &:hover {
             color: var(--color-secondary-dark) !important;
