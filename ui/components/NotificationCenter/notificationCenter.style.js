@@ -1,6 +1,7 @@
 import { Badge, Box, Button, Drawer, Grid, IconButton, Typography, styled } from '@layer5/sistent';
 import { alpha } from '@mui/system';
 import { STATUS } from './constants';
+
 export const DarkBackdrop = styled('div')(({ open }) => ({
   position: 'fixed',
   top: 0,
@@ -19,6 +20,7 @@ export const SideList = styled('div')(() => ({
 export const StyledSubtitle = styled(Typography)(() => ({
   textTransform: 'capitalize',
 }));
+
 export const NotificationButton = styled(IconButton)(() => ({
   height: '100%',
   '&:hover': {
@@ -27,7 +29,6 @@ export const NotificationButton = styled(IconButton)(() => ({
 }));
 
 export const NotificationDrawer = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#252E31' : '#fff',
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'space-between',
@@ -35,20 +36,9 @@ export const NotificationDrawer = styled('div')(({ theme }) => ({
   zIndex: 1205,
 }));
 
-export const DrawerButton = styled('button')(({ theme }) => ({
-  padding: '0.45rem',
-  margin: '0.2rem',
-  backgroundColor: theme.palette.secondary.dark,
-  color: '#FFFFFF',
-  '&:hover': {
-    backgroundColor: '#FFFFFF',
-    color: theme.palette.secondary.dark,
-  },
-}));
-
 export const StyledNotificationDrawer = styled(Drawer)(({ theme, isNotificationCenterOpen }) => ({
   '& .MuiDrawer-paper': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#252E31' : '#fff',
+    backgroundColor: theme.palette.background.brand?.disabled,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
@@ -81,7 +71,7 @@ export const Header = styled('header')(({ theme }) => ({
   alignItems: 'center',
   height: '5.65rem',
   flexWrap: 'wrap',
-  background: theme.palette.mode === 'dark' ? '#202020' : '#eeeeee',
+  background: theme.palette.background.card,
 }));
 
 export const NotificationContainer = styled('div')(({ theme }) => ({
@@ -92,7 +82,7 @@ export const NotificationContainer = styled('div')(({ theme }) => ({
   alignItems: 'center',
   height: '5.65rem',
   flexWrap: 'wrap',
-  background: theme.palette.mode === 'dark' ? '#202020' : '#eeeeee',
+  background: theme.palette.background.card,
 }));
 
 export const Title = styled('div')(() => ({
@@ -150,7 +140,7 @@ export const ListDetails = styled('div')(({ theme }) => ({
   gridGap: '0.5rem',
   marginBlock: '0.5rem',
   borderRadius: '0.25rem',
-  backgroundColor: theme.palette.mode === 'dark' ? '#303030' : '#F0F0F0',
+  backgroundColor: theme.palette.background.card,
   '&:hover': {
     backgroundColor: alpha(theme.palette.text.brand, 0.25),
   },
@@ -165,7 +155,7 @@ export const ListItem = styled(Box)(() => ({
 
 export const SoicialListItem = styled(Box)(({ theme }) => ({
   display: 'flex',
-  backgroundColor: alpha(theme.palette.mode === 'dark' ? '#303030' : '#F0F0F0', 0.25),
+  backgroundColor: theme.palette.background.card,
   alignItems: 'center',
   justifyContent: 'space-around',
   padding: '.65rem',
@@ -234,7 +224,7 @@ export const OptionList = styled(Box)(({ theme }) => ({
   gridGap: '0.5rem',
   marginBlock: '0.5rem',
   borderRadius: '0.25rem',
-  backgroundColor: theme.palette.mode === 'dark' ? '#303030' : '#F0F0F0',
+  backgroundColor: theme.palette.background.card,
   '&:hover': {
     backgroundColor: alpha(theme.palette.text.brand, 0.25),
   },
