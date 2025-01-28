@@ -166,6 +166,9 @@ class ReactSelectWrapper extends React.Component {
         color: theme.palette.text.primary,
         '& input': { font: 'inherit' },
       }),
+      indicatorSeparator: () => ({
+        display: 'none',
+      }),
     };
 
     return (

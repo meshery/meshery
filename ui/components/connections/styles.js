@@ -30,9 +30,6 @@ const styles = (theme) => ({
     marginLeft: 'auto',
     paddingLeft: '1rem',
   },
-  chipFormControl: {
-    minWidth: '100%',
-  },
   statusChip: {
     minWidth: '145px',
     width: '100%',

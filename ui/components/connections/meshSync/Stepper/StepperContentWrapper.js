@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, Typography, Divider, Button } from '@layer5/sistent';
-import { useStyles } from '../../../Connect/styles';
+import { useStyles } from './styles';
 
 const ContentHeader = ({ title }) => (
   <>

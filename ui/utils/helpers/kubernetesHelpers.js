@@ -1,6 +1,6 @@
-import dataFetch from '../../../lib/data-fetch';
-import { EVENT_TYPES } from '../../../lib/event-types';
-import { CONNECTION_KINDS, CONNECTION_STATES } from '../../../utils/Enum';
+import dataFetch from '../../lib/data-fetch';
+import { EVENT_TYPES } from '../../lib/event-types';
+import { CONNECTION_KINDS, CONNECTION_STATES } from '../Enum';
 
 /**
  * Pings kuberenetes server endpoint

@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
-import dataFetch from '../../../lib/data-fetch';
-import { EVENT_TYPES } from '../../../lib/event-types';
-import { ctxUrl } from '../../../utils/multi-ctx';
+import dataFetch from '../../lib/data-fetch';
+import { EVENT_TYPES } from '../../lib/event-types';
+import { ctxUrl } from '../multi-ctx';
 
 export const verifyGrafanaConnection = (grafanaUrl) => {
   return new Promise((res, rej) => {
