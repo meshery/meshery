@@ -118,6 +118,10 @@ type HandlerInterface interface {
 	GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, r *http.Request)
+
+	GetMeshmodelSubCategories(rw http.ResponseWriter, r *http.Request)
+	GetMeshmodelSubCategoriesByName(rw http.ResponseWriter, r *http.Request)
+
 	ValidationHandler(rw http.ResponseWriter, r *http.Request)
 	MeshModelGenerationHandler(rw http.ResponseWriter, r *http.Request)
 	GetMeshmodelModels(rw http.ResponseWriter, r *http.Request)
