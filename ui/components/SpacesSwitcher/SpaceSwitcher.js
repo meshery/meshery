@@ -9,12 +9,12 @@ import {
   FormGroup,
   Grid,
   MenuItem,
-  NoSsr,
   styled,
   TextField,
   Typography,
   Select,
-} from '@material-ui/core';
+} from '@layer5/sistent';
+import { NoSsr } from '@mui/material';
 import { setKeys, setOrganization, setWorkspace } from '../../lib/store';
 import { connect, Provider } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -22,7 +22,7 @@ import { store } from '../../store';
 import { withRouter } from 'next/router';
 import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
 import { iconXLarge } from 'css/icons.styles';
-import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
+// import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { useGetCurrentAbilities } from '@/rtk-query/ability';
 import theme from '@/themes/app';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
@@ -183,106 +183,106 @@ function OrgMenu(props) {
   );
 }
 
-export function WorkspaceSwitcher({ organization, open, workspace, setWorkspace }) {
-  const [orgId, setOrgId] = useState('');
-  const { data: workspacesData, isError: isWorkspacesError } = useGetWorkspacesQuery(
-    {
-      page: 0,
-      pagesize: 10,
-      search: '',
-      order: '',
-      orgId: orgId,
-    },
-    {
-      skip: !orgId ? true : false,
-    },
-  );
+// export function WorkspaceSwitcher({ organization, open, workspace, setWorkspace }) {
+//   const [orgId, setOrgId] = useState('');
+//   const { data: workspacesData, isError: isWorkspacesError } = useGetWorkspacesQuery(
+//     {
+//       page: 0,
+//       pagesize: 10,
+//       search: '',
+//       order: '',
+//       orgId: orgId,
+//     },
+//     {
+//       skip: !orgId ? true : false,
+//     },
+//   );
 
-  const handleWorkspaceSelect = (e) => {
-    const id = e.target.value;
-    const selected = workspacesData.workspaces.find((org) => org.id === id);
-    setWorkspace({ workspace: selected });
-  };
+//   const handleWorkspaceSelect = (e) => {
+//     const id = e.target.value;
+//     const selected = workspacesData.workspaces.find((org) => org.id === id);
+//     setWorkspace({ workspace: selected });
+//   };
 
-  useEffect(() => {
-    setOrgId(organization?.id);
-  }, [organization]);
+//   useEffect(() => {
+//     setOrgId(organization?.id);
+//   }, [organization]);
 
-  if (!organization || !workspace) {
-    return null;
-  }
+//   if (!organization || !workspace) {
+//     return null;
+//   }
 
-  return (
-    <NoSsr>
-      {!isWorkspacesError && workspace && (
-        <div
-          style={{
-            width: open ? 'auto' : 0,
-            overflow: open ? '' : 'hidden',
-            transition: 'all 1s',
-          }}
-        >
-          <FormControl component="fieldset">
-            <FormGroup>
-              <FormControlLabel
-                key="SpacesPreferences"
-                control={
-                  <Grid container spacing={1} alignItems="flex-end">
-                    <Grid item xs={12} data-cy="mesh-adapter-url">
-                      <StyledSelect
-                        value={workspace.id}
-                        onChange={handleWorkspaceSelect}
-                        SelectDisplayProps={{ style: { display: 'flex', flexDirection: 'row' } }}
-                        MenuProps={{
-                          anchorOrigin: {
-                            vertical: 'bottom',
-                            horizontal: 'left',
-                          },
-                          transformOrigin: {
-                            vertical: 'top',
-                            horizontal: 'left',
-                          },
-                          getContentAnchorEl: null,
-                        }}
-                      >
-                        {workspacesData?.workspaces?.map((works) => (
-                          <MenuItem key={works.id} value={works.id}>
-                            <span>{works.name}</span>
-                          </MenuItem>
-                        ))}
-                      </StyledSelect>
-                    </Grid>
-                  </Grid>
-                }
-              />
-            </FormGroup>
-          </FormControl>
-        </div>
-      )}
-    </NoSsr>
-  );
-}
+//   return (
+//     <NoSsr>
+//       {!isWorkspacesError && workspace && (
+//         <div
+//           style={{
+//             width: open ? 'auto' : 0,
+//             overflow: open ? '' : 'hidden',
+//             transition: 'all 1s',
+//           }}
+//         >
+//           <FormControl component="fieldset">
+//             <FormGroup>
+//               <FormControlLabel
+//                 key="SpacesPreferences"
+//                 control={
+//                   <Grid container spacing={1} alignItems="flex-end">
+//                     <Grid item xs={12} data-cy="mesh-adapter-url">
+//                       <StyledSelect
+//                         value={workspace.id}
+//                         onChange={handleWorkspaceSelect}
+//                         SelectDisplayProps={{ style: { display: 'flex', flexDirection: 'row' } }}
+//                         MenuProps={{
+//                           anchorOrigin: {
+//                             vertical: 'bottom',
+//                             horizontal: 'left',
+//                           },
+//                           transformOrigin: {
+//                             vertical: 'top',
+//                             horizontal: 'left',
+//                           },
+//                           getContentAnchorEl: null,
+//                         }}
+//                       >
+//                         {workspacesData?.workspaces?.map((works) => (
+//                           <MenuItem key={works.id} value={works.id}>
+//                             <span>{works.name}</span>
+//                           </MenuItem>
+//                         ))}
+//                       </StyledSelect>
+//                     </Grid>
+//                   </Grid>
+//                 }
+//               />
+//             </FormGroup>
+//           </FormControl>
+//         </div>
+//       )}
+//     </NoSsr>
+//   );
+// }
 
-export const FileNameInput = ({
-  fileName,
-  handleFileNameChange,
-  handleFocus,
-  activateWalkthrough,
-}) => {
-  return (
-    <StyledTextField
-      id="design-name-textfield"
-      onChange={handleFileNameChange}
-      label="Name"
-      value={fileName || ''}
-      autoComplete="off"
-      size="small"
-      variant="standard"
-      onFocus={handleFocus}
-      onMouseEnter={() => activateWalkthrough && activateWalkthrough()}
-    />
-  );
-};
+// export const FileNameInput = ({
+//   fileName,
+//   handleFileNameChange,
+//   handleFocus,
+//   activateWalkthrough,
+// }) => {
+//   return (
+//     <StyledTextField
+//       id="design-name-textfield"
+//       onChange={handleFileNameChange}
+//       label="Name"
+//       value={fileName || ''}
+//       autoComplete="off"
+//       size="small"
+//       variant="standard"
+//       onFocus={handleFocus}
+//       onMouseEnter={() => activateWalkthrough && activateWalkthrough()}
+//     />
+//   );
+// };
 
 function DefaultHeader({ title, isBeta }) {
   return (

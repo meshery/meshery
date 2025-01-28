@@ -1,5 +1,5 @@
-import dataFetch from '../../../lib/data-fetch';
-import { EVENT_TYPES } from '../../../lib/event-types';
+import dataFetch from '../../lib/data-fetch';
+import { EVENT_TYPES } from '../../lib/event-types';
 
 /**
  * fetch the adapters that are available

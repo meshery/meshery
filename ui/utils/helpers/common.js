@@ -1,7 +1,7 @@
 /* eslint-disable react/display-name */
-import { IconButton } from '@material-ui/core';
+import { IconButton } from '@layer5/sistent';
 import CloseIcon from '@mui/icons-material/Close';
-import { EVENT_TYPES } from '../../../lib/event-types';
+import { EVENT_TYPES } from '../../lib/event-types';
 
 /**
  * A function that generates a close button component for a snackbar.
