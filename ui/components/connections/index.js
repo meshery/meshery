@@ -1,12 +1,11 @@
 import React, { useRef, useState } from 'react';
 import { NoSsr, AppBar } from '@material-ui/core';
-import { ErrorBoundary, Tab, Tabs } from '@layer5/sistent';
-import { withStyles } from '@material-ui/core/styles';
+import { ErrorBoundary } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateProgress } from '../../lib/store';
 import Modal from '../Modal';
-import styles from './styles';
+import { ConnectionIconText, ConnectionTab, ConnectionTabs } from './styles';
 import MeshSyncTable from './meshSync';
 import ConnectionIcon from '../../assets/icons/Connection';
 import MeshsyncIcon from '../../assets/icons/Meshsync';
@@ -71,7 +70,6 @@ function ConnectionManagementPage(props) {
 }
 function Connections(props) {
   const {
-    classes,
     updateProgress,
     /*onOpenCreateConnectionModal,*/ operatorState,
     selectedK8sContexts,
@@ -89,10 +87,9 @@ function Connections(props) {
       {CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) ? (
         <>
           <UsesSistent>
-            <AppBar position="static" color="default" className={classes.appBar}>
-              <Tabs
+            <AppBar position="static" color="default" style={{ marginBottom: '3rem' }}>
+              <ConnectionTabs
                 value={tab}
-                className={classes.tabs}
                 onChange={(e, newTab) => {
                   e.stopPropagation();
                   setTab(newTab);
@@ -104,25 +101,23 @@ function Connections(props) {
                   height: '10%',
                 }}
               >
-                <Tab
-                  className={classes.tab}
+                <ConnectionTab
                   label={
-                    <div className={classes.iconText}>
+                    <ConnectionIconText>
                       <span style={{ marginRight: '0.3rem' }}>Connections</span>
                       <ConnectionIcon width="20" height="20" />
-                    </div>
+                    </ConnectionIconText>
                   }
                 />
-                <Tab
-                  className={classes.tab}
+                <ConnectionTab
                   label={
-                    <div className={classes.iconText}>
+                    <ConnectionIconText>
                       <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
                       <MeshsyncIcon width="20" height="20" />
-                    </div>
+                    </ConnectionIconText>
                   }
                 />
-              </Tabs>
+              </ConnectionTabs>
             </AppBar>
           </UsesSistent>
 
@@ -134,7 +129,6 @@ function Connections(props) {
           )}
           {tab === 1 && (
             <MeshSyncTable
-              classes={classes}
               updateProgress={updateProgress}
               selectedK8sContexts={selectedK8sContexts}
               k8sconfig={k8sconfig}
@@ -179,9 +173,7 @@ const ConnectionManagementPageWithErrorBoundary = (props) => {
 };
 
 // @ts-ignore
-export default withStyles(styles)(
-  connect(
-    mapStateToProps,
-    mapDispatchToProps,
-  )(withRouter(ConnectionManagementPageWithErrorBoundary)),
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withRouter(ConnectionManagementPageWithErrorBoundary));

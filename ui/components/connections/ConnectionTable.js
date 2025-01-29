@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { TableCell, TableRow, Popover } from '@material-ui/core';
+import { TableCell, TableRow, Popover } from '@mui/material';
 import {
   CustomTooltip,
   CustomColumnVisibilityControl,
@@ -1043,6 +1043,8 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
           style={{
             display: 'flex',
             borderRadius: '0.5rem 0.5rem 0 0',
+            width: '100%',
+            justifyContent: 'flex-end',
           }}
         >
           <SearchBar
