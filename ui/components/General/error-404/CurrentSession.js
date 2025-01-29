@@ -12,14 +12,12 @@ import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
 import { Provider } from 'react-redux';
 import { store } from '../../../store';
-import NoSsr from '@material-ui/core/NoSsr';
+import NoSsr from '@mui/material';
 import OrgIcon from 'assets/icons/OrgIcon';
-import { useTheme } from '@material-ui/core/styles';
 import { ErrorBoundary } from '@layer5/sistent';
 import CustomErrorFallback from '../ErrorBoundary';
 
 const CurrentSessionInfo = (props) => {
-  const theme = useTheme();
   const { organization } = props;
   const {
     data: rolesRes,
@@ -42,7 +40,7 @@ const CurrentSessionInfo = (props) => {
           Organization
         </StyledTypographyDisabled>
         <StyledBox>
-          <OrgIcon width="24" height="24" secondaryFill={theme.palette.darkSlateGray} />
+          <OrgIcon width="24" height="24" secondaryFill={'#294957'} />
           <OrgNameDisabled>{organization?.name}</OrgNameDisabled>
         </StyledBox>
       </div>

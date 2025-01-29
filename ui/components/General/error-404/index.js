@@ -1,5 +1,4 @@
 import { ErrorTypes } from '@/constants/common';
-import { useTheme } from '@material-ui/core/styles';
 import {
   ErrorSection,
   ErrorSectionContainer,
@@ -15,7 +14,7 @@ import {
   StyledDivider,
   ErrorLink,
 } from './styles';
-import { Typography, InfoCircleIcon, CustomTooltip } from '@layer5/sistent';
+import { Typography, InfoCircleIcon, CustomTooltip, useTheme } from '@layer5/sistent';
 import OrgSwitcher from './OrgSwitcher';
 // import RequestForm from './RequestForm';
 import CurrentSessionInfo from './CurrentSession';
@@ -63,7 +62,7 @@ const DefaultError = (props) => {
             <Logo src="/static/img/meshery-logo/meshery-logo.svg" alt="Meshery logo" />
             <LogoText
               src={
-                theme.palette.type === 'dark'
+                theme.palette.mode === 'dark'
                   ? '/static/img/meshery-logo/meshery-white.svg'
                   : '/static/img/meshery-logo/meshery-black.svg'
               }
