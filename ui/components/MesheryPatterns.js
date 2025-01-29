@@ -1355,7 +1355,11 @@ function MesheryPatterns({
   };
 
   if (ispatternsLoading) {
-    return <LoadingScreen animatedIcon="AnimatedMeshPattern" message={`Loading ${pageTitle}...`} />;
+    return (
+      <UsesSistent>
+        <LoadingScreen animatedIcon="AnimatedMeshPattern" message={`Loading ${pageTitle}...`} />
+      </UsesSistent>
+    );
   }
 
   /**

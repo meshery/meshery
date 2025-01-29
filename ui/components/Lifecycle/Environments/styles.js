@@ -219,7 +219,7 @@ export const StyledChip = styled('div')(({ theme }) => ({
   height: 'unset',
   borderRadius: '100px',
   border: `0.5px solid ${theme.palette.secondary.default}`,
-  background: theme.palette.secondary.white,
+  background: theme.palette.background.constant.white,
   maxWidth: '230px',
   '& .MuiChip-avatar': {
     margin: 0,
