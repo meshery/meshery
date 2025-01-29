@@ -1,4 +1,6 @@
-import { IconButton, styled } from '@layer5/sistent';
+import { Accordion, FormControl, IconButton, styled } from '@layer5/sistent';
+import { HelpOutlineOutlined } from '@mui/icons-material';
+import { Radio } from '@mui/material';
 import { Calendar } from 'react-big-calendar';
 
 export const CardButton = styled('div')(() => ({
@@ -98,4 +100,42 @@ export const CalendarComponent = styled(Calendar)(({ theme }) => ({
 
 export const IconButtonComp = styled(IconButton)(({ theme }) => ({
   color: theme.palette.icon.default,
+}));
+
+export const CenterTimer = styled('div')(() => ({
+  width: '100%',
+  height: '100%',
+  position: 'absolute',
+  top: '0',
+  left: '0',
+  backgroundColor: 'rgba(0, 0, 0, 0.6)',
+  zIndex: 1201,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+}));
+
+export const HelpIcon = styled(HelpOutlineOutlined)(({ theme }) => ({
+  width: '15px',
+  height: '18px',
+  marginBottom: theme.spacing(1),
+  marginLeft: theme.spacing(0.3),
+}));
+
+export const RadioButton = styled(Radio)(({ theme }) => ({
+  radio: {
+    '&.Mui-checked': {
+      color: theme.palette.text.brand,
+    },
+  },
+}));
+
+export const ExpansionPanelComponent = styled(Accordion)(() => ({
+  boxShadow: 'none',
+  border: '1px solid rgb(196,196,196)',
+  background: 'none',
+}));
+
+export const FormContainer = styled(FormControl)(({ theme }) => ({
+  margin: theme.spacing(1),
 }));
