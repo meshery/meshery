@@ -1139,7 +1139,11 @@ function MesheryFilters({
   };
 
   if (isFiltersLoading) {
-    return <LoadingScreen animatedIcon="AnimatedFilter" message={`Loading Filters...`} />;
+    return (
+      <UsesSistent>
+        <LoadingScreen animatedIcon="AnimatedFilter" message={`Loading Filters...`} />
+      </UsesSistent>
+    );
   }
 
   return (

@@ -529,6 +529,8 @@ export default function MeshSyncTable(props) {
           style={{
             display: 'flex',
             borderRadius: '0.5rem 0.5rem 0 0',
+            width: '100%',
+            justifyContent: 'end',
           }}
         >
           <SearchBar

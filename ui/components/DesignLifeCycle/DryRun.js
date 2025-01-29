@@ -55,7 +55,6 @@ const ExpandableComponentErrors = ({
   errors,
   component,
   componentName,
-  classes,
   validationMachine,
   currentComponentName, // if dry run is initiated by clicking on node's error badge
 }) => {
@@ -150,12 +149,11 @@ const ExpandableComponentErrors = ({
                       variant="subtitle2"
                       disablePadding
                       style={{ fontWeight: 'bold', marginBottom: '0.25rem' }}
-                      className={classes.nested}
                     >
                       {breakCapitalizedWords(err.Type || '')}: {getFieldPathString(err.FieldPath)}
                     </Typography>
 
-                    <Typography variant="subtitle2" disablePadding className={classes.nested}>
+                    <Typography variant="subtitle2" disablePadding>
                       {err.Message}
                     </Typography>
                   </div>
@@ -173,7 +171,6 @@ export const FormatDryRunResponse = ({
   configurableComponentsCount,
   annotationComponentsCount,
   validationMachine,
-  classes,
   currentComponentName,
 }) => {
   const totalDryRunErrors = getTotalCountOfDeploymentErrors(dryRunErrors);
@@ -202,7 +199,6 @@ export const FormatDryRunResponse = ({
           <Typography
             varaint="h6"
             disablePadding
-            className={classes.error}
             style={{
               color: `${
                 totalDryRunErrors > 0
