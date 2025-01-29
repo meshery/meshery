@@ -23,7 +23,6 @@ import { store } from '../../store';
 import { withRouter } from 'next/router';
 import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
 import { iconXLarge } from 'css/icons.styles';
-// import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { useGetCurrentAbilities } from '@/rtk-query/ability';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
 import { UsesSistent } from '../SistentWrapper';
@@ -141,9 +140,9 @@ function OrgMenu(props) {
                             display: 'flex',
                             flexDirection: 'row',
                             fill: '#eee',
-                            color: theme.palette.text.default,
                             paddingBlock: '9px 8px',
                             paddingInline: '18px 34px',
+                            color: theme.palette.background.constant.white,
                           },
                         }}
                         MenuProps={{
