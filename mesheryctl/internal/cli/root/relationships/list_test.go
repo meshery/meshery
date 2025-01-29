@@ -14,7 +14,7 @@ import (
 
 var update = flag.Bool("update", false, "update golden files")
 
-func TestExperimentalList(t *testing.T) {
+func TestList(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
 
