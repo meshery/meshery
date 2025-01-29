@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
-import { NoSsr, AppBar } from '@material-ui/core';
-import { ErrorBoundary } from '@layer5/sistent';
+import { NoSsr } from '@mui/material';
+import { ErrorBoundary, AppBar } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateProgress } from '../../lib/store';
