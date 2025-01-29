@@ -2,8 +2,8 @@ import { alpha } from '@mui/material/styles';
 import { Colors } from '../../themes/app';
 import { CONNECTION_STATES } from '../../utils/Enum';
 import { notificationColors } from '../../themes';
-import { Chip, Grid, styled } from '@layer5/sistent';
-import { StepConnector, StepLabel, Stepper } from '@mui/material';
+import { Box, Button, Chip, Grid, MenuItem, Select, styled } from '@layer5/sistent';
+import { StepConnector, StepLabel, Stepper, TableContainer } from '@mui/material';
 
 const styles = (theme) => ({
   grid: { padding: theme.spacing(2) },
@@ -11,9 +11,7 @@ const styles = (theme) => ({
     fontWeight: 'bolder',
     fontSize: 18,
   },
-  muiRow: {
-    '& .MuiTableCell-root': {},
-  },
+
   statusSelect: {
     '& .MuiSelect-select.MuiSelect-select': {
       padding: '0 !important',
@@ -233,6 +231,57 @@ const styles = (theme) => ({
     '& .MuiSvgIcon-root': {
       color: `${theme.palette.secondary.iconMain} !important`,
     },
+  },
+});
+export const CreateButton = styled(Grid)({
+  display: 'flex',
+  justifyContent: 'flex-start',
+  alignItems: 'center',
+  whiteSpace: 'nowrap',
+});
+
+export const InnerTableContainer = styled(TableContainer)(({ theme }) => ({
+  background: theme.palette.background.card,
+  margin: '10px 10px 10px 13px',
+  borderLeft: `9px solid ${theme.palette.background.default} !important`,
+  borderRadius: '10px 0 0 10px',
+  width: 'calc(100% - 23px)',
+  border: 'none',
+  overflowX: 'hidden',
+}));
+
+export const ActionListItem = styled(Box)({
+  display: 'flex',
+  gridGap: '0.5rem',
+  alignItems: 'center',
+  justifyContent: 'space-around',
+  width: '100%',
+});
+
+export const ActionButton = styled(Button)({
+  width: '100%',
+  justifyContent: 'flex-start',
+  '&:hover': {
+    backgroundColor: 'transparent',
+  },
+});
+
+export const ConnectionStyledSelect = styled(Select)({
+  '& .MuiSelect-select': {
+    padding: '0 !important',
+  },
+  '& .MuiMenuItem-root': {
+    padding: '0',
+  },
+});
+
+export const ConnectionStyledMenuItem = styled(MenuItem)({
+  padding: '0',
+  '& .MuiMenuItem-root': {
+    padding: '0',
+  },
+  '& .MuiButtonBase-root': {
+    padding: '0 !important',
   },
 });
 

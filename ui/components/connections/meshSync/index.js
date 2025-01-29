@@ -279,7 +279,7 @@ export default function MeshSyncTable(props) {
               : true;
           return (
             <UsesSistent>
-              <FormControl className={classes.chipFormControl}>
+              <FormControl>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
