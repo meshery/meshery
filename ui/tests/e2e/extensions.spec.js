@@ -45,7 +45,7 @@ test.describe('Extensions Section Tests', () => {
       page.getByTestId('docker-extension-download-btn').click(),
     ]);
     await expect(newPage).toHaveURL(
-      'https://hub.docker.com/extensions/meshery/docker-extension-meshery'
+      'https://hub.docker.com/extensions/meshery/docker-extension-meshery',
     );
     await newPage.close();
   });
