@@ -259,6 +259,7 @@ const ConnectionTable = ({
     ['created_at', 'na'],
     ['status', 'xs'],
     ['Actions', 'xs'],
+    ['ConnectionID', 'xs'],
   ];
 
   const addConnectionToEnvironment = async (
@@ -771,6 +772,28 @@ const ConnectionTable = ({
               </CustomTooltip>
             </UsesSistent>
           );
+        },
+      },
+    },
+    {
+      name: 'ConnectionID',
+      label: 'Connection ID',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
+        customBodyRender: (value, tableMeta) => {
+          const connectionId = getColumnValue(tableMeta.rowData, 'id', columns);
+          return <span>{connectionId}</span>;
         },
       },
     },

@@ -189,16 +189,6 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                       secondary={<Link title={metadata.server}>{metadata.server}</Link>}
                     />
                   </ListItem>
-                  <ListItem>
-                    <StyledListItemText
-                      primary="Connection Id"
-                      secondary={
-                        <Box display="flex" alignItems="center">
-                          <FormatId id={connection.id} />
-                        </Box>
-                      }
-                    />
-                  </ListItem>
                 </List>
               </Grid>
             </ContentContainer>
