@@ -1074,6 +1074,23 @@ exp:
           output-format:
             name: -o, --output-format
             description: (optional) format to display in [json|yaml] (default "yaml")
+      search:
+        name: search
+        description: search for relationship using a query
+        usage: mesheryctl exp relationship search --[flag] [query-text]
+        flags:
+          kind:
+            name: -k --kind
+            description: kind of relationships
+          model:
+            name: -m, --model
+            description: model name
+          subtype:
+            name: -s, --subtype
+            description: subtype of relationships
+          type:
+            name: -t, --type
+            description: type of relationships 
   workspace:
     name: workspace
     description: View list of workspaces and detail of workspaces
