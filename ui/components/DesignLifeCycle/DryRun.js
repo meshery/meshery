@@ -191,7 +191,7 @@ export const FormatDryRunResponse = ({
       subheader={
         <ValidationSubHeader disableSticky="true" component="div" id="nested-list-subheader">
           {canShowComponentCount && (
-            <Typography varaint="h6" disablePadding style={{ color: theme.palette.text.disabled }}>
+            <Typography varaint="h6" disablePadding style={{ color: theme.palette.text.default }}>
               {configurableComponentsCount} component{configurableComponentsCount > 1 ? 's' : ''}{' '}
               and {annotationComponentsCount} annotations
             </Typography>
