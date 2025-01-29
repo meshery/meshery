@@ -1,28 +1,28 @@
 import React, { useState } from 'react';
 import { Avatar, Divider, Grid, IconButton, Typography, Link, useTheme } from '@layer5/sistent';
 import { CustomTooltip, VisibilityChipMenu } from '@layer5/sistent';
-import DeleteIcon from '@material-ui/icons/Delete';
-import Save from '@material-ui/icons/Save';
-import Fullscreen from '@material-ui/icons/Fullscreen';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Save from '@mui/icons-material/Save';
+import Fullscreen from '@mui/icons-material/Fullscreen';
 import Moment from 'react-moment';
-import GetAppIcon from '@material-ui/icons/GetApp';
+import GetAppIcon from '@mui/icons-material/GetApp';
 import FlipCard from '../FlipCard';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
-import FullscreenExit from '@material-ui/icons/FullscreenExit';
+import FullscreenExit from '@mui/icons-material/FullscreenExit';
 import UndeployIcon from '../../public/static/img/UndeployIcon';
-import DoneAllIcon from '@material-ui/icons/DoneAll';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
 import useStyles, {
   BottomContainer,
   CatalogCardButtons,
   UpdateDeleteButtons,
 } from './Cards.styles';
 import YAMLDialog from '../YamlDialog';
-import PublicIcon from '@material-ui/icons/Public';
+import PublicIcon from '@mui/icons-material/Public';
 import TooltipButton from '@/utils/TooltipButton';
 import CloneIcon from '../../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
-import { Edit, Lock, Public } from '@material-ui/icons';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import { Edit, Lock, Public } from '@mui/icons-material';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { Provider } from 'react-redux';

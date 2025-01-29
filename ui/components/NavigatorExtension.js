@@ -27,10 +27,9 @@ import usePreventUserFromLeavingPage from '../utils/hooks/usePreventUserFromLeav
 import { getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
 import ConfirmationModal, { SelectDeploymentTarget } from './ConfirmationModal';
 import { getComponentsinFile, generateValidatePayload } from '../utils/utils';
-import UploadImport from './UploadImport';
 import InfoModal from '../components/Modals/Information/InfoModal';
 import ConfigurationSubscription from '../components/graphql/subscriptions/ConfigurationSubscription';
-import PromptComponent from './PromptComponent';
+import _PromptComponent from './PromptComponent';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import { useNotification } from '../utils/hooks/useNotification';
 import Modal, { RJSFModalWrapper } from './Modal';
@@ -143,12 +142,11 @@ function NavigatorExtension({
           ConfirmationModal,
           SelectDeploymentTarget: SelectDeploymentTarget,
           getComponentsinFile,
-          UploadImport,
           InfoModal,
           ExportModal,
           GenericRJSFModal: Modal,
           RJSFModalWrapper: RJSFModalWrapper,
-          PromptComponent,
+          _PromptComponent,
           generateValidatePayload,
           capabilitiesRegistry,
           CapabilitiesRegistryClass: CapabilitiesRegistry,

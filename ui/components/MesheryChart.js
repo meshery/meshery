@@ -1,6 +1,15 @@
 import React, { useState, useRef } from 'react';
-import { Grid, NoSsr, Typography } from '@material-ui/core';
-import { makeStyles } from '@material-ui/core/styles';
+import {
+  Grid,
+  Typography,
+  IconButton,
+  Paper,
+  ClickAwayListener,
+  Fade,
+  Popper,
+  styled,
+} from '@layer5/sistent';
+import { NoSsr } from '@mui/material';
 import {
   fortioResultToJsChartData,
   makeChart,
@@ -16,52 +25,54 @@ import {
   LinkedinIcon,
   FacebookIcon,
 } from 'react-share';
-import ReplyIcon from '@material-ui/icons/Reply';
-import IconButton from '@material-ui/core/IconButton';
-import Paper from '@material-ui/core/Paper';
-import { ClickAwayListener, Fade, Popper } from '@material-ui/core';
-import classNames from 'classnames';
+import ReplyIcon from '@mui/icons-material/Reply';
 
-const useStyles = makeStyles((theme) => ({
-  title: {
-    textAlign: 'center',
-    fontSize: theme.spacing(1.75),
-    marginBottom: theme.spacing(1),
-  },
-  percentiles: {
-    height: '100%',
-    justifyContent: 'center',
-    display: 'flex',
-    position: 'relative',
-    alignItems: 'center',
-    transform: 'translateY(-30%)',
-  },
-  chart: {
-    width: 'calc( 100% - 150px )',
-  },
-  chartWrapper: {
-    display: 'flex',
-    flexWrap: 'no-wrap',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  share: {
-    transform: 'scaleX(-1)',
-  },
-  popper: {
-    width: 500,
-  },
-  paper: {
-    padding: theme.spacing(1),
-  },
-  socialIcon: {
-    margin: theme.spacing(0.4),
-  },
-  shareIcon: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-  },
+const ChartTitle = styled(Typography)(({ theme }) => ({
+  textAlign: 'center',
+  fontSize: theme.spacing(1.75),
+  marginBottom: theme.spacing(1),
 }));
+
+const ChartPercentiles = styled('div')({
+  height: '100%',
+  justifyContent: 'center',
+  display: 'flex',
+  position: 'relative',
+  alignItems: 'center',
+  transform: 'translateY(-30%)',
+});
+
+const ChartContainer = styled('div')({
+  width: 'calc( 100% - 150px )',
+});
+
+const ChartWrapper = styled('div')({
+  display: 'flex',
+  flexWrap: 'no-wrap',
+  justifyContent: 'center',
+  alignItems: 'center',
+});
+
+const ShareIconButton = styled(IconButton)({
+  transform: 'scaleX(-1)',
+});
+
+const SocialPopper = styled(Popper)({
+  width: 500,
+});
+
+const SocialPaper = styled(Paper)(({ theme }) => ({
+  padding: theme.spacing(1),
+}));
+
+const SocialIconWrapper = styled('span')(({ theme }) => ({
+  margin: theme.spacing(0.4),
+}));
+
+const ShareIconContainer = styled('div')({
+  display: 'flex',
+  justifyContent: 'flex-end',
+});
 
 function NonRecursiveConstructDisplayCells(data) {
   return Object.keys(data).map((el) => {
@@ -76,7 +87,6 @@ function NonRecursiveConstructDisplayCells(data) {
 }
 
 function MesheryChart(props) {
-  const classes = useStyles();
   const chartRef = useRef(null);
   const chart = useRef(null);
   const percentileRef = useRef(null);
@@ -343,63 +353,56 @@ function MesheryChart(props) {
 
   return (
     <NoSsr>
-      <div className={classes.shareIcon}>
-        <IconButton
-          aria-label="Share"
-          className={classes.expand}
-          onClick={(e) => handleSocialExpandClick(e, chartData)}
-        >
-          <ReplyIcon className={classNames(classes.share, classes.iconColor)} />
-        </IconButton>
-      </div>
-      <Popper open={socialExpand} anchorEl={anchorEl} transition style={{ zIndex: '1301' }}>
+      <ShareIconContainer>
+        <ShareIconButton aria-label="Share" onClick={(e) => handleSocialExpandClick(e, chartData)}>
+          <ReplyIcon />
+        </ShareIconButton>
+      </ShareIconContainer>
+      <SocialPopper open={socialExpand} anchorEl={anchorEl} transition style={{ zIndex: '1301' }}>
         {({ TransitionProps }) => (
           <ClickAwayListener onClickAway={() => setSocialExpand(false)}>
             <Fade {...TransitionProps} timeout={350}>
-              <Paper className={classes.paper}>
-                <TwitterShareButton
-                  className={classes.socialIcon}
-                  url={'https://meshery.io'}
-                  title={socialMessage}
-                  hashtags={['opensource']}
-                >
-                  <TwitterIcon size={32} />
-                </TwitterShareButton>
-                <LinkedinShareButton
-                  className={classes.socialIcon}
-                  url={'https://meshery.io'}
-                  summary={socialMessage}
-                >
-                  <LinkedinIcon size={32} />
-                </LinkedinShareButton>
-                <FacebookShareButton
-                  className={classes.socialIcon}
-                  url={'https://meshery.io'}
-                  quote={socialMessage}
-                  hashtag={'#opensource'}
-                >
-                  <FacebookIcon size={32} />
-                </FacebookShareButton>
-              </Paper>
+              <SocialPaper>
+                <SocialIconWrapper>
+                  <TwitterShareButton
+                    url={'https://meshery.io'}
+                    title={socialMessage}
+                    hashtags={['opensource']}
+                  >
+                    <TwitterIcon size={32} />
+                  </TwitterShareButton>
+                </SocialIconWrapper>
+                <SocialIconWrapper>
+                  <LinkedinShareButton url={'https://meshery.io'} summary={socialMessage}>
+                    <LinkedinIcon size={32} />
+                  </LinkedinShareButton>
+                </SocialIconWrapper>
+                <SocialIconWrapper>
+                  <FacebookShareButton
+                    url={'https://meshery.io'}
+                    quote={socialMessage}
+                    hashtag={'#opensource'}
+                  >
+                    <FacebookIcon size={32} />
+                  </FacebookShareButton>
+                </SocialIconWrapper>
+              </SocialPaper>
             </Fade>
           </ClickAwayListener>
         )}
-      </Popper>
+      </SocialPopper>
       <div>
-        <div ref={titleRef} className={classes.title} style={{ display: 'none' }} />
+        <ChartTitle ref={titleRef} style={{ display: 'none' }} />
         <Grid container justifyContent="center" style={{ padding: '0.5rem' }}>
-          {NonRecursiveConstructDisplayCells(chartData?.options?.metadata || {})?.map((el, i) => {
-            return (
-              <Grid item xs={4} key={`nri-${i}`}>
-                {el}
-              </Grid>
-            );
-          })}
+          {NonRecursiveConstructDisplayCells(chartData?.options?.metadata || {})?.map((el, i) => (
+            <Grid item xs={4} key={`nri-${i}`}>
+              {el}
+            </Grid>
+          ))}
         </Grid>
-        <div className={classes.chartWrapper}>
-          <div className={classes.chart} ref={chartRef}></div>
-          <div
-            className={classes.percentiles}
+        <ChartWrapper>
+          <ChartContainer ref={chartRef}></ChartContainer>
+          <ChartPercentiles
             ref={(ch) => {
               percentileRef.current = ch;
               if (props.data.length > 2) {
@@ -417,14 +420,14 @@ function MesheryChart(props) {
                 <div>
                   {NonRecursiveConstructDisplayCells(
                     chartData?.options?.metadata?.percentiles?.display?.value || {},
-                  ).map((el, i) => {
-                    return <div key={`percentile-${i}`}>{el}</div>;
-                  })}
+                  ).map((el, i) => (
+                    <div key={`percentile-${i}`}>{el}</div>
+                  ))}
                 </div>
               </div>
             ) : null}
-          </div>
-        </div>
+          </ChartPercentiles>
+        </ChartWrapper>
       </div>
     </NoSsr>
   );

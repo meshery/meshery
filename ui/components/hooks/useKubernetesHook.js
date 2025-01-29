@@ -1,9 +1,9 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProgress } from '../../lib/store';
 import { useNotification } from '../../utils/hooks/useNotification';
-import { errorHandlerGenerator, successHandlerGenerator } from '../ConnectionWizard/helpers/common';
-import { pingKubernetes } from '../ConnectionWizard/helpers/kubernetesHelpers';
-import { pingMesheryOperator } from '../ConnectionWizard/helpers/mesheryOperator';
+import { errorHandlerGenerator, successHandlerGenerator } from '../../utils/helpers/common';
+import { pingKubernetes } from '../../utils/helpers/kubernetesHelpers';
+import { pingMesheryOperator } from '../../utils/helpers/mesheryOperator';
 import { EVENT_TYPES } from '../../lib/event-types';
 import MeshsyncStatusQuery from '../graphql/queries/MeshsyncStatusQuery';
 import { useEffect, useState } from 'react';

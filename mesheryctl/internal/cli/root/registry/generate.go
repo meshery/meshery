@@ -64,10 +64,7 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
 		// TODO: Include a prerequisite check to confirm that this command IS being the executED from within a fork of the Meshery repo, and is being executed at the root of that fork.
 		const errorMsg = "[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory ] isn't specified\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nRun 'mesheryctl registry generate --help' to see detailed help message"
-		if len(args) == 0 {
-			return errors.New(utils.RegistryError(errorMsg, "generate"))
-		}
-		
+
 		spreadsheetIdFlag, _ := cmd.Flags().GetString("spreadsheet-id")
 		registrantDefFlag, _ := cmd.Flags().GetString("registrant-def")
 		directory, _ := cmd.Flags().GetString("directory")
@@ -104,8 +101,7 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 		if csvDirectory == "" {
 			srv, err = mutils.NewSheetSRV(spreadsheeetCred)
 			if err != nil {
-				utils.LogError.Error(ErrUpdateRegistry(err, modelLocation))
-				return nil
+				return errors.New(utils.RegistryError("Invalid JWT Token: Ensure the provided token is a base64-encoded, valid Google Spreadsheets API token.", "generate"))
 			}
 
 			resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()

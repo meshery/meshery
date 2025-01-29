@@ -1,4 +1,4 @@
-import { alpha } from '@material-ui/core';
+import { alpha } from '@mui/material/styles';
 import { Colors } from '../../themes/app';
 import { CONNECTION_STATES } from '../../utils/Enum';
 import { notificationColors } from '../../themes';
@@ -12,13 +12,11 @@ const styles = (theme) => ({
     fontSize: 18,
   },
   muiRow: {
-    '& .MuiTableCell-root': {
-      // textTransform: 'capitalize',
-    },
+    '& .MuiTableCell-root': {},
   },
   statusSelect: {
     '& .MuiSelect-select.MuiSelect-select': {
-      padding: '0',
+      padding: '0 !important',
     },
   },
   createButton: {
@@ -31,12 +29,6 @@ const styles = (theme) => ({
     justifySelf: 'flex-end',
     marginLeft: 'auto',
     paddingLeft: '1rem',
-  },
-  chipFormControl: {
-    minWidth: '100%',
-    '& .MuiSelect-icon': {
-      marginRight: '10px !important',
-    },
   },
   statusChip: {
     minWidth: '145px',

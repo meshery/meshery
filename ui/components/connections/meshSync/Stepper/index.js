@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useColorlibStepIconStyles } from '../../../Connect/styles';
+import { useColorlibStepIconStyles } from './styles';
 import TipsCarousel from '../../../General/TipsCarousel';
 import {
   ConnectionStepperTips,

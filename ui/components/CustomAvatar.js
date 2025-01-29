@@ -1,11 +1,10 @@
 import React from 'react';
-import Badge from '@material-ui/core/Badge';
-import { makeStyles, withStyles } from '@material-ui/core/styles';
+import { styled, Badge } from '@layer5/sistent';
 
-const StyledBadge = withStyles((theme) => ({
-  badge: {
-    backgroundColor: ({ color }) => color || '#44b700',
-    color: ({ color }) => color || '#44b700',
+const StyledBadge = styled(Badge)(({ theme, color }) => ({
+  '& .MuiBadge-badge': {
+    backgroundColor: color || '#44b700',
+    color: color || '#44b700',
     boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
     '&::after': {
       position: 'absolute',
@@ -14,7 +13,7 @@ const StyledBadge = withStyles((theme) => ({
       width: '100%',
       height: '100%',
       borderRadius: '50%',
-      animation: '$ripple 1.2s infinite ease-in-out',
+      animation: 'ripple 1.2s infinite ease-in-out',
       border: '1px solid currentColor',
       content: '""',
     },
@@ -29,23 +28,19 @@ const StyledBadge = withStyles((theme) => ({
       opacity: 0,
     },
   },
-}))(Badge);
+}));
 
-const useStyles = makeStyles((theme) => ({
-  root: {
-    display: 'flex',
-    '& > *': {
-      marginLeft: theme.spacing(0.5),
-      marginRight: -theme.spacing(0.75),
-    },
+const Container = styled('div')(({ theme }) => ({
+  display: 'flex',
+  '& > *': {
+    marginLeft: theme.spacing(0.5),
+    marginRight: -theme.spacing(0.75),
   },
 }));
 
 export default function BadgeAvatars({ children, color }) {
-  const classes = useStyles();
-
   return (
-    <div className={classes.root}>
+    <Container>
       <StyledBadge
         overlap="circular"
         anchorOrigin={{
@@ -57,6 +52,6 @@ export default function BadgeAvatars({ children, color }) {
       >
         {children}
       </StyledBadge>
-    </div>
+    </Container>
   );
 }
