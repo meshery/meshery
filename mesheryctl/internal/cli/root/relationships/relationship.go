@@ -30,7 +30,7 @@ import (
 var (
 	outFormatFlag        string
 	pageNumberFlag       int
-	availableSubcommands = []*cobra.Command{ViewRelationshipsCmd, GenerateRelationshipDocsCmd, listRelationshipsCmd, SearchComponentsCmd}
+	availableSubcommands = []*cobra.Command{viewCmd, generateCmd, listCmd, searchCmd}
 	maxRowsPerPage       = 25
 )
 
@@ -81,7 +81,7 @@ mesheryctl exp relationships search --[flag] [query-text]
 }
 
 func init() {
-	ViewRelationshipsCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json| yaml]")
+	viewCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json| yaml]")
 	RelationshipCmd.AddCommand(availableSubcommands...)
 }
 

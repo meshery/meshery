@@ -34,7 +34,7 @@ type CustomValueRange struct {
 	VisualizationExample string `json:"VisualizationExample"`
 }
 
-var GenerateRelationshipDocsCmd = &cobra.Command{
+var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "generate relationships docs",
 	Long:  "generate relationships docs from the google spreadsheets",
@@ -86,8 +86,9 @@ var GenerateRelationshipDocsCmd = &cobra.Command{
 }
 
 func init() {
-	GenerateRelationshipDocsCmd.PersistentFlags().StringVarP(&sheetID, "sheetId", "s", "", "Google Sheet ID")
+	generateCmd.PersistentFlags().StringVarP(&sheetID, "sheetId", "s", "", "Google Sheet ID")
 }
+
 func createJsonFile(resp *sheets.ValueRange, jsonFilePath string) error {
 
 	var customResp []CustomValueRange

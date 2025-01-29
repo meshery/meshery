@@ -28,7 +28,7 @@ import (
 )
 
 // represents the mesheryctl exp relationships list command
-var listRelationshipsCmd = &cobra.Command{
+var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered relationships",
 	Long:  "List all relationships registered in Meshery Server",
@@ -124,5 +124,5 @@ var listRelationshipsCmd = &cobra.Command{
 
 func init() {
 	// Add the new exp relationship commands to the listRelationshipsCmd
-	listRelationshipsCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of relationships with --page (default = 1)")
+	listCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of relationships with --page (default = 1)")
 }

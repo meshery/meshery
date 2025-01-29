@@ -39,7 +39,7 @@ var (
 )
 
 // represents the mesheryctl exp relationship search [query-text] subcommand.
-var SearchComponentsCmd = &cobra.Command{
+var searchCmd = &cobra.Command{
 	Use:   "search",
 	Short: "Searches registered relationships",
 	Long:  "Searches and finds the realtionship used by different models based on the query-text.",
@@ -179,11 +179,11 @@ mesheryctl exp relationship search --[flag] [query-text]`,
 }
 
 func init() {
-	SearchComponentsCmd.Flags().SetNormalizeFunc(func(f *pflag.FlagSet, name string) pflag.NormalizedName {
+	searchCmd.Flags().SetNormalizeFunc(func(f *pflag.FlagSet, name string) pflag.NormalizedName {
 		return pflag.NormalizedName(strings.ToLower(name))
 	})
-	SearchComponentsCmd.Flags().StringVarP(&searchKind, "kind", "k", "", "search particular kind of relationships")
-	SearchComponentsCmd.Flags().StringVarP(&searchSubType, "subtype", "s", "", "search particular subtype of relationships")
-	SearchComponentsCmd.Flags().StringVarP(&searchModelName, "model", "m", "", "search relationships of particular model name")
-	SearchComponentsCmd.Flags().StringVarP(&searchType, "type", "t", "", "search particular type of relationships")
+	searchCmd.Flags().StringVarP(&searchKind, "kind", "k", "", "search particular kind of relationships")
+	searchCmd.Flags().StringVarP(&searchSubType, "subtype", "s", "", "search particular subtype of relationships")
+	searchCmd.Flags().StringVarP(&searchModelName, "model", "m", "", "search relationships of particular model name")
+	searchCmd.Flags().StringVarP(&searchType, "type", "t", "", "search particular type of relationships")
 }

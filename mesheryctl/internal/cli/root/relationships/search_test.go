@@ -1,7 +1,6 @@
-package experimental
+package relationships
 
 import (
-	"errors"
 	"io"
 	"os"
 	"path/filepath"
@@ -12,7 +11,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
-func TestExperimentalGenerate(t *testing.T) {
+func TestSearch(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
 
@@ -41,11 +40,11 @@ func TestExperimentalGenerate(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
-			Name:             "Generate registered relationships",
-			Args:             []string{"relationship", "generate", "$CRED", "", "-s", "1"},
-			URL:              testContext.BaseURL + "/api/meshmodels/relationships",
-			Fixture:          "generate.exp.relationship.api.response.golden",
-			ExpectedResponse: "generate.exp.relationship.output.golden",
+			Name:             "Search registered relationships",
+			Args:             []string{"search", "--model", "kubernetes"},
+			URL:              testContext.BaseURL + "/api/meshmodels/models/kubernetes",
+			Fixture:          "search.relationship.api.response.golden",
+			ExpectedResponse: "search.relationship.output.golden",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},
@@ -69,9 +68,9 @@ func TestExperimentalGenerate(t *testing.T) {
 			r, w, _ := os.Pipe()
 			os.Stdout = w
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
-			ExpCmd.SetArgs(tt.Args)
-			ExpCmd.SetOutput(rescueStdout)
-			err := ExpCmd.Execute()
+			RelationshipCmd.SetArgs(tt.Args)
+			RelationshipCmd.SetOutput(rescueStdout)
+			err := RelationshipCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
@@ -103,47 +102,8 @@ func TestExperimentalGenerate(t *testing.T) {
 
 			utils.Equals(t, cleanedExceptedResponse, cleanedActualResponse)
 		})
-		t.Log("Generate experimental relationship test passed")
+		t.Log("Search experimental relationship test passed")
 	}
 
 	utils.StopMockery(t)
-}
-
-func TestExperimentalGenerate_MissingArguments(t *testing.T) {
-
-	const errMsg = "Usage: mesheryctl exp relationship generate $CRED [google-sheets-credential] --sheetId [sheet-id]\nRun 'mesheryctl exp relationship generate --help' to see detailed help message"
-
-	// test scenarios for fetching data
-	tests := []struct {
-		Name             string
-		Args             []string
-		ExpectedResponse string
-		ExpectError      bool
-	}{
-		{
-			Name:             "Missing Credentials",
-			Args:             []string{"relationship", "generate"},
-			ExpectedResponse: "Google Sheet Credentials is required\n" + errMsg,
-			ExpectError:      false,
-		},
-		{
-			Name:             "Missing Sheet ID",
-			Args:             []string{"relationship", "generate", "$CRED", "--sheetId", ""},
-			ExpectedResponse: "Sheet ID is required\n" + errMsg,
-			ExpectError:      false,
-		},
-	}
-
-	// run tests
-	for _, tt := range tests {
-		t.Run(tt.Name, func(t *testing.T) {
-
-			cmd := ExpCmd
-			cmd.SetArgs(tt.Args)
-			err := cmd.Execute()
-
-			utils.Equals(t, errors.New(utils.RelationshipsError(tt.ExpectedResponse, "generate")), err)
-		})
-		t.Log("Generate relationships test passed")
-	}
 }

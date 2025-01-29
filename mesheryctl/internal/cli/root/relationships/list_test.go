@@ -1,6 +1,7 @@
-package experimental
+package relationships
 
 import (
+	"flag"
 	"io"
 	"os"
 	"path/filepath"
@@ -11,7 +12,9 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
-func TestExperimentalView(t *testing.T) {
+var update = flag.Bool("update", false, "update golden files")
+
+func TestExperimentalList(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
 
@@ -40,11 +43,11 @@ func TestExperimentalView(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
-			Name:             "View registered relationships",
-			Args:             []string{"relationship", "view", "kubernetes"},
-			URL:              testContext.BaseURL + "/api/meshmodels/models/kubernetes/relationships?pagesize=all",
-			Fixture:          "view.exp.relationship.api.response.golden",
-			ExpectedResponse: "view.exp.relationship.output.golden",
+			Name:             "List registered relationships",
+			Args:             []string{"list", "--page", "0"},
+			URL:              testContext.BaseURL + "/api/meshmodels/relationships",
+			Fixture:          "list.relationship.api.response.golden",
+			ExpectedResponse: "list.relationship.output.golden",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},
@@ -68,9 +71,9 @@ func TestExperimentalView(t *testing.T) {
 			r, w, _ := os.Pipe()
 			os.Stdout = w
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
-			ExpCmd.SetArgs(tt.Args)
-			ExpCmd.SetOutput(rescueStdout)
-			err := ExpCmd.Execute()
+			RelationshipCmd.SetArgs(tt.Args)
+			RelationshipCmd.SetOutput(rescueStdout)
+			err := RelationshipCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
@@ -102,7 +105,7 @@ func TestExperimentalView(t *testing.T) {
 
 			utils.Equals(t, cleanedExceptedResponse, cleanedActualResponse)
 		})
-		t.Log("View experimental relationship test passed")
+		t.Log("List experimental relationship test passed")
 	}
 
 	utils.StopMockery(t)
