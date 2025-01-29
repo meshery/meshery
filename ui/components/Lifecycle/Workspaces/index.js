@@ -7,7 +7,7 @@ import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DesignsIcon from '../../../assets/icons/DesignIcon';
 
 import WorkspaceIcon from '../../../assets/icons/Workspace';
-import { EmptyState, GenericModal } from '../General';
+import { EmptyState } from '../General';
 import {
   TransferList,
   Modal as SisitentModal,
@@ -113,7 +113,6 @@ const Workspaces = ({ organization }) => {
   const [designsPage, setDesignsPage] = useState(0);
   const [designsPageSize /*setDesignssPageSize*/] = useState(25);
   const [selectedWorkspaces, setSelectedWorkspaces] = useState([]);
-  const [deleteWorkspacesModal, setDeleteWorkspacesModal] = useState(false);
   const [disableTranferButton, setDisableTranferButton] = useState(true);
 
   const ref = useRef(null);
@@ -397,14 +396,6 @@ const Workspaces = ({ organization }) => {
       const newSelectedEnv = selectedWorkspaces.filter((env) => env !== id);
       setSelectedWorkspaces(newSelectedEnv);
     }
-  };
-
-  const handleDeleteWorkspacesModalClose = () => {
-    setDeleteWorkspacesModal(false);
-  };
-
-  const handleDeleteWorkspacesModalOpen = () => {
-    setDeleteWorkspacesModal(true);
   };
 
   const handleDeleteWorkspaceConfirm = async (e, workspace) => {
@@ -822,13 +813,6 @@ const Workspaces = ({ organization }) => {
                 />
               </ModalFooter>
             </SisitentModal>
-            <GenericModal
-              open={deleteWorkspacesModal}
-              handleClose={handleDeleteWorkspacesModalClose}
-              title={'Delete Workspace'}
-              body={`Do you want to delete ${selectedWorkspaces.length} workspace(s) ?`}
-              action={handleBulkDeleteWorkspace}
-            />
             <_PromptComponent ref={ref} />
           </>
         ) : (
