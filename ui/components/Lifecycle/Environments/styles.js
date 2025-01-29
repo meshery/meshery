@@ -22,7 +22,7 @@ export const CardWrapper = styled(Card)(() => {
     display: 'flex',
     flexDirection: 'column',
     padding: '20px',
-    backgroundColor: theme.palette.background?.default,
+    backgroundColor: theme.palette.background.card,
     '&:hover': {
       cursor: 'pointer',
     },

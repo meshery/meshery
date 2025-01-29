@@ -824,7 +824,11 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
                     nextStatus.map((status) => (
                       <MenuItem
                         disabled={status === value ? true : false}
-                        style={{ display: status === value ? 'none' : 'flex' }}
+                        style={{
+                          padding: 0,
+                          display: status === value ? 'none' : 'flex',
+                          justifyContent: 'center',
+                        }}
                         value={status}
                         key={status}
                       >

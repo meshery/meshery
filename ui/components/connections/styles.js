@@ -57,17 +57,17 @@ export const ConnectionStyledSelect = styled(Select)({
     padding: '0 !important',
   },
   '& .MuiMenuItem-root': {
-    padding: '0',
+    padding: '0 !important',
   },
 });
 
 export const ConnectionStyledMenuItem = styled(MenuItem)({
-  padding: '0',
-  '& .MuiMenuItem-root': {
-    padding: '0',
+  padding: 0,
+  '&.MuiMenuItem-root': {
+    padding: 0,
   },
   '& .MuiButtonBase-root': {
-    padding: '0 !important',
+    padding: 0,
   },
 });
 

@@ -27,7 +27,7 @@ export const CardContainer = styled('div')(({ theme }) => ({
   borderRadius: theme.spacing(1),
   transformStyle: 'preserve-3d',
   boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
-  backgroundColor: theme.palette.background.default,
+  backgroundColor: theme.palette.background.card,
   minHeight: '250px',
   position: 'relative',
 }));
