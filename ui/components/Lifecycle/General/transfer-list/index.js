@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { List, ListItem, Grid } from '@material-ui/core';
-
+import { List, ListItem, Grid, Typography, Tooltip } from '@layer5/sistent';
 import KubernetesIcon from '../../../../assets/icons/KubernetesIcon';
 import SMPIcon from '../../../../assets/icons/SMPIcon';
 import LeftArrowIcon from '../../../../assets/icons/LeftArrowIcon';
@@ -14,8 +13,6 @@ import {
   StyledPaper,
   TransferButton,
 } from './style';
-import { Typography } from '@mui/material';
-import { Tooltip } from '@mui/material';
 import { TRANSFER_COMPONENT } from '../../../../utils/Enum';
 import { Colors } from '@/themes/app';
 

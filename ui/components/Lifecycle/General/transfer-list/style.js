@@ -1,5 +1,4 @@
-import { Button, Checkbox, Chip, Grid, Paper, Typography } from '@material-ui/core';
-import { styled } from '@mui/system';
+import { Button, Checkbox, Chip, Grid, Paper, Typography, styled } from '@layer5/sistent';
 import theme, { Colors } from '../../../../themes/app';
 
 export const StyledChip = styled(Chip)({
