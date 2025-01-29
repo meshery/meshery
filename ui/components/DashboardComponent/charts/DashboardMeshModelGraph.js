@@ -1,4 +1,4 @@
-import { Grid } from '@layer5/sistent';
+import Grid from '@material-ui/core/Grid';
 import React, { useMemo } from 'react';
 import BBChart from '../../BBChart';
 import { donut } from 'billboard.js';
@@ -204,11 +204,11 @@ function MeshModelCategories() {
 const MeshModelGraph = () => {
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} md={6} style={{ marginBottom: '0.5rem' }}>
+      <Grid item xs={12} md={6}>
         <MeshModelCategories />
       </Grid>
 
-      <Grid item xs={12} md={6} style={{ marginBottom: '0.5rem' }}>
+      <Grid item xs={12} md={6}>
         <MeshModelContructs />
       </Grid>
     </Grid>

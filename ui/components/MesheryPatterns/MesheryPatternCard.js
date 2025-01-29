@@ -15,11 +15,6 @@ import useStyles, {
   BottomContainer,
   CatalogCardButtons,
   UpdateDeleteButtons,
-  CardBackGrid,
-  YamlDialogTitleGrid,
-  CardHeaderRight,
-  GridBtnText,
-  GridCloneBtnText,
 } from './Cards.styles';
 import YAMLDialog from '../YamlDialog';
 import PublicIcon from '@mui/icons-material/Public';
@@ -70,7 +65,6 @@ function MesheryPatternCard_({
   isReadOnly = false,
 }) {
   const router = useRouter();
-  const classes = useStyles();
 
   const genericClickHandler = (ev, fn) => {
     ev.stopPropagation();
@@ -87,6 +81,7 @@ function MesheryPatternCard_({
   const { data: owner } = useGetUserByIdQuery(pattern.user_id || '');
   const catalogContentKeys = Object.keys(description);
   const catalogContentValues = Object.values(description);
+  const classes = useStyles();
   const theme = useTheme();
 
   const editInConfigurator = () => {
@@ -194,7 +189,7 @@ function MesheryPatternCard_({
                   disabled={!CAN(keys.UNPUBLISH_DESIGN.action, keys.UNPUBLISH_DESIGN.subject)}
                 >
                   <PublicIcon style={iconMedium} />
-                  <GridBtnText> Unpublish </GridBtnText>
+                  <span className={classes.btnText}> Unpublish </span>
                 </TooltipButton>
               )}
               <ActionButton
@@ -240,7 +235,7 @@ function MesheryPatternCard_({
                   fill={theme.palette.background.constant.white}
                   data-cy="download-button"
                 />
-                <GridBtnText> Download </GridBtnText>
+                <span className={classes.btnText}> Download </span>
               </TooltipButton>
               {visibility === VISIBILITY.PRIVATE ? (
                 <TooltipButton
@@ -259,7 +254,7 @@ function MesheryPatternCard_({
                     style={{ borderRadius: '50%', ...iconMedium }}
                     // imgProps={{ height: '16px', width: '16px' }}
                   />
-                  <GridBtnText> Design </GridBtnText>
+                  <span className={classes.btnText}> Design </span>
                 </TooltipButton>
               ) : (
                 <TooltipButton
@@ -274,7 +269,7 @@ function MesheryPatternCard_({
                   disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)}
                 >
                   <CloneIcon fill={theme.palette.background.constant.white} style={iconMedium} />
-                  <GridCloneBtnText> Clone </GridCloneBtnText>
+                  <span className={classes.cloneBtnText}> Clone </span>
                 </TooltipButton>
               )}
 
@@ -291,7 +286,7 @@ function MesheryPatternCard_({
                   }}
                 >
                   <Edit style={{ fill: theme.palette.background.constant.white, ...iconMedium }} />
-                  <GridCloneBtnText> Edit </GridCloneBtnText>
+                  <span className={classes.cloneBtnText}> Edit </span>
                 </TooltipButton>
               )}
               <TooltipButton
@@ -308,7 +303,7 @@ function MesheryPatternCard_({
                 <InfoOutlinedIcon
                   style={{ fill: theme.palette.background.constant.white, ...iconMedium }}
                 />
-                <GridBtnText> Info </GridBtnText>
+                <span className={classes.btnText}> Info </span>
               </TooltipButton>
             </CatalogCardButtons>
           </BottomContainer>
@@ -316,10 +311,18 @@ function MesheryPatternCard_({
 
         {/* BACK PART */}
         <>
-          <CardBackGrid container spacing={1} alignContent="space-between" alignItems="center">
-            <YamlDialogTitleGrid item xs={12}>
-              <Typography variant="h6">{name}</Typography>
-              <CardHeaderRight>
+          <Grid
+            className={classes.backGrid}
+            container
+            spacing={1}
+            alignContent="space-between"
+            alignItems="center"
+          >
+            <Grid item xs={12} className={classes.yamlDialogTitle}>
+              <Typography variant="h6" className={classes.yamlDialogTitleText}>
+                {name}
+              </Typography>
+              <div className={classes.cardHeaderRight}>
                 <Link href={`${MESHERY_CLOUD_PROD}/user/${pattern?.user_id}`} target="_blank">
                   <Avatar alt="profile-avatar" src={owner?.avatar_url} />
                 </Link>
@@ -336,8 +339,8 @@ function MesheryPatternCard_({
                     {fullScreen ? <FullscreenExit /> : <Fullscreen />}
                   </IconButton>
                 </CustomTooltip>
-              </CardHeaderRight>
-            </YamlDialogTitleGrid>
+              </div>
+            </Grid>
             <Grid item xs={12} onClick={(ev) => genericClickHandler(ev, () => {})}>
               <Divider variant="fullWidth" light />
               {catalogContentKeys.length === 0 ? (
@@ -359,7 +362,9 @@ function MesheryPatternCard_({
               ) : (
                 catalogContentKeys.map((title, index) => (
                   <>
-                    <Typography variant="h6">{title}</Typography>
+                    <Typography variant="h6" className={classes.yamlDialogTitleText}>
+                      {title}
+                    </Typography>
                     <Typography variant="body2">{catalogContentValues[index]}</Typography>
                   </>
                 ))
@@ -410,7 +415,7 @@ function MesheryPatternCard_({
                 </UpdateDeleteButtons>
               )}
             </Grid>
-          </CardBackGrid>
+          </Grid>
         </>
       </FlipCard>
     </UsesSistent>

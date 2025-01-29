@@ -5,8 +5,9 @@ import { Pagination, PaginationItem } from '@layer5/sistent';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DesignsIcon from '../../../assets/icons/DesignIcon';
+
 import WorkspaceIcon from '../../../assets/icons/Workspace';
-import { EmptyState } from '../General';
+import { EmptyState, GenericModal } from '../General';
 import {
   TransferList,
   Modal as SisitentModal,
@@ -112,10 +113,10 @@ const Workspaces = ({ organization }) => {
   const [designsPage, setDesignsPage] = useState(0);
   const [designsPageSize /*setDesignssPageSize*/] = useState(25);
   const [selectedWorkspaces, setSelectedWorkspaces] = useState([]);
+  const [deleteWorkspacesModal, setDeleteWorkspacesModal] = useState(false);
   const [disableTranferButton, setDisableTranferButton] = useState(true);
 
   const ref = useRef(null);
-  const bulkDeleteRef = useRef(null);
   const { notify } = useNotification();
 
   const {
@@ -385,6 +386,7 @@ const Workspaces = ({ organization }) => {
       );
     });
     setSelectedWorkspaces([]);
+    handleDeleteWorkspacesModalClose();
   };
 
   const handleBulkSelect = (e, id) => {
@@ -395,6 +397,14 @@ const Workspaces = ({ organization }) => {
       const newSelectedEnv = selectedWorkspaces.filter((env) => env !== id);
       setSelectedWorkspaces(newSelectedEnv);
     }
+  };
+
+  const handleDeleteWorkspacesModalClose = () => {
+    setDeleteWorkspacesModal(false);
+  };
+
+  const handleDeleteWorkspacesModalOpen = () => {
+    setDeleteWorkspacesModal(true);
   };
 
   const handleDeleteWorkspaceConfirm = async (e, workspace) => {
@@ -420,23 +430,6 @@ const Workspaces = ({ organization }) => {
         </i>
       </p>
     </>
-  );
-
-  const handleBulkDeleteWorkspaceConfirm = async (e) => {
-    e.stopPropagation();
-    let response = await bulkDeleteRef.current.show({
-      title: `Delete ${selectedWorkspaces.length} workspaces ?`,
-      subtitle: deleteBlukWorkspaceModalContent(),
-      primaryOption: 'DELETE',
-      variant: PROMPT_VARIANTS.DANGER,
-    });
-    if (response === 'DELETE') {
-      handleBulkDeleteWorkspace();
-    }
-  };
-
-  const deleteBlukWorkspaceModalContent = () => (
-    <p>Are you sure you want to delete these workspaces? (This action is irreversible)</p>
   );
 
   const handleAssignEnvironmentModalClose = () => {
@@ -651,7 +644,7 @@ const Workspaces = ({ organization }) => {
                 <Button>
                   <DeleteIcon
                     fill={theme.palette.text.default}
-                    onClick={handleBulkDeleteWorkspaceConfirm}
+                    onClick={handleDeleteWorkspacesModalOpen}
                     disabled={
                       CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject) &&
                       selectedWorkspaces.length > 0
@@ -829,8 +822,14 @@ const Workspaces = ({ organization }) => {
                 />
               </ModalFooter>
             </SisitentModal>
+            <GenericModal
+              open={deleteWorkspacesModal}
+              handleClose={handleDeleteWorkspacesModalClose}
+              title={'Delete Workspace'}
+              body={`Do you want to delete ${selectedWorkspaces.length} workspace(s) ?`}
+              action={handleBulkDeleteWorkspace}
+            />
             <_PromptComponent ref={ref} />
-            <_PromptComponent ref={bulkDeleteRef} />
           </>
         ) : (
           <DefaultError />

@@ -1,11 +1,19 @@
 import React from 'react';
-import { IconButton, CustomTooltip } from '@layer5/sistent';
+import IconButton from '@material-ui/core/IconButton';
+import Tooltip from '@material-ui/core/Tooltip';
+import { withStyles } from '@material-ui/core/styles';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { clearResultsSelection } from '../../lib/store';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+const defaultToolbarSelectStyles = {
+  iconButton: {},
+  iconContainer: {
+    marginRight: '24px',
+  },
+};
 
 class CustomToolbarSelect extends React.Component {
   handleClickDelete = async () => {
@@ -26,18 +34,18 @@ class CustomToolbarSelect extends React.Component {
   };
 
   render() {
+    const { classes } = this.props;
     return (
-      <div style={{ marginRight: '24px' }}>
-        <CustomTooltip title={'Delete'}>
-          <div>
-            <IconButton
-              onClick={this.handleClickDelete}
-              disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </div>
-        </CustomTooltip>
+      <div className={classes.iconContainer}>
+        <Tooltip title={'Delete'}>
+          <IconButton
+            className={classes.iconButton}
+            onClick={this.handleClickDelete}
+            disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
+          >
+            <DeleteIcon className={classes.icon} />
+          </IconButton>
+        </Tooltip>
       </div>
     );
   }
@@ -50,4 +58,6 @@ const mapStateToProps = (state) => {
   const results_selection = state.get('results_selection').toObject();
   return { results_selection };
 };
-export default connect(mapStateToProps, mapDispatchToProps)(CustomToolbarSelect);
+export default withStyles(defaultToolbarSelectStyles, { name: 'CustomToolbarSelect' })(
+  connect(mapStateToProps, mapDispatchToProps)(CustomToolbarSelect),
+);

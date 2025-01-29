@@ -1,49 +1,49 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import classNames from 'classnames';
 import CreateSelect from 'react-select/creatable';
-import { styled } from '@mui/material/styles';
-import { Typography, TextField, Paper, Chip, MenuItem, useTheme } from '@layer5/sistent';
-import NoSsr from '@mui/material/NoSsr';
+import { withStyles } from '@material-ui/core/styles';
+import Typography from '@material-ui/core/Typography';
+import NoSsr from '@material-ui/core/NoSsr';
+import TextField from '@material-ui/core/TextField';
+import Paper from '@material-ui/core/Paper';
+import Chip from '@material-ui/core/Chip';
+import MenuItem from '@material-ui/core/MenuItem';
 import CancelIcon from '@mui/icons-material/Cancel';
 
-const StyledNoOptionsMessage = styled(Typography)({
-  padding: '0.2rem',
-  marginLeft: '0.8rem',
-});
-
-const StyledValueContainer = styled('div')({
-  display: 'flex',
-  flex: 1,
-  alignItems: 'center',
-  overflow: 'hidden',
-});
-
-const StyledPlaceholder = styled(Typography)({
-  position: 'absolute',
-  left: 16,
-  fontSize: 16,
-});
-
-const StyledPaper = styled(Paper)({
-  zIndex: 9999,
-  width: '100%',
-  position: 'absolute',
-});
-
-const StyledChip = styled(Chip)(({ theme }) => ({
-  margin: '3px 3px',
-  height: 'auto',
-  '&:focus': {
-    backgroundColor: theme.palette.background.default,
-    color: theme.palette.background.inverse,
+const styles = () => ({
+  input: { display: 'flex' },
+  valueContainer: {
+    display: 'flex',
+    flex: 1,
+    alignItems: 'center',
+    overflow: 'hidden',
   },
-}));
+  placeholder: {
+    position: 'absolute',
+    left: 16,
+    fontSize: 16,
+  },
+  paper: {
+    zIndex: 9999,
+    width: '100%',
+    position: 'absolute',
+  },
+  noOptionsMessage: {
+    padding: '0.2rem',
+    marginLeft: '0.8rem',
+  },
+});
 
 function NoOptionsMessage(props) {
   return (
-    <StyledNoOptionsMessage color="textSecondary" {...props.innerProps}>
+    <Typography
+      color="textSecondary"
+      className={props.selectProps.classes.noOptionsMessage}
+      {...props.innerProps}
+    >
       {props.children}
-    </StyledNoOptionsMessage>
+    </Typography>
   );
 }
 
@@ -59,9 +59,7 @@ function Control(props) {
       InputProps={{
         inputComponent,
         inputProps: {
-          style: {
-            display: 'flex',
-          },
+          className: props.selectProps.classes.input,
           inputRef: props.innerRef,
           children: props.children,
           ...props.innerProps,
@@ -75,7 +73,7 @@ function Control(props) {
 function Option(props) {
   return (
     <MenuItem
-      ref={props.innerRef}
+      buttonRef={props.innerRef}
       selected={props.isFocused}
       component="div"
       style={{ fontWeight: props.isSelected ? 500 : 400, padding: '0.4rem 1rem' }}
@@ -88,25 +86,36 @@ function Option(props) {
 
 function Placeholder(props) {
   return (
-    <StyledPlaceholder color="textSecondary" {...props.innerProps}>
+    <Typography
+      color="textSecondary"
+      className={props.selectProps.classes.placeholder}
+      {...props.innerProps}
+    >
       {props.children}
-    </StyledPlaceholder>
+    </Typography>
   );
 }
 
 function SingleValue(props) {
-  return <Typography {...props.innerProps}>{props.children}</Typography>;
+  return (
+    <Typography className={props.selectProps.classes.singleValue} {...props.innerProps}>
+      {props.children}
+    </Typography>
+  );
 }
 
 function ValueContainer(props) {
-  return <StyledValueContainer>{props.children}</StyledValueContainer>;
+  return <div className={props.selectProps.classes.valueContainer}>{props.children}</div>;
 }
 
 function MultiValue(props) {
   return (
-    <StyledChip
+    <Chip
       tabIndex={-1}
       label={props.children}
+      className={classNames(props.selectProps.classes.chip, {
+        [props.selectProps.classes.chipFocused]: props.isFocused,
+      })}
       onDelete={props.removeProps.onClick}
       deleteIcon={<CancelIcon {...props.removeProps} />}
     />
@@ -115,9 +124,9 @@ function MultiValue(props) {
 
 function Menu(props) {
   return (
-    <StyledPaper square {...props.innerProps}>
+    <Paper square className={props.selectProps.classes.paper} {...props.innerProps}>
       {props.children}
-    </StyledPaper>
+    </Paper>
   );
 }
 
@@ -132,53 +141,62 @@ const components = {
   ValueContainer,
 };
 
-const ReactSelectWrapper = ({
-  label,
-  placeholder,
-  onChange,
-  onInputChange,
-  value,
-  options,
-  error,
-  isMulti = false,
-  noOptionsMessage = 'Type to create a new Environment',
-}) => {
-  const theme = useTheme();
-  const selectStyles = {
-    input: (base) => ({
-      ...base,
-      color: theme.palette.text.primary,
-      '& input': { font: 'inherit' },
-    }),
-    indicatorSeparator: () => ({
-      display: 'none',
-    }),
-  };
+// NOTE: This is a wrapper for react-select
+// It is used to customize the look and feel of the react-select component
+// NOTE: Migrate to functional component and move to sistent
+class ReactSelectWrapper extends React.Component {
+  render() {
+    const {
+      classes,
+      theme,
+      label,
+      placeholder,
+      onChange,
+      onInputChange,
+      value,
+      options,
+      error,
+      isMulti = false,
+      noOptionsMessage = 'Type to create a new Environment',
+    } = this.props;
 
-  return (
-    <NoSsr>
-      <CreateSelect
-        styles={selectStyles}
-        textFieldProps={{
-          label,
-          InputLabelProps: { shrink: true },
-          error,
-        }}
-        options={options}
-        components={components}
-        value={value}
-        onChange={onChange}
-        onInputChange={onInputChange}
-        placeholder={placeholder}
-        isClearable
-        isMulti={isMulti}
-        noOptionsMessage={() => noOptionsMessage}
-      />
-    </NoSsr>
-  );
-};
+    const selectStyles = {
+      input: (base) => ({
+        ...base,
+        color: theme.palette.text.primary,
+        '& input': { font: 'inherit' },
+      }),
+      indicatorSeparator: () => ({
+        display: 'none',
+      }),
+    };
+
+    return (
+      <div className={classes.root}>
+        <NoSsr>
+          <CreateSelect
+            classes={classes}
+            styles={selectStyles}
+            textFieldProps={{ label, InputLabelProps: { shrink: true }, error }}
+            options={options}
+            components={components}
+            value={value}
+            onChange={onChange}
+            onInputChange={onInputChange}
+            placeholder={placeholder}
+            isClearable
+            isMulti={isMulti}
+            noOptionsMessage={() => noOptionsMessage}
+          />
+        </NoSsr>
+      </div>
+    );
+  }
+}
 
 ReactSelectWrapper.propTypes = {
+  classes: PropTypes.object.isRequired,
+  theme: PropTypes.object.isRequired,
   label: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
   onInputChange: PropTypes.func.isRequired,
@@ -188,5 +206,4 @@ ReactSelectWrapper.propTypes = {
   isMulti: PropTypes.bool,
   noOptionsMessage: PropTypes.string,
 };
-
-export default ReactSelectWrapper;
+export default withStyles(styles, { withTheme: true })(ReactSelectWrapper);

@@ -1,7 +1,7 @@
 import { Typography, IconButton, Paper, styled, Tab, Tabs, gray, charcoal } from '@layer5/sistent';
 
 export const DashboardSection = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.background.card,
+  backgroundColor: theme.palette.background.default,
   padding: theme.spacing(2),
   borderRadius: '4px',
   height: '100%',

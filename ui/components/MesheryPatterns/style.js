@@ -1,7 +1,11 @@
-import { DialogTitle, Typography, styled } from '@layer5/sistent';
+import { DialogTitle, Typography } from '@layer5/sistent';
 
-export const StyledDialog = styled(DialogTitle)(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? theme.palette.secondary.headerColor : '#396679',
+import { styled } from '@mui/material';
+import theme from '../../themes/app';
+
+export const StyledDialog = styled(DialogTitle)(() => ({
+  backgroundColor: theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#396679',
+  // color: theme.palette.primary.contrastText,
   textAlign: 'center',
   minWidth: 400,
   padding: '10px',

@@ -1,5 +1,6 @@
 import React from 'react';
-import { Box, Typography, Divider, Button, styled } from '@layer5/sistent';
+import { Box, Typography, Divider, Button } from '@layer5/sistent';
+import { useStyles } from './styles';
 
 const ContentHeader = ({ title }) => (
   <>
@@ -9,41 +10,6 @@ const ContentHeader = ({ title }) => (
     <Divider style={{ margin: '1rem 0 1rem 0' }} />
   </>
 );
-
-const ContentContainer = styled(Box)({
-  display: 'flex',
-  flexDirection: 'column',
-  width: '60%',
-  justifyContent: 'space-between',
-  margin: '1rem 0 0 2rem',
-  '@media (max-width:780px)': {
-    width: 'auto',
-    margin: '1rem 0',
-    justifyContent: 'flex-start',
-  },
-});
-
-const ContentBody = styled(Box)({
-  marginBottom: '2rem',
-});
-
-const CancelButton = styled(Button)(({ theme }) => ({
-  backgroundColor: theme.palette.background.neutral.default,
-  color: theme.palette.background.constant.white,
-  margin: 0,
-}));
-
-const StepperButton = styled(Button)(({ theme }) => ({
-  marginTop: '1rem',
-  color: theme.palette.background.constant.white,
-  backgroundColor: theme.palette.background.brand.default,
-  '&:hover': {
-    backgroundColor: theme.palette.background.brand.default,
-  },
-  '&.Mui-disabled': {
-    cursor: 'not-allowed',
-  },
-}));
 
 const StepperContent = ({
   title,
@@ -56,14 +22,15 @@ const StepperContent = ({
   cancelCallback,
   disabled,
 }) => {
+  const classes = useStyles();
   return (
-    <ContentContainer>
+    <Box className={classes.contentContainer}>
       <div>
         <ContentHeader title={title} />
         {subtitle && (
-          <ContentBody>
+          <Box className={classes.contentBody}>
             <Typography variant="body2">{subtitle}</Typography>
-          </ContentBody>
+          </Box>
         )}
         {children}
         {tips && (
@@ -85,7 +52,8 @@ const StepperContent = ({
         }}
       >
         {cancel && (
-          <CancelButton
+          <Button
+            className={classes.cancelButton}
             style={{
               margin: 0,
             }}
@@ -93,21 +61,22 @@ const StepperContent = ({
             variant="contained"
           >
             Cancel
-          </CancelButton>
+          </Button>
         )}
 
         {btnText && (
-          <StepperButton
+          <Button
             onClick={handleCallback}
             disabled={disabled}
             variant="contained"
             style={{ margin: 0 }}
+            className={classes.stepperButton}
           >
             {btnText}
-          </StepperButton>
+          </Button>
         )}
       </Box>
-    </ContentContainer>
+    </Box>
   );
 };
 

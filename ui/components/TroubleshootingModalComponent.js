@@ -11,12 +11,10 @@ import {
   Paper,
   IconButton,
   InfoIcon,
-  LIGHT_TEAL,
 } from '@layer5/sistent';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CloseIcon from '@mui/icons-material/Close';
 import { UsesSistent } from './SistentWrapper';
-import theme from '@/themes/app';
 const StyledPaper = styled(Paper)(({ theme }) => ({
   top: '50%',
   left: '50%',
@@ -44,11 +42,11 @@ const HeaderText = styled(Typography)(() => ({
 }));
 
 const Info = styled(InfoIcon)(({ theme }) => ({
-  color: theme.palette.type === 'dark' ? theme.palette.background.brand?.default : LIGHT_TEAL,
+  color: theme.palette.type === 'dark' ? '#00B39F' : '#607d8b',
 }));
 
-const FooterText = styled(Typography)(({ theme }) => ({
-  color: theme.palette.text.constant.white,
+const FooterText = styled(Typography)(() => ({
+  color: '#EDEDED',
   fontSize: '.85rem',
   textDecoration: 'italics',
   fontFamily: 'Qanelas Soft, sans-serif',
@@ -91,14 +89,14 @@ const Details = styled('div')({
   display: 'block',
 });
 
-const ModelHeader = styled(Typography)(({ theme }) => ({
+const ModelHeader = styled(Typography)(() => ({
   fontSize: '1rem',
-  color: theme.palette.text.constant.white,
+  color: '#fff',
 }));
 
-const IconStyle = styled(CloseIcon)(({ theme }) => ({
-  color: theme.palette.text.constant.white,
-}));
+const IconStyle = styled(CloseIcon)({
+  color: '#fff',
+});
 
 const IconContainer = styled(IconButton)({
   transition: 'all .3s',
@@ -115,7 +113,7 @@ const AccordionContainer = styled(Accordion)({
 
 const AccordionSummaryStyled = styled(AccordionSummary)(({ theme }) => ({
   '&.Mui-expanded': {
-    backgroundColor: theme.palette.background.card,
+    backgroundColor: theme.palette.mode === 'dark' ? '#303030' : '#f1f1f1',
   },
 }));
 
@@ -144,14 +142,13 @@ const AccDetailsContainer = styled(AccordionDetails)({
 });
 
 const TroubleshootHelpLink = styled('a')(({ theme }) => ({
-  color:
-    theme.palette.mode === 'dark' ? theme.palette.background.brand?.default : 'rgb(57, 102, 121)',
+  color: theme.palette.mode === 'dark' ? '#00B39F' : 'rgb(57, 102, 121)',
   fontWeight: 'bold',
   textDecoration: 'none',
 }));
 
 const ContactHelpLink = styled('a')({
-  color: theme.palette.text.constant.white,
+  color: '#EDEDED',
   fontWeight: 'bold',
   textDecoration: 'none',
 });

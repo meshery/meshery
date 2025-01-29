@@ -8,8 +8,8 @@ import {
   Button,
   Divider,
   LeftArrowIcon,
-  styled,
 } from '@layer5/sistent';
+import { styled } from '@material-ui/core';
 
 export const ErrorMain = styled('main')(({ theme }) => ({
   padding: '4rem 8rem',
@@ -23,7 +23,7 @@ export const ErrorMain = styled('main')(({ theme }) => ({
 }));
 
 export const ErrorContainer = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.background.card,
+  backgroundColor: theme.palette.background.paper,
   boxShadow:
     '0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 1px rgb(0 0 0 / 12%)',
   borderRadius: '8px',
@@ -77,7 +77,7 @@ export const ErrorContentContainer = styled('div')(() => ({
 }));
 
 export const ErrorLink = styled('a')(({ theme }) => ({
-  color: theme.palette.background.brand.default,
+  color: theme.palette.secondary.focused,
 }));
 
 export const ErrorMsg = styled('errormsg')(() => ({
@@ -100,7 +100,7 @@ export const OrgName = styled('span')(() => ({
 }));
 
 export const OrgNameDisabled = styled('span')(({ theme }) => ({
-  color: theme.palette.text.disabled,
+  color: theme.palette.text.secondary,
   marginLeft: '10px',
   overflow: 'hidden',
   whiteSpace: 'nowrap',
@@ -108,7 +108,10 @@ export const OrgNameDisabled = styled('span')(({ theme }) => ({
   fontSize: '1.1rem',
 }));
 
-export const StyledSelect = styled(Select)({
+export const StyledSelect = styled(Select)(({ theme }) => ({
+  '& .MuiOutlinedInput-notchedOutline': {
+    borderColor: theme.palette.primary.main,
+  },
   '&.MuiInputBase-root': {
     borderRadius: '10px',
     paddingBlock: '5px',
@@ -117,7 +120,7 @@ export const StyledSelect = styled(Select)({
   '@media (max-width: 368px)': {
     width: '180px',
   },
-});
+}));
 
 export const StyledBox = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -126,8 +129,8 @@ export const StyledBox = styled(Box)(({ theme }) => ({
   borderRadius: '10px',
   fontSize: '1.1rem',
   padding: '1.3rem',
-  border: `1px solid ${theme.palette.background.brand.disabled}`,
-  color: theme.palette.text.default,
+  border: `1px solid ${theme.palette.action.disabled}`,
+  color: theme.palette.text.secondary,
 }));
 
 export const FormField = styled('div')(() => ({
@@ -145,9 +148,9 @@ export const StyledFormControlLabel = styled(FormControlLabel)(() => ({
 
 export const StyledTextField = styled(TextField)(({ theme }) => ({
   '& .MuiOutlinedInput-root': {
-    color: theme.palette.text.default,
+    color: theme.palette.text.primary,
     '& fieldset': {
-      borderColor: theme.palette.text.default,
+      borderColor: theme.palette.primary.main,
       borderRadius: '10px',
     },
   },
@@ -160,7 +163,7 @@ export const StyledTypography = styled(Typography)(() => ({
 }));
 
 export const StyledTypographyDisabled = styled(Typography)(({ theme }) => ({
-  color: theme.palette.text.disabled,
+  color: theme.palette.text.secondary,
   fontSize: '1.3rem',
   margin: '0px',
   marginBlock: '0.5rem',
@@ -192,7 +195,7 @@ export const IconWrapper = styled('div')(({ theme }) => ({
   paddingInline: '2rem',
   paddingTop: '1rem',
   alignSelf: 'flex-end',
-  color: theme.palette.icon.secondary,
+  color: theme.palette.info.main,
 }));
 
 export const Logo = styled('img')(() => ({
@@ -204,7 +207,7 @@ export const LogoText = styled('img')(() => ({
 }));
 
 export const StyledDivider = styled(Divider)(({ theme }) => ({
-  backgroundColor: theme.palette.border.default,
+  backgroundColor: theme.palette.action.disabled,
   [theme.breakpoints.down('md')]: {
     display: 'none',
   },
@@ -214,6 +217,6 @@ export const CustomDownIcon = styled(LeftArrowIcon)(({ theme }) => ({
   rotate: '-90deg',
   marginInline: '1rem',
   '&.MuiSelect-icon': {
-    fill: theme.palette.background.brand.default,
+    fill: theme.palette.primary.main,
   },
 }));

@@ -34,7 +34,9 @@ const YAMLDialog = ({
       fullWidth={!fullScreen}
     >
       <StyledDialog disableTypography id="filter-dialog-title">
-        <YamlDialogTitleText variant="h6">{name}</YamlDialogTitleText>
+        <YamlDialogTitleText variant="h6" className={classes.yamlDialogTitleText}>
+          {name}
+        </YamlDialogTitleText>
         <Tooltip title="Exit Fullscreen" arrow interactive placement="bottom">
           <IconButton onClick={toggleFullScreen}>
             {fullScreen ? <FullscreenExit /> : <Fullscreen />}
@@ -51,6 +53,7 @@ const YAMLDialog = ({
             lineNumbers: true,
             lineWrapping: true,
             gutters: ['CodeMirror-lint-markers'],
+            // @ts-ignore
             lint: true,
             mode: 'text/x-yaml',
             readOnly: isReadOnly,

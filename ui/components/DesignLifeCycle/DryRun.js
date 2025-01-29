@@ -1,5 +1,15 @@
 import React, { useRef, useEffect } from 'react';
-import { List, ListItemText, ListItemIcon, Typography, Collapse, useTheme } from '@layer5/sistent';
+import {
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  ListSubheader,
+  Typography,
+  Collapse,
+  alpha,
+  withStyles,
+} from '@material-ui/core';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { useState } from 'react';
 import { ComponentIcon, DEPLOYMENT_TYPE, Loading, processDesign } from './common';
@@ -12,20 +22,62 @@ import {
 import { ErrorIcon } from '@layer5/sistent';
 import { NOTIFICATIONCOLORS } from '@/themes/index';
 import { FormatStructuredData } from '../DataFormatter';
-import {
-  DryRunComponentLabel,
-  DryRunComponentStyled,
-  DryRunErrorContainer,
-  DryRunSignleError,
-  DryRunRootListStyled,
-  ValidationSubHeader,
-} from './styles';
 
 function breakCapitalizedWords(input) {
   // Use regular expression to split capitalized words
   // into separate words with space in between
   return input.replace(/([a-z])([A-Z])/g, '$1 $2');
 }
+
+const styles = (theme) => {
+  const error_color = NOTIFICATIONCOLORS.ERROR_DARK;
+  return {
+    singleErrorRoot: {
+      backgroundColor: theme.palette.secondary.mainBackground2,
+      cursor: 'pointer',
+      '&:hover': {
+        backgroundColor: alpha(error_color, 0.25),
+      },
+    },
+    singleError: {
+      paddingInline: theme.spacing(1),
+      paddingBlock: theme.spacing(1),
+      marginInline: theme.spacing(0.5),
+    },
+
+    componentLabel: {
+      backgroundColor: error_color,
+      gap: '0.5rem',
+      color: 'white',
+      '&:hover': {
+        backgroundColor: error_color,
+      },
+    },
+    component: {
+      backgroundColor: theme.palette.secondary.mainBackground2,
+      color: theme.palette.secondary.text3,
+      fontFamily: 'Qanelas Soft, sans-serif',
+      marginBlock: '0.5rem',
+    },
+    errorList: {
+      border: `solid 2px ${error_color}`,
+    },
+
+    root: {
+      width: '100%',
+      // maxHeight: "18rem",
+      position: 'relative',
+      marginBottom: '0.5rem',
+    },
+    subHeader: {
+      marginTop: '1rem',
+      display: 'flex',
+      padding: 0,
+      justifyContent: 'space-between',
+      width: '100%',
+    },
+  };
+};
 
 /**
  *
@@ -51,7 +103,7 @@ function getFieldPathString(fieldPath) {
 // errors - [{type, fieldPath, message}]
 // 'component' refers to MeshModel Component
 // 'componentName' is assumed to be unique
-const ExpandableComponentErrors = ({
+const ExpandableComponentErrors = withStyles(styles)(({
   errors,
   component,
   componentName,
@@ -87,34 +139,41 @@ const ExpandableComponentErrors = ({
       currentComponentErrorRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [currentComponentErrorRef]);
-  const theme = useTheme();
 
   if (!componentName) return null;
 
   if (!errors.length) return null;
+
   return (
-    <DryRunComponentStyled
+    <div
       aria-labelledby="nested-list-subheader"
+      className={classes.component}
       ref={isCurrentComponent(componentName) ? currentComponentErrorRef : null}
     >
-      <DryRunComponentLabel button onClick={() => setIsComponentAccordionOpen((p) => !p)}>
+      <ListItem
+        button
+        className={classes.componentLabel}
+        onClick={() => setIsComponentAccordionOpen((p) => !p)}
+      >
         {componentIcon && <ComponentIcon iconSrc={componentIcon} />}
         <ListItemText primary={componentName} />({errors.length})
         {isComponentAccordionOpen ? <ExpandLess /> : <ExpandMore />}
-      </DryRunComponentLabel>
+      </ListItem>
 
       <Collapse
+        className={classes.errorList}
         in={isComponentAccordionOpen}
         timeout="auto"
         unmountOnExit
-        style={{ height: '100%', border: `solid 2px ${theme.palette.background.error.default}` }}
+        style={{ height: '100%' }}
       >
         <List style={{ height: '100%' }}>
           {errors?.length > 0 &&
             errors?.map((err, index) => (
-              <DryRunErrorContainer
+              <ListItem
                 disablePadding
                 key={index}
+                className={classes.singleErrorRoot}
                 style={{ cursor: 'pointer' }}
                 onClick={() => onErrorTap(err)}
               >
@@ -129,7 +188,7 @@ const ExpandableComponentErrors = ({
                 </ListItemIcon>
 
                 {typeof err === 'string' ? (
-                  <DryRunSignleError
+                  <ListItemText
                     disableTypography
                     primary={
                       <Typography variant="subtitle2" disablePadding>
@@ -137,7 +196,8 @@ const ExpandableComponentErrors = ({
                       </Typography>
                     }
                     disablePadding
-                  ></DryRunSignleError>
+                    className={classes.singleError}
+                  ></ListItemText>
                 ) : (
                   <div
                     style={{
@@ -160,15 +220,15 @@ const ExpandableComponentErrors = ({
                     </Typography>
                   </div>
                 )}
-              </DryRunErrorContainer>
+              </ListItem>
             ))}
         </List>
       </Collapse>
-    </DryRunComponentStyled>
+    </div>
   );
-};
+});
 
-export const FormatDryRunResponse = ({
+export const FormatDryRunResponse = withStyles(styles)(({
   dryRunErrors,
   configurableComponentsCount,
   annotationComponentsCount,
@@ -177,7 +237,7 @@ export const FormatDryRunResponse = ({
   currentComponentName,
 }) => {
   const totalDryRunErrors = getTotalCountOfDeploymentErrors(dryRunErrors);
-  const theme = useTheme();
+
   const canShowComponentCount =
     annotationComponentsCount !== undefined && annotationComponentsCount !== undefined;
 
@@ -188,13 +248,31 @@ export const FormatDryRunResponse = ({
 
   console.log('dryRunRequestErrors', dryRunRequestErrors);
 
+  // const ErrorListItem = ({ children }) => (
+  //   <ListItem disablePadding className={classes.singleErrorRoot}>
+  //     <ListItemIcon>
+  //       <ErrorIcon height="24px" width="24px" bang fill={NOTIFICATIONCOLORS.ERROR_DARK} />
+  //     </ListItemIcon>
+
+  //     {children}
+  //   </ListItem>
+  // );
   return (
-    <DryRunRootListStyled
+    <List
       aria-labelledby="nested-list-subheader"
       subheader={
-        <ValidationSubHeader disableSticky="true" component="div" id="nested-list-subheader">
+        <ListSubheader
+          disableSticky="true"
+          component="div"
+          id="nested-list-subheader"
+          className={classes.subHeader}
+        >
           {canShowComponentCount && (
-            <Typography varaint="h6" disablePadding style={{ color: theme.palette.text.disabled }}>
+            <Typography
+              varaint="h6"
+              disablePadding
+              // style={{ position: "relative", left: "35px" }}
+            >
               {configurableComponentsCount} component{configurableComponentsCount > 1 ? 's' : ''}{' '}
               and {annotationComponentsCount} annotations
             </Typography>
@@ -213,8 +291,9 @@ export const FormatDryRunResponse = ({
           >
             {`${totalDryRunErrors} error(s)`}
           </Typography>
-        </ValidationSubHeader>
+        </ListSubheader>
       }
+      className={classes.root}
     >
       <div style={{ padding: '1rem' }}> </div>
       {dryRunRequestErrors?.map((error, index) => (
@@ -237,9 +316,9 @@ export const FormatDryRunResponse = ({
           No deployment errors.
         </Typography>
       )}
-    </DryRunRootListStyled>
+    </List>
   );
-};
+});
 
 const DryRunComponent = (props) => {
   const {

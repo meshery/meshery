@@ -1,15 +1,10 @@
-import { Grid, Pagination } from '@layer5/sistent';
+import { Grid, Paper, Typography, Pagination } from '@layer5/sistent';
 import React, { useState } from 'react';
 import MesheryPatternCard from './MesheryPatternCard';
 import DesignConfigurator from '../configuratorComponents/MeshModel';
 import { FILE_OPS } from '../../utils/Enum';
 import { EVENT_TYPES } from '../../lib/event-types';
-import {
-  GridNoContainerStyles,
-  GridNoPapperStyles,
-  GridNoTextStyles,
-  GridPaginationStyles,
-} from './Grid.styles';
+import useStyles from './Grid.styles';
 import { RJSFModalWrapper } from '../Modal';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -149,6 +144,7 @@ function MesheryPatternGrid({
   hideVisibility = false,
   arePatternsReadOnly = false,
 }) {
+  const classes = useStyles();
   const { notify } = useNotification();
   const handlePublishModal = (pattern) => {
     if (canPublishPattern) {
@@ -243,22 +239,36 @@ function MesheryPatternGrid({
         )}
 
         {!selectedPattern.show && patterns.length === 0 && (
-          <GridNoPapperStyles>
-            <GridNoContainerStyles>
-              <GridNoTextStyles align="center" color="textSecondary">
+          <Paper className={classes.noPaper}>
+            <div className={classes.noContainer}>
+              <Typography align="center" color="textSecondary" className={classes.noText}>
                 No Designs Found
-              </GridNoTextStyles>
-            </GridNoContainerStyles>
-          </GridNoPapperStyles>
+              </Typography>
+              <div>
+                {/* <Button
+                  aria-label="Add Application"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  // @ts-ignore
+                  onClick={handleUploadImport}
+                  style={{ marginRight : "2rem" }}
+                >
+                  <PublishIcon className={classes.addIcon} />
+              Import Design
+                </Button> */}
+              </div>
+            </div>
+          </Paper>
         )}
         {patterns.length ? (
-          <GridPaginationStyles>
+          <div className={classes.pagination}>
             <Pagination
               count={pages}
               page={selectedPage + 1}
               onChange={(_, page) => setPage(page - 1)}
             />
-          </GridPaginationStyles>
+          </div>
         ) : null}
 
         {canPublishPattern && publishModal.open && (
