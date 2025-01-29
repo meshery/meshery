@@ -5,7 +5,6 @@ import { styled } from '@mui/material/styles';
 import { Typography, TextField, Paper, Chip, MenuItem, useTheme } from '@layer5/sistent';
 import NoSsr from '@mui/material/NoSsr';
 import CancelIcon from '@mui/icons-material/Cancel';
-import {} from '@mui/material';
 
 const StyledNoOptionsMessage = styled(Typography)({
   padding: '0.2rem',
@@ -60,6 +59,9 @@ function Control(props) {
       InputProps={{
         inputComponent,
         inputProps: {
+          style: {
+            display: 'flex',
+          },
           inputRef: props.innerRef,
           children: props.children,
           ...props.innerProps,
