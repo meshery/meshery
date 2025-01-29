@@ -12,7 +12,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
 import { Provider } from 'react-redux';
 import { store } from '../../../store';
-import NoSsr from '@mui/material';
+import { NoSsr } from '@mui/material';
 import OrgIcon from 'assets/icons/OrgIcon';
 import { ErrorBoundary } from '@layer5/sistent';
 import CustomErrorFallback from '../ErrorBoundary';

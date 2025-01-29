@@ -11,10 +11,9 @@ import { UnControlled as CodeMirror } from 'react-codemirror2';
 import FullscreenExit from '@mui/icons-material/FullscreenExit';
 import UndeployIcon from '../../public/static/img/UndeployIcon';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
-import {
+import useStyles, {
   BottomContainer,
   CatalogCardButtons,
-  FullScreenCodeMirror,
   UpdateDeleteButtons,
   CardBackGrid,
   YamlDialogTitleGrid,
@@ -71,6 +70,7 @@ function MesheryPatternCard_({
   isReadOnly = false,
 }) {
   const router = useRouter();
+  const classes = useStyles();
 
   const genericClickHandler = (ev, fn) => {
     ev.stopPropagation();
@@ -343,7 +343,7 @@ function MesheryPatternCard_({
               {catalogContentKeys.length === 0 ? (
                 <CodeMirror
                   value={showCode && formatted_pattern_file}
-                  className={fullScreen ? FullScreenCodeMirror : ''}
+                  className={fullScreen ? classes.fullScreenCodeMirror : ''}
                   options={{
                     theme: 'material',
                     lineNumbers: true,
