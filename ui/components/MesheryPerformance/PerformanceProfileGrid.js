@@ -1,7 +1,6 @@
-import { Grid } from '@layer5/sistent';
 import React, { useState } from 'react';
 import PerformanceCard from './PerformanceCard';
-import { Pagination } from '@layer5/sistent';
+import { Grid, Pagination } from '@layer5/sistent';
 import { UsesSistent } from '../SistentWrapper';
 import { PaginationWrapper } from './style';
 
