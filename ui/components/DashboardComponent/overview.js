@@ -1,8 +1,10 @@
 import React from 'react';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@material-ui/core';
 import Popup from '../Popup';
+import { withStyles } from '@material-ui/core/styles';
 import { withRouter } from 'next/router';
 import { withNotify } from '../../utils/hooks/useNotification';
+import blue from '@material-ui/core/colors/blue';
 import { connect, Provider } from 'react-redux';
 import { store } from '@/store/index';
 import HoneycombComponent from './HoneyComb/HoneyCombComponent';
@@ -14,6 +16,87 @@ import { UsesSistent } from '../SistentWrapper';
 import ConnectCluster from './charts/ConnectCluster';
 import { ErrorContainer, HoneycombRoot } from './style';
 import { ErrorIcon, Typography, useTheme } from '@layer5/sistent';
+
+const styles = (theme) => ({
+  datatable: {
+    boxShadow: 'none',
+  },
+  chip: {
+    marginRight: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+  },
+  buttons: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+  },
+  button: {
+    marginTop: theme.spacing(3),
+    marginLeft: theme.spacing(1),
+  },
+  link: {
+    cursor: 'pointer',
+    textDecoration: 'none',
+  },
+  metricsButton: { width: '240px' },
+  alreadyConfigured: { textAlign: 'center' },
+  margin: { margin: theme.spacing(1) },
+  colorSwitchBase: {
+    color: blue[300],
+    '&$colorChecked': {
+      color: blue[500],
+      '& + $colorBar': { backgroundColor: blue[500] },
+    },
+  },
+  colorBar: {},
+  colorChecked: {},
+  fileLabel: { width: '100%' },
+  fileLabelText: {},
+  inClusterLabel: { paddingRight: theme.spacing(2) },
+  alignCenter: { textAlign: 'center' },
+  icon: { width: theme.spacing(2.5) },
+  istioIcon: { width: theme.spacing(1.5) },
+  settingsIcon: {
+    width: theme.spacing(2.5),
+    paddingRight: theme.spacing(0.5),
+  },
+  addIcon: {
+    width: theme.spacing(2.5),
+    paddingRight: theme.spacing(0.5),
+  },
+  cardHeader: { fontSize: theme.spacing(2) },
+  card: {
+    height: '100%',
+    marginTop: theme.spacing(2),
+  },
+  cardContent: { height: '100%' },
+  redirectButton: {
+    marginLeft: '-.5em',
+    color: '#000',
+  },
+  dashboardSection: {
+    backgroundColor: theme.palette.secondary.elevatedComponents,
+    padding: theme.spacing(2),
+    borderRadius: 4,
+    height: '100%',
+    marginBottom: theme.spacing(2),
+  },
+  errorContainer: {
+    padding: theme.spacing(2),
+    textAlign: 'center',
+    backgroundColor: theme.palette.secondary.elevatedComponents2,
+    marginTop: '1rem',
+    borderRadius: 4,
+  },
+  errorIcon: {
+    color: theme.palette.error.main,
+    fontSize: '3rem',
+    marginBottom: theme.spacing(1),
+  },
+  errorMessage: {
+    color: theme.palette.error.main,
+    marginBottom: theme.spacing(1),
+  },
+});
 
 const ErrorDisplay = ({ theme }) => (
   <ErrorContainer>
@@ -117,4 +200,6 @@ const mapDispatchToProps = (dispatch) => ({
   setK8sContexts: bindActionCreators(setK8sContexts, dispatch),
 });
 
-export default withRouter(withNotify(connect(mapStateToProps, mapDispatchToProps)(Overview)));
+export default withStyles(styles, { withTheme: true })(
+  withRouter(withNotify(connect(mapStateToProps, mapDispatchToProps)(Overview))),
+);

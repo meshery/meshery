@@ -1,15 +1,10 @@
 //@ts-check
-import { Grid, Button, Pagination } from '@layer5/sistent';
+import { Grid, Paper, Typography, Button, Pagination } from '@layer5/sistent';
 import React, { useState } from 'react';
 import FiltersCard from './FiltersCard';
 import { FILE_OPS } from '../../utils/Enum';
-import {
-  GridAddIconStyles,
-  GridNoContainerStyles,
-  GridNoPapperStyles,
-  GridNoTextStyles,
-  GridPaginationStyles,
-} from '../MesheryPatterns/Grid.styles';
+import PublishIcon from '@mui/icons-material/Publish';
+import useStyles from '../MesheryPatterns/Grid.styles';
 import { RJSFModalWrapper } from '../Modal';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -130,6 +125,8 @@ function FiltersGrid({
   publishSchema,
   handleInfoModal,
 }) {
+  const classes = useStyles();
+
   const handlePublishModal = (filter) => {
     if (canPublishFilter) {
       setPublishModal({
@@ -179,11 +176,11 @@ function FiltersGrid({
           </Grid>
         )}
         {!selectedFilter.show && filters.length === 0 && (
-          <GridNoPapperStyles>
-            <GridNoContainerStyles>
-              <GridNoTextStyles align="center" color="textSecondary">
+          <Paper className={classes.noPaper}>
+            <div className={classes.noContainer}>
+              <Typography align="center" color="textSecondary" className={classes.noText}>
                 No Filters Found
-              </GridNoTextStyles>
+              </Typography>
               <div>
                 <Button
                   aria-label="Add Application"
@@ -195,21 +192,21 @@ function FiltersGrid({
                   onClick={handleUploadImport}
                   style={{ marginRight: '2rem' }}
                 >
-                  <GridAddIconStyles />
+                  <PublishIcon className={classes.addIcon} />
                   Import Filter
                 </Button>
               </div>
-            </GridNoContainerStyles>
-          </GridNoPapperStyles>
+            </div>
+          </Paper>
         )}
         {filters.length ? (
-          <GridPaginationStyles>
+          <div className={classes.pagination}>
             <Pagination
               count={pages}
               page={selectedPage + 1}
               onChange={(_, page) => setPage(page - 1)}
             />
-          </GridPaginationStyles>
+          </div>
         ) : null}
         {canPublishFilter && publishModal.open && (
           <SistentModal

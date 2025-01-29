@@ -9,6 +9,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import GenericModal from '../GenericModal';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import MesheryChart from '../MesheryChart';
+import { withStyles } from '@material-ui/core';
 import { Typography, Paper } from '@layer5/sistent';
 import fetchAllResults from '../graphql/queries/FetchAllResultsQuery';
 import { useNotification } from '../../utils/hooks/useNotification';
@@ -17,6 +18,50 @@ import { CalendarComponent } from './style';
 import { UsesSistent } from '../SistentWrapper';
 
 const localizer = momentLocalizer(moment);
+const styles = (theme) => ({
+  paper: { padding: '3rem' },
+  resultContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    ['@media (max-width: 830px)']: {
+      flexDirection: 'column',
+    },
+  },
+  vSep: {
+    height: '10.4rem',
+    width: '1px',
+    background: 'black',
+    marginTop: '1.1rem',
+    bottom: '0',
+    left: '36%',
+    backgroundColor: '#36454f',
+    opacity: '0.7',
+    ['@media (max-width: 830px)']: {
+      display: 'none',
+    },
+  },
+  hSep: {
+    display: 'none',
+    ['@media (max-width: 830px)']: {
+      display: 'block',
+      width: '100%',
+      height: '1px',
+      background: 'black',
+      marginTop: '1.1rem',
+      bottom: '0',
+      left: '36%',
+      backgroundColor: '#36454f',
+      opacity: '0.7',
+    },
+  },
+  resultText: {
+    color: theme.palette.secondary.lightText,
+  },
+  profileText: {
+    color: theme.palette.secondary.lightText,
+  },
+});
 // const PERFORMANCE_PROFILE_RESULTS_URL = "/api/user/performance/profiles/results";
 
 /**
@@ -221,4 +266,4 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-export default connect(null, mapDispatchToProps)(PerformanceCalendar);
+export default withStyles(styles)(connect(null, mapDispatchToProps)(PerformanceCalendar));

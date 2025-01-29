@@ -1,6 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { Grid, Chip, Button, TextField, Tooltip, Avatar, styled } from '@layer5/sistent';
-import { NoSsr } from '@mui/material';
+import PropTypes from 'prop-types';
+
+import Grid from '@material-ui/core/Grid';
+import { NoSsr, Chip, Button, TextField, Tooltip, Avatar, makeStyles } from '@material-ui/core';
+import blue from '@material-ui/core/colors/blue';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
@@ -13,37 +16,59 @@ import { EVENT_TYPES } from '../lib/event-types';
 import BadgeAvatars from './CustomAvatar';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
-import { iconMedium } from 'css/icons.styles';
 
-const WrapperStyledDiv = styled('div')(({ theme }) => ({
-  padding: theme.spacing(5),
-  backgroundColor: theme.palette.background.card,
-  borderBottomLeftRadius: theme.spacing(1),
-  borderBottomRightRadius: theme.spacing(1),
-  marginTop: theme.spacing(2),
-  marginBottom: theme.spacing(2),
+const useStyles = makeStyles((theme) => ({
+  wrapperClass: {
+    padding: theme.spacing(5),
+    backgroundColor: theme.palette.secondary.elevatedComponents,
+    borderBottomLeftRadius: theme.spacing(1),
+    borderBottomRightRadius: theme.spacing(1),
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
+  },
+  buttons: {
+    display: 'flex',
+    justifyContent: 'flex-end',
+    paddingTop: '2rem',
+  },
+  button: {
+    marginLeft: theme.spacing(1),
+  },
+  margin: { margin: theme.spacing(1) },
+  alreadyConfigured: {
+    textAlign: 'center',
+    padding: theme.spacing(20),
+  },
+  colorSwitchBase: {
+    color: blue[300],
+    '&$colorChecked': {
+      color: blue[500],
+      '& + $colorBar': { backgroundColor: blue[500] },
+    },
+    '&$colorChecked + $colorBar': { backgroundColor: blue[500] },
+  },
+  colorBar: {},
+  colorChecked: {},
+  fileLabel: { width: '100%' },
+  fileLabelText: {},
+  inClusterLabel: { paddingRight: theme.spacing(2) },
+  alignCenter: { textAlign: 'center' },
+  alignRight: {
+    textAlign: 'right',
+    marginBottom: theme.spacing(2),
+  },
+  fileInputStyle: { opacity: '0.01' },
+  // icon : { width : theme.spacing(2.5), },
+  icon: {
+    width: 20,
+    height: 20,
+  },
+  istioIcon: { width: theme.spacing(1.5) },
+  chip: {
+    marginRight: theme.spacing(1),
+    marginBottom: theme.spacing(1),
+  },
 }));
-
-const AdapterButtons = styled('div')({
-  display: 'flex',
-  justifyContent: 'flex-end',
-  paddingTop: '2rem',
-});
-
-const AdapterButton = styled(Button)(({ theme }) => ({
-  marginLeft: theme.spacing(1),
-}));
-
-const AlignRight = styled('div')(({ theme }) => ({
-  textAlign: 'right',
-  marginBottom: theme.spacing(2),
-}));
-
-const AdapterChipStyled = styled(Chip)(({ theme }) => ({
-  marginRight: theme.spacing(1),
-  marginBottom: theme.spacing(1),
-}));
-
 const STATUS = {
   DEPLOYED: 'DEPLOYED',
   UNDEPLOYED: 'UNDEPLOYED',
@@ -64,6 +89,7 @@ const MeshAdapterConfigComponent = (props) => {
   const [meshDeployURL, setMeshDeployURL] = useState();
   const [meshDeployURLError, setMeshDeployURLError] = useState();
   const [selectedAvailableAdapter, setSelectedAvailableAdapter] = useState();
+  const classes = useStyles();
   const { notify } = useNotification();
 
   useEffect(() => {
@@ -407,11 +433,13 @@ const MeshAdapterConfigComponent = (props) => {
     let showAdapters = '';
     if (meshAdapters.length > 0) {
       showAdapters = (
-        <AlignRight>
+        <div className={classes.alignRight}>
           {meshAdapters.map((adapter) => {
             let image = '/static/img/meshery-logo.png';
+            // let logoIcon = <img src={image} className={classes.icon} />;
             if (adapter.name) {
               image = '/static/img/' + adapter.name.toLowerCase() + '.svg';
+              // logoIcon = <img src={image} className={classes.icon} />;
             }
 
             return (
@@ -424,14 +452,15 @@ const MeshAdapterConfigComponent = (props) => {
                           .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
                           .join(' ')} (${adapter.version})`}
               >
-                <AdapterChipStyled
+                <Chip
+                  className={classes.chip}
                   label={adapter.adapter_location}
                   onDelete={handleDelete(adapter.adapter_location)}
                   onClick={handleClick(adapter.adapter_location)}
                   icon={
                     // logoIcon
                     <BadgeAvatars color={getStatusColor(adapterStates[adapter.name])}>
-                      <Avatar alt={adapter.name} src={image} style={iconMedium} />
+                      <Avatar alt={adapter.name} src={image} className={classes.icon} />
                     </BadgeAvatars>
                   }
                   variant="outlined"
@@ -440,13 +469,13 @@ const MeshAdapterConfigComponent = (props) => {
               </Tooltip>
             );
           })}
-        </AlignRight>
+        </div>
       );
     }
 
     return (
       <NoSsr>
-        <WrapperStyledDiv data-cy="mesh-adapter-connections">
+        <div className={classes.wrapperClass} data-cy="mesh-adapter-connections">
           {showAdapters}
 
           <Grid container spacing={1} alignItems="flex-end">
@@ -462,14 +491,15 @@ const MeshAdapterConfigComponent = (props) => {
             </Grid>
           </Grid>
           <React.Fragment>
-            <AdapterButtons>
-              <AdapterButton
+            <div className={classes.buttons}>
+              <Button
                 type="submit"
                 variant="contained"
                 data-testid="adapter-undeploy-button"
                 color="primary"
                 size="large"
                 onClick={handleAdapterUndeploy}
+                className={classes.button}
                 disabled={
                   !CAN(
                     keys.UNDEPLOY_CLOUD_NATIVE_INFRASTRUCTURE.action,
@@ -478,20 +508,21 @@ const MeshAdapterConfigComponent = (props) => {
                 }
               >
                 Undeploy
-              </AdapterButton>
-              <AdapterButton
+              </Button>
+              <Button
                 type="submit"
                 variant="contained"
                 data-testid="adapter-connect-button"
                 color="primary"
                 size="large"
                 onClick={handleSubmit}
+                className={classes.button}
                 data-cy="btnSubmitMeshAdapter"
                 disabled={!CAN(keys.CONNECT_ADAPTER.action, keys.CONNECT_ADAPTER.subject)}
               >
                 Connect
-              </AdapterButton>
-            </AdapterButtons>
+              </Button>
+            </div>
           </React.Fragment>
           <Grid container spacing={1} alignItems="flex-end" style={{ marginTop: '50px' }}>
             <Grid item xs={12}>
@@ -512,21 +543,21 @@ const MeshAdapterConfigComponent = (props) => {
                 id="deployPort"
                 type="text"
                 label="Enter Port"
-                variant="standard"
                 onChange={(e) => handleDeployPortChange(e.target)}
                 value={meshDeployURL}
                 error={meshDeployURLError}
               />
             </div>
             <React.Fragment>
-              <AdapterButtons>
-                <AdapterButton
+              <div className={classes.buttons}>
+                <Button
                   type="submit"
                   variant="contained"
                   data-testid="adapter-deploy-button"
                   color="primary"
                   size="large"
                   onClick={handleAdapterDeploy}
+                  className={classes.button}
                   disabled={
                     !CAN(
                       keys.DEPLOY_CLOUD_NATIVE_INFRASTRUCTURE.action,
@@ -535,17 +566,19 @@ const MeshAdapterConfigComponent = (props) => {
                   }
                 >
                   Deploy
-                </AdapterButton>
-              </AdapterButtons>
+                </Button>
+              </div>
             </React.Fragment>
           </Grid>
-        </WrapperStyledDiv>
+        </div>
       </NoSsr>
     );
   };
 
   return configureTemplate();
 };
+
+MeshAdapterConfigComponent.propTypes = { classes: PropTypes.object.isRequired };
 
 const mapDispatchToProps = (dispatch) => ({
   updateAdaptersInfo: bindActionCreators(updateAdaptersInfo, dispatch),

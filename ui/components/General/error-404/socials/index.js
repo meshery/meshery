@@ -1,5 +1,4 @@
-import { Tooltip } from '@layer5/sistent';
-import { Fade } from '@mui/material';
+import { Tooltip, Fade } from '@material-ui/core';
 import {
   DockerIcon,
   GithubIcon,

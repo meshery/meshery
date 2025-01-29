@@ -1,4 +1,4 @@
-import { useTheme } from '@layer5/sistent';
+import { useTheme } from '@material-ui/core';
 import React, { useState, useEffect } from 'react';
 
 function getClassName(className, isActive) {
@@ -9,7 +9,7 @@ function getClassName(className, isActive) {
   return `${className} active`;
 }
 function getLogoTextColor(theme) {
-  return theme.palette.mode == 'light' ? '#3c494f' : '#FFF';
+  return theme.palette.type == 'light' ? '#3c494f' : '#FFF';
 }
 const AnimatedMeshPattern = (props) => {
   const [isActive, setIsActive] = useState(true);

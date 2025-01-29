@@ -1,28 +1,30 @@
-import { Button, Link, Typography, styled, useTheme } from '@layer5/sistent';
+import { Button, Link, Typography, makeStyles } from '@material-ui/core';
 import OperatorLight from '../../assets/img/OperatorLight';
 import Operator from '../../assets/img/Operator';
+import theme from '../../themes/app';
 import AddIcon from '@mui/icons-material/Add';
 
-const TextContent = styled('div')({
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  justifyContent: 'center',
-  marginTop: '1rem',
-  padding: '10px',
-  borderRadius: '10px',
-});
-
-const StyledAddIcon = styled(AddIcon)(({ theme }) => ({
-  width: theme.spacing(2.5),
-  marginRight: theme.spacing(0.5),
+const styles = makeStyles((theme) => ({
+  textContent: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: '1rem',
+    padding: '10px',
+    borderRadius: '10px',
+  },
+  AddIcon: {
+    width: theme.spacing(2.5),
+    paddingRight: theme.spacing(0.5),
+  },
 }));
 
 export const K8sEmptyState = ({ message }) => {
-  const theme = useTheme();
+  const classes = styles();
   return (
-    <TextContent>
-      {theme.palette.mode === 'dark' ? <OperatorLight /> : <Operator />}
+    <div className={classes.textContent}>
+      {theme.palette.type == 'dark' ? <OperatorLight /> : <Operator />}
       <Typography variant="h5">{message || 'No cluster connected yet'}</Typography>
 
       <Link href="/management/connections">
@@ -30,12 +32,12 @@ export const K8sEmptyState = ({ message }) => {
           type="submit"
           variant="contained"
           color="primary"
-          sx={{ margin: '0.6rem 0.6rem', whiteSpace: 'nowrap' }}
+          style={{ margin: '0.6rem 0.6rem', whiteSpace: 'nowrap' }}
         >
-          <StyledAddIcon />
+          <AddIcon className={classes.AddIcon} />
           Connect Clusters
         </Button>
       </Link>
-    </TextContent>
+    </div>
   );
 };

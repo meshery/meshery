@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@mui/material';
-import { Grid, Button, styled } from '@layer5/sistent';
+import { Grid, Button, styled, useTheme } from '@layer5/sistent';
 import ReactSelectWrapper from '../../ReactSelectWrapper';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -10,13 +10,16 @@ import { CONNECTION_KINDS, CONNECTION_STATES } from '@/utils/Enum';
 import dataFetch from 'lib/data-fetch';
 import { UsesSistent } from '@/components/SistentWrapper';
 
-const StyledRoot = styled('div')(({ theme }) => ({
-  padding: theme.spacing(5),
-  backgroundColor: theme.palette.background.card,
-  borderBottomLeftRadius: theme.spacing(1),
-  borderBottomRightRadius: theme.spacing(1),
-  marginTop: theme.spacing(2),
-}));
+const StyledRoot = styled('div')(() => {
+  const theme = useTheme();
+  return {
+    padding: theme.spacing(5),
+    backgroundColor: theme.palette.background.default,
+    borderBottomLeftRadius: theme.spacing(1),
+    borderBottomRightRadius: theme.spacing(1),
+    marginTop: theme.spacing(2),
+  };
+});
 
 const ButtonContainer = styled('div')(({ theme }) => ({
   display: 'flex',

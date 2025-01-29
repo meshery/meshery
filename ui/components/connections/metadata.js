@@ -1,8 +1,10 @@
 import React from 'react';
 import { Grid, List, ListItem, ListItemText, Box, styled } from '@layer5/sistent';
+import { makeStyles } from '@material-ui/core/styles';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateProgress } from '../../lib/store';
+
 import {
   FormatId,
   FormatStructuredData,
@@ -26,6 +28,57 @@ import { ColumnWrapper, ContentContainer, OperationButton } from './styles';
 const DISABLED = 'DISABLED';
 const KUBERNETES = 'kubernetes';
 const MESHERY = 'meshery';
+
+const useKubernetesStyles = makeStyles((theme) => ({
+  icon: { width: theme.spacing(2.5) },
+  operatorIcon: { width: theme.spacing(2.5), filter: theme.palette.secondary.brightness },
+  heading: { textAlign: 'center' },
+  configBoxContainer: {
+    [theme?.breakpoints?.down(1050)]: {
+      flexGrow: 0,
+      maxWidth: '100%',
+      flexBasis: '100%',
+    },
+    [theme?.breakpoints?.down(1050)]: {
+      flexDirection: 'column',
+    },
+  },
+  clusterConfiguratorWrapper: { padding: theme.spacing(5), display: 'flex' },
+  fileInputStyle: { display: 'none' },
+  topToolbar: {
+    margin: '1rem 0',
+    paddingLeft: '1rem',
+    maxWidth: '90%',
+  },
+  button: {
+    padding: theme.spacing(1),
+    borderRadius: 5,
+  },
+  grey: {
+    background: 'WhiteSmoke',
+    padding: theme.spacing(2),
+    borderRadius: 'inherit',
+  },
+  subtitle: {
+    minWidth: 400,
+    overflowWrap: 'anywhere',
+    textAlign: 'left',
+    padding: '5px',
+  },
+  text: {
+    width: '80%',
+    wordWrap: 'break-word',
+  },
+  table: {
+    marginTop: theme.spacing(1.5),
+  },
+  uploadCluster: {
+    overflow: 'hidden',
+  },
+  OperatorSwitch: {
+    pointerEvents: 'auto',
+  },
+}));
 
 const customIdFormatter = (title, id) => <KeyValue Key={title} Value={<FormatId id={id} />} />;
 const customDateFormatter = (title, date) => (
@@ -53,6 +106,8 @@ const StyledListItemText = styled(ListItemText)(({ theme }) => ({
 }));
 
 const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, metadata }) => {
+  const classes = useKubernetesStyles();
+
   const pingKubernetes = useKubernetesHook();
   const { ping: pingMesheryOperator } = useMesheryOperator();
   const { ping: pingMeshSync } = useMeshsSyncController();
@@ -129,10 +184,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                 <List>
                   <ListItem>
                     <StyledListItemText
-                      style={{
-                        width: '80%',
-                        wordWrap: 'break-word',
-                      }}
+                      className={classes.text}
                       primary="Server"
                       secondary={<Link title={metadata.server}>{metadata.server}</Link>}
                     />

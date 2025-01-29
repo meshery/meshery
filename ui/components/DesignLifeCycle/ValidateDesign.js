@@ -1,5 +1,15 @@
 import React, { useRef, useEffect } from 'react';
-import { List, ListItemText, ListItemIcon, Typography, Collapse, useTheme } from '@layer5/sistent';
+import {
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  ListSubheader,
+  Typography,
+  Collapse,
+  alpha,
+  withStyles,
+} from '@material-ui/core';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { ComponentIcon, Loading, getSvgWhiteForComponent, processDesign } from './common';
 import {
@@ -10,15 +20,61 @@ import {
 } from '../../machines/validator/designValidator';
 import AlertIcon from '@/assets/icons/AlertIcon';
 import { NOTIFICATIONCOLORS } from '@/themes/index';
-import {
-  ValidatedComponent,
-  ValidationErrorListItem,
-  ComponentValidationListItem,
-  ValidationResultsListWrapper,
-  ValidationSubHeader,
-} from './styles';
 
-const ComponentErrorList = ({ component, errors, validatorActor }) => {
+const styles = (theme) => {
+  const saffron = NOTIFICATIONCOLORS.WARNING;
+  return {
+    singleErrorRoot: {
+      gap: '0.5rem',
+      backgroundColor: theme.palette.secondary.mainBackground2,
+      cursor: 'pointer',
+      '&:hover': {
+        backgroundColor: alpha(NOTIFICATIONCOLORS.WARNING, 0.25),
+      },
+    },
+    singleError: {
+      paddingInline: theme.spacing(1),
+      paddingBlock: theme.spacing(1),
+      marginInline: theme.spacing(0.5),
+      overflow: 'hidden',
+      whiteSpace: 'wrap',
+    },
+
+    componentLabel: {
+      gap: '0.5rem',
+      backgroundColor: saffron,
+      '&:hover': {
+        backgroundColor: saffron,
+      },
+    },
+    component: {
+      backgroundColor: theme.palette.secondary.mainBackground2,
+      color: theme.palette.secondary.text3,
+      fontFamily: 'Qanelas Soft, sans-serif',
+    },
+    errorList: {
+      border: `solid 2px ${saffron}`,
+    },
+
+    root: {
+      width: '100%',
+      maxHeight: '18rem',
+      marginBottom: '0.5rem',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '1rem',
+    },
+    subHeader: {
+      marginTop: '1rem',
+      display: 'flex',
+      padding: 0,
+      justifyContent: 'space-between',
+      width: '100%',
+    },
+  };
+};
+
+const ComponentErrorList = ({ component, classes, errors, validatorActor }) => {
   const onErrorTap = (error) => {
     validatorActor.send(
       designValidatorEvents.tapOnError({ error, type: 'schemaValidation', component }),
@@ -35,9 +91,10 @@ const ComponentErrorList = ({ component, errors, validatorActor }) => {
   return (
     <List>
       {errors.map((error) => (
-        <ValidationErrorListItem
+        <ListItem
           disablePadding
           key={error.instancePath}
+          className={classes.singleErrorRoot}
           onClick={() => onErrorTap(error)}
         >
           <ListItemIcon>
@@ -50,8 +107,12 @@ const ComponentErrorList = ({ component, errors, validatorActor }) => {
               fill={NOTIFICATIONCOLORS.WARNING}
             />{' '}
           </ListItemIcon>
-          <ListItemText primary={message(error)} disableTypography></ListItemText>
-        </ValidationErrorListItem>
+          <ListItemText
+            primary={message(error)}
+            disableTypography
+            className={classes.nested}
+          ></ListItemText>
+        </ListItem>
       ))}
     </List>
   );
@@ -62,6 +123,7 @@ const ValidationResults_ = (props) => {
     errorCount,
     compCount,
     annotationCount,
+    classes,
     validationResults,
     currentNodeId,
     validationMachine,
@@ -89,14 +151,22 @@ const ValidationResults_ = (props) => {
       currentComponentErrorRef.current.scrollIntoView({ behavior: 'smooth' });
     }
   }, [currentComponentErrorRef]);
-  const theme = useTheme();
   return (
     <div title="DesignValidationResults">
-      <ValidationResultsListWrapper
+      <List
         aria-labelledby="nested-list-subheader"
         subheader={
-          <ValidationSubHeader disableSticky="true" component="div" disablePadding>
-            <Typography varaint="h6" disablePadding style={{ color: theme.palette.text.disabled }}>
+          <ListSubheader
+            disableSticky="true"
+            component="div"
+            disablePadding
+            className={classes.subHeader}
+          >
+            <Typography
+              varaint="h6"
+              disablePadding
+              // style={{ position: "relative", left: "35px" }}
+            >
               {compCount} component{compCount > 1 ? 's' : ''} and {annotationCount} annotations
             </Typography>
 
@@ -111,8 +181,9 @@ const ValidationResults_ = (props) => {
             >
               {errorCount} error{errorCount === 1 ? '' : 's'}
             </Typography>
-          </ValidationSubHeader>
+          </ListSubheader>
         }
+        className={classes.root}
       >
         {errorCount == 0 && (
           <Typography varaint="h6" align="center" style={{ marginBlock: '1rem' }} disablePadding>
@@ -121,37 +192,35 @@ const ValidationResults_ = (props) => {
         )}
 
         {componentsWithErrors?.map((componentResult, index) => (
-          <ValidatedComponent
+          <div
+            style={{ margin: '0.6rem 0rem' }}
             key={index}
             ref={isCurrentComponent(componentResult) ? currentComponentErrorRef : null}
+            className={classes.component}
           >
             {/*  Errors For A Component */}
-            <ComponentValidationListItem button onClick={() => handleClick(index)}>
+            <ListItem button onClick={() => handleClick(index)} className={classes.componentLabel}>
               {/* key can be error id?? */}
               <ComponentIcon iconSrc={getSvgWhiteForComponent(componentResult.component)} />
               <ListItemText primary={componentResult.component.displayName} disableTypography />(
               {componentResult?.errors?.length}){open[index] ? <ExpandLess /> : <ExpandMore />}
-            </ComponentValidationListItem>
-            <Collapse
-              in={open[index]}
-              timeout="auto"
-              unmountOnExit
-              style={{ border: `solid 2px ${theme.palette.background.cta.default}` }}
-            >
+            </ListItem>
+            <Collapse in={open[index]} timeout="auto" unmountOnExit className={classes.errorList}>
               <ComponentErrorList
                 component={componentResult.component}
                 validatorActor={validationMachine}
                 errors={componentResult.errors}
+                classes={classes}
               />
             </Collapse>
-          </ValidatedComponent>
+          </div>
         ))}
-      </ValidationResultsListWrapper>
+      </List>
     </div>
   );
 };
 
-const ValidationResults = ValidationResults_;
+const ValidationResults = withStyles(styles)(ValidationResults_);
 
 /**
  *
