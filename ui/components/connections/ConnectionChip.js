@@ -1,5 +1,4 @@
-import { Chip, MenuItem, Tooltip, makeStyles, Avatar } from '@material-ui/core';
-import classNames from 'classnames';
+import { Avatar } from '@layer5/sistent';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
@@ -12,33 +11,27 @@ import DisconnectIcon from '../../assets/icons/disconnect';
 import NotInterestedRoundedIcon from '@mui/icons-material/NotInterestedRounded';
 import { CONNECTION_STATES, CONTROLLER_STATES } from '../../utils/Enum';
 import theme from '../../themes/app';
-
-const useChipStyles = makeStyles(() => ({
-  Chip: {
-    width: '13rem',
-    maxWidth: '13rem',
-    minWidth: '9rem',
-    textAlign: 'left',
-    cursor: 'pointer',
-    '& .MuiChip-label': {
-      flexGrow: 1,
-    },
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-  },
-  icon: {
-    width: '1.5rem',
-    height: '1.5rem',
-  },
-}));
+import { CustomTooltip } from '@layer5/sistent';
+import {
+  ChipWrapper,
+  ConnectedChip,
+  DeletedChip,
+  DisconnectedChip,
+  DiscoveredChip,
+  IgnoredChip,
+  MaintainanceChip,
+  NotFoundChip,
+  RegisteredChip,
+  ConnectionStyledMenuItem,
+} from './styles';
+import { iconMedium } from 'css/icons.styles';
+import { UsesSistent } from '../SistentWrapper';
 
 export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, width }) => {
-  const classes = useChipStyles();
   const chipStyle = { width };
   return (
     // <Tooltip title={tooltip || title} placement="bottom">
-    <Chip
+    <ChipWrapper
       label={title}
       onClick={(e) => {
         e.stopPropagation(); // Prevent event propagation
@@ -54,18 +47,17 @@ export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, 
                 : theme.palette.secondary.penColorSecondary
             }
           >
-            <Avatar src={iconSrc} className={classes.icon} style={status ? {} : { opacity: 0.2 }}>
-              <img className={classes.icon} src="/static/img/kubernetes.svg" />
+            <Avatar src={iconSrc} style={(status ? {} : { opacity: 0.2 }, iconMedium)}>
+              <img style={iconMedium} src="/static/img/kubernetes.svg" />
             </Avatar>
           </BadgeAvatars>
         ) : (
-          <Avatar src={iconSrc} className={classes.icon}>
-            <img className={classes.icon} src="/static/img/kubernetes.svg" />
+          <Avatar src={iconSrc} sx={iconMedium}>
+            <img style={iconMedium} src="/static/img/kubernetes.svg" />
           </Avatar>
         )
       }
-      variant="filled"
-      className={classes.Chip}
+      // variant="filled"
       data-cy="chipContextName"
       style={chipStyle}
     />
@@ -75,235 +67,115 @@ export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, 
 
 export const TootltipWrappedConnectionChip = (props) => {
   return (
-    <Tooltip title={props.tooltip || props.title} placement="bottom">
-      <>
+    <CustomTooltip title={props.tooltip || props.title} placement="left">
+      <div>
         <_ConnectionChip {...props} />
-      </>
-    </Tooltip>
+      </div>
+    </CustomTooltip>
   );
 };
-const styles = makeStyles((theme) => ({
-  statusCip: {
-    minWidth: '142px !important',
-    maxWidth: 'max-content !important',
-    display: 'flex !important',
-    justifyContent: 'flex-start !important',
-    borderRadius: '3px !important',
-    padding: '6px 8px',
-    '& .MuiChip-label': {
-      paddingTop: '3px',
-      fontWeight: '400',
-    },
-    '& .MuiSvgIcon-root': {
-      marginLeft: '0px !important',
-    },
-    '&:hover': {
-      boxShadow: '0px 1px 2px 0px rgba(0, 0, 0, 0.25)',
-    },
-  },
-  helpIcon: {
-    color: '#fff',
-    opacity: '0.7',
-    transition: 'opacity 200ms linear',
-    '&:hover': {
-      opacity: 1,
-      background: 'transparent',
-    },
-    '&:focus': {
-      opacity: 1,
-      background: 'transparent',
-    },
-  },
-  ignored: {
-    '& .MuiChip-label': {
-      color: `${theme.palette.secondary.default}`,
-    },
-    background: `${theme.palette.secondary.default}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.default} !important`,
-    },
-  },
-  connected: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.success,
-    },
-    background: `${theme.palette.secondary.success}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.success} !important`,
-    },
-  },
-  registered: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.primary,
-    },
-    background: `${theme.palette.secondary.primary}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.primary} !important`,
-    },
-  },
-  discovered: {
-    '& .MuiChip-label': {
-      color: notificationColors.info,
-    },
-    background: `${notificationColors.info}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${notificationColors.info} !important`,
-    },
-  },
-  deleted: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.error,
-    },
-    background: `${theme.palette.secondary.lightError}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.error} !important`,
-    },
-  },
-  maintenance: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.warning,
-    },
-    background: `${theme.palette.secondary.warning}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.warning} !important`,
-    },
-  },
-  disconnected: {
-    '& .MuiChip-label': {
-      color: notificationColors.lightwarning,
-    },
-    background: `${notificationColors.lightwarning}30 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${notificationColors.lightwarning} !important`,
-    },
-  },
-  notfound: {
-    '& .MuiChip-label': {
-      color: theme.palette.secondary.text,
-    },
-    background: `${theme.palette.secondary.disableButtonBg}60 !important`,
-    '& .MuiSvgIcon-root': {
-      color: `${theme.palette.secondary.iconMain} !important`,
-    },
-  },
-}));
 
 const DiscoveredStateChip = ({ value }) => {
-  const classes = styles();
   return (
-    <MenuItem value={value}>
-      <Chip
-        className={classNames(classes.statusCip, classes.discovered)}
+    <ConnectionStyledMenuItem value={value} sx={{ padding: 0 }}>
+      <DiscoveredChip
         avatar={<ExploreIcon />}
         label={value}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       {/* <HelpToolTip classes={classes} value="1-discovered" /> */}
-    </MenuItem>
+    </ConnectionStyledMenuItem>
   );
 };
 
 const RegisteredStateChip = ({ value }) => {
-  const classes = styles();
   return (
-    <MenuItem value={value}>
-      <Chip
-        className={classNames(classes.statusCip, classes.registered)}
+    <ConnectionStyledMenuItem value={value}>
+      <RegisteredChip
         avatar={<AssignmentTurnedInIcon />}
         label={value}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       {/* <HelpToolTip classes={classes} value="2-registered" /> */}
-    </MenuItem>
+    </ConnectionStyledMenuItem>
   );
 };
 
 const ConnectedStateChip = ({ value }) => {
-  const classes = styles();
   return (
-    <MenuItem value={value}>
-      <Chip
-        className={classNames(classes.statusCip, classes.connected)}
+    <ConnectionStyledMenuItem value={value}>
+      <ConnectedChip
         avatar={<CheckCircleIcon />}
         label={value}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       {/* <HelpToolTip classes={classes} value="3-connected" /> */}
-    </MenuItem>
+    </ConnectionStyledMenuItem>
   );
 };
 
 const DisconnectedStateChip = ({ value }) => {
-  const classes = styles();
   return (
-    <MenuItem value={value}>
-      <Chip
-        className={classNames(classes.statusCip, classes.disconnected)}
+    <ConnectionStyledMenuItem value={value}>
+      <DisconnectedChip
         avatar={<DisconnectIcon fill={notificationColors.lightwarning} width={24} height={24} />}
         label={value}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
-    </MenuItem>
+    </ConnectionStyledMenuItem>
   );
 };
 
 const IgnoredStateChip = ({ value }) => {
-  const classes = styles();
+  // const classes = styles/();
   return (
-    <MenuItem value={value}>
-      <Chip
-        className={classNames(classes.statusCip, classes.ignored)}
+    <ConnectionStyledMenuItem value={value}>
+      <IgnoredChip
         avatar={<RemoveCircleIcon />}
         label={value}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       {/* <HelpToolTip classes={classes} value="4-ignored" /> */}
-    </MenuItem>
+    </ConnectionStyledMenuItem>
   );
 };
 
 const DeletedStateChip = ({ value }) => {
-  const classes = styles();
   return (
-    <MenuItem value={value}>
-      <Chip
-        className={classNames(classes.statusCip, classes.deleted)}
+    <ConnectionStyledMenuItem value={value}>
+      <DeletedChip
         avatar={<DeleteForeverIcon />}
         label={value}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       {/* <HelpToolTip classes={classes} value="7-deleted" /> */}
-    </MenuItem>
+    </ConnectionStyledMenuItem>
   );
 };
 
 const MaintainanceStateChip = ({ value }) => {
-  const classes = styles();
   return (
-    <MenuItem value={value}>
-      <Chip
-        className={classNames(classes.statusCip, classes.maintenance)}
+    <ConnectionStyledMenuItem value={value}>
+      <MaintainanceChip
         avatar={<HandymanIcon />}
         label={value}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       {/* <HelpToolTip classes={classes} value="7-deleted" /> */}
-    </MenuItem>
+    </ConnectionStyledMenuItem>
   );
 };
 
 const NotFoundStateChip = ({ value }) => {
-  const classes = styles();
   return (
-    <MenuItem value={value}>
-      <Chip
-        className={classNames(classes.statusCip, classes.notfound)}
+    <ConnectionStyledMenuItem value={value}>
+      <NotFoundChip
         avatar={<NotInterestedRoundedIcon />}
         label={value}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       {/* <HelpToolTip classes={classes} value="7-deleted" /> */}
-    </MenuItem>
+    </ConnectionStyledMenuItem>
   );
 };
 
@@ -324,17 +196,10 @@ const NotFoundStateChip = ({ value }) => {
 // };
 
 const Default = ({ value }) => {
-  const classes = styles();
-
   return (
-    <MenuItem value={value}>
-      <Chip
-        className={classNames(classes.statusChip, classes.discovered)}
-        value={value}
-        avatar={<ExploreIcon />}
-        label={value}
-      />
-    </MenuItem>
+    <ConnectionStyledMenuItem value={value}>
+      <DiscoveredChip value={value} avatar={<ExploreIcon />} label={value} />
+    </ConnectionStyledMenuItem>
   );
 };
 
@@ -362,5 +227,5 @@ function getStatusChip(status) {
 }
 
 export const ConnectionStateChip = ({ status }) => {
-  return getStatusChip(status);
+  return <UsesSistent>{getStatusChip(status)}</UsesSistent>;
 };

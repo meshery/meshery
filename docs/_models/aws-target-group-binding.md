@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/aws-target-group-binding/components/target-group-binding/icons/color/target-group-binding-color.svg
   whiteIcon: assets/img/integrations/aws-target-group-binding/components/target-group-binding/icons/white/target-group-binding-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Expose your pods using an existing ALB TargetGroup or NLB TargetGroup.",
   "Allows you to provision the load balancer infrastructure completely outside of Kubernetes.",

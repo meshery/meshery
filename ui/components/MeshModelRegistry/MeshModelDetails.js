@@ -1,24 +1,12 @@
 import React from 'react';
-import useStyles from '../../assets/styles/general/tool.styles';
+import { DetailsContainer, Segment, FullWidth } from '@/assets/styles/general/tool.styles';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import { FormatStructuredData, reorderObjectProperties } from '../DataFormatter';
-import {
-  FormControl,
-  Select,
-  MenuItem,
-  Chip,
-  CircularProgress,
-  useTheme,
-  Paper,
-  Button,
-} from '@material-ui/core';
+import { FormControl, Select, MenuItem, CircularProgress, useTheme, Button } from '@layer5/sistent';
 import DownloadIcon from '@mui/icons-material/Download';
-import { withStyles } from '@material-ui/core/styles';
-import styles from '../connections/styles';
 import { REGISTRY_ITEM_STATES, REGISTRY_ITEM_STATES_TO_TRANSITION_MAP } from '../../utils/Enum';
-import classNames from 'classnames';
-import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
+// import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
+// import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import {
   useUpdateEntityStatusMutation,
   useGetComponentsQuery,
@@ -55,9 +43,10 @@ const KeyValue = ({ property, value }) => {
 };
 
 const StyledTitle = styled('div')(({ theme }) => ({
-  fontSize: '18px',
+  fontSize: '1.25rem',
   fontFamily: theme.typography.fontFamily,
-  fontWeight: theme.typography.fontWeightBold,
+  textAlign: 'left',
+  lineHeight: '1.3rem',
 }));
 
 const RenderContents = ({
@@ -69,55 +58,56 @@ const RenderContents = ({
   orderRight,
   jsonData,
 }) => {
-  const StyleClass = useStyles();
   const theme = useTheme();
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-      <div className={StyleClass.segment}>
-        <div
-          className={StyleClass.fullWidth}
-          style={{ display: 'flex', flexDirection: 'column', paddingRight: '1rem' }}
-        >
+      <Segment>
+        <FullWidth style={{ display: 'flex', flexDirection: 'column', paddingRight: '1rem' }}>
           <FormatStructuredData
             data={reorderObjectProperties(metaDataLeft, orderLeft)}
             propertyFormatters={PropertyFormattersLeft}
             order={orderLeft}
           />
-        </div>
-
-        <div className={StyleClass.fullWidth} style={{ display: 'flex', flexDirection: 'column' }}>
+        </FullWidth>
+        <FullWidth style={{ display: 'flex', flexDirection: 'column' }}>
           <FormatStructuredData
             data={reorderObjectProperties(metaDataRight, orderRight)}
             propertyFormatters={PropertyFormattersRight}
             order={orderRight}
           />
-        </div>
-      </div>
-
+        </FullWidth>
+      </Segment>
       {jsonData && (
         <Accordion
           style={{
             borderRadius: '6px',
-            backgroundColor: theme.palette.secondary.toolbarBg2,
-            color: theme.palette.secondary.text,
+            color: theme.palette.text.default,
+            margin: '0 -1rem',
+            padding: '0',
           }}
         >
           <AccordionSummary
-            expandIcon={<ExpandMoreIcon style={{ fill: theme.palette.secondary.text }} />}
+            expandIcon={<ExpandMoreIcon style={{ fill: theme.palette.text.default }} />}
           >
             Advanced Details
           </AccordionSummary>
-          <AccordionDetails>
+          <AccordionDetails
+            style={{
+              padding: '0',
+              fontSize: '0.85rem',
+            }}
+          >
             <ReactJson
-              theme={reactJsonTheme(theme.palette.type)}
+              theme={reactJsonTheme(theme.palette.mode)}
               name={false}
               displayDataTypes={false}
               iconStyle="circle"
               src={jsonData}
               style={{
-                fontSize: 'inherit',
+                fontSize: '.85rem',
                 minHeight: 'inherit',
                 padding: '1.1rem',
+                margin: '0rem',
               }}
               collapsed={1} // expanded upto 1 level
             />
@@ -133,7 +123,9 @@ const ModelContents = ({ modelDef }) => {
     version: (value) => <KeyValue property="API Version" value={value} />,
     hostname: (value) => <KeyValue property="Registrant" value={value} />,
     components: (value) => <KeyValue property="Components" value={value} />,
-    subCategory: (value) => <KeyValue property="Sub Category" value={value} />,
+    subCategory: (value) => <KeyValue property="Sub-Category" value={value} />,
+    modelVersion: (value) => <KeyValue property="Model Version" value={value} />,
+    registrant: (value) => <KeyValue property="Registrant" value={value} />,
   };
 
   const getCompRelValue = () => {
@@ -156,9 +148,11 @@ const ModelContents = ({ modelDef }) => {
 
   const metaDataLeft = {
     version: modelDef?.model?.version,
+    modelVersion: modelDef?.model?.modelVersion,
     hostname: modelDef?.registrant?.hostname,
     components: getCompRelValue()?.components?.toString(),
     subCategory: modelDef?.model?.subCategory,
+    registrant: modelDef?.registrant?.name,
   };
 
   const orderLeft = ['version', 'hostname', 'components', 'subCategory'];
@@ -190,20 +184,23 @@ const ModelContents = ({ modelDef }) => {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <TitleWithImg displayName={modelDef.displayName} iconSrc={modelDef?.metadata?.svgColor} />
-        {ExportAvailable ? (
-          <Button
-            aria-label="Add Pattern"
-            variant="contained"
-            color="primary"
-            size="medium"
-            onClick={handleExport}
-            style={{ display: 'flex' }}
-          >
-            <DownloadIcon style={{ fontSize: '1.2rem' }} />
-            Export
-          </Button>
-        ) : null}
-        {isShowStatusSelector && <StatusChip entityData={modelDef} entityType="models" />}
+        <div style={{ display: 'block' }}>
+          {ExportAvailable ? (
+            <Button
+              aria-label="Export Model"
+              variant="contained"
+              color="primary"
+              size="medium"
+              alt="Export Model to OCI Image"
+              onClick={handleExport}
+              style={{ display: 'flex', width: '100%', marginBottom: '.25rem' }}
+            >
+              <DownloadIcon style={{ fontSize: '1.2rem' }} />
+              Export
+            </Button>
+          ) : null}
+          {isShowStatusSelector && <StatusChip entityData={modelDef} entityType="models" />}
+        </div>
       </div>
       <RenderContents
         metaDataLeft={metaDataLeft}
@@ -292,16 +289,16 @@ const ComponentContents = ({ componentDef }) => {
 const RelationshipContents = ({ relationshipDef }) => {
   const PropertyFormattersLeft = {
     version: (value) => <KeyValue property="API Version" value={value} />,
-    modelName: (value) => <KeyValue property="Model Name" value={value} />,
-    kind: (value) => <KeyValue property="Kind" value={value} />,
+    registrant: (value) => <KeyValue property="Registrant" value={value} />,
   };
 
   const metaDataLeft = {
-    version: relationshipDef.schemaVersion,
+    registrant: relationshipDef.model.registrant.name,
     modelName: relationshipDef.model?.displayName,
+    version: relationshipDef.schemaVersion,
   };
 
-  const orderLeft = ['version', 'modelName'];
+  const orderLeft = ['registrant', 'version'];
   const orderdMetadataLeft = reorderObjectProperties(metaDataLeft, orderLeft);
 
   const PropertyFormattersRight = {
@@ -320,7 +317,7 @@ const RelationshipContents = ({ relationshipDef }) => {
   return (
     <div>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
-        <StyledTitle>{relationshipDef?.subType}</StyledTitle>
+        <StyledTitle>{`${relationshipDef?.kind} :: ${relationshipDef.type} :: ${relationshipDef.subType}`}</StyledTitle>
         <Description description={relationshipDef?.metadata?.description} />
       </div>
       <RenderContents
@@ -389,13 +386,12 @@ const Description = ({ description }) => (
 
 const TitleWithImg = ({ displayName, iconSrc }) => (
   <div style={{ display: 'flex', alignItems: 'center', flexBasis: '60%' }}>
-    {iconSrc && <img src={iconSrc} height="55px" width="55px" style={{ marginRight: '0.6rem' }} />}
+    {iconSrc && <img src={iconSrc} height="32px" width="32px" style={{ marginRight: '0.6rem' }} />}
     <StyledTitle>{displayName}</StyledTitle>
   </div>
 );
 
-// TODO: remove with styles and use either makestyle or styled component
-const StatusChip = withStyles(styles)(({ classes, entityData, entityType }) => {
+const StatusChip = ({ entityData, entityType }) => {
   const nextStatus = Object.values(REGISTRY_ITEM_STATES);
   const [updateEntityStatus] = useUpdateEntityStatusMutation();
   const { data: modelData, isSuccess } = useGetMeshModelsQuery({
@@ -417,16 +413,13 @@ const StatusChip = withStyles(styles)(({ classes, entityData, entityType }) => {
     });
   };
 
-  const icons = {
-    [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.IGNORED]: () => <RemoveCircleIcon />,
-    [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.ENABLED]: () => <AssignmentTurnedInIcon />,
-  };
+  // const icons = {
+  //   [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.IGNORED]: () => <RemoveCircleIcon />,
+  //   [REGISTRY_ITEM_STATES_TO_TRANSITION_MAP.ENABLED]: () => <AssignmentTurnedInIcon />,
+  // };
 
   return (
-    <FormControl
-      className={classes.chipFormControl}
-      style={{ minWidth: '0%', flexDirection: 'inherit' }}
-    >
+    <FormControl style={{ flexDirection: 'inherit', minWidth: '100%' }}>
       {isSuccess ? (
         <Select
           labelId="entity-status-select-label"
@@ -436,7 +429,12 @@ const StatusChip = withStyles(styles)(({ classes, entityData, entityType }) => {
           defaultValue={data?.status}
           onClick={(e) => e.stopPropagation()}
           onChange={(e) => handleStatusChange(e)}
-          className={classes.statusSelect}
+          sx={{
+            '& .MuiSelect-select': {
+              p: '0.5rem !important',
+              pr: '2rem !important',
+            },
+          }}
           disableUnderline
           disabled={!isSuccess} // Disable the select when isSuccess is false
           MenuProps={{
@@ -456,19 +454,13 @@ const StatusChip = withStyles(styles)(({ classes, entityData, entityType }) => {
           {nextStatus.map((status) => (
             <MenuItem
               disabled={status === data?.status}
-              style={{ padding: '0', display: status === data?.status ? 'none' : 'flex' }}
+              style={{ display: status === data?.status ? 'none' : 'flex' }}
               value={status}
               key={status}
             >
-              <Chip
-                className={classNames(classes.statusChip, classes[status])}
-                avatar={icons[status] ? icons[status]() : ''}
-                label={
-                  status === data?.status
-                    ? status
-                    : REGISTRY_ITEM_STATES_TO_TRANSITION_MAP?.[status] || status
-                }
-              />
+              {status === data?.status
+                ? status
+                : REGISTRY_ITEM_STATES_TO_TRANSITION_MAP?.[status] || status}
             </MenuItem>
           ))}
         </Select>
@@ -477,11 +469,10 @@ const StatusChip = withStyles(styles)(({ classes, entityData, entityType }) => {
       )}
     </FormControl>
   );
-});
+};
 
 const MeshModelDetails = ({ view, showDetailsData }) => {
   const theme = useTheme();
-  const StyleClass = useStyles();
   const isEmptyDetails =
     Object.keys(showDetailsData.data).length === 0 || showDetailsData.type === 'none';
 
@@ -508,11 +499,9 @@ const MeshModelDetails = ({ view, showDetailsData }) => {
 
   return (
     <UsesSistent>
-      <Paper
-        className={isEmptyDetails ? StyleClass.emptyDetailsContainer : StyleClass.detailsContainer}
-      >
+      <DetailsContainer isEmpty={isEmptyDetails}>
         {isEmptyDetails ? renderEmptyDetails() : getContent(showDetailsData.type)}
-      </Paper>
+      </DetailsContainer>
     </UsesSistent>
   );
 };

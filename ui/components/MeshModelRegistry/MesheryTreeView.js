@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { TreeView } from '@mui/x-tree-view/TreeView';
-import { IconButton, FormControlLabel, Switch } from '@material-ui/core';
+import { IconButton, FormControlLabel, Switch } from '@layer5/sistent';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import SearchBar from '../../utils/custom-search';
 import debounce from '../../utils/debounce';
@@ -12,7 +12,7 @@ import StyledTreeItem from './StyledTreeItem';
 import { useRouter } from 'next/router';
 import { getFilteredDataForDetailsComponent, groupRelationshipsByKind } from './helper';
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import _ from 'lodash';
 import CollapseAllIcon from '@/assets/icons/CollapseAll';
 import ExpandAllIcon from '@/assets/icons/ExpandAll';
@@ -279,7 +279,7 @@ const RelationshipTree = ({
                 key={index}
                 nodeId={`${idForKind}.${relationship.id}`}
                 data-id={`${idForKind}.${relationship.id}`}
-                labelText={relationship.subType}
+                labelText={`${relationship.subType} (${relationship.model.name})`}
                 onClick={() => {
                   setShowDetailsData({
                     type: RELATIONSHIPS,
@@ -773,6 +773,12 @@ const MesheryTreeView = ({
     if (!isExpand) {
       setSearchText(() => null);
       setResourcesDetail(() => []);
+      setPage({
+        Models: 0,
+        Components: 0,
+        Relationships: 0,
+        Registrants: 0,
+      });
     }
     setIsSearchExpanded(isExpand);
   };

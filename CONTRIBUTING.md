@@ -136,7 +136,7 @@ Please contribute! Meshery documentation uses GitHub Pages to host the docs site
    `git push origin <my-changes>`
 1. Open a pull request (in your web browser) against our main repo: https://github.com/meshery/meshery.
 
-_Alternatively, LiveReload is available as an option during development: with jekyll serve --livereload no more manual page refresh. 
+_Alternatively, LiveReload is available as an option during development: with jekyll serve --livereload no more manual page refresh.
 
 `bundle exec jekyll serve --drafts --livereload --incremental --config _config_dev.yml`
 
@@ -235,7 +235,7 @@ make docker
 
 #### <a name="adapter">Writing a Meshery Adapter</a>
 
-Meshery uses adapters to provision and interact with different service meshes. Follow these instructions to create a new adapter or modify an existing adapter.
+Meshery uses adapters to provision and interact with different infrastructure and to extend its core functionality. Follow these instructions to create a new adapter or modify an existing adapter.
 
 1. Get the proto buf spec file from Meshery repo:
    `wget https://raw.githubusercontent.com/meshery/meshery/master/server/meshes/meshops.proto`

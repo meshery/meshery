@@ -53,16 +53,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        k8s_version: ['v1.23.13', 'v1.24.7', 'v1.25.3']
+        k8s_version: ['v1.31.4', 'v1.32.0']
     runs-on: ubuntu-22.04
     outputs:
       exitstatus: ${{ steps.runresources.outputs.exitstatus }}
     steps:
       - name: Setting up minikube
         id: setk8s
-        uses: manusa/actions-setup-minikube@v2.7.0
+        uses: manusa/actions-setup-minikube@v2.11.0
         with:
-          minikube version: "v1.26.1"
+          minikube version: "v1.34.0"
           kubernetes version: '"${{ matrix.k8s_version }}"'
           driver: docker
           start args: --cni "${{ inputs.k8s_cni }}"

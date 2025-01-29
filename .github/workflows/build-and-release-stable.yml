@@ -92,7 +92,7 @@ jobs:
     if: github.repository == 'meshery/meshery'
     env:
       RELEASE_CHANNEL: "stable"
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -172,6 +172,14 @@ jobs:
   #   name: Deploy Meshery Playground
   #   uses: meshery/meshery/.github/workflows/deploy-meshery-playground.yml@master
   #   secrets: inherit
+  deploy-delay:
+    name: Playground Deploy Delay
+    runs-on: ubuntu-20.04
+    needs:
+      - build
+    steps:
+      - name: Delay Playground Deployment # Delay for 13 minutes to allow Remote Provider to update their extensions
+        run: sleep 780
   email-meshery-release-notes-workflow:
     needs:
       - build
@@ -188,8 +196,7 @@ jobs:
       release-tag: ${{github.ref_name}}
       to: developers@meshery.io
   call-cncf-playground-rollout:
-    needs:
-      - build
+    needs: [build, deploy-delay]
     name: Deploy CNCF Playground
     uses: meshery/meshery/.github/workflows/cncf-playground-deploy-meshery.yaml@master
     with:
@@ -198,7 +205,7 @@ jobs:
   email-on-failure:
     needs: [update-rest-api-docs, update-graphql-docs, build, ctlrelease, call-dde-release-workflow, call-helm-chart-releaser, email-meshery-release-notes-workflow, call-cncf-playground-rollout]
     if: ${{ failure() }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - name: Find failed jobs.
         run: |

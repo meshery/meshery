@@ -50,6 +50,9 @@ components:
   colorIcon: assets/img/integrations/aws-eks-controller/components/identity-provider-config/icons/color/identity-provider-config-color.svg
   whiteIcon: assets/img/integrations/aws-eks-controller/components/identity-provider-config/icons/white/identity-provider-config-white.svg
   description: 
+components-count: 10
+relationships: 
+relationship-count: 0
 featureList: [
   "Simplifies Kubernetes cluster creation and management",
   "Integrates with other AWS services",

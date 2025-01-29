@@ -1,52 +1,7 @@
-import { makeStyles } from '@material-ui/core';
+import { Grid, styled } from '@layer5/sistent';
+import { makeStyles } from '@mui/styles';
 
-const useStyles = makeStyles((theme) => ({
-  // dialogTitle: {
-  //   textAlign: 'center',
-  //   minWidth: 400,
-  //   padding: '10px',
-  //   color: '#fff',
-  //   backgroundColor:
-  //     theme.palette.type === 'dark' ? theme.palette.secondary.headerColor : '#396679',
-  // },
-  cardButtons: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    marginTop: '50px',
-    height: '100%',
-    gap: '.5rem',
-  },
-  testsButton: {
-    padding: '6px 9px',
-  },
-  perfResultsContainer: {
-    marginTop: '0.5rem',
-  },
-  flipButton: {
-    minWidth: 'max-content',
-    padding: '6px 9px',
-    twhiteSpace: 'nowwrap',
-  },
-  backGrid: {
-    marginBottom: '0.25rem',
-    minHeight: '6rem',
-    position: 'relative',
-  },
-  updateDeleteButtons: {
-    width: 'fit-content',
-    margin: '10 0 0 auto',
-    position: 'absolute',
-    right: 0,
-    bottom: 0,
-  },
-  yamlDialogTitle: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  // yamlDialogTitleText: {
-  //   flexGrow: 1,
-  // },
+const useStyles = makeStyles({
   fullScreenCodeMirror: {
     height: '100%',
     width: '100%',
@@ -56,95 +11,111 @@ const useStyles = makeStyles((theme) => ({
       width: '100%',
     },
   },
-  noOfResultsContainer: {
-    margin: '0 0 1rem',
-    '& div': {
-      display: 'flex',
-      alignItems: 'center',
-    },
+});
+
+export const fullScreenCodeMirrorstyles = {
+  height: '100%',
+  width: '100%',
+  '& .CodeMirror': {
+    minHeight: '300px',
+    height: '100%',
+    width: '100%',
   },
-  visibilityChip: {
-    width: '3.8rem',
+};
+
+export const CardBackGrid = styled(Grid)(() => ({
+  marginBottom: '0.25rem',
+  minHeight: '6rem',
+  position: 'relative',
+}));
+
+export const YamlDialogTitleGrid = styled(Grid)(() => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+}));
+
+export const CardHeaderRight = styled('div')(() => ({
+  display: 'flex',
+  alignItems: 'center',
+}));
+
+export const GridBtnText = styled('span')(({ theme }) => ({
+  marginLeft: '5px',
+  display: 'flex',
+  justifyContent: 'center',
+  [theme.breakpoints.down(1370)]: { display: 'none' },
+  [`${theme.breakpoints.up(1920)} and (max-width: 2200px)`]: {
+    display: 'none',
   },
-  bottomPart: {
-    display: 'flex',
-    justifyContent: 'flex-start',
-    alignItems: 'center',
-    marginTop: '1rem',
+}));
+
+export const GridCloneBtnText = styled('span')(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  marginLeft: '3px',
+  [theme.breakpoints.down(1370)]: { display: 'none' },
+  [`${theme.breakpoints.up(1920)} and (max-width: 2200px)`]: {
+    display: 'none',
   },
-  lastRunText: {
-    marginRight: '0.5rem',
-  },
-  cardHeaderRight: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  iconPatt: {
-    width: '24px',
-    height: '24px',
-    marginRight: '5px',
-  },
-  iconDownload: {
-    width: 'auto',
-    height: '24px',
-  },
-  btnText: {
-    [theme.breakpoints.down(1370)]: { display: 'none' },
-    [`${theme.breakpoints.up(1920)} and (max-width: 2200px)`]: {
-      display: 'none',
-    },
-    marginLeft: '5px',
-    display: 'flex',
-    justifyContent: 'center',
-  },
-  cloneBtnText: {
-    [theme.breakpoints.down(1370)]: { display: 'none' },
-    [`${theme.breakpoints.up(1920)} and (max-width: 2200px)`]: {
-      display: 'none',
-    },
-    display: 'flex',
-    justifyContent: 'center',
-    marginLeft: '3px',
-  },
-  undeployButton: {
-    backgroundColor: '#8F1F00',
-    color: '#ffffff',
-    padding: '6px 9px',
-    minWidth: 'unset',
-    '&:hover': {
-      backgroundColor: '#B32700',
-    },
-    '& > span': {
-      width: 'unset',
-    },
-    '& > span > svg': {
-      marginRight: '5px',
-    },
-  },
-  img: {
-    marginRight: '0.5rem',
-    filter: theme.palette.secondary.img,
-  },
-  noPaper: {
-    padding: '0.5rem',
-    fontSize: '3rem',
-  },
-  noContainer: {
-    padding: '2rem',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-  },
-  noText: {
-    fontSize: '2rem',
-    marginBottom: '2rem',
-  },
-  clonePatt: {
-    width: '20px',
-    height: '20px',
-    marginRight: '5px',
-  },
+}));
+
+export const CardImg = styled('img')(() => ({
+  marginRight: '0.5rem',
+  // filter: theme.palette.secondary.img,
+}));
+
+export const CardNoPaper = styled('div')(() => ({
+  padding: '0.5rem',
+  fontSize: '3rem',
+}));
+
+export const CardNoText = styled('div')(() => ({
+  fontSize: '2rem',
+  marginBottom: '2rem',
+}));
+
+export const CardNoContainer = styled('div')(() => ({
+  padding: '2rem',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  flexDirection: 'column',
+}));
+
+export const CardPagination = styled('div')(() => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginTop: '2rem',
+}));
+
+export const PatternAddIcon = styled('div')(() => ({
+  paddingLeft: '0.5rem',
+  marginRight: '0.5rem',
+}));
+
+export const UpdateDeleteButtons = styled('div')(() => ({
+  width: 'fit-content',
+  margin: '10 0 0 auto',
+  position: 'absolute',
+  right: 0,
+  bottom: 0,
+}));
+
+export const BottomContainer = styled('div')(() => ({
+  display: 'flex',
+  justifyContent: 'flex-start',
+  alignItems: 'center',
+  marginTop: '1rem',
+}));
+
+export const CatalogCardButtons = styled('div')(() => ({
+  display: 'flex',
+  flexWrap: 'wrap',
+  marginTop: '50px',
+  height: '100%',
+  gap: '.5rem',
 }));
 
 export default useStyles;

@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/slack-operator/components/channel/icons/color/channel-color.svg
   whiteIcon: assets/img/integrations/slack-operator/components/channel/icons/white/channel-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates Slack notification sending",
   "Customizable notification templates",

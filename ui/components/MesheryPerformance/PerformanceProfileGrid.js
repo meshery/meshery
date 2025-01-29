@@ -1,9 +1,8 @@
-//@ts-check
-import { Grid } from '@material-ui/core';
-import { Pagination } from '@material-ui/lab';
 import React, { useState } from 'react';
 import PerformanceCard from './PerformanceCard';
-import { makeStyles } from '@material-ui/core/styles';
+import { Grid, Pagination } from '@layer5/sistent';
+import { UsesSistent } from '../SistentWrapper';
+import { PaginationWrapper } from './style';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
@@ -24,14 +23,7 @@ function PerformanceCardGridItem({ profile, deleteHandler, setProfileForModal, t
     </Grid>
   );
 }
-const useStyles = makeStyles(() => ({
-  pagination: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: '2rem',
-  },
-}));
+
 /**
  * PerformanceProfileGrid is the react component for rendering grid
  * @param {{
@@ -60,9 +52,8 @@ function PerformanceProfileGrid({
   setPage,
   testHandler,
 }) {
-  const classes = useStyles();
   return (
-    <div>
+    <UsesSistent>
       <Grid container spacing={2} style={{ padding: '1rem' }}>
         {profiles.map((profile) => (
           <PerformanceCardGridItem
@@ -75,11 +66,11 @@ function PerformanceProfileGrid({
         ))}
       </Grid>
       {profiles.length ? (
-        <div className={classes.pagination}>
+        <PaginationWrapper>
           <Pagination count={pages} onChange={(_, page) => setPage(page - 1)} />
-        </div>
+        </PaginationWrapper>
       ) : null}
-    </div>
+    </UsesSistent>
   );
 }
 

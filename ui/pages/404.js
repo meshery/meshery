@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import CustomErrorMessage from '../components/ErrorPage';
-import { NoSsr } from '@material-ui/core';
+import { NoSsr } from '@mui/material';
 import { updatepagepath } from '../lib/store';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -15,7 +15,7 @@ const Error = () => {
   return (
     <NoSsr>
       <Head>
-        <title>404 - Page Not Found</title>
+        <title>404 - Page Not Found </title>
       </Head>
       <CustomErrorMessage />
     </NoSsr>

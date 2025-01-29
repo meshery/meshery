@@ -46,7 +46,7 @@ jobs:
         commit_message: 'Upgrading go.mod in response to meshery/meshery'
         branch: master
   notify-via-email:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
       - sync
     if: ${{ always() && contains(needs.*.result, 'failure') }}

@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/jaeger-operator/components/jaeger/icons/color/jaeger-color.svg
   whiteIcon: assets/img/integrations/jaeger-operator/components/jaeger/icons/white/jaeger-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates Jaeger installation and configuration",
   "Manages Jaeger resources",

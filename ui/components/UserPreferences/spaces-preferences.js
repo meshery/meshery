@@ -2,8 +2,8 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
-import { FormGroup, FormControlLabel, Grid } from '@material-ui/core';
-import NoSsr from '@material-ui/core/NoSsr';
+import { FormGroup, FormControlLabel, Grid } from '@layer5/sistent';
+import { NoSsr } from '@mui/material';
 import { setOrganization, setKeys } from '../../lib/store';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { useNotification } from '../../utils/hooks/useNotification';
@@ -12,11 +12,19 @@ import OrgIcon from '../../assets/icons/OrgIcon';
 import { ErrorBoundary as SistentErrorBoundary } from '@layer5/sistent';
 import { Provider } from 'react-redux';
 import { store } from '../../store';
-import { withStyles } from '@material-ui/core';
-import { Select, MenuItem, FormControl, FormLabel } from '@material-ui/core';
-import styles from './style';
+import { MenuItem } from '@layer5/sistent';
 import theme from '../../themes/app';
 import { useGetCurrentAbilities } from '../../rtk-query/ability';
+import { UsesSistent } from '../SistentWrapper';
+import { FormLabel } from '@mui/material';
+import {
+  FormContainerWrapper,
+  FormGroupWrapper,
+  StyledSelect,
+  SelectItem,
+  OrgText,
+  OrgIconContainer,
+} from './style';
 
 const SpacesPreferences = (props) => {
   const {
@@ -26,7 +34,7 @@ const SpacesPreferences = (props) => {
     error: orgsError,
   } = useGetOrgsQuery({});
   let orgs = orgsResponse?.organizations || [];
-  const { organization, setOrganization, classes } = props;
+  const { organization, setOrganization } = props;
   const [skip, setSkip] = React.useState(true);
 
   const { notify } = useNotification();
@@ -52,47 +60,48 @@ const SpacesPreferences = (props) => {
   return (
     <NoSsr>
       <>
-        {isOrgsSuccess && orgs && (
-          <div className={classes.formContainerWrapper}>
-            <FormControl component="fieldset" className={classes.formControlWrapper}>
-              <FormLabel component="legend" className={classes.formLabelWrapper}>
-                Spaces
-              </FormLabel>
-              <FormGroup>
-                <FormControlLabel
-                  key="SpacesPreferences"
-                  control={
-                    <Grid container spacing={1} alignItems="flex-end">
-                      <Grid item xs={12} data-cy="mesh-adapter-url">
-                        <Select
-                          value={organization.id}
-                          onChange={handleOrgSelect}
-                          SelectDisplayProps={{ style: { display: 'flex', padding: '10px' } }}
-                          className={classes.orgSelect}
-                        >
-                          {orgs?.map((org) => {
-                            return (
-                              <MenuItem key={org.id} value={org.id} className={classes.selectItem}>
-                                <div className={classes.orgIconWrapper}>
-                                  <OrgIcon
-                                    width="24"
-                                    height="24"
-                                    secondaryFill={theme.palette.darkSlateGray}
-                                  />
-                                </div>
-                                <span className={classes.org}>{org.name}</span>
+        <UsesSistent>
+          {isOrgsSuccess && orgs && (
+            <FormContainerWrapper>
+              <FormGroupWrapper component="fieldset">
+                <FormLabel component="legend" sx={{ fontSize: 20 }}>
+                  Spaces
+                </FormLabel>
+                <FormGroup>
+                  <FormControlLabel
+                    key="SpacesPreferences"
+                    control={
+                      <Grid container spacing={1} alignItems="flex-end">
+                        <Grid item xs={12} data-cy="mesh-adapter-url">
+                          <StyledSelect
+                            value={organization.id}
+                            onChange={handleOrgSelect}
+                            SelectDisplayProps={{ style: { display: 'flex', padding: '10px' } }}
+                          >
+                            {orgs?.map((org) => (
+                              <MenuItem key={org.id} value={org.id}>
+                                <SelectItem>
+                                  <OrgIconContainer>
+                                    <OrgIcon
+                                      width="24"
+                                      height="24"
+                                      secondaryFill={theme.palette.darkSlateGray}
+                                    />
+                                  </OrgIconContainer>
+                                  <OrgText>{org.name}</OrgText>
+                                </SelectItem>
                               </MenuItem>
-                            );
-                          })}
-                        </Select>
+                            ))}
+                          </StyledSelect>
+                        </Grid>
                       </Grid>
-                    </Grid>
-                  }
-                />
-              </FormGroup>
-            </FormControl>
-          </div>
-        )}
+                    }
+                  />
+                </FormGroup>
+              </FormGroupWrapper>
+            </FormContainerWrapper>
+          )}
+        </UsesSistent>
       </>
     </NoSsr>
   );
@@ -122,6 +131,7 @@ const SpacesPreferencesWithErrorBoundary = (props) => {
   );
 };
 
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(SpacesPreferencesWithErrorBoundary)),
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withRouter(SpacesPreferencesWithErrorBoundary));

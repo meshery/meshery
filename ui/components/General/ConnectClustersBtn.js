@@ -1,19 +1,13 @@
 import React from 'react';
-import { Button, withStyles } from '@material-ui/core';
 import Link from 'next/link';
 import { iconMedium } from '../../css/icons.styles';
-import AddIcon from '@material-ui/icons/AddCircleOutline';
+import AddIcon from '@mui/icons-material/AddCircleOutline';
+import { Button, useTheme } from '@layer5/sistent';
 
-const style = (theme) => ({
-  addIcon: {
-    width: theme.spacing(2.5),
-    paddingRight: theme.spacing(0.5),
-  },
-});
-
-function ConnectClustersBtn({ classes }) {
+function ConnectClustersBtn() {
+  const theme = useTheme();
   return (
-    <Link href="/settings">
+    <Link href="/management/connections">
       <Button
         type="submit"
         variant="contained"
@@ -21,11 +15,17 @@ function ConnectClustersBtn({ classes }) {
         size="large"
         style={{ margin: '0.5rem 0.5rem', whiteSpace: 'nowrap' }}
       >
-        <AddIcon style={iconMedium} className={classes.addIcon} />
+        <AddIcon
+          style={{
+            width: theme.spacing(2.5),
+            paddingRight: theme.spacing(0.5),
+            ...iconMedium,
+          }}
+        />
         Connect Clusters
       </Button>
     </Link>
   );
 }
 
-export default withStyles(style)(ConnectClustersBtn);
+export default ConnectClustersBtn;
