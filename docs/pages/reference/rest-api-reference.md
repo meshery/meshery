@@ -85,3 +85,4 @@ Using curl, you can access Meshery's REST API by executing this command:
 
 Self-generated documentation based on Meshery's OpenAPI specification for it's REST API.
 
+{% include alert.html type="info" title="An alternative overview" content="See the <a href='https://docs.google.com/spreadsheets/d/1ABJCbfQRi0uN_YoP2kmHZ-lTI4S4QuvRk1_unomKNRE/edit'>Meshery API Endpoints spreadsheet</a> for an alternative overview of these endpoints." %}
