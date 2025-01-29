@@ -15,9 +15,10 @@ import {
   ResponsiveDataTable,
   SearchBar,
   Button,
-  IconButton,
   Paper,
   Typography,
+  IconButton,
+  charcoal,
 } from '@layer5/sistent';
 import MesheryPerformanceComponent from './index';
 import PerformanceProfileGrid from './PerformanceProfileGrid';
@@ -58,7 +59,6 @@ function PerformanceProfile({ updateProgress, user, handleDelete }) {
     ('grid'),
   );
   const modalRef = useRef(null);
-
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
@@ -315,13 +315,16 @@ function PerformanceProfile({ updateProgress, user, handleDelete }) {
                     setSelectedProfile(testProfiles[tableMeta.rowIndex]);
                   }}
                   aria-label="edit"
-                  // @ts-ignore
-                  color="rgba(0, 0, 0, 0.54)"
                   disabled={
                     !CAN(keys.EDIT_PERFORMANCE_TEST.action, keys.EDIT_PERFORMANCE_TEST.subject)
                   }
                 >
-                  <EditIcon style={iconMedium} />
+                  <EditIcon
+                    style={{
+                      fill: charcoal[50],
+                      ...iconMedium,
+                    }}
+                  />
                 </IconButton>
               </ReusableTooltip>
 
@@ -333,11 +336,14 @@ function PerformanceProfile({ updateProgress, user, handleDelete }) {
                     setSelectedProfile({ ...testProfiles[tableMeta.rowIndex], runTest: true });
                   }}
                   aria-label="run"
-                  // @ts-ignore
-                  color="rgba(0, 0, 0, 0.54)"
                   disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
                 >
-                  <PlayArrowIcon style={iconMedium} />
+                  <PlayArrowIcon
+                    style={{
+                      fill: charcoal[50],
+                      ...iconMedium,
+                    }}
+                  />
                 </IconButton>
               </ReusableTooltip>
             </div>

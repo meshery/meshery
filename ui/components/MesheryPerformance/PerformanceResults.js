@@ -501,8 +501,6 @@ function MesheryResults({
   const theme = useTheme();
 
   const searchTimeout = useRef();
-
-  //hooks
   const { notify } = useNotification();
 
   useEffect(() => {

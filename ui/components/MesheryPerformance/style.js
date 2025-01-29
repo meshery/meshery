@@ -1,4 +1,4 @@
-import { styled } from '@layer5/sistent';
+import { IconButton, styled } from '@layer5/sistent';
 import { Calendar } from 'react-big-calendar';
 
 export const CardButton = styled('div')(() => ({
@@ -94,4 +94,8 @@ export const CalendarComponent = styled(Calendar)(({ theme }) => ({
     backgroundColor: theme.palette.mode === 'dark' ? '#505050' : '#eaf6ff',
     color: theme.palette.mode === 'dark' ? 'white' : 'black',
   },
+}));
+
+export const IconButtonComp = styled(IconButton)(({ theme }) => ({
+  color: theme.palette.icon.default,
 }));
