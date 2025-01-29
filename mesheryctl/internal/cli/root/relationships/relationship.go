@@ -55,6 +55,8 @@ mesheryctl exp relationships view [model-name]
 //To search a specific relationship
 mesheryctl exp relationships search --[flag] [query-text]
 
+//To generate a relationship documentation 
+mesheryctl exp relationship generate  [google-sheets-credential] --sheetId [sheet-id]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {

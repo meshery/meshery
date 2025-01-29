@@ -175,7 +175,7 @@ func TestGenerate(t *testing.T) {
 
 func TestGenerateArguments(t *testing.T) {
 
-	const errMsg = "Usage: mesheryctl exp relationship generate $CRED [google-sheets-credential] --sheetId [sheet-id]\nRun 'mesheryctl exp relationship generate --help' to see detailed help message"
+	const errMsg = "Usage: mesheryctl exp relationship generate [google-sheets-credential] --sheetId [sheet-id]\nRun 'mesheryctl exp relationship generate --help' to see detailed help message"
 
 	// test scenarios for fetching data
 	tests := []struct {

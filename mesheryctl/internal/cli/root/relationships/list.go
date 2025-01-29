@@ -33,11 +33,12 @@ var listCmd = &cobra.Command{
 	Short: "List registered relationships",
 	Long:  "List all relationships registered in Meshery Server",
 	Example: `
-	View list of relationship
-    mesheryctl exp relationship list
-    View list of relationship with specified page number (25 relationships per page)
-    mesheryctl exp relationship list --page 2
-	`,
+// View list of relationship
+mesheryctl exp relationship list
+
+// View list of relationship with specified page number (25 relationships per page)
+mesheryctl exp relationship list --page 2
+`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp relationship list \nRun 'mesheryctl exp relationship list --help' to see detailed help message"
 		if len(args) != 0 {

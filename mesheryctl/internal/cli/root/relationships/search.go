@@ -45,9 +45,9 @@ var searchCmd = &cobra.Command{
 	Long:  "Searches and finds the realtionship used by different models based on the query-text.",
 	Example: `
 // Search for relationship using a query
-mesheryctl exp relationship search --[flag] [query-text]`,
+mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>] [query-text]`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp relationship search --[flag] [query-text] \nRun 'mesheryctl exp relationship search --help' to see detailed help message"
+		const errMsg = "Usage: mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>] [query-text] \nRun 'mesheryctl exp relationship search --help' to see detailed help message"
 		if len(args) == 1 {
 			return fmt.Errorf("flag is missing. Please provide flag \n\n%v", errMsg)
 		}
