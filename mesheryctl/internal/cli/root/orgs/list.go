@@ -74,7 +74,6 @@ var ListOrgCmd = &cobra.Command{
 			utils.Log.Error(err)
 			return nil
 		}
-		fmt.Println(string(JsonData))
 
 		var orgsPage models.OrganizationsPage
 		err = json.Unmarshal(JsonData, &orgsPage)
