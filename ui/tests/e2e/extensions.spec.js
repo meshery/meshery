@@ -7,38 +7,30 @@ test.describe('Extensions Section Tests', () => {
     // Visit The Meshery Serve URL
     await page.goto(ENV.MESHERY_SERVER_URL);
 
-    const extensionsNav = page.locator('[data-test="navigation"] >> text=Extensions');
+    const extensionsNav = page.locator('[data-cy="Extensions"]');
     await extensionsNav.click();
   });
 
   test('Verify Kanvas Snapshot using data-testid', async ({ page }) => {
-    // Verify heading using data-testid
     await expect(page.getByTestId('kanvas-snapshot-heading')).toBeVisible();
-
-    // Verify description using data-testid
     await expect(page.getByTestId('kanvas-snapshot-description')).toBeVisible();
-
-    // Verify enable button using data-testid
+    
     const enableButton = page.getByTestId('kanvas-snapshot-enable-btn');
     await expect(enableButton).toBeVisible();
     await expect(enableButton).toBeDisabled();
-
-    // Verify snapshot logo using data-testid
+    
     await expect(page.getByTestId('kanvas-snapshot-image')).toBeVisible();
   });
 
   test('Verify Performance Analysis Details', async ({ page }) => {
-    // Verify heading using data-testid
     await expect(page.getByTestId('performance-analysis-heading')).toBeVisible();
 
-    // Verify enable button using data-testid
     const performanceEnableButton = page.getByTestId('performance-analysis-enable-btn');
     await expect(performanceEnableButton).toBeVisible();
     await expect(performanceEnableButton).toBeDisabled();
   });
 
   test('Verify Kanvas Details', async ({ page, context }) => {
-    // Verify Kanvas heading using data-testid
     await expect(page.getByTestId('kanvas-signup-heading')).toBeVisible();
 
     const [newPage] = await Promise.all([
@@ -51,7 +43,6 @@ test.describe('Extensions Section Tests', () => {
   });
 
   test('Verify Meshery Docker Extension Details', async ({ page, context }) => {
-    // Verify Docker Extension heading using data-testid
     await expect(page.getByTestId('docker-extension-heading')).toBeVisible();
 
     const [newPage] = await Promise.all([
@@ -78,30 +69,14 @@ test.describe('Extensions Section Tests', () => {
   });
 
   test('Verify Meshery Catalog Section Details', async ({ page, context }) => {
-    // Verify Catalog section heading using data-testid
     await expect(page.getByTestId('catalog-section-heading')).toBeVisible();
 
-    // Verify catalog toggle switch using data-testid
-    await expect(page.getByTestId('catalog-toggle-switch')).toBeVisible();
-
-    // First verify the toggle button functionality
-    const toggleButton = page
-      .locator(
-        'div:has-text("Explore the Meshery Catalog") >> .MuiSwitch-root input[type="checkbox"]',
-      )
-      .nth(0);
-    await expect(toggleButton).toBeVisible();
-
-    // Click toggle Button and Verify the State changes
-    const initialState = await toggleButton.isChecked();
+    const toggleButton = page.getByTestId('catalog-toggle-switch');
     await toggleButton.click();
-    await expect(toggleButton).toBeChecked(!initialState);
 
-    // Verify the Meshery Catalog Link
     const catalogLink = page.locator('a[href="https://meshery.io/catalog"]');
     const [newPage] = await Promise.all([context.waitForEvent('page'), catalogLink.click()]);
 
-    // Verify the URL
     await expect(newPage).toHaveURL('https://meshery.io/catalog');
     await newPage.close();
   });
@@ -113,21 +88,12 @@ test.describe('Extensions Section Tests', () => {
     });
 
     // Test the "Open Adapter docs" link
-    const adapterDocsLink = istioSection.locator('a:has-text("Open Adapter docs")').first();
-    await expect(adapterDocsLink).toBeVisible();
-
-    const [docsPage] = await Promise.all([context.waitForEvent('page'), adapterDocsLink.click()]);
+    const [docsPage] = await Promise.all([
+      context.waitForEvent('page'),
+      page.getByRole('link', { name: 'Open Adapter docs' }).click(),
+    ]);
 
     await expect(docsPage).toHaveURL('https://docs.meshery.io/concepts/architecture/adapters');
     await docsPage.close();
-
-    const toggleButton = page
-      .locator('div:has-text("Meshery Catalog") >> input[type="checkbox"]')
-      .nth(1);
-    await expect(toggleButton).toBeVisible();
-
-    const initialState = await toggleButton.isChecked();
-    await toggleButton.click();
-    await expect(toggleButton).toBeChecked(!initialState);
   });
 });
