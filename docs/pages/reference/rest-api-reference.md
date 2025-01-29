@@ -81,8 +81,7 @@ Using curl, you can access Meshery's REST API by executing this command:
 
 </details>
 
-### Self-generated documentation based on Meshery's OpenAPI specification for it's REST API.
-
-Meshery's REST API can be explored interactively using the Swagger UI Playground.
-
 ## Endpoints
+
+Self-generated documentation based on Meshery's OpenAPI specification for it's REST API.
+
