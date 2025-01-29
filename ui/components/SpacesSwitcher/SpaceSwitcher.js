@@ -45,10 +45,9 @@ export const StyledMenuItem = styled(MenuItem)(({ theme }) => ({
   flexDirection: 'row',
   alignItems: 'center',
   textAlign: 'center',
-  fill: theme.palette.secondary.text,
+  fill: theme.palette.text.default,
 }));
 export const StyledSelect = styled(Select)(() => ({
-  paddingTop: '0.5rem',
   backgroundColor: 'transparent',
   '& .OrgClass': {
     display: 'none',
@@ -65,7 +64,7 @@ export const StyledTextField = styled(TextField)(({ theme }) => ({
   marginRight: '0.625rem', // 10px converted to rem
   marginTop: '0.5rem', // 8px converted to rem
   '& .MuiInput-underline:after': {
-    borderBottomColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary, // change the color here
+    borderBottomColor: theme.palette.mode === 'dark' ? '#00B39F' : theme.palette.text.default, // change the color here
   },
   '& .MuiInput': {
     fontFamily: 'Qanelas Soft, sans-serif',
@@ -141,6 +140,8 @@ function OrgMenu(props) {
                             display: 'flex',
                             flexDirection: 'row',
                             fill: '#eee',
+                            paddingBlock: '9px 8px',
+                            paddingInline: '18px 34px',
                             color: theme.palette.background.constant.white,
                           },
                         }}
@@ -155,7 +156,7 @@ function OrgMenu(props) {
                           },
                           getContentAnchorEl: null,
                           style: {
-                            fill: theme.palette.secondary.text,
+                            fill: theme.palette.text.secondary,
                           },
                         }}
                       >
@@ -165,7 +166,7 @@ function OrgMenu(props) {
                               width="24"
                               height="24"
                               className="OrgClass"
-                              style={{ marginRight: '1rem' }}
+                              style={{ marginRight: '1rem', color: theme.palette.icon.default }}
                             />
                             <span>{org.name}</span>
                           </StyledMenuItem>

@@ -6,6 +6,7 @@ function ViewSwitch({ view, changeView }) {
   const theme = useTheme();
   return (
     <ToggleButton
+      style={{ border: 'none' }}
       size="small"
       value={view}
       onChange={() => {
@@ -17,9 +18,9 @@ function ViewSwitch({ view, changeView }) {
       }}
     >
       {view === 'grid' ? (
-        <TableChartIcon style={{ fill: theme.palette.icon.default }} />
+        <TableChartIcon style={{ color: theme.palette.icon.default }} />
       ) : (
-        <GridOnIcon style={{ fill: theme.palette.icon.default }} />
+        <GridOnIcon style={{ color: theme.palette.icon.default }} />
       )}
     </ToggleButton>
   );
