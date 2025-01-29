@@ -78,25 +78,31 @@
     // gap: 10px;
     .selected {
       font-weight: 600;
-      &:hover {
-        text-decoration: none;
-      }
-    }
-    .active {
-      color: var(--sidenav-hover);
     }
     & ul {
       font-size: .9rem;
       padding-inline-start: 0px;
       margin-bottom: 0;
+      margin-left: 8px;
       & li {
         list-style: none !important;
-
+        & ul li {
+          list-style: disc !important;
+          &.active {
+            color: var(--sidenav-hover);
+          }
+  
+          &.active::marker {
+            color: var(--sidenav-hover);
+          }
+        }
+        &.active > a {
+          color: var(--sidenav-hover);
+        }
         & a {
           color: var(--color-secondary-medium);
 
           &:hover {
-            color: var(--color-secondary-dark) !important;
             text-decoration: underline;
           }
 

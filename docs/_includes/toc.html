@@ -63,8 +63,8 @@ $(document).ready(function() {
           }, 1000);
         }
       // Added .active class to the clicked link
-      $('.md-nav__link').removeClass('active');
-      $(this).addClass('active');
+      $('.md-nav__item').removeClass('active');
+      $(this).closest('.md-nav__item').addClass('active');
       });
     });
 </script>
