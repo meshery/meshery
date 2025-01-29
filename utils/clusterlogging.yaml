@@ -1,0 +1,105 @@
+---
+apiVersion: "logging.openshift.io/v1"
+kind: "ClusterLogging"
+metadata:
+  name: "instance"
+spec:
+  managementState: "Managed"
+  collection:
+    logs:
+      type: "fluentd"
+      fluentd: {}
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: prometheus-k8s
+subjects:
+  - kind: ServiceAccount
+    name: prometheus-k8s
+    namespace: openshift-monitoring
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: prometheus-k8s
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: prometheus-k8s
+rules:
+  - verbs:
+      - get
+      - list
+      - watch
+    apiGroups:
+      - ''
+    resources:
+      - services
+      - endpoints
+      - pods
+  - verbs:
+      - get
+      - list
+      - watch
+    apiGroups:
+      - extensions
+    resources:
+      - ingresses
+  - verbs:
+      - get
+      - list
+      - watch
+    apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingresses
+---
+apiVersion: logging.openshift.io/v1
+kind: ClusterLogForwarder
+metadata:
+  name: instance
+  namespace: openshift-logging
+spec:
+  outputs:
+    - name: app-logs
+      secret:
+        name: clo-kafka
+      type: kafka
+      url: >-
+        tls://odh-message-bus-kafka-bootstrap-opf-kafka.apps.smaug.na.operate-first.cloud:443/infra-prod.cluster-logs.application
+    - name: infra-logs
+      secret:
+        name: clo-kafka
+      type: kafka
+      url: >-
+        tls://odh-message-bus-kafka-bootstrap-opf-kafka.apps.smaug.na.operate-first.cloud:443/infra-prod.cluster-logs.infrastructure
+    - name: audit-logs
+      secret:
+        name: clo-kafka
+      type: kafka
+      url: >-
+        tls://odh-message-bus-kafka-bootstrap-opf-kafka.apps.smaug.na.operate-first.cloud:443/infra-prod.cluster-logs.audit
+  pipelines:
+    - inputRefs:
+        - application
+      name: forward-app-logs
+      outputRefs:
+        - app-logs
+    - inputRefs:
+        - infrastructure
+      name: forward-infra-logs
+      outputRefs:
+        - infra-logs
+    - inputRefs:
+        - audit
+      name: forward-audit-logs
+      outputRefs:
+        - audit-logs
+---
+apiVersion: viaduct.ai/v1
+kind: ksops
+metadata:
+  name: secret-generator
+files:
+  - ./secrets/clo-kafka.enc.yaml
