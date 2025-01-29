@@ -1,4 +1,4 @@
-import Grid from '@material-ui/core/Grid';
+import Grid from '@layer5/sistent';
 import React, { useMemo } from 'react';
 import BBChart from '../../BBChart';
 import { donut } from 'billboard.js';
