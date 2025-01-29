@@ -13,6 +13,7 @@ import {
   TextField,
   Typography,
   Select,
+  useTheme,
 } from '@layer5/sistent';
 import { NoSsr } from '@mui/material';
 import { setKeys, setOrganization, setWorkspace } from '../../lib/store';
@@ -22,9 +23,7 @@ import { store } from '../../store';
 import { withRouter } from 'next/router';
 import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
 import { iconXLarge } from 'css/icons.styles';
-// import { useGetWorkspacesQuery } from '@/rtk-query/workspace';
 import { useGetCurrentAbilities } from '@/rtk-query/ability';
-import theme from '@/themes/app';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
 import { UsesSistent } from '../SistentWrapper';
 import _ from 'lodash';
@@ -122,6 +121,7 @@ function OrgMenu(props) {
     setOrganization({ organization: selected });
     setSkip(false);
   };
+  const theme = useTheme();
   return (
     <NoSsr>
       {isOrgsSuccess && orgs && open && (
@@ -141,7 +141,7 @@ function OrgMenu(props) {
                             display: 'flex',
                             flexDirection: 'row',
                             fill: '#eee',
-                            color: theme.palette.secondary.white,
+                            color: theme.palette.background.constant.white,
                           },
                         }}
                         MenuProps={{

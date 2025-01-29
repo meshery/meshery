@@ -13,7 +13,9 @@ const EnvironmentModal = ({ isOpenModal, setIsOpenModal }) => {
       <Modal
         open={isOpenModal}
         closeModal={() => setIsOpenModal(false)}
-        headerIcon={<EnvironmentIcon height={24} width={24} fill={theme.palette.common.white} />}
+        headerIcon={
+          <EnvironmentIcon height={24} width={24} fill={theme.palette.background.constant.white} />
+        }
         title="Environment"
         maxWidth="xl"
       >

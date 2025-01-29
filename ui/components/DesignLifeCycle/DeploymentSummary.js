@@ -94,7 +94,7 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
             }
             style={{ gap: '0.25rem' }}
           >
-            Open In Operator <ExternalLinkIcon fill={theme.palette.common.white} />
+            Open In Operator <ExternalLinkIcon fill={theme.palette.background.constant.white} />
           </Button>
         )}
       </StyledDetailBox>

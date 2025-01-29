@@ -16,7 +16,7 @@ import {
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CloseIcon from '@mui/icons-material/Close';
 import { UsesSistent } from './SistentWrapper';
-import theme from '@/themes/app';
+
 const StyledPaper = styled(Paper)(({ theme }) => ({
   top: '50%',
   left: '50%',
@@ -47,8 +47,8 @@ const Info = styled(InfoIcon)(({ theme }) => ({
   color: theme.palette.type === 'dark' ? theme.palette.background.brand?.default : LIGHT_TEAL,
 }));
 
-const FooterText = styled(Typography)(({ theme }) => ({
-  color: theme.palette.text.constant.white,
+const FooterText = styled(Typography)(() => ({
+  color: 'white',
   fontSize: '.85rem',
   textDecoration: 'italics',
   fontFamily: 'Qanelas Soft, sans-serif',
@@ -91,14 +91,14 @@ const Details = styled('div')({
   display: 'block',
 });
 
-const ModelHeader = styled(Typography)(({ theme }) => ({
+const ModelHeader = styled(Typography)({
   fontSize: '1rem',
-  color: theme.palette.text.constant.white,
-}));
+  color: 'white',
+});
 
-const IconStyle = styled(CloseIcon)(({ theme }) => ({
-  color: theme.palette.text.constant.white,
-}));
+const IconStyle = styled(CloseIcon)({
+  color: 'white',
+});
 
 const IconContainer = styled(IconButton)({
   transition: 'all .3s',
@@ -151,7 +151,7 @@ const TroubleshootHelpLink = styled('a')(({ theme }) => ({
 }));
 
 const ContactHelpLink = styled('a')({
-  color: theme.palette.text.constant.white,
+  color: 'white',
   fontWeight: 'bold',
   textDecoration: 'none',
 });

@@ -29,13 +29,13 @@ const ContentBody = styled(Box)({
 
 const CancelButton = styled(Button)(({ theme }) => ({
   backgroundColor: theme.palette.background.neutral.default,
-  color: theme.palette.background.constant.white,
+  color: 'white',
   margin: 0,
 }));
 
 const StepperButton = styled(Button)(({ theme }) => ({
   marginTop: '1rem',
-  color: theme.palette.background.constant.white,
+  color: 'white',
   backgroundColor: theme.palette.background.brand.default,
   '&:hover': {
     backgroundColor: theme.palette.background.brand.default,

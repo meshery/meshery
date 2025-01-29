@@ -54,7 +54,7 @@ const TipsCarousel = ({ tips }) => {
               color:
                 index === activeStep
                   ? theme.palette.background.brand?.default
-                  : theme.palette.common.white,
+                  : theme.palette.background.constant.white,
             }}
           >
             &bull;
