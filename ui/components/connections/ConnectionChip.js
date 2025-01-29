@@ -1,4 +1,4 @@
-import { MenuItem, Avatar } from '@layer5/sistent';
+import { Avatar } from '@layer5/sistent';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import ExploreIcon from '@mui/icons-material/Explore';
@@ -22,6 +22,7 @@ import {
   MaintainanceChip,
   NotFoundChip,
   RegisteredChip,
+  ConnectionStyledMenuItem,
 } from './styles';
 import { iconMedium } from 'css/icons.styles';
 import { UsesSistent } from '../SistentWrapper';
@@ -76,105 +77,105 @@ export const TootltipWrappedConnectionChip = (props) => {
 
 const DiscoveredStateChip = ({ value }) => {
   return (
-    <MenuItem value={value}>
+    <ConnectionStyledMenuItem value={value} sx={{ padding: 0 }}>
       <DiscoveredChip
         avatar={<ExploreIcon />}
         label={value}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       {/* <HelpToolTip classes={classes} value="1-discovered" /> */}
-    </MenuItem>
+    </ConnectionStyledMenuItem>
   );
 };
 
 const RegisteredStateChip = ({ value }) => {
   return (
-    <MenuItem value={value}>
+    <ConnectionStyledMenuItem value={value}>
       <RegisteredChip
         avatar={<AssignmentTurnedInIcon />}
         label={value}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       {/* <HelpToolTip classes={classes} value="2-registered" /> */}
-    </MenuItem>
+    </ConnectionStyledMenuItem>
   );
 };
 
 const ConnectedStateChip = ({ value }) => {
   return (
-    <MenuItem value={value}>
+    <ConnectionStyledMenuItem value={value}>
       <ConnectedChip
         avatar={<CheckCircleIcon />}
         label={value}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       {/* <HelpToolTip classes={classes} value="3-connected" /> */}
-    </MenuItem>
+    </ConnectionStyledMenuItem>
   );
 };
 
 const DisconnectedStateChip = ({ value }) => {
   return (
-    <MenuItem value={value}>
+    <ConnectionStyledMenuItem value={value}>
       <DisconnectedChip
         avatar={<DisconnectIcon fill={notificationColors.lightwarning} width={24} height={24} />}
         label={value}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
-    </MenuItem>
+    </ConnectionStyledMenuItem>
   );
 };
 
 const IgnoredStateChip = ({ value }) => {
   // const classes = styles/();
   return (
-    <MenuItem value={value}>
+    <ConnectionStyledMenuItem value={value}>
       <IgnoredChip
         avatar={<RemoveCircleIcon />}
         label={value}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       {/* <HelpToolTip classes={classes} value="4-ignored" /> */}
-    </MenuItem>
+    </ConnectionStyledMenuItem>
   );
 };
 
 const DeletedStateChip = ({ value }) => {
   return (
-    <MenuItem value={value}>
+    <ConnectionStyledMenuItem value={value}>
       <DeletedChip
         avatar={<DeleteForeverIcon />}
         label={value}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       {/* <HelpToolTip classes={classes} value="7-deleted" /> */}
-    </MenuItem>
+    </ConnectionStyledMenuItem>
   );
 };
 
 const MaintainanceStateChip = ({ value }) => {
   return (
-    <MenuItem value={value}>
+    <ConnectionStyledMenuItem value={value}>
       <MaintainanceChip
         avatar={<HandymanIcon />}
         label={value}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       {/* <HelpToolTip classes={classes} value="7-deleted" /> */}
-    </MenuItem>
+    </ConnectionStyledMenuItem>
   );
 };
 
 const NotFoundStateChip = ({ value }) => {
   return (
-    <MenuItem value={value}>
+    <ConnectionStyledMenuItem value={value}>
       <NotFoundChip
         avatar={<NotInterestedRoundedIcon />}
         label={value}
         // helpIcon={<HelpToolTip classes={classes} value="7-deleted" />}
       />
       {/* <HelpToolTip classes={classes} value="7-deleted" /> */}
-    </MenuItem>
+    </ConnectionStyledMenuItem>
   );
 };
 
@@ -196,9 +197,9 @@ const NotFoundStateChip = ({ value }) => {
 
 const Default = ({ value }) => {
   return (
-    <MenuItem value={value}>
+    <ConnectionStyledMenuItem value={value}>
       <DiscoveredChip value={value} avatar={<ExploreIcon />} label={value} />
-    </MenuItem>
+    </ConnectionStyledMenuItem>
   );
 };
 
