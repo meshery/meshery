@@ -54,12 +54,13 @@ RUN npm run build && npm run export
 # This image will be reuse for wrk2, seed content and the last built
 FROM alpine:3.15.3 as base-alpine
 
-FROM base-alpine as wrk2
-RUN apk update \
-    && apk --no-cache --update add alpine-sdk zlib-dev openssl-dev wget git
-RUN git config --global user.email "meshery@layer5.io"
-RUN git config --global user.name "meshery"
-RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
+# Deprecating wrk2 in favor of nighthawk and fortio
+# FROM base-alpine as wrk2
+# RUN apk update \
+#     && apk --no-cache --update add alpine-sdk zlib-dev openssl-dev wget git
+# RUN git config --global user.email "meshery@layer5.io"
+# RUN git config --global user.name "meshery"
+# RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 
 FROM base-alpine as seed_content
 RUN apk add --no-cache curl
@@ -126,8 +127,8 @@ COPY --from=meshery-server /github.com/meshery/meshery/server/helpers/swagger.ya
 COPY --from=ui-builder /app/out /app/ui/out
 COPY --from=ui-builder /app/public /app/ui/public
 COPY --from=ui-provider-builder /app/out /app/provider-ui/out
-COPY --from=wrk2 /wrk2 /app/server/cmd/wrk2
-COPY --from=wrk2 /wrk2/wrk /usr/local/bin
+# COPY --from=wrk2 /wrk2 /app/server/cmd/wrk2
+# COPY --from=wrk2 /wrk2/wrk /usr/local/bin
 COPY --from=seed_content /seed_content /home/appuser/.meshery/seed_content
 COPY --from=layer5/getnighthawk:v1.0.1 /usr/local/bin/nighthawk_service /app/server/cmd/
 COPY --from=layer5/getnighthawk:v1.0.1 /usr/local/bin/nighthawk_output_transform /app/server/cmd/
