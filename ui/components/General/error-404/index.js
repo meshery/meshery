@@ -78,6 +78,7 @@ const DefaultError = (props) => {
             <UnknownServerSideError errorContent={errorContent} />
           ) : null}
         </div>
+
         <ErrorContainer>
           <ErrorSectionContainer>
             <ErrorSection>
