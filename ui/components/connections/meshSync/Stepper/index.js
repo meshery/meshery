@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { useColorlibStepIconStyles } from './styles';
+import { Step } from '@mui/material';
+import { Box, styled } from '@layer5/sistent';
 import TipsCarousel from '../../../General/TipsCarousel';
 import {
   ConnectionStepperTips,
@@ -7,49 +8,76 @@ import {
   registerConnectionIcons,
   registerConnectionSteps,
 } from './constants';
-import clsx from 'clsx';
-import { Step } from '@mui/material';
 import { ColorlibConnector, CustomLabelStyle, StepperContainer } from '../../styles';
 
-function StepperIcon(props) {
-  const classes = useColorlibStepIconStyles();
-  const { active, completed, stepIcons } = props;
+const StepIconWrapper = styled('div')(({ theme, active, completed }) => ({
+  backgroundColor: theme.palette.secondary.filterChipBackground,
+  zIndex: 1,
+  color: '#fff',
+  width: 50,
+  height: 50,
+  display: 'flex',
+  border: `.2rem solid ${theme.palette.secondary.filterChipBackground}`,
+  borderRadius: '50%',
+  justifyContent: 'center',
+  alignItems: 'center',
+  cursor: 'default',
+  '@media (max-width:780px)': {
+    width: 40,
+    height: 40,
+  },
+  ...(active && {
+    background: theme.palette.secondary.elevatedComponents,
+    color: '#3C494E',
+    border: '.2rem solid #00B39F',
+    transition: 'all 0.5s ease-in',
+  }),
+  ...(completed && {
+    border: '.2rem solid #00B39F',
+    background: '#00B39F',
+    transition: 'all 0.5s ease-in',
+  }),
+}));
 
-  const iconComponent = stepIcons[String(props.icon)];
+const StepperLayout = styled(Box)({
+  display: 'flex',
+  flexDirection: 'column',
+});
 
+const StepperHeader = styled(Box)({
+  display: 'flex',
+  justifyContent: 'center',
+});
+
+const StepperContent = styled(Box)({
+  marginTop: '2rem',
+  display: 'flex',
+  minHeight: '58vh',
+  minWidth: '100%',
+  width: '100%',
+});
+
+function StepperIcon({ active, completed, stepIcons, icon }) {
+  const iconComponent = stepIcons[String(icon)];
   const additionalProps = {
     fill: completed ? 'white' : 'currentColor',
   };
 
   return (
-    <div
-      className={clsx(classes.icnlist, {
-        [classes.active]: active,
-        [classes.completed]: completed,
-      })}
-      style={{ position: 'relative', cursor: 'default' }}
-    >
+    <StepIconWrapper active={active} completed={completed}>
       {React.cloneElement(iconComponent, additionalProps)}
-    </div>
+    </StepIconWrapper>
   );
 }
 
-/* eslint-disable */
-
-export default function CustomizedSteppers({
-  sharedData,
-  setSharedData,
-  connectionData,
-  onClose,
-  handleRegistrationComplete,
-}) {
+export default function CustomizedSteppers({ sharedData, setSharedData, connectionData, onClose }) {
+  const [activeStep, setActiveStep] = React.useState(0);
   const stepData = {
     stepContent: registerConnectionContent,
     stepIcons: registerConnectionIcons,
     steps: registerConnectionSteps,
   };
   const { stepContent, stepIcons, steps } = stepData;
-  const [activeStep, setActiveStep] = React.useState(0);
 
   React.useEffect(() => {
     setSharedData({
@@ -65,6 +93,7 @@ export default function CustomizedSteppers({
       onClose: onClose,
     }));
   }, [sharedData]);
+
   const ActiveStepContent = stepContent[String(activeStep + 1)].component;
 
   const handleNext = () => {
@@ -77,8 +106,8 @@ export default function CustomizedSteppers({
   }, {});
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <div style={{ display: 'flex', justifyContent: 'center' }}>
+    <StepperLayout>
+      <StepperHeader>
         <StepperContainer
           alternativeLabel
           activeStep={activeStep}
@@ -94,19 +123,11 @@ export default function CustomizedSteppers({
             </Step>
           ))}
         </StepperContainer>
-      </div>
-      <div
-        style={{
-          marginTop: '2rem',
-          display: 'flex',
-          minHeight: '58vh',
-          minWidth: '100%',
-          width: '100%',
-        }}
-      >
+      </StepperHeader>
+      <StepperContent>
         <TipsCarousel tips={ConnectionStepperTips} />
         {React.cloneElement(ActiveStepContent, stepProps)}
-      </div>
-    </div>
+      </StepperContent>
+    </StepperLayout>
   );
 }

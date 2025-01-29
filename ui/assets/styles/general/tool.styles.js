@@ -79,7 +79,7 @@ export const CardStyle = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'isAnimated' && prop !== 'isSelected',
 })(({ theme, isAnimated, isSelected }) => ({
   background: isAnimated ? tabMenu.hover : tabMenu.main,
-  color: isSelected ? theme.palette.text.default : theme.palette.common.white,
+  color: isSelected ? theme.palette.text.default : theme.palette.background.constant.white,
   height: isAnimated ? '3rem' : '10rem',
   width: isAnimated ? '15rem' : '13rem',
   display: 'flex',

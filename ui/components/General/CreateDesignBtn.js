@@ -1,17 +1,10 @@
 import React from 'react';
-import { Button, withStyles } from '@material-ui/core';
+import { Button } from '@layer5/sistent';
 import Link from 'next/link';
-import { iconMedium } from '../../css/icons.styles';
 import AddIcon from '@mui/icons-material/AddCircleOutline';
+import { iconMedium } from 'css/icons.styles';
 
-const style = (theme) => ({
-  addIcon: {
-    width: theme.spacing(2.5),
-    paddingRight: theme.spacing(0.5),
-  },
-});
-
-function CreateDesignBtn({ classes }) {
+function CreateDesignBtn() {
   return (
     <Link href="/configuration/design">
       <Button
@@ -21,11 +14,11 @@ function CreateDesignBtn({ classes }) {
         size="large"
         style={{ margin: '0.5rem 0.5rem', whiteSpace: 'nowrap' }}
       >
-        <AddIcon style={iconMedium} className={classes.addIcon} />
+        <AddIcon style={{ marginRight: '0.5rem', ...iconMedium }} />
         Create Design
       </Button>
     </Link>
   );
 }
 
-export default withStyles(style)(CreateDesignBtn);
+export default CreateDesignBtn;
