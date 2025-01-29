@@ -1,4 +1,4 @@
-import { Grid } from '@material-ui/core';
+import { Grid } from '@layer5/sistent';
 import React, { useState } from 'react';
 import PerformanceCard from './PerformanceCard';
 import { Pagination } from '@layer5/sistent';

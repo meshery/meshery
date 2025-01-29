@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { updateProgress } from '../../lib/store';
 import { bindActionCreators } from 'redux';
-import useMediaQuery from '@material-ui/core/useMediaQuery';
+import { useMediaQuery } from '@mui/material';
 import { withRouter } from 'next/router';
 import MesheryMetrics from '../MesheryMetrics';
 import PerformanceCalendar from './PerformanceCalendar';
