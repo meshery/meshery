@@ -96,11 +96,7 @@ const ValidationResults_ = (props) => {
         aria-labelledby="nested-list-subheader"
         subheader={
           <ValidationSubHeader disableSticky="true" component="div" disablePadding>
-            <Typography
-              varaint="h6"
-              disablePadding
-              // style={{ position: "relative", left: "35px" }}
-            >
+            <Typography varaint="h6" disablePadding style={{ color: theme.palette.text.disabled }}>
               {compCount} component{compCount > 1 ? 's' : ''} and {annotationCount} annotations
             </Typography>
 

@@ -19,34 +19,34 @@ export const DryRunErrorContainer = styled(ListItem)(({ theme }) => ({
   },
 }));
 
-export const ComponentValidationListItem = styled(ListItem)(({ theme }) => ({
+export const ComponentValidationListItem = styled(ListItem)({
   gap: '0.5rem',
-  backgroundColor: theme.palette.background.cta.default,
+  backgroundColor: NOTIFICATIONCOLORS.WARNING,
   '&:hover': {
-    backgroundColor: theme.palette.background.cta.hover,
+    backgroundColor: NOTIFICATIONCOLORS.WARNING,
   },
-}));
+});
 
 export const ValidatedComponent = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background.card,
-  color: theme.palette.text.secondary,
+  color: theme.palette.text.default,
   margin: '0.6rem 0rem',
 }));
 
 export const DryRunComponentStyled = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.secondary.card,
-  color: theme.palette.text.secondary,
+  color: theme.palette.text.default,
   marginBlock: '0.5rem',
 }));
 
-export const DryRunComponentLabel = styled(ListItem)(({ theme }) => ({
-  backgroundColor: theme.palette.background.error.default,
+export const DryRunComponentLabel = styled(ListItem)({
+  backgroundColor: NOTIFICATIONCOLORS.ERROR_DARK,
   gap: '0.5rem',
   color: 'white',
   '&:hover': {
-    backgroundColor: theme.palette.background.error.hover,
+    backgroundColor: NOTIFICATIONCOLORS.ERROR_DARK,
   },
-}));
+});
 
 export const ValidationResultsListWrapper = styled(List)({
   width: '100%',

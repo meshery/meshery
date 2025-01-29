@@ -177,7 +177,7 @@ export const FormatDryRunResponse = ({
   currentComponentName,
 }) => {
   const totalDryRunErrors = getTotalCountOfDeploymentErrors(dryRunErrors);
-
+  const theme = useTheme();
   const canShowComponentCount =
     annotationComponentsCount !== undefined && annotationComponentsCount !== undefined;
 
@@ -194,11 +194,7 @@ export const FormatDryRunResponse = ({
       subheader={
         <ValidationSubHeader disableSticky="true" component="div" id="nested-list-subheader">
           {canShowComponentCount && (
-            <Typography
-              varaint="h6"
-              disablePadding
-              // style={{ position: "relative", left: "35px" }}
-            >
+            <Typography varaint="h6" disablePadding style={{ color: theme.palette.text.disabled }}>
               {configurableComponentsCount} component{configurableComponentsCount > 1 ? 's' : ''}{' '}
               and {annotationComponentsCount} annotations
             </Typography>
