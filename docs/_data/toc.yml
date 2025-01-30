@@ -282,7 +282,8 @@
               url: project/contributing/contributing-components
             - title: Relationships
               url: project/contributing/contributing-relationships
-
+        - title: Schema
+          url: project/contributing/contributing-schema
 - title: 📖 Reference
   url: reference
   links:
