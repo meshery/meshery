@@ -1,17 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  TableCell,
-  Tooltip,
-  TableContainer,
-  Table,
-  Grid,
-  TableRow,
-  FormControl,
-  Select,
-  MenuItem,
-  Chip,
-} from '@material-ui/core';
-import Moment from 'react-moment';
+import { Tooltip, Grid, FormControl, MenuItem, CustomTooltip, Table } from '@layer5/sistent';
+import { TableCell, TableRow } from '@mui/material';
+import { formatDate } from '../../DataFormatter';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import {
@@ -20,10 +10,10 @@ import {
   SearchBar,
   UniversalFilter,
 } from '@layer5/sistent';
-import useStyles from '../../../assets/styles/general/tool.styles';
 import { MeshSyncDataFormatter } from '../metadata';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
 import { DefaultTableCell, SortableTableCell } from '../common';
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import {
   JsonParse,
   camelcaseToSnakecase,
@@ -31,9 +21,6 @@ import {
   getVisibilityColums,
 } from '../../../utils/utils';
 import RegisterConnectionModal from './RegisterConnectionModal';
-import classNames from 'classnames';
-import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
-import ExploreIcon from '@mui/icons-material/Explore';
 import { CONNECTION_STATES, MESHSYNC_STATES } from '../../../utils/Enum';
 import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
@@ -43,6 +30,8 @@ import {
   useGetMeshSyncResourcesQuery,
 } from '@/rtk-query/meshsync';
 import { UsesSistent } from '@/components/SistentWrapper';
+import { ConnectionStateChip } from '../ConnectionChip';
+import { ContentContainer, ConnectionStyledSelect, InnerTableContainer } from '../styles';
 
 const ACTION_TYPES = {
   FETCH_MESHSYNC_RESOURCES: {
@@ -52,7 +41,7 @@ const ACTION_TYPES = {
 };
 
 export default function MeshSyncTable(props) {
-  const { classes, updateProgress, selectedK8sContexts, k8sconfig } = props;
+  const { updateProgress, selectedK8sContexts, k8sconfig } = props;
   const callbackRef = useRef();
   const [openRegistrationModal, setRegistrationModal] = useState(false);
   const [page, setPage] = useState(0);
@@ -68,13 +57,7 @@ export default function MeshSyncTable(props) {
     metadata: {},
     kind: '',
   });
-  const StyleClass = useStyles();
   const { width } = useWindowDimensions();
-
-  const icons = {
-    [MESHSYNC_STATES.REGISTER]: () => <AssignmentTurnedInIcon />,
-    [MESHSYNC_STATES.DISCOVERED]: () => <ExploreIcon />,
-  };
 
   const { notify } = useNotification();
 
@@ -253,19 +236,13 @@ export default function MeshSyncTable(props) {
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(value) {
+          const renderValue = formatDate(value);
           return (
-            <Tooltip
-              title={
-                <Moment startOf="day" format="LLL">
-                  {value}
-                </Moment>
-              }
-              placement="top"
-              arrow
-              interactive
-            >
-              <Moment format="LL">{value}</Moment>
-            </Tooltip>
+            <UsesSistent>
+              <CustomTooltip title={renderValue} placement="top" arrow interactive>
+                {renderValue}
+              </CustomTooltip>
+            </UsesSistent>
           );
         },
       },
@@ -295,9 +272,9 @@ export default function MeshSyncTable(props) {
               ? false
               : true;
           return (
-            <>
-              <FormControl className={classes.chipFormControl}>
-                <Select
+            <UsesSistent>
+              <FormControl>
+                <ConnectionStyledSelect
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   defaultValue={MESHSYNC_STATES.DISCOVERED}
@@ -317,7 +294,6 @@ export default function MeshSyncTable(props) {
                       resourceID: tableMeta.rowData[tableMeta.rowData.length - 1],
                     });
                   }}
-                  className={classes.statusSelect}
                   disableUnderline
                   MenuProps={{
                     anchorOrigin: {
@@ -345,16 +321,12 @@ export default function MeshSyncTable(props) {
                       key={meshSyncStates[s]}
                       style={{ padding: '0' }}
                     >
-                      <Chip
-                        className={classNames(classes.statusChip, classes[meshSyncStates[s]])}
-                        avatar={icons[meshSyncStates[s]]()}
-                        label={meshSyncStates[s]}
-                      />
+                      <ConnectionStateChip status={meshSyncStates[s]} />
                     </MenuItem>
                   ))}
-                </Select>
+                </ConnectionStyledSelect>
               </FormControl>
-            </>
+            </UsesSistent>
           );
         },
       },
@@ -463,36 +435,37 @@ export default function MeshSyncTable(props) {
       const metadata = rowData[columnIndex];
 
       return (
-        <TableCell colSpan={colSpan} className={classes.innerTableWrapper}>
-          <TableContainer className={classes.innerTableContainer}>
-            <Table>
-              <TableRow className={classes.noGutter}>
-                <TableCell style={{ padding: '20px 0' }}>
-                  <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
-                    <Grid item xs={12} md={12} className={classes.contentContainer}>
-                      <Grid container spacing={1}>
-                        <Grid
-                          item
-                          xs={12}
-                          md={12}
-                          style={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            padding: '0 20px',
-                            gap: 30,
-                          }}
-                          className={classes.contentContainer}
-                        >
-                          <MeshSyncDataFormatter metadata={metadata} />
+        <UsesSistent>
+          <TableCell colSpan={colSpan}>
+            <InnerTableContainer>
+              <Table>
+                <TableRow style={{ padding: 0 }}>
+                  <TableCell style={{ padding: '20px 0' }}>
+                    <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
+                      <ContentContainer item xs={12} md={12}>
+                        <Grid container spacing={1}>
+                          <ContentContainer
+                            item
+                            xs={12}
+                            md={12}
+                            style={{
+                              display: 'flex',
+                              flexWrap: 'wrap',
+                              padding: '0 20px',
+                              gap: 30,
+                            }}
+                          >
+                            <MeshSyncDataFormatter metadata={metadata} />
+                          </ContentContainer>
                         </Grid>
-                      </Grid>
+                      </ContentContainer>
                     </Grid>
-                  </Grid>
-                </TableCell>
-              </TableRow>
-            </Table>
-          </TableContainer>
-        </TableCell>
+                  </TableCell>
+                </TableRow>
+              </Table>
+            </InnerTableContainer>
+          </TableCell>
+        </UsesSistent>
       );
     },
   };
@@ -550,58 +523,53 @@ export default function MeshSyncTable(props) {
   }, []);
 
   return (
-    <>
-      <div className={StyleClass.toolWrapper} style={{ marginBottom: '5px', marginTop: '-30px' }}>
-        <div className={classes.createButton}>{/* <MesherySettingsEnvButtons /> */}</div>
-        <UsesSistent>
-          <div
-            className={classes.searchAndView}
-            style={{
-              display: 'flex',
-              borderRadius: '0.5rem 0.5rem 0 0',
+    <UsesSistent>
+      <ToolWrapper style={{ marginBottom: '5px', marginTop: '-30px' }}>
+        <div
+          style={{
+            display: 'flex',
+            borderRadius: '0.5rem 0.5rem 0 0',
+            width: '100%',
+            justifyContent: 'end',
+          }}
+        >
+          <SearchBar
+            onSearch={(value) => {
+              setSearch(value);
             }}
-          >
-            <SearchBar
-              onSearch={(value) => {
-                setSearch(value);
-              }}
-              expanded={isSearchExpanded}
-              setExpanded={setIsSearchExpanded}
-              placeholder="Search Connections..."
-            />
+            expanded={isSearchExpanded}
+            setExpanded={setIsSearchExpanded}
+            placeholder="Search Connections..."
+          />
 
-            <UniversalFilter
-              id="ref"
-              filters={filters}
-              selectedFilters={selectedFilters}
-              setSelectedFilters={setSelectedFilters}
-              handleApplyFilter={handleApplyFilter}
-            />
+          <UniversalFilter
+            id="ref"
+            filters={filters}
+            selectedFilters={selectedFilters}
+            setSelectedFilters={setSelectedFilters}
+            handleApplyFilter={handleApplyFilter}
+          />
 
-            <CustomColumnVisibilityControl
-              id="ref"
-              columns={getVisibilityColums(columns)}
-              customToolsProps={{ columnVisibility, setColumnVisibility }}
-            />
-          </div>
-        </UsesSistent>
-      </div>
-      <UsesSistent>
-        <ResponsiveDataTable
-          data={meshSyncResources}
-          columns={columns}
-          options={options}
-          className={classes.muiRow}
-          tableCols={tableCols}
-          updateCols={updateCols}
-          columnVisibility={columnVisibility}
-        />
-      </UsesSistent>
+          <CustomColumnVisibilityControl
+            id="ref"
+            columns={getVisibilityColums(columns)}
+            customToolsProps={{ columnVisibility, setColumnVisibility }}
+          />
+        </div>
+      </ToolWrapper>
+      <ResponsiveDataTable
+        data={meshSyncResources}
+        columns={columns}
+        options={options}
+        tableCols={tableCols}
+        updateCols={updateCols}
+        columnVisibility={columnVisibility}
+      />
       <RegisterConnectionModal
         handleRegistrationModalClose={handleRegistrationModalClose}
         openRegistrationModal={openRegistrationModal}
         connectionData={registerConnection}
       />
-    </>
+    </UsesSistent>
   );
 }

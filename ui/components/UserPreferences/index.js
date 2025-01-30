@@ -1,13 +1,8 @@
-//import useState from "react"
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
-import { withStyles } from '@material-ui/core/styles';
-import CopyIcon from '../../assets/icons/CopyIcon';
-import _ from 'lodash';
 import {
-  CustomTooltip,
   Tab,
   Tabs,
   Typography,
@@ -18,12 +13,31 @@ import {
   IconButton,
   CardContent,
   CardHeader,
-  Box,
+  CustomTooltip,
 } from '@layer5/sistent';
-import NoSsr from '@material-ui/core/NoSsr';
+import CopyIcon from '../../assets/icons/CopyIcon';
+import _ from 'lodash';
+import NoSsr from '@mui/material/NoSsr';
+import {
+  StatsWrapper,
+  ProviderCard,
+  RootContainer,
+  BoxWrapper,
+  Divider,
+  GridCapabilityHeader,
+  GridExtensionHeader,
+  GridExtensionItem,
+  StyledPaper,
+  TabLabel,
+  HideScrollbar,
+  IconStyled,
+  FormLegend,
+  FormContainerWrapper,
+  FormGroupWrapper,
+} from './style';
 import { updateUser, updateProgress, toggleCatalogContent } from '../../lib/store';
-import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
-import SettingsCellIcon from '@material-ui/icons/SettingsCell';
+import SettingsRemoteIcon from '@mui/icons-material/SettingsRemote';
+import SettingsCellIcon from '@mui/icons-material/SettingsCell';
 import ExtensionSandbox from '../ExtensionSandbox';
 import RemoteComponent from '../RemoteComponent';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
@@ -42,83 +56,21 @@ import {
 } from '@/rtk-query/user';
 import { ThemeTogglerCore } from '@/themes/hooks';
 import { UsesSistent } from '../SistentWrapper';
-import { FormLabel } from '@mui/material';
-import { FormGroupWrapper, PaperRoot, ProviderCard, RootContainer, StatsWrapper } from './style';
-import { SecondaryTab, SecondaryTabs } from '../DashboardComponent/style';
 
-const styles = (theme) => ({
-  icon: {
-    display: 'inline',
-    verticalAlign: 'text-top',
-    width: theme.spacing(1.75),
-    marginLeft: theme.spacing(0.5),
-  },
-  iconText: {
-    display: 'inline',
-    verticalAlign: 'middle',
-  },
-  backToPlay: { margin: theme.spacing(2) },
-  link: { cursor: 'pointer' },
-  formContainer: {
-    display: 'flex',
-    'flex-wrap': 'wrap',
-    'justify-content': 'space-evenly',
-    padding: 50,
-  },
-  formLegend: { fontSize: 20 },
-  formLegendSmall: { fontSize: 16 },
-  tabLabel: {
-    [theme.breakpoints.up('sm')]: {
-      fontSize: '1em',
-    },
-    [theme.breakpoints.between('xs', 'sm')]: {
-      fontSize: '0.8em',
-    },
-  },
-  hideScrollbar: {
-    overflowX: 'auto',
-    '&::-webkit-scrollbar': {
-      display: 'none',
-    },
-    '&::-moz-scrollbar': {
-      display: 'none',
-    },
-  },
-  box: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'space-between',
-    whiteSpace: 'nowrap',
-    paddingRight: '10px',
-  },
-  gridCapabilityHeader: {
-    backgroundColor: theme.palette.type === 'dark' ? '#293B43' : '#7493A1',
-  },
-  gridExtensionHeader: {
-    backgroundColor: theme.palette.type === 'dark' ? '#293B43 ' : '#C9DBE3',
-  },
-  gridExtensionItem: {
-    backgroundColor: theme.palette.type === 'dark' ? '#3D4F57 ' : '#E7EFF3',
-  },
-  line: {
-    border: '1px solid rgba(116,147,161, 0.3)',
-    width: '100%',
-    margin: '30px 0',
-  },
-});
+import { SecondaryTab, SecondaryTabs } from '../DashboardComponent/style';
 
 const ThemeToggler = ({ handleUpdateUserPref }) => {
   const Component = ({ mode, toggleTheme }) => {
     return (
       <UsesSistent>
         <div>
-          <Switch 
-            color="primary" 
-            checked={mode === 'dark'} 
+          <Switch
+            color="primary"
+            checked={mode === 'dark'}
             onChange={() => {
               toggleTheme();
               handleUpdateUserPref(mode === 'dark' ? 'light' : 'dark');
-            }} 
+            }}
           />
           Dark Mode
         </div>
@@ -316,15 +268,15 @@ const UserPreference = (props) => {
                           />
                           <CardContent>
                             {' '}
-                            <Box className={props.classes.box}>
+                            <BoxWrapper>
                               <Typography
                                 variant="body1"
-                                className={props.classes.hideScrollbar}
+                                component={HideScrollbar}
                                 style={{ marginRight: '20px' }}
                               >
                                 {provider}
                               </Typography>
-                            </Box>
+                            </BoxWrapper>
                           </CardContent>
                         </ProviderCard>
                       </Grid>
@@ -352,10 +304,10 @@ const UserPreference = (props) => {
                       />
                       <CardContent>
                         {' '}
-                        <Box className={props.classes.box}>
+                        <BoxWrapper>
                           <Typography
                             variant="body1"
-                            className={props.classes.hideScrollbar}
+                            component={HideScrollbar}
                             style={{ marginRight: '20px' }}
                           >
                             {provider}
@@ -369,7 +321,7 @@ const UserPreference = (props) => {
                               <CopyIcon />
                             </IconButton>
                           </CustomTooltip>
-                        </Box>
+                        </BoxWrapper>
                       </CardContent>
                     </ProviderCard>
                   ),
@@ -404,7 +356,7 @@ const UserPreference = (props) => {
               </CardContent>
             </ProviderCard>
 
-            <hr className={props.classes.line} />
+            <Divider />
             <Typography variant="h5" style={{ margin: '20px 0' }}>
               Capabilities
             </Typography>
@@ -414,30 +366,28 @@ const UserPreference = (props) => {
               spacing={2}
               style={{ display: 'flex', justifyContent: 'space-between' }}
             >
-              <Grid
+              <GridCapabilityHeader
                 item
                 xs={6}
-                className={props.classes.gridCapabilityHeader}
                 style={{ borderRadius: '10px 0 0 0', padding: '10px 20px' }}
               >
                 <Typography variant="body1" style={{ fontWeight: 'bold' }}>
                   Feature
                 </Typography>
-              </Grid>
-              <Grid
+              </GridCapabilityHeader>
+              <GridCapabilityHeader
                 item
                 xs={6}
-                className={props.classes.gridCapabilityHeader}
                 style={{ borderRadius: '0 10px 0 0', padding: '10px 20px' }}
               >
                 <Typography variant="body1" style={{ fontWeight: 'bold' }}>
                   Endpoint
                 </Typography>
-              </Grid>
+              </GridCapabilityHeader>
               {providerInfo.capabilities &&
                 providerInfo.capabilities.map((capability, index) => (
                   <>
-                    <Grid
+                    <GridCapabilityHeader
                       item
                       key={`${index}-${capability.feature}`}
                       xs={6}
@@ -449,13 +399,13 @@ const UserPreference = (props) => {
                               ? '#3D4F57'
                               : '#293B43'
                             : index % 2 === 0
-                            ? '#E7EFF3'
-                            : '#C9DBE3',
+                              ? '#E7EFF3'
+                              : '#C9DBE3',
                       }}
                     >
                       <Typography variant="body1">{capability.feature}</Typography>
-                    </Grid>
-                    <Grid
+                    </GridCapabilityHeader>
+                    <GridCapabilityHeader
                       item
                       key={`${index}-${capability.endpoint}`}
                       xs={6}
@@ -467,16 +417,16 @@ const UserPreference = (props) => {
                               ? '#3D4F57'
                               : '#293B43'
                             : index % 2 === 0
-                            ? '#E7EFF3'
-                            : '#C9DBE3',
+                              ? '#E7EFF3'
+                              : '#C9DBE3',
                       }}
                     >
                       <Typography variant="body1">{capability.endpoint}</Typography>
-                    </Grid>
+                    </GridCapabilityHeader>
                   </>
                 ))}
             </Grid>
-            <hr className={props.classes.line} />
+            <Divider />
             <Typography variant="h5" style={{ margin: '20px 0' }}>
               Extensions
             </Typography>
@@ -485,10 +435,9 @@ const UserPreference = (props) => {
                 <div key={index} margin="20px 0px">
                   <Typography variant="h6"> {convertToTitleCase(extensionName)}</Typography>
                   <Grid container spacing={2} style={{ margin: '10px 0 20px 0' }}>
-                    <Grid
+                    <GridExtensionHeader
                       item
                       xs={6}
-                      className={props.classes.gridExtensionHeader}
                       style={{
                         borderRadius: '10px 0 0 0',
                         padding: '10px 20px',
@@ -497,11 +446,10 @@ const UserPreference = (props) => {
                       <Typography variant="body1" style={{ fontWeight: 'bold' }}>
                         Component
                       </Typography>
-                    </Grid>
-                    <Grid
+                    </GridExtensionHeader>
+                    <GridExtensionHeader
                       item
                       xs={6}
-                      className={props.classes.gridExtensionHeader}
                       style={{
                         borderRadius: '0 10px 0 0',
                         padding: '10px 20px',
@@ -510,23 +458,21 @@ const UserPreference = (props) => {
                       <Typography variant="body1" style={{ fontWeight: 'bold' }}>
                         Type
                       </Typography>
-                    </Grid>
+                    </GridExtensionHeader>
 
-                    <Grid
+                    <GridExtensionItem
                       item
                       xs={6}
-                      className={props.classes.gridExtensionItem}
                       style={{
                         borderRadius: '0 0 0 10px',
                         padding: '20px 20px',
                       }}
                     >
                       <Typography variant="body1">{extension[0].component}</Typography>
-                    </Grid>
-                    <Grid
+                    </GridExtensionItem>
+                    <GridExtensionItem
                       item
                       xs={6}
-                      className={props.classes.gridExtensionItem}
                       style={{
                         borderRadius: '0 0 10px 0',
                         padding: '20px 20px',
@@ -535,7 +481,7 @@ const UserPreference = (props) => {
                       <Typography variant="body1">
                         {convertToTitleCase(extension[0].type)}
                       </Typography>
-                    </Grid>
+                    </GridExtensionItem>
                   </Grid>
                 </div>
               ))}
@@ -552,7 +498,7 @@ const UserPreference = (props) => {
   return (
     <UsesSistent>
       <NoSsr>
-        <PaperRoot>
+        <StyledPaper>
           <Tabs
             value={tabVal}
             onChange={handleTabValChange}
@@ -565,14 +511,14 @@ const UserPreference = (props) => {
           >
             <CustomTooltip title="General preferences" placement="top">
               <Tab
-                icon={<SettingsCellIcon style={iconMedium} />}
-                label={<span className={props.classes.tabLabel}>General</span>}
+                icon={<IconStyled as={SettingsCellIcon} />}
+                label={<TabLabel>General</TabLabel>}
               />
             </CustomTooltip>
             <CustomTooltip title="Choose Performance Test Defaults" placement="top">
               <Tab
                 icon={<FontAwesomeIcon icon={faTachometerAlt} style={iconMedium} />}
-                label={<span className={props.classes.tabLabel}>Performance</span>}
+                label={<TabLabel>Performance</TabLabel>}
               />
             </CustomTooltip>
             {/* NOTE: This tab's appearance is logical hence it must be put at last here! Otherwise added logic will need to be added for tab numbers!*/}
@@ -580,20 +526,18 @@ const UserPreference = (props) => {
               <CustomTooltip title="Remote Provider preferences" placement="top">
                 <Tab
                   icon={<SettingsRemoteIcon style={iconMedium} />}
-                  label={<span className={props.classes.tabLabel}>Remote Provider</span>}
+                  label={<TabLabel>Remote Provider</TabLabel>}
                 />
               </CustomTooltip>
             )}
           </Tabs>
-        </PaperRoot>
+        </StyledPaper>
         <StatsWrapper>
           {tabVal === 0 && (
             <>
-              <div className={props.classes.formContainer}>
+              <FormContainerWrapper>
                 <FormGroupWrapper component="fieldset">
-                  <FormLabel component="legend" className={props.classes.formLegend}>
-                    Extensions
-                  </FormLabel>
+                  <FormLegend component="legend">Extensions</FormLegend>
                   <FormGroup>
                     <FormControlLabel
                       key="CatalogContentPreference"
@@ -610,12 +554,10 @@ const UserPreference = (props) => {
                     />
                   </FormGroup>
                 </FormGroupWrapper>
-              </div>
-              <div className={props.classes.formContainer}>
+              </FormContainerWrapper>
+              <FormContainerWrapper>
                 <FormGroupWrapper component="fieldset">
-                  <FormLabel component="legend" className={props.classes.formLegend}>
-                    Analytics and Improvement Program
-                  </FormLabel>
+                  <FormLegend component="legend">Analytics and Improvement Program</FormLegend>
                   <FormGroup>
                     <FormControlLabel
                       key="UsageStatsPreference"
@@ -645,13 +587,10 @@ const UserPreference = (props) => {
                     />
                   </FormGroup>
                 </FormGroupWrapper>
-              </div>
-
-              <div className={props.classes.formContainer}>
+              </FormContainerWrapper>
+              <FormContainerWrapper>
                 <FormGroupWrapper component="fieldset">
-                  <FormLabel component="legend" className={props.classes.formLegend}>
-                    Theme
-                  </FormLabel>
+                  <FormLegend component="legend">Theme</FormLegend>
 
                   <FormGroup>
                     <ThemeToggler
@@ -660,7 +599,7 @@ const UserPreference = (props) => {
                     />
                   </FormGroup>
                 </FormGroupWrapper>
-              </div>
+              </FormContainerWrapper>
             </>
           )}
           {tabVal === 1 && <MesherySettingsPerformanceComponent />}
@@ -677,10 +616,10 @@ const UserPreference = (props) => {
                 centered
               >
                 <CustomTooltip title="Details" placement="top">
-                  <SecondaryTab label={<span className={props.classes.tabLabel}>Details</span>} />
+                  <SecondaryTab label={<TabLabel>Details</TabLabel>} />
                 </CustomTooltip>
                 <CustomTooltip title="Plugins" placement="top">
-                  <SecondaryTab label={<span className={props.classes.tabLabel}>Plugins</span>} />
+                  <SecondaryTab label={<TabLabel>Plugins</TabLabel>} />
                 </CustomTooltip>
               </SecondaryTabs>
               <StatsWrapper>
@@ -718,6 +657,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(UserPreference)),
-);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(UserPreference));

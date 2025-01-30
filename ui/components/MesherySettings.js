@@ -2,18 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
 import { connect, Provider } from 'react-redux';
-import { NoSsr } from '@material-ui/core';
+import { NoSsr } from '@mui/material';
 import { bindActionCreators } from 'redux';
-import {
-  CustomTooltip,
-  AppBar,
-  // Paper,
-  Typography,
-  styled,
-  Tabs,
-  Tab,
-  Paper,
-} from '@layer5/sistent';
+import { CustomTooltip, AppBar, Typography, styled, Tabs, Tab, Paper, Grid } from '@layer5/sistent';
 import DashboardMeshModelGraph from './DashboardComponent/charts/DashboardMeshModelGraph';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft, faPoll, faDatabase, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
@@ -45,7 +36,6 @@ import {
   PROMETHEUS,
   OVERVIEW,
 } from '@/constants/navigator';
-import Grid from '@material-ui/core/Grid';
 import { removeDuplicateVersions } from './MeshModelRegistry/helper';
 import DefaultError from './General/error-404';
 import { store } from '../store';
@@ -269,7 +259,12 @@ const MesherySettings = (props) => {
                     // disabled={!CAN(keys.VIEW_OVERVIEW.action, keys.VIEW_OVERVIEW.subject)}
                   />
                 </CustomTooltip>
-                <CustomTooltip title="Connect Meshery Adapters" placement="top" value={ADAPTERS}>
+                <CustomTooltip
+                  title="Connect Meshery Adapters"
+                  data-testid="settings-tab-adapters"
+                  placement="top"
+                  value={ADAPTERS}
+                >
                   <Tab
                     icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
                     label="Adapters"
@@ -287,6 +282,7 @@ const MesherySettings = (props) => {
                   <Tab
                     icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
                     label="Metrics"
+                    data-testid="settings-tab-metrics"
                     // tab="tabMetrics"
                     value={METRICS}
                     disabled={!CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject)}
@@ -296,6 +292,7 @@ const MesherySettings = (props) => {
                   <Tab
                     icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
                     label="Registry"
+                    data-testid="settings-tab-registry"
                     // tab="registry"
                     value={REGISTRY}
                     disabled={!CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)}
@@ -306,6 +303,7 @@ const MesherySettings = (props) => {
                   <Tab
                     icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
                     label="Reset"
+                    data-testid="settings-tab-reset"
                     // tab="systemReset"
                     value={RESET}
                     // disabled={!CAN(keys.VIEW_SYSTEM_RESET.action, keys.VIEW_SYSTEM_RESET.subject)} TODO: uncomment when key get seeded

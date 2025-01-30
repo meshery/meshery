@@ -27,7 +27,7 @@ import {
 import { useSelectorRtk, useDispatchRtk } from '@/store/hooks';
 import { Button } from '@layer5/sistent';
 import { AddIcon } from '@layer5/sistent';
-import { Edit } from '@material-ui/icons';
+import { Edit } from '@mui/icons-material';
 
 export const DeploymentTargetContext = createContext({
   meshsyncControllerState: null,

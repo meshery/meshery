@@ -1,20 +1,17 @@
-import { makeStyles, Typography, useTheme } from '@material-ui/core';
-import clsx from 'clsx';
+import { Typography, useTheme, styled } from '@layer5/sistent';
 import React from 'react';
+import PropTypes from 'prop-types';
 import AnimatedMeshSync from './Animations/AnimatedMeshSync';
 import AnimatedMeshPattern from './Animations/AnimatedMeshPattern';
 import AnimatedMeshery from './Animations/AnimatedMeshery';
 import AnimatedFilter from './Animations/AnimatedFilter';
-import PropTypes from 'prop-types';
 import AnimatedLightMeshery from './Animations/AnimatedLightMeshery';
 
-const useStyles = makeStyles(() => ({
-  loadingWrapper: {
-    textAlign: 'center',
-    marginTop: 'calc(50vh - 141px)',
-    transform: 'translateY(-50%)',
-  },
-}));
+const LoadingContainer = styled('div')({
+  textAlign: 'center',
+  marginTop: 'calc(50vh - 141px)',
+  transform: 'translateY(-50%)',
+});
 
 const animatedIconList = {
   AnimatedMeshPattern: <AnimatedMeshPattern style={{ height: '100px', margin: '4px 0px 8px' }} />,
@@ -49,19 +46,20 @@ const animatedLightIconList = {
   AnimatedFilter: <AnimatedFilter style={{ height: '75px', margin: '4px 0px 8px' }} />,
   AnimatedMeshery: <AnimatedLightMeshery style={{ height: '100px', margin: '4px 0px 8px' }} />,
 };
+
 function LoadingScreen(props) {
   const { message, className, animatedIcon, ...other } = props;
-  const classes = useStyles();
   const theme = useTheme();
+
   return (
-    <div className={clsx(classes.loadingWrapper, className)} {...other}>
-      {theme.palette.type === 'light'
+    <LoadingContainer className={className} {...other}>
+      {theme.palette.mode === 'light'
         ? animatedIconList[animatedIcon]
         : animatedLightIconList[animatedIcon]}
       <Typography variant="caption" component="div">
         {message}
       </Typography>
-    </div>
+    </LoadingContainer>
   );
 }
 

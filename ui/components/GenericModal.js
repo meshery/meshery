@@ -1,31 +1,32 @@
-// @ts-check
 import React from 'react';
-import { Modal, Backdrop, Fade } from '@material-ui/core';
+import { Modal, Backdrop, Box, styled } from '@layer5/sistent';
+import { Fade } from '@mui/material';
 
-/**
- *
- * @param {{
- *  open?: boolean,
- *  Content?: JSX.Element,
- *  handleClose?: (event: {}, reason: "backdropClick" | "escapeKeyDown") => void,
- *  container?: React.ReactInstance | (() => React.ReactInstance)
- * }} props
- * @returns
- */
+const StyledModal = styled(Modal)({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+});
+
+const StyledFade = styled(Fade)({
+  maxHeight: '90vh',
+  overflow: 'auto',
+});
+
 export default function GenericModal({ open, Content, handleClose, container }) {
   return (
-    <Modal
-      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
+    <StyledModal
       open={open}
       onClose={handleClose}
       closeAfterTransition
-      BackdropComponent={Backdrop}
-      BackdropProps={{ timeout: 200 }}
+      slots={{ backdrop: Backdrop }}
+      slotProps={{ backdrop: { timeout: 200 } }}
       container={container}
+      maxWidth="lg"
     >
-      <Fade in={open} style={{ maxHeight: '90vh', overflow: 'auto' }}>
-        {Content}
-      </Fade>
-    </Modal>
+      <StyledFade in={open}>
+        <Box sx={{ outline: 'none', width: '100%' }}>{Content}</Box>
+      </StyledFade>
+    </StyledModal>
   );
 }
