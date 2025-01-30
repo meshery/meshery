@@ -19,8 +19,13 @@ import { UnControlled as CodeMirror } from 'react-codemirror2';
 import FullscreenExit from '@mui/icons-material/FullscreenExit';
 import useStyles, {
   BottomContainer,
+  CardBackGrid,
   CatalogCardButtons,
   UpdateDeleteButtons,
+  YamlDialogTitleGrid,
+  GridBtnText,
+  GridCloneBtnText,
+  CardHeaderRight,
 } from '../MesheryPatterns/Cards.styles';
 import YAMLDialog from '../YamlDialog';
 import CloneIcon from '../../public/static/img/CloneIcon';
@@ -146,7 +151,7 @@ function FiltersCard_({
                   disabled={!CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject)}
                 >
                   <PublicIcon style={iconMedium} />
-                  <span className={classes.btnText}> Publish </span>
+                  <> Publish </>
                 </TooltipButton>
               ) : (
                 <TooltipButton
@@ -162,7 +167,7 @@ function FiltersCard_({
                   }
                 >
                   <PublicIcon style={iconMedium} />
-                  <span className={classes.btnText}> Unpublish </span>
+                  <GridBtnText> Unpublish </GridBtnText>
                 </TooltipButton>
               )}
               <TooltipButton
@@ -179,7 +184,7 @@ function FiltersCard_({
                 }
               >
                 <GetAppIcon fill={theme.palette.background.constant.white} style={iconMedium} />
-                <span className={classes.btnText}>Download</span>
+                <GridBtnText>Download</GridBtnText>
               </TooltipButton>
 
               {visibility === VISIBILITY.PUBLISHED ? (
@@ -195,7 +200,7 @@ function FiltersCard_({
                   disabled={!CAN(keys.CLONE_WASM_FILTER.action, keys.CLONE_WASM_FILTER.subject)}
                 >
                   <CloneIcon fill={theme.palette.background.constant.white} style={iconMedium} />
-                  <span className={classes.cloneBtnText}>Clone</span>
+                  <GridCloneBtnText>Clone</GridCloneBtnText>
                 </TooltipButton>
               ) : null}
               <TooltipButton
@@ -215,7 +220,7 @@ function FiltersCard_({
                   fill={theme.palette.background.constant.white}
                   style={iconMedium}
                 />
-                <span className={classes.btnText}> Info </span>
+                <GridBtnText> Info </GridBtnText>
               </TooltipButton>
             </CatalogCardButtons>
           </BottomContainer>
@@ -223,18 +228,10 @@ function FiltersCard_({
 
         {/* BACK PART */}
         <>
-          <Grid
-            className={classes.backGrid}
-            container
-            spacing={1}
-            alignContent="space-between"
-            alignItems="center"
-          >
-            <Grid item xs={12} className={classes.yamlDialogTitle}>
-              <Typography variant="h6" className={classes.yamlDialogTitleText}>
-                {name}
-              </Typography>
-              <div className={classes.cardHeaderRight}>
+          <CardBackGrid container spacing={1} alignContent="space-between" alignItems="center">
+            <YamlDialogTitleGrid item xs={12}>
+              <Typography variant="h6">{name}</Typography>
+              <CardHeaderRight>
                 <Link href={`${MESHERY_CLOUD_PROD}/user/${ownerId}`} target="_blank">
                   <Avatar alt="profile-avatar" src={owner?.avatar_url} />
                 </Link>
@@ -251,8 +248,8 @@ function FiltersCard_({
                     {fullScreen ? <FullscreenExit /> : <Fullscreen />}
                   </IconButton>
                 </Tooltip>
-              </div>
-            </Grid>
+              </CardHeaderRight>
+            </YamlDialogTitleGrid>
             <Grid item xs={12} onClick={(ev) => genericClickHandler(ev, () => {})}>
               <Divider variant="fullWidth" light />
 
@@ -274,9 +271,7 @@ function FiltersCard_({
               ) : (
                 catalogContentKeys.map((title, index) => (
                   <>
-                    <Typography variant="h6" className={classes.yamlDialogTitleText}>
-                      {title}
-                    </Typography>
+                    <Typography variant="h6">{title}</Typography>
                     <Typography variant="body2">{catalogContentValues[index]}</Typography>
                   </>
                 ))
@@ -318,7 +313,7 @@ function FiltersCard_({
                 </Tooltip>
               </UpdateDeleteButtons>
             </Grid>
-          </Grid>
+          </CardBackGrid>
         </>
       </FlipCard>
     </UsesSistent>

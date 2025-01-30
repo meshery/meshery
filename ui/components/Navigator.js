@@ -242,7 +242,9 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
     children: [
       {
         id: PROFILES,
-        icon: <FontAwesomeIcon icon={faDigitalTachograph} style={{ fontSize: 24 }} />,
+        icon: (
+          <FontAwesomeIcon icon={faDigitalTachograph} style={{ fontSize: 24, color: 'white' }} />
+        ),
         href: '/performance/profiles',
         title: 'Profiles',
         show: capabilityRegistryObj.isNavigatorComponentEnabled([PERFORMANCE, PROFILES]),

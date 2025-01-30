@@ -1,14 +1,10 @@
-import { CustomTooltip, styled } from '@layer5/sistent';
+import { CustomTooltip } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
 
-export const CustomTextTooltip = ({ flag, ...props }) => {
-  const StyledTooltip = styled(CustomTooltip)(() => ({
-    fontFamily: flag ? 'Qanelas Soft, sans-serif' : 'inherit',
-  }));
-
+export const CustomTextTooltip = ({ ...props }) => {
   return (
     <UsesSistent>
-      <StyledTooltip {...props} />
+      <CustomTooltip {...props} />
     </UsesSistent>
   );
 };

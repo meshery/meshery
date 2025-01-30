@@ -17,12 +17,12 @@ const DialogTitleStyled = styled(DialogTitle)(({ theme }) => ({
   padding: theme.spacing(2),
   textAlign: 'center',
   backgroundColor: '#252E31',
-  color: theme.palette.common.white,
+  color: theme.palette.background.constant.white,
 }));
 
 const CloseButton = styled(IconButton)(({ theme }) => ({
   position: 'absolute',
-  color: theme.palette.common.white,
+  color: theme.palette.background.constant.white,
   right: theme.spacing(1),
   top: theme.spacing(1),
   transform: 'rotate(-90deg)',

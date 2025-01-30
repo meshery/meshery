@@ -68,9 +68,9 @@ export const HeaderIcons = styled(MenuIcon)(({ theme }) => ({
   fontSize: '1.5rem',
   height: '1.5rem',
   width: '1.5rem',
-  fill: theme.palette.common.white,
+  fill: theme.palette.background.constant.white,
   '&:hover': {
-    fill: theme.palette.primary.brand,
+    fill: theme.palette.background.brand.default,
   },
 }));
 
