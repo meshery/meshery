@@ -79,6 +79,7 @@ export default function ActionButton({ options }) {
             vertical: 'top',
             horizontal: 'left',
           }}
+          placement={dropdownMode === 'icon-only' ? 'bottom-end' : 'bottom'}
         >
           <Paper>
             <ClickAwayListener onClickAway={handleClose}>
