@@ -130,7 +130,6 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 	if err != nil {
 		return err
 	}
-
 	req, err := utils.NewRequest(http.MethodPost, url, bytes.NewReader(requestBody))
 	if err != nil {
 		return err
@@ -182,17 +181,25 @@ func displayEmtpyModel(response *models.RegistryAPIResponse) bool {
 // TO check the case if we were never able to read the file at first palce
 func hasExtension(name string) bool {
 	extension := filepath.Ext(name)
-	return extension == ".json" || extension == ".yaml" || extension == ".yml" || extension == ".tar.gz" || extension == ".tar" || extension == ".zip" || extension == ".tgz"
+	return extension == ".json" || extension == ".yaml" || extension == ".yml" || extension == ".tar.gz" || extension == ".tar" || extension == ".zip" || extension == "."
+}
+
+func invalidExtension(name string) bool {
+	extension := filepath.Ext(name)
+	return extension != "" && extension != ".json" && extension != ".yaml" && extension != ".yml" && extension != ".tar.gz" && extension != ".tar" && extension != ".zip" && extension != ".tgz" && extension != ".tar.zip"
 }
 
 func displayEntitisIfModel(response *models.RegistryAPIResponse) {
 	var modelsWithoutExtension []string
 	var modelsWithExtension []string
+	var modelsWithInvalidExtension []string
 
 	// Separate models into those with and without extensions
 	for _, model := range response.ModelName {
 		if model != "" {
-			if hasExtension(model) {
+			if invalidExtension(model) {
+				modelsWithInvalidExtension = append(modelsWithInvalidExtension, model)
+			} else if hasExtension(model) {
 				modelsWithExtension = append(modelsWithExtension, model)
 			} else {
 				modelsWithoutExtension = append(modelsWithoutExtension, model)
@@ -201,10 +208,14 @@ func displayEntitisIfModel(response *models.RegistryAPIResponse) {
 	}
 
 	// Function to display models and their components, relationships, and entities
-	displayModelInfo := func(model string, hasExtension bool) {
-		if !hasExtension {
+	displayModelInfo := func(model string, extensionType string) {
+		if extensionType == "" {
 			boldModel := utils.BoldString("MODEL")
 			utils.Log.Infof("\n%s: %s", boldModel, model)
+		} else if extensionType == "invalid extension" {
+			boldError := utils.BoldString("ERROR")
+			utils.Log.Infof("\n%s: %s file is not importable", boldError, model)
+			return
 		}
 		displaySuccessfulComponents(response, model)
 		displaySuccessfulRelationships(response, model)
@@ -212,10 +223,13 @@ func displayEntitisIfModel(response *models.RegistryAPIResponse) {
 	}
 
 	for _, model := range modelsWithoutExtension {
-		displayModelInfo(model, false)
+		displayModelInfo(model, "")
 	}
 	for _, model := range modelsWithExtension {
-		displayModelInfo(model, true)
+		displayModelInfo(model, "valid extension")
+	}
+	for _, model := range modelsWithInvalidExtension {
+		displayModelInfo(model, "invalid extension")
 	}
 }
 
