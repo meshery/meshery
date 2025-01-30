@@ -1077,7 +1077,7 @@ exp:
       search:
         name: search
         description: search for relationship using a query
-        usage: mesheryctl exp relationship search --[flag] [query-text]
+        usage: mesheryctl exp relationship search [flags] [query-text]
         flags:
           kind:
             name: -k --kind
