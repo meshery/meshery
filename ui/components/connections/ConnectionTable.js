@@ -25,6 +25,7 @@ import {
   ActionListItem,
   ConnectionStyledSelect,
 } from './styles';
+import { FormatId } from '../DataFormatter';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import { getVisibilityColums } from '../../utils/utils';
@@ -106,7 +107,6 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState();
   const [kindFilter, setKindFilter] = useState();
-
   const [useUpdateConnectionMutator] = useUpdateConnectionMutation();
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
@@ -762,7 +762,7 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
         },
         customBodyRender: (value, tableMeta) => {
           const connectionId = getColumnValue(tableMeta.rowData, 'id', columns);
-          return <span>{connectionId}</span>;
+          return <FormatId id={connectionId} />;
         },
       },
     },
