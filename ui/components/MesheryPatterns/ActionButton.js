@@ -11,7 +11,7 @@ import {
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { UsesSistent } from '../SistentWrapper';
 
-export default function ActionButton({ defaultActionClick, options }) {
+export default function ActionButton({ options }) {
   const [open, setOpen] = React.useState(false);
   const [dropdownMode, setDropdownMode] = React.useState('withLabel');
   const anchorRef = React.useRef(null);
