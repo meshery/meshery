@@ -13,6 +13,7 @@ import { UsesSistent } from '../SistentWrapper';
 
 export default function ActionButton({ defaultActionClick, options }) {
   const [open, setOpen] = React.useState(false);
+  const [dropdownMode, setDropdownMode] = React.useState('withLabel');
   const anchorRef = React.useRef(null);
 
   const handleMenuItemClick = () => {
