@@ -14,6 +14,7 @@ var OrgCmd = &cobra.Command{
 
 	Use:   "org",
 	Short: "view list of registered orgs",
+	Long:  "view list of registered orgs with their name,id and date of creation",
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			if err := cmd.Help(); err != nil {
