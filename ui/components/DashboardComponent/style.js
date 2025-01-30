@@ -1,14 +1,15 @@
 import { Typography, IconButton, Paper, styled, Tab, Tabs, gray, charcoal } from '@layer5/sistent';
 
 export const DashboardSection = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.background.default,
+  backgroundColor: theme.palette.background.card,
   padding: theme.spacing(2),
   borderRadius: '4px',
   height: '100%',
 }));
 
 export const ChartSectionWithColumn = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#202020' : theme.palette.common.white,
+  backgroundColor:
+    theme.palette.mode === 'dark' ? '#202020' : theme.palette.background.constant.white,
   padding: theme.spacing(2),
   borderRadius: '4px',
   height: '100%',
@@ -42,7 +43,8 @@ export const ConnectClusterText = styled(Typography)({
 });
 
 export const HoneycombRoot = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#202020' : theme.palette.common.white,
+  backgroundColor:
+    theme.palette.mode === 'dark' ? '#202020' : theme.palette.background.constant.white,
   padding: theme.spacing(2),
   borderRadius: 4,
   width: '100%',
@@ -114,11 +116,14 @@ export const ErrorContainer = styled(Paper)(({ theme }) => ({
   borderRadius: 4,
 }));
 
-export const WrapperContainer = styled('div')({
+export const WrapperContainer = styled('div')(({ theme }) => ({
   flexGrow: 1,
+  [theme.breakpoints.down('sm')]: {
+    maxWidth: '80vw',
+  },
   maxWidth: '100vw',
   height: 'auto',
-});
+}));
 
 export const WrapperPaper = styled(Paper)({
   flexGrow: 1,
@@ -126,18 +131,28 @@ export const WrapperPaper = styled(Paper)({
   height: 'auto',
 });
 
-export const HeaderContainer = styled('div')({
+export const HeaderContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
   marginBottom: '1rem',
-});
+  flexDirection: 'row',
+  [theme.breakpoints.down('sm')]: {
+    flexDirection: 'column',
+    gap: '1rem',
+    alignItems: 'stretch',
+    width: '100%',
+  },
+}));
 
-export const ControlsContainer = styled('div')({
+export const ControlsContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
   gap: '0.5rem',
-});
+  [theme.breakpoints.down('sm')]: {
+    alignSelf: 'flex-end',
+  },
+}));
 
 export const StyledIconButton = styled(IconButton)({
   padding: '4px',

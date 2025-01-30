@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/postgres-controller/components/postgres-database/icons/color/postgres-database-color.svg
   whiteIcon: assets/img/integrations/postgres-controller/components/postgres-database/icons/white/postgres-database-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates PostgreSQL deployment and scaling",
   "Manages PostgreSQL configuration",

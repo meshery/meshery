@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/dragonfly/components/dragonfly/icons/color/dragonfly-color.svg
   whiteIcon: assets/img/integrations/dragonfly/components/dragonfly/icons/white/dragonfly-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Efficient image and file distribution",
   "Reduces network bandwidth consumption",

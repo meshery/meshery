@@ -25,7 +25,7 @@ export const NetWorkTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['spec.attribute', 's'],
         ['spec.attribute', 's'],
         ['status.attribute', 'na'],
@@ -265,7 +265,7 @@ export const NetWorkTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
@@ -381,7 +381,7 @@ export const NetWorkTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
@@ -475,7 +475,7 @@ export const NetWorkTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['status.attribute', 'm'],
         ['spec.attribute', 'm'],
         ['spec.attribute', 'm'],
@@ -641,7 +641,7 @@ export const NetWorkTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['spec.attribute', 'm'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
@@ -776,7 +776,7 @@ export const NetWorkTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['spec.attribute', 'm'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],

@@ -47,10 +47,14 @@ export const PaneSection = styled('div')(() => {
   };
 });
 
-const AlreadyConfigured = styled('div')(({ theme }) => ({
+const AlreadyConfigured = styled('div')({
   textAlign: 'center',
-  padding: theme.spacing(20),
-}));
+  height: '100%',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  flexDirection: 'column',
+});
 
 const MesheryPlayComponent = (props) => {
   const { meshAdapters } = props;
@@ -195,6 +199,9 @@ const MesheryPlayComponent = (props) => {
                   value={adapter && adapter.adapter_location ? adapter.adapter_location : ''}
                   margin="normal"
                   variant="outlined"
+                  sx={{
+                    display: 'flex',
+                  }}
                   onChange={handleAdapterChange()}
                   SelectProps={{
                     MenuProps: {

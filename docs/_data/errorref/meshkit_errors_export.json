@@ -645,65 +645,65 @@
       "11190": {
         "name": "ErrApplyManifestCode",
         "code": "11190",
-        "severity": "Alert",
+        "severity": "",
         "long_description": "",
-        "short_description": "Error Applying manifest",
-        "probable_cause": "Manifest could be invalid",
-        "suggested_remediation": "Make sure manifest yaml is valid"
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       },
       "11191": {
         "name": "ErrServiceDiscoveryCode",
         "code": "11191",
-        "severity": "Alert",
+        "severity": "",
         "long_description": "",
-        "short_description": "Error Discovering service",
-        "probable_cause": "Network not reachable to the service",
-        "suggested_remediation": "Make sure the endpoint is reachable"
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       },
       "11192": {
         "name": "ErrApplyHelmChartCode",
         "code": "11192",
-        "severity": "Alert",
+        "severity": "",
         "long_description": "",
-        "short_description": "Error applying helm chart",
-        "probable_cause": "Chart could be invalid",
-        "suggested_remediation": "Make sure to apply valid chart"
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       },
       "11193": {
         "name": "ErrNewKubeClientCode",
         "code": "11193",
-        "severity": "Alert",
+        "severity": "",
         "long_description": "",
-        "short_description": "Error creating kubernetes clientset",
-        "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
-        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       },
       "11194": {
         "name": "ErrNewDynClientCode",
         "code": "11194",
-        "severity": "Alert",
+        "severity": "",
         "long_description": "",
-        "short_description": "Error creating dynamic client",
-        "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
-        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       },
       "11195": {
         "name": "ErrNewDiscoveryCode",
         "code": "11195",
-        "severity": "Alert",
+        "severity": "",
         "long_description": "",
-        "short_description": "Error creating discovery client",
-        "probable_cause": "Discovery resource is invalid or doesnt exist",
-        "suggested_remediation": "Makes sure the you input valid resource for discovery"
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       },
       "11196": {
         "name": "ErrNewInformerCode",
         "code": "11196",
-        "severity": "Alert",
+        "severity": "",
         "long_description": "",
-        "short_description": "Error creating informer client",
-        "probable_cause": "Informer is invalid or doesnt exist",
-        "suggested_remediation": "Makes sure the you input valid resource for the informer"
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       },
       "11197": {
         "name": "ErrEndpointNotFoundCode",
@@ -726,20 +726,20 @@
       "11199": {
         "name": "ErrLoadConfigCode",
         "code": "11199",
-        "severity": "Alert",
+        "severity": "",
         "long_description": "",
-        "short_description": "Error loading kubernetes config",
-        "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
-        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       },
       "11200": {
         "name": "ErrValidateConfigCode",
         "code": "11200",
-        "severity": "Alert",
+        "severity": "",
         "long_description": "",
-        "short_description": "Validation failed in the kubernetes config",
-        "probable_cause": "Kubernetes config is not accessible to meshery or not valid",
-        "suggested_remediation": "Upload your kubernetes config via the settings dashboard. If uploaded, wait for a minute for it to get initialized"
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       },
       "11201": {
         "name": "ErrCreatingHelmIndexCode",
@@ -1379,6 +1379,24 @@
         "short_description": "unable to open file: ",
         "probable_cause": "The file does not exist in the location",
         "suggested_remediation": "Make sure to upload the correct file"
+      },
+      "11279": {
+        "name": "ErrGoogleJwtInvalidCode",
+        "code": "11279",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Invalid JWT credentials",
+        "probable_cause": "Invalid JWT credentials",
+        "suggested_remediation": "Make sure to provide valid JWT credentials"
+      },
+      "11280": {
+        "name": "ErrGoogleSheetSRVCode",
+        "code": "11280",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error while creating Google Sheets Service",
+        "probable_cause": "Issue happened with Google Sheets Service",
+        "suggested_remediation": "Make you provide valid JWT credentials and Spreadsheet ID"
       }
     }
   }

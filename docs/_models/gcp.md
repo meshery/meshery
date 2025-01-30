@@ -874,6 +874,9 @@ components:
   colorIcon: assets/img/integrations/gcp/components/gcp-profiler/icons/color/gcp-profiler-color.svg
   whiteIcon: assets/img/integrations/gcp/components/gcp-profiler/icons/white/gcp-profiler-white.svg
   description: 
+components-count: 216
+relationships: 
+relationship-count: 0
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import humanizeDuration from 'humanize-duration';
+import { JsonParse } from './utils';
 
 const humanize = humanizeDuration.humanizer();
 humanize.languages['en-mini'] = {
@@ -254,14 +255,28 @@ export function getResourceStr(value, resourceType) {
 }
 
 export const getStatus = (status) => {
-  if (!status) {
+  if (!status || typeof status !== 'string') {
     return false;
   }
-  const attribute = JSON.parse(status);
-  if (attribute?.phase) {
-    return attribute.phase;
+
+  try {
+    const attribute = JsonParse(status);
+
+    if (!attribute) {
+      return false;
+    }
+    if (attribute.phase) {
+      return attribute.phase;
+    }
+    if (Array.isArray(attribute.conditions) && attribute.conditions.length > 0) {
+      // return the last condition status because it is the most recent one
+      const lastCondition = attribute.conditions.reverse()[0];
+      return lastCondition?.type === 'Ready' && lastCondition?.status === 'True' ? 'Ready' : false;
+    }
+
+    return false;
+  } catch (error) {
+    console.error('Error parsing status:', error);
+    return false;
   }
-  const lastCondition = attribute?.conditions?.reverse()[0];
-  const readyCondition = lastCondition?.type === 'Ready' && lastCondition?.status === 'True';
-  return readyCondition ? 'Ready' : false;
 };

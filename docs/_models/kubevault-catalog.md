@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/kubevault-catalog/components/vault-server-version/icons/color/vault-server-version-color.svg
   whiteIcon: assets/img/integrations/kubevault-catalog/components/vault-server-version/icons/white/vault-server-version-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Simplifies Vault configuration",
   "Provides pre-configured templates and examples",

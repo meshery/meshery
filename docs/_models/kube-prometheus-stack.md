@@ -62,6 +62,9 @@ components:
   colorIcon: assets/img/integrations/kube-prometheus-stack/components/service-monitor/icons/color/service-monitor-color.svg
   whiteIcon: assets/img/integrations/kube-prometheus-stack/components/service-monitor/icons/white/service-monitor-white.svg
   description: 
+components-count: 13
+relationships: 
+relationship-count: 0
 featureList: [
   "Provides a full-fledged monitoring solution",
   "Collects metrics, logs, and traces",

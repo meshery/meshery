@@ -8,10 +8,10 @@ import {
 } from '@layer5/sistent';
 import useStyles from './MesheryPatterns/Cards.styles';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
-import FullscreenExit from '@material-ui/icons/FullscreenExit';
-import DeleteIcon from '@material-ui/icons/Delete';
-import Fullscreen from '@material-ui/icons/Fullscreen';
-import Save from '@material-ui/icons/Save';
+import FullscreenExit from '@mui/icons-material/FullscreenExit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Fullscreen from '@mui/icons-material/Fullscreen';
+import Save from '@mui/icons-material/Save';
 import { StyledDialog, YamlDialogTitleText } from './MesheryPatterns/style';
 
 const YAMLDialog = ({
@@ -34,9 +34,7 @@ const YAMLDialog = ({
       fullWidth={!fullScreen}
     >
       <StyledDialog disableTypography id="filter-dialog-title">
-        <YamlDialogTitleText variant="h6" className={classes.yamlDialogTitleText}>
-          {name}
-        </YamlDialogTitleText>
+        <YamlDialogTitleText variant="h6">{name}</YamlDialogTitleText>
         <Tooltip title="Exit Fullscreen" arrow interactive placement="bottom">
           <IconButton onClick={toggleFullScreen}>
             {fullScreen ? <FullscreenExit /> : <Fullscreen />}
@@ -53,7 +51,6 @@ const YAMLDialog = ({
             lineNumbers: true,
             lineWrapping: true,
             gutters: ['CodeMirror-lint-markers'],
-            // @ts-ignore
             lint: true,
             mode: 'text/x-yaml',
             readOnly: isReadOnly,

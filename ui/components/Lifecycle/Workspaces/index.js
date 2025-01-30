@@ -1,13 +1,12 @@
 import { NoSsr } from '@mui/material';
 import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
-import { Pagination, PaginationItem } from '@material-ui/lab';
+import { Pagination, PaginationItem } from '@layer5/sistent';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import DesignsIcon from '../../../assets/icons/DesignIcon';
-
 import WorkspaceIcon from '../../../assets/icons/Workspace';
-import { EmptyState, GenericModal } from '../General';
+import { EmptyState } from '../General';
 import {
   TransferList,
   Modal as SisitentModal,
@@ -23,6 +22,7 @@ import {
   SearchBar,
   styled,
   useTheme,
+  PROMPT_VARIANTS,
 } from '@layer5/sistent';
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import { useEffect, useRef, useState } from 'react';
@@ -42,7 +42,7 @@ import { updateProgress } from '../../../lib/store';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import WorkspaceCard from './workspace-card';
 import { RJSFModalWrapper } from '../../Modal';
-import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
+import _PromptComponent from '../../PromptComponent';
 import { debounce } from 'lodash';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import EnvironmentIcon from '../../../assets/icons/Environment';
@@ -50,32 +50,13 @@ import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '@/components/General/error-404/index';
 import { UsesSistent } from '@/components/SistentWrapper';
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 
 export const CreateButtonWrapper = styled('div')({
   display: 'flex',
   justifyContent: 'flex-start',
   alignItems: 'center',
   whiteSpace: 'nowrap',
-});
-
-export const ToolWrapper = styled('div')(() => {
-  const theme = useTheme();
-  return {
-    marginBottom: '1rem',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor:
-      theme.palette.mode === 'dark'
-        ? theme.palette.text.inverse
-        : theme.palette.background.constant?.white,
-    boxShadow: '0px 2px 4px -1px rgba(0,0,0,0.2)',
-    height: '4rem',
-    padding: '0.68rem',
-    borderRadius: '0.5rem',
-    position: 'relative',
-    zIndex: 101,
-  };
 });
 
 export const BulkActionWrapper = styled(`div`)({
@@ -131,10 +112,10 @@ const Workspaces = ({ organization }) => {
   const [designsPage, setDesignsPage] = useState(0);
   const [designsPageSize /*setDesignssPageSize*/] = useState(25);
   const [selectedWorkspaces, setSelectedWorkspaces] = useState([]);
-  const [deleteWorkspacesModal, setDeleteWorkspacesModal] = useState(false);
   const [disableTranferButton, setDisableTranferButton] = useState(true);
 
   const ref = useRef(null);
+  const bulkDeleteRef = useRef(null);
   const { notify } = useNotification();
 
   const {
@@ -404,7 +385,6 @@ const Workspaces = ({ organization }) => {
       );
     });
     setSelectedWorkspaces([]);
-    handleDeleteWorkspacesModalClose();
   };
 
   const handleBulkSelect = (e, id) => {
@@ -417,20 +397,12 @@ const Workspaces = ({ organization }) => {
     }
   };
 
-  const handleDeleteWorkspacesModalClose = () => {
-    setDeleteWorkspacesModal(false);
-  };
-
-  const handleDeleteWorkspacesModalOpen = () => {
-    setDeleteWorkspacesModal(true);
-  };
-
   const handleDeleteWorkspaceConfirm = async (e, workspace) => {
     e.stopPropagation();
     let response = await ref.current.show({
       title: `Delete workspace ?`,
       subtitle: deleteWorkspaceModalContent(workspace.name),
-      options: ['DELETE', 'CANCEL'],
+      primaryOption: 'DELETE',
       variant: PROMPT_VARIANTS.DANGER,
     });
     if (response === 'DELETE') {
@@ -448,6 +420,23 @@ const Workspaces = ({ organization }) => {
         </i>
       </p>
     </>
+  );
+
+  const handleBulkDeleteWorkspaceConfirm = async (e) => {
+    e.stopPropagation();
+    let response = await bulkDeleteRef.current.show({
+      title: `Delete ${selectedWorkspaces.length} workspaces ?`,
+      subtitle: deleteBlukWorkspaceModalContent(),
+      primaryOption: 'DELETE',
+      variant: PROMPT_VARIANTS.DANGER,
+    });
+    if (response === 'DELETE') {
+      handleBulkDeleteWorkspace();
+    }
+  };
+
+  const deleteBlukWorkspaceModalContent = () => (
+    <p>Are you sure you want to delete these workspaces? (This action is irreversible)</p>
   );
 
   const handleAssignEnvironmentModalClose = () => {
@@ -662,7 +651,7 @@ const Workspaces = ({ organization }) => {
                 <Button>
                   <DeleteIcon
                     fill={theme.palette.text.default}
-                    onClick={handleDeleteWorkspacesModalOpen}
+                    onClick={handleBulkDeleteWorkspaceConfirm}
                     disabled={
                       CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject) &&
                       selectedWorkspaces.length > 0
@@ -700,11 +689,6 @@ const Workspaces = ({ organization }) => {
                   <Pagination
                     count={Math.ceil(workspacesData?.total_count / pageSize)}
                     page={page + 1}
-                    sx={{
-                      backgroundColor: 'white',
-                      borderRadius: '1rem',
-                      padding: '0.5rem',
-                    }}
                     onChange={debounce((_, page) => setPage(page - 1), 150)}
                     boundaryCount={3}
                     renderItem={(item) => (
@@ -845,14 +829,8 @@ const Workspaces = ({ organization }) => {
                 />
               </ModalFooter>
             </SisitentModal>
-            <GenericModal
-              open={deleteWorkspacesModal}
-              handleClose={handleDeleteWorkspacesModalClose}
-              title={'Delete Workspace'}
-              body={`Do you want to delete ${selectedWorkspaces.length} workspace(s) ?`}
-              action={handleBulkDeleteWorkspace}
-            />
-            <PromptComponent ref={ref} />
+            <_PromptComponent ref={ref} />
+            <_PromptComponent ref={bulkDeleteRef} />
           </>
         ) : (
           <DefaultError />

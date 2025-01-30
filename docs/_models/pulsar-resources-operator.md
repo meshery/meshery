@@ -62,6 +62,17 @@ components:
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-ns-isolation-policy/icons/color/pulsar-ns-isolation-policy-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-ns-isolation-policy/icons/white/pulsar-ns-isolation-policy-white.svg
   description: 
+- name: compute-flink-deployment
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/compute-flink-deployment/icons/color/compute-flink-deployment-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/compute-flink-deployment/icons/white/compute-flink-deployment-white.svg
+  description: 
+- name: compute-workspace
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/compute-workspace/icons/color/compute-workspace-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/compute-workspace/icons/white/compute-workspace-white.svg
+  description: 
+components-count: 15
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates Pulsar resource management",
   "Simplifies Pulsar configuration",

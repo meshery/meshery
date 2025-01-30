@@ -10,6 +10,9 @@ integrations-category: Platform
 integrations-subcategory: Operating System
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Windows-native builds of Meshery CLI",
   "Deploy Meshery on Docker Desktop for Windows",
