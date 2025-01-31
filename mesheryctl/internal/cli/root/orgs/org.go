@@ -32,7 +32,9 @@ var OrgCmd = &cobra.Command{
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 && !count {
-			cmd.Usage()
+			if err := cmd.Usage(); err != nil {
+				return err
+			}
 
 			return utils.ErrInvalidArgument(fmt.Errorf("No arguments passed, provide a subcommand"))
 		}
@@ -45,7 +47,7 @@ var OrgCmd = &cobra.Command{
 				utils.Log.Error(err)
 				return nil
 			}
-			fmt.Println(fmt.Sprintf("Total registered orgs : %v", orgs.TotalCount))
+			fmt.Printf("Total registered orgs : %v", orgs.TotalCount)
 			return nil
 
 		}
