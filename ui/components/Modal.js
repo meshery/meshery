@@ -4,87 +4,19 @@ import {
   Menu,
   MenuItem,
   Tooltip,
-  Button,
   Typography,
   CircularProgress,
-} from '@material-ui/core';
-import { Dialog, DialogActions, makeStyles } from '@material-ui/core';
-import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
-import CloseIcon from '@mui/icons-material/Close';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+  ModalBody,
+  ModalFooter,
+  PrimaryActionButtons,
+  Modal as SistentModal,
+} from '@layer5/sistent';
 import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
 import { ArrowDropDown } from '@mui/icons-material';
 import { getSchema } from './MesheryMeshInterface/PatternService/helper';
 import { Snackbar } from '@material-ui/core';
 import { Alert } from '@mui/material';
-import { ModalBody, ModalFooter, PrimaryActionButtons } from '@layer5/sistent';
-
-const useStyles = makeStyles((theme) => ({
-  '@keyframes rotateCloseIcon': {
-    from: {
-      transform: 'rotate(0deg)',
-    },
-    to: {
-      transform: 'rotate(90deg)',
-    },
-  },
-  infoIcon: {
-    position: 'absolute',
-    right: 10,
-    color: theme.palette.type === 'dark' ? '#00B39F' : '#607d8b',
-  },
-  modalHeader: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingBottom: 10,
-    padding: '0 .5rem',
-    paddingTop: 10,
-    backgroundColor: theme.palette.secondary.mainBackground,
-  },
-  modelHeader: {
-    fontSize: '1rem',
-    color: '#fff',
-  },
-  iconStyle: {
-    color: '#fff',
-    '&:hover': {
-      backgroundColor: 'transparent !important',
-      animation: '$rotateCloseIcon 1s',
-    },
-  },
-  iconContainer: {
-    // transition: 'all .3s',
-  },
-  submitButton: {
-    backgroundColor: theme.palette.secondary.focused,
-    color: '#fff',
-    textTransform: 'uppercase',
-  },
-  iconPatt: {
-    display: 'flex',
-    alignItems: 'center',
-    marginRight: theme.spacing(1),
-  },
-  btnText: {
-    textTransform: 'uppercase',
-  },
-  toolTip: {
-    textDecoration: 'underline',
-    color: theme.palette.secondary.link2,
-  },
-  dialogAction: {
-    display: 'flex',
-    justifyContent: 'center',
-    padding: '0.5rem 1rem',
-  },
-  snackbar: {
-    backgroundColor: theme.palette.secondary.elevatedComponents,
-  },
-  leftHeaderIcon: {
-    paddingLeft: '0.45rem',
-  },
-}));
+import { UsesSistent } from './SistentWrapper';
 
 const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -149,15 +81,13 @@ function Modal(props) {
     type,
     schemaChangeHandler,
     handleSubmit,
-    showInfoIcon,
     submitBtnText,
     leftHeaderIcon,
-    submitBtnIcon,
     uiSchema = {},
+    helpText,
     RJSFWrapperComponent = null,
     initialData = {},
   } = props;
-  const classes = useStyles();
 
   const [canNotSubmit, setCanNotSubmit] = useState(false);
   const [snackbar, setSnackbar] = useState(false);
@@ -204,71 +134,49 @@ function Modal(props) {
   }, [schema]);
 
   return (
-    <>
-      <Dialog style={{ zIndex: 9999 }} open={open} onClose={handleClose}>
-        <div className={classes.modalHeader}>
-          <Typography className={classes.leftHeaderIcon}>
-            {leftHeaderIcon ? leftHeaderIcon : null}
-          </Typography>
-          <Typography className={classes.modelHeader} variant="h5">
-            {title}
-            {schema_array?.length < 1 && (
-              <SchemaVersion
-                schema_array={schema_array}
-                type={type}
-                schemaChangeHandler={schemaChangeHandler}
-              />
-            )}
-          </Typography>
-          <IconButton className={classes.iconContainer} onClick={handleClose} disableRipple>
-            <CloseIcon className={classes.iconStyle} />
-          </IconButton>
-        </div>
-
-        {loadingSchema ? (
-          <div style={{ textAlign: 'center', padding: '8rem 17rem' }}>
-            <CircularProgress />
-          </div>
-        ) : (
-          <RJSFWrapper
-            key={type}
-            formData={initialData || formStateRef}
-            jsonSchema={schema || getSchema(type)}
-            uiSchema={uiSchema}
-            onChange={handleFormChange}
-            liveValidate={false}
-            formRef={formRef}
-            hideTitle={true}
-            {...(RJSFWrapperComponent && { RJSFWrapperComponent })}
-          />
-        )}
-
-        <DialogActions className={classes.dialogAction}>
-          <Button
-            title={submitBtnText ? submitBtnText : 'Submit'}
-            variant="contained"
-            color="primary"
-            className={classes.submitButton}
-            disabled={canNotSubmit}
-            onClick={handleFormSubmit}
-          >
-            {submitBtnIcon ? <div className={classes.iconPatt}>{submitBtnIcon}</div> : null}
-            <span className={classes.btnText}>{submitBtnText ? submitBtnText : 'Submit'}</span>
-          </Button>
-          {showInfoIcon && (
-            <CustomTextTooltip
-              placement="top"
-              interactive={true}
-              title={`${showInfoIcon.text} ${
-                showInfoIcon.link ? `[Learn more](${showInfoIcon.link})` : ''
-              }`}
-            >
-              <IconButton className={classes.infoIcon} color="primary">
-                <InfoOutlinedIcon />
-              </IconButton>
-            </CustomTextTooltip>
+    <UsesSistent>
+      <SistentModal open={open} closeModal={handleClose} title={title} headerIcon={leftHeaderIcon}>
+        <Typography variant="h5">
+          {schema_array?.length < 1 && (
+            <SchemaVersion
+              schema_array={schema_array}
+              type={type}
+              schemaChangeHandler={schemaChangeHandler}
+            />
           )}
-        </DialogActions>
+        </Typography>
+        <ModalBody>
+          {loadingSchema ? (
+            <div style={{ textAlign: 'center', padding: '8rem 17rem' }}>
+              <CircularProgress />
+            </div>
+          ) : (
+            <RJSFWrapper
+              key={type}
+              formData={initialData || formStateRef}
+              jsonSchema={schema || getSchema(type)}
+              uiSchema={uiSchema}
+              onChange={handleFormChange}
+              liveValidate={false}
+              formRef={formRef}
+              hideTitle={true}
+              {...(RJSFWrapperComponent && { RJSFWrapperComponent })}
+            />
+          )}
+        </ModalBody>
+        <ModalFooter variant="filled" helpText={helpText} hasHelpText={!!helpText}>
+          <PrimaryActionButtons
+            primaryText={submitBtnText || 'Submit'}
+            secondaryText="Cancel"
+            primaryButtonProps={{
+              onClick: handleFormSubmit,
+              disabled: canNotSubmit,
+            }}
+            secondaryButtonProps={{
+              onClick: handleClose,
+            }}
+          />
+        </ModalFooter>
         {snackbar && (
           <Snackbar
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -276,17 +184,13 @@ function Modal(props) {
             autoHideDuration={6000}
             onClose={() => setSnackbar(null)}
           >
-            <Alert
-              className={classes.snackbar}
-              onClose={() => setSnackbar(null)}
-              severity={snackbar.severity}
-            >
+            <Alert onClose={() => setSnackbar(null)} severity={snackbar.severity}>
               {snackbar.message}
             </Alert>
           </Snackbar>
         )}
-      </Dialog>
-    </>
+      </SistentModal>
+    </UsesSistent>
   );
 }
 
@@ -303,7 +207,6 @@ function RJSFModalWrapper({
   helpText,
 }) {
   const formRef = useRef();
-  const classes = useStyles();
   const formStateRef = useRef();
   const [canNotSubmit, setCanNotSubmit] = useState(false);
   const [snackbar, setSnackbar] = useState(false);
@@ -384,11 +287,7 @@ function RJSFModalWrapper({
           autoHideDuration={6000}
           onClose={() => setSnackbar(null)}
         >
-          <Alert
-            className={classes.snackbar}
-            onClose={() => setSnackbar(null)}
-            severity={snackbar.severity}
-          >
+          <Alert onClose={() => setSnackbar(null)} severity={snackbar.severity}>
             {snackbar.message}
           </Alert>
         </Snackbar>
