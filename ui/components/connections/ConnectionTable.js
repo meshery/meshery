@@ -18,7 +18,6 @@ import {
   useTheme,
 } from '@layer5/sistent';
 import {
-  ActionButton,
   ContentContainer,
   CreateButton,
   InnerTableContainer,
@@ -1086,19 +1085,18 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
         columnVisibility={columnVisibility}
       />
       <_PromptComponent ref={modalRef} />
-
-      <Popover
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleActionMenuClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-      >
-        <Grid style={{ margin: '10px' }}>
+      <UsesSistent>
+        <Popover
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleActionMenuClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+        >
           <ActionListItem>
-            <ActionButton
+            <Button
               type="submit"
               onClick={handleFlushMeshSync()}
               data-cy="btnResetDatabase"
@@ -1108,10 +1106,10 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
               <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
                 Flush MeshSync
               </Typography>
-            </ActionButton>
+            </Button>
           </ActionListItem>
-        </Grid>
-      </Popover>
+        </Popover>
+      </UsesSistent>
     </UsesSistent>
   );
 };
