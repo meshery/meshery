@@ -24,6 +24,7 @@ import {
   ActionListItem,
   ConnectionStyledSelect,
 } from './styles';
+import { FormatId } from '../DataFormatter';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import { getVisibilityColums } from '../../utils/utils';
@@ -105,7 +106,6 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState();
   const [kindFilter, setKindFilter] = useState();
-
   const [useUpdateConnectionMutator] = useUpdateConnectionMutation();
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
@@ -227,6 +227,7 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
     ['created_at', 'na'],
     ['status', 'xs'],
     ['Actions', 'xs'],
+    ['ConnectionID', 'xs'],
   ];
 
   const addConnectionToEnvironment = async (
@@ -739,6 +740,28 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
               </CustomTooltip>
             </UsesSistent>
           );
+        },
+      },
+    },
+    {
+      name: 'ConnectionID',
+      label: 'Connection ID',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
+        customBodyRender: (value, tableMeta) => {
+          const connectionId = getColumnValue(tableMeta.rowData, 'id', columns);
+          return <FormatId id={connectionId} />;
         },
       },
     },
