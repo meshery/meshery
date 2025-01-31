@@ -13,8 +13,7 @@ import {
   useEnvironmentAssignment,
   useTeamAssignment,
   useViewAssignment,
-  ViewsIcon,
-  DesignsIcon,
+  ViewIcon,
   WorkspaceIcon,
   Modal as SisitentModal,
   createAndEditWorkspaceSchema,
@@ -28,6 +27,7 @@ import {
   PROMPT_VARIANTS,
   L5EditIcon,
   L5DeleteIcon,
+  OutlinedPatternIcon,
 } from '@layer5/sistent';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -442,7 +442,7 @@ const Workspaces = ({ organization }) => {
                     <>
                       <L5EditIcon
                         key={`edit_role-${tableMeta.rowIndex}`}
-                        disabled={CAN(keys.EDIT_WORKSPACE.subject, keys.EDIT_WORKSPACE.action)}
+                        disabled={CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)}
                         onClick={(e) =>
                           handleWorkspaceModalOpen(
                             e,
@@ -454,7 +454,7 @@ const Workspaces = ({ organization }) => {
 
                       <L5DeleteIcon
                         key={`delete_role-${tableMeta.rowIndex}`}
-                        disabled={CAN(keys.DELETE_WORKSPACE.subject, keys.DELETE_WORKSPACE.action)}
+                        disabled={CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject)}
                         onClick={(e) =>
                           handleDeleteWorkspaceConfirm(
                             e,
@@ -736,16 +736,14 @@ const Workspaces = ({ organization }) => {
               onAssign={environmentAssignment.handleAssign}
               disableTransfer={environmentAssignment.disableTransferButton}
               helpText={`Assign Environments to ${environmentAssignWorkspace.name}`}
-              isAssignAllowed={
-                !CAN(
-                  keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.subject,
-                  keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.action,
-                )
-              }
+              isAssignAllowed={CAN(
+                keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.action,
+                keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.subject,
+              )}
               isRemoveAllowed={
                 !CAN(
-                  keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.subject,
                   keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.action,
+                  keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.subject,
                 )
               }
             />
@@ -770,12 +768,12 @@ const Workspaces = ({ organization }) => {
               disableTransfer={teamAssignment.disableTransferButton}
               helpText={`Assign Teams to ${teamAssignWorkspace.name}`}
               isAssignAllowed={CAN(
-                keys.ASSIGN_TEAM_TO_WORKSPACE.subject,
                 keys.ASSIGN_TEAM_TO_WORKSPACE.action,
+                keys.ASSIGN_TEAM_TO_WORKSPACE.subject,
               )}
-              isRemoveAllowisAssignAllowed={CAN(
-                keys.REMOVE_TEAM_FROM_WORKSPACE.subject,
+              isRemoveAllowed={CAN(
                 keys.REMOVE_TEAM_FROM_WORKSPACE.action,
+                keys.REMOVE_TEAM_FROM_WORKSPACE.subject,
               )}
             />
 
@@ -783,12 +781,20 @@ const Workspaces = ({ organization }) => {
               open={designAssignment.assignModal && viewAssignment.assignModal}
               onClose={designAssignment.handleAssignModalClose}
               title={`Assign Designs and Views to ${designAssignWorkspace.name}`}
-              headerIcon={<DesignsIcon height="40" width="40" />}
+              headerIcon={
+                <OutlinedPatternIcon height="40" width="40" fill={theme.palette.icon.default} />
+              }
               name="Designs"
               assignableData={designAssignment.data}
               handleAssignedData={designAssignment.handleAssignData}
               originalAssignedData={designAssignment.workspaceData}
-              emptyStateIcon={<DesignsIcon height="5rem" width="5rem" />}
+              emptyStateIcon={
+                <OutlinedPatternIcon
+                  height="5rem"
+                  width="5rem"
+                  fill={theme.palette.icon.disabled}
+                />
+              }
               handleAssignablePage={designAssignment.handleAssignablePage}
               handleAssignedPage={designAssignment.handleAssignedPage}
               originalLeftCount={designAssignment.data?.total_count}
@@ -799,16 +805,16 @@ const Workspaces = ({ organization }) => {
               }
               helpText={`Assign Designs and Views to ${designAssignWorkspace.name}`}
               isAssignAllowed={CAN(
-                keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
                 keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
+                keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
               )}
               isRemoveAllowed={CAN(
-                keys.REMOVE_DESIGNS_FROM_WORKSPACE.subject,
                 keys.REMOVE_DESIGNS_FROM_WORKSPACE.action,
+                keys.REMOVE_DESIGNS_FROM_WORKSPACE.subject,
               )}
               showViews={true}
               emptyStateViewsIcon={
-                <ViewsIcon height="5rem" width="5rem" fill={theme.palette.icon.disabled} />
+                <ViewIcon height="5rem" width="5rem" fill={theme.palette.icon.disabled} />
               }
               nameViews="Views"
               assignableViewsData={viewAssignment.data}
@@ -819,12 +825,12 @@ const Workspaces = ({ organization }) => {
               originalLeftViewsCount={viewAssignment.data?.total_count}
               originalRightViewsCount={viewAssignment.workspaceData?.total_count}
               isAssignAllowedViews={CAN(
-                keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
                 keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
+                keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
               )}
               isRemoveAllowedViews={CAN(
-                keys.REMOVE_VIEWS_FROM_WORKSPACE.subject,
                 keys.REMOVE_VIEWS_FROM_WORKSPACE.action,
+                keys.REMOVE_VIEWS_FROM_WORKSPACE.subject,
               )}
             />
             <_PromptComponent ref={ref} />

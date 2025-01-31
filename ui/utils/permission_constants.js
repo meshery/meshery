@@ -369,14 +369,6 @@ export const keys = {
     subject: 'Edit View',
     action: 'f2e04b59-42ee-4af6-b488-7bc7047fc01b',
   },
-  ASSIGN_VIEWS_TO_WORKSPACE: {
-    subject: 'Assign views to workspace',
-    action: '5a26b21b-bf15-4622-9681-d907fc5154fd',
-  },
-  REMOVE_VIEWS_FROM_WORKSPACE: {
-    subject: 'Remove views from workspace',
-    action: '5b48eded-15d8-4c51-9ac4-b11097dbdd75',
-  },
   INVITE_COLLABORATORS_PUBLIC_DESIGNS: {
     subject: 'Invite any Meshery Cloud user, or all Meshery users',
     action: 'ccc4bc8d-f484-42b3-8a62-2667284605c3',
