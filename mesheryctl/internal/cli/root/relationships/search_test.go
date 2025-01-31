@@ -40,6 +40,15 @@ func TestSearch(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
+			Name:             "Search with missing arguments",
+			Args:             []string{"search"},
+			URL:              "",
+			Fixture:          "",
+			ExpectedResponse: "search.missing.args.output.golden",
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      true,
+		},
+		{
 			Name:             "Search registered relationships",
 			Args:             []string{"search", "--model", "kubernetes"},
 			URL:              testContext.BaseURL + "/api/meshmodels/models/kubernetes",
@@ -53,12 +62,13 @@ func TestSearch(t *testing.T) {
 	// run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
+			if tt.Fixture != "" {
+				apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
+				httpmock.RegisterResponder("GET", tt.URL,
+					httpmock.NewStringResponder(200, apiResponse))
+			}
 
 			utils.TokenFlag = tt.Token
-
-			httpmock.RegisterResponder("GET", tt.URL,
-				httpmock.NewStringResponder(200, apiResponse))
 
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
