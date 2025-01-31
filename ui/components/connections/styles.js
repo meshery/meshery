@@ -20,20 +20,19 @@ export const InnerTableContainer = styled(TableContainer)(({ theme }) => ({
   overflowX: 'hidden',
 }));
 
-export const ActionListItem = styled(Box)({
+export const ActionListItem = styled(Box)(({ theme }) => ({
   display: 'flex',
   gridGap: '0.5rem',
   alignItems: 'center',
   justifyContent: 'space-around',
   width: '100%',
-});
+  backgroundColor: theme.palette.background.card,
+  padding: '10px',
+}));
 
 export const ActionButton = styled(Button)({
   width: '100%',
   justifyContent: 'flex-start',
-  '&:hover': {
-    backgroundColor: 'transparent',
-  },
 });
 
 export const ConnectionTab = styled(Tab)(({ theme }) => ({
