@@ -5,7 +5,7 @@ const Tags = {
   USER_PREF: 'userPref',
 };
 
-const userApi = api.injectEndpoints({
+export const userApi = api.injectEndpoints({
   endpoints: (builder) => ({
     getLoggedInUser: builder.query({
       query: () => `user`,
@@ -80,6 +80,27 @@ const userApi = api.injectEndpoints({
       }),
       invalidatesTags: ['users'],
     }),
+    getUsersForOrg: builder.query({
+      query: (queryArg) => ({
+        url: `extensions/api/identity/orgs/${queryArg.orgId}/users`,
+        params: {
+          page: queryArg.page,
+          pagesize: queryArg.pagesize,
+          search: queryArg.search,
+          order: queryArg.order,
+          filter: queryArg.filter,
+          teamID: queryArg.teamId,
+        },
+      }),
+      invalidatesTags: ['users'],
+    }),
+    removeUserFromTeam: builder.mutation({
+      query: (queryArg) => ({
+        url: `/api/identity/orgs/${queryArg.orgId}/teams/${queryArg.teamId}/users/${queryArg.userId}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['teams'],
+    }),
   }),
 });
 
@@ -93,4 +114,6 @@ export const {
   useUpdateUserPrefWithContextMutation,
   useGetProviderCapabilitiesQuery,
   useHandleFeedbackFormSubmissionMutation,
+  useGetUsersForOrgQuery,
+  useRemoveUserFromTeamMutation,
 } = userApi;
