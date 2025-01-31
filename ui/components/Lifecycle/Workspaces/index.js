@@ -441,8 +441,9 @@ const Workspaces = ({ organization }) => {
                   {
                     <>
                       <L5EditIcon
+                        title="Edit Workspace"
                         key={`edit_role-${tableMeta.rowIndex}`}
-                        disabled={CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)}
+                        disabled={!CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)}
                         onClick={(e) =>
                           handleWorkspaceModalOpen(
                             e,
@@ -453,8 +454,9 @@ const Workspaces = ({ organization }) => {
                       />
 
                       <L5DeleteIcon
+                        title="Delete Workspace"
                         key={`delete_role-${tableMeta.rowIndex}`}
-                        disabled={CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject)}
+                        disabled={!CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject)}
                         onClick={(e) =>
                           handleDeleteWorkspaceConfirm(
                             e,

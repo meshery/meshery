@@ -14,8 +14,7 @@ import {
 import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
 import { ArrowDropDown } from '@mui/icons-material';
 import { getSchema } from './MesheryMeshInterface/PatternService/helper';
-import { Snackbar } from '@material-ui/core';
-import { Alert } from '@mui/material';
+import { Alert, Snackbar } from '@mui/material';
 import { UsesSistent } from './SistentWrapper';
 
 const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {

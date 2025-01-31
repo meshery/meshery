@@ -96,7 +96,7 @@ export const userApi = api.injectEndpoints({
     }),
     removeUserFromTeam: builder.mutation({
       query: (queryArg) => ({
-        url: `/api/identity/orgs/${queryArg.orgId}/teams/${queryArg.teamId}/users/${queryArg.userId}`,
+        url: `extensions/api/identity/orgs/${queryArg.orgId}/teams/${queryArg.teamId}/users/${queryArg.userId}`,
         method: 'DELETE',
       }),
       invalidatesTags: ['teams'],

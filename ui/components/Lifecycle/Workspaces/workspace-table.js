@@ -127,11 +127,9 @@ const WorkSpaceDataTable = ({ rowData }) => {
           >
             <UsesSistent>
               <DesignTable
-                handleBulkUnpublishModal={() => {}}
                 GenericRJSFModal={Modal}
                 designsOfWorkspace={designsOfWorkspace}
                 handleBulkWorkspaceDesignDeleteModal={handleBulkWorkspaceDesignDeleteModal}
-                handleUnpublishModal={() => {}}
                 handleWorkspaceDesignDeleteModal={handleWorkspaceDesignDeleteModal}
                 isAssignAllowed={CAN(
                   keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
@@ -178,31 +176,31 @@ const WorkSpaceDataTable = ({ rowData }) => {
                 workspaceId={rowData[0]}
                 workspaceName={rowData[1]}
               />
-              <UsesSistent>
-                <WorkspaceTeamsTable
-                  workspaceId={rowData[0]}
-                  isAssignTeamAllowed={CAN(
-                    keys.ASSIGN_TEAM_TO_WORKSPACE.action,
-                    keys.ASSIGN_TEAM_TO_WORKSPACE.subject,
-                  )}
-                  isDeleteTeamAllowed={CAN(keys.DELETE_TEAM.action, keys.DELETE_TEAM.subject)}
-                  isEditTeamAllowed={CAN(keys.EDIT_TEAM.action, keys.EDIT_TEAM.subject)}
-                  isLeaveTeamAllowed={CAN(keys.LEAVE_TEAM.action, keys.LEAVE_TEAM.subject)}
-                  isRemoveTeamFromWorkspaceAllowed={CAN(
-                    keys.REMOVE_TEAM_FROM_WORKSPACE.action,
-                    keys.REMOVE_TEAM_FROM_WORKSPACE.subject,
-                  )}
-                  useAssignTeamToWorkspaceMutation={useAssignTeamToWorkspaceMutation}
-                  useGetTeamsOfWorkspaceQuery={useGetTeamsOfWorkspaceQuery}
-                  useUnassignTeamFromWorkspaceMutation={useUnassignTeamFromWorkspaceMutation}
-                  workspaceName={rowData[1]}
-                  fetchTeamUsers={() => {}}
-                  org_id={org_id}
-                  useGetUsersForOrgQuery={useGetUsersForOrgQuery}
-                  useNotificationHandlers={useNotificationHandlers}
-                  useRemoveUserFromTeamMutation={useRemoveUserFromTeamMutation}
-                />
-              </UsesSistent>
+
+              <WorkspaceTeamsTable
+                workspaceId={rowData[0]}
+                isAssignTeamAllowed={CAN(
+                  keys.ASSIGN_TEAM_TO_WORKSPACE.action,
+                  keys.ASSIGN_TEAM_TO_WORKSPACE.subject,
+                )}
+                isDeleteTeamAllowed={CAN(keys.DELETE_TEAM.action, keys.DELETE_TEAM.subject)}
+                isEditTeamAllowed={CAN(keys.EDIT_TEAM.action, keys.EDIT_TEAM.subject)}
+                isLeaveTeamAllowed={CAN(keys.LEAVE_TEAM.action, keys.LEAVE_TEAM.subject)}
+                isRemoveTeamFromWorkspaceAllowed={CAN(
+                  keys.REMOVE_TEAM_FROM_WORKSPACE.action,
+                  keys.REMOVE_TEAM_FROM_WORKSPACE.subject,
+                )}
+                useAssignTeamToWorkspaceMutation={useAssignTeamToWorkspaceMutation}
+                useGetTeamsOfWorkspaceQuery={useGetTeamsOfWorkspaceQuery}
+                useUnassignTeamFromWorkspaceMutation={useUnassignTeamFromWorkspaceMutation}
+                workspaceName={rowData[1]}
+                fetchTeamUsers={() => {}}
+                org_id={org_id}
+                useGetUsersForOrgQuery={useGetUsersForOrgQuery}
+                useNotificationHandlers={useNotificationHandlers}
+                useRemoveUserFromTeamMutation={useRemoveUserFromTeamMutation}
+              />
+
               <EnvironmentTable
                 workspaceId={rowData[0]}
                 workspaceName={rowData[1]}
