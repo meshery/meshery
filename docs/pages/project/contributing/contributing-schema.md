@@ -1,8 +1,8 @@
 ---
 layout: page
-title: Contributing to Meshery Schema
-permalink: project/contributing/contributing-schema
-abstract: How to contribute to Meshery Schema
+title: Contributing to Meshery Schemas
+permalink: project/contributing/contributing-schemas
+abstract: How to contribute to Meshery Schemas
 language: en
 type: project
 category: contributing
