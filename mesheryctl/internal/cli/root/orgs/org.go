@@ -40,12 +40,12 @@ var OrgCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if count {
-			_, c, err := getAllOrgs(true)
+			orgs, err := getAllOrgs()
 			if err != nil {
 				utils.Log.Error(err)
 				return nil
 			}
-			fmt.Println(fmt.Sprintf("Total registered orgs : %v", c))
+			fmt.Println(fmt.Sprintf("Total registered orgs : %v", orgs.TotalCount))
 			return nil
 
 		}
@@ -63,36 +63,33 @@ func init() {
 
 }
 
-func getAllOrgs(countOnly bool) (*models.OrganizationsPage, int, error) {
+func getAllOrgs() (*models.OrganizationsPage, error) {
 	var orgPage models.OrganizationsPage
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		return nil, 0, utils.ErrLoadConfig(err)
+		return nil, utils.ErrLoadConfig(err)
 	}
 	baseUrl := mctlCfg.GetBaseMesheryURL()
-	url := fmt.Sprintf("%s/api/identity/orgs?all=%v", baseUrl, countOnly)
+	url := fmt.Sprintf("%s/api/identity/orgs?all=true", baseUrl)
 
 	req, err := utils.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 	res, err := utils.MakeRequest(req)
 	if err != nil {
-		return nil, 0, utils.ErrFailRequest(err)
+		return nil, utils.ErrFailRequest(err)
 	}
 
 	jsonBytes, err := io.ReadAll(res.Body)
 	if err != nil {
-		return nil, 0, err
+		return nil, err
 	}
 	err = json.Unmarshal(jsonBytes, &orgPage)
 	if err != nil {
-		return nil, 0, err
-	}
-	if countOnly {
-		return nil, orgPage.TotalCount, nil
+		return nil, err
 	}
 
-	return &orgPage, 0, nil
+	return &orgPage, nil
 
 }
