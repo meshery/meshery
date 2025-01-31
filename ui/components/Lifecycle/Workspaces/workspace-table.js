@@ -21,7 +21,6 @@ import {
   Grid,
 } from '@layer5/sistent';
 import { TableCell } from '@mui/material';
-import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useDeletePattern, usePublishPattern } from './hooks';
 import { useLegacySelector } from 'lib/store';

@@ -83,7 +83,7 @@ const Workspaces = ({ organization }) => {
     schema: {},
   });
   const [page, setPage] = useState(0);
-  const [pageSize /*setPageSize*/] = useState(10);
+  const [pageSize, setPageSize] = useState(10);
   const [sortOrder, setSortOrder] = useState('');
   const [search, setSearch] = useState('');
 
@@ -500,7 +500,6 @@ const Workspaces = ({ organization }) => {
     download: false,
     elevation: 0,
     serverSide: true,
-    viewColumns: false,
     search: false,
     textLabels: {
       selectedRows: {

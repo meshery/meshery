@@ -1,6 +1,6 @@
 import { styled } from '@layer5/sistent';
 
-export const TableIconsContainer = styled('span')(({ disabled }) => ({
+export const TableIconsContainer = styled('span')(({ disabled, theme }) => ({
   color: disabled ? theme.palette.icon.disabled : '#455a64',
   pointerEvents: disabled ? 'none' : 'normal',
   display: 'flex',
