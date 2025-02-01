@@ -51,18 +51,18 @@ const MesheryWorkspaceCard = ({
       workspaceId: workspaceDetails.id,
       pagesize: 1,
     },
-    {
-      skip,
-    },
+    // {
+    //   skip,
+    // },
   );
   const { data: designsOfWorkspace } = useGetDesignsOfWorkspaceQuery(
     {
       workspaceId: workspaceDetails.id,
       pagesize: 1,
     },
-    {
-      skip,
-    },
+    // {
+    //   skip,
+    // },
   );
 
   const { data: events, isLoading: isEventsLoading } = useGetEventsOfWorkspaceQuery(

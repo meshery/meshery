@@ -116,6 +116,7 @@ const workspacesApi = api
 
           return designs;
         },
+        providesTags: () => [{ type: TAGS.WORKSPACES }],
         invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
       }),
 
@@ -133,7 +134,6 @@ const workspacesApi = api
           url: `workspaces/${queryArg.workspaceId}/designs/${queryArg.designId}`,
           method: 'DELETE',
         }),
-
         invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
       }),
       getViewsOfWorkspace: builder.query({
@@ -162,6 +162,7 @@ const workspacesApi = api
 
           return views;
         },
+        providesTags: () => [{ type: TAGS.WORKSPACES }],
         invalidatesTags: () => [{ type: TAGS.WORKSPACES }],
       }),
       assignViewToWorkspace: builder.mutation({

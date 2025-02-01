@@ -320,6 +320,9 @@ const Workspaces = ({ organization }) => {
     useUnassignEnvironmentFromWorkspaceMutation: useUnassignEnvironmentFromWorkspaceMutation,
   });
 
+  console.log('amit assignable data', environmentAssignment.data);
+  console.log('amit assigned data', environmentAssignment.workspaceData);
+
   const teamAssignment = useTeamAssignment({
     workspaceId: teamAssignWorkspace?.id,
     useAssignTeamToWorkspaceMutation: useAssignTeamToWorkspaceMutation,
@@ -343,8 +346,8 @@ const Workspaces = ({ organization }) => {
 
   const handleAssignEnvironmentModalOpen = (e, workspace) => {
     e.stopPropagation();
-    environmentAssignment.handleAssignModal();
     setEnvironmentAssignWorkspace(workspace);
+    environmentAssignment.handleAssignModal();
   };
 
   const handleAssignTeamModalOpen = (e, workspace) => {
@@ -742,12 +745,10 @@ const Workspaces = ({ organization }) => {
                 keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.action,
                 keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.subject,
               )}
-              isRemoveAllowed={
-                !CAN(
-                  keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.action,
-                  keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.subject,
-                )
-              }
+              isRemoveAllowed={CAN(
+                keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.action,
+                keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.subject,
+              )}
             />
 
             <AssignmentModal
