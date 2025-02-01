@@ -154,24 +154,6 @@ export const CardTitle = styled(Typography)({
   },
 });
 
-export const OrganizationName = styled('p')({
-  fontSize: '0.9rem',
-  display: 'flex',
-  alignItems: 'end',
-  padding: '0 5px',
-  '&:hover': {
-    cursor: 'default',
-  },
-});
-
-export const StyledIconButton = styled('button')({
-  background: 'transparent',
-  border: 'none',
-  '&:hover': {
-    cursor: 'default',
-  },
-});
-
 export const DateLabel = styled(Typography)({
   fontStyle: 'italic',
   fontSize: '12px',
