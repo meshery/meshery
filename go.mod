@@ -5,7 +5,7 @@ go 1.23.4
 replace github.com/vektah/gqlparser/v2 => github.com/vektah/gqlparser/v2 v2.5.11
 
 require (
-	cuelang.org/go v0.11.2
+	cuelang.org/go v0.12.0
 	fortio.org/fortio v1.66.2
 	github.com/99designs/gqlgen v0.17.45
 	github.com/Masterminds/semver/v3 v3.3.1
