@@ -20,12 +20,19 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
+type MesheryDesignImportPayload struct {
+	Name     string `json:"name,omitempty"`
+	URL      string `json:"url,omitempty"`
+	File     []byte `json:"file,omitempty"`
+	FileName string `json:"file_name,omitempty"`
+}
+
 type FileToImport struct {
 	Data     []byte
 	FileName string
 }
 
-func GetFileToImportFromPayload(payload *MesheryPatternPOSTRequestBody) (FileToImport, error) {
+func GetFileToImportFromPayload(payload MesheryDesignImportPayload) (FileToImport, error) {
 	if payload.URL != "" {
 		resp, err := http.Get(payload.URL)
 		if err != nil {
@@ -52,8 +59,8 @@ func GetFileToImportFromPayload(payload *MesheryPatternPOSTRequestBody) (FileToI
 	}
 
 	return FileToImport{
-		Data:     payload.PatternData.PatternFile,
-		FileName: payload.PatternData.FileName,
+		Data:     payload.File,
+		FileName: payload.FileName,
 	}, nil
 }
 
@@ -107,6 +114,8 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 	}
 
 	tempDir, err := os.MkdirTemp("", "temp-import")
+
+	defer os.RemoveAll(tempDir)
 
 	if err != nil {
 		return emptyDesign, fmt.Errorf("Failed to create tmp directory %w", err)
@@ -206,7 +215,8 @@ func (h *Handler) DesignFileImportHandler(
 	userID := uuid.FromStringOrNil(user.ID)
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("create").ActedUpon(userID).WithSeverity(events.Informational)
 
-	parsedBody := &MesheryPatternPOSTRequestBody{}
+	var parsedBody MesheryDesignImportPayload
+
 	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
 		h.logErrorParsingRequestBody(rw, provider, err, userID, eventBuilder)
 		return
@@ -227,10 +237,17 @@ func (h *Handler) DesignFileImportHandler(
 
 	if err != nil {
 		h.log.Error(fmt.Errorf("Conversion: Failed to convert to design %w", err))
+
+		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": ErrSavePattern(err),
+		}).WithDescription(ErrSavePattern(err).Error()).Build()
+
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
 
-	design.Name = parsedBody.PatternData.Name
+	design.Name = parsedBody.Name
 	patternFile, err := encoding.Marshal(design)
 
 	h.log.Info("Successfull convertion to design")
@@ -242,7 +259,7 @@ func (h *Handler) DesignFileImportHandler(
 		SourceContent: fileToImport.Data,
 	}
 
-	_, err = provider.SaveMesheryPattern(token, &designRecord)
+	savedDesignByt, err := provider.SaveMesheryPattern(token, &designRecord)
 
 	if err != nil {
 		h.log.Error(ErrSavePattern(err))
@@ -256,11 +273,15 @@ func (h *Handler) DesignFileImportHandler(
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
+
+	_, _ = rw.Write(savedDesignByt)
+
 	event := eventBuilder.Build()
 	_ = provider.PersistEvent(event)
 	// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
 	// go h.config.EventBroadcaster.Publish(userID, event)
 	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
+
 	return
 
 }

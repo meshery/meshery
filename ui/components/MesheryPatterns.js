@@ -1377,26 +1377,20 @@ function MesheryPatterns({
     updateProgress({ showProgress: true });
     const { uploadType, name, url, file, designType } = data;
 
-    console.log("file upload",file)
     let requestBody = null;
     switch (uploadType) {
       case 'File Upload': {
         const fileElement = document.getElementById('root_file');
         const fileName = fileElement.files[0].name;
         requestBody = JSON.stringify({
-          save: true,
-          pattern_data: {
             name,
             file_name: fileName,
-            pattern_file: getUnit8ArrayDecodedFile(file),
-          },
+            file: getUnit8ArrayDecodedFile(file),
         });
-        console.log("request body",requestBody,fileName)
         break;
       }
       case 'URL Import':
         requestBody = JSON.stringify({
-          save: true,
           url,
           name,
         });
