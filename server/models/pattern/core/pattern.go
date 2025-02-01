@@ -403,7 +403,7 @@ func NewPatternFileFromK8sManifest(data string, fileName string, ignoreErrors bo
 }
 
 func createPatternDeclarationFromK8s(manifest map[string]interface{}, regManager *registry.RegistryManager) (component.ComponentDefinition, error) {
-	fmt.Printf("%+#v\n", manifest)
+	// fmt.Printf("%+#v\n", manifest)
 
 	apiVersion, err := mutils.Cast[string](manifest["apiVersion"])
 	if err != nil {
@@ -431,7 +431,7 @@ func createPatternDeclarationFromK8s(manifest map[string]interface{}, regManager
 		rest[k] = v
 	}
 
-	fmt.Printf(">>> %s %s\n", kind, apiVersion)
+	// fmt.Printf(">>> %s %s\n", kind, apiVersion)
 	// Get MeshModel entity with the selectors
 	componentList, _, _, _ := regManager.GetEntities(&regv1beta1.ComponentFilter{
 		Name:       kind,
