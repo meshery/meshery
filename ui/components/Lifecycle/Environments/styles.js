@@ -166,6 +166,7 @@ export const EmptyDescription = styled('p')({
   fontSize: '0.9rem',
   textAlign: 'left',
   fontStyle: 'italic',
+  margin: '0',
 });
 
 export const DescriptionLabel = styled('p')({

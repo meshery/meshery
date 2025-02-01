@@ -320,9 +320,6 @@ const Workspaces = ({ organization }) => {
     useUnassignEnvironmentFromWorkspaceMutation: useUnassignEnvironmentFromWorkspaceMutation,
   });
 
-  console.log('amit assignable data', environmentAssignment.data);
-  console.log('amit assigned data', environmentAssignment.workspaceData);
-
   const teamAssignment = useTeamAssignment({
     workspaceId: teamAssignWorkspace?.id,
     useAssignTeamToWorkspaceMutation: useAssignTeamToWorkspaceMutation,
