@@ -6,7 +6,7 @@ export const CardWrapper = styled(Card)(({ theme }) => ({
   width: '100%',
   display: 'flex',
   flexDirection: 'column',
-  backgroundColor: theme.palette.text.inverse,
+  backgroundColor: theme.palette.background.card,
   padding: '20px',
   '&:hover': {
     cursor: 'pointer',
