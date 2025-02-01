@@ -1,11 +1,11 @@
-import * as React from 'react';
-import PropTypes from 'prop-types';
-import Head from 'next/head';
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import { CacheProvider } from '@emotion/react';
-import theme from '../styles/theme';
-import createEmotionCache from '../lib/createEmotionCache';
+import * as React from "react";
+import PropTypes from "prop-types";
+import Head from "next/head";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import { CacheProvider } from "@emotion/react";
+import theme from "../styles/theme";
+import createEmotionCache from "../lib/createEmotionCache";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Footer from "../components/Footer";
@@ -30,12 +30,18 @@ export default function MyApp(props) {
           sx={{ display : "flex", flexDirection : "column", minHeight : "100vh" }}
         >
           <Box sx={{ display : "flex", flexGrow : 1 }}>
-            <Box sx={{ display : "flex", flex : 1, flexDirection : "column", background : "#202020"}}>
+            <Box
+              sx={{
+                display : "flex",
+                flex : 1,
+                flexDirection : "column",
+                background : "#202020",
+              }}
+            >
               <Box
                 sx={{
                   flex : 1,
                   padding : "48px 36px 24px",
-                  
                 }}
               >
                 <Paper>

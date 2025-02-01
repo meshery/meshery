@@ -10,6 +10,7 @@ import {
   CustomDialogActions,
   LearnMore,
   CustomTypography,
+  StyledPopover,
 } from "./Provider.style";
 import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
@@ -17,7 +18,7 @@ import Divider from "@mui/material/Divider";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import Popover from "@mui/material/Popover";
+
 import MenuList from "@mui/material/MenuList";
 import MenuItem from "@mui/material/MenuItem";
 import Tooltip from "@mui/material/Tooltip";
@@ -99,7 +100,7 @@ export default function Provider() {
       },
       (error) => {
         console.log(`there was an error fetching providers: ${error}`);
-      },
+      }
     );
   }
 
@@ -110,7 +111,7 @@ export default function Provider() {
     setIsLoading(true);
     const existingQueryString = window.location.search;
     const existingQueryParams = new URLSearchParams(existingQueryString);
-    existingQueryParams.append("provider", encodeURIComponent(provider))
+    existingQueryParams.append("provider", encodeURIComponent(provider));
     window.location.href = `/api/provider?${existingQueryParams.toString()}`;
   };
 
@@ -124,11 +125,18 @@ export default function Provider() {
 
   return (
     <ProviderLayout>
-      <MesheryLogo src="/provider/static/img/meshery-logo/meshery-logo-white-text.png" alt="logo" />
+      <MesheryLogo
+        src="/provider/static/img/meshery-logo/meshery-logo-dark-text-noBG.png"
+        alt="logo"
+      />
       <CustomDiv>
         {availableProviders !== "" && (
           <Fragment>
-            <ButtonGroup variant="contained" aria-label="split button" color="primary">
+            <ButtonGroup
+              variant="contained"
+              aria-label="split button"
+              color="primary"
+            >
               <Button
                 size="large"
                 aria-describedby={id}
@@ -138,12 +146,19 @@ export default function Provider() {
                 data-cy="select_provider"
                 disableElevation
               >
-                {isLoading && <CircularProgress size={20} sx={{ color : "white", marginRight : 8 }} />}
-                {selectedProvider !== "" ? selectedProvider : "Select your provider"}
+                {isLoading && (
+                  <CircularProgress
+                    size={20}
+                    sx={{ color : "white", marginRight : 8 }}
+                  />
+                )}
+                {selectedProvider !== ""
+                  ? selectedProvider
+                  : "Select your provider"}
                 <ArrowDropDownIcon />
               </Button>
             </ButtonGroup>
-            <Popover
+            <StyledPopover
               id={id}
               open={open}
               anchorEl={anchorEl}
@@ -160,7 +175,10 @@ export default function Provider() {
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList id="split-button-menu" autoFocusItem>
                   {Object.keys(availableProviders).map((key) => (
-                    <MenuItem key={key} onClick={(e) => handleMenuItemClick(e, key)}>
+                    <MenuItem
+                      key={key}
+                      onClick={(e) => handleMenuItemClick(e, key)}
+                    >
                       {key}
                     </MenuItem>
                   ))}
@@ -187,12 +205,16 @@ export default function Provider() {
                   </MenuProviderDisabled>
                 </MenuList>
               </ClickAwayListener>
-            </Popover>
+            </StyledPopover>
           </Fragment>
         )}
       </CustomDiv>
       <LearnMore>
-        <Typography variant="h6" sx={{ fontWeight : 500 }} gutterBottom>
+        <Typography
+          variant="h6"
+          sx={{ fontWeight : 500, color : "#FDFDFD" }}
+          gutterBottom
+        >
           Learn more about
           <Tooltip
             title="Learn more about providers"
@@ -225,23 +247,32 @@ export default function Provider() {
         disableScrollLock={true}
         data-cy="providers-modal"
       >
-        <CustomDialogTitle id="customized-dialog-title" onClose={handleModalClose} style={{ background : "#eee"}}>
+        <CustomDialogTitle
+          id="customized-dialog-title"
+          onClose={handleModalClose}
+          style={{ background : "#eee" }}
+        >
           <CustomTypography>Choosing a Provider</CustomTypography>
         </CustomDialogTitle>
         <DialogContent dividers>
           <DialogContentText id="customized-dialog-content">
-            Login to Meshery by choosing from the available providers. Providers extend Meshery by offering various
-            plugins and services, including identity services, long-term persistence, advanced performance analysis,
-            multi-player user collaboration, and so on.
+            Login to Meshery by choosing from the available providers. Providers
+            extend Meshery by offering various plugins and services, including
+            identity services, long-term persistence, advanced performance
+            analysis, multi-player user collaboration, and so on.
             <h3>Available Providers</h3>
             {Object.keys(availableProviders).map((key) => {
               return (
                 <React.Fragment key={availableProviders[key].provider_name}>
-                  <p style={{ fontWeight : 700 }}>{availableProviders[key].provider_name}</p>
+                  <p style={{ fontWeight : 700 }}>
+                    {availableProviders[key].provider_name}
+                  </p>
                   <ul>
-                    {availableProviders[key].provider_description?.map((desc, i) => (
-                      <li key={`desc-${i}`}>{desc}</li>
-                    ))}
+                    {availableProviders[key].provider_description?.map(
+                      (desc, i) => (
+                        <li key={`desc-${i}`}>{desc}</li>
+                      )
+                    )}
                   </ul>
                 </React.Fragment>
               );
@@ -254,13 +285,24 @@ export default function Provider() {
             </ul>
             <p style={{ fontWeight : 700 }}>The University of Texas at Austin</p>
             <ul>
-              <li>Academic research and advanced studies by Ph.D. researchers</li>
-              <li>Used by school of Electrical and Computer Engineering (ECE)</li>
+              <li>
+                Academic research and advanced studies by Ph.D. researchers
+              </li>
+              <li>
+                Used by school of Electrical and Computer Engineering (ECE)
+              </li>
             </ul>
-            <p style={{ fontWeight : 700 }}>Cloud Native Computing Foundation Infrastructure Lab</p>
+            <p style={{ fontWeight : 700 }}>
+              Cloud Native Computing Foundation Infrastructure Lab
+            </p>
             <ul>
-              <li>Performance and compatibility-centric research and validation</li>
-              <li>Used by various service meshes and by the Service Mesh Performance project</li>
+              <li>
+                Performance and compatibility-centric research and validation
+              </li>
+              <li>
+                Used by various service meshes and by the Service Mesh
+                Performance project
+              </li>
             </ul>
             <p style={{ fontWeight : 700 }}>HPE Security</p>
             <ul>
@@ -281,7 +323,12 @@ export default function Provider() {
             </a>
           </div>
 
-          <Button onClick={handleModalClose} color="primary" data-cy="providers-modal-button-ok" variant="contained">
+          <Button
+            onClick={handleModalClose}
+            color="primary"
+            data-cy="providers-modal-button-ok"
+            variant="contained"
+          >
             {" "}
             OK
           </Button>

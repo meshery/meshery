@@ -6,7 +6,7 @@ export default function ProviderLayout({ children }) {
   return (
     <>
       <NoSsr>
-        <div data-cy="root" style={{ padding : '170px 0px', textAlign : 'center', backgroundColor: 'rgb(54, 54, 54)' }}>
+        <div data-cy="root" style={{ padding : '170px 0px', textAlign : 'center', backgroundColor : 'rgb(54, 54, 54)' }}>
           {children}
         </div>
       </NoSsr>
