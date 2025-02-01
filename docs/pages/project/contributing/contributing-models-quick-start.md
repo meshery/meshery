@@ -21,31 +21,106 @@ The following instructions are a no-fluff guide to creating your own Meshery Mod
 ### Prerequisites
 
 1. Fork the [meshery/meshery](https://github.com/meshery/meshery) repository.
-1. Install the Meshery CLI by following the [installation instructions](https://docs.meshery.io/installation/).
+2. Install the Meshery CLI by following the [installation instructions](https://docs.meshery.io/installation/).
 
 ### Create a Model Definition
 
-<ol>
+There are two approaches to creating Meshery Model definitions.
 
-<li>In your meshery/meshery fork, open the template <a href="https://docs.google.com/spreadsheets/d/19JEpqvHrG8UL-Bc-An9UIcubf1NVhlfnQSN1TD7JOZ4/edit?gid=1308482975#gid=1308482975">spreadsheet</a>.</li>
-<ul><li>Or, optionally, use CSVs by navigating to <code>mesheryctl/templates/templates-csvs</code> directory.</li></ul>
-<li>Edit the <code>models sheet</code> file to include your model definition.
-   <ol>
-      <li>[Annotation-only Components] For models that contain annotation components, edit the <code>components sheet</code> file to include your component definitions.</li>
-   </ol>
-</li>
-<li>Generate your neww using a Meshery Server (optionally, use the <a href="https://playground.meshery.io">Meshery Playground</a>). Click the "Generate" button after navigating to Meshery UI --> Settings --> Registry.</li>
-<li> 
+### Using Meshery Integration Spreadsheet
 
-<details>
-   <summary>Or use Meshery CLI</summary>
-   Or, opttionally, use Meshery CLI by executing the following command:<code>mesheryctl registry generate --directory templates-csvs</code>
-   Review the generated components inside of the <code>server/meshmodel</code> directory under your model's name.
+The Meshery project maintains a central Integration Spreadsheet that serves as the source of truth for all models. While this spreadsheet is publicly viewable at [Meshery Integration Sheet](https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw), direct editing access is restricted to maintain data integrity.
 
-</details></li>
-<li> Verify that your model is displayed in the Meshery UI under Settings->Registry->Models.</li>
+To work with the spreadsheet approach, you'll need to set up your way to access the sheet. Here is how:
 
-</ol>
+1.  **Creating Your Spreadsheet Copy**: First, create your own copy of the [Meshery Integration Sheet](https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw)
+2.  **Setting Up Google Cloud Project**: To access your spreadsheet programmatically, you'll need to set up a Google Cloud Project. [How to?](https://developers.google.com/workspace/guides/create-project)
+3.  **Enabling the Google Sheets API**: Enable API access for your project. [How to?](https://support.google.com/googleapi/answer/6158841)
+4.  **Creating Service Account Credentials**: [How to?](https://developers.google.com/workspace/guides/create-credentials#create_credentials_for_a_service_account)
+5. **Preparing Credentials**: Convert your credentials to the required format:
+
+```bash
+# Convert the downloaded JSON credentials to base64
+base64 -w 0 /path/to/your-service-account-creds.json
+
+# Add the output to your shell configuration file
+echo 'export SHEET_CRED="<paste-base64-output-here>"' >> ~/.bashrc  # or ~/.zshrc for Zsh users
+
+# Reload your shell configuration
+source ~/.bashrc  # or source ~/.zshrc for Zsh users
+```
+
+6. **Configuring Spreadsheet Access**: Grant access to your service account:
+
+    -   Copy the service account email address (it ends with @developer.gserviceaccount.com)
+    -   Open your copy of the Meshery Integration Sheet
+    -   Click the "Share" button
+    -   Paste the service account email
+    -   Set the role to "Editor" and "Share"
+7. **Publishing Your Spreadsheet**: Make your spreadsheet accessible:
+
+    -   In your spreadsheet, click `File > Share > Publish` to web
+    -   Choose "Entire Document" and "Comma-separated values (.csv)"
+    -   Click "Publish"
+    -   Keep note of your spreadsheet ID (it's the long string in your spreadsheet's URL between /d/ and /edit)
+	    - Example: `https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw/edit`
+	    - spreadsheet ID: `1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw`
+
+### Using Local CSV Files
+
+For a simpler approach that requires no additional setup, you can use local CSV files. This method is particularly useful for initial development and testing.
+
+In your Meshery fork, you can find the CSV templates at `mesheryctl/templates/templates-csvs`. The directory contains three essential files:
+
+-   `models.csv`: Defines model metadata and basic properties
+-   `components.csv`: Specifies component definitions and their attributes
+-   `relationships.csv`: Describes connections between components
+
+Each file follows the same structure as the spreadsheet, but can be edited locally.
+
+## Generating Models
+
+### Using Meshery CLI
+
+#### For Spreadsheet-Based Definitions:
+
+If you set up the Google Sheets integration, use the following command:
+
+```bash
+mesheryctl registry generate --spreadsheet-id "<your-spreadsheet-id>" --spreadsheet-cred $SHEET_CRED
+```
+
+for specific model:
+
+```bash
+mesheryctl registry generate --spreadsheet-id "<your-spreadsheet-id>" --spreadsheet-cred $SHEET_CRED --model "<model-name-in-csv"
+```
+
+#### For Local CSV-Based Definitions:
+
+If you're working with local CSV files, use:
+
+```bash
+mesheryctl registry generate --directory templates-csvs
+```
+
+The generated model will be placed in `server/meshmodel` directory under your model's name
+
+### Using Meshery UI
+
+The Meshery UI provides a visual interface for model generation. Here's how to use it:
+
+-   Navigate to `Settings → Registry → Models`
+-   Click "Generate" button
+- In the generation dialog, select "Upload CSV Files"
+-   You can now upload the three template CSV files from `mesheryctl/templates/templates-csvs`
+
+Verify:
+
+-   Navigate to `Settings → Registry → Models`
+-   Look for your model in the list
+-   Check that all components and relationships are present
+-   Verify that properties and metadata are correctly displayed
 
 **Congratulations! You have successfully created a new model.**
 
@@ -64,4 +139,3 @@ The following instructions are a no-fluff guide to creating your own Meshery Mod
 We encourage you to get involved in the development of Meshery Models and to share your feedback.
 
 {% include alert.html type="info" title="Meshery Models are extensible" content="Meshery Models are designed to be extensible, allowing you to define new components as needed. If you have an idea for a new component, please create one and share it with the Meshery community." %}
-
