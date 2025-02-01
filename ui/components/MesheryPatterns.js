@@ -1373,8 +1373,11 @@ function MesheryPatterns({
    * }} data
    */
   function handleImportDesign(data) {
+
     updateProgress({ showProgress: true });
     const { uploadType, name, url, file, designType } = data;
+
+    console.log("file upload",file)
     let requestBody = null;
     switch (uploadType) {
       case 'File Upload': {
@@ -1384,10 +1387,11 @@ function MesheryPatterns({
           save: true,
           pattern_data: {
             name,
-            file_name: fileName.split('.')[0],
+            file_name: fileName,
             pattern_file: getUnit8ArrayDecodedFile(file),
           },
         });
+        console.log("request body",requestBody,fileName)
         break;
       }
       case 'URL Import':
@@ -1401,7 +1405,6 @@ function MesheryPatterns({
 
     importPattern({
       importBody: requestBody,
-      type: designType,
     })
       .unwrap()
       .then(() => {
