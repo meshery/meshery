@@ -70,7 +70,11 @@ components:
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/compute-workspace/icons/color/compute-workspace-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/compute-workspace/icons/white/compute-workspace-white.svg
   description: 
-components-count: 15
+- name: stream-native-cloud-connection
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/stream-native-cloud-connection/icons/color/stream-native-cloud-connection-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/stream-native-cloud-connection/icons/white/stream-native-cloud-connection-white.svg
+  description: 
+components-count: 16
 relationships: 
 relationship-count: 0
 featureList: [

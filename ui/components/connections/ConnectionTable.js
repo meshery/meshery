@@ -18,13 +18,13 @@ import {
   useTheme,
 } from '@layer5/sistent';
 import {
-  ActionButton,
   ContentContainer,
   CreateButton,
   InnerTableContainer,
   ActionListItem,
   ConnectionStyledSelect,
 } from './styles';
+import { FormatId } from '../DataFormatter';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import MesherySettingsEnvButtons from '../MesherySettingsEnvButtons';
 import { getVisibilityColums } from '../../utils/utils';
@@ -106,7 +106,6 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState();
   const [kindFilter, setKindFilter] = useState();
-
   const [useUpdateConnectionMutator] = useUpdateConnectionMutation();
   const [addConnectionToEnvironmentMutator] = useAddConnectionToEnvironmentMutation();
   const [removeConnectionFromEnvMutator] = useRemoveConnectionFromEnvironmentMutation();
@@ -228,6 +227,7 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
     ['created_at', 'na'],
     ['status', 'xs'],
     ['Actions', 'xs'],
+    ['ConnectionID', 'xs'],
   ];
 
   const addConnectionToEnvironment = async (
@@ -744,6 +744,28 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
       },
     },
     {
+      name: 'ConnectionID',
+      label: 'Connection ID',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
+        customBodyRender: (value, tableMeta) => {
+          const connectionId = getColumnValue(tableMeta.rowData, 'id', columns);
+          return <FormatId id={connectionId} />;
+        },
+      },
+    },
+    {
       name: 'status',
       label: 'Status',
       options: {
@@ -1086,19 +1108,18 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
         columnVisibility={columnVisibility}
       />
       <_PromptComponent ref={modalRef} />
-
-      <Popover
-        open={open}
-        anchorEl={anchorEl}
-        onClose={handleActionMenuClose}
-        anchorOrigin={{
-          vertical: 'bottom',
-          horizontal: 'left',
-        }}
-      >
-        <Grid style={{ margin: '10px' }}>
+      <UsesSistent>
+        <Popover
+          open={open}
+          anchorEl={anchorEl}
+          onClose={handleActionMenuClose}
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left',
+          }}
+        >
           <ActionListItem>
-            <ActionButton
+            <Button
               type="submit"
               onClick={handleFlushMeshSync()}
               data-cy="btnResetDatabase"
@@ -1108,10 +1129,10 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
               <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
                 Flush MeshSync
               </Typography>
-            </ActionButton>
+            </Button>
           </ActionListItem>
-        </Grid>
-      </Popover>
+        </Popover>
+      </UsesSistent>
     </UsesSistent>
   );
 };
