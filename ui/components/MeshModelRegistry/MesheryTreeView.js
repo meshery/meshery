@@ -773,6 +773,12 @@ const MesheryTreeView = ({
     if (!isExpand) {
       setSearchText(() => null);
       setResourcesDetail(() => []);
+      setPage({
+        Models: 0,
+        Components: 0,
+        Relationships: 0,
+        Registrants: 0,
+      });
     }
     setIsSearchExpanded(isExpand);
   };

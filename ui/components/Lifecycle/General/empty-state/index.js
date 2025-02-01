@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@layer5/sistent';
 import React from 'react';
 import CurvedArrowIcon from './curvedArrowIcon';
 

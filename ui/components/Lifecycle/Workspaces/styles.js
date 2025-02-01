@@ -1,149 +1,39 @@
-import { Colors } from '../../../themes/app';
-import { Checkbox, Box, Button, Card, Typography, styled, useTheme } from '@layer5/sistent';
+import { styled } from '@layer5/sistent';
 
-/** Workspace card wrapper */
-export const CardWrapper = styled(Card)(({ theme }) => ({
-  width: '100%',
+export const TableIconsContainer = styled('span')(({ disabled, theme }) => ({
+  color: disabled ? theme.palette.icon.disabled : '#455a64',
+  pointerEvents: disabled ? 'none' : 'normal',
   display: 'flex',
-  flexDirection: 'column',
-  backgroundColor: theme.palette.text.inverse,
-  padding: '20px',
-  '&:hover': {
+  cursor: 'not-allowed',
+  '& svg': {
     cursor: 'pointer',
   },
 }));
 
-export const BulkSelectCheckbox = styled(Checkbox)({
-  padding: 0,
-  marginRight: '0.5rem',
-  height: '28px',
-  '& .MuiSvgIcon-root': {
-    borderColor: 'white',
-  },
-  color: 'white',
-  '&:hover': {
-    color: 'white',
-    cursor: 'pointer',
-  },
-  '&.Mui-checked': {
-    color: 'white',
-  },
-});
-
-export const CardTitle = styled(Typography)({
-  fontSize: '1.25rem',
-  fontWeight: 800,
-  '&:hover': {
-    cursor: 'default',
-  },
-});
-
-export const OrganizationName = styled(Typography)({
-  fontSize: '0.9rem',
+export const IconWrapper = styled('div')(({ disabled = false }) => ({
+  cursor: disabled ? 'not-allowed' : 'pointer',
+  opacity: disabled ? '0.5' : '1',
   display: 'flex',
-  alignItems: 'end',
-  padding: '0 5px',
-  '&:hover': {
-    cursor: 'default',
+  '& svg': {
+    cursor: disabled ? 'not-allowed' : 'pointer',
   },
-});
-
-export const StyledIconButton = styled('button')({
-  background: 'transparent',
-  border: 'none',
-  '&:hover': {
-    cursor: 'default',
-  },
-});
-
-export const DateLabel = styled(Typography)({
-  fontStyle: 'italic',
-  fontSize: '12px',
-  '&:hover': {
-    cursor: 'default',
-  },
-});
-
-export const EmptyDescription = styled(Typography)({
-  fontSize: '0.9rem',
-  textAlign: 'left',
-  fontStyle: 'italic',
-});
-
-export const DescriptionLabel = styled(EmptyDescription)({
-  height: 'fit-content',
-  fontStyle: 'normal',
-  '&:hover': {
-    cursor: 'default',
-  },
-});
-
-export const AllocationButton = styled(Box)(() => {
-  const theme = useTheme();
-  return {
-    background:
-      theme.palette.mode === 'dark'
-        ? theme.palette.background.brand.default
-        : theme.palette.icon.weather,
-    padding: '10px 10px 1px 10px',
-    borderRadius: '4px',
-    height: '100%',
-    display: 'flex',
-    width: '100%',
-  };
-});
-
-export const AllocationWorkspace = styled(AllocationButton)({
-  display: 'flex',
-  width: '100%',
-  gap: '10px',
-  ['@media (min-width : 600px)']: {
-    flexDirection: 'column',
-    gap: '0',
-  },
-});
-
-export const PopupButton = styled(Button)(({ theme }) => ({
-  width: '100%',
-  borderRadius: '4px',
-  background: theme.palette.text.default,
-  boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
-  display: 'flex',
-  flexDirection: 'column',
-  marginBottom: '10px',
-  color: Colors.charcoal,
-  '&:hover': {
-    background: theme.palette.text.default,
-  },
-  padding: '15px 10px',
 }));
 
-export const TabTitle = styled('p')({
-  margin: '0',
-  fontSize: '12px',
-  fontWeight: '400',
+export const CreateButtonWrapper = styled('div')({
   display: 'flex',
+  justifyContent: 'flex-start',
+  alignItems: 'center',
+  whiteSpace: 'nowrap',
 });
 
-export const TabCount = styled('p')({
-  margin: '0',
-  fontSize: '60px',
-  fontWeight: '500',
-  lineHeight: 1,
-  marginBottom: '5px',
-});
-
-export const ViewButton = styled(Button)(({ theme }) => ({
+export const BulkActionWrapper = styled(`div`)({
   width: '100%',
-  borderRadius: '4px',
-  background: theme.palette.text.default,
-  boxShadow: '0px 4px 4px 0px rgba(0, 0, 0, 0.25)',
+  padding: '0.8rem',
+  justifyContent: 'space-between',
+  marginTop: '0.18rem',
+  marginBottom: '1rem',
+  borderRadius: '.25rem',
   display: 'flex',
-  flexDirection: 'column',
-  marginBottom: '10px',
-  color: `${Colors.charcoal}30 !important`,
-  '&:hover': {
-    background: theme.palette.text.default,
-  },
-  padding: '15px 10px',
-}));
+  flexDirection: 'row',
+  alignItems: 'center',
+});

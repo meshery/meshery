@@ -14,7 +14,7 @@ export const ActionContainer = styled(Box)({
 });
 
 export const CopyLinkButton = styled(Button)(({ theme }) => ({
-  color: theme.palette.text.inverse,
+  color: theme.palette.background.constant.white,
 }));
 
 export const ResourceName = styled(Typography)(() => ({
