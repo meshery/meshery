@@ -124,6 +124,12 @@ Verify:
 
 **Congratulations! You have successfully created a new model.**
 
+### Troubleshooting
+
+- You can find the detailed logs at `~/.meshery/logs/registry/`.
+- Join the Meshery Slack channel for community support
+- File an issue on the Meshery GitHub repository
+
 ### Contributing a Model Definition
 
 1. Fork the [meshery/meshery.io](https://github.com/meshery/meshery.io) repository.
