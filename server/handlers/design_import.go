@@ -17,6 +17,7 @@ import (
 	"github.com/layer5io/meshkit/files"
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
+	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
 
@@ -87,11 +88,11 @@ func ConvertFileToManifest(identifiedFile files.IdentifiedFile, rawFile FileToIm
 
 	switch identifiedFile.Type {
 
-	case files.HELM_CHART:
+	case core.IacFileTypes.HELM_CHART:
 		return files.ConvertHelmChartToKubernetesManifest(identifiedFile)
-	case files.DOCKER_COMPOSE:
+	case core.IacFileTypes.DOCKER_COMPOSE:
 		return files.ConvertDockerComposeToKubernetesManifest(identifiedFile)
-	case files.KUBERNETES_MANIFEST:
+	case core.IacFileTypes.KUBERNETES_MANIFEST:
 		return string(rawFile.Data), nil
 	default:
 		return "", fmt.Errorf("Failed to convert to manifest , unsupported file type %s", identifiedFile.Type)
@@ -132,7 +133,7 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 		return emptyDesign, err
 	}
 
-	if identifiedFile.Type == files.MESHERY_DESIGN {
+	if identifiedFile.Type == core.IacFileTypes.MESHERY_DESIGN {
 		design := identifiedFile.ParsedFile.(pattern.PatternFile)
 		return design, nil
 	}

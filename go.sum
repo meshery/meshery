@@ -1666,8 +1666,8 @@ github.com/mattn/go-sqlite3 v1.14.24/go.mod h1:Uh1q+B4BYcTPb+yiD3kU8Ct7aC0hY9fxU
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
 github.com/maxatome/go-testdeep v1.12.0 h1:Ql7Go8Tg0C1D/uMMX59LAoYK7LffeJQ6X2T04nTH68g=
 github.com/maxatome/go-testdeep v1.12.0/go.mod h1:lPZc/HAcJMP92l7yI6TRz1aZN5URwUBUAfUNvrclaNM=
-github.com/meshery/schemas v0.7.42 h1:HbCt97cE/j1BxBya3UFCGFZf2jGo4J79M8EEtnDHqJo=
-github.com/meshery/schemas v0.7.42/go.mod h1:ZKx5cazFfsBe9DtCjsgeDvWcTQz3MRHC+adL8n94KEE=
+github.com/meshery/schemas v0.7.44 h1:LQoQDuoUDlK5CnBEEtr3J+zAnCsurTOJWaeNjCfLwck=
+github.com/meshery/schemas v0.7.44/go.mod h1:xpg60NqqRXmFV7Fj5tRjDN8TofGRi/Gcbt/Ilgr06WE=
 github.com/miekg/dns v1.0.14/go.mod h1:W1PPwlIAgtquWBMBEV9nkV9Cazfe8ScdGz/Lj7v3Nrg=
 github.com/miekg/dns v1.1.57 h1:Jzi7ApEIzwEPLHWRcafCN9LZSBbqQpxjt/wpgvg7wcM=
 github.com/miekg/dns v1.1.57/go.mod h1:uqRjCRUuEAA6qsOiJvDd+CFo/vW+y5WR6SNmHE55hZk=
