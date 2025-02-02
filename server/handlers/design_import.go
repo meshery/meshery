@@ -96,7 +96,7 @@ func ConvertFileToManifest(identifiedFile files.IdentifiedFile, rawFile FileToIm
 	case core.IacFileTypes.KUBERNETES_MANIFEST:
 		return string(rawFile.Data), nil
 	default:
-		return "", fmt.Errorf("Failed to convert to manifest , unsupported file type %s", identifiedFile.Type)
+		return "", files.ErrUnsupportedFileTypeForConversionToDesign(rawFile.FileName, identifiedFile.Type)
 	}
 }
 
@@ -137,7 +137,7 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 
 	if identifiedFile.Type == core.IacFileTypes.MESHERY_DESIGN {
 		design := identifiedFile.ParsedFile.(pattern.PatternFile)
-		return design, "", nil
+		return design, identifiedFile.Type, nil
 	}
 
 	manifest, err := ConvertFileToManifest(identifiedFile, fileToImport)
@@ -154,14 +154,6 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 
 	return design, identifiedFile.Type, err
 }
-
-// swagger:route POST /api/pattern PatternsAPI idPostPatternFile
-// Handle POST requests for patterns
-//
-// Edit/update a meshery pattern
-// responses:
-//
-//	200: mesheryPatternResponseWrapper
 
 func (h *Handler) logErrorGettingUserToken(rw http.ResponseWriter, provider models.Provider, err error, userID uuid.UUID, eventBuilder *events.EventBuilder) {
 
@@ -194,6 +186,26 @@ func (h *Handler) logErrorParsingRequestBody(rw http.ResponseWriter, provider mo
 	}
 }
 
+func ImportErrorEvent(eventBuilder events.EventBuilder, importPayload MesheryDesignImportPayload, err error) *events.Event {
+
+	source := importPayload.URL
+	if source == "" {
+		source = importPayload.FileName
+	}
+	event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+		"error": err,
+	}).WithDescription(fmt.Sprintf("Failed to import design '%s' from %s", importPayload.Name, source)).Build()
+
+	return event
+
+}
+
+// swagger:route POST /api/pattern/import PatternsAPI idPostPatternFile
+// Handle design import
+//
+// responses: [Design]
+//
+//	200: mesheryPatternResponseWrapper
 func (h *Handler) DesignFileImportHandler(
 	rw http.ResponseWriter,
 	r *http.Request,
@@ -210,9 +222,9 @@ func (h *Handler) DesignFileImportHandler(
 	userID := uuid.FromStringOrNil(user.ID)
 	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction("create").ActedUpon(userID).WithSeverity(events.Informational)
 
-	var parsedBody MesheryDesignImportPayload
+	var importDesignPayload MesheryDesignImportPayload
 
-	if err := json.NewDecoder(r.Body).Decode(&parsedBody); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&importDesignPayload); err != nil {
 		h.logErrorParsingRequestBody(rw, provider, err, userID, eventBuilder)
 		return
 	}
@@ -225,23 +237,20 @@ func (h *Handler) DesignFileImportHandler(
 		return
 	}
 
-	fileToImport, err := GetFileToImportFromPayload(parsedBody)
+	fileToImport, err := GetFileToImportFromPayload(importDesignPayload)
 
 	design, sourceFileType, err := ConvertFileToDesign(fileToImport, h.registryManager)
 
 	if err != nil {
 		h.log.Error(fmt.Errorf("Conversion: Failed to convert to design %w", err))
 
-		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
-			"error": ErrSavePattern(err),
-		}).WithDescription(ErrSavePattern(err).Error()).Build()
-
+		event := ImportErrorEvent(*eventBuilder, importDesignPayload, err)
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
 		return
 	}
 
-	design.Name = parsedBody.Name
+	design.Name = importDesignPayload.Name
 	patternFile, err := encoding.Marshal(design)
 
 	// pattern to be saved in the database
@@ -272,11 +281,9 @@ func (h *Handler) DesignFileImportHandler(
 
 	_, _ = rw.Write(savedDesignByt)
 
-	event := eventBuilder.Build()
+	event := eventBuilder.WithDescription(fmt.Sprintf("Imported design '%s' from '%s'", design.Name, sourceFileType)).Build()
 	_ = provider.PersistEvent(event)
-	// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
-	// go h.config.EventBroadcaster.Publish(userID, event)
-	go h.config.PatternChannel.Publish(uuid.FromStringOrNil(user.ID), struct{}{})
+	go h.config.EventBroadcaster.Publish(userID, event)
 
 	return
 
