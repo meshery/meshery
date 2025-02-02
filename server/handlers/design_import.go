@@ -100,7 +100,6 @@ func ConvertFileToManifest(identifiedFile files.IdentifiedFile, rawFile FileToIm
 
 func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryManager) (pattern.PatternFile, error) {
 
-	fmt.Println("File to Import", fileToImport.FileName)
 	var emptyDesign pattern.PatternFile
 
 	validImportExtensions := map[string]bool{
@@ -129,8 +128,6 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 
 	identifiedFile, err := files.IdentifyFile(sanitizedFile)
 
-	fmt.Println("Identified file %s", identifiedFile.Type)
-
 	if err != nil {
 		return emptyDesign, err
 	}
@@ -142,15 +139,11 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 
 	manifest, err := ConvertFileToManifest(identifiedFile, fileToImport)
 
-	// fmt.Println("Converted manifest: %s", manifest)
-
 	if err != nil {
 		return emptyDesign, err
 	}
 
 	design, err := pCore.NewPatternFileFromK8sManifest(manifest, fileToImport.FileName, true, registry)
-
-	// fmt.Println("Converted design: %s", design)
 
 	if err != nil {
 		return emptyDesign, err
@@ -232,7 +225,6 @@ func (h *Handler) DesignFileImportHandler(
 
 	fileToImport, err := GetFileToImportFromPayload(parsedBody)
 
-	fmt.Println("File to Import", fileToImport.FileName, err)
 	design, err := ConvertFileToDesign(fileToImport, h.registryManager)
 
 	if err != nil {
@@ -249,8 +241,6 @@ func (h *Handler) DesignFileImportHandler(
 
 	design.Name = parsedBody.Name
 	patternFile, err := encoding.Marshal(design)
-
-	h.log.Info("Successfull convertion to design")
 
 	// pattern to be saved in the database
 	designRecord := models.MesheryPattern{
