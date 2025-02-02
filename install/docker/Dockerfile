@@ -34,6 +34,7 @@ COPY --from=meshery-ui-deps /app/node_modules ./node_modules
 COPY ui .
 # Disable NextJS Telemetry data collect
 ENV NEXT_TELEMETRY_DISABLED 1
+RUN npm install --legacy-peer-deps
 RUN npm run build && npm run export
 
 FROM base-node AS meshery-ui-provider-builder
@@ -42,6 +43,7 @@ COPY --from=meshery-ui-provider-deps /app/node_modules ./node_modules
 # Disable NextJS Telemetry data collect
 ENV NEXT_TELEMETRY_DISABLED 1
 COPY provider-ui .
+RUN npm install --legacy-peer-deps
 RUN npm run build && npm run export
 
 FROM ubuntu AS wrk2

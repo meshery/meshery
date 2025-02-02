@@ -33,6 +33,12 @@ jobs:
           node-version: 18
           cache: 'npm'
           cache-dependency-path: '**/package-lock.json'
+      - name: Install ESLint
+        run: |
+          cd ui
+          npm install --save-dev eslint
+          cd ../provider-ui
+          npm install --save-dev eslint
       - name: Build meshery-ui and provider-ui
         run: |
           make ui-build

@@ -466,17 +466,6 @@ function ConfirmationMsg(props) {
 
                 <ActionButton
                   onClick={handleSubmit}
-                  className={
-                    isDisabled
-                      ? tabVal === ACTIONS.UNDEPLOY
-                        ? classes.disabledBtnDel
-                        : classes.button
-                      : tabVal === ACTIONS.UNDEPLOY
-                        ? classes.undeployBtn
-                        : classes.button
-                  }
-                  autoFocus
-                  type="submit"
                   variant="contained"
                   color="primary"
                   isUndeploy={tabVal === ACTIONS.UNDEPLOY}
