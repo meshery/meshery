@@ -1,4 +1,4 @@
-package experimental
+package relationships
 
 import (
 	"flag"
@@ -14,7 +14,7 @@ import (
 
 var update = flag.Bool("update", false, "update golden files")
 
-func TestExperimentalList(t *testing.T) {
+func TestList(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
 
@@ -44,10 +44,10 @@ func TestExperimentalList(t *testing.T) {
 	}{
 		{
 			Name:             "List registered relationships",
-			Args:             []string{"relationship", "list", "--page", "0"},
+			Args:             []string{"list", "--page", "0"},
 			URL:              testContext.BaseURL + "/api/meshmodels/relationships",
-			Fixture:          "list.exp.relationship.api.response.golden",
-			ExpectedResponse: "list.exp.relationship.output.golden",
+			Fixture:          "list.relationship.api.response.golden",
+			ExpectedResponse: "list.relationship.output.golden",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},
@@ -71,9 +71,9 @@ func TestExperimentalList(t *testing.T) {
 			r, w, _ := os.Pipe()
 			os.Stdout = w
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
-			ExpCmd.SetArgs(tt.Args)
-			ExpCmd.SetOutput(rescueStdout)
-			err := ExpCmd.Execute()
+			RelationshipCmd.SetArgs(tt.Args)
+			RelationshipCmd.SetOutput(rescueStdout)
+			err := RelationshipCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {

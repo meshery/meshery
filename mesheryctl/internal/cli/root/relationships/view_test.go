@@ -1,4 +1,4 @@
-package experimental
+package relationships
 
 import (
 	"io"
@@ -11,7 +11,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
-func TestExperimentalView(t *testing.T) {
+func TestView(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
 
@@ -41,10 +41,10 @@ func TestExperimentalView(t *testing.T) {
 	}{
 		{
 			Name:             "View registered relationships",
-			Args:             []string{"relationship", "view", "kubernetes"},
+			Args:             []string{"view", "kubernetes"},
 			URL:              testContext.BaseURL + "/api/meshmodels/models/kubernetes/relationships?pagesize=all",
-			Fixture:          "view.exp.relationship.api.response.golden",
-			ExpectedResponse: "view.exp.relationship.output.golden",
+			Fixture:          "view.relationship.api.response.golden",
+			ExpectedResponse: "view.relationship.output.golden",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      false,
 		},
@@ -68,9 +68,9 @@ func TestExperimentalView(t *testing.T) {
 			r, w, _ := os.Pipe()
 			os.Stdout = w
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
-			ExpCmd.SetArgs(tt.Args)
-			ExpCmd.SetOutput(rescueStdout)
-			err := ExpCmd.Execute()
+			RelationshipCmd.SetArgs(tt.Args)
+			RelationshipCmd.SetOutput(rescueStdout)
+			err := RelationshipCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
