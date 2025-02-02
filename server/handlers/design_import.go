@@ -199,7 +199,6 @@ func (h *Handler) DesignFileImportHandler(
 	provider models.Provider,
 ) {
 
-	h.log.Info("Design file import wooo")
 	defer func() {
 		_ = r.Body.Close()
 	}()
