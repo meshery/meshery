@@ -101,7 +101,7 @@ import PatternConfigureIcon from '@/assets/icons/PatternConfigure';
 // import { useGetUserPrefQuery } from '@/rtk-query/user';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import TooltipButton from '@/utils/TooltipButton';
-import { ToolWrapper } from './Lifecycle/Workspaces';
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -1355,7 +1355,11 @@ function MesheryPatterns({
   };
 
   if (ispatternsLoading) {
-    return <LoadingScreen animatedIcon="AnimatedMeshPattern" message={`Loading ${pageTitle}...`} />;
+    return (
+      <UsesSistent>
+        <LoadingScreen animatedIcon="AnimatedMeshPattern" message={`Loading ${pageTitle}...`} />
+      </UsesSistent>
+    );
   }
 
   /**
@@ -1542,8 +1546,7 @@ function MesheryPatterns({
 
                 {!selectedPattern.show && (
                   <ViewSwitchButton>
-                    {' '}
-                    <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true} />
+                    <ViewSwitch view={viewType} changeView={setViewType} />
                   </ViewSwitchButton>
                 )}
               </SearchWrapper>

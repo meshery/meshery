@@ -17,10 +17,10 @@ import {
   styled,
 } from '@layer5/sistent';
 import Moment from 'react-moment';
-import AccessTimeIcon from '@material-ui/icons/AccessTime';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PropTypes from 'prop-types';
 import MesheryDateTimePicker from '../../MesheryDateTimePicker';
-import { Close } from '@material-ui/icons';
+import { Close } from '@mui/icons-material';
 import { UsesSistent } from '@/components/SistentWrapper';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({

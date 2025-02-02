@@ -1,20 +1,19 @@
 /* eslint-disable no-unused-vars */
 //NOTE: This file is being refactored to use the new notification center
-import { IconButton } from '@material-ui/core';
-import { ToggleButtonGroup } from '@mui/material';
+
+import { IconButton, ToggleButtonGroup } from '@layer5/sistent';
 import { useSnackbar } from 'notistack';
 import { iconMedium } from '../../css/icons.styles';
-import CloseIcon from '@material-ui/icons/Close';
-import { useDispatch } from 'react-redux';
+import CloseIcon from '@mui/icons-material/Close';
 import moment from 'moment';
 import { v4 } from 'uuid';
-import { NOTIFICATION_STATUS } from '../../lib/event-types';
 import { store as rtkStore } from '../../store/index';
 import { toggleNotificationCenter } from '../../store/slices/events';
 import { NOTIFICATION_CENTER_TOGGLE_CLASS } from '../../components/NotificationCenter/constants';
 import React from 'react';
 import BellIcon from '../../assets/icons/BellIcon';
 import { AddClassRecursively } from '../Elements';
+import { useCallback } from 'react';
 
 /**
  * A React hook to facilitate emitting events from the client.
@@ -112,3 +111,62 @@ export function withNotify(Component) {
     return <Component {...props} notify={notify} />;
   };
 }
+
+export const useNotificationHandlers = () => {
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
+
+  const handleNotification = useCallback(
+    (type, msg) => {
+      let message = typeof msg === 'string' ? msg : msg?.response?.data;
+      enqueueSnackbar(message, {
+        variant: type,
+        action: (key) => (
+          <IconButton
+            key="close"
+            aria-label="Close"
+            color="inherit"
+            onClick={() => closeSnackbar(key)}
+          >
+            <CloseIcon />
+          </IconButton>
+        ),
+        autoHideDuration: 8000,
+        style: {
+          display: 'flex',
+          flexWrap: 'nowrap',
+        },
+      });
+    },
+    [enqueueSnackbar, closeSnackbar],
+  );
+
+  const handleSuccess = useCallback(
+    (message) => {
+      handleNotification('success', message);
+    },
+    [handleNotification],
+  );
+
+  const handleError = useCallback(
+    (message) => {
+      handleNotification('error', message);
+    },
+    [handleNotification],
+  );
+
+  const handleInfo = useCallback(
+    (message) => {
+      handleNotification('info', message);
+    },
+    [handleNotification],
+  );
+
+  const handleWarn = useCallback(
+    (message) => {
+      handleNotification('warning', message);
+    },
+    [handleNotification],
+  );
+
+  return { handleSuccess, handleError, handleInfo, handleWarn };
+};

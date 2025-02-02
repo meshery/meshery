@@ -1,22 +1,12 @@
 import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import AppBar from '@material-ui/core/AppBar';
-import Grid from '@material-ui/core/Grid';
-import Hidden from '@material-ui/core/Hidden';
-import IconButton from '@material-ui/core/IconButton';
-import Toolbar from '@material-ui/core/Toolbar';
-import { withStyles } from '@material-ui/core/styles';
+import { Hidden, NoSsr } from '@mui/material';
 import { connect, useSelector } from 'react-redux';
-import NoSsr from '@material-ui/core/NoSsr';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
-import Slide from '@material-ui/core/Slide';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import { Edit, Search } from '@material-ui/icons';
-import { TextField } from '@material-ui/core';
-import { Paper } from '@material-ui/core';
-import { deleteKubernetesConfig } from './ConnectionWizard/helpers/kubernetesHelpers';
-import { successHandlerGenerator, errorHandlerGenerator } from './ConnectionWizard/helpers/common';
+import { Edit, Search } from '@mui/icons-material';
+import { deleteKubernetesConfig } from '../utils/helpers/kubernetesHelpers';
+import { successHandlerGenerator, errorHandlerGenerator } from '../utils/helpers/common';
 import { _ConnectionChip } from './connections/ConnectionChip';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateK8SConfig, updateProgress, updateCapabilities } from '../lib/store';
@@ -32,19 +22,21 @@ import { useNotification, withNotify } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
+import SettingsIcon from '@mui/icons-material/Settings';
 import {
   Checkbox,
-  MenuIcon,
-  OutlinedSettingsIcon,
   Box,
   CustomTooltip,
   Typography,
   styled,
   PROMPT_VARIANTS,
+  TextField,
+  ClickAwayListener,
+  IconButton,
+  Grid,
+  Slide,
 } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
-import { Colors } from '@/themes/app';
-
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
@@ -53,183 +45,18 @@ import Router from 'next/router';
 import HeaderMenu from './HeaderMenu';
 import ConnectionModal from './Modals/ConnectionModal';
 import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
-
-const lightColor = 'rgba(255, 255, 255, 0.7)';
-const styles = (theme) => ({
-  secondaryBar: { zIndex: 0 },
-  menuButton: { marginLeft: -theme.spacing(1) },
-  iconButtonAvatar: { padding: 4 },
-  link: {
-    textDecoration: 'none',
-    color: theme.palette.secondary.link,
-  },
-  button: { borderColor: lightColor },
-  notifications: {
-    paddingLeft: theme.spacing(4),
-    paddingRight: theme.spacing(0),
-    marginLeft: theme.spacing(4),
-  },
-  userContainer: {
-    paddingLeft: 1,
-    display: 'flex',
-    alignItems: 'center',
-    [theme.breakpoints.down('xs')]: {
-      width: '100%',
-      justifyContent: 'flex-end',
-      marginRight: '1rem',
-      marginBlock: '0.5rem',
-    },
-  },
-  userSpan: { marginLeft: theme.spacing(1) },
-  pageTitleWrapper: {
-    flexGrow: 1,
-    marginRight: 'auto',
-    flexWrap: 'nowrap',
-    marginBlock: '0.5rem',
-  },
-  appBarOnDrawerOpen: {
-    backgroundColor: theme.palette.secondary.mainBackground,
-    shadowColor: ' #808080',
-    [theme.breakpoints.between(635, 732)]: { padding: theme.spacing(0.75, 1.4) },
-    [theme.breakpoints.between(600, 635)]: { padding: theme.spacing(0.4, 1.4) },
-  },
-  appBarOnDrawerClosed: {
-    backgroundColor: theme.palette.secondary.mainBackground,
-  },
-  addClusterButtonClass: {
-    borderRadius: 5,
-    marginRight: '2rem',
-    width: '100%',
-    marginTop: '1rem',
-  },
-  toolbarOnDrawerClosed: {
-    minHeight: 59,
-    padding: theme.spacing(2),
-    paddingLeft: 0,
-    paddingRight: 34,
-    backgroundColor: theme.palette.secondary.mainBackground,
-    boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
-    [theme.breakpoints.down('xs')]: {
-      padding: 0,
-    },
-  },
-  toolbarOnDrawerOpen: {
-    minHeight: 58,
-    padding: theme.spacing(2),
-    paddingLeft: 34,
-    paddingRight: 34,
-    backgroundColor: theme.palette.secondary.mainBackground,
-    [theme.breakpoints.between(620, 732)]: { minHeight: 68, paddingLeft: 20, paddingRight: 20 },
-    boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
-  },
-  itemActiveItem: { fill: '#00B39F' },
-  headerIcons: {
-    fontSize: '1.5rem',
-    height: '1.5rem',
-    width: '1.5rem',
-    fill: theme.palette.secondary.whiteIcon,
-    '&:hover': {
-      fill: Colors.keppelGreen,
-    },
-  },
-  cbadge: {
-    fontSize: '0.65rem',
-    backgroundColor: 'white',
-    borderRadius: '50%',
-    color: 'black',
-    height: '1.30rem',
-    width: '1.30rem',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    zIndex: 1,
-    right: '-0.75rem',
-    top: '-0.29rem',
-  },
-  cbadgeContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
-  },
-  icon: {
-    width: 24,
-    height: 24,
-  },
-  Chip: {
-    width: '12.8rem',
-    textAlign: 'center',
-    cursor: 'pointer',
-    '& .MuiChip-label': {
-      flexGrow: 1,
-    },
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-  },
-  cMenuContainer: {
-    backgroundColor: theme.palette.secondary.headerColor,
-    marginTop: '-0.7rem',
-    borderRadius: '3px',
-    padding: '1rem',
-    // zIndex: 1201,
-    boxShadow: '20px #979797',
-    transition: 'linear .2s',
-    transitionProperty: 'height',
-  },
-  alertEnter: {
-    opacity: '0',
-    transform: 'scale(0.9)',
-  },
-  alertEnterActive: {
-    opacity: '1',
-    transform: 'translateX(0)',
-    transition: 'opacity 300ms, transform 300ms',
-  },
-  chip: {
-    margin: '0.25rem 0',
-  },
-  AddIcon: {
-    width: theme.spacing(2.5),
-    paddingRight: theme.spacing(0.5),
-  },
-  searchIcon: {
-    width: theme.spacing(3.5),
-  },
-  darkThemeToggle: {
-    marginLeft: '1.5em',
-  },
-
-  toggle: {
-    appearance: 'none',
-    outline: 'none',
-    cursor: 'pointer',
-    width: '1.5rem',
-    height: '1.5rem',
-    boxShadow: 'inset calc(1.5rem * 0.33) calc(1.5rem * -0.25) 0',
-    borderRadius: '999px',
-    color: '#00B39F',
-    transition: 'all 500ms',
-    zIndex: '1',
-    '&:checked': {
-      width: '1.5rem',
-      height: '1.5rem',
-      borderRadius: '50%',
-      background: 'orange',
-      boxShadow: '0 0 10px orange, 0 0 60px orange,0 0 200px yellow, inset 0 0 80px yellow',
-    },
-  },
-  addButton: {
-    width: '100%',
-    whiteSpace: 'nowrap',
-    color: theme.palette.secondary.text,
-    margin: '0.5rem',
-  },
-  mesherySettingsEnvButtons: {
-    marginTop: '1rem',
-  },
-});
+import {
+  HeaderAppBar,
+  UserContainer,
+  PageTitleWrapper,
+  CBadgeContainer,
+  CMenuContainer,
+  HeaderIcons,
+  MenuIconButton,
+  UserSpan,
+  CBadge,
+  StyledToolbar,
+} from './Header.styles';
 
 async function loadActiveK8sContexts() {
   try {
@@ -246,7 +73,6 @@ async function loadActiveK8sContexts() {
 
 const K8sContextConnectionChip_ = ({
   ctx,
-  classes,
   selectable = false,
   onSelectChange,
   connectionMetadataState,
@@ -262,7 +88,7 @@ const K8sContextConnectionChip_ = ({
   );
 
   return (
-    <div id={ctx.id} className={classes.chip}>
+    <Box id={ctx.id} sx={{ margin: '0.25rem 0' }}>
       <CustomTextTooltip
         placement="left-end"
         leaveDelay={200}
@@ -296,14 +122,13 @@ const K8sContextConnectionChip_ = ({
           />
         </div>
       </CustomTextTooltip>
-    </div>
+    </Box>
   );
 };
 
-export const K8sContextConnectionChip = withStyles(styles)(K8sContextConnectionChip_);
+export const K8sContextConnectionChip = K8sContextConnectionChip_;
 
 function K8sContextMenu({
-  classes = {},
   contexts = {},
   activeContexts = [],
   updateK8SConfig,
@@ -426,7 +251,7 @@ function K8sContextMenu({
               marginRight: '0.5rem',
             }}
           >
-            <div className={classes.cbadgeContainer}>
+            <CBadgeContainer>
               <img
                 className="k8s-image"
                 src={
@@ -442,8 +267,8 @@ function K8sContextMenu({
                 height="24px"
                 style={{ objectFit: 'contain' }}
               />
-              <div className={classes.cbadge}>{contexts?.total_count || 0}</div>
-            </div>
+              <CBadge>{contexts?.total_count || 0}</CBadge>
+            </CBadgeContainer>
           </IconButton>
         </CanShow>
 
@@ -470,7 +295,7 @@ function K8sContextMenu({
                   }
                 }}
               >
-                <Paper className={classes.cMenuContainer}>
+                <CMenuContainer>
                   <div>
                     <TextField
                       id="search-ctx"
@@ -484,7 +309,7 @@ function K8sContextMenu({
                         margin: '1px 0px',
                       }}
                       InputProps={{
-                        endAdornment: <Search className={classes.searchIcon} style={iconMedium} />,
+                        endAdornment: <Search style={iconMedium} width={24} />,
                       }}
                     />
                   </div>
@@ -524,7 +349,6 @@ function K8sContextMenu({
                       return (
                         <K8sContextConnectionChip
                           key={ctx.id}
-                          classes={classes}
                           ctx={ctx}
                           selectable
                           onDelete={handleKubernetesDelete}
@@ -535,11 +359,11 @@ function K8sContextMenu({
                         />
                       );
                     })}
-                    <Box className={classes.mesherySettingsEnvButtons}>
+                    <Box sx={{ marginTop: '1rem' }}>
                       <MesherySettingsEnvButtons />
                     </Box>
                   </div>
-                </Paper>
+                </CMenuContainer>
               </ClickAwayListener>
             </CanShow>
           </div>
@@ -594,38 +418,32 @@ class Header extends React.PureComponent {
   };
 
   render() {
-    const { classes, title, onDrawerToggle, isBeta, onDrawerCollapse, abilityUpdated } = this.props;
+    const { title, onDrawerToggle, isBeta, onDrawerCollapse, abilityUpdated } = this.props;
     const loaderType = 'circular';
 
     return (
       <NoSsr>
-        <React.Fragment>
-          <AppBar
+        <UsesSistent>
+          <HeaderAppBar
             id="top-navigation-bar"
             color="primary"
             position="sticky"
-            // elevation={1}
-            className={onDrawerCollapse ? classes.appBarOnDrawerClosed : classes.appBarOnDrawerOpen}
+            isDrawerCollapsed={onDrawerCollapse}
           >
-            <Toolbar
-              className={
-                onDrawerCollapse ? classes.toolbarOnDrawerClosed : classes.toolbarOnDrawerOpen
-              }
-            >
+            <StyledToolbar isDrawerCollapsed={onDrawerCollapse}>
               <Grid container alignItems="center">
                 <Hidden smUp>
                   <Grid item style={{ display: 'none' }}>
-                    <IconButton
+                    <MenuIconButton
                       color="inherit"
                       aria-label="Open drawer"
                       onClick={onDrawerToggle}
-                      className={classes.menuButton}
                     >
-                      <MenuIcon className={classes.headerIcons} style={iconMedium} />
-                    </IconButton>
+                      <HeaderIcons style={iconMedium} />
+                    </MenuIconButton>
                   </Grid>
                 </Hidden>
-                <Grid item xs container alignItems="center" className={classes.pageTitleWrapper}>
+                <Grid item xs container alignItems="center" component={PageTitleWrapper}>
                   {/* Extension Point for   Logo */}
                   <div
                     id="nav-header-logo"
@@ -639,7 +457,7 @@ class Header extends React.PureComponent {
                   ></div>
                   <SpaceSwitcher title={title} isBeta={isBeta} />
                 </Grid>
-                <Grid item className={classes.userContainer} style={{ position: 'relative' }}>
+                <Grid item component={UserContainer} style={{ position: 'relative' }}>
                   {/* According to the capabilities load the component */}
                   {this.state.collaboratorExt && (
                     <ExtensionSandbox
@@ -647,9 +465,8 @@ class Header extends React.PureComponent {
                       Extension={(url) => RemoteComponent({ url, loaderType })}
                     />
                   )}
-                  <div className={classes.userSpan} style={{ position: 'relative' }}>
+                  <UserSpan style={{ position: 'relative' }}>
                     <K8sContextMenu
-                      classes={classes}
                       contexts={this.props.contexts}
                       activeContexts={this.props.activeContexts}
                       setActiveContexts={this.props.setActiveContexts}
@@ -661,19 +478,12 @@ class Header extends React.PureComponent {
                       updateK8SConfig={this.props.updateK8SConfig}
                       updateProgress={this.props.updateProgress}
                     />
-                  </div>
+                  </UserSpan>
 
                   <div data-testid="settings-button" aria-describedby={abilityUpdated}>
                     <CanShow Key={keys.VIEW_SETTINGS}>
                       <IconButton onClick={() => Router.push('/settings')} color="inherit">
-                        <OutlinedSettingsIcon
-                          className={
-                            classes.headerIcons +
-                            ' ' +
-                            (title === 'Settings' ? classes.itemActiveItem : '')
-                          }
-                          style={iconMedium}
-                        />
+                        <SettingsIcon style={iconMedium} />
                       </IconButton>
                     </CanShow>
                   </div>
@@ -682,36 +492,26 @@ class Header extends React.PureComponent {
                     <NotificationDrawerButton />
                   </div>
 
-                  <span className={classes.userSpan}>
-                    <User
-                      classes={classes}
-                      color="inherit"
-                      iconButtonClassName={classes.iconButtonAvatar}
-                      avatarClassName={classes.avatar}
-                      updateExtensionType={this.props.updateExtensionType}
-                    />
-                  </span>
-                  <span className={classes.userSpan}>
+                  <UserSpan>
+                    <User color="inherit" updateExtensionType={this.props.updateExtensionType} />
+                  </UserSpan>
+                  <UserSpan>
                     <HeaderMenu
-                      classes={classes}
                       color="inherit"
-                      iconButtonClassName={classes.iconButtonAvatar}
-                      avatarClassName={classes.avatar}
                       updateExtensionType={this.props.updateExtensionType}
                     />
-                  </span>
+                  </UserSpan>
                 </Grid>
               </Grid>
-            </Toolbar>
-          </AppBar>
-        </React.Fragment>
+            </StyledToolbar>
+          </HeaderAppBar>
+        </UsesSistent>
       </NoSsr>
     );
   }
 }
 
 Header.propTypes = {
-  classes: PropTypes.object.isRequired,
   onDrawerToggle: PropTypes.func.isRequired,
 };
 
@@ -733,4 +533,4 @@ const mapDispatchToProps = (dispatch) => ({
   updateCapabilities: bindActionCreators(updateCapabilities, dispatch),
 });
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withNotify(Header)));
+export default connect(mapStateToProps, mapDispatchToProps)(withNotify(Header));

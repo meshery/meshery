@@ -1,28 +1,33 @@
 import React, { useState } from 'react';
 import { Avatar, Divider, Grid, IconButton, Typography, Link, useTheme } from '@layer5/sistent';
 import { CustomTooltip, VisibilityChipMenu } from '@layer5/sistent';
-import DeleteIcon from '@material-ui/icons/Delete';
-import Save from '@material-ui/icons/Save';
-import Fullscreen from '@material-ui/icons/Fullscreen';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Save from '@mui/icons-material/Save';
+import Fullscreen from '@mui/icons-material/Fullscreen';
 import Moment from 'react-moment';
-import GetAppIcon from '@material-ui/icons/GetApp';
+import GetAppIcon from '@mui/icons-material/GetApp';
 import FlipCard from '../FlipCard';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
-import FullscreenExit from '@material-ui/icons/FullscreenExit';
+import FullscreenExit from '@mui/icons-material/FullscreenExit';
 import UndeployIcon from '../../public/static/img/UndeployIcon';
-import DoneAllIcon from '@material-ui/icons/DoneAll';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
 import useStyles, {
   BottomContainer,
   CatalogCardButtons,
   UpdateDeleteButtons,
+  CardBackGrid,
+  YamlDialogTitleGrid,
+  CardHeaderRight,
+  GridBtnText,
+  GridCloneBtnText,
 } from './Cards.styles';
 import YAMLDialog from '../YamlDialog';
-import PublicIcon from '@material-ui/icons/Public';
+import PublicIcon from '@mui/icons-material/Public';
 import TooltipButton from '@/utils/TooltipButton';
 import CloneIcon from '../../public/static/img/CloneIcon';
 import { useRouter } from 'next/router';
-import { Edit, Lock, Public } from '@material-ui/icons';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import { Edit, Lock, Public } from '@mui/icons-material';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { Provider } from 'react-redux';
@@ -65,6 +70,7 @@ function MesheryPatternCard_({
   isReadOnly = false,
 }) {
   const router = useRouter();
+  const classes = useStyles();
 
   const genericClickHandler = (ev, fn) => {
     ev.stopPropagation();
@@ -81,7 +87,6 @@ function MesheryPatternCard_({
   const { data: owner } = useGetUserByIdQuery(pattern.user_id || '');
   const catalogContentKeys = Object.keys(description);
   const catalogContentValues = Object.values(description);
-  const classes = useStyles();
   const theme = useTheme();
 
   const editInConfigurator = () => {
@@ -189,7 +194,7 @@ function MesheryPatternCard_({
                   disabled={!CAN(keys.UNPUBLISH_DESIGN.action, keys.UNPUBLISH_DESIGN.subject)}
                 >
                   <PublicIcon style={iconMedium} />
-                  <span className={classes.btnText}> Unpublish </span>
+                  <GridBtnText> Unpublish </GridBtnText>
                 </TooltipButton>
               )}
               <ActionButton
@@ -235,7 +240,7 @@ function MesheryPatternCard_({
                   fill={theme.palette.background.constant.white}
                   data-cy="download-button"
                 />
-                <span className={classes.btnText}> Download </span>
+                <GridBtnText> Download </GridBtnText>
               </TooltipButton>
               {visibility === VISIBILITY.PRIVATE ? (
                 <TooltipButton
@@ -254,7 +259,7 @@ function MesheryPatternCard_({
                     style={{ borderRadius: '50%', ...iconMedium }}
                     // imgProps={{ height: '16px', width: '16px' }}
                   />
-                  <span className={classes.btnText}> Design </span>
+                  <GridBtnText> Design </GridBtnText>
                 </TooltipButton>
               ) : (
                 <TooltipButton
@@ -269,7 +274,7 @@ function MesheryPatternCard_({
                   disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)}
                 >
                   <CloneIcon fill={theme.palette.background.constant.white} style={iconMedium} />
-                  <span className={classes.cloneBtnText}> Clone </span>
+                  <GridCloneBtnText> Clone </GridCloneBtnText>
                 </TooltipButton>
               )}
 
@@ -286,7 +291,7 @@ function MesheryPatternCard_({
                   }}
                 >
                   <Edit style={{ fill: theme.palette.background.constant.white, ...iconMedium }} />
-                  <span className={classes.cloneBtnText}> Edit </span>
+                  <GridCloneBtnText> Edit </GridCloneBtnText>
                 </TooltipButton>
               )}
               <TooltipButton
@@ -303,7 +308,7 @@ function MesheryPatternCard_({
                 <InfoOutlinedIcon
                   style={{ fill: theme.palette.background.constant.white, ...iconMedium }}
                 />
-                <span className={classes.btnText}> Info </span>
+                <GridBtnText> Info </GridBtnText>
               </TooltipButton>
             </CatalogCardButtons>
           </BottomContainer>
@@ -311,18 +316,10 @@ function MesheryPatternCard_({
 
         {/* BACK PART */}
         <>
-          <Grid
-            className={classes.backGrid}
-            container
-            spacing={1}
-            alignContent="space-between"
-            alignItems="center"
-          >
-            <Grid item xs={12} className={classes.yamlDialogTitle}>
-              <Typography variant="h6" className={classes.yamlDialogTitleText}>
-                {name}
-              </Typography>
-              <div className={classes.cardHeaderRight}>
+          <CardBackGrid container spacing={1} alignContent="space-between" alignItems="center">
+            <YamlDialogTitleGrid item xs={12}>
+              <Typography variant="h6">{name}</Typography>
+              <CardHeaderRight>
                 <Link href={`${MESHERY_CLOUD_PROD}/user/${pattern?.user_id}`} target="_blank">
                   <Avatar alt="profile-avatar" src={owner?.avatar_url} />
                 </Link>
@@ -339,8 +336,8 @@ function MesheryPatternCard_({
                     {fullScreen ? <FullscreenExit /> : <Fullscreen />}
                   </IconButton>
                 </CustomTooltip>
-              </div>
-            </Grid>
+              </CardHeaderRight>
+            </YamlDialogTitleGrid>
             <Grid item xs={12} onClick={(ev) => genericClickHandler(ev, () => {})}>
               <Divider variant="fullWidth" light />
               {catalogContentKeys.length === 0 ? (
@@ -362,9 +359,7 @@ function MesheryPatternCard_({
               ) : (
                 catalogContentKeys.map((title, index) => (
                   <>
-                    <Typography variant="h6" className={classes.yamlDialogTitleText}>
-                      {title}
-                    </Typography>
+                    <Typography variant="h6">{title}</Typography>
                     <Typography variant="body2">{catalogContentValues[index]}</Typography>
                   </>
                 ))
@@ -415,7 +410,7 @@ function MesheryPatternCard_({
                 </UpdateDeleteButtons>
               )}
             </Grid>
-          </Grid>
+          </CardBackGrid>
         </>
       </FlipCard>
     </UsesSistent>

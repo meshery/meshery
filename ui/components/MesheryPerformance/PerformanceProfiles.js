@@ -3,27 +3,22 @@ import React, { useEffect, useState, useRef } from 'react';
 import Moment from 'react-moment';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-
-import {
-  Button,
-  IconButton,
-  Paper,
-  TableCell,
-  TableRow,
-  TableSortLabel,
-  Typography,
-  withStyles,
-} from '@material-ui/core';
-import AddIcon from '@material-ui/icons/AddCircleOutline';
-import EditIcon from '@material-ui/icons/Edit';
-import PlayArrowIcon from '@material-ui/icons/PlayArrow';
-
+import { TableCell, TableRow } from '@mui/material';
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
+import AddIcon from '@mui/icons-material/AddCircleOutline';
+import EditIcon from '@mui/icons-material/Edit';
+import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import {
   CustomColumnVisibilityControl,
   Modal,
   PROMPT_VARIANTS,
   ResponsiveDataTable,
   SearchBar,
+  Button,
+  Paper,
+  Typography,
+  IconButton,
+  charcoal,
 } from '@layer5/sistent';
 import MesheryPerformanceComponent from './index';
 import PerformanceProfileGrid from './PerformanceProfileGrid';
@@ -31,14 +26,11 @@ import PerformanceResults from './PerformanceResults';
 import _PromptComponent from '../PromptComponent';
 import ViewSwitch from '../ViewSwitch';
 import { UsesSistent } from '../SistentWrapper';
-
 import { updateProgress } from '../../lib/store';
 import { EVENT_TYPES } from '../../lib/event-types';
 import fetchPerformanceProfiles from '../graphql/queries/PerformanceProfilesQuery';
 import subscribePerformanceProfiles from '../graphql/subscriptions/PerformanceProfilesSubscription';
-import useStyles from '../../assets/styles/general/tool.styles';
 import { iconMedium } from '../../css/icons.styles';
-
 import { useDeletePerformanceProfileMutation } from '@/rtk-query/performance-profile';
 import { useNotification } from '@/utils/hooks/useNotification';
 import ReusableTooltip from '../reusable-tooltip';
@@ -47,75 +39,9 @@ import { useWindowDimensions } from '@/utils/dimension';
 import { ConditionalTooltip } from '@/utils/utils';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { ButtonTextWrapper, ProfileContainer, ViewSwitchBUtton } from './style';
+import { DefaultTableCell, SortableTableCell } from '../connections/common';
 
-const styles = (theme) => ({
-  title: {
-    textAlign: 'center',
-    minWidth: 400,
-    padding: '10px',
-    color: '#fff',
-    flexGrow: 1,
-  },
-  btnText: {
-    display: 'block',
-    '@media (max-width: 1450px)': {
-      display: 'none',
-    },
-  },
-  dialogHeader: {
-    backgroundColor:
-      theme.palette.type === 'dark'
-        ? theme.palette.secondary.headerColor
-        : theme.palette.secondary.mainBackground,
-    display: 'flex',
-    alignItems: 'center',
-  },
-  addButton: {
-    width: 'fit-content',
-    alignSelf: 'flex-start',
-  },
-  viewSwitchButton: {
-    justifySelf: 'flex-end',
-    marginLeft: 'auto',
-    paddingLeft: '1rem',
-    display: 'flex',
-  },
-  pageContainer: {
-    padding: '0.5rem',
-  },
-  noProfileContainer: {
-    padding: '2rem',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-  },
-  noProfilePaper: {
-    padding: '0.5rem',
-  },
-  noProfileText: {
-    fontSize: '1.5rem',
-    marginBottom: '2rem',
-  },
-  addProfileModal: {
-    margin: 'auto',
-    maxWidth: '90%',
-    outline: 'none',
-  },
-  addIcon: {
-    paddingRight: '0.5',
-  },
-  grid: { padding: theme.spacing(2) },
-  tableHeader: {
-    fontWeight: 'bolder',
-    fontSize: 18,
-  },
-  paper: {
-    maxWidth: '90%',
-    margin: 'auto',
-    overflow: 'hidden',
-  },
-});
 /**
  * Type Definition for View Type
  * @typedef {"grid" | "table"} TypeView
@@ -127,14 +53,12 @@ const styles = (theme) => ({
  * @param {{ view: TypeView, changeView: (view: TypeView) => void }} props
  */
 
-function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
+function PerformanceProfile({ updateProgress, user, handleDelete }) {
   const [viewType, setViewType] = useState(
     /**  @type {TypeView} */
     ('grid'),
   );
   const modalRef = useRef(null);
-  const StyleClass = useStyles();
-
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
   const [sortOrder, setSortOrder] = useState('');
@@ -147,7 +71,6 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const [deletePerformanceProfile] = useDeletePerformanceProfileMutation();
-  // const [loading, setLoading] = useState(false);
   /**
    * fetch performance profiles when the page loads
    */
@@ -190,9 +113,6 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
   function fetchTestProfiles(page, pageSize, search, sortOrder) {
     if (!search) search = '';
     if (!sortOrder) sortOrder = '';
-    // const query = `?page=${page}&page_size=${pageSize}&search=${encodeURIComponent(search)}&order=${encodeURIComponent(
-    //   sortOrder
-    // )}`;
 
     updateProgress({ showProgress: true });
     fetchPerformanceProfiles({
@@ -277,16 +197,14 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel
-                active={column.sortDirection != null}
-                direction={column.sortDirection || 'asc'}
-              >
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
       },
@@ -297,16 +215,14 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
       options: {
         filter: false,
         sort: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel
-                active={column.sortDirection != null}
-                direction={column.sortDirection || 'asc'}
-              >
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
         customBodyRender: (value) => <ConditionalTooltip value={value} maxLength={20} />,
@@ -319,16 +235,14 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel
-                active={column.sortDirection != null}
-                direction={column.sortDirection || 'asc'}
-              >
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
         customBodyRender: function CustomBody(value) {
@@ -343,16 +257,14 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel
-                active={column.sortDirection != null}
-                direction={column.sortDirection || 'asc'}
-              >
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
         customBodyRender: function CustomBody(value) {
@@ -367,16 +279,14 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel
-                active={column.sortDirection != null}
-                direction={column.sortDirection || 'asc'}
-              >
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
         customBodyRender: function CustomBody(value) {
@@ -391,12 +301,8 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
         filter: false,
         sort: false,
         searchable: false,
-        customHeadRender: function CustomHead({ index, ...column }) {
-          return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
-            </TableCell>
-          );
+        customHeadRender: function CustomHead({ ...column }) {
+          return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(_, tableMeta) {
           return (
@@ -409,13 +315,16 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
                     setSelectedProfile(testProfiles[tableMeta.rowIndex]);
                   }}
                   aria-label="edit"
-                  // @ts-ignore
-                  color="rgba(0, 0, 0, 0.54)"
                   disabled={
                     !CAN(keys.EDIT_PERFORMANCE_TEST.action, keys.EDIT_PERFORMANCE_TEST.subject)
                   }
                 >
-                  <EditIcon style={iconMedium} />
+                  <EditIcon
+                    style={{
+                      fill: charcoal[50],
+                      ...iconMedium,
+                    }}
+                  />
                 </IconButton>
               </ReusableTooltip>
 
@@ -427,11 +336,14 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
                     setSelectedProfile({ ...testProfiles[tableMeta.rowIndex], runTest: true });
                   }}
                   aria-label="run"
-                  // @ts-ignore
-                  color="rgba(0, 0, 0, 0.54)"
                   disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
                 >
-                  <PlayArrowIcon style={iconMedium} />
+                  <PlayArrowIcon
+                    style={{
+                      fill: charcoal[50],
+                      ...iconMedium,
+                    }}
+                  />
                 </IconButton>
               </ReusableTooltip>
             </div>
@@ -451,7 +363,6 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
 
   const [columnVisibility, setColumnVisibility] = useState(() => {
     let showCols = updateVisibleColumns(colViews, width);
-    // Initialize column visibility based on the original columns' visibility
     const initialVisibility = {};
     columns.forEach((col) => {
       initialVisibility[col.name] = showCols[col.name];
@@ -553,34 +464,34 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
 
   return (
     <>
-      <div className={classes.pageContainer}>
-        <div className={StyleClass.toolWrapper}>
-          {width < 550 && isSearchExpanded ? null : (
-            <>
-              {(testProfiles.length > 0 || viewType == 'table') && (
-                <div className={classes.addButton}>
-                  <Button
-                    aria-label="Add Performance Profile"
-                    variant="contained"
-                    color="primary"
-                    size="large"
-                    onClick={() => setProfileForModal({})}
-                    disabled={
-                      !CAN(
-                        keys.ADD_PERFORMANCE_PROFILE.action,
-                        keys.ADD_PERFORMANCE_PROFILE.subject,
-                      )
-                    }
-                  >
-                    <AddIcon style={iconMedium} className={classes.addIcon} />
-                    <span className={classes.btnText}> Add Performance Profile </span>
-                  </Button>
-                </div>
-              )}
-            </>
-          )}
-          <div className={classes.viewSwitchButton}>
-            <UsesSistent>
+      <UsesSistent>
+        <div style={{ padding: '0.5rem' }}>
+          <ToolWrapper>
+            {width < 550 && isSearchExpanded ? null : (
+              <>
+                {(testProfiles.length > 0 || viewType == 'table') && (
+                  <div style={{ width: 'fit-content', alignSelf: 'flex-start' }}>
+                    <Button
+                      aria-label="Add Performance Profile"
+                      variant="contained"
+                      color="primary"
+                      size="large"
+                      onClick={() => setProfileForModal({})}
+                      disabled={
+                        !CAN(
+                          keys.ADD_PERFORMANCE_PROFILE.action,
+                          keys.ADD_PERFORMANCE_PROFILE.subject,
+                        )
+                      }
+                    >
+                      <AddIcon style={{ paddingRight: '0.5', ...iconMedium }} />
+                      <ButtonTextWrapper> Add Performance Profile </ButtonTextWrapper>
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
+            <ViewSwitchBUtton>
               <SearchBar
                 onSearch={(value) => {
                   setSearch(value);
@@ -593,59 +504,58 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
               {viewType === 'table' && (
                 <CustomColumnVisibilityControl
                   id="ref"
-                  classes={classes}
                   columns={columns}
                   customToolsProps={{ columnVisibility, setColumnVisibility }}
                 />
               )}
-            </UsesSistent>
-            <ViewSwitch view={viewType} changeView={setViewType} />
-          </div>
-        </div>
-        {viewType === 'grid' ? (
-          <PerformanceProfileGrid
-            profiles={testProfiles}
-            deleteHandler={deleteProfile}
-            setProfileForModal={setProfileForModal}
-            pages={Math.ceil(count / pageSize)}
-            setPage={setPage}
-            testHandler={setSelectedProfile}
-          />
-        ) : (
-          <UsesSistent>
+              <ViewSwitch view={viewType} changeView={setViewType} />
+            </ViewSwitchBUtton>
+          </ToolWrapper>
+
+          {viewType === 'grid' ? (
+            <PerformanceProfileGrid
+              profiles={testProfiles}
+              deleteHandler={deleteProfile}
+              setProfileForModal={setProfileForModal}
+              pages={Math.ceil(count / pageSize)}
+              setPage={setPage}
+              testHandler={setSelectedProfile}
+            />
+          ) : (
             <ResponsiveDataTable
               data={testProfiles}
               columns={columns}
-              // @ts-ignore
               options={options}
               tableCols={tableCols}
               updateCols={updateCols}
               columnVisibility={columnVisibility}
             />
-          </UsesSistent>
-        )}
-        {testProfiles.length === 0 && viewType === 'grid' && (
-          <Paper className={classes.noProfilePaper}>
-            <div className={classes.noProfileContainer}>
-              <Typography className={classes.noProfileText} align="center" color="textSecondary">
-                No Performance Profiles Found
-              </Typography>
-              <Button
-                aria-label="Add Performance Profile"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={() => setProfileForModal({})}
-                disabled={
-                  !CAN(keys.ADD_PERFORMANCE_PROFILE.action, keys.ADD_PERFORMANCE_PROFILE.subject)
-                }
-              >
-                <Typography className="addIcon">Add Performance Profile</Typography>
-              </Button>
-            </div>
-          </Paper>
-        )}
-        <UsesSistent>
+          )}
+          {testProfiles.length === 0 && viewType === 'grid' && (
+            <Paper sx={{ padding: '0.5rem' }}>
+              <ProfileContainer>
+                <Typography
+                  sx={{ fontSize: '1.5rem', marginBottom: '2rem' }}
+                  align="center"
+                  color="textSecondary"
+                >
+                  No Performance Profiles Found
+                </Typography>
+                <Button
+                  aria-label="Add Performance Profile"
+                  variant="contained"
+                  color="primary"
+                  size="large"
+                  onClick={() => setProfileForModal({})}
+                  disabled={
+                    !CAN(keys.ADD_PERFORMANCE_PROFILE.action, keys.ADD_PERFORMANCE_PROFILE.subject)
+                  }
+                >
+                  <Typography className="addIcon">Add Performance Profile</Typography>
+                </Button>
+              </ProfileContainer>
+            </Paper>
+          )}
           <Modal
             open={!!profileForModal}
             title="Performance Profile Wizard"
@@ -671,10 +581,10 @@ function PerformanceProfile({ updateProgress, classes, user, handleDelete }) {
               closeModal={() => setProfileForModal(undefined)}
             />
           </Modal>
-        </UsesSistent>
-      </div>
+        </div>
 
-      <_PromptComponent ref={modalRef} />
+        <_PromptComponent ref={modalRef} />
+      </UsesSistent>
     </>
   );
 }
@@ -685,4 +595,4 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(PerformanceProfile));
+export default connect(mapStateToProps, mapDispatchToProps)(PerformanceProfile);

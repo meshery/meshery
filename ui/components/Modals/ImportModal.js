@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import useStyles from '../MesheryPatterns/Cards.styles';
 import RJSFModal from '../Modal';
-import { Button } from '@material-ui/core';
+import { Button } from '@layer5/sistent';
 import { capitalize } from 'lodash';
 
 // might also expect RJSFWrapperComponent from extensions

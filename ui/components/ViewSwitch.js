@@ -1,22 +1,12 @@
-import { ToggleButton } from '@layer5/sistent';
-import GridOnIcon from '@material-ui/icons/GridOn';
-import TableChartIcon from '@material-ui/icons/TableChart';
-import { makeStyles } from '@material-ui/core/styles';
-
-const useStyles = makeStyles((theme) => ({
-  toggleButton: {
-    border: 'none',
-  },
-  icon: {
-    color: theme.palette.secondary.iconMain,
-  },
-}));
+import { CustomTooltip, ToggleButton, useTheme } from '@layer5/sistent';
+import GridOnIcon from '@mui/icons-material/GridOn';
+import TableChartIcon from '@mui/icons-material/TableChart';
 
 function ViewSwitch({ view, changeView }) {
-  const classes = useStyles();
+  const theme = useTheme();
   return (
     <ToggleButton
-      className={classes.toggleButton}
+      style={{ border: 'none' }}
       size="small"
       value={view}
       onChange={() => {
@@ -28,9 +18,17 @@ function ViewSwitch({ view, changeView }) {
       }}
     >
       {view === 'grid' ? (
-        <TableChartIcon className={classes.icon} />
+        <CustomTooltip title="Grid View">
+          <div>
+            <TableChartIcon style={{ color: theme.palette.icon.default }} />
+          </div>
+        </CustomTooltip>
       ) : (
-        <GridOnIcon className={classes.icon} />
+        <CustomTooltip title="Table View">
+          <div>
+            <GridOnIcon style={{ color: theme.palette.icon.default }} />
+          </div>
+        </CustomTooltip>
       )}
     </ToggleButton>
   );

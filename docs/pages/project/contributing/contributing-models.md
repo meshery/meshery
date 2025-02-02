@@ -116,12 +116,12 @@ When a Component is initially generated a new Component definition is created wi
     4.3. Codify the relationships that you have identified into a [Relationship Definition](#definition).
    
 
-{% include alert.html type="info" title="Using Meshery CLI with the Meshery Registry and Meshery Models" content="Meshery CLI has a set of commands that pertain to the lifecycle management of models:
-
-- <a href="{{ site.baseurl }}/reference/mesheryctl#meshery-registry<code>mesheryctl registry</code></a>- interact with and update spreadsheets.
-- <a href="{{ site.baseurl }}/reference/mesheryctl#meshery-models<code>mesheryctl models</code></a> - interact with and update Meshery Server. 
-- <a href="{{ site.baseurl }}/reference/mesheryctl#meshery-models<code>mesheryctl components</code></a> - interact with and update Meshery Server. 
-- <a href="{{ site.baseurl }}/reference/mesheryctl#meshery-models<code>mesheryctl relationships</code></a> - interact with and update Meshery Server." %}
+{% capture data %}Meshery CLI has a set of commands that pertain to the lifecycle management of models:<br />
+<div><li><a href='{{ site.baseurl }}/reference/mesheryctl#meshery-registry'><code>mesheryctl registry</code></a>- interact with and update spreadsheets.</li>
+<li><a href='{{ site.baseurl }}/reference/mesheryctl#meshery-models'><code>mesheryctl models</code></a> - interact with and update Meshery Server.</li>
+<li><a href='{{ site.baseurl }}/reference/mesheryctl#meshery-models'><code>mesheryctl components</code></a> - interact with and update Meshery Server.</li>
+<li><a href='{{ site.baseurl }}/reference/mesheryctl#meshery-models'><code>mesheryctl relationships</code></a> - interact with and update Meshery Server.</li></div>{% endcapture %}
+{% include alert.html type="info" title="Using Meshery CLI with the Meshery Registry and Meshery Models" content=data %}
 
 
 ### Instructions for creating a new Component

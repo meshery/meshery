@@ -1,6 +1,6 @@
 //@ts-check
 import React, { useEffect, useState } from 'react';
-import { Calendar, momentLocalizer } from 'react-big-calendar';
+import { momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import { connect } from 'react-redux';
 import { updateProgress } from '../../lib/store';
@@ -9,93 +9,14 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import GenericModal from '../GenericModal';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import MesheryChart from '../MesheryChart';
-import { Paper, withStyles } from '@material-ui/core';
-import { Typography } from '@material-ui/core';
+import { Typography, Paper } from '@layer5/sistent';
 import fetchAllResults from '../graphql/queries/FetchAllResultsQuery';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
+import { CalendarComponent } from './style';
+import { UsesSistent } from '../SistentWrapper';
 
 const localizer = momentLocalizer(moment);
-const styles = (theme) => ({
-  paper: { padding: '3rem' },
-  resultContainer: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    ['@media (max-width: 830px)']: {
-      flexDirection: 'column',
-    },
-  },
-  vSep: {
-    height: '10.4rem',
-    width: '1px',
-    background: 'black',
-    marginTop: '1.1rem',
-    bottom: '0',
-    left: '36%',
-    backgroundColor: '#36454f',
-    opacity: '0.7',
-    ['@media (max-width: 830px)']: {
-      display: 'none',
-    },
-  },
-  hSep: {
-    display: 'none',
-    ['@media (max-width: 830px)']: {
-      display: 'block',
-      width: '100%',
-      height: '1px',
-      background: 'black',
-      marginTop: '1.1rem',
-      bottom: '0',
-      left: '36%',
-      backgroundColor: '#36454f',
-      opacity: '0.7',
-    },
-  },
-  calender: {
-    '& .rbc-off-range-bg': {
-      backgroundColor: theme.palette.type === 'dark' ? '#a9a9a9' : '#e6e6e6',
-      color: theme.palette.type === 'dark' ? 'white' : 'black',
-    },
-    '& .rbc-off-range ': {
-      color: theme.palette.secondary.lightText,
-    },
-    '& .rbc-btn-group': {
-      color: theme.palette.secondary.lightText,
-    },
-    '& .rbc-toolbar button': {
-      color: theme.palette.secondary.lightText,
-    },
-    '& .rbc-today': {
-      backgroundColor: theme.palette.type === 'dark' ? '#505050' : '#eaf6ff',
-    },
-    '& .rbc-day-slot .rbc-time-slot': {
-      borderTop: `1px solid ${theme.palette.type === 'dark' ? '#555555' : '#eaf6ff'}`,
-    },
-    '& .rbc-toolbar button.rbc-active': {
-      backgroundColor: theme.palette.type === 'dark' ? '#505050' : '#eaf6ff',
-      color: theme.palette.type === 'dark' ? 'white' : 'black',
-    },
-    '& .rbc-toolbar button:hover': {
-      backgroundColor:
-        theme.palette.type === 'dark' ? 'rgba(0, 0, 0, 0.54)' : 'rgba(255, 255, 255, 0.54)',
-    },
-    '& .rbc-toolbar button.rbc-active:hover': {
-      backgroundColor: theme.palette.type === 'dark' ? '#909090' : '#eaf6ff',
-    },
-    '& .rbc-toolbar button:focus ': {
-      backgroundColor: theme.palette.type === 'dark' ? '#505050' : '#eaf6ff',
-      color: theme.palette.type === 'dark' ? 'white' : 'black',
-    },
-  },
-  resultText: {
-    color: theme.palette.secondary.lightText,
-  },
-  profileText: {
-    color: theme.palette.secondary.lightText,
-  },
-});
 // const PERFORMANCE_PROFILE_RESULTS_URL = "/api/user/performance/profiles/results";
 
 /**
@@ -165,11 +86,10 @@ function generateDateRange(from, to) {
  * @param {{
  *  style?: React.CSSProperties,
  *  updateProgress: any,
- * classes: any
  * }} props
  * @returns
  */
-function PerformanceCalendar({ style, updateProgress, classes }) {
+function PerformanceCalendar({ style, updateProgress }) {
   const [time, setTime] = useState(generateDateRange());
   const [results, setResults] = useState([]);
   const [selectedEvent, setSelectedEvent] = useState();
@@ -234,63 +154,66 @@ function PerformanceCalendar({ style, updateProgress, classes }) {
     const startTime = new Date(row.StartTime);
     const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
     return (
-      <Paper
-        style={{
-          width: '100%',
-          maxWidth: '90vw',
-          padding: '0.5rem',
-        }}
-      >
-        <div>
-          <Typography variant="h6" gutterBottom align="center">
-            Performance Graph
-          </Typography>
-          <MesheryChart
-            rawdata={[result && result.runner_results ? result : {}]}
-            data={[result && result.runner_results ? result.runner_results : {}]}
-          />
-        </div>
-        {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
+      <UsesSistent>
+        <Paper
+          style={{
+            width: '100%',
+            maxWidth: '90vw',
+            padding: '0.5rem',
+          }}
+        >
           <div>
-            <GrafanaCustomCharts
-              boardPanelConfigs={[boardConfig]}
-              // @ts-ignore
-              boardPanelData={[serverMetrics]}
-              startDate={startTime}
-              from={startTime.getTime().toString()}
-              endDate={endTime}
-              to={endTime.getTime().toString()}
-              liveTail={false}
+            <Typography variant="h6" gutterBottom align="center">
+              Performance Graph
+            </Typography>
+            <MesheryChart
+              rawdata={[result && result.runner_results ? result : {}]}
+              data={[result && result.runner_results ? result.runner_results : {}]}
             />
           </div>
-        )}
-      </Paper>
+          {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
+            <div>
+              <GrafanaCustomCharts
+                boardPanelConfigs={[boardConfig]}
+                // @ts-ignore
+                boardPanelData={[serverMetrics]}
+                startDate={startTime}
+                from={startTime.getTime().toString()}
+                endDate={endTime}
+                to={endTime.getTime().toString()}
+                liveTail={false}
+              />
+            </div>
+          )}
+        </Paper>
+      </UsesSistent>
     );
   }
   return (
-    <div style={style}>
-      <Calendar
-        events={generateCalendarEventsFromResults(results)}
-        views={['month', 'week', 'day']}
-        defaultView="day"
-        step={60}
-        showMultiDayTimes
-        defaultDate={new Date()}
-        localizer={localizer}
-        className={classes.calender}
-        style={{ height: '100%' }}
-        // @ts-ignore
-        onRangeChange={(range) => setTime(generateDateRange(range.start, range.end))}
-        onSelectEvent={(results) => handleEventClick(results)}
-      />
+    <UsesSistent>
+      <div style={style}>
+        <CalendarComponent
+          events={generateCalendarEventsFromResults(results)}
+          views={['month', 'week', 'day']}
+          defaultView="day"
+          step={60}
+          showMultiDayTimes
+          defaultDate={new Date()}
+          localizer={localizer}
+          style={{ height: '100%' }}
+          // @ts-ignore
+          onRangeChange={(range) => setTime(generateDateRange(range.start, range.end))}
+          onSelectEvent={(results) => handleEventClick(results)}
+        />
 
-      <GenericModal
-        open={!!selectedEvent}
-        // @ts-ignore
-        Content={<ResultChart result={selectedEvent} />}
-        handleClose={() => setSelectedEvent(undefined)}
-      />
-    </div>
+        <GenericModal
+          open={!!selectedEvent}
+          // @ts-ignore
+          Content={<ResultChart result={selectedEvent} />}
+          handleClose={() => setSelectedEvent(undefined)}
+        />
+      </div>
+    </UsesSistent>
   );
 }
 
@@ -298,4 +221,4 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-export default withStyles(styles)(connect(null, mapDispatchToProps)(PerformanceCalendar));
+export default connect(null, mapDispatchToProps)(PerformanceCalendar);

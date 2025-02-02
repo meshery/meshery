@@ -44,6 +44,52 @@ Credentials in an Environment are the keys to securely authenticate and access m
 
 See "[Credentials](/concepts/logical/credentials)" section for more information.
 
+## Environment Lifecycle
+
+Environments in Meshery follow a defined lifecycle that helps maintain organization and control over your cloud-native resources:
+
+### Creating Environments
+
+1. Create environments through Meshery UI or via `mesheryctl`
+2. Give your environment a meaningful name and description
+3. Optionally add tags for better organization
+4. Start assigning connections and credentials
+
+### Managing Environments 
+
+- Add or remove connections and credentials as needed
+- Monitor the health and status of resources within the environment
+- Configure environment-specific settings and policies
+- Share environments by assigning them to workspaces
+
+### Environment States
+
+Environments can exist in different states:
+
+- **Active**: Environment is created and ready for use
+- **Empty**: Environment exists but has no connections assigned
+- **Archived**: Environment is preserved but not actively used
+- **Deleted**: Environment is removed but contained resources persist
+
+### Best Practices
+
+- Use clear naming conventions for environments (e.g., "prod", "staging", "dev")
+- Document the purpose and contents of each environment
+- Regularly review and clean up unused environments
+- Implement consistent tagging across environments
+- Maintain separation between production and non-production environments
+
+## Environment Security
+
+Meshery implements several security measures for environments:
+
+- Access control through workspace permissions
+- Credential encryption for sensitive data
+- Audit logging of environment changes
+- Resource isolation between environments
+
+By following these lifecycle and security practices, you can maintain well-organized and secure environments for your cloud-native infrastructure.
+
 ## Summary
 
 Environments represent a collection of resources in the form of Connections - both of managed and unmanaged Connections. Environment resources are comprised of Connections (and implicitly any Credentials used by those assigned Connections). Create and use environments to organize your connections and credentials into groups, and then make these resources available to you and your teams by assigning environments to [Workspaces](/concepts/logical/workspaces).

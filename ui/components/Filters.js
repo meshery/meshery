@@ -74,11 +74,12 @@ import {
 } from '@/rtk-query/filter';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
-import { ToolWrapper } from './Lifecycle/Workspaces';
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 
 const CreateButton = styled(Button)(() => ({
   width: 'fit-content',
   alignSelf: 'flex-start',
+  placeSelf: 'center',
 }));
 
 const ViewSwitchButton = styled('div')(() => ({
@@ -1138,7 +1139,11 @@ function MesheryFilters({
   };
 
   if (isFiltersLoading) {
-    return <LoadingScreen animatedIcon="AnimatedFilter" message={`Loading Filters...`} />;
+    return (
+      <UsesSistent>
+        <LoadingScreen animatedIcon="AnimatedFilter" message={`Loading Filters...`} />
+      </UsesSistent>
+    );
   }
 
   return (
@@ -1159,19 +1164,17 @@ function MesheryFilters({
                   <div style={{ display: 'flex' }}>
                     {!selectedFilter.show && (filters.length > 0 || viewType === 'table') && (
                       <CreateButton>
-                        <div>
-                          <Button
-                            aria-label="Add Filter"
-                            variant="contained"
-                            color="primary"
-                            size="large"
-                            onClick={handleUploadImport}
-                            disabled={!CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject)}
-                          >
-                            <PublishIcon style={iconMedium} data-cy="import-button" />
-                            <BtnText> Import Filters </BtnText>
-                          </Button>
-                        </div>
+                        <Button
+                          aria-label="Add Filter"
+                          variant="contained"
+                          color="primary"
+                          size="large"
+                          onClick={handleUploadImport}
+                          disabled={!CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject)}
+                        >
+                          <PublishIcon style={iconMedium} data-cy="import-button" />
+                          <BtnText> Import Filters </BtnText>
+                        </Button>
                       </CreateButton>
                     )}
                     <ViewSwitchButton style={{ jdisplay: 'flex' }}>

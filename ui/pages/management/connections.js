@@ -1,24 +1,29 @@
 import React from 'react';
-import { NoSsr, withStyles } from '@material-ui/core';
+import { NoSsr } from '@mui/material';
+import { styled } from '@mui/material/styles';
 import { connect } from 'react-redux';
 import Head from 'next/head';
 import MesheryConnections from '../../components/connections';
 
-const styles = { paper: { maxWidth: '90%', margin: 'auto', overflow: 'hidden' } };
+const StyledPageWrapperDiv = styled('div')({
+  paper: {
+    maxWidth: '90%',
+    margin: 'auto',
+    overflow: 'hidden',
+  },
+});
 
-class Connections extends React.Component {
-  componentDidMount() {}
-
-  render() {
-    return (
-      <NoSsr>
-        <Head>
-          <title>Connections | Meshery</title>
-        </Head>
+const Connections = () => {
+  return (
+    <NoSsr>
+      <Head>
+        <title>Connections | Meshery</title>
+      </Head>
+      <StyledPageWrapperDiv>
         <MesheryConnections />
-      </NoSsr>
-    );
-  }
-}
+      </StyledPageWrapperDiv>
+    </NoSsr>
+  );
+};
 
-export default withStyles(styles)(connect(null)(Connections));
+export default connect(null)(Connections);

@@ -2,10 +2,7 @@ import { useState } from 'react';
 import { components } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import theme, { Colors } from '../themes/app';
-import { MenuItem } from '@material-ui/core';
-import { Paper } from '@material-ui/core';
-import { FormControlLabel } from '@material-ui/core';
-import { Checkbox } from '@layer5/sistent';
+import { Checkbox, MenuItem, Paper, FormControlLabel } from '@layer5/sistent';
 import { UsesSistent } from './SistentWrapper';
 
 const MultiSelectWrapper = (props) => {
