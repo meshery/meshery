@@ -43,6 +43,7 @@ import {
   getUnit8ArrayForDesign,
   parseDesignFile,
 } from '../utils/utils';
+import { designValidatorCommands } from '../machines/validator/designValidator';
 import ViewSwitch from './ViewSwitch';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
 import UndeployIcon from '../public/static/img/UndeployIcon';
@@ -688,6 +689,23 @@ function MesheryPatterns({
           />
         </ModalBody>
       ),
+    });
+  };
+
+  const quickValidateModal = async (e, pattern_file) => {
+    e.stopPropagation();
+
+    const design = parseDesignFile(pattern_file);
+
+    try {
+      await designValidationActorRef.send(designValidatorCommands.validateDesignSchema({ design }));
+    } catch (error) {
+      console.error('Validation failed:', error);
+    }
+
+    notify({
+      message: `Validating Design`,
+      event_type: EVENT_TYPES.INFO,
     });
   };
 
@@ -1598,6 +1616,7 @@ function MesheryPatterns({
                 handleInfoModal={handleInfoModal}
                 openUndeployModal={openUndeployModal}
                 openValidationModal={openValidateModal}
+                quickValidationModal={quickValidateModal}
                 openDryRunModal={openDryRunModal}
                 openDeployModal={openDeployModal}
                 hideVisibility={hideVisibility}

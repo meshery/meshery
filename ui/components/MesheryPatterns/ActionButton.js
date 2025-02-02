@@ -90,7 +90,7 @@ export default function ActionButton({ options }) {
                     key={option}
                     onClick={(event) => {
                       handleMenuItemClick(event);
-                      option.onClick(event, index);
+                      option.onClick(event, index, dropdownMode);
                     }}
                   >
                     {dropdownMode === 'icon-only' ? (

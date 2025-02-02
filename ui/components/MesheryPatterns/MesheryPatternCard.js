@@ -51,6 +51,7 @@ function MesheryPatternCard_({
   created_at,
   pattern_file,
   handleVerify,
+  quickHandleVerify,
   handleDryRun,
   handleUnpublishModal,
   handleDeploy,
@@ -203,7 +204,11 @@ function MesheryPatternCard_({
                   {
                     label: 'Validate',
                     icon: <CheckIcon style={iconMedium} />,
-                    onClick: (e) => genericClickHandler(e, handleVerify),
+                    onClick: (e, index, dropdownMode) => {
+                      return dropdownMode === 'icon-only'
+                        ? genericClickHandler(e, quickHandleVerify)
+                        : genericClickHandler(e, handleVerify);
+                    },
                     disabled: !CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject),
                   },
                   {
