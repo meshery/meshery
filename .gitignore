@@ -15,7 +15,7 @@
 .DS_Store
 
 .vscode/
-
+.cusorignore
 *.config
 
 Chart.min.js
@@ -78,3 +78,4 @@ default.profraw
 
 wasm/policies/temp-bundle-extract-dir/**
 .nvim.lua
+

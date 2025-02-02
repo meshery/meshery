@@ -1355,7 +1355,11 @@ function MesheryPatterns({
   };
 
   if (ispatternsLoading) {
-    return <LoadingScreen animatedIcon="AnimatedMeshPattern" message={`Loading ${pageTitle}...`} />;
+    return (
+      <UsesSistent>
+        <LoadingScreen animatedIcon="AnimatedMeshPattern" message={`Loading ${pageTitle}...`} />
+      </UsesSistent>
+    );
   }
 
   /**
@@ -1542,8 +1546,7 @@ function MesheryPatterns({
 
                 {!selectedPattern.show && (
                   <ViewSwitchButton>
-                    {' '}
-                    <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true} />
+                    <ViewSwitch view={viewType} changeView={setViewType} />
                   </ViewSwitchButton>
                 )}
               </SearchWrapper>

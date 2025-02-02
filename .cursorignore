@@ -1,0 +1,22 @@
+# Add directories or file patterns to ignore during indexing (e.g. foo/ or *.csv)
+docs/_site, docs/catalog, docs/_releases, docs/_catalog, docs/assets, install/docker/extension/ui/node_modules, ui/node_modules, ui/out, docs/v0*
+
+# UI
+ui/.next/
+ui/out/
+ui/node_modules/
+
+provider-ui/out/
+provider-ui/.next/
+provider-ui/node_modules/
+
+# Docs
+docs/_site
+docs/.sass-cache
+docs/.jekyll-metadata
+docs/.jekyll-cache
+
+docs/v0.4
+docs/v0.5
+docs/v0.6
+docs/v0.*
