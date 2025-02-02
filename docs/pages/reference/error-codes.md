@@ -104,7 +104,7 @@ Troubleshooting guides to using Meshery's various features and components.
 
 ## Error Code Categories by Component
 
-<table style="margin:auto;padding-right:25%; padding-left:20%;">
+<table style="margin:auto;padding-right:25%; padding-left:20%;" class="tbl-head">
 <thead>
   <tr>
     <th style="text-align:left">Component Type</th>
@@ -188,12 +188,12 @@ text-orientation: mixed;" %}
 text-orientation: mixed;" %}
       {% endif %}
       <tr class="tbl-body-row hover-effect" onclick="toggle_visibility('{{ component[1].component_name }}-{{ err_code[1]["name"] }}-more-info');">
-        <td style="{{ severity }}">{{ err_code[1]["severity"] }}</td>
-        <td id="{{ heading | slugify }}-{{err_code[1]["code"] }}" class="error-name-code">
+        <td data-label="Severity" style="{{ severity }}" class="severity_class" >{{ err_code[1]["severity"] }}</td>
+        <td data-label="Error Name - Code" id="{{ heading | slugify }}-{{err_code[1]["code"] }}" class="error-name-code">
           <code>{{ err_code[1]["name"] | xml_escape }}-{{ err_code[1]["code"] }}</code>
         </td>
-        <td>{{ err_code[1]["short_description"] | xml_escape }}</td>
-        <td><a href="https://discuss.layer5.io/search?q={{ err_code[1]['name'] | xml_escape }}-{{ err_code[1]['code'] }}" target="_blank">search forum</a></td>
+        <td data-label="Short Description" >{{ err_code[1]["short_description"] | xml_escape }}</td>
+        <td  data-label="Discussion"><a href="https://discuss.layer5.io/search?q={{ err_code[1]['name'] | xml_escape }}-{{ err_code[1]['code'] }}" target="_blank">search forum</a></td>
       </tr>
       <tr id="{{ component[1].component_name }}-{{ err_code[1]["name"] }}-more-info" class="tbl-hidden-row">
         <td style="word-break:break-all;" colspan="4">
