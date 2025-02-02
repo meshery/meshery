@@ -1373,9 +1373,8 @@ function MesheryPatterns({
    * }} data
    */
   function handleImportDesign(data) {
-
     updateProgress({ showProgress: true });
-    const { uploadType, name, url, file, designType } = data;
+    const { uploadType, name, url, file } = data;
 
     let requestBody = null;
     switch (uploadType) {
@@ -1383,9 +1382,9 @@ function MesheryPatterns({
         const fileElement = document.getElementById('root_file');
         const fileName = fileElement.files[0].name;
         requestBody = JSON.stringify({
-            name,
-            file_name: fileName,
-            file: getUnit8ArrayDecodedFile(file),
+          name,
+          file_name: fileName,
+          file: getUnit8ArrayDecodedFile(file),
         });
         break;
       }

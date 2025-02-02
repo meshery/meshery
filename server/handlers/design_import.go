@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -99,7 +100,8 @@ func ConvertFileToManifest(identifiedFile files.IdentifiedFile, rawFile FileToIm
 	}
 }
 
-func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryManager) (pattern.PatternFile, error) {
+// returns the design file , the type of file that was identified during converion , and any error
+func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryManager) (pattern.PatternFile, string, error) {
 
 	var emptyDesign pattern.PatternFile
 
@@ -118,39 +120,39 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 	defer os.RemoveAll(tempDir)
 
 	if err != nil {
-		return emptyDesign, fmt.Errorf("Failed to create tmp directory %w", err)
+		return emptyDesign, "", fmt.Errorf("Failed to create tmp directory %w", err)
 	}
 
 	sanitizedFile, err := files.SanitizeFile(fileToImport.Data, fileToImport.FileName, tempDir, validImportExtensions)
 
 	if err != nil {
-		return emptyDesign, err
+		return emptyDesign, "", err
 	}
 
 	identifiedFile, err := files.IdentifyFile(sanitizedFile)
 
 	if err != nil {
-		return emptyDesign, err
+		return emptyDesign, "", err
 	}
 
 	if identifiedFile.Type == core.IacFileTypes.MESHERY_DESIGN {
 		design := identifiedFile.ParsedFile.(pattern.PatternFile)
-		return design, nil
+		return design, "", nil
 	}
 
 	manifest, err := ConvertFileToManifest(identifiedFile, fileToImport)
 
 	if err != nil {
-		return emptyDesign, err
+		return emptyDesign, "", err
 	}
 
 	design, err := pCore.NewPatternFileFromK8sManifest(manifest, fileToImport.FileName, true, registry)
 
 	if err != nil {
-		return emptyDesign, err
+		return emptyDesign, "", err
 	}
 
-	return design, err
+	return design, identifiedFile.Type, err
 }
 
 // swagger:route POST /api/pattern PatternsAPI idPostPatternFile
@@ -225,7 +227,7 @@ func (h *Handler) DesignFileImportHandler(
 
 	fileToImport, err := GetFileToImportFromPayload(parsedBody)
 
-	design, err := ConvertFileToDesign(fileToImport, h.registryManager)
+	design, sourceFileType, err := ConvertFileToDesign(fileToImport, h.registryManager)
 
 	if err != nil {
 		h.log.Error(fmt.Errorf("Conversion: Failed to convert to design %w", err))
@@ -247,6 +249,10 @@ func (h *Handler) DesignFileImportHandler(
 		Name:          design.Name,
 		PatternFile:   string(patternFile),
 		SourceContent: fileToImport.Data,
+		Type: sql.NullString{
+			String: sourceFileType,
+			Valid:  true,
+		},
 	}
 
 	savedDesignByt, err := provider.SaveMesheryPattern(token, &designRecord)
