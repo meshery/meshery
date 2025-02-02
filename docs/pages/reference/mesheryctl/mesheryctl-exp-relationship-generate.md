@@ -26,16 +26,10 @@ mesheryctl exp relationship generate [flags]
 
 ## Examples
 
+Generate relationships docs
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-    // generate relationships docs
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-    mesheryctl relationships generate $CRED
+mesheryctl exp relationship generate [google-sheets-credential] --sheetId [sheet-id]
 
 </div>
 </pre> 
