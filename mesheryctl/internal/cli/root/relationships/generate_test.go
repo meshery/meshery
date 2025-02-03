@@ -107,7 +107,7 @@ func TestGenerate(t *testing.T) {
 			Name:             "Generate registered relationships without spread sheet id",
 			Args:             []string{"generate", "--spreadsheet-cred", "$CRED"},
 			URL:              testContext.BaseURL + "/api/meshmodels/relationships",
-			Fixture:          "generate.relationship.api.response.without.spreadsheet.id.golden",
+			Fixture:          "",
 			ExpectedResponse: "generate.relationship.output.without.spreadsheet.id.golden",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      true,
@@ -116,7 +116,7 @@ func TestGenerate(t *testing.T) {
 			Name:             "Generate registered relationships without spread sheet creadentials",
 			Args:             []string{"generate", "--spreadsheet-id", "1"},
 			URL:              testContext.BaseURL + "/api/meshmodels/relationships",
-			Fixture:          "generate.relationship.api.response.without.spreadsheet.cred.golden",
+			Fixture:          "",
 			ExpectedResponse: "generate.relationship.output.without.spreadsheet.cred.golden",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectError:      true,
@@ -135,12 +135,14 @@ func TestGenerate(t *testing.T) {
 	// run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
+			if tt.Fixture != "" {
+				apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
 
-			utils.TokenFlag = tt.Token
+				utils.TokenFlag = tt.Token
 
-			httpmock.RegisterResponder("GET", tt.URL,
-				httpmock.NewStringResponder(200, apiResponse))
+				httpmock.RegisterResponder("GET", tt.URL,
+					httpmock.NewStringResponder(200, apiResponse))
+			}
 
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
@@ -195,41 +197,3 @@ func TestGenerate(t *testing.T) {
 
 	utils.StopMockery(t)
 }
-
-// func TestGenerateArguments(t *testing.T) {
-
-// 	const errMsg = "Usage: mesheryctl exp relationship generate [google-sheets-credential] --sheetId [sheet-id]\nRun 'mesheryctl exp relationship generate --help' to see detailed help message"
-
-// 	// test scenarios for fetching data
-// 	tests := []struct {
-// 		Name             string
-// 		Args             []string
-// 		ExpectedResponse string
-// 		ExpectError      bool
-// 	}{
-// 		{
-// 			Name:             "Missing Credentials",
-// 			Args:             []string{"generate"},
-// 			ExpectedResponse: "Google Sheet Credentials is required\n" + errMsg,
-// 			ExpectError:      false,
-// 		},
-// 		{
-// 			Name:             "Missing Sheet ID",
-// 			Args:             []string{"generate", "--spreadsheet-cred", "$CRED", "--spreadsheet-id", ""},
-// 			ExpectedResponse: "Sheet ID is required\n" + errMsg,
-// 			ExpectError:      false,
-// 		},
-// 	}
-
-// 	// run tests
-// 	for _, tt := range tests {
-// 		t.Run(tt.Name, func(t *testing.T) {
-
-// 			RelationshipCmd.SetArgs(tt.Args)
-// 			err := RelationshipCmd.Execute()
-
-// 			utils.Equals(t, errors.New(utils.RelationshipsError(tt.ExpectedResponse, "generate")), err)
-// 		})
-// 		t.Log("Generate relationships test passed")
-// 	}
-// }
