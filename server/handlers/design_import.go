@@ -260,6 +260,19 @@ func (h *Handler) DesignFileImportHandler(
 	design.Name = importDesignPayload.Name
 	patternFile, err := encoding.Marshal(design)
 
+	if err != nil {
+		h.log.Error(ErrSavePattern(err))
+		http.Error(rw, ErrSavePattern(err).Error(), http.StatusInternalServerError)
+
+		event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+			"error": ErrSavePattern(err),
+		}).WithDescription(ErrSavePattern(err).Error()).Build()
+
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+		return
+	}
+
 	// pattern to be saved in the database
 	designRecord := models.MesheryPattern{
 		Name:          design.Name,
@@ -291,7 +304,5 @@ func (h *Handler) DesignFileImportHandler(
 	event := eventBuilder.WithDescription(fmt.Sprintf("Imported design '%s' from '%s'", design.Name, sourceFileType)).Build()
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userID, event)
-
-	return
 
 }
