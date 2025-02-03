@@ -15,21 +15,15 @@
 package orgs
 
 import (
-	"encoding/json"
-	"fmt"
-	"io"
-	"net/http"
-
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/eiannone/keyboard"
+	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshery/server/models"
 	"github.com/spf13/cobra"
-	"github.com/spf13/viper"
 )
 
 var (
-	pageNo   int
-	pageSize int
+	maxRowsPerPage    int = 10
+	whiteBoardPrinter     = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 )
 
 var ListOrgCmd = &cobra.Command{
@@ -48,55 +42,52 @@ var ListOrgCmd = &cobra.Command{
 	
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			utils.Log.Error(utils.ErrLoadConfig(err))
-			return nil
-
-		}
-		baseUrl := mctlCfg.GetBaseMesheryURL()
-		url := fmt.Sprintf("%s/api/identity/orgs?page=%d&pagesize=%d", baseUrl, pageNo, pageSize)
-
-		req, err := utils.NewRequest(http.MethodGet, url, nil)
+		orgs, err := getAllOrgs()
 		if err != nil {
 			utils.Log.Error(err)
-			return nil
-		}
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-
-		defer resp.Body.Close()
-		JsonData, err := io.ReadAll(resp.Body)
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-
-		var orgsPage models.OrganizationsPage
-		err = json.Unmarshal(JsonData, &orgsPage)
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
 		}
 
 		var orgsData [][]string
 		columnNames := []string{"NAME", "ID", "CREATED-AT"}
 
-		for _, org := range orgsPage.Organizations {
+		for _, org := range orgs.Organizations {
 			orgsData = append(orgsData, []string{org.Name, org.ID.String(), org.CreatedAt.String()})
 		}
+		if len(orgsData) == 0 {
+			utils.Log.Info("No organizations found")
+			return nil
+		}
 
-		utils.PrintToTable(columnNames, orgsData)
+		startIndex := 0
+		endIndex := min(len(orgsData), maxRowsPerPage)
+
+		for {
+			utils.ClearLine()
+			whiteBoardPrinter.Println("Total registered orgs : ", len(orgsData))
+			whiteBoardPrinter.Println("Press ENTER to continue. ESC or CTRL + C to exit")
+
+			utils.PrintToTable(columnNames, orgsData[startIndex:endIndex])
+
+			keyEventChan, err := keyboard.GetKeys(10)
+			if err != nil {
+				utils.Log.Error(err)
+				return nil
+			}
+			keyEvent := <-keyEventChan
+			if keyEvent.Key == keyboard.KeyCtrlC || keyEvent.Key == keyboard.KeyEsc {
+				break
+			}
+			if keyEvent.Key == keyboard.KeyArrowDown || keyEvent.Key == keyboard.KeyEnter {
+				startIndex += maxRowsPerPage
+				endIndex = min(len(orgsData), startIndex+maxRowsPerPage)
+				continue
+			}
+			if startIndex >= len(orgsData) {
+				break
+			}
+
+		}
 
 		return nil
 	},
-}
-
-func init() {
-	ListOrgCmd.Flags().IntVarP(&pageNo, "page", "n", 0, "page number to fetch")
-	ListOrgCmd.Flags().IntVarP(&pageSize, "pagesize", "s", 10, "page size")
-
 }

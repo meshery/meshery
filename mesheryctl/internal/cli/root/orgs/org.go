@@ -32,11 +32,7 @@ var OrgCmd = &cobra.Command{
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 && !count {
-			if err := cmd.Usage(); err != nil {
-				return err
-			}
-
-			return utils.ErrInvalidArgument(fmt.Errorf("No arguments passed, provide a subcommand"))
+			return cmd.Help()
 		}
 		return nil
 	},
@@ -82,6 +78,7 @@ func getAllOrgs() (*models.OrganizationsPage, error) {
 	if err != nil {
 		return nil, utils.ErrFailRequest(err)
 	}
+	defer res.Body.Close()
 
 	jsonBytes, err := io.ReadAll(res.Body)
 	if err != nil {
