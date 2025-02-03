@@ -88,6 +88,38 @@ export const keys = {
     subject: 'Remove team from workspace',
     action: 'c4ed82f5-783d-4451-9b34-44f50cae71df',
   },
+  ASSIGN_DESIGNS_TO_WORKSPACE: {
+    subject: 'Assign designs to workspaces',
+    action: '64a1bad5-30f1-431a-aea0-8073d14a0262',
+  },
+  REMOVE_DESIGNS_FROM_WORKSPACE: {
+    subject: 'Remove designs from workspaces',
+    action: '076515f1-f696-4211-ae27-58d5463a229e',
+  },
+  ASSIGN_VIEWS_TO_WORKSPACE: {
+    subject: 'Assign views to workspace',
+    action: '5a26b21b-bf15-4622-9681-d907fc5154fd',
+  },
+  REMOVE_VIEWS_FROM_WORKSPACE: {
+    subject: 'Remove views from workspace',
+    action: '5b48eded-15d8-4c51-9ac4-b11097dbdd75',
+  },
+  DELETE_TEAM: {
+    subject: 'Delete Team',
+    action: 'bbb691b6-8664-44c7-8ea7-9c46b1ca1e8b',
+  },
+  CREATE_TEAM: {
+    subject: 'Create Team',
+    action: '41a9eb36-b99b-4715-8140-780f97d3c6a0',
+  },
+  EDIT_TEAM: {
+    subject: 'Edit Team',
+    action: '6cf69881-0be0-4723-b5f0-031b7847509a',
+  },
+  LEAVE_TEAM: {
+    subject: 'Leave Team',
+    action: '680b9fcb-6d8d-448d-8012-4b792d71c52e',
+  },
   ASSIGN_ENVIRONMENT_TO_WORKSPACE: {
     subject: 'Assign environment to workspace',
     action: 'f421fc20-c14a-4282-b526-776c6cacfd99',
@@ -151,6 +183,10 @@ export const keys = {
   CLONE_DESIGN: {
     subject: 'Clone Design',
     action: '94a12f80-3c45-4a1f-afb2-a68b909d0d7f',
+  },
+  DOWNLOAD_DESIGN: {
+    subject: 'Download a Design', // not seeded
+    action: '64de96b7-60db-4aab-b311-afc64066b2c4',
   },
   OPEN_IN_PLAYGROUND: {
     subject: 'Open in Playground', // not seeded
@@ -332,14 +368,6 @@ export const keys = {
   EDIT_VIEW: {
     subject: 'Edit View',
     action: 'f2e04b59-42ee-4af6-b488-7bc7047fc01b',
-  },
-  ASSIGN_VIEWS_TO_WORKSPACE: {
-    subject: 'Assign views to workspace',
-    action: '5a26b21b-bf15-4622-9681-d907fc5154fd',
-  },
-  REMOVE_VIEWS_FROM_WORKSPACE: {
-    subject: 'Remove views from workspace',
-    action: '5b48eded-15d8-4c51-9ac4-b11097dbdd75',
   },
   INVITE_COLLABORATORS_PUBLIC_DESIGNS: {
     subject: 'Invite any Meshery Cloud user, or all Meshery users',

@@ -1,4 +1,4 @@
-import { ToggleButton, useTheme } from '@layer5/sistent';
+import { CustomTooltip, ToggleButton, useTheme } from '@layer5/sistent';
 import GridOnIcon from '@mui/icons-material/GridOn';
 import TableChartIcon from '@mui/icons-material/TableChart';
 
@@ -18,9 +18,17 @@ function ViewSwitch({ view, changeView }) {
       }}
     >
       {view === 'grid' ? (
-        <TableChartIcon style={{ color: theme.palette.icon.default }} />
+        <CustomTooltip title="Grid View">
+          <div>
+            <TableChartIcon style={{ color: theme.palette.icon.default }} />
+          </div>
+        </CustomTooltip>
       ) : (
-        <GridOnIcon style={{ color: theme.palette.icon.default }} />
+        <CustomTooltip title="Table View">
+          <div>
+            <GridOnIcon style={{ color: theme.palette.icon.default }} />
+          </div>
+        </CustomTooltip>
       )}
     </ToggleButton>
   );

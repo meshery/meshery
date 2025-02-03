@@ -1542,8 +1542,7 @@ function MesheryPatterns({
 
                 {!selectedPattern.show && (
                   <ViewSwitchButton>
-                    {' '}
-                    <ViewSwitch view={viewType} changeView={setViewType} hideCatalog={true} />
+                    <ViewSwitch view={viewType} changeView={setViewType} />
                   </ViewSwitchButton>
                 )}
               </SearchWrapper>
