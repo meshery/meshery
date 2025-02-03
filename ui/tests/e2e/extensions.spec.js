@@ -1,6 +1,21 @@
 import { expect, test } from '@playwright/test';
 import { ENV } from './env';
 
+// URLs used in tests
+const URLS = {
+  KANVAS: {
+    DOCS: 'https://docs.layer5.io/kanvas/',
+    DESIGNER_EMBED: 'https://docs.layer5.io/kanvas/designer/embedding-designs/',
+  },
+  DOCKER: {
+    EXTENSION: 'https://hub.docker.com/extensions/meshery/docker-extension-meshery',
+  },
+  MESHERY: {
+    CATALOG: 'https://meshery.io/catalog',
+    ADATPER_DOCS: 'https://docs.meshery.io/concepts/architecture/adapters',
+  },
+};
+
 // Extensions Section Tests
 test.describe('Extensions Section Tests', () => {
   test.beforeEach(async ({ page }) => {
@@ -34,7 +49,7 @@ test.describe('Extensions Section Tests', () => {
       context.waitForEvent('page'),
       page.getByTestId('kanvas-signup-btn').click(),
     ]);
-    await expect(newPage).toHaveURL('https://docs.layer5.io/kanvas/');
+    await expect(newPage).toHaveURL(URLS.KANVAS.DOCS);
     await newPage.close();
   });
 
@@ -44,9 +59,7 @@ test.describe('Extensions Section Tests', () => {
       context.waitForEvent('page'),
       page.getByTestId('docker-extension-download-btn').click(),
     ]);
-    await expect(newPage).toHaveURL(
-      'https://hub.docker.com/extensions/meshery/docker-extension-meshery',
-    );
+    await expect(newPage).toHaveURL(URLS.DOCKER.EXTENSION);
     await newPage.close();
   });
 
@@ -56,7 +69,7 @@ test.describe('Extensions Section Tests', () => {
       context.waitForEvent('page'),
       page.getByTestId('design-embed-learn-more-btn').click(),
     ]);
-    await expect(newPage).toHaveURL('https://docs.layer5.io/kanvas/designer/embedding-designs/');
+    await expect(newPage).toHaveURL(URLS.KANVAS.DESIGNER_EMBED);
     await newPage.close();
   });
 
@@ -66,7 +79,7 @@ test.describe('Extensions Section Tests', () => {
     await toggleButton.click();
     const catalogLink = page.locator('a[href="https://meshery.io/catalog"]');
     const [newPage] = await Promise.all([context.waitForEvent('page'), catalogLink.click()]);
-    await expect(newPage).toHaveURL('https://meshery.io/catalog');
+    await expect(newPage).toHaveURL(URLS.MESHERY.CATALOG);
     await newPage.close();
   });
 
@@ -76,7 +89,7 @@ test.describe('Extensions Section Tests', () => {
       context.waitForEvent('page'),
       page.getByRole('link', { name: 'Open Adapter docs' }).click(),
     ]);
-    await expect(docsPage).toHaveURL('https://docs.meshery.io/concepts/architecture/adapters');
+    await expect(docsPage).toHaveURL(URLS.MESHERY.ADATPER_DOCS);
     await docsPage.close();
   });
 });
