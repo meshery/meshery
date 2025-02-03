@@ -38,8 +38,7 @@ func GetFileToImportFromPayload(payload MesheryDesignImportPayload) (FileToImpor
 	if payload.URL != "" {
 		resp, err := http.Get(payload.URL)
 		if err != nil {
-
-			return FileToImport{}, err
+			return FileToImport{}, models.ErrDoRequest(err, "GET", payload.URL)
 		}
 		defer func() {
 			if resp != nil {
@@ -238,6 +237,14 @@ func (h *Handler) DesignFileImportHandler(
 	}
 
 	fileToImport, err := GetFileToImportFromPayload(importDesignPayload)
+
+	if err != nil {
+		h.log.Error(fmt.Errorf("Conversion: Failed to get file from payload  %w", err))
+		event := ImportErrorEvent(*eventBuilder, importDesignPayload, err)
+		_ = provider.PersistEvent(event)
+		go h.config.EventBroadcaster.Publish(userID, event)
+		return
+	}
 
 	design, sourceFileType, err := ConvertFileToDesign(fileToImport, h.registryManager)
 
