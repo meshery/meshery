@@ -15,6 +15,8 @@
 package orgs
 
 import (
+	"fmt"
+
 	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
@@ -50,7 +52,7 @@ var ListOrgCmd = &cobra.Command{
 		columnNames := []string{"NAME", "ID", "CREATED-AT"}
 
 		for _, org := range orgs.Organizations {
-			orgsData = append(orgsData, []string{org.Name, org.ID.String(), org.CreatedAt.String()})
+			orgsData = append(orgsData, []string{org.Name, org.ID.String(), fmt.Sprintf("%v/%v/%v", org.CreatedAt.Year(), org.CreatedAt.Month(), org.CreatedAt.Day())})
 		}
 		if len(orgsData) == 0 {
 			utils.Log.Info("No organizations found")
