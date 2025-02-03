@@ -199,6 +199,9 @@ const MesheryPlayComponent = (props) => {
                   value={adapter && adapter.adapter_location ? adapter.adapter_location : ''}
                   margin="normal"
                   variant="outlined"
+                  sx={{
+                    display: 'flex',
+                  }}
                   onChange={handleAdapterChange()}
                   SelectProps={{
                     MenuProps: {
