@@ -30,8 +30,8 @@ import (
 // represents the mesheryctl exp relationships list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "List registered relationships",
-	Long:  "List all relationships registered in Meshery Server",
+	Short: "List registered relationship",
+	Long:  "List all relationship registered in Meshery Server",
 	Example: `
 // View list of relationship
 mesheryctl exp relationship list

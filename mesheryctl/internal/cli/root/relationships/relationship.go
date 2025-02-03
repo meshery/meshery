@@ -43,31 +43,31 @@ type MeshmodelRelationshipsAPIResponse struct {
 
 var RelationshipCmd = &cobra.Command{
 	Use:   "relationship",
-	Short: "View list of relationships and details of relationship",
-	Long:  "Meshery uses relationships to define how interconnected components interact. View list of relationships and detailed information of a specific relationship",
+	Short: "View, list and details of relationship",
+	Long:  "Meshery uses relationship to define how interconnected components interact. View list of relationship and detailed information of a specific relationship",
 	Example: `
-// To view list of relationships
-mesheryctl exp relationships list
+// To view list of relationship
+mesheryctl exp relationship list
 
 // To view a specific relationship
-mesheryctl exp relationships view [model-name]
+mesheryctl exp relationship view [model-name]
 
-//To search a specific relationship
-mesheryctl exp relationships search --[flag] [query-text]
+// To search a specific relationship
+mesheryctl exp relationship search [flags] [query-text]
 
-//To generate a relationship documentation 
-mesheryctl exp relationship generate  [google-sheets-credential] --sheetId [sheet-id]
+// To generate a relationship documentation 
+mesheryctl exp relationship generate  [flags]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
-			errMsg := "Usage: mesheryctl exp relationships [subcommand]\nRun 'mesheryctl exp relationships --help' to see detailed help message"
+			errMsg := "Usage: mesheryctl exp relationship [subcommand]\nRun 'mesheryctl exp relationship --help' to see detailed help message"
 			return utils.ErrInvalidArgument(errors.New("missing required argument: [model-name]. " + errMsg))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.RelationshipsError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl exp relationships --help' to display usage guide.\n", args[0]), "relationship"))
+			return errors.New(utils.RelationshipsError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl exp relationship --help' to display usage guide.\n", args[0]), "relationship"))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {

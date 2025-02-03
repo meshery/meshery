@@ -41,11 +41,11 @@ var viewCmd = &cobra.Command{
 mesheryctl exp relationship view [model-name]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp relationships view [model-name]\nRun 'mesheryctl exp relationships view --help' to see detailed help message"
+		const errMsg = "\n\nUsage: mesheryctl exp relationship view [model-name]\nRun 'mesheryctl exp relationship view --help' to see detailed help message"
 		if len(args) == 0 {
-			return utils.ErrInvalidArgument(errors.New("missing required argument: [model-name]. " + errMsg))
+			return errors.New(utils.RelationshipsError(fmt.Sprintf("[model-name] isn't specified%s", errMsg), "view"))
 		} else if len(args) > 1 {
-			return errors.New(utils.RelationshipsError(fmt.Sprintf("'%s' is an invalid subcommand. %s\n", args[0], errMsg), "view"))
+			return errors.New(utils.RelationshipsError(fmt.Sprintf("Too many arguments only [model-name] is expected%s", errMsg), "view"))
 		}
 		return nil
 	},
