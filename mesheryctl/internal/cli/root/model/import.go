@@ -15,6 +15,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/encoding"
+	meshkitFileUtils "github.com/layer5io/meshkit/files"
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"github.com/spf13/cobra"
@@ -214,7 +215,9 @@ func displayEntitisIfModel(response *models.RegistryAPIResponse) {
 			utils.Log.Infof("\n%s: %s", boldModel, model)
 		} else if extensionType == "invalid extension" {
 			boldError := utils.BoldString("ERROR")
-			utils.Log.Infof("\n%s: %s file is not importable", boldError, model)
+			fileExt := filepath.Ext(model)
+			errMsg := meshkitFileUtils.ErrUnsupportedExtensionForOperation("import", model, fileExt, []string{".json", ".yaml", ".yml", ".tar.gz", ".tar", ".zip", ".tar.zip", ".tgz", "."})
+			utils.Log.Infof("\n%s: %s", boldError, errMsg)
 			return
 		}
 		displaySuccessfulComponents(response, model)
