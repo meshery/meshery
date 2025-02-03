@@ -15,7 +15,6 @@
 package orgs
 
 import (
-	"github.com/eiannone/keyboard"
 	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
@@ -57,35 +56,10 @@ var ListOrgCmd = &cobra.Command{
 			utils.Log.Info("No organizations found")
 			return nil
 		}
-
-		startIndex := 0
-		endIndex := min(len(orgsData), maxRowsPerPage)
-
-		for {
-			utils.ClearLine()
-			whiteBoardPrinter.Println("Total registered orgs : ", len(orgsData))
-			whiteBoardPrinter.Println("Press ENTER to continue. ESC or CTRL + C to exit")
-
-			utils.PrintToTable(columnNames, orgsData[startIndex:endIndex])
-
-			keyEventChan, err := keyboard.GetKeys(10)
-			if err != nil {
-				utils.Log.Error(err)
-				return nil
-			}
-			keyEvent := <-keyEventChan
-			if keyEvent.Key == keyboard.KeyCtrlC || keyEvent.Key == keyboard.KeyEsc {
-				break
-			}
-			if keyEvent.Key == keyboard.KeyArrowDown || keyEvent.Key == keyboard.KeyEnter {
-				startIndex += maxRowsPerPage
-				endIndex = min(len(orgsData), startIndex+maxRowsPerPage)
-				continue
-			}
-			if startIndex >= len(orgsData) {
-				break
-			}
-
+		err = utils.HandlePagination(maxRowsPerPage, "organizations", orgsData, columnNames)
+		if err != nil {
+			utils.Log.Error(err)
+			return nil
 		}
 
 		return nil
