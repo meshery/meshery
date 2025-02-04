@@ -126,8 +126,8 @@
    "secondaryColor": "#00D3A9",
    "shape": "rectangle",
    "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 41 19\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#00b39f;fill-opacity:0.1;stroke:#00b39f;stroke-miterlimit:10;}\u003c/style\u003e\u003c/defs\u003e\u003cg id=\"Layer_2\" data-name=\"Layer 2\"\u003e\u003cg id=\"Layer_1-2\" data-name=\"Layer 1\"\u003e\u003crect class=\"cls-1\" x=\"0.5\" y=\"0.5\" width=\"40\" height=\"18\" rx=\"2\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e",
-   "svgComplete": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003crect x=\"1.5\" y=\"10\" width=\"38\" height=\"20\" rx=\"4\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",
-   "svgWhite": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003crect x=\"1.5\" y=\"10\" width=\"38\" height=\"20\" rx=\"4\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",
+   "svgComplete": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003crect x=\"1.5\" y=\"10\" width=\"38\" height=\"20\" rx=\"4\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003crect x=\"1.5\" y=\"10\" width=\"38\" height=\"20\" rx=\"4\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-miterlimit=\"10\"/\u003e\u003c/svg\u003e",
    "width": 30
   },
   "version": "v1.0.0"

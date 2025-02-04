@@ -133,9 +133,9 @@
    "secondaryColor": "#00D3A9",
    "shape": "polygon",
    "shape-polygon-points": "-1.00 0.54 -1.00 -0.54 -0.54 -0.54 -0.54 -1.00 0.54 -1.00 0.54 -0.54 1.00 -0.54 1.00 0.54 0.54 0.54 0.54 1.00 -0.54 1.00 -0.54 0.54",
-   "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M2 10.5V29.5H8.5V35.5H33V29.5H39V10.5H33V4H8.5V10.5H2Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\"/\u003e\n\u003c/svg\u003e",
-   "svgComplete": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M2 10.5V29.5H8.5V35.5H33V29.5H39V10.5H33V4H8.5V10.5H2Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\"/\u003e\n\u003c/svg\u003e",
-   "svgWhite": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M2 10.5V29.5H8.5V35.5H33V29.5H39V10.5H33V4H8.5V10.5H2Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\"/\u003e\n\u003c/svg\u003e",
+   "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M2 10.5V29.5H8.5V35.5H33V29.5H39V10.5H33V4H8.5V10.5H2Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\"/\u003e\u003c/svg\u003e",
+   "svgComplete": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M2 10.5V29.5H8.5V35.5H33V29.5H39V10.5H33V4H8.5V10.5H2Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M2 10.5V29.5H8.5V35.5H33V29.5H39V10.5H33V4H8.5V10.5H2Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\"/\u003e\u003c/svg\u003e",
    "width": 30
   },
   "version": "v1.0.0"

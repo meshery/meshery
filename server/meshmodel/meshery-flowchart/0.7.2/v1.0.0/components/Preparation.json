@@ -133,9 +133,9 @@
    "secondaryColor": "#00D3A9",
    "shape": "polygon",
    "shape-polygon-points": "-1 0 -0.62 -0.69 0.62 -0.69 1 0 0.62 0.69 -0.62 0.69",
-   "svgColor": "\u003csvg width=\"40\" height=\"26\" viewBox=\"0 0 40 26\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M7 1L1 14L7 25H33L39 14L33 1H7Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-width=\"1.08\"/\u003e\n\u003c/svg\u003e",
-   "svgComplete": "\u003csvg width=\"40\" height=\"26\" viewBox=\"0 0 40 26\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M7 1L1 14L7 25H33L39 14L33 1H7Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-width=\"1.08\"/\u003e\n\u003c/svg\u003e",
-   "svgWhite": "\u003csvg width=\"40\" height=\"26\" viewBox=\"0 0 40 26\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M7 1L1 14L7 25H33L39 14L33 1H7Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-width=\"1.08\"/\u003e\n\u003c/svg\u003e",
+   "svgColor": "\u003csvg width=\"40\" height=\"26\" viewBox=\"0 0 40 26\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M7 1L1 14L7 25H33L39 14L33 1H7Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-width=\"1.08\"/\u003e\u003c/svg\u003e",
+   "svgComplete": "\u003csvg width=\"40\" height=\"26\" viewBox=\"0 0 40 26\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M7 1L1 14L7 25H33L39 14L33 1H7Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-width=\"1.08\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg width=\"40\" height=\"26\" viewBox=\"0 0 40 26\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M7 1L1 14L7 25H33L39 14L33 1H7Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-width=\"1.08\"/\u003e\u003c/svg\u003e",
    "width": 30
   },
   "version": "v1.0.0"
