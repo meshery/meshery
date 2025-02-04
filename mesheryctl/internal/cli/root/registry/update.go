@@ -30,6 +30,19 @@ import (
 	"github.com/spf13/cobra"
 )
 
+type ComponentSourceParser interface {
+	parse() (map[string]map[string][]utils.ComponentCSV, error)
+}
+
+type LocalCSVDirParser struct {
+	dirPath string
+}
+
+type GoogleSheetParser struct {
+	spreadsheeetID   string
+	spreadsheeetCred string
+}
+
 var (
 	csvDir                   string
 	modelLocation            string
@@ -45,20 +58,21 @@ var (
 var updateCmd = &cobra.Command{
 	Use:   "update",
 	Short: "Update the registry with latest data.",
-	Long:  "Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet or CSV directory.",
+	Long:  "Updates the component metadata (SVGs, shapes, styles and other) by referring from a Google Spreadsheet or CSV directory",
 	Example: `
 // Update models from Meshery Integration Spreadsheet
 mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 encoded spreadsheet credential] -i [path to the directory containing models].
 
 // Updating models in the meshery/meshery repo
 mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED
+
 // Updating models in the meshery/meshery repo based on flag
 mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED --model "[model-name]"
 
 // Updating models from a local CSV directory
 mesheryctl registry update --csv-dir /path/to/csv-directory
 
-// Example to update with both Google Sheets and CSV, CSV takes precedence
+// Updating models from local CSV takes precedence if both CSV directory and Google Sheet are provided
 mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 encoded spreadsheet credential] --csv-dir [/path/to/csv-directory]
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
@@ -91,22 +105,20 @@ mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 enco
 
 		utils.Log.Debugf("Input Directory check completed with path  %s", modelLocation)
 
-		var parsedComponents map[string]map[string][]utils.ComponentCSV
+		var parser ComponentSourceParser
 
 		if csvDir != "" {
 			utils.Log.Info("Using local CSV directory: ", csvDir)
-			parsedComponents, err = parseLocalCSVDirectory(csvDir)
-			if err != nil {
-				utils.Log.Error(err)
-				return err
-			}
+			parser = &LocalCSVDirParser{dirPath: csvDir}
 		} else {
 			utils.Log.Info("Using Google Sheet with ID: ", spreadsheeetID)
-			parsedComponents, err = parseFromGoogleSheet(spreadsheeetID, spreadsheeetCred, modelName)
-			if err != nil {
-				utils.Log.Error(err)
-				return err
-			}
+			parser = &GoogleSheetParser{spreadsheeetID: spreadsheeetID, spreadsheeetCred: spreadsheeetCred}
+		}
+
+		parsedComponents, err := parser.parse()
+		if err != nil {
+			utils.Log.Error(err)
+			return err
 		}
 
 		err = InvokeComponentsUpdate(parsedComponents)
@@ -275,11 +287,11 @@ func logModelUpdateSummary(modelToCompUpdateTracker *store.GenerticThreadSafeSto
 	utils.Log.Info(fmt.Sprintf("For %d models updated %d components", len(values), totalAggregateComponents))
 }
 
-func parseLocalCSVDirectory(dirPath string) (map[string]map[string][]utils.ComponentCSV, error) {
+func (parser *LocalCSVDirParser) parse() (map[string]map[string][]utils.ComponentCSV, error) {
 	localComps := make(map[string]map[string][]utils.ComponentCSV)
 	var allErrors []error
 
-	entries, err := os.ReadDir(dirPath)
+	entries, err := os.ReadDir(parser.dirPath)
 	if err != nil {
 		return nil, err
 	}
@@ -289,7 +301,7 @@ func parseLocalCSVDirectory(dirPath string) (map[string]map[string][]utils.Compo
 			continue
 		}
 		if filepath.Ext(entry.Name()) == ".csv" {
-			csvPath := filepath.Join(dirPath, entry.Name())
+			csvPath := filepath.Join(parser.dirPath, entry.Name())
 			helper, err := utils.NewComponentCSVHelper("", "Components", 0, csvPath)
 			if err != nil {
 				allErrors = append(allErrors, err)
@@ -308,9 +320,9 @@ func parseLocalCSVDirectory(dirPath string) (map[string]map[string][]utils.Compo
 				if _, ok := localComps[registrant]; !ok {
 					localComps[registrant] = make(map[string][]utils.ComponentCSV)
 				}
-				for modelName, comps := range modelMap {
-					utils.Log.Info("    model ", modelName, " => # of comps: ", len(comps))
-					localComps[registrant][modelName] = append(localComps[registrant][modelName], comps...)
+				for model, comps := range modelMap {
+					utils.Log.Info("    model ", model, " => # of comps: ", len(comps))
+					localComps[registrant][model] = append(localComps[registrant][model], comps...)
 				}
 			}
 		}
@@ -321,19 +333,19 @@ func parseLocalCSVDirectory(dirPath string) (map[string]map[string][]utils.Compo
 	return localComps, nil
 }
 
-func parseFromGoogleSheet(sheetID, sheetCred, modelName string) (map[string]map[string][]utils.ComponentCSV, error) {
-	srv, err := mutils.NewSheetSRV(sheetCred)
+func (parser *GoogleSheetParser) parse() (map[string]map[string][]utils.ComponentCSV, error) {
+	srv, err := mutils.NewSheetSRV(parser.spreadsheeetCred)
 	if err != nil {
 		return nil, err
 	}
 
-	resp, err := srv.Spreadsheets.Get(sheetID).Fields().Do()
+	resp, err := srv.Spreadsheets.Get(parser.spreadsheeetID).Fields().Do()
 	if err != nil || resp.HTTPStatusCode != 200 {
 		return nil, fmt.Errorf("failed to get google sheet: %w", err)
 	}
 
 	gid := GetSheetIDFromTitle(resp, "Components")
-	url := GoogleSpreadSheetURL + sheetID
+	url := GoogleSpreadSheetURL + parser.spreadsheeetID
 	helper, err := utils.NewComponentCSVHelper(url, "Components", gid, componentCSVFilePath)
 	if err != nil {
 		return nil, err
