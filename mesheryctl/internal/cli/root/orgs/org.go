@@ -34,6 +34,10 @@ var OrgCmd = &cobra.Command{
 		if len(args) == 0 && !count {
 			return cmd.Help()
 		}
+		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
+			utils.Log.Error(fmt.Errorf("invalid subcommand"))
+			return nil
+		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -47,10 +51,7 @@ var OrgCmd = &cobra.Command{
 			return nil
 
 		}
-		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			utils.Log.Error(fmt.Errorf("invalid subcommand"))
-			return nil
-		}
+
 		return nil
 	},
 }

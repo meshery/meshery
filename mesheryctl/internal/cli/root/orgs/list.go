@@ -17,14 +17,12 @@ package orgs
 import (
 	"fmt"
 
-	"github.com/fatih/color"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
 var (
-	maxRowsPerPage    int = 10
-	whiteBoardPrinter     = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
+	maxRowsPerPage int = 10
 )
 
 var ListOrgCmd = &cobra.Command{
