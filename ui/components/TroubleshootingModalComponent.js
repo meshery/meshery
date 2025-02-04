@@ -288,15 +288,11 @@ const TroubleshootingModal = (props) => {
                     in the <code>layer5labs/meshery-extensions</code> repository are identical.
                   </li>
                   <li className={classes.troubleshootListitem}>
-                    <b>Loading</b>: Confirm that the <code>plugin</code> version offered by Meshery
-                    Cloud (at{' '}
-                    <a
-                      className={classes.troubleshootHelpLink}
-                      href="https://cloud.layer5.io/capabilities"
-                    >
-                      https://cloud.layer5.io/capabilities
+                    <b>Loading</b>: Confirm that the <code>plugin</code> version (at{' '}
+                    <a className={classes.troubleshootHelpLink} href="/capabilities">
+                      /capabilities
                     </a>
-                    ), from which MeshMap files are retreived, matches the <code>plugin</code>{' '}
+                    ), from which Extension files are retreived, matches the <code>plugin</code>{' '}
                     version that Meshery Server is using as the filesystem reference in{' '}
                     <code>~/.meshery/provider/Meshery/vx.x.x/</code>.
                   </li>
@@ -348,7 +344,7 @@ const TroubleshootingModal = (props) => {
               Need help? Contact us via{' '}
               <a
                 className={classes.contactHelpLink}
-                href="mailto:meshmap@layer5.io"
+                href="mailto:maintainers@meshery.io"
                 target="_blank"
                 rel="noreferrer"
               >
