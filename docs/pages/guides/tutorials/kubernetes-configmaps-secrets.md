@@ -23,7 +23,7 @@ In this tutorial, we will work with Kubernetes ConfigMaps and Secrets. _ConfigMa
 ## Prerequisites
 
 - Basic understanding of containerization and Kubernetes concepts.
-- Access to the _Meshery Playground_. If you don't have an account, sign up at [Meshery Playground](https://play.meshery.io/).
+- Access to the _Meshery Playground_.
 
 ## Lab Scenario
 
