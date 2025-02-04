@@ -23,7 +23,6 @@ In this tutorial, we will learn how to deploy a **WordPress site and a MySQL dat
 ### Prerequisites
 
 - Basic understanding of Kubernetes concepts.
-- Access to the _Meshery Playground_.
 
 ### Lab Scenario
 

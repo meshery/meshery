@@ -21,7 +21,6 @@ In this tutorial, we will learn how to deploy a **Apache Cassandra with a Statef
 ### Prerequisites
 
 - Basic understanding of Kubernetes concepts.
-- Access to the _Meshery Playground_.
 
 ### Lab Scenario
 
