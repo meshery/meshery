@@ -44,6 +44,7 @@ import {
   ListItem,
   List,
   Collapse,
+  Box,
 } from '@layer5/sistent';
 import { UsesSistent } from './SistentWrapper';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
@@ -486,7 +487,9 @@ class Navigator_ extends React.Component {
             height: '30px',
           }}
         >
-          <span onClick={() => this.props.updateExtensionType('navigator')}>{content}</span>
+          <Box width="100%" onClick={() => this.props.updateExtensionType('navigator')}>
+            {content}
+          </Box>
         </Link>
       );
     }
@@ -984,9 +987,6 @@ class Navigator_ extends React.Component {
               submenu,
               permission,
             }) => {
-              // if (typeof show !== "undefined" && !show) {
-              //   return "";
-              // }
               return (
                 <RootDiv key={childId}>
                   <SideBarListItem

@@ -133,9 +133,9 @@
    "secondaryColor": "#00D3A9",
    "shape": "polygon",
    "shape-polygon-points": "-1 0.46 -1 -0.77 0.69 -0.77 0.69 0.46 -1 0.46 -0.85 0.46 -0.85 0.62 0.85 0.62 0.85 -0.62 0.69 -0.62 0.85 -0.62 0.85 -0.46 1 -0.46 1 0.77 -0.69 0.77 -0.69 0.62 -0.85 0.62 0.85 0.62 0.85 -0.62 0.69 -0.62 0.69 0.46",
-   "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M5 29H29.5V6M5 29V32.5M5 29H1.5V2.5H29.5V6M5 32.5H8.5M5 32.5H34M34 32.5H8.5M34 32.5V10M29.5 6H34V10M8.5 32.5V36.5H38V10H34\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",
-   "svgComplete": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M5 29H29.5V6M5 29V32.5M5 29H1.5V2.5H29.5V6M5 32.5H8.5M5 32.5H34M34 32.5H8.5M34 32.5V10M29.5 6H34V10M8.5 32.5V36.5H38V10H34\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",
-   "svgWhite": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M5 29H29.5V6M5 29V32.5M5 29H1.5V2.5H29.5V6M5 32.5H8.5M5 32.5H34M34 32.5H8.5M34 32.5V10M29.5 6H34V10M8.5 32.5V36.5H38V10H34\" stroke=\"white\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",
+   "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M5 29H29.5V6M5 29V32.5M5 29H1.5V2.5H29.5V6M5 32.5H8.5M5 32.5H34M34 32.5H8.5M34 32.5V10M29.5 6H34V10M8.5 32.5V36.5H38V10H34\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\u003c/svg\u003e",
+   "svgComplete": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M5 29H29.5V6M5 29V32.5M5 29H1.5V2.5H29.5V6M5 32.5H8.5M5 32.5H34M34 32.5H8.5M34 32.5V10M29.5 6H34V10M8.5 32.5V36.5H38V10H34\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M5 29H29.5V6M5 29V32.5M5 29H1.5V2.5H29.5V6M5 32.5H8.5M5 32.5H34M34 32.5H8.5M34 32.5V10M29.5 6H34V10M8.5 32.5V36.5H38V10H34\" stroke=\"white\" stroke-miterlimit=\"10\"/\u003e\u003c/svg\u003e",
    "width": 30
   },
   "version": "v1.0.0"

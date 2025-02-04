@@ -130,9 +130,9 @@
    "secondaryColor": "#00D3A9",
    "shape": "polygon",
    "shape-polygon-points": "-1 -0.68 1 -0.69 0 0.69",
-   "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M19.9874 38L10.1823 19.9873L1.56804 1.99992L19.9874 1.99992H38.4321L29.7925 19.9873L19.9874 38Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-width=\"1.08\"/\u003e\n\u003c/svg\u003e",
-   "svgComplete": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M19.9874 38L10.1823 19.9873L1.56804 1.99992L19.9874 1.99992H38.4321L29.7925 19.9873L19.9874 38Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-width=\"1.08\"/\u003e\n\u003c/svg\u003e",
-   "svgWhite": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M19.9874 38L10.1823 19.9873L1.56804 1.99992L19.9874 1.99992H38.4321L29.7925 19.9873L19.9874 38Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-width=\"1.08\"/\u003e\n\u003c/svg\u003e",
+   "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M19.9874 38L10.1823 19.9873L1.56804 1.99992L19.9874 1.99992H38.4321L29.7925 19.9873L19.9874 38Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-width=\"1.08\"/\u003e\u003c/svg\u003e",
+   "svgComplete": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M19.9874 38L10.1823 19.9873L1.56804 1.99992L19.9874 1.99992H38.4321L29.7925 19.9873L19.9874 38Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-width=\"1.08\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M19.9874 38L10.1823 19.9873L1.56804 1.99992L19.9874 1.99992H38.4321L29.7925 19.9873L19.9874 38Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-width=\"1.08\"/\u003e\u003c/svg\u003e",
    "width": 30
   },
   "version": "v1.0.0"

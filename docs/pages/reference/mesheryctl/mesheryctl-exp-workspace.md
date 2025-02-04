@@ -71,4 +71,7 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 
 ## See Also
 
+* [mesheryctl exp workspace create](/reference/mesheryctl/exp/workspace/create)
+* [mesheryctl exp workspace list](/reference/mesheryctl/exp/workspace/list)
+
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

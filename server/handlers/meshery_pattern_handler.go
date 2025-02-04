@@ -1311,7 +1311,26 @@ func (h *Handler) DownloadMesheryPatternHandler(
 		}
 		defer file.Close()
 
-		ymlDesign, err := yaml.Marshal(pattern.PatternFile)
+		var design patternV1beta1.PatternFile
+
+		err = encoding.Unmarshal([]byte(pattern.PatternFile), &design)
+
+		if err != nil {
+
+			err = ErrEncodePattern(err)
+			h.log.Error(err)
+			http.Error(rw, fmt.Sprintf("Failed to export design \"%s\" as OCI image.", pattern.Name), http.StatusInternalServerError)
+			event := eventBuilder.WithSeverity(events.Error).WithMetadata(map[string]interface{}{
+				"error": err,
+			}).WithDescription(fmt.Sprintf("Failed to export design \"%s\" as OCI image.", pattern.Name)).Build()
+			_ = provider.PersistEvent(event)
+			go h.config.EventBroadcaster.Publish(userID, event)
+
+			return
+		}
+
+		ymlDesign, err := yaml.Marshal(design)
+
 		if err != nil {
 			err = ErrEncodePattern(err)
 			h.log.Error(err)
