@@ -6,6 +6,7 @@ import CustomErrorMessage from '@/components/ErrorPage';
 // import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
 import DefaultError from '@/components/General/error-404';
 import { DynamicFullScrrenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
+import { UsesSistent } from '@/components/SistentWrapper';
 export const useGetUserAbilities = (org, skip) => {
   const { data, ...res } = useGetUserKeysQuery(
     {
@@ -46,7 +47,7 @@ export const LoadSessionGuard = ({ children }) => {
 
   if (error) {
     return (
-      <>
+      <UsesSistent>
         <DefaultError />
         <CustomErrorMessage
           message={
@@ -54,7 +55,7 @@ export const LoadSessionGuard = ({ children }) => {
           }
           showImage={false}
         />
-      </>
+      </UsesSistent>
     );
   }
 

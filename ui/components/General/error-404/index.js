@@ -69,7 +69,13 @@ const DefaultError = (props) => {
               alt="Meshery logo text"
             />
           </ImageContainer>
-          <Typography variant="h4" component="h4" align="center" className="errormsg">
+          <Typography
+            variant="h4"
+            component="h4"
+            align="center"
+            className="errormsg"
+            style={{ color: theme.palette.text.default }}
+          >
             {errorTitle
               ? errorTitle
               : "Oops! It seems like you don't have the necessary permissions to view this page."}
