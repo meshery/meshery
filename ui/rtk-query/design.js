@@ -93,7 +93,7 @@ export const designsApi = api
       }),
       importPattern: builder.mutation({
         query: (queryArg) => ({
-          url: `pattern/${queryArg.type}`,
+          url: `pattern/import`,
           method: 'POST',
           body: queryArg.importBody,
         }),

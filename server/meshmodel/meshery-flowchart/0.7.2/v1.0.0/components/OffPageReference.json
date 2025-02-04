@@ -133,9 +133,9 @@
    "secondaryColor": "#00D3A9",
    "shape": "polygon",
    "shape-polygon-points": "-1 0.15384615384615385 -1 -1 1 -1 1 0.15384615384615385 0 1",
-   "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M20.0876 39L1 26.1367L1 1L39 1V26.1367L20.0876 39Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-width=\"1.08055\"/\u003e\n\u003c/svg\u003e\n",
-   "svgComplete": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M20.5876 39L1.5 26.1367L1.5 1L39.5 1V26.1367L20.5876 39Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-width=\"1\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",
-   "svgWhite": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M20.5876 39L1.5 26.1367L1.5 1L39.5 1V26.1367L20.5876 39Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-width=\"1\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e\n",
+   "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M20.0876 39L1 26.1367L1 1L39 1V26.1367L20.0876 39Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-width=\"1.08055\"/\u003e\u003c/svg\u003e",
+   "svgComplete": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M20.5876 39L1.5 26.1367L1.5 1L39.5 1V26.1367L20.5876 39Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-width=\"1\" stroke-miterlimit=\"10\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M20.5876 39L1.5 26.1367L1.5 1L39.5 1V26.1367L20.5876 39Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-width=\"1\" stroke-miterlimit=\"10\"/\u003e\u003c/svg\u003e",
    "width": 30
   },
   "version": "v1.0.0"

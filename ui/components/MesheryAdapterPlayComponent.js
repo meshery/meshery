@@ -1,4 +1,5 @@
 import {
+  Box,
   Card,
   CardActions,
   CardHeader,
@@ -11,22 +12,16 @@ import {
   FormControl,
   FormControlLabel,
   FormGroup,
-  FormLabel,
   Grid,
   IconButton,
   Menu,
   MenuItem,
   Switch,
   Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
   Tooltip,
-  withStyles,
-} from '@material-ui/core';
-import { blue } from '@material-ui/core/colors';
-import NoSsr from '@material-ui/core/NoSsr';
+  styled,
+} from '@layer5/sistent';
+import { FormLabel, TableBody, TableCell, TableHead, TableRow, NoSsr } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PlayIcon from '@mui/icons-material/PlayArrow';
@@ -39,7 +34,6 @@ import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import dataFetch from '../lib/data-fetch';
-// import { updateSMIResults } from '../lib/store';
 import { setK8sContexts, updateProgress, actionTypes } from '../lib/store';
 import { ctxUrl, getK8sClusterIdsFromCtxId } from '../utils/multi-ctx';
 import fetchAvailableAddons from './graphql/queries/AddonsStatusQuery';
@@ -56,112 +50,55 @@ import { withNotify } from '../utils/hooks/useNotification';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 
-const styles = (theme) => ({
-  smWrapper: { backgroundColor: theme.palette.secondary.elevatedComponents2 },
-  buttons: { width: '100%' },
-  button: {
-    marginTop: theme.spacing(3),
-    marginLeft: theme.spacing(1),
+export const AdapterChip = styled(Chip)(({ theme }) => ({
+  height: '50px',
+  fontSize: '15px',
+  position: 'relative',
+  top: theme.spacing(0.5),
+  [theme.breakpoints.down('md')]: {
+    fontSize: '12px',
   },
-  margin: { margin: theme.spacing(1) },
-  alreadyConfigured: {
-    textAlign: 'center',
-    padding: theme.spacing(20),
-  },
-  chip: {
-    height: '50px',
-    fontSize: '15px',
-    position: 'relative',
-    top: theme.spacing(0.5),
-    [theme.breakpoints.down('md')]: { fontSize: '12px' },
-  },
-  colorSwitchBase: {
-    color: blue[300],
-    '&$colorChecked': {
-      color: blue[500],
-      '& + $colorBar': { backgroundColor: blue[500] },
-    },
-  },
-  colorBar: {},
-  colorChecked: {},
-  uploadButton: {
-    margin: theme.spacing(1),
-    marginTop: theme.spacing(3),
-  },
-  fileLabel: { width: '100%' },
-  editorContainer: { width: '100%' },
-  deleteLabel: { paddingRight: theme.spacing(2) },
-  alignRight: { textAlign: 'right' },
-  alignLeft: {
-    textAlign: 'left',
-    marginLeft: theme.spacing(1),
-  },
-  padLeft: { paddingLeft: theme.spacing(0.25) },
-  padRight: { paddingRight: theme.spacing(0.25) },
-  deleteRight: { float: 'right' },
-  expTitleIcon: {
-    width: theme.spacing(3),
-    display: 'inline',
-    verticalAlign: 'middle',
-  },
-  expIstioTitleIcon: {
-    width: theme.spacing(2),
-    display: 'inline',
-    verticalAlign: 'middle',
-    marginLeft: theme.spacing(0.5),
-    marginRight: theme.spacing(0.5),
-  },
-  expTitle: {
-    display: 'inline',
-    verticalAlign: 'middle',
-  },
-  icon: { width: theme.spacing(2.5) },
-  tableHeader: {
-    fontWeight: 'bolder',
-    fontSize: 18,
-  },
-  secondaryTable: {
-    borderRadius: 10,
-    backgroundColor: '#f7f7f7',
-  },
-  paneSection: {
-    backgroundColor: theme.palette.secondary.elevatedComponents,
-    padding: theme.spacing(3),
-    borderRadius: 4,
-  },
-  chipNamespace: {
-    gap: '2rem',
-    margin: '0px',
-  },
-  cardMesh: { margin: '-8px 0px' },
-  inputContainer: {
-    flex: '1',
-    minWidth: '250px',
-  },
-  card: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  ctxIcon: {
-    display: 'inline',
-    verticalAlign: 'text-top',
-    width: theme.spacing(2.5),
-    marginLeft: theme.spacing(0.5),
-  },
-  ctxChip: {
-    backgroundColor: 'white',
-    cursor: 'pointer',
-    marginRight: theme.spacing(1),
-    marginLeft: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-    height: '100%',
-    padding: theme.spacing(0.5),
-  },
-  text: {
-    padding: theme.spacing(1),
-  },
+}));
+
+const AdapterTableHeader = styled(TableCell)({
+  fontWeight: 'bolder',
+  fontSize: 18,
 });
+
+const AdapterSmWrapper = styled('div')(({ theme }) => ({
+  backgroundColor: theme.palette.background.card,
+}));
+
+const SecondaryTable = styled('div')({
+  borderRadius: 10,
+  backgroundColor: '#f7f7f7',
+});
+
+const PaneSection = styled('div')(({ theme }) => ({
+  backgroundColor: theme.palette.background.tabs,
+  padding: theme.spacing(3),
+  borderRadius: 4,
+}));
+
+const ChipNamespaceContainer = styled(Grid)(() => ({
+  gap: '2rem',
+  margin: '0px',
+}));
+
+const CardMeshContainer = styled(Grid)(() => ({
+  margin: '-8px 0px',
+}));
+
+const InputWrapper = styled('div')(() => ({
+  flex: '1',
+  minWidth: '250px',
+}));
+
+const AdapterCard = styled(Card)(() => ({
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+}));
 
 class MesheryAdapterPlayComponent extends React.Component {
   constructor(props) {
@@ -693,7 +630,7 @@ class MesheryAdapterPlayComponent extends React.Component {
 
     const { customDialogSMI, smi_result, pageSize } = self.state;
 
-    const { user, classes } = self.props;
+    const { user } = self.props;
 
     const smi_columns = [
       {
@@ -836,7 +773,7 @@ class MesheryAdapterPlayComponent extends React.Component {
         return (
           <TableRow>
             <TableCell colSpan={colSpan}>
-              <div className={classes.secondaryTable}>
+              <SecondaryTable>
                 <Table aria-label="a dense table">
                   <TableHead>
                     <TableRow>
@@ -870,7 +807,7 @@ class MesheryAdapterPlayComponent extends React.Component {
                     ))}
                   </TableBody>
                 </Table>
-              </div>
+              </SecondaryTable>
             </TableCell>
           </TableRow>
         );
@@ -963,7 +900,7 @@ class MesheryAdapterPlayComponent extends React.Component {
       >
         <MUIDataTable
           title={
-            <div className={classes.tableHeader}>Service Mesh Interface Conformance Results</div>
+            <AdapterTableHeader>Service Mesh Interface Conformance Results</AdapterTableHeader>
           }
           data={data}
           columns={smi_columns}
@@ -1092,7 +1029,7 @@ class MesheryAdapterPlayComponent extends React.Component {
     if (typeof cat === 'undefined') {
       cat = 0;
     }
-    const { classes, adapter } = this.props;
+    const { adapter } = this.props;
     // const expanded = false;
 
     let selectedAdapterOps =
@@ -1153,7 +1090,7 @@ class MesheryAdapterPlayComponent extends React.Component {
         break;
     }
     return (
-      <Card className={classes.card}>
+      <AdapterCard>
         <CardHeader title={content} subheader={description} style={{ flexGrow: 1 }} />
         <CardActions disableSpacing>
           <IconButton
@@ -1167,11 +1104,11 @@ class MesheryAdapterPlayComponent extends React.Component {
           {cat !== 4 && this.generateMenu(cat, false, selectedAdapterOps)}
           {cat === 4 && this.generateYAMLEditor(cat, false)}
           {cat !== 3 && (
-            <div className={classes.fileLabel}>
+            <Box width={'100%'}>
               <IconButton
                 aria-label="delete"
                 ref={(ch) => (this.delIconEles[cat] = ch)}
-                className={classes.deleteRight}
+                style={{ float: 'right' }}
                 onClick={this.addDelHandleClick(cat, true)}
                 disabled={!CAN(permission.action, permission.subject)}
               >
@@ -1179,10 +1116,10 @@ class MesheryAdapterPlayComponent extends React.Component {
               </IconButton>
               {cat !== 4 && this.generateMenu(cat, true, selectedAdapterOps)}
               {cat === 4 && this.generateYAMLEditor(cat, true)}
-            </div>
+            </Box>
           )}
         </CardActions>
-      </Card>
+      </AdapterCard>
     );
   }
 
@@ -1267,7 +1204,7 @@ class MesheryAdapterPlayComponent extends React.Component {
   }
 
   render() {
-    const { classes, adapter } = this.props;
+    const { adapter } = this.props;
     const {
       namespace,
       namespaceError,
@@ -1280,12 +1217,11 @@ class MesheryAdapterPlayComponent extends React.Component {
     let adapterName = adapter.name.split(' ').join('').toLowerCase();
     let imageSrc = '/static/img/' + adapterName + '.svg';
     let adapterChip = (
-      <Chip
+      <AdapterChip
         label={adapter.adapter_location}
         data-cy="adapter-chip-ping"
         onClick={this.handleAdapterClick(adapter.adapter_location)}
-        icon={<img src={imageSrc} className={classes.icon} />}
-        className={classes.chip}
+        icon={<img src={imageSrc} width={'1.25rem'} />}
         variant="outlined"
       />
     );
@@ -1302,29 +1238,27 @@ class MesheryAdapterPlayComponent extends React.Component {
       });
       filteredOps.sort();
     }
-
     return (
       <NoSsr>
         {selectedRowData && selectedRowData !== null && Object.keys(selectedRowData).length > 0 && (
           <MesheryResultDialog rowData={selectedRowData} close={self.resetSelectedRowData()} />
         )}
         <React.Fragment>
-          <div className={classes.smWrapper}>
+          <AdapterSmWrapper>
             <Grid container spacing={2} direction="row" alignItems="flex-start">
               {/* SECTION 1 */}
               <Grid item xs={12}>
-                <div className={classes.paneSection}>
+                <PaneSection>
                   <Grid container spacing={4}>
-                    <Grid
+                    <ChipNamespaceContainer
                       container
                       item
                       xs={12}
                       alignItems="flex-start"
                       justify="space-between"
-                      className={classes.chipNamespace}
                     >
                       <div>{adapterChip}</div>
-                      <div className={classes.inputContainer}>
+                      <InputWrapper>
                         <ReactSelectWrapper
                           label="Namespace"
                           value={namespace}
@@ -1332,8 +1266,8 @@ class MesheryAdapterPlayComponent extends React.Component {
                           options={namespaceList}
                           onChange={this.handleNamespaceChange}
                         />
-                      </div>
-                      <div className={classes.inputContainer}>
+                      </InputWrapper>
+                      <InputWrapper>
                         <ReactSelectWrapper
                           label="Version"
                           value={version}
@@ -1341,23 +1275,22 @@ class MesheryAdapterPlayComponent extends React.Component {
                           options={versionList}
                           onChange={this.handleVersionChange}
                         />
-                      </div>
-                    </Grid>
+                      </InputWrapper>
+                    </ChipNamespaceContainer>
                     <Grid container spacing={1}>
-                      <Grid
+                      <CardMeshContainer
                         container
                         item
                         lg={!this.extractAddonOperations(2).length ? 12 : 10}
                         xs={12}
                         spacing={2}
-                        className={classes.cardMesh}
                       >
                         {filteredOps.map((val, i) => (
                           <Grid item lg={3} md={4} xs={12} key={`adapter-card-${i}`}>
                             {this.generateCardForCategory(val)}
                           </Grid>
                         ))}
-                      </Grid>
+                      </CardMeshContainer>
                       <Grid container item lg={2} xs={12}>
                         <Grid item xs={12} md={4}>
                           {this.generateAddonSwitches(this.extractAddonOperations(2))}
@@ -1365,20 +1298,20 @@ class MesheryAdapterPlayComponent extends React.Component {
                       </Grid>
                     </Grid>
                   </Grid>
-                </div>
+                </PaneSection>
               </Grid>
               {/* SECTION 2 */}
               <Grid item xs={12}>
-                <div className={classes.paneSection}>
+                <PaneSection>
                   {this.renderGrafanaCustomCharts(
                     this.props.grafana.selectedBoardsConfigs,
                     this.props.grafana.grafanaURL,
                     this.props.grafana.grafanaAPIKey,
                   )}
-                </div>
+                </PaneSection>
               </Grid>
             </Grid>
-          </div>
+          </AdapterSmWrapper>
           <ConfirmationMsg
             open={this.state.modalOpen}
             handleClose={this.handleClose}
@@ -1397,7 +1330,6 @@ class MesheryAdapterPlayComponent extends React.Component {
 }
 
 MesheryAdapterPlayComponent.propTypes = {
-  classes: PropTypes.object.isRequired,
   adapter: PropTypes.object.isRequired,
 };
 
@@ -1415,6 +1347,7 @@ const mapDispatchToProps = (dispatch) => ({
   // updateSMIResults: bindActionCreators(updateSMIResults, dispatch),
 });
 
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(withNotify(MesheryAdapterPlayComponent))),
-);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withRouter(withNotify(MesheryAdapterPlayComponent)));

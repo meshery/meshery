@@ -194,11 +194,12 @@ export const SideBarListItem = styled(ListItem, {
   fill: isActive ? theme.palette.background.brand.default : '#fff',
   '&:hover': {
     ...(link && {
-      backgroundColor: 'rgba(0, 187, 166, 0.5)', // Only applies when link is true
+      backgroundColor: 'rgba(0, 187, 166, 0.5)',
     }),
-    '& $expandMoreIcon': {
+
+    '.svg-inline--fa': {
       opacity: 1,
-      transition: 'opacity 200ms ease-in',
+      visibility: 'visible',
     },
   },
   paddingTop: 4,
@@ -206,6 +207,21 @@ export const SideBarListItem = styled(ListItem, {
   pointerEvents: isShow ? 'none' : 'auto',
   opacity: isShow ? 0.5 : '',
   fontSize: '14px',
+}));
+
+export const ExpandMoreIcon = styled(FontAwesomeIcon, {
+  shouldForwardProp: (prop) => prop !== 'isCollapsed' && prop !== 'hasChildren',
+})(({ isCollapsed, hasChildren, theme }) => ({
+  opacity: 0,
+  visibility: 'hidden',
+  cursor: 'pointer',
+  display: hasChildren ? 'inline-block' : 'none',
+  transform: isCollapsed ? 'rotate(180deg) translateX(-0.8px)' : 'translateX(3px)',
+  transition:
+    'transform 200ms ease-in-out, opacity 200ms ease-in-out, visibility 200ms ease-in-out',
+  '&:hover': {
+    color: theme.palette.background.brand.default,
+  },
 }));
 
 export const SideBarText = styled(ListItemText)(({ drawerCollapsed }) => ({
@@ -248,20 +264,6 @@ export const SecondaryDivider = styled(Divider)(({ theme }) => ({
   marginTop: theme.spacing(1),
   marginBottom: theme.spacing(1),
   borderColor: '#404854',
-}));
-
-export const ExpandMoreIcon = styled(FontAwesomeIcon, {
-  shouldForwardProp: (prop) => prop !== 'isCollapsed' && prop !== 'hasChildren',
-})(({ isCollapsed, hasChildren }) => ({
-  opacity: 0,
-  cursor: 'pointer',
-  display: hasChildren ? 'inline-block' : 'none',
-  transform: isCollapsed ? 'rotate(180deg) translateX(-0.8px)' : 'translateX(3px)', // Rotate if collapsed
-  transition: 'transform 200ms ease-in-out', // Smooth rotation animation
-  '&:hover': {
-    opacity: 1,
-    color: '#4fc3f7',
-  },
 }));
 
 export const ChevronIcon = styled(FontAwesomeIcon)(({ theme }) => ({

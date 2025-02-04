@@ -22,7 +22,7 @@ export const CardWrapper = styled(Card)(() => {
     display: 'flex',
     flexDirection: 'column',
     padding: '20px',
-    backgroundColor: theme.palette.background?.default,
+    backgroundColor: theme.palette.background.card,
     '&:hover': {
       cursor: 'pointer',
     },
@@ -154,24 +154,6 @@ export const CardTitle = styled(Typography)({
   },
 });
 
-export const OrganizationName = styled('p')({
-  fontSize: '0.9rem',
-  display: 'flex',
-  alignItems: 'end',
-  padding: '0 5px',
-  '&:hover': {
-    cursor: 'default',
-  },
-});
-
-export const StyledIconButton = styled('button')({
-  background: 'transparent',
-  border: 'none',
-  '&:hover': {
-    cursor: 'default',
-  },
-});
-
 export const DateLabel = styled(Typography)({
   fontStyle: 'italic',
   fontSize: '12px',
@@ -184,6 +166,7 @@ export const EmptyDescription = styled('p')({
   fontSize: '0.9rem',
   textAlign: 'left',
   fontStyle: 'italic',
+  margin: '0',
 });
 
 export const DescriptionLabel = styled('p')({
@@ -219,7 +202,7 @@ export const StyledChip = styled('div')(({ theme }) => ({
   height: 'unset',
   borderRadius: '100px',
   border: `0.5px solid ${theme.palette.secondary.default}`,
-  background: theme.palette.secondary.white,
+  background: theme.palette.background.constant.white,
   maxWidth: '230px',
   '& .MuiChip-avatar': {
     margin: 0,

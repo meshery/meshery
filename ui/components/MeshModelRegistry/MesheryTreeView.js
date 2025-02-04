@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { TreeView } from '@mui/x-tree-view/TreeView';
-import { IconButton, FormControlLabel, Switch } from '@material-ui/core';
+import { IconButton, FormControlLabel, Switch } from '@layer5/sistent';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import SearchBar from '../../utils/custom-search';
 import debounce from '../../utils/debounce';
@@ -773,6 +773,12 @@ const MesheryTreeView = ({
     if (!isExpand) {
       setSearchText(() => null);
       setResourcesDetail(() => []);
+      setPage({
+        Models: 0,
+        Components: 0,
+        Relationships: 0,
+        Registrants: 0,
+      });
     }
     setIsSearchExpanded(isExpand);
   };

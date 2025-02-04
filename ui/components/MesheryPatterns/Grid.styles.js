@@ -1,31 +1,31 @@
-import { makeStyles } from '@material-ui/core';
+import { Paper, styled, Typography } from '@layer5/sistent';
 
-const useStyles = makeStyles((theme) => ({
-  noPaper: {
-    padding: '0.5rem',
-    fontSize: '3rem',
-  },
-  noContainer: {
-    padding: '2rem',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexDirection: 'column',
-  },
-  noText: {
-    fontSize: '2rem',
-    marginBottom: '2rem',
-  },
-  pagination: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: '2rem',
-  },
-  addIcon: {
-    paddingLeft: theme.spacing(0.5),
-    marginRight: theme.spacing(0.5),
-  },
-}));
+export const GridNoPapperStyles = styled(Paper)({
+  padding: '0.5rem',
+  fontSize: '3rem',
+});
 
-export default useStyles;
+export const GridNoContainerStyles = styled('div')({
+  padding: '2rem',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  flexDirection: 'column',
+});
+
+export const GridNoTextStyles = styled(Typography)({
+  fontSize: '2rem',
+  marginBottom: '2rem',
+});
+
+export const GridPaginationStyles = styled('div')({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginTop: '2rem',
+});
+
+export const GridAddIconStyles = styled('div')({
+  paddingLeft: '0.5rem',
+  marginRight: '0.5rem',
+});

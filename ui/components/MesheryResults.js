@@ -1,14 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
-import { NoSsr, TableRow, TableCell, IconButton } from '@material-ui/core';
+import { NoSsr, TableRow, TableCell, TableSortLabel } from '@mui/material';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import MUIDataTable from 'mui-datatables';
 import Moment from 'react-moment';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { updateResultsSelection, clearResultsSelection, updateProgress } from '../lib/store';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
 import dataFetch from '../lib/data-fetch';
 import CustomToolbarSelect from './CustomToolbarSelect';
 import MesheryChart from './MesheryChart';
@@ -16,14 +14,7 @@ import GrafanaCustomCharts from './telemetry/grafana/GrafanaCustomCharts';
 import MesheryResultDialog from './MesheryResultDialog';
 import { withNotify } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
-
-const styles = (theme) => ({
-  grid: { padding: theme.spacing(2) },
-  tableHeader: { fontWeight: 'bolder', fontSize: 18 },
-  chartContent: {
-    // minHeight: window.innerHeight * 0.7,
-  },
-});
+import { Box, IconButton } from '@layer5/sistent';
 
 class MesheryResults extends Component {
   constructor(props) {
@@ -464,7 +455,9 @@ class MesheryResults extends Component {
         <MUIDataTable
           title={
             this.props.customHeader || (
-              <div className={classes.tableHeader}>Performance Test Results</div>
+              <Box fontWeight={'bolder'} fontSize={'18'}>
+                Performance Test Results
+              </Box>
             )
           }
           data={resultsForDisplay}
@@ -499,6 +492,4 @@ const mapStateToProps = (state) => {
   return { results_selection, user };
 };
 
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withNotify(MesheryResults)),
-);
+export default connect(mapStateToProps, mapDispatchToProps)(withNotify(MesheryResults));

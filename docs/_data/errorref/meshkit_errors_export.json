@@ -1397,6 +1397,15 @@
         "short_description": "Error while creating Google Sheets Service",
         "probable_cause": "Issue happened with Google Sheets Service",
         "suggested_remediation": "Make you provide valid JWT credentials and Spreadsheet ID"
+      },
+      "11281": {
+        "name": "ErrWritingIntoFileCode",
+        "code": "11281",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Insufficient permissions to write into file\nfile might be corrupted",
+        "suggested_remediation": "check if sufficient permissions are givent to the file\ncheck if the file is corrupted"
       }
     }
   }

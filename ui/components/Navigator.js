@@ -44,6 +44,7 @@ import {
   ListItem,
   List,
   Collapse,
+  Box,
 } from '@layer5/sistent';
 import { UsesSistent } from './SistentWrapper';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
@@ -242,7 +243,9 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
     children: [
       {
         id: PROFILES,
-        icon: <FontAwesomeIcon icon={faDigitalTachograph} style={{ fontSize: 24 }} />,
+        icon: (
+          <FontAwesomeIcon icon={faDigitalTachograph} style={{ fontSize: 24, color: 'white' }} />
+        ),
         href: '/performance/profiles',
         title: 'Profiles',
         show: capabilityRegistryObj.isNavigatorComponentEnabled([PERFORMANCE, PROFILES]),
@@ -484,7 +487,9 @@ class Navigator_ extends React.Component {
             height: '30px',
           }}
         >
-          <span onClick={() => this.props.updateExtensionType('navigator')}>{content}</span>
+          <Box width="100%" onClick={() => this.props.updateExtensionType('navigator')}>
+            {content}
+          </Box>
         </Link>
       );
     }
@@ -982,9 +987,6 @@ class Navigator_ extends React.Component {
               submenu,
               permission,
             }) => {
-              // if (typeof show !== "undefined" && !show) {
-              //   return "";
-              // }
               return (
                 <RootDiv key={childId}>
                   <SideBarListItem

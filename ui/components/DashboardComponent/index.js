@@ -13,7 +13,7 @@ import MesheryIcon from './images/meshery-icon.js';
 import { TabPanel } from './tabpanel';
 import { iconLarge } from '../../css/icons.styles';
 import { useWindowDimensions } from '@/utils/dimension';
-import { Tab, Tabs, Tooltip as CustomTooltip } from '@layer5/sistent';
+import { Tab, Tabs, CustomTooltip } from '@layer5/sistent';
 import { UsesSistent } from '../SistentWrapper';
 import { WrapperContainer, WrapperPaper } from './style';
 import _ from 'lodash';

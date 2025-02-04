@@ -1,4 +1,4 @@
-import { styled } from '@material-ui/core';
+import { styled } from '@layer5/sistent';
 import Message from '@/assets/icons/general/message';
 import Docker from '@/assets/icons/social/docker';
 import Github from '@/assets/icons/social/github';
@@ -19,19 +19,19 @@ export const SocialContainer = styled('div')(() => ({
 }));
 
 export const MessageIcon = styled(Message)(({ theme }) => ({
-  fill: theme.palette.secondary.iconMain,
-  color: theme.palette.secondary.iconMain,
+  fill: theme.palette.icon.default,
+  color: theme.palette.icon.default,
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
-    fill: theme.palette.secondary.iconMain,
-    color: theme.palette.secondary.iconMain,
+    fill: theme.palette.icon.default,
+    color: theme.palette.icon.default,
   },
 }));
 
 export const SlackIcon = styled(Slack)(({ theme }) => ({
-  fill: theme.palette.secondary.iconMain,
-  color: theme.palette.secondary.iconMain,
+  fill: theme.palette.icon.default,
+  color: theme.palette.icon.default,
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
@@ -41,8 +41,8 @@ export const SlackIcon = styled(Slack)(({ theme }) => ({
 }));
 
 export const TwitterIcon = styled(Twitter)(({ theme }) => ({
-  fill: theme.palette.secondary.iconMain,
-  color: theme.palette.secondary.iconMain,
+  fill: theme.palette.icon.default,
+  color: theme.palette.icon.default,
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
@@ -74,8 +74,8 @@ export const GithubHandleIcon = styled(Github)(({ theme }) => ({
 }));
 
 export const GithubIcon = styled(Github)(({ theme }) => ({
-  fill: theme.palette.secondary.iconMain,
-  color: theme.palette.secondary.iconMain,
+  fill: theme.palette.icon.default,
+  color: theme.palette.icon.default,
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
@@ -85,8 +85,8 @@ export const GithubIcon = styled(Github)(({ theme }) => ({
 }));
 
 export const YoutubeIcon = styled(Youtube)(({ theme }) => ({
-  fill: theme.palette.secondary.iconMain,
-  color: theme.palette.secondary.iconMain,
+  fill: theme.palette.icon.default,
+  color: theme.palette.icon.default,
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {
@@ -96,8 +96,8 @@ export const YoutubeIcon = styled(Youtube)(({ theme }) => ({
 }));
 
 export const DockerIcon = styled(Docker)(({ theme }) => ({
-  fill: theme.palette.secondary.iconMain,
-  color: theme.palette.secondary.iconMain,
+  fill: theme.palette.icon.default,
+  color: theme.palette.icon.default,
   cursor: 'pointer',
   transition: 'all .3s',
   '&:hover': {

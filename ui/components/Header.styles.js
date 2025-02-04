@@ -68,9 +68,9 @@ export const HeaderIcons = styled(MenuIcon)(({ theme }) => ({
   fontSize: '1.5rem',
   height: '1.5rem',
   width: '1.5rem',
-  fill: theme.palette.common.white,
+  fill: theme.palette.background.constant.white,
   '&:hover': {
-    fill: theme.palette.primary.brand,
+    fill: theme.palette.background.brand.default,
   },
 }));
 
@@ -99,7 +99,7 @@ export const CBadgeContainer = styled('div')({
 
 export const CMenuContainer = styled(Paper)(({ theme }) => ({
   backgroundColor: theme.palette.secondary.headerColor,
-  marginTop: '-0.7rem',
+  marginTop: '-1.2rem',
   borderRadius: '3px',
   padding: '1rem',
   boxShadow: '20px #979797',
