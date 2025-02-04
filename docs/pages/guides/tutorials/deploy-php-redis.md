@@ -21,7 +21,6 @@ In this tutorial, we will learn how to deploy a **PHP Guestbook application with
 
 ### Prerequisites
 - Basic understanding of Kubernetes concepts.
-- Meshery Playground access. If you don't have an account, sign up at [Meshery Playground](https://meshery.layer5.io/play).
 
 ### Lab Scenario
 - Import the PHP and Redis manifest files into Meshery Playground.

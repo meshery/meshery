@@ -21,7 +21,6 @@ In this tutorial, we'll learn the fundamentals of Pods, the smallest deployable 
 ### Prerequisites
 
 - Basic understanding of containerization and Kubernetes concepts.
-- Access to the _Meshery Playground_. If you don't have an account, sign up at [Meshery Playground](https://play.meshery.io/).
 
 ### Lab Scenario
 
