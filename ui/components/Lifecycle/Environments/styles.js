@@ -136,7 +136,7 @@ export const Record = styled('div')(() => ({
 export const BulkSelectCheckbox = styled(Checkbox)({
   padding: 0,
   marginRight: '0.5rem',
-  height: '28px',
+  height: '1.75rem',
   color: 'white',
   '&:hover': {
     color: 'white',
