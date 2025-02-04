@@ -36,7 +36,7 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/meshery-operator v0.8.1
-	github.com/layer5io/meshkit v0.8.11
+	github.com/layer5io/meshkit v0.8.12
 	github.com/layer5io/meshsync v0.8.5
 	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.6.1
