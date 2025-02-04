@@ -28,6 +28,7 @@ const (
 	ErrOffboardDesignCode        = "mesheryctl-1005"
 	ErrDesignFlagCode            = "mesheryctl-1006"
 	ErrDesignManifestCode        = "mesheryctl-1007"
+	ErrDesignFileCode            = "replace_me"
 	ErrDesignsNotFoundCode       = "mesheryctl-1037"
 	ErrInvalidDesignFileCode     = "mesheryctl-1038"
 	ErrDesignInvalidNameOrIDCode = "mesheryctl-1039"
@@ -88,6 +89,14 @@ func ErrDesignManifest() error {
 		[]string{"No manifest file path detected"},
 		[]string{"Manifest path not provided"},
 		[]string{"Provide the path to the design manifest. \n\n%v", errPatternMsg})
+}
+
+func ErrDesignFile() error {
+	return errors.New(ErrDesignFileCode, errors.Alert,
+		[]string{"No file path detected"},
+		[]string{"No design file path detected"},
+		[]string{"Design path not provided"},
+		[]string{"Provide the path to the design file. \n\n%v", errPatternMsg})
 }
 
 func ErrOnboardDesign() error {

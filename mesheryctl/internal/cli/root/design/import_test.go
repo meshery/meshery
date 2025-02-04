@@ -19,15 +19,15 @@ func Test_importPattern_DisplayErrorsMissingFlags(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name:    "Import missing source type flag",
-			args:    args{"", "file.yaml", "", false},
-			want:    ErrDesignSourceType(),
+			name:    "Import invalid source type",
+			args:    args{"invalid source type", "file.yaml", "", false},
+			want:    ErrInValidSource("invalid source type", []string{"Helm Chart", "Kubernetes Manifest", "Docker Compose", "Meshery Design"}),
 			wantErr: true,
 		},
 		{
 			name:    "Import missing file flag",
 			args:    args{"helm", "", "", false},
-			want:    ErrDesignManifest(),
+			want:    ErrDesignFile(),
 			wantErr: true,
 		},
 	}
