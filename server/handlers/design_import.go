@@ -94,6 +94,8 @@ func ConvertFileToManifest(identifiedFile files.IdentifiedFile, rawFile FileToIm
 		return files.ConvertDockerComposeToKubernetesManifest(identifiedFile)
 	case core.IacFileTypes.KUBERNETES_MANIFEST:
 		return string(rawFile.Data), nil
+	case core.IacFileTypes.KUSTOMIZE:
+		return files.ConvertKustomizeToKubernetesManifest(identifiedFile)
 	default:
 		return "", files.ErrUnsupportedFileTypeForConversionToDesign(rawFile.FileName, identifiedFile.Type)
 	}
