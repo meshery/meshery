@@ -131,9 +131,9 @@
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "round-diamond",
-   "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003crect x=\"20.3101\" y=\"0.331543\" width=\"27.8166\" height=\"27.8166\" rx=\"4.45066\" transform=\"rotate(44.4462 20.3101 0.331543)\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e\n",
+   "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003crect x=\"20.3101\" y=\"0.331543\" width=\"27.8166\" height=\"27.8166\" rx=\"4.45066\" transform=\"rotate(44.4462 20.3101 0.331543)\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\u003c/svg\u003e",
    "svgComplete": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e \u003crect x=\"20.3101\" y=\"0.331543\" width=\"27.8166\" height=\"27.8166\" rx=\"4.45066\" transform=\"rotate(44.4462 20.3101 0.331543)\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e \u003c/svg\u003e",
-   "svgWhite": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003crect x=\"20.3101\" y=\"0.331543\" width=\"27.8166\" height=\"27.8166\" rx=\"4.45066\" transform=\"rotate(44.4462 20.3101 0.331543)\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e\n",
+   "svgWhite": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003crect x=\"20.3101\" y=\"0.331543\" width=\"27.8166\" height=\"27.8166\" rx=\"4.45066\" transform=\"rotate(44.4462 20.3101 0.331543)\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-miterlimit=\"10\"/\u003e\u003c/svg\u003e",
    "width": 30
   },
   "version": "v1.0.0"
