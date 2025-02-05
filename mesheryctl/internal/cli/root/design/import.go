@@ -81,6 +81,17 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 			}
 		}
 
+		switch sourceType {
+			case "Helm Chart":
+				sourceType = core.IacFileTypes.HELM_CHART
+			case "Kubernetes Manifest":
+				sourceType = core.IacFileTypes.KUBERNETES_MANIFEST
+			case "Meshery Design":
+				sourceType = core.IacFileTypes.MESHERY_DESIGN
+			case "Docker Compose":
+				sourceType = core.IacFileTypes.DOCKER_COMPOSE
+		}
+
 		pattern, err := importPattern(sourceType, file, patternURL, true)
 		if err != nil {
 			utils.Log.Error(err)
