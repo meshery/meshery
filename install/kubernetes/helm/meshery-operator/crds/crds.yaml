@@ -113,9 +113,9 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.6.1
   creationTimestamp: null
-  name: meshsyncs.meshery.layer5.io
+  name: meshsyncs.meshery.io
 spec:
-  group: meshery.layer5.io
+  group: meshery.io
   names:
     kind: MeshSync
     listKind: MeshSyncList
