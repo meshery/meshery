@@ -4,6 +4,7 @@ import {
   MenuItem,
   ListItemText,
   Select,
+  styled,
   Typography,
   FormControl,
   InputLabel,
@@ -35,12 +36,12 @@ const schema = selectCompSchema(
 );
 
 const SelectContainer = styled(Select)(({ theme }) => ({
-  fontFamily: theme.typography.fontFamily
-}))
+  fontFamily: theme.typography.fontFamily,
+}));
 
-const MenuItemContainer = styled(MenuItem)(({ theme })=> ({
-  fontFamily: theme.typography.fontFamily
-}))
+const MenuItemContainer = styled(MenuItem)(({ theme }) => ({
+  fontFamily: theme.typography.fontFamily,
+}));
 
 export const SelectConnection = ({ setSharedData, handleNext }) => {
   const formRef = useRef();

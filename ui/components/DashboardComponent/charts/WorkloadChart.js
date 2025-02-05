@@ -6,16 +6,16 @@ import ConnectClustersBtn from '../../General/ConnectClustersBtn';
 import Link from 'next/link';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { Box, MenuItem, Select, Typography } from '@layer5/sistent';
+import { Box, MenuItem, Select, styled, Typography } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
 
 const SelectContainer = styled(Select)(({ theme }) => ({
-  fontFamily: theme.typography.fontFamily
-}))
+  fontFamily: theme.typography.fontFamily,
+}));
 
-const MenuItemContainer = styled(MenuItem)(({ theme })=> ({
-  fontFamily: theme.typography.fontFamily
-}))
+const MenuItemContainer = styled(MenuItem)(({ theme }) => ({
+  fontFamily: theme.typography.fontFamily,
+}));
 
 export default function WorkloadChart({
   classes,
@@ -91,7 +91,10 @@ export default function WorkloadChart({
             </Typography>
           </Link>
           {namespaces?.length > 0 && (
-            <SelectContainer value={selectedNamespace} onChange={(e) => handleSetNamespace(e.target.value)}>
+            <SelectContainer
+              value={selectedNamespace}
+              onChange={(e) => handleSetNamespace(e.target.value)}
+            >
               {namespaces.map((ns) => (
                 <MenuItemContainer key={ns.uniqueID} value={ns}>
                   {ns}

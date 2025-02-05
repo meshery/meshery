@@ -61,6 +61,7 @@ import {
   FormControl,
   RadioGroup,
   MenuItem,
+  styled,
 } from '@layer5/sistent';
 import BrushIcon from '@mui/icons-material/Brush';
 import CategoryIcon from '@mui/icons-material/Category';
@@ -76,12 +77,12 @@ import AddIcon from '@mui/icons-material/AddCircleOutline';
 import LanOutlinedIcon from '@mui/icons-material/LanOutlined';
 
 const SelectContainer = styled(Select)(({ theme }) => ({
-  fontFamily: theme.typography.fontFamily
-}))
+  fontFamily: theme.typography.fontFamily,
+}));
 
-const MenuItemContainer = styled(MenuItem)(({ theme })=> ({
-  fontFamily: theme.typography.fontFamily
-}))
+const MenuItemContainer = styled(MenuItem)(({ theme }) => ({
+  fontFamily: theme.typography.fontFamily,
+}));
 
 const useMeshModelComponentRouter = () => {
   const router = useRouter();

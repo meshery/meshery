@@ -29,15 +29,13 @@ import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { useResourceOptions, useResourceFiltering, SORT_DIRECTIONS } from './useResourceOptions';
 import GetKubernetesNodeIcon from '../utils';
 
-
 const SelectContainer = styled(Select)(({ theme }) => ({
-  fontFamily: theme.typography.fontFamily
-}))
+  fontFamily: theme.typography.fontFamily,
+}));
 
-const MenuItemContainer = styled(MenuItem)(({ theme })=> ({
-  fontFamily: theme.typography.fontFamily
-}))
-
+const MenuItemContainer = styled(MenuItem)(({ theme }) => ({
+  fontFamily: theme.typography.fontFamily,
+}));
 
 const HoneycombComponent = (props) => {
   const { kinds, isClusterLoading, isClusterIdsEmpty } = props;

@@ -26,12 +26,12 @@ import {
 } from './MeshModel.style';
 
 const SelectContainer = styled(Select)(({ theme }) => ({
-  fontFamily: theme.typography.fontFamily
-}))
+  fontFamily: theme.typography.fontFamily,
+}));
 
-const MenuItemContainer = styled(MenuItem)(({ theme })=> ({
-  fontFamily: theme.typography.fontFamily
-}))
+const MenuItemContainer = styled(MenuItem)(({ theme }) => ({
+  fontFamily: theme.typography.fontFamily,
+}));
 
 const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
 
