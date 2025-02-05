@@ -280,3 +280,17 @@ export const getStatus = (status) => {
     return false;
   }
 };
+
+export const convertToReadableUnit = (value) => {
+  if (!value) return '0';
+
+  const units = ['B', 'KiB', 'MiB', 'GiB', 'TiB', 'PiB'];
+  let index = 0;
+
+  while (value >= 1024 && index < units.length - 1) {
+    value /= 1024;
+    index++;
+  }
+
+  return `${value.toFixed(2)} ${units[index]}`;
+};

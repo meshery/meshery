@@ -27,6 +27,7 @@ import {
 } from '@layer5/sistent';
 import { SectionHeading } from '../DataFormatter';
 import { UsesSistent } from '../SistentWrapper';
+import { convertToReadableUnit } from '../../utils/k8s-utils';
 
 const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
 const FormatterContext = React.createContext({
@@ -176,26 +177,36 @@ const propertyFormatter = {
   annotations: (value) => (
     <KeyValueInRow Key={'Annotations'} Value={<StatusFormatter status={value} />} />
   ),
-  totalCapacity: (value) => (
-    <KeyValueInRow
-      Key={'Capacity'}
-      Value={
-        <ColourContainer>
-          <TableDataFormatter data={value} />
-        </ColourContainer>
-      }
-    />
-  ),
-  totalAllocatable: (value) => (
-    <KeyValueInRow
-      Key={'Allocatable'}
-      Value={
-        <ColourContainer>
-          <TableDataFormatter data={value} />
-        </ColourContainer>
-      }
-    />
-  ),
+  totalCapacity: (value) => {
+    const readableData = Object.fromEntries(
+      Object.entries(value).map(([key, val]) => [key, convertToReadableUnit(parseInt(val))]),
+    );
+    return (
+      <KeyValueInRow
+        Key={'Capacity'}
+        Value={
+          <ColourContainer>
+            <TableDataFormatter data={readableData} />
+          </ColourContainer>
+        }
+      />
+    );
+  },
+  totalAllocatable: (value) => {
+    const readableData = Object.fromEntries(
+      Object.entries(value).map(([key, val]) => [key, convertToReadableUnit(parseInt(val))]),
+    );
+    return (
+      <KeyValueInRow
+        Key={'Allocatable'}
+        Value={
+          <ColourContainer>
+            <TableDataFormatter data={readableData} />
+          </ColourContainer>
+        }
+      />
+    );
+  },
   tolerations: (value) => (
     <KeyValueInRow
       Key={'Tolerations'}
