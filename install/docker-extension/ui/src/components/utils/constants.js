@@ -1,9 +1,4 @@
-export const CHART_COLORS = [
-  "#3B697D",
-  "#74A8BE",
-  "#90B9CB",
-  "#CBDEE6"
-];
+export const CHART_COLORS = ["#3B697D", "#74A8BE", "#90B9CB", "#CBDEE6"];
 
 export const topicsList = [
   { label: "Deployment", value: "deployment" },
@@ -16,6 +11,6 @@ export const topicsList = [
   { label: "Resiliency", value: "resiliency" },
 ];
 
-export const mesheryCloudUrl = 'https://cloud.layer5.io'
+export const providerUrl = "https://cloud.layer5.io";
 
-export const MESHMAP = 'meshmap'
+export const MESHMAP = "meshmap";

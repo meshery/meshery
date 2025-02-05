@@ -1416,7 +1416,7 @@ function MesheryPatterns({
 
   const filter = {
     visibility: {
-      name: 'visibility',
+      name: 'Visibility',
       //if catalog content is enabled, then show all filters including published otherwise only show public and private filters
       options: catalogVisibility
         ? [
