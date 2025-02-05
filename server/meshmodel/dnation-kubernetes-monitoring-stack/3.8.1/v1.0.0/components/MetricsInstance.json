@@ -1,0 +1,197 @@
+{
+  "capabilities": [
+   {
+    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+    "displayName": "Performance Test",
+    "entityState": [
+     "instance"
+    ],
+    "key": "",
+    "kind": "action",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "perf-test",
+    "type": "operator",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the workload specific setting of a component",
+    "displayName": "Workload Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "config",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure Labels And Annotations for  the component ",
+    "displayName": "Labels and Annotations Configuration",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "labels-and-annotations",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View relationships for the component",
+    "displayName": "Relationships",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "relationship",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "View Component Definition ",
+    "displayName": "Json Schema",
+    "entityState": [
+     "declaration",
+     "instance"
+    ],
+    "key": "",
+    "kind": "view",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "definition",
+    "type": "configuration",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Configure the visual styles for the component",
+    "displayName": "Styling",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Change the shape of the component",
+    "displayName": "Change Shape",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "mutate",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "shape",
+    "type": "style",
+    "version": "0.7.0"
+   },
+   {
+    "description": "Drag and Drop a component into a parent component in graph view",
+    "displayName": "Compound Drag And Drop",
+    "entityState": [
+     "declaration"
+    ],
+    "key": "",
+    "kind": "interaction",
+    "metadata": null,
+    "schemaVersion": "capability.meshery.io/v1alpha1",
+    "status": "enabled",
+    "subType": "compoundDnd",
+    "type": "graph",
+    "version": "0.7.0"
+   }
+  ],
+  "component": {
+   "kind": "MetricsInstance",
+   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"additionalScrapeConfigs\": {\n     \"properties\": {\n      \"key\": {\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"optional\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"key\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"maxWALTime\": {\n     \"type\": \"string\"\n    },\n    \"minWALTime\": {\n     \"type\": \"string\"\n    },\n    \"podMonitorNamespaceSelector\": {\n     \"properties\": {\n      \"matchExpressions\": {\n       \"items\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"podMonitorSelector\": {\n     \"properties\": {\n      \"matchExpressions\": {\n       \"items\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"probeNamespaceSelector\": {\n     \"properties\": {\n      \"matchExpressions\": {\n       \"items\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"probeSelector\": {\n     \"properties\": {\n      \"matchExpressions\": {\n       \"items\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"remoteFlushDeadline\": {\n     \"type\": \"string\"\n    },\n    \"remoteWrite\": {\n     \"items\": {\n      \"properties\": {\n       \"basicAuth\": {\n        \"properties\": {\n         \"password\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         },\n         \"username\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"bearerToken\": {\n        \"type\": \"string\"\n       },\n       \"bearerTokenFile\": {\n        \"type\": \"string\"\n       },\n       \"headers\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"metadataConfig\": {\n        \"properties\": {\n         \"send\": {\n          \"type\": \"boolean\"\n         },\n         \"sendInterval\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"oauth2\": {\n        \"properties\": {\n         \"clientId\": {\n          \"properties\": {\n           \"configMap\": {\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"optional\": {\n              \"type\": \"boolean\"\n             }\n            },\n            \"required\": [\n             \"key\"\n            ],\n            \"type\": \"object\",\n            \"x-kubernetes-map-type\": \"atomic\"\n           },\n           \"secret\": {\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"optional\": {\n              \"type\": \"boolean\"\n             }\n            },\n            \"required\": [\n             \"key\"\n            ],\n            \"type\": \"object\",\n            \"x-kubernetes-map-type\": \"atomic\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"clientSecret\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         },\n         \"endpointParams\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"object\"\n         },\n         \"scopes\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"tokenUrl\": {\n          \"minLength\": 1,\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"clientId\",\n         \"clientSecret\",\n         \"tokenUrl\"\n        ],\n        \"type\": \"object\"\n       },\n       \"proxyUrl\": {\n        \"type\": \"string\"\n       },\n       \"queueConfig\": {\n        \"properties\": {\n         \"batchSendDeadline\": {\n          \"type\": \"string\"\n         },\n         \"capacity\": {\n          \"type\": \"integer\"\n         },\n         \"maxBackoff\": {\n          \"type\": \"string\"\n         },\n         \"maxRetries\": {\n          \"type\": \"integer\"\n         },\n         \"maxSamplesPerSend\": {\n          \"type\": \"integer\"\n         },\n         \"maxShards\": {\n          \"type\": \"integer\"\n         },\n         \"minBackoff\": {\n          \"type\": \"string\"\n         },\n         \"minShards\": {\n          \"type\": \"integer\"\n         },\n         \"retryOnRateLimit\": {\n          \"type\": \"boolean\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"remoteTimeout\": {\n        \"type\": \"string\"\n       },\n       \"sigv4\": {\n        \"properties\": {\n         \"accessKey\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         },\n         \"profile\": {\n          \"type\": \"string\"\n         },\n         \"region\": {\n          \"type\": \"string\"\n         },\n         \"roleARN\": {\n          \"type\": \"string\"\n         },\n         \"secretKey\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"tlsConfig\": {\n        \"properties\": {\n         \"ca\": {\n          \"properties\": {\n           \"configMap\": {\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"optional\": {\n              \"type\": \"boolean\"\n             }\n            },\n            \"required\": [\n             \"key\"\n            ],\n            \"type\": \"object\",\n            \"x-kubernetes-map-type\": \"atomic\"\n           },\n           \"secret\": {\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"optional\": {\n              \"type\": \"boolean\"\n             }\n            },\n            \"required\": [\n             \"key\"\n            ],\n            \"type\": \"object\",\n            \"x-kubernetes-map-type\": \"atomic\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"caFile\": {\n          \"type\": \"string\"\n         },\n         \"cert\": {\n          \"properties\": {\n           \"configMap\": {\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"optional\": {\n              \"type\": \"boolean\"\n             }\n            },\n            \"required\": [\n             \"key\"\n            ],\n            \"type\": \"object\",\n            \"x-kubernetes-map-type\": \"atomic\"\n           },\n           \"secret\": {\n            \"properties\": {\n             \"key\": {\n              \"type\": \"string\"\n             },\n             \"name\": {\n              \"type\": \"string\"\n             },\n             \"optional\": {\n              \"type\": \"boolean\"\n             }\n            },\n            \"required\": [\n             \"key\"\n            ],\n            \"type\": \"object\",\n            \"x-kubernetes-map-type\": \"atomic\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"certFile\": {\n          \"type\": \"string\"\n         },\n         \"insecureSkipVerify\": {\n          \"type\": \"boolean\"\n         },\n         \"keyFile\": {\n          \"type\": \"string\"\n         },\n         \"keySecret\": {\n          \"properties\": {\n           \"key\": {\n            \"type\": \"string\"\n           },\n           \"name\": {\n            \"type\": \"string\"\n           },\n           \"optional\": {\n            \"type\": \"boolean\"\n           }\n          },\n          \"required\": [\n           \"key\"\n          ],\n          \"type\": \"object\",\n          \"x-kubernetes-map-type\": \"atomic\"\n         },\n         \"serverName\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"url\": {\n        \"type\": \"string\"\n       },\n       \"writeRelabelConfigs\": {\n        \"items\": {\n         \"properties\": {\n          \"action\": {\n           \"default\": \"replace\",\n           \"enum\": [\n            \"replace\",\n            \"Replace\",\n            \"keep\",\n            \"Keep\",\n            \"drop\",\n            \"Drop\",\n            \"hashmod\",\n            \"HashMod\",\n            \"labelmap\",\n            \"LabelMap\",\n            \"labeldrop\",\n            \"LabelDrop\",\n            \"labelkeep\",\n            \"LabelKeep\",\n            \"lowercase\",\n            \"Lowercase\",\n            \"uppercase\",\n            \"Uppercase\",\n            \"keepequal\",\n            \"KeepEqual\",\n            \"dropequal\",\n            \"DropEqual\"\n           ],\n           \"type\": \"string\"\n          },\n          \"modulus\": {\n           \"format\": \"int64\",\n           \"type\": \"integer\"\n          },\n          \"regex\": {\n           \"type\": \"string\"\n          },\n          \"replacement\": {\n           \"type\": \"string\"\n          },\n          \"separator\": {\n           \"type\": \"string\"\n          },\n          \"sourceLabels\": {\n           \"items\": {\n            \"pattern\": \"^[a-zA-Z_][a-zA-Z0-9_]*$\",\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          },\n          \"targetLabel\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"url\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"serviceMonitorNamespaceSelector\": {\n     \"properties\": {\n      \"matchExpressions\": {\n       \"items\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"serviceMonitorSelector\": {\n     \"properties\": {\n      \"matchExpressions\": {\n       \"items\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"walTruncateFrequency\": {\n     \"type\": \"string\"\n    },\n    \"writeStaleOnShutdown\": {\n     \"type\": \"boolean\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Metrics Instance\",\n \"type\": \"object\"\n}",
+   "version": "monitoring.grafana.com/v1alpha1"
+  },
+  "configuration": null,
+  "description": "",
+  "displayName": "Metrics Instance",
+  "format": "JSON",
+  "id": "00000000-0000-0000-0000-000000000000",
+  "metadata": {
+   "genealogy": "",
+   "isAnnotation": false,
+   "isNamespaced": true,
+   "published": false,
+   "source_uri": "https://dnationcloud.github.io/helm-hub/dnation-kubernetes-monitoring-stack-3.8.1.tgz"
+  },
+  "model": {
+   "category": {
+    "name": "Uncategorized"
+   },
+   "displayName": "Dnation Kubernetes Monitoring Stack",
+   "id": "00000000-0000-0000-0000-000000000000",
+   "metadata": {
+    "isAnnotation": false,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "source_uri": "https://dnationcloud.github.io/helm-hub/dnation-kubernetes-monitoring-stack-3.8.1.tgz",
+    "styleOverrides": "",
+    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 86 62\" fill=\"none\"\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"13\" cy=\"13\" r=\"13\" fill=\"#248431\"\u003e\u003c/circle\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"43\" cy=\"13\" r=\"13\" fill=\"#F4790D\"\u003e\u003c/circle\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"73\" cy=\"13\" r=\"13\" fill=\"#E61F2E\"\u003e\u003c/circle\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M43 62V34H48L62.5 51.5V34H69.5V62H64L49.5 45V62H43Z\" fill=\"#D6D7D8\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M34 62V34H40V62H34Z\" fill=\"#D6D7D8\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M28 62C34.0742 62 39 57.0752 39 51C39 44.9248 34.0742 40 28 40C21.9258 40 17 44.9248 17 51C17 57.0752 21.9258 62 28 62ZM29 57C32.3125 57 35 54.3137 35 51C35 47.6863 32.3125 45 29 45C25.6875 45 23 47.6863 23 51C23 54.3137 25.6875 57 29 57Z\" fill=\"#D9D9D9\"\u003e\u003c/path\u003e\n\u003c/svg\u003e",
+    "svgComplete": "",
+    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 86 62\" fill=\"none\"\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"13\" cy=\"13\" r=\"13\" fill=\"white\"\u003e\u003c/circle\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"43\" cy=\"13\" r=\"13\" fill=\"white\"\u003e\u003c/circle\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"73\" cy=\"13\" r=\"13\" fill=\"white\"\u003e\u003c/circle\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M43 62V34H48L62.5 51.5V34H69.5V62H64L49.5 45V62H43Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M34 62V34H40V62H34Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M28 62C34.0751 62 39 57.0751 39 51C39 44.9249 34.0751 40 28 40C21.9249 40 17 44.9249 17 51C17 57.0751 21.9249 62 28 62ZM29 57C32.3137 57 35 54.3137 35 51C35 47.6863 32.3137 45 29 45C25.6863 45 23 47.6863 23 51C23 54.3137 25.6863 57 29 57Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
+   },
+   "model": {
+    "version": "3.8.1"
+   },
+   "name": "dnation-kubernetes-monitoring-stack",
+   "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+   },
+   "connection_id": "00000000-0000-0000-0000-000000000000",
+   "schemaVersion": "models.meshery.io/v1beta1",
+   "status": "ignored",
+   "subCategory": "Uncategorized",
+   "version": "v1.0.0",
+   "components": null,
+   "relationships": null,
+   "components_count": 0,
+   "relationships_count": 0
+  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "status": "enabled",
+  "styles": {
+   "primaryColor": "#00B39F",
+   "secondaryColor": "#00D3A9",
+   "shape": "circle",
+   "svgColor": "\u003csvg width=\"86\" height=\"62\" viewBox=\"0 0 86 62\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003ccircle cx=\"13\" cy=\"13\" r=\"13\" fill=\"#248431\"/\u003e\u003ccircle cx=\"43\" cy=\"13\" r=\"13\" fill=\"#F4790D\"/\u003e\u003ccircle cx=\"73\" cy=\"13\" r=\"13\" fill=\"#E61F2E\"/\u003e\u003cpath d=\"M43 62V34H48L62.5 51.5V34H69.5V62H64L49.5 45V62H43Z\" fill=\"#D6D7D8\"/\u003e\u003cpath d=\"M34 62V34H40V62H34Z\" fill=\"#D6D7D8\"/\u003e\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M28 62C34.0742 62 39 57.0752 39 51C39 44.9248 34.0742 40 28 40C21.9258 40 17 44.9248 17 51C17 57.0752 21.9258 62 28 62ZM29 57C32.3125 57 35 54.3137 35 51C35 47.6863 32.3125 45 29 45C25.6875 45 23 47.6863 23 51C23 54.3137 25.6875 57 29 57Z\" fill=\"#D9D9D9\"/\u003e\u003c/svg\u003e\r",
+   "svgWhite": "\u003csvg width=\"86\" height=\"62\" viewBox=\"0 0 86 62\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003ccircle cx=\"13\" cy=\"13\" r=\"13\" fill=\"white\"/\u003e\u003ccircle cx=\"43\" cy=\"13\" r=\"13\" fill=\"white\"/\u003e\u003ccircle cx=\"73\" cy=\"13\" r=\"13\" fill=\"white\"/\u003e\u003cpath d=\"M43 62V34H48L62.5 51.5V34H69.5V62H64L49.5 45V62H43Z\" fill=\"white\"/\u003e\u003cpath d=\"M34 62V34H40V62H34Z\" fill=\"white\"/\u003e\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M28 62C34.0751 62 39 57.0751 39 51C39 44.9249 34.0751 40 28 40C21.9249 40 17 44.9249 17 51C17 57.0751 21.9249 62 28 62ZM29 57C32.3137 57 35 54.3137 35 51C35 47.6863 32.3137 45 29 45C25.6863 45 23 47.6863 23 51C23 54.3137 25.6863 57 29 57Z\" fill=\"white\"/\u003e\u003c/svg\u003e\r"
+  },
+  "version": "v1.0.0"
+ }

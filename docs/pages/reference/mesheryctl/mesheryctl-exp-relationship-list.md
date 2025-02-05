@@ -26,30 +26,18 @@ mesheryctl exp relationship list [flags]
 
 ## Examples
 
+View list of relationship
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-	View list of relationship
+mesheryctl exp relationship list
 
 </div>
 </pre> 
 
+View list of relationship with specified page number (25 relationships per page)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-    mesheryctl exp relationship list
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-    View list of relationship with specified page number (25 relationships per page)
-
-</div>
-</pre> 
-
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-    mesheryctl exp relationship list --page 2
+mesheryctl exp relationship list --page 2
 
 </div>
 </pre> 

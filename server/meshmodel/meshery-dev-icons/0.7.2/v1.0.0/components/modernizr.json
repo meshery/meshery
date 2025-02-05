@@ -128,9 +128,9 @@
    "primaryColor": "#00B39F",
    "secondaryColor": "#00D3A9",
    "shape": "circle",
-   "svgColor": "\u003csvg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"32\" height=\"32\" viewBox=\"0 0 32 32\"\u003e\n\u003cpath fill=\"#444444\" d=\"M0.321 23.812v-5.018h5.017v-5.017h5.017v-5.017h5.017v15.052zM16.627 8.76c8.313 0 15.052 6.739 15.052 15.052h-15.052v-15.052z\"\u003e\u003c/path\u003e\n\u003c/svg\u003e",
-   "svgComplete": "\u003csvg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"32\" height=\"32\" viewBox=\"0 0 32 32\"\u003e\n\u003cpath fill=\"#00B39F\" d=\"M0.321 23.812v-5.018h5.017v-5.017h5.017v-5.017h5.017v15.052zM16.627 8.76c8.313 0 15.052 6.739 15.052 15.052h-15.052v-15.052z\"\u003e\u003c/path\u003e\n\u003c/svg\u003e",
-   "svgWhite": "\u003csvg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"32\" height=\"32\" viewBox=\"0 0 32 32\"\u003e\n\u003cpath fill=\"#fff\" d=\"M0.321 23.812v-5.018h5.017v-5.017h5.017v-5.017h5.017v15.052zM16.627 8.76c8.313 0 15.052 6.739 15.052 15.052h-15.052v-15.052z\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
+   "svgColor": "\u003csvg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"32\" height=\"32\" viewBox=\"0 0 32 32\"\u003e\u003cpath fill=\"#444444\" d=\"M0.321 23.812v-5.018h5.017v-5.017h5.017v-5.017h5.017v15.052zM16.627 8.76c8.313 0 15.052 6.739 15.052 15.052h-15.052v-15.052z\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+   "svgComplete": "\u003csvg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"32\" height=\"32\" viewBox=\"0 0 32 32\"\u003e\u003cpath fill=\"#00B39F\" d=\"M0.321 23.812v-5.018h5.017v-5.017h5.017v-5.017h5.017v15.052zM16.627 8.76c8.313 0 15.052 6.739 15.052 15.052h-15.052v-15.052z\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"32\" height=\"32\" viewBox=\"0 0 32 32\"\u003e\u003cpath fill=\"#fff\" d=\"M0.321 23.812v-5.018h5.017v-5.017h5.017v-5.017h5.017v15.052zM16.627 8.76c8.313 0 15.052 6.739 15.052 15.052h-15.052v-15.052z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
   },
   "version": "v1.0.0"
  }
