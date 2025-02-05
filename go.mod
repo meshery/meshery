@@ -6,8 +6,6 @@ go 1.23.4
 
 replace github.com/vektah/gqlparser/v2 => github.com/vektah/gqlparser/v2 v2.5.11
 
-//replace github.com/layer5io/meshkit v0.8.7 => ../meshkit
-
 require (
 	cuelang.org/go v0.11.2
 	fortio.org/fortio v1.66.2
