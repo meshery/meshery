@@ -12,19 +12,22 @@ import {
   CustomTypography,
   StyledPopover,
 } from "./Provider.style";
-import Button from "@mui/material/Button";
-import ButtonGroup from "@mui/material/ButtonGroup";
-import Divider from "@mui/material/Divider";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
+import {
+  Button,
+  ButtonGroup,
+  Divider,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  MenuList,
+  MenuItem,
+  Tooltip,
+  Typography,
+  IconButton,
+  CircularProgress,
+  styled,
+} from "@layer5/sistent";
 
-import MenuList from "@mui/material/MenuList";
-import MenuItem from "@mui/material/MenuItem";
-import Tooltip from "@mui/material/Tooltip";
-import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
-import CircularProgress from "@mui/material/CircularProgress";
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 import CloseIcon from "@mui/icons-material/Close";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
@@ -56,7 +59,39 @@ CustomDialogTitle.propTypes = {
   children : PropTypes.node,
   onClose : PropTypes.func.isRequired,
 };
+//Styled-components:
+const StyledTypography = styled(Typography)(({ theme }) => ({
+  fontWeight : 500,
+  color : theme.palette.text.default,
+  marginBottom : theme.spacing(2), // Equivalent to `gutterBottom`
+}));
+const StyledTooltip = styled(Tooltip)(({ theme }) => ({
+  color : theme.palette.icon.brand,
+  cursor : "pointer",
+  fontWeight : 700,
+}));
 
+const StyledCustomDialogTitle = styled(CustomDialogTitle)(({ theme }) => ({
+  background : theme.palette.background.tabs,
+}));
+
+const StyledButton = styled(Button)(({ theme }) => ({
+  backgroundColor : theme.palette.background.tertiary,
+}));
+const StyledButtonGroup = styled(ButtonGroup)(() => ({
+  border : "none",
+  "& .MuiButtonGroup-grouped" : {
+    border : "none !important",
+  },
+}));
+
+const StyledDialogBox = styled(DialogContentText)(({ theme }) => ({
+  color : theme.palette.text.default,
+}));
+
+const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
+  backgroundColor : theme.palette.background.elevatedComponents,
+}));
 export default function Provider() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [availableProviders, setAvailableProviders] = useState({});
@@ -132,15 +167,10 @@ export default function Provider() {
       <CustomDiv>
         {availableProviders !== "" && (
           <Fragment>
-            <ButtonGroup
-              variant="contained"
-              aria-label="split button"
-              color="primary"
-            >
-              <Button
+            <StyledButtonGroup aria-label="split button">
+              <StyledButton
                 size="large"
                 aria-describedby={id}
-                variant="contained"
                 onClick={handleClick}
                 aria-label="Select Provider"
                 data-cy="select_provider"
@@ -156,8 +186,8 @@ export default function Provider() {
                   ? selectedProvider
                   : "Select your provider"}
                 <ArrowDropDownIcon />
-              </Button>
-            </ButtonGroup>
+              </StyledButton>
+            </StyledButtonGroup>
             <StyledPopover
               id={id}
               open={open}
@@ -210,35 +240,16 @@ export default function Provider() {
         )}
       </CustomDiv>
       <LearnMore>
-        <Typography
-          variant="h6"
-          sx={{ fontWeight : 500, color : "#FDFDFD" }}
-          gutterBottom
-        >
+        <StyledTypography variant="h6" gutterBottom>
           Learn more about
-          <Tooltip
+          <StyledTooltip
             title="Learn more about providers"
             placement="bottom"
             data-cy="providers-tooltip"
-            sx={{
-              color : "#00B39F",
-              cursor : "pointer",
-              fontWeight : 700,
-            }}
           >
-            <a
-              onClick={handleModalOpen}
-              style={{
-                color : "#00B39F",
-                cursor : "pointer",
-                fontWeight : 700,
-              }}
-            >
-              {" "}
-              providers{" "}
-            </a>
-          </Tooltip>
-        </Typography>
+            <a onClick={handleModalOpen}> providers </a>
+          </StyledTooltip>
+        </StyledTypography>
       </LearnMore>
       <CustomDialog
         onClose={handleModalClose}
@@ -247,15 +258,14 @@ export default function Provider() {
         disableScrollLock={true}
         data-cy="providers-modal"
       >
-        <CustomDialogTitle
+        <StyledCustomDialogTitle
           id="customized-dialog-title"
           onClose={handleModalClose}
-          style={{ background : "#eee" }}
         >
           <CustomTypography>Choosing a Provider</CustomTypography>
-        </CustomDialogTitle>
-        <DialogContent dividers>
-          <DialogContentText id="customized-dialog-content">
+        </StyledCustomDialogTitle>
+        <StyledDialogContent dividers>
+          <StyledDialogBox id="customized-dialog-content">
             Login to Meshery by choosing from the available providers. Providers
             extend Meshery by offering various plugins and services, including
             identity services, long-term persistence, advanced performance
@@ -313,8 +323,8 @@ export default function Provider() {
               <li>Identity services</li>
               <li>Bare-metal Kubernetes configuration</li>
             </ul>
-          </DialogContentText>
-        </DialogContent>
+          </StyledDialogBox>
+        </StyledDialogContent>
         <CustomDialogActions>
           <div className="learnmore">
             <a href="https://docs.meshery.io/extensibility/providers">
@@ -323,15 +333,13 @@ export default function Provider() {
             </a>
           </div>
 
-          <Button
+          <StyledButton
             onClick={handleModalClose}
-            color="primary"
             data-cy="providers-modal-button-ok"
-            variant="contained"
           >
             {" "}
             OK
-          </Button>
+          </StyledButton>
         </CustomDialogActions>
       </CustomDialog>
     </ProviderLayout>

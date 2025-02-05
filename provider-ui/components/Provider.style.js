@@ -11,7 +11,7 @@ export const CustomDiv = styled("div")(({ theme }) => ({
   marginTop : theme.spacing(3),
 }));
 
-export const CustomTypography = styled(Typography)(() => ({
+export const CustomTypography = styled(Typography)(({ theme }) => ({
   "@font-face" : {
     fontFamily : "Qanelas Soft",
     src : "url('/provider/static/fonts/qanelas-soft/QanelasSoftRegular.otf') format('opentype')",
@@ -21,7 +21,7 @@ export const CustomTypography = styled(Typography)(() => ({
   fontSize : "1.5rem",
   lineHeight : "2rem",
   letterSpacing : "0.01em",
-  color : "#222",
+  color : theme.palette.text.default,
 }));
 
 export const MesheryLogo = styled("img")(({ theme }) => ({
@@ -49,16 +49,16 @@ export const CustomDialog = styled(Dialog)(({ theme }) => ({
 export const CustomDialogActions = styled(DialogActions)(({ theme }) => ({
   display : "flex",
   justifyContent : "space-between",
-  background : "#eee",
+  background : theme.palette.background.tabs,
   padding : theme.spacing(2),
   "& div > a" : {
-    color : "#222",
+    color : theme.palette.text.default,
   },
 }));
-export const StyledPopover = styled(Popover)(() => ({
+export const StyledPopover = styled(Popover)(({ theme }) => ({
   ".MuiPaper-root" : {
-    backgroundColor : "#202020", // Background color
-    color : "white", // Optional: for readable text
+    backgroundColor : theme.palette.background.brand.disabled,
+    color : theme.palette.text.default,
   },
 }));
 export const LearnMore = styled("div")(() => ({
