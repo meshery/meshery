@@ -32,7 +32,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-var ViewRelationshipsCmd = &cobra.Command{
+var viewCmd = &cobra.Command{
 	Use:   "view",
 	Short: "view relationships of a model by its name",
 	Long:  "view a relationship queried by the model name",

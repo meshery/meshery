@@ -35,8 +35,9 @@ export const EVENT_TYPES = {
   MODIFIED: 'MODIFIED',
 };
 
-export const EXTENSIONS = {
-  MESHMAP: 'meshmap',
+//ExtensionPoint: Insert extension names here
+export const EXTENSION_NAMES = {
+  KANVAS: 'kanvas',
 };
 
 export const REGISTRY_ITEM_STATES = {
@@ -117,3 +118,24 @@ export const CONNECTION_STATE_TO_TRANSITION_MAP = {
 
 export const FILTER = 'filter';
 export const PATTERN = 'pattern';
+
+//ExtensionPoint: Insert extension details here
+export const EXTENSIONS = {
+  [EXTENSION_NAMES.KANVAS]: {
+    name: 'Kanvas',
+    signup_header: 'Get early access to Kanvas!',
+    signup_button: 'Open Kanvas',
+    signup_url: 'https://layer5.io/cloud-native-management/kanvas',
+    show_popup: true,
+  },
+  Catalog: {
+    name: 'Meshery Catalog',
+  },
+  KanvasSnapshot: {
+    name: 'Kanvas Snapshot',
+    signup_url: 'https://cloud.layer5.io/connect/github/new/',
+  },
+  PerformanceAnalysis: {
+    name: 'Performance Analysis',
+  },
+};

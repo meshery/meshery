@@ -120,7 +120,7 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 				return fmt.Errorf("error reading the directory: %v", err)
 			}
 			if modelCSVFilePath == "" || componentCSVFilePath == "" || relationshipCSVFilePath == "" {
-				return fmt.Errorf("both ModelCSV and ComponentCSV files must be present in the directory")
+				return fmt.Errorf("ModelCSV, ComponentCSV and RelationshipCSV files must be present in the directory")
 			}
 		}
 		err = os.MkdirAll(logDirPath, 0755)
