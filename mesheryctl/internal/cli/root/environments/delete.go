@@ -34,7 +34,7 @@ var deleteEnvironmentCmd = &cobra.Command{
 // delete a new environment
 mesheryctl environment delete [environmentId]
 // Documentation for environment can be found at:
-https://docs.layer5.io/cloud/spaces/environments/
+https://docs.meshery.io/concepts/logical/environments
 `,
 
 	Args: func(cmd *cobra.Command, args []string) error {
