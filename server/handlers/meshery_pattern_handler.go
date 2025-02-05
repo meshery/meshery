@@ -51,7 +51,7 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	patternV1beta1 "github.com/meshery/schemas/models/v1beta1/pattern"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 )
 
 // MesheryPatternRequestBody refers to the type of request body that
@@ -1553,7 +1553,11 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	rw.Header().Set("Content-Type", "application/yaml")
 	rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.yml", pattern.Name))
 
-	err = yaml.NewEncoder(rw).Encode(unmarshalledPatternFile)
+	encoder := yaml.NewEncoder(rw)
+	encoder.SetIndent(4)
+	err = encoder.Encode(unmarshalledPatternFile)
+	defer encoder.Close()
+
 	if err != nil {
 		err = ErrEncodePattern(err)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
