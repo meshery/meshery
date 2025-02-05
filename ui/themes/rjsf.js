@@ -330,23 +330,6 @@ export const darkRjsfTheme = createTheme({
         },
       },
     },
-    MuiIconButton: {
-      styleOverrides: {
-        root: {
-          cursor: 'default',
-        },
-      },
-    },
-    MuiPaper: {
-      styleOverrides: {
-        elevation0: {
-          backgroundColor: 'inherit',
-        },
-        elevation2: {
-          boxShadow: 'none',
-        },
-      },
-    },
     MuiInputLabel: {
       styleOverrides: {
         root: {
@@ -463,7 +446,7 @@ export const darkRjsfTheme = createTheme({
     MuiIconButton: {
       styleOverrides: {
         root: {
-          cursor: 'default',
+          cursor: 'pointer',
         },
         sizeSmall: {
           padding: '1px',
