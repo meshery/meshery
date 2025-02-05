@@ -182,7 +182,7 @@ const TroubleshootingModal = (props) => {
           <ModalContent>
             <ModalHeader>
               <Typography variant="h5"></Typography>
-              <ModelHeader variant="h5">Meshmap Troubleshooting Guide</ModelHeader>
+              <ModelHeader variant="h5">Extensions Troubleshooting Guide</ModelHeader>
               <IconContainer data-cy="modal-close-btn" onClick={handleClose}>
                 <IconStyle />
               </IconContainer>
@@ -257,43 +257,7 @@ const TroubleshootingModal = (props) => {
                 </ul>
               </AccDetailsContainer>
             </AccordionContainer>
-            <AccordionContainer expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
-              <AccordionSummaryStyled
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel3bh-content"
-                id="panel3bh-header"
-              >
-                <HeaderContainer>
-                  <Info />
-                  <HeaderText variant="h6">Incompatibility</HeaderText>
-                </HeaderContainer>
-              </AccordionSummaryStyled>
-              <AccDetailsContainer>
-                <AccDetailHead>
-                  <strong>GraphQL/Golang Plugin</strong>
-                </AccDetailHead>
-                <ul>
-                  <Typography>
-                    <TroubleshootListitem>
-                      <b>Building</b>: Ensure that <code>go.mod</code> in the{' '}
-                      <code>meshery/meshery</code> repository is identical to the{' '}
-                      <code>go.mod</code> in the <code>layer5labs/meshery-extensions</code>{' '}
-                      repository are identical.
-                    </TroubleshootListitem>
-                    <TroubleshootListitem>
-                      <b>Loading</b>: Confirm that the <code>plugin</code> version offered by
-                      Meshery Cloud (at{' '}
-                      <TroubleshootHelpLink href="https://cloud.layer5.io/capabilities">
-                        https://cloud.layer5.io/capabilities
-                      </TroubleshootHelpLink>
-                      ), from which MeshMap files are retreived, matches the <code>plugin</code>{' '}
-                      version that Meshery Server is using as the filesystem reference in{' '}
-                      <code>~/.meshery/provider/Meshery/vx.x.x/</code>.
-                    </TroubleshootListitem>
-                  </Typography>
-                </ul>
-              </AccDetailsContainer>
-            </AccordionContainer>
+
             <AccordionContainer expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
               <AccordionSummaryStyled
                 expandIcon={<ExpandMoreIcon />}
@@ -328,7 +292,11 @@ const TroubleshootingModal = (props) => {
             <ModalFooter>
               <FooterText variant="h6">
                 Need help? Contact us via{' '}
-                <ContactHelpLink href="mailto:meshmap@layer5.io" target="_blank" rel="noreferrer">
+                <ContactHelpLink
+                  href="mailto:maintainers@meshery.io"
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   email
                 </ContactHelpLink>{' '}
                 or{' '}
