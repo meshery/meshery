@@ -98,64 +98,66 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 		}
 		var err error
 
+		utils.Log.Info("Starting model generation...")
+		utils.Log.Infof("Model output location: %s", registryLocation)
+
+		if err := setupLogging(); err != nil {
+			utils.LogError.Error(err)
+		}
+
+		defer cleanup()
+
 		if csvDirectory == "" {
+			utils.Log.Info("Initializing Google Sheets service...")
 			srv, err = mutils.NewSheetSRV(spreadsheeetCred)
 			if err != nil {
-				return errors.New(utils.RegistryError("Invalid JWT Token: Ensure the provided token is a base64-encoded, valid Google Spreadsheets API token.", "generate"))
-			}
-
-			resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
-			if err != nil || resp.HTTPStatusCode != 200 {
-				utils.LogError.Error(ErrUpdateRegistry(err, outputLocation))
+				utils.LogError.Error(errors.New(utils.RegistryError("Invalid JWT Token: Ensure the provided token is a base64-encoded, valid Google Spreadsheets API token.", "generate")))
 				return nil
 			}
 
+			utils.Log.Info("Fetching data from spreadsheet ID: ", spreadsheeetID)
+			resp, err := srv.Spreadsheets.Get(spreadsheeetID).Fields().Do()
+			if err != nil || resp.HTTPStatusCode != 200 {
+				utils.LogError.Error(errors.New(utils.RegistryError(fmt.Sprintf("%s\nPlease verify the spreadsheet ID and permissions.", err), "generate")))
+				return nil
+			}
+
+			utils.Log.Debug("Extracting sheet IDs from spreadsheet")
 			sheetGID = GetSheetIDFromTitle(resp, "Models")
 			componentSpredsheetGID = GetSheetIDFromTitle(resp, "Components")
-			// Collect list of corresponding relationship by name from spreadsheet
 			relationshipSpredsheetGID = GetSheetIDFromTitle(resp, "Relationships")
+
+			utils.Log.Debugf("Sheet IDs: \n -Models: %d, \n -Components: %d, \n -Relationships: %d",
+				sheetGID, componentSpredsheetGID, relationshipSpredsheetGID)
 		} else {
+			utils.Log.Info("Reading CSV files from directory: ", csvDirectory)
 			modelCSVFilePath, componentCSVFilePath, relationshipCSVFilePath, err = utils.GetCsv(csvDirectory)
 			if err != nil {
-				return fmt.Errorf("error reading the directory: %v", err)
+				utils.LogError.Error(errors.New(utils.RegistryError(fmt.Sprintf("Error reading directory %s: %v", csvDirectory, err), "generate")))
+				return nil
 			}
+
 			if modelCSVFilePath == "" || componentCSVFilePath == "" || relationshipCSVFilePath == "" {
-				return fmt.Errorf("both ModelCSV and ComponentCSV files must be present in the directory")
+				errMsg := "Required CSV files missing. Directory must contain:\n" +
+					"- Model definition CSV file\n" +
+					"- Component definition CSV file\n" +
+					"- Relationship definition CSV file"
+				utils.LogError.Error(errors.New(utils.RegistryError(errMsg, "generate")))
+				return nil
 			}
-		}
-		err = os.MkdirAll(logDirPath, 0755)
-		if err != nil {
-			return ErrUpdateRegistry(err, modelLocation)
-		}
-		utils.Log.SetLevel(logrus.DebugLevel)
-		logFilePath := filepath.Join(logDirPath, "model-generation.log")
-		logFile, err = os.Create(logFilePath)
-		if err != nil {
-			return err
+
+			utils.Log.Info("Successfully located all required CSV files")
+			utils.Log.Debugf("Found CSV files: \n -Models: %s \n -Components: %s \n -Relationships: %s",
+				filepath.Base(modelCSVFilePath),
+				filepath.Base(componentCSVFilePath),
+				filepath.Base(relationshipCSVFilePath))
 		}
 
-		utils.LogError.SetLevel(logrus.ErrorLevel)
-		logErrorFilePath := filepath.Join(logDirPath, "registry-errors.log")
-		errorLogFile, err = os.Create(logErrorFilePath)
-		if err != nil {
-			return err
-		}
-		multiWriter := io.MultiWriter(os.Stdout, logFile)
-		multiErrorWriter := io.MultiWriter(os.Stdout, errorLogFile)
-
-		utils.Log.UpdateLogOutput(multiWriter)
-		utils.LogError.UpdateLogOutput(multiErrorWriter)
 		err = utils.InvokeGenerationFromSheet(&wg, registryLocation, sheetGID, componentSpredsheetGID, spreadsheeetID, modelName, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath, relationshipSpredsheetGID, srv)
 		if err != nil {
-			// meshkit
 			utils.LogError.Error(err)
 			return nil
 		}
-		_ = logFile.Close()
-		_ = errorLogFile.Close()
-
-		utils.Log.UpdateLogOutput(os.Stdout)
-		utils.LogError.UpdateLogOutput(os.Stdout)
 		return err
 	},
 }
@@ -178,4 +180,35 @@ func init() {
 
 	generateCmd.PersistentFlags().StringVarP(&csvDirectory, "directory", "d", "", "Directory containing the Model and Component CSV files")
 
+}
+
+func setupLogging() error {
+	if err := os.MkdirAll(logDirPath, 0755); err != nil {
+		return fmt.Errorf("Failed to create log directory: %v", err)
+	}
+
+	utils.Log.SetLevel(logrus.DebugLevel)
+	logFile, err := os.Create(filepath.Join(logDirPath, "model-generation.log"))
+	if err != nil {
+		return fmt.Errorf("Failed to create log file: %v", err)
+	}
+
+	utils.LogError.SetLevel(logrus.ErrorLevel)
+	errorLogFile, err := os.Create(filepath.Join(logDirPath, "registry-errors.log"))
+	if err != nil {
+		return fmt.Errorf("Failed to create error log file: %v", err)
+	}
+
+	utils.Log.UpdateLogOutput(io.MultiWriter(os.Stdout, logFile))
+	utils.LogError.UpdateLogOutput(io.MultiWriter(os.Stdout, errorLogFile))
+
+	return nil
+}
+
+func cleanup() {
+	logFile.Close()
+	errorLogFile.Close()
+
+	utils.Log.UpdateLogOutput(os.Stdout)
+	utils.LogError.UpdateLogOutput(os.Stdout)
 }

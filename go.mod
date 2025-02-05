@@ -6,6 +6,8 @@ go 1.23.4
 
 replace github.com/vektah/gqlparser/v2 => github.com/vektah/gqlparser/v2 v2.5.11
 
+//replace github.com/layer5io/meshkit v0.8.7 => ../meshkit
+
 require (
 	cuelang.org/go v0.11.2
 	fortio.org/fortio v1.66.2
@@ -65,6 +67,7 @@ require (
 	google.golang.org/grpc v1.70.0
 	google.golang.org/protobuf v1.36.4
 	gopkg.in/yaml.v2 v2.4.0
+	gopkg.in/yaml.v3 v3.0.1
 	gorm.io/gorm v1.25.12
 	k8s.io/api v0.32.1
 	k8s.io/apiextensions-apiserver v0.32.1
@@ -322,7 +325,6 @@ require (
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/postgres v1.5.11 // indirect
 	gorm.io/driver/sqlite v1.5.7 // indirect
 	helm.sh/helm/v3 v3.17.0 // indirect

@@ -18,7 +18,6 @@ import (
 	"github.com/layer5io/meshkit/generators/models"
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	"github.com/sirupsen/logrus"
-	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/semaphore"
 	"google.golang.org/api/sheets/v4"
 
@@ -837,10 +836,21 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, co
 		}
 	}()
 	// Iterate models from the spreadsheet
+	Log.Info("--------------------------------------------------------------------------")
+	Log.Infof("Models found: %s", len(modelCSVHelper.Models))
+	if modelName != "" {
+		Log.Infof("Model to process: %s", modelName)
+	} else {
+		Log.Infof("Models to process: All")
+	}
+	Log.Info("--------------------------------------------------------------------------")
+	Log.Info("Start processing models...")
 	for _, model := range modelCSVHelper.Models {
 		if modelName != "" && modelName != model.Model {
+			Log.Debugf("Skipping model %s as it doesn't match requested model %s", model.Model, modelName)
 			continue
 		}
+
 		totalAvailableModels++
 		ctx := context.Background()
 
@@ -850,7 +860,9 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, co
 		}
 		wg.Add(1)
 		go func(model ModelCSV) {
+			Log.Infof("[model: %s] Starting component generation (registrant: %s)", model.Model, model.Registrant)
 			defer func() {
+				Log.Infof("[model: %s] Completed processing", model.Model)
 				wg.Done()
 				weightedSem.Release(1)
 			}()
@@ -883,36 +895,49 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, co
 			}
 
 			version := pkg.GetVersion()
+			Log.Debugf("[model: %s] Package version resolved: %s", model.Model, version)
 
+			Log.Infof("[model: %s] Generating components", model.Model)
 			comps, err := pkg.GenerateComponents()
 			if err != nil {
 				err = ErrGenerateModel(err, model.Model)
 				LogError.Error(err)
 				return
 			}
+
 			lengthOfComps := len(comps)
+			Log.Infof("[model: %s] Generated %d components", model.Model, len(comps))
 			if lengthOfComps == 0 {
-				err = ErrGenerateModel(fmt.Errorf("no components found for model"), model.Model)
+				err = ErrGenerateModel(fmt.Errorf("No components found for model"), model.Model)
 				LogError.Error(err)
 				return
 			}
+
 			modelDirPath, compDirPath, err := createVersionedDirectoryForModelAndComp(version, model.Model, path)
 			if err != nil {
 				err = ErrGenerateModel(err, model.Model)
 				LogError.Error(err)
 				return
 			}
+
 			modelDef, alreadyExist, err := writeModelDefToFileSystem(&model, version, modelDirPath)
 			if err != nil {
 				err = ErrGenerateModel(err, model.Model)
 				LogError.Error(err)
 				return
 			}
+
 			if alreadyExist {
+				Log.Infof("[model: %s] Model definition already exists", model.Model)
 				totalAvailableModels--
+			} else {
+				Log.Infof("[model: %s] Model definition written to %s", model.Model, modelDirPath)
 			}
+
+			Log.Infof("[model: %s] Writing %d components to %s", model.Model, lengthOfComps, compDirPath)
 			for _, comp := range comps {
 				comp.Version = defVersion
+				Log.Debugf("  [component: %s] Processing component", comp.DisplayName)
 				// Assign the component status corresponding to model status.
 				// i.e., If model is enabled, comps are also "enabled". Ultimately, all individual comps will have the ability to control their status.
 				// The status "enabled" indicates that the component will be registered inside the registry.
@@ -928,9 +953,11 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, co
 				}
 				comp.Model = *modelDef
 
+				Log.Debugf("  [component: %s] Writing component definition", comp.DisplayName)
 				AssignDefaultsForCompDefs(&comp, modelDef)
 				compAlreadyExist, err := comp.WriteComponentDefinition(compDirPath, "json")
 				if compAlreadyExist {
+					Log.Debugf("  [component: %s] Component already exists", comp.DisplayName)
 					lengthOfComps--
 				}
 				if err != nil {
@@ -938,19 +965,21 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, co
 					LogError.Error(err)
 					return
 				}
+				Log.Debugf("  [component: %s] Component written successfully", comp.DisplayName)
 			}
+
 			if !alreadyExist {
 				if len(comps) == 0 {
-					err = ErrGenerateModel(fmt.Errorf("no components found for model"), model.Model)
+					err = ErrGenerateModel(fmt.Errorf("No components found for model"), model.Model)
 					LogError.Error(err)
 
 				} else {
-					log.Info("Current model: ", model.Model)
-					log.Info("Extracted ", lengthOfComps, " components for ", model.ModelDisplayName, " (", model.Model, ")")
+					Log.Info("Current model: ", model.Model)
+					Log.Info("Extracted ", lengthOfComps, " components for ", model.ModelDisplayName, " (", model.Model, ")")
 				}
 			} else {
 				if len(comps) > 0 {
-					log.Info("Model already exists: ", model.Model)
+					Log.Infof("Model '%s' and it's components already exists", model.Model)
 				} else {
 					err = ErrGenerateModel(fmt.Errorf("no components found for model"), model.Model)
 					LogError.Error(err)
@@ -970,6 +999,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, co
 
 	wg.Wait()
 	close(spreadsheeetChan)
+	Log.Info("Beginning processing relationship...")
 	ProcessRelationships(relationshipCSVHelper, relationshipUpdateChan, path)
 	close(relationshipUpdateChan)
 	wgForRelationshipUpdates.Wait()
@@ -991,7 +1021,7 @@ func GenerateDefsForCoreRegistrant(model ModelCSV, ComponentCSVHelper *Component
 	if len(parts) >= 8 {
 		version = parts[8] // Fetch the version from the expected position
 	} else {
-		return fmt.Errorf("invalid SourceURL format: %s", model.SourceURL)
+		return fmt.Errorf("Invalid SourceURL format: %s", model.SourceURL)
 	}
 	isModelPublished, _ := strconv.ParseBool(model.PublishToRegistry)
 	var compDefComps []component.ComponentDefinition
@@ -1061,7 +1091,7 @@ func GenerateDefsForCoreRegistrant(model ModelCSV, ComponentCSVHelper *Component
 
 	if !alreadyExist {
 		if len(compDefComps) == 0 {
-			err = ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model)
+			err = ErrGenerateModel(fmt.Errorf("No components found for model "), model.Model)
 			return err
 		} else if len(compDefComps)-actualCompCount == 0 {
 			Log.Info("Current model: ", model.Model)
