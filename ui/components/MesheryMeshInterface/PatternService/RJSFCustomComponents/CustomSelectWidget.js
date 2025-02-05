@@ -83,6 +83,7 @@ export default function CustomSelectWidget({
         onChange={_onChange}
         onBlur={_onBlur}
         onFocus={_onFocus}
+        size="small"
         InputProps={{
           style: { paddingRight: '0px' },
           endAdornment: (
