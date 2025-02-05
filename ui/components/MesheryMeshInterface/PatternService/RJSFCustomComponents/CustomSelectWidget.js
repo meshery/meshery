@@ -6,7 +6,7 @@ import {
   MenuItem,
   TextField,
   InputLabel,
-} from '@material-ui/core';
+} from '@layer5/sistent';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import ErrorOutlineIcon from '@mui/icons-material/ErrorOutline';
 import { ERROR_COLOR } from '../../../../constants/colors';
