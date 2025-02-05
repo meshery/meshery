@@ -6,7 +6,7 @@ import {
   useTheme,
   InputLabel,
   styled,
-} from '@material-ui/core';
+} from '@layer5/sistent';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
@@ -17,7 +17,7 @@ import { makeStyles } from '@material-ui/styles';
 const CustomTextField = styled(TextField)(({ theme, overrideFlag }) => {
   return {
     '& div': {
-      backgroundColor: overrideFlag ? (theme.palette.type === 'dark' ? '#303030' : '#fff') : '',
+      backgroundColor: overrideFlag ? (theme.palette.mode === 'dark' ? '#303030' : '#fff') : '',
     },
   };
 });
@@ -127,7 +127,7 @@ const BaseInput = (props) => {
                       <HelpOutlineIcon
                         width="14px"
                         height="14px"
-                        fill={theme.palette.type === 'dark' ? 'white' : 'gray'}
+                        fill={theme.palette.mode === 'dark' ? 'white' : 'gray'}
                         style={{ verticalAlign: 'middle', ...iconSmall }}
                       />
                     </IconButton>
