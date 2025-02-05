@@ -9,6 +9,14 @@ import { keys } from '@/utils/permission_constants';
 import { Box, MenuItem, Select, Typography } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
 
+const SelectContainer = styled(Select)(({ theme }) => ({
+  fontFamily: theme.typography.fontFamily
+}))
+
+const MenuItemContainer = styled(MenuItem)(({ theme })=> ({
+  fontFamily: theme.typography.fontFamily
+}))
+
 export default function WorkloadChart({
   classes,
   resourses = [],
@@ -83,13 +91,13 @@ export default function WorkloadChart({
             </Typography>
           </Link>
           {namespaces?.length > 0 && (
-            <Select value={selectedNamespace} onChange={(e) => handleSetNamespace(e.target.value)}>
+            <SelectContainer value={selectedNamespace} onChange={(e) => handleSetNamespace(e.target.value)}>
               {namespaces.map((ns) => (
-                <MenuItem key={ns.uniqueID} value={ns}>
+                <MenuItemContainer key={ns.uniqueID} value={ns}>
                   {ns}
-                </MenuItem>
+                </MenuItemContainer>
               ))}
-            </Select>
+            </SelectContainer>
           )}
         </div>
         <Box

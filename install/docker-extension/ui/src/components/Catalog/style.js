@@ -1,5 +1,4 @@
-import { styled } from "@mui/material/styles";
-import { Box } from "@mui/material";
+import { styled, Box } from '@layer5/sistent';
 
 export const ChartDiv = styled(Box)(() => ({
   padding: "1rem",

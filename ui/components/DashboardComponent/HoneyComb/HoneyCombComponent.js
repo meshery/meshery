@@ -8,6 +8,7 @@ import {
   Typography,
   Select,
   MenuItem,
+  styled,
 } from '@layer5/sistent';
 import { useRouter } from 'next/router';
 import ConnectCluster from '../charts/ConnectCluster';
@@ -27,6 +28,16 @@ import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { useResourceOptions, useResourceFiltering, SORT_DIRECTIONS } from './useResourceOptions';
 import GetKubernetesNodeIcon from '../utils';
+
+
+const SelectContainer = styled(Select)(({ theme }) => ({
+  fontFamily: theme.typography.fontFamily
+}))
+
+const MenuItemContainer = styled(MenuItem)(({ theme })=> ({
+  fontFamily: theme.typography.fontFamily
+}))
+
 
 const HoneycombComponent = (props) => {
   const { kinds, isClusterLoading, isClusterIdsEmpty } = props;
@@ -70,13 +81,13 @@ const HoneycombComponent = (props) => {
         <HeaderContainer>
           <Typography variant="h6">Cluster Resource Overview</Typography>
           <ControlsContainer>
-            <Select value={groupBy} onChange={handleGroupChange} size="small">
+            <SelectContainer value={groupBy} onChange={handleGroupChange} size="small">
               {groupOptions.map((option) => (
-                <MenuItem key={option.value} value={option.value}>
+                <MenuItemContainer key={option.value} value={option.value}>
                   {option.label}
-                </MenuItem>
+                </MenuItemContainer>
               ))}
-            </Select>
+            </SelectContainer>
             <StyledIconButton size="small" onClick={handleSortChange}>
               <CustomTooltip title={`Sort by Count`}>
                 {sortDirection === SORT_DIRECTIONS.ASC ? (

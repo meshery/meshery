@@ -33,6 +33,15 @@ const schema = selectCompSchema(
   'Select type of Connection to register',
   'selectedConnectionType',
 );
+
+const SelectContainer = styled(Select)(({ theme }) => ({
+  fontFamily: theme.typography.fontFamily
+}))
+
+const MenuItemContainer = styled(MenuItem)(({ theme })=> ({
+  fontFamily: theme.typography.fontFamily
+}))
+
 export const SelectConnection = ({ setSharedData, handleNext }) => {
   const formRef = useRef();
 
@@ -154,7 +163,7 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
             <InputLabel fontSize="inherit" id="endpoint-checkbox-label">
               Select from the discovered endpoints
             </InputLabel>
-            <Select
+            <SelectContainer
               labelId="endpoint-checkbox-label"
               id="endpoint-checkbox"
               onChange={handleSelectEndpoint}
@@ -190,7 +199,7 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
                   <ListItemText primary={endpoint} />
                 </MenuItem>
               ))}
-            </Select>
+            </SelectContainer>
           </FormControl>
         )}
         <p style={{ display: 'flex', justifyContent: 'center' }}>-OR-</p>
@@ -382,7 +391,7 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
           <InputLabel fontSize="20" id="credential-checkbox-label">
             Select existing credential
           </InputLabel>
-          <Select
+          <SelectContainer
             labelId="credential-checkbox-label"
             id="credential-checkbox"
             onChange={handleSelectCredential}
@@ -416,12 +425,12 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
           >
             {existingCredentials &&
               existingCredentials?.map((credential) => (
-                <MenuItem key={credential.id} value={credential.id} name={credential.name}>
+                <MenuItemContainer key={credential.id} value={credential.id} name={credential.name}>
                   <Checkbox checked={selectedCredential?.id === credential.id} />
                   <ListItemText primary={credential.name} />
-                </MenuItem>
+                </MenuItemContainer>
               ))}
-          </Select>
+          </SelectContainer>
         </FormControl>
         <p style={{ display: 'flex', justifyContent: 'center' }}>-OR-</p>
         <p>Configure a new credential to use for this connection</p>

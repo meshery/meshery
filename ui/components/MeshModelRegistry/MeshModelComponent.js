@@ -75,6 +75,14 @@ import { iconMedium } from '../../css/icons.styles';
 import AddIcon from '@mui/icons-material/AddCircleOutline';
 import LanOutlinedIcon from '@mui/icons-material/LanOutlined';
 
+const SelectContainer = styled(Select)(({ theme }) => ({
+  fontFamily: theme.typography.fontFamily
+}))
+
+const MenuItemContainer = styled(MenuItem)(({ theme })=> ({
+  fontFamily: theme.typography.fontFamily
+}))
+
 const useMeshModelComponentRouter = () => {
   const router = useRouter();
   const { query } = router;
@@ -1047,7 +1055,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
               <Grid item xs={6}>
                 <FormControl fullWidth variant="outlined">
                   <InputLabel id="category-label">Category</InputLabel>
-                  <Select
+                  <SelectContainer
                     labelId="category-label"
                     id="category"
                     value={modelCategory}
@@ -1055,17 +1063,17 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                     onChange={(e) => setModelCategory(e.target.value)}
                   >
                     {modelCategories.map((category, idx) => (
-                      <MenuItem key={idx} value={category}>
+                      <MenuItemContainer key={idx} value={category}>
                         {category}
-                      </MenuItem>
+                      </MenuItemContainer>
                     ))}
-                  </Select>
+                  </SelectContainer>
                 </FormControl>
               </Grid>
               <Grid item xs={6}>
                 <FormControl fullWidth variant="outlined">
                   <InputLabel id="subcategory-label">Subcategory</InputLabel>
-                  <Select
+                  <SelectContainer
                     labelId="subcategory-label"
                     id="subcategory"
                     value={modelSubcategory}
@@ -1073,11 +1081,11 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                     onChange={(e) => setModelSubcategory(e.target.value)}
                   >
                     {modelSubCategories.map((subCategory, idx) => (
-                      <MenuItem key={idx} value={subCategory}>
+                      <MenuItemContainer key={idx} value={subCategory}>
                         {subCategory}
-                      </MenuItem>
+                      </MenuItemContainer>
                     ))}
-                  </Select>
+                  </SelectContainer>
                 </FormControl>
               </Grid>
             </Grid>
@@ -1167,7 +1175,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
               <Grid item xs={12} style={{ marginTop: '1rem' }}>
                 <FormControl fullWidth variant="outlined">
                   <InputLabel id="shape-label">Shape</InputLabel>
-                  <Select
+                  <SelectContainer
                     labelId="shape-label"
                     id="shape"
                     value={modelShape}
@@ -1176,11 +1184,11 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                     style={{ marginTop: '1rem' }}
                   >
                     {modelShapes.map((shape, idx) => (
-                      <MenuItem key={idx} value={shape}>
+                      <MenuItemContainer key={idx} value={shape}>
                         {shape}
-                      </MenuItem>
+                      </MenuItemContainer>
                     ))}
-                  </Select>
+                  </SelectContainer>
                 </FormControl>
               </Grid>
             </Grid>

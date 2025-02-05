@@ -24,6 +24,15 @@ import {
   StyledKeyValuePropertyDiv,
   StyledKeyValueProperty,
 } from './MeshModel.style';
+
+const SelectContainer = styled(Select)(({ theme }) => ({
+  fontFamily: theme.typography.fontFamily
+}))
+
+const MenuItemContainer = styled(MenuItem)(({ theme })=> ({
+  fontFamily: theme.typography.fontFamily
+}))
+
 const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
 
 const ExportAvailable = true;
@@ -421,7 +430,7 @@ const StatusChip = ({ entityData, entityType }) => {
   return (
     <FormControl style={{ flexDirection: 'inherit', minWidth: '100%' }}>
       {isSuccess ? (
-        <Select
+        <SelectContainer
           labelId="entity-status-select-label"
           id={data?.id}
           key={data?.id}
@@ -452,7 +461,7 @@ const StatusChip = ({ entityData, entityType }) => {
           }}
         >
           {nextStatus.map((status) => (
-            <MenuItem
+            <MenuItemContainer
               disabled={status === data?.status}
               style={{ display: status === data?.status ? 'none' : 'flex' }}
               value={status}
@@ -461,9 +470,9 @@ const StatusChip = ({ entityData, entityType }) => {
               {status === data?.status
                 ? status
                 : REGISTRY_ITEM_STATES_TO_TRANSITION_MAP?.[status] || status}
-            </MenuItem>
+            </MenuItemContainer>
           ))}
-        </Select>
+        </SelectContainer>
       ) : (
         <CircularProgress size={24} />
       )}
