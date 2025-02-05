@@ -2,6 +2,7 @@ package orgs
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -36,7 +37,7 @@ var OrgCmd = &cobra.Command{
 		}
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
 			utils.Log.Error(fmt.Errorf("invalid subcommand"))
-			return nil
+			return errors.New(fmt.Sprintf("%s is a invalid subcommand. Use `mesheryctl org --help` for usagae guide \n", args[0]))
 		}
 		return nil
 	},
