@@ -104,7 +104,7 @@ func TestGenerate(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
-			Name:             "Generate registered relationships without spread sheet id",
+			Name:             "Generate registered relationships without spreadsheet id",
 			Args:             []string{"generate", "--spreadsheet-cred", "$CRED"},
 			URL:              testContext.BaseURL + "/api/meshmodels/relationships",
 			Fixture:          "",
@@ -113,7 +113,7 @@ func TestGenerate(t *testing.T) {
 			ExpectError:      true,
 		},
 		{
-			Name:             "Generate registered relationships without spread sheet creadentials",
+			Name:             "Generate registered relationships without spreadsheet creadentials",
 			Args:             []string{"generate", "--spreadsheet-id", "1"},
 			URL:              testContext.BaseURL + "/api/meshmodels/relationships",
 			Fixture:          "",
