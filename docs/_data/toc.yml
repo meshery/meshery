@@ -232,8 +232,7 @@
           #   url: extensions/sharing-a-design
         - title: "GitOps: Snapshots"
           url: extensions/snapshot
-        # - title: "Provider: Layer5 Cloud"
-        #   url: extensions/layer5-cloud
+
       # children:
       # - title: Building a Remote Provider
       #   url: extensibility/providers/building-a-remote-provider
