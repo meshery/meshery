@@ -72,6 +72,7 @@ type MesheryPatternUPDATERequestBody struct {
 }
 
 type DesignPostPayload struct {
+	ID         *uuid.UUID                 `json:"id,omitempty"`
 	Name       string                     `json:"name,omitempty"`
 	DesignFile patternV1beta1.PatternFile `json:"design_file"`
 	// Meshery doesn't have the user id fields
@@ -145,6 +146,7 @@ func (h *Handler) handlePatternPOST(
 	designFile := string(designFileBytes)
 
 	mesheryPatternRecord := models.MesheryPattern{
+		ID:          requestPayload.ID,
 		PatternFile: designFile,
 		UserID:      requestPayload.UserID,
 		Name:        requestPayload.Name,
