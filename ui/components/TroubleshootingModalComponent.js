@@ -132,7 +132,7 @@ const TroubleshootListitem = styled('li')({
 const KeyStyleContainer = styled('div')(({ theme }) => ({
   display: 'inline-block',
   padding: '0.1rem 0.5rem',
-  background: theme.palette.secondary.elevatedComponent,
+  background: theme.palette.background.tabs,
   margin: '0.3rem',
   borderRadius: '5px',
   boxShadow:
