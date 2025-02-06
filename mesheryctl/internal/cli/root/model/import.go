@@ -15,7 +15,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/encoding"
-	meshkitFileUtils "github.com/layer5io/meshkit/files"
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"github.com/spf13/cobra"
@@ -131,6 +130,7 @@ func registerModel(data []byte, componentData []byte, relationshipData []byte, f
 	if err != nil {
 		return err
 	}
+
 	req, err := utils.NewRequest(http.MethodPost, url, bytes.NewReader(requestBody))
 	if err != nil {
 		return err
@@ -182,25 +182,17 @@ func displayEmtpyModel(response *models.RegistryAPIResponse) bool {
 // TO check the case if we were never able to read the file at first palce
 func hasExtension(name string) bool {
 	extension := filepath.Ext(name)
-	return extension == ".json" || extension == ".yaml" || extension == ".yml" || extension == ".tar.gz" || extension == ".tar" || extension == ".zip" || extension == "."
-}
-
-func invalidExtension(name string) bool {
-	extension := filepath.Ext(name)
-	return extension != "" && extension != ".json" && extension != ".yaml" && extension != ".yml" && extension != ".tar.gz" && extension != ".tar" && extension != ".zip" && extension != ".tgz" && extension != ".tar.zip"
+	return extension != ""
 }
 
 func displayEntitisIfModel(response *models.RegistryAPIResponse) {
 	var modelsWithoutExtension []string
 	var modelsWithExtension []string
-	var modelsWithInvalidExtension []string
 
 	// Separate models into those with and without extensions
 	for _, model := range response.ModelName {
 		if model != "" {
-			if invalidExtension(model) {
-				modelsWithInvalidExtension = append(modelsWithInvalidExtension, model)
-			} else if hasExtension(model) {
+			if hasExtension(model) {
 				modelsWithExtension = append(modelsWithExtension, model)
 			} else {
 				modelsWithoutExtension = append(modelsWithoutExtension, model)
@@ -209,16 +201,10 @@ func displayEntitisIfModel(response *models.RegistryAPIResponse) {
 	}
 
 	// Function to display models and their components, relationships, and entities
-	displayModelInfo := func(model string, extensionType string) {
-		if extensionType == "" {
+	displayModelInfo := func(model string, hasExtension bool) {
+		if !hasExtension {
 			boldModel := utils.BoldString("MODEL")
 			utils.Log.Infof("\n%s: %s", boldModel, model)
-		} else if extensionType == "invalid extension" {
-			boldError := utils.BoldString("ERROR")
-			fileExt := filepath.Ext(model)
-			errMsg := meshkitFileUtils.ErrUnsupportedExtensionForOperation("import", model, fileExt, []string{".json", ".yaml", ".yml", ".tar.gz", ".tar", ".zip", ".tar.zip", ".tgz", "."})
-			utils.Log.Infof("\n%s: %s", boldError, errMsg)
-			return
 		}
 		displaySuccessfulComponents(response, model)
 		displaySuccessfulRelationships(response, model)
@@ -226,13 +212,10 @@ func displayEntitisIfModel(response *models.RegistryAPIResponse) {
 	}
 
 	for _, model := range modelsWithoutExtension {
-		displayModelInfo(model, "")
+		displayModelInfo(model, false)
 	}
 	for _, model := range modelsWithExtension {
-		displayModelInfo(model, "valid extension")
-	}
-	for _, model := range modelsWithInvalidExtension {
-		displayModelInfo(model, "invalid extension")
+		displayModelInfo(model, true)
 	}
 }
 
@@ -329,9 +312,11 @@ func displayUnsuccessfulEntities(response *models.RegistryAPIResponse, modelName
 				continue
 			}
 
-			longDescription := buildLongDescription(errorDetails["LongDescription"])
+			longDescription := buildDescription(errorDetails["LongDescription"], "LongDescription")
+			probableCause := buildDescriptionList(errorDetails["ProbableCause"], "ProbableCause")
+			suggestedRemediation := buildDescriptionList(errorDetails["SuggestedRemediation"], "SuggestedRemediation")
 
-			EntityTypeLine := buildEntityTypeLine(names, entityTypes, longDescription, modelName)
+			EntityTypeLine := buildEntityTypeLine(names, entityTypes, longDescription, probableCause, suggestedRemediation, modelName)
 			if EntityTypeLine != "" {
 				fmt.Println("")
 				utils.Log.Infof("  %s: Import did not occur for%s error: \n  %s", utils.BoldString("ERROR"), EntityTypeLine, longDescription)
@@ -341,27 +326,47 @@ func displayUnsuccessfulEntities(response *models.RegistryAPIResponse, modelName
 	}
 }
 
-func buildLongDescription(longDescriptionInterface interface{}) string {
-	longDescriptionSlice, ok := longDescriptionInterface.([]interface{})
+func buildDescription(descriptionInterface interface{}, descriptionType string) string {
+	descriptionSlice, ok := descriptionInterface.([]interface{})
 	if !ok {
-		utils.Log.Infof("Type assertion to []interface{} failed for LongDescription: %v (type %T)", longDescriptionInterface, longDescriptionInterface)
+		utils.Log.Infof("Type assertion to []interface{} failed for %s: %v (type %T)", descriptionType, descriptionInterface, descriptionInterface)
 		return ""
 	}
 
-	var longDescription string
-	for _, item := range longDescriptionSlice {
+	var description string
+	for _, item := range descriptionSlice {
 		str, ok := item.(string)
 		if !ok {
-			utils.Log.Infof("Item in LongDescription is not a string: %v (type %T)", item, item)
+			utils.Log.Infof("Item in %s is not a string: %v (type %T)", descriptionType, item, item)
 			continue
 		}
-		longDescription += str + " "
+		description += str + " "
 	}
 
-	return strings.TrimSpace(longDescription)
+	return strings.TrimSpace(description)
 }
 
-func buildEntityTypeLine(names, entityTypes []interface{}, longDescription, modelName string) string {
+func buildDescriptionList(descriptionInterface interface{}, descriptionType string) string {
+	descriptionSlice, ok := descriptionInterface.([]interface{})
+	if !ok {
+		utils.Log.Infof("Type assertion to []interface{} failed for %s: %v (type %T)", descriptionType, descriptionInterface, descriptionInterface)
+		return ""
+	}
+
+	var descriptionList string
+	for _, item := range descriptionSlice {
+		str, ok := item.(string)
+		if !ok {
+			utils.Log.Infof("Item in %s is not a string: %v (type %T)", descriptionType, item, item)
+			continue
+		}
+		descriptionList += fmt.Sprintf("  - %s\n", str)
+	}
+
+	return strings.TrimSpace(descriptionList)
+}
+
+func buildEntityTypeLine(names, entityTypes []interface{}, longDescription, probableCause, suggestedRemediation, modelName string) string {
 	compCount, relCount := 0, 0
 	EntityTypeLine := ""
 	for i, name := range names {
@@ -380,6 +385,7 @@ func buildEntityTypeLine(names, entityTypes []interface{}, longDescription, mode
 		}
 		if entityType == "unknown" {
 			utils.Log.Infof("\n%s: Import process for file %s encountered error: \n    %s", utils.BoldString("ERROR"), name.(string), longDescription)
+			utils.Log.Infof("\n  %s:\n  %s \n  %s:\n  %s", utils.BoldString("PROBABLE CAUSE"), probableCause, utils.BoldString("SUGGESTED REMEDIATION"), suggestedRemediation)
 		} else if entityType == "component" {
 			compCount++
 		} else if entityType == "relationship" {
