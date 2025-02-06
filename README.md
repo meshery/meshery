@@ -122,7 +122,7 @@ Using a GitOps-centric approach, visually and collaboratively design and manage 
           </td>
         </tr>
         <tr>
-          <td><a href="https://github.com/layer5io/meshery-linkerd">
+          <td><a href="https://github.com/meshery/meshery-linkerd">
             <img src='https://docs.meshery.io/assets/img/service-meshes/linkerd.svg' alt='Linkerd' align="middle" hspace="5px" vspace="5px" height="30px" width="30px" /> Meshery adapter for Linkerd</a>
           </td>
         </tr>
