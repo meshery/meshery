@@ -193,7 +193,7 @@ text-orientation: mixed;" %}
           <code>{{ err_code[1]["name"] | xml_escape }}-{{ err_code[1]["code"] }}</code>
         </td>
         <td>{{ err_code[1]["short_description"] | xml_escape }}</td>
-        <td><a href="https://meshery.io/community#community-forums/search?q={{ err_code[1]['name'] | xml_escape }}-{{ err_code[1]['code'] }}" target="_blank">search forum</a></td>
+        <td><a href="https://meshery.io/community#discussion-forums/search?q={{ err_code[1]['name'] | xml_escape }}-{{ err_code[1]['code'] }}" target="_blank">search forum</a></td>
       </tr>
       <tr id="{{ component[1].component_name }}-{{ err_code[1]["name"] }}-more-info" class="tbl-hidden-row">
         <td style="word-break:break-all;" colspan="4">

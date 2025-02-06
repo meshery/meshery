@@ -190,7 +190,7 @@ Meshery documentation is built using the following components:
 
 - Use docs here [Jekyll installation](https://jekyllrb.com/docs/installation/macos/)
 
-{% include alert.html type="light" title="Note" content="In case of any installation issues, use the <a href='https://meshery.io/community#community-forums)'>discussion forum</a>." %}
+{% include alert.html type="light" title="Note" content="In case of any installation issues, use the <a href='https://meshery.io/community#discussion-forums'>discussion forum</a>." %}
 
 ### Get the code
 
