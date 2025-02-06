@@ -1,5 +1,5 @@
 import { rjsfTheme } from './rjsf';
-import defaultTheme, { styles, notificationColors } from './app';
+import { notificationColors } from './app';
 
 export const NOTIFICATIONCOLORS = {
   ERROR: '#F91313',
@@ -10,5 +10,4 @@ export const NOTIFICATIONCOLORS = {
   ERROR_DARK: '#B32700',
 };
 
-export default defaultTheme;
-export { rjsfTheme, styles, notificationColors };
+export { rjsfTheme, notificationColors };
