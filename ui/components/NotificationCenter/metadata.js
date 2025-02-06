@@ -137,7 +137,11 @@ const ComponentWithIcon = ({ component }) => {
       container
       alignItems="center"
       spacing={1}
-      style={{ marginBottom: '8px', marginLeft: '1rem', marginTop: '8px' }}
+      style={{
+        marginBottom: '8px',
+        marginLeft: '1rem',
+        marginTop: '8px',
+      }}
     >
       <Grid item>
         <div
@@ -220,12 +224,10 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
         <Typography variant="body1">
           <strong>{heading}</strong>
         </Typography>
-        <List sx={{}}>
+        <List sx={{ listStyleType: heading === 'Details' ? 'none' : 'decimal' }}>
           {value.map((error, idx) => (
-            <ListItem key={idx}>
-              <Box>
-                <RenderMarkdown content={error} />
-              </Box>
+            <ListItem key={idx} sx={{ display: 'list-item', padding: 0 }}>
+              <RenderMarkdown content={error} />
             </ListItem>
           ))}
         </List>
@@ -234,7 +236,8 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
   };
   return (
     <Grid container>
-      <div>
+      {' '}
+      <div sx={{ border: '10px solid blue' }}>
         <TitleLink href={errorLink}> {formattedErrorCode} </TitleLink>
         {event?.description && <FormatStructuredData data={event.description} />}
         <div style={{ marginTop: '1rem' }}>

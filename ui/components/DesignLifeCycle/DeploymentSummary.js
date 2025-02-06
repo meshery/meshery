@@ -12,9 +12,8 @@ import { openViewScopedToDesignInOperator, useIsOperatorEnabled } from '@/utils/
 import { useRouter } from 'next/router';
 
 const StyledDetailBox = styled(Box)(({ theme, severityColor, bgOpacity }) => ({
-  padding: theme.spacing(2),
-  backgroundColor: alpha(severityColor, bgOpacity),
-  border: `1px solid ${theme.palette.divider}`,
+  // padding: theme.spacing(2),
+  // backgroundColor: alpha(severityColor, bgOpacity),
   display: 'flex',
 }));
 
@@ -79,7 +78,11 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
       >
         <TextWithLinks
           text={event?.description || ''}
-          style={{ color: theme.palette.text.default, textTransform: 'capitalize' }}
+          style={{
+            color: theme.palette.text.default,
+            textTransform: 'capitalize',
+            fontWeight: 'bold',
+          }}
         />
         {is_operator_enabled && (
           <Button

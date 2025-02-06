@@ -248,6 +248,7 @@ export const SectionBody = ({ body, style = {} }) => {
     <TextWithLinks
       variant="body1"
       style={{
+        fontWeight: 'bold',
         wordWrap: 'break-word',
         color: theme.palette.text.tertiary,
         ...style,
@@ -307,7 +308,12 @@ const DynamicFormatter = ({ data, uiSchema, isLevel = true }) => {
 
       if (propertyFormatters?.[title]) {
         return (
-          <Grid key={title} sm={12} {...(uiSchema?.[title] || {})}>
+          <Grid
+            key={title}
+            sm={12}
+
+            // {...(uiSchema?.[title] || {})}
+          >
             {propertyFormatters[title](data, data)}
           </Grid>
         );
@@ -370,11 +376,11 @@ export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema, 
       >
         <Grid
           container
-          style={{
-            wordBreak: 'break-word',
-            overflowWrap: 'break-word',
-            gap: '0.3rem 1rem',
-          }}
+          style={
+            {
+              // gap: '0.3rem 1rem',
+            }
+          }
         >
           <DynamicFormatter data={data} uiSchema={uiSchema} isLevel={isLevel} />
         </Grid>
