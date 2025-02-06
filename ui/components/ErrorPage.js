@@ -77,7 +77,7 @@ const CustomErrorMessage = ({ message, showImage = true }) => {
           )}
           <StyledTypographyBody1 variant="body1">
             Start a conversation at Layer5 community{' '}
-            <StyledLink href="http://discuss.meshery.io/c/meshery/5" target="_blank">
+            <StyledLink href="https://meshery.io/community#community-forums/c/meshery/5" target="_blank">
               discussion forum
             </StyledLink>
             .

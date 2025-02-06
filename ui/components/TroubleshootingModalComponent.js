@@ -278,7 +278,7 @@ const TroubleshootingModal = (props) => {
                     <TroubleshootListitem>
                       {' '}
                       <TroubleshootHelpLink
-                        href="http://discuss.meshery.io/t/what-are-some-troubleshooting-tips-for-meshmap"
+                        href="https://meshery.io/community#community-forums/t/what-are-some-troubleshooting-tips-for-meshmap"
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -300,7 +300,7 @@ const TroubleshootingModal = (props) => {
                   email
                 </ContactHelpLink>{' '}
                 or{' '}
-                <ContactHelpLink href="http://discuss.meshery.io" target="_blank" rel="noreferrer">
+                <ContactHelpLink href="https://meshery.io/community#community-forums" target="_blank" rel="noreferrer">
                   community forum
                 </ContactHelpLink>
                 .
