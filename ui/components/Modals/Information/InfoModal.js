@@ -40,8 +40,7 @@ import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import { filterEmptyFields } from '@/utils/objects';
 import { Lock, Public } from '@mui/icons-material';
-import yaml from "js-yaml"
-
+import yaml from 'js-yaml';
 
 const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';
@@ -118,11 +117,11 @@ const InfoModal_ = React.memo((props) => {
     };
     if (dataName === PATTERN_PLURAL) {
       body = JSON.stringify({
-          name:selectedResource.name,
-          catalog_data: modifiedData,
-          design_file: yaml.load(selectedResource.pattern_file),
-          id: selectedResource.id,
-          visibility: visibility,
+        name: selectedResource.name,
+        catalog_data: modifiedData,
+        design_file: yaml.load(selectedResource.pattern_file),
+        id: selectedResource.id,
+        visibility: visibility,
       });
     } else if (dataName === FILTER_PLURAL) {
       setSaveFormLoading(true);
