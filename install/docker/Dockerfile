@@ -17,13 +17,15 @@ RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY ui/package.json ui/package-lock.json ./
 ENV HUSKY=0
-RUN npm ci --omit=dev --legacy-peer-deps --ignore-scripts
+RUN npm ci --omit=dev --legacy-peer-deps --ignore-scripts && \
+    npm install --save-dev eslint@^8.57.0 eslint-config-next@^13.1.2 @next/eslint-plugin-next@^13.1.2 eslint-config-prettier@^9.1.0 eslint-plugin-prettier@^5.2.1 eslint-plugin-react@^7.37.2
 
 FROM base-node AS meshery-ui-provider-deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 COPY provider-ui/package.json provider-ui/package-lock.json ./
-RUN npm ci --omit=dev --legacy-peer-deps
+RUN npm ci --omit=dev --legacy-peer-deps && \
+    npm install --save-dev eslint@^8.57.0 eslint-config-next@^15.1.3
 
 # Build NextJS Application
 FROM base-node AS meshery-ui-builder
@@ -32,6 +34,7 @@ COPY --from=meshery-ui-deps /app/node_modules ./node_modules
 COPY ui .
 # Disable NextJS Telemetry data collect
 ENV NEXT_TELEMETRY_DISABLED 1
+RUN npm install --legacy-peer-deps
 RUN npm run build && npm run export
 
 FROM base-node AS meshery-ui-provider-builder
@@ -40,6 +43,7 @@ COPY --from=meshery-ui-provider-deps /app/node_modules ./node_modules
 # Disable NextJS Telemetry data collect
 ENV NEXT_TELEMETRY_DISABLED 1
 COPY provider-ui .
+RUN npm install --legacy-peer-deps
 RUN npm run build && npm run export
 
 FROM ubuntu AS wrk2
