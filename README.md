@@ -19,7 +19,7 @@ alt="Meshery Logo" width="70%" /></picture></a><br /><br /></p>
   <img src="https://img.shields.io/github/actions/workflow/status/meshery/meshery/release-drafter.yml" /></a>
 <a href="https://bestpractices.coreinfrastructure.org/projects/3564" alt="CLI Best Practices">
   <img src="https://bestpractices.coreinfrastructure.org/projects/3564/badge" /></a>
-<a href="http://discuss.meshery.io" alt="Discuss Users">
+<a href="https://meshery.io/community#community-forums" alt="Discuss Users">
   <img src="https://img.shields.io/discourse/users?label=discuss&logo=discourse&server=https%3A%2F%2Fdiscuss.layer5.io" /></a>
 <a href="https://slack.meshery.io" alt="Join Slack">
   <img src="https://img.shields.io/badge/Slack-@layer5.svg?logo=slack" /></a>
@@ -368,7 +368,7 @@ See the [getting started](https://meshery.io/#getting-started) section to quickl
 ## Join the Meshery community!
 
 <a name="contributing"></a><a name="community"></a>
-Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://layer5.io/community/newcomers">Contributor Journey Map</a> and <a href="https://layer5.io/community/handbook">Community Handbook</a> for a tour of resources available to you and the <a href="https://layer5.io/community/handbook/repository-overview">Repository Overview</a> for a cursory description of repository by technology and programming language. Jump into community <a href="https://slack.meshery.io">Slack</a> or <a href="http://discuss.meshery.io">discussion forum</a> to participate.
+Our projects are community-built and welcome collaboration. 👍 Be sure to see the <a href="https://layer5.io/community/newcomers">Contributor Journey Map</a> and <a href="https://layer5.io/community/handbook">Community Handbook</a> for a tour of resources available to you and the <a href="https://layer5.io/community/handbook/repository-overview">Repository Overview</a> for a cursory description of repository by technology and programming language. Jump into community <a href="https://slack.meshery.io">Slack</a> or <a href="https://meshery.io/community#community-forums">discussion forum</a> to participate.
 
 <p style="clear:both;">
 <a href ="https://layer5.io/community"><img alt="MeshMates" src=".github/assets/images/readme/layer5-community-sign.png" style="margin-right:36px; margin-bottom:7px;" width="140px" align="left" /></a>
@@ -387,10 +387,10 @@ Learn more about the <a href="https://layer5.io/community/meshmates">MeshMates</
 <div style="width:60%; padding-left: 16px; padding-right: 16px">
 <p>
 ✔️ <em><strong>Join</strong></em> any or all of the weekly meetings on <a href="https://meshery.io/calendar">community calendar</a>.<br />
-✔️ <em><strong>Watch</strong></em> community <a href="https://www.youtube.com/Layer5io?sub_confirmation=1">meeting recordings</a>.<br />
+✔️ <em><strong>Watch</strong></em> community <a href="https://www.youtube.com/@mesheryio?sub_confirmation=1">meeting recordings</a>.<br />
 ✔️ <em><strong>Fill-in</strong></em> a <a href="https://layer5.io/newcomers">member form</a> and gain access to community resources.
 <br />
-✔️ <em><strong>Discuss</strong></em> in the <a href="http://discuss.meshery.io">community forum</a>.<br />
+✔️ <em><strong>Discuss</strong></em> in the <a href="https://meshery.io/community#community-forums">community forum</a>.<br />
 ✔️ <em><strong>Explore more</strong></em> in the <a href="https://layer5.io/community/handbook">community handbook</a>.<br />
 </p>
 </div><br /><br />

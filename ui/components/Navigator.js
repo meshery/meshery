@@ -299,7 +299,7 @@ const externlinks = [
   },
   {
     id: 'forum',
-    href: 'http://discuss.meshery.io',
+    href: 'https://meshery.io/community#community-forums',
     title: 'Discussion Forum',
     icon: <ChatIcon style={drawerIconsStyle} />,
     external_icon: ExternalLinkIcon,
