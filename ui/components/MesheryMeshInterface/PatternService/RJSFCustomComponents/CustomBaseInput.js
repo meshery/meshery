@@ -12,7 +12,6 @@ import { CustomTextTooltip } from '../CustomTextTooltip';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
-import { makeStyles } from '@material-ui/styles';
 
 const CustomTextField = styled(TextField)(({ theme, overrideFlag }) => {
   return {
@@ -35,17 +34,21 @@ const BaseInput = (props) => {
     display: 'flex',
     alignItems: 'center',
   };
-  const styles = makeStyles((theme) => ({
-    customInputLabel: {
-      color: theme.palette.secondary.text,
-      backgroundColor: theme.palette.background.default,
-      padding: '0.2rem',
-      height: '1rem',
-      borderRadius: '3px',
-    },
-  }));
   const theme = useTheme();
-  const classes = styles();
+
+  const getInputLabelStyle = () => {
+    if (prettifiedName === 'name' || prettifiedName === 'namespace' || isFocused) {
+      return {
+        color: theme.palette.secondary.text,
+        backgroundColor: theme.palette.background.default,
+        padding: '0.2rem',
+        height: '1rem',
+        borderRadius: '3px',
+      };
+    }
+    return {};
+  };
+
   return (
     <>
       <div key={props.id} style={xRjsfGridArea ? {} : style}>
@@ -89,10 +92,7 @@ const BaseInput = (props) => {
                 )
           }
           InputLabelProps={{
-            className:
-              prettifiedName === 'name' || prettifiedName === 'namespace' || isFocused
-                ? classes.customInputLabel
-                : '',
+            style: getInputLabelStyle(),
           }}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}

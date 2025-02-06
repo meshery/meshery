@@ -34,7 +34,7 @@ export const ValidatedComponent = styled(Box)(({ theme }) => ({
 }));
 
 export const DryRunComponentStyled = styled(Box)(({ theme }) => ({
-  backgroundColor: theme.palette.secondary.card,
+  backgroundColor: theme.palette.background.card,
   color: theme.palette.text.default,
   marginBlock: '0.5rem',
 }));
