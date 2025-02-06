@@ -11,7 +11,6 @@ import { durationOptions } from '../lib/prePopulatedOptions';
 import { ctxUrl } from '../utils/multi-ctx';
 import { withNotify } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
-import theme from '@/themes/app';
 import { styled } from '@mui/styles';
 import {
   FormControl,
@@ -22,6 +21,7 @@ import {
   Grid,
   Button,
   CustomTooltip,
+  useTheme,
 } from '@layer5/sistent';
 
 const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
@@ -143,7 +143,7 @@ const MesherySettingsPerformanceComponent = (props) => {
   };
 
   // const { blockRunTest, qps, t, c, gen, tValue, tError } = state;
-
+  const theme = useTheme();
   return (
     <NoSsr>
       <React.Fragment>
