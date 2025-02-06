@@ -27,7 +27,7 @@ func Test_importPattern_DisplayErrorsMissingFlags(t *testing.T) {
 		{
 			name:    "Import missing file flag",
 			args:    args{"helm", "", "", false},
-			want:    ErrDesignFile(),
+			want:    ErrDesignFileNotProvided(),
 			wantErr: true,
 		},
 	}

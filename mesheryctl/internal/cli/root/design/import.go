@@ -25,6 +25,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/schemas/models/core"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -52,9 +53,10 @@ mesheryctl design import -f design.yml -n design-name
 mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = "Usage: mesheryctl design import -f [file/URL] -s [source-type] -n [name]\n"
 		if file == "" {
-			utils.Log.Debug("file path not provided")
-			return ErrDesignFile()
+			utils.Log.Debug("File path not provided\n" + errMsg)
+			return ErrDesignFileNotProvided()
 		}
 
 		return nil
@@ -82,14 +84,14 @@ mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 		}
 
 		switch sourceType {
-			case "Helm Chart":
-				sourceType = core.IacFileTypes.HELM_CHART
-			case "Kubernetes Manifest":
-				sourceType = core.IacFileTypes.KUBERNETES_MANIFEST
-			case "Meshery Design":
-				sourceType = core.IacFileTypes.MESHERY_DESIGN
-			case "Docker Compose":
-				sourceType = core.IacFileTypes.DOCKER_COMPOSE
+		case "Helm Chart":
+			sourceType = core.IacFileTypes.HELM_CHART
+		case "Kubernetes Manifest":
+			sourceType = core.IacFileTypes.KUBERNETES_MANIFEST
+		case "Meshery Design":
+			sourceType = core.IacFileTypes.MESHERY_DESIGN
+		case "Docker Compose":
+			sourceType = core.IacFileTypes.DOCKER_COMPOSE
 		}
 
 		pattern, err := importPattern(sourceType, file, patternURL, true)
