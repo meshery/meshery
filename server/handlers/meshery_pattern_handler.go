@@ -13,7 +13,6 @@ import (
 	"slices"
 	"strconv"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/gofrs/uuid"
@@ -31,7 +30,6 @@ import (
 	"github.com/layer5io/meshkit/models/converter"
 	_errors "github.com/pkg/errors"
 
-	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/catalog/v1alpha1"
 	"github.com/layer5io/meshkit/models/events"
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
@@ -40,7 +38,6 @@ import (
 	"github.com/layer5io/meshkit/utils/catalog"
 	"github.com/layer5io/meshkit/utils/kubernetes"
 	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
-	"github.com/layer5io/meshkit/utils/walker"
 
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/meshery/schemas/models/v1alpha2"
@@ -270,186 +267,189 @@ func (h *Handler) VerifyAndConvertToDesign(
 	return nil
 }
 
-func unCompressOCIArtifactIntoDesign(artifact []byte) (*models.MesheryPattern, error) {
+// Commenting out unused function
+// func unCompressOCIArtifactIntoDesign(artifact []byte) (*models.MesheryPattern, error) {
 
-	// Assume design is in OCI Tarball Format
-	tmpDir, err := oci.CreateTempOCIContentDir()
-	if err != nil {
-		return nil, ErrCreateDir(err, "OCI")
-	}
-	defer os.RemoveAll(tmpDir)
+// 	// Assume design is in OCI Tarball Format
+// 	tmpDir, err := oci.CreateTempOCIContentDir()
+// 	if err != nil {
+// 		return nil, ErrCreateDir(err, "OCI")
+// 	}
+// 	defer os.RemoveAll(tmpDir)
 
-	tmpInputDesignFile := filepath.Join(tmpDir, "design.tar")
-	file, err := os.Create(tmpInputDesignFile)
-	if err != nil {
-		return nil, ErrCreateFile(err, tmpInputDesignFile)
-	}
-	defer file.Close()
+// 	tmpInputDesignFile := filepath.Join(tmpDir, "design.tar")
+// 	file, err := os.Create(tmpInputDesignFile)
+// 	if err != nil {
+// 		return nil, ErrCreateFile(err, tmpInputDesignFile)
+// 	}
+// 	defer file.Close()
 
-	reader := bytes.NewReader(artifact)
-	if _, err := io.Copy(file, reader); err != nil {
-		return nil, ErrWritingIntoFile(err, tmpInputDesignFile)
-	}
+// 	reader := bytes.NewReader(artifact)
+// 	if _, err := io.Copy(file, reader); err != nil {
+// 		return nil, ErrWritingIntoFile(err, tmpInputDesignFile)
+// 	}
 
-	tmpOutputDesignFile := filepath.Join(tmpDir, "output")
-	// Extract the tarball
-	if err := oci.UnCompressOCIArtifact(tmpInputDesignFile, tmpOutputDesignFile); err != nil {
-		return nil, ErrUnCompressOCIArtifact(err)
-	}
+// 	tmpOutputDesignFile := filepath.Join(tmpDir, "output")
+// 	// Extract the tarball
+// 	if err := oci.UnCompressOCIArtifact(tmpInputDesignFile, tmpOutputDesignFile); err != nil {
+// 		return nil, ErrUnCompressOCIArtifact(err)
+// 	}
 
-	files, err := walker.WalkLocalDirectory(tmpOutputDesignFile)
-	if err != nil {
-		return nil, ErrWaklingLocalDirectory(err)
-	}
+// 	files, err := walker.WalkLocalDirectory(tmpOutputDesignFile)
+// 	if err != nil {
+// 		return nil, ErrWaklingLocalDirectory(err)
+// 	}
 
-	// TODO: Add support to merge multiple designs into one
-	// Currently, assumes to save only the first design
-	if len(files) == 0 {
-		return nil, ErrEmptyOCIImage(fmt.Errorf("no design file detected in the imported OCI image"))
-	}
-	design := files[0]
+// 	// TODO: Add support to merge multiple designs into one
+// 	// Currently, assumes to save only the first design
+// 	if len(files) == 0 {
+// 		return nil, ErrEmptyOCIImage(fmt.Errorf("no design file detected in the imported OCI image"))
+// 	}
+// 	design := files[0]
 
-	var patternFile pattern.PatternFile
+// 	var patternFile pattern.PatternFile
 
-	err = encoding.Unmarshal([]byte(design.Content), &patternFile)
-	if err != nil {
-		return nil, ErrDecodePattern(err)
-	}
-	mesheryPattern := &models.MesheryPattern{
-		PatternFile: design.Content,
-		Name:        design.Name,
-	}
+// 	err = encoding.Unmarshal([]byte(design.Content), &patternFile)
+// 	if err != nil {
+// 		return nil, ErrDecodePattern(err)
+// 	}
+// 	mesheryPattern := &models.MesheryPattern{
+// 		PatternFile: design.Content,
+// 		Name:        design.Name,
+// 	}
 
-	return mesheryPattern, nil
-}
+// 	return mesheryPattern, nil
+// }
 
-func githubRepoDesignScan(
-	owner,
-	repo,
-	path,
-	branch,
-	sourceType string,
-	reg *meshmodel.RegistryManager,
-) ([]models.MesheryPattern, error) {
-	var mu sync.Mutex
-	ghWalker := walker.NewGit()
-	result := make([]models.MesheryPattern, 0)
-	err := ghWalker.
-		Owner(owner).
-		Repo(repo).
-		Branch(branch).
-		Root(path).
-		RegisterFileInterceptor(func(f walker.File) error {
-			ext := filepath.Ext(f.Name)
-			var k8sres string
-			var err error
-			k8sres = f.Content
-			if ext == ".yml" || ext == ".yaml" {
-				if sourceType == string(models.DockerCompose) {
-					k8sres, err = kompose.Convert([]byte(f.Content))
-					if err != nil {
-						return ErrRemoteApplication(err)
-					}
-				}
-				pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, "", false, reg)
-				if err != nil {
-					return err //always a meshkit error
-				}
+// Commenting out unused function
+// func githubRepoDesignScan(
+// 	owner,
+// 	repo,
+// 	path,
+// 	branch,
+// 	sourceType string,
+// 	reg *meshmodel.RegistryManager,
+// ) ([]models.MesheryPattern, error) {
+// 	var mu sync.Mutex
+// 	ghWalker := walker.NewGit()
+// 	result := make([]models.MesheryPattern, 0)
+// 	err := ghWalker.
+// 		Owner(owner).
+// 		Repo(repo).
+// 		Branch(branch).
+// 		Root(path).
+// 		RegisterFileInterceptor(func(f walker.File) error {
+// 			ext := filepath.Ext(f.Name)
+// 			var k8sres string
+// 			var err error
+// 			k8sres = f.Content
+// 			if ext == ".yml" || ext == ".yaml" {
+// 				if sourceType == string(models.DockerCompose) {
+// 					k8sres, err = kompose.Convert([]byte(f.Content))
+// 					if err != nil {
+// 						return ErrRemoteApplication(err)
+// 					}
+// 				}
+// 				pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, "", false, reg)
+// 				if err != nil {
+// 					return err //always a meshkit error
+// 				}
 
-				patternByt, _ := encoding.Marshal(pattern)
+// 				patternByt, _ := encoding.Marshal(pattern)
 
-				af := models.MesheryPattern{
-					Name:        strings.TrimSuffix(f.Name, ext),
-					PatternFile: string(patternByt),
-					Location: map[string]interface{}{
-						"type":   "github",
-						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
-						"path":   f.Path,
-						"branch": branch,
-					},
-					Type: sql.NullString{
-						String: string(sourceType),
-						Valid:  true,
-					},
-					SourceContent: []byte(f.Content),
-				}
+// 				af := models.MesheryPattern{
+// 					Name:        strings.TrimSuffix(f.Name, ext),
+// 					PatternFile: string(patternByt),
+// 					Location: map[string]interface{}{
+// 						"type":   "github",
+// 						"host":   fmt.Sprintf("github.com/%s/%s", owner, repo),
+// 						"path":   f.Path,
+// 						"branch": branch,
+// 					},
+// 					Type: sql.NullString{
+// 						String: string(sourceType),
+// 						Valid:  true,
+// 					},
+// 					SourceContent: []byte(f.Content),
+// 				}
 
-				mu.Lock()
-				result = append(result, af)
-				mu.Unlock()
-			}
+// 				mu.Lock()
+// 				result = append(result, af)
+// 				mu.Unlock()
+// 			}
 
-			return nil
-		}).
-		Walk()
+// 			return nil
+// 		}).
+// 		Walk()
 
-	return result, ErrRemoteApplication(err)
-}
+// 	return result, ErrRemoteApplication(err)
+// }
 
+// Commenting out unused function
 // Always returns a meshery pattern slice of length 1 otherwise an error is returned
-func genericHTTPDesignFile(fileURL, patternName, sourceType string, reg *meshmodel.RegistryManager, log logger.Handler) ([]models.MesheryPattern, error) {
-	resp, err := http.Get(fileURL)
-	if err != nil {
-		return nil, ErrRemoteApplication(err)
-	}
-	if resp.StatusCode != http.StatusOK {
-		return nil, ErrRemoteApplication(fmt.Errorf("file not found"))
-	}
+// func genericHTTPDesignFile(fileURL, patternName, sourceType string, reg *meshmodel.RegistryManager, log logger.Handler) ([]models.MesheryPattern, error) {
+// 	resp, err := http.Get(fileURL)
+// 	if err != nil {
+// 		return nil, ErrRemoteApplication(err)
+// 	}
+// 	if resp.StatusCode != http.StatusOK {
+// 		return nil, ErrRemoteApplication(fmt.Errorf("file not found"))
+// 	}
 
-	defer models.SafeClose(resp.Body, log)
+// 	defer models.SafeClose(resp.Body, log)
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, ErrRemoteApplication(err)
-	}
+// 	body, err := io.ReadAll(resp.Body)
+// 	if err != nil {
+// 		return nil, ErrRemoteApplication(err)
+// 	}
 
-	res := string(body)
+// 	res := string(body)
 
-	if sourceType == string(models.DockerCompose) {
-		res, err = kompose.Convert(body)
-		if err != nil {
-			return nil, ErrRemoteApplication(err)
-		}
-	}
+// 	if sourceType == string(models.DockerCompose) {
+// 		res, err = kompose.Convert(body)
+// 		if err != nil {
+// 			return nil, ErrRemoteApplication(err)
+// 		}
+// 	}
 
-	var pattern pattern.PatternFile
-	if sourceType == string(models.DockerCompose) || sourceType == string(models.K8sManifest) {
-		var err error
-		pattern, err = pCore.NewPatternFileFromK8sManifest(res, "", false, reg)
-		if err != nil {
-			return nil, err //This error is already a meshkit error
-		}
-	} else {
-		err := encoding.Unmarshal([]byte(res), &pattern)
-		if err != nil {
-			return nil, ErrDecodePattern(err)
-		}
-	}
+// 	var pattern pattern.PatternFile
+// 	if sourceType == string(models.DockerCompose) || sourceType == string(models.K8sManifest) {
+// 		var err error
+// 		pattern, err = pCore.NewPatternFileFromK8sManifest(res, "", false, reg)
+// 		if err != nil {
+// 			return nil, err //This error is already a meshkit error
+// 		}
+// 	} else {
+// 		err := encoding.Unmarshal([]byte(res), &pattern)
+// 		if err != nil {
+// 			return nil, ErrDecodePattern(err)
+// 		}
+// 	}
 
-	if patternName != "" {
-		pattern.Name = patternName
-	}
+// 	if patternName != "" {
+// 		pattern.Name = patternName
+// 	}
 
-	patternByt, _ := encoding.Marshal(pattern)
+// 	patternByt, _ := encoding.Marshal(pattern)
 
-	url := strings.Split(fileURL, "/")
-	af := models.MesheryPattern{
-		Name:        url[len(url)-1],
-		PatternFile: string(patternByt),
-		Location: map[string]interface{}{
-			"type":   "http",
-			"host":   fileURL,
-			"path":   "",
-			"branch": "",
-		},
-		Type: sql.NullString{
-			String: string(sourceType),
-			Valid:  true,
-		},
-		SourceContent: body,
-	}
-	return []models.MesheryPattern{af}, nil
-}
+// 	url := strings.Split(fileURL, "/")
+// 	af := models.MesheryPattern{
+// 		Name:        url[len(url)-1],
+// 		PatternFile: string(patternByt),
+// 		Location: map[string]interface{}{
+// 			"type":   "http",
+// 			"host":   fileURL,
+// 			"path":   "",
+// 			"branch": "",
+// 		},
+// 		Type: sql.NullString{
+// 			String: string(sourceType),
+// 			Valid:  true,
+// 		},
+// 		SourceContent: body,
+// 	}
+// 	return []models.MesheryPattern{af}, nil
+// }
 
 // swagger:route GET /api/pattern PatternsAPI idGetPatternFiles
 // Handle GET request for patterns
