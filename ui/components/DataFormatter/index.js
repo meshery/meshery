@@ -308,12 +308,7 @@ const DynamicFormatter = ({ data, uiSchema, isLevel = true }) => {
 
       if (propertyFormatters?.[title]) {
         return (
-          <Grid
-            key={title}
-            sm={12}
-
-            // {...(uiSchema?.[title] || {})}
-          >
+          <Grid key={title} sm={12} {...(uiSchema?.[title] || {})}>
             {propertyFormatters[title](data, data)}
           </Grid>
         );

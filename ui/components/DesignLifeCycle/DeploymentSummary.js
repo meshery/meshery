@@ -1,6 +1,6 @@
 import { NOTIFICATIONCOLORS } from '@/themes/index';
 import { Box, Stack, Typography, styled, useTheme } from '@layer5/sistent';
-import { alpha } from '@mui/material';
+
 import { FormatStructuredData, TextWithLinks } from '../DataFormatter';
 import { SEVERITY_STYLE } from '../NotificationCenter/constants';
 import { ErrorMetadataFormatter } from '../NotificationCenter/metadata';
@@ -11,7 +11,7 @@ import { UsesSistent } from '../SistentWrapper';
 import { openViewScopedToDesignInOperator, useIsOperatorEnabled } from '@/utils/utils';
 import { useRouter } from 'next/router';
 
-const StyledDetailBox = styled(Box)(({ theme, severityColor, bgOpacity }) => ({
+const StyledDetailBox = styled(Box)(() => ({
   // padding: theme.spacing(2),
   // backgroundColor: alpha(severityColor, bgOpacity),
   display: 'flex',
