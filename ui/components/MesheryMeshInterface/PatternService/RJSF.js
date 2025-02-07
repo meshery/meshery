@@ -54,6 +54,8 @@ function RJSFForm({
   uiSchema = {},
   validator,
   fieldTemplates = {},
+  customFields ={},
+  widgets={},
   extraErrors,
   isExtensionTooltipPortal = true,
   ...restProps
@@ -71,6 +73,7 @@ function RJSFForm({
   if (isLoading && LoadingComponent) {
     return <LoadingComponent />;
   }
+
 
   return (
     <ErrorBoundary customFallback={CustomErrorFallback}>
@@ -105,7 +108,9 @@ function RJSFForm({
             TextareaWidget: CustomTextAreaWidget,
             FileWidget: CustomFileWidget,
             URLWidget: CustomURLWidget,
+            ...widgets
           }}
+          fields={customFields}
           liveValidate={liveValidate}
           showErrorList={false}
           noHtml5Validate

@@ -220,6 +220,7 @@ func processEvaluationResponse(registry *registry.RegistryManager, evalPayload p
 		} else {
 			_component.DisplayName = fmt.Sprintf("%s-%s", strings.ToLower(_component.DisplayName), utils.GetRandomAlphabetsOfDigit(3))
 		}
+		_component.Metadata.IsAnnotation = _c.Metadata.IsAnnotation
 		_component.Configuration = _c.Configuration
 		compsAdded = append(compsAdded, *_component)
 	}
