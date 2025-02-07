@@ -1,4 +1,3 @@
-
 export const Colors = {
   darkJungleGreen: '#1E2117',
   caribbeanGreen: '#00D3a9',
