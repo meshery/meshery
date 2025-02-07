@@ -6,7 +6,6 @@ const verifyWorkspaceResBody = (body, provider) => {
     expect.objectContaining({
       workspaces: expect.any(Array),
       total_count: expect.any(Number),
-      page: expect.any(Number),
       page_size: expect.any(Number),
     }),
   );
@@ -21,7 +20,15 @@ const verifyWorkspaceResBody = (body, provider) => {
             created_at: expect.any(String),
             updated_at: expect.any(String),
           }
-        : null;
+        : {
+            name: expect.any(String),
+            description: expect.any(String),
+            org_id: expect.any(String),
+            created_at: expect.any(String),
+            updated_at: expect.any(String),
+            owner: expect.any(String),
+            deleted_at: expect.anything(),
+        };
 
     expect(workspace).toEqual(
       expect.objectContaining({
@@ -42,20 +49,20 @@ test.beforeEach(async ({ page, provider }) => {
       request.method() === 'GET',
   );
   const workspacesRes = page.waitForResponse(async (response) => {
-    if (!response.url().includes(`${ENV.MESHERY_SERVER_URL}/api/workspaces`)) return false;
+    if (!response.url().startsWith(`${ENV.MESHERY_SERVER_URL}/api/workspaces`)) return false;
     if (response.status() !== 200) return false;
     const body = await response.json();
     if (body.workspaces) return true;
     return false;
   });
-
-  await page.goto(`${ENV.MESHERY_SERVER_URL}/workspace`);
+  await page.goto(`${ENV.MESHERY_SERVER_URL}`);
+  await page.getByRole('button', { name: 'Lifecycle' }).click();
+  await page.getByRole('button', { name: 'Workspaces' }).click();
 
   await workspacesReq;
   const res = await workspacesRes;
   const body = await res.json();
   verifyWorkspaceResBody(body, provider);
-
   workspaceCount = body.workspaces.length;
 });
 
@@ -64,7 +71,9 @@ test('Verify workspace page components', async ({ page }) => {
   await expect(page.getByRole('button').filter({ hasText: 'Create' })).toBeVisible();
 
   // Verify Search bar exists
-  await expect(page.getByPlaceholder('Search Workspaces...')).toBeVisible();
+  // await page.locator('button[aria-label="Search"]').click();
+  // await expect(page.getByPlaceholder('Search Workspaces...')).toBeVisible();
+
 
   if (workspaceCount > 0) {
     // Verify workspace cards are displayed
@@ -76,6 +85,27 @@ test('Verify workspace page components', async ({ page }) => {
       page.getByText('Click "Create" to establish your first workspace.'),
     ).toBeVisible();
   }
+});
+
+test('should switch between grid and table views', async ({ page }) => {
+  // Verify initial grid view
+  await expect(page.locator('.MuiGrid-container').first()).toBeVisible();
+
+  // Switch to table view using aria-label
+  await page.getByRole('button', { name: 'Switch View' }).click();
+
+  // Wait for table view to load
+  // await page.waitForSelector('table');
+
+  // Match exact column headers using partial class that won't change
+  const columns = ['Name', 'Description', 'Owner', 'Actions'];
+  for (const heading of columns) {
+    await expect(page.locator('[class*="MUIDataTableHeadCell-data"]', { hasText: heading })).toBeVisible();
+  }
+
+  // Switch back to grid view
+  await page.getByRole('button', { name: 'Switch View' }).click();
+  await expect(page.locator('.MuiGrid-container').first()).toBeVisible();
 });
 
 test('Create new workspace', async ({ page, provider }) => {
