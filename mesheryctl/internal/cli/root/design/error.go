@@ -28,7 +28,7 @@ const (
 	ErrOffboardDesignCode        = "mesheryctl-1005"
 	ErrDesignFlagCode            = "mesheryctl-1006"
 	ErrDesignManifestCode        = "mesheryctl-1007"
-	ErrDesignFileNotProvidedCode = "replace_me"
+	ErrDesignFileNotProvidedCode = "mesheryctl-1140"
 	ErrDesignsNotFoundCode       = "mesheryctl-1037"
 	ErrInvalidDesignFileCode     = "mesheryctl-1038"
 	ErrDesignInvalidNameOrIDCode = "mesheryctl-1039"
