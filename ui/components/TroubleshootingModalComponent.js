@@ -300,7 +300,11 @@ const TroubleshootingModal = (props) => {
                   email
                 </ContactHelpLink>{' '}
                 or{' '}
-                <ContactHelpLink href="https://meshery.io/community#community-forums" target="_blank" rel="noreferrer">
+                <ContactHelpLink
+                  href="https://meshery.io/community#community-forums"
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   community forum
                 </ContactHelpLink>
                 .

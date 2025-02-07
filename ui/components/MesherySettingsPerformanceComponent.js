@@ -11,7 +11,6 @@ import { durationOptions } from '../lib/prePopulatedOptions';
 import { ctxUrl } from '../utils/multi-ctx';
 import { withNotify } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
-import { styled } from '@mui/styles';
 import {
   FormControl,
   CircularProgress,
@@ -22,6 +21,7 @@ import {
   Button,
   CustomTooltip,
   useTheme,
+  styled,
 } from '@layer5/sistent';
 
 const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
