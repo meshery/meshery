@@ -17,7 +17,7 @@ services:
       - "${istio.port}:10000"
     x-enabled: ${istio.enabled}
   meshery-linkerd:
-    image: layer5/meshery-linkerd:stable-latest
+    image: meshery/meshery-linkerd:stable-latest
     labels:
       - ${labels.watchtower}
     ports:
