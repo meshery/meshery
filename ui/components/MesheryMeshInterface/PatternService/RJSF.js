@@ -74,7 +74,6 @@ function RJSFForm({
     return <LoadingComponent />;
   }
 
-  console.log("widgets",widgets)
 
   return (
     <ErrorBoundary customFallback={CustomErrorFallback}>
