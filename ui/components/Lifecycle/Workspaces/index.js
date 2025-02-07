@@ -674,15 +674,17 @@ const Workspaces = ({ organization }) => {
                   </Grid>
                 </>
               ) : (
-                <ResponsiveDataTable
-                  columns={columns}
-                  data={workspacesData?.workspaces}
-                  options={options}
-                  columnVisibility={columnVisibility}
-                  tableCols={tableCols}
-                  updateCols={updateCols}
-                  backgroundColor={theme.palette.background.card}
-                />
+                <UsesSistent>
+                  <ResponsiveDataTable
+                    columns={columns}
+                    data={workspacesData?.workspaces}
+                    options={options}
+                    columnVisibility={columnVisibility}
+                    tableCols={tableCols}
+                    updateCols={updateCols}
+                    backgroundColor={theme.palette.background.card}
+                  />
+                </UsesSistent>
               )}
             </>
             {(actionType === WORKSPACE_ACTION_TYPES.CREATE
