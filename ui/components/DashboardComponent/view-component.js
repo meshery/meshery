@@ -24,10 +24,10 @@ import {
   extractPodVolumnTables,
   splitCamelCaseString,
   KeyValueInRow,
+  convertToReadableUnit,
 } from '@layer5/sistent';
 import { SectionHeading } from '../DataFormatter';
 import { UsesSistent } from '../SistentWrapper';
-import { convertToReadableUnit } from '../../utils/k8s-utils';
 
 const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
 const FormatterContext = React.createContext({
