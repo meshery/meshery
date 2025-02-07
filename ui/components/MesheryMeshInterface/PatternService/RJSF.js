@@ -56,6 +56,8 @@ function RJSFForm({
   uiSchema = {},
   validator,
   fieldTemplates = {},
+  customFields = {},
+  widgets = {},
   extraErrors,
   isExtensionTooltipPortal = true,
   ...restProps
@@ -111,7 +113,9 @@ function RJSFForm({
               TextareaWidget: CustomTextAreaWidget,
               FileWidget: CustomFileWidget,
               URLWidget: CustomURLWidget,
+              ...widgets,
             }}
+            fields={customFields}
             liveValidate={liveValidate}
             showErrorList={false}
             noHtml5Validate
