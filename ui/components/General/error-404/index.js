@@ -123,8 +123,11 @@ const DefaultError = (props) => {
         </StyledButton>
         <Typography variant="textB1Regular" component="p" align="center">
           For more help, please inquire on the
-          <ErrorLink href="https://meshery.io/community#community-forums"> discussion forum</ErrorLink> or the{' '}
-          <ErrorLink href="https://slack.layer5.io"> Slack workspace</ErrorLink>.
+          <ErrorLink href="https://meshery.io/community#community-forums">
+            {' '}
+            discussion forum
+          </ErrorLink>{' '}
+          or the <ErrorLink href="https://slack.layer5.io"> Slack workspace</ErrorLink>.
         </Typography>
       </ErrorMain>
     </UsesSistent>

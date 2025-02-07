@@ -6,18 +6,17 @@ import {
   useTheme,
   InputLabel,
   styled,
-} from '@material-ui/core';
+} from '@layer5/sistent';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
-import { makeStyles } from '@material-ui/styles';
 
 const CustomTextField = styled(TextField)(({ theme, overrideFlag }) => {
   return {
     '& div': {
-      backgroundColor: overrideFlag ? (theme.palette.type === 'dark' ? '#303030' : '#fff') : '',
+      backgroundColor: overrideFlag ? (theme.palette.mode === 'dark' ? '#303030' : '#fff') : '',
     },
   };
 });
@@ -35,17 +34,21 @@ const BaseInput = (props) => {
     display: 'flex',
     alignItems: 'center',
   };
-  const styles = makeStyles((theme) => ({
-    customInputLabel: {
-      color: theme.palette.secondary.text,
-      backgroundColor: theme.palette.background.default,
-      padding: '0.2rem',
-      height: '1rem',
-      borderRadius: '3px',
-    },
-  }));
   const theme = useTheme();
-  const classes = styles();
+
+  const getInputLabelStyle = () => {
+    if (prettifiedName === 'name' || prettifiedName === 'namespace' || isFocused) {
+      return {
+        color: theme.palette.secondary.text,
+        backgroundColor: theme.palette.background.default,
+        padding: '0.2rem',
+        height: '1rem',
+        borderRadius: '3px',
+      };
+    }
+    return {};
+  };
+
   return (
     <>
       <div key={props.id} style={xRjsfGridArea ? {} : style}>
@@ -89,10 +92,7 @@ const BaseInput = (props) => {
                 )
           }
           InputLabelProps={{
-            className:
-              prettifiedName === 'name' || prettifiedName === 'namespace' || isFocused
-                ? classes.customInputLabel
-                : '',
+            style: getInputLabelStyle(),
           }}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
@@ -127,7 +127,7 @@ const BaseInput = (props) => {
                       <HelpOutlineIcon
                         width="14px"
                         height="14px"
-                        fill={theme.palette.type === 'dark' ? 'white' : 'gray'}
+                        fill={theme.palette.mode === 'dark' ? 'white' : 'gray'}
                         style={{ verticalAlign: 'middle', ...iconSmall }}
                       />
                     </IconButton>

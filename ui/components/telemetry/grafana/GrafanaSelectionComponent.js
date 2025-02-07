@@ -13,7 +13,7 @@ const GrafanaRoot = styled(Box)(() => {
   const theme = useTheme();
   return {
     padding: theme.spacing(5),
-    backgroundColor: theme.palette.secondary.elevatedComponents,
+    backgroundColor: theme.palette.background.card,
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
   };
