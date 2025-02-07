@@ -54,25 +54,29 @@ mesheryctl system reset
 func resetMesheryConfig() error {
 	userResponse := false
 	if utils.SilentFlag {
+		log.Debug("Silent mode enabled. Skipping confirmation.")
 		userResponse = true
 	} else {
 		// ask user for confirmation
-		userResponse = utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue")
+		userResponse = utils.AskForConfirmation("Meshery config file will be reset to system defaults. Are you sure you want to continue?")
 	}
+
 	if !userResponse {
-		log.Info("Reset aborted.")
+		log.Info("Reset aborted by user.")
 		return nil
 	}
 
-	// Get viper instance used for context
+	log.Info("Fetching Meshery configuration...")
 	mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 	if err != nil {
-		utils.Log.Error(err)
+		log.Errorf("Error retrieving Meshery configuration: %v", err)
 		return nil
 	}
+
 	// get the platform, channel and the version of the current context
 	// if a temp context is set using the -c flag, use it as the current context
 	if tempContext != "" {
+		log.Infof("Applying temporary context: %s", tempContext)
 		err = mctlCfg.SetCurrentContext(tempContext)
 		if err != nil {
 			return ErrSettingTemporaryContext(err)
@@ -81,20 +85,20 @@ func resetMesheryConfig() error {
 
 	currCtx, err := mctlCfg.GetCurrentContext()
 	if err != nil {
+		log.Errorf("Error retrieving current context: %v", err)
 		return ErrRetrievingCurrentContext(err)
 	}
 
-	log.Info("Meshery resetting...\n")
-	log.Printf("Current Context: %s", mctlCfg.GetCurrentContextName())
-	log.Printf("Channel: %s", currCtx.GetChannel())
-	log.Printf("Version: %s", currCtx.GetVersion())
-	log.Printf("Platform: %s\n", currCtx.GetPlatform())
+	log.Infof("Meshery resetting with context: %s", mctlCfg.GetCurrentContextName())
+	log.Infof("Channel: %s, Version: %s, Platform: %s", currCtx.GetChannel(), currCtx.GetVersion(), currCtx.GetPlatform())
 
 	// Reset the config file to the default context
+	log.Info("Resetting configuration to default context...")
 	defaultContext := utils.TemplateContext
 	defaultContext.Platform = currCtx.Platform
 	err = config.AddContextToConfig(mctlCfg.GetCurrentContextName(), defaultContext, utils.DefaultConfigPath, true, true)
 	if err != nil {
+		log.Errorf("Error setting default context: %v", err)
 		return ErrSettingDefaultContextToConfig(err)
 	}
 
@@ -105,46 +109,46 @@ func resetMesheryConfig() error {
 func fetchManifests(mctlCfg *config.MesheryCtlConfig) error {
 	currCtx, err := mctlCfg.GetCurrentContext()
 	if err != nil {
+		log.Errorf("Error retrieving current context: %v", err)
 		return ErrRetrievingCurrentContext(err)
 	}
 
 	switch currCtx.GetPlatform() {
 	case "docker":
-
-		log.Printf("Fetching default docker-compose file as per current-context: %s...", mctlCfg.GetCurrentContextName())
+		log.Infof("Fetching default docker-compose file for context: %s", mctlCfg.GetCurrentContextName())
 		err = utils.DownloadDockerComposeFile(currCtx, true)
 		if err != nil {
+			log.Errorf("Error downloading Docker Compose file: %v", err)
 			return ErrDownloadFile(err, utils.DockerComposeFile)
 		}
 
 		err = utils.CreateManifestsFolder()
-
 		if err != nil {
+			log.Errorf("Error creating manifests folder: %v", err)
 			return ErrCreateManifestsFolder(err)
 		}
 
-		log.Printf("...fetching Meshery Operator manifests for Kubernetes...")
+		log.Info("Fetching Meshery Operator manifests...")
 		err = utils.DownloadOperatorManifest()
-
 		if err != nil {
+			log.Errorf("Error downloading operator manifest: %v", err)
 			return ErrDownloadFile(err, "operator manifest")
 		}
 
-		log.Info("...meshconfig (" + utils.DockerComposeFile + ") now reset to default settings.")
+		log.Info("Meshery configuration reset to default settings.")
 
 	case "kubernetes":
-
-		log.Printf("Fetching Meshery Server and Meshery Operator manifests for  %s context...", mctlCfg.GetCurrentContextName())
-		// fetch the manifest files corresponding to the version specified
+		log.Infof("Fetching Meshery Server and Operator manifests for context: %s", mctlCfg.GetCurrentContextName())
 		_, err := utils.FetchManifests(currCtx)
-
 		if err != nil {
+			log.Errorf("Error fetching Kubernetes manifests: %v", err)
 			return err
 		}
 
-		log.Info("...meshconfig has been reset to default settings.")
+		log.Info("Meshery configuration reset to default settings.")
 
 	default:
+		log.Errorf("Unsupported platform: %s", currCtx.Platform)
 		return fmt.Errorf("the platform %s is not supported currently. The supported platforms are:\ndocker\nkubernetes\nPlease check %s/config.yaml file", currCtx.Platform, utils.MesheryFolder)
 	}
 
