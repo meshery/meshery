@@ -263,6 +263,9 @@ alias_components_to_add(design_file, alias_relationships) := {action |
 		"id": from.id,
 		"component": {"kind": from.kind},
 		"model": from.model,
+		"metadata": {
+			"isAnnotation":true
+		}
 	}
 
 	action := {
