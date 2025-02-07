@@ -90,7 +90,7 @@ This Relationship type configures the networking between one or more components.
 
 **Examples**: An edge-network relationship between a Service and a Deployment or an edge-binding relationship between an Ingress and a Service.
 
-- Example 1) Service --> DeploymentS
+- Example 1) Service --> Deployment
 - Example 2) IngressController --> Ingress --> Service
 
 <details close><summary>Visual Representation of Edge-Network Relationships</summary>
