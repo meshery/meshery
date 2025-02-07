@@ -1,3 +1,4 @@
+import { ThemeProvider } from '@mui/material/styles';
 import { withTheme } from '@rjsf/core';
 import { Theme as MaterialUITheme } from '@rjsf/mui';
 import ajv8validator from '@rjsf/validator-ajv8';
@@ -6,7 +7,6 @@ import { rjsfTheme } from '../../../themes';
 import darkRjsfTheme from '../../../themes/rjsf';
 import { useTheme } from '@layer5/sistent';
 import { CustomTextTooltip } from './CustomTextTooltip';
-import { SistentThemeProvider } from '@layer5/sistent';
 import MesheryArrayFieldTemplate from './RJSFCustomComponents/ArrayFieldTemlate';
 import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';
 import CustomTextWidget from './RJSFCustomComponents/CustomTextWidget';
@@ -22,6 +22,7 @@ import CustomURLWidget from './RJSFCustomComponents/CustomURLWidget';
 import CustomColorWidget from './RJSFCustomComponents/CustomColorWidget';
 import { ErrorBoundary } from '@layer5/sistent';
 import CustomErrorFallback from '@/components/General/ErrorBoundary';
+import { UsesSistent } from '@/components/SistentWrapper';
 
 const MuiRJSFForm = withTheme(MaterialUITheme);
 
@@ -78,13 +79,10 @@ function RJSFForm({
   }
 
   return (
-    <>
+    <UsesSistent>
       <ErrorBoundary customFallback={CustomErrorFallback}>
         {/* Putting RJSF into error boundary, so that error can be catched.. */}{' '}
-        <SistentThemeProvider
-          customTheme={globalTheme.palette.mode === 'dark' ? darkRjsfTheme : rjsfTheme}
-          initialMode={globalTheme.palette.mode}
-        >
+        <ThemeProvider theme={globalTheme.palette.mode === 'dark' ? darkRjsfTheme : rjsfTheme}>
           <MuiRJSFForm
             schema={schema.rjsfSchema}
             idPrefix={jsonSchema?.title}
@@ -123,9 +121,9 @@ function RJSFForm({
             {children}
             <div></div>
           </MuiRJSFForm>
-        </SistentThemeProvider>
+        </ThemeProvider>
       </ErrorBoundary>
-    </>
+    </UsesSistent>
   );
 }
 
