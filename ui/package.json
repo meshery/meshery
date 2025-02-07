@@ -124,7 +124,7 @@
     "babel-loader": "^9.1.2",
     "dotenv": "^16.4.5",
     "eslint": "^8.57.1",
-    "eslint-config-next": "^13.1.2",
+    "eslint-config-next": "^15.1.6",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react": "^7.37.2",
