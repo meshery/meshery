@@ -748,7 +748,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
   </tr>
   {% assign command12 = site.data.mesheryctlcommands.cmds.model %}
     <tr>
-      <td rowspan=10><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command12.name }}">{{ command12.name }}</a></td>
+      <td rowspan=11><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command12.name }}">{{ command12.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command12.description }}</td>

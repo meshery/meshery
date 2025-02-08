@@ -906,6 +906,20 @@ model:
         output-format:
           name: -o, --output-format
           description: (optional) format to display in [json|yaml] (default "yaml")
+    generate:
+      name: generate
+      description: Generate models by specifying the directory, file, or URL.
+      usage: mesheryctl model generate [flags]
+      flags:
+        file:
+          name: --file, -f
+          description: Specify the path to the file, directory, or URL.
+        template:
+          name: --template, -t
+          description: Specify the path to the template JSON file (only required for URLs).
+        register:
+        name: --register, -r
+        description: Skip model registration (default is true).      
     import:
       name: import
       description: Import models using a file or filepath directly to the meshery registry
