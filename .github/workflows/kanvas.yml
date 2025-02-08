@@ -37,7 +37,7 @@ jobs:
           path: action
           repository: layer5labs/kanvas-snapshot
       - id: test_result
-        uses: layer5labs/Kanvas-Snapshot@v0.2.26
+        uses: layer5labs/Kanvas-Snapshot@v0.2.27
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }} # github's personal access token example: "ghp_...."
           mesheryToken: ${{ secrets.MESHERY_TOKEN }} # Meshery Cloud Authentication token, signin to meshery-cloud to get one, example: ey.....
