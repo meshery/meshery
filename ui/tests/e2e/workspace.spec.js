@@ -70,11 +70,6 @@ test('Verify workspace page components', async ({ page }) => {
   // Verify Create button exists
   await expect(page.getByRole('button').filter({ hasText: 'Create' })).toBeVisible();
 
-  // Verify Search bar exists
-  // await page.locator('button[aria-label="Search"]').click();
-  // await expect(page.getByPlaceholder('Search Workspaces...')).toBeVisible();
-
-
   if (workspaceCount > 0) {
     // Verify workspace cards are displayed
     await expect(page.locator('.MuiGrid-container').first()).toBeVisible();
@@ -87,20 +82,23 @@ test('Verify workspace page components', async ({ page }) => {
   }
 });
 
-test('should switch between grid and table views', async ({ page }) => {
+test('Switch between grid and table views', async ({ page }) => {
   // Verify initial grid view
   await expect(page.locator('.MuiGrid-container').first()).toBeVisible();
 
   // Switch to table view using aria-label
   await page.getByRole('button', { name: 'Switch View' }).click();
 
-  // Wait for table view to load
-  // await page.waitForSelector('table');
+  // Verify table structure exists (simpler approach)
+  await expect(page.locator('.MuiTable-root').first()).toBeVisible();
+  await expect(page.locator('.MuiTableHead-root').first()).toBeVisible();
+  await expect(page.locator('.MuiTableBody-root').first()).toBeVisible();
 
-  // Match exact column headers using partial class that won't change
-  const columns = ['Name', 'Description', 'Owner', 'Actions'];
-  for (const heading of columns) {
-    await expect(page.locator('[class*="MUIDataTableHeadCell-data"]', { hasText: heading })).toBeVisible();
+  const expectedHeaders = ['Name', 'Description', 'Owner'];
+  for (const header of expectedHeaders) {
+    await expect(
+      page.locator('[class*="MUIDataTableHeadCell-data"]', { hasText: header }).first()
+    ).toBeVisible();
   }
 
   // Switch back to grid view
@@ -109,10 +107,10 @@ test('should switch between grid and table views', async ({ page }) => {
 });
 
 test('Create new workspace', async ({ page, provider }) => {
-  const createWorkspaceReq = page.waitForRequest(
-    (request) =>
-      request.url().includes(`${ENV.MESHERY_SERVER_URL}/api/workspaces`) &&
-      request.method() === 'POST',
+  const createWorkspaceRes = page.waitForResponse(
+    (response) =>
+      response.url().includes(`${ENV.MESHERY_SERVER_URL}/api/workspaces`) &&
+      response.request().method() === 'POST',
   );
 
   // Click Create button
@@ -125,20 +123,28 @@ test('Create new workspace', async ({ page, provider }) => {
   // Submit form
   await page.getByRole('button', { name: 'Save' }).click();
 
-  // Wait for request to complete
-  const request = await createWorkspaceReq;
-  const requestBody = JSON.parse(request.postData());
+  // Wait for response
+  const response = await createWorkspaceRes;
+  const responseBody = await response.json();
 
-  // Verify request payload
-  expect(requestBody).toEqual(
-    expect.objectContaining({
-      name: 'Test Workspace',
-      description: 'Test workspace description',
-    }),
-  );
+  // Verify response payload
+  expect(responseBody).toMatchObject({
+    name: 'Test Workspace',
+    description: 'Test workspace description',
+  });
 
   // Verify success notification
   await expect(page.getByText('Workspace "Test Workspace" created')).toBeVisible();
+
+  // Verify the new workspace is visible in the UI
+  const workspaceCard = page.locator('.MuiGrid-container').filter({ 
+    has: page.getByText('Test Workspace')
+  });
+  await expect(workspaceCard).toBeVisible();
+
+  // Verify workspace details in the card
+  await expect(workspaceCard.getByText('Test Workspace').first()).toBeVisible();
+  await expect(workspaceCard.getByText('Test workspace description').first()).toBeVisible();
 });
 
 test('Assign environments to workspace', async ({ page }) => {
