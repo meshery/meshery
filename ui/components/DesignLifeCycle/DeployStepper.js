@@ -200,7 +200,6 @@ export const UpdateDeploymentStepper = ({
   const [openInOperator, setOpenInOperator] = useState(false);
 
   const selectedEnvironments = useSelectorRtk(selectSelectedEnvs);
-  const selectedEnvCount = Object.keys(selectedEnvironments).length;
   const dryRunErrors = useDryRunValidationResults(validationMachine);
   const totalDryRunErrors = getTotalCountOfDeploymentErrors(dryRunErrors);
   const isDryRunning = useIsValidatingDryRun(validationMachine);
