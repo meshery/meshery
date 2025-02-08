@@ -1594,8 +1594,8 @@ github.com/layer5io/gowrk2 v0.6.1/go.mod h1:ugxQ23+HwQ8dmZYJd1LScw/TLKbdgfN6OOtg
 github.com/layer5io/meshery-operator v0.8.1 h1:AP6BTQ8fi5re4+o71vJ3NoQBuwfn+33EIYjabHU0Kxg=
 github.com/layer5io/meshery-operator v0.8.1/go.mod h1:Wi9ODHppoq8ODtzdfiplWYJXYpqsHOJfkJyTMQeNXk4=
 github.com/layer5io/meshkit v0.2.7/go.mod h1:QvEKV8wIEOabiFlUgiu+s78GpJTsRpoRw5pgvEX077Y=
-github.com/layer5io/meshkit v0.8.7 h1:DJ8ylJC33P1NPlB5aPtH+mpEJm/bP6Wt5ZRYB0bQdOw=
-github.com/layer5io/meshkit v0.8.7/go.mod h1:KMUAUXe6Tdl12Zha73/PYps4nQVuVsb2WmjUg0//l2c=
+github.com/layer5io/meshkit v0.8.12 h1:vHKcnvjmEkM8eg+LPGmvGKjjJKvGjBwuCXVM4+s+KoM=
+github.com/layer5io/meshkit v0.8.12/go.mod h1:ocQLHERnWyippvwulKA4TqxBi7e7mTvZgOA1ragCxiw=
 github.com/layer5io/meshsync v0.8.5 h1:mnRgCxaDJRHZUl/KKRxzg54s084wfxm85DaA4BREXS0=
 github.com/layer5io/meshsync v0.8.5/go.mod h1:FsAfvQ+9HOjbOeAutrzoHDzAohmmnWpcaDEE0ygfGyg=
 github.com/layer5io/nighthawk-go v1.0.3 h1:AGhip7TM8FjaDJ58jU/7BoPx+O45S7UNImfw7vC2Z0U=
@@ -1666,8 +1666,8 @@ github.com/mattn/go-sqlite3 v1.14.24/go.mod h1:Uh1q+B4BYcTPb+yiD3kU8Ct7aC0hY9fxU
 github.com/matttproud/golang_protobuf_extensions v1.0.1/go.mod h1:D8He9yQNgCq6Z5Ld7szi9bcBfOoFv/3dc6xSMkL2PC0=
 github.com/maxatome/go-testdeep v1.12.0 h1:Ql7Go8Tg0C1D/uMMX59LAoYK7LffeJQ6X2T04nTH68g=
 github.com/maxatome/go-testdeep v1.12.0/go.mod h1:lPZc/HAcJMP92l7yI6TRz1aZN5URwUBUAfUNvrclaNM=
-github.com/meshery/schemas v0.7.42 h1:HbCt97cE/j1BxBya3UFCGFZf2jGo4J79M8EEtnDHqJo=
-github.com/meshery/schemas v0.7.42/go.mod h1:ZKx5cazFfsBe9DtCjsgeDvWcTQz3MRHC+adL8n94KEE=
+github.com/meshery/schemas v0.7.45 h1:4WPnCMMqv5Plsf6zwRnhBdBJhJR6SLBOpgK+ZwCA0dc=
+github.com/meshery/schemas v0.7.45/go.mod h1:xpg60NqqRXmFV7Fj5tRjDN8TofGRi/Gcbt/Ilgr06WE=
 github.com/miekg/dns v1.0.14/go.mod h1:W1PPwlIAgtquWBMBEV9nkV9Cazfe8ScdGz/Lj7v3Nrg=
 github.com/miekg/dns v1.1.57 h1:Jzi7ApEIzwEPLHWRcafCN9LZSBbqQpxjt/wpgvg7wcM=
 github.com/miekg/dns v1.1.57/go.mod h1:uqRjCRUuEAA6qsOiJvDd+CFo/vW+y5WR6SNmHE55hZk=
@@ -1999,8 +1999,9 @@ github.com/spf13/pflag v1.0.0/go.mod h1:DYY7MBk1bdzusC3SYhjObp+wFpr4gzcvqqNjLnIn
 github.com/spf13/pflag v1.0.1-0.20171106142849-4c012f6dcd95/go.mod h1:DYY7MBk1bdzusC3SYhjObp+wFpr4gzcvqqNjLnInEg4=
 github.com/spf13/pflag v1.0.1/go.mod h1:DYY7MBk1bdzusC3SYhjObp+wFpr4gzcvqqNjLnInEg4=
 github.com/spf13/pflag v1.0.3/go.mod h1:DYY7MBk1bdzusC3SYhjObp+wFpr4gzcvqqNjLnInEg4=
-github.com/spf13/pflag v1.0.5 h1:iy+VFUOCP1a+8yFto/drg2CJ5u0yRoB7fZw3DKv/JXA=
 github.com/spf13/pflag v1.0.5/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
+github.com/spf13/pflag v1.0.6 h1:jFzHGLGAlb3ruxLB8MhbI6A8+AQX/2eW4qeyNZXNp2o=
+github.com/spf13/pflag v1.0.6/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
 github.com/spf13/viper v0.0.0-20150530192845-be5ff3e4840c/go.mod h1:A8kyI5cUJhb8N+3pkfONlcEcZbueH6nhAm0Fq7SrnBM=
 github.com/spf13/viper v1.3.2/go.mod h1:ZiWeW+zYFKm7srdB9IoDzzZXaJaI5eL9QjNiN/DMA2s=
 github.com/spf13/viper v1.4.0/go.mod h1:PTJ7Z/lr49W6bUbkmS1V3by4uWynFiR9p7+dSq/yZzE=

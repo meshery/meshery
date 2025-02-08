@@ -18,6 +18,8 @@
 - [Metabit Trading](https://www.metabit-trading.com/)
 - [PITS Global Data Recovery Services](https://www.pitsdatarecovery.net/)
 - [AYA Innovation Labs](https://ayapay.com/)
+- [OD10 Ventures](https://od10.in/)
+  - "I stumbled upon **Meshery** while looking for tools that can help visualize Kubernetes and its components. This helps me during PoCs and solution design demonstrations. What surprised me is that the visual design was not just a bunch of icons but could be deployed and managed collaboratively. And these are just a few of the many features of **Meshery**. It was just the product of my area of interest, so I decided to be a contributor, too." [Sangram Rath](https://linkedin.com/in/sangramrath)
 ---
 
 If you're using Meshery and aren't on this list, please [submit a pull request](https://github.com/meshery/meshery/pulls)!

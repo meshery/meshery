@@ -9,7 +9,7 @@ import { Adapters } from '../components/extensions';
 import DefaultError from '@/components/General/error-404';
 import { toggleCatalogContent } from '../lib/store';
 import { EVENT_TYPES } from '../lib/event-types';
-import { EXTENSIONS } from '../utils/Enum';
+import { EXTENSION_NAMES } from '../utils/Enum';
 import { useNotification } from '../utils/hooks/useNotification';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
@@ -324,7 +324,7 @@ const Extensions = ({ toggleCatalogContent, capabilitiesRegistry }) => {
 
   useEffect(() => {
     const meshMapExtensionExists = capabilitiesRegistry?.extensions?.navigator?.filter(
-      (val) => val.title.toLowerCase() === EXTENSIONS.MESHMAP,
+      (val) => val.title.toLowerCase() === EXTENSION_NAMES.KANVAS,
     );
     if (typeof meshMapExtensionExists === 'object' && meshMapExtensionExists.length)
       setHasAccessToMeshMap(true);

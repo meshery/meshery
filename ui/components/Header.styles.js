@@ -98,7 +98,7 @@ export const CBadgeContainer = styled('div')({
 });
 
 export const CMenuContainer = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.secondary.headerColor,
+  backgroundColor: theme.palette.background.card,
   marginTop: '-1.2rem',
   borderRadius: '3px',
   padding: '1rem',

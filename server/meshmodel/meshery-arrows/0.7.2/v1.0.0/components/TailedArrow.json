@@ -134,9 +134,9 @@
    "secondaryColor": "#00D3A9",
    "shape": "polygon",
    "shape-polygon-points": "-1 0.77 -1 -0.77 -0.54 -0.77 0 -0.23 0.46 -0.23 0.46 -0.46 1 0 0.46 0.46 0.46 0.23 0 0.23 -0.54 0.77",
-   "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M1 9H10.3333L17.8 16.4667H30.8667V9L38.3333 20.2L30.8667 31.4V23.9333H17.8L10.3333 31.4H1V20.2V9Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",
-   "svgComplete": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M1 9H10.3333L17.8 16.4667H30.8667V9L38.3333 20.2L30.8667 31.4V23.9333H17.8L10.3333 31.4H1V20.2V9Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",
-   "svgWhite": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M1 9H10.3333L17.8 16.4667H30.8667V9L38.3333 20.2L30.8667 31.4V23.9333H17.8L10.3333 31.4H1V20.2V9Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e",
+   "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M1 9H10.3333L17.8 16.4667H30.8667V9L38.3333 20.2L30.8667 31.4V23.9333H17.8L10.3333 31.4H1V20.2V9Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\u003c/svg\u003e",
+   "svgComplete": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M1 9H10.3333L17.8 16.4667H30.8667V9L38.3333 20.2L30.8667 31.4V23.9333H17.8L10.3333 31.4H1V20.2V9Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\u003c/svg\u003e",
+   "svgWhite": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 40 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M1 9H10.3333L17.8 16.4667H30.8667V9L38.3333 20.2L30.8667 31.4V23.9333H17.8L10.3333 31.4H1V20.2V9Z\" fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-miterlimit=\"10\"/\u003e\u003c/svg\u003e",
    "width": 30
   },
   "version": "v1.0.0"
