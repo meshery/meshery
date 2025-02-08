@@ -472,14 +472,11 @@ const StatusChip = ({ entityData, entityType }) => {
 };
 
 const MeshModelDetails = ({ view, showDetailsData }) => {
-  const theme = useTheme();
   const isEmptyDetails =
     Object.keys(showDetailsData.data).length === 0 || showDetailsData.type === 'none';
 
   const renderEmptyDetails = () => (
-    <p style={{ color: theme.palette.secondary.menuItemBorder, margin: 'auto' }}>
-      No {view} selected
-    </p>
+    <p style={{ color: '#979797', margin: 'auto' }}>No {view} selected</p>
   );
 
   const getContent = (type) => {

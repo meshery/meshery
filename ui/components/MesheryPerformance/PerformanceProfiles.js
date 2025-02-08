@@ -18,7 +18,8 @@ import {
   Paper,
   Typography,
   IconButton,
-  charcoal,
+  useTheme,
+  CustomTooltip,
 } from '@layer5/sistent';
 import MesheryPerformanceComponent from './index';
 import PerformanceProfileGrid from './PerformanceProfileGrid';
@@ -33,7 +34,6 @@ import subscribePerformanceProfiles from '../graphql/subscriptions/PerformancePr
 import { iconMedium } from '../../css/icons.styles';
 import { useDeletePerformanceProfileMutation } from '@/rtk-query/performance-profile';
 import { useNotification } from '@/utils/hooks/useNotification';
-import ReusableTooltip from '../reusable-tooltip';
 import { updateVisibleColumns } from '@/utils/responsive-column';
 import { useWindowDimensions } from '@/utils/dimension';
 import { ConditionalTooltip } from '@/utils/utils';
@@ -179,6 +179,7 @@ function PerformanceProfile({ updateProgress, user, handleDelete }) {
   }, [selectedProfile]);
 
   const searchTimeout = useRef(null);
+  const theme = useTheme();
 
   let colViews = [
     ['name', 'xs'],
@@ -306,46 +307,50 @@ function PerformanceProfile({ updateProgress, user, handleDelete }) {
         },
         customBodyRender: function CustomBody(_, tableMeta) {
           return (
-            <div style={{ display: 'flex' }}>
-              <ReusableTooltip title="Edit">
-                <IconButton
-                  style={iconMedium}
-                  onClick={(ev) => {
-                    ev.stopPropagation();
-                    setSelectedProfile(testProfiles[tableMeta.rowIndex]);
-                  }}
-                  aria-label="edit"
-                  disabled={
-                    !CAN(keys.EDIT_PERFORMANCE_TEST.action, keys.EDIT_PERFORMANCE_TEST.subject)
-                  }
-                >
-                  <EditIcon
-                    style={{
-                      fill: charcoal[50],
-                      ...iconMedium,
+            <div style={{ display: 'flex', gap: '1rem' }}>
+              <CustomTooltip title="Edit">
+                <div>
+                  <IconButton
+                    style={iconMedium}
+                    onClick={(ev) => {
+                      ev.stopPropagation();
+                      setSelectedProfile(testProfiles[tableMeta.rowIndex]);
                     }}
-                  />
-                </IconButton>
-              </ReusableTooltip>
+                    aria-label="edit"
+                    disabled={
+                      !CAN(keys.EDIT_PERFORMANCE_TEST.action, keys.EDIT_PERFORMANCE_TEST.subject)
+                    }
+                  >
+                    <EditIcon
+                      style={{
+                        fill: theme.palette.icon.secondary,
+                        ...iconMedium,
+                      }}
+                    />
+                  </IconButton>
+                </div>
+              </CustomTooltip>
 
-              <ReusableTooltip title="Run test">
-                <IconButton
-                  style={iconMedium}
-                  onClick={(ev) => {
-                    ev.stopPropagation();
-                    setSelectedProfile({ ...testProfiles[tableMeta.rowIndex], runTest: true });
-                  }}
-                  aria-label="run"
-                  disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
-                >
-                  <PlayArrowIcon
-                    style={{
-                      fill: charcoal[50],
-                      ...iconMedium,
+              <CustomTooltip title="Run test">
+                <div>
+                  <IconButton
+                    style={iconMedium}
+                    onClick={(ev) => {
+                      ev.stopPropagation();
+                      setSelectedProfile({ ...testProfiles[tableMeta.rowIndex], runTest: true });
                     }}
-                  />
-                </IconButton>
-              </ReusableTooltip>
+                    aria-label="run"
+                    disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
+                  >
+                    <PlayArrowIcon
+                      style={{
+                        fill: theme.palette.icon.secondary,
+                        ...iconMedium,
+                      }}
+                    />
+                  </IconButton>
+                </div>
+              </CustomTooltip>
             </div>
           );
         },
@@ -534,11 +539,7 @@ function PerformanceProfile({ updateProgress, user, handleDelete }) {
           {testProfiles.length === 0 && viewType === 'grid' && (
             <Paper sx={{ padding: '0.5rem' }}>
               <ProfileContainer>
-                <Typography
-                  sx={{ fontSize: '1.5rem', marginBottom: '2rem' }}
-                  align="center"
-                  color="textSecondary"
-                >
+                <Typography sx={{ fontSize: '1.5rem', marginBottom: '2rem' }} align="center">
                   No Performance Profiles Found
                 </Typography>
                 <Button

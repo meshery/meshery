@@ -8,7 +8,7 @@ import {
   MenuItem,
   TextField,
   Toolbar,
-  Tooltip,
+  CustomTooltip,
 } from '@layer5/sistent';
 import React, { useEffect, useRef, useState } from 'react';
 import AppBarComponent from './styledComponents/AppBar';
@@ -172,40 +172,47 @@ export default function DesignConfigurator() {
               label="Design Name"
               value={designJson.name}
               onChange={(e) => updateDesignName(e.target.value)}
+              variant="standard"
             />
 
-            <Tooltip title="Save Design as New File">
-              <IconButton
-                aria-label="Save"
-                color="primary"
-                onClick={designSave}
-                disabled={!CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)}
-              >
-                <SaveAsIcon style={iconMedium} />
-              </IconButton>
-            </Tooltip>
+            <CustomTooltip title="Save Design as New File">
+              <div>
+                <IconButton
+                  aria-label="Save"
+                  color="primary"
+                  onClick={designSave}
+                  disabled={!CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)}
+                >
+                  <SaveAsIcon style={iconMedium} />
+                </IconButton>
+              </div>
+            </CustomTooltip>
             {designId && (
               <>
-                <Tooltip title="Update Design">
-                  <IconButton
-                    aria-label="Update"
-                    color="primary"
-                    onClick={designUpdate}
-                    disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
-                  >
-                    <SaveIcon style={iconMedium} />
-                  </IconButton>
-                </Tooltip>
-                <Tooltip title="Delete Design">
-                  <IconButton
-                    aria-label="Delete"
-                    color="primary"
-                    onClick={designDelete}
-                    disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
-                  >
-                    <DeleteIcon style={iconMedium} />
-                  </IconButton>
-                </Tooltip>
+                <CustomTooltip title="Update Design">
+                  <div>
+                    <IconButton
+                      aria-label="Update"
+                      color="primary"
+                      onClick={designUpdate}
+                      disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
+                    >
+                      <SaveIcon style={iconMedium} />
+                    </IconButton>
+                  </div>
+                </CustomTooltip>
+                <CustomTooltip title="Delete Design">
+                  <div>
+                    <IconButton
+                      aria-label="Delete"
+                      color="primary"
+                      onClick={designDelete}
+                      disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
+                    >
+                      <DeleteIcon style={iconMedium} />
+                    </IconButton>
+                  </div>
+                </CustomTooltip>
               </>
             )}
           </Toolbar>

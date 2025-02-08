@@ -1,6 +1,8 @@
-import { createTheme } from '@material-ui/core/styles';
-import createBreakpoints from '@material-ui/core/styles/createBreakpoints';
+import { createTheme } from '@mui/material/styles';
+import createBreakpoints from '@mui/system/createTheme/createBreakpoints';
+
 const breakpoints = createBreakpoints({});
+
 export const rjsfTheme = createTheme({
   palette: {
     primary: {
@@ -11,218 +13,245 @@ export const rjsfTheme = createTheme({
     fontFamily: 'Qanelas Soft, sans-serif',
     fontSize: 13,
   },
-  props: {
+  components: {
     MuiTextField: {
-      variant: 'outlined',
-      margin: 'dense',
+      defaultProps: {
+        variant: 'outlined',
+        margin: 'dense',
+      },
+      styleOverrides: {
+        root: {
+          width: 'calc(100% - 4px)',
+        },
+      },
     },
     MuiCheckbox: {
-      color: 'primary',
+      defaultProps: {
+        color: 'primary',
+      },
+      styleOverrides: {
+        root: {
+          marginLeft: '4px',
+          '& > *:nth-child(1)': {
+            backgroundColor: '#ffffff',
+            width: '1rem',
+            height: '1rem',
+          },
+        },
+      },
     },
     MuiMenu: {
-      variant: 'outlined',
+      defaultProps: {
+        variant: 'outlined',
+      },
     },
-  },
-  overrides: {
     MuiOutlinedInput: {
-      root: {
-        backgroundColor: '#ffffff',
+      styleOverrides: {
+        root: {
+          backgroundColor: '#ffffff',
+        },
       },
     },
     MuiButton: {
-      textSecondary: {
-        color: '#00b39f',
-        '&:hover': '00b39f',
-      },
-    },
-    MuiTextField: {
-      root: {
-        width: 'calc(100% - 4px)',
+      styleOverrides: {
+        textSecondary: {
+          color: '#00b39f',
+          '&:hover': { color: '#00b39f' },
+        },
       },
     },
     MuiInputLabel: {
-      root: {
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        maxWidth: '60%',
-        height: '100%',
-        '&:hover': {
-          overflow: 'visible',
+      styleOverrides: {
+        root: {
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          maxWidth: '60%',
+          height: '100%',
+          '&:hover': {
+            overflow: 'visible',
+          },
         },
-      },
-      shrink: {
-        maxWidth: '100%',
+        shrink: {
+          maxWidth: '100%',
+        },
       },
     },
     MuiFormControl: {
-      root: {
-        marginTop: '0.3rem',
+      styleOverrides: {
+        root: {
+          marginTop: '0.3rem',
+        },
       },
     },
     MuiFormControlLabel: {
-      root: {
-        textTransform: 'capitalize',
-        padding: '3px',
+      styleOverrides: {
+        root: {
+          textTransform: 'capitalize',
+          padding: '3px',
+        },
       },
     },
     MuiBox: {
-      root: {
-        marginTop: 0,
+      styleOverrides: {
+        root: {
+          marginTop: 0,
+        },
       },
     },
     MuiDivider: {
-      root: {
-        height: '0.5px',
+      styleOverrides: {
+        root: {
+          height: '0.5px',
+        },
       },
     },
     MuiFormLabel: {
-      root: {
-        color: '#333',
-        fontSize: '0.8rem',
-        textTransform: 'capitalize',
+      styleOverrides: {
+        root: {
+          color: '#333',
+          fontSize: '0.8rem',
+          textTransform: 'capitalize',
+        },
       },
     },
     MuiTypography: {
-      body1: {
-        fontSize: '0.8rem',
-      },
-      h5: {
-        textTransform: 'capitalize',
-        fontSize: '1.1rem',
-        fontWeight: 'bold',
-      },
-      subtitle2: {
-        fontSize: '0.8rem',
-        fontStyle: 'italic',
-        color: '#565656',
+      styleOverrides: {
+        body1: {
+          fontSize: '0.8rem',
+        },
+        h5: {
+          textTransform: 'capitalize',
+          fontSize: '1.1rem',
+          fontWeight: 'bold',
+        },
+        subtitle2: {
+          fontSize: '0.8rem',
+          fontStyle: 'italic',
+          color: '#565656',
+        },
       },
     },
     MuiInputBase: {
-      root: {
-        fontSize: '0.8rem', // same as title
-        minRows: 5,
+      styleOverrides: {
+        root: {
+          fontSize: '0.8rem',
+          minRows: 5,
+        },
       },
     },
     MuiTooltip: {
-      tooltip: {
-        backgroundColor: ' #3C494F',
-        color: '#fff',
-        opacity: '100%',
-        fontSize: '14px',
-        borderRadius: '0.9375rem',
-        padding: '0.9rem',
-        zIndex: '99999999999',
-      },
-      popper: {
-        zIndex: '99999 !important',
+      styleOverrides: {
+        tooltip: {
+          backgroundColor: '#3C494F',
+          color: '#fff',
+          opacity: '100%',
+          fontSize: '14px',
+          borderRadius: '0.9375rem',
+          padding: '0.9rem',
+          zIndex: 99999999999,
+        },
+        popper: {
+          zIndex: 99999,
+        },
       },
     },
     MuiAccordionSummary: {
-      root: {
-        // border: "5px solid red",
-        backgroundColor: 'rgba(242,242,242)',
-        borderBottom: '1px solid rgba(0, 0, 0, .125)',
-        marginBottom: -1,
-        maxHeight: '1.5rem',
-        '&$expanded': {
-          minHeight: 56,
+      styleOverrides: {
+        root: {
+          backgroundColor: 'rgba(242,242,242)',
+          borderBottom: '1px solid rgba(0, 0, 0, .125)',
+          marginBottom: -1,
+          maxHeight: '1.5rem',
+          '&$expanded': {
+            minHeight: 56,
+          },
         },
-      },
-      content: {
-        // border: "5px solid green",
-        justifyContent: 'space-between',
-        '&$expanded': {
-          margin: '12px 0',
+        content: {
           justifyContent: 'space-between',
+          '&$expanded': {
+            margin: '12px 0',
+            justifyContent: 'space-between',
+          },
         },
       },
     },
     MuiAccordionDetails: {
-      root: {
-        padding: 16,
+      styleOverrides: {
+        root: {
+          padding: 16,
+        },
       },
     },
     MuiAccordion: {
-      root: {
-        border: '1px solid rgba(0, 0, 0, .125)',
-        boxShadow: 'none',
-        '&:not(:last-child)': {
-          borderBottom: 0,
+      styleOverrides: {
+        root: {
+          border: '1px solid rgba(0, 0, 0, .125)',
+          boxShadow: 'none',
+          '&:not(:last-child)': {
+            borderBottom: 0,
+          },
+          '&:before': {
+            display: 'none',
+          },
+          '&$expanded': {
+            margin: 'auto',
+          },
+          backgroundColor: 'rgba(242,242,242)',
         },
-        '&:before': {
-          display: 'none',
-        },
-        '&$expanded': {
-          margin: 'auto',
-        },
-        backgroundColor: 'rgba(242,242,242)',
       },
     },
     MuiGrid: {
-      root: {
-        '& > *': {
-          border: 'none !important',
-        },
-        marginTop: '0.1rem !important',
-        overflow: 'hidden',
-        alignSelf: 'center',
-        textOverflow: 'ellipsis',
-        '&:hover': {
-          overflow: 'visible',
-        },
-        // To scale the grid items on a particular screen size
-        [breakpoints.up('lg')]: {
-          '& > *:nth-child(2)': {
-            '& > *:nth-child(1)': {
-              '& > *:nth-child(2)': {
-                justifyContent: 'space-around',
+      styleOverrides: {
+        root: {
+          '& > *': {
+            border: 'none !important',
+          },
+          marginTop: '0.1rem !important',
+          overflow: 'hidden',
+          alignSelf: 'center',
+          textOverflow: 'ellipsis',
+          '&:hover': {
+            overflow: 'visible',
+          },
+          [breakpoints.up('lg')]: {
+            '& > *:nth-child(2)': {
+              '& > *:nth-child(1)': {
+                '& > *:nth-child(2)': {
+                  justifyContent: 'space-around',
+                },
               },
             },
           },
         },
       },
     },
-    MuiCheckbox: {
-      // checkboxes white background
-      root: {
-        marginLeft: '4px',
-        '& > *:nth-child(1)': {
-          backgroundColor: '#ffffff',
-          width: '1rem',
-          height: '1rem',
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          cursor: 'pointer',
+        },
+        sizeSmall: {
+          padding: '1px',
         },
       },
     },
-    MuiIconButton: {
-      root: {
-        cursor: 'pointer',
-      },
-      sizeSmall: {
-        padding: '1px',
-      },
-    },
     MuiPaper: {
-      elevation0: {
-        backgroundColor: 'inherit',
-      },
-      elevation2: {
-        boxShadow: 'none',
-      },
-    },
-    'spacing-xs-2': {
-      padding: 0,
-      '& > *': {
-        paddingTop: '0 !important',
-        paddingBottom: '0 !important',
+      styleOverrides: {
+        elevation0: {
+          backgroundColor: 'inherit',
+        },
+        elevation2: {
+          boxShadow: 'none',
+        },
       },
     },
   },
 });
 
-const darkRjsfTheme = createTheme({
+export const darkRjsfTheme = createTheme({
   palette: {
-    type: 'dark',
+    mode: 'dark',
     primary: {
       main: '#00B39F',
     },
@@ -231,213 +260,210 @@ const darkRjsfTheme = createTheme({
     fontFamily: 'Qanelas Soft, sans-serif',
     fontSize: 13,
   },
-  props: {
+  components: {
+    // Most components mirror the light theme, with dark mode adjustments
     MuiTextField: {
-      variant: 'outlined',
-      margin: 'dense',
-    },
-    MuiCheckbox: {
-      color: 'primary',
-    },
-    MuiMenu: {
-      variant: 'outlined',
-    },
-  },
-  overrides: {
-    MuiOutlinedInput: {
-      root: {
-        // backgroundColor: '#303030',
+      defaultProps: {
+        variant: 'outlined',
+        margin: 'dense',
       },
-    },
-    MuiButton: {
-      textSecondary: {
-        color: '#00b39f',
-        '&:hover': '00b39f',
-      },
-    },
-    MuiTextField: {
-      root: {
-        width: 'calc(100% - 4px)',
-      },
-    },
-    MuiFormControlLabel: {
-      root: {
-        textTransform: 'capitalize',
-        padding: '3px',
-      },
-    },
-    MuiInputLabel: {
-      root: {
-        whiteSpace: 'nowrap',
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        maxWidth: '60%',
-        height: '100%',
-        '&:hover': {
-          overflow: 'visible',
+      styleOverrides: {
+        root: {
+          width: 'calc(100% - 4px)',
         },
       },
-      shrink: {
-        maxWidth: '100%',
+    },
+    MuiSelect: {
+      defaultProps: {
+        variant: 'outlined',
+        margin: 'dense',
+      },
+      styleOverrides: {
+        root: {
+          width: 'calc(100% - 4px)',
+        },
       },
     },
-    MuiFormControl: {
-      root: {
-        marginTop: '0.3rem',
+    MuiOutlinedInput: {
+      defaultProps: {
+        variant: 'outlined',
+        margin: 'dense',
       },
     },
-    MuiBox: {
-      root: {
-        marginTop: 0,
+    MuiCheckbox: {
+      defaultProps: {
+        color: 'primary',
       },
-    },
-    MuiDivider: {
-      root: {
-        height: '0.5px',
-      },
-    },
-    MuiFormLabel: {
-      root: {
-        color: '#FFF',
-        fontSize: '0.8rem',
-        textTransform: 'capitalize',
-      },
-    },
-    MuiTypography: {
-      body1: {
-        fontSize: '0.8rem',
-      },
-      h5: {
-        textTransform: 'capitalize',
-        fontSize: '1.1rem',
-        fontWeight: 'bold',
-      },
-      subtitle2: {
-        fontSize: '0.8rem',
-        fontStyle: 'italic',
-        color: '#565656',
-      },
-    },
-    MuiInputBase: {
-      root: {
-        fontSize: '0.8rem', // same as title
-        minRows: 5,
-      },
-    },
-    MuiTooltip: {
-      tooltip: {
-        backgroundColor: ' #3C494F',
-        color: '#fff',
-        opacity: '100%',
-        fontSize: '14px',
-        borderRadius: '0.9375rem',
-        padding: '0.9rem',
-        zIndex: '99999999999',
-      },
-      popper: {
-        zIndex: '99999 !important',
+      styleOverrides: {
+        root: {
+          marginLeft: '4px',
+          '& > *:nth-child(1)': {
+            backgroundColor: '#303030',
+            width: '1rem',
+            height: '1rem',
+          },
+        },
       },
     },
     MuiAccordionSummary: {
-      root: {
-        // border: "5px solid red",
-        backgroundColor: '#303030',
-        borderBottom: '1px solid rgba(255, 255, 255, .125)',
-        marginBottom: -1,
-        maxHeight: '1.5rem',
-        '&$expanded': {
-          minHeight: 56,
+      styleOverrides: {
+        root: {
+          backgroundColor: '#303030',
+          borderBottom: '1px solid rgba(255, 255, 255, .125)',
         },
-      },
-      content: {
-        // border: "5px solid green",
-        justifyContent: 'space-between',
-        '&$expanded': {
-          margin: '12px 0',
-          justifyContent: 'space-between',
-        },
-      },
-    },
-    MuiAccordionDetails: {
-      root: {
-        padding: 16,
       },
     },
     MuiAccordion: {
-      root: {
-        border: '1px solid rgba(255, 255, 255, .125)',
-        boxShadow: 'none',
-        '&:not(:last-child)': {
-          borderBottom: 0,
+      styleOverrides: {
+        root: {
+          border: '1px solid rgba(255, 255, 255, .125)',
+          backgroundColor: '#303030',
         },
-        '&:before': {
-          display: 'none',
+      },
+    },
+    MuiFormLabel: {
+      styleOverrides: {
+        root: {
+          color: '#FFF',
+          fontSize: '0.8rem',
+          textTransform: 'capitalize',
         },
-        '&$expanded': {
-          margin: 'auto',
+      },
+    },
+    MuiInputLabel: {
+      styleOverrides: {
+        root: {
+          whiteSpace: 'nowrap',
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          maxWidth: '60%',
+          height: '100%',
+          '&:hover': {
+            overflow: 'visible',
+          },
         },
-        backgroundColor: '#303030',
+        shrink: {
+          maxWidth: '100%',
+        },
+      },
+    },
+    MuiFormControl: {
+      styleOverrides: {
+        root: {
+          marginTop: '0.3rem',
+        },
+      },
+    },
+    MuiFormControlLabel: {
+      styleOverrides: {
+        root: {
+          textTransform: 'capitalize',
+          padding: '3px',
+        },
+      },
+    },
+    MuiBox: {
+      styleOverrides: {
+        root: {
+          marginTop: 0,
+        },
+      },
+    },
+    MuiDivider: {
+      styleOverrides: {
+        root: {
+          height: '0.5px',
+        },
+      },
+    },
+    MuiTypography: {
+      styleOverrides: {
+        body1: {
+          fontSize: '0.8rem',
+        },
+        h5: {
+          textTransform: 'capitalize',
+          fontSize: '1.1rem',
+          fontWeight: 'bold',
+        },
+        subtitle2: {
+          fontSize: '0.8rem',
+          fontStyle: 'italic',
+          color: '#565656',
+        },
+      },
+    },
+    MuiInputBase: {
+      styleOverrides: {
+        root: {
+          fontSize: '0.8rem',
+          minRows: 5,
+        },
+      },
+    },
+    MuiTooltip: {
+      styleOverrides: {
+        tooltip: {
+          backgroundColor: '#3C494F',
+          color: '#fff',
+          opacity: '100%',
+          fontSize: '14px',
+          borderRadius: '0.9375rem',
+          padding: '0.9rem',
+          zIndex: 99999999999,
+        },
+        popper: {
+          zIndex: 99999,
+        },
       },
     },
     MuiGrid: {
-      root: {
-        '& > *': {
-          border: 'none !important',
-        },
-        marginTop: '0.1rem !important',
-        overflow: 'hidden',
-        alignSelf: 'center',
-        textOverflow: 'ellipsis',
-        '&:hover': {
-          overflow: 'visible',
-        },
-        background: 'none',
-        // To scale the grid items on a particular screen size
-        [breakpoints.up('lg')]: {
-          '& > *:nth-child(2)': {
-            '& > *:nth-child(1)': {
-              '& > *:nth-child(2)': {
-                justifyContent: 'space-around',
+      styleOverrides: {
+        root: {
+          '& > *': {
+            border: 'none !important',
+          },
+          marginTop: '0.1rem !important',
+          overflow: 'hidden',
+          alignSelf: 'center',
+          textOverflow: 'ellipsis',
+          '&:hover': {
+            overflow: 'visible',
+          },
+          background: 'none',
+          [breakpoints.up('lg')]: {
+            '& > *:nth-child(2)': {
+              '& > *:nth-child(1)': {
+                '& > *:nth-child(2)': {
+                  justifyContent: 'space-around',
+                },
               },
             },
           },
         },
       },
     },
-    MuiCheckbox: {
-      // checkboxes white background
-      root: {
-        marginLeft: '4px',
-        '& > *:nth-child(1)': {
-          backgroundColor: '#303030',
-          width: '1rem',
-          height: '1rem',
+    MuiIconButton: {
+      styleOverrides: {
+        root: {
+          cursor: 'pointer',
+        },
+        sizeSmall: {
+          padding: '1px',
         },
       },
     },
-    MuiIconButton: {
-      root: {
-        cursor: 'default',
-      },
-      sizeSmall: {
-        padding: '1px',
-      },
-    },
     MuiPaper: {
-      elevation0: {
-        backgroundColor: 'inherit',
-      },
-      elevation2: {
-        boxShadow: 'none',
-      },
-    },
-    'spacing-xs-2': {
-      padding: 0,
-      '& > *': {
-        paddingTop: '0 !important',
-        paddingBottom: '0 !important',
+      styleOverrides: {
+        elevation0: {
+          backgroundColor: 'inherit',
+        },
+        elevation2: {
+          boxShadow: 'none',
+        },
       },
     },
   },
 });
+
 export default darkRjsfTheme;
