@@ -20,7 +20,6 @@ import { DeploymentTargetContext, SelectTargetEnvironments } from './SelectDeplo
 import { FinalizeDeployment } from './finalizeDeployment';
 import {
   selectAllSelectedK8sConnections,
-  selectSelectedEnvs,
 } from '@/store/slices/globalEnvironmentContext';
 import {
   useDryRunValidationResults,
