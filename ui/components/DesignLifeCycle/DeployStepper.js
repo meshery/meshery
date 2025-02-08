@@ -311,7 +311,7 @@ export const UpdateDeploymentStepper = ({
       nextAction: () => deployStepper.handleNext(),
     },
     1: {
-      canGoNext: () => selectedEnvCount > 0,
+      canGoNext: () => selectedK8sConnections.length > 0,
       nextButtonText: 'Next',
       nextAction: () => deployStepper.handleNext(),
     },
