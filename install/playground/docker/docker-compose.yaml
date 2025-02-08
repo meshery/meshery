@@ -32,7 +32,7 @@ services:
             - 10000:10000
         restart: always
     meshery-linkerd:
-       image: layer5/meshery-linkerd:stable-latest
+       image: meshery/meshery-linkerd:stable-latest
        ports:
             - 10001:10001
        restart: always

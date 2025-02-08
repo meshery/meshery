@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
-import { FormGroup, FormControlLabel, Grid } from '@layer5/sistent';
+import { FormGroup, FormControlLabel, Grid, MenuItem, useTheme } from '@layer5/sistent';
 import { NoSsr } from '@mui/material';
 import { setOrganization, setKeys } from '../../lib/store';
 import { EVENT_TYPES } from '../../lib/event-types';
@@ -12,8 +12,6 @@ import OrgIcon from '../../assets/icons/OrgIcon';
 import { ErrorBoundary as SistentErrorBoundary } from '@layer5/sistent';
 import { Provider } from 'react-redux';
 import { store } from '../../store';
-import { MenuItem } from '@layer5/sistent';
-import theme from '../../themes/app';
 import { useGetCurrentAbilities } from '../../rtk-query/ability';
 import { UsesSistent } from '../SistentWrapper';
 import { FormLabel } from '@mui/material';
@@ -33,6 +31,7 @@ const SpacesPreferences = (props) => {
     isError: isOrgsError,
     error: orgsError,
   } = useGetOrgsQuery({});
+  const theme = useTheme();
   let orgs = orgsResponse?.organizations || [];
   const { organization, setOrganization } = props;
   const [skip, setSkip] = React.useState(true);
@@ -85,7 +84,7 @@ const SpacesPreferences = (props) => {
                                     <OrgIcon
                                       width="24"
                                       height="24"
-                                      secondaryFill={theme.palette.darkSlateGray}
+                                      secondaryFill={theme.palette.icon.secondary}
                                     />
                                   </OrgIconContainer>
                                   <OrgText>{org.name}</OrgText>
