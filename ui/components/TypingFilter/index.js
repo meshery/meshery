@@ -233,7 +233,7 @@ const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false, placehol
 
   return (
     <UsesSistent>
-      <Root className="mui-fixed" style={{ backgroundColor: 'transparent' }}>
+      <Root className="mui-fixed">
         <InputField
           ref={inputFieldRef}
           variant="outlined"
