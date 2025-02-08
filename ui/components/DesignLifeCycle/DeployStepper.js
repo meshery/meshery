@@ -18,9 +18,7 @@ import CheckIcon from '@/assets/icons/CheckIcon';
 import { useLegacySelector } from 'lib/store';
 import { DeploymentTargetContext, SelectTargetEnvironments } from './SelectDeploymentTarget';
 import { FinalizeDeployment } from './finalizeDeployment';
-import {
-  selectAllSelectedK8sConnections,
-} from '@/store/slices/globalEnvironmentContext';
+import { selectAllSelectedK8sConnections } from '@/store/slices/globalEnvironmentContext';
 import {
   useDryRunValidationResults,
   useIsValidatingDryRun,
