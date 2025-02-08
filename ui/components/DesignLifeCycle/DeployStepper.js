@@ -199,7 +199,6 @@ export const UpdateDeploymentStepper = ({
   const [bypassDryRun, setBypassDryRun] = useState(false);
   const [openInOperator, setOpenInOperator] = useState(false);
 
-  const selectedEnvironments = useSelectorRtk(selectSelectedEnvs);
   const dryRunErrors = useDryRunValidationResults(validationMachine);
   const totalDryRunErrors = getTotalCountOfDeploymentErrors(dryRunErrors);
   const isDryRunning = useIsValidatingDryRun(validationMachine);
