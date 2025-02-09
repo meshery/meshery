@@ -1,5 +1,3 @@
-import { makeStyles } from '@mui/styles';
-
 const opacity = 0.5;
 
 export const disabledStyle = {
@@ -14,13 +12,3 @@ export const disabledStyleWithOutOpacity = {
 export const cursorNotAllowed = {
   cursor: 'not-allowed',
 };
-
-export const cursorNotAllowedWithLowOpacity = {
-  cursor: 'not-allowed',
-  opacity,
-};
-
-export const disabledStylesMui = makeStyles(() => ({
-  disabled: disabledStyle,
-  cursorNotAllowed,
-}));

@@ -21,10 +21,9 @@ import { UsesSistent } from '../SistentWrapper';
 // const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 // const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
 
-const StyledPaper = styled(Paper)(({ theme }) => ({
+const StyledPaper = styled(Paper)({
   padding: '1rem',
-  backgroundColor: theme.palette.background?.default,
-}));
+});
 
 const StyledButton = styled(Button)(() => {
   const theme = useTheme();
@@ -187,7 +186,7 @@ function Dashboard({ updateProgress, grafana, router }) {
                         <Typography
                           variant="h2"
                           component="div"
-                          style={{ marginRight: '0.75rem', color: theme.palette.icon?.weather }}
+                          style={{ marginRight: '0.75rem', color: theme.palette.icon?.default }}
                         >
                           {tests.count.toLocaleString('en')}
                         </Typography>
@@ -215,7 +214,7 @@ function Dashboard({ updateProgress, grafana, router }) {
                         <Typography
                           variant="h2"
                           component="div"
-                          style={{ marginRight: '0.75rem', color: theme.palette.icon?.weather }}
+                          style={{ marginRight: '0.75rem', color: theme.palette.icon?.default }}
                         >
                           {profiles.count}
                         </Typography>
