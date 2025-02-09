@@ -369,14 +369,7 @@ export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema, 
           propertyFormatters: propertyFormatters,
         }}
       >
-        <Grid
-          container
-          style={
-            {
-              // gap: '0.3rem 1rem',
-            }
-          }
-        >
+        <Grid container style={{}}>
           <DynamicFormatter data={data} uiSchema={uiSchema} isLevel={isLevel} />
         </Grid>
       </FormatterContext.Provider>
