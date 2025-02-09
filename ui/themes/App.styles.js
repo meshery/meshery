@@ -38,6 +38,16 @@ export const StyledAppContent = styled('div')({
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
+  position: 'relative',
+  overflow: 'visible',
+});
+
+export const StyledContentWrapper = styled('div')({
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  overflow: 'auto',
+  minHeight: 0,
 });
 
 export const StyledDrawer = styled('nav', {
