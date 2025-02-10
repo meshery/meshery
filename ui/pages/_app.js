@@ -128,9 +128,13 @@ const Footer = ({ capabilitiesRegistry, handleL5CommunityClick }) => {
       <Typography
         variant="body2"
         align="center"
-        color="textSecondary"
         component="p"
-        style={{ color: theme.palette.text.disabled }}
+        style={{
+          color:
+            theme.palette.mode === 'light'
+              ? theme.palette.text.default
+              : theme.palette.text.disabled,
+        }}
       >
         <StyledFooterText onClick={handleL5CommunityClick}>
           {capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? (

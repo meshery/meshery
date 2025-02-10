@@ -303,7 +303,7 @@ func (h *Handler) DesignFileImportHandler(
 
 	_, _ = rw.Write(savedDesignByt)
 
-	event := eventBuilder.WithDescription(fmt.Sprintf("Imported design '%s' from '%s'", design.Name, sourceFileType)).Build()
+	event := eventBuilder.WithSeverity(events.Success).WithDescription(fmt.Sprintf("Imported design '%s' of type '%s'", design.Name, sourceFileType)).Build()
 	_ = provider.PersistEvent(event)
 	go h.config.EventBroadcaster.Publish(userID, event)
 
