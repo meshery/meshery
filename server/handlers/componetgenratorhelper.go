@@ -15,6 +15,7 @@ import (
 	mesheryctlUtils "github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshkit/encoding"
 
+	meshkitFileUtils "github.com/layer5io/meshkit/files"
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/core/policies"
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
@@ -147,11 +148,12 @@ func addUnsuccessfulEntry(path string, response *models.RegistryAPIResponse, err
 	}
 
 	// If error not found, create a new entry
+	errMsg := meshkitFileUtils.ErrMessageBasedOnFileExtension(filename, "import", err)
 	if !entryFound {
 		entry := map[string]interface{}{
 			"name":       []string{filename},
 			"entityType": []string{entityType},
-			"error":      err,
+			"error":      errMsg,
 		}
 		response.EntityTypeSummary.UnsuccessfulEntityNameWithError = append(response.EntityTypeSummary.UnsuccessfulEntityNameWithError, entry)
 	}
@@ -269,6 +271,7 @@ func (h *Handler) handleRegistrationAndError(registrationHelper registration.Reg
 			path := errEntry.EntityName
 			err := errEntry.Err
 			entityTypeStr := string(errEntry.EntityType)
+			// checking this ....
 			addUnsuccessfulEntry(path, response, err, entityTypeStr)
 		}
 	}

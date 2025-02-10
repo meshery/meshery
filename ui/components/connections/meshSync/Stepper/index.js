@@ -11,13 +11,13 @@ import {
 import { ColorlibConnector, CustomLabelStyle, StepperContainer } from '../../styles';
 
 const StepIconWrapper = styled('div')(({ theme, active, completed }) => ({
-  backgroundColor: theme.palette.secondary.filterChipBackground,
+  backgroundColor: theme.palette.background.card,
   zIndex: 1,
   color: '#fff',
   width: 50,
   height: 50,
   display: 'flex',
-  border: `.2rem solid ${theme.palette.secondary.filterChipBackground}`,
+  border: `.2rem solid ${theme.palette.divider}`,
   borderRadius: '50%',
   justifyContent: 'center',
   alignItems: 'center',
@@ -27,7 +27,7 @@ const StepIconWrapper = styled('div')(({ theme, active, completed }) => ({
     height: 40,
   },
   ...(active && {
-    background: theme.palette.secondary.elevatedComponents,
+    background: theme.palette.background.tabs,
     color: '#3C494E',
     border: '.2rem solid #00B39F',
     transition: 'all 0.5s ease-in',
