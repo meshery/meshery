@@ -110,8 +110,9 @@ export const rjsfTheme = createTheme({
       styleOverrides: {
         root: {
           color: '#333',
-          fontSize: '0.8rem',
+          fontSize: '1rem',
           textTransform: 'capitalize',
+          backgroundColor: 'transparent',
         },
       },
     },
@@ -325,7 +326,7 @@ export const darkRjsfTheme = createTheme({
       styleOverrides: {
         root: {
           color: '#FFF',
-          fontSize: '0.8rem',
+          fontSize: '1rem',
           textTransform: 'capitalize',
         },
       },
