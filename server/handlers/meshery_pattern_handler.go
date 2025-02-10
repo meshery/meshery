@@ -120,7 +120,8 @@ func (h *Handler) handlePatternPOST(
 	var err error
 
 	userID := uuid.FromStringOrNil(user.ID)
-	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(models.Create).ActedUpon(userID).WithSeverity(events.Informational)
+	eventBuilder := events.NewEvent().FromUser(userID).FromSystem(*h.SystemID).WithCategory("pattern").WithAction(models.Create).
+		ActedUpon(userID).WithSeverity(events.Informational).WithDescription("Save design ")
 
 	requestPayload := &DesignPostPayload{}
 	if err := json.NewDecoder(r.Body).Decode(&requestPayload); err != nil {
@@ -166,7 +167,13 @@ func (h *Handler) handlePatternPOST(
 		return
 	}
 
-	event := eventBuilder.Build()
+	if requestPayload.DesignFile.Id != uuid.Nil {
+		eventBuilder = eventBuilder.WithAction(models.Update)
+	} else {
+		eventBuilder = eventBuilder.WithAction(models.Create)
+	}
+
+	event := eventBuilder.WithDescription(fmt.Sprintf("Saved design '%s'", requestPayload.DesignFile.Name)).Build()
 	_ = provider.PersistEvent(event)
 
 	_, _ = rw.Write(savedDesignByt)
