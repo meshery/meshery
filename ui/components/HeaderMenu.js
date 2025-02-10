@@ -13,7 +13,6 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { NavigationNavbar } from '@layer5/sistent';
 import { Popover } from '@mui/material';
-import theme from '@/themes/app';
 import { UsesSistent } from './SistentWrapper';
 import { IconButtonAvatar } from './Header.styles';
 
@@ -179,7 +178,6 @@ const HeaderMenu = (props) => {
           ListItemTextProps={{
             primaryTypographyProps: {
               sx: {
-                fontFamily: theme.typography.fontFamily,
                 fontSize: '1rem',
               },
             },

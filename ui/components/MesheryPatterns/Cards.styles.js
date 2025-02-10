@@ -62,7 +62,6 @@ export const GridCloneBtnText = styled('span')(({ theme }) => ({
 
 export const CardImg = styled('img')(() => ({
   marginRight: '0.5rem',
-  // filter: theme.palette.secondary.img,
 }));
 
 export const CardNoPaper = styled('div')(() => ({

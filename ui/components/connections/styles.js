@@ -76,7 +76,7 @@ export const ConnectionIconText = styled('div')({
   justifyContent: 'center',
 });
 
-export const ChipWrapper = styled(Chip)({
+export const ChipWrapper = styled(Chip)(({ theme }) => ({
   width: '13rem',
   maxWidth: '13rem',
   minWidth: '9rem',
@@ -89,7 +89,9 @@ export const ChipWrapper = styled(Chip)({
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
   border: '1px solid rgba(255, 255, 255, 0.23)',
-});
+  textTransform: 'lowercase',
+  color: theme.palette.text.primary,
+}));
 
 const baseChipStyles = {
   minWidth: '142px !important',
