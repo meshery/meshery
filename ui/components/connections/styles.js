@@ -89,6 +89,7 @@ export const ChipWrapper = styled(Chip)(({ theme }) => ({
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
   border: '1px solid rgba(255, 255, 255, 0.23)',
+  textTransform: 'lowercase',
   color: theme.palette.text.primary,
 }));
 

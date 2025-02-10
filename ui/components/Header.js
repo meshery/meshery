@@ -424,12 +424,7 @@ class Header extends React.PureComponent {
     return (
       <NoSsr>
         <UsesSistent>
-          <HeaderAppBar
-            id="top-navigation-bar"
-            color="primary"
-            position="sticky"
-            isDrawerCollapsed={onDrawerCollapse}
-          >
+          <HeaderAppBar id="top-navigation-bar" color="primary" position="sticky">
             <StyledToolbar isDrawerCollapsed={onDrawerCollapse}>
               <Grid container alignItems="center">
                 <Hidden smUp>

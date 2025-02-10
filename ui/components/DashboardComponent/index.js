@@ -90,6 +90,9 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
                     placement="top"
                   >
                     <Tab
+                      style={{
+                        gap: '0.4rem',
+                      }}
                       key={resource}
                       icon={
                         resource === 'Overview' ? (
