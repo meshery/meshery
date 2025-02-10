@@ -3,7 +3,7 @@ name: meshery-linkerd
 description: Meshery Adapter for Linkerd
 icon: https://meshery.io/images/logos/meshery-logo.png
 source: 
-  - https://github.com/layer5io/meshery-linkerd
+  - https://github.com/meshery/meshery-linkerd
 
 deprecated: false
 # A chart can be either an 'application' or a 'library' chart.

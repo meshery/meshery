@@ -37,7 +37,7 @@ mesheryctl environment delete [environmentId]
 Documentation for environment can be found at:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-https://docs.layer5.io/cloud/spaces/environments/
+https://docs.meshery.io/concepts/logical/environments
 
 </div>
 </pre> 

@@ -182,7 +182,7 @@ function PerformanceCard({
               <Typography
                 variant="body1"
                 sx={{
-                  color: theme.palette.text.secondary,
+                  color: theme.palette.text.disabled,
                 }}
                 component="div"
               >

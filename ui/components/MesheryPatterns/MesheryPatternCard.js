@@ -92,8 +92,8 @@ function MesheryPatternCard_({
   const editInConfigurator = () => {
     router.push('/configuration/designs/configurator?design_id=' + id);
   };
-  const userCanEdit =
-    CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject) || user?.user_id == pattern?.user_id; // allow if owner
+  const isOwner = user?.user_id == pattern?.user_id;
+  const userCanEdit = CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject) || isOwner;
 
   const formatPatternFile = (file) => {
     try {
@@ -242,7 +242,7 @@ function MesheryPatternCard_({
                 />
                 <GridBtnText> Download </GridBtnText>
               </TooltipButton>
-              {visibility === VISIBILITY.PRIVATE ? (
+              {visibility === VISIBILITY.PRIVATE && userCanEdit ? (
                 <TooltipButton
                   title="Design"
                   variant="contained"

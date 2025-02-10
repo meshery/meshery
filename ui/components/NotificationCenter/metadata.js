@@ -220,12 +220,13 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
         <Typography variant="body1">
           <strong>{heading}</strong>
         </Typography>
-        <List sx={{}}>
+        <List sx={{ listStyleType: 'decimal' }}>
           {value.map((error, idx) => (
-            <ListItem key={idx}>
-              <Box>
-                <RenderMarkdown content={error} />
-              </Box>
+            <ListItem
+              key={idx}
+              sx={{ display: 'list-item', paddingLeft: '0.1rem', marginLeft: '1rem' }}
+            >
+              <RenderMarkdown content={error} />
             </ListItem>
           ))}
         </List>

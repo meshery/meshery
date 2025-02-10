@@ -34,7 +34,7 @@ The following instructions are a no-fluff guide to creating your own Meshery Mod
       <li>[Annotation-only Components] For models that contain annotation components, edit the <code>components sheet</code> file to include your component definitions.</li>
    </ol>
 </li>
-<li>Generate your neww using a Meshery Server (optionally, use the <a href="https://playground.meshery.io">Meshery Playground</a>). Click the "Generate" button after navigating to Meshery UI --> Settings --> Registry.</li>
+<li>Generate your new models using a Meshery Server (optionally, use the <a href="https://playground.meshery.io">Meshery Playground</a>). Click the "Generate" button after navigating to Meshery UI --> Settings --> Registry.</li>
 <li> 
 
 <details>

@@ -47,7 +47,7 @@ These YAML files contain the Cassandra Service and Cassandra StatefulSet manifes
 
 #### Access Meshery Playground
 
-1. Log in to the [Meshery Playground](https://cloud.layer5.io/) using your credentials. On successful login, you should be at the dashboard. Press the **X** on the _Where do you want to start?_ popup to close it (if required).
+1. Log in to the [Meshery Playground](https://play.meshery.io/) using your credentials. On successful login, you should be at the dashboard. Press the **X** on the _Where do you want to start?_ popup to close it (if required).
 
 2. Click **Explore** in the Cloud Native Playground tile to navigate to _MeshMap_
 
