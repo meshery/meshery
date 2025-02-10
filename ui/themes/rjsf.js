@@ -67,7 +67,6 @@ export const rjsfTheme = createTheme({
           overflow: 'hidden',
           textOverflow: 'ellipsis',
           maxWidth: '60%',
-          height: '100%',
           '&:hover': {
             overflow: 'visible',
           },
@@ -110,7 +109,7 @@ export const rjsfTheme = createTheme({
       styleOverrides: {
         root: {
           color: '#333',
-          fontSize: '1rem',
+          fontSize: '0.8rem',
           textTransform: 'capitalize',
           backgroundColor: 'transparent',
         },
@@ -326,7 +325,7 @@ export const darkRjsfTheme = createTheme({
       styleOverrides: {
         root: {
           color: '#FFF',
-          fontSize: '1rem',
+          fontSize: '0.8rem',
           textTransform: 'capitalize',
         },
       },
@@ -338,7 +337,6 @@ export const darkRjsfTheme = createTheme({
           overflow: 'hidden',
           textOverflow: 'ellipsis',
           maxWidth: '60%',
-          height: '100%',
           '&:hover': {
             overflow: 'visible',
           },
