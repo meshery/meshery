@@ -280,7 +280,7 @@ export const MainListIcon = styled(ListItemIcon)(({ theme }) => ({
   textAlign: 'center',
   display: 'inline-table',
   paddingRight: theme.spacing(0.5),
-  marginLeft: theme.spacing(0.8),
+  marginLeft: '8.45px',
 }));
 
 export const ListIconSide = styled(ListItemIcon)(({ theme }) => ({
@@ -347,8 +347,8 @@ export const NavigatorFooter = styled('div')({
 
 export const ChevronButtonWrapper = styled('div', {
   shouldForwardProp: (prop) => prop !== 'isCollapsed',
-})(({ isCollapsed }) => ({
-  backgroundColor: isCollapsed ? '#515b60' : 'transparent',
+})(({ isCollapsed, theme }) => ({
+  backgroundColor: isCollapsed ? '#515b60' : theme.palette.background.tabs,
   color: isCollapsed ? '#ffffff' : 'inherit',
   boxShadow: !isCollapsed
     ? '0.5px 0px 0px 0px rgb(0 0 0 / 20%), 1.5px 0px 0px 0px rgb(0 0 0 / 14%), 2.5px 1px 3px 0px rgb(0 0 0 / 12%)'
@@ -367,11 +367,11 @@ export const ChevronButtonWrapper = styled('div', {
 
   '&:hover': {
     opacity: 1,
-    background: !isCollapsed ? 'transparent' : undefined,
+    background: !isCollapsed ? theme.palette.background.card : undefined,
   },
   '&:focus': {
     opacity: 1,
-    background: !isCollapsed ? 'transparent' : undefined,
+    background: !isCollapsed ? theme.palette.background.card : undefined,
   },
 }));
 

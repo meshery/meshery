@@ -1133,4 +1133,18 @@ exp:
         flags:
           org:
             name: -o, -orgId
-            description: organization id
+            description: organization id 
+  org:
+    name: org
+    description: show existing organizations with their name,id, date of creation
+    usage: mesheryctl exp org 
+    flags:
+      description: 
+        pageNo:
+          name: -p --pagenumber
+          description: page number to fetch
+        pagesize:
+          name: -s --size
+          description: page size
+      
+
