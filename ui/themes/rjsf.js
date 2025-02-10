@@ -70,6 +70,9 @@ export const rjsfTheme = createTheme({
           '&:hover': {
             overflow: 'visible',
           },
+          '&.Mui-focused': {
+            padding: '0.2rem',
+          },
         },
         shrink: {
           maxWidth: '100%',
@@ -339,6 +342,9 @@ export const darkRjsfTheme = createTheme({
           maxWidth: '60%',
           '&:hover': {
             overflow: 'visible',
+          },
+          '&.Mui-focused': {
+            padding: '0.2rem',
           },
         },
         shrink: {
