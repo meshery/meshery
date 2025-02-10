@@ -67,7 +67,6 @@ export const rjsfTheme = createTheme({
           overflow: 'hidden',
           textOverflow: 'ellipsis',
           maxWidth: '60%',
-          height: '100%',
           '&:hover': {
             overflow: 'visible',
           },
@@ -115,6 +114,7 @@ export const rjsfTheme = createTheme({
           color: '#333',
           fontSize: '0.8rem',
           textTransform: 'capitalize',
+          backgroundColor: 'transparent',
         },
       },
     },
@@ -340,7 +340,6 @@ export const darkRjsfTheme = createTheme({
           overflow: 'hidden',
           textOverflow: 'ellipsis',
           maxWidth: '60%',
-          height: '100%',
           '&:hover': {
             overflow: 'visible',
           },

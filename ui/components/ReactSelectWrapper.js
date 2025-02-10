@@ -6,10 +6,11 @@ import { Typography, TextField, Paper, Chip, MenuItem, useTheme } from '@layer5/
 import NoSsr from '@mui/material/NoSsr';
 import CancelIcon from '@mui/icons-material/Cancel';
 
-const StyledNoOptionsMessage = styled(Typography)({
+const StyledNoOptionsMessage = styled(Typography)(({ theme }) => ({
   padding: '0.2rem',
   marginLeft: '0.8rem',
-});
+  color: theme.palette.text.disabled,
+}));
 
 const StyledValueContainer = styled('div')({
   display: 'flex',
@@ -18,11 +19,12 @@ const StyledValueContainer = styled('div')({
   overflow: 'hidden',
 });
 
-const StyledPlaceholder = styled(Typography)({
+const StyledPlaceholder = styled(Typography)(({ theme }) => ({
+  color: theme.palette.text.disabled,
   position: 'absolute',
   left: 16,
   fontSize: 16,
-});
+}));
 
 const StyledPaper = styled(Paper)({
   zIndex: 9999,
@@ -40,11 +42,7 @@ const StyledChip = styled(Chip)(({ theme }) => ({
 }));
 
 function NoOptionsMessage(props) {
-  return (
-    <StyledNoOptionsMessage color="textSecondary" {...props.innerProps}>
-      {props.children}
-    </StyledNoOptionsMessage>
-  );
+  return <StyledNoOptionsMessage {...props.innerProps}>{props.children}</StyledNoOptionsMessage>;
 }
 
 function inputComponent({ inputRef, ...props }) {
@@ -87,11 +85,7 @@ function Option(props) {
 }
 
 function Placeholder(props) {
-  return (
-    <StyledPlaceholder color="textSecondary" {...props.innerProps}>
-      {props.children}
-    </StyledPlaceholder>
-  );
+  return <StyledPlaceholder {...props.innerProps}>{props.children}</StyledPlaceholder>;
 }
 
 function SingleValue(props) {

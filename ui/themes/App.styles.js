@@ -38,6 +38,16 @@ export const StyledAppContent = styled('div')({
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
+  position: 'relative',
+  overflow: 'visible',
+});
+
+export const StyledContentWrapper = styled('div')({
+  flex: 1,
+  display: 'flex',
+  flexDirection: 'column',
+  overflow: 'auto',
+  minHeight: 0,
 });
 
 export const StyledDrawer = styled('nav', {
@@ -72,12 +82,13 @@ const StyledSnackbarContent = styled(SnackbarContent)(({ theme, variant }) => {
     warning: theme.palette.warning.main,
     error: theme.palette.error.main,
   };
-  
+
   return {
     backgroundColor: theme.palette.text.default,
     color: notificationColors[variant] || notificationColors.info,
     pointerEvents: 'auto',
     borderRadius: '0.3rem',
+    boxShadow: `0 0px 10px ${theme.palette.background.default}`,
   };
 });
 

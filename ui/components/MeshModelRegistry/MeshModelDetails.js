@@ -184,7 +184,7 @@ const ModelContents = ({ modelDef }) => {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <TitleWithImg displayName={modelDef.displayName} iconSrc={modelDef?.metadata?.svgColor} />
-        <div style={{ display: 'block' }}>
+        <div style={{ display: 'flex', gap: '1rem', marginRight: '2rem' }}>
           {ExportAvailable ? (
             <Button
               aria-label="Export Model"
@@ -193,7 +193,7 @@ const ModelContents = ({ modelDef }) => {
               size="medium"
               alt="Export Model to OCI Image"
               onClick={handleExport}
-              style={{ display: 'flex', width: '100%', marginBottom: '.25rem' }}
+              style={{ display: 'flex', width: '100%', paddingInline: '0' }}
             >
               <DownloadIcon style={{ fontSize: '1.2rem' }} />
               Export
@@ -385,7 +385,7 @@ const Description = ({ description }) => (
 );
 
 const TitleWithImg = ({ displayName, iconSrc }) => (
-  <div style={{ display: 'flex', alignItems: 'center', flexBasis: '60%' }}>
+  <div style={{ display: 'flex', alignItems: 'center' }}>
     {iconSrc && <img src={iconSrc} height="32px" width="32px" style={{ marginRight: '0.6rem' }} />}
     <StyledTitle>{displayName}</StyledTitle>
   </div>
@@ -419,7 +419,7 @@ const StatusChip = ({ entityData, entityType }) => {
   // };
 
   return (
-    <FormControl style={{ flexDirection: 'inherit', minWidth: '100%' }}>
+    <FormControl style={{ flexDirection: 'inherit' }}>
       {isSuccess ? (
         <Select
           labelId="entity-status-select-label"
@@ -430,6 +430,7 @@ const StatusChip = ({ entityData, entityType }) => {
           onClick={(e) => e.stopPropagation()}
           onChange={(e) => handleStatusChange(e)}
           sx={{
+            textTransform: 'capitalize',
             '& .MuiSelect-select': {
               p: '0.5rem !important',
               pr: '2rem !important',
@@ -454,7 +455,10 @@ const StatusChip = ({ entityData, entityType }) => {
           {nextStatus.map((status) => (
             <MenuItem
               disabled={status === data?.status}
-              style={{ display: status === data?.status ? 'none' : 'flex' }}
+              style={{
+                display: status === data?.status ? 'none' : 'flex',
+                textTransform: 'capitalize',
+              }}
               value={status}
               key={status}
             >
