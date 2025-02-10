@@ -898,6 +898,20 @@ model:
       name: search
       description: Using a keyword(s) search the registry for matching model(s)
       usage: mesheryctl model search [keyword]
+    generate:
+      name: generate
+      description: Generate models by specifying the directory, file, or URL.
+      usage: mesheryctl model generate [flags]
+      flags:
+        file:
+          name: --file, -f
+          description: Specify the path to the file, directory, or URL.
+        template:
+          name: --template, -t
+          description: Specify the path to the template JSON file (only required for URLs).
+        register:
+        name: --register, -r
+        description: Skip model registration (default is true).    
     view:
       name: view
       description: View details of a specific model
