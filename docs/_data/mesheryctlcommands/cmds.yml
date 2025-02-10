@@ -910,8 +910,8 @@ model:
           name: --template, -t
           description: Specify the path to the template JSON file (only required for URLs).
         register:
-        name: --register, -r
-        description: Skip model registration (default is true).    
+          name: --register, -r
+          description: Skip model registration (default is true).    
     view:
       name: view
       description: View details of a specific model
