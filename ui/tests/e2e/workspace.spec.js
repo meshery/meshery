@@ -147,36 +147,43 @@ test('Create new workspace', async ({ page, provider }) => {
   await expect(workspaceCard.getByText('Test workspace description').first()).toBeVisible();
 });
 
-test('Assign environments to workspace', async ({ page }) => {
-  // Find and click assign environment button on workspace card
+test('Update workspace', async ({ page }) => {
+  const updateWorkspaceRes = page.waitForResponse(
+    (response) =>
+      response.url().includes(`${ENV.MESHERY_SERVER_URL}/api/workspaces`) &&
+      response.request().method() === 'PUT',
+  );
+
+  // Click edit button on the first workspace card
   const workspaceCard = page.locator('.MuiGrid-container').first();
-  await workspaceCard.getByTestId('environment-icon').click();
+  await workspaceCard.getByTestId('edit-icon').click();
 
-  // Verify transfer list modal
-  await expect(page.getByText(/Assign Environments to/)).toBeVisible();
+  // Fill workspace form
+  await page.getByLabel('Name').fill('Updated Workspace');
+  await page.getByLabel('Description').fill('Updated workspace description');
 
-  // Verify transfer list components
-  await expect(page.getByText('Available Environments')).toBeVisible();
-  await expect(page.getByText('Assigned Environments')).toBeVisible();
+  // Submit form
+  await page.getByRole('button', { name: 'Save' }).click();
 
-  // Close modal
-  await page.getByRole('button', { name: 'Cancel' }).click();
-});
+  // Wait for response
+  const response = await updateWorkspaceRes;
+  const responseBody = await response.json();
 
-test('Assign designs to workspace', async ({ page }) => {
-  // Find and click assign design button on workspace card
-  const workspaceCard = page.locator('.MuiGrid-container').first();
-  await workspaceCard.getByTestId('design-icon').click();
+  // Verify response payload
+  expect(responseBody).toMatchObject({
+    name: 'Updated Workspace',
+    description: 'Updated workspace description',
+  });
 
-  // Verify transfer list modal
-  await expect(page.getByText(/Assign Designs to/)).toBeVisible();
+  // Verify success notification
+  await expect(page.getByText('Workspace updated successfully')).toBeVisible();
 
-  // Verify transfer list components
-  await expect(page.getByText('Available Designs')).toBeVisible();
-  await expect(page.getByText('Assigned Designs')).toBeVisible();
-
-  // Close modal
-  await page.getByRole('button', { name: 'Cancel' }).click();
+  // Verify the updated workspace is visible in the UI
+  const updatedCard = page.locator('.MuiGrid-container').filter({ 
+    has: page.getByText('Updated Workspace')
+  });
+  await expect(updatedCard).toBeVisible();
+  await expect(updatedCard.getByText('Updated workspace description')).toBeVisible();
 });
 
 test('Delete workspace', async ({ page }) => {
@@ -227,4 +234,3 @@ test('Search workspaces', async ({ page }) => {
   const workspaceCards = page.locator('.MuiGrid-container').first();
   await expect(workspaceCards).toContainText('Test');
 });
-
