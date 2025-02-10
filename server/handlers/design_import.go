@@ -84,6 +84,11 @@ func getFileNameFromResponse(resp *http.Response, fileURL string) string {
 	return path.Base(parsedURL.Path)
 }
 
+func trackTime(logger logger.Handler, start time.Time, name string) {
+	elapsed := time.Since(start)
+	logger.Debugf("%s took %s\n", name, elapsed)
+}
+
 func ConvertFileToManifest(identifiedFile files.IdentifiedFile, rawFile FileToImport) (string, error) {
 
 	switch identifiedFile.Type {
