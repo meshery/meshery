@@ -561,9 +561,11 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
                     interactive={true}
                     title="Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)"
                   >
-                    <IconButton color="primary">
-                      <InfoOutlinedIcon height={20} width={20} />
-                    </IconButton>
+                    <div>
+                      <IconButton color="default">
+                        <InfoOutlinedIcon height={20} width={20} />
+                      </IconButton>
+                    </div>
                   </CustomTextTooltip>
                 </UsesSistent>
               )}
@@ -608,35 +610,37 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
           let updatingEnvs = updatingConnection.current;
           return (
             isEnvironmentsSuccess && (
-              <div onClick={(e) => e.stopPropagation()}>
-                <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
-                  <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
-                    <MultiSelectWrapper
-                      updating={updatingEnvs}
-                      onChange={(selected, unselected) =>
-                        handleEnvironmentSelect(
-                          getColumnValue(tableMeta.rowData, 'id', columns),
-                          getColumnValue(tableMeta.rowData, 'name', columns),
-                          cleanedEnvs,
-                          selected,
-                          unselected,
-                        )
-                      }
-                      options={getOptions()}
-                      value={cleanedEnvs}
-                      placeholder={`Assigned Environments`}
-                      isSelectAll={true}
-                      menuPlacement={'bottom'}
-                      disabled={
-                        !CAN(
-                          keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
-                          keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
-                        )
-                      }
-                    />
+              <UsesSistent>
+                <div onClick={(e) => e.stopPropagation()}>
+                  <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
+                    <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
+                      <MultiSelectWrapper
+                        updating={updatingEnvs}
+                        onChange={(selected, unselected) =>
+                          handleEnvironmentSelect(
+                            getColumnValue(tableMeta.rowData, 'id', columns),
+                            getColumnValue(tableMeta.rowData, 'name', columns),
+                            cleanedEnvs,
+                            selected,
+                            unselected,
+                          )
+                        }
+                        options={getOptions()}
+                        value={cleanedEnvs}
+                        placeholder={`Assigned Environments`}
+                        isSelectAll={true}
+                        menuPlacement={'bottom'}
+                        disabled={
+                          !CAN(
+                            keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
+                            keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
+                          )
+                        }
+                      />
+                    </Grid>
                   </Grid>
-                </Grid>
-              </div>
+                </div>
+              </UsesSistent>
             )
           );
         },

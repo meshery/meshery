@@ -119,7 +119,9 @@ function TooltipIcon({ children, onClick, title }) {
   return (
     <UsesSistent>
       <CustomTooltip title={title} placement="top" interactive>
-        <IconButton onClick={onClick}>{children}</IconButton>
+        <div>
+          <IconButton onClick={onClick}>{children}</IconButton>
+        </div>
       </CustomTooltip>
     </UsesSistent>
   );

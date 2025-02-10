@@ -1,32 +1,32 @@
-import { SheetsRegistry } from 'jss';
-import { createTheme } from '@material-ui/core/styles';
+import { createTheme } from '@mui/material/styles';
+import createCache from '@emotion/cache';
 
-// a theme with custom primary and secondary color.
-// it's optional.
-const theme = createTheme({});
+// Create a custom theme
+const theme = createTheme({
+  // Your theme customization here
+});
+
+// Create emotion cache
+const createEmotionCache = () => {
+  return createCache({ key: 'css', prepend: true });
+};
 
 function createPageContext() {
   return {
     theme,
-    // this is needed in order to deduplicate the injection of CSS in the page.
-    sheetsManager: new Map(),
-    // this is needed in order to inject the critical CSS.
-    sheetsRegistry: new SheetsRegistry(),
-    // the standard class name generator.
-    // generateClassName: createGenerateClassName(),
+    emotionCache: createEmotionCache(),
   };
 }
 
 let pageContext;
 
 export default function getPageContext() {
-  // make sure to create a new context for every server-side request so that data
-  // isn't shared between connections (which would be bad).
-  if (!process.browser) {
+  // Make sure to create a new context for every server-side request
+  if (typeof window === 'undefined') {
     return createPageContext();
   }
 
-  // reuse context on the client-side.
+  // Reuse context on the client-side
   if (!pageContext) {
     pageContext = createPageContext();
   }
