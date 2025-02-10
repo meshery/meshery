@@ -12,7 +12,7 @@ import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
-import { Box, IconButton, Typography, useTheme } from '@layer5/sistent';
+import { Box, Typography, useTheme } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
 
 export default function ConnectionStatsChart() {
@@ -74,24 +74,15 @@ export default function ConnectionStatsChart() {
             </Typography>
             <div onClick={(e) => e.stopPropagation()}>
               <CustomTextTooltip
-                interactive={true}
-                variant="standard"
                 title={`Meshery Connections are managed and unmanaged resources that either through discovery or manual entry can be assigned to one or more Environments. [Learn More](https://docs.meshery.io/concepts/logical/connections)`}
                 placement="left"
-                leaveDelay={200}
               >
-                <IconButton
-                  disableRipple={true}
-                  disableFocusRipple={true}
-                  disableTouchRipple={true}
-                  sx={{ padding: '0px' }}
-                >
+                <div>
                   <InfoOutlined
                     color={theme.palette.icon.default}
                     style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-                    onClick={(e) => e.stopPropagation()}
                   />
-                </IconButton>
+                </div>
               </CustomTextTooltip>
             </div>
           </div>
