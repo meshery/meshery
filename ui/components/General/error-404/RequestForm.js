@@ -10,7 +10,7 @@ import { useGetOrgsQuery } from 'rtk-query/organization';
 import OrgIcon from 'assets/icons/OrgIcon';
 import { Provider } from 'react-redux';
 import { store } from '../../../store';
-import { ErrorBoundary, FormControl, FormGroup, MenuItem } from '@layer5/sistent';
+import { ErrorBoundary, FormControl, FormGroup, MenuItem, useTheme } from '@layer5/sistent';
 import {
   OrgName,
   StyledSelect,
@@ -20,7 +20,6 @@ import {
   StyledTypography,
   StyledFormButton,
 } from './styles';
-import theme from 'themes/app';
 import { useGetCurrentAbilities } from 'rtk-query/ability';
 import CustomErrorFallback from '../ErrorBoundary';
 
@@ -31,6 +30,7 @@ const RequestForm = (props) => {
     isError: isOrgsError,
     error: orgsError,
   } = useGetOrgsQuery({});
+  const theme = useTheme();
   let orgs = orgsResponse?.organizations || [];
   const { organization, setOrganization } = props;
   const [skip, setSkip] = React.useState(true);
@@ -89,7 +89,7 @@ const RequestForm = (props) => {
                             <OrgIcon
                               width="24"
                               height="24"
-                              secondaryFill={theme.palette.darkSlateGray}
+                              secondaryFill={theme.palette.icon.secondary}
                             />
                             <OrgName>{org.name}</OrgName>
                           </MenuItem>

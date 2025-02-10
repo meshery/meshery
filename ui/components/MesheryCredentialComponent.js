@@ -19,11 +19,10 @@ import { useWindowDimensions } from '../utils/dimension';
 import { CustomColumnVisibilityControl } from '@layer5/sistent';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 
-const CredentialIcon = styled('img')(({ theme }) => ({
+const CredentialIcon = styled('img')({
   width: '24px',
   height: '24px',
-  filter: theme.palette.secondary.brightness,
-}));
+});
 
 const ActionContainer = styled('div')({
   display: 'flex',

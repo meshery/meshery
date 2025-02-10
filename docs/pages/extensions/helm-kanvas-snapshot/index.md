@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Helm Kanvas Snapshot
-permalink: extensions/kubectl-kanvas-snapshot
+permalink: extensions/helm-kanvas-snapshot
 language: en
 abstract: Helm CLI plugin to visually render a snapshot of your Helm charts.
 display-title: "false"
@@ -33,8 +33,6 @@ To install the Meshery Snapshot Helm Plugin, use the following steps:
 
 - `helm` must be [installed]( helm plugin install https://github.com/meshery/helm-kanvas-snapshot) on your system.
 - (Optional) A free [Layer5 Cloud](https://cloud.layer5.io) user account.
-- Environemnt Variables:
-    1. ...?
 
 **Plugin Installation**
 
@@ -59,19 +57,19 @@ To install the Meshery Snapshot Helm Plugin, use the following steps:
 Once the plugin is installed, you can generate a snapshot using either a packaged or unpackaged Helm chart.
 
 ```bash
-helm snapshot -f <chart-URI> [-n <snapshot-name>] [-e <email>]
+helm snapshot -f <chart-URI> [--name <snapshot-name>] [-e <email>]
 ```
 
 - **`-f`**, **`--file`**: (required) path or URL to the Helm chart (required).
-- **`-n`**, **`--name`**: (optional) name for the snapshot. If not provided, a name will be auto-generated based on the chart name.
-- **`-e`, **`--email`**: (optional) email address to notify when snapshot is ready. If not provided, a link to the snapshot will be displayed in the terminal.
+- **`--name`**: (optional) name for the snapshot. If not provided, a name will be auto-generated based on the chart name.
+- **`-e`**, **`--email`**: (optional) email address to notify when snapshot is ready. If not provided, a link to the snapshot will be displayed in the terminal.
 
 **Example**
 
 To generate a snapshot for a Helm chart located at `https://meshery.io/charts/v0.8.0-meshery.tar.gz`, you can use:
 
 ```bash
-helm snapshot -f https://meshery.io/charts/v0.8.0-meshery.tar.gz -n meshery-chart
+helm snapshot -f https://meshery.io/charts/v0.8.0-meshery.tar.gz --name meshery-chart
 ```
 
 <hr />
