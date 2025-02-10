@@ -72,16 +72,9 @@ const StyledSnackbarContent = styled(SnackbarContent)(({ theme, variant }) => {
     warning: theme.palette.warning.main,
     error: theme.palette.error.main,
   };
-
-  const backgroundColors = {
-    light: 'rgb(248, 252, 248)',
-    dark: '#323232',
-  };
-
-  const themeMode = theme.palette.mode; // Access theme mode (light or dark)
-
+  
   return {
-    backgroundColor: backgroundColors[themeMode],
+    backgroundColor: theme.palette.text.default,
     color: notificationColors[variant] || notificationColors.info,
     pointerEvents: 'auto',
     borderRadius: '0.3rem',
