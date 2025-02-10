@@ -213,6 +213,12 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
 
+	// default value for ShowIgnored
+	showIgnored := true
+	if queryParams.Get("showIgnored") != "" {
+		showIgnored = queryParams.Get("showIgnored") == "true"
+	}
+
 	filter := &regv1beta1.ModelFilter{
 		Id:          queryParams.Get("id"),
 		Registrant:  queryParams.Get("registrant"),
@@ -225,6 +231,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 
 		Components:    queryParams.Get("components") == "true",
 		Relationships: queryParams.Get("relationships") == "true",
+		ShowIgnored:   showIgnored,
 		Status:        queryParams.Get("status"),
 		Trim:          queryParams.Get("trim") == "true",
 	}
