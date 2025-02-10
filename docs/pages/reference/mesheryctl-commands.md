@@ -747,8 +747,14 @@ Installation, troubleshooting and debugging of Meshery and its adapters
     <th>Function</th>
   </tr>
   {% assign command12 = site.data.mesheryctlcommands.cmds.model %}
+  {% assign subcommand12_flag_count = 0 %}
+    {% for subcommand12_hash in command12.subcommands %}
+      {% assign subcommand = subcommand12_hash[1] %}
+      {% assign subcommand12_flag_count = subcommand12_flag_count | plus: subcommand.flags.size %}
+    {% endfor %}
+    {% assign total_rowspan = command12.subcommands.size | plus: subcommand12_flag_count | plus: command12.flags.size | plus: 1 %}
     <tr>
-      <td rowspan=11><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command12.name }}">{{ command12.name }}</a></td>
+      <td rowspan={{ total_rowspan }}><a href="{{ site.baseurl }}/reference/mesheryctl/{{ command12.name }}">{{ command12.name }}</a></td>
       <td></td>
       <td></td>
       <td>{{ command12.description }}</td>
