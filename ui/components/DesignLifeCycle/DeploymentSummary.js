@@ -12,8 +12,6 @@ import { openViewScopedToDesignInOperator, useIsOperatorEnabled } from '@/utils/
 import { useRouter } from 'next/router';
 
 const StyledDetailBox = styled(Box)(() => ({
-  // padding: theme.spacing(2),
-  // backgroundColor: alpha(severityColor, bgOpacity),
   display: 'flex',
 }));
 

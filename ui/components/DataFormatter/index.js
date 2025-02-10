@@ -369,7 +369,7 @@ export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema, 
           propertyFormatters: propertyFormatters,
         }}
       >
-        <Grid container style={{}}>
+        <Grid container>
           <DynamicFormatter data={data} uiSchema={uiSchema} isLevel={isLevel} />
         </Grid>
       </FormatterContext.Provider>
