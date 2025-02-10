@@ -1107,7 +1107,7 @@ class Navigator_ extends React.Component {
               </HelpListItem>
             );
           })}
-          <ListItem>
+          <ListItem style={{ display: isDrawerCollapsed ? 'inherit' : 'none' }}>
             <CustomTextTooltip title="Help" placement={isDrawerCollapsed ? 'right' : 'top'}>
               <HelpButton isCollapsed={isDrawerCollapsed} onClick={this.toggleSpacing}>
                 <HelpIcon
@@ -1183,7 +1183,12 @@ class Navigator_ extends React.Component {
               icon={faAngleLeft}
               fixedWidth
               size="2x"
-              style={{ margin: '0.75rem 0.2rem ', width: '0.8rem', verticalAlign: 'middle' }}
+              style={{
+                margin: '0.75rem 0.2rem ',
+                width: '0.8rem',
+                verticalAlign: 'middle',
+                color: isDrawerCollapsed ? '#fff' : 'inherit',
+              }}
               alt="Sidebar collapse toggle icon"
             />
           </UsesSistent>

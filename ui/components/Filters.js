@@ -156,7 +156,11 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
       fullWidth={!fullScreen}
     >
       <YmlDialogTitle>
-        <DialogTitle disableTypography id="filter-dialog-title">
+        <DialogTitle
+          disableTypography
+          id="filter-dialog-title"
+          style={{ width: '100%', display: 'flex' }}
+        >
           <YmlDialogTitleText variant="h6">{filter.name}</YmlDialogTitleText>
           <TooltipIcon
             title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
