@@ -43,7 +43,7 @@ export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, 
             color={
               status === CONNECTION_STATES.CONNECTED || status === CONTROLLER_STATES.DEPLOYED
                 ? theme.palette.background.brand.default
-                : theme.palette.text.default
+                : theme.palette.text.disabled
             }
           >
             <Avatar src={iconSrc} style={(status ? {} : { opacity: 0.2 }, iconMedium)}>
