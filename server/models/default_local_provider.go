@@ -484,7 +484,7 @@ func (l *DefaultLocalProvider) PublishSmiResults(result *SmiResult) (string, err
 
 func (l *DefaultLocalProvider) shipResults(_ *http.Request, data []byte) (string, error) {
 	bf := bytes.NewBuffer(data)
-	remoteProviderURL, _ := url.Parse(l.ProviderBaseURL + "/api/performace/results")
+	remoteProviderURL, _ := url.Parse(l.ProviderBaseURL + "/api/performance/results")
 	cReq, _ := http.NewRequest(http.MethodPost, remoteProviderURL.String(), bf)
 	cReq.Header.Set("X-API-Key", GlobalTokenForAnonymousResults)
 	c := &http.Client{}
