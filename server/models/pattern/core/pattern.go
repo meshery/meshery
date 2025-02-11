@@ -14,6 +14,7 @@ import (
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/manifests"
+	"github.com/meshery/schemas/models/v1alpha1/capability"
 	"github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
@@ -450,6 +451,7 @@ func createPatternDeclarationFromK8s(manifest map[string]interface{}, regManager
 
 	rest = Format.Prettify(rest, false)
 	uuidV4, _ := uuid.NewV4()
+	defaultCapabilities := []capability.Capability{} // only assign empty capabilities for component declarations
 	declaration := component.ComponentDefinition{
 		Id:            uuidV4,
 		SchemaVersion: comp.SchemaVersion,
@@ -461,8 +463,8 @@ func createPatternDeclarationFromK8s(manifest map[string]interface{}, regManager
 		},
 		Model:         comp.Model,
 		Configuration: rest,
+		Capabilities:  &defaultCapabilities,
 		Metadata:      comp.Metadata,
-		Capabilities:  comp.Capabilities,
 		Styles:        comp.Styles,
 		Status:        comp.Status,
 	}
