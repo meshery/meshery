@@ -667,7 +667,6 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	patternID := mux.Vars(r)["id"]
 	ociFormat, _ := strconv.ParseBool(r.URL.Query().Get("oci"))
 	ahpkg, _ := strconv.ParseBool(r.URL.Query().Get("pkg"))
-	var unmarshalledPatternFile pattern.PatternFile
 
 	resp, err := provider.GetMesheryPattern(r, patternID, "false")
 	if err != nil {
@@ -1016,7 +1015,8 @@ func (h *Handler) DownloadMesheryPatternHandler(
 			return
 		}
 	}
-	err = encoding.Unmarshal([]byte(pattern.PatternFile), &unmarshalledPatternFile)
+
+	yamlBytes, err := encoding.ToYaml([]byte(pattern.PatternFile))
 	if err != nil {
 		err = ErrParsePattern(err)
 		h.log.Error(err)
@@ -1027,11 +1027,10 @@ func (h *Handler) DownloadMesheryPatternHandler(
 	rw.Header().Set("Content-Type", "application/yaml")
 	rw.Header().Add("Content-Disposition", fmt.Sprintf("attachment;filename=%s.yml", pattern.Name))
 
-	enc := yaml.NewEncoder(rw)
-	enc.SetIndent(2)
-	err = enc.Encode(unmarshalledPatternFile)
+	_, err = rw.Write(yamlBytes)
 	if err != nil {
 		err = ErrEncodePattern(err)
+		h.log.Error(err)
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
 	}
