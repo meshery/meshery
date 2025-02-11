@@ -21,7 +21,7 @@ See your deployment before you merge. Connect Kanvas to your GitHub repo and see
 
 See [Extension: Kanvas Snapshot](/extensions/snapshot) for more details.
 
-## <img src="{{ site.baseurl }}/assets/img/smp-dark-text-side.svg" className="image-left-no-shadow" alt="service mesh performance logo" style="width: 60%; max-width: 200px;vertical-align:middle" /> Meshery Performance Analysis GitHub Action
+## <img src="{{ site.baseurl }}/assets/img/smp-dark-text-side.svg" className="image-left-no-shadow" alt="Infrastructure fperformance logo" style="width: 60%; max-width: 200px;vertical-align:middle" /> Meshery Performance Analysis GitHub Action
 
 - See your performance regressions before you merge
 - Connect Performance Management to your GitHub repo and see changes pull request-to-pull request
