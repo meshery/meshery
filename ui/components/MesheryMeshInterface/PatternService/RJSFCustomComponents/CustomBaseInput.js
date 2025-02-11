@@ -29,7 +29,7 @@ const BaseInput = (props) => {
   const focused = props.options?.focused; // true for datetime-local
   const isRequired = props?.required;
   const prettifiedName = name || 'Enter a value';
-  const [isFocused, setIsFocused] = React.useState(false);
+  const [, setIsFocused] = React.useState(false);
   const style = {
     display: 'flex',
     alignItems: 'center',
@@ -37,10 +37,10 @@ const BaseInput = (props) => {
   const theme = useTheme();
 
   const getInputLabelStyle = () => {
-    if (prettifiedName === 'name' || prettifiedName === 'namespace' || isFocused) {
+    if (prettifiedName === 'name' || prettifiedName === 'namespace') {
       return {
         color: theme.palette.secondary.text,
-        backgroundColor: theme.palette.background.default,
+        backgroundColor: theme.palette.mode === 'dark' ? '#303030' : 'white',
         padding: '0.2rem',
         height: '1rem',
         borderRadius: '3px',
