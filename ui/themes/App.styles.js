@@ -84,7 +84,7 @@ const StyledSnackbarContent = styled(SnackbarContent)(({ theme, variant }) => {
   };
 
   return {
-    backgroundColor: theme.palette.background.secondary,
+    backgroundColor: theme.palette.text.default,
     color: notificationColors[variant] || notificationColors.info,
     pointerEvents: 'auto',
     borderRadius: '0.3rem',

@@ -318,6 +318,7 @@ const Workspaces = ({ organization }) => {
     useAssignEnvironmentToWorkspaceMutation: useAssignEnvironmentToWorkspaceMutation,
     useGetEnvironmentsOfWorkspaceQuery: useGetEnvironmentsOfWorkspaceQuery,
     useUnassignEnvironmentFromWorkspaceMutation: useUnassignEnvironmentFromWorkspaceMutation,
+    isEnvironmentsVisible: CAN(keys.VIEW_ENVIRONMENTS.action, keys.VIEW_ENVIRONMENTS.subject),
   });
 
   const teamAssignment = useTeamAssignment({
@@ -325,6 +326,7 @@ const Workspaces = ({ organization }) => {
     useAssignTeamToWorkspaceMutation: useAssignTeamToWorkspaceMutation,
     useGetTeamsOfWorkspaceQuery: useGetTeamsOfWorkspaceQuery,
     useUnassignTeamFromWorkspaceMutation: useUnassignTeamFromWorkspaceMutation,
+    isTeamsVisible: CAN(keys.VIEW_TEAMS.action, keys.VIEW_TEAMS.subject),
   });
 
   const designAssignment = useDesignAssignment({
@@ -332,6 +334,7 @@ const Workspaces = ({ organization }) => {
     useAssignDesignToWorkspaceMutation: useAssignDesignToWorkspaceMutation,
     useGetDesignsOfWorkspaceQuery: useGetDesignsOfWorkspaceQuery,
     useUnassignDesignFromWorkspaceMutation: useUnassignDesignFromWorkspaceMutation,
+    isDesignsVisible: CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject),
   });
 
   const viewAssignment = useViewAssignment({
@@ -339,6 +342,7 @@ const Workspaces = ({ organization }) => {
     useGetViewsOfWorkspaceQuery: useGetViewsOfWorkspaceQuery,
     useAssignViewToWorkspaceMutation: useAssignViewToWorkspaceMutation,
     useUnassignViewFromWorkspaceMutation: useUnassignViewFromWorkspaceMutation,
+    isViewsVisible: CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject),
   });
 
   const handleAssignEnvironmentModalOpen = (e, workspace) => {
