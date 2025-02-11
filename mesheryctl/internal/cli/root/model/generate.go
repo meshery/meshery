@@ -21,7 +21,7 @@ var generateModelCmd = &cobra.Command{
  
 	
 	mesheryctl model generate --f /path/to/csv-drectory
-    mesheryctl model generate --f http://example.com/model -t /path/to/template.json 
+        mesheryctl model generate --f http://example.com/model -t /path/to/template.json 
 	mesheryctl model generate --f http://example.com/model -t /path/to/template.json -r
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
