@@ -18,8 +18,11 @@ import (
 )
 
 type SpreadsheetData struct {
-	Model      *ModelCSV
-	Components []component.ComponentDefinition
+	Model              *ModelCSV
+	Components         []component.ComponentDefinition
+	NewComponentCount  int
+	ExistingComponents int
+	Version            string
 }
 
 var (
@@ -160,17 +163,22 @@ func VerifyandUpdateSpreadsheet(cred string, wg *sync.WaitGroup, srv *sheets.Ser
 		return
 	}
 }
+
 func (mrh *RelationshipCSVHelper) UpdateRelationshipSheet(srv *sheets.Service, cred, sheetId, csvPath string) error {
 	if len(mrh.UpdatedRelationships) == 0 {
 		return nil
 	}
 
+	// Prepare batch update data with logging
+	Log.Infof("Preparing batch update for %d relationships", len(mrh.UpdatedRelationships))
 	var dataToUpdate []*sheets.ValueRange
 
 	for _, rel := range mrh.UpdatedRelationships {
 		row := rel.RowIndex
 		// Column O corresponds to column 15 in A1 notation (O is the 15th letter)
 		rangeStr := fmt.Sprintf("Relationships!O%d", row)
+
+		Log.Debugf("Adding update for relationship at row %d: %s", row, rel.Filename)
 		valueRange := &sheets.ValueRange{
 			Range:  rangeStr,
 			Values: [][]interface{}{{rel.Filename}},
@@ -178,15 +186,22 @@ func (mrh *RelationshipCSVHelper) UpdateRelationshipSheet(srv *sheets.Service, c
 		dataToUpdate = append(dataToUpdate, valueRange)
 	}
 
+	// Perform batch update
+	Log.Info("Executing batch update to spreadsheet...")
 	batchUpdateValuesRequest := &sheets.BatchUpdateValuesRequest{
 		ValueInputOption: "USER_ENTERED",
 		Data:             dataToUpdate,
 	}
 
-	_, err := srv.Spreadsheets.Values.BatchUpdate(sheetId, batchUpdateValuesRequest).Context(context.Background()).Do()
+	_, err := srv.Spreadsheets.Values.BatchUpdate(sheetId, batchUpdateValuesRequest).
+		Context(context.Background()).
+		Do()
+
 	if err != nil {
-		return ErrUpdateToSheet(err, sheetId)
+		return ErrUpdateToSheet(fmt.Errorf("Failed to update relationships (sheet ID: %s): %v", sheetId, err), sheetId)
 	}
+
+	Log.Infof("Successfully updated %d relationships in spreadsheet", len(dataToUpdate))
 	return nil
 }
 
@@ -195,7 +210,7 @@ func updateModelsSheet(srv *sheets.Service, cred, sheetId string, values []*Mode
 	if err != nil {
 		return err
 	}
-	Log.Info("Appending", len(marshalledValues), "in the models sheet") // appendSheet or appendToCSVFile
+	Log.Info("Appending", len(marshalledValues), " components into models sheet") // appendSheet or appendToCSVFile
 	err = appendSheet(srv, cred, sheetId, ModelsSheetAppendRange, marshalledValues)
 
 	return err
@@ -203,7 +218,7 @@ func updateModelsSheet(srv *sheets.Service, cred, sheetId string, values []*Mode
 
 func updateComponentsSheet(srv *sheets.Service, cred, sheetId string, values []*ComponentCSV, csvPath string) error {
 	marshalledValues, err := marshalStructToCSValues[ComponentCSV](values)
-	Log.Info("Appending", len(marshalledValues), "in the components sheet")
+	Log.Info("Appending ", len(marshalledValues), "in the components sheet")
 	if err != nil {
 		return err
 	}

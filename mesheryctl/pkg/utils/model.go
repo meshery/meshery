@@ -18,7 +18,6 @@ import (
 	"github.com/layer5io/meshkit/generators/models"
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	"github.com/sirupsen/logrus"
-	log "github.com/sirupsen/logrus"
 	"golang.org/x/sync/semaphore"
 	"google.golang.org/api/sheets/v4"
 
@@ -37,8 +36,10 @@ import (
 var modelToCompGenerateTracker = store.NewGenericThreadSafeStore[compGenerateTracker]()
 
 type compGenerateTracker struct {
-	totalComps int
-	version    string
+	totalNewComps      int    // New components generated
+	totalExistingComps int    // Existing components found
+	version            string // Version of the model
+	status             string // Status of generation (success/failed/skipped)
 }
 
 var (
@@ -47,15 +48,24 @@ var (
 	totalAggregateModel      int
 	logDirPath               = filepath.Join(utils.GetHome(), ".meshery", "logs", "registry")
 )
+
 var (
 	shouldRegisterMod = "publishToSites"
 )
+
 var (
 	artifactHubCount        = 0
 	artifactHubRateLimit    = 100
 	artifactHubRateLimitDur = 5 * time.Minute
 	artifactHubMutex        sync.Mutex
 )
+
+const (
+	StatusSuccess = "success"
+	StatusFailed  = "failed"
+	StatusSkipped = "skipped"
+)
+
 var defVersion = "v1.0.0"
 
 type ModelCSV struct {
@@ -617,6 +627,7 @@ func AssignDefaultsForCompDefs(componentDef *component.ComponentDefinition, mode
 		}
 	}
 }
+
 func GenerateComponentsFromPkg(pkg models.Package, compDirPath string, defVersion string, modelDef _model.ModelDefinition) (int, int, error) {
 	comps, err := pkg.GenerateComponents()
 	if err != nil {
@@ -647,6 +658,7 @@ func GenerateComponentsFromPkg(pkg models.Package, compDirPath string, defVersio
 	}
 	return len(comps), lengthOfComps, nil
 }
+
 func GenerateModels(registrant string, sourceURl string, modelName string) (models.Package, string, error) {
 	generator, err := generators.NewGenerator(registrant, sourceURl, modelName)
 	if err != nil {
@@ -670,6 +682,7 @@ func RateLimitArtifactHub() {
 	}
 	artifactHubCount++
 }
+
 func createVersionedDirectoryForModelAndComp(version, modelName, storeLocation string) (string, string, error) {
 	modelDirPath := filepath.Join(storeLocation, modelName, version, defVersion)
 	err := utils.CreateDirectory(modelDirPath)
@@ -730,6 +743,7 @@ NewGen:
 
 	return &modelDef, false, nil
 }
+
 func parseModelSheet(url string, modelName string, sheetGID int64, modelCSVFilePath string) (*ModelCSVHelper, error) {
 	modelCSVHelper, err := NewModelCSVHelper(url, "Models", sheetGID, modelCSVFilePath)
 	if err != nil {
@@ -742,6 +756,7 @@ func parseModelSheet(url string, modelName string, sheetGID int64, modelCSVFileP
 	}
 	return modelCSVHelper, nil
 }
+
 func parseComponentSheet(url string, modelName string, componentSpredsheetGID int64, componentCSVFilePath string) (*ComponentCSVHelper, error) {
 	compCSVHelper, err := NewComponentCSVHelper(url, "Components", componentSpredsheetGID, componentCSVFilePath)
 	if err != nil {
@@ -754,6 +769,7 @@ func parseComponentSheet(url string, modelName string, componentSpredsheetGID in
 	}
 	return compCSVHelper, nil
 }
+
 func parseRelationshipSheet(url string, modelName string, relationshipSpredsheetGID int64, relationshipCSVFilePath string) (*RelationshipCSVHelper, error) {
 	relationshipCSVHelper, err := NewRelationshipCSVHelper(url, "Relationships", relationshipSpredsheetGID, relationshipCSVFilePath)
 	if err != nil {
@@ -765,16 +781,107 @@ func parseRelationshipSheet(url string, modelName string, relationshipSpredsheet
 	}
 	return relationshipCSVHelper, nil
 }
+
 func logModelGenerationSummary(modelToCompGenerateTracker *store.GenerticThreadSafeStore[compGenerateTracker]) {
-	for key, val := range modelToCompGenerateTracker.GetAllPairs() {
-		Log.Info(fmt.Sprintf("Generated %d components for model [%s] %s", val.totalComps, key, val.version))
-		totalAggregateComponents += val.totalComps
-		if val.totalComps > 0 {
-			totalAggregateModel++
+	// Define statistics structure to track all aspects of generation
+	stats := struct {
+		totalModels        int
+		successfulModels   int
+		failedModels       int
+		skippedModels      int
+		totalNewComps      int
+		totalExistingComps int
+		versionStats       map[string]struct {
+			models        int
+			newComps      int
+			existingComps int
+			failures      int
+			skips         int
 		}
+	}{
+		versionStats: make(map[string]struct {
+			models        int
+			newComps      int
+			existingComps int
+			failures      int
+			skips         int
+		}),
 	}
 
-	Log.Info(fmt.Sprintf("-----------------------------\n-----------------------------\nGenerated %d models and %d components", totalAggregateModel, totalAggregateComponents))
+	// Process generation results for each model
+	for modelName, tracker := range modelToCompGenerateTracker.GetAllPairs() {
+		stats.totalModels++
+
+		// Initialize version statistics if not present
+		if _, exists := stats.versionStats[tracker.version]; !exists {
+			stats.versionStats[tracker.version] = struct {
+				models        int
+				newComps      int
+				existingComps int
+				failures      int
+				skips         int
+			}{}
+		}
+
+		vStats := stats.versionStats[tracker.version]
+		vStats.models++
+
+		// Update statistics based on model status
+		switch tracker.status {
+		case StatusSuccess:
+			stats.successfulModels++
+			stats.totalNewComps += tracker.totalNewComps
+			stats.totalExistingComps += tracker.totalExistingComps
+			vStats.newComps += tracker.totalNewComps
+			vStats.existingComps += tracker.totalExistingComps
+
+			Log.Infof("Model [%s] v%s: Generated %d new components, Found %d existing",
+				modelName, tracker.version, tracker.totalNewComps, tracker.totalExistingComps)
+
+		case StatusFailed:
+			stats.failedModels++
+			vStats.failures++
+			Log.Warnf("Model [%s] v%s: Generation failed", modelName, tracker.version)
+
+		case StatusSkipped:
+			stats.skippedModels++
+			vStats.skips++
+			Log.Debugf("Model [%s] v%s: Generation skipped", modelName, tracker.version)
+		}
+
+		stats.versionStats[tracker.version] = vStats
+	}
+
+	// Generate comprehensive summary report
+	Log.Info("\n========= Model Generation Report =========")
+
+	Log.Info("\nOverall Statistics:")
+	Log.Infof("Total Models Processed: %d", stats.totalModels)
+	Log.Infof("├── Successfully Generated: %d", stats.successfulModels)
+	Log.Infof("├── Failed: %d", stats.failedModels)
+	Log.Infof("└── Skipped: %d", stats.skippedModels)
+
+	Log.Info("\nComponent Statistics:")
+	Log.Infof("New Components Generated: %d", stats.totalNewComps)
+	Log.Infof("Existing Components Found: %d", stats.totalExistingComps)
+	Log.Infof("Total Components Processed: %d", stats.totalNewComps+stats.totalExistingComps)
+
+	Log.Info("\nDetailed Version Statistics:")
+	for version, vStats := range stats.versionStats {
+		Log.Infof("\nVersion %s:", version)
+		Log.Infof("├── Models Processed: %d", vStats.models)
+		Log.Infof("├── New Components: %d", vStats.newComps)
+		Log.Infof("├── Existing Components: %d", vStats.existingComps)
+		Log.Infof("├── Failed Models: %d", vStats.failures)
+		Log.Infof("└── Skipped Models: %d", vStats.skips)
+	}
+
+	Log.Info("\nDetailed logs available at:", logDirPath)
+	Log.Info("\n==========================================")
+
+	// Reset aggregation counters
+	totalAggregateModel = 0
+	totalAggregateComponents = 0
 }
 
 // This function serves dual purposes: it is invoked either via the UI generation or a spreadsheet. Based on the invocation source, the logger configuration is dynamically set to either output solely to the terminal or to a multi-writer.
@@ -797,12 +904,6 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, co
 	relationshipUpdateChan := make(chan RelationshipCSV)
 	defer func() {
 		logModelGenerationSummary(modelToCompGenerateTracker)
-
-		// Log.UpdateLogOutput(os.Stdout)
-		Log.Info(fmt.Sprintf("Summary: %d models, %d components generated.", totalAggregateModel, totalAggregateComponents))
-
-		Log.Info("See ", logDirPath, " for detailed logs.")
-
 		totalAggregateModel = 0
 		totalAggregateComponents = 0
 	}()
@@ -837,10 +938,21 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, co
 		}
 	}()
 	// Iterate models from the spreadsheet
+	Log.Info("--------------------------------------------------------------------------")
+	Log.Infof("Models found: %d", len(modelCSVHelper.Models))
+	if modelName != "" {
+		Log.Infof("Model to process: %s", modelName)
+	} else {
+		Log.Infof("Models to process: All")
+	}
+	Log.Info("--------------------------------------------------------------------------")
+	Log.Info("Start processing models...")
 	for _, model := range modelCSVHelper.Models {
 		if modelName != "" && modelName != model.Model {
+			Log.Debugf("Skipping model %s as it doesn't match requested model %s", model.Model, modelName)
 			continue
 		}
+
 		totalAvailableModels++
 		ctx := context.Background()
 
@@ -850,7 +962,9 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, co
 		}
 		wg.Add(1)
 		go func(model ModelCSV) {
+			Log.Infof("[model: %s] Starting component generation (registrant: %s)", model.Model, model.Registrant)
 			defer func() {
+				Log.Infof("[model: %s] Completed processing", model.Model)
 				wg.Done()
 				weightedSem.Release(1)
 			}()
@@ -875,6 +989,7 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, co
 				RateLimitArtifactHub()
 			}
 
+			Log.Infof("[model: %s] Getting content from %s package", model.Model, model.Registrant)
 			pkg, err := generator.GetPackage()
 			if err != nil {
 				err = ErrGenerateModel(err, model.Model)
@@ -883,101 +998,163 @@ func InvokeGenerationFromSheet(wg *sync.WaitGroup, path string, modelsheetID, co
 			}
 
 			version := pkg.GetVersion()
+			Log.Debugf("[model: %s] Package version resolved: %s", model.Model, version)
 
+			Log.Infof("[model: %s] Generating components from the extracted content", model.Model)
 			comps, err := pkg.GenerateComponents()
 			if err != nil {
 				err = ErrGenerateModel(err, model.Model)
 				LogError.Error(err)
 				return
 			}
+
 			lengthOfComps := len(comps)
+			Log.Infof("[model: %s] Generated %d components", model.Model, len(comps))
 			if lengthOfComps == 0 {
-				err = ErrGenerateModel(fmt.Errorf("no components found for model"), model.Model)
+				err = ErrGenerateModel(fmt.Errorf("No components found for model"), model.Model)
 				LogError.Error(err)
 				return
 			}
+
 			modelDirPath, compDirPath, err := createVersionedDirectoryForModelAndComp(version, model.Model, path)
 			if err != nil {
 				err = ErrGenerateModel(err, model.Model)
 				LogError.Error(err)
 				return
 			}
+
+			Log.Infof("[model: %s] Attempting to write model definition to file: %s", model.Model, modelDirPath)
 			modelDef, alreadyExist, err := writeModelDefToFileSystem(&model, version, modelDirPath)
 			if err != nil {
 				err = ErrGenerateModel(err, model.Model)
 				LogError.Error(err)
 				return
 			}
-			if alreadyExist {
-				totalAvailableModels--
-			}
-			for _, comp := range comps {
-				comp.Version = defVersion
-				// Assign the component status corresponding to model status.
-				// i.e., If model is enabled, comps are also "enabled". Ultimately, all individual comps will have the ability to control their status.
-				// The status "enabled" indicates that the component will be registered inside the registry.
-				if modelDef.Metadata == nil {
-					modelDef.Metadata = &_model.ModelDefinition_Metadata{}
-				}
-				if modelDef.Metadata.AdditionalProperties == nil {
-					modelDef.Metadata.AdditionalProperties = make(map[string]interface{})
-				}
 
-				if comp.Model.Metadata.AdditionalProperties != nil {
-					modelDef.Metadata.AdditionalProperties["source_uri"] = comp.Model.Metadata.AdditionalProperties["source_uri"]
-				}
-				comp.Model = *modelDef
+			newComponentCount := 0
+			existingComponentCount := 0
+			processingStatus := "success"
 
-				AssignDefaultsForCompDefs(&comp, modelDef)
-				compAlreadyExist, err := comp.WriteComponentDefinition(compDirPath, "json")
-				if compAlreadyExist {
-					lengthOfComps--
-				}
-				if err != nil {
-					err = ErrGenerateModel(err, model.Model)
-					LogError.Error(err)
-					return
+			Log.Infof("[model: %s] Writing %d components to %s", model.Model, lengthOfComps, compDirPath)
+
+			if modelDef.Metadata == nil {
+				modelDef.Metadata = &_model.ModelDefinition_Metadata{
+					AdditionalProperties: make(map[string]interface{}),
 				}
 			}
-			if !alreadyExist {
-				if len(comps) == 0 {
-					err = ErrGenerateModel(fmt.Errorf("no components found for model"), model.Model)
-					LogError.Error(err)
 
-				} else {
-					log.Info("Current model: ", model.Model)
-					log.Info("Extracted ", lengthOfComps, " components for ", model.ModelDisplayName, " (", model.Model, ")")
+			// Process components only if we have any
+			if len(comps) > 0 {
+				Log.Infof("[model: %s] Processing %d components to %s", model.Model, len(comps), compDirPath)
+
+				for _, comp := range comps {
+					comp.Version = defVersion
+					Log.Debugf("  [component: %s] Setting defaults to component definition", comp.DisplayName)
+
+					// Update model metadata with component source URI if available
+					if comp.Model.Metadata.AdditionalProperties != nil {
+						modelDef.Metadata.AdditionalProperties["source_uri"] = comp.Model.Metadata.AdditionalProperties["source_uri"]
+					}
+
+					comp.Model = *modelDef
+					AssignDefaultsForCompDefs(&comp, modelDef)
+
+					Log.Debugf("  [component: %s] Attempting to write component definition to file", comp.DisplayName)
+					compAlreadyExist, err := comp.WriteComponentDefinition(compDirPath, "json")
+					if err != nil {
+						LogError.Error(ErrGenerateModel(err, model.Model))
+						processingStatus = "failed"
+						break
+					}
+
+					if compAlreadyExist {
+						existingComponentCount++
+						Log.Debugf("  [component: %s] Component already exists", comp.DisplayName)
+					} else {
+						newComponentCount++
+						Log.Debugf("  [component: %s] Component written to file", comp.DisplayName)
+					}
 				}
 			} else {
-				if len(comps) > 0 {
-					log.Info("Model already exists: ", model.Model)
+				processingStatus = "skipped"
+				Log.Warnf("[model: %s] No components to process", model.Model)
+			}
+
+			var processingSummary string
+			if alreadyExist {
+				if newComponentCount > 0 {
+					processingSummary = "Updated existing model"
 				} else {
-					err = ErrGenerateModel(fmt.Errorf("no components found for model"), model.Model)
-					LogError.Error(err)
+					processingSummary = "Model exists unchanged"
+				}
+			} else {
+				if newComponentCount > 0 {
+					processingSummary = "Created new model"
+				} else {
+					processingSummary = "Failed - no components"
 				}
 			}
+
+			// Log a consistent summary message for all cases
+			Log.Infof("[model: %s] %s", model.Model, processingSummary)
+			Log.Infof("[model: %s] Components summary: %d total (%d new, %d existing)",
+				model.Model, newComponentCount+existingComponentCount, newComponentCount, existingComponentCount)
+
+			// Update the tracking status based on the results
+			processingStatus = StatusSuccess
+			if !alreadyExist && newComponentCount == 0 {
+				processingStatus = "Failed"
+				LogError.Error(ErrGenerateModel(
+					fmt.Errorf("No components generated for new model"),
+					model.Model))
+			}
+
 			spreadsheeetChan <- SpreadsheetData{
-				Model:      &model,
-				Components: comps,
+				Model:              &model,
+				Components:         comps,
+				NewComponentCount:  newComponentCount,
+				ExistingComponents: existingComponentCount,
+				Version:            version,
 			}
 
 			modelToCompGenerateTracker.Set(model.Model, compGenerateTracker{
-				totalComps: lengthOfComps,
-				version:    version,
+				totalNewComps:      newComponentCount,
+				totalExistingComps: existingComponentCount,
+				version:            version,
+				status:             processingStatus,
 			})
 		}(model)
 	}
 
 	wg.Wait()
 	close(spreadsheeetChan)
+
+	Log.Info("\n=== Processing Relationships ===")
+	Log.Infof("Found %d relationships to process", len(relationshipCSVHelper.Relationships))
+
+	// Process relationships
 	ProcessRelationships(relationshipCSVHelper, relationshipUpdateChan, path)
 	close(relationshipUpdateChan)
+
+	// Wait for relationship collection to complete
 	wgForRelationshipUpdates.Wait()
-	err = relationshipCSVHelper.UpdateRelationshipSheet(srv, spreadsheeetCred, spreadsheeetID, relationshipCSVFilePath)
-	if err == nil {
-		Log.Info("Updated relationship to sheet.")
+
+	// Update spreadsheet with relationship changes
+	if len(relationshipCSVHelper.UpdatedRelationships) > 0 {
+		Log.Infof("Updating spreadsheet with %d relationship changes", len(relationshipCSVHelper.UpdatedRelationships))
+		err = relationshipCSVHelper.UpdateRelationshipSheet(srv, spreadsheeetCred, spreadsheeetID, relationshipCSVFilePath)
+		if err != nil {
+			LogError.Error(fmt.Errorf("Failed to update relationships in spreadsheet: %v", err))
+		} else {
+			Log.Infof("Successfully updated %d relationships in spreadsheet", len(relationshipCSVHelper.UpdatedRelationships))
+		}
+	} else {
+		Log.Info("No relationship updates needed")
 	}
+
+	Log.Info("Waiting for remaining spreadsheet updates...")
 	wgForSpreadsheetUpdate.Wait()
+	Log.Info("All updates completed")
 	return nil
 }
 
@@ -991,7 +1168,7 @@ func GenerateDefsForCoreRegistrant(model ModelCSV, ComponentCSVHelper *Component
 	if len(parts) >= 8 {
 		version = parts[8] // Fetch the version from the expected position
 	} else {
-		return fmt.Errorf("invalid SourceURL format: %s", model.SourceURL)
+		return fmt.Errorf("Invalid SourceURL format: %s", model.SourceURL)
 	}
 	isModelPublished, _ := strconv.ParseBool(model.PublishToRegistry)
 	var compDefComps []component.ComponentDefinition
@@ -999,8 +1176,10 @@ func GenerateDefsForCoreRegistrant(model ModelCSV, ComponentCSVHelper *Component
 	actualCompCount := 0
 	defer func() {
 		modelToCompGenerateTracker.Set(model.Model, compGenerateTracker{
-			totalComps: len(compDefComps) - actualCompCount,
-			version:    version,
+			totalNewComps:      len(compDefComps) - actualCompCount,
+			totalExistingComps: actualCompCount,
+			version:            version,
+			status:             "success",
 		})
 	}()
 	status := entity.Ignored
@@ -1011,12 +1190,26 @@ func GenerateDefsForCoreRegistrant(model ModelCSV, ComponentCSVHelper *Component
 	modelDirPath, compDirPath, err := createVersionedDirectoryForModelAndComp(version, model.Model, path)
 	if err != nil {
 		err = ErrGenerateModel(err, model.Model)
+		modelToCompGenerateTracker.Set(model.Model, compGenerateTracker{
+			totalNewComps:      0,
+			totalExistingComps: 0,
+			version:            version,
+			status:             "failed",
+		})
 		return err
 	}
 	modelDef, alreadyExists, err := writeModelDefToFileSystem(&model, version, modelDirPath)
 	if err != nil {
+		LogError.Error(ErrGenerateModel(err, model.Model))
+		modelToCompGenerateTracker.Set(model.Model, compGenerateTracker{
+			totalNewComps:      0,
+			totalExistingComps: 0,
+			version:            version,
+			status:             "failed",
+		})
 		return ErrGenerateModel(err, model.Model)
 	}
+
 	isModelPublishToSite, _ := strconv.ParseBool(model.PublishToSites)
 	alreadyExist = alreadyExists
 
@@ -1061,7 +1254,7 @@ func GenerateDefsForCoreRegistrant(model ModelCSV, ComponentCSVHelper *Component
 
 	if !alreadyExist {
 		if len(compDefComps) == 0 {
-			err = ErrGenerateModel(fmt.Errorf("no components found for model "), model.Model)
+			err = ErrGenerateModel(fmt.Errorf("No components found for model "), model.Model)
 			return err
 		} else if len(compDefComps)-actualCompCount == 0 {
 			Log.Info("Current model: ", model.Model)
