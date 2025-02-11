@@ -255,6 +255,7 @@ func (h *Handler) DesignFileImportHandler(
 
 	if err != nil {
 		h.log.Error(fmt.Errorf("Conversion: Failed to get file from payload  %w", err))
+		http.Error(rw, err.Error(), http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, importDesignPayload, err)
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
@@ -265,7 +266,7 @@ func (h *Handler) DesignFileImportHandler(
 
 	if err != nil {
 		h.log.Error(fmt.Errorf("Conversion: Failed to convert to design %w", err))
-
+		http.Error(rw, err.Error(), http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, importDesignPayload, err)
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
