@@ -62,7 +62,7 @@ func TestOnboardCmd(t *testing.T) {
 				},
 				{
 					Method:       "POST",
-					URL:          testContext.BaseURL + "/api/pattern",
+					URL:          testContext.BaseURL + "/api/pattern/import",
 					Response:     "apply.designSave.response.golden",
 					ResponseCode: 200,
 				},

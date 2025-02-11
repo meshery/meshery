@@ -13,6 +13,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
+	"github.com/meshery/schemas/models/v1alpha1/capability"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
@@ -220,8 +221,11 @@ func processEvaluationResponse(registry *registry.RegistryManager, evalPayload p
 		} else {
 			_component.DisplayName = fmt.Sprintf("%s-%s", strings.ToLower(_component.DisplayName), utils.GetRandomAlphabetsOfDigit(3))
 		}
+
+		defaultCapabilities := []capability.Capability{} // only assign empty capabilities for component declarations
 		_component.Metadata.IsAnnotation = _c.Metadata.IsAnnotation
 		_component.Configuration = _c.Configuration
+		_component.Capabilities = &defaultCapabilities
 		compsAdded = append(compsAdded, *_component)
 	}
 
