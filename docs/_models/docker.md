@@ -16,7 +16,7 @@ relationship-count: 0
 featureList: [
   "Scan your kubeconfigs and select your current Kubernetes environment. Switch from one environment to another one.",
   "Convert your Docker Compose apps to Kubernetes apps.",
-  "Meshery Docker Extension extends Docker Desktop’s position as the cloud native developer’s go-to Kubernetes environment with easy access to the next layer of cloud native infrastructure: service meshes."
+  "Meshery Docker Extension extends Docker Desktop’s position as the cloud native developer’s go-to Kubernetes environment with easy access to the next layer of cloud native infrastructure.."
 ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "From the convenience of your Docker Desktop interface, connect Meshery with your Kubernetes cluster. Watch as MeshSync discovers all of your Kuberentes clusters. Visually design your Docker-based infrastructure. Choose from hundreds of ready-made design patterns using Meshery Catalog. Use our no-code designer, MeshMap, to collaboratively design and operate your infra."
