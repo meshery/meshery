@@ -25,7 +25,7 @@ description: |-
     Understand the relationship between different Kubernetes resources (Namespace, Deployment, and Service).
     Observe how traffic flows from external clients through the LoadBalancer to the Nginx pods.
     Learn the basics of deploying and managing stateless applications in Kubernetes.
-    Use this as a foundation to explore more advanced Kubernetes concepts like autoscaling, rolling updates, and integration with cloud native infrastructure..
+    Use this as a foundation to explore more advanced Kubernetes concepts like autoscaling, rolling updates, and integration with cloud native.
     In summary, this design sets up a highly available Nginx web server with external access and load balancing, making it a fundamental example of how to deploy and expose applications using Kubernetes.
 logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
 license: Apache-2.0
