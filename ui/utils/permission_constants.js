@@ -104,6 +104,10 @@ export const keys = {
     subject: 'Remove views from workspace',
     action: '5b48eded-15d8-4c51-9ac4-b11097dbdd75',
   },
+  VIEW_TEAMS: {
+    subject: 'View Teams',
+    action: '6ecbbe79-c392-43bd-b7b6-ecdec019e24c', // not seeded
+  },
   DELETE_TEAM: {
     subject: 'Delete Team',
     action: 'bbb691b6-8664-44c7-8ea7-9c46b1ca1e8b',
