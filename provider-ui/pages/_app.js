@@ -5,14 +5,14 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { CacheProvider } from "@emotion/react";
 import createEmotionCache from "../lib/createEmotionCache";
 import Footer from "../components/Footer";
-import { Box, Paper, SistentThemeProvider, styled, useTheme } from "@layer5/sistent";
+import { charcoal,Box, Paper, SistentThemeProvider, styled, useTheme } from "@layer5/sistent";
 
 //styled-components:
 const StyledBox = styled(Box)(({ theme }) => ({
   display : "flex",
   flex : 1,
   flexDirection : "column",
-  background : theme.palette.background.secondary,
+  background : charcoal[10],
 }));
 
 // Client-side cache, shared for the whole session of the user in the browser.

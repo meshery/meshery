@@ -26,6 +26,7 @@ import {
   IconButton,
   CircularProgress,
   styled,
+  charcoal
 } from "@layer5/sistent";
 
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -62,7 +63,7 @@ CustomDialogTitle.propTypes = {
 //Styled-components:
 const StyledTypography = styled(Typography)(({ theme }) => ({
   fontWeight : 500,
-  color : theme.palette.text.default,
+  color : charcoal[100],
   marginBottom : theme.spacing(2), // Equivalent to `gutterBottom`
 }));
 const StyledTooltip = styled(Tooltip)(({ theme }) => ({
@@ -161,7 +162,7 @@ export default function Provider() {
   return (
     <ProviderLayout>
       <MesheryLogo
-        src="/provider/static/img/meshery-logo/meshery-logo-light-text.png"
+        src="/provider/static/img/meshery-logo/meshery-logo-dark-text-noBG.png"
         alt="logo"
       />
       <CustomDiv>

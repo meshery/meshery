@@ -3,9 +3,9 @@ import React, { Fragment } from "react";
 import NoSsr from "@mui/material/NoSsr";
 
 import FavoriteIcon from "@mui/icons-material/Favorite";
-import { Typography, Paper, styled } from "@layer5/sistent";
+import { Typography, Paper, styled, accentGrey } from "@layer5/sistent";
 const Item = styled(Paper)(({ theme }) => ({
-  backgroundColor : theme.palette.background.elevatedComponents,
+  backgroundColor : accentGrey[20],
   padding : theme.spacing(2),
   color : theme.palette.background.secondary,
   minWidth : "100%",

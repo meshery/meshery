@@ -1,12 +1,12 @@
 import React from "react";
 import PropTypes from "prop-types";
 import NoSsr from "@mui/material/NoSsr";
-import { styled } from "@layer5/sistent";
+import { accentGrey, styled } from "@layer5/sistent";
 
 const RootContainer = styled("div")(({ theme }) => ({
   padding : "170px 0px",
   textAlign : "center",
-  backgroundColor : theme.palette.background.elevatedComponents,
+  backgroundColor : accentGrey[20]
 }));
 
 export default function ProviderLayout({ children }) {
