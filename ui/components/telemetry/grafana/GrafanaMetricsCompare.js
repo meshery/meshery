@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { NoSsr } from '@mui/material';
 import { MenuItem, TextField, Box, styled } from '@layer5/sistent';
 import { connect } from 'react-redux';
-import { UsesSistent } from '@/components/SistentWrapper';
 
 const Root = styled(Box)(() => ({
   width: '100%',
@@ -78,44 +77,42 @@ class GrafanaMetricsCompare extends Component {
     const { panels, panel, selectedSeries, series } = this.state;
 
     return (
-      <UsesSistent>
-        <NoSsr>
-          <Root>
-            <StyledTextField
-              select
-              fullWidth
-              label="Panel"
-              value={panel}
-              onChange={this.handleChange('panel')}
-              margin="dense"
-              variant="outlined"
-            >
-              {panels &&
-                Object.keys(panels).map((p) => (
-                  <MenuItem key={p} value={p}>
-                    {p}
-                  </MenuItem>
-                ))}
-            </StyledTextField>
-            <StyledTextField
-              select
-              fullWidth
-              label="Series"
-              value={selectedSeries}
-              onChange={this.handleChange('series')}
-              margin="dense"
-              variant="outlined"
-            >
-              {series &&
-                series.map((s) => (
-                  <MenuItem key={s} value={s}>
-                    {s}
-                  </MenuItem>
-                ))}
-            </StyledTextField>
-          </Root>
-        </NoSsr>
-      </UsesSistent>
+      <NoSsr>
+        <Root>
+          <StyledTextField
+            select
+            fullWidth
+            label="Panel"
+            value={panel}
+            onChange={this.handleChange('panel')}
+            margin="dense"
+            variant="outlined"
+          >
+            {panels &&
+              Object.keys(panels).map((p) => (
+                <MenuItem key={p} value={p}>
+                  {p}
+                </MenuItem>
+              ))}
+          </StyledTextField>
+          <StyledTextField
+            select
+            fullWidth
+            label="Series"
+            value={selectedSeries}
+            onChange={this.handleChange('series')}
+            margin="dense"
+            variant="outlined"
+          >
+            {series &&
+              series.map((s) => (
+                <MenuItem key={s} value={s}>
+                  {s}
+                </MenuItem>
+              ))}
+          </StyledTextField>
+        </Root>
+      </NoSsr>
     );
   }
 }

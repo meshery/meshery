@@ -1,7 +1,6 @@
 import { Card, CardContent, styled } from '@layer5/sistent';
 import { useEffect, useState } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
-import { UsesSistent } from '../SistentWrapper';
 
 export const CardRoot = styled(Card)({
   position: 'sticky',
@@ -43,34 +42,32 @@ export default function CodeEditor({ yaml, saveCodeEditorChanges, fullWidth, onC
   }, []);
 
   return (
-    <UsesSistent>
-      <Wrapper scrollPos={scrollPos} fullWidth={fullWidth}>
-        <CardRoot elevation={0}>
-          <CardContent>
-            <CodeMirror
-              value={yaml}
-              options={{
-                theme: 'material',
-                lineNumbers: true,
-                lineWrapping: true,
-                gutters: ['CodeMirror-lint-markers'],
-                mode: 'text/x-yaml',
-              }}
-              onChange={(a, b, c) => {
-                onChange(a, b, c);
-              }}
-              onBlur={(a) => saveCodeEditorChanges(a)}
-              style={{
-                '& .CodeMirror': {
-                  minHeight: '300px',
-                  height: '54vh',
-                },
-              }}
-            />
-          </CardContent>
-        </CardRoot>
-      </Wrapper>
-    </UsesSistent>
+    <Wrapper scrollPos={scrollPos} fullWidth={fullWidth}>
+      <CardRoot elevation={0}>
+        <CardContent>
+          <CodeMirror
+            value={yaml}
+            options={{
+              theme: 'material',
+              lineNumbers: true,
+              lineWrapping: true,
+              gutters: ['CodeMirror-lint-markers'],
+              mode: 'text/x-yaml',
+            }}
+            onChange={(a, b, c) => {
+              onChange(a, b, c);
+            }}
+            onBlur={(a) => saveCodeEditorChanges(a)}
+            style={{
+              '& .CodeMirror': {
+                minHeight: '300px',
+                height: '54vh',
+              },
+            }}
+          />
+        </CardContent>
+      </CardRoot>
+    </Wrapper>
   );
 }
 

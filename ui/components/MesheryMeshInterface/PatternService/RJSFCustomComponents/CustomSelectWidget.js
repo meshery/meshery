@@ -20,7 +20,6 @@ import {
   labelValue,
 } from '@rjsf/utils';
 import { Checkbox } from '@layer5/sistent';
-import { UsesSistent } from '@/components/SistentWrapper';
 
 export default function CustomSelectWidget({
   schema,
@@ -163,11 +162,7 @@ export default function CustomSelectWidget({
             const disabled = Array.isArray(enumDisabled) && enumDisabled?.indexOf(value) !== -1;
             return (
               <MenuItem key={i} value={String(i)} disabled={disabled}>
-                {multiple && (
-                  <UsesSistent>
-                    <Checkbox checked={selectedIndexes?.indexOf(String(i)) !== -1} />
-                  </UsesSistent>
-                )}
+                {multiple && <Checkbox checked={selectedIndexes?.indexOf(String(i)) !== -1} />}
                 <ListItemText primary={label} />
               </MenuItem>
             );

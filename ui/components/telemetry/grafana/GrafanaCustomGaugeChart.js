@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { Box, styled, useTheme } from '@layer5/sistent';
 import bb, { gauge } from 'billboard.js';
-import { UsesSistent } from '@/components/SistentWrapper';
+
 import { NoSsr } from '@mui/material';
 
 const ChartRoot = styled(Box)(() => ({
@@ -103,14 +103,12 @@ export default function GrafanaCustomGaugeChart(props) {
   const { error } = props;
 
   return (
-    <UsesSistent>
-      <NoSsr>
-        <Box>
-          {/* <ChartTitle>{props.panel?.title}</ChartTitle> */}
-          <ErrorMessage>{error && 'There was an error communicating with the server'}</ErrorMessage>
-          <ChartRoot ref={(ch) => (chartRef = ch)} />
-        </Box>
-      </NoSsr>
-    </UsesSistent>
+    <NoSsr>
+      <Box>
+        {/* <ChartTitle>{props.panel?.title}</ChartTitle> */}
+        <ErrorMessage>{error && 'There was an error communicating with the server'}</ErrorMessage>
+        <ChartRoot ref={(ch) => (chartRef = ch)} />
+      </Box>
+    </NoSsr>
   );
 }

@@ -9,7 +9,6 @@ import {
   ClickAwayListener,
 } from '@layer5/sistent';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { UsesSistent } from '../SistentWrapper';
 
 export default function ActionButton({ defaultActionClick, options }) {
   const [open, setOpen] = React.useState(false);
@@ -33,72 +32,70 @@ export default function ActionButton({ defaultActionClick, options }) {
   };
 
   return (
-    <UsesSistent>
-      <React.Fragment>
-        <ButtonGroup
-          variant="outlined"
-          style={{ boxShadow: 'none' }}
-          ref={anchorRef}
-          aria-label="Button group with a nested menu"
-        >
-          <Button
-            sx={{
-              padding: '6px 9px',
-              borderRadius: '8px',
-            }}
-            onClick={defaultActionClick}
-            variant="outlined"
-          >
-            Action
-          </Button>
-          <Button
-            sx={{
-              padding: '6px 9px',
-              borderRadius: '8px',
-            }}
-            size="small"
-            onClick={handleToggle}
-            variant="outlined"
-          >
-            <ArrowDropDownIcon />
-          </Button>
-        </ButtonGroup>
-        <Popper
+    <React.Fragment>
+      <ButtonGroup
+        variant="outlined"
+        style={{ boxShadow: 'none' }}
+        ref={anchorRef}
+        aria-label="Button group with a nested menu"
+      >
+        <Button
           sx={{
-            zIndex: 1,
+            padding: '6px 9px',
+            borderRadius: '8px',
           }}
-          open={open}
-          anchorEl={anchorRef.current}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-          transformOrigin={{
-            vertical: 'top',
-            horizontal: 'left',
-          }}
+          onClick={defaultActionClick}
+          variant="outlined"
         >
-          <Paper>
-            <ClickAwayListener onClickAway={handleClose}>
-              <MenuList id="split-button-menu" autoFocusItem>
-                {options.map((option, index) => (
-                  <MenuItem
-                    disabled={option.disabled}
-                    key={option}
-                    onClick={(event) => {
-                      handleMenuItemClick(event);
-                      option.onClick(event, index);
-                    }}
-                  >
-                    <div style={{ marginRight: '0.5rem' }}>{option.icon}</div>
-                    {option.label}
-                  </MenuItem>
-                ))}
-              </MenuList>
-            </ClickAwayListener>
-          </Paper>
-        </Popper>
-      </React.Fragment>
-    </UsesSistent>
+          Action
+        </Button>
+        <Button
+          sx={{
+            padding: '6px 9px',
+            borderRadius: '8px',
+          }}
+          size="small"
+          onClick={handleToggle}
+          variant="outlined"
+        >
+          <ArrowDropDownIcon />
+        </Button>
+      </ButtonGroup>
+      <Popper
+        sx={{
+          zIndex: 1,
+        }}
+        open={open}
+        anchorEl={anchorRef.current}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        transformOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
+        }}
+      >
+        <Paper>
+          <ClickAwayListener onClickAway={handleClose}>
+            <MenuList id="split-button-menu" autoFocusItem>
+              {options.map((option, index) => (
+                <MenuItem
+                  disabled={option.disabled}
+                  key={option}
+                  onClick={(event) => {
+                    handleMenuItemClick(event);
+                    option.onClick(event, index);
+                  }}
+                >
+                  <div style={{ marginRight: '0.5rem' }}>{option.icon}</div>
+                  {option.label}
+                </MenuItem>
+              ))}
+            </MenuList>
+          </ClickAwayListener>
+        </Paper>
+      </Popper>
+    </React.Fragment>
   );
 }

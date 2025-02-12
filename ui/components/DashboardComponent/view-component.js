@@ -27,7 +27,6 @@ import {
   convertToReadableUnit,
 } from '@layer5/sistent';
 import { SectionHeading } from '../DataFormatter';
-import { UsesSistent } from '../SistentWrapper';
 
 const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
 const FormatterContext = React.createContext({
@@ -322,24 +321,22 @@ const propertyFormatter = {
 };
 const ResourceDetailFormatData = ({ data }) => {
   return (
-    <UsesSistent>
-      <FormatterContext.Provider
-        value={{
-          propertyFormatters: propertyFormatter,
+    <FormatterContext.Provider
+      value={{
+        propertyFormatters: propertyFormatter,
+      }}
+    >
+      <Grid
+        container
+        style={{
+          wordBreak: 'break-word',
+          overflowWrap: 'break-word',
+          gap: '0.3rem 1rem',
         }}
       >
-        <Grid
-          container
-          style={{
-            wordBreak: 'break-word',
-            overflowWrap: 'break-word',
-            gap: '0.3rem 1rem',
-          }}
-        >
-          <ResourceDynamicFormatter data={data} />
-        </Grid>
-      </FormatterContext.Provider>
-    </UsesSistent>
+        <ResourceDynamicFormatter data={data} />
+      </Grid>
+    </FormatterContext.Provider>
   );
 };
 

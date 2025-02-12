@@ -8,7 +8,6 @@ import { keys } from '@/utils/permission_constants';
 import { useEffect } from 'react';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '@/utils/Enum';
 import dataFetch from 'lib/data-fetch';
-import { UsesSistent } from '@/components/SistentWrapper';
 
 const StyledRoot = styled('div')(({ theme }) => ({
   padding: theme.spacing(5),
@@ -51,42 +50,40 @@ const PrometheusConfigComponent = ({
   }, []);
 
   return (
-    <UsesSistent>
-      <NoSsr>
-        <StyledRoot>
-          <Grid container spacing={1}>
-            <Grid item xs={12}>
-              <ReactSelectWrapper
-                onChange={(select) => handleChange('prometheusURL')(select)}
-                options={availablePrometheusConnection.map((connection) => ({
-                  value: connection?.metadata?.url,
-                  label: connection?.metadata?.url,
-                  ...connection,
-                }))}
-                value={prometheusURL}
-                label="Prometheus Base URL"
-                placeholder="Address of Prometheus Server"
-                noOptionsMessage="No Prometheus servers discovered"
-                error={urlError}
-              />
-            </Grid>
+    <NoSsr>
+      <StyledRoot>
+        <Grid container spacing={1}>
+          <Grid item xs={12}>
+            <ReactSelectWrapper
+              onChange={(select) => handleChange('prometheusURL')(select)}
+              options={availablePrometheusConnection.map((connection) => ({
+                value: connection?.metadata?.url,
+                label: connection?.metadata?.url,
+                ...connection,
+              }))}
+              value={prometheusURL}
+              label="Prometheus Base URL"
+              placeholder="Address of Prometheus Server"
+              noOptionsMessage="No Prometheus servers discovered"
+              error={urlError}
+            />
           </Grid>
-          <ButtonContainer>
-            <Button
-              type="submit"
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={handlePrometheusConfigure}
-              className="submitButton"
-              disabled={!CAN(keys.CONNECT_METRICS.action, keys.CONNECT_METRICS.subject)}
-            >
-              Submit
-            </Button>
-          </ButtonContainer>
-        </StyledRoot>
-      </NoSsr>
-    </UsesSistent>
+        </Grid>
+        <ButtonContainer>
+          <Button
+            type="submit"
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={handlePrometheusConfigure}
+            className="submitButton"
+            disabled={!CAN(keys.CONNECT_METRICS.action, keys.CONNECT_METRICS.subject)}
+          >
+            Submit
+          </Button>
+        </ButtonContainer>
+      </StyledRoot>
+    </NoSsr>
   );
 };
 

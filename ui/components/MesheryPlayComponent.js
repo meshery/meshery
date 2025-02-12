@@ -19,7 +19,6 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
 import { bindActionCreators } from 'redux';
 import { setAdapter } from '../lib/store';
-import { UsesSistent } from './SistentWrapper';
 
 const StyledButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(3),
@@ -154,21 +153,19 @@ const MesheryPlayComponent = (props) => {
   if (meshAdapters.size === 0) {
     return (
       <NoSsr>
-        <UsesSistent>
-          <AlreadyConfigured>
-            <Typography variant="h6">Adapter Unavailable</Typography>
-            <Typography variant="subtitle1">Connect Meshery Adapter(s) in Settings</Typography>
-            <StyledButton
-              variant="contained"
-              color="primary"
-              size="large"
-              onClick={handleConfigure}
-              startIcon={<StyledIcon />}
-            >
-              Configure Settings
-            </StyledButton>
-          </AlreadyConfigured>
-        </UsesSistent>
+        <AlreadyConfigured>
+          <Typography variant="h6">Adapter Unavailable</Typography>
+          <Typography variant="subtitle1">Connect Meshery Adapter(s) in Settings</Typography>
+          <StyledButton
+            variant="contained"
+            color="primary"
+            size="large"
+            onClick={handleConfigure}
+            startIcon={<StyledIcon />}
+          >
+            Configure Settings
+          </StyledButton>
+        </AlreadyConfigured>
       </NoSsr>
     );
   }
@@ -183,64 +180,62 @@ const MesheryPlayComponent = (props) => {
   const imageIcon = pickImage(adapter);
 
   return (
-    <UsesSistent>
-      <NoSsr>
-        <PlayRoot>
-          <Grid container>
-            <Grid item xs={12}>
-              <PaneSection>
-                <TextField
-                  select
-                  id="adapter_id"
-                  name="adapter_name"
-                  label="Select Meshery Adapter"
-                  data-cy="lifecycle-service-mesh-type"
-                  fullWidth
-                  value={adapter && adapter.adapter_location ? adapter.adapter_location : ''}
-                  margin="normal"
-                  variant="outlined"
-                  sx={{
-                    display: 'flex',
-                  }}
-                  onChange={handleAdapterChange()}
-                  SelectProps={{
-                    MenuProps: {
-                      anchorOrigin: {
-                        vertical: 'bottom',
-                        horizontal: 'left',
-                      },
-                      transformOrigin: {
-                        vertical: 'top',
-                        horizontal: 'left',
-                      },
+    <NoSsr>
+      <PlayRoot>
+        <Grid container>
+          <Grid item xs={12}>
+            <PaneSection>
+              <TextField
+                select
+                id="adapter_id"
+                name="adapter_name"
+                label="Select Meshery Adapter"
+                data-cy="lifecycle-service-mesh-type"
+                fullWidth
+                value={adapter && adapter.adapter_location ? adapter.adapter_location : ''}
+                margin="normal"
+                variant="outlined"
+                sx={{
+                  display: 'flex',
+                }}
+                onChange={handleAdapterChange()}
+                SelectProps={{
+                  MenuProps: {
+                    anchorOrigin: {
+                      vertical: 'bottom',
+                      horizontal: 'left',
                     },
-                  }}
-                >
-                  {meshAdapters.map((ada) => (
-                    <MenuItem
-                      key={`${ada.adapter_location}_${new Date().getTime()}`}
-                      value={ada.adapter_location}
-                      sx={{
-                        display: 'flex',
-                      }}
-                    >
-                      {pickImage(ada)}
-                      <Typography variant="body1" sx={{ ml: 1 }}>
-                        {ada.adapter_location}
-                      </Typography>
-                    </MenuItem>
-                  ))}
-                </TextField>
-              </PaneSection>
-            </Grid>
+                    transformOrigin: {
+                      vertical: 'top',
+                      horizontal: 'left',
+                    },
+                  },
+                }}
+              >
+                {meshAdapters.map((ada) => (
+                  <MenuItem
+                    key={`${ada.adapter_location}_${new Date().getTime()}`}
+                    value={ada.adapter_location}
+                    sx={{
+                      display: 'flex',
+                    }}
+                  >
+                    {pickImage(ada)}
+                    <Typography variant="body1" sx={{ ml: 1 }}>
+                      {ada.adapter_location}
+                    </Typography>
+                  </MenuItem>
+                ))}
+              </TextField>
+            </PaneSection>
           </Grid>
-        </PlayRoot>
-        <Divider variant="fullWidth" light />
-        {adapter && adapter.adapter_location && (
-          <MesheryAdapterPlayComponent adapter={adapter} adapter_icon={imageIcon} />
-        )}
-      </NoSsr>
-    </UsesSistent>
+        </Grid>
+      </PlayRoot>
+      <Divider variant="fullWidth" light />
+      {adapter && adapter.adapter_location && (
+        <MesheryAdapterPlayComponent adapter={adapter} adapter_icon={imageIcon} />
+      )}
+    </NoSsr>
   );
 };
 

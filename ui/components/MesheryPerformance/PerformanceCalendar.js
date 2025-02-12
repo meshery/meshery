@@ -14,7 +14,6 @@ import fetchAllResults from '../graphql/queries/FetchAllResultsQuery';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
 import { CalendarComponent } from './style';
-import { UsesSistent } from '../SistentWrapper';
 
 const localizer = momentLocalizer(moment);
 // const PERFORMANCE_PROFILE_RESULTS_URL = "/api/user/performance/profiles/results";
@@ -154,66 +153,62 @@ function PerformanceCalendar({ style, updateProgress }) {
     const startTime = new Date(row.StartTime);
     const endTime = new Date(startTime.getTime() + row.ActualDuration / 1000000);
     return (
-      <UsesSistent>
-        <Paper
-          style={{
-            width: '100%',
-            maxWidth: '90vw',
-            padding: '0.5rem',
-          }}
-        >
+      <Paper
+        style={{
+          width: '100%',
+          maxWidth: '90vw',
+          padding: '0.5rem',
+        }}
+      >
+        <div>
+          <Typography variant="h6" gutterBottom align="center">
+            Performance Graph
+          </Typography>
+          <MesheryChart
+            rawdata={[result && result.runner_results ? result : {}]}
+            data={[result && result.runner_results ? result.runner_results : {}]}
+          />
+        </div>
+        {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
           <div>
-            <Typography variant="h6" gutterBottom align="center">
-              Performance Graph
-            </Typography>
-            <MesheryChart
-              rawdata={[result && result.runner_results ? result : {}]}
-              data={[result && result.runner_results ? result.runner_results : {}]}
+            <GrafanaCustomCharts
+              boardPanelConfigs={[boardConfig]}
+              // @ts-ignore
+              boardPanelData={[serverMetrics]}
+              startDate={startTime}
+              from={startTime.getTime().toString()}
+              endDate={endTime}
+              to={endTime.getTime().toString()}
+              liveTail={false}
             />
           </div>
-          {boardConfig && boardConfig !== null && Object.keys(boardConfig).length > 0 && (
-            <div>
-              <GrafanaCustomCharts
-                boardPanelConfigs={[boardConfig]}
-                // @ts-ignore
-                boardPanelData={[serverMetrics]}
-                startDate={startTime}
-                from={startTime.getTime().toString()}
-                endDate={endTime}
-                to={endTime.getTime().toString()}
-                liveTail={false}
-              />
-            </div>
-          )}
-        </Paper>
-      </UsesSistent>
+        )}
+      </Paper>
     );
   }
   return (
-    <UsesSistent>
-      <div style={style}>
-        <CalendarComponent
-          events={generateCalendarEventsFromResults(results)}
-          views={['month', 'week', 'day']}
-          defaultView="day"
-          step={60}
-          showMultiDayTimes
-          defaultDate={new Date()}
-          localizer={localizer}
-          style={{ height: '100%' }}
-          // @ts-ignore
-          onRangeChange={(range) => setTime(generateDateRange(range.start, range.end))}
-          onSelectEvent={(results) => handleEventClick(results)}
-        />
+    <div style={style}>
+      <CalendarComponent
+        events={generateCalendarEventsFromResults(results)}
+        views={['month', 'week', 'day']}
+        defaultView="day"
+        step={60}
+        showMultiDayTimes
+        defaultDate={new Date()}
+        localizer={localizer}
+        style={{ height: '100%' }}
+        // @ts-ignore
+        onRangeChange={(range) => setTime(generateDateRange(range.start, range.end))}
+        onSelectEvent={(results) => handleEventClick(results)}
+      />
 
-        <GenericModal
-          open={!!selectedEvent}
-          // @ts-ignore
-          Content={<ResultChart result={selectedEvent} />}
-          handleClose={() => setSelectedEvent(undefined)}
-        />
-      </div>
-    </UsesSistent>
+      <GenericModal
+        open={!!selectedEvent}
+        // @ts-ignore
+        Content={<ResultChart result={selectedEvent} />}
+        handleClose={() => setSelectedEvent(undefined)}
+      />
+    </div>
   );
 }
 

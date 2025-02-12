@@ -23,7 +23,6 @@ import { Box } from '@mui/material';
 import { selectCompSchema } from '../../../RJSFUtils/common';
 import { JsonParse, randomPatternNameGenerator } from '../../../../utils/utils';
 import Notification from './Notification';
-import { UsesSistent } from '@/components/SistentWrapper';
 
 const CONNECTION_TYPES = ['Prometheus Connection', 'Grafana Connection'];
 
@@ -142,69 +141,67 @@ export const ConnectionDetails = ({ sharedData, setSharedData, handleNext }) => 
       ? false
       : true;
   return (
-    <UsesSistent>
-      <StepperContent
-        {...ConnectionDetailContent}
-        handleCallback={handleCallback}
-        disabled={isDisabledNextButton}
-        cancelCallback={cancelCallback}
-      >
-        {sharedData?.capabilities && (
-          <FormControl fullWidth size="small">
-            <InputLabel fontSize="inherit" id="endpoint-checkbox-label">
-              Select from the discovered endpoints
-            </InputLabel>
-            <Select
-              labelId="endpoint-checkbox-label"
-              id="endpoint-checkbox"
-              onChange={handleSelectEndpoint}
-              value={selectedEndpoint}
-              onClose={handleClose}
-              input={<OutlinedInput label="Select discovered endpoint" />}
-              renderValue={() => <div>{selectedEndpoint !== null ? selectedEndpoint : ''}</div>}
-              MenuProps={{
-                anchorOrigin: {
-                  vertical: 'bottom',
-                  horizontal: 'left',
-                },
-                transformOrigin: {
-                  vertical: 'top',
-                  horizontal: 'left',
-                },
-                getContentAnchorEl: null,
+    <StepperContent
+      {...ConnectionDetailContent}
+      handleCallback={handleCallback}
+      disabled={isDisabledNextButton}
+      cancelCallback={cancelCallback}
+    >
+      {sharedData?.capabilities && (
+        <FormControl fullWidth size="small">
+          <InputLabel fontSize="inherit" id="endpoint-checkbox-label">
+            Select from the discovered endpoints
+          </InputLabel>
+          <Select
+            labelId="endpoint-checkbox-label"
+            id="endpoint-checkbox"
+            onChange={handleSelectEndpoint}
+            value={selectedEndpoint}
+            onClose={handleClose}
+            input={<OutlinedInput label="Select discovered endpoint" />}
+            renderValue={() => <div>{selectedEndpoint !== null ? selectedEndpoint : ''}</div>}
+            MenuProps={{
+              anchorOrigin: {
+                vertical: 'bottom',
+                horizontal: 'left',
+              },
+              transformOrigin: {
+                vertical: 'top',
+                horizontal: 'left',
+              },
+              getContentAnchorEl: null,
+              style: {
+                maxHeight: 48 * 4.5 + 8,
+                width: 250,
+                zIndex: 10000,
+              },
+              PaperProps: {
                 style: {
-                  maxHeight: 48 * 4.5 + 8,
-                  width: 250,
                   zIndex: 10000,
                 },
-                PaperProps: {
-                  style: {
-                    zIndex: 10000,
-                  },
-                },
-              }}
-            >
-              {sharedData.capabilities?.urls?.map((endpoint, index) => (
-                <MenuItem key={index} value={endpoint} name={endpoint}>
-                  <Checkbox checked={endpoint === selectedEndpoint} />
-                  <ListItemText primary={endpoint} />
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        )}
-        <p style={{ display: 'flex', justifyContent: 'center' }}>-OR-</p>
-        <p>Enter the {sharedData.kind} service URL</p>
-        <RJSFWrapper
-          key="register-connection-rjsf-form"
-          jsonSchema={sharedData?.schemas?.connection}
-          liveValidate={true}
-          formRef={formRef}
-          disabled={selectedEndpoint !== null ? true : false}
-          onChange={handleChange}
-        />
-      </StepperContent>
-    </UsesSistent>
+              },
+            }}
+          >
+            {sharedData.capabilities?.urls?.map((endpoint, index) => (
+              <MenuItem key={index} value={endpoint} name={endpoint}>
+                <Checkbox checked={endpoint === selectedEndpoint} />
+                <ListItemText primary={endpoint} />
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      )}
+      <p style={{ display: 'flex', justifyContent: 'center' }}>-OR-</p>
+      <p>Enter the {sharedData.kind} service URL</p>
+      <RJSFWrapper
+        key="register-connection-rjsf-form"
+        jsonSchema={sharedData?.schemas?.connection}
+        liveValidate={true}
+        formRef={formRef}
+        disabled={selectedEndpoint !== null ? true : false}
+        onChange={handleChange}
+      />
+    </StepperContent>
   );
 };
 
@@ -367,105 +364,103 @@ export const CredentialDetails = ({ sharedData, handleNext, handleRegistrationCo
   }, [selectedCredential, formState]);
 
   return (
-    <UsesSistent>
-      <StepperContent
-        {...CredentialDetailContent}
-        handleCallback={handleCallback}
-        cancelCallback={cancelCallback}
-        disabled={disableVerify}
-        btnText={isSuccess === null || isSuccess === false ? 'Verify Connection' : 'Next'}
-      >
-        <Typography variant="body2" style={{ paddingLeft: '16px' }}>
-          Select an existing credential to use for this connection
-        </Typography>
-        <FormControl sx={{ width: '100%' }} size="small">
-          <InputLabel fontSize="20" id="credential-checkbox-label">
-            Select existing credential
-          </InputLabel>
-          <Select
-            labelId="credential-checkbox-label"
-            id="credential-checkbox"
-            onChange={handleSelectCredential}
-            value={selectedCredential?.name}
-            onClose={handleClose}
-            input={<OutlinedInput label="Select existing credential" />}
-            renderValue={() => (
-              <div>{selectedCredential !== null ? selectedCredential.name : ''}</div>
-            )}
-            MenuProps={{
-              anchorOrigin: {
-                vertical: 'bottom',
-                horizontal: 'left',
-              },
-              transformOrigin: {
-                vertical: 'top',
-                horizontal: 'left',
-              },
-              getContentAnchorEl: null,
+    <StepperContent
+      {...CredentialDetailContent}
+      handleCallback={handleCallback}
+      cancelCallback={cancelCallback}
+      disabled={disableVerify}
+      btnText={isSuccess === null || isSuccess === false ? 'Verify Connection' : 'Next'}
+    >
+      <Typography variant="body2" style={{ paddingLeft: '16px' }}>
+        Select an existing credential to use for this connection
+      </Typography>
+      <FormControl sx={{ width: '100%' }} size="small">
+        <InputLabel fontSize="20" id="credential-checkbox-label">
+          Select existing credential
+        </InputLabel>
+        <Select
+          labelId="credential-checkbox-label"
+          id="credential-checkbox"
+          onChange={handleSelectCredential}
+          value={selectedCredential?.name}
+          onClose={handleClose}
+          input={<OutlinedInput label="Select existing credential" />}
+          renderValue={() => (
+            <div>{selectedCredential !== null ? selectedCredential.name : ''}</div>
+          )}
+          MenuProps={{
+            anchorOrigin: {
+              vertical: 'bottom',
+              horizontal: 'left',
+            },
+            transformOrigin: {
+              vertical: 'top',
+              horizontal: 'left',
+            },
+            getContentAnchorEl: null,
+            style: {
+              maxHeight: 48 * 4.5 + 8,
+              width: 250,
+              zIndex: 10000,
+            },
+            PaperProps: {
               style: {
-                maxHeight: 48 * 4.5 + 8,
-                width: 250,
                 zIndex: 10000,
               },
-              PaperProps: {
-                style: {
-                  zIndex: 10000,
-                },
-              },
-            }}
-          >
-            {existingCredentials &&
-              existingCredentials?.map((credential) => (
-                <MenuItem key={credential.id} value={credential.id} name={credential.name}>
-                  <Checkbox checked={selectedCredential?.id === credential.id} />
-                  <ListItemText primary={credential.name} />
-                </MenuItem>
-              ))}
-          </Select>
-        </FormControl>
-        <p style={{ display: 'flex', justifyContent: 'center' }}>-OR-</p>
-        <p>Configure a new credential to use for this connection</p>
-        <RJSFWrapper
-          key="register-connection-rjsf-form"
-          jsonSchema={sharedData?.schemas?.credential}
-          liveValidate={true}
-          formRef={formRef}
-          disabled={selectedCredential !== null ? true : false}
-          onChange={handleChange}
-        />
-        <Box
-          style={{
-            background: 'rgba(0, 211, 169, 0.05)',
-            padding: '0.4rem',
-            margin: '1rem 0',
+            },
           }}
         >
-          <Typography style={{ fontSize: 'inherit' }}>
-            <Checkbox
-              id="bypass_verification"
-              color="success"
-              onChange={(e) => {
-                setSkipCredentialVerification(e.target.checked);
-                setDisableVerify(!e.target.checked);
-              }}
-            />
-            <label fontSize="inherit" for="bypass_verification">
-              Bypass connection verification
-            </label>
-          </Typography>
-        </Box>
-        {isSuccess !== null && (
-          <Notification
-            type={isSuccess ? 'success' : 'error'}
-            message={`Credential for ${sharedData?.kind} ${
-              isSuccess ? 'created' : 'verification failed'
-            }`}
-            retry={!isSuccess}
-            onRetry={() => verifyConnection()}
+          {existingCredentials &&
+            existingCredentials?.map((credential) => (
+              <MenuItem key={credential.id} value={credential.id} name={credential.name}>
+                <Checkbox checked={selectedCredential?.id === credential.id} />
+                <ListItemText primary={credential.name} />
+              </MenuItem>
+            ))}
+        </Select>
+      </FormControl>
+      <p style={{ display: 'flex', justifyContent: 'center' }}>-OR-</p>
+      <p>Configure a new credential to use for this connection</p>
+      <RJSFWrapper
+        key="register-connection-rjsf-form"
+        jsonSchema={sharedData?.schemas?.credential}
+        liveValidate={true}
+        formRef={formRef}
+        disabled={selectedCredential !== null ? true : false}
+        onChange={handleChange}
+      />
+      <Box
+        style={{
+          background: 'rgba(0, 211, 169, 0.05)',
+          padding: '0.4rem',
+          margin: '1rem 0',
+        }}
+      >
+        <Typography style={{ fontSize: 'inherit' }}>
+          <Checkbox
+            id="bypass_verification"
+            color="success"
+            onChange={(e) => {
+              setSkipCredentialVerification(e.target.checked);
+              setDisableVerify(!e.target.checked);
+            }}
           />
-        )}
-      </StepperContent>
-    </UsesSistent>
+          <label fontSize="inherit" for="bypass_verification">
+            Bypass connection verification
+          </label>
+        </Typography>
+      </Box>
+      {isSuccess !== null && (
+        <Notification
+          type={isSuccess ? 'success' : 'error'}
+          message={`Credential for ${sharedData?.kind} ${
+            isSuccess ? 'created' : 'verification failed'
+          }`}
+          retry={!isSuccess}
+          onRetry={() => verifyConnection()}
+        />
+      )}
+    </StepperContent>
   );
 };
 

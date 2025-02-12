@@ -46,7 +46,7 @@ import {
   Collapse,
   Box,
 } from '@layer5/sistent';
-import { UsesSistent } from './SistentWrapper';
+
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import dataFetch from '../lib/data-fetch';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
@@ -184,14 +184,12 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
       {
         id: CATALOG,
         icon: (
-          <UsesSistent>
-            <CatalogIcon
-              primaryFill="#FFFFFF"
-              secondaryFill="#FFFFFFb3"
-              tertiaryFill="transparent"
-              style={{ ...drawerIconsStyle }}
-            />
-          </UsesSistent>
+          <CatalogIcon
+            primaryFill="#FFFFFF"
+            secondaryFill="#FFFFFFb3"
+            tertiaryFill="transparent"
+            style={{ ...drawerIconsStyle }}
+          />
         ),
         href: '/configuration/catalog',
         title: 'Catalog',
@@ -443,36 +441,34 @@ class Navigator_ extends React.Component {
 
   extensionPointContent(icon, href, name, drawerCollapsed) {
     let content = (
-      <UsesSistent>
-        <LinkContainer data-cy={name}>
-          <CustomTooltip
-            title={name}
-            placement="right"
-            disableFocusListener={!drawerCollapsed}
-            disableTouchListener={!drawerCollapsed}
-          >
-            <MainListIcon>
-              <img
-                src={icon}
-                style={{
-                  width: '20px',
-                }}
-                onMouseOver={(e) => {
-                  e.target.style.transform = 'translate(-20%, -25%)';
-                  e.target.style.top = '0';
-                  e.target.style.right = '0';
-                }}
-                onMouseOut={(e) => {
-                  e.target.style.transform = 'translate(0, 0)';
-                  e.target.style.top = 'auto';
-                  e.target.style.right = 'auto';
-                }}
-              />
-            </MainListIcon>
-          </CustomTooltip>
-          <SideBarText drawerCollapsed={drawerCollapsed}>{name}</SideBarText>
-        </LinkContainer>
-      </UsesSistent>
+      <LinkContainer data-cy={name}>
+        <CustomTooltip
+          title={name}
+          placement="right"
+          disableFocusListener={!drawerCollapsed}
+          disableTouchListener={!drawerCollapsed}
+        >
+          <MainListIcon>
+            <img
+              src={icon}
+              style={{
+                width: '20px',
+              }}
+              onMouseOver={(e) => {
+                e.target.style.transform = 'translate(-20%, -25%)';
+                e.target.style.top = '0';
+                e.target.style.right = '0';
+              }}
+              onMouseOut={(e) => {
+                e.target.style.transform = 'translate(0, 0)';
+                e.target.style.top = 'auto';
+                e.target.style.right = 'auto';
+              }}
+            />
+          </MainListIcon>
+        </CustomTooltip>
+        <SideBarText drawerCollapsed={drawerCollapsed}>{name}</SideBarText>
+      </LinkContainer>
     );
 
     if (href) {
@@ -699,7 +695,51 @@ class Navigator_ extends React.Component {
 
     if (idname != LIFECYCLE && children && children.length > 0) {
       return (
-        <UsesSistent>
+        <List disablePadding>
+          {children.map(
+            ({
+              id: idc,
+              title: titlec,
+              icon: iconc,
+              href: hrefc,
+              show: showc,
+              link: linkc,
+              children: childrenc,
+              permission: permissionc,
+            }) => {
+              if (typeof showc !== 'undefined' && !showc) {
+                return '';
+              }
+              const isActive = path === hrefc;
+              return (
+                <div key={idc}>
+                  <NavigatorListItemII
+                    button
+                    key={idc}
+                    depth={depth}
+                    isDrawerCollapsed={isDrawerCollapsed}
+                    isActive={isActive}
+                    onClick={() => {
+                      if (linkc && hrefc) {
+                        this.props.router.push(hrefc);
+                      }
+                    }}
+                    disabled={permissionc ? !CAN(permissionc.action, permissionc.subject) : false}
+                  >
+                    {this.linkContent(iconc, titlec, hrefc, false, isDrawerCollapsed)}
+                  </NavigatorListItemII>
+                  {this.renderChildren(idname, childrenc, depth + 1)}
+                </div>
+              );
+            },
+          )}
+        </List>
+      );
+    }
+
+    if (idname == LIFECYCLE) {
+      if (children && children.length > 0) {
+        return (
           <List disablePadding>
             {children.map(
               ({
@@ -717,82 +757,32 @@ class Navigator_ extends React.Component {
                 }
                 const isActive = path === hrefc;
                 return (
-                  <div key={idc}>
-                    <NavigatorListItemII
+                  <div key={idc} style={!showc ? cursorNotAllowed : null}>
+                    <NavigatorListItemIII
+                      component="a"
+                      data-cy={idc}
                       button
                       key={idc}
                       depth={depth}
                       isDrawerCollapsed={isDrawerCollapsed}
                       isActive={isActive}
+                      isShow={!showc}
                       onClick={() => {
+                        this.handleAdapterClick(idc, linkc);
                         if (linkc && hrefc) {
                           this.props.router.push(hrefc);
                         }
                       }}
                       disabled={permissionc ? !CAN(permissionc.action, permissionc.subject) : false}
                     >
-                      {this.linkContent(iconc, titlec, hrefc, false, isDrawerCollapsed)}
-                    </NavigatorListItemII>
+                      {this.linkContent(iconc, titlec, hrefc, false, isDrawerCollapsed)}{' '}
+                    </NavigatorListItemIII>
                     {this.renderChildren(idname, childrenc, depth + 1)}
                   </div>
                 );
               },
             )}
           </List>
-        </UsesSistent>
-      );
-    }
-
-    if (idname == LIFECYCLE) {
-      if (children && children.length > 0) {
-        return (
-          <UsesSistent>
-            <List disablePadding>
-              {children.map(
-                ({
-                  id: idc,
-                  title: titlec,
-                  icon: iconc,
-                  href: hrefc,
-                  show: showc,
-                  link: linkc,
-                  children: childrenc,
-                  permission: permissionc,
-                }) => {
-                  if (typeof showc !== 'undefined' && !showc) {
-                    return '';
-                  }
-                  const isActive = path === hrefc;
-                  return (
-                    <div key={idc} style={!showc ? cursorNotAllowed : null}>
-                      <NavigatorListItemIII
-                        component="a"
-                        data-cy={idc}
-                        button
-                        key={idc}
-                        depth={depth}
-                        isDrawerCollapsed={isDrawerCollapsed}
-                        isActive={isActive}
-                        isShow={!showc}
-                        onClick={() => {
-                          this.handleAdapterClick(idc, linkc);
-                          if (linkc && hrefc) {
-                            this.props.router.push(hrefc);
-                          }
-                        }}
-                        disabled={
-                          permissionc ? !CAN(permissionc.action, permissionc.subject) : false
-                        }
-                      >
-                        {this.linkContent(iconc, titlec, hrefc, false, isDrawerCollapsed)}{' '}
-                      </NavigatorListItemIII>
-                      {this.renderChildren(idname, childrenc, depth + 1)}
-                    </div>
-                  );
-                },
-              )}
-            </List>
-          </UsesSistent>
         );
       }
       if (children && children.length === 1) {
@@ -813,20 +803,18 @@ class Navigator_ extends React.Component {
    */
   linkContent(iconc, titlec, hrefc, linkc, drawerCollapsed) {
     let linkContent = (
-      <UsesSistent>
-        <LinkContainer>
-          <CustomTooltip
-            title={titlec}
-            placement="right"
-            disableFocusListener={!drawerCollapsed}
-            disableHoverListener={!drawerCollapsed}
-            disableTouchListener={!drawerCollapsed}
-          >
-            <MainListIcon>{iconc}</MainListIcon>
-          </CustomTooltip>
-          <SideBarText drawerCollapsed={drawerCollapsed}>{titlec}</SideBarText>
-        </LinkContainer>
-      </UsesSistent>
+      <LinkContainer>
+        <CustomTooltip
+          title={titlec}
+          placement="right"
+          disableFocusListener={!drawerCollapsed}
+          disableHoverListener={!drawerCollapsed}
+          disableTouchListener={!drawerCollapsed}
+        >
+          <MainListIcon>{iconc}</MainListIcon>
+        </CustomTooltip>
+        <SideBarText drawerCollapsed={drawerCollapsed}>{titlec}</SideBarText>
+      </LinkContainer>
     );
 
     if (linkc && hrefc) {
@@ -939,199 +927,190 @@ class Navigator_ extends React.Component {
             : {}
         }
       >
-        <UsesSistent>
-          <StyledListItem
-            component="a"
-            onClick={this.handleTitleClick}
-            disableLogo={
-              !this.state.capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD])
-            }
-          >
-            {isDrawerCollapsed ? (
-              <>
-                <MainLogoCollapsed
-                  src="/static/img/meshery-logo.png"
-                  onClick={this.handleTitleClick}
-                />
-                <MainLogoTextCollapsed
-                  src="/static/img/meshery-logo-text.png"
-                  onClick={this.handleTitleClick}
-                />
-              </>
-            ) : (
-              <>
-                <MainLogo src="/static/img/meshery-logo.png" onClick={this.handleTitleClick} />
-                <MainLogoText
-                  src="/static/img/meshery-logo-text.png"
-                  onClick={this.handleTitleClick}
-                />
-              </>
-            )}
-          </StyledListItem>
-        </UsesSistent>
+        <StyledListItem
+          component="a"
+          onClick={this.handleTitleClick}
+          disableLogo={
+            !this.state.capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD])
+          }
+        >
+          {isDrawerCollapsed ? (
+            <>
+              <MainLogoCollapsed
+                src="/static/img/meshery-logo.png"
+                onClick={this.handleTitleClick}
+              />
+              <MainLogoTextCollapsed
+                src="/static/img/meshery-logo-text.png"
+                onClick={this.handleTitleClick}
+              />
+            </>
+          ) : (
+            <>
+              <MainLogo src="/static/img/meshery-logo.png" onClick={this.handleTitleClick} />
+              <MainLogoText
+                src="/static/img/meshery-logo-text.png"
+                onClick={this.handleTitleClick}
+              />
+            </>
+          )}
+        </StyledListItem>
       </div>
     );
     const Menu = (
-      <UsesSistent>
-        <HideScrollbar disablePadding>
-          {navigatorComponents.map(
-            ({
-              id: childId,
-              title,
-              icon,
-              href,
-              show,
-              link,
-              children,
-              hovericon,
-              submenu,
-              permission,
-            }) => {
-              return (
-                <RootDiv key={childId}>
-                  <SideBarListItem
-                    button={!!link}
-                    dense
-                    key={childId}
-                    link={!!link}
-                    isActive={path === href}
-                    isShow={!show}
-                    onClick={() => this.toggleItemCollapse(childId)}
-                    onMouseOver={() =>
-                      isDrawerCollapsed ? this.setState({ hoveredId: childId }) : null
-                    }
-                    onMouseLeave={() =>
-                      !submenu || !this.state.openItems.includes(childId)
-                        ? this.setState({ hoveredId: false })
-                        : null
-                    }
-                    disabled={permission ? !CAN(permission.action, permission.subject) : false}
-                  >
-                    <Link href={link ? href : ''}>
-                      <NavigatorLink data-cy={childId}>
-                        <CustomTooltip
-                          title={childId}
-                          placement="right"
-                          disableFocusListener={!isDrawerCollapsed}
-                          disableHoverListener={true}
-                          disableTouchListener={!isDrawerCollapsed}
-                          TransitionComponent={Zoom}
-                        >
-                          {isDrawerCollapsed &&
-                          (this.state.hoveredId === childId ||
-                            (this.state.openItems.includes(childId) && submenu)) ? (
-                            <div>
-                              <CustomTooltip
-                                title={title}
-                                placement="right"
-                                TransitionComponent={Zoom}
+      <HideScrollbar disablePadding>
+        {navigatorComponents.map(
+          ({
+            id: childId,
+            title,
+            icon,
+            href,
+            show,
+            link,
+            children,
+            hovericon,
+            submenu,
+            permission,
+          }) => {
+            return (
+              <RootDiv key={childId}>
+                <SideBarListItem
+                  button={!!link}
+                  dense
+                  key={childId}
+                  link={!!link}
+                  isActive={path === href}
+                  isShow={!show}
+                  onClick={() => this.toggleItemCollapse(childId)}
+                  onMouseOver={() =>
+                    isDrawerCollapsed ? this.setState({ hoveredId: childId }) : null
+                  }
+                  onMouseLeave={() =>
+                    !submenu || !this.state.openItems.includes(childId)
+                      ? this.setState({ hoveredId: false })
+                      : null
+                  }
+                  disabled={permission ? !CAN(permission.action, permission.subject) : false}
+                >
+                  <Link href={link ? href : ''}>
+                    <NavigatorLink data-cy={childId}>
+                      <CustomTooltip
+                        title={childId}
+                        placement="right"
+                        disableFocusListener={!isDrawerCollapsed}
+                        disableHoverListener={true}
+                        disableTouchListener={!isDrawerCollapsed}
+                        TransitionComponent={Zoom}
+                      >
+                        {isDrawerCollapsed &&
+                        (this.state.hoveredId === childId ||
+                          (this.state.openItems.includes(childId) && submenu)) ? (
+                          <div>
+                            <CustomTooltip
+                              title={title}
+                              placement="right"
+                              TransitionComponent={Zoom}
+                            >
+                              <ListItemIcon
+                                onClick={() => this.toggleItemCollapse(childId)}
+                                style={{ marginLeft: '20%', marginBottom: '0.4rem' }}
                               >
-                                <ListItemIcon
-                                  onClick={() => this.toggleItemCollapse(childId)}
-                                  style={{ marginLeft: '20%', marginBottom: '0.4rem' }}
-                                >
-                                  {hovericon}
-                                </ListItemIcon>
-                              </CustomTooltip>
-                            </div>
-                          ) : (
-                            <MainListIcon>{icon}</MainListIcon>
-                          )}
-                        </CustomTooltip>
-                        <SideBarText drawerCollapsed={isDrawerCollapsed}>{title}</SideBarText>
-                      </NavigatorLink>
-                    </Link>
-                    <ExpandMoreIcon
-                      icon={faCaretDown}
-                      onClick={() => this.toggleItemCollapse(childId)}
-                      isCollapsed={this.state.openItems.includes(childId)} // Pass collapsed state
-                      isDrawerCollapsed={isDrawerCollapsed} // Pass drawer state
-                      hasChildren={!!children}
-                    />
-                  </SideBarListItem>
-                  <Collapse
-                    in={this.state.openItems.includes(childId)}
-                    style={{ backgroundColor: '#396679', opacity: '100%' }}
-                  >
-                    {this.renderChildren(childId, children, 1)}
-                  </Collapse>
-                </RootDiv>
-              );
-            },
-          )}
-          {this.state.navigator && this.state.navigator.length ? (
-            <React.Fragment>
-              <SecondaryDivider />
-              {this.renderNavigatorExtensions(this.state.navigator, 1)}
-            </React.Fragment>
-          ) : null}
-          <SecondaryDivider />
-        </HideScrollbar>
-      </UsesSistent>
+                                {hovericon}
+                              </ListItemIcon>
+                            </CustomTooltip>
+                          </div>
+                        ) : (
+                          <MainListIcon>{icon}</MainListIcon>
+                        )}
+                      </CustomTooltip>
+                      <SideBarText drawerCollapsed={isDrawerCollapsed}>{title}</SideBarText>
+                    </NavigatorLink>
+                  </Link>
+                  <ExpandMoreIcon
+                    icon={faCaretDown}
+                    onClick={() => this.toggleItemCollapse(childId)}
+                    isCollapsed={this.state.openItems.includes(childId)} // Pass collapsed state
+                    isDrawerCollapsed={isDrawerCollapsed} // Pass drawer state
+                    hasChildren={!!children}
+                  />
+                </SideBarListItem>
+                <Collapse
+                  in={this.state.openItems.includes(childId)}
+                  style={{ backgroundColor: '#396679', opacity: '100%' }}
+                >
+                  {this.renderChildren(childId, children, 1)}
+                </Collapse>
+              </RootDiv>
+            );
+          },
+        )}
+        {this.state.navigator && this.state.navigator.length ? (
+          <React.Fragment>
+            <SecondaryDivider />
+            {this.renderNavigatorExtensions(this.state.navigator, 1)}
+          </React.Fragment>
+        ) : null}
+        <SecondaryDivider />
+      </HideScrollbar>
     );
     const HelpIcons = (
-      <UsesSistent>
-        <NavigatorHelpIcons
-          isCollapsed={isDrawerCollapsed}
-          size="large"
-          orientation={isDrawerCollapsed ? 'vertical' : 'horizontal'}
-        >
-          {externlinks.map(({ id, icon, title, href }, index) => {
-            return (
-              <HelpListItem
-                key={id}
-                style={isDrawerCollapsed && !showHelperButton ? { display: 'none' } : {}}
+      <NavigatorHelpIcons
+        isCollapsed={isDrawerCollapsed}
+        size="large"
+        orientation={isDrawerCollapsed ? 'vertical' : 'horizontal'}
+      >
+        {externlinks.map(({ id, icon, title, href }, index) => {
+          return (
+            <HelpListItem
+              key={id}
+              style={isDrawerCollapsed && !showHelperButton ? { display: 'none' } : {}}
+            >
+              <Grow
+                in={showHelperButton || !isDrawerCollapsed}
+                timeout={{ enter: 600 - index * 200, exit: 100 * index }}
               >
-                <Grow
-                  in={showHelperButton || !isDrawerCollapsed}
-                  timeout={{ enter: 600 - index * 200, exit: 100 * index }}
+                <a
+                  href={href}
+                  target="_blank"
+                  rel="noreferrer"
+                  style={
+                    isDrawerCollapsed
+                      ? { display: 'flex', alignItems: 'center', justifyContent: 'center' }
+                      : {}
+                  }
                 >
-                  <a
-                    href={href}
-                    target="_blank"
-                    rel="noreferrer"
-                    style={
-                      isDrawerCollapsed
-                        ? { display: 'flex', alignItems: 'center', justifyContent: 'center' }
-                        : {}
-                    }
-                  >
-                    <CustomTextTooltip
-                      title={title}
-                      placement={isDrawerCollapsed ? 'right' : 'top'}
-                    >
-                      <ListIconSide>{icon}</ListIconSide>
-                    </CustomTextTooltip>
-                  </a>
-                </Grow>
-              </HelpListItem>
-            );
-          })}
-          <ListItem style={{ display: isDrawerCollapsed ? 'inherit' : 'none' }}>
-            <CustomTextTooltip title="Help" placement={isDrawerCollapsed ? 'right' : 'top'}>
-              <HelpButton isCollapsed={isDrawerCollapsed} onClick={this.toggleSpacing}>
-                <HelpIcon
-                  style={{
-                    fontSize: '1.45rem',
-                    ...iconSmall,
-                    color: '#fff',
-                    opacity: '0.7',
-                    transition: 'opacity 200ms linear',
-                    '&:hover': {
-                      opacity: 1,
-                      background: 'transparent',
-                    },
-                    '&:focus': {
-                      opacity: 1,
-                      background: 'transparent',
-                    },
-                  }}
-                />
-              </HelpButton>
-            </CustomTextTooltip>
-          </ListItem>
-        </NavigatorHelpIcons>
-      </UsesSistent>
+                  <CustomTextTooltip title={title} placement={isDrawerCollapsed ? 'right' : 'top'}>
+                    <ListIconSide>{icon}</ListIconSide>
+                  </CustomTextTooltip>
+                </a>
+              </Grow>
+            </HelpListItem>
+          );
+        })}
+        <ListItem style={{ display: isDrawerCollapsed ? 'inherit' : 'none' }}>
+          <CustomTextTooltip title="Help" placement={isDrawerCollapsed ? 'right' : 'top'}>
+            <HelpButton isCollapsed={isDrawerCollapsed} onClick={this.toggleSpacing}>
+              <HelpIcon
+                style={{
+                  fontSize: '1.45rem',
+                  ...iconSmall,
+                  color: '#fff',
+                  opacity: '0.7',
+                  transition: 'opacity 200ms linear',
+                  '&:hover': {
+                    opacity: 1,
+                    background: 'transparent',
+                  },
+                  '&:focus': {
+                    opacity: 1,
+                    background: 'transparent',
+                  },
+                }}
+              />
+            </HelpButton>
+          </CustomTextTooltip>
+        </ListItem>
+      </NavigatorHelpIcons>
     );
     const Version = (
       <ListItem
@@ -1178,20 +1157,18 @@ class Navigator_ extends React.Component {
           }
           onClick={this.toggleMiniDrawer}
         >
-          <UsesSistent>
-            <ChevronIcon
-              icon={faAngleLeft}
-              fixedWidth
-              size="2x"
-              style={{
-                margin: '0.75rem 0.2rem ',
-                width: '0.8rem',
-                verticalAlign: 'middle',
-                color: isDrawerCollapsed ? '#fff' : 'inherit',
-              }}
-              alt="Sidebar collapse toggle icon"
-            />
-          </UsesSistent>
+          <ChevronIcon
+            icon={faAngleLeft}
+            fixedWidth
+            size="2x"
+            style={{
+              margin: '0.75rem 0.2rem ',
+              width: '0.8rem',
+              verticalAlign: 'middle',
+              color: isDrawerCollapsed ? '#fff' : 'inherit',
+            }}
+            alt="Sidebar collapse toggle icon"
+          />
         </div>
       </ChevronButtonWrapper>
     );

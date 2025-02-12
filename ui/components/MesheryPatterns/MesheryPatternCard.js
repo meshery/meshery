@@ -40,7 +40,7 @@ import CheckIcon from '@/assets/icons/CheckIcon';
 import { VISIBILITY } from '@/utils/Enum';
 import PatternIcon from '@/assets/icons/Pattern';
 import { iconLarge, iconMedium } from 'css/icons.styles';
-import { UsesSistent } from '../SistentWrapper';
+
 import { VIEW_VISIBILITY } from '../Modals/Information/InfoModal';
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
@@ -106,7 +106,7 @@ function MesheryPatternCard_({
 
   const formatted_pattern_file = formatPatternFile(pattern_file);
   return (
-    <UsesSistent>
+    <>
       {fullScreen && (
         <YAMLDialog
           fullScreen={fullScreen}
@@ -413,7 +413,7 @@ function MesheryPatternCard_({
           </CardBackGrid>
         </>
       </FlipCard>
-    </UsesSistent>
+    </>
   );
 }
 

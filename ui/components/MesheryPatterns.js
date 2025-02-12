@@ -75,7 +75,7 @@ import { keys } from '@/utils/permission_constants';
 import ExportModal from './ExportModal';
 import { useModal, Modal as SistentModal, ModalBody } from '@layer5/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
-import { UsesSistent } from './SistentWrapper';
+
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import { useActorRef } from '@xstate/react';
 import { designValidationMachine } from 'machines/validator/designValidator';
@@ -152,15 +152,13 @@ const YamlDialogTitleText = styled(Typography)(() => ({
 
 function TooltipIcon({ children, onClick, title, placement, disabled }) {
   return (
-    <UsesSistent>
-      <CustomTooltip title={title} placement={placement} interactive>
-        <div>
-          <IconButton disabled={disabled} onClick={onClick}>
-            {children}
-          </IconButton>
-        </div>
-      </CustomTooltip>
-    </UsesSistent>
+    <CustomTooltip title={title} placement={placement} interactive>
+      <div>
+        <IconButton disabled={disabled} onClick={onClick}>
+          {children}
+        </IconButton>
+      </div>
+    </CustomTooltip>
   );
 }
 
@@ -1360,11 +1358,7 @@ function MesheryPatterns({
   };
 
   if (ispatternsLoading) {
-    return (
-      <UsesSistent>
-        <LoadingScreen animatedIcon="AnimatedMeshPattern" message={`Loading ${pageTitle}...`} />
-      </UsesSistent>
-    );
+    return <LoadingScreen animatedIcon="AnimatedMeshPattern" message={`Loading ${pageTitle}...`} />;
   }
 
   /**
@@ -1443,210 +1437,201 @@ function MesheryPatterns({
   };
 
   return (
-    <UsesSistent>
-      <NoSsr>
-        {CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject) ? (
-          <>
-            {selectedRowData && Object.keys(selectedRowData).length > 0 && (
-              <YAMLEditor
-                pattern={selectedRowData}
-                onClose={resetSelectedRowData()}
-                onSubmit={handleSubmit}
-                isReadOnly={arePatternsReadOnly}
-              />
-            )}
-            <ToolWrapper>
-              {width < 600 && isSearchExpanded ? null : (
-                <CreateButton style={{ display: 'flex' }}>
-                  {!selectedPattern.show && (patterns.length >= 0 || viewType === 'table') && (
-                    <div>
-                      {disableCreateImportDesignButton ? null : (
-                        <div style={{ display: 'flex', order: '1' }}>
-                          <TooltipButton
-                            title="Create Design"
-                            aria-label="Add Pattern"
-                            variant="contained"
-                            color="primary"
-                            size="large"
-                            // @ts-ignore
-                            onClick={() => router.push('designs/configurator')}
-                            style={{ display: 'flex', marginRight: '2rem' }}
-                            disabled={
-                              !CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)
-                            }
-                          >
-                            <AddIconStyled />
-                            <BtnText> Create Design </BtnText>
-                          </TooltipButton>
-                          <TooltipButton
-                            title="Import Design"
-                            aria-label="Add Pattern"
-                            variant="contained"
-                            color="primary"
-                            size="large"
-                            // @ts-ignore
-                            onClick={handleUploadImport}
-                            style={{ display: 'flex', marginRight: '2rem', marginLeft: '-0.6rem' }}
-                            disabled={!CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject)}
-                          >
-                            <AddIconStyled>
-                              <PublishIcon />
-                            </AddIconStyled>
-                            <BtnText> Import Design </BtnText>
-                          </TooltipButton>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  {!selectedPattern.show && (
-                    <div style={{ display: 'flex' }}>
-                      {/* <StyledCatalogFilter>
+    <NoSsr>
+      {CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject) ? (
+        <>
+          {selectedRowData && Object.keys(selectedRowData).length > 0 && (
+            <YAMLEditor
+              pattern={selectedRowData}
+              onClose={resetSelectedRowData()}
+              onSubmit={handleSubmit}
+              isReadOnly={arePatternsReadOnly}
+            />
+          )}
+          <ToolWrapper>
+            {width < 600 && isSearchExpanded ? null : (
+              <CreateButton style={{ display: 'flex' }}>
+                {!selectedPattern.show && (patterns.length >= 0 || viewType === 'table') && (
+                  <div>
+                    {disableCreateImportDesignButton ? null : (
+                      <div style={{ display: 'flex', order: '1' }}>
+                        <TooltipButton
+                          title="Create Design"
+                          aria-label="Add Pattern"
+                          variant="contained"
+                          color="primary"
+                          size="large"
+                          // @ts-ignore
+                          onClick={() => router.push('designs/configurator')}
+                          style={{ display: 'flex', marginRight: '2rem' }}
+                          disabled={
+                            !CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)
+                          }
+                        >
+                          <AddIconStyled />
+                          <BtnText> Create Design </BtnText>
+                        </TooltipButton>
+                        <TooltipButton
+                          title="Import Design"
+                          aria-label="Add Pattern"
+                          variant="contained"
+                          color="primary"
+                          size="large"
+                          // @ts-ignore
+                          onClick={handleUploadImport}
+                          style={{ display: 'flex', marginRight: '2rem', marginLeft: '-0.6rem' }}
+                          disabled={!CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject)}
+                        >
+                          <AddIconStyled>
+                            <PublishIcon />
+                          </AddIconStyled>
+                          <BtnText> Import Design </BtnText>
+                        </TooltipButton>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {!selectedPattern.show && (
+                  <div style={{ display: 'flex' }}>
+                    {/* <StyledCatalogFilter>
                     <CatalogFilter
                       catalogVisibility={catalogVisibility}
                       handleCatalogVisibility={handleCatalogVisibility}
                       classes={classes}
                     />
                     </StyledCatalogFilter>*/}
-                    </div>
-                  )}
-                </CreateButton>
-              )}
-              <SearchWrapper style={{ display: 'flex' }}>
-                <UsesSistent>
-                  <SearchBar
-                    onSearch={(value) => {
-                      setSearch(value);
-                      initPatternsSubscription(
-                        page.toString(),
-                        pageSize.toString(),
-                        value,
-                        sortOrder,
-                      );
-                    }}
-                    expanded={isSearchExpanded}
-                    setExpanded={setIsSearchExpanded}
-                    placeholder={`Search ${pageTitle.toLowerCase()}...`}
-                  />
-                  {disableUniversalFilter ? null : (
-                    <UniversalFilter
-                      id="ref"
-                      filters={filter}
-                      selectedFilters={selectedFilters}
-                      setSelectedFilters={setSelectedFilters}
-                      handleApplyFilter={handleApplyFilter}
-                    />
-                  )}
-                  {viewType === 'table' && (
-                    <CustomColumnVisibilityControl
-                      id="ref"
-                      columns={columns}
-                      customToolsProps={{ columnVisibility, setColumnVisibility }}
-                    />
-                  )}
-                </UsesSistent>
-
-                {!selectedPattern.show && (
-                  <ViewSwitchButton>
-                    <ViewSwitch view={viewType} changeView={setViewType} />
-                  </ViewSwitchButton>
+                  </div>
                 )}
-              </SearchWrapper>
-            </ToolWrapper>
-            {!selectedPattern.show && viewType === 'table' && (
-              <>
-                {/* <StyledRow> */}
-                <ResponsiveDataTable
-                  data={patterns}
+              </CreateButton>
+            )}
+            <SearchWrapper style={{ display: 'flex' }}>
+              <SearchBar
+                onSearch={(value) => {
+                  setSearch(value);
+                  initPatternsSubscription(page.toString(), pageSize.toString(), value, sortOrder);
+                }}
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
+                placeholder={`Search ${pageTitle.toLowerCase()}...`}
+              />
+              {disableUniversalFilter ? null : (
+                <UniversalFilter
+                  id="ref"
+                  filters={filter}
+                  selectedFilters={selectedFilters}
+                  setSelectedFilters={setSelectedFilters}
+                  handleApplyFilter={handleApplyFilter}
+                />
+              )}
+              {viewType === 'table' && (
+                <CustomColumnVisibilityControl
+                  id="ref"
                   columns={columns}
-                  // @ts-ignore
-                  options={options}
-                  tableCols={tableCols}
-                  updateCols={updateCols}
-                  columnVisibility={columnVisibility}
-                />
-                {/* </StyledRow> */}
-
-                <ExportModal
-                  downloadModal={downloadModal}
-                  handleDownloadDialogClose={handleDownloadDialogClose}
-                  handleDesignDownload={handleDownload}
-                />
-              </>
-            )}
-            {!selectedPattern.show && viewType === 'grid' && (
-              // grid vieww
-              <MesheryPatternGrid
-                selectedK8sContexts={selectedK8sContexts}
-                canPublishPattern={canPublishPattern}
-                patterns={patterns}
-                handlePublish={handlePublish}
-                handleUnpublishModal={handleUnpublishModal}
-                handleClone={handleClone}
-                supportedTypes="null"
-                handleSubmit={handleSubmit}
-                setSelectedPattern={setSelectedPattern}
-                selectedPattern={selectedPattern}
-                pages={Math.ceil(count / pageSize)}
-                setPage={setPage}
-                selectedPage={page}
-                patternErrors={[]}
-                publishModal={publishModal}
-                setPublishModal={setPublishModal}
-                publishSchema={publishSchema}
-                user={user}
-                fetch={() => getPatterns()}
-                handleInfoModal={handleInfoModal}
-                openUndeployModal={openUndeployModal}
-                openValidationModal={openValidateModal}
-                openDryRunModal={openDryRunModal}
-                openDeployModal={openDeployModal}
-                hideVisibility={hideVisibility}
-                arePatternsReadOnly={arePatternsReadOnly}
-              />
-            )}
-
-            <SistentModal maxWidth="sm" {...designLifecycleModal}></SistentModal>
-            <SistentModal {...sistentInfoModal}>
-              {CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject) &&
-                infoModal.open && (
-                  <InfoModal
-                    handlePublish={handlePublish}
-                    infoModalOpen={true}
-                    handleInfoModalClose={handleInfoModalClose}
-                    dataName="patterns"
-                    selectedResource={infoModal.selectedResource}
-                    resourceOwnerID={infoModal.ownerID}
-                    currentUser={user}
-                    patternFetcher={fetchPatternsCaller}
-                    formSchema={publishSchema}
-                    meshModels={meshModels}
-                  />
-                )}
-            </SistentModal>
-
-            {canPublishPattern &&
-              publishModal.open &&
-              CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject) && (
-                <PublishModal
-                  publishFormSchema={publishSchema}
-                  handleClose={handlePublishModalClose}
-                  title={publishModal.pattern?.name}
-                  handleSubmit={handlePublish}
+                  customToolsProps={{ columnVisibility, setColumnVisibility }}
                 />
               )}
-            {importModal.open && CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject) && (
-              <ImportModal
-                handleClose={handleUploadImportClose}
-                handleImportDesign={handleImportDesign}
+
+              {!selectedPattern.show && (
+                <ViewSwitchButton>
+                  <ViewSwitch view={viewType} changeView={setViewType} />
+                </ViewSwitchButton>
+              )}
+            </SearchWrapper>
+          </ToolWrapper>
+          {!selectedPattern.show && viewType === 'table' && (
+            <>
+              {/* <StyledRow> */}
+              <ResponsiveDataTable
+                data={patterns}
+                columns={columns}
+                // @ts-ignore
+                options={options}
+                tableCols={tableCols}
+                updateCols={updateCols}
+                columnVisibility={columnVisibility}
+              />
+              {/* </StyledRow> */}
+
+              <ExportModal
+                downloadModal={downloadModal}
+                handleDownloadDialogClose={handleDownloadDialogClose}
+                handleDesignDownload={handleDownload}
+              />
+            </>
+          )}
+          {!selectedPattern.show && viewType === 'grid' && (
+            // grid vieww
+            <MesheryPatternGrid
+              selectedK8sContexts={selectedK8sContexts}
+              canPublishPattern={canPublishPattern}
+              patterns={patterns}
+              handlePublish={handlePublish}
+              handleUnpublishModal={handleUnpublishModal}
+              handleClone={handleClone}
+              supportedTypes="null"
+              handleSubmit={handleSubmit}
+              setSelectedPattern={setSelectedPattern}
+              selectedPattern={selectedPattern}
+              pages={Math.ceil(count / pageSize)}
+              setPage={setPage}
+              selectedPage={page}
+              patternErrors={[]}
+              publishModal={publishModal}
+              setPublishModal={setPublishModal}
+              publishSchema={publishSchema}
+              user={user}
+              fetch={() => getPatterns()}
+              handleInfoModal={handleInfoModal}
+              openUndeployModal={openUndeployModal}
+              openValidationModal={openValidateModal}
+              openDryRunModal={openDryRunModal}
+              openDeployModal={openDeployModal}
+              hideVisibility={hideVisibility}
+              arePatternsReadOnly={arePatternsReadOnly}
+            />
+          )}
+
+          <SistentModal maxWidth="sm" {...designLifecycleModal}></SistentModal>
+          <SistentModal {...sistentInfoModal}>
+            {CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject) &&
+              infoModal.open && (
+                <InfoModal
+                  handlePublish={handlePublish}
+                  infoModalOpen={true}
+                  handleInfoModalClose={handleInfoModalClose}
+                  dataName="patterns"
+                  selectedResource={infoModal.selectedResource}
+                  resourceOwnerID={infoModal.ownerID}
+                  currentUser={user}
+                  patternFetcher={fetchPatternsCaller}
+                  formSchema={publishSchema}
+                  meshModels={meshModels}
+                />
+              )}
+          </SistentModal>
+
+          {canPublishPattern &&
+            publishModal.open &&
+            CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject) && (
+              <PublishModal
+                publishFormSchema={publishSchema}
+                handleClose={handlePublishModalClose}
+                title={publishModal.pattern?.name}
+                handleSubmit={handlePublish}
               />
             )}
-            <_PromptComponent ref={modalRef} />
-          </>
-        ) : (
-          <DefaultError />
-        )}
-      </NoSsr>
-    </UsesSistent>
+          {importModal.open && CAN(keys.IMPORT_DESIGN.action, keys.IMPORT_DESIGN.subject) && (
+            <ImportModal
+              handleClose={handleUploadImportClose}
+              handleImportDesign={handleImportDesign}
+            />
+          )}
+          <_PromptComponent ref={modalRef} />
+        </>
+      ) : (
+        <DefaultError />
+      )}
+    </NoSsr>
   );
 }
 
@@ -1655,25 +1640,23 @@ const ImportModal = React.memo((props) => {
 
   return (
     <>
-      <UsesSistent>
-        <SistentModal
-          open={true}
-          closeModal={handleClose}
-          headerIcon={
-            <Pattern fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
-          }
-          maxWidth="sm"
-          title="Import Design"
-        >
-          <RJSFModalWrapper
-            schema={importDesignSchema}
-            uiSchema={importDesignUiSchema}
-            handleSubmit={handleImportDesign}
-            submitBtnText="Import"
-            handleClose={handleClose}
-          />
-        </SistentModal>
-      </UsesSistent>
+      <SistentModal
+        open={true}
+        closeModal={handleClose}
+        headerIcon={
+          <Pattern fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
+        }
+        maxWidth="sm"
+        title="Import Design"
+      >
+        <RJSFModalWrapper
+          schema={importDesignSchema}
+          uiSchema={importDesignUiSchema}
+          handleSubmit={handleImportDesign}
+          submitBtnText="Import"
+          handleClose={handleClose}
+        />
+      </SistentModal>
     </>
   );
 });
@@ -1683,27 +1666,25 @@ const PublishModal = React.memo((props) => {
 
   return (
     <>
-      <UsesSistent>
-        <SistentModal
-          open={true}
-          closeModal={handleClose}
-          aria-label="catalog publish"
-          title={title}
-          headerIcon={
-            <Pattern fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
-          }
-          maxWidth="sm"
-        >
-          <RJSFModalWrapper
-            schema={publishCatalogItemSchema}
-            uiSchema={publishCatalogItemUiSchema}
-            handleSubmit={handleSubmit}
-            submitBtnText="Submit for Approval"
-            handleClose={handleClose}
-            helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
-          />
-        </SistentModal>
-      </UsesSistent>
+      <SistentModal
+        open={true}
+        closeModal={handleClose}
+        aria-label="catalog publish"
+        title={title}
+        headerIcon={
+          <Pattern fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
+        }
+        maxWidth="sm"
+      >
+        <RJSFModalWrapper
+          schema={publishCatalogItemSchema}
+          uiSchema={publishCatalogItemUiSchema}
+          handleSubmit={handleSubmit}
+          submitBtnText="Submit for Approval"
+          handleClose={handleClose}
+          helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
+        />
+      </SistentModal>
     </>
   );
 });

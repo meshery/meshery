@@ -20,7 +20,7 @@ import useKubernetesHook, {
 import { TootltipWrappedConnectionChip } from './ConnectionChip';
 import { CONTROLLER_STATES } from '../../utils/Enum';
 import { formatToTitleCase } from '../../utils/utils';
-import { UsesSistent } from '../SistentWrapper';
+
 import { ColumnWrapper, ContentContainer, OperationButton } from './styles';
 
 const DISABLED = 'DISABLED';
@@ -79,167 +79,165 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
     getControllerStatesByConnectionID(connection.id);
 
   return (
-    <UsesSistent>
-      <Grid container spacing={1} sx={{ textTransform: 'none' }}>
-        <Grid item xs={12} md={6}>
-          <ColumnWrapper>
-            <Grid container spacing={1}>
-              <OperationButton item xs={12} md={5}>
-                <List>
-                  <ListItem>
-                    <TootltipWrappedConnectionChip
-                      tooltip={`Server: ${metadata.server}`}
-                      title={metadata.name}
-                      status={connection.status}
-                      iconSrc={'/static/img/kubernetes.svg'}
-                      handlePing={() => handleKubernetesClick(connection.id)}
-                    />
-                  </ListItem>
-                </List>
-              </OperationButton>
+    <Grid container spacing={1} sx={{ textTransform: 'none' }}>
+      <Grid item xs={12} md={6}>
+        <ColumnWrapper>
+          <Grid container spacing={1}>
+            <OperationButton item xs={12} md={5}>
+              <List>
+                <ListItem>
+                  <TootltipWrappedConnectionChip
+                    tooltip={`Server: ${metadata.server}`}
+                    title={metadata.name}
+                    status={connection.status}
+                    iconSrc={'/static/img/kubernetes.svg'}
+                    handlePing={() => handleKubernetesClick(connection.id)}
+                  />
+                </ListItem>
+              </List>
+            </OperationButton>
+          </Grid>
+          <ContentContainer container spacing={1}>
+            <Grid item xs={12} md={5}>
+              <List>
+                <ListItem>
+                  <StyledListItemText primary="Name" secondary={metadata.name} />
+                </ListItem>
+                <ListItem>
+                  <StyledListItemText primary="K8s Version" secondary={metadata.version} />
+                </ListItem>
+              </List>
             </Grid>
-            <ContentContainer container spacing={1}>
-              <Grid item xs={12} md={5}>
-                <List>
-                  <ListItem>
-                    <StyledListItemText primary="Name" secondary={metadata.name} />
-                  </ListItem>
-                  <ListItem>
-                    <StyledListItemText primary="K8s Version" secondary={metadata.version} />
-                  </ListItem>
-                </List>
-              </Grid>
-              <Grid item xs={12} md={5}>
-                <List>
-                  <ListItem>
-                    <StyledListItemText
-                      primary="Created At"
-                      secondary={<FormattedDate date={connection.created_at} />}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <StyledListItemText
-                      primary="Updated At"
-                      secondary={<FormattedDate date={connection.updated_at} />}
-                    />
-                  </ListItem>
-                </List>
-              </Grid>
-              <Grid item xs={12} md={5}>
-                <List>
-                  <ListItem>
-                    <StyledListItemText
-                      style={{
-                        width: '80%',
-                        wordWrap: 'break-word',
-                      }}
-                      primary="Server"
-                      secondary={<Link title={metadata.server}>{metadata.server}</Link>}
-                    />
-                  </ListItem>
-                </List>
-              </Grid>
-            </ContentContainer>
-          </ColumnWrapper>
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <ColumnWrapper>
-            <Grid container spacing={1}>
-              <OperationButton item xs={12} md={4}>
-                <List>
-                  <ListItem>
-                    <TootltipWrappedConnectionChip
-                      tooltip={operatorState ? `Version: ${operatorVersion}` : 'Not Available'}
-                      title={'Operator'}
-                      disabled={operatorState === CONTROLLER_STATES.UNDEPLOYED}
-                      status={operatorState}
-                      handlePing={handleOperatorClick}
-                      iconSrc="/static/img/meshery-operator.svg"
-                      width="9rem"
-                    />
-                  </ListItem>
-                </List>
-              </OperationButton>
-
-              {(meshSyncState || natsState) && (
-                <>
-                  <Grid item xs={12} md={4}>
-                    <List>
-                      <ListItem>
-                        <TootltipWrappedConnectionChip
-                          tooltip={meshSyncState !== DISABLED ? `Ping MeshSync` : 'Not Available'}
-                          title={'MeshSync'}
-                          status={meshSyncState?.toLowerCase()}
-                          handlePing={handleMeshSyncClick}
-                          iconSrc="/static/img/meshsync.svg"
-                          width="9rem"
-                        />
-                      </ListItem>
-                    </List>
-                  </Grid>
-                  <Grid item xs={12} md={4}>
-                    <List>
-                      <ListItem>
-                        <TootltipWrappedConnectionChip
-                          tooltip={natsState === 'Not Active' ? 'Not Available' : `Reconnect NATS`}
-                          title={'NATS'}
-                          status={natsState?.toLowerCase()}
-                          handlePing={() => handleNATSClick()}
-                          iconSrc="/static/img/nats-icon-color.svg"
-                          width="9rem"
-                        />
-                      </ListItem>
-                    </List>
-                  </Grid>
-                </>
-              )}
+            <Grid item xs={12} md={5}>
+              <List>
+                <ListItem>
+                  <StyledListItemText
+                    primary="Created At"
+                    secondary={<FormattedDate date={connection.created_at} />}
+                  />
+                </ListItem>
+                <ListItem>
+                  <StyledListItemText
+                    primary="Updated At"
+                    secondary={<FormattedDate date={connection.updated_at} />}
+                  />
+                </ListItem>
+              </List>
             </Grid>
-
-            <ContentContainer container spacing={1}>
-              <Grid item xs={12} md={5}>
-                <List>
-                  <ListItem>
-                    <StyledListItemText
-                      primary="Operator State"
-                      secondary={formatToTitleCase(operatorState)}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <StyledListItemText primary="Operator Version" secondary={operatorVersion} />
-                  </ListItem>
-                </List>
-              </Grid>
-              <Grid item xs={12} md={5}>
-                <List>
-                  <ListItem>
-                    <StyledListItemText
-                      primary="MeshSync State"
-                      secondary={formatToTitleCase(meshSyncState) || 'Undeployed'}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <StyledListItemText primary="MeshSync Version" secondary={meshSyncVersion} />
-                  </ListItem>
-                </List>
-              </Grid>
-              <Grid item xs={12} md={5}>
-                <List>
-                  <ListItem>
-                    <StyledListItemText
-                      primary="NATS State"
-                      secondary={formatToTitleCase(natsState) || 'Not Connected'}
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <StyledListItemText primary="NATS Version" secondary={natsVersion} />
-                  </ListItem>
-                </List>
-              </Grid>
-            </ContentContainer>
-          </ColumnWrapper>
-        </Grid>
+            <Grid item xs={12} md={5}>
+              <List>
+                <ListItem>
+                  <StyledListItemText
+                    style={{
+                      width: '80%',
+                      wordWrap: 'break-word',
+                    }}
+                    primary="Server"
+                    secondary={<Link title={metadata.server}>{metadata.server}</Link>}
+                  />
+                </ListItem>
+              </List>
+            </Grid>
+          </ContentContainer>
+        </ColumnWrapper>
       </Grid>
-    </UsesSistent>
+      <Grid item xs={12} md={6}>
+        <ColumnWrapper>
+          <Grid container spacing={1}>
+            <OperationButton item xs={12} md={4}>
+              <List>
+                <ListItem>
+                  <TootltipWrappedConnectionChip
+                    tooltip={operatorState ? `Version: ${operatorVersion}` : 'Not Available'}
+                    title={'Operator'}
+                    disabled={operatorState === CONTROLLER_STATES.UNDEPLOYED}
+                    status={operatorState}
+                    handlePing={handleOperatorClick}
+                    iconSrc="/static/img/meshery-operator.svg"
+                    width="9rem"
+                  />
+                </ListItem>
+              </List>
+            </OperationButton>
+
+            {(meshSyncState || natsState) && (
+              <>
+                <Grid item xs={12} md={4}>
+                  <List>
+                    <ListItem>
+                      <TootltipWrappedConnectionChip
+                        tooltip={meshSyncState !== DISABLED ? `Ping MeshSync` : 'Not Available'}
+                        title={'MeshSync'}
+                        status={meshSyncState?.toLowerCase()}
+                        handlePing={handleMeshSyncClick}
+                        iconSrc="/static/img/meshsync.svg"
+                        width="9rem"
+                      />
+                    </ListItem>
+                  </List>
+                </Grid>
+                <Grid item xs={12} md={4}>
+                  <List>
+                    <ListItem>
+                      <TootltipWrappedConnectionChip
+                        tooltip={natsState === 'Not Active' ? 'Not Available' : `Reconnect NATS`}
+                        title={'NATS'}
+                        status={natsState?.toLowerCase()}
+                        handlePing={() => handleNATSClick()}
+                        iconSrc="/static/img/nats-icon-color.svg"
+                        width="9rem"
+                      />
+                    </ListItem>
+                  </List>
+                </Grid>
+              </>
+            )}
+          </Grid>
+
+          <ContentContainer container spacing={1}>
+            <Grid item xs={12} md={5}>
+              <List>
+                <ListItem>
+                  <StyledListItemText
+                    primary="Operator State"
+                    secondary={formatToTitleCase(operatorState)}
+                  />
+                </ListItem>
+                <ListItem>
+                  <StyledListItemText primary="Operator Version" secondary={operatorVersion} />
+                </ListItem>
+              </List>
+            </Grid>
+            <Grid item xs={12} md={5}>
+              <List>
+                <ListItem>
+                  <StyledListItemText
+                    primary="MeshSync State"
+                    secondary={formatToTitleCase(meshSyncState) || 'Undeployed'}
+                  />
+                </ListItem>
+                <ListItem>
+                  <StyledListItemText primary="MeshSync Version" secondary={meshSyncVersion} />
+                </ListItem>
+              </List>
+            </Grid>
+            <Grid item xs={12} md={5}>
+              <List>
+                <ListItem>
+                  <StyledListItemText
+                    primary="NATS State"
+                    secondary={formatToTitleCase(natsState) || 'Not Connected'}
+                  />
+                </ListItem>
+                <ListItem>
+                  <StyledListItemText primary="NATS Version" secondary={natsVersion} />
+                </ListItem>
+              </List>
+            </Grid>
+          </ContentContainer>
+        </ColumnWrapper>
+      </Grid>
+    </Grid>
   );
 };
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import PerformanceCard from './PerformanceCard';
 import { Grid, Pagination } from '@layer5/sistent';
-import { UsesSistent } from '../SistentWrapper';
+
 import { PaginationWrapper } from './style';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
@@ -53,7 +53,7 @@ function PerformanceProfileGrid({
   testHandler,
 }) {
   return (
-    <UsesSistent>
+    <>
       <Grid container spacing={2} style={{ padding: '1rem' }}>
         {profiles.map((profile) => (
           <PerformanceCardGridItem
@@ -70,7 +70,7 @@ function PerformanceProfileGrid({
           <Pagination count={pages} onChange={(_, page) => setPage(page - 1)} />
         </PaginationWrapper>
       ) : null}
-    </UsesSistent>
+    </>
   );
 }
 

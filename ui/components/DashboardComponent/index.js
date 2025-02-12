@@ -14,7 +14,7 @@ import { TabPanel } from './tabpanel';
 import { iconLarge } from '../../css/icons.styles';
 import { useWindowDimensions } from '@/utils/dimension';
 import { Tab, Tabs, CustomTooltip } from '@layer5/sistent';
-import { UsesSistent } from '../SistentWrapper';
+
 import { WrapperContainer, WrapperPaper } from './style';
 import _ from 'lodash';
 
@@ -69,97 +69,95 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
   }
   return (
     <>
-      <UsesSistent>
-        <WrapperContainer>
-          <WrapperPaper square>
-            <Tabs
-              value={getResourceCategoryIndex(resourceCategory)}
-              indicatorColor="primary"
-              onChange={(_e, val) => {
-                changeResourceTab(getResourceCategory(val));
-              }}
-              variant={width < 1280 ? 'scrollable' : 'fullWidth'}
-              scrollButtons="on"
-              textColor="primary"
-            >
-              {ResourceCategoryTabs.map((resource, idx) => {
-                return (
-                  <CustomTooltip
-                    key={`${resource}-${idx}`}
-                    title={`View ${resource}`}
-                    placement="top"
-                  >
-                    <Tab
-                      style={{
-                        gap: '0.4rem',
-                      }}
-                      key={resource}
-                      icon={
-                        resource === 'Overview' ? (
-                          <MesheryIcon style={iconLarge} />
-                        ) : (
-                          <KubernetesIcon style={iconLarge} />
-                        )
-                      }
-                      label={resource}
-                    />
-                  </CustomTooltip>
-                );
-              })}
-            </Tabs>
-          </WrapperPaper>
-
-          <TabPanel value={resourceCategory} index={'Overview'}>
-            <Overview />
-          </TabPanel>
-
-          {Object.keys(ResourcesConfig).map((resource, idx) => {
-            let CRDsKeys = [];
-            const isCRDS = resource === 'CRDS';
-            if (isCRDS) {
-              const TableValue = Object.values(
-                ResourcesConfig[resource].tableConfig(
-                  null,
-                  null,
-                  k8sconfig,
-                  null,
-                  resource,
-                  selectedK8sContexts,
-                ),
+      <WrapperContainer>
+        <WrapperPaper square>
+          <Tabs
+            value={getResourceCategoryIndex(resourceCategory)}
+            indicatorColor="primary"
+            onChange={(_e, val) => {
+              changeResourceTab(getResourceCategory(val));
+            }}
+            variant={width < 1280 ? 'scrollable' : 'fullWidth'}
+            scrollButtons="on"
+            textColor="primary"
+          >
+            {ResourceCategoryTabs.map((resource, idx) => {
+              return (
+                <CustomTooltip
+                  key={`${resource}-${idx}`}
+                  title={`View ${resource}`}
+                  placement="top"
+                >
+                  <Tab
+                    style={{
+                      gap: '0.4rem',
+                    }}
+                    key={resource}
+                    icon={
+                      resource === 'Overview' ? (
+                        <MesheryIcon style={iconLarge} />
+                      ) : (
+                        <KubernetesIcon style={iconLarge} />
+                      )
+                    }
+                    label={resource}
+                  />
+                </CustomTooltip>
               );
-              CRDsKeys = TableValue.map((item) => _.pick(item, ['name', 'model']));
-            }
+            })}
+          </Tabs>
+        </WrapperPaper>
 
-            return (
-              <TabPanel value={resourceCategory} index={resource} key={`${resource}-${idx}`}>
-                {ResourcesConfig[resource].submenu ? (
-                  <ResourcesSubMenu
-                    key={idx}
-                    resource={ResourcesConfig[resource]}
-                    selectedResource={selectedResource}
-                    handleChangeSelectedResource={handleChangeSelectedResource}
-                    updateProgress={updateProgress}
-                    k8sConfig={k8sconfig}
-                    selectedK8sContexts={selectedK8sContexts}
-                    CRDsKeys={CRDsKeys}
-                    isCRDS={isCRDS}
-                  />
-                ) : (
-                  <ResourcesTable
-                    key={idx}
-                    workloadType={resource}
-                    k8sConfig={k8sconfig}
-                    selectedK8sContexts={selectedK8sContexts}
-                    resourceConfig={ResourcesConfig[resource].tableConfig}
-                    menu={ResourcesConfig[resource].submenu}
-                    updateProgress={updateProgress}
-                  />
-                )}
-              </TabPanel>
+        <TabPanel value={resourceCategory} index={'Overview'}>
+          <Overview />
+        </TabPanel>
+
+        {Object.keys(ResourcesConfig).map((resource, idx) => {
+          let CRDsKeys = [];
+          const isCRDS = resource === 'CRDS';
+          if (isCRDS) {
+            const TableValue = Object.values(
+              ResourcesConfig[resource].tableConfig(
+                null,
+                null,
+                k8sconfig,
+                null,
+                resource,
+                selectedK8sContexts,
+              ),
             );
-          })}
-        </WrapperContainer>
-      </UsesSistent>
+            CRDsKeys = TableValue.map((item) => _.pick(item, ['name', 'model']));
+          }
+
+          return (
+            <TabPanel value={resourceCategory} index={resource} key={`${resource}-${idx}`}>
+              {ResourcesConfig[resource].submenu ? (
+                <ResourcesSubMenu
+                  key={idx}
+                  resource={ResourcesConfig[resource]}
+                  selectedResource={selectedResource}
+                  handleChangeSelectedResource={handleChangeSelectedResource}
+                  updateProgress={updateProgress}
+                  k8sConfig={k8sconfig}
+                  selectedK8sContexts={selectedK8sContexts}
+                  CRDsKeys={CRDsKeys}
+                  isCRDS={isCRDS}
+                />
+              ) : (
+                <ResourcesTable
+                  key={idx}
+                  workloadType={resource}
+                  k8sConfig={k8sconfig}
+                  selectedK8sContexts={selectedK8sContexts}
+                  resourceConfig={ResourcesConfig[resource].tableConfig}
+                  menu={ResourcesConfig[resource].submenu}
+                  updateProgress={updateProgress}
+                />
+              )}
+            </TabPanel>
+          );
+        })}
+      </WrapperContainer>
     </>
   );
 };

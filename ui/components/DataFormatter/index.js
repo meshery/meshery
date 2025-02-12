@@ -5,7 +5,7 @@ import _ from 'lodash';
 import { useContext } from 'react';
 import { isEmptyAtAllDepths } from '../../utils/objects';
 import CopyIcon from '../../assets/icons/CopyIcon';
-import { UsesSistent } from './../SistentWrapper';
+
 const FormatterContext = React.createContext({
   propertyFormatters: {},
 });
@@ -362,23 +362,21 @@ export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema, 
   }
 
   return (
-    <UsesSistent>
-      <FormatterContext.Provider
-        value={{
-          propertyFormatters: propertyFormatters,
+    <FormatterContext.Provider
+      value={{
+        propertyFormatters: propertyFormatters,
+      }}
+    >
+      <Grid
+        container
+        style={{
+          wordBreak: 'break-word',
+          overflowWrap: 'break-word',
+          gap: '0.3rem 1rem',
         }}
       >
-        <Grid
-          container
-          style={{
-            wordBreak: 'break-word',
-            overflowWrap: 'break-word',
-            gap: '0.3rem 1rem',
-          }}
-        >
-          <DynamicFormatter data={data} uiSchema={uiSchema} isLevel={isLevel} />
-        </Grid>
-      </FormatterContext.Provider>
-    </UsesSistent>
+        <DynamicFormatter data={data} uiSchema={uiSchema} isLevel={isLevel} />
+      </Grid>
+    </FormatterContext.Provider>
   );
 };

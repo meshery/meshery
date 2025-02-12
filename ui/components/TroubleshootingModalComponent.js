@@ -15,7 +15,6 @@ import {
 } from '@layer5/sistent';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CloseIcon from '@mui/icons-material/Close';
-import { UsesSistent } from './SistentWrapper';
 
 const StyledPaper = styled(Paper)(({ theme }) => ({
   top: '50%',
@@ -171,149 +170,147 @@ const TroubleshootingModal = (props) => {
   const handleClose = () => props?.setOpen(false);
 
   return (
-    <UsesSistent>
-      <Modal
-        open={props?.open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <StyledPaper elevation={6} square="true">
-          <ModalContent>
-            <ModalHeader>
-              <Typography variant="h5"></Typography>
-              <ModelHeader variant="h5">Extensions Troubleshooting Guide</ModelHeader>
-              <IconContainer data-cy="modal-close-btn" onClick={handleClose}>
-                <IconStyle />
-              </IconContainer>
-            </ModalHeader>
-            <AccordionContainer expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
-              <AccordionSummaryStyled
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1bh-content"
-                id="panel1bh-header"
-              >
-                <HeaderContainer>
-                  <Info />
-                  <HeaderText variant="h6">Stale Data</HeaderText>
-                </HeaderContainer>
-              </AccordionSummaryStyled>
-              <Details>
-                <AccDetailHead>
-                  <strong>Browser</strong>
-                </AccDetailHead>
-                <ul>
-                  <Typography>
-                    <TroubleshootListitem>
-                      Run <KeyStyleContainer>CTRL</KeyStyleContainer> +
-                      <KeyStyleContainer>SHIFT</KeyStyleContainer>+
-                      <KeyStyleContainer>R</KeyStyleContainer> or
-                      <KeyStyleContainer>CMD</KeyStyleContainer>+
-                      <KeyStyleContainer>OPTION</KeyStyleContainer>+
-                      <KeyStyleContainer>E</KeyStyleContainer> to force reload if you are getting
-                      stale copy of the component due to caching.
-                    </TroubleshootListitem>
-                    <TroubleshootListitem>
-                      Use Incognito or Private browsing mode. If you are still getting stale copy of
-                      the component, try opening a <code>incognito tab</code>
-                    </TroubleshootListitem>
-                  </Typography>
-                </ul>
-              </Details>
-            </AccordionContainer>
-            <AccordionContainer
-              expanded={expanded === 'panel2' || missingData}
-              onChange={handleChange('panel2')}
+    <Modal
+      open={props?.open}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+    >
+      <StyledPaper elevation={6} square="true">
+        <ModalContent>
+          <ModalHeader>
+            <Typography variant="h5"></Typography>
+            <ModelHeader variant="h5">Extensions Troubleshooting Guide</ModelHeader>
+            <IconContainer data-cy="modal-close-btn" onClick={handleClose}>
+              <IconStyle />
+            </IconContainer>
+          </ModalHeader>
+          <AccordionContainer expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+            <AccordionSummaryStyled
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel1bh-content"
+              id="panel1bh-header"
             >
-              <AccordionSummaryStyled
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel2bh-content"
-                id="panel2bh-header"
-              >
-                <HeaderContainer>
-                  <Info />
-                  <HeaderText variant="h6">Missing Data</HeaderText>
-                </HeaderContainer>
-              </AccordionSummaryStyled>
-              <AccDetailsContainer>
-                <AccDetailHead>
-                  <strong>Meshery Database</strong>
-                </AccDetailHead>
-                <ul>
-                  <Typography>
-                    <TroubleshootListitem>
-                      Verify MeshSync data is being received. Run{' '}
-                      <code>kubectl get svc -n meshery</code>. Docker Desktop: VPNkit commonly fails
-                      to assign an IP address to Meshery Broker (MeshSync). Verify that the Meshery
-                      Broker service has external IP address assigned.
-                    </TroubleshootListitem>
-                    <TroubleshootListitem>
-                      Confirm that your machine&apos;s firewall isn&apos;t getting in the way.
-                    </TroubleshootListitem>
-                    <TroubleshootListitem>
-                      Dump Meshery Database. Run <code>rm -rf ~/.meshery/config</code>.
-                    </TroubleshootListitem>
-                  </Typography>
-                </ul>
-              </AccDetailsContainer>
-            </AccordionContainer>
+              <HeaderContainer>
+                <Info />
+                <HeaderText variant="h6">Stale Data</HeaderText>
+              </HeaderContainer>
+            </AccordionSummaryStyled>
+            <Details>
+              <AccDetailHead>
+                <strong>Browser</strong>
+              </AccDetailHead>
+              <ul>
+                <Typography>
+                  <TroubleshootListitem>
+                    Run <KeyStyleContainer>CTRL</KeyStyleContainer> +
+                    <KeyStyleContainer>SHIFT</KeyStyleContainer>+
+                    <KeyStyleContainer>R</KeyStyleContainer> or
+                    <KeyStyleContainer>CMD</KeyStyleContainer>+
+                    <KeyStyleContainer>OPTION</KeyStyleContainer>+
+                    <KeyStyleContainer>E</KeyStyleContainer> to force reload if you are getting
+                    stale copy of the component due to caching.
+                  </TroubleshootListitem>
+                  <TroubleshootListitem>
+                    Use Incognito or Private browsing mode. If you are still getting stale copy of
+                    the component, try opening a <code>incognito tab</code>
+                  </TroubleshootListitem>
+                </Typography>
+              </ul>
+            </Details>
+          </AccordionContainer>
+          <AccordionContainer
+            expanded={expanded === 'panel2' || missingData}
+            onChange={handleChange('panel2')}
+          >
+            <AccordionSummaryStyled
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel2bh-content"
+              id="panel2bh-header"
+            >
+              <HeaderContainer>
+                <Info />
+                <HeaderText variant="h6">Missing Data</HeaderText>
+              </HeaderContainer>
+            </AccordionSummaryStyled>
+            <AccDetailsContainer>
+              <AccDetailHead>
+                <strong>Meshery Database</strong>
+              </AccDetailHead>
+              <ul>
+                <Typography>
+                  <TroubleshootListitem>
+                    Verify MeshSync data is being received. Run{' '}
+                    <code>kubectl get svc -n meshery</code>. Docker Desktop: VPNkit commonly fails
+                    to assign an IP address to Meshery Broker (MeshSync). Verify that the Meshery
+                    Broker service has external IP address assigned.
+                  </TroubleshootListitem>
+                  <TroubleshootListitem>
+                    Confirm that your machine&apos;s firewall isn&apos;t getting in the way.
+                  </TroubleshootListitem>
+                  <TroubleshootListitem>
+                    Dump Meshery Database. Run <code>rm -rf ~/.meshery/config</code>.
+                  </TroubleshootListitem>
+                </Typography>
+              </ul>
+            </AccDetailsContainer>
+          </AccordionContainer>
 
-            <AccordionContainer expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
-              <AccordionSummaryStyled
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel4bh-content"
-                id="panel4bh-header"
+          <AccordionContainer expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
+            <AccordionSummaryStyled
+              expandIcon={<ExpandMoreIcon />}
+              aria-controls="panel4bh-content"
+              id="panel4bh-header"
+            >
+              <HeaderContainer>
+                <Info />
+                <HeaderText variant="h6">Additional Resources</HeaderText>
+              </HeaderContainer>
+            </AccordionSummaryStyled>
+            <AccDetailsContainer>
+              <HeaderText variant="h6">
+                <strong>Troubleshooting Tips</strong>
+              </HeaderText>
+              <ul>
+                <Typography>
+                  <TroubleshootListitem>
+                    {' '}
+                    <TroubleshootHelpLink
+                      href="https://meshery.io/community#community-forums/t/what-are-some-troubleshooting-tips-for-meshmap"
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      &quot;What are some troubleshooting tips for MeshMap?&quot;
+                    </TroubleshootHelpLink>
+                  </TroubleshootListitem>
+                </Typography>
+              </ul>
+            </AccDetailsContainer>
+          </AccordionContainer>
+          <ModalFooter>
+            <FooterText variant="h6">
+              Need help? Contact us via{' '}
+              <ContactHelpLink
+                href="mailto:maintainers@meshery.io"
+                target="_blank"
+                rel="noreferrer"
               >
-                <HeaderContainer>
-                  <Info />
-                  <HeaderText variant="h6">Additional Resources</HeaderText>
-                </HeaderContainer>
-              </AccordionSummaryStyled>
-              <AccDetailsContainer>
-                <HeaderText variant="h6">
-                  <strong>Troubleshooting Tips</strong>
-                </HeaderText>
-                <ul>
-                  <Typography>
-                    <TroubleshootListitem>
-                      {' '}
-                      <TroubleshootHelpLink
-                        href="https://meshery.io/community#community-forums/t/what-are-some-troubleshooting-tips-for-meshmap"
-                        target="_blank"
-                        rel="noreferrer"
-                      >
-                        &quot;What are some troubleshooting tips for MeshMap?&quot;
-                      </TroubleshootHelpLink>
-                    </TroubleshootListitem>
-                  </Typography>
-                </ul>
-              </AccDetailsContainer>
-            </AccordionContainer>
-            <ModalFooter>
-              <FooterText variant="h6">
-                Need help? Contact us via{' '}
-                <ContactHelpLink
-                  href="mailto:maintainers@meshery.io"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  email
-                </ContactHelpLink>{' '}
-                or{' '}
-                <ContactHelpLink
-                  href="https://meshery.io/community#community-forums"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  community forum
-                </ContactHelpLink>
-                .
-              </FooterText>
-            </ModalFooter>
-          </ModalContent>
-        </StyledPaper>
-      </Modal>
-    </UsesSistent>
+                email
+              </ContactHelpLink>{' '}
+              or{' '}
+              <ContactHelpLink
+                href="https://meshery.io/community#community-forums"
+                target="_blank"
+                rel="noreferrer"
+              >
+                community forum
+              </ContactHelpLink>
+              .
+            </FooterText>
+          </ModalFooter>
+        </ModalContent>
+      </StyledPaper>
+    </Modal>
   );
 };
 

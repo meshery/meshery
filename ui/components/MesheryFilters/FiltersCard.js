@@ -43,7 +43,7 @@ import CAN from '@/utils/can';
 import { VisibilityChipMenu } from '@layer5/sistent';
 import { VIEW_VISIBILITY } from '../Modals/Information/InfoModal';
 import { Public, Lock } from '@mui/icons-material';
-import { UsesSistent } from '../SistentWrapper';
+
 import { iconMedium } from 'css/icons.styles';
 
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
@@ -86,7 +86,7 @@ function FiltersCard_({
   const theme = useTheme();
 
   return (
-    <UsesSistent>
+    <>
       {fullScreen && (
         <YAMLDialog
           fullScreen={fullScreen}
@@ -316,7 +316,7 @@ function FiltersCard_({
           </CardBackGrid>
         </>
       </FlipCard>
-    </UsesSistent>
+    </>
   );
 }
 

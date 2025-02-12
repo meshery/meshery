@@ -21,7 +21,6 @@ import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PropTypes from 'prop-types';
 import MesheryDateTimePicker from '../../MesheryDateTimePicker';
 import { Close } from '@mui/icons-material';
-import { UsesSistent } from '@/components/SistentWrapper';
 
 const StyledDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -627,24 +626,23 @@ class GrafanaDateRangePicker extends Component {
     const { open } = this.state;
     const { startDate, endDate, liveTail, refresh } = this.props;
     return (
-      <UsesSistent>
-        <NoSsr>
-          <React.Fragment>
-            <RangeButton variant="filled" onClick={this.handleClick}>
-              <AccessTimeIcon sx={{ marginRight: '0.25rem', fontSize: '1.15rem' }} />
-              <Moment format="LLLL">{startDate}</Moment>
-              <Space>-</Space>
-              {liveTail ? 'now' : <Moment format="LLLL">{endDate}</Moment>}
-              <Space>,{refresh}</Space>
-            </RangeButton>
-            {/* <Popper open={open} anchorEl={this.anchorEl} transition placement='bottom-start'>
+      <NoSsr>
+        <React.Fragment>
+          <RangeButton variant="filled" onClick={this.handleClick}>
+            <AccessTimeIcon sx={{ marginRight: '0.25rem', fontSize: '1.15rem' }} />
+            <Moment format="LLLL">{startDate}</Moment>
+            <Space>-</Space>
+            {liveTail ? 'now' : <Moment format="LLLL">{endDate}</Moment>}
+            <Space>,{refresh}</Space>
+          </RangeButton>
+          {/* <Popper open={open} anchorEl={this.anchorEl} transition placement='bottom-start'>
             {({ TransitionProps, placement }) => (
               <Grow
                 {...TransitionProps}
                 id="dateRange-list-grow"
                 style={{ transformOrigin: placement === 'bottom' ? 'left top' : 'left bottom' }}
               > */}
-            {/* <Popover
+          {/* <Popover
                  id="daterange-popper"
                  open={open}
                  anchorEl={anchorEl}
@@ -657,98 +655,97 @@ class GrafanaDateRangePicker extends Component {
                     vertical: 'top',
                     horizontal: 'left',
                 }} */}
-            {/* > */}
-            {/* <Paper> */}
+          {/* > */}
+          {/* <Paper> */}
 
-            <StyledDialog
-              open={open}
-              onClose={this.handleClose}
-              scroll="paper"
-              aria-labelledby="daterange-dialog-title"
-              maxWidth="md"
-            >
-              <DialogTitleBar>
-                <DialogTitle id="daterange-dialog-title">Select a Date Range</DialogTitle>
-                <CloseIconButton aria-label="close" onClick={this.handleClose}>
-                  <CloseIcon />
-                </CloseIconButton>
-              </DialogTitleBar>
-              <DialogContent>
-                <DialogContentText>
-                  <Grid container>
-                    <Grid item xs={12}>
-                      Custom Range
-                      <RangeDialogRow>
-                        <DateTimePicker
-                          selectedDate={startDate}
-                          onChange={this.handleChange('startDate')}
-                          label="Start"
-                        />
-                        <DateTimePicker
-                          disabled={liveTail}
-                          selectedDate={endDate}
-                          onChange={this.handleChange('endDate')}
-                          label="End"
-                        />
-                      </RangeDialogRow>
-                      <RangeDialogRow>
-                        <FormControlLabel
-                          control={
-                            <Switch
-                              checked={liveTail}
-                              color="primary"
-                              onChange={this.handleChange('liveTail')}
-                            />
-                          }
-                          label="Live tail"
-                        />
-                        <TextField
-                          select
-                          id="refresh"
-                          name="refresh"
-                          label="Refresh Interval"
-                          fullWidth
-                          value={refresh}
-                          margin="normal"
-                          variant="outlined"
-                          onChange={this.handleChange('refresh')}
-                          // disabled={liveTail}
-                        >
-                          {refreshIntervals.map((ri) => (
-                            <MenuItem key={`ri_-_-_${ri}`} value={ri}>
-                              {ri}
-                            </MenuItem>
-                          ))}
-                        </TextField>
-                      </RangeDialogRow>
-                    </Grid>
-                    <InnerGrid item xs={12}>
-                      Quick Ranges
-                      <Grid container spacing={0}>
-                        {quickRanges.map((qr) => (
-                          <TimeList item key={qr.uniqueID} xs={12} sm={3}>
-                            {qr.map((q) => (
-                              <Button key={q.uniqueID} variant="text" onClick={this.setRange(q)}>
-                                {q}
-                              </Button>
-                            ))}
-                          </TimeList>
+          <StyledDialog
+            open={open}
+            onClose={this.handleClose}
+            scroll="paper"
+            aria-labelledby="daterange-dialog-title"
+            maxWidth="md"
+          >
+            <DialogTitleBar>
+              <DialogTitle id="daterange-dialog-title">Select a Date Range</DialogTitle>
+              <CloseIconButton aria-label="close" onClick={this.handleClose}>
+                <CloseIcon />
+              </CloseIconButton>
+            </DialogTitleBar>
+            <DialogContent>
+              <DialogContentText>
+                <Grid container>
+                  <Grid item xs={12}>
+                    Custom Range
+                    <RangeDialogRow>
+                      <DateTimePicker
+                        selectedDate={startDate}
+                        onChange={this.handleChange('startDate')}
+                        label="Start"
+                      />
+                      <DateTimePicker
+                        disabled={liveTail}
+                        selectedDate={endDate}
+                        onChange={this.handleChange('endDate')}
+                        label="End"
+                      />
+                    </RangeDialogRow>
+                    <RangeDialogRow>
+                      <FormControlLabel
+                        control={
+                          <Switch
+                            checked={liveTail}
+                            color="primary"
+                            onChange={this.handleChange('liveTail')}
+                          />
+                        }
+                        label="Live tail"
+                      />
+                      <TextField
+                        select
+                        id="refresh"
+                        name="refresh"
+                        label="Refresh Interval"
+                        fullWidth
+                        value={refresh}
+                        margin="normal"
+                        variant="outlined"
+                        onChange={this.handleChange('refresh')}
+                        // disabled={liveTail}
+                      >
+                        {refreshIntervals.map((ri) => (
+                          <MenuItem key={`ri_-_-_${ri}`} value={ri}>
+                            {ri}
+                          </MenuItem>
                         ))}
-                      </Grid>
-                    </InnerGrid>
+                      </TextField>
+                    </RangeDialogRow>
                   </Grid>
-                </DialogContentText>
-              </DialogContent>
-              <Divider light variant="fullWidth" />
-            </StyledDialog>
-            {/* </Paper> */}
-            {/* </Popover> */}
-            {/* </Grow> */}
-            {/* )} */}
-            {/* </Popper> */}
-          </React.Fragment>
-        </NoSsr>
-      </UsesSistent>
+                  <InnerGrid item xs={12}>
+                    Quick Ranges
+                    <Grid container spacing={0}>
+                      {quickRanges.map((qr) => (
+                        <TimeList item key={qr.uniqueID} xs={12} sm={3}>
+                          {qr.map((q) => (
+                            <Button key={q.uniqueID} variant="text" onClick={this.setRange(q)}>
+                              {q}
+                            </Button>
+                          ))}
+                        </TimeList>
+                      ))}
+                    </Grid>
+                  </InnerGrid>
+                </Grid>
+              </DialogContentText>
+            </DialogContent>
+            <Divider light variant="fullWidth" />
+          </StyledDialog>
+          {/* </Paper> */}
+          {/* </Popover> */}
+          {/* </Grow> */}
+          {/* )} */}
+          {/* </Popper> */}
+        </React.Fragment>
+      </NoSsr>
     );
   }
 }

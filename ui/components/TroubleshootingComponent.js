@@ -11,7 +11,7 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import SupportIcon from '@/assets/icons/support';
 import { EVENT_TYPES } from 'lib/event-types';
-import { UsesSistent } from './SistentWrapper';
+
 import { useSupportWebHookMutation } from '@/rtk-query/webhook';
 import { StickyFeedbackButton } from './General/feedback';
 
@@ -84,22 +84,22 @@ const Troubleshoot = ({ errorMessage, ...props }) => {
         open={open}
         setOpen={setOpen}
       />
-      <UsesSistent>
-        <Modal
-          open={openForm}
-          closeModal={handleSupportFormClose}
-          title="Help & Support"
-          headerIcon={<SupportIcon style={{ height: '24px', width: '24px' }} />}
-        >
-          <RJSFModalWrapper
-            schema={helpAndSupportModalSchema}
-            uiSchema={helpAndSupportModalUiSchema}
-            handleClose={handleSupportFormClose}
-            handleSubmit={handleSupportFormSubmission}
-            submitBtnText="Submit"
-          />
-        </Modal>
-      </UsesSistent>
+
+      <Modal
+        open={openForm}
+        closeModal={handleSupportFormClose}
+        title="Help & Support"
+        headerIcon={<SupportIcon style={{ height: '24px', width: '24px' }} />}
+      >
+        <RJSFModalWrapper
+          schema={helpAndSupportModalSchema}
+          uiSchema={helpAndSupportModalUiSchema}
+          handleClose={handleSupportFormClose}
+          handleSubmit={handleSupportFormSubmission}
+          submitBtnText="Submit"
+        />
+      </Modal>
+
       <StickyFeedbackButton
         containerStyles={{ zIndex: 11 }}
         defaultMessage={errorMessage}
