@@ -239,7 +239,7 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
               >
                 <RenderMarkdown content={error} />
               </ListItem>
-            )
+            );
           })}
         </List>
       </Box>
@@ -248,7 +248,7 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
   return (
     <Grid container>
       {' '}
-      <div >
+      <div>
         <TitleLink href={errorLink}> {formattedErrorCode} </TitleLink>
         {event?.description && <FormatStructuredData data={event.description} />}
         <div style={{ marginTop: '1rem' }}>
