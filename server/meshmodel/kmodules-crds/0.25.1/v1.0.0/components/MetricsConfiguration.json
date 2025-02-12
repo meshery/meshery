@@ -1,194 +1,194 @@
 {
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Metrics Configuration",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "kmodules-crds",
+    "displayName": "AppsCode Kmodules",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized"
+    },
+    "subCategory": "Uncategorized",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://charts.appscode.com/stable/kmodules-crds/kmodules-crds-v0.25.1.tgz",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 735 593.5\" height=\"20\" width=\"20\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#0865ad\" d=\"M297.496 1.488 65.749 113.096a15.035 15.035 0 0 0-8.135 10.194L.377 374.065a15.02 15.02 0 0 0 2.902 12.711l160.376 201.108a15.038 15.038 0 0 0 11.747 5.657H432.63c4.571 0 8.895-2.085 11.747-5.657l160.376-201.108a15.023 15.023 0 0 0 2.903-12.711L550.418 123.29a15.019 15.019 0 0 0-8.135-10.194L310.536 1.488a15.022 15.022 0 0 0-13.04 0\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#fff\" d=\"M221.845 210.533h51.054v100.764h1.017c5.072-8.798 10.48-16.907 15.552-25.023l51.736-75.741h63.225l-75.398 97.039 79.455 130.856h-60.18l-55.792-98.394-19.615 24.005v74.389h-51.054V210.533Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#6695ca\" d=\"m585.328 1.307-91.112 33.16a7.521 7.521 0 0 0-3.935 3.306l-48.478 83.964a7.513 7.513 0 0 0-.892 5.066l16.835 95.483a7.495 7.495 0 0 0 2.568 4.453l74.277 62.319a7.507 7.507 0 0 0 4.828 1.76h96.957a7.515 7.515 0 0 0 4.831-1.76l74.274-62.319a7.508 7.508 0 0 0 2.567-4.453l16.839-95.483a7.538 7.538 0 0 0-.896-5.066l-48.474-83.964a7.526 7.526 0 0 0-3.939-3.306l-91.112-33.16a7.5 7.5 0 0 0-5.138 0\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#fff\" d=\"M570.231 111.865a59.358 59.358 0 0 1 5.654-4.821 37.76 37.76 0 0 1 6.228-3.773c2.192-1.052 4.559-1.866 7.101-2.452 2.542-.585 5.301-.876 8.281-.876 4.91 0 9.265.848 13.063 2.542 3.801 1.694 7.001 4.067 9.603 7.101 2.602 3.04 4.558 6.663 5.873 10.871 1.316 4.205 1.976 8.826 1.976 13.851v57.423h-24.115v-57.423c0-5.025-1.168-8.929-3.5-11.706-2.342-2.775-5.786-4.162-10.351-4.162-3.385 0-6.569.73-9.556 2.192-2.981 1.462-5.814 3.504-8.498 6.137v64.962h-24.202v-90.389h14.903c3.04 0 5.057 1.403 6.056 4.211l1.484 6.312Z\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 735 593.5\" style=\"enable-background:new 0 0 735 593.5;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n\u0026#x9;.st0{fill:#FFFFFF;}\n\u0026#x9;.st1{opacity:0.8;fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M297.5,1.5L65.7,113.1c-4.1,2-7.1,5.7-8.1,10.2L0.4,374.1c-1,4.5,0.1,9.1,2.9,12.7l160.4,201.1\u0026#xA;\u0026#x9;c2.9,3.6,7.2,5.7,11.7,5.7h257.2c4.6,0,8.9-2.1,11.7-5.7l160.4-201.1c2.9-3.6,3.9-8.3,2.9-12.7l-57.2-250.8c-1-4.5-4-8.2-8.1-10.2\u0026#xA;\u0026#x9;L310.5,1.5C306.4-0.5,301.6-0.5,297.5,1.5\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M221.8,210.5h51.1v100.8h1c5.1-8.8,10.5-16.9,15.6-25l51.7-75.7h63.2l-75.4,97l79.5,130.9h-60.2L292.5,340l-19.6,24v74.4\u0026#xA;\u0026#x9;h-51.1L221.8,210.5L221.8,210.5z\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st1\" d=\"M585.3,1.3l-91.1,33.2c-1.7,0.6-3.1,1.8-3.9,3.3l-48.5,84c-0.9,1.5-1.2,3.3-0.9,5.1l16.8,95.5\u0026#xA;\u0026#x9;c0.3,1.7,1.2,3.3,2.6,4.5l74.3,62.3c1.4,1.1,3.1,1.8,4.8,1.8h97c1.8,0,3.5-0.6,4.8-1.8l74.3-62.3c1.4-1.1,2.3-2.7,2.6-4.5l16.8-95.5\u0026#xA;\u0026#x9;c0.3-1.7,0-3.5-0.9-5.1l-48.5-84c-0.9-1.5-2.3-2.7-3.9-3.3L590.5,1.3C588.8,0.7,587,0.7,585.3,1.3\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M570.2,111.9c1.8-1.7,3.7-3.3,5.7-4.8c1.9-1.5,4-2.7,6.2-3.8c2.2-1.1,4.6-1.9,7.1-2.5c2.5-0.6,5.3-0.9,8.3-0.9\u0026#xA;\u0026#x9;c4.9,0,9.3,0.8,13.1,2.5c3.8,1.7,7,4.1,9.6,7.1c2.6,3,4.6,6.7,5.9,10.9c1.3,4.2,2,8.8,2,13.9v57.4h-24.1v-57.4c0-5-1.2-8.9-3.5-11.7\u0026#xA;\u0026#x9;c-2.3-2.8-5.8-4.2-10.4-4.2c-3.4,0-6.6,0.7-9.6,2.2c-3,1.5-5.8,3.5-8.5,6.1v65h-24.2v-90.4h14.9c3,0,5.1,1.4,6.1,4.2L570.2,111.9\u0026#xA;\u0026#x9;L570.2,111.9z\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "0.25.1"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
+    "primaryColor": "",
+    "svgColor": "",
+    "svgWhite": ""
+  },
   "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
   ],
-  "component": {
-   "kind": "MetricsConfiguration",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MetricsConfigurationSpec is the spec of MetricsConfiguration object.\",\n   \"properties\": {\n    \"commonLabels\": {\n     \"description\": \"CommonLabels defines the common labels added to all the exported metrics\",\n     \"items\": {\n      \"description\": \"Label contains the information of a metric label. Given labels are always added in the metrics along with resource name and namespace. Resource's name and namespace are always added in the labels by default. No configuration is needed for name and namespace labels. \\n Example: kube_pod_info{pod=\\\"\\u003cpod_name\\u003e\\\", namespace=\\\"\\u003cpod_namespace\\u003e\\\", host_ip=\\\"172.18.0.2\\\", pod_ip=\\\"10.244.0.14\\\", node=\\\"kind-control-plane\\\"}  1 In the example pod, namespace, host_ip, pod_ip, node are labels. pod(resource name) and namespace are default labels. No configurations is needed for those. \\n # To generate others labels, config should be given in the following way \\n labels: - key: host_ip valuePath: .status.hostIP - key: pod_ip valuePath: .status.podIP - key: node valuePath: .spec.nodeName \\n Either Value or ValuePath must be specified for a Label. If both is specified, ValuePath is ignored. Note that if a valuePath doesn't exist for a label key, the label will be ignored.\",\n      \"properties\": {\n       \"key\": {\n        \"description\": \"Key defines the label key\",\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"description\": \"Value defines the hard coded label value. Example: labels: - key: unit value: byte - key: environment value: production\",\n        \"type\": \"string\"\n       },\n       \"valuePath\": {\n        \"description\": \"ValuePath defines the label value path. Example: To add deployment's resource version as labels, labels: - key: version valuePath: .metadata.resourceVersion\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"key\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"metrics\": {\n     \"description\": \"List of Metrics configuration for the resource object defined in TargetRef\",\n     \"items\": {\n      \"description\": \"Metrics contains the configuration of a metric in prometheus style.\",\n      \"properties\": {\n       \"field\": {\n        \"description\": \"Field defines the metric value path of the manifest file and the type of that value\",\n        \"properties\": {\n         \"path\": {\n          \"description\": \"Path defines the json path of the object. Example: For deployment spec replica count, the path will be .spec.replicas\",\n          \"type\": \"string\"\n         },\n         \"type\": {\n          \"description\": \"Type defines the type of the value in the given Path Type can be \\\"Integer\\\" for integer value like .spec.replicas, \\\"DateTime\\\" for time stamp value like .metadata.creationTimestamp \\\"Array\\\" for array field like .spec.containers \\\"String\\\" for string field like .statue.phase (for pod status)\",\n          \"enum\": [\n           \"Integer\",\n           \"DateTime\",\n           \"Array\",\n           \"String\"\n          ],\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"path\",\n         \"type\"\n        ],\n        \"type\": \"object\"\n       },\n       \"help\": {\n        \"description\": \"Help is used to describe the metrics. Example: For kube_deployment_spec_replicas, help string can be \\\"Number of desired pods for a deployment.\\\"\",\n        \"type\": \"string\"\n       },\n       \"labels\": {\n        \"description\": \"Labels defines the metric labels as a key-value pair\",\n        \"items\": {\n         \"description\": \"Label contains the information of a metric label. Given labels are always added in the metrics along with resource name and namespace. Resource's name and namespace are always added in the labels by default. No configuration is needed for name and namespace labels. \\n Example: kube_pod_info{pod=\\\"\\u003cpod_name\\u003e\\\", namespace=\\\"\\u003cpod_namespace\\u003e\\\", host_ip=\\\"172.18.0.2\\\", pod_ip=\\\"10.244.0.14\\\", node=\\\"kind-control-plane\\\"}  1 In the example pod, namespace, host_ip, pod_ip, node are labels. pod(resource name) and namespace are default labels. No configurations is needed for those. \\n # To generate others labels, config should be given in the following way \\n labels: - key: host_ip valuePath: .status.hostIP - key: pod_ip valuePath: .status.podIP - key: node valuePath: .spec.nodeName \\n Either Value or ValuePath must be specified for a Label. If both is specified, ValuePath is ignored. Note that if a valuePath doesn't exist for a label key, the label will be ignored.\",\n         \"properties\": {\n          \"key\": {\n           \"description\": \"Key defines the label key\",\n           \"type\": \"string\"\n          },\n          \"value\": {\n           \"description\": \"Value defines the hard coded label value. Example: labels: - key: unit value: byte - key: environment value: production\",\n           \"type\": \"string\"\n          },\n          \"valuePath\": {\n           \"description\": \"ValuePath defines the label value path. Example: To add deployment's resource version as labels, labels: - key: version valuePath: .metadata.resourceVersion\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"metricValue\": {\n        \"description\": \"MetricValue defines the configuration to obtain metric value. \\n Metrics must contain either States or MetricValue. If both are specified, MetricValue will be ignored.\",\n        \"properties\": {\n         \"value\": {\n          \"description\": \"Value contains the metric value. It is always equal to 1. It is defined when some information of the object is collected as labels but there is no specific metric value. \\n Example: For metrics \\\"kube_pod_info\\\", there are some information like host_ip, pod_ip, node name is collected as labels. As there must be a metric value, metric value is kept as 1. The metric will look like `kube_pod_info{host_ip=\\\"172.18.0.2\\\", pod_ip=\\\"10.244.0.14\\\", node=\\\"kind-control-plane\\\" .....}  1`\",\n          \"format\": \"double\",\n          \"type\": \"number\"\n         },\n         \"valueFromExpression\": {\n          \"description\": \"ValueFromExpression contains an expression for the metric value expression can be a function as well. Parameters is used in the expression string \\n Available expression evaluation functions are: \\n int() returns 1 if the expression is true otherwise 0, example: int(phase == 'Running') \\n percentage(percent, total, roundUp) returns the value of (percent * total%) when `percent` contains the percent(%) value. If percent represents an Integer value, then it will simply return it. roundUp is an optional field. By default, its value is false. If roundUp is set as `true`, the resultant value will be rounded up. example: (i) percentage(\\\"25%\\\", 4) will return 1. (ii) percentage(\\\"25%\\\", 1 , true) will return 1 as roundUp is set as true. (iii) percentage(2, 4) will return 2 as percent is representing an Integer value. \\n cpu_cores() returns the cpu in unit core example: cpu_cores(cpu), for cpu value 150m, it will return 0.15 \\n bytes() returns the memory size in byte example: bytes(memory), for memory value 1 ki, it will return 1024 \\n unix() returns the DateTime string into unix format. example: unix(dateTime) will return the corresponding unix value for the given dateTime \\n in above examples phase, replicas, maxUnavailable, cpu, memory, dateTime are Parameter's key those values will come from corresponding Parameter's value \\n Some expression evaluation functions are used for calculating resource requests and limits. Those functions are stated here: https://github.com/kmodules/resource-metrics/blob/master/eval.go\",\n          \"type\": \"string\"\n         },\n         \"valueFromPath\": {\n          \"description\": \"ValueFromPath contains the field path of the manifest file of a object. ValueFromPath is used when the metric value is coming from any specific json path of the object. \\n Example: For metrics \\\"kube_deployment_spec_replicas\\\", the metricValue is coming from a specific path .spec.replicas In this case, valueFromPath: .spec.replicas Some example of json path: .metadata.observedGeneration, .spec.restartPolicy, .status.startTime \\n Some example of json path which is coming from an element of an array: .spec.containers[*].image, .status.containerStatuses[*].restartCount\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"name\": {\n        \"description\": \"Name defines the metrics name. Name should be in snake case. Example: kube_deployment_spec_replicas\",\n        \"type\": \"string\"\n       },\n       \"params\": {\n        \"description\": \"Params is list of parameters configuration used in expression evaluation\",\n        \"items\": {\n         \"description\": \"Parameter contains the information of a parameter used in expression evaluation Parameter should contain an user defined key and corresponding Value or ValuePath. Either Value or ValuePath must be specified. If both are specified, ValuePath is ignored.\",\n         \"properties\": {\n          \"key\": {\n           \"description\": \"Key defines the parameter's key\",\n           \"type\": \"string\"\n          },\n          \"value\": {\n           \"description\": \"Value defines user defined parameter's value.\",\n           \"type\": \"string\"\n          },\n          \"valuePath\": {\n           \"description\": \"ValuePath defines the manifest field path for the parameter's value. Example: To add deployment's spec replica count as parameter, params: - key: replica valuePath: .spec.replicas\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"states\": {\n        \"description\": \"States handle metrics with label cardinality. States specify the possible states for a label and their corresponding MetricValue configuration. \\n Metrics must contain either States or MetricValue. If both are specified, MetricValue will be ignored.\",\n        \"properties\": {\n         \"labelKey\": {\n          \"description\": \"LabelKey defines an user defined label key of the label which label cardinality is greater than one. Example: For metric \\\"kube_pod_status_phase\\\", the LabelKey can be \\\"phase\\\"\",\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"description\": \"Values contains the list of state values. The size of the list is always equal to the cardinality of that label. Example: \\\"kube_pod_statue_phase\\\" metric has a label \\\"phase\\\" which cardinality is equal to 5. So Values should have StateValues config for all of them.\",\n          \"items\": {\n           \"description\": \"StateValues contains the information of a state value. StateValues is used to define state with all possible label values and corresponding MetricValue.\",\n           \"properties\": {\n            \"labelValue\": {\n             \"description\": \"LabelValue defines the value of the label. Example: For labelKey \\\"phase\\\" (metric: kube_pod_status_phase path: .status.phase ) label value can be \\\"Running\\\", \\\"Succeeded\\\", \\\"Failed\\\", \\\"Unknown\\\" and \\\"Pending\\\"\",\n             \"type\": \"string\"\n            },\n            \"metricValue\": {\n             \"description\": \"MetricValue defines the configuration of the metric value for the corresponding LabelValue\",\n             \"properties\": {\n              \"value\": {\n               \"description\": \"Value contains the metric value. It is always equal to 1. It is defined when some information of the object is collected as labels but there is no specific metric value. \\n Example: For metrics \\\"kube_pod_info\\\", there are some information like host_ip, pod_ip, node name is collected as labels. As there must be a metric value, metric value is kept as 1. The metric will look like `kube_pod_info{host_ip=\\\"172.18.0.2\\\", pod_ip=\\\"10.244.0.14\\\", node=\\\"kind-control-plane\\\" .....}  1`\",\n               \"format\": \"double\",\n               \"type\": \"number\"\n              },\n              \"valueFromExpression\": {\n               \"description\": \"ValueFromExpression contains an expression for the metric value expression can be a function as well. Parameters is used in the expression string \\n Available expression evaluation functions are: \\n int() returns 1 if the expression is true otherwise 0, example: int(phase == 'Running') \\n percentage(percent, total, roundUp) returns the value of (percent * total%) when `percent` contains the percent(%) value. If percent represents an Integer value, then it will simply return it. roundUp is an optional field. By default, its value is false. If roundUp is set as `true`, the resultant value will be rounded up. example: (i) percentage(\\\"25%\\\", 4) will return 1. (ii) percentage(\\\"25%\\\", 1 , true) will return 1 as roundUp is set as true. (iii) percentage(2, 4) will return 2 as percent is representing an Integer value. \\n cpu_cores() returns the cpu in unit core example: cpu_cores(cpu), for cpu value 150m, it will return 0.15 \\n bytes() returns the memory size in byte example: bytes(memory), for memory value 1 ki, it will return 1024 \\n unix() returns the DateTime string into unix format. example: unix(dateTime) will return the corresponding unix value for the given dateTime \\n in above examples phase, replicas, maxUnavailable, cpu, memory, dateTime are Parameter's key those values will come from corresponding Parameter's value \\n Some expression evaluation functions are used for calculating resource requests and limits. Those functions are stated here: https://github.com/kmodules/resource-metrics/blob/master/eval.go\",\n               \"type\": \"string\"\n              },\n              \"valueFromPath\": {\n               \"description\": \"ValueFromPath contains the field path of the manifest file of a object. ValueFromPath is used when the metric value is coming from any specific json path of the object. \\n Example: For metrics \\\"kube_deployment_spec_replicas\\\", the metricValue is coming from a specific path .spec.replicas In this case, valueFromPath: .spec.replicas Some example of json path: .metadata.observedGeneration, .spec.restartPolicy, .status.startTime \\n Some example of json path which is coming from an element of an array: .spec.containers[*].image, .status.containerStatuses[*].restartCount\",\n               \"type\": \"string\"\n              }\n             },\n             \"type\": \"object\"\n            }\n           },\n           \"required\": [\n            \"labelValue\",\n            \"metricValue\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"labelKey\",\n         \"values\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": {\n        \"description\": \"Type defines the metrics type. For kubernetes based object, types can only be \\\"gauge\\\"\",\n        \"enum\": [\n         \"gauge\"\n        ],\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"help\",\n       \"name\",\n       \"type\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"targetRef\": {\n     \"description\": \"TargetRef defines the object for which metrics will be collected\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"APIVersion defines the versioned schema of this representation of an object.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind is a string value representing the REST resource this object represents. In CamelCase.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"apiVersion\",\n      \"kind\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"metrics\",\n    \"targetRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Metrics Configuration\",\n \"type\": \"object\"\n}",
-   "version": "metrics.appscode.com/v1alpha1"
+  "status": "enabled",
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": false,
+    "published": false
   },
   "configuration": null,
-  "description": "",
-  "displayName": "Metrics Configuration",
-  "format": "JSON",
-  "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": false,
-   "published": false
-  },
-  "model": {
-   "category": {
-    "name": "Uncategorized"
-   },
-   "displayName": "AppsCode Kmodules",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
-    "primaryColor": "#00B39F",
-    "secondaryColor": "#00D3A9",
-    "shape": "circle",
-    "source_uri": "https://charts.appscode.com/stable/kmodules-crds/kmodules-crds-v0.25.1.tgz",
-    "styleOverrides": "",
-    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 735 593.5\" height=\"20\" width=\"20\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#0865ad\" d=\"M297.496 1.488 65.749 113.096a15.035 15.035 0 0 0-8.135 10.194L.377 374.065a15.02 15.02 0 0 0 2.902 12.711l160.376 201.108a15.038 15.038 0 0 0 11.747 5.657H432.63c4.571 0 8.895-2.085 11.747-5.657l160.376-201.108a15.023 15.023 0 0 0 2.903-12.711L550.418 123.29a15.019 15.019 0 0 0-8.135-10.194L310.536 1.488a15.022 15.022 0 0 0-13.04 0\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#fff\" d=\"M221.845 210.533h51.054v100.764h1.017c5.072-8.798 10.48-16.907 15.552-25.023l51.736-75.741h63.225l-75.398 97.039 79.455 130.856h-60.18l-55.792-98.394-19.615 24.005v74.389h-51.054V210.533Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#6695ca\" d=\"m585.328 1.307-91.112 33.16a7.521 7.521 0 0 0-3.935 3.306l-48.478 83.964a7.513 7.513 0 0 0-.892 5.066l16.835 95.483a7.495 7.495 0 0 0 2.568 4.453l74.277 62.319a7.507 7.507 0 0 0 4.828 1.76h96.957a7.515 7.515 0 0 0 4.831-1.76l74.274-62.319a7.508 7.508 0 0 0 2.567-4.453l16.839-95.483a7.538 7.538 0 0 0-.896-5.066l-48.474-83.964a7.526 7.526 0 0 0-3.939-3.306l-91.112-33.16a7.5 7.5 0 0 0-5.138 0\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#fff\" d=\"M570.231 111.865a59.358 59.358 0 0 1 5.654-4.821 37.76 37.76 0 0 1 6.228-3.773c2.192-1.052 4.559-1.866 7.101-2.452 2.542-.585 5.301-.876 8.281-.876 4.91 0 9.265.848 13.063 2.542 3.801 1.694 7.001 4.067 9.603 7.101 2.602 3.04 4.558 6.663 5.873 10.871 1.316 4.205 1.976 8.826 1.976 13.851v57.423h-24.115v-57.423c0-5.025-1.168-8.929-3.5-11.706-2.342-2.775-5.786-4.162-10.351-4.162-3.385 0-6.569.73-9.556 2.192-2.981 1.462-5.814 3.504-8.498 6.137v64.962h-24.202v-90.389h14.903c3.04 0 5.057 1.403 6.056 4.211l1.484 6.312Z\"\u003e\u003c/path\u003e\u003c/svg\u003e",
-    "svgComplete": "",
-    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 735 593.5\" style=\"enable-background:new 0 0 735 593.5;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n\u0026#x9;.st0{fill:#FFFFFF;}\n\u0026#x9;.st1{opacity:0.8;fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M297.5,1.5L65.7,113.1c-4.1,2-7.1,5.7-8.1,10.2L0.4,374.1c-1,4.5,0.1,9.1,2.9,12.7l160.4,201.1\u0026#xA;\u0026#x9;c2.9,3.6,7.2,5.7,11.7,5.7h257.2c4.6,0,8.9-2.1,11.7-5.7l160.4-201.1c2.9-3.6,3.9-8.3,2.9-12.7l-57.2-250.8c-1-4.5-4-8.2-8.1-10.2\u0026#xA;\u0026#x9;L310.5,1.5C306.4-0.5,301.6-0.5,297.5,1.5\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M221.8,210.5h51.1v100.8h1c5.1-8.8,10.5-16.9,15.6-25l51.7-75.7h63.2l-75.4,97l79.5,130.9h-60.2L292.5,340l-19.6,24v74.4\u0026#xA;\u0026#x9;h-51.1L221.8,210.5L221.8,210.5z\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st1\" d=\"M585.3,1.3l-91.1,33.2c-1.7,0.6-3.1,1.8-3.9,3.3l-48.5,84c-0.9,1.5-1.2,3.3-0.9,5.1l16.8,95.5\u0026#xA;\u0026#x9;c0.3,1.7,1.2,3.3,2.6,4.5l74.3,62.3c1.4,1.1,3.1,1.8,4.8,1.8h97c1.8,0,3.5-0.6,4.8-1.8l74.3-62.3c1.4-1.1,2.3-2.7,2.6-4.5l16.8-95.5\u0026#xA;\u0026#x9;c0.3-1.7,0-3.5-0.9-5.1l-48.5-84c-0.9-1.5-2.3-2.7-3.9-3.3L590.5,1.3C588.8,0.7,587,0.7,585.3,1.3\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M570.2,111.9c1.8-1.7,3.7-3.3,5.7-4.8c1.9-1.5,4-2.7,6.2-3.8c2.2-1.1,4.6-1.9,7.1-2.5c2.5-0.6,5.3-0.9,8.3-0.9\u0026#xA;\u0026#x9;c4.9,0,9.3,0.8,13.1,2.5c3.8,1.7,7,4.1,9.6,7.1c2.6,3,4.6,6.7,5.9,10.9c1.3,4.2,2,8.8,2,13.9v57.4h-24.1v-57.4c0-5-1.2-8.9-3.5-11.7\u0026#xA;\u0026#x9;c-2.3-2.8-5.8-4.2-10.4-4.2c-3.4,0-6.6,0.7-9.6,2.2c-3,1.5-5.8,3.5-8.5,6.1v65h-24.2v-90.4h14.9c3,0,5.1,1.4,6.1,4.2L570.2,111.9\u0026#xA;\u0026#x9;L570.2,111.9z\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
-   },
-   "model": {
-    "version": "0.25.1"
-   },
-   "name": "kmodules-crds",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Uncategorized",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
-  },
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "status": "enabled",
-  "styles": {
-   "primaryColor": "",
-   "svgColor": "",
-   "svgWhite": ""
-  },
-  "version": "v1.0.0"
- }
+  "component": {
+    "kind": "MetricsConfiguration",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MetricsConfigurationSpec is the spec of MetricsConfiguration object.\",\n   \"properties\": {\n    \"commonLabels\": {\n     \"description\": \"CommonLabels defines the common labels added to all the exported metrics\",\n     \"items\": {\n      \"description\": \"Label contains the information of a metric label. Given labels are always added in the metrics along with resource name and namespace. Resource's name and namespace are always added in the labels by default. No configuration is needed for name and namespace labels. \\n Example: kube_pod_info{pod=\\\"\\u003cpod_name\\u003e\\\", namespace=\\\"\\u003cpod_namespace\\u003e\\\", host_ip=\\\"172.18.0.2\\\", pod_ip=\\\"10.244.0.14\\\", node=\\\"kind-control-plane\\\"}  1 In the example pod, namespace, host_ip, pod_ip, node are labels. pod(resource name) and namespace are default labels. No configurations is needed for those. \\n # To generate others labels, config should be given in the following way \\n labels: - key: host_ip valuePath: .status.hostIP - key: pod_ip valuePath: .status.podIP - key: node valuePath: .spec.nodeName \\n Either Value or ValuePath must be specified for a Label. If both is specified, ValuePath is ignored. Note that if a valuePath doesn't exist for a label key, the label will be ignored.\",\n      \"properties\": {\n       \"key\": {\n        \"description\": \"Key defines the label key\",\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"description\": \"Value defines the hard coded label value. Example: labels: - key: unit value: byte - key: environment value: production\",\n        \"type\": \"string\"\n       },\n       \"valuePath\": {\n        \"description\": \"ValuePath defines the label value path. Example: To add deployment's resource version as labels, labels: - key: version valuePath: .metadata.resourceVersion\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"key\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"metrics\": {\n     \"description\": \"List of Metrics configuration for the resource object defined in TargetRef\",\n     \"items\": {\n      \"description\": \"Metrics contains the configuration of a metric in prometheus style.\",\n      \"properties\": {\n       \"field\": {\n        \"description\": \"Field defines the metric value path of the manifest file and the type of that value\",\n        \"properties\": {\n         \"path\": {\n          \"description\": \"Path defines the json path of the object. Example: For deployment spec replica count, the path will be .spec.replicas\",\n          \"type\": \"string\"\n         },\n         \"type\": {\n          \"description\": \"Type defines the type of the value in the given Path Type can be \\\"Integer\\\" for integer value like .spec.replicas, \\\"DateTime\\\" for time stamp value like .metadata.creationTimestamp \\\"Array\\\" for array field like .spec.containers \\\"String\\\" for string field like .statue.phase (for pod status)\",\n          \"enum\": [\n           \"Integer\",\n           \"DateTime\",\n           \"Array\",\n           \"String\"\n          ],\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"path\",\n         \"type\"\n        ],\n        \"type\": \"object\"\n       },\n       \"help\": {\n        \"description\": \"Help is used to describe the metrics. Example: For kube_deployment_spec_replicas, help string can be \\\"Number of desired pods for a deployment.\\\"\",\n        \"type\": \"string\"\n       },\n       \"labels\": {\n        \"description\": \"Labels defines the metric labels as a key-value pair\",\n        \"items\": {\n         \"description\": \"Label contains the information of a metric label. Given labels are always added in the metrics along with resource name and namespace. Resource's name and namespace are always added in the labels by default. No configuration is needed for name and namespace labels. \\n Example: kube_pod_info{pod=\\\"\\u003cpod_name\\u003e\\\", namespace=\\\"\\u003cpod_namespace\\u003e\\\", host_ip=\\\"172.18.0.2\\\", pod_ip=\\\"10.244.0.14\\\", node=\\\"kind-control-plane\\\"}  1 In the example pod, namespace, host_ip, pod_ip, node are labels. pod(resource name) and namespace are default labels. No configurations is needed for those. \\n # To generate others labels, config should be given in the following way \\n labels: - key: host_ip valuePath: .status.hostIP - key: pod_ip valuePath: .status.podIP - key: node valuePath: .spec.nodeName \\n Either Value or ValuePath must be specified for a Label. If both is specified, ValuePath is ignored. Note that if a valuePath doesn't exist for a label key, the label will be ignored.\",\n         \"properties\": {\n          \"key\": {\n           \"description\": \"Key defines the label key\",\n           \"type\": \"string\"\n          },\n          \"value\": {\n           \"description\": \"Value defines the hard coded label value. Example: labels: - key: unit value: byte - key: environment value: production\",\n           \"type\": \"string\"\n          },\n          \"valuePath\": {\n           \"description\": \"ValuePath defines the label value path. Example: To add deployment's resource version as labels, labels: - key: version valuePath: .metadata.resourceVersion\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"metricValue\": {\n        \"description\": \"MetricValue defines the configuration to obtain metric value. \\n Metrics must contain either States or MetricValue. If both are specified, MetricValue will be ignored.\",\n        \"properties\": {\n         \"value\": {\n          \"description\": \"Value contains the metric value. It is always equal to 1. It is defined when some information of the object is collected as labels but there is no specific metric value. \\n Example: For metrics \\\"kube_pod_info\\\", there are some information like host_ip, pod_ip, node name is collected as labels. As there must be a metric value, metric value is kept as 1. The metric will look like `kube_pod_info{host_ip=\\\"172.18.0.2\\\", pod_ip=\\\"10.244.0.14\\\", node=\\\"kind-control-plane\\\" .....}  1`\",\n          \"format\": \"double\",\n          \"type\": \"number\"\n         },\n         \"valueFromExpression\": {\n          \"description\": \"ValueFromExpression contains an expression for the metric value expression can be a function as well. Parameters is used in the expression string \\n Available expression evaluation functions are: \\n int() returns 1 if the expression is true otherwise 0, example: int(phase == 'Running') \\n percentage(percent, total, roundUp) returns the value of (percent * total%) when `percent` contains the percent(%) value. If percent represents an Integer value, then it will simply return it. roundUp is an optional field. By default, its value is false. If roundUp is set as `true`, the resultant value will be rounded up. example: (i) percentage(\\\"25%\\\", 4) will return 1. (ii) percentage(\\\"25%\\\", 1 , true) will return 1 as roundUp is set as true. (iii) percentage(2, 4) will return 2 as percent is representing an Integer value. \\n cpu_cores() returns the cpu in unit core example: cpu_cores(cpu), for cpu value 150m, it will return 0.15 \\n bytes() returns the memory size in byte example: bytes(memory), for memory value 1 ki, it will return 1024 \\n unix() returns the DateTime string into unix format. example: unix(dateTime) will return the corresponding unix value for the given dateTime \\n in above examples phase, replicas, maxUnavailable, cpu, memory, dateTime are Parameter's key those values will come from corresponding Parameter's value \\n Some expression evaluation functions are used for calculating resource requests and limits. Those functions are stated here: https://github.com/kmodules/resource-metrics/blob/master/eval.go\",\n          \"type\": \"string\"\n         },\n         \"valueFromPath\": {\n          \"description\": \"ValueFromPath contains the field path of the manifest file of a object. ValueFromPath is used when the metric value is coming from any specific json path of the object. \\n Example: For metrics \\\"kube_deployment_spec_replicas\\\", the metricValue is coming from a specific path .spec.replicas In this case, valueFromPath: .spec.replicas Some example of json path: .metadata.observedGeneration, .spec.restartPolicy, .status.startTime \\n Some example of json path which is coming from an element of an array: .spec.containers[*].image, .status.containerStatuses[*].restartCount\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"name\": {\n        \"description\": \"Name defines the metrics name. Name should be in snake case. Example: kube_deployment_spec_replicas\",\n        \"type\": \"string\"\n       },\n       \"params\": {\n        \"description\": \"Params is list of parameters configuration used in expression evaluation\",\n        \"items\": {\n         \"description\": \"Parameter contains the information of a parameter used in expression evaluation Parameter should contain an user defined key and corresponding Value or ValuePath. Either Value or ValuePath must be specified. If both are specified, ValuePath is ignored.\",\n         \"properties\": {\n          \"key\": {\n           \"description\": \"Key defines the parameter's key\",\n           \"type\": \"string\"\n          },\n          \"value\": {\n           \"description\": \"Value defines user defined parameter's value.\",\n           \"type\": \"string\"\n          },\n          \"valuePath\": {\n           \"description\": \"ValuePath defines the manifest field path for the parameter's value. Example: To add deployment's spec replica count as parameter, params: - key: replica valuePath: .spec.replicas\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"states\": {\n        \"description\": \"States handle metrics with label cardinality. States specify the possible states for a label and their corresponding MetricValue configuration. \\n Metrics must contain either States or MetricValue. If both are specified, MetricValue will be ignored.\",\n        \"properties\": {\n         \"labelKey\": {\n          \"description\": \"LabelKey defines an user defined label key of the label which label cardinality is greater than one. Example: For metric \\\"kube_pod_status_phase\\\", the LabelKey can be \\\"phase\\\"\",\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"description\": \"Values contains the list of state values. The size of the list is always equal to the cardinality of that label. Example: \\\"kube_pod_statue_phase\\\" metric has a label \\\"phase\\\" which cardinality is equal to 5. So Values should have StateValues config for all of them.\",\n          \"items\": {\n           \"description\": \"StateValues contains the information of a state value. StateValues is used to define state with all possible label values and corresponding MetricValue.\",\n           \"properties\": {\n            \"labelValue\": {\n             \"description\": \"LabelValue defines the value of the label. Example: For labelKey \\\"phase\\\" (metric: kube_pod_status_phase path: .status.phase ) label value can be \\\"Running\\\", \\\"Succeeded\\\", \\\"Failed\\\", \\\"Unknown\\\" and \\\"Pending\\\"\",\n             \"type\": \"string\"\n            },\n            \"metricValue\": {\n             \"description\": \"MetricValue defines the configuration of the metric value for the corresponding LabelValue\",\n             \"properties\": {\n              \"value\": {\n               \"description\": \"Value contains the metric value. It is always equal to 1. It is defined when some information of the object is collected as labels but there is no specific metric value. \\n Example: For metrics \\\"kube_pod_info\\\", there are some information like host_ip, pod_ip, node name is collected as labels. As there must be a metric value, metric value is kept as 1. The metric will look like `kube_pod_info{host_ip=\\\"172.18.0.2\\\", pod_ip=\\\"10.244.0.14\\\", node=\\\"kind-control-plane\\\" .....}  1`\",\n               \"format\": \"double\",\n               \"type\": \"number\"\n              },\n              \"valueFromExpression\": {\n               \"description\": \"ValueFromExpression contains an expression for the metric value expression can be a function as well. Parameters is used in the expression string \\n Available expression evaluation functions are: \\n int() returns 1 if the expression is true otherwise 0, example: int(phase == 'Running') \\n percentage(percent, total, roundUp) returns the value of (percent * total%) when `percent` contains the percent(%) value. If percent represents an Integer value, then it will simply return it. roundUp is an optional field. By default, its value is false. If roundUp is set as `true`, the resultant value will be rounded up. example: (i) percentage(\\\"25%\\\", 4) will return 1. (ii) percentage(\\\"25%\\\", 1 , true) will return 1 as roundUp is set as true. (iii) percentage(2, 4) will return 2 as percent is representing an Integer value. \\n cpu_cores() returns the cpu in unit core example: cpu_cores(cpu), for cpu value 150m, it will return 0.15 \\n bytes() returns the memory size in byte example: bytes(memory), for memory value 1 ki, it will return 1024 \\n unix() returns the DateTime string into unix format. example: unix(dateTime) will return the corresponding unix value for the given dateTime \\n in above examples phase, replicas, maxUnavailable, cpu, memory, dateTime are Parameter's key those values will come from corresponding Parameter's value \\n Some expression evaluation functions are used for calculating resource requests and limits. Those functions are stated here: https://github.com/kmodules/resource-metrics/blob/master/eval.go\",\n               \"type\": \"string\"\n              },\n              \"valueFromPath\": {\n               \"description\": \"ValueFromPath contains the field path of the manifest file of a object. ValueFromPath is used when the metric value is coming from any specific json path of the object. \\n Example: For metrics \\\"kube_deployment_spec_replicas\\\", the metricValue is coming from a specific path .spec.replicas In this case, valueFromPath: .spec.replicas Some example of json path: .metadata.observedGeneration, .spec.restartPolicy, .status.startTime \\n Some example of json path which is coming from an element of an array: .spec.containers[*].image, .status.containerStatuses[*].restartCount\",\n               \"type\": \"string\"\n              }\n             },\n             \"type\": \"object\"\n            }\n           },\n           \"required\": [\n            \"labelValue\",\n            \"metricValue\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"labelKey\",\n         \"values\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": {\n        \"description\": \"Type defines the metrics type. For kubernetes based object, types can only be \\\"gauge\\\"\",\n        \"enum\": [\n         \"gauge\"\n        ],\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"help\",\n       \"name\",\n       \"type\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"targetRef\": {\n     \"description\": \"TargetRef defines the object for which metrics will be collected\",\n     \"properties\": {\n      \"apiVersion\": {\n       \"description\": \"APIVersion defines the versioned schema of this representation of an object.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind is a string value representing the REST resource this object represents. In CamelCase.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"apiVersion\",\n      \"kind\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"metrics\",\n    \"targetRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Metrics Configuration\",\n \"type\": \"object\"\n}",
+    "version": "metrics.appscode.com/v1alpha1"
+  }
+}
