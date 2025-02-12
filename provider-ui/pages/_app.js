@@ -8,7 +8,7 @@ import Footer from "../components/Footer";
 import { charcoal,Box, Paper, SistentThemeProvider, styled, useTheme } from "@layer5/sistent";
 
 //styled-components:
-const StyledBox = styled(Box)(({ theme }) => ({
+const StyledBox = styled(Box)(() => ({
   display : "flex",
   flex : 1,
   flexDirection : "column",

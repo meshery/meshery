@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import NoSsr from "@mui/material/NoSsr";
 import { accentGrey, styled } from "@layer5/sistent";
 
-const RootContainer = styled("div")(({ theme }) => ({
+const RootContainer = styled("div")(() => ({
   padding : "170px 0px",
   textAlign : "center",
   backgroundColor : accentGrey[20]
