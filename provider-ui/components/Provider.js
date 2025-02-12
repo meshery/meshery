@@ -161,15 +161,16 @@ export default function Provider() {
   return (
     <ProviderLayout>
       <MesheryLogo
-        src="/provider/static/img/meshery-logo/meshery-logo-dark-text-noBG.png"
+        src="/provider/static/img/meshery-logo/meshery-logo-light-text.png"
         alt="logo"
       />
       <CustomDiv>
         {availableProviders !== "" && (
           <Fragment>
             <StyledButtonGroup aria-label="split button">
-              <StyledButton
+              <Button
                 size="large"
+                variant="contained"
                 aria-describedby={id}
                 onClick={handleClick}
                 aria-label="Select Provider"
@@ -186,7 +187,7 @@ export default function Provider() {
                   ? selectedProvider
                   : "Select your provider"}
                 <ArrowDropDownIcon />
-              </StyledButton>
+              </Button>
             </StyledButtonGroup>
             <StyledPopover
               id={id}
