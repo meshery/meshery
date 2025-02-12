@@ -22,6 +22,7 @@ import (
 
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
+	mutils "github.com/layer5io/meshkit/utils"
 )
 
 const (
@@ -146,6 +147,8 @@ func (h *Handler) EvaluateDesign(
 	relationshipPolicyEvalPayload pattern.EvaluationRequest,
 ) (pattern.EvaluationResponse, error) {
 
+	defer mutils.TrackTime(h.log, time.Now(), "EvaluateDesign")
+
 	// evaluate specified relationship policies
 	// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
 	evaluationResponse, err := h.Rego.RegoPolicyHandler(relationshipPolicyEvalPayload.Design,
@@ -162,16 +165,21 @@ func (h *Handler) EvaluateDesign(
 	evaluationResponse.Timestamp = &currentTime
 
 	// Create the event but do not notify the client immediately, as the evaluations are frequent and takes up the view area.
+	now := time.Now()
 	_ = processEvaluationResponse(h.registryManager, relationshipPolicyEvalPayload, &evaluationResponse)
+
 	evaluatedAliases := ResolveAliasesInDesign(evaluationResponse.Design)
 	if evaluationResponse.Design.Metadata == nil {
 		evaluationResponse.Design.Metadata = &pattern.PatternFileMetadata{}
 	}
 	evaluationResponse.Design.Metadata.ResolvedAliases = evaluatedAliases
+
+	mutils.TrackTime(h.log, now, "PostProcessEvaluationResponse")
 	return evaluationResponse, nil
 }
 
 func processEvaluationResponse(registry *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
+
 	compsUpdated := []component.ComponentDefinition{}
 	compsAdded := []component.ComponentDefinition{}
 

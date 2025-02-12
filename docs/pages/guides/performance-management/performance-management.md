@@ -20,15 +20,13 @@ _Meshery dashboard_
 
 <a href="{{ site.baseurl }}/assets/img/smi/dashboard.png"><img alt="Meshery Dashboard" src="{{ site.baseurl }}/assets/img/smi/dashboard.png" /></a>
 
-If you are looking to run performance benchmarks on a service mesh, you can use Meshery's service mesh lifecycle management capabilities to deploy a service mesh and deploy your application on the mesh. 
+If you are looking to run performance benchmarks on cloud native infrastructur, you can use Meshery's cloud native infrastructurelifecycle management capabilities to deploy all kinds of cloud native infrastructure on Kubernets. With Meshery's performance benchmarking feature, you can also deploy you application off the mesh and compare the performance and determine the overhead when the app runs on the mesh.
 
-With Meshery's performance benchmarking feature, you can also deploy you application off the mesh and compare the performance and determine the overhead when the app runs on the mesh.
+To install cloud native infrastructure, see [this guide]({{ site.baseurl }}/service-meshes).
 
-To install a service mesh, see [this guide]({{ site.baseurl }}/service-meshes).
+Meshery also comes with a set of [sample applications](h{{ site.baseurl }}/guides/sample-apps) that you can quickly deploy to test out the capabilities of your cloud native infrastructure.
 
-Meshery also comes with a set of [sample applications](h{{ site.baseurl }}/guides/sample-apps) that you can quickly deploy to test out the capabilities of your service mesh.
-
-Next, we navigate to the main Performance Testing dashboard. See [Performance Management]({{ site.baseurl }}/tasks/performance/managing-performance) to learn more about performance profiles, load generators, Kubernetes cluster, and service mesh metrics.
+Next, we navigate to the main Performance Testing dashboard. See [Performance Management]({{ site.baseurl }}/tasks/performance/managing-performance) to learn more about performance profiles, load generators, Kubernetes cluster, and all kinds of cloud native infrastructure metrics.
 
 ## Running Performance Benchmarks Through Meshery UI
 
@@ -36,7 +34,7 @@ Meshery UI provides an easy-to-use interface in which users can create performan
 
 On the navigation menu, click on performance.
 
-This will open the performance management dashboard as shown below. 
+This will open the performance management dashboard as shown below.
 
 <a href="{{ site.baseurl }}/assets/img/performance-management/performance-management-dashboard.png"><img alt="Performance Management Dashboard" src="{{ site.baseurl }}/assets/img/performance-management/performance-management-dashboard.png" /></a>
 
@@ -66,7 +64,7 @@ _Performance Test Results_
 
 You can then go back to your performance profile and get these results anytime.
 
-You can also compare different test results in Meshery and draw insights. For example, you can run this test with your application running on different service meshes and check which performs better.
+You can also compare different test results in Meshery and draw insights. For example, you can run this test with your application running on different cloud native infrastructure and check which performs better.
 
 <a href="{{ site.baseurl }}/assets/img/performance-management/comparison-table.png"><img alt="Comparing Test Results" src="{{ site.baseurl }}/assets/img/performance-management/comparison-table.png" /></a>
 
