@@ -1,51 +1,55 @@
 ---
 layout: default
-title: mesheryctl-exp-workspace
-permalink: reference/mesheryctl/exp/workspace
-redirect_from: reference/mesheryctl/exp/workspace/
+title: mesheryctl-exp-org
+permalink: reference/mesheryctl/exp/org
+redirect_from: reference/mesheryctl/exp/org/
 type: reference
 display-title: "false"
 language: en
 command: exp
-subcommand: workspace
+subcommand: org
 ---
 
-# mesheryctl exp workspace
+# mesheryctl exp org
 
-View list of workspaces and detail of workspaces
+view list of registered orgs
 
 ## Synopsis
 
-View list of workspaces and detailed information of a specific workspaces
+view list of registered orgs with their name,id and date of creation
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace [flags]
+mesheryctl exp org [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-To view a list workspaces
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace list --orgId [orgId]
+	// Number of  registered orgs
 
 </div>
 </pre> 
 
-To create a workspace
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
+	mesheryctl org --count 
 
 </div>
 </pre> 
 
-Documentation for workspace can be found at:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-https://docs.layer5.io/cloud/spaces/workspaces/
+	// List registerd orgs
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+	mesheryctl org list
 
 </div>
 </pre> 
@@ -54,7 +58,8 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help   help for workspace
+      --count   total number of registered orgs
+  -h, --help    help for org
 
 </div>
 </pre>
@@ -71,7 +76,6 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 
 ## See Also
 
-* [mesheryctl exp workspace create](/reference/mesheryctl/exp/workspace/create)
-* [mesheryctl exp workspace list](/reference/mesheryctl/exp/workspace/list)
+* [mesheryctl exp org list](/reference/mesheryctl/exp/org/list)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
