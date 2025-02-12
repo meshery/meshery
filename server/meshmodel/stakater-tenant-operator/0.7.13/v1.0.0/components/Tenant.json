@@ -1,196 +1,196 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "Tenant",
-   "schema": "{\n \"description\": \"Tenant is the Schema for the tenants API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TenantSpec defines the desired state of Tenant\",\n   \"properties\": {\n    \"argocd\": {\n     \"description\": \"ArgoCD defines configurations for the tenant\",\n     \"properties\": {\n      \"sourceRepos\": {\n       \"description\": \"SourceRepos contains list of repository URLs which can be used for deployment\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"sourceRepos\"\n     ],\n     \"type\": \"object\"\n    },\n    \"commonMetadata\": {\n     \"description\": \"CommonMetadata is used to apply given labels and annotations across all tenant's namespaces\",\n     \"properties\": {\n      \"annotations\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Annotations to be added to all tenant's namespaces\",\n       \"type\": \"object\"\n      },\n      \"labels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Labels to be added to all tenant's namespaces\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"desc\": {\n     \"description\": \"Desc can contains description about the tenant\",\n     \"type\": \"string\"\n    },\n    \"editors\": {\n     \"description\": \"Editors defines the list of editors\",\n     \"properties\": {\n      \"groups\": {\n       \"description\": \"Groups defines the list of linked Openshift Groups\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"users\": {\n       \"description\": \"Users defines the list of linked Openshift Users\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"hibernation\": {\n     \"description\": \"Hibernation contains the schedule during which the tenant will be sleeping\",\n     \"properties\": {\n      \"sleepSchedule\": {\n       \"description\": \"SleepSchedule contains the schedule during which the resources within the tenant's namespaces will be put to sleep\",\n       \"type\": \"string\"\n      },\n      \"wakeSchedule\": {\n       \"description\": \"WakeSchedule contains the schedule during which the resources within the tenant's namespaces will be awoken\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"sleepSchedule\",\n      \"wakeSchedule\"\n     ],\n     \"type\": \"object\"\n    },\n    \"namespaces\": {\n     \"description\": \"Namespaces field create new namespaces which are mentioned in it\",\n     \"items\": {\n      \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])$\",\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"onDelete\": {\n     \"description\": \"OnDelete cleans resources when a tenant is deleted\",\n     \"properties\": {\n      \"cleanNamespaces\": {\n       \"description\": \"CleanNamespaces deletes namespaces when a tenant is deleted and the value is set to `true`\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"owners\": {\n     \"description\": \"Owners defines the list of admins\",\n     \"properties\": {\n      \"groups\": {\n       \"description\": \"Groups defines the list of linked Openshift Groups\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"users\": {\n       \"description\": \"Users defines the list of linked Openshift Users\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"quota\": {\n     \"description\": \"Quota field is used to link relevant Tenant Operator Quota CR\",\n     \"type\": \"string\"\n    },\n    \"sandbox\": {\n     \"default\": false,\n     \"description\": \"Sandbox field is used to make sandbox environments for all mentioned users in tenant spec\",\n     \"type\": \"boolean\"\n    },\n    \"specificMetadata\": {\n     \"description\": \"SpecificMetadata is used to apply given labels and annotation across tenant's specific namespaces\",\n     \"items\": {\n      \"properties\": {\n       \"annotations\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"Annotations to be added to the specified namespaces\",\n        \"type\": \"object\"\n       },\n       \"labels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"Labels to be added to the specified namespaces\",\n        \"type\": \"object\"\n       },\n       \"namespaces\": {\n        \"description\": \"Namespaces names on which labels and annotations will be applied\",\n        \"items\": {\n         \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])$\",\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"namespaces\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"templateInstances\": {\n     \"description\": \"TemplateInstances are templates that will be added in matching namespaces\",\n     \"items\": {\n      \"description\": \"TenantTemplateInstance defines a template instance\",\n      \"properties\": {\n       \"metadata\": {\n        \"description\": \"The metadata of the template instance to create\",\n        \"type\": \"object\"\n       },\n       \"selector\": {\n        \"description\": \"The labeSelector to filter namespaces that templates should be created by default in. If it is omitted, templates are created in all namespaces.\",\n        \"properties\": {\n         \"matchExpressions\": {\n          \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n          \"items\": {\n           \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"key is the label key that the selector applies to.\",\n             \"type\": \"string\"\n            },\n            \"operator\": {\n             \"description\": \"operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.\",\n             \"type\": \"string\"\n            },\n            \"values\": {\n             \"description\": \"values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.\",\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\"\n            }\n           },\n           \"required\": [\n            \"key\",\n            \"operator\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"matchLabels\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the operator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\",\n        \"x-kubernetes-map-type\": \"atomic\"\n       },\n       \"spec\": {\n        \"description\": \"The spec of the template instance\",\n        \"properties\": {\n         \"parameters\": {\n          \"description\": \"Parameters hold the values of the defined parameters in the template\",\n          \"items\": {\n           \"properties\": {\n            \"name\": {\n             \"description\": \"Name is the name of the parameter to set\",\n             \"type\": \"string\"\n            },\n            \"value\": {\n             \"description\": \"Value is the value of the parameter to set\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"sync\": {\n          \"description\": \"If true the template instance will keep the deployed resources in sync with the template.\",\n          \"type\": \"boolean\"\n         },\n         \"template\": {\n          \"description\": \"The template to instantiate. This is an immutable field\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"template\"\n        ],\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"viewers\": {\n     \"description\": \"Viewers defines the list of viewers\",\n     \"properties\": {\n      \"groups\": {\n       \"description\": \"Groups defines the list of linked Openshift Groups\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"users\": {\n       \"description\": \"Users defines the list of linked Openshift Users\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"quota\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Tenant\",\n \"type\": \"object\"\n}",
-   "version": "tenantoperator.stakater.com/v1beta1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Tenant",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": false,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Tenant",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Uncategorized"
-   },
-   "displayName": "stakater-tenant-operator",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "stakater-tenant-operator",
+    "displayName": "stakater-tenant-operator",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized"
+    },
+    "subCategory": "Uncategorized",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://stakater.github.io/stakater-charts/stakater-tenant-operator-0.7.13.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "0.7.13"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "source_uri": "https://stakater.github.io/stakater-charts/stakater-tenant-operator-0.7.13.tgz",
-    "styleOverrides": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "0.7.13"
-   },
-   "name": "stakater-tenant-operator",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Uncategorized",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": false,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "Tenant",
+    "schema": "{\n \"description\": \"Tenant is the Schema for the tenants API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TenantSpec defines the desired state of Tenant\",\n   \"properties\": {\n    \"argocd\": {\n     \"description\": \"ArgoCD defines configurations for the tenant\",\n     \"properties\": {\n      \"sourceRepos\": {\n       \"description\": \"SourceRepos contains list of repository URLs which can be used for deployment\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"required\": [\n      \"sourceRepos\"\n     ],\n     \"type\": \"object\"\n    },\n    \"commonMetadata\": {\n     \"description\": \"CommonMetadata is used to apply given labels and annotations across all tenant's namespaces\",\n     \"properties\": {\n      \"annotations\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Annotations to be added to all tenant's namespaces\",\n       \"type\": \"object\"\n      },\n      \"labels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Labels to be added to all tenant's namespaces\",\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"desc\": {\n     \"description\": \"Desc can contains description about the tenant\",\n     \"type\": \"string\"\n    },\n    \"editors\": {\n     \"description\": \"Editors defines the list of editors\",\n     \"properties\": {\n      \"groups\": {\n       \"description\": \"Groups defines the list of linked Openshift Groups\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"users\": {\n       \"description\": \"Users defines the list of linked Openshift Users\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"hibernation\": {\n     \"description\": \"Hibernation contains the schedule during which the tenant will be sleeping\",\n     \"properties\": {\n      \"sleepSchedule\": {\n       \"description\": \"SleepSchedule contains the schedule during which the resources within the tenant's namespaces will be put to sleep\",\n       \"type\": \"string\"\n      },\n      \"wakeSchedule\": {\n       \"description\": \"WakeSchedule contains the schedule during which the resources within the tenant's namespaces will be awoken\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"sleepSchedule\",\n      \"wakeSchedule\"\n     ],\n     \"type\": \"object\"\n    },\n    \"namespaces\": {\n     \"description\": \"Namespaces field create new namespaces which are mentioned in it\",\n     \"items\": {\n      \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])$\",\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"onDelete\": {\n     \"description\": \"OnDelete cleans resources when a tenant is deleted\",\n     \"properties\": {\n      \"cleanNamespaces\": {\n       \"description\": \"CleanNamespaces deletes namespaces when a tenant is deleted and the value is set to `true`\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"owners\": {\n     \"description\": \"Owners defines the list of admins\",\n     \"properties\": {\n      \"groups\": {\n       \"description\": \"Groups defines the list of linked Openshift Groups\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"users\": {\n       \"description\": \"Users defines the list of linked Openshift Users\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"quota\": {\n     \"description\": \"Quota field is used to link relevant Tenant Operator Quota CR\",\n     \"type\": \"string\"\n    },\n    \"sandbox\": {\n     \"default\": false,\n     \"description\": \"Sandbox field is used to make sandbox environments for all mentioned users in tenant spec\",\n     \"type\": \"boolean\"\n    },\n    \"specificMetadata\": {\n     \"description\": \"SpecificMetadata is used to apply given labels and annotation across tenant's specific namespaces\",\n     \"items\": {\n      \"properties\": {\n       \"annotations\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"Annotations to be added to the specified namespaces\",\n        \"type\": \"object\"\n       },\n       \"labels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"Labels to be added to the specified namespaces\",\n        \"type\": \"object\"\n       },\n       \"namespaces\": {\n        \"description\": \"Namespaces names on which labels and annotations will be applied\",\n        \"items\": {\n         \"pattern\": \"^[a-z0-9]([-a-z0-9]*[a-z0-9])$\",\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"namespaces\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"templateInstances\": {\n     \"description\": \"TemplateInstances are templates that will be added in matching namespaces\",\n     \"items\": {\n      \"description\": \"TenantTemplateInstance defines a template instance\",\n      \"properties\": {\n       \"metadata\": {\n        \"description\": \"The metadata of the template instance to create\",\n        \"type\": \"object\"\n       },\n       \"selector\": {\n        \"description\": \"The labeSelector to filter namespaces that templates should be created by default in. If it is omitted, templates are created in all namespaces.\",\n        \"properties\": {\n         \"matchExpressions\": {\n          \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n          \"items\": {\n           \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"key is the label key that the selector applies to.\",\n             \"type\": \"string\"\n            },\n            \"operator\": {\n             \"description\": \"operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.\",\n             \"type\": \"string\"\n            },\n            \"values\": {\n             \"description\": \"values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.\",\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\"\n            }\n           },\n           \"required\": [\n            \"key\",\n            \"operator\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"matchLabels\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the operator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\",\n        \"x-kubernetes-map-type\": \"atomic\"\n       },\n       \"spec\": {\n        \"description\": \"The spec of the template instance\",\n        \"properties\": {\n         \"parameters\": {\n          \"description\": \"Parameters hold the values of the defined parameters in the template\",\n          \"items\": {\n           \"properties\": {\n            \"name\": {\n             \"description\": \"Name is the name of the parameter to set\",\n             \"type\": \"string\"\n            },\n            \"value\": {\n             \"description\": \"Value is the value of the parameter to set\",\n             \"type\": \"string\"\n            }\n           },\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"sync\": {\n          \"description\": \"If true the template instance will keep the deployed resources in sync with the template.\",\n          \"type\": \"boolean\"\n         },\n         \"template\": {\n          \"description\": \"The template to instantiate. This is an immutable field\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"template\"\n        ],\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"viewers\": {\n     \"description\": \"Viewers defines the list of viewers\",\n     \"properties\": {\n      \"groups\": {\n       \"description\": \"Groups defines the list of linked Openshift Groups\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"users\": {\n       \"description\": \"Users defines the list of linked Openshift Users\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"quota\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Tenant\",\n \"type\": \"object\"\n}",
+    "version": "tenantoperator.stakater.com/v1beta1"
+  }
+}
