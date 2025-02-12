@@ -13,7 +13,7 @@ export const StyledToolbar = styled(Toolbar, {
   paddingLeft: isDrawerCollapsed ? 0 : 34,
   paddingRight: 34,
   backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.card : darkTeal.main,
-  boxShadow: `3px 0px 4px ${theme.palette.background.brand.default}`,
+  boxShadow: `3px 0px 4px ${theme.palette.background.brand?.default}`,
   ...(isDrawerCollapsed
     ? {
         [theme.breakpoints.down('xs')]: {
@@ -62,7 +62,7 @@ export const HeaderIcons = styled(MenuIcon)(({ theme }) => ({
   width: '1.5rem',
   fill: theme.palette.background.constant.white,
   '&:hover': {
-    fill: theme.palette.background.brand.default,
+    fill: theme.palette.background.brand?.default,
   },
 }));
 

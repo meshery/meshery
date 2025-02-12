@@ -79,7 +79,7 @@ export const ErrorContentContainer = styled('div')(() => ({
 }));
 
 export const ErrorLink = styled('a')(({ theme }) => ({
-  color: theme.palette.background.brand.default,
+  color: theme.palette.background.brand?.default,
 }));
 
 export const ErrorMsg = styled('errormsg')(() => ({
@@ -216,6 +216,6 @@ export const CustomDownIcon = styled(LeftArrowIcon)(({ theme }) => ({
   rotate: '-90deg',
   marginInline: '1rem',
   '&.MuiSelect-icon': {
-    fill: theme.palette.background.brand.default,
+    fill: theme.palette.background.brand?.default,
   },
 }));

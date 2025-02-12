@@ -41,7 +41,7 @@ export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, 
           <BadgeAvatars
             color={
               status === CONNECTION_STATES.CONNECTED || status === CONTROLLER_STATES.DEPLOYED
-                ? theme.palette.background.brand.default
+                ? theme.palette.background.brand?.default
                 : theme.palette.text.disabled
             }
           >

@@ -36,9 +36,9 @@ const CancelButton = styled(Button)(({ theme }) => ({
 const StepperButton = styled(Button)(({ theme }) => ({
   marginTop: '1rem',
   color: 'white',
-  backgroundColor: theme.palette.background.brand.default,
+  backgroundColor: theme.palette.background.brand?.default,
   '&:hover': {
-    backgroundColor: theme.palette.background.brand.default,
+    backgroundColor: theme.palette.background.brand?.default,
   },
   '&.Mui-disabled': {
     cursor: 'not-allowed',

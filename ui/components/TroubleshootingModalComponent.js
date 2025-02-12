@@ -60,7 +60,7 @@ const ModalHeader = styled(Typography)(({ theme }) => ({
   paddingBottom: 10,
   padding: '0.5rem',
   paddingTop: 10,
-  backgroundColor: theme.palette.background.brand.default,
+  backgroundColor: theme.palette.background.brand?.default,
 }));
 
 const ModalFooter = styled('div')(({ theme }) => ({
@@ -70,7 +70,7 @@ const ModalFooter = styled('div')(({ theme }) => ({
   paddingBottom: 10,
   padding: '0.5rem',
   paddingTop: 10,
-  backgroundColor: theme.palette.background.brand.default,
+  backgroundColor: theme.palette.background.brand?.default,
 }));
 
 const rotateCloseIcon = keyframes`
