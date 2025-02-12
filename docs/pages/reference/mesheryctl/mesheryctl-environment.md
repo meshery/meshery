@@ -45,7 +45,7 @@ mesheryctl environment create --orgID [orgId] --name [name] --description [descr
 Documentation for environment can be found at:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-https://docs.layer5.io/cloud/spaces/environments/
+https://docs.meshery.io/concepts/logical/environments
 
 </div>
 </pre> 
@@ -70,5 +70,10 @@ https://docs.layer5.io/cloud/spaces/environments/
 </pre>
 
 ## See Also
+
+* [mesheryctl environment create](/reference/mesheryctl/environment/create)
+* [mesheryctl environment delete](/reference/mesheryctl/environment/delete)
+* [mesheryctl environment list](/reference/mesheryctl/environment/list)
+* [mesheryctl environment view](/reference/mesheryctl/environment/view)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

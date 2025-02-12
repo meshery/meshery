@@ -19,6 +19,7 @@ import ResourceDetailFormatData, { JSONViewFormatter } from './view-component';
 import { styled } from '@mui/system';
 import { useRouter } from 'next/router';
 import GetKubernetesNodeIcon from './utils';
+import { CONNECTION_STATES } from '@/utils/Enum';
 
 const Container = styled('div')({
   margin: '1rem auto',
@@ -62,7 +63,6 @@ const View = (props) => {
   const cleanData = getResourceCleanData({ resource: resource, router: router });
   if (!resource) return null;
   const context = getK8sContextFromClusterId(resource.cluster_id, k8sConfig);
-
   return (
     <Container>
       <Paper>
@@ -93,6 +93,7 @@ const View = (props) => {
               title={context.name}
               width="100%"
               handlePing={() => ping(context.name, context.server, context.connection_id)}
+              status={CONNECTION_STATES.CONNECTED}
             />
           </Header>
           <ErrorBoundary>

@@ -1,14 +1,15 @@
 import { Typography, IconButton, Paper, styled, Tab, Tabs, gray, charcoal } from '@layer5/sistent';
 
 export const DashboardSection = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.background.default,
+  backgroundColor: theme.palette.background.card,
   padding: theme.spacing(2),
   borderRadius: '4px',
   height: '100%',
 }));
 
 export const ChartSectionWithColumn = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#202020' : theme.palette.common.white,
+  backgroundColor:
+    theme.palette.mode === 'dark' ? '#202020' : theme.palette.background.constant.white,
   padding: theme.spacing(2),
   borderRadius: '4px',
   height: '100%',
@@ -42,7 +43,8 @@ export const ConnectClusterText = styled(Typography)({
 });
 
 export const HoneycombRoot = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#202020' : theme.palette.common.white,
+  backgroundColor:
+    theme.palette.mode === 'dark' ? '#202020' : theme.palette.background.constant.white,
   padding: theme.spacing(2),
   borderRadius: 4,
   width: '100%',

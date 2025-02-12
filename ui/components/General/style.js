@@ -194,11 +194,12 @@ export const SideBarListItem = styled(ListItem, {
   fill: isActive ? theme.palette.background.brand.default : '#fff',
   '&:hover': {
     ...(link && {
-      backgroundColor: 'rgba(0, 187, 166, 0.5)', // Only applies when link is true
+      backgroundColor: 'rgba(0, 187, 166, 0.5)',
     }),
-    '& $expandMoreIcon': {
+
+    '.svg-inline--fa': {
       opacity: 1,
-      transition: 'opacity 200ms ease-in',
+      visibility: 'visible',
     },
   },
   paddingTop: 4,
@@ -206,6 +207,21 @@ export const SideBarListItem = styled(ListItem, {
   pointerEvents: isShow ? 'none' : 'auto',
   opacity: isShow ? 0.5 : '',
   fontSize: '14px',
+}));
+
+export const ExpandMoreIcon = styled(FontAwesomeIcon, {
+  shouldForwardProp: (prop) => prop !== 'isCollapsed' && prop !== 'hasChildren',
+})(({ isCollapsed, hasChildren, theme }) => ({
+  opacity: 0,
+  visibility: 'hidden',
+  cursor: 'pointer',
+  display: hasChildren ? 'inline-block' : 'none',
+  transform: isCollapsed ? 'rotate(180deg) translateX(-0.8px)' : 'translateX(3px)',
+  transition:
+    'transform 200ms ease-in-out, opacity 200ms ease-in-out, visibility 200ms ease-in-out',
+  '&:hover': {
+    color: theme.palette.background.brand.default,
+  },
 }));
 
 export const SideBarText = styled(ListItemText)(({ drawerCollapsed }) => ({
@@ -250,20 +266,6 @@ export const SecondaryDivider = styled(Divider)(({ theme }) => ({
   borderColor: '#404854',
 }));
 
-export const ExpandMoreIcon = styled(FontAwesomeIcon, {
-  shouldForwardProp: (prop) => prop !== 'isCollapsed' && prop !== 'hasChildren',
-})(({ isCollapsed, hasChildren }) => ({
-  opacity: 0,
-  cursor: 'pointer',
-  display: hasChildren ? 'inline-block' : 'none',
-  transform: isCollapsed ? 'rotate(180deg) translateX(-0.8px)' : 'translateX(3px)', // Rotate if collapsed
-  transition: 'transform 200ms ease-in-out', // Smooth rotation animation
-  '&:hover': {
-    opacity: 1,
-    color: '#4fc3f7',
-  },
-}));
-
 export const ChevronIcon = styled(FontAwesomeIcon)(({ theme }) => ({
   color: theme.palette.icon.default,
   cursor: 'pointer',
@@ -278,7 +280,7 @@ export const MainListIcon = styled(ListItemIcon)(({ theme }) => ({
   textAlign: 'center',
   display: 'inline-table',
   paddingRight: theme.spacing(0.5),
-  marginLeft: theme.spacing(0.8),
+  marginLeft: '8.45px',
 }));
 
 export const ListIconSide = styled(ListItemIcon)(({ theme }) => ({
@@ -345,8 +347,8 @@ export const NavigatorFooter = styled('div')({
 
 export const ChevronButtonWrapper = styled('div', {
   shouldForwardProp: (prop) => prop !== 'isCollapsed',
-})(({ isCollapsed }) => ({
-  backgroundColor: isCollapsed ? '#515b60' : 'transparent',
+})(({ isCollapsed, theme }) => ({
+  backgroundColor: isCollapsed ? '#515b60' : theme.palette.background.tabs,
   color: isCollapsed ? '#ffffff' : 'inherit',
   boxShadow: !isCollapsed
     ? '0.5px 0px 0px 0px rgb(0 0 0 / 20%), 1.5px 0px 0px 0px rgb(0 0 0 / 14%), 2.5px 1px 3px 0px rgb(0 0 0 / 12%)'
@@ -365,11 +367,11 @@ export const ChevronButtonWrapper = styled('div', {
 
   '&:hover': {
     opacity: 1,
-    background: !isCollapsed ? 'transparent' : undefined,
+    background: !isCollapsed ? theme.palette.background.card : undefined,
   },
   '&:focus': {
     opacity: 1,
-    background: !isCollapsed ? 'transparent' : undefined,
+    background: !isCollapsed ? theme.palette.background.card : undefined,
   },
 }));
 

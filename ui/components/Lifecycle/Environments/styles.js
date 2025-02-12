@@ -22,7 +22,7 @@ export const CardWrapper = styled(Card)(() => {
     display: 'flex',
     flexDirection: 'column',
     padding: '20px',
-    backgroundColor: theme.palette.background?.default,
+    backgroundColor: theme.palette.background.card,
     '&:hover': {
       cursor: 'pointer',
     },
@@ -127,7 +127,6 @@ export const PopupButton = styled(Button)(({ theme }) => ({
 }));
 
 export const Record = styled('div')(() => ({
-  // borderBottom: `1px solid ${theme.palette.secondary.modalTabs}60`,
   display: 'flex',
   flexDirection: 'row',
   padding: '5px 0',
@@ -154,24 +153,6 @@ export const CardTitle = styled(Typography)({
   },
 });
 
-export const OrganizationName = styled('p')({
-  fontSize: '0.9rem',
-  display: 'flex',
-  alignItems: 'end',
-  padding: '0 5px',
-  '&:hover': {
-    cursor: 'default',
-  },
-});
-
-export const StyledIconButton = styled('button')({
-  background: 'transparent',
-  border: 'none',
-  '&:hover': {
-    cursor: 'default',
-  },
-});
-
 export const DateLabel = styled(Typography)({
   fontStyle: 'italic',
   fontSize: '12px',
@@ -184,6 +165,7 @@ export const EmptyDescription = styled('p')({
   fontSize: '0.9rem',
   textAlign: 'left',
   fontStyle: 'italic',
+  margin: '0',
 });
 
 export const DescriptionLabel = styled('p')({
@@ -212,14 +194,14 @@ export const Status = styled('div')({
 
 export const StyledChip = styled('div')(({ theme }) => ({
   padding: '5px 6px',
-  color: theme.palette.secondary.text,
+  color: theme.palette.text.default,
   fontSize: '14px',
   textTransform: 'uppercase',
   fontWeight: 400,
   height: 'unset',
   borderRadius: '100px',
-  border: `0.5px solid ${theme.palette.secondary.default}`,
-  background: theme.palette.secondary.white,
+  border: `0.5px solid ${theme.palette.background.default}`,
+  background: theme.palette.background.constant.white,
   maxWidth: '230px',
   '& .MuiChip-avatar': {
     margin: 0,

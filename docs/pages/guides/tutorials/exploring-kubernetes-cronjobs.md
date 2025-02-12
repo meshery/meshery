@@ -16,7 +16,7 @@ In this tutorial, we will explore Kubernetes CronJobs, a resource that allows yo
 
 Prerequisites:
 - Basic understanding of Kubernetes concepts.
-- Meshery Playground access. If you don't have an account, you can sign up at [Meshery Playground](https://cloud.layer5.io/play).
+- Meshery Playground access. If you don't have an account, you can sign up at [Meshery Playground](https://play.meshery.io).
 
 Lab Scenario: Scheduled Backups using CronJobs
 
@@ -26,7 +26,7 @@ Learn how to use Kubernetes CronJobs to schedule and automate periodic backups o
 ### Steps:
 
 #### 1. **Accessing Meshery Playground:**
-   - Log in to the [Meshery Playground](https://cloud.layer5.io/play) using your credentials.
+   - Log in to the [Meshery Playground](https://play.meshery.io) using your credentials.
    - Once logged in, navigate to the Meshery Playground dashboard.
 
 #### 2. **Deploying an Application:**

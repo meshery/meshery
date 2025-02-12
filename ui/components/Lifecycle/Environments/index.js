@@ -6,7 +6,7 @@ import { withRouter } from 'next/router';
 import { debounce } from 'lodash';
 import { Delete } from '@mui/icons-material';
 import { NoSsr } from '@mui/material';
-import { CreateButtonWrapper, BulkActionWrapper } from '../Workspaces/index.js';
+import { CreateButtonWrapper, BulkActionWrapper } from './styles';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
@@ -80,7 +80,7 @@ const Environments = () => {
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
   const [disableTranferButton, setDisableTranferButton] = useState(true);
 
-  const pageSize = 2;
+  const pageSize = 10;
   const connectionPageSize = 25;
 
   const modalRef = useRef(null);
@@ -459,7 +459,7 @@ const Environments = () => {
                   onClick={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.CREATE)}
                   sx={{
                     padding: '8px',
-                    borderRadius: 2,
+                    borderRadius: '5px',
                     marginRight: '2rem',
                   }}
                   disabled={!CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject)}

@@ -1,4 +1,3 @@
-import Grid from '@material-ui/core/Grid';
 import React, { useMemo } from 'react';
 import BBChart from '../../BBChart';
 import { donut } from 'billboard.js';
@@ -18,7 +17,7 @@ import { DashboardSection } from '../style';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
-import { IconButton, Typography, useTheme } from '@layer5/sistent';
+import { Typography, useTheme, Grid } from '@layer5/sistent';
 import { UsesSistent } from '@/components/SistentWrapper';
 
 function MeshModelContructs() {
@@ -90,19 +89,14 @@ function MeshModelContructs() {
               <CustomTextTooltip
                 placement="left"
                 interactive={true}
-                variant="standard"
-                leaveDelay={200}
                 title={`The Meshery Registry is a critical component acting as the central repository for all capabilities known to Meshery. [Learn More](https://docs.meshery.io/concepts/logical/registry)`}
               >
-                <IconButton disableRipple={true} disableFocusRipple={true}>
+                <div>
                   <InfoOutlined
                     color={theme.palette.icon.default}
                     style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
                   />
-                </IconButton>
+                </div>
               </CustomTextTooltip>
             </div>
           </div>
@@ -176,19 +170,13 @@ function MeshModelCategories() {
               <CustomTextTooltip
                 title={`Meshery Models represent the fundamental building blocks of your infrastructure. Models are categorized by their function. For example, a model for Prometheus belongs in the "Observability and Analysis" category. [Learn More](https://docs.meshery.io/concepts/logical/models)`}
                 placement="left"
-                variant="standard"
-                interactive={true}
-                leaveDelay={200}
               >
-                <IconButton disableRipple={true} disableFocusRipple={true}>
+                <div>
                   <InfoOutlined
                     color={theme.palette.icon.default}
                     style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
                   />
-                </IconButton>
+                </div>
               </CustomTextTooltip>
             </div>
           </div>
@@ -204,11 +192,11 @@ function MeshModelCategories() {
 const MeshModelGraph = () => {
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} md={6}>
+      <Grid item xs={12} md={6} style={{ marginBottom: '0.5rem' }}>
         <MeshModelCategories />
       </Grid>
 
-      <Grid item xs={12} md={6}>
+      <Grid item xs={12} md={6} style={{ marginBottom: '0.5rem' }}>
         <MeshModelContructs />
       </Grid>
     </Grid>

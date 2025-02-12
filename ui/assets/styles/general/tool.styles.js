@@ -79,7 +79,7 @@ export const CardStyle = styled(Box, {
   shouldForwardProp: (prop) => prop !== 'isAnimated' && prop !== 'isSelected',
 })(({ theme, isAnimated, isSelected }) => ({
   background: isAnimated ? tabMenu.hover : tabMenu.main,
-  color: isSelected ? theme.palette.text.default : theme.palette.common.white,
+  color: isSelected ? theme.palette.text.default : theme.palette.background.constant.white,
   height: isAnimated ? '3rem' : '10rem',
   width: isAnimated ? '15rem' : '13rem',
   display: 'flex',
@@ -138,7 +138,7 @@ export const DetailsContainer = styled(Box, {
     justifyContent: 'center',
   }),
   [theme.breakpoints.down('sm')]: {
-    width: '90%',
+    width: '100%',
     padding: isEmpty ? '0.5rem' : '1rem',
     height: 'fit-content',
     maxHeight: '30rem',
@@ -152,7 +152,7 @@ export const TreeContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
   [theme.breakpoints.down('sm')]: {
-    width: '90%',
+    width: '100%',
   },
 }));
 

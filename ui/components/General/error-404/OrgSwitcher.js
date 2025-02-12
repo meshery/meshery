@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
-import NoSsr from '@material-ui/core/NoSsr';
+import { NoSsr } from '@mui/material';
 import { setOrganization, setKeys } from 'lib/store';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useNotification } from 'utils/hooks/useNotification';
@@ -18,9 +18,9 @@ import {
   StyledTypography,
   CustomDownIcon,
 } from './styles';
-import theme from 'themes/app';
 import { useGetCurrentAbilities } from 'rtk-query/ability';
 import CustomErrorFallback from '../ErrorBoundary';
+import { useTheme } from '@layer5/sistent';
 
 const OrgSwitcher = (props) => {
   const {
@@ -56,7 +56,7 @@ const OrgSwitcher = (props) => {
       location.reload();
     }, 1000);
   };
-
+  const theme = useTheme();
   return (
     <NoSsr>
       <>
@@ -83,7 +83,7 @@ const OrgSwitcher = (props) => {
                           <OrgIcon
                             width="24"
                             height="24"
-                            secondaryFill={theme.palette.darkSlateGray}
+                            secondaryFill={theme.palette.icon.secondary}
                           />
                           <OrgName>{org.name}</OrgName>
                         </MenuItem>
