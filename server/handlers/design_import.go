@@ -20,6 +20,7 @@ import (
 	"github.com/layer5io/meshkit/logger"
 	"github.com/layer5io/meshkit/models/events"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
+	"github.com/layer5io/meshkit/utils"
 	"github.com/meshery/schemas/models/core"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 )
@@ -86,11 +87,6 @@ func getFileNameFromResponse(resp *http.Response, fileURL string) string {
 	return path.Base(parsedURL.Path)
 }
 
-func trackTime(logger logger.Handler, start time.Time, name string) {
-	elapsed := time.Since(start)
-	logger.Debugf("%s took %s\n", name, elapsed)
-}
-
 func ConvertFileToManifest(identifiedFile files.IdentifiedFile, rawFile FileToImport) (string, error) {
 
 	switch identifiedFile.Type {
@@ -111,7 +107,7 @@ func ConvertFileToManifest(identifiedFile files.IdentifiedFile, rawFile FileToIm
 // returns the design file , the type of file that was identified during converion , and any error
 func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryManager, logger logger.Handler) (pattern.PatternFile, string, error) {
 
-	defer trackTime(logger, time.Now(), "ConvertFileToDesign")
+	defer utils.TrackTime(logger, time.Now(), "ConvertFileToDesign")
 
 	var emptyDesign pattern.PatternFile
 
@@ -135,7 +131,7 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 
 	now := time.Now()
 	sanitizedFile, err := files.SanitizeFile(fileToImport.Data, fileToImport.FileName, tempDir, validImportExtensions)
-	trackTime(logger, now, "SanitizeFile")
+	utils.TrackTime(logger, now, "SanitizeFile")
 
 	if err != nil {
 		return emptyDesign, "", err
@@ -143,7 +139,7 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 
 	now = time.Now()
 	identifiedFile, err := files.IdentifyFile(sanitizedFile)
-	trackTime(logger, now, "IdentifyFile")
+	utils.TrackTime(logger, now, "IdentifyFile")
 
 	if err != nil {
 		return emptyDesign, "", err
@@ -156,7 +152,7 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 
 	now = time.Now()
 	manifest, err := ConvertFileToManifest(identifiedFile, fileToImport)
-	trackTime(logger, now, "ConvertFileToManifest")
+	utils.TrackTime(logger, now, "ConvertFileToManifest")
 
 	if err != nil {
 		return emptyDesign, "", err
@@ -164,7 +160,7 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 
 	now = time.Now()
 	design, err := pCore.NewPatternFileFromK8sManifest(manifest, fileToImport.FileName, true, registry)
-	trackTime(logger, now, "ConvertManifestToDesign")
+	utils.TrackTime(logger, now, "ConvertManifestToDesign")
 
 	if err != nil {
 		return emptyDesign, "", err
@@ -259,6 +255,7 @@ func (h *Handler) DesignFileImportHandler(
 
 	if err != nil {
 		h.log.Error(fmt.Errorf("Conversion: Failed to get file from payload  %w", err))
+		http.Error(rw, err.Error(), http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, importDesignPayload, err)
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)
@@ -269,7 +266,7 @@ func (h *Handler) DesignFileImportHandler(
 
 	if err != nil {
 		h.log.Error(fmt.Errorf("Conversion: Failed to convert to design %w", err))
-
+		http.Error(rw, err.Error(), http.StatusBadRequest)
 		event := ImportErrorEvent(*eventBuilder, importDesignPayload, err)
 		_ = provider.PersistEvent(event)
 		go h.config.EventBroadcaster.Publish(userID, event)

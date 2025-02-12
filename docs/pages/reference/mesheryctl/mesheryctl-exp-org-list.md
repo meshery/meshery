@@ -1,51 +1,59 @@
 ---
 layout: default
-title: mesheryctl-exp-workspace
-permalink: reference/mesheryctl/exp/workspace
-redirect_from: reference/mesheryctl/exp/workspace/
+title: mesheryctl-exp-org-list
+permalink: reference/mesheryctl/exp/org/list
+redirect_from: reference/mesheryctl/exp/org/list/
 type: reference
 display-title: "false"
 language: en
 command: exp
-subcommand: workspace
+subcommand: org
 ---
 
-# mesheryctl exp workspace
+# mesheryctl exp org list
 
-View list of workspaces and detail of workspaces
+List registered orgs
 
 ## Synopsis
 
-View list of workspaces and detailed information of a specific workspaces
+Print all registered organizations with their id, name and date of creation. Organization will be returned based on provider you logged in.
+	
+	Documentation for organizations can be found at 
+	https://docs.layer5.io/cloud/identity/organizations/
+	
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace [flags]
+mesheryctl exp org list [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-To view a list workspaces
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace list --orgId [orgId]
+	// list all organizations
 
 </div>
 </pre> 
 
-To create a workspace
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
+	mesheryctl exp org list
 
 </div>
 </pre> 
 
-Documentation for workspace can be found at:
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-https://docs.layer5.io/cloud/spaces/workspaces/
+	// list organizations (using flags)
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+	mesheryctl exp org --page [page_no] --size [size]
 
 </div>
 </pre> 
@@ -54,7 +62,7 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help   help for workspace
+  -h, --help   help for list
 
 </div>
 </pre>
@@ -70,8 +78,5 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 </pre>
 
 ## See Also
-
-* [mesheryctl exp workspace create](/reference/mesheryctl/exp/workspace/create)
-* [mesheryctl exp workspace list](/reference/mesheryctl/exp/workspace/list)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
