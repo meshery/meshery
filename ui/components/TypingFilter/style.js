@@ -41,7 +41,7 @@ export const Item = styled('div')(({ theme }) => ({
 }));
 export const Label = styled(Typography)(({ theme }) => ({
   fontWeight: 500,
-  color: theme.palette.secondary.icon,
+  color: theme.palette.text.primary,
 }));
 
 export const Description = styled(Typography)(({ theme }) => ({

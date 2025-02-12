@@ -579,18 +579,18 @@ adapter:
 
     remove:
       name: remove
-      description: Remove service mesh in the connected Kubernetes cluster
+      description: Remove infrastructure in the connected Kubernetes cluster
       usage: mesheryctl adapter remove [args] [flags] [args]
       flags:
         namespace:
           name: --namespace, -n
-          description: Kubernetes namespace to be used for removing a service mesh under a specific namespace
+          description: Kubernetes namespace to be used for removing infrastrucutre under a specific namespace
           usage: mesheryctl adapter remove [args] --namespace [namespace to be used]
           example: mesheryctl adapter remove linkerd --namespace linkerd-ns -t "~/Download/auth.json"
 
     deploy:
       name: deploy
-      description: Deploy a service mesh into the cluster
+      description: Deploy infrastructure into the cluster
       usage: mesheryctl adapter deploy [flags]
       example: mesheryctl adapter deploy -t "~/Downloads/auth.json"
       flags:
@@ -759,7 +759,7 @@ design:
 
 filter:
   name: filter
-  description: Service Mesh Filter Management
+  description: Envoy Filter Management
   usage: mesheryctl filter [command] or
   example: mesheryctl filter list
   subcommands:
@@ -1119,4 +1119,18 @@ exp:
         flags:
           org:
             name: -o, -orgId
-            description: organization id
+            description: organization id 
+  org:
+    name: org
+    description: show existing organizations with their name,id, date of creation
+    usage: mesheryctl exp org 
+    flags:
+      description: 
+        pageNo:
+          name: -p --pagenumber
+          description: page number to fetch
+        pagesize:
+          name: -s --size
+          description: page size
+      
+
