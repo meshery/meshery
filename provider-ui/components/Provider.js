@@ -26,7 +26,8 @@ import {
   IconButton,
   CircularProgress,
   styled,
-  charcoal
+  charcoal,
+  accentGrey
 } from "@layer5/sistent";
 
 import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
@@ -205,7 +206,10 @@ export default function Provider() {
               }}
             >
               <ClickAwayListener onClickAway={handleClose}>
-                <MenuList id="split-button-menu" autoFocusItem>
+                <MenuList sx={{
+                  background: accentGrey[20],
+                  color:charcoal[100]
+                }} id="split-button-menu" autoFocusItem>
                   {Object.keys(availableProviders).map((key) => (
                     <MenuItem
                       key={key}
