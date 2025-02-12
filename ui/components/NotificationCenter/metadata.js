@@ -232,15 +232,14 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
         >
           {value.map((error, idx) => {
             const hashedError = error.trim().startsWith('-');
-            return hashedError ? (
-              <ListItem key={idx} sx={{ display: 'block', padding: '0', pb: 1 }}>
+            return (
+              <ListItem
+                key={idx}
+                sx={{ display: hashedError ? 'block' : 'list-item', padding: '0', pb: 1 }}
+              >
                 <RenderMarkdown content={error} />
               </ListItem>
-            ) : (
-              <ListItem key={idx} sx={{ display: 'list-item', padding: '0', pb: 1 }}>
-                <RenderMarkdown content={error} />
-              </ListItem>
-            );
+            )
           })}
         </List>
       </Box>
@@ -249,7 +248,7 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
   return (
     <Grid container>
       {' '}
-      <div sx={{ border: '10px solid blue' }}>
+      <div >
         <TitleLink href={errorLink}> {formattedErrorCode} </TitleLink>
         {event?.description && <FormatStructuredData data={event.description} />}
         <div style={{ marginTop: '1rem' }}>
