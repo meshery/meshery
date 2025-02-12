@@ -226,19 +226,19 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
         </Typography>
         <List
           sx={{
-            listStyleType: heading === 'Details' ? 'none' : 'decimal',
-            pl: heading === 'Details' ? 0 : 3,
+            listStyleType: value.length > 1 ? 'decimal' : 'none',
+            pl: 3,
           }}
         >
           {value.map((error, idx) => {
-            const isNestedList = typeof error === 'object' && error.length > 0;
-            return (
+            const hashedError = error.trim().startsWith('-');
+            return hashedError ? (
+              <ListItem key={idx} sx={{ display: 'block', padding: '0', pb: 1 }}>
+                <RenderMarkdown content={error} />
+              </ListItem>
+            ) : (
               <ListItem key={idx} sx={{ display: 'list-item', padding: '0', pb: 1 }}>
-                {isNestedList ? (
-                  <ErrorDetailsObjectFormatter heading="" value={error} />
-                ) : (
-                  <RenderMarkdown content={error} />
-                )}
+                <RenderMarkdown content={error} />
               </ListItem>
             );
           })}
