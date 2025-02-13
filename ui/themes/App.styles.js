@@ -89,7 +89,6 @@ const StyledSnackbarContent = styled(SnackbarContent)(({ theme, variant }) => {
     pointerEvents: 'auto',
     borderRadius: '0.3rem',
     boxShadow: `0 0px 10px ${theme.palette.background.default}`,
-    fontWeight: '800',
   };
 });
 
