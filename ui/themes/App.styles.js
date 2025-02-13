@@ -77,7 +77,7 @@ export const StyledDrawer = styled('nav', {
 
 const StyledSnackbarContent = styled(SnackbarContent)(({ theme, variant }) => {
   const notificationColors = {
-    success: theme.palette.success.main,
+    success: theme.palette.background.brand.default,
     info: theme.palette.info.main,
     warning: theme.palette.warning.main,
     error: theme.palette.error.main,

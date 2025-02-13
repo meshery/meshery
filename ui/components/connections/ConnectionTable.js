@@ -561,7 +561,7 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
                     interactive={true}
                     title="Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)"
                   >
-                    <div>
+                    <div style={{ display: 'inline-block' }}>
                       <IconButton color="default">
                         <InfoOutlinedIcon height={20} width={20} />
                       </IconButton>
