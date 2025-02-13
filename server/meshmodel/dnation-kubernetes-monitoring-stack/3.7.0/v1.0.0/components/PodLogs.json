@@ -1,197 +1,197 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "PodLogs",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"jobLabel\": {\n     \"type\": \"string\"\n    },\n    \"namespaceSelector\": {\n     \"properties\": {\n      \"any\": {\n       \"type\": \"boolean\"\n      },\n      \"matchNames\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"pipelineStages\": {\n     \"items\": {\n      \"properties\": {\n       \"cri\": {\n        \"type\": \"object\"\n       },\n       \"docker\": {\n        \"type\": \"object\"\n       },\n       \"drop\": {\n        \"properties\": {\n         \"dropCounterReason\": {\n          \"type\": \"string\"\n         },\n         \"expression\": {\n          \"type\": \"string\"\n         },\n         \"longerThan\": {\n          \"type\": \"string\"\n         },\n         \"olderThan\": {\n          \"type\": \"string\"\n         },\n         \"source\": {\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"json\": {\n        \"properties\": {\n         \"expressions\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"object\"\n         },\n         \"source\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"labelAllow\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"labelDrop\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"labels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"limit\": {\n        \"properties\": {\n         \"burst\": {\n          \"type\": \"integer\"\n         },\n         \"drop\": {\n          \"type\": \"boolean\"\n         },\n         \"rate\": {\n          \"type\": \"integer\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"match\": {\n        \"properties\": {\n         \"action\": {\n          \"type\": \"string\"\n         },\n         \"dropCounterReason\": {\n          \"type\": \"string\"\n         },\n         \"pipelineName\": {\n          \"type\": \"string\"\n         },\n         \"selector\": {\n          \"type\": \"string\"\n         },\n         \"stages\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"selector\"\n        ],\n        \"type\": \"object\"\n       },\n       \"metrics\": {\n        \"additionalProperties\": {\n         \"properties\": {\n          \"action\": {\n           \"type\": \"string\"\n          },\n          \"buckets\": {\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          },\n          \"countEntryBytes\": {\n           \"type\": \"boolean\"\n          },\n          \"description\": {\n           \"type\": \"string\"\n          },\n          \"matchAll\": {\n           \"type\": \"boolean\"\n          },\n          \"maxIdleDuration\": {\n           \"type\": \"string\"\n          },\n          \"prefix\": {\n           \"type\": \"string\"\n          },\n          \"source\": {\n           \"type\": \"string\"\n          },\n          \"type\": {\n           \"type\": \"string\"\n          },\n          \"value\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"action\",\n          \"type\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"object\"\n       },\n       \"multiline\": {\n        \"properties\": {\n         \"firstLine\": {\n          \"type\": \"string\"\n         },\n         \"maxLines\": {\n          \"type\": \"integer\"\n         },\n         \"maxWaitTime\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"firstLine\"\n        ],\n        \"type\": \"object\"\n       },\n       \"output\": {\n        \"properties\": {\n         \"source\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"source\"\n        ],\n        \"type\": \"object\"\n       },\n       \"pack\": {\n        \"properties\": {\n         \"ingestTimestamp\": {\n          \"type\": \"boolean\"\n         },\n         \"labels\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"labels\"\n        ],\n        \"type\": \"object\"\n       },\n       \"regex\": {\n        \"properties\": {\n         \"expression\": {\n          \"type\": \"string\"\n         },\n         \"source\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"expression\"\n        ],\n        \"type\": \"object\"\n       },\n       \"replace\": {\n        \"properties\": {\n         \"expression\": {\n          \"type\": \"string\"\n         },\n         \"replace\": {\n          \"type\": \"string\"\n         },\n         \"source\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"expression\"\n        ],\n        \"type\": \"object\"\n       },\n       \"template\": {\n        \"properties\": {\n         \"source\": {\n          \"type\": \"string\"\n         },\n         \"template\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"source\",\n         \"template\"\n        ],\n        \"type\": \"object\"\n       },\n       \"tenant\": {\n        \"properties\": {\n         \"label\": {\n          \"type\": \"string\"\n         },\n         \"source\": {\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"timestamp\": {\n        \"properties\": {\n         \"actionOnFailure\": {\n          \"type\": \"string\"\n         },\n         \"fallbackFormats\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"format\": {\n          \"type\": \"string\"\n         },\n         \"location\": {\n          \"type\": \"string\"\n         },\n         \"source\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"format\",\n         \"source\"\n        ],\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"podTargetLabels\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"relabelings\": {\n     \"items\": {\n      \"properties\": {\n       \"action\": {\n        \"default\": \"replace\",\n        \"enum\": [\n         \"replace\",\n         \"Replace\",\n         \"keep\",\n         \"Keep\",\n         \"drop\",\n         \"Drop\",\n         \"hashmod\",\n         \"HashMod\",\n         \"labelmap\",\n         \"LabelMap\",\n         \"labeldrop\",\n         \"LabelDrop\",\n         \"labelkeep\",\n         \"LabelKeep\",\n         \"lowercase\",\n         \"Lowercase\",\n         \"uppercase\",\n         \"Uppercase\",\n         \"keepequal\",\n         \"KeepEqual\",\n         \"dropequal\",\n         \"DropEqual\"\n        ],\n        \"type\": \"string\"\n       },\n       \"modulus\": {\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       },\n       \"regex\": {\n        \"type\": \"string\"\n       },\n       \"replacement\": {\n        \"type\": \"string\"\n       },\n       \"separator\": {\n        \"type\": \"string\"\n       },\n       \"sourceLabels\": {\n        \"items\": {\n         \"pattern\": \"^[a-zA-Z_][a-zA-Z0-9_]*$\",\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"targetLabel\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"selector\": {\n     \"properties\": {\n      \"matchExpressions\": {\n       \"items\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    }\n   },\n   \"required\": [\n    \"selector\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pod Logs\",\n \"type\": \"object\"\n}",
-   "version": "monitoring.grafana.com/v1alpha1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Pod Logs",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false,
-   "source_uri": "https://dnationcloud.github.io/helm-hub/dnation-kubernetes-monitoring-stack-3.7.0.tgz"
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Pod Logs",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Uncategorized"
-   },
-   "displayName": "Dnation Kubernetes Monitoring Stack",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "dnation-kubernetes-monitoring-stack",
+    "displayName": "Dnation Kubernetes Monitoring Stack",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized"
+    },
+    "subCategory": "Uncategorized",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://dnationcloud.github.io/helm-hub/dnation-kubernetes-monitoring-stack-3.7.0.tgz",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 86 62\" fill=\"none\"\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"13\" cy=\"13\" r=\"13\" fill=\"#248431\"\u003e\u003c/circle\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"43\" cy=\"13\" r=\"13\" fill=\"#F4790D\"\u003e\u003c/circle\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"73\" cy=\"13\" r=\"13\" fill=\"#E61F2E\"\u003e\u003c/circle\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M43 62V34H48L62.5 51.5V34H69.5V62H64L49.5 45V62H43Z\" fill=\"#D6D7D8\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M34 62V34H40V62H34Z\" fill=\"#D6D7D8\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M28 62C34.0742 62 39 57.0752 39 51C39 44.9248 34.0742 40 28 40C21.9258 40 17 44.9248 17 51C17 57.0752 21.9258 62 28 62ZM29 57C32.3125 57 35 54.3137 35 51C35 47.6863 32.3125 45 29 45C25.6875 45 23 47.6863 23 51C23 54.3137 25.6875 57 29 57Z\" fill=\"#D9D9D9\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 86 62\" fill=\"none\"\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"13\" cy=\"13\" r=\"13\" fill=\"white\"\u003e\u003c/circle\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"43\" cy=\"13\" r=\"13\" fill=\"white\"\u003e\u003c/circle\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"73\" cy=\"13\" r=\"13\" fill=\"white\"\u003e\u003c/circle\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M43 62V34H48L62.5 51.5V34H69.5V62H64L49.5 45V62H43Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M34 62V34H40V62H34Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M28 62C34.0751 62 39 57.0751 39 51C39 44.9249 34.0751 40 28 40C21.9249 40 17 44.9249 17 51C17 57.0751 21.9249 62 28 62ZM29 57C32.3137 57 35 54.3137 35 51C35 47.6863 32.3137 45 29 45C25.6863 45 23 47.6863 23 51C23 54.3137 25.6863 57 29 57Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n"
+    },
+    "model": {
+      "version": "3.7.0"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "source_uri": "https://dnationcloud.github.io/helm-hub/dnation-kubernetes-monitoring-stack-3.7.0.tgz",
-    "styleOverrides": "",
-    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 86 62\" fill=\"none\"\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"13\" cy=\"13\" r=\"13\" fill=\"#248431\"\u003e\u003c/circle\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"43\" cy=\"13\" r=\"13\" fill=\"#F4790D\"\u003e\u003c/circle\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"73\" cy=\"13\" r=\"13\" fill=\"#E61F2E\"\u003e\u003c/circle\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M43 62V34H48L62.5 51.5V34H69.5V62H64L49.5 45V62H43Z\" fill=\"#D6D7D8\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M34 62V34H40V62H34Z\" fill=\"#D6D7D8\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M28 62C34.0742 62 39 57.0752 39 51C39 44.9248 34.0742 40 28 40C21.9258 40 17 44.9248 17 51C17 57.0752 21.9258 62 28 62ZM29 57C32.3125 57 35 54.3137 35 51C35 47.6863 32.3125 45 29 45C25.6875 45 23 47.6863 23 51C23 54.3137 25.6875 57 29 57Z\" fill=\"#D9D9D9\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
-    "svgComplete": "",
-    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 86 62\" fill=\"none\"\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"13\" cy=\"13\" r=\"13\" fill=\"white\"\u003e\u003c/circle\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"43\" cy=\"13\" r=\"13\" fill=\"white\"\u003e\u003c/circle\u003e\n\u003ccircle xmlns=\"http://www.w3.org/2000/svg\" cx=\"73\" cy=\"13\" r=\"13\" fill=\"white\"\u003e\u003c/circle\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M43 62V34H48L62.5 51.5V34H69.5V62H64L49.5 45V62H43Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M34 62V34H40V62H34Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M28 62C34.0751 62 39 57.0751 39 51C39 44.9249 34.0751 40 28 40C21.9249 40 17 44.9249 17 51C17 57.0751 21.9249 62 28 62ZM29 57C32.3137 57 35 54.3137 35 51C35 47.6863 32.3137 45 29 45C25.6863 45 23 47.6863 23 51C23 54.3137 25.6863 57 29 57Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n"
-   },
-   "model": {
-    "version": "3.7.0"
-   },
-   "name": "dnation-kubernetes-monitoring-stack",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Uncategorized",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
+    "svgColor": "\u003csvg width=\"86\" height=\"62\" viewBox=\"0 0 86 62\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003ccircle cx=\"13\" cy=\"13\" r=\"13\" fill=\"#248431\"/\u003e\n\u003ccircle cx=\"43\" cy=\"13\" r=\"13\" fill=\"#F4790D\"/\u003e\n\u003ccircle cx=\"73\" cy=\"13\" r=\"13\" fill=\"#E61F2E\"/\u003e\n\u003cpath d=\"M43 62V34H48L62.5 51.5V34H69.5V62H64L49.5 45V62H43Z\" fill=\"#D6D7D8\"/\u003e\n\u003cpath d=\"M34 62V34H40V62H34Z\" fill=\"#D6D7D8\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M28 62C34.0742 62 39 57.0752 39 51C39 44.9248 34.0742 40 28 40C21.9258 40 17 44.9248 17 51C17 57.0752 21.9258 62 28 62ZM29 57C32.3125 57 35 54.3137 35 51C35 47.6863 32.3125 45 29 45C25.6875 45 23 47.6863 23 51C23 54.3137 25.6875 57 29 57Z\" fill=\"#D9D9D9\"/\u003e\n\u003c/svg\u003e\r",
+    "svgWhite": "\u003csvg width=\"86\" height=\"62\" viewBox=\"0 0 86 62\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003ccircle cx=\"13\" cy=\"13\" r=\"13\" fill=\"white\"/\u003e\n\u003ccircle cx=\"43\" cy=\"13\" r=\"13\" fill=\"white\"/\u003e\n\u003ccircle cx=\"73\" cy=\"13\" r=\"13\" fill=\"white\"/\u003e\n\u003cpath d=\"M43 62V34H48L62.5 51.5V34H69.5V62H64L49.5 45V62H43Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M34 62V34H40V62H34Z\" fill=\"white\"/\u003e\n\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M28 62C34.0751 62 39 57.0751 39 51C39 44.9249 34.0751 40 28 40C21.9249 40 17 44.9249 17 51C17 57.0751 21.9249 62 28 62ZM29 57C32.3137 57 35 54.3137 35 51C35 47.6863 32.3137 45 29 45C25.6863 45 23 47.6863 23 51C23 54.3137 25.6863 57 29 57Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\r"
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "\u003csvg width=\"86\" height=\"62\" viewBox=\"0 0 86 62\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003ccircle cx=\"13\" cy=\"13\" r=\"13\" fill=\"#248431\"/\u003e\u003ccircle cx=\"43\" cy=\"13\" r=\"13\" fill=\"#F4790D\"/\u003e\u003ccircle cx=\"73\" cy=\"13\" r=\"13\" fill=\"#E61F2E\"/\u003e\u003cpath d=\"M43 62V34H48L62.5 51.5V34H69.5V62H64L49.5 45V62H43Z\" fill=\"#D6D7D8\"/\u003e\u003cpath d=\"M34 62V34H40V62H34Z\" fill=\"#D6D7D8\"/\u003e\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M28 62C34.0742 62 39 57.0752 39 51C39 44.9248 34.0742 40 28 40C21.9258 40 17 44.9248 17 51C17 57.0752 21.9258 62 28 62ZM29 57C32.3125 57 35 54.3137 35 51C35 47.6863 32.3125 45 29 45C25.6875 45 23 47.6863 23 51C23 54.3137 25.6875 57 29 57Z\" fill=\"#D9D9D9\"/\u003e\u003c/svg\u003e\r",
-   "svgWhite": "\u003csvg width=\"86\" height=\"62\" viewBox=\"0 0 86 62\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003ccircle cx=\"13\" cy=\"13\" r=\"13\" fill=\"white\"/\u003e\u003ccircle cx=\"43\" cy=\"13\" r=\"13\" fill=\"white\"/\u003e\u003ccircle cx=\"73\" cy=\"13\" r=\"13\" fill=\"white\"/\u003e\u003cpath d=\"M43 62V34H48L62.5 51.5V34H69.5V62H64L49.5 45V62H43Z\" fill=\"white\"/\u003e\u003cpath d=\"M34 62V34H40V62H34Z\" fill=\"white\"/\u003e\u003cpath fill-rule=\"evenodd\" clip-rule=\"evenodd\" d=\"M28 62C34.0751 62 39 57.0751 39 51C39 44.9249 34.0751 40 28 40C21.9249 40 17 44.9249 17 51C17 57.0751 21.9249 62 28 62ZM29 57C32.3137 57 35 54.3137 35 51C35 47.6863 32.3137 45 29 45C25.6863 45 23 47.6863 23 51C23 54.3137 25.6863 57 29 57Z\" fill=\"white\"/\u003e\u003c/svg\u003e\r"
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://dnationcloud.github.io/helm-hub/dnation-kubernetes-monitoring-stack-3.7.0.tgz"
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "PodLogs",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"jobLabel\": {\n     \"type\": \"string\"\n    },\n    \"namespaceSelector\": {\n     \"properties\": {\n      \"any\": {\n       \"type\": \"boolean\"\n      },\n      \"matchNames\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"pipelineStages\": {\n     \"items\": {\n      \"properties\": {\n       \"cri\": {\n        \"type\": \"object\"\n       },\n       \"docker\": {\n        \"type\": \"object\"\n       },\n       \"drop\": {\n        \"properties\": {\n         \"dropCounterReason\": {\n          \"type\": \"string\"\n         },\n         \"expression\": {\n          \"type\": \"string\"\n         },\n         \"longerThan\": {\n          \"type\": \"string\"\n         },\n         \"olderThan\": {\n          \"type\": \"string\"\n         },\n         \"source\": {\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"json\": {\n        \"properties\": {\n         \"expressions\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"object\"\n         },\n         \"source\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"labelAllow\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"labelDrop\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"labels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"limit\": {\n        \"properties\": {\n         \"burst\": {\n          \"type\": \"integer\"\n         },\n         \"drop\": {\n          \"type\": \"boolean\"\n         },\n         \"rate\": {\n          \"type\": \"integer\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"match\": {\n        \"properties\": {\n         \"action\": {\n          \"type\": \"string\"\n         },\n         \"dropCounterReason\": {\n          \"type\": \"string\"\n         },\n         \"pipelineName\": {\n          \"type\": \"string\"\n         },\n         \"selector\": {\n          \"type\": \"string\"\n         },\n         \"stages\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"selector\"\n        ],\n        \"type\": \"object\"\n       },\n       \"metrics\": {\n        \"additionalProperties\": {\n         \"properties\": {\n          \"action\": {\n           \"type\": \"string\"\n          },\n          \"buckets\": {\n           \"items\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"array\"\n          },\n          \"countEntryBytes\": {\n           \"type\": \"boolean\"\n          },\n          \"description\": {\n           \"type\": \"string\"\n          },\n          \"matchAll\": {\n           \"type\": \"boolean\"\n          },\n          \"maxIdleDuration\": {\n           \"type\": \"string\"\n          },\n          \"prefix\": {\n           \"type\": \"string\"\n          },\n          \"source\": {\n           \"type\": \"string\"\n          },\n          \"type\": {\n           \"type\": \"string\"\n          },\n          \"value\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"action\",\n          \"type\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"object\"\n       },\n       \"multiline\": {\n        \"properties\": {\n         \"firstLine\": {\n          \"type\": \"string\"\n         },\n         \"maxLines\": {\n          \"type\": \"integer\"\n         },\n         \"maxWaitTime\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"firstLine\"\n        ],\n        \"type\": \"object\"\n       },\n       \"output\": {\n        \"properties\": {\n         \"source\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"source\"\n        ],\n        \"type\": \"object\"\n       },\n       \"pack\": {\n        \"properties\": {\n         \"ingestTimestamp\": {\n          \"type\": \"boolean\"\n         },\n         \"labels\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"labels\"\n        ],\n        \"type\": \"object\"\n       },\n       \"regex\": {\n        \"properties\": {\n         \"expression\": {\n          \"type\": \"string\"\n         },\n         \"source\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"expression\"\n        ],\n        \"type\": \"object\"\n       },\n       \"replace\": {\n        \"properties\": {\n         \"expression\": {\n          \"type\": \"string\"\n         },\n         \"replace\": {\n          \"type\": \"string\"\n         },\n         \"source\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"expression\"\n        ],\n        \"type\": \"object\"\n       },\n       \"template\": {\n        \"properties\": {\n         \"source\": {\n          \"type\": \"string\"\n         },\n         \"template\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"source\",\n         \"template\"\n        ],\n        \"type\": \"object\"\n       },\n       \"tenant\": {\n        \"properties\": {\n         \"label\": {\n          \"type\": \"string\"\n         },\n         \"source\": {\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"timestamp\": {\n        \"properties\": {\n         \"actionOnFailure\": {\n          \"type\": \"string\"\n         },\n         \"fallbackFormats\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"format\": {\n          \"type\": \"string\"\n         },\n         \"location\": {\n          \"type\": \"string\"\n         },\n         \"source\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"format\",\n         \"source\"\n        ],\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"podTargetLabels\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"relabelings\": {\n     \"items\": {\n      \"properties\": {\n       \"action\": {\n        \"default\": \"replace\",\n        \"enum\": [\n         \"replace\",\n         \"Replace\",\n         \"keep\",\n         \"Keep\",\n         \"drop\",\n         \"Drop\",\n         \"hashmod\",\n         \"HashMod\",\n         \"labelmap\",\n         \"LabelMap\",\n         \"labeldrop\",\n         \"LabelDrop\",\n         \"labelkeep\",\n         \"LabelKeep\",\n         \"lowercase\",\n         \"Lowercase\",\n         \"uppercase\",\n         \"Uppercase\",\n         \"keepequal\",\n         \"KeepEqual\",\n         \"dropequal\",\n         \"DropEqual\"\n        ],\n        \"type\": \"string\"\n       },\n       \"modulus\": {\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       },\n       \"regex\": {\n        \"type\": \"string\"\n       },\n       \"replacement\": {\n        \"type\": \"string\"\n       },\n       \"separator\": {\n        \"type\": \"string\"\n       },\n       \"sourceLabels\": {\n        \"items\": {\n         \"pattern\": \"^[a-zA-Z_][a-zA-Z0-9_]*$\",\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"targetLabel\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"selector\": {\n     \"properties\": {\n      \"matchExpressions\": {\n       \"items\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    }\n   },\n   \"required\": [\n    \"selector\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Pod Logs\",\n \"type\": \"object\"\n}",
+    "version": "monitoring.grafana.com/v1alpha1"
+  }
+}

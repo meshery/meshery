@@ -148,7 +148,26 @@ func addUnsuccessfulEntry(path string, response *models.RegistryAPIResponse, err
 	}
 
 	// If error not found, create a new entry
-	errMsg := meshkitFileUtils.ErrMessageBasedOnFileExtension(filename, "import", err)
+
+	// Error message based on file extension
+	var errMsg error
+	fileExt := filepath.Ext(filename)
+
+	isEntityJsonFile := fileExt == ".json"
+	isEntityYamlFile := fileExt == ".yaml" || fileExt == ".yml"
+	isEntityModel := fileExt == ".tar.gz" || fileExt == ".zip" || fileExt == ".tar" || fileExt == ".tgz"
+
+	if isEntityJsonFile {
+		errMsg = meshkitFileUtils.ErrInvalidJson(filename, err)
+	} else if isEntityYamlFile {
+		errMsg = meshkitFileUtils.ErrInvalidYaml(filename, err)
+	} else if isEntityModel {
+		errMsg = meshkitFileUtils.ErrFailedToExtractArchive(filename, err)
+	} else {
+		supportedExtensions := []string{".json", ".yaml", ".yml", ".tar", ".tgz", ".tar.gz", ".zip"}
+		errMsg = meshkitFileUtils.ErrUnsupportedExtensionForOperation("import", filename, fileExt, supportedExtensions)
+	}
+
 	if !entryFound {
 		entry := map[string]interface{}{
 			"name":       []string{filename},

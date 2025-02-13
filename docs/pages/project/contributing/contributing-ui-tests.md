@@ -30,8 +30,8 @@ To run the tests successfully, three environment variables must be configured:
 
 {% include alert.html
     type="info"
-    title="Layer5 Cloud Provider"
-    content='In the case you are using Layer5 Cloud as provider, you can generate your token on <a href="https://cloud.layer5.io/security/tokens">Layer5 cloud account token</a>' %}
+    title="Accessing Remote Providers"
+    content='In the case you are using Layer5 Cloud as a remote provider, you can <a href="https://cloud.layer5.io/security/tokens">generate a token from your user account</a> to use while writing and executing tests.' %}
 
 During the setup phase, Playwright utilizes these environment variables to log in and store credentials securely in the `playwright/.auth` directory. To protect sensitive data, the `.gitignore` file is configured to exclude the `.env` file and any JSON files within the `/playwright/.auth` directory from the GitHub repository.
 
@@ -86,9 +86,9 @@ make docker-testing-env-build
 make docker-testing-env
 ```
 
-## Setup playwright
+## Setup Playwright
 
-For playwrights, always try to use a native OS whenever possible. The Docker-based approach is intended only for unsupported OSes and is generally not recommended because it runs on top of Ubuntu images, which can be redundant if you already using Ubuntu or Windows.
+For Playwrights, always try to use a native OS whenever possible. The Docker-based approach is intended only for unsupported OSes and is generally not recommended because it runs on top of Ubuntu images, which can be redundant if you already using Ubuntu or Windows.
 
 ### Playwright on Native OS (Recommended)
 
@@ -197,10 +197,10 @@ test('Random test',  { tag: '@unstable' }, async ({ provider }) => {
 
 ## Debugging Test on Github Actions
 
-We also storing test result on every PR in github actions, in case you need to debug it further:
+End-to-end test results are stored as artifacts on every PR in Github Actions. In case you need to debug a failed test:
 
-- Check the PR you are made, go to the bottom of PR directly above the comment
-- Wait until all github actions completed, and scroll until you see `Meshery UI and Server / UI end-to-end tests`  
+- Visit the PR in question. Go to the bottom of PR directly above the comment.
+- Wait until all Github Actions completed, and scroll until you see `Meshery UI and Server / UI end-to-end tests`  
 - Click details and it will redirect you to the actions workflow
 - Go to summary tab, scroll down until you see artifact, and check the artifact `playwright-report`
 - Download the artifact
@@ -208,3 +208,8 @@ We also storing test result on every PR in github actions, in case you need to d
 - Go to [Playwright Trace Page](https://trace.playwright.dev/)
 - From the test folder pick one folder which represents the test, you want to check
 - Upload the trace file
+
+
+Watch the training session on Playwright testing and trace debugging.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/x-W60mvDYuo?si=coN7RpRjkI4a_ndk&amp;start=1524" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>

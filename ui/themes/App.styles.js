@@ -77,18 +77,19 @@ export const StyledDrawer = styled('nav', {
 
 const StyledSnackbarContent = styled(SnackbarContent)(({ theme, variant }) => {
   const notificationColors = {
-    success: theme.palette.success.main,
+    success: theme.palette.background.brand.default,
     info: theme.palette.info.main,
     warning: theme.palette.warning.main,
     error: theme.palette.error.main,
   };
 
   return {
-    backgroundColor: theme.palette.background.secondary,
+    backgroundColor: theme.palette.text.default,
     color: notificationColors[variant] || notificationColors.info,
     pointerEvents: 'auto',
     borderRadius: '0.3rem',
     boxShadow: `0 0px 10px ${theme.palette.background.default}`,
+    fontWeight: '800',
   };
 });
 
