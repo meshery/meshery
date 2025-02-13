@@ -67,7 +67,7 @@ export const TootltipWrappedConnectionChip = (props) => {
   return (
     <UsesSistent>
       <CustomTooltip title={props.tooltip || props.title} placement="left">
-        <div>
+        <div style={{ display: 'inline-block' }}>
           <_ConnectionChip {...props} />
         </div>
       </CustomTooltip>
