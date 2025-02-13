@@ -37,7 +37,6 @@ is_rel_enabled(rel) := true if {
 }
 
 is_rel_enabled(rel) := true if {
-
 	rel_key := relationship_preference_key(rel)
     not input.preferences.layers.relationships[rel_key] == false
 }
