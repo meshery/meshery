@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { HexagonWrapper } from '../style';
+import { HexagonWrapper } from '../../style';
 
 const Hexagon = ({ children, className, style, onClick }) => {
   return (

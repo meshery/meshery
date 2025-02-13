@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { HoneycombCell as StyledHoneycombCell } from '../style';
+import { HoneycombCell as StyledHoneycombCell } from '../../style';
 
 const HoneycombCell = ({ children, row, column }) => {
   const safeRow = Number.isFinite(row) ? row : 1;

@@ -8,10 +8,11 @@ import {
   Typography,
   Select,
   MenuItem,
+  IconButton,
 } from '@layer5/sistent';
 import { useRouter } from 'next/router';
-import ConnectCluster from '../charts/ConnectCluster';
-import { generateDynamicURL } from '../resources/config';
+import ConnectCluster from '../../charts/ConnectCluster';
+import { generateDynamicURL } from '../../resources/config';
 import {
   HoneycombRoot,
   IconWrapper,
@@ -21,15 +22,14 @@ import {
   HeaderContainer,
   ControlsContainer,
   NoResourcesText,
-  StyledIconButton,
-} from '../style';
+} from '../../style';
 import ArrowUpwardIcon from '@mui/icons-material/ArrowUpward';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { useResourceOptions, useResourceFiltering, SORT_DIRECTIONS } from './useResourceOptions';
-import GetKubernetesNodeIcon from '../utils';
+import GetKubernetesNodeIcon from '../../utils';
 
 const HoneycombComponent = (props) => {
-  const { kinds, isClusterLoading, isClusterIdsEmpty } = props;
+  const { kinds, isClusterLoading, isClusterIdsEmpty, isEditMode } = props;
   const router = useRouter();
   const [groupBy, setGroupBy] = useState('all');
   const [sortDirection, setSortDirection] = useState(null);
@@ -66,18 +66,20 @@ const HoneycombComponent = (props) => {
 
   return (
     <ErrorBoundary>
-      <HoneycombRoot>
+      <HoneycombRoot isEditMode={isEditMode}>
         <HeaderContainer>
-          <Typography variant="h6">Cluster Resource Overview</Typography>
+          <Typography variant="h6" fontWeight={'700'}>
+            Cluster Resource Overview
+          </Typography>
           <ControlsContainer>
-            <Select value={groupBy} onChange={handleGroupChange} size="small">
+            <Select value={groupBy} onChange={handleGroupChange} variant="standard">
               {groupOptions.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
                   {option.label}
                 </MenuItem>
               ))}
             </Select>
-            <StyledIconButton size="small" onClick={handleSortChange}>
+            <IconButton size="small" onClick={handleSortChange}>
               <CustomTooltip title={`Sort by Count`}>
                 {sortDirection === SORT_DIRECTIONS.ASC ? (
                   <ArrowUpwardIcon />
@@ -85,7 +87,7 @@ const HoneycombComponent = (props) => {
                   <ArrowDownwardIcon />
                 )}
               </CustomTooltip>
-            </StyledIconButton>
+            </IconButton>
           </ControlsContainer>
         </HeaderContainer>
         {isClusterLoading || isClusterIdsEmpty ? (

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { getAllCustomResourceDefinitionsKinds, ResourceMenuConfig } from '../resources/config';
+import { getAllCustomResourceDefinitionsKinds, ResourceMenuConfig } from '../../resources/config';
 
 export const useResourceOptions = () => {
   const groupOptions = useMemo(
