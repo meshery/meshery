@@ -35,7 +35,7 @@ const WorkspaceActivityWidget = () => {
       activities={events?.data}
       workspaces={workspaces?.workspaces}
       isEventsLoading={isEventsLoading}
-      workspacePagePath= "/management/workspaces"
+      workspacePagePath="/management/workspaces"
     />
   );
 };
