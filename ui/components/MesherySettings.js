@@ -41,7 +41,7 @@ import DefaultError from './General/error-404';
 import { store } from '../store';
 import MesheryConfigurationChart from './DashboardComponent/charts/MesheryConfigurationCharts';
 import ConnectionStatsChart from './DashboardComponent/charts/ConnectionCharts';
-import { UsesSistent } from './SistentWrapper';
+
 import { SecondaryTab, SecondaryTabs } from './DashboardComponent/style';
 
 const StyledPaper = styled(Paper)(() => ({
@@ -231,188 +231,186 @@ const MesherySettings = (props) => {
   return (
     <>
       {CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject) ? (
-        <UsesSistent>
-          <div sx={{ flexGrow: 1, maxWidth: '100%', height: 'auto' }}>
-            <StyledPaper square>
-              <Tabs
-                value={tabVal}
-                onChange={handleChange('tabVal')}
-                variant={window.innerWidth < 900 ? 'scrollable' : 'fullWidth'}
-                scrollButtons="on"
-                indicatorColor="primary"
-                textColor="primary"
-                centered
+        <div sx={{ flexGrow: 1, maxWidth: '100%', height: 'auto' }}>
+          <StyledPaper square>
+            <Tabs
+              value={tabVal}
+              onChange={handleChange('tabVal')}
+              variant={window.innerWidth < 900 ? 'scrollable' : 'fullWidth'}
+              scrollButtons="on"
+              indicatorColor="primary"
+              textColor="primary"
+              centered
+            >
+              <CustomTooltip title="Overview" placement="top" value={OVERVIEW}>
+                <Tab
+                  icon={
+                    <img
+                      src="/static/img/meshery-logo/meshery-logo.svg"
+                      alt="Meshery logo"
+                      height={32}
+                      width={32}
+                    />
+                  }
+                  label="Overview"
+                  // tab="Overview"
+                  value={OVERVIEW}
+                  // disabled={!CAN(keys.VIEW_OVERVIEW.action, keys.VIEW_OVERVIEW.subject)}
+                />
+              </CustomTooltip>
+              <CustomTooltip
+                title="Connect Meshery Adapters"
+                data-testid="settings-tab-adapters"
+                placement="top"
+                value={ADAPTERS}
               >
-                <CustomTooltip title="Overview" placement="top" value={OVERVIEW}>
-                  <Tab
-                    icon={
-                      <img
-                        src="/static/img/meshery-logo/meshery-logo.svg"
-                        alt="Meshery logo"
-                        height={32}
-                        width={32}
-                      />
-                    }
-                    label="Overview"
-                    // tab="Overview"
-                    value={OVERVIEW}
-                    // disabled={!CAN(keys.VIEW_OVERVIEW.action, keys.VIEW_OVERVIEW.subject)}
-                  />
-                </CustomTooltip>
-                <CustomTooltip
-                  title="Connect Meshery Adapters"
-                  data-testid="settings-tab-adapters"
-                  placement="top"
+                <Tab
+                  icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
+                  label="Adapters"
+                  data-cy="tabServiceMeshes"
                   value={ADAPTERS}
-                >
-                  <Tab
-                    icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
-                    label="Adapters"
-                    data-cy="tabServiceMeshes"
-                    value={ADAPTERS}
-                    disabled={
-                      !CAN(
-                        keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
-                        keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.subject,
-                      )
-                    }
-                  />
-                </CustomTooltip>
-                <CustomTooltip title="Configure Metrics backends" placement="top" value={METRICS}>
-                  <Tab
-                    icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
-                    label="Metrics"
-                    data-testid="settings-tab-metrics"
-                    // tab="tabMetrics"
-                    value={METRICS}
-                    disabled={!CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject)}
-                  />
-                </CustomTooltip>
-                <CustomTooltip title="Registry" placement="top" value={REGISTRY}>
-                  <Tab
-                    icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
-                    label="Registry"
-                    data-testid="settings-tab-registry"
-                    // tab="registry"
-                    value={REGISTRY}
-                    disabled={!CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)}
-                  />
-                </CustomTooltip>
+                  disabled={
+                    !CAN(
+                      keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
+                      keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.subject,
+                    )
+                  }
+                />
+              </CustomTooltip>
+              <CustomTooltip title="Configure Metrics backends" placement="top" value={METRICS}>
+                <Tab
+                  icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
+                  label="Metrics"
+                  data-testid="settings-tab-metrics"
+                  // tab="tabMetrics"
+                  value={METRICS}
+                  disabled={!CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject)}
+                />
+              </CustomTooltip>
+              <CustomTooltip title="Registry" placement="top" value={REGISTRY}>
+                <Tab
+                  icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
+                  label="Registry"
+                  data-testid="settings-tab-registry"
+                  // tab="registry"
+                  value={REGISTRY}
+                  disabled={!CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject)}
+                />
+              </CustomTooltip>
 
-                <CustomTooltip title="Reset System" placement="top" value={RESET}>
-                  <Tab
-                    icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
-                    label="Reset"
-                    data-testid="settings-tab-reset"
-                    // tab="systemReset"
-                    value={RESET}
-                    // disabled={!CAN(keys.VIEW_SYSTEM_RESET.action, keys.VIEW_SYSTEM_RESET.subject)} TODO: uncomment when key get seeded
-                  />
-                </CustomTooltip>
-              </Tabs>
-            </StyledPaper>
+              <CustomTooltip title="Reset System" placement="top" value={RESET}>
+                <Tab
+                  icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
+                  label="Reset"
+                  data-testid="settings-tab-reset"
+                  // tab="systemReset"
+                  value={RESET}
+                  // disabled={!CAN(keys.VIEW_SYSTEM_RESET.action, keys.VIEW_SYSTEM_RESET.subject)} TODO: uncomment when key get seeded
+                />
+              </CustomTooltip>
+            </Tabs>
+          </StyledPaper>
 
-            {tabVal === OVERVIEW && (
-              <TabContainer>
-                <NoSsr>
-                  <Provider store={store}>
-                    <RootClass>
-                      <DashboardMeshModelGraph />
-                      <Grid container spacing={2}>
-                        <Grid item xs={12} md={6}>
-                          <ConnectionStatsChart />
-                        </Grid>
-                        <Grid item xs={12} md={6}>
-                          <MesheryConfigurationChart />
-                        </Grid>
+          {tabVal === OVERVIEW && (
+            <TabContainer>
+              <NoSsr>
+                <Provider store={store}>
+                  <RootClass>
+                    <DashboardMeshModelGraph />
+                    <Grid container spacing={2}>
+                      <Grid item xs={12} md={6}>
+                        <ConnectionStatsChart />
                       </Grid>
-                    </RootClass>
-                  </Provider>
-                </NoSsr>
+                      <Grid item xs={12} md={6}>
+                        <MesheryConfigurationChart />
+                      </Grid>
+                    </Grid>
+                  </RootClass>
+                </Provider>
+              </NoSsr>
+            </TabContainer>
+          )}
+          {tabVal === ADAPTERS &&
+            CAN(
+              keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
+              keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.subject,
+            ) && (
+              <TabContainer>
+                <MeshAdapterConfigComponent />
               </TabContainer>
             )}
-            {tabVal === ADAPTERS &&
-              CAN(
-                keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.action,
-                keys.VIEW_CLOUD_NATIVE_INFRASTRUCTURE.subject,
-              ) && (
+          {tabVal === METRICS && CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject) && (
+            <TabContainer>
+              <AppBar position="static" color="default">
+                <SecondaryTabs
+                  value={subTabVal}
+                  onChange={handleChange('subTabVal')}
+                  indicatorColor="primary"
+                  textColor="primary"
+                  variant="fullWidth"
+                >
+                  <SecondaryTab
+                    value={GRAFANA}
+                    label={
+                      <IconText>
+                        Grafana
+                        <StyledIcon src="/static/img/grafana_icon.svg" />
+                      </IconText>
+                    }
+                  />
+                  <SecondaryTab
+                    value={PROMETHEUS}
+                    label={
+                      <IconText>
+                        Prometheus
+                        <StyledIcon src="/static/img/prometheus_logo_orange_circle.svg" />
+                      </IconText>
+                    }
+                  />
+                </SecondaryTabs>
+              </AppBar>
+              {subTabVal === GRAFANA && (
                 <TabContainer>
-                  <MeshAdapterConfigComponent />
+                  <GrafanaComponent
+                    scannedGrafana={state.scannedGrafana}
+                    isMeshConfigured={state.isMeshConfigured}
+                  />
                 </TabContainer>
               )}
-            {tabVal === METRICS && CAN(keys.VIEW_METRICS.action, keys.VIEW_METRICS.subject) && (
-              <TabContainer>
-                <AppBar position="static" color="default">
-                  <SecondaryTabs
-                    value={subTabVal}
-                    onChange={handleChange('subTabVal')}
-                    indicatorColor="primary"
-                    textColor="primary"
-                    variant="fullWidth"
-                  >
-                    <SecondaryTab
-                      value={GRAFANA}
-                      label={
-                        <IconText>
-                          Grafana
-                          <StyledIcon src="/static/img/grafana_icon.svg" />
-                        </IconText>
-                      }
-                    />
-                    <SecondaryTab
-                      value={PROMETHEUS}
-                      label={
-                        <IconText>
-                          Prometheus
-                          <StyledIcon src="/static/img/prometheus_logo_orange_circle.svg" />
-                        </IconText>
-                      }
-                    />
-                  </SecondaryTabs>
-                </AppBar>
-                {subTabVal === GRAFANA && (
-                  <TabContainer>
-                    <GrafanaComponent
-                      scannedGrafana={state.scannedGrafana}
-                      isMeshConfigured={state.isMeshConfigured}
-                    />
-                  </TabContainer>
-                )}
-                {subTabVal === PROMETHEUS && (
-                  <TabContainer>
-                    <PrometheusComponent
-                      scannedPrometheus={state.scannedPrometheus}
-                      isMeshConfigured={state.isMeshConfigured}
-                    />
-                  </TabContainer>
-                )}
-              </TabContainer>
-            )}
-            {tabVal === REGISTRY && CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject) && (
+              {subTabVal === PROMETHEUS && (
+                <TabContainer>
+                  <PrometheusComponent
+                    scannedPrometheus={state.scannedPrometheus}
+                    isMeshConfigured={state.isMeshConfigured}
+                  />
+                </TabContainer>
+              )}
+            </TabContainer>
+          )}
+          {tabVal === REGISTRY && CAN(keys.VIEW_REGISTRY.action, keys.VIEW_REGISTRY.subject) && (
+            <TabContainer>
               <TabContainer>
                 <TabContainer>
-                  <TabContainer>
-                    <MeshModelComponent
-                      modelsCount={state.modelsCount}
-                      componentsCount={state.componentsCount}
-                      relationshipsCount={state.relationshipsCount}
-                      registrantCount={state.registrantCount}
-                      settingsRouter={settingsRouter}
-                    />
-                  </TabContainer>
+                  <MeshModelComponent
+                    modelsCount={state.modelsCount}
+                    componentsCount={state.componentsCount}
+                    relationshipsCount={state.relationshipsCount}
+                    registrantCount={state.registrantCount}
+                    settingsRouter={settingsRouter}
+                  />
                 </TabContainer>
               </TabContainer>
-            )}
+            </TabContainer>
+          )}
 
-            {tabVal === RESET && (
-              <TabContainer>
-                <DatabaseSummary promptRef={systemResetPromptRef} />
-              </TabContainer>
-            )}
-            {backToPlay}
-            <_PromptComponent ref={systemResetPromptRef} />
-          </div>
-        </UsesSistent>
+          {tabVal === RESET && (
+            <TabContainer>
+              <DatabaseSummary promptRef={systemResetPromptRef} />
+            </TabContainer>
+          )}
+          {backToPlay}
+          <_PromptComponent ref={systemResetPromptRef} />
+        </div>
       ) : (
         <DefaultError />
       )}

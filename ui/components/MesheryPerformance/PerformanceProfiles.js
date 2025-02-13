@@ -26,7 +26,7 @@ import PerformanceProfileGrid from './PerformanceProfileGrid';
 import PerformanceResults from './PerformanceResults';
 import _PromptComponent from '../PromptComponent';
 import ViewSwitch from '../ViewSwitch';
-import { UsesSistent } from '../SistentWrapper';
+
 import { updateProgress } from '../../lib/store';
 import { EVENT_TYPES } from '../../lib/event-types';
 import fetchPerformanceProfiles from '../graphql/queries/PerformanceProfilesQuery';
@@ -469,123 +469,121 @@ function PerformanceProfile({ updateProgress, user, handleDelete }) {
 
   return (
     <>
-      <UsesSistent>
-        <div style={{ padding: '0.5rem' }}>
-          <ToolWrapper>
-            {width < 550 && isSearchExpanded ? null : (
-              <>
-                {(testProfiles.length > 0 || viewType == 'table') && (
-                  <div style={{ width: 'fit-content', alignSelf: 'flex-start' }}>
-                    <Button
-                      aria-label="Add Performance Profile"
-                      variant="contained"
-                      color="primary"
-                      size="large"
-                      onClick={() => setProfileForModal({})}
-                      disabled={
-                        !CAN(
-                          keys.ADD_PERFORMANCE_PROFILE.action,
-                          keys.ADD_PERFORMANCE_PROFILE.subject,
-                        )
-                      }
-                    >
-                      <AddIcon style={{ paddingRight: '0.5', ...iconMedium }} />
-                      <ButtonTextWrapper> Add Performance Profile </ButtonTextWrapper>
-                    </Button>
-                  </div>
-                )}
-              </>
-            )}
-            <ViewSwitchBUtton>
-              <SearchBar
-                onSearch={(value) => {
-                  setSearch(value);
-                  fetchTestProfiles(page, pageSize, value, sortOrder);
-                }}
-                expanded={isSearchExpanded}
-                setExpanded={setIsSearchExpanded}
-                placeholder="Search Profiles..."
-              />
-              {viewType === 'table' && (
-                <CustomColumnVisibilityControl
-                  id="ref"
-                  columns={columns}
-                  customToolsProps={{ columnVisibility, setColumnVisibility }}
-                />
+      <div style={{ padding: '0.5rem' }}>
+        <ToolWrapper>
+          {width < 550 && isSearchExpanded ? null : (
+            <>
+              {(testProfiles.length > 0 || viewType == 'table') && (
+                <div style={{ width: 'fit-content', alignSelf: 'flex-start' }}>
+                  <Button
+                    aria-label="Add Performance Profile"
+                    variant="contained"
+                    color="primary"
+                    size="large"
+                    onClick={() => setProfileForModal({})}
+                    disabled={
+                      !CAN(
+                        keys.ADD_PERFORMANCE_PROFILE.action,
+                        keys.ADD_PERFORMANCE_PROFILE.subject,
+                      )
+                    }
+                  >
+                    <AddIcon style={{ paddingRight: '0.5', ...iconMedium }} />
+                    <ButtonTextWrapper> Add Performance Profile </ButtonTextWrapper>
+                  </Button>
+                </div>
               )}
-              <ViewSwitch view={viewType} changeView={setViewType} />
-            </ViewSwitchBUtton>
-          </ToolWrapper>
+            </>
+          )}
+          <ViewSwitchBUtton>
+            <SearchBar
+              onSearch={(value) => {
+                setSearch(value);
+                fetchTestProfiles(page, pageSize, value, sortOrder);
+              }}
+              expanded={isSearchExpanded}
+              setExpanded={setIsSearchExpanded}
+              placeholder="Search Profiles..."
+            />
+            {viewType === 'table' && (
+              <CustomColumnVisibilityControl
+                id="ref"
+                columns={columns}
+                customToolsProps={{ columnVisibility, setColumnVisibility }}
+              />
+            )}
+            <ViewSwitch view={viewType} changeView={setViewType} />
+          </ViewSwitchBUtton>
+        </ToolWrapper>
 
-          {viewType === 'grid' ? (
-            <PerformanceProfileGrid
-              profiles={testProfiles}
-              deleteHandler={deleteProfile}
-              setProfileForModal={setProfileForModal}
-              pages={Math.ceil(count / pageSize)}
-              setPage={setPage}
-              testHandler={setSelectedProfile}
-            />
-          ) : (
-            <ResponsiveDataTable
-              data={testProfiles}
-              columns={columns}
-              options={options}
-              tableCols={tableCols}
-              updateCols={updateCols}
-              columnVisibility={columnVisibility}
-            />
-          )}
-          {testProfiles.length === 0 && viewType === 'grid' && (
-            <Paper sx={{ padding: '0.5rem' }}>
-              <ProfileContainer>
-                <Typography sx={{ fontSize: '1.5rem', marginBottom: '2rem' }} align="center">
-                  No Performance Profiles Found
-                </Typography>
-                <Button
-                  aria-label="Add Performance Profile"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  onClick={() => setProfileForModal({})}
-                  disabled={
-                    !CAN(keys.ADD_PERFORMANCE_PROFILE.action, keys.ADD_PERFORMANCE_PROFILE.subject)
-                  }
-                >
-                  <Typography className="addIcon">Add Performance Profile</Typography>
-                </Button>
-              </ProfileContainer>
-            </Paper>
-          )}
-          <Modal
-            open={!!profileForModal}
-            title="Performance Profile Wizard"
+        {viewType === 'grid' ? (
+          <PerformanceProfileGrid
+            profiles={testProfiles}
+            deleteHandler={deleteProfile}
+            setProfileForModal={setProfileForModal}
+            pages={Math.ceil(count / pageSize)}
+            setPage={setPage}
+            testHandler={setSelectedProfile}
+          />
+        ) : (
+          <ResponsiveDataTable
+            data={testProfiles}
+            columns={columns}
+            options={options}
+            tableCols={tableCols}
+            updateCols={updateCols}
+            columnVisibility={columnVisibility}
+          />
+        )}
+        {testProfiles.length === 0 && viewType === 'grid' && (
+          <Paper sx={{ padding: '0.5rem' }}>
+            <ProfileContainer>
+              <Typography sx={{ fontSize: '1.5rem', marginBottom: '2rem' }} align="center">
+                No Performance Profiles Found
+              </Typography>
+              <Button
+                aria-label="Add Performance Profile"
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={() => setProfileForModal({})}
+                disabled={
+                  !CAN(keys.ADD_PERFORMANCE_PROFILE.action, keys.ADD_PERFORMANCE_PROFILE.subject)
+                }
+              >
+                <Typography className="addIcon">Add Performance Profile</Typography>
+              </Button>
+            </ProfileContainer>
+          </Paper>
+        )}
+        <Modal
+          open={!!profileForModal}
+          title="Performance Profile Wizard"
+          closeModal={() => setProfileForModal(undefined)}
+          maxWidth="md"
+        >
+          <MesheryPerformanceComponent
+            loadAsPerformanceProfile
+            performanceProfileID={profileForModal?.id}
+            profileName={profileForModal?.name}
+            meshName={profileForModal?.service_mesh}
+            url={profileForModal?.endpoints?.[0]}
+            qps={profileForModal?.qps}
+            loadGenerator={profileForModal?.load_generators?.[0]}
+            t={profileForModal?.duration}
+            c={profileForModal?.concurrent_request}
+            reqBody={profileForModal?.request_body}
+            headers={profileForModal?.request_headers}
+            cookies={profileForModal?.request_cookies}
+            contentType={profileForModal?.content_type}
+            runTestOnMount={!!profileForModal?.runTest}
+            metadata={profileForModal?.metadata}
             closeModal={() => setProfileForModal(undefined)}
-            maxWidth="md"
-          >
-            <MesheryPerformanceComponent
-              loadAsPerformanceProfile
-              performanceProfileID={profileForModal?.id}
-              profileName={profileForModal?.name}
-              meshName={profileForModal?.service_mesh}
-              url={profileForModal?.endpoints?.[0]}
-              qps={profileForModal?.qps}
-              loadGenerator={profileForModal?.load_generators?.[0]}
-              t={profileForModal?.duration}
-              c={profileForModal?.concurrent_request}
-              reqBody={profileForModal?.request_body}
-              headers={profileForModal?.request_headers}
-              cookies={profileForModal?.request_cookies}
-              contentType={profileForModal?.content_type}
-              runTestOnMount={!!profileForModal?.runTest}
-              metadata={profileForModal?.metadata}
-              closeModal={() => setProfileForModal(undefined)}
-            />
-          </Modal>
-        </div>
+          />
+        </Modal>
+      </div>
 
-        <_PromptComponent ref={modalRef} />
-      </UsesSistent>
+      <_PromptComponent ref={modalRef} />
     </>
   );
 }

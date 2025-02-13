@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NoSsr } from '@mui/material';
 import { Typography, Link, Box, styled } from '@layer5/sistent';
-import { UsesSistent } from './SistentWrapper';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background?.default,
@@ -52,42 +51,38 @@ const CustomErrorMessage = ({ message, showImage = true }) => {
   }, []);
 
   return (
-    <UsesSistent>
-      <NoSsr>
-        <StyledBox>
-          <Box>
-            <StyledTypographyH1 variant="h1">{customMessage}</StyledTypographyH1>
-            <StyledTypographyH5 variant="h5">
-              {message || 'Page does not exist.'}
-            </StyledTypographyH5>
-          </Box>
-          {showImage && (
-            <Box
-              component="img"
-              src="/static/img/service-mesh.svg"
-              alt="service meshed"
-              sx={{
-                display: 'block',
-                margin: 'auto',
-                mt: 3.125,
-                maxWidth: '50%',
-                height: '45%',
-              }}
-            />
-          )}
-          <StyledTypographyBody1 variant="body1">
-            Start a conversation at Layer5 community{' '}
-            <StyledLink
-              href="https://meshery.io/community#community-forums/c/meshery/5"
-              target="_blank"
-            >
-              discussion forum
-            </StyledLink>
-            .
-          </StyledTypographyBody1>
-        </StyledBox>
-      </NoSsr>
-    </UsesSistent>
+    <NoSsr>
+      <StyledBox>
+        <Box>
+          <StyledTypographyH1 variant="h1">{customMessage}</StyledTypographyH1>
+          <StyledTypographyH5 variant="h5">{message || 'Page does not exist.'}</StyledTypographyH5>
+        </Box>
+        {showImage && (
+          <Box
+            component="img"
+            src="/static/img/service-mesh.svg"
+            alt="service meshed"
+            sx={{
+              display: 'block',
+              margin: 'auto',
+              mt: 3.125,
+              maxWidth: '50%',
+              height: '45%',
+            }}
+          />
+        )}
+        <StyledTypographyBody1 variant="body1">
+          Start a conversation at Layer5 community{' '}
+          <StyledLink
+            href="https://meshery.io/community#community-forums/c/meshery/5"
+            target="_blank"
+          >
+            discussion forum
+          </StyledLink>
+          .
+        </StyledTypographyBody1>
+      </StyledBox>
+    </NoSsr>
   );
 };
 

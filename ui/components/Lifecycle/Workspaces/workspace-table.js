@@ -29,7 +29,7 @@ import React from 'react';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import Modal from '@/components/Modal';
-import { UsesSistent } from '@/components/SistentWrapper';
+
 import { useGetUsersForOrgQuery, useRemoveUserFromTeamMutation } from '@/rtk-query/user';
 import { useNotification, useNotificationHandlers } from '@/utils/hooks/useNotification';
 import downloadContent from '@/utils/fileDownloader';
@@ -128,106 +128,104 @@ const WorkSpaceDataTable = ({ rowData }) => {
               gap: '1rem',
             }}
           >
-            <UsesSistent>
-              {isDesignsVisible && (
-                <DesignTable
-                  GenericRJSFModal={Modal}
-                  designsOfWorkspace={designsOfWorkspace}
-                  handleBulkWorkspaceDesignDeleteModal={handleBulkWorkspaceDesignDeleteModal}
-                  handleWorkspaceDesignDeleteModal={handleWorkspaceDesignDeleteModal}
-                  isAssignAllowed={CAN(
-                    keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
-                    keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
-                  )}
-                  isRemoveAllowed={CAN(
-                    keys.REMOVE_DESIGNS_FROM_WORKSPACE.action,
-                    keys.REMOVE_DESIGNS_FROM_WORKSPACE.subject,
-                  )}
-                  isDownloadAllowed={CAN(keys.DOWNLOAD_DESIGN.action, keys.DOWNLOAD_DESIGN.subject)}
-                  isCopyLinkAllowed={CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)}
-                  isDeleteAllowed={CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
-                  isPublishAllowed={CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject)}
-                  isUnpublishAllowed={CAN(
-                    keys.UNPUBLISH_DESIGN.action,
-                    keys.UNPUBLISH_DESIGN.subject,
-                  )}
-                  publishModalHandler={publishModalHandler}
-                  useAssignDesignToWorkspaceMutation={useAssignDesignToWorkspaceMutation}
-                  useUnassignDesignFromWorkspaceMutation={useUnassignDesignFromWorkspaceMutation}
-                  workspaceId={rowData[0]}
-                  workspaceName={rowData[1]}
-                  useGetWorkspaceDesignsQuery={useGetDesignsOfWorkspaceQuery}
-                  meshModelModelsData={meshModelModelsData}
-                  handleCopyUrl={handleCopyUrl}
-                  handleShowDetails={() => {}}
-                  handlePublish={handlePublish}
-                  handleDownload={handleDesignDownloadModal}
-                  setDesignSearch={setDesignSearch}
-                />
-              )}
-              {isViewVisible && (
-                <WorkspaceViewsTable
-                  isAssignAllowed={CAN(
-                    keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
-                    keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
-                  )}
-                  isRemoveAllowed={CAN(
-                    keys.REMOVE_VIEWS_FROM_WORKSPACE.action,
-                    keys.REMOVE_VIEWS_FROM_WORKSPACE.subject,
-                  )}
-                  handleShowDetails={() => {}}
-                  useAssignViewToWorkspaceMutation={useAssignViewToWorkspaceMutation}
-                  useGetViewsOfWorkspaceQuery={useGetViewsOfWorkspaceQuery}
-                  useUnassignViewFromWorkspaceMutation={useUnassignViewFromWorkspaceMutation}
-                  workspaceId={rowData[0]}
-                  workspaceName={rowData[1]}
-                />
-              )}
-              {isTeamsVisible && (
-                <WorkspaceTeamsTable
-                  workspaceId={rowData[0]}
-                  isAssignTeamAllowed={CAN(
-                    keys.ASSIGN_TEAM_TO_WORKSPACE.action,
-                    keys.ASSIGN_TEAM_TO_WORKSPACE.subject,
-                  )}
-                  isDeleteTeamAllowed={CAN(keys.DELETE_TEAM.action, keys.DELETE_TEAM.subject)}
-                  isEditTeamAllowed={CAN(keys.EDIT_TEAM.action, keys.EDIT_TEAM.subject)}
-                  isLeaveTeamAllowed={CAN(keys.LEAVE_TEAM.action, keys.LEAVE_TEAM.subject)}
-                  isRemoveTeamFromWorkspaceAllowed={CAN(
-                    keys.REMOVE_TEAM_FROM_WORKSPACE.action,
-                    keys.REMOVE_TEAM_FROM_WORKSPACE.subject,
-                  )}
-                  useAssignTeamToWorkspaceMutation={useAssignTeamToWorkspaceMutation}
-                  useGetTeamsOfWorkspaceQuery={useGetTeamsOfWorkspaceQuery}
-                  useUnassignTeamFromWorkspaceMutation={useUnassignTeamFromWorkspaceMutation}
-                  workspaceName={rowData[1]}
-                  fetchTeamUsers={() => {}}
-                  org_id={org_id}
-                  useGetUsersForOrgQuery={useGetUsersForOrgQuery}
-                  useNotificationHandlers={useNotificationHandlers}
-                  useRemoveUserFromTeamMutation={useRemoveUserFromTeamMutation}
-                />
-              )}
-              {isEnvironmentsVisible && (
-                <EnvironmentTable
-                  workspaceId={rowData[0]}
-                  workspaceName={rowData[1]}
-                  isAssignAllowed={CAN(
-                    keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.action,
-                    keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.subject,
-                  )}
-                  isRemoveAllowed={CAN(
-                    keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.action,
-                    keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.subject,
-                  )}
-                  useGetEnvironmentsOfWorkspaceQuery={useGetEnvironmentsOfWorkspaceQuery}
-                  useUnassignEnvironmentFromWorkspaceMutation={
-                    useUnassignEnvironmentFromWorkspaceMutation
-                  }
-                  useAssignEnvironmentToWorkspaceMutation={useAssignEnvironmentToWorkspaceMutation}
-                />
-              )}
-            </UsesSistent>
+            {isDesignsVisible && (
+              <DesignTable
+                GenericRJSFModal={Modal}
+                designsOfWorkspace={designsOfWorkspace}
+                handleBulkWorkspaceDesignDeleteModal={handleBulkWorkspaceDesignDeleteModal}
+                handleWorkspaceDesignDeleteModal={handleWorkspaceDesignDeleteModal}
+                isAssignAllowed={CAN(
+                  keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
+                  keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
+                )}
+                isRemoveAllowed={CAN(
+                  keys.REMOVE_DESIGNS_FROM_WORKSPACE.action,
+                  keys.REMOVE_DESIGNS_FROM_WORKSPACE.subject,
+                )}
+                isDownloadAllowed={CAN(keys.DOWNLOAD_DESIGN.action, keys.DOWNLOAD_DESIGN.subject)}
+                isCopyLinkAllowed={CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)}
+                isDeleteAllowed={CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
+                isPublishAllowed={CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject)}
+                isUnpublishAllowed={CAN(
+                  keys.UNPUBLISH_DESIGN.action,
+                  keys.UNPUBLISH_DESIGN.subject,
+                )}
+                publishModalHandler={publishModalHandler}
+                useAssignDesignToWorkspaceMutation={useAssignDesignToWorkspaceMutation}
+                useUnassignDesignFromWorkspaceMutation={useUnassignDesignFromWorkspaceMutation}
+                workspaceId={rowData[0]}
+                workspaceName={rowData[1]}
+                useGetWorkspaceDesignsQuery={useGetDesignsOfWorkspaceQuery}
+                meshModelModelsData={meshModelModelsData}
+                handleCopyUrl={handleCopyUrl}
+                handleShowDetails={() => {}}
+                handlePublish={handlePublish}
+                handleDownload={handleDesignDownloadModal}
+                setDesignSearch={setDesignSearch}
+              />
+            )}
+            {isViewVisible && (
+              <WorkspaceViewsTable
+                isAssignAllowed={CAN(
+                  keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
+                  keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
+                )}
+                isRemoveAllowed={CAN(
+                  keys.REMOVE_VIEWS_FROM_WORKSPACE.action,
+                  keys.REMOVE_VIEWS_FROM_WORKSPACE.subject,
+                )}
+                handleShowDetails={() => {}}
+                useAssignViewToWorkspaceMutation={useAssignViewToWorkspaceMutation}
+                useGetViewsOfWorkspaceQuery={useGetViewsOfWorkspaceQuery}
+                useUnassignViewFromWorkspaceMutation={useUnassignViewFromWorkspaceMutation}
+                workspaceId={rowData[0]}
+                workspaceName={rowData[1]}
+              />
+            )}
+            {isTeamsVisible && (
+              <WorkspaceTeamsTable
+                workspaceId={rowData[0]}
+                isAssignTeamAllowed={CAN(
+                  keys.ASSIGN_TEAM_TO_WORKSPACE.action,
+                  keys.ASSIGN_TEAM_TO_WORKSPACE.subject,
+                )}
+                isDeleteTeamAllowed={CAN(keys.DELETE_TEAM.action, keys.DELETE_TEAM.subject)}
+                isEditTeamAllowed={CAN(keys.EDIT_TEAM.action, keys.EDIT_TEAM.subject)}
+                isLeaveTeamAllowed={CAN(keys.LEAVE_TEAM.action, keys.LEAVE_TEAM.subject)}
+                isRemoveTeamFromWorkspaceAllowed={CAN(
+                  keys.REMOVE_TEAM_FROM_WORKSPACE.action,
+                  keys.REMOVE_TEAM_FROM_WORKSPACE.subject,
+                )}
+                useAssignTeamToWorkspaceMutation={useAssignTeamToWorkspaceMutation}
+                useGetTeamsOfWorkspaceQuery={useGetTeamsOfWorkspaceQuery}
+                useUnassignTeamFromWorkspaceMutation={useUnassignTeamFromWorkspaceMutation}
+                workspaceName={rowData[1]}
+                fetchTeamUsers={() => {}}
+                org_id={org_id}
+                useGetUsersForOrgQuery={useGetUsersForOrgQuery}
+                useNotificationHandlers={useNotificationHandlers}
+                useRemoveUserFromTeamMutation={useRemoveUserFromTeamMutation}
+              />
+            )}
+            {isEnvironmentsVisible && (
+              <EnvironmentTable
+                workspaceId={rowData[0]}
+                workspaceName={rowData[1]}
+                isAssignAllowed={CAN(
+                  keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.action,
+                  keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.subject,
+                )}
+                isRemoveAllowed={CAN(
+                  keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.action,
+                  keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.subject,
+                )}
+                useGetEnvironmentsOfWorkspaceQuery={useGetEnvironmentsOfWorkspaceQuery}
+                useUnassignEnvironmentFromWorkspaceMutation={
+                  useUnassignEnvironmentFromWorkspaceMutation
+                }
+                useAssignEnvironmentToWorkspaceMutation={useAssignEnvironmentToWorkspaceMutation}
+              />
+            )}
           </Grid>
         </TableCell>
       </ErrorBoundary>

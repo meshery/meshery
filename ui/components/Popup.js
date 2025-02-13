@@ -1,5 +1,5 @@
 import { Button, Grid, IconButton, Typography, styled, useTheme } from '@layer5/sistent';
-import { UsesSistent } from './SistentWrapper';
+
 import CloseIcon from '@mui/icons-material/Close';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -142,73 +142,71 @@ export function MesheryExtensionEarlyAccessCard({
   }, [capabilitiesRegistry]);
 
   return (
-    <UsesSistent>
-      <StyledPaper style={rootStyle}>
-        <StyledHeaderWrapper>
-          <Typography
-            sx={{
-              paddingBottom: '0.5rem',
-              paddingTop: '0.6rem',
-              fontWeight: 'bold',
-              color: '#F6F8F8',
-              ['@media (max-width: 455px)']: {
-                fontSize: '1rem',
-              },
-            }}
-            variant="h6"
-          >
-            {title}
-          </Typography>
-
-          <StyledCloseButtonContainer>
-            <IconButton
-              key="close"
-              aria-label="Close"
-              color="inherit"
-              onClick={closeForm}
-              style={{ height: '2.5rem' }}
-            >
-              <CloseIcon />
-            </IconButton>
-          </StyledCloseButtonContainer>
-        </StyledHeaderWrapper>
-
-        <StyledImgWrapper>
-          <StyledDesignerImg src={popupImageSrc} alt="pop-up" />
-        </StyledImgWrapper>
+    <StyledPaper style={rootStyle}>
+      <StyledHeaderWrapper>
         <Typography
           sx={{
-            lineHeight: '1.2',
-            paddingBottom: '15px',
-            fontSize: '.85rem',
-            textAlign: 'center',
+            paddingBottom: '0.5rem',
+            paddingTop: '0.6rem',
+            fontWeight: 'bold',
             color: '#F6F8F8',
+            ['@media (max-width: 455px)']: {
+              fontSize: '1rem',
+            },
           }}
-          variant="subtitle1"
+          variant="h6"
         >
-          <i>
-            Friends don&apos;t let friends GitOps alone. Visually design and collaborate in
-            real-time with other Meshery users.
-          </i>
+          {title}
         </Typography>
-        <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <Grid>
-            <Button
-              variant="contained"
-              sx={{
-                backgroundColor: Colors.keppelGreen,
-                borderRadius: 2,
-                height: 35,
-                fontSize: '0.8rem',
-              }}
-              onClick={(e) => handleButtonClick(e)}
-            >
-              {buttonText}
-            </Button>
-          </Grid>
-        </div>
-      </StyledPaper>
-    </UsesSistent>
+
+        <StyledCloseButtonContainer>
+          <IconButton
+            key="close"
+            aria-label="Close"
+            color="inherit"
+            onClick={closeForm}
+            style={{ height: '2.5rem' }}
+          >
+            <CloseIcon />
+          </IconButton>
+        </StyledCloseButtonContainer>
+      </StyledHeaderWrapper>
+
+      <StyledImgWrapper>
+        <StyledDesignerImg src={popupImageSrc} alt="pop-up" />
+      </StyledImgWrapper>
+      <Typography
+        sx={{
+          lineHeight: '1.2',
+          paddingBottom: '15px',
+          fontSize: '.85rem',
+          textAlign: 'center',
+          color: '#F6F8F8',
+        }}
+        variant="subtitle1"
+      >
+        <i>
+          Friends don&apos;t let friends GitOps alone. Visually design and collaborate in real-time
+          with other Meshery users.
+        </i>
+      </Typography>
+      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+        <Grid>
+          <Button
+            variant="contained"
+            sx={{
+              backgroundColor: Colors.keppelGreen,
+              borderRadius: 2,
+              height: 35,
+              fontSize: '0.8rem',
+            }}
+            onClick={(e) => handleButtonClick(e)}
+          >
+            {buttonText}
+          </Button>
+        </Grid>
+      </div>
+    </StyledPaper>
   );
 }
 

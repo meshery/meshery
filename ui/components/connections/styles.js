@@ -149,11 +149,11 @@ export const RegisteredChip = styled(Chip)(({ theme }) => ({
 export const ConnectedChip = styled(Chip)(({ theme }) => ({
   ...baseChipStyles,
   '& .MuiChip-label': {
-    color: theme.palette.background.success.default,
+    color: theme.palette.background.success?.default,
   },
-  background: `${theme.palette.background.success.default}30 !important`,
+  background: `${theme.palette.background.success?.default}30 !important`,
   '& .MuiSvgIcon-root': {
-    color: `${theme.palette.background.success.default} !important`,
+    color: `${theme.palette.background.success?.default} !important`,
   },
 }));
 

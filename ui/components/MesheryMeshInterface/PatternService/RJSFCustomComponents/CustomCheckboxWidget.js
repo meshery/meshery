@@ -4,7 +4,7 @@ import React from 'react';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import { iconSmall } from '../../../../css/icons.styles';
-import { UsesSistent } from '@/components/SistentWrapper';
+
 import { Checkbox } from '@layer5/sistent';
 
 export const CustomCheckboxWidget = (props) => {
@@ -29,17 +29,15 @@ export const CustomCheckboxWidget = (props) => {
     <>
       <FormControlLabel
         control={
-          <UsesSistent>
-            <Checkbox
-              id={id}
-              name={id}
-              checked={typeof value === 'undefined' ? false : Boolean(value)}
-              required={required}
-              disabled={disabled || readonly}
-              autoFocus={autofocus}
-              onChange={_onChange}
-            />
-          </UsesSistent>
+          <Checkbox
+            id={id}
+            name={id}
+            checked={typeof value === 'undefined' ? false : Boolean(value)}
+            required={required}
+            disabled={disabled || readonly}
+            autoFocus={autofocus}
+            onChange={_onChange}
+          />
         }
         label={
           <>

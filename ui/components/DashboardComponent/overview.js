@@ -10,7 +10,7 @@ import { useGetMeshSyncResourceKindsQuery } from '@/rtk-query/meshsync';
 import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
 import { bindActionCreators } from 'redux';
 import { setK8sContexts, updateProgress } from 'lib/store';
-import { UsesSistent } from '../SistentWrapper';
+
 import ConnectCluster from './charts/ConnectCluster';
 import { ErrorContainer, HoneycombRoot } from './style';
 import { ErrorIcon, Typography, useTheme } from '@layer5/sistent';
@@ -55,18 +55,16 @@ const Overview = ({ selectedK8sContexts, k8scontext }) => {
 
   if (clusterIds.length === 0) {
     return (
-      <UsesSistent>
-        <div
-          style={{
-            background: theme.palette.background.default,
-            marginTop: '1rem',
-          }}
-        >
-          <HoneycombRoot>
-            <ConnectCluster message="No clusters available. Please connect your clusters to proceed." />
-          </HoneycombRoot>
-        </div>
-      </UsesSistent>
+      <div
+        style={{
+          background: theme.palette.background.default,
+          marginTop: '1rem',
+        }}
+      >
+        <HoneycombRoot>
+          <ConnectCluster message="No clusters available. Please connect your clusters to proceed." />
+        </HoneycombRoot>
+      </div>
     );
   }
 
@@ -75,32 +73,28 @@ const Overview = ({ selectedK8sContexts, k8scontext }) => {
   if (isError) {
     return (
       <NoSsr>
-        <UsesSistent>
-          <ErrorDisplay theme={theme} />
-        </UsesSistent>
+        <ErrorDisplay theme={theme} />
       </NoSsr>
     );
   }
 
   return (
     <NoSsr>
-      <UsesSistent>
-        <Popup />
-        <Provider store={store}>
-          <div
-            style={{
-              background: theme.palette.background.default,
-              marginTop: '1rem',
-            }}
-          >
-            <HoneycombComponent
-              kinds={clusterSummary?.kinds}
-              isClusterLoading={isClusterLoading}
-              isClusterIdsEmpty={isClusterIdsEmpty}
-            />
-          </div>
-        </Provider>
-      </UsesSistent>
+      <Popup />
+      <Provider store={store}>
+        <div
+          style={{
+            background: theme.palette.background.default,
+            marginTop: '1rem',
+          }}
+        >
+          <HoneycombComponent
+            kinds={clusterSummary?.kinds}
+            isClusterLoading={isClusterLoading}
+            isClusterIdsEmpty={isClusterIdsEmpty}
+          />
+        </div>
+      </Provider>
     </NoSsr>
   );
 };

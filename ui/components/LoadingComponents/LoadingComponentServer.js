@@ -3,7 +3,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import uiConfig from '../../ui.config';
 // import { Typography } from '@layer5/sistent';
-// import { UsesSistent } from '../SistentWrapper';
+//
 
 // const StyledAnimatedLogoDark = styled(uiConfig.AnimatedLogoDark)(({ theme }) => ({
 //   height: '100px',

@@ -3,7 +3,7 @@ import { withRouter } from 'next/router';
 import { withNotify } from '../../../utils/hooks/useNotification';
 import ResourcesTable from './resources-table';
 import { TabPanel } from '../tabpanel';
-import { UsesSistent } from '@/components/SistentWrapper';
+
 import { SecondaryTab, SecondaryTabs, WrapperContainer, WrapperPaper } from '../style';
 import GetKubernetesNodeIcon from '../utils';
 import { iconMedium } from 'css/icons.styles';
@@ -64,54 +64,52 @@ const ResourcesSubMenu = (props) => {
   };
   return (
     <>
-      <UsesSistent>
-        <WrapperContainer>
-          <WrapperPaper>
-            <SecondaryTabs
-              value={getResourceCategoryIndex(selectedResource)}
-              onChange={(_e, v) => handleChangeSelectedResource(getResourceCategory(v))}
-              variant="scrollable"
-              scrollButtons="on"
-              indicatorColor="primary"
-              textColor="primary"
-              centered={true}
-            >
-              {TABS.map((key, index) => {
-                const title = isCRDS ? key : resource.tableConfig()[key].name;
-                return (
-                  <SecondaryTab
-                    key={index}
-                    value={index}
-                    label={
-                      <DashboardIconText>
-                        <GetKubernetesNodeIcon
-                          kind={key}
-                          model={CRDsModelName[index]}
-                          size={iconMedium}
-                        />
-                        {title}
-                      </DashboardIconText>
-                    }
-                  />
-                );
-              })}
-            </SecondaryTabs>
-          </WrapperPaper>
-          {TABS.map((key, index) => (
-            <TabPanel value={selectedResource} index={key} key={`${key}-${index}`}>
-              <ResourcesTable
-                key={index}
-                workloadType={key}
-                updateProgress={updateProgress}
-                k8sConfig={k8sConfig}
-                resourceConfig={resource.tableConfig}
-                submenu={resource.submenu}
-                selectedK8sContexts={selectedK8sContexts}
-              />
-            </TabPanel>
-          ))}
-        </WrapperContainer>
-      </UsesSistent>
+      <WrapperContainer>
+        <WrapperPaper>
+          <SecondaryTabs
+            value={getResourceCategoryIndex(selectedResource)}
+            onChange={(_e, v) => handleChangeSelectedResource(getResourceCategory(v))}
+            variant="scrollable"
+            scrollButtons="on"
+            indicatorColor="primary"
+            textColor="primary"
+            centered={true}
+          >
+            {TABS.map((key, index) => {
+              const title = isCRDS ? key : resource.tableConfig()[key].name;
+              return (
+                <SecondaryTab
+                  key={index}
+                  value={index}
+                  label={
+                    <DashboardIconText>
+                      <GetKubernetesNodeIcon
+                        kind={key}
+                        model={CRDsModelName[index]}
+                        size={iconMedium}
+                      />
+                      {title}
+                    </DashboardIconText>
+                  }
+                />
+              );
+            })}
+          </SecondaryTabs>
+        </WrapperPaper>
+        {TABS.map((key, index) => (
+          <TabPanel value={selectedResource} index={key} key={`${key}-${index}`}>
+            <ResourcesTable
+              key={index}
+              workloadType={key}
+              updateProgress={updateProgress}
+              k8sConfig={k8sConfig}
+              resourceConfig={resource.tableConfig}
+              submenu={resource.submenu}
+              selectedK8sContexts={selectedK8sContexts}
+            />
+          </TabPanel>
+        ))}
+      </WrapperContainer>
     </>
   );
 };

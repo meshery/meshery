@@ -7,7 +7,7 @@ import { ErrorMetadataFormatter } from '../NotificationCenter/metadata';
 import { ComponentIcon } from './common';
 import { Button } from '@layer5/sistent';
 import { ExternalLinkIcon, componentIcon } from '@layer5/sistent';
-import { UsesSistent } from '../SistentWrapper';
+
 import { openViewScopedToDesignInOperator, useIsOperatorEnabled } from '@/utils/utils';
 import { useRouter } from 'next/router';
 
@@ -115,7 +115,5 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
 };
 
 export const DeploymentSummaryFormatter = ({ event }) => (
-  <UsesSistent>
-    <DeploymentSummaryFormatter_ event={event} />
-  </UsesSistent>
+  <DeploymentSummaryFormatter_ event={event} />
 );

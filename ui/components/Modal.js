@@ -15,7 +15,6 @@ import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
 import { ArrowDropDown } from '@mui/icons-material';
 import { getSchema } from './MesheryMeshInterface/PatternService/helper';
 import { Alert, Snackbar } from '@mui/material';
-import { UsesSistent } from './SistentWrapper';
 
 const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -133,63 +132,61 @@ function Modal(props) {
   }, [schema]);
 
   return (
-    <UsesSistent>
-      <SistentModal open={open} closeModal={handleClose} title={title} headerIcon={leftHeaderIcon}>
-        <Typography variant="h5">
-          {schema_array?.length < 1 && (
-            <SchemaVersion
-              schema_array={schema_array}
-              type={type}
-              schemaChangeHandler={schemaChangeHandler}
-            />
-          )}
-        </Typography>
-        <ModalBody>
-          {loadingSchema ? (
-            <div style={{ textAlign: 'center', padding: '8rem 17rem' }}>
-              <CircularProgress />
-            </div>
-          ) : (
-            <RJSFWrapper
-              key={type}
-              formData={initialData || formStateRef}
-              jsonSchema={schema || getSchema(type)}
-              uiSchema={uiSchema}
-              onChange={handleFormChange}
-              liveValidate={false}
-              formRef={formRef}
-              hideTitle={true}
-              {...(RJSFWrapperComponent && { RJSFWrapperComponent })}
-            />
-          )}
-        </ModalBody>
-        <ModalFooter variant="filled" helpText={helpText} hasHelpText={!!helpText}>
-          <PrimaryActionButtons
-            primaryText={submitBtnText || 'Submit'}
-            secondaryText="Cancel"
-            primaryButtonProps={{
-              onClick: handleFormSubmit,
-              disabled: canNotSubmit,
-            }}
-            secondaryButtonProps={{
-              onClick: handleClose,
-            }}
+    <SistentModal open={open} closeModal={handleClose} title={title} headerIcon={leftHeaderIcon}>
+      <Typography variant="h5">
+        {schema_array?.length < 1 && (
+          <SchemaVersion
+            schema_array={schema_array}
+            type={type}
+            schemaChangeHandler={schemaChangeHandler}
           />
-        </ModalFooter>
-        {snackbar && (
-          <Snackbar
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            open={snackbar.open}
-            autoHideDuration={6000}
-            onClose={() => setSnackbar(null)}
-          >
-            <Alert onClose={() => setSnackbar(null)} severity={snackbar.severity}>
-              {snackbar.message}
-            </Alert>
-          </Snackbar>
         )}
-      </SistentModal>
-    </UsesSistent>
+      </Typography>
+      <ModalBody>
+        {loadingSchema ? (
+          <div style={{ textAlign: 'center', padding: '8rem 17rem' }}>
+            <CircularProgress />
+          </div>
+        ) : (
+          <RJSFWrapper
+            key={type}
+            formData={initialData || formStateRef}
+            jsonSchema={schema || getSchema(type)}
+            uiSchema={uiSchema}
+            onChange={handleFormChange}
+            liveValidate={false}
+            formRef={formRef}
+            hideTitle={true}
+            {...(RJSFWrapperComponent && { RJSFWrapperComponent })}
+          />
+        )}
+      </ModalBody>
+      <ModalFooter variant="filled" helpText={helpText} hasHelpText={!!helpText}>
+        <PrimaryActionButtons
+          primaryText={submitBtnText || 'Submit'}
+          secondaryText="Cancel"
+          primaryButtonProps={{
+            onClick: handleFormSubmit,
+            disabled: canNotSubmit,
+          }}
+          secondaryButtonProps={{
+            onClick: handleClose,
+          }}
+        />
+      </ModalFooter>
+      {snackbar && (
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+          open={snackbar.open}
+          autoHideDuration={6000}
+          onClose={() => setSnackbar(null)}
+        >
+          <Alert onClose={() => setSnackbar(null)} severity={snackbar.severity}>
+            {snackbar.message}
+          </Alert>
+        </Snackbar>
+      )}
+    </SistentModal>
   );
 }
 

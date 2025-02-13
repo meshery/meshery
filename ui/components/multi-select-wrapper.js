@@ -3,7 +3,7 @@ import { components } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
 import { Colors } from '../themes/app';
 import { Checkbox, MenuItem, Paper, FormControlLabel } from '@layer5/sistent';
-import { UsesSistent } from './SistentWrapper';
+
 import { useTheme } from '@layer5/sistent';
 
 const MultiSelectWrapper = (props) => {
@@ -39,28 +39,24 @@ const MultiSelectWrapper = (props) => {
         <FormControlLabel
           control={
             props.value === '*' && filteredSelectedOptions?.length > 0 ? (
-              <UsesSistent>
-                <Checkbox
-                  key={props.value}
-                  ref={(input) => {
-                    if (input) input.indeterminate = true;
-                  }}
-                  style={{
-                    padding: '0',
-                  }}
-                />
-              </UsesSistent>
+              <Checkbox
+                key={props.value}
+                ref={(input) => {
+                  if (input) input.indeterminate = true;
+                }}
+                style={{
+                  padding: '0',
+                }}
+              />
             ) : (
-              <UsesSistent>
-                <Checkbox
-                  key={props.value}
-                  checked={props.isSelected}
-                  onChange={() => {}}
-                  style={{
-                    padding: '0',
-                  }}
-                />
-              </UsesSistent>
+              <Checkbox
+                key={props.value}
+                checked={props.isSelected}
+                onChange={() => {}}
+                style={{
+                  padding: '0',
+                }}
+              />
             )
           }
           label={<span style={{ marginLeft: '0.5rem' }}>{props.label}</span>}

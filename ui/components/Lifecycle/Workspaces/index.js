@@ -62,7 +62,7 @@ import EnvironmentIcon from '../../../assets/icons/Environment';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '@/components/General/error-404/index';
-import { UsesSistent } from '@/components/SistentWrapper';
+
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import WorkSpaceDataTable from './workspace-table';
 import { useWindowDimensions } from '@/utils/dimension';
@@ -439,40 +439,38 @@ const Workspaces = ({ organization }) => {
         sort: false,
         customBodyRender: (value, tableMeta) => {
           return (
-            <UsesSistent>
-              <TableIconsContainer>
-                <IconWrapper>
-                  {
-                    <>
-                      <L5EditIcon
-                        title="Edit Workspace"
-                        key={`edit_role-${tableMeta.rowIndex}`}
-                        disabled={!CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)}
-                        onClick={(e) =>
-                          handleWorkspaceModalOpen(
-                            e,
-                            WORKSPACE_ACTION_TYPES.EDIT,
-                            workspacesData.workspaces[tableMeta.rowIndex],
-                          )
-                        }
-                      />
+            <TableIconsContainer>
+              <IconWrapper>
+                {
+                  <>
+                    <L5EditIcon
+                      title="Edit Workspace"
+                      key={`edit_role-${tableMeta.rowIndex}`}
+                      disabled={!CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)}
+                      onClick={(e) =>
+                        handleWorkspaceModalOpen(
+                          e,
+                          WORKSPACE_ACTION_TYPES.EDIT,
+                          workspacesData.workspaces[tableMeta.rowIndex],
+                        )
+                      }
+                    />
 
-                      <L5DeleteIcon
-                        title="Delete Workspace"
-                        key={`delete_role-${tableMeta.rowIndex}`}
-                        disabled={!CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject)}
-                        onClick={(e) =>
-                          handleDeleteWorkspaceConfirm(
-                            e,
-                            workspacesData.workspaces[tableMeta.rowIndex],
-                          )
-                        }
-                      />
-                    </>
-                  }
-                </IconWrapper>
-              </TableIconsContainer>
-            </UsesSistent>
+                    <L5DeleteIcon
+                      title="Delete Workspace"
+                      key={`delete_role-${tableMeta.rowIndex}`}
+                      disabled={!CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject)}
+                      onClick={(e) =>
+                        handleDeleteWorkspaceConfirm(
+                          e,
+                          workspacesData.workspaces[tableMeta.rowIndex],
+                        )
+                      }
+                    />
+                  </>
+                }
+              </IconWrapper>
+            </TableIconsContainer>
           );
         },
       },
@@ -561,291 +559,283 @@ const Workspaces = ({ organization }) => {
 
   return (
     <NoSsr>
-      <UsesSistent>
-        {CAN(keys.VIEW_WORKSPACE.action, keys.VIEW_WORKSPACE.subject) ? (
-          <>
-            <ToolWrapper>
-              <CreateButtonWrapper>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  onClick={(e) => handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE)}
+      {CAN(keys.VIEW_WORKSPACE.action, keys.VIEW_WORKSPACE.subject) ? (
+        <>
+          <ToolWrapper>
+            <CreateButtonWrapper>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={(e) => handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE)}
+                sx={{
+                  backgroundColor: '#607d8b',
+                  padding: '8px',
+                  borderRadius: '5px',
+                  marginRight: '2rem',
+                }}
+                disabled={!CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)}
+                data-cy="btnResetDatabase"
+              >
+                <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
+                <Typography
                   sx={{
-                    backgroundColor: '#607d8b',
-                    padding: '8px',
-                    borderRadius: '5px',
-                    marginRight: '2rem',
+                    paddingLeft: '4px',
+                    marginRight: '4px',
+                    textTransform: 'none',
                   }}
-                  disabled={!CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)}
-                  data-cy="btnResetDatabase"
                 >
-                  <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
-                  <Typography
-                    sx={{
-                      paddingLeft: '4px',
-                      marginRight: '4px',
-                      textTransform: 'none',
-                    }}
-                  >
-                    Create
-                  </Typography>
-                </Button>
-              </CreateButtonWrapper>
-              <Box display={'flex'}>
-                <SearchBar
-                  onSearch={(value) => {
-                    setSearch(value);
-                  }}
-                  placeholder="Search Workspaces..."
-                  expanded={isSearchExpanded}
-                  setExpanded={setIsSearchExpanded}
-                />
-                {viewType !== 'grid' && (
-                  <CustomColumnVisibilityControl
-                    columns={columns}
-                    customToolsProps={{ columnVisibility, setColumnVisibility }}
-                  />
-                )}
-                <ViewSwitch view={viewType} changeView={setViewType} />
-              </Box>
-            </ToolWrapper>
-            {selectedWorkspaces.length > 0 && (
-              <BulkActionWrapper>
-                <Typography>
-                  {selectedWorkspaces.length > 1
-                    ? `${selectedWorkspaces.length} workspaces selected`
-                    : `${selectedWorkspaces.length} workspace selected`}
+                  Create
                 </Typography>
-                <Button>
-                  <DeleteIcon
-                    fill={theme.palette.text.default}
-                    onClick={handleBulkDeleteWorkspaceConfirm}
-                    disabled={
-                      CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject) &&
-                      selectedWorkspaces.length > 0
-                        ? false
-                        : true
-                    }
-                  />
-                </Button>
-              </BulkActionWrapper>
-            )}
-            <>
-              {workspaces.length === 0 ? (
-                <EmptyState
-                  icon={<WorkspaceIcon height="6rem" width="6rem" fill="#808080" />}
-                  message="No workspace available"
-                  pointerLabel="Click “Create” to establish your first workspace."
+              </Button>
+            </CreateButtonWrapper>
+            <Box display={'flex'}>
+              <SearchBar
+                onSearch={(value) => {
+                  setSearch(value);
+                }}
+                placeholder="Search Workspaces..."
+                expanded={isSearchExpanded}
+                setExpanded={setIsSearchExpanded}
+              />
+              {viewType !== 'grid' && (
+                <CustomColumnVisibilityControl
+                  columns={columns}
+                  customToolsProps={{ columnVisibility, setColumnVisibility }}
                 />
-              ) : viewType === 'grid' ? (
-                <>
-                  <Grid container spacing={2}>
-                    {workspaces.map((workspace) => (
-                      <MesheryWorkspaceCard
-                        key={workspace.id}
-                        workspaceDetails={workspace}
-                        handleAssignDesignModalOpen={handleAssignDesignModalOpen}
-                        handleAssignTeamModalOpen={handleAssignTeamModalOpen}
-                        handleAssignEnvironmentModalOpen={handleAssignEnvironmentModalOpen}
-                        handleWorkspaceModalOpen={handleWorkspaceModalOpen}
-                        handleDeleteWorkspaceConfirm={handleDeleteWorkspaceConfirm}
-                        handleBulkSelect={handleBulkSelect}
-                        selectedWorkspaces={selectedWorkspaces}
-                      />
-                    ))}
-                  </Grid>
-                  <Grid
-                    container
-                    sx={{ padding: '2rem 0', marginTop: '20px' }}
-                    flex
-                    justifyContent="center"
-                    spacing={2}
-                  >
-                    <Pagination
-                      count={Math.ceil(workspacesData?.total_count / pageSize)}
-                      page={page + 1}
-                      onChange={debounce((_, page) => setPage(page - 1), 150)}
-                      boundaryCount={3}
-                      renderItem={(item) => (
-                        <PaginationItem
-                          slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
-                          {...item}
-                        />
-                      )}
-                    />
-                  </Grid>
-                </>
-              ) : (
-                <UsesSistent>
-                  <ResponsiveDataTable
-                    columns={columns}
-                    data={workspacesData?.workspaces}
-                    options={options}
-                    columnVisibility={columnVisibility}
-                    tableCols={tableCols}
-                    updateCols={updateCols}
-                    backgroundColor={theme.palette.background.card}
-                  />
-                </UsesSistent>
               )}
-            </>
-            {(actionType === WORKSPACE_ACTION_TYPES.CREATE
-              ? CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)
-              : CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)) &&
-              workspaceModal.open && (
-                <SisitentModal
-                  open={workspaceModal.open}
-                  closeModal={handleWorkspaceModalClose}
-                  title={
-                    actionType === WORKSPACE_ACTION_TYPES.CREATE
-                      ? 'Create Workspace'
-                      : 'Edit Workspace'
+              <ViewSwitch view={viewType} changeView={setViewType} />
+            </Box>
+          </ToolWrapper>
+          {selectedWorkspaces.length > 0 && (
+            <BulkActionWrapper>
+              <Typography>
+                {selectedWorkspaces.length > 1
+                  ? `${selectedWorkspaces.length} workspaces selected`
+                  : `${selectedWorkspaces.length} workspace selected`}
+              </Typography>
+              <Button>
+                <DeleteIcon
+                  fill={theme.palette.text.default}
+                  onClick={handleBulkDeleteWorkspaceConfirm}
+                  disabled={
+                    CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject) &&
+                    selectedWorkspaces.length > 0
+                      ? false
+                      : true
                   }
+                />
+              </Button>
+            </BulkActionWrapper>
+          )}
+          <>
+            {workspaces.length === 0 ? (
+              <EmptyState
+                icon={<WorkspaceIcon height="6rem" width="6rem" fill="#808080" />}
+                message="No workspace available"
+                pointerLabel="Click “Create” to establish your first workspace."
+              />
+            ) : viewType === 'grid' ? (
+              <>
+                <Grid container spacing={2}>
+                  {workspaces.map((workspace) => (
+                    <MesheryWorkspaceCard
+                      key={workspace.id}
+                      workspaceDetails={workspace}
+                      handleAssignDesignModalOpen={handleAssignDesignModalOpen}
+                      handleAssignTeamModalOpen={handleAssignTeamModalOpen}
+                      handleAssignEnvironmentModalOpen={handleAssignEnvironmentModalOpen}
+                      handleWorkspaceModalOpen={handleWorkspaceModalOpen}
+                      handleDeleteWorkspaceConfirm={handleDeleteWorkspaceConfirm}
+                      handleBulkSelect={handleBulkSelect}
+                      selectedWorkspaces={selectedWorkspaces}
+                    />
+                  ))}
+                </Grid>
+                <Grid
+                  container
+                  sx={{ padding: '2rem 0', marginTop: '20px' }}
+                  flex
+                  justifyContent="center"
+                  spacing={2}
                 >
-                  <RJSFModalWrapper
-                    schema={workspaceModal.schema.schema}
-                    uiSchema={workspaceModal.schema.uiSchema}
-                    handleSubmit={
-                      actionType === WORKSPACE_ACTION_TYPES.CREATE
-                        ? handleCreateWorkspace
-                        : handleEditWorkspace
-                    }
-                    submitBtnText={actionType === WORKSPACE_ACTION_TYPES.CREATE ? 'Save' : 'Update'}
-                    initialData={initialData}
-                    handleClose={handleWorkspaceModalClose}
+                  <Pagination
+                    count={Math.ceil(workspacesData?.total_count / pageSize)}
+                    page={page + 1}
+                    onChange={debounce((_, page) => setPage(page - 1), 150)}
+                    boundaryCount={3}
+                    renderItem={(item) => (
+                      <PaginationItem
+                        slots={{ previous: ChevronLeftIcon, next: ChevronRightIcon }}
+                        {...item}
+                      />
+                    )}
                   />
-                </SisitentModal>
-              )}
-            <AssignmentModal
-              open={environmentAssignment.assignModal}
-              onClose={environmentAssignment.handleAssignModalClose}
-              title={`Assign Environments to ${environmentAssignWorkspace.name}`}
-              headerIcon={
-                <EnvironmentIcon height="40" width="40" fill={theme.palette.common.white} />
-              }
-              name="Environments"
-              assignableData={environmentAssignment.data}
-              handleAssignedData={environmentAssignment.handleAssignData}
-              originalAssignedData={environmentAssignment.workspaceData}
-              emptyStateIcon={
-                <EnvironmentIcon
-                  height="5rem"
-                  width="5rem"
-                  fill={theme.palette.icon.disabled}
-                  secondaryFill={theme.palette.icon.disabled}
-                />
-              }
-              handleAssignablePage={environmentAssignment.handleAssignablePage}
-              handleAssignedPage={environmentAssignment.handleAssignedPage}
-              originalLeftCount={environmentAssignment.data?.length}
-              originalRightCount={environmentAssignment.assignedItems?.length}
-              onAssign={environmentAssignment.handleAssign}
-              disableTransfer={environmentAssignment.disableTransferButton}
-              helpText={`Assign Environments to ${environmentAssignWorkspace.name}`}
-              isAssignAllowed={CAN(
-                keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.action,
-                keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.subject,
-              )}
-              isRemoveAllowed={CAN(
-                keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.action,
-                keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.subject,
-              )}
-            />
-
-            <AssignmentModal
-              open={teamAssignment.assignModal}
-              onClose={teamAssignment.handleAssignModalClose}
-              title={`Assign Teams to ${teamAssignWorkspace.name}`}
-              headerIcon={
-                <TeamsIcon height="40" width="40" primaryFill={theme.palette.common.white} />
-              }
-              name="Teams"
-              assignableData={teamAssignment.data}
-              handleAssignedData={teamAssignment.handleAssignData}
-              originalAssignedData={teamAssignment.workspaceData}
-              emptyStateIcon={<TeamsIcon height="5rem" width="5rem" />}
-              handleAssignablePage={teamAssignment.handleAssignablePage}
-              handleAssignedPage={teamAssignment.handleAssignedPage}
-              originalLeftCount={teamAssignment.data?.length}
-              originalRightCount={teamAssignment.assignedItems?.length}
-              onAssign={teamAssignment.handleAssign}
-              disableTransfer={teamAssignment.disableTransferButton}
-              helpText={`Assign Teams to ${teamAssignWorkspace.name}`}
-              isAssignAllowed={CAN(
-                keys.ASSIGN_TEAM_TO_WORKSPACE.action,
-                keys.ASSIGN_TEAM_TO_WORKSPACE.subject,
-              )}
-              isRemoveAllowed={CAN(
-                keys.REMOVE_TEAM_FROM_WORKSPACE.action,
-                keys.REMOVE_TEAM_FROM_WORKSPACE.subject,
-              )}
-            />
-
-            <AssignmentModal
-              open={designAssignment.assignModal && viewAssignment.assignModal}
-              onClose={designAssignment.handleAssignModalClose}
-              title={`Assign Designs and Views to ${designAssignWorkspace.name}`}
-              headerIcon={
-                <OutlinedPatternIcon height="40" width="40" fill={theme.palette.icon.default} />
-              }
-              name="Designs"
-              assignableData={designAssignment.data}
-              handleAssignedData={designAssignment.handleAssignData}
-              originalAssignedData={designAssignment.workspaceData}
-              emptyStateIcon={
-                <OutlinedPatternIcon
-                  height="5rem"
-                  width="5rem"
-                  fill={theme.palette.icon.disabled}
-                />
-              }
-              handleAssignablePage={designAssignment.handleAssignablePage}
-              handleAssignedPage={designAssignment.handleAssignedPage}
-              originalLeftCount={designAssignment.data?.total_count}
-              originalRightCount={designAssignment.workspaceData?.total_count}
-              onAssign={isDesignActivity || isViewActivity ? handleAssignments : null}
-              disableTransfer={
-                designAssignment.disableTransferButton && viewAssignment.disableTransferButton
-              }
-              helpText={`Assign Designs and Views to ${designAssignWorkspace.name}`}
-              isAssignAllowed={CAN(
-                keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
-                keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
-              )}
-              isRemoveAllowed={CAN(
-                keys.REMOVE_DESIGNS_FROM_WORKSPACE.action,
-                keys.REMOVE_DESIGNS_FROM_WORKSPACE.subject,
-              )}
-              showViews={true}
-              emptyStateViewsIcon={
-                <ViewIcon height="5rem" width="5rem" fill={theme.palette.icon.disabled} />
-              }
-              nameViews="Views"
-              assignableViewsData={viewAssignment.data}
-              handleAssignedViewsData={viewAssignment.handleAssignData}
-              originalAssignedViewsData={viewAssignment.workspaceData}
-              handleAssignableViewsPage={viewAssignment.handleAssignablePage}
-              handleAssignedViewsPage={viewAssignment.handleAssignedPage}
-              originalLeftViewsCount={viewAssignment.data?.total_count}
-              originalRightViewsCount={viewAssignment.workspaceData?.total_count}
-              isAssignAllowedViews={CAN(
-                keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
-                keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
-              )}
-              isRemoveAllowedViews={CAN(
-                keys.REMOVE_VIEWS_FROM_WORKSPACE.action,
-                keys.REMOVE_VIEWS_FROM_WORKSPACE.subject,
-              )}
-            />
-            <_PromptComponent ref={ref} />
-            <_PromptComponent ref={bulkDeleteRef} />
+                </Grid>
+              </>
+            ) : (
+              <ResponsiveDataTable
+                columns={columns}
+                data={workspacesData?.workspaces}
+                options={options}
+                columnVisibility={columnVisibility}
+                tableCols={tableCols}
+                updateCols={updateCols}
+                backgroundColor={theme.palette.background.card}
+              />
+            )}
           </>
-        ) : (
-          <DefaultError />
-        )}
-      </UsesSistent>
+          {(actionType === WORKSPACE_ACTION_TYPES.CREATE
+            ? CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)
+            : CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)) &&
+            workspaceModal.open && (
+              <SisitentModal
+                open={workspaceModal.open}
+                closeModal={handleWorkspaceModalClose}
+                title={
+                  actionType === WORKSPACE_ACTION_TYPES.CREATE
+                    ? 'Create Workspace'
+                    : 'Edit Workspace'
+                }
+              >
+                <RJSFModalWrapper
+                  schema={workspaceModal.schema.schema}
+                  uiSchema={workspaceModal.schema.uiSchema}
+                  handleSubmit={
+                    actionType === WORKSPACE_ACTION_TYPES.CREATE
+                      ? handleCreateWorkspace
+                      : handleEditWorkspace
+                  }
+                  submitBtnText={actionType === WORKSPACE_ACTION_TYPES.CREATE ? 'Save' : 'Update'}
+                  initialData={initialData}
+                  handleClose={handleWorkspaceModalClose}
+                />
+              </SisitentModal>
+            )}
+          <AssignmentModal
+            open={environmentAssignment.assignModal}
+            onClose={environmentAssignment.handleAssignModalClose}
+            title={`Assign Environments to ${environmentAssignWorkspace.name}`}
+            headerIcon={
+              <EnvironmentIcon height="40" width="40" fill={theme.palette.common.white} />
+            }
+            name="Environments"
+            assignableData={environmentAssignment.data}
+            handleAssignedData={environmentAssignment.handleAssignData}
+            originalAssignedData={environmentAssignment.workspaceData}
+            emptyStateIcon={
+              <EnvironmentIcon
+                height="5rem"
+                width="5rem"
+                fill={theme.palette.icon.disabled}
+                secondaryFill={theme.palette.icon.disabled}
+              />
+            }
+            handleAssignablePage={environmentAssignment.handleAssignablePage}
+            handleAssignedPage={environmentAssignment.handleAssignedPage}
+            originalLeftCount={environmentAssignment.data?.length}
+            originalRightCount={environmentAssignment.assignedItems?.length}
+            onAssign={environmentAssignment.handleAssign}
+            disableTransfer={environmentAssignment.disableTransferButton}
+            helpText={`Assign Environments to ${environmentAssignWorkspace.name}`}
+            isAssignAllowed={CAN(
+              keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.action,
+              keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.subject,
+            )}
+            isRemoveAllowed={CAN(
+              keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.action,
+              keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.subject,
+            )}
+          />
+
+          <AssignmentModal
+            open={teamAssignment.assignModal}
+            onClose={teamAssignment.handleAssignModalClose}
+            title={`Assign Teams to ${teamAssignWorkspace.name}`}
+            headerIcon={
+              <TeamsIcon height="40" width="40" primaryFill={theme.palette.common.white} />
+            }
+            name="Teams"
+            assignableData={teamAssignment.data}
+            handleAssignedData={teamAssignment.handleAssignData}
+            originalAssignedData={teamAssignment.workspaceData}
+            emptyStateIcon={<TeamsIcon height="5rem" width="5rem" />}
+            handleAssignablePage={teamAssignment.handleAssignablePage}
+            handleAssignedPage={teamAssignment.handleAssignedPage}
+            originalLeftCount={teamAssignment.data?.length}
+            originalRightCount={teamAssignment.assignedItems?.length}
+            onAssign={teamAssignment.handleAssign}
+            disableTransfer={teamAssignment.disableTransferButton}
+            helpText={`Assign Teams to ${teamAssignWorkspace.name}`}
+            isAssignAllowed={CAN(
+              keys.ASSIGN_TEAM_TO_WORKSPACE.action,
+              keys.ASSIGN_TEAM_TO_WORKSPACE.subject,
+            )}
+            isRemoveAllowed={CAN(
+              keys.REMOVE_TEAM_FROM_WORKSPACE.action,
+              keys.REMOVE_TEAM_FROM_WORKSPACE.subject,
+            )}
+          />
+
+          <AssignmentModal
+            open={designAssignment.assignModal && viewAssignment.assignModal}
+            onClose={designAssignment.handleAssignModalClose}
+            title={`Assign Designs and Views to ${designAssignWorkspace.name}`}
+            headerIcon={
+              <OutlinedPatternIcon height="40" width="40" fill={theme.palette.icon.default} />
+            }
+            name="Designs"
+            assignableData={designAssignment.data}
+            handleAssignedData={designAssignment.handleAssignData}
+            originalAssignedData={designAssignment.workspaceData}
+            emptyStateIcon={
+              <OutlinedPatternIcon height="5rem" width="5rem" fill={theme.palette.icon.disabled} />
+            }
+            handleAssignablePage={designAssignment.handleAssignablePage}
+            handleAssignedPage={designAssignment.handleAssignedPage}
+            originalLeftCount={designAssignment.data?.total_count}
+            originalRightCount={designAssignment.workspaceData?.total_count}
+            onAssign={isDesignActivity || isViewActivity ? handleAssignments : null}
+            disableTransfer={
+              designAssignment.disableTransferButton && viewAssignment.disableTransferButton
+            }
+            helpText={`Assign Designs and Views to ${designAssignWorkspace.name}`}
+            isAssignAllowed={CAN(
+              keys.ASSIGN_DESIGNS_TO_WORKSPACE.action,
+              keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject,
+            )}
+            isRemoveAllowed={CAN(
+              keys.REMOVE_DESIGNS_FROM_WORKSPACE.action,
+              keys.REMOVE_DESIGNS_FROM_WORKSPACE.subject,
+            )}
+            showViews={true}
+            emptyStateViewsIcon={
+              <ViewIcon height="5rem" width="5rem" fill={theme.palette.icon.disabled} />
+            }
+            nameViews="Views"
+            assignableViewsData={viewAssignment.data}
+            handleAssignedViewsData={viewAssignment.handleAssignData}
+            originalAssignedViewsData={viewAssignment.workspaceData}
+            handleAssignableViewsPage={viewAssignment.handleAssignablePage}
+            handleAssignedViewsPage={viewAssignment.handleAssignedPage}
+            originalLeftViewsCount={viewAssignment.data?.total_count}
+            originalRightViewsCount={viewAssignment.workspaceData?.total_count}
+            isAssignAllowedViews={CAN(
+              keys.ASSIGN_VIEWS_TO_WORKSPACE.action,
+              keys.ASSIGN_VIEWS_TO_WORKSPACE.subject,
+            )}
+            isRemoveAllowedViews={CAN(
+              keys.REMOVE_VIEWS_FROM_WORKSPACE.action,
+              keys.REMOVE_VIEWS_FROM_WORKSPACE.subject,
+            )}
+          />
+          <_PromptComponent ref={ref} />
+          <_PromptComponent ref={bulkDeleteRef} />
+        </>
+      ) : (
+        <DefaultError />
+      )}
     </NoSsr>
   );
 };
@@ -860,9 +850,7 @@ const mapStateToProps = (state) => {
 const WorkspacesPageWithErrorBoundary = (props) => {
   return (
     <NoSsr>
-      <UsesSistent>
-        <Workspaces {...props} />
-      </UsesSistent>
+      <Workspaces {...props} />
     </NoSsr>
   );
 };

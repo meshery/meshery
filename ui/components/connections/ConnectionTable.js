@@ -58,7 +58,7 @@ import { useGetConnectionsQuery, useUpdateConnectionMutation } from '@/rtk-query
 import { CustomTextTooltip } from '../MesheryMeshInterface/PatternService/CustomTextTooltip';
 import InfoOutlinedIcon from '@/assets/icons/InfoOutlined';
 import { DeleteIcon } from '@layer5/sistent';
-import { UsesSistent } from '../SistentWrapper';
+
 import { formatDate } from '../DataFormatter';
 import { getFallbackImageBasedOnKind } from '@/utils/fallback';
 
@@ -555,19 +555,17 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
                 width="12rem"
               />
               {kind == 'kubernetes' && (
-                <UsesSistent>
-                  <CustomTextTooltip
-                    placement="top"
-                    interactive={true}
-                    title="Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)"
-                  >
-                    <div>
-                      <IconButton color="default">
-                        <InfoOutlinedIcon height={20} width={20} />
-                      </IconButton>
-                    </div>
-                  </CustomTextTooltip>
-                </UsesSistent>
+                <CustomTextTooltip
+                  placement="top"
+                  interactive={true}
+                  title="Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)"
+                >
+                  <div>
+                    <IconButton color="default">
+                      <InfoOutlinedIcon height={20} width={20} />
+                    </IconButton>
+                  </div>
+                </CustomTextTooltip>
               )}
             </>
           );
@@ -610,37 +608,35 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
           let updatingEnvs = updatingConnection.current;
           return (
             isEnvironmentsSuccess && (
-              <UsesSistent>
-                <div onClick={(e) => e.stopPropagation()}>
-                  <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
-                    <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
-                      <MultiSelectWrapper
-                        updating={updatingEnvs}
-                        onChange={(selected, unselected) =>
-                          handleEnvironmentSelect(
-                            getColumnValue(tableMeta.rowData, 'id', columns),
-                            getColumnValue(tableMeta.rowData, 'name', columns),
-                            cleanedEnvs,
-                            selected,
-                            unselected,
-                          )
-                        }
-                        options={getOptions()}
-                        value={cleanedEnvs}
-                        placeholder={`Assigned Environments`}
-                        isSelectAll={true}
-                        menuPlacement={'bottom'}
-                        disabled={
-                          !CAN(
-                            keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
-                            keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
-                          )
-                        }
-                      />
-                    </Grid>
+              <div onClick={(e) => e.stopPropagation()}>
+                <Grid item xs={12} style={{ height: '5rem', width: '15rem' }}>
+                  <Grid item xs={12} style={{ marginTop: '2rem', cursor: 'pointer' }}>
+                    <MultiSelectWrapper
+                      updating={updatingEnvs}
+                      onChange={(selected, unselected) =>
+                        handleEnvironmentSelect(
+                          getColumnValue(tableMeta.rowData, 'id', columns),
+                          getColumnValue(tableMeta.rowData, 'name', columns),
+                          cleanedEnvs,
+                          selected,
+                          unselected,
+                        )
+                      }
+                      options={getOptions()}
+                      value={cleanedEnvs}
+                      placeholder={`Assigned Environments`}
+                      isSelectAll={true}
+                      menuPlacement={'bottom'}
+                      disabled={
+                        !CAN(
+                          keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
+                          keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
+                        )
+                      }
+                    />
                   </Grid>
-                </div>
-              </UsesSistent>
+                </Grid>
+              </div>
             )
           );
         },
@@ -738,11 +734,9 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
         customBodyRender: function CustomBody(value) {
           const renderValue = formatDate(value);
           return (
-            <UsesSistent>
-              <CustomTooltip title={renderValue} placement="top" arrow interactive>
-                {renderValue}
-              </CustomTooltip>
-            </UsesSistent>
+            <CustomTooltip title={renderValue} placement="top" arrow interactive>
+              {renderValue}
+            </CustomTooltip>
           );
         },
       },
@@ -815,55 +809,53 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
               ? true
               : !CAN(keys.CHANGE_CONNECTION_STATE.action, keys.CHANGE_CONNECTION_STATE.subject);
           return (
-            <UsesSistent>
-              <FormControl>
-                <ConnectionStyledSelect
-                  labelId="connection-status-select-label"
-                  id="connection-status-select"
-                  disabled={disabled}
-                  value={value}
-                  defaultValue={value}
-                  onClick={(e) => e.stopPropagation()}
-                  onChange={(e) =>
-                    handleStatusChange(
-                      e,
-                      getColumnValue(tableMeta.rowData, 'id', columns),
-                      getColumnValue(tableMeta.rowData, 'kind', columns),
-                    )
-                  }
-                  disableUnderline
-                  MenuProps={{
-                    anchorOrigin: {
-                      vertical: 'bottom',
-                      horizontal: 'left',
-                    },
-                    transformOrigin: {
-                      vertical: 'top',
-                      horizontal: 'left',
-                    },
-                    getContentAnchorEl: null,
-                    MenuListProps: { disablePadding: true },
-                    PaperProps: { square: true },
-                  }}
-                >
-                  {nextStatus &&
-                    nextStatus.map((status) => (
-                      <MenuItem
-                        disabled={status === value ? true : false}
-                        style={{
-                          padding: 0,
-                          display: status === value ? 'none' : 'flex',
-                          justifyContent: 'center',
-                        }}
-                        value={status}
-                        key={status}
-                      >
-                        <ConnectionStateChip status={status} />
-                      </MenuItem>
-                    ))}
-                </ConnectionStyledSelect>
-              </FormControl>
-            </UsesSistent>
+            <FormControl>
+              <ConnectionStyledSelect
+                labelId="connection-status-select-label"
+                id="connection-status-select"
+                disabled={disabled}
+                value={value}
+                defaultValue={value}
+                onClick={(e) => e.stopPropagation()}
+                onChange={(e) =>
+                  handleStatusChange(
+                    e,
+                    getColumnValue(tableMeta.rowData, 'id', columns),
+                    getColumnValue(tableMeta.rowData, 'kind', columns),
+                  )
+                }
+                disableUnderline
+                MenuProps={{
+                  anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  },
+                  transformOrigin: {
+                    vertical: 'top',
+                    horizontal: 'left',
+                  },
+                  getContentAnchorEl: null,
+                  MenuListProps: { disablePadding: true },
+                  PaperProps: { square: true },
+                }}
+              >
+                {nextStatus &&
+                  nextStatus.map((status) => (
+                    <MenuItem
+                      disabled={status === value ? true : false}
+                      style={{
+                        padding: 0,
+                        display: status === value ? 'none' : 'flex',
+                        justifyContent: 'center',
+                      }}
+                      value={status}
+                      key={status}
+                    >
+                      <ConnectionStateChip status={status} />
+                    </MenuItem>
+                  ))}
+              </ConnectionStyledSelect>
+            </FormControl>
           );
         },
       },
@@ -887,16 +879,14 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
             <Box display={'flex'} justifyContent={'center'}>
               {getColumnValue(tableMeta.rowData, 'kind', columns) ===
               CONNECTION_KINDS.KUBERNETES ? (
-                <UsesSistent>
-                  <IconButton
-                    aria-label="more"
-                    id="long-button"
-                    aria-haspopup="true"
-                    onClick={(e) => handleActionMenuOpen(e, tableMeta)}
-                  >
-                    <MoreVertIcon style={iconMedium} />
-                  </IconButton>
-                </UsesSistent>
+                <IconButton
+                  aria-label="more"
+                  id="long-button"
+                  aria-haspopup="true"
+                  onClick={(e) => handleActionMenuOpen(e, tableMeta)}
+                >
+                  <MoreVertIcon style={iconMedium} />
+                </IconButton>
               ) : (
                 '-'
               )}
@@ -1005,30 +995,28 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
       const colSpan = rowData.length;
       const connection = connections && connections[tableMeta.rowIndex];
       return (
-        <UsesSistent>
-          <TableCell colSpan={colSpan}>
-            <InnerTableContainer>
-              <Table>
-                <TableRow style={{ padding: 0 }}>
-                  <TableCell style={{ padding: '20px 0', overflowX: 'hidden' }}>
-                    <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
-                      <ContentContainer item xs={12} md={12}>
-                        <Grid container spacing={1}>
-                          <ContentContainer item xs={12} md={12}>
-                            <FormatConnectionMetadata
-                              connection={connection}
-                              meshsyncControllerState={meshsyncControllerState}
-                            />
-                          </ContentContainer>
-                        </Grid>
-                      </ContentContainer>
-                    </Grid>
-                  </TableCell>
-                </TableRow>
-              </Table>
-            </InnerTableContainer>
-          </TableCell>
-        </UsesSistent>
+        <TableCell colSpan={colSpan}>
+          <InnerTableContainer>
+            <Table>
+              <TableRow style={{ padding: 0 }}>
+                <TableCell style={{ padding: '20px 0', overflowX: 'hidden' }}>
+                  <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
+                    <ContentContainer item xs={12} md={12}>
+                      <Grid container spacing={1}>
+                        <ContentContainer item xs={12} md={12}>
+                          <FormatConnectionMetadata
+                            connection={connection}
+                            meshsyncControllerState={meshsyncControllerState}
+                          />
+                        </ContentContainer>
+                      </Grid>
+                    </ContentContainer>
+                  </Grid>
+                </TableCell>
+              </TableRow>
+            </Table>
+          </InnerTableContainer>
+        </TableCell>
       );
     },
   };
@@ -1064,7 +1052,7 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
     }
   }, [environmentsError, connectionError, isEnvironmentsSuccess]);
   return (
-    <UsesSistent>
+    <>
       <ToolWrapper style={{ marginBottom: '5px', marginTop: '-30px' }}>
         <CreateButton>
           <MesherySettingsEnvButtons />
@@ -1112,32 +1100,31 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
         columnVisibility={columnVisibility}
       />
       <_PromptComponent ref={modalRef} />
-      <UsesSistent>
-        <Popover
-          open={open}
-          anchorEl={anchorEl}
-          onClose={handleActionMenuClose}
-          anchorOrigin={{
-            vertical: 'bottom',
-            horizontal: 'left',
-          }}
-        >
-          <ActionListItem>
-            <Button
-              type="submit"
-              onClick={handleFlushMeshSync()}
-              data-cy="btnResetDatabase"
-              disabled={!CAN(keys.FLUSH_MESHSYNC_DATA.action, keys.FLUSH_MESHSYNC_DATA.subject)}
-            >
-              <SyncIcon {...iconMedium} />
-              <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
-                Flush MeshSync
-              </Typography>
-            </Button>
-          </ActionListItem>
-        </Popover>
-      </UsesSistent>
-    </UsesSistent>
+
+      <Popover
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleActionMenuClose}
+        anchorOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+      >
+        <ActionListItem>
+          <Button
+            type="submit"
+            onClick={handleFlushMeshSync()}
+            data-cy="btnResetDatabase"
+            disabled={!CAN(keys.FLUSH_MESHSYNC_DATA.action, keys.FLUSH_MESHSYNC_DATA.subject)}
+          >
+            <SyncIcon {...iconMedium} />
+            <Typography variant="body1" style={{ marginLeft: '0.5rem' }}>
+              Flush MeshSync
+            </Typography>
+          </Button>
+        </ActionListItem>
+      </Popover>
+    </>
   );
 };
 

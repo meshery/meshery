@@ -13,7 +13,6 @@ import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
 import bb, { area, line } from 'billboard.js';
 import { IconButton, Card, CardContent, CardHeader, Tooltip, Box, styled } from '@layer5/sistent';
 import { LinearProgress } from '@mui/material';
-import { UsesSistent } from '../../SistentWrapper';
 
 const StyledCard = styled(Card)(() => ({
   height: '100%',
@@ -849,32 +848,27 @@ class GrafanaCustomChart extends Component {
     //   )
     // }
     return (
-      <UsesSistent>
-        <NoSsr>
-          {loadingBar}
-          <StyledCard>
-            {!inDialog && (
-              <CardHeader
-                disableTypography
-                avatar={
-                  error && (
-                    <Tooltip
-                      title="There was an error communicating with the server"
-                      placement="top"
-                    >
-                      <WarningIcon component={ErrorText} />
-                    </Tooltip>
-                  )
-                }
-                title={panel.title}
-                action={iconComponent}
-                sx={{ fontSize: (theme) => theme.spacing(2), width: '100%' }}
-              />
-            )}
-            <StyledCardContent>{mainChart}</StyledCardContent>
-          </StyledCard>
-        </NoSsr>
-      </UsesSistent>
+      <NoSsr>
+        {loadingBar}
+        <StyledCard>
+          {!inDialog && (
+            <CardHeader
+              disableTypography
+              avatar={
+                error && (
+                  <Tooltip title="There was an error communicating with the server" placement="top">
+                    <WarningIcon component={ErrorText} />
+                  </Tooltip>
+                )
+              }
+              title={panel.title}
+              action={iconComponent}
+              sx={{ fontSize: (theme) => theme.spacing(2), width: '100%' }}
+            />
+          )}
+          <StyledCardContent>{mainChart}</StyledCardContent>
+        </StyledCard>
+      </NoSsr>
     );
   }
 }

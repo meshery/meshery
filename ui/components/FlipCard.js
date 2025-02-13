@@ -1,7 +1,6 @@
 //@ts-check
 import React, { useState, useRef, useEffect } from 'react';
 import { FlipCardWrapper, InnerCard } from './MesheryPatterns/style';
-import { UsesSistent } from './SistentWrapper';
 
 function GetChild(children, key) {
   if (children.length != 2) throw Error('FlipCard requires exactly two child components');
@@ -36,44 +35,42 @@ function FlipCard({ duration = 500, onClick, onShow, children }) {
   }, [flipped]);
 
   return (
-    <UsesSistent>
-      <FlipCardWrapper
-        onClick={() => {
-          setFlipped((flipped) => !flipped);
-          onClick && onClick();
-          onShow && onShow();
+    <FlipCardWrapper
+      onClick={() => {
+        setFlipped((flipped) => !flipped);
+        onClick && onClick();
+        onShow && onShow();
+      }}
+    >
+      <InnerCard
+        style={{
+          transform: flipped ? 'scale(-1,1)' : undefined,
+          transition: `transform ${duration}ms`,
+          transformOrigin: '50% 50% 10%',
         }}
       >
-        <InnerCard
-          style={{
-            transform: flipped ? 'scale(-1,1)' : undefined,
-            transition: `transform ${duration}ms`,
-            transformOrigin: '50% 50% 10%',
-          }}
-        >
-          {!activeBack ? (
-            <div
-              style={{
-                backfaceVisibility: 'hidden',
-              }}
-            >
-              {React.isValidElement(Front) ? Front : null}
-            </div>
-          ) : (
-            <div
-              style={{
-                backfaceVisibility: 'hidden',
-                transform: 'scale(-1, 1)',
-                maxWidth: '50vw',
-                wordBreak: 'break-word',
-              }}
-            >
-              {React.isValidElement(Back) ? Back : null}
-            </div>
-          )}
-        </InnerCard>
-      </FlipCardWrapper>
-    </UsesSistent>
+        {!activeBack ? (
+          <div
+            style={{
+              backfaceVisibility: 'hidden',
+            }}
+          >
+            {React.isValidElement(Front) ? Front : null}
+          </div>
+        ) : (
+          <div
+            style={{
+              backfaceVisibility: 'hidden',
+              transform: 'scale(-1, 1)',
+              maxWidth: '50vw',
+              wordBreak: 'break-word',
+            }}
+          >
+            {React.isValidElement(Back) ? Back : null}
+          </div>
+        )}
+      </InnerCard>
+    </FlipCardWrapper>
   );
 }
 

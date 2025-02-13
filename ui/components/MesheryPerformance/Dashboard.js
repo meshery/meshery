@@ -16,7 +16,6 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from '@/components/General/error-404/index';
 import { Modal, Button, Grid, Paper, Typography, useTheme, styled } from '@layer5/sistent';
-import { UsesSistent } from '../SistentWrapper';
 
 // const MESHERY_PERFORMANCE_URL = "/api/user/performance/profiles";
 // const MESHERY_PERFORMANCE_TEST_URL = "/api/user/performance/profiles/results";
@@ -155,7 +154,7 @@ function Dashboard({ updateProgress, grafana, router }) {
   }
 
   return (
-    <UsesSistent>
+    <>
       {CAN(keys.VIEW_PERFORMANCE_PROFILES.action, keys.VIEW_PERFORMANCE_PROFILES.subject) ? (
         <>
           <Grid container spacing={2} style={{ padding: '0.5rem' }} alignContent="space-around">
@@ -258,7 +257,7 @@ function Dashboard({ updateProgress, grafana, router }) {
       ) : (
         <DefaultError />
       )}
-    </UsesSistent>
+    </>
   );
 }
 

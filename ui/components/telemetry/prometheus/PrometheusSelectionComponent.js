@@ -9,7 +9,6 @@ import { updateProgress } from '../../../lib/store';
 import { trueRandom } from '../../../lib/trueRandom';
 import dataFetch from '../../../lib/data-fetch';
 import CodeIcon from '@mui/icons-material/Code';
-import { UsesSistent } from '@/components/SistentWrapper';
 
 const PrometheusContainer = styled('div')(({ theme }) => ({
   padding: theme.spacing(5),
@@ -295,179 +294,172 @@ class PrometheusSelectionComponent extends Component {
     const { prometheusURL, handlePrometheusChipDelete, handlePrometheusClick } = this.props;
     const { panels, selectedPanels, grafanaBoard, templateVars, templateVarOptions } = this.state;
     return (
-      <UsesSistent>
-        <NoSsr>
-          <PrometheusContainer>
-            <AlignRight>
-              <Chip
-                label={prometheusURL}
-                onDelete={handlePrometheusChipDelete}
-                onClick={handlePrometheusClick}
-                key="prometh-key"
-                icon={
-                  <StyledIcon
-                    src="/static/img/prometheus_logo_orange_circle.svg"
-                    alt="Prometheus"
-                  />
-                }
-                variant="outlined"
-              />
-            </AlignRight>
+      <NoSsr>
+        <PrometheusContainer>
+          <AlignRight>
+            <Chip
+              label={prometheusURL}
+              onDelete={handlePrometheusChipDelete}
+              onClick={handlePrometheusClick}
+              key="prometh-key"
+              icon={
+                <StyledIcon src="/static/img/prometheus_logo_orange_circle.svg" alt="Prometheus" />
+              }
+              variant="outlined"
+            />
+          </AlignRight>
 
-            <Grid container spacing={1}>
-              <Grid item xs={12}>
-                <div style={{ padding: '20px', display: 'flex' }}>
-                  <CodeIcon style={{ marginRight: '6px' }} />
-                  Paste your custom board JSON below.
-                </div>
+          <Grid container spacing={1}>
+            <Grid item xs={12}>
+              <div style={{ padding: '20px', display: 'flex' }}>
+                <CodeIcon style={{ marginRight: '6px' }} />
+                Paste your custom board JSON below.
+              </div>
 
-                <CodeMirror
-                  editorDidMount={(editor) => {
-                    this.cmEditor = editor;
-                  }}
-                  value={grafanaBoard}
-                  options={{
-                    theme: 'material',
-                    lineNumbers: true,
-                    lineWrapping: true,
-                    gutters: ['CodeMirror-lint-markers'],
-                    lint: true,
-                    mode: 'application/json',
-                  }}
-                  onBeforeChange={(editor, data, value) => {
-                    self.setState({
-                      grafanaBoard: value,
-                      grafanaBoardObject: {},
-                      panels: [],
-                      selectedPanels: [],
-                      templateVars: [],
-                      templateVarOptions: [],
-                      selectedTemplateVars: [],
-                    });
-                    if (typeof self.boardTimeout !== 'undefined') {
-                      clearTimeout(self.boardTimeout);
-                    }
-                    self.boardTimeout = setTimeout(() => {
-                      if (value !== '' && self.cmEditor.state.lint.marked.length === 0) {
-                        self.setState({ grafanaBoardError: false });
-                      } else {
-                        self.setState({ grafanaBoardError: true });
-                        return;
-                      }
-                      self.boardChange(value);
-                    }, 1000);
-                  }}
-                  onChange={() => {}}
-                />
-              </Grid>
-
-              {templateVars.length > 0 &&
-                templateVars.map(({ name }, ind) => {
-                  // if (ind === 0 || this.getSelectedTemplateVar(ind-1) !== ''){
-
-                  if (ind === 0 || typeof this.getSelectedTemplateVar(ind - 1) !== 'undefined') {
-                    return (
-                      <Grid item xs={12} sm={4} key={ind}>
-                        <FormControlWrapper>
-                          <TextField
-                            select
-                            id={`template_var_${ind}`}
-                            name={`template_var_${ind}`}
-                            label={`Template variable: ${name}`}
-                            fullWidth
-                            value={this.getSelectedTemplateVar(ind)}
-                            margin="normal"
-                            variant="outlined"
-                            onChange={this.handleChange(`template_var_${ind}`)}
-                          >
-                            <MenuItem
-                              key={`tmplVarOpt__-___${ind}_${self.genRandomNumberForKey()}`}
-                              value=""
-                            />
-                            {templateVarOptions[ind]?.map((opt) => (
-                              <MenuItem
-                                key={`tmplVarOpt__-__${name}_${opt}_${ind}_${self.genRandomNumberForKey()}`}
-                                value={opt}
-                              >
-                                {opt}
-                              </MenuItem>
-                            ))}
-                          </TextField>
-                        </FormControlWrapper>
-                      </Grid>
-                    );
+              <CodeMirror
+                editorDidMount={(editor) => {
+                  this.cmEditor = editor;
+                }}
+                value={grafanaBoard}
+                options={{
+                  theme: 'material',
+                  lineNumbers: true,
+                  lineWrapping: true,
+                  gutters: ['CodeMirror-lint-markers'],
+                  lint: true,
+                  mode: 'application/json',
+                }}
+                onBeforeChange={(editor, data, value) => {
+                  self.setState({
+                    grafanaBoard: value,
+                    grafanaBoardObject: {},
+                    panels: [],
+                    selectedPanels: [],
+                    templateVars: [],
+                    templateVarOptions: [],
+                    selectedTemplateVars: [],
+                  });
+                  if (typeof self.boardTimeout !== 'undefined') {
+                    clearTimeout(self.boardTimeout);
                   }
-                  return null;
-                })}
-
-              {panels.length === 0 && (
-                <Grid item xs={12} style={{ marginTop: '10px' }}>
-                  <Alert severity="error">
-                    Please load a valid Board JSON to be able to view the panels
-                  </Alert>
-                </Grid>
-              )}
-
-              {panels.length > 0 && (
-                <Grid item xs={12}>
-                  <TextField
-                    select
-                    id="panels"
-                    name="panels"
-                    label="Panels"
-                    fullWidth
-                    value={selectedPanels}
-                    margin="normal"
-                    variant="outlined"
-                    onChange={this.handleChange('selectedPanels')}
-                    SelectProps={{
-                      multiple: true,
-                      renderValue: (selected) => (
-                        <PanelChipsContainer>
-                          {selected.map((value) => {
-                            let selVal = '';
-                            let panelId = '';
-                            panels.forEach((panel) => {
-                              if (panel.id === value) {
-                                selVal = panel.title;
-                                panelId = panel.id;
-                              }
-                            });
-                            return (
-                              <Chip key={`pl_--_${panelId}`} label={selVal} className="chip" />
-                            );
-                          })}
-                        </PanelChipsContainer>
-                      ),
-                    }}
-                  >
-                    {panels.map((panel) => (
-                      <MenuItem key={`panel_-__-${panel.id}`} value={panel.id}>
-                        {panel.title}
-                      </MenuItem>
-                    ))}
-                  </TextField>
-                </Grid>
-              )}
+                  self.boardTimeout = setTimeout(() => {
+                    if (value !== '' && self.cmEditor.state.lint.marked.length === 0) {
+                      self.setState({ grafanaBoardError: false });
+                    } else {
+                      self.setState({ grafanaBoardError: true });
+                      return;
+                    }
+                    self.boardChange(value);
+                  }, 1000);
+                }}
+                onChange={() => {}}
+              />
             </Grid>
 
-            {selectedPanels.length > 0 && (
-              <ButtonContainer>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  onClick={this.addSelectedBoardPanelConfig}
-                  className="actionButton"
-                >
-                  Add
-                </Button>
-              </ButtonContainer>
+            {templateVars.length > 0 &&
+              templateVars.map(({ name }, ind) => {
+                // if (ind === 0 || this.getSelectedTemplateVar(ind-1) !== ''){
+
+                if (ind === 0 || typeof this.getSelectedTemplateVar(ind - 1) !== 'undefined') {
+                  return (
+                    <Grid item xs={12} sm={4} key={ind}>
+                      <FormControlWrapper>
+                        <TextField
+                          select
+                          id={`template_var_${ind}`}
+                          name={`template_var_${ind}`}
+                          label={`Template variable: ${name}`}
+                          fullWidth
+                          value={this.getSelectedTemplateVar(ind)}
+                          margin="normal"
+                          variant="outlined"
+                          onChange={this.handleChange(`template_var_${ind}`)}
+                        >
+                          <MenuItem
+                            key={`tmplVarOpt__-___${ind}_${self.genRandomNumberForKey()}`}
+                            value=""
+                          />
+                          {templateVarOptions[ind]?.map((opt) => (
+                            <MenuItem
+                              key={`tmplVarOpt__-__${name}_${opt}_${ind}_${self.genRandomNumberForKey()}`}
+                              value={opt}
+                            >
+                              {opt}
+                            </MenuItem>
+                          ))}
+                        </TextField>
+                      </FormControlWrapper>
+                    </Grid>
+                  );
+                }
+                return null;
+              })}
+
+            {panels.length === 0 && (
+              <Grid item xs={12} style={{ marginTop: '10px' }}>
+                <Alert severity="error">
+                  Please load a valid Board JSON to be able to view the panels
+                </Alert>
+              </Grid>
             )}
-          </PrometheusContainer>
-        </NoSsr>
-      </UsesSistent>
+
+            {panels.length > 0 && (
+              <Grid item xs={12}>
+                <TextField
+                  select
+                  id="panels"
+                  name="panels"
+                  label="Panels"
+                  fullWidth
+                  value={selectedPanels}
+                  margin="normal"
+                  variant="outlined"
+                  onChange={this.handleChange('selectedPanels')}
+                  SelectProps={{
+                    multiple: true,
+                    renderValue: (selected) => (
+                      <PanelChipsContainer>
+                        {selected.map((value) => {
+                          let selVal = '';
+                          let panelId = '';
+                          panels.forEach((panel) => {
+                            if (panel.id === value) {
+                              selVal = panel.title;
+                              panelId = panel.id;
+                            }
+                          });
+                          return <Chip key={`pl_--_${panelId}`} label={selVal} className="chip" />;
+                        })}
+                      </PanelChipsContainer>
+                    ),
+                  }}
+                >
+                  {panels.map((panel) => (
+                    <MenuItem key={`panel_-__-${panel.id}`} value={panel.id}>
+                      {panel.title}
+                    </MenuItem>
+                  ))}
+                </TextField>
+              </Grid>
+            )}
+          </Grid>
+
+          {selectedPanels.length > 0 && (
+            <ButtonContainer>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                size="large"
+                onClick={this.addSelectedBoardPanelConfig}
+                className="actionButton"
+              >
+                Add
+              </Button>
+            </ButtonContainer>
+          )}
+        </PrometheusContainer>
+      </NoSsr>
     );
   };
 }

@@ -13,7 +13,6 @@ import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
 import { Box, Typography, useTheme } from '@layer5/sistent';
-import { UsesSistent } from '@/components/SistentWrapper';
 
 export default function ConnectionStatsChart() {
   const { data: statusData } = useGetAllConnectionStatusQuery();
@@ -58,51 +57,49 @@ export default function ConnectionStatsChart() {
   };
 
   return (
-    <UsesSistent>
-      <Link
-        href="/management/connections"
-        style={{
-          pointerEvents: !CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)
-            ? 'none'
-            : 'auto',
-        }}
-      >
-        <DashboardSection>
-          <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <Typography variant="h6" gutterBottom>
-              Connections
-            </Typography>
-            <div onClick={(e) => e.stopPropagation()}>
-              <CustomTextTooltip
-                title={`Meshery Connections are managed and unmanaged resources that either through discovery or manual entry can be assigned to one or more Environments. [Learn More](https://docs.meshery.io/concepts/logical/connections)`}
-                placement="left"
-              >
-                <div>
-                  <InfoOutlined
-                    color={theme.palette.icon.default}
-                    style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-                  />
-                </div>
-              </CustomTextTooltip>
-            </div>
+    <Link
+      href="/management/connections"
+      style={{
+        pointerEvents: !CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)
+          ? 'none'
+          : 'auto',
+      }}
+    >
+      <DashboardSection>
+        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Typography variant="h6" gutterBottom>
+            Connections
+          </Typography>
+          <div onClick={(e) => e.stopPropagation()}>
+            <CustomTextTooltip
+              title={`Meshery Connections are managed and unmanaged resources that either through discovery or manual entry can be assigned to one or more Environments. [Learn More](https://docs.meshery.io/concepts/logical/connections)`}
+              placement="left"
+            >
+              <div>
+                <InfoOutlined
+                  color={theme.palette.icon.default}
+                  style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
+                />
+              </div>
+            </CustomTextTooltip>
           </div>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              alignContent: 'center',
-              height: '100%',
-            }}
-          >
-            {chartData.length > 0 ? (
-              <BBChart options={chartOptions} />
-            ) : (
-              <ConnectCluster message={'No connections found in your clusters'} />
-            )}
-          </Box>
-        </DashboardSection>
-      </Link>
-    </UsesSistent>
+        </div>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            alignContent: 'center',
+            height: '100%',
+          }}
+        >
+          {chartData.length > 0 ? (
+            <BBChart options={chartOptions} />
+          ) : (
+            <ConnectCluster message={'No connections found in your clusters'} />
+          )}
+        </Box>
+      </DashboardSection>
+    </Link>
   );
 }

@@ -24,7 +24,6 @@ import {
   ConnectionStyledMenuItem,
 } from './styles';
 import { iconMedium } from 'css/icons.styles';
-import { UsesSistent } from '../SistentWrapper';
 
 export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, width }) => {
   const chipStyle = { width };
@@ -42,7 +41,7 @@ export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, 
           <BadgeAvatars
             color={
               status === CONNECTION_STATES.CONNECTED || status === CONTROLLER_STATES.DEPLOYED
-                ? theme.palette.background.brand.default
+                ? theme.palette.background.brand?.default
                 : theme.palette.text.disabled
             }
           >
@@ -65,13 +64,11 @@ export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, 
 
 export const TootltipWrappedConnectionChip = (props) => {
   return (
-    <UsesSistent>
-      <CustomTooltip title={props.tooltip || props.title} placement="left">
-        <div>
-          <_ConnectionChip {...props} />
-        </div>
-      </CustomTooltip>
-    </UsesSistent>
+    <CustomTooltip title={props.tooltip || props.title} placement="left">
+      <div>
+        <_ConnectionChip {...props} />
+      </div>
+    </CustomTooltip>
   );
 };
 
@@ -227,5 +224,5 @@ function getStatusChip(status) {
 }
 
 export const ConnectionStateChip = ({ status }) => {
-  return <UsesSistent>{getStatusChip(status)}</UsesSistent>;
+  return <>{getStatusChip(status)}</>;
 };

@@ -26,7 +26,7 @@ import {
 } from '@/rtk-query/meshModel';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
-import { UsesSistent } from '../SistentWrapper';
+
 import { StyledTreeItemDiv, StyledTreeItemNameDiv } from './MeshModel.style';
 
 const VersionedModelComponentTree = ({
@@ -807,71 +807,69 @@ const MesheryTreeView = ({
   );
 
   return (
-    <UsesSistent>
-      <MesheryTreeViewWrapper style={{ width: '100%', height: '100%' }}>
-        {view === MODELS &&
-          renderTree(
-            <MesheryTreeViewModel
-              data={data}
-              handleToggle={handleToggle}
-              handleSelect={handleSelect}
-              expanded={expanded}
-              selected={selected}
-              setShowDetailsData={setShowDetailsData}
-              showDetailsData={showDetailsData}
-              lastModelRef={lastItemRef[MODELS]}
-              isModelFetching={isFetching[MODELS]}
-            />,
-            MODELS,
-          )}
-        {view === REGISTRANTS &&
-          renderTree(
-            <MesheryTreeViewRegistrants
-              data={data}
-              handleToggle={handleToggle}
-              handleSelect={handleSelect}
-              expanded={expanded}
-              selected={selected}
-              setShowDetailsData={setShowDetailsData}
-              showDetailsData={showDetailsData}
-              lastRegistrantRef={lastItemRef[REGISTRANTS]}
-              isRegistrantFetching={isFetching[REGISTRANTS]}
-            />,
-            REGISTRANTS,
-          )}
-        {view === COMPONENTS &&
-          renderTree(
-            <ComponentTree
-              handleToggle={handleToggle}
-              handleSelect={handleSelect}
-              expanded={expanded}
-              selected={selected}
-              data={data}
-              setExpanded={setExpanded}
-              setSelected={setSelected}
-              setSearchText={setSearchText}
-              setShowDetailsData={setShowDetailsData}
-              lastComponentRef={lastItemRef[COMPONENTS]}
-              isComponentFetching={isFetching[COMPONENTS]}
-            />,
-            COMPONENTS,
-          )}
-        {view === RELATIONSHIPS &&
-          renderTree(
-            <RelationshipTree
-              handleToggle={handleToggle}
-              handleSelect={handleSelect}
-              expanded={expanded}
-              selected={selected}
-              data={data}
-              setShowDetailsData={setShowDetailsData}
-              lastRegistrantRef={lastItemRef[RELATIONSHIPS]}
-              isRelationshipFetching={isFetching[RELATIONSHIPS]}
-            />,
-            RELATIONSHIPS,
-          )}
-      </MesheryTreeViewWrapper>
-    </UsesSistent>
+    <MesheryTreeViewWrapper style={{ width: '100%', height: '100%' }}>
+      {view === MODELS &&
+        renderTree(
+          <MesheryTreeViewModel
+            data={data}
+            handleToggle={handleToggle}
+            handleSelect={handleSelect}
+            expanded={expanded}
+            selected={selected}
+            setShowDetailsData={setShowDetailsData}
+            showDetailsData={showDetailsData}
+            lastModelRef={lastItemRef[MODELS]}
+            isModelFetching={isFetching[MODELS]}
+          />,
+          MODELS,
+        )}
+      {view === REGISTRANTS &&
+        renderTree(
+          <MesheryTreeViewRegistrants
+            data={data}
+            handleToggle={handleToggle}
+            handleSelect={handleSelect}
+            expanded={expanded}
+            selected={selected}
+            setShowDetailsData={setShowDetailsData}
+            showDetailsData={showDetailsData}
+            lastRegistrantRef={lastItemRef[REGISTRANTS]}
+            isRegistrantFetching={isFetching[REGISTRANTS]}
+          />,
+          REGISTRANTS,
+        )}
+      {view === COMPONENTS &&
+        renderTree(
+          <ComponentTree
+            handleToggle={handleToggle}
+            handleSelect={handleSelect}
+            expanded={expanded}
+            selected={selected}
+            data={data}
+            setExpanded={setExpanded}
+            setSelected={setSelected}
+            setSearchText={setSearchText}
+            setShowDetailsData={setShowDetailsData}
+            lastComponentRef={lastItemRef[COMPONENTS]}
+            isComponentFetching={isFetching[COMPONENTS]}
+          />,
+          COMPONENTS,
+        )}
+      {view === RELATIONSHIPS &&
+        renderTree(
+          <RelationshipTree
+            handleToggle={handleToggle}
+            handleSelect={handleSelect}
+            expanded={expanded}
+            selected={selected}
+            data={data}
+            setShowDetailsData={setShowDetailsData}
+            lastRegistrantRef={lastItemRef[RELATIONSHIPS]}
+            isRelationshipFetching={isFetching[RELATIONSHIPS]}
+          />,
+          RELATIONSHIPS,
+        )}
+    </MesheryTreeViewWrapper>
   );
 };
 

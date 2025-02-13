@@ -27,7 +27,6 @@ import TooltipButton from '../../../utils/TooltipButton';
 import { SaveAs as SaveAsIcon } from '@mui/icons-material';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { UsesSistent } from '@/components/SistentWrapper';
 
 export default function DesignConfigurator() {
   const [selectedCategory, setSelectedCategory] = useState(null);
@@ -74,18 +73,56 @@ export default function DesignConfigurator() {
 
   return (
     <NoSsr>
-      <UsesSistent>
-        <TooltipButton title="Back" placement="left">
-          <IconButton onClick={() => router.back()}>
-            <ArrowBack />
-          </IconButton>
-        </TooltipButton>
-        <AppBarComponent position="static" elevation={0}>
-          <Toolbar>
-            <div style={{ flexGrow: 1 }}>
-              {/* Category Selector */}
+      <TooltipButton title="Back" placement="left">
+        <IconButton onClick={() => router.back()}>
+          <ArrowBack />
+        </IconButton>
+      </TooltipButton>
+      <AppBarComponent position="static" elevation={0}>
+        <Toolbar>
+          <div style={{ flexGrow: 1 }}>
+            {/* Category Selector */}
+            <FormControl>
+              <TextField
+                select={true}
+                SelectProps={{
+                  MenuProps: {
+                    anchorOrigin: {
+                      vertical: 'bottom',
+                      horizontal: 'left',
+                    },
+                    getContentAnchorEl: null,
+                  },
+                  renderValue: (selected) => {
+                    if (!selected || selected.length === 0) {
+                      return <em>Select Category</em>;
+                    }
+
+                    return selected;
+                  },
+                  displayEmpty: true,
+                }}
+                InputProps={{ disableUnderline: true }}
+                labelId="category-selector"
+                id="category-selector"
+                value={selectedCategory}
+                onChange={handleCategoryChange}
+                fullWidth
+                variant="standard"
+              >
+                {categories.map((cat) => (
+                  <MenuItem key={cat.name} value={cat.name}>
+                    {cat.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </FormControl>
+
+            {/* Model Selector */}
+            {selectedCategory && (
               <FormControl>
                 <TextField
+                  placeholder="select Model"
                   select={true}
                   SelectProps={{
                     MenuProps: {
@@ -97,188 +134,148 @@ export default function DesignConfigurator() {
                     },
                     renderValue: (selected) => {
                       if (!selected || selected.length === 0) {
-                        return <em>Select Category</em>;
+                        return <em>Select Model</em>;
                       }
 
-                      return selected;
+                      return removeHyphenAndCapitalise(selected);
                     },
                     displayEmpty: true,
                   }}
                   InputProps={{ disableUnderline: true }}
-                  labelId="category-selector"
-                  id="category-selector"
-                  value={selectedCategory}
-                  onChange={handleCategoryChange}
+                  labelId="model-selector"
+                  id="model-selector"
+                  value={selectedModel}
+                  onChange={handleModelChange}
                   fullWidth
                   variant="standard"
                 >
-                  {categories.map((cat) => (
-                    <MenuItem key={cat.name} value={cat.name}>
-                      {cat.name}
-                    </MenuItem>
-                  ))}
+                  {models?.[selectedCategory] ? (
+                    models[selectedCategory].map(function renderModels(model, idx) {
+                      return (
+                        <MenuItem key={`${model.name}-${idx}`} value={model.name}>
+                          {model.displayName}
+                        </MenuItem>
+                      );
+                    })
+                  ) : (
+                    <RenderModelNull selectedCategory={selectedCategory} models={models} />
+                  )}
                 </TextField>
               </FormControl>
-
-              {/* Model Selector */}
-              {selectedCategory && (
-                <FormControl>
-                  <TextField
-                    placeholder="select Model"
-                    select={true}
-                    SelectProps={{
-                      MenuProps: {
-                        anchorOrigin: {
-                          vertical: 'bottom',
-                          horizontal: 'left',
-                        },
-                        getContentAnchorEl: null,
-                      },
-                      renderValue: (selected) => {
-                        if (!selected || selected.length === 0) {
-                          return <em>Select Model</em>;
-                        }
-
-                        return removeHyphenAndCapitalise(selected);
-                      },
-                      displayEmpty: true,
-                    }}
-                    InputProps={{ disableUnderline: true }}
-                    labelId="model-selector"
-                    id="model-selector"
-                    value={selectedModel}
-                    onChange={handleModelChange}
-                    fullWidth
-                    variant="standard"
-                  >
-                    {models?.[selectedCategory] ? (
-                      models[selectedCategory].map(function renderModels(model, idx) {
-                        return (
-                          <MenuItem key={`${model.name}-${idx}`} value={model.name}>
-                            {model.displayName}
-                          </MenuItem>
-                        );
-                      })
-                    ) : (
-                      <RenderModelNull selectedCategory={selectedCategory} models={models} />
-                    )}
-                  </TextField>
-                </FormControl>
-              )}
-            </div>
-
-            {/* Action Toolbar */}
-            <TextField
-              label="Design Name"
-              value={designJson.name}
-              onChange={(e) => updateDesignName(e.target.value)}
-              variant="standard"
-            />
-
-            <CustomTooltip title="Save Design as New File">
-              <div>
-                <IconButton
-                  aria-label="Save"
-                  color="primary"
-                  onClick={designSave}
-                  disabled={!CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)}
-                >
-                  <SaveAsIcon style={iconMedium} />
-                </IconButton>
-              </div>
-            </CustomTooltip>
-            {designId && (
-              <>
-                <CustomTooltip title="Update Design">
-                  <div>
-                    <IconButton
-                      aria-label="Update"
-                      color="primary"
-                      onClick={designUpdate}
-                      disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
-                    >
-                      <SaveIcon style={iconMedium} />
-                    </IconButton>
-                  </div>
-                </CustomTooltip>
-                <CustomTooltip title="Delete Design">
-                  <div>
-                    <IconButton
-                      aria-label="Delete"
-                      color="primary"
-                      onClick={designDelete}
-                      disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
-                    >
-                      <DeleteIcon style={iconMedium} />
-                    </IconButton>
-                  </div>
-                </CustomTooltip>
-              </>
             )}
-          </Toolbar>
-        </AppBarComponent>
-        <Grid container spacing={3}>
-          {meshmodelComponents?.[selectedModel] && (
-            <Grid item xs={12} md={6}>
-              {meshmodelComponents[selectedModel]?.[0]?.components?.map(
-                function ShowRjsfComponentsLazily(trimmedComponent, idx) {
-                  const hasInvalidSchema = !!trimmedComponent.metadata?.hasInvalidSchema;
-                  return (
-                    <LazyComponentForm
-                      key={`${trimmedComponent.component.kind}-${idx}`}
-                      component={trimmedComponent}
-                      onSettingsChange={onSettingsChange(trimmedComponent, formReference)}
-                      reference={formReference}
-                      disabled={hasInvalidSchema}
-                    />
-                  );
-                },
-              )}
-            </Grid>
-          )}
-          <Grid item xs={12} md={selectedCategory && selectedModel ? 6 : 12}>
-            <CodeEditor
-              yaml={designYaml}
-              onChange={(_val, _view, update) => {
-                updateDesignData({ yamlData: update });
-              }}
-              saveCodeEditorChanges={(args) => {
-                console.log('onSave', args);
-              }}
-              fullWidth={!(selectedCategory && selectedModel)}
-            />
-            {designJson?.services && Object.keys(designJson.services).length > 0 && (
-              <AvatarGroup
-                max={10}
-                style={{
-                  position: 'fixed',
-                  bottom: 60,
-                  right: 40,
-                }}
+          </div>
+
+          {/* Action Toolbar */}
+          <TextField
+            label="Design Name"
+            value={designJson.name}
+            onChange={(e) => updateDesignName(e.target.value)}
+            variant="standard"
+          />
+
+          <CustomTooltip title="Save Design as New File">
+            <div>
+              <IconButton
+                aria-label="Save"
+                color="primary"
+                onClick={designSave}
+                disabled={!CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)}
               >
-                {Object.values(designJson.services).map(
-                  function renderAvatarFromServices(service, idx) {
-                    const metadata = service.traits?.['meshmodel-metadata'];
-                    if (metadata) {
-                      const { primaryColor, svgWhite } = metadata;
-                      return (
-                        <Avatar
-                          key={idx}
-                          src={`${getWebAdress()}/${svgWhite}`}
-                          style={{ background: primaryColor, padding: 6, height: 20, width: 20 }}
-                          onClick={() => {
-                            console.log('TODO: write function to highlight things on editor');
-                          }}
-                        />
-                      );
-                    }
-                  },
-                )}
-              </AvatarGroup>
+                <SaveAsIcon style={iconMedium} />
+              </IconButton>
+            </div>
+          </CustomTooltip>
+          {designId && (
+            <>
+              <CustomTooltip title="Update Design">
+                <div>
+                  <IconButton
+                    aria-label="Update"
+                    color="primary"
+                    onClick={designUpdate}
+                    disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
+                  >
+                    <SaveIcon style={iconMedium} />
+                  </IconButton>
+                </div>
+              </CustomTooltip>
+              <CustomTooltip title="Delete Design">
+                <div>
+                  <IconButton
+                    aria-label="Delete"
+                    color="primary"
+                    onClick={designDelete}
+                    disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
+                  >
+                    <DeleteIcon style={iconMedium} />
+                  </IconButton>
+                </div>
+              </CustomTooltip>
+            </>
+          )}
+        </Toolbar>
+      </AppBarComponent>
+      <Grid container spacing={3}>
+        {meshmodelComponents?.[selectedModel] && (
+          <Grid item xs={12} md={6}>
+            {meshmodelComponents[selectedModel]?.[0]?.components?.map(
+              function ShowRjsfComponentsLazily(trimmedComponent, idx) {
+                const hasInvalidSchema = !!trimmedComponent.metadata?.hasInvalidSchema;
+                return (
+                  <LazyComponentForm
+                    key={`${trimmedComponent.component.kind}-${idx}`}
+                    component={trimmedComponent}
+                    onSettingsChange={onSettingsChange(trimmedComponent, formReference)}
+                    reference={formReference}
+                    disabled={hasInvalidSchema}
+                  />
+                );
+              },
             )}
           </Grid>
+        )}
+        <Grid item xs={12} md={selectedCategory && selectedModel ? 6 : 12}>
+          <CodeEditor
+            yaml={designYaml}
+            onChange={(_val, _view, update) => {
+              updateDesignData({ yamlData: update });
+            }}
+            saveCodeEditorChanges={(args) => {
+              console.log('onSave', args);
+            }}
+            fullWidth={!(selectedCategory && selectedModel)}
+          />
+          {designJson?.services && Object.keys(designJson.services).length > 0 && (
+            <AvatarGroup
+              max={10}
+              style={{
+                position: 'fixed',
+                bottom: 60,
+                right: 40,
+              }}
+            >
+              {Object.values(designJson.services).map(
+                function renderAvatarFromServices(service, idx) {
+                  const metadata = service.traits?.['meshmodel-metadata'];
+                  if (metadata) {
+                    const { primaryColor, svgWhite } = metadata;
+                    return (
+                      <Avatar
+                        key={idx}
+                        src={`${getWebAdress()}/${svgWhite}`}
+                        style={{ background: primaryColor, padding: 6, height: 20, width: 20 }}
+                        onClick={() => {
+                          console.log('TODO: write function to highlight things on editor');
+                        }}
+                      />
+                    );
+                  }
+                },
+              )}
+            </AvatarGroup>
+          )}
         </Grid>
-      </UsesSistent>
+      </Grid>
     </NoSsr>
   );
 }

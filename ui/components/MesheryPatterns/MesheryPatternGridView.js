@@ -18,7 +18,7 @@ import ExportModal from '../ExportModal';
 import downloadContent from '@/utils/fileDownloader';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { Modal as SistentModal } from '@layer5/sistent';
-import { UsesSistent } from '../SistentWrapper';
+
 import Pattern from '../../public/static/img/drawer-icons/pattern_svg';
 const INITIAL_GRID_SIZE = { xl: 6, md: 6, xs: 12 };
 
@@ -43,54 +43,52 @@ function PatternCardGridItem({
   const [yaml, setYaml] = useState(pattern.pattern_file);
 
   return (
-    <UsesSistent>
-      <Grid item {...gridProps}>
-        <MesheryPatternCard
-          id={pattern.id}
-          user={user}
-          name={pattern.name}
-          updated_at={pattern.updated_at}
-          created_at={pattern.created_at}
-          pattern_file={pattern.pattern_file}
-          requestFullSize={() => setGridProps({ xl: 12, md: 12, xs: 12 })}
-          requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
-          handleDeploy={handleDeploy}
-          handleVerify={handleVerify}
-          handleDryRun={handleDryRun}
-          handlePublishModal={handlePublishModal}
-          handleUnDeploy={handleUnDeploy}
-          handleUnpublishModal={handleUnpublishModal}
-          handleClone={handleClone}
-          handleInfoModal={handleInfoModal}
-          handleDownload={handleDownload}
-          deleteHandler={() =>
-            handleSubmit({
-              data: yaml,
-              id: pattern.id,
-              type: FILE_OPS.DELETE,
-              name: pattern.name,
-              catalog_data: pattern.catalog_data,
-            })
-          }
-          updateHandler={() =>
-            handleSubmit({
-              data: yaml,
-              id: pattern.id,
-              type: FILE_OPS.UPDATE,
-              name: pattern.name,
-              catalog_data: pattern.catalog_data,
-            })
-          }
-          setSelectedPatterns={() => setSelectedPatterns({ pattern: pattern, show: true })}
-          setYaml={setYaml}
-          description={pattern.description}
-          visibility={pattern.visibility}
-          pattern={pattern}
-          hideVisibility={hideVisibility}
-          isReadOnly={isReadOnly}
-        />
-      </Grid>
-    </UsesSistent>
+    <Grid item {...gridProps}>
+      <MesheryPatternCard
+        id={pattern.id}
+        user={user}
+        name={pattern.name}
+        updated_at={pattern.updated_at}
+        created_at={pattern.created_at}
+        pattern_file={pattern.pattern_file}
+        requestFullSize={() => setGridProps({ xl: 12, md: 12, xs: 12 })}
+        requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
+        handleDeploy={handleDeploy}
+        handleVerify={handleVerify}
+        handleDryRun={handleDryRun}
+        handlePublishModal={handlePublishModal}
+        handleUnDeploy={handleUnDeploy}
+        handleUnpublishModal={handleUnpublishModal}
+        handleClone={handleClone}
+        handleInfoModal={handleInfoModal}
+        handleDownload={handleDownload}
+        deleteHandler={() =>
+          handleSubmit({
+            data: yaml,
+            id: pattern.id,
+            type: FILE_OPS.DELETE,
+            name: pattern.name,
+            catalog_data: pattern.catalog_data,
+          })
+        }
+        updateHandler={() =>
+          handleSubmit({
+            data: yaml,
+            id: pattern.id,
+            type: FILE_OPS.UPDATE,
+            name: pattern.name,
+            catalog_data: pattern.catalog_data,
+          })
+        }
+        setSelectedPatterns={() => setSelectedPatterns({ pattern: pattern, show: true })}
+        setYaml={setYaml}
+        description={pattern.description}
+        visibility={pattern.visibility}
+        pattern={pattern}
+        hideVisibility={hideVisibility}
+        isReadOnly={isReadOnly}
+      />
+    </Grid>
   );
 }
 
@@ -200,99 +198,97 @@ function MesheryPatternGrid({
   };
 
   return (
-    <UsesSistent>
-      <div>
-        {selectedPattern.show && (
-          <DesignConfigurator
-            pattern={selectedPattern.pattern}
-            show={setSelectedPattern}
-            onSubmit={handleSubmit}
-          />
-        )}
-        {!selectedPattern.show && (
-          <Grid container spacing={3}>
-            {patterns.map((pattern) => (
-              <PatternCardGridItem
-                key={pattern.id}
-                user={user}
-                pattern={pattern}
-                handleClone={() => handleClone(pattern.id, pattern.name)}
-                handleDeploy={(e) => {
-                  openDeployModal(e, pattern.pattern_file, pattern.name, pattern.id);
-                }}
-                handleUnDeploy={(e) => {
-                  openUndeployModal(e, pattern.pattern_file, pattern.name, pattern.id);
-                }}
-                handleDryRun={(e) =>
-                  openDryRunModal(e, pattern.pattern_file, pattern.name, pattern.id)
-                }
-                handleVerify={(e) =>
-                  openValidationModal(e, pattern.pattern_file, pattern.name, pattern.id)
-                }
-                handlePublishModal={() => handlePublishModal(pattern)}
-                handleUnpublishModal={(e) => handleUnpublishModal(e, pattern)()}
-                handleInfoModal={() => handleInfoModal(pattern)}
-                handleSubmit={handleSubmit}
-                handleDownload={(e) => handleDesignDownloadModal(e, pattern)}
-                setSelectedPatterns={setSelectedPattern}
-                hideVisibility={hideVisibility}
-                isReadOnly={arePatternsReadOnly}
-              />
-            ))}
-          </Grid>
-        )}
-
-        {!selectedPattern.show && patterns.length === 0 && (
-          <GridNoPapperStyles>
-            <GridNoContainerStyles>
-              <GridNoTextStyles align="center" color="textSecondary">
-                No Designs Found
-              </GridNoTextStyles>
-            </GridNoContainerStyles>
-          </GridNoPapperStyles>
-        )}
-        {patterns.length ? (
-          <GridPaginationStyles>
-            <Pagination
-              count={pages}
-              page={selectedPage + 1}
-              onChange={(_, page) => setPage(page - 1)}
-            />
-          </GridPaginationStyles>
-        ) : null}
-
-        {canPublishPattern && publishModal.open && (
-          <SistentModal
-            open={true}
-            title={publishModal.pattern?.name}
-            closeModal={handlePublishModalClose}
-            aria-label="catalog publish"
-            maxWidth="sm"
-            headerIcon={
-              <Pattern
-                fill="#fff"
-                style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-                className={undefined}
-              />
-            }
-          >
-            <RJSFModalWrapper
-              schema={publishSchema.rjsfSchema}
-              uiSchema={publishSchema.uiSchema}
-              submitBtnText="Submit for Approval"
-              handleSubmit={handlePublish}
-              helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
-              handleClose={handlePublishModalClose}
-            />
-          </SistentModal>
-        )}
-        <ExportModal
-          downloadModal={downloadModal}
-          handleDownloadDialogClose={handleDownloadDialogClose}
-          handleDesignDownload={handleDownload}
+    <div>
+      {selectedPattern.show && (
+        <DesignConfigurator
+          pattern={selectedPattern.pattern}
+          show={setSelectedPattern}
+          onSubmit={handleSubmit}
         />
-      </div>
-    </UsesSistent>
+      )}
+      {!selectedPattern.show && (
+        <Grid container spacing={3}>
+          {patterns.map((pattern) => (
+            <PatternCardGridItem
+              key={pattern.id}
+              user={user}
+              pattern={pattern}
+              handleClone={() => handleClone(pattern.id, pattern.name)}
+              handleDeploy={(e) => {
+                openDeployModal(e, pattern.pattern_file, pattern.name, pattern.id);
+              }}
+              handleUnDeploy={(e) => {
+                openUndeployModal(e, pattern.pattern_file, pattern.name, pattern.id);
+              }}
+              handleDryRun={(e) =>
+                openDryRunModal(e, pattern.pattern_file, pattern.name, pattern.id)
+              }
+              handleVerify={(e) =>
+                openValidationModal(e, pattern.pattern_file, pattern.name, pattern.id)
+              }
+              handlePublishModal={() => handlePublishModal(pattern)}
+              handleUnpublishModal={(e) => handleUnpublishModal(e, pattern)()}
+              handleInfoModal={() => handleInfoModal(pattern)}
+              handleSubmit={handleSubmit}
+              handleDownload={(e) => handleDesignDownloadModal(e, pattern)}
+              setSelectedPatterns={setSelectedPattern}
+              hideVisibility={hideVisibility}
+              isReadOnly={arePatternsReadOnly}
+            />
+          ))}
+        </Grid>
+      )}
+
+      {!selectedPattern.show && patterns.length === 0 && (
+        <GridNoPapperStyles>
+          <GridNoContainerStyles>
+            <GridNoTextStyles align="center" color="textSecondary">
+              No Designs Found
+            </GridNoTextStyles>
+          </GridNoContainerStyles>
+        </GridNoPapperStyles>
+      )}
+      {patterns.length ? (
+        <GridPaginationStyles>
+          <Pagination
+            count={pages}
+            page={selectedPage + 1}
+            onChange={(_, page) => setPage(page - 1)}
+          />
+        </GridPaginationStyles>
+      ) : null}
+
+      {canPublishPattern && publishModal.open && (
+        <SistentModal
+          open={true}
+          title={publishModal.pattern?.name}
+          closeModal={handlePublishModalClose}
+          aria-label="catalog publish"
+          maxWidth="sm"
+          headerIcon={
+            <Pattern
+              fill="#fff"
+              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+              className={undefined}
+            />
+          }
+        >
+          <RJSFModalWrapper
+            schema={publishSchema.rjsfSchema}
+            uiSchema={publishSchema.uiSchema}
+            submitBtnText="Submit for Approval"
+            handleSubmit={handlePublish}
+            helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
+            handleClose={handlePublishModalClose}
+          />
+        </SistentModal>
+      )}
+      <ExportModal
+        downloadModal={downloadModal}
+        handleDownloadDialogClose={handleDownloadDialogClose}
+        handleDesignDownload={handleDownload}
+      />
+    </div>
   );
 }
 

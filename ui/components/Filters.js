@@ -61,7 +61,7 @@ import { DefaultTableCell, SortableTableCell } from './connections/common/index.
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from './General/error-404/index';
-import { UsesSistent } from './SistentWrapper';
+
 import { Modal as SistentModal } from '@layer5/sistent';
 import {
   useGetFiltersQuery,
@@ -117,13 +117,11 @@ const ActionsBox = styled(Box)(() => ({
 
 function TooltipIcon({ children, onClick, title }) {
   return (
-    <UsesSistent>
-      <CustomTooltip title={title} placement="top" interactive>
-        <div>
-          <IconButton onClick={onClick}>{children}</IconButton>
-        </div>
-      </CustomTooltip>
-    </UsesSistent>
+    <CustomTooltip title={title} placement="top" interactive>
+      <div>
+        <IconButton onClick={onClick}>{children}</IconButton>
+      </div>
+    </CustomTooltip>
   );
 }
 
@@ -1145,159 +1143,148 @@ function MesheryFilters({
   };
 
   if (isFiltersLoading) {
-    return (
-      <UsesSistent>
-        <LoadingScreen animatedIcon="AnimatedFilter" message={`Loading Filters...`} />
-      </UsesSistent>
-    );
+    return <LoadingScreen animatedIcon="AnimatedFilter" message={`Loading Filters...`} />;
   }
 
   return (
     <>
-      <UsesSistent>
-        <NoSsr>
-          {CAN(keys.VIEW_FILTERS.action, keys.VIEW_FILTERS.subject) ? (
-            <>
-              {selectedRowData && Object.keys(selectedRowData).length > 0 && (
-                <YAMLEditor
-                  filter={selectedRowData}
-                  onClose={resetSelectedRowData()}
-                  onSubmit={handleSubmit}
-                />
-              )}
-              <ToolWrapper>
-                {width < 600 && isSearchExpanded ? null : (
-                  <div style={{ display: 'flex' }}>
-                    {!selectedFilter.show && (filters.length > 0 || viewType === 'table') && (
-                      <CreateButton>
-                        <Button
-                          aria-label="Add Filter"
-                          variant="contained"
-                          color="primary"
-                          size="large"
-                          onClick={handleUploadImport}
-                          disabled={!CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject)}
-                        >
-                          <PublishIcon style={iconMedium} data-cy="import-button" />
-                          <BtnText> Import Filters </BtnText>
-                        </Button>
-                      </CreateButton>
-                    )}
-                    <ViewSwitchButton style={{ jdisplay: 'flex' }}>
-                      {/* <CatalogFilter
+      <NoSsr>
+        {CAN(keys.VIEW_FILTERS.action, keys.VIEW_FILTERS.subject) ? (
+          <>
+            {selectedRowData && Object.keys(selectedRowData).length > 0 && (
+              <YAMLEditor
+                filter={selectedRowData}
+                onClose={resetSelectedRowData()}
+                onSubmit={handleSubmit}
+              />
+            )}
+            <ToolWrapper>
+              {width < 600 && isSearchExpanded ? null : (
+                <div style={{ display: 'flex' }}>
+                  {!selectedFilter.show && (filters.length > 0 || viewType === 'table') && (
+                    <CreateButton>
+                      <Button
+                        aria-label="Add Filter"
+                        variant="contained"
+                        color="primary"
+                        size="large"
+                        onClick={handleUploadImport}
+                        disabled={!CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject)}
+                      >
+                        <PublishIcon style={iconMedium} data-cy="import-button" />
+                        <BtnText> Import Filters </BtnText>
+                      </Button>
+                    </CreateButton>
+                  )}
+                  <ViewSwitchButton style={{ jdisplay: 'flex' }}>
+                    {/* <CatalogFilter
                       catalogVisibility={catalogVisibility}
                       handleCatalogVisibility={handleCatalogVisibility}
                       classes={classes}
                     /> */}
-                    </ViewSwitchButton>
-                  </div>
-                )}
-                <div style={{ display: 'flex', alignItems: 'center' }}>
-                  <SearchBar
-                    onSearch={(value) => {
-                      setSearch(value);
-                      initFiltersSubscription(
-                        page.toString(),
-                        pageSize.toString(),
-                        value,
-                        sortOrder,
-                      );
-                    }}
-                    expanded={isSearchExpanded}
-                    setExpanded={setIsSearchExpanded}
-                    placeholder="Search"
-                  />
-                  <UniversalFilter
-                    id="ref"
-                    filters={filter}
-                    selectedFilters={selectedFilters}
-                    setSelectedFilters={setSelectedFilters}
-                    handleApplyFilter={handleApplyFilter}
-                  />
-                  {viewType === 'table' && (
-                    <CustomColumnVisibilityControl
-                      id="ref"
-                      columns={columns}
-                      customToolsProps={{ columnVisibility, setColumnVisibility }}
-                    />
-                  )}
-
-                  {!selectedFilter.show && (
-                    <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
-                  )}
+                  </ViewSwitchButton>
                 </div>
-              </ToolWrapper>
-              {!selectedFilter.show && viewType === 'table' && (
-                <ResponsiveDataTable
-                  data={filters}
-                  columns={columns}
-                  tableCols={tableCols}
-                  updateCols={updateCols}
-                  columnVisibility={columnVisibility}
-                  options={options}
+              )}
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <SearchBar
+                  onSearch={(value) => {
+                    setSearch(value);
+                    initFiltersSubscription(page.toString(), pageSize.toString(), value, sortOrder);
+                  }}
+                  expanded={isSearchExpanded}
+                  setExpanded={setIsSearchExpanded}
+                  placeholder="Search"
+                />
+                <UniversalFilter
+                  id="ref"
+                  filters={filter}
+                  selectedFilters={selectedFilters}
+                  setSelectedFilters={setSelectedFilters}
+                  handleApplyFilter={handleApplyFilter}
+                />
+                {viewType === 'table' && (
+                  <CustomColumnVisibilityControl
+                    id="ref"
+                    columns={columns}
+                    customToolsProps={{ columnVisibility, setColumnVisibility }}
+                  />
+                )}
+
+                {!selectedFilter.show && (
+                  <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
+                )}
+              </div>
+            </ToolWrapper>
+            {!selectedFilter.show && viewType === 'table' && (
+              <ResponsiveDataTable
+                data={filters}
+                columns={columns}
+                tableCols={tableCols}
+                updateCols={updateCols}
+                columnVisibility={columnVisibility}
+                options={options}
+              />
+            )}
+            {!selectedFilter.show && viewType === 'grid' && (
+              // grid view
+              <FiltersGrid
+                filters={filters}
+                handleSubmit={handleSubmit}
+                canPublishFilter={canPublishFilter}
+                handlePublish={handlePublish}
+                handleUnpublishModal={handleUnpublishModal}
+                handleUploadImport={handleUploadImport}
+                handleClone={handleClone}
+                handleDownload={handleDownload}
+                uploadHandler={uploadHandler}
+                setSelectedFilter={setSelectedFilter}
+                selectedFilter={selectedFilter}
+                pages={Math.ceil(count / pageSize)}
+                setPage={setPage}
+                selectedPage={page}
+                publishModal={publishModal}
+                setPublishModal={setPublishModal}
+                publishSchema={publishSchema}
+                fetch={() => getFilters()}
+                handleInfoModal={handleInfoModal}
+              />
+            )}
+            {canPublishFilter &&
+              publishModal.open &&
+              CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject) && (
+                <PublishModal
+                  handleClose={handlePublishModalClose}
+                  title={publishModal.filter?.name}
+                  handleSubmit={handlePublish}
                 />
               )}
-              {!selectedFilter.show && viewType === 'grid' && (
-                // grid view
-                <FiltersGrid
-                  filters={filters}
-                  handleSubmit={handleSubmit}
-                  canPublishFilter={canPublishFilter}
+            {importModal.open && CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject) && (
+              <ImportModal
+                handleClose={handleUploadImportClose}
+                handleImportFilter={handleImportFilter}
+              />
+            )}
+            {infoModal.open &&
+              CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject) && (
+                <InfoModal
                   handlePublish={handlePublish}
-                  handleUnpublishModal={handleUnpublishModal}
-                  handleUploadImport={handleUploadImport}
-                  handleClone={handleClone}
-                  handleDownload={handleDownload}
-                  uploadHandler={uploadHandler}
-                  setSelectedFilter={setSelectedFilter}
-                  selectedFilter={selectedFilter}
-                  pages={Math.ceil(count / pageSize)}
-                  setPage={setPage}
-                  selectedPage={page}
-                  publishModal={publishModal}
-                  setPublishModal={setPublishModal}
-                  publishSchema={publishSchema}
-                  fetch={() => getFilters()}
-                  handleInfoModal={handleInfoModal}
+                  infoModalOpen={true}
+                  handleInfoModalClose={handleInfoModalClose}
+                  dataName="filters"
+                  selectedResource={infoModal.selectedResource}
+                  resourceOwnerID={infoModal.ownerID}
+                  currentUser={user}
+                  formSchema={publishSchema}
+                  meshModels={meshModels}
+                  patternFetcher={() => getFilters()}
                 />
               )}
-              {canPublishFilter &&
-                publishModal.open &&
-                CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject) && (
-                  <PublishModal
-                    handleClose={handlePublishModalClose}
-                    title={publishModal.filter?.name}
-                    handleSubmit={handlePublish}
-                  />
-                )}
-              {importModal.open && CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject) && (
-                <ImportModal
-                  handleClose={handleUploadImportClose}
-                  handleImportFilter={handleImportFilter}
-                />
-              )}
-              {infoModal.open &&
-                CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject) && (
-                  <InfoModal
-                    handlePublish={handlePublish}
-                    infoModalOpen={true}
-                    handleInfoModalClose={handleInfoModalClose}
-                    dataName="filters"
-                    selectedResource={infoModal.selectedResource}
-                    resourceOwnerID={infoModal.ownerID}
-                    currentUser={user}
-                    formSchema={publishSchema}
-                    meshModels={meshModels}
-                    patternFetcher={() => getFilters()}
-                  />
-                )}
-              <_PromptComponent ref={modalRef} />
-            </>
-          ) : (
-            <DefaultError />
-          )}
-        </NoSsr>
-      </UsesSistent>
+            <_PromptComponent ref={modalRef} />
+          </>
+        ) : (
+          <DefaultError />
+        )}
+      </NoSsr>
     </>
   );
 }
@@ -1308,25 +1295,23 @@ const ImportModal = React.memo((props) => {
   // const classes = useStyles();
 
   return (
-    <UsesSistent>
-      <SistentModal
-        open={true}
-        closeModal={handleClose}
-        headerIcon={
-          <Filter fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
-        }
-        title="Import Design"
-        maxWidth="sm"
-      >
-        <RJSFModalWrapper
-          schema={importFilterSchema}
-          uiSchema={importFilterUiSchema}
-          handleSubmit={handleImportFilter}
-          submitBtnText="Import"
-          handleClose={handleClose}
-        />
-      </SistentModal>
-    </UsesSistent>
+    <SistentModal
+      open={true}
+      closeModal={handleClose}
+      headerIcon={
+        <Filter fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
+      }
+      title="Import Design"
+      maxWidth="sm"
+    >
+      <RJSFModalWrapper
+        schema={importFilterSchema}
+        uiSchema={importFilterUiSchema}
+        handleSubmit={handleImportFilter}
+        submitBtnText="Import"
+        handleClose={handleClose}
+      />
+    </SistentModal>
   );
 });
 
@@ -1334,27 +1319,25 @@ const PublishModal = React.memo((props) => {
   const { handleClose, handleSubmit, title } = props;
 
   return (
-    <UsesSistent>
-      <SistentModal
-        open={true}
-        headerIcon={
-          <Filter fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
-        }
-        closeModal={handleClose}
-        aria-label="catalog publish"
-        title={title}
-        maxWidth="sm"
-      >
-        <RJSFModalWrapper
-          schema={publishCatalogItemSchema}
-          uiSchema={publishCatalogItemUiSchema}
-          submitBtnText="Submit for Approval"
-          handleSubmit={handleSubmit}
-          helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
-          handleClose={handleClose}
-        />
-      </SistentModal>
-    </UsesSistent>
+    <SistentModal
+      open={true}
+      headerIcon={
+        <Filter fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
+      }
+      closeModal={handleClose}
+      aria-label="catalog publish"
+      title={title}
+      maxWidth="sm"
+    >
+      <RJSFModalWrapper
+        schema={publishCatalogItemSchema}
+        uiSchema={publishCatalogItemUiSchema}
+        submitBtnText="Submit for Approval"
+        handleSubmit={handleSubmit}
+        helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
+        handleClose={handleClose}
+      />
+    </SistentModal>
   );
 });
 

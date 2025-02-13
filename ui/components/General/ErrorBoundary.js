@@ -12,7 +12,7 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { useSupportWebHookMutation } from '@/rtk-query/webhook';
 import { EVENT_TYPES } from 'lib/event-types';
 import { useGetLoggedInUserQuery, useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
-import { UsesSistent } from '../SistentWrapper';
+
 import {
   EditButton,
   FallbackWrapper,
@@ -81,57 +81,55 @@ const CustomErrorFallback = (props) => {
 
   return (
     <>
-      <UsesSistent>
-        <FallbackWrapper>
-          <Fallback showPackageInfo={true} {...props}>
-            <>
-              {showSupportBasedOnProvider ? (
-                <ToolBarButtonContainer style={{ marginTop: '0.7rem' }}>
-                  <EditButton
-                    variant="contained"
-                    style={{ marginRight: '0.7rem' }}
-                    onClick={handleOpenSupportModal}
-                  >
-                    <TextButton>Get Help</TextButton>
-                  </EditButton>
-                </ToolBarButtonContainer>
-              ) : null}
-            </>
-
-            <TryAgainButton color="primary" onClick={props.resetErrorBoundary}>
-              <TextButton
-                style={{
-                  color: theme.palette.text.default,
-                }}
-              >
-                Try Again
-              </TextButton>
-            </TryAgainButton>
-
-            <Modal
-              open={openSupportModal}
-              closeModal={handleCloseSupportModal}
-              title="Help & Support"
-              headerIcon={<SupportIcon style={{ height: '24px', width: '24px' }} />}
-            >
-              <RJSFModalWrapper
-                schema={helpAndSupportModalSchema}
-                uiSchema={helpAndSupportModalUiSchema}
-                handleClose={handleCloseSupportModal}
-                handleSubmit={handleSupportFormSubmission}
-                submitBtnText="Submit"
-              />
-            </Modal>
+      <FallbackWrapper>
+        <Fallback showPackageInfo={true} {...props}>
+          <>
             {showSupportBasedOnProvider ? (
-              <StickyFeedbackButton
-                containerStyles={{ zIndex: 11 }}
-                defaultMessage={errorMessage}
-                defaultOpen={true}
-              />
+              <ToolBarButtonContainer style={{ marginTop: '0.7rem' }}>
+                <EditButton
+                  variant="contained"
+                  style={{ marginRight: '0.7rem' }}
+                  onClick={handleOpenSupportModal}
+                >
+                  <TextButton>Get Help</TextButton>
+                </EditButton>
+              </ToolBarButtonContainer>
             ) : null}
-          </Fallback>
-        </FallbackWrapper>
-      </UsesSistent>
+          </>
+
+          <TryAgainButton color="primary" onClick={props.resetErrorBoundary}>
+            <TextButton
+              style={{
+                color: theme.palette.text.default,
+              }}
+            >
+              Try Again
+            </TextButton>
+          </TryAgainButton>
+
+          <Modal
+            open={openSupportModal}
+            closeModal={handleCloseSupportModal}
+            title="Help & Support"
+            headerIcon={<SupportIcon style={{ height: '24px', width: '24px' }} />}
+          >
+            <RJSFModalWrapper
+              schema={helpAndSupportModalSchema}
+              uiSchema={helpAndSupportModalUiSchema}
+              handleClose={handleCloseSupportModal}
+              handleSubmit={handleSupportFormSubmission}
+              submitBtnText="Submit"
+            />
+          </Modal>
+          {showSupportBasedOnProvider ? (
+            <StickyFeedbackButton
+              containerStyles={{ zIndex: 11 }}
+              defaultMessage={errorMessage}
+              defaultOpen={true}
+            />
+          ) : null}
+        </Fallback>
+      </FallbackWrapper>
     </>
   );
 };

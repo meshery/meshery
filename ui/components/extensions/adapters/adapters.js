@@ -12,7 +12,6 @@ import { promisifiedDataFetch } from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { Grid, Switch, Typography, useTheme } from '@layer5/sistent';
-import { UsesSistent } from '@/components/SistentWrapper';
 
 const Adapters = ({ updateProgress }) => {
   // States.
@@ -113,66 +112,64 @@ const Adapters = ({ updateProgress }) => {
   // Render.
   return (
     <>
-      <UsesSistent>
-        {Object.entries(availableAdapters).map(([adapterId, adapter]) => (
-          <Grid item {...LARGE_6_MED_12_GRID_STYLE} key={adapterId}>
-            <CardContainer>
-              <Typography variant="h5" component="div">
-                Meshery Adapter for {adapter.name}
-              </Typography>
+      {Object.entries(availableAdapters).map(([adapterId, adapter]) => (
+        <Grid item {...LARGE_6_MED_12_GRID_STYLE} key={adapterId}>
+          <CardContainer>
+            <Typography variant="h5" component="div">
+              Meshery Adapter for {adapter.name}
+            </Typography>
 
-              <FrontSideDescription variant="body">
-                <ImageWrapper src={adapter.imageSrc} />
-                <div
-                  style={{
-                    display: 'inline',
-                    position: 'relative',
-                  }}
-                >
-                  {adapter.description}
-                </div>
-              </FrontSideDescription>
-
-              <Grid
-                container
-                spacing={2}
-                direction="row"
-                justifyContent="space-between"
-                alignItems="baseline"
+            <FrontSideDescription variant="body">
+              <ImageWrapper src={adapter.imageSrc} />
+              <div
                 style={{
-                  position: 'absolute',
-                  paddingRight: '3rem',
-                  paddingLeft: '.5rem',
-                  bottom: '1.5rem',
+                  display: 'inline',
+                  position: 'relative',
                 }}
               >
-                <Typography variant="subtitle2" style={{ fontStyle: 'italic' }}>
-                  <a
-                    href="https://docs.meshery.io/concepts/architecture/adapters"
-                    target="_blank"
-                    rel="noreferrer"
-                    style={{
-                      textDecoration: 'none',
-                      color: theme.palette.text.brand,
-                    }}
-                  >
-                    Open Adapter docs
-                  </a>
-                </Typography>
+                {adapter.description}
+              </div>
+            </FrontSideDescription>
 
-                <div style={{ textAlign: 'right' }}>
-                  <Switch
-                    checked={adapter.enabled}
-                    onChange={() => handleToggle(adapter, adapterId)}
-                    name="OperatorSwitch"
-                    color="primary"
-                  />
-                </div>
-              </Grid>
-            </CardContainer>
-          </Grid>
-        ))}
-      </UsesSistent>
+            <Grid
+              container
+              spacing={2}
+              direction="row"
+              justifyContent="space-between"
+              alignItems="baseline"
+              style={{
+                position: 'absolute',
+                paddingRight: '3rem',
+                paddingLeft: '.5rem',
+                bottom: '1.5rem',
+              }}
+            >
+              <Typography variant="subtitle2" style={{ fontStyle: 'italic' }}>
+                <a
+                  href="https://docs.meshery.io/concepts/architecture/adapters"
+                  target="_blank"
+                  rel="noreferrer"
+                  style={{
+                    textDecoration: 'none',
+                    color: theme.palette.text.brand,
+                  }}
+                >
+                  Open Adapter docs
+                </a>
+              </Typography>
+
+              <div style={{ textAlign: 'right' }}>
+                <Switch
+                  checked={adapter.enabled}
+                  onChange={() => handleToggle(adapter, adapterId)}
+                  name="OperatorSwitch"
+                  color="primary"
+                />
+              </div>
+            </Grid>
+          </CardContainer>
+        </Grid>
+      ))}
     </>
   );
 };

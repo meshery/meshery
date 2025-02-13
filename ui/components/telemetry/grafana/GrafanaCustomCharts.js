@@ -18,7 +18,6 @@ import {
   styled,
   useTheme,
 } from '@layer5/sistent';
-import { UsesSistent } from '@/components/SistentWrapper';
 
 const GrafanaRoot = styled('div')({
   width: '100%',
@@ -150,13 +149,40 @@ class GrafanaCustomCharts extends Component {
     //   grafanaURL = grafanaURL.substring(0, grafanaURL.length - 1);
     // }
     return (
-      <UsesSistent>
-        <NoSsr>
-          <React.Fragment>
-            <GrafanaRoot>
-              {!(boardPanelData && boardPanelData !== null) && (
-                <ChartsHeaderOptions>
-                  {enableGrafanaChip && <div>{this.GrafanaChip(grafanaURL)}</div>}
+      <NoSsr>
+        <React.Fragment>
+          <GrafanaRoot>
+            {!(boardPanelData && boardPanelData !== null) && (
+              <ChartsHeaderOptions>
+                {enableGrafanaChip && <div>{this.GrafanaChip(grafanaURL)}</div>}
+                <DateRangePickerContainer>
+                  <GrafanaDateRangePicker
+                    from={from}
+                    startDate={startDate}
+                    to={to}
+                    endDate={endDate}
+                    liveTail={liveTail}
+                    refresh={refresh}
+                    updateDateRange={this.updateDateRange}
+                  />
+                </DateRangePickerContainer>
+              </ChartsHeaderOptions>
+            )}
+
+            <Dialog
+              fullWidth
+              maxWidth="md"
+              open={chartDialogOpen}
+              onClose={this.chartDialogClose()}
+              aria-labelledby="max-width-dialog-title"
+            >
+              <StyledDialogTitle id="max-width-dialog-title">
+                <div>{chartDialogPanel.title}</div>
+                {!(
+                  chartDialogPanelData &&
+                  chartDialogPanelData !== null &&
+                  Object.keys(chartDialogPanelData).length > 0
+                ) ? (
                   <DateRangePickerContainer>
                     <GrafanaDateRangePicker
                       from={from}
@@ -168,139 +194,110 @@ class GrafanaCustomCharts extends Component {
                       updateDateRange={this.updateDateRange}
                     />
                   </DateRangePickerContainer>
-                </ChartsHeaderOptions>
-              )}
+                ) : (
+                  <div></div>
+                )}
+              </StyledDialogTitle>
+              <DialogContent>
+                <GrafanaCustomChart
+                  board={chartDialogBoard}
+                  panel={chartDialogPanel}
+                  handleChartDialogOpen={this.handleChartDialogOpen}
+                  grafanaURL={grafanaURL}
+                  grafanaAPIKey={grafanaAPIKey}
+                  prometheusURL={prometheusURL}
+                  from={from}
+                  startDate={startDate}
+                  to={to}
+                  endDate={endDate}
+                  liveTail={liveTail}
+                  refresh={refresh}
+                  templateVars={chartDialogBoard.templateVars}
+                  updateDateRange={this.updateDateRange}
+                  inDialog
+                  connectionID={connectionID}
+                  // testUUID={testUUID} // this is just a dialog, we dont want this series too to be persisted
+                  panelData={
+                    chartDialogPanelData && chartDialogPanelData !== null
+                      ? chartDialogPanelData
+                      : {}
+                  }
+                />
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={this.chartDialogClose()} color="primary">
+                  Close
+                </Button>
+              </DialogActions>
+            </Dialog>
 
-              <Dialog
-                fullWidth
-                maxWidth="md"
-                open={chartDialogOpen}
-                onClose={this.chartDialogClose()}
-                aria-labelledby="max-width-dialog-title"
-              >
-                <StyledDialogTitle id="max-width-dialog-title">
-                  <div>{chartDialogPanel.title}</div>
-                  {!(
-                    chartDialogPanelData &&
-                    chartDialogPanelData !== null &&
-                    Object.keys(chartDialogPanelData).length > 0
-                  ) ? (
-                    <DateRangePickerContainer>
-                      <GrafanaDateRangePicker
-                        from={from}
-                        startDate={startDate}
-                        to={to}
-                        endDate={endDate}
-                        liveTail={liveTail}
-                        refresh={refresh}
-                        updateDateRange={this.updateDateRange}
-                      />
-                    </DateRangePickerContainer>
-                  ) : (
-                    <div></div>
-                  )}
-                </StyledDialogTitle>
-                <DialogContent>
-                  <GrafanaCustomChart
-                    board={chartDialogBoard}
-                    panel={chartDialogPanel}
-                    handleChartDialogOpen={this.handleChartDialogOpen}
-                    grafanaURL={grafanaURL}
-                    grafanaAPIKey={grafanaAPIKey}
-                    prometheusURL={prometheusURL}
-                    from={from}
-                    startDate={startDate}
-                    to={to}
-                    endDate={endDate}
-                    liveTail={liveTail}
-                    refresh={refresh}
-                    templateVars={chartDialogBoard.templateVars}
-                    updateDateRange={this.updateDateRange}
-                    inDialog
-                    connectionID={connectionID}
-                    // testUUID={testUUID} // this is just a dialog, we dont want this series too to be persisted
-                    panelData={
-                      chartDialogPanelData && chartDialogPanelData !== null
-                        ? chartDialogPanelData
-                        : {}
-                    }
-                  />
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={this.chartDialogClose()} color="primary">
-                    Close
-                  </Button>
-                </DialogActions>
-              </Dialog>
-
-              {boardPanelConfigs.map((config, ind) => (
-                // <ExpansionPanel defaultExpanded={ind === 0?true:false}>
-                <ExpansionPanel key={ind} square defaultExpanded={ind === 0}>
-                  <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+            {boardPanelConfigs.map((config, ind) => (
+              // <ExpansionPanel defaultExpanded={ind === 0?true:false}>
+              <ExpansionPanel key={ind} square defaultExpanded={ind === 0}>
+                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                  <Column>
+                    <StyledHeading variant="subtitle1" gutterBottom>
+                      {config.board && config.board.title
+                        ? config.board.title
+                        : config.title
+                          ? config.title
+                          : ''}
+                    </StyledHeading>
+                  </Column>
+                  {config.templateVars && config.templateVars.length > 0 && (
                     <Column>
-                      <StyledHeading variant="subtitle1" gutterBottom>
-                        {config.board && config.board.title
-                          ? config.board.title
-                          : config.title
-                            ? config.title
-                            : ''}
-                      </StyledHeading>
+                      <SecondaryHeading variant="subtitle2">
+                        {`Template variables: ${config.templateVars.join(' ')}`}
+                      </SecondaryHeading>
                     </Column>
-                    {config.templateVars && config.templateVars.length > 0 && (
-                      <Column>
-                        <SecondaryHeading variant="subtitle2">
-                          {`Template variables: ${config.templateVars.join(' ')}`}
-                        </SecondaryHeading>
-                      </Column>
-                    )}
-                  </ExpansionPanelSummary>
-                  <ExpansionPanelDetails>
-                    <Grid container spacing={3}>
-                      {config.panels.map(
-                        (panel, i) => (
-                          // if(panel.type === 'graph'){
+                  )}
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails>
+                  <Grid container spacing={3}>
+                    {config.panels.map(
+                      (panel, i) => (
+                        // if(panel.type === 'graph'){
 
-                          <Grid key={`grafana-chart-${i}`} item xs={12} lg={sparkline ? 12 : 6}>
-                            <GrafanaCustomChart
-                              connectionID={connectionID}
-                              board={config}
-                              sparkline={sparkline}
-                              panel={panel}
-                              handleChartDialogOpen={this.handleChartDialogOpen}
-                              grafanaURL={grafanaURL}
-                              grafanaAPIKey={grafanaAPIKey}
-                              prometheusURL={prometheusURL}
-                              from={from}
-                              startDate={startDate}
-                              to={to}
-                              endDate={endDate}
-                              liveTail={liveTail}
-                              refresh={refresh}
-                              templateVars={config.templateVars}
-                              updateDateRange={this.updateDateRange}
-                              inDialog={false}
-                              testUUID={config.testUUID ? config.testUUID : ''}
-                              panelData={
-                                boardPanelData &&
-                                boardPanelData !== null &&
-                                boardPanelData[ind] &&
-                                boardPanelData[ind] !== null
-                                  ? boardPanelData[ind]
-                                  : {}
-                              }
-                            />
-                          </Grid>
-                        ),
-                        // } else return '';
-                      )}
-                    </Grid>
-                  </ExpansionPanelDetails>
-                </ExpansionPanel>
-              ))}
-            </GrafanaRoot>
-          </React.Fragment>
-        </NoSsr>
-      </UsesSistent>
+                        <Grid key={`grafana-chart-${i}`} item xs={12} lg={sparkline ? 12 : 6}>
+                          <GrafanaCustomChart
+                            connectionID={connectionID}
+                            board={config}
+                            sparkline={sparkline}
+                            panel={panel}
+                            handleChartDialogOpen={this.handleChartDialogOpen}
+                            grafanaURL={grafanaURL}
+                            grafanaAPIKey={grafanaAPIKey}
+                            prometheusURL={prometheusURL}
+                            from={from}
+                            startDate={startDate}
+                            to={to}
+                            endDate={endDate}
+                            liveTail={liveTail}
+                            refresh={refresh}
+                            templateVars={config.templateVars}
+                            updateDateRange={this.updateDateRange}
+                            inDialog={false}
+                            testUUID={config.testUUID ? config.testUUID : ''}
+                            panelData={
+                              boardPanelData &&
+                              boardPanelData !== null &&
+                              boardPanelData[ind] &&
+                              boardPanelData[ind] !== null
+                                ? boardPanelData[ind]
+                                : {}
+                            }
+                          />
+                        </Grid>
+                      ),
+                      // } else return '';
+                    )}
+                  </Grid>
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+            ))}
+          </GrafanaRoot>
+        </React.Fragment>
+      </NoSsr>
     );
   }
 }
