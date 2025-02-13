@@ -158,7 +158,7 @@ evaluate := eval_results if {
 
 	# Identify additional components that need to be added.
 	components_added := [result |
-		some relationship in data.relationships
+		some relationship in relationships_to_evaluate_against
 		new_comps := identify_additions(updated_design_file, relationship)
 		some new_comp in new_comps
 		result := new_comp
@@ -176,7 +176,7 @@ evaluate := eval_results if {
 
 	# Identify all valid relationships after updates.
 	all_valid_relationships := union({result |
-		some relationship in data.relationships
+		some relationship in relationships_to_evaluate_against
 		result := identify_relationship(updated_design_file_with_new_comps, relationship)
 	})
 
@@ -278,6 +278,8 @@ evaluate := eval_results if {
 			"relationshipsUpdated": intermediate_rels,
 		},
 	}
+
+	print("Evaluation complete")
 }
 
 trace_from_actions(response) := {
