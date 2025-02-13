@@ -3,7 +3,7 @@ import GettingStartedThumbnail from './Thumbnails/GettingStartedProgress.svg';
 import ClusterOverviewThumbnail from './Thumbnails/ClusterOverview.png';
 import HelpCenterThumbnail from './Thumbnails/HelpCenter.svg';
 import MyDesignthumbnail from './Thumbnails/MyDesigns.png';
-import ClusterThumbnail from './Thumbnails/ClusterOverview.png';
+import ClusterStatusThumbnail from './Thumbnails/ClusterStatus.png';
 import Overview from '../overview';
 import GetStarted from './getting-started';
 import HelpCenterWidget from './HelpCenterWidget';
@@ -72,7 +72,7 @@ const getWidgets = ({ iconsProps, isEditMode }) => {
       title: 'Connections Status Chart',
       isEnabled: alwaysShown,
       component: <KubernetesConnectionStatsChart />,
-      thumbnail: ClusterThumbnail?.src,
+      thumbnail: ClusterStatusThumbnail?.src,
       defaultSizing: {
         w: 6,
         h: 2,
