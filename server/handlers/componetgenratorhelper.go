@@ -149,23 +149,13 @@ func addUnsuccessfulEntry(path string, response *models.RegistryAPIResponse, err
 
 	// If error not found, create a new entry
 
-	// Error message based on file extension
 	var errMsg error
-	fileExt := filepath.Ext(filename)
-
-	isEntityJsonFile := fileExt == ".json"
-	isEntityYamlFile := fileExt == ".yaml" || fileExt == ".yml"
-	isEntityModel := fileExt == ".tar.gz" || fileExt == ".zip" || fileExt == ".tar" || fileExt == ".tgz"
-
-	if isEntityJsonFile {
-		errMsg = meshkitFileUtils.ErrInvalidJson(filename, err)
-	} else if isEntityYamlFile {
-		errMsg = meshkitFileUtils.ErrInvalidYaml(filename, err)
-	} else if isEntityModel {
-		errMsg = meshkitFileUtils.ErrFailedToExtractArchive(filename, err)
+	if entityType == "Empty Model" {
+		errMsg = err
+		entityType = "unknown"
 	} else {
-		supportedExtensions := []string{".json", ".yaml", ".yml", ".tar", ".tgz", ".tar.gz", ".zip"}
-		errMsg = meshkitFileUtils.ErrUnsupportedExtensionForOperation("import", filename, fileExt, supportedExtensions)
+		// Error message based on file extension
+		errMsg = meshkitFileUtils.ErrInvalidModel(filename, err)
 	}
 
 	if !entryFound {
@@ -282,6 +272,12 @@ func (h *Handler) handleRegistrationAndError(registrationHelper registration.Reg
 	}
 
 	if regErrorStore != nil {
+		// for empty models
+		if len(registrationHelper.PkgUnits) == 0 && len(regErrorStore.GetEntityRegErrors()) == 0 {
+			incrementCountersOnErr(mu, "", response)
+			addUnsuccessfulEntry("", response, meshkitFileUtils.ErrEmptyModel(), "Empty Model")
+		}
+
 		for _, errEntry := range regErrorStore.GetEntityRegErrors() {
 			if errEntry.EntityType == "Unknown" {
 				errEntry.EntityType = ""
@@ -290,7 +286,6 @@ func (h *Handler) handleRegistrationAndError(registrationHelper registration.Reg
 			path := errEntry.EntityName
 			err := errEntry.Err
 			entityTypeStr := string(errEntry.EntityType)
-			// checking this ....
 			addUnsuccessfulEntry(path, response, err, entityTypeStr)
 		}
 	}

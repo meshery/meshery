@@ -385,7 +385,12 @@ func buildEntityTypeLine(names, entityTypes []interface{}, longDescription, prob
 		}
 		if entityType == "unknown" {
 			utils.Log.Infof("\n%s: Import process for file %s encountered error: \n    %s", utils.BoldString("ERROR"), name.(string), longDescription)
-			utils.Log.Infof("\n  %s:\n  %s \n  %s:\n  %s", utils.BoldString("PROBABLE CAUSE"), probableCause, utils.BoldString("SUGGESTED REMEDIATION"), suggestedRemediation)
+			if probableCause != "" {
+				utils.Log.Infof("\n  %s:\n  %s", utils.BoldString("PROBABLE CAUSE"), probableCause)
+			}
+			if suggestedRemediation != "" {
+				utils.Log.Infof("\n  %s:\n  %s", utils.BoldString("SUGGESTED REMEDIATION"), suggestedRemediation)
+			}
 		} else if entityType == "component" {
 			compCount++
 		} else if entityType == "relationship" {
