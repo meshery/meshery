@@ -1,72 +1,72 @@
 {
-  "capabilities": null,
-  "component": {
-   "kind": "Document",
-   "schema": "{\n \"description\": \"Document is the Schema for the Documents API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DocumentSpec defines the desired state of Document.\",\n   \"properties\": {\n    \"attachments\": {\n     \"description\": \"A list of key-value pairs that describe attachments to a version of a document.\",\n     \"items\": {\n      \"description\": \"Identifying information about a document attachment, including the file name\\nand a key-value pair that identifies the location of an attachment to a document.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"values\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"content\": {\n     \"description\": \"The content for the new SSM document in JSON or YAML format. The content\\nof the document must not exceed 64KB. This quota also includes the content\\nspecified for input parameters at runtime. We recommend storing the contents\\nfor your new document in an external JSON or YAML file and referencing the\\nfile in a command.\\n\\nFor examples, see the following topics in the Amazon Web Services Systems\\nManager User Guide.\\n\\n  - Create an SSM document (Amazon Web Services API) (https://docs.aws.amazon.com/systems-manager/latest/userguide/create-ssm-document-api.html)\\n\\n  - Create an SSM document (Amazon Web Services CLI) (https://docs.aws.amazon.com/systems-manager/latest/userguide/create-ssm-document-cli.html)\\n\\n  - Create an SSM document (API) (https://docs.aws.amazon.com/systems-manager/latest/userguide/create-ssm-document-api.html)\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"description\": \"An optional field where you can specify a friendly name for the SSM document.\\nThis value can differ for each version of the document. You can update this\\nvalue at a later time using the UpdateDocument operation.\",\n     \"type\": \"string\"\n    },\n    \"documentFormat\": {\n     \"description\": \"Specify the document format for the request. The document format can be JSON,\\nYAML, or TEXT. JSON is the default format.\",\n     \"type\": \"string\"\n    },\n    \"documentType\": {\n     \"description\": \"The type of document to create.\\n\\nThe DeploymentStrategy document type is an internal-use-only document type\\nreserved for AppConfig.\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"A name for the SSM document.\\n\\nYou can't use the following strings as document name prefixes. These are\\nreserved by Amazon Web Services for use as document name prefixes:\\n\\n  - aws\\n\\n  - amazon\\n\\n  - amzn\",\n     \"type\": \"string\"\n    },\n    \"requires\": {\n     \"description\": \"A list of SSM documents required by a document. This parameter is used exclusively\\nby AppConfig. When a user creates an AppConfig configuration in an SSM document,\\nthe user must also specify a required document for validation purposes. In\\nthis case, an ApplicationConfiguration document requires an ApplicationConfigurationSchema\\ndocument for validation purposes. For more information, see What is AppConfig?\\n(https://docs.aws.amazon.com/appconfig/latest/userguide/what-is-appconfig.html)\\nin the AppConfig User Guide.\",\n     \"items\": {\n      \"description\": \"An SSM document required by the current document.\",\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"requireType\": {\n        \"type\": \"string\"\n       },\n       \"version\": {\n        \"type\": \"string\"\n       },\n       \"versionName\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"tags\": {\n     \"description\": \"Optional metadata that you assign to a resource. Tags enable you to categorize\\na resource in different ways, such as by purpose, owner, or environment.\\nFor example, you might want to tag an SSM document to identify the types\\nof targets or the environment where it will run. In this case, you could\\nspecify the following key-value pairs:\\n\\n  - Key=OS,Value=Windows\\n\\n  - Key=Environment,Value=Production\\n\\nTo add tags to an existing SSM document, use the AddTagsToResource operation.\",\n     \"items\": {\n      \"description\": \"Metadata that you assign to your Amazon Web Services resources. Tags enable\\nyou to categorize your resources in different ways, for example, by purpose,\\nowner, or environment. In Amazon Web Services Systems Manager, you can apply\\ntags to Systems Manager documents (SSM documents), managed nodes, maintenance\\nwindows, parameters, patch baselines, OpsItems, and OpsMetadata.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"targetType\": {\n     \"description\": \"Specify a target type to define the kinds of resources the document can run\\non. For example, to run a document on EC2 instances, specify the following\\nvalue: /AWS::EC2::Instance. If you specify a value of '/' the document can\\nrun on all types of resources. If you don't specify a value, the document\\ncan't run on any resources. For a list of valid resource types, see Amazon\\nWeb Services resource and property types reference (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html)\\nin the CloudFormation User Guide.\",\n     \"type\": \"string\"\n    },\n    \"versionName\": {\n     \"description\": \"An optional field specifying the version of the artifact you are creating\\nwith the document. For example, Release12.1. This value is unique across\\nall versions of a document, and can't be changed.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"content\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Document\",\n \"type\": \"object\"\n}",
-   "version": "ssm.services.k8s.aws/v1alpha1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Document",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false,
-   "source_uri": "git://github.com/aws-controllers-k8s/ssm-controller/main/helm"
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Document",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Orchestration \u0026 Management"
-   },
-   "displayName": "AWS Systems Manager",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-ssm-controller",
+    "displayName": "AWS Systems Manager",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Orchestration \u0026 Management"
+    },
+    "subCategory": "Management Governance",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#7AA116",
+      "shape": "rectangle",
+      "source_uri": "git://github.com/aws-controllers-k8s/ssm-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "v1.0.2"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#7AA116",
     "shape": "rectangle",
-    "source_uri": "git://github.com/aws-controllers-k8s/ssm-controller/main/helm",
-    "styleOverrides": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "v1.0.2"
-   },
-   "name": "aws-ssm-controller",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "github",
-    "name": "Github",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Management Governance",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": null,
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#7AA116",
-   "shape": "rectangle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/ssm-controller/main/helm"
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "Document",
+    "schema": "{\n \"description\": \"Document is the Schema for the Documents API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DocumentSpec defines the desired state of Document.\",\n   \"properties\": {\n    \"attachments\": {\n     \"description\": \"A list of key-value pairs that describe attachments to a version of a document.\",\n     \"items\": {\n      \"description\": \"Identifying information about a document attachment, including the file name\\nand a key-value pair that identifies the location of an attachment to a document.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"values\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"content\": {\n     \"description\": \"The content for the new SSM document in JSON or YAML format. The content\\nof the document must not exceed 64KB. This quota also includes the content\\nspecified for input parameters at runtime. We recommend storing the contents\\nfor your new document in an external JSON or YAML file and referencing the\\nfile in a command.\\n\\nFor examples, see the following topics in the Amazon Web Services Systems\\nManager User Guide.\\n\\n  - Create an SSM document (Amazon Web Services API) (https://docs.aws.amazon.com/systems-manager/latest/userguide/create-ssm-document-api.html)\\n\\n  - Create an SSM document (Amazon Web Services CLI) (https://docs.aws.amazon.com/systems-manager/latest/userguide/create-ssm-document-cli.html)\\n\\n  - Create an SSM document (API) (https://docs.aws.amazon.com/systems-manager/latest/userguide/create-ssm-document-api.html)\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"description\": \"An optional field where you can specify a friendly name for the SSM document.\\nThis value can differ for each version of the document. You can update this\\nvalue at a later time using the UpdateDocument operation.\",\n     \"type\": \"string\"\n    },\n    \"documentFormat\": {\n     \"description\": \"Specify the document format for the request. The document format can be JSON,\\nYAML, or TEXT. JSON is the default format.\",\n     \"type\": \"string\"\n    },\n    \"documentType\": {\n     \"description\": \"The type of document to create.\\n\\nThe DeploymentStrategy document type is an internal-use-only document type\\nreserved for AppConfig.\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"A name for the SSM document.\\n\\nYou can't use the following strings as document name prefixes. These are\\nreserved by Amazon Web Services for use as document name prefixes:\\n\\n  - aws\\n\\n  - amazon\\n\\n  - amzn\",\n     \"type\": \"string\"\n    },\n    \"requires\": {\n     \"description\": \"A list of SSM documents required by a document. This parameter is used exclusively\\nby AppConfig. When a user creates an AppConfig configuration in an SSM document,\\nthe user must also specify a required document for validation purposes. In\\nthis case, an ApplicationConfiguration document requires an ApplicationConfigurationSchema\\ndocument for validation purposes. For more information, see What is AppConfig?\\n(https://docs.aws.amazon.com/appconfig/latest/userguide/what-is-appconfig.html)\\nin the AppConfig User Guide.\",\n     \"items\": {\n      \"description\": \"An SSM document required by the current document.\",\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"requireType\": {\n        \"type\": \"string\"\n       },\n       \"version\": {\n        \"type\": \"string\"\n       },\n       \"versionName\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"tags\": {\n     \"description\": \"Optional metadata that you assign to a resource. Tags enable you to categorize\\na resource in different ways, such as by purpose, owner, or environment.\\nFor example, you might want to tag an SSM document to identify the types\\nof targets or the environment where it will run. In this case, you could\\nspecify the following key-value pairs:\\n\\n  - Key=OS,Value=Windows\\n\\n  - Key=Environment,Value=Production\\n\\nTo add tags to an existing SSM document, use the AddTagsToResource operation.\",\n     \"items\": {\n      \"description\": \"Metadata that you assign to your Amazon Web Services resources. Tags enable\\nyou to categorize your resources in different ways, for example, by purpose,\\nowner, or environment. In Amazon Web Services Systems Manager, you can apply\\ntags to Systems Manager documents (SSM documents), managed nodes, maintenance\\nwindows, parameters, patch baselines, OpsItems, and OpsMetadata.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"targetType\": {\n     \"description\": \"Specify a target type to define the kinds of resources the document can run\\non. For example, to run a document on EC2 instances, specify the following\\nvalue: /AWS::EC2::Instance. If you specify a value of '/' the document can\\nrun on all types of resources. If you don't specify a value, the document\\ncan't run on any resources. For a list of valid resource types, see Amazon\\nWeb Services resource and property types reference (https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html)\\nin the CloudFormation User Guide.\",\n     \"type\": \"string\"\n    },\n    \"versionName\": {\n     \"description\": \"An optional field specifying the version of the artifact you are creating\\nwith the document. For example, Release12.1. This value is unique across\\nall versions of a document, and can't be changed.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"content\",\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Document\",\n \"type\": \"object\"\n}",
+    "version": "ssm.services.k8s.aws/v1alpha1"
+  }
+}

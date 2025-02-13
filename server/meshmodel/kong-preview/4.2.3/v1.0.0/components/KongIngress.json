@@ -1,194 +1,194 @@
 {
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Kong Ingress",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "kong-preview",
+    "displayName": "Kong Preview",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized"
+    },
+    "subCategory": "Uncategorized",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://charts.wallarm.com/kong-preview/kong-preview-4.2.3.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "4.2.3"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
+    "primaryColor": "",
+    "svgColor": "",
+    "svgWhite": ""
+  },
   "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
   ],
-  "component": {
-   "kind": "KongIngress",
-   "schema": "{\n \"description\": \"KongIngress is the Schema for the kongingresses API\",\n \"properties\": {\n  \"proxy\": {\n   \"description\": \"KongIngressService contains KongIngress service configuration\",\n   \"properties\": {\n    \"connect_timeout\": {\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"path\": {\n     \"pattern\": \"^/.*$\",\n     \"type\": \"string\"\n    },\n    \"protocol\": {\n     \"enum\": [\n      \"http\",\n      \"https\",\n      \"grpc\",\n      \"grpcs\",\n      \"tcp\",\n      \"tls\",\n      \"udp\"\n     ],\n     \"type\": \"string\"\n    },\n    \"read_timeout\": {\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"retries\": {\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"write_timeout\": {\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"route\": {\n   \"description\": \"KongIngressRoute contains KongIngress route configuration\",\n   \"properties\": {\n    \"headers\": {\n     \"additionalProperties\": {\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"type\": \"array\"\n     },\n     \"type\": \"object\"\n    },\n    \"https_redirect_status_code\": {\n     \"type\": \"integer\"\n    },\n    \"methods\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"path_handling\": {\n     \"enum\": [\n      \"v0\",\n      \"v1\"\n     ],\n     \"type\": \"string\"\n    },\n    \"preserve_host\": {\n     \"type\": \"boolean\"\n    },\n    \"protocols\": {\n     \"items\": {\n      \"enum\": [\n       \"http\",\n       \"https\",\n       \"grpc\",\n       \"grpcs\",\n       \"tcp\",\n       \"tls\",\n       \"udp\"\n      ],\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"regex_priority\": {\n     \"type\": \"integer\"\n    },\n    \"request_buffering\": {\n     \"type\": \"boolean\"\n    },\n    \"response_buffering\": {\n     \"type\": \"boolean\"\n    },\n    \"snis\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"strip_path\": {\n     \"type\": \"boolean\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"upstream\": {\n   \"description\": \"KongIngressUpstream contains KongIngress upstream configuration\",\n   \"properties\": {\n    \"algorithm\": {\n     \"enum\": [\n      \"round-robin\",\n      \"consistent-hashing\",\n      \"least-connections\"\n     ],\n     \"type\": \"string\"\n    },\n    \"hash_fallback\": {\n     \"type\": \"string\"\n    },\n    \"hash_fallback_header\": {\n     \"type\": \"string\"\n    },\n    \"hash_on\": {\n     \"type\": \"string\"\n    },\n    \"hash_on_cookie\": {\n     \"type\": \"string\"\n    },\n    \"hash_on_cookie_path\": {\n     \"type\": \"string\"\n    },\n    \"hash_on_header\": {\n     \"type\": \"string\"\n    },\n    \"healthchecks\": {\n     \"description\": \"Healthcheck represents a health-check config of an upstream in Kong.\",\n     \"properties\": {\n      \"active\": {\n       \"description\": \"ActiveHealthcheck configures active health check probing.\",\n       \"properties\": {\n        \"concurrency\": {\n         \"minimum\": 1,\n         \"type\": \"integer\"\n        },\n        \"healthy\": {\n         \"description\": \"Healthy configures thresholds and HTTP status codes to mark targets healthy for an upstream.\",\n         \"properties\": {\n          \"http_statuses\": {\n           \"items\": {\n            \"type\": \"integer\"\n           },\n           \"type\": \"array\"\n          },\n          \"interval\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"successes\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"http_path\": {\n         \"pattern\": \"^/.*$\",\n         \"type\": \"string\"\n        },\n        \"https_sni\": {\n         \"type\": \"string\"\n        },\n        \"https_verify_certificate\": {\n         \"type\": \"boolean\"\n        },\n        \"timeout\": {\n         \"minimum\": 0,\n         \"type\": \"integer\"\n        },\n        \"type\": {\n         \"type\": \"string\"\n        },\n        \"unhealthy\": {\n         \"description\": \"Unhealthy configures thresholds and HTTP status codes to mark targets unhealthy.\",\n         \"properties\": {\n          \"http_failures\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"http_statuses\": {\n           \"items\": {\n            \"type\": \"integer\"\n           },\n           \"type\": \"array\"\n          },\n          \"interval\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"tcp_failures\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"timeouts\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"passive\": {\n       \"description\": \"PassiveHealthcheck configures passive checks around passive health checks.\",\n       \"properties\": {\n        \"healthy\": {\n         \"description\": \"Healthy configures thresholds and HTTP status codes to mark targets healthy for an upstream.\",\n         \"properties\": {\n          \"http_statuses\": {\n           \"items\": {\n            \"type\": \"integer\"\n           },\n           \"type\": \"array\"\n          },\n          \"interval\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"successes\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": {\n         \"type\": \"string\"\n        },\n        \"unhealthy\": {\n         \"description\": \"Unhealthy configures thresholds and HTTP status codes to mark targets unhealthy.\",\n         \"properties\": {\n          \"http_failures\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"http_statuses\": {\n           \"items\": {\n            \"type\": \"integer\"\n           },\n           \"type\": \"array\"\n          },\n          \"interval\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"tcp_failures\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"timeouts\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"threshold\": {\n       \"type\": \"number\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"host_header\": {\n     \"type\": \"string\"\n    },\n    \"slots\": {\n     \"minimum\": 10,\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kong Ingress\",\n \"type\": \"object\"\n}",
-   "version": "configuration.konghq.com/v1"
+  "status": "enabled",
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
   "configuration": null,
-  "description": "",
-  "displayName": "Kong Ingress",
-  "format": "JSON",
-  "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false
-  },
-  "model": {
-   "category": {
-    "name": "Uncategorized"
-   },
-   "displayName": "Kong Preview",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
-    "primaryColor": "#00B39F",
-    "secondaryColor": "#00D3A9",
-    "shape": "circle",
-    "source_uri": "https://charts.wallarm.com/kong-preview/kong-preview-4.2.3.tgz",
-    "styleOverrides": "",
-    "svgColor": "",
-    "svgComplete": "",
-    "svgWhite": ""
-   },
-   "model": {
-    "version": "4.2.3"
-   },
-   "name": "kong-preview",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Uncategorized",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
-  },
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "status": "enabled",
-  "styles": {
-   "primaryColor": "",
-   "svgColor": "",
-   "svgWhite": ""
-  },
-  "version": "v1.0.0"
- }
+  "component": {
+    "kind": "KongIngress",
+    "schema": "{\n \"description\": \"KongIngress is the Schema for the kongingresses API\",\n \"properties\": {\n  \"proxy\": {\n   \"description\": \"KongIngressService contains KongIngress service configuration\",\n   \"properties\": {\n    \"connect_timeout\": {\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"path\": {\n     \"pattern\": \"^/.*$\",\n     \"type\": \"string\"\n    },\n    \"protocol\": {\n     \"enum\": [\n      \"http\",\n      \"https\",\n      \"grpc\",\n      \"grpcs\",\n      \"tcp\",\n      \"tls\",\n      \"udp\"\n     ],\n     \"type\": \"string\"\n    },\n    \"read_timeout\": {\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"retries\": {\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"write_timeout\": {\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"route\": {\n   \"description\": \"KongIngressRoute contains KongIngress route configuration\",\n   \"properties\": {\n    \"headers\": {\n     \"additionalProperties\": {\n      \"items\": {\n       \"type\": \"string\"\n      },\n      \"type\": \"array\"\n     },\n     \"type\": \"object\"\n    },\n    \"https_redirect_status_code\": {\n     \"type\": \"integer\"\n    },\n    \"methods\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"path_handling\": {\n     \"enum\": [\n      \"v0\",\n      \"v1\"\n     ],\n     \"type\": \"string\"\n    },\n    \"preserve_host\": {\n     \"type\": \"boolean\"\n    },\n    \"protocols\": {\n     \"items\": {\n      \"enum\": [\n       \"http\",\n       \"https\",\n       \"grpc\",\n       \"grpcs\",\n       \"tcp\",\n       \"tls\",\n       \"udp\"\n      ],\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"regex_priority\": {\n     \"type\": \"integer\"\n    },\n    \"request_buffering\": {\n     \"type\": \"boolean\"\n    },\n    \"response_buffering\": {\n     \"type\": \"boolean\"\n    },\n    \"snis\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"strip_path\": {\n     \"type\": \"boolean\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"upstream\": {\n   \"description\": \"KongIngressUpstream contains KongIngress upstream configuration\",\n   \"properties\": {\n    \"algorithm\": {\n     \"enum\": [\n      \"round-robin\",\n      \"consistent-hashing\",\n      \"least-connections\"\n     ],\n     \"type\": \"string\"\n    },\n    \"hash_fallback\": {\n     \"type\": \"string\"\n    },\n    \"hash_fallback_header\": {\n     \"type\": \"string\"\n    },\n    \"hash_on\": {\n     \"type\": \"string\"\n    },\n    \"hash_on_cookie\": {\n     \"type\": \"string\"\n    },\n    \"hash_on_cookie_path\": {\n     \"type\": \"string\"\n    },\n    \"hash_on_header\": {\n     \"type\": \"string\"\n    },\n    \"healthchecks\": {\n     \"description\": \"Healthcheck represents a health-check config of an upstream in Kong.\",\n     \"properties\": {\n      \"active\": {\n       \"description\": \"ActiveHealthcheck configures active health check probing.\",\n       \"properties\": {\n        \"concurrency\": {\n         \"minimum\": 1,\n         \"type\": \"integer\"\n        },\n        \"healthy\": {\n         \"description\": \"Healthy configures thresholds and HTTP status codes to mark targets healthy for an upstream.\",\n         \"properties\": {\n          \"http_statuses\": {\n           \"items\": {\n            \"type\": \"integer\"\n           },\n           \"type\": \"array\"\n          },\n          \"interval\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"successes\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"http_path\": {\n         \"pattern\": \"^/.*$\",\n         \"type\": \"string\"\n        },\n        \"https_sni\": {\n         \"type\": \"string\"\n        },\n        \"https_verify_certificate\": {\n         \"type\": \"boolean\"\n        },\n        \"timeout\": {\n         \"minimum\": 0,\n         \"type\": \"integer\"\n        },\n        \"type\": {\n         \"type\": \"string\"\n        },\n        \"unhealthy\": {\n         \"description\": \"Unhealthy configures thresholds and HTTP status codes to mark targets unhealthy.\",\n         \"properties\": {\n          \"http_failures\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"http_statuses\": {\n           \"items\": {\n            \"type\": \"integer\"\n           },\n           \"type\": \"array\"\n          },\n          \"interval\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"tcp_failures\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"timeouts\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"passive\": {\n       \"description\": \"PassiveHealthcheck configures passive checks around passive health checks.\",\n       \"properties\": {\n        \"healthy\": {\n         \"description\": \"Healthy configures thresholds and HTTP status codes to mark targets healthy for an upstream.\",\n         \"properties\": {\n          \"http_statuses\": {\n           \"items\": {\n            \"type\": \"integer\"\n           },\n           \"type\": \"array\"\n          },\n          \"interval\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"successes\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": {\n         \"type\": \"string\"\n        },\n        \"unhealthy\": {\n         \"description\": \"Unhealthy configures thresholds and HTTP status codes to mark targets unhealthy.\",\n         \"properties\": {\n          \"http_failures\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"http_statuses\": {\n           \"items\": {\n            \"type\": \"integer\"\n           },\n           \"type\": \"array\"\n          },\n          \"interval\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"tcp_failures\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          },\n          \"timeouts\": {\n           \"minimum\": 0,\n           \"type\": \"integer\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"threshold\": {\n       \"type\": \"number\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"host_header\": {\n     \"type\": \"string\"\n    },\n    \"slots\": {\n     \"minimum\": 10,\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kong Ingress\",\n \"type\": \"object\"\n}",
+    "version": "configuration.konghq.com/v1"
+  }
+}
