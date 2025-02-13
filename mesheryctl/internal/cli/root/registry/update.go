@@ -97,10 +97,10 @@ mesheryctl registry update --spreadsheet-id [id] --spreadsheet-cred [base64 enco
 	RunE: func(cmd *cobra.Command, args []string) error {
 		info, err := os.Stat(modelLocation)
 		if err != nil {
-			return fmt.Errorf("invalid --input path '%s': %w", modelLocation, err)
+			return utils.ErrInvalidPath(err, modelLocation)
 		}
 		if !info.IsDir() {
-			return fmt.Errorf("--input path '%s' is not a directory", modelLocation)
+			return utils.ErrInvalidPath(err, modelLocation)
 		}
 
 		utils.Log.Debugf("Input Directory check completed with path  %s", modelLocation)

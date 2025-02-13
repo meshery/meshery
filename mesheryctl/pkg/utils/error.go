@@ -52,6 +52,7 @@ var (
 	ErrMissingCommandsCode        = "mesheryctl-1137"
 	ErrKubernetesConnectivityCode = "mesheryctl-1138"
 	ErrKubernetesQueryCode        = "mesheryctl-1139"
+	ErrInvalidPathCode            = "mesheryctl-1140"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -678,4 +679,8 @@ func ErrKubernetesConnectivity(err error) error {
 
 func ErrKubernetesQuery(err error) error {
 	return errors.New(ErrKubernetesQueryCode, errors.Alert, []string{"Failed to query Kubernetes API"}, []string{err.Error()}, []string{"Kubernetes API query failed"}, []string{"Ensure your Kubernetes cluster is running and accessible"})
+}
+
+func ErrInvalidPath(err error, path string) error {
+	return errors.New(ErrInvalidPathCode, errors.Alert, []string{"Invalid path", path}, []string{err.Error()}, []string{fmt.Sprintf("The provided path %s is invalid", path)}, []string{"Ensure the path exists and is of the correct format"})
 }
