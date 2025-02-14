@@ -27,7 +27,7 @@ import {
 } from './notificationCenter.style';
 import { UsesSistent } from '../SistentWrapper';
 import { Popover } from '@mui/material';
-
+import { alpha } from '@mui/material';
 import { SEVERITY, SEVERITY_STYLE, STATUS } from './constants';
 import { iconLarge, iconMedium } from '../../css/icons.styles';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -233,6 +233,7 @@ export const Notification = ({ event_id }) => {
   const event = useSelector((state) => selectEventById(state, event_id));
   const isVisible = useSelector((state) => selectIsEventVisible(state, event.id));
   const severityStyles = SEVERITY_STYLE[event.severity] || SEVERITY_STYLE[SEVERITY.INFO];
+  const eventStyle = SEVERITY_STYLE[event?.severity] || {};
   const notificationColor = severityStyles?.color;
   const theme = useTheme();
   const dispatch = useDispatch();
@@ -274,22 +275,25 @@ export const Notification = ({ event_id }) => {
 
   const Detail = () => (
     <Expanded container>
-      <ActorAvatar item sm={1}>
-        <AvatarStack
-          avatars={eventActors}
-          direction={{
-            xs: 'row',
-            md: 'column',
-          }}
-        />
-      </ActorAvatar>
       <Grid
         item
-        sm={10}
+        xs={12}
         sx={{
           color: theme.palette.text.default,
+          borderTop: `1px solid ${notificationColor}`,
+          padding: '1rem',
+          backgroundColor: alpha(eventStyle.color, 0.1),
         }}
       >
+        <ActorAvatar item sm={1}>
+          <AvatarStack
+            avatars={eventActors}
+            direction={{
+              xs: 'row',
+              md: 'row',
+            }}
+          />
+        </ActorAvatar>
         <FormattedMetadata event={event} />
       </Grid>
     </Expanded>
