@@ -108,7 +108,6 @@ identify_relationships(design_file, relationships_in_scope, relationship_policy_
 
 	eval_results := {new_relationship |
 		some relationship in relationships_in_scope
-		print("count eval_results",count(eval_results))
 		is_matchlabel_relationship(relationship)
 		
 		# limit matchlabel relationships
