@@ -24,26 +24,15 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     steps:
-      - name: Remove old Node.js versions
-        run: |
-          sudo rm -rf /opt/hostedtoolcache/node/*
-          sudo apt-get remove -y nodejs
-          sudo apt-get autoremove -y
-          sudo apt-get update
       - name: Check out code
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
-      - name: Install Node.js 20
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
           node-version: "20.x"
-          check-latest: true
-          cache: "npm" # Allow caching for faster builds
-      - name: Verify Node.js version
-        run: |
-          node -v
-          which node
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
       - name: Build meshery-ui and provider
         run: |
           make ui-build
@@ -105,8 +94,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20.x"
-          cache: "none" # Temporary disable caching for testing
-          # cache-dependency-path: "**/package-lock.json"
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
       - name: Download meshery-ui artifacts
         uses: actions/download-artifact@v4
         with:
