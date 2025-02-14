@@ -235,7 +235,12 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
             return (
               <ListItem
                 key={idx}
-                sx={{ display: hashedError ? 'block' : 'list-item', padding: '0', pb: 1, '& ul': { paddingInlineStart: hashedError ? '20px' : '0px' }, }}
+                sx={{
+                  display: hashedError ? 'block' : 'list-item',
+                  padding: '0',
+                  pb: 1,
+                  '& ul': { paddingInlineStart: hashedError ? '20px' : '0px' },
+                }}
               >
                 <RenderMarkdown content={error} />
               </ListItem>
