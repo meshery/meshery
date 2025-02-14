@@ -178,7 +178,9 @@ func (h *Handler) EvaluateDesign(
 	return evaluationResponse, nil
 }
 
-func processEvaluationResponse(registry *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
+func processEvaluationResponse(registryManager *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
+
+	registryCache := &registry.RegistryEntityCache{}
 
 	compsUpdated := []component.ComponentDefinition{}
 	compsAdded := []component.ComponentDefinition{}
@@ -216,7 +218,7 @@ func processEvaluationResponse(registry *registry.RegistryManager, evalPayload p
 			compFilter.Version = ""
 		}
 
-		entities, _, _, _ := registry.GetEntities(compFilter)
+		entities, _, _, _ := registryManager.GetEntitiesMemoized(compFilter, registryCache)
 		if len(entities) == 0 {
 			unknownComponents = append(unknownComponents, &_c)
 			continue
