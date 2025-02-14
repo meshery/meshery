@@ -1568,6 +1568,15 @@
         "short_description": "Error failed to decode design data into go slice",
         "probable_cause": "",
         "suggested_remediation": ""
+      },
+      "11300": {
+        "name": "ErrFileTypeNotSupportedForDesignConversionCode",
+        "code": "11300",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }
