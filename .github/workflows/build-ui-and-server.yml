@@ -30,9 +30,9 @@ jobs:
           fetch-depth: 1
       - uses: actions/setup-node@v4
         with:
-          node-version: 18
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
+          node-version: 20
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
       - name: Build meshery-ui and provider-ui
         run: |
           make ui-build
@@ -93,9 +93,9 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 18
-          cache: 'npm'
-          cache-dependency-path: '**/package-lock.json'
+          node-version: 20
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
       - name: Download meshery-ui artifacts
         uses: actions/download-artifact@v4
         with:
@@ -176,9 +176,9 @@ jobs:
         if: github.event_name != 'pull_request' && startsWith(github.ref, 'refs/tags/') && success()
         uses: peter-evans/dockerhub-description@v4
         with:
-            username: ${{ secrets.DOCKERHUB_USERNAME }}
-            password: ${{ secrets.DOCKERHUB_PASSWORD }}
-            repository: ${{ secrets.IMAGE_NAME }}
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          repository: ${{ secrets.IMAGE_NAME }}
   # validate the swagger docs
   swaggerci:
     if: github.repository == 'meshery/meshery'
