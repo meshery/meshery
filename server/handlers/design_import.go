@@ -160,9 +160,7 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 	}
 
 	now = time.Now()
-	// remove file extension from file name if any
-	name, _ := strings.CutSuffix(sanitizedFile.FileName, sanitizedFile.FileExt)
-	design, err := pCore.NewPatternFileFromK8sManifest(manifest, name, true, registry)
+	design, err := pCore.NewPatternFileFromK8sManifest(manifest, fileToImport.FileName, true, registry)
 	utils.TrackTime(logger, now, "ConvertManifestToDesign")
 
 	if err != nil {
