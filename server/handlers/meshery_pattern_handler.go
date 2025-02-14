@@ -192,27 +192,31 @@ func (h *Handler) VerifyAndConvertToDesign(
 		token, _ := ctx.Value(models.TokenCtxKey).(string)
 
 		sourceContent := mesheryPattern.SourceContent
-		if mesheryPattern.SourceContent == nil || len(mesheryPattern.SourceContent) > 0 {
+		if mesheryPattern.SourceContent == nil || len(mesheryPattern.SourceContent) == 0 {
+			h.log.Info("Pattern file doesn't contain SourceContent, fetching from remote provider")
 			sourceContent, err := provider.GetDesignSourceContent(token, mesheryPattern.ID.String())
 			if err != nil {
-				return fmt.Errorf("failed to get source content: %w", err)
+				return ErrDesignSourceContent(err, "get ")
 			}
 			mesheryPattern.SourceContent = sourceContent
 		}
 
 		fileToImport := FileToImport{
 			Data:     sourceContent,
-			FileName: mesheryPattern.Name, // Use pattern name as filename
+			FileName: mesheryPattern.Name, // Use pattern name as filename, make sure extension is there
 		}
 
+		// This function requires a valid file extension in the filename to work.
+		// Note: Assuming MesheryPattern is already sanitized and identified, we are again going through
+		// sanitization and identification (which is a redundant step but it's a one off)
 		design, _, err := ConvertFileToDesign(fileToImport, h.registryManager, h.log)
 		if err != nil {
-			return fmt.Errorf("failed to convert pattern: %w", err)
+			return fmt.Errorf("Failed to convert pattern: %w", err)
 		}
 
-		bytPattern, err := yaml.Marshal(design)
+		bytPattern, err := encoding.Marshal(design)
 		if err != nil {
-			return fmt.Errorf("failed to marshal pattern: %w", err)
+			return fmt.Errorf("Failed to marshal pattern: %w", err)
 		}
 		mesheryPattern.PatternFile = string(bytPattern)
 
