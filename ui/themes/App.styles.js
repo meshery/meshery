@@ -2,6 +2,7 @@ import { BasicMarkdown, CircularProgress, styled } from '@layer5/sistent';
 import { SnackbarContent } from 'notistack';
 import { forwardRef } from 'react';
 import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
+import { lighten } from '@mui/material';
 
 const drawerWidth = 256;
 
@@ -77,18 +78,22 @@ export const StyledDrawer = styled('nav', {
 
 const StyledSnackbarContent = styled(SnackbarContent)(({ theme, variant }) => {
   const notificationColors = {
-    success: theme.palette.background.brand.default,
-    info: theme.palette.info.main,
-    warning: theme.palette.warning.main,
-    error: theme.palette.error.main,
+    success: theme.palette.text.success,
+    info: theme.palette.text.info,
+    warning: theme.palette.text.warning,
+    error: theme.palette.text.error,
   };
 
+  const baseColor = notificationColors[variant] || notificationColors.info;
+
+  const backgroundColor = theme.palette.mode === 'light' ? lighten(baseColor, 0.95) : '#323232';
+
   return {
-    backgroundColor: theme.palette.text.default,
-    color: notificationColors[variant] || notificationColors.info,
+    backgroundColor,
+    color: baseColor,
     pointerEvents: 'auto',
     borderRadius: '0.3rem',
-    boxShadow: `0 0px 10px ${theme.palette.background.default}`,
+    boxShadow: `0 0px 6px ${theme.palette.background.tabs}`,
   };
 });
 
