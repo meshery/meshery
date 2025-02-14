@@ -39,10 +39,10 @@ jobs:
           fetch-depth: 1
       - uses: actions/setup-node@v4
         with:
-          node-version: '20.x'
+          node-version: "20.x"
           check-latest: true
-          cache: "none" # Temporary disable caching for testing
-          # cache-dependency-path: '**/package-lock.json'
+          cache: "npm"
+          cache-dependency-path: "**/package-lock.json"
       - name: Install dependencies
         run: |
           make ui-build
@@ -56,4 +56,3 @@ jobs:
         with:
           name: meshery-provider-ui build
           path: provider-ui/out/
-
