@@ -2,8 +2,8 @@
   "id": "00000000-0000-0000-0000-000000000000",
   "schemaVersion": "models.meshery.io/v1beta1",
   "version": "v1.0.0",
-  "name": "perf-operator",
-  "displayName": "Perf Operator",
+  "name": "aerokube",
+  "displayName": "Aerokube",
   "status": "ignored",
   "registrant": {
     "id": "00000000-0000-0000-0000-000000000000",
@@ -20,9 +20,9 @@
   },
   "connection_id": "00000000-0000-0000-0000-000000000000",
   "category": {
-    "name": "Observability and Analysis"
+    "name": "Uncategorized"
   },
-  "subCategory": "Monitoring",
+  "subCategory": "Uncategorized",
   "metadata": {
     "capabilities": null,
     "isAnnotation": false,
@@ -35,7 +35,7 @@
     "svgWhite": ""
   },
   "model": {
-    "version": "2.13.0"
+    "version": "2.7.3"
   },
   "components": null,
   "relationships": null,
