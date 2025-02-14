@@ -4,6 +4,10 @@
  */
 
 export const keys = {
+  EDIT_ORGANIZATION: {
+    subject: 'Edit Organization',
+    action: 'd39a34fb-0ccf-4c80-8a6c-b545c8db869a',
+  },
   VIEW_ALL_ORGANIZATIONS: {
     subject: 'View All Organizations',
     action: 'e996c998-a50f-4cb8-ae7b-f2f1b523c971',
@@ -316,6 +320,10 @@ export const keys = {
   VIEW_MESHERY_USER_PREFERENCES: {
     subject: 'View Meshery User Preferences',
     action: 'cdec6212-bbbf-4cab-b10d-76d12bee7e56',
+  },
+  ASSIGN_USER_ROLES: {
+    subject: 'Assign User Roles',
+    action: '9a84a76a-0a16-11ee-be56-0242ac120002',
   },
   VIEW_SETTINGS: {
     subject: 'View Settings',
