@@ -33,7 +33,7 @@ import { AddWidgetsToLayoutPanel, LayoutActionButton, LayoutWidget } from './com
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { DEFAULT_LAYOUT } from './defaultLayout';
+import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT } from './defaultLayout';
 import Popup from '../Popup';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import getWidgets from './widgets/getWidgets';
@@ -75,7 +75,7 @@ const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
 const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) => {
   const { data: userData } = useGetUserPrefQuery();
   const [updateUserPref] = useUpdateUserPrefMutation();
-
+  const defaultLayout = true ? LOCAL_PROVIDER_LAYOUT : DEFAULT_LAYOUT;
   const { resourceCategory, changeResourceTab, selectedResource, handleChangeSelectedResource } =
     useDashboardRouter();
 
@@ -95,7 +95,7 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
   }
   const getCurrentDashboardLayoutFromOrgPrefs = (prefs) => {
     if (!prefs) {
-      return DEFAULT_LAYOUT;
+      return defaultLayout;
     }
     return prefs;
   };
@@ -180,8 +180,8 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
   };
 
   const resetLayout = () => {
-    setDashboardLayout(DEFAULT_LAYOUT);
-    updateLayout(DEFAULT_LAYOUT);
+    setDashboardLayout(defaultLayout);
+    updateLayout(defaultLayout);
   };
   const LayoutActions = {
     START_EDIT: {
