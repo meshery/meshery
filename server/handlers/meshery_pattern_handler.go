@@ -22,7 +22,6 @@ import (
 	"github.com/layer5io/meshery/server/meshes"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
-	pCore "github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/resource/selector"
 	patternutils "github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/layer5io/meshkit/encoding"
@@ -36,8 +35,7 @@ import (
 	"github.com/layer5io/meshkit/models/oci"
 	"github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/catalog"
-	"github.com/layer5io/meshkit/utils/kubernetes"
-	"github.com/layer5io/meshkit/utils/kubernetes/kompose"
+	modelsCore "github.com/meshery/schemas/models/core"
 
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 	"github.com/meshery/schemas/models/v1alpha2"
@@ -184,82 +182,40 @@ func (h *Handler) handlePatternPOST(
 // A pattern is required to be converted to design format iff,
 // 1. pattern_file attribute is empty, and
 // 2. The "type" (sourcetype/original content) is not Design. [is one of compose/helmchart/manifests]
-
 func (h *Handler) VerifyAndConvertToDesign(
 	ctx context.Context,
 	mesheryPattern *models.MesheryPattern,
 	provider models.Provider,
 ) error {
-
-	if mesheryPattern.Type.Valid && mesheryPattern.Type.String != string(models.Design) && mesheryPattern.PatternFile == "" {
+	// Only proceed if we need to convert a non-design pattern that doesn't have a pattern file yet
+	if mesheryPattern.Type.Valid && mesheryPattern.Type.String != modelsCore.IacFileTypes.MESHERY_DESIGN && mesheryPattern.PatternFile == "" {
 		token, _ := ctx.Value(models.TokenCtxKey).(string)
 
-		sourceContent, err := provider.GetDesignSourceContent(token, mesheryPattern.ID.String())
+		sourceContent := mesheryPattern.SourceContent
+		if mesheryPattern.SourceContent == nil || len(mesheryPattern.SourceContent) > 0 {
+			sourceContent, err := provider.GetDesignSourceContent(token, mesheryPattern.ID.String())
+			if err != nil {
+				return fmt.Errorf("failed to get source content: %w", err)
+			}
+			mesheryPattern.SourceContent = sourceContent
+		}
+
+		fileToImport := FileToImport{
+			Data:     sourceContent,
+			FileName: mesheryPattern.Name, // Use pattern name as filename
+		}
+
+		design, _, err := ConvertFileToDesign(fileToImport, h.registryManager, h.log)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to convert pattern: %w", err)
 		}
 
-		mesheryPattern.SourceContent = sourceContent
-		sourcetype := mesheryPattern.Type.String
-
-		if sourcetype == string(models.DockerCompose) || sourcetype == string(models.K8sManifest) {
-			var k8sres string
-			if sourcetype == string(models.DockerCompose) {
-				k8sres, err = kompose.Convert(sourceContent) // convert the docker compose file into kubernetes manifest
-				if err != nil {
-					err = ErrConvertingDockerComposeToDesign(err)
-					return err
-				}
-
-			} else if sourcetype == string(models.K8sManifest) {
-				k8sres = string(sourceContent)
-			}
-			pattern, err := pCore.NewPatternFileFromK8sManifest(k8sres, "", false, h.registryManager)
-			if err != nil {
-				err = ErrConvertingK8sManifestToDesign(err)
-				return err
-			}
-			bytPattern, _ := yaml.Marshal(pattern)
-			mesheryPattern.PatternFile = string(bytPattern)
-		} else if sourcetype == string(models.HelmChart) {
-			// Write sourceContent to a temporary file
-			tempFile, err := os.CreateTemp("", "helm-chart-*.tgz")
-			if err != nil {
-				return fmt.Errorf("failed to create temp file: %w", err)
-			}
-			defer os.Remove(tempFile.Name()) // Ensure cleanup of the temporary file
-
-			_, err = tempFile.Write(sourceContent)
-			if err != nil {
-				return fmt.Errorf("failed to write to temp file: %w", err)
-			}
-
-			err = tempFile.Close()
-			if err != nil {
-				return fmt.Errorf("failed to close temp file: %w", err)
-			}
-
-			// Use the temporary file path as LocalPath
-			latestKuberVersion := getLatestKubeVersionFromRegistry(h.registryManager)
-			resp, err := kubernetes.ConvertHelmChartToK8sManifest(kubernetes.ApplyHelmChartConfig{
-				LocalPath:         tempFile.Name(),
-				KubernetesVersion: latestKuberVersion,
-			})
-			if err != nil {
-				return ErrConvertingHelmChartToDesign(err)
-			}
-
-			result := string(resp)
-			pattern, err := pCore.NewPatternFileFromK8sManifest(result, mesheryPattern.Name, false, h.registryManager)
-			if err != nil {
-				return ErrConvertingHelmChartToDesign(err)
-			}
-			bytPattern, _ := yaml.Marshal(pattern)
-
-			mesheryPattern.PatternFile = string(bytPattern)
+		bytPattern, err := yaml.Marshal(design)
+		if err != nil {
+			return fmt.Errorf("failed to marshal pattern: %w", err)
 		}
+		mesheryPattern.PatternFile = string(bytPattern)
 
-		// Save the updated Meshery pattern
 		resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 		if err != nil {
 			return ErrApplicationFailure(err, "save")
@@ -270,7 +226,6 @@ func (h *Handler) VerifyAndConvertToDesign(
 			return models.ErrUnmarshal(err, "pattern")
 		}
 	}
-
 	return nil
 }
 
