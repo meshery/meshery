@@ -192,7 +192,7 @@ func (h *Handler) VerifyAndConvertToDesign(
 		token, _ := ctx.Value(models.TokenCtxKey).(string)
 
 		sourceContent := mesheryPattern.SourceContent
-		if mesheryPattern.SourceContent == nil || len(mesheryPattern.SourceContent) == 0 {
+		if len(mesheryPattern.SourceContent) == 0 {
 			h.log.Info("Pattern file doesn't contain SourceContent, fetching from remote provider")
 			sourceContent, err := provider.GetDesignSourceContent(token, mesheryPattern.ID.String())
 			if err != nil {
