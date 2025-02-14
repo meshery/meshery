@@ -27,10 +27,46 @@ filter_pending_relationships(rel, relationships) := rel if {
 
 # scope for relationships to evaluate against
 # NEEDS IMPROVEMENT: make this dynamic based on the models referenced in the design file
-relationships_to_evaluate_against := data.relationships
+
+relationship_preference_key(rel) := sprintf("%s-%s-%s",[lower(rel.kind),lower(rel.type),lower(rel.subType)])
+
+models_in_design :=  {component.model | some component in input.components }
+
+is_rel_enabled(rel) := true if {
+	not input.preferences.layers.relationships
+}
+
+is_rel_enabled(rel) := true if {
+	rel_key := relationship_preference_key(rel)
+    not input.preferences.layers.relationships[rel_key] == false
+}
+
+is_rel_disabled(rel) := true  if {
+	not is_rel_enabled(rel)
+}
+
+
+
+relationships_to_evaluate_against := { rel |
+    some rel in data.relationships
+	some model in models_in_design
+	rel_key := relationship_preference_key(rel)
+	# print("rel_key",rel_key)
+	model.name == rel.model.name
+	is_rel_enabled(rel) == true
+	# print("model implicated and rel is enabled",model.name,rel_key)
+	# print("is_rel_enabled",rel_key,is_rel_enabled(rel))
+}
 
 # Main evaluation function that processes relationships and updates the design.
 evaluate := eval_results if {
+
+    print("model in design ",count(models_in_design))
+	print("all registered rels count",count(data.relationships))
+	print("rels to evaluate count",count(relationships_to_evaluate_against))
+
+	
+
 	relationship_policy_identifiers := [
 		{
 			"kind": "hierarchical",
@@ -122,7 +158,7 @@ evaluate := eval_results if {
 
 	# Identify additional components that need to be added.
 	components_added := [result |
-		some relationship in data.relationships
+		some relationship in relationships_to_evaluate_against
 		new_comps := identify_additions(updated_design_file, relationship)
 		some new_comp in new_comps
 		result := new_comp
@@ -140,7 +176,7 @@ evaluate := eval_results if {
 
 	# Identify all valid relationships after updates.
 	all_valid_relationships := union({result |
-		some relationship in data.relationships
+		some relationship in relationships_to_evaluate_against
 		result := identify_relationship(updated_design_file_with_new_comps, relationship)
 	})
 
@@ -242,6 +278,8 @@ evaluate := eval_results if {
 			"relationshipsUpdated": intermediate_rels,
 		},
 	}
+
+	print("Evaluation complete")
 }
 
 trace_from_actions(response) := {

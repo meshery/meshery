@@ -178,7 +178,9 @@ func (h *Handler) EvaluateDesign(
 	return evaluationResponse, nil
 }
 
-func processEvaluationResponse(registry *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
+func processEvaluationResponse(registryManager *registry.RegistryManager, evalPayload pattern.EvaluationRequest, evalResponse *pattern.EvaluationResponse) []*component.ComponentDefinition {
+
+	registryCache := &registry.RegistryEntityCache{}
 
 	compsUpdated := []component.ComponentDefinition{}
 	compsAdded := []component.ComponentDefinition{}
@@ -216,7 +218,7 @@ func processEvaluationResponse(registry *registry.RegistryManager, evalPayload p
 			compFilter.Version = ""
 		}
 
-		entities, _, _, _ := registry.GetEntities(compFilter)
+		entities, _, _, _ := registryManager.GetEntitiesMemoized(compFilter, registryCache)
 		if len(entities) == 0 {
 			unknownComponents = append(unknownComponents, &_c)
 			continue
@@ -304,6 +306,8 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	user *models.User,
 	provider models.Provider,
 ) {
+	evalCtx := r.Context()
+
 	userUUID := uuid.FromStringOrNil(user.ID)
 	defer func() {
 		_ = r.Body.Close()
@@ -330,31 +334,48 @@ func (h *Handler) EvaluateRelationshipPolicy(
 	patternUUID := relationshipPolicyEvalPayload.Design.Id
 	eventBuilder.ActedUpon(patternUUID)
 
-	// evaluate specified relationship policies
-	// on successful eval the event containing details like comps evaulated, relationships indeitified should be emitted and peristed.
-	evaluationResponse, err := h.EvaluateDesign(relationshipPolicyEvalPayload)
+	evalRespChan := make(chan pattern.EvaluationResponse)
+	evalErrChan := make(chan error)
 
-	if err != nil {
+	go func() {
+		// Evaluate specified relationship policies
+		// Perform the CPU-intensive work
+		evaluationResponse, err := h.EvaluateDesign(relationshipPolicyEvalPayload)
+
+		if err != nil {
+			evalErrChan <- err // Send the error
+		} else {
+			evalRespChan <- evaluationResponse // Send the response
+		}
+	}()
+
+	select {
+
+	case err := <-evalErrChan:
 		h.log.Debug(err)
 		// log an event
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
 		return
-	}
 
-	// include trace instead of design file in the event
-	event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for design \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).
-		WithMetadata(map[string]interface{}{
-			"trace":        evaluationResponse.Trace,
-			"evaluated_at": *evaluationResponse.Timestamp,
-		}).WithSeverity(events.Informational).Build()
-	_ = provider.PersistEvent(event)
+	case evaluationResponse := <-evalRespChan:
+		// include trace instead of design file in the event
+		event := eventBuilder.WithDescription(fmt.Sprintf("Relationship evaluation completed for design \"%s\" at version \"%s\"", evaluationResponse.Design.Name, evaluationResponse.Design.Version)).
+			WithMetadata(map[string]interface{}{
+				"trace":        evaluationResponse.Trace,
+				"evaluated_at": *evaluationResponse.Timestamp,
+			}).WithSeverity(events.Informational).Build()
+		_ = provider.PersistEvent(event)
 
-	// write the response
-	ec := json.NewEncoder(rw)
-	err = ec.Encode(evaluationResponse)
-	if err != nil {
-		h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
-		http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
+		// write the response
+		ec := json.NewEncoder(rw)
+		err = ec.Encode(evaluationResponse)
+		if err != nil {
+			h.log.Error(models.ErrEncoding(err, "policy evaluation response"))
+			http.Error(rw, models.ErrEncoding(err, "failed to generate policy evaluation results").Error(), http.StatusInternalServerError)
+			return
+		}
+	case <-evalCtx.Done():
+		h.log.Info("Evaluation terminated: request context closed")
 		return
 	}
 }
