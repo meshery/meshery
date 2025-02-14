@@ -131,5 +131,8 @@
     "start-server-and-test": "^2.0.5",
     "webpack": "^5.95.0",
     "webpack-cli": "^5.1.4"
+  },
+  "engines": {
+    "node": "^18 || ^20"
   }
 }
