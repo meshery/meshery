@@ -211,12 +211,12 @@ func (h *Handler) VerifyAndConvertToDesign(
 		// sanitization and identification (which is a redundant step but it's a one off)
 		design, _, err := ConvertFileToDesign(fileToImport, h.registryManager, h.log)
 		if err != nil {
-			return fmt.Errorf("Failed to convert pattern: %w", err)
+			return err
 		}
 
 		bytPattern, err := encoding.Marshal(design)
 		if err != nil {
-			return fmt.Errorf("Failed to marshal pattern: %w", err)
+			return err
 		}
 		mesheryPattern.PatternFile = string(bytPattern)
 
