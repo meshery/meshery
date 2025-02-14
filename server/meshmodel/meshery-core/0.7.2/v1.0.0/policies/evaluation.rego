@@ -54,7 +54,7 @@ relationships_to_evaluate_against := { rel |
 	# print("rel_key",rel_key)
 	model.name == rel.model.name
 	is_rel_enabled(rel) == true
-	print("model implicated and rel is enabled",model.name,rel_key)
+	# print("model implicated and rel is enabled",model.name,rel_key)
 	# print("is_rel_enabled",rel_key,is_rel_enabled(rel))
 }
 

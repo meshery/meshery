@@ -83,6 +83,7 @@ identify_matchlabels(design_file, relationship) := all_match_labels if {
 	} |
 		some pair in field_pairs
 	}
+
 }
 
 # merges the pairs into single groups on n components for each matching field ,value
@@ -107,9 +108,9 @@ identify_relationships(design_file, relationships_in_scope, relationship_policy_
 
 	eval_results := {new_relationship |
 		some relationship in relationships_in_scope
-
+		print("count eval_results",count(eval_results))
 		is_matchlabel_relationship(relationship)
-
+		
 		# limit matchlabel relationships
 		identified_matchlabels := truncate_set(identify_matchlabels(design_file, relationship), MAX_MATCHLABELS)
 		some match_label in identified_matchlabels
@@ -159,6 +160,7 @@ identify_relationships(design_file, relationships_in_scope, relationship_policy_
 				"value": "pending",
 			},
 		])
+
 	}
 
 	print("Identify match rels Eval results", count(eval_results))
