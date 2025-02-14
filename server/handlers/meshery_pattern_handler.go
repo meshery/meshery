@@ -222,7 +222,7 @@ func (h *Handler) VerifyAndConvertToDesign(
 
 		resp, err := provider.SaveMesheryPattern(token, mesheryPattern)
 		if err != nil {
-			return ErrApplicationFailure(err, "save")
+			return ErrSavePattern(err)
 		}
 
 		contentMesheryPatternSlice := make([]models.MesheryPattern, 0)
