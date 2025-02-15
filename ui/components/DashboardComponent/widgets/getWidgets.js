@@ -80,6 +80,16 @@ const getWidgets = ({ iconsProps, isEditMode }) => {
         h: 2,
       },
     },
+    LATEST_BLOGS: {
+      title: 'Latest Blogs',
+      isEnabled: alwaysShown,
+      component: <LatestBlogs />,
+      defaultSizing: {
+        w: 3,
+        h: 2,
+      },
+      thumbnail: LatestBlogsThumbnail?.src,
+    },
   };
 
   return WIDGETS;
