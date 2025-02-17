@@ -104,8 +104,8 @@ All of Meshery's Models can be found in the [Meshery Integrations spreadsheet](h
   <section class="tabbed">
     <h3>Prerequisites:</h3>
     <ul>
-      <li>Fork the <a href="https://github.com/meshery/meshery">meshery/meshery repository.</a></li>
-      <li>Install the Meshery CLI by following the <a href="https://docs.meshery.io/installation/">installation instructions.</a></li>
+      <li>Fork the <a href="https://github.com/meshery/meshery" target="_blank" rel="noopener">meshery/meshery repository.</a></li>
+      <li>Install the Meshery CLI by following the <a href="https://docs.meshery.io/installation/" target="_blank" rel="noopener">installation instructions.</a></li>
     </ul>
     <br />
     <!-- Second Level Tabs under mesheryctl -->
@@ -160,7 +160,7 @@ All of Meshery's Models can be found in the [Meshery Integrations spreadsheet](h
         <h4>1. Spreadsheet Preparation</h4>
         <p>Start by creating your own copy of the Meshery Integration Sheet:</p>
         <ol>
-          <li>Visit the <a href="https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw">Meshery Integration Sheet</a></li>
+          <li>Visit the <a href="https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" target="_blank" rel="noopener">Meshery Integration Sheet</a></li>
           <li>Make a copy using File > Make a copy</li>
           <li>Look at the URL of your new spreadsheet and note the ID (the long string between /d/ and /edit)</li>
         </ol>
@@ -168,9 +168,9 @@ All of Meshery's Models can be found in the [Meshery Integrations spreadsheet](h
         <h4>2. Google Cloud Configuration</h4>
         <p>Set up your Google Cloud environment with these steps:</p>
         <ol>
-          <li><a href="https://developers.google.com/workspace/guides/create-project">Create a new Google Cloud Project or select an existing one</a></li>
-          <li><a href="https://support.google.com/googleapi/answer/6158841">Enable the Google Sheets API for your project</a></li>
-          <li><a href="https://developers.google.com/workspace/guides/create-credentials#create_credentials_for_a_service_account">Create service account credentials</a></li>
+          <li><a href="https://developers.google.com/workspace/guides/create-project" target="_blank" rel="noopener">Create a new Google Cloud Project or select an existing one</a></li>
+          <li><a href="https://support.google.com/googleapi/answer/6158841" target="_blank" rel="noopener">Enable the Google Sheets API for your project</a></li>
+          <li><a href="https://developers.google.com/workspace/guides/create-credentials#create_credentials_for_a_service_account" target="_blank" rel="noopener">Create service account credentials</a></li>
         </ol>
 
         <h4>3. Credential Configuration</h4>
