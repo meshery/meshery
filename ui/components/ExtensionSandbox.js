@@ -274,13 +274,13 @@ function getComponentURIFromPathForUserPrefs(extensions) {
  * @param {import("../utils/ExtensionPointSchemaValidator").CollaboratorSchema[]} extensions
  * @returns {string[]}
  */
-// function getComponentURIFromPathForCollaborator(extensions) {
-//   if (Array.isArray(extensions)) {
-//     return extensions.map((ext) => ext.component);
-//   }
+function getComponentURIFromPathForCollaborator(extensions) {
+  if (Array.isArray(extensions)) {
+    return extensions.map((ext) => ext.component)[0];
+  }
 
-//   return [];
-// }
+  return [];
+}
 
 /**
  * createPathForRemoteComponent takes in the name of the component and
@@ -349,6 +349,12 @@ const ExtensionSandbox = React.memo(
       }
 
       switch (type) {
+        case 'collaborator': {
+          const collaboratorUri = getComponentURIFromPathForCollaborator(extension, getPath());
+          return collaboratorUri ? (
+            <Extension url={createPathForRemoteComponent(collaboratorUri)} />
+          ) : null;
+        }
         case 'navigator': {
           const navigatorUri = getComponentURIFromPathForNavigator(extension, getPath());
           return navigatorUri ? (
