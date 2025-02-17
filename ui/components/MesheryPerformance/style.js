@@ -63,38 +63,37 @@ export const ResultContainerWrap = styled('div')(() => ({
 
 export const CalendarComponent = styled(Calendar)(({ theme }) => ({
   '& .rbc-off-range-bg': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#a9a9a9' : '#e6e6e6',
-    color: theme.palette.mode === 'dark' ? 'white' : 'black',
+    backgroundColor: theme.palette.mode === 'dark' ? '#6b6b6b' : '#e6e6e6',
+    color: theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000',
   },
   '& .rbc-off-range ': {
-    color: theme.palette.text.secondary,
+    color: theme.palette.mode === 'dark' ? '#d3d3d3' : theme.palette.text.secondary,
   },
   '& .rbc-btn-group': {
     color: theme.palette.text.secondary,
   },
   '& .rbc-toolbar button': {
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.primary,
   },
   '& .rbc-today': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#505050' : '#eaf6ff',
+    backgroundColor: theme.palette.mode === 'dark' ? '#404040' : '#eaf6ff', // Darker gray for better contrast
   },
   '& .rbc-day-slot .rbc-time-slot': {
-    borderTop: `1px solid ${theme.palette.mode === 'dark' ? '#555555' : '#eaf6ff'}`,
+    borderTop: `1px solid ${theme.palette.mode === 'dark' ? '#888888' : '#eaf6ff'}`, // Brighter lines in dark mode
   },
   '& .rbc-toolbar button.rbc-active': {
     backgroundColor: theme.palette.mode === 'dark' ? '#505050' : '#eaf6ff',
-    color: theme.palette.mode === 'dark' ? 'white' : 'black',
+    color: theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000',
   },
   '& .rbc-toolbar button:hover': {
-    backgroundColor:
-      theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.54)' : 'rgba(255, 255, 255, 0.54)',
+    backgroundColor: theme.palette.mode === 'dark' ? '#757575' : 'rgba(255, 255, 255, 0.54)',
   },
   '& .rbc-toolbar button.rbc-active:hover': {
     backgroundColor: theme.palette.mode === 'dark' ? '#909090' : '#eaf6ff',
   },
   '& .rbc-toolbar button:focus ': {
     backgroundColor: theme.palette.mode === 'dark' ? '#505050' : '#eaf6ff',
-    color: theme.palette.mode === 'dark' ? 'white' : 'black',
+    color: theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000',
   },
 }));
 
