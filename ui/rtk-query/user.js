@@ -20,7 +20,6 @@ export const userApi = api
         method: 'GET',
         providesTags: [Tags.USER_PREF],
       }),
-      }),
       getToken: builder.query({
         query: () => `token`,
         method: 'GET',
