@@ -818,7 +818,7 @@ const Workspaces = ({ organization }) => {
                 keys.REMOVE_DESIGNS_FROM_WORKSPACE.action,
                 keys.REMOVE_DESIGNS_FROM_WORKSPACE.subject,
               )}
-              showViews={true}
+              showViews={CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject)}
               emptyStateViewsIcon={
                 <ViewIcon height="5rem" width="5rem" fill={theme.palette.icon.disabled} />
               }
