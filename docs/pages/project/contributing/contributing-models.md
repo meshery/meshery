@@ -149,7 +149,7 @@ All of Meshery's Models can be found in the [Meshery Integrations spreadsheet](h
       </section>
 
       <!-- Spreadsheet Method -->
-      <input type="radio" id="spreadsheet-tab" name="mesheryctl-tabs" checked>
+      <input type="radio" id="spreadsheet-tab" name="mesheryctl-tabs">
       <label for="spreadsheet-tab">
         <i class="fa fa-table"></i> Using Integration Spreadsheet
       </label>
