@@ -105,30 +105,35 @@ type Manifest struct {
 
 // GetManifestTreeURL returns the manifest tree url based on version
 func GetManifestTreeURL(version string) (string, error) {
-	url := "https://api.github.com/repos/" + constants.GetMesheryGitHubOrg() + "/" + constants.GetMesheryGitHubRepo() + "/git/trees/" + version + "?recursive=1"
+	// Construct the URL to fetch the entire repository tree
+	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/git/trees/%s?recursive=1",
+		constants.GetMesheryGitHubOrg(),
+		constants.GetMesheryGitHubRepo(),
+		version)
+
+	// Make the GET request
 	resp, err := http.Get(url)
 	if err != nil {
 		return "", errors.Wrapf(err, "failed to make GET request to %s", url)
 	}
 	defer SafeClose(resp.Body)
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", errors.Wrap(err, "failed to read response body")
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("failed to fetch repository tree: %s", resp.Status)
 	}
 
-	var manLis ManifestList
+	// Parse the response
+	var treeResponse struct {
+		SHA  string     `json:"sha"`
+		URL  string     `json:"url"`
+		Tree []Manifest `json:"tree"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&treeResponse); err != nil {
+		return "", errors.Wrap(err, "failed to decode response")
+	}
 
-	err = json.Unmarshal([]byte(body), &manLis)
-	if err != nil {
-		return "", errors.Wrap(err, "failed to read response body")
-	}
-	for i := range manLis.Tree {
-		if manLis.Tree[i].Path == "install/deployment_yamls/k8s" {
-			return manLis.Tree[i].URL, nil
-		}
-	}
-	return "", errors.New("could not find path: install/deployment_yamls/k8s in the manifest tree")
+	// Return the URL of the tree (contains all files)
+	return treeResponse.URL, nil
 }
 
 // ListManifests lists the manifest files stored in GitHub
@@ -144,14 +149,27 @@ func ListManifests(url string) ([]Manifest, error) {
 		return nil, errors.Wrap(err, "failed to read response body")
 	}
 
-	var manLis ManifestList
-
-	err = json.Unmarshal([]byte(body), &manLis)
-	if err != nil {
-		return nil, errors.Wrap(err, "failed to read response body")
+	var treeResponse struct {
+		SHA  string     `json:"sha"`
+		URL  string     `json:"url"`
+		Tree []Manifest `json:"tree"`
+	}
+	if err := json.Unmarshal(body, &treeResponse); err != nil {
+		return nil, errors.Wrap(err, "failed to decode response")
 	}
 
-	return manLis.Tree, nil
+	var manifests []Manifest
+	for _, item := range treeResponse.Tree {
+		// Filter out only files (not directories) with .yaml extension
+		if item.Typ == "blob" && strings.HasSuffix(item.Path, ".yaml") {
+			manifests = append(manifests, Manifest{
+				Path: item.Path,
+				URL:  item.URL,
+			})
+		}
+	}
+
+	return manifests, nil
 }
 
 // GetManifestURL returns the URLs for the manifest files
