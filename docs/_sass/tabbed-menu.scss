@@ -2,20 +2,21 @@
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,600,700");
 @import url("https://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css");
 
-/* Tab container layout */
-.tab-container {
+/* Tab container - this will apply to any container with tabs */
+[class*="tab-container"] {
   display: flex;
   flex-wrap: wrap;
   position: relative;
+  width: 100%;
 }
 
-/* Hide radio inputs while maintaining functionality */
+/* Hide all radio inputs */
 input[type="radio"] {
   display: none;
 }
 
-/* Tab content styling */
-section.tabbed {
+/* Generic tabbed section styling - applies to all levels */
+section[class*="tabbed"] {
   display: none;
   padding: 1rem;
   border: 1px solid #ddd;
@@ -25,7 +26,7 @@ section.tabbed {
   z-index: 0;
 }
 
-/* Tab label styling */
+/* Tab label styling - applies to all levels */
 label {
   display: inline-flex;
   align-items: center;
@@ -38,21 +39,13 @@ label {
   gap: 10px;
 }
 
-/* Icon styling */
-label:before {
-  font-family: fontawesome;
-  content: attr(data-icon);
-  display: inline-block;
-  flex-shrink: 0;
-}
-
-/* Hover state */
+/* Hover state for all labels */
 label:hover {
   color: #888;
   background-color: var(--brand-color-secondary-50);
 }
 
-/* Active tab styling */
+/* Active tab styling for all levels */
 input:checked + label {
   color: var(--color-secondary-dark);
   border: 1px solid #ddd;
@@ -63,9 +56,24 @@ input:checked + label {
   z-index: 1;
 }
 
-/* Show active tab content */
-input:checked + label + section.tabbed {
+/* Show content for active tabs at any level */
+input:checked + label + section[class*="tabbed"] {
   display: block;
+}
+
+/* Nested tab specific styling */
+section[class*="tabbed"] input:checked + label {
+  font-size: 0.95em;
+  padding: 10px 20px 10px 10px;
+  border-bottom-color: #fff;  /* Match content background */
+  position: relative;
+  z-index: 2;  /* Ensure tab appears above content border 
+}
+
+section[class*="tabbed"] section[class*="tabbed"] {
+  padding: 0.75rem;
+  border-top: none;  /* Remove top border to prevent double border */
+  margin-top: -1px;  /* Connect with the tab border */
 }
 
 /* Mobile responsiveness */
@@ -74,18 +82,18 @@ input:checked + label + section.tabbed {
     font-size: 0;
   }
   
-  label:before {
+  label i {
     font-size: 18px;
     margin: 0;
+  }
+  
+  section[class*="tabbed"] label {
+    padding: 12px;  /* Adjusted padding for nested tabs on mobile */
   }
 }
 
 @media screen and (max-width: 400px) {
-  label {
-    padding: 15px;
-  }
-  
-  .tab-container {
+  [class*="tab-container"] {
     flex-direction: column;
   }
 }
