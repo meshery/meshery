@@ -307,7 +307,7 @@ func displayUnsuccessfulEntities(response *models.RegistryAPIResponse, modelName
 			}
 
 			errorDetails, err := meshkitutils.Cast[map[string]interface{}](entityMap["error"])
-			if err != nil {
+			if err != nil || len(errorDetails) == 0 {
 				utils.Log.Error(err)
 				continue
 			}

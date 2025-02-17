@@ -149,20 +149,15 @@ func addUnsuccessfulEntry(path string, response *models.RegistryAPIResponse, err
 
 	// If error not found, create a new entry
 
-	var errMsg error
 	if entityType == "Empty Model" {
-		errMsg = err
 		entityType = "unknown"
-	} else {
-		// Error message based on file extension
-		errMsg = meshkitFileUtils.ErrInvalidModel(filename, err)
 	}
 
 	if !entryFound {
 		entry := map[string]interface{}{
 			"name":       []string{filename},
 			"entityType": []string{entityType},
-			"error":      errMsg,
+			"error":      err,
 		}
 		response.EntityTypeSummary.UnsuccessfulEntityNameWithError = append(response.EntityTypeSummary.UnsuccessfulEntityNameWithError, entry)
 	}
