@@ -1,98 +1,91 @@
+/* Essential font imports */
 @import url("https://fonts.googleapis.com/css?family=Open+Sans:400,600,700");
 @import url("https://netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.css");
-// *, *:before, *:after {
-//   margin: 0;
-//   padding: 0;
-//   box-sizing: border-box;
-// }
 
-// main {
-//   min-width: 320px;
-//   max-width: 800px;
-//   padding: 50px;
-//   margin: 0 auto;
-//   background: #fff;
-// }
+/* Tab container layout */
+.tab-container {
+  display: flex;
+  flex-wrap: wrap;
+  position: relative;
+}
 
+/* Hide radio inputs while maintaining functionality */
+input[type="radio"] {
+  display: none;
+}
+
+/* Tab content styling */
 section.tabbed {
   display: none;
   padding: 1rem;
   border: 1px solid #ddd;
+  width: 100%;
+  order: 99;
+  position: relative;
+  z-index: 0;
 }
-section:after{
-  background-color: red;
-}
-// input {
-//   display: none;
-// }
 
+/* Tab label styling */
 label {
-  display: inline-block;
-  margin: 0 0 -1px;
-  padding: 15px 25px;
+  display: inline-flex;
+  align-items: center;
+  padding: 15px 25px 15px 15px;
   font-weight: 600;
-  text-align: center;
   color: var(--background-primary);
-  border: 1px solid transparent;
+  cursor: pointer;
+  position: relative;
+  z-index: 1;
+  gap: 10px;
 }
 
+/* Icon styling */
 label:before {
   font-family: fontawesome;
-  font-weight: normal;
-  margin-right: 10px;
+  content: attr(data-icon);
+  display: inline-block;
+  flex-shrink: 0;
 }
 
-label[for*='1']:before {
-  content: '\f1cb';
-}
-
-label[for*='2']:before {
-  content: '\f17d';
-}
-
-label[for*='3']:before {
-  content: '\f16b';
-}
-
-label[for*='4']:before {
-  content: '\f1a9';
-}
-
+/* Hover state */
 label:hover {
   color: #888;
-  cursor: pointer;
   background-color: var(--brand-color-secondary-50);
 }
 
+/* Active tab styling */
 input:checked + label {
   color: var(--color-secondary-dark);
   border: 1px solid #ddd;
   border-top: 2px solid var(--brand-color);
-  border-bottom: 1px solid #fff;
+  border-bottom: 1px solid var(--background-primary);
   background-color: var(--background-primary);
+  margin-bottom: -1px;
+  z-index: 1;
 }
-#content1 {
-  background-color: "pink";
-}
-#tab1:checked ~ #content1,
-#tab2:checked ~ #content2,
-#tab3:checked ~ #content3,
-#tab4:checked ~ #content4 {
+
+/* Show active tab content */
+input:checked + label + section.tabbed {
   display: block;
 }
 
+/* Mobile responsiveness */
 @media screen and (max-width: 650px) {
   label {
     font-size: 0;
   }
-
+  
   label:before {
-    margin: 0;
     font-size: 18px;
+    margin: 0;
   }
 }
+
 @media screen and (max-width: 400px) {
   label {
     padding: 15px;
+  }
+  
+  .tab-container {
+    flex-direction: column;
   }
 }
