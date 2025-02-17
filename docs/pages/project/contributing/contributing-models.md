@@ -102,15 +102,50 @@ All of Meshery's Models can be found in the [Meshery Integrations spreadsheet](h
     <i class="fa fa-terminal"></i> mesheryctl
   </label>
   <section class="tabbed">
+    <h3>Prerequisites:</h3>
+    <ul>
+      <li>Fork the <a href="https://github.com/meshery/meshery">meshery/meshery repository.</a></li>
+      <li>Install the Meshery CLI by following the <a href="https://docs.meshery.io/installation/">installation instructions.</a></li>
+    </ul>
+    <br />
     <!-- Second Level Tabs under mesheryctl -->
     <div class="tab-container">
       <!-- CSV Method -->
-      <input type="radio" id="csv-tab" name="mesheryctl-tabs">
+      <input type="radio" id="csv-tab" name="mesheryctl-tabs" checked>
       <label for="csv-tab">
         <i class="fa fa-list"></i> Using CSV
       </label>
       <section class="tabbed">
-        <p>Content for CSV method will be added in the next iteration</p>
+        <h4>1. Understanding the Template Directory</h4>
+        <p>Inside your forked Meshery repository, you'll find the templates-csvs directory containing three essential CSV files:</p>
+        <code>
+            mesheryctl/templates/templates-csvs/
+                <br />
+                ├── models.csv       # Define model metadata and core properties
+                <br />
+                ├── components.csv   # Specify individual components and their characteristics
+                <br />
+                └── relationships.csv # Define how components interact and connect
+                <br />
+        </code>
+
+        <h4>2. Customizing Your Model</h4>
+        <p>Creating your model involves modifying these CSV files to match your specific requirements. When making changes, you have two valuable references at your disposal: the existing entries in the CSV files serve as practical examples, while the <a href="https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw">integration spreadsheet</a> provides comprehensive documentation of all possible fields and their purposes.</p>
+
+        <h4>3. Generating Your Model</h4>
+        <p>Once you've customized your CSV files, you can generate your model using a single command. Ensure you're in the root directory of your forked Meshery repository, as this maintains the correct file path relationships:</p>
+        <code>mesheryctl registry generate --directory templates-csvs --model "YOUR_MODEL_NAME"</code>
+
+        <h4>4. Locating Generated Files</h4>
+        <p>After successful generation, your model's files will be created in the Meshery server's model directory. You can find these files at <code>meshery/server/meshmodel/[YOUR_MODEL_NAME]/</code>. Take time to review these generated files to ensure they accurately reflect your intended model structure.</p>
+
+        <h4>5. Troubleshooting</h4>
+        <p>If you encounter issues during the generation process, you can use these diagnostic approaches to identify and resolve problems:</p>
+        <ul>
+          <li>Examine the detailed error logs at <code>~/.meshery/logs/registry/</code> to understand specific generation issues.</li>
+          <li>Review your CSV files for proper formatting, ensuring all required columns are present and correctly populated.</li>
+          <li>Confirm you're executing the command from the root of your forked Meshery repository.</li>
+        </ul>
       </section>
 
       <!-- Spreadsheet Method -->
@@ -171,22 +206,10 @@ All of Meshery's Models can be found in the [Meshery Integrations spreadsheet](h
         <p>Once your environment is set up, you can begin working with the spreadsheet:</p>
 
         <h4>1. Adding Your Model</h4>
-        <ol>
-          <li>Open your copied spreadsheet</li>
-          <li>Review existing models for reference</li>
-          <li>Create a new row for your model</li>
-          <li>Fill in required columns:
-            <ul>
-              <li>Name: Your model's name</li>
-              <li>Version: Semantic version number</li>
-              <li>Category: Model classification</li>
-              <li>Components: List of included components</li>
-            </ul>
-          </li>
-        </ol>
+        <p>The integration spreadsheet contains existing model definitions that serve as practical examples. You can either create a new entry following the patterns in existing rows, or practice by generating an existing model first to understand the process. Each row represents a complete model definition, use them as reference for creating a new row.</p>
 
         <h4>2. Generating the Model</h4>
-        <p>Use mesheryctl to generate your models</p>
+        <p>Use mesheryctl to generate your models. Make sure to run the command inside your forked <code>meshery/meshery</code> repo</p>
         <code>mesheryctl registry generate --spreadsheet-id "YOUR_SPREADSHEET_ID" --spreadsheet-cred "$SHEET_CRED" --model "YOUR_MODEL_NAME"</code>
 
         <p>The command will:</p>
@@ -198,11 +221,7 @@ All of Meshery's Models can be found in the [Meshery Integrations spreadsheet](h
         </ul>
 
         <h4>3. Verification</h4>
-        <p>After generation, verify your model:</p>
-        <ol>
-          <li>The model will be generated in <code>meshery/server/meshmodels/[YOUR_MODEL_NAME]</code></li>
-          <li>Test the model using Meshery UI or CLI</li>
-        </ol>
+        <p>The model will be generated in <code>meshery/server/meshmodels/[YOUR_MODEL_NAME]</code></p>
       </section>
     </div>
   </section>
