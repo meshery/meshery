@@ -45,6 +45,15 @@ label:hover {
   background-color: var(--brand-color-secondary-50);
 }
 
+/* Icon styling using pseudo-element */
+label:before {
+  font-family: 'FontAwesome';
+  content: attr(data-icon);
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+
 /* Active tab styling for all levels */
 input:checked + label {
   color: var(--color-secondary-dark);

@@ -17,7 +17,7 @@ Each of Meshery's APIs are subject to the following authentication and authoriza
 <div class="tab-container">
   <!-- Tab 1: REST API -->
   <input id="tab1" type="radio" name="tabs" checked>
-  <label for="tab1" data-icon=""><i class="fa fa-exchange"></i> REST API</label>
+  <label for="tab1" data-icon="&#xf1cb;">REST API</label>
   <section class="tabbed" id="content1">
     <p>Meshery Server's REST API is available at <code>[hostname]:[port]/api/</code>.</p>
     {% include alert.html type="dark" title="Meshery's REST API Reference"
@@ -26,7 +26,7 @@ Each of Meshery's APIs are subject to the following authentication and authoriza
 
   <!-- Tab 2: GraphQL API -->
   <input id="tab2" type="radio" name="tabs">
-  <label for="tab2" data-icon=""><i class="fa fa-connectdevelop"></i> GraphQL API</label>
+  <label for="tab2" data-icon="&#xf17d;">GraphQL API</label>
   <section class="tabbed" id="content2">
     <p>Meshery Server's GraphQl API is available at <code>{hostname]:[port]/api/graphql/query</code>. A GraphQL request can be made as a POST request to the endpoint with the query as the payload. Meshery Server's GraphQL API can be used to perform three operations:</p>
     <ul>
