@@ -1,190 +1,190 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "ServiceDNSRecord",
-   "schema": "{\n \"description\": \"ServiceDNSRecord defines a scheme of DNS name and subdomains that should be programmed with endpoint information about a Service deployed in multiple Kubernetes clusters. ServiceDNSRecord is name-associated with the Services it programs endpoint information for, meaning that a ServiceDNSRecord expresses the intent to program DNS with information about endpoints for the Kubernetes Service resources with the same name and namespace in different clusters. \\n For the example, given the following values: \\n metadata.name: test-service metadata.namespace: test-namespace spec.federationName: test-federation \\n the following set of DNS names will be programmed: \\n Global Level: test-service.test-namespace.test-federation.svc.\\u003cfederation-domain\\u003e Region Level: test-service.test-namespace.test-federation.svc.(status.DNS[*].region).\\u003cfederation-domain\\u003e Zone Level  : test-service.test-namespace.test-federation.svc.(status.DNS[*].zone).(status.DNS[*].region).\\u003cfederation-domain\\u003e \\n Optionally, when DNSPrefix is specified, another DNS name will be programmed which would be a CNAME record pointing to DNS name at global level as below: \\u003cdns-prefix\\u003e.\\u003cfederation-domain\\u003e --\\u003e test-service.test-namespace.test-federation.svc.\\u003cfederation-domain\\u003e\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ServiceDNSRecordSpec defines the desired state of ServiceDNSRecord.\",\n   \"properties\": {\n    \"allowServiceWithoutEndpoints\": {\n     \"description\": \"AllowServiceWithoutEndpoints allows DNS records to be written for Service shards without endpoints\",\n     \"type\": \"boolean\"\n    },\n    \"dnsPrefix\": {\n     \"description\": \"DNSPrefix when specified, an additional DNS record would be created with \\u003cDNSPrefix\\u003e.\\u003cKubeFedDomain\\u003e\",\n     \"type\": \"string\"\n    },\n    \"domainRef\": {\n     \"description\": \"DomainRef is the name of the domain object to which the corresponding federated service belongs\",\n     \"type\": \"string\"\n    },\n    \"externalName\": {\n     \"description\": \"ExternalName when specified, replaces the service name portion of a resource record with the value of ExternalName.\",\n     \"type\": \"string\"\n    },\n    \"recordTTL\": {\n     \"description\": \"RecordTTL is the TTL in seconds for DNS records created for this Service, if omitted a default would be used\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"domainRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Service DNS Record\",\n \"type\": \"object\"\n}",
-   "version": "multiclusterdns.kubefed.io/v1alpha1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Service DNS Record",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Service DNS Record",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Uncategorized"
-   },
-   "displayName": "Kubefed",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
-    "source_uri": "https://kubernetes-charts.banzaicloud.com/charts/kubefed-0.3.1-banzai.1.tgz",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "kubefed",
+    "displayName": "Kubefed",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized"
+    },
+    "metadata": {
+      "isAnnotation": false,
+      "source_uri": "https://kubernetes-charts.banzaicloud.com/charts/kubefed-0.3.1-banzai.1.tgz",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "0.3.1-banzai.1"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
     "svgColor": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "0.3.1-banzai.1"
-   },
-   "name": "kubefed",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "ServiceDNSRecord",
+    "schema": "{\n \"description\": \"ServiceDNSRecord defines a scheme of DNS name and subdomains that should be programmed with endpoint information about a Service deployed in multiple Kubernetes clusters. ServiceDNSRecord is name-associated with the Services it programs endpoint information for, meaning that a ServiceDNSRecord expresses the intent to program DNS with information about endpoints for the Kubernetes Service resources with the same name and namespace in different clusters. \\n For the example, given the following values: \\n metadata.name: test-service metadata.namespace: test-namespace spec.federationName: test-federation \\n the following set of DNS names will be programmed: \\n Global Level: test-service.test-namespace.test-federation.svc.\\u003cfederation-domain\\u003e Region Level: test-service.test-namespace.test-federation.svc.(status.DNS[*].region).\\u003cfederation-domain\\u003e Zone Level  : test-service.test-namespace.test-federation.svc.(status.DNS[*].zone).(status.DNS[*].region).\\u003cfederation-domain\\u003e \\n Optionally, when DNSPrefix is specified, another DNS name will be programmed which would be a CNAME record pointing to DNS name at global level as below: \\u003cdns-prefix\\u003e.\\u003cfederation-domain\\u003e --\\u003e test-service.test-namespace.test-federation.svc.\\u003cfederation-domain\\u003e\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ServiceDNSRecordSpec defines the desired state of ServiceDNSRecord.\",\n   \"properties\": {\n    \"allowServiceWithoutEndpoints\": {\n     \"description\": \"AllowServiceWithoutEndpoints allows DNS records to be written for Service shards without endpoints\",\n     \"type\": \"boolean\"\n    },\n    \"dnsPrefix\": {\n     \"description\": \"DNSPrefix when specified, an additional DNS record would be created with \\u003cDNSPrefix\\u003e.\\u003cKubeFedDomain\\u003e\",\n     \"type\": \"string\"\n    },\n    \"domainRef\": {\n     \"description\": \"DomainRef is the name of the domain object to which the corresponding federated service belongs\",\n     \"type\": \"string\"\n    },\n    \"externalName\": {\n     \"description\": \"ExternalName when specified, replaces the service name portion of a resource record with the value of ExternalName.\",\n     \"type\": \"string\"\n    },\n    \"recordTTL\": {\n     \"description\": \"RecordTTL is the TTL in seconds for DNS records created for this Service, if omitted a default would be used\",\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"domainRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Service DNS Record\",\n \"type\": \"object\"\n}",
+    "version": "multiclusterdns.kubefed.io/v1alpha1"
+  }
+}

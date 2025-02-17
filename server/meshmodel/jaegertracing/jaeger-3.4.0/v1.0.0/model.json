@@ -1,45 +1,45 @@
 {
-  "category": {
-   "name": "Observability and Analysis"
-  },
-  "description": "Metrics Server is a scalable, efficient source of container resource metrics for Kubernetes built-in autoscaling pipelines.",
-  "displayName": "Jaeger",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "capabilities": null,
-   "isAnnotation": false,
-   "primaryColor": "#67cfe3",
-   "secondaryColor": "#ACFFFF",
-   "shape": "circle",
-   "styleOverrides": "",
-   "svgColor": "",
-   "svgComplete": "",
-   "svgWhite": ""
-  },
-  "model": {
-   "version": "jaeger-3.4.0"
-  },
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "version": "v1.0.0",
   "name": "jaegertracing",
+  "displayName": "Jaeger",
+  "description": "Metrics Server is a scalable, efficient source of container resource metrics for Kubernetes built-in autoscaling pipelines.",
+  "status": "ignored",
   "registrant": {
-   "created_at": "0001-01-01T00:00:00Z",
-   "credential_id": "00000000-0000-0000-0000-000000000000",
-   "deleted_at": "0001-01-01T00:00:00Z",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "kind": "github",
-   "name": "Github",
-   "status": "discovered",
-   "sub_type": "",
-   "type": "registry",
-   "updated_at": "0001-01-01T00:00:00Z",
-   "user_id": "00000000-0000-0000-0000-000000000000"
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Github",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "type": "registry",
+    "sub_type": "",
+    "kind": "github",
+    "status": "discovered",
+    "user_id": "00000000-0000-0000-0000-000000000000",
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "deleted_at": "0001-01-01T00:00:00Z"
   },
   "connection_id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "models.meshery.io/v1beta1",
-  "status": "ignored",
+  "category": {
+    "name": "Observability and Analysis"
+  },
   "subCategory": "Tracing",
-  "version": "v1.0.0",
+  "metadata": {
+    "capabilities": null,
+    "isAnnotation": false,
+    "primaryColor": "#67cfe3",
+    "secondaryColor": "#ACFFFF",
+    "shape": "circle",
+    "styleOverrides": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+  },
+  "model": {
+    "version": "jaeger-3.4.0"
+  },
   "components": null,
   "relationships": null,
   "components_count": 0,
   "relationships_count": 0
- }
+}

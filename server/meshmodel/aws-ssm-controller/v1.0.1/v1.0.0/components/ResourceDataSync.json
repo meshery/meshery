@@ -1,72 +1,72 @@
 {
-  "capabilities": null,
-  "component": {
-   "kind": "ResourceDataSync",
-   "schema": "{\n \"description\": \"ResourceDataSync is the Schema for the ResourceDataSyncs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ResourceDataSyncSpec defines the desired state of ResourceDataSync.\",\n   \"properties\": {\n    \"s3Destination\": {\n     \"description\": \"Amazon S3 configuration details for the sync. This parameter is required\\nif the SyncType value is SyncToDestination.\",\n     \"properties\": {\n      \"awsKMSKeyARN\": {\n       \"type\": \"string\"\n      },\n      \"bucketName\": {\n       \"type\": \"string\"\n      },\n      \"destinationDataSharing\": {\n       \"description\": \"Synchronize Amazon Web Services Systems Manager Inventory data from multiple\\nAmazon Web Services accounts defined in Organizations to a centralized Amazon\\nS3 bucket. Data is synchronized to individual key prefixes in the central\\nbucket. Each key prefix represents a different Amazon Web Services account\\nID.\",\n       \"properties\": {\n        \"destinationDataSharingType\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"prefix\": {\n       \"type\": \"string\"\n      },\n      \"region\": {\n       \"type\": \"string\"\n      },\n      \"syncFormat\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"syncName\": {\n     \"description\": \"A name for the configuration.\",\n     \"type\": \"string\"\n    },\n    \"syncSource\": {\n     \"description\": \"Specify information about the data sources to synchronize. This parameter\\nis required if the SyncType value is SyncFromSource.\",\n     \"properties\": {\n      \"awsOrganizationsSource\": {\n       \"description\": \"Information about the AwsOrganizationsSource resource data sync source. A\\nsync source of this type can synchronize data from Organizations or, if an\\nAmazon Web Services organization isn't present, from multiple Amazon Web\\nServices Regions.\",\n       \"properties\": {\n        \"organizationSourceType\": {\n         \"type\": \"string\"\n        },\n        \"organizationalUnits\": {\n         \"items\": {\n          \"description\": \"The Organizations organizational unit data source for the sync.\",\n          \"properties\": {\n           \"organizationalUnitID\": {\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"enableAllOpsDataSources\": {\n       \"type\": \"boolean\"\n      },\n      \"includeFutureRegions\": {\n       \"type\": \"boolean\"\n      },\n      \"sourceRegions\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"sourceType\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"syncType\": {\n     \"description\": \"Specify SyncToDestination to create a resource data sync that synchronizes\\ndata to an S3 bucket for Inventory. If you specify SyncToDestination, you\\nmust provide a value for S3Destination. Specify SyncFromSource to synchronize\\ndata from a single account and multiple Regions, or multiple Amazon Web Services\\naccounts and Amazon Web Services Regions, as listed in Organizations for\\nExplorer. If you specify SyncFromSource, you must provide a value for SyncSource.\\nThe default value is SyncToDestination.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"syncName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Resource Data Sync\",\n \"type\": \"object\"\n}",
-   "version": "ssm.services.k8s.aws/v1alpha1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Resource Data Sync",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false,
-   "source_uri": "git://github.com/aws-controllers-k8s/ssm-controller/main/helm"
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Resource Data Sync",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Orchestration \u0026 Management"
-   },
-   "displayName": "AWS Systems Manager",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-ssm-controller",
+    "displayName": "AWS Systems Manager",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Orchestration \u0026 Management"
+    },
+    "subCategory": "Management Governance",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#7AA116",
+      "shape": "rectangle",
+      "source_uri": "git://github.com/aws-controllers-k8s/ssm-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "v1.0.1"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#7AA116",
     "shape": "rectangle",
-    "source_uri": "git://github.com/aws-controllers-k8s/ssm-controller/main/helm",
-    "styleOverrides": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "v1.0.1"
-   },
-   "name": "aws-ssm-controller",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "github",
-    "name": "Github",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Management Governance",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": null,
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#7AA116",
-   "shape": "rectangle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/ssm-controller/main/helm"
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "ResourceDataSync",
+    "schema": "{\n \"description\": \"ResourceDataSync is the Schema for the ResourceDataSyncs API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ResourceDataSyncSpec defines the desired state of ResourceDataSync.\",\n   \"properties\": {\n    \"s3Destination\": {\n     \"description\": \"Amazon S3 configuration details for the sync. This parameter is required\\nif the SyncType value is SyncToDestination.\",\n     \"properties\": {\n      \"awsKMSKeyARN\": {\n       \"type\": \"string\"\n      },\n      \"bucketName\": {\n       \"type\": \"string\"\n      },\n      \"destinationDataSharing\": {\n       \"description\": \"Synchronize Amazon Web Services Systems Manager Inventory data from multiple\\nAmazon Web Services accounts defined in Organizations to a centralized Amazon\\nS3 bucket. Data is synchronized to individual key prefixes in the central\\nbucket. Each key prefix represents a different Amazon Web Services account\\nID.\",\n       \"properties\": {\n        \"destinationDataSharingType\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"prefix\": {\n       \"type\": \"string\"\n      },\n      \"region\": {\n       \"type\": \"string\"\n      },\n      \"syncFormat\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"syncName\": {\n     \"description\": \"A name for the configuration.\",\n     \"type\": \"string\"\n    },\n    \"syncSource\": {\n     \"description\": \"Specify information about the data sources to synchronize. This parameter\\nis required if the SyncType value is SyncFromSource.\",\n     \"properties\": {\n      \"awsOrganizationsSource\": {\n       \"description\": \"Information about the AwsOrganizationsSource resource data sync source. A\\nsync source of this type can synchronize data from Organizations or, if an\\nAmazon Web Services organization isn't present, from multiple Amazon Web\\nServices Regions.\",\n       \"properties\": {\n        \"organizationSourceType\": {\n         \"type\": \"string\"\n        },\n        \"organizationalUnits\": {\n         \"items\": {\n          \"description\": \"The Organizations organizational unit data source for the sync.\",\n          \"properties\": {\n           \"organizationalUnitID\": {\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"enableAllOpsDataSources\": {\n       \"type\": \"boolean\"\n      },\n      \"includeFutureRegions\": {\n       \"type\": \"boolean\"\n      },\n      \"sourceRegions\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"sourceType\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"syncType\": {\n     \"description\": \"Specify SyncToDestination to create a resource data sync that synchronizes\\ndata to an S3 bucket for Inventory. If you specify SyncToDestination, you\\nmust provide a value for S3Destination. Specify SyncFromSource to synchronize\\ndata from a single account and multiple Regions, or multiple Amazon Web Services\\naccounts and Amazon Web Services Regions, as listed in Organizations for\\nExplorer. If you specify SyncFromSource, you must provide a value for SyncSource.\\nThe default value is SyncToDestination.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"syncName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Resource Data Sync\",\n \"type\": \"object\"\n}",
+    "version": "ssm.services.k8s.aws/v1alpha1"
+  }
+}

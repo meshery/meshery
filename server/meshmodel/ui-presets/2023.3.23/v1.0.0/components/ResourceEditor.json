@@ -1,196 +1,196 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "ResourceEditor",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"icons\": {\n     \"description\": \"Icons is an optional list of icons for an application. Icon information includes the source, size, and mime type.\",\n     \"items\": {\n      \"description\": \"ImageSpec contains information about an image used as an icon.\",\n      \"properties\": {\n       \"size\": {\n        \"description\": \"(optional) The size of the image in pixels (e.g., 25x25).\",\n        \"type\": \"string\"\n       },\n       \"src\": {\n        \"description\": \"The source for image represented as either an absolute URL to the image or a Data URL containing the image. Data URLs are defined in RFC 2397.\",\n        \"type\": \"string\"\n       },\n       \"type\": {\n        \"description\": \"(optional) The mine type of the image (e.g., \\\"image/png\\\").\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"src\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"installer\": {\n     \"properties\": {\n      \"chart\": {\n       \"description\": \"ChartRepoRef references to a single version of a Chart\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"url\": {\n         \"type\": \"string\"\n        },\n        \"version\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\",\n        \"version\"\n       ],\n       \"type\": \"object\"\n      },\n      \"planID\": {\n       \"type\": \"string\"\n      },\n      \"productID\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resource\": {\n     \"description\": \"ResourceID identifies a resource\",\n     \"properties\": {\n      \"group\": {\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind is the serialized kind of the resource.  It is normally CamelCase and singular.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name is the plural name of the resource to serve.  It must match the name of the CustomResourceDefinition-registration too: plural.group and it must be all lowercase.\",\n       \"type\": \"string\"\n      },\n      \"scope\": {\n       \"description\": \"ResourceScope is an enum defining the different scopes available to a custom resource\",\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"group\",\n      \"kind\",\n      \"name\",\n      \"scope\",\n      \"version\"\n     ],\n     \"type\": \"object\"\n    },\n    \"ui\": {\n     \"properties\": {\n      \"editor\": {\n       \"description\": \"ChartRepoRef references to a single version of a Chart\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"url\": {\n         \"type\": \"string\"\n        },\n        \"version\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\",\n        \"version\"\n       ],\n       \"type\": \"object\"\n      },\n      \"instanceLabelPaths\": {\n       \"description\": \"app.kubernetes.io/instance label must be updated at these paths when refilling metadata\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"options\": {\n       \"description\": \"ChartRepoRef references to a single version of a Chart\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"url\": {\n         \"type\": \"string\"\n        },\n        \"version\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\",\n        \"version\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"variants\": {\n     \"description\": \"Kind == VendorChartPreset | ClusterChartPreset\",\n     \"items\": {\n      \"properties\": {\n       \"apiGroup\": {\n        \"description\": \"APIGroup is the group for the resource being referenced. If APIGroup is not specified, the specified Kind must be in the core API group. For any other third-party types, APIGroup is required.\",\n        \"type\": \"string\"\n       },\n       \"icons\": {\n        \"description\": \"Icons is an optional list of icons for an application. Icon information includes the source, size, and mime type.\",\n        \"items\": {\n         \"description\": \"ImageSpec contains information about an image used as an icon.\",\n         \"properties\": {\n          \"size\": {\n           \"description\": \"(optional) The size of the image in pixels (e.g., 25x25).\",\n           \"type\": \"string\"\n          },\n          \"src\": {\n           \"description\": \"The source for image represented as either an absolute URL to the image or a Data URL containing the image. Data URLs are defined in RFC 2397.\",\n           \"type\": \"string\"\n          },\n          \"type\": {\n           \"description\": \"(optional) The mine type of the image (e.g., \\\"image/png\\\").\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"src\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"kind\": {\n        \"description\": \"Kind is the type of resource being referenced\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name is the name of resource being referenced\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"kind\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"resource\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Resource Editor\",\n \"type\": \"object\"\n}",
-   "version": "ui.k8s.appscode.com/v1alpha1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Resource Editor",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": false,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Resource Editor",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Uncategorized"
-   },
-   "displayName": "Ui Presets",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "ui-presets",
+    "displayName": "Ui Presets",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized"
+    },
+    "subCategory": "Uncategorized",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://charts.appscode.com/stable/ui-presets/ui-presets-v2023.03.23.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "2023.3.23"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "source_uri": "https://charts.appscode.com/stable/ui-presets/ui-presets-v2023.03.23.tgz",
-    "styleOverrides": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "2023.3.23"
-   },
-   "name": "ui-presets",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Uncategorized",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": false,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "ResourceEditor",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"icons\": {\n     \"description\": \"Icons is an optional list of icons for an application. Icon information includes the source, size, and mime type.\",\n     \"items\": {\n      \"description\": \"ImageSpec contains information about an image used as an icon.\",\n      \"properties\": {\n       \"size\": {\n        \"description\": \"(optional) The size of the image in pixels (e.g., 25x25).\",\n        \"type\": \"string\"\n       },\n       \"src\": {\n        \"description\": \"The source for image represented as either an absolute URL to the image or a Data URL containing the image. Data URLs are defined in RFC 2397.\",\n        \"type\": \"string\"\n       },\n       \"type\": {\n        \"description\": \"(optional) The mine type of the image (e.g., \\\"image/png\\\").\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"src\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"installer\": {\n     \"properties\": {\n      \"chart\": {\n       \"description\": \"ChartRepoRef references to a single version of a Chart\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"url\": {\n         \"type\": \"string\"\n        },\n        \"version\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\",\n        \"version\"\n       ],\n       \"type\": \"object\"\n      },\n      \"planID\": {\n       \"type\": \"string\"\n      },\n      \"productID\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resource\": {\n     \"description\": \"ResourceID identifies a resource\",\n     \"properties\": {\n      \"group\": {\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Kind is the serialized kind of the resource.  It is normally CamelCase and singular.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name is the plural name of the resource to serve.  It must match the name of the CustomResourceDefinition-registration too: plural.group and it must be all lowercase.\",\n       \"type\": \"string\"\n      },\n      \"scope\": {\n       \"description\": \"ResourceScope is an enum defining the different scopes available to a custom resource\",\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"group\",\n      \"kind\",\n      \"name\",\n      \"scope\",\n      \"version\"\n     ],\n     \"type\": \"object\"\n    },\n    \"ui\": {\n     \"properties\": {\n      \"editor\": {\n       \"description\": \"ChartRepoRef references to a single version of a Chart\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"url\": {\n         \"type\": \"string\"\n        },\n        \"version\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\",\n        \"version\"\n       ],\n       \"type\": \"object\"\n      },\n      \"instanceLabelPaths\": {\n       \"description\": \"app.kubernetes.io/instance label must be updated at these paths when refilling metadata\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"options\": {\n       \"description\": \"ChartRepoRef references to a single version of a Chart\",\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"url\": {\n         \"type\": \"string\"\n        },\n        \"version\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\",\n        \"version\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"variants\": {\n     \"description\": \"Kind == VendorChartPreset | ClusterChartPreset\",\n     \"items\": {\n      \"properties\": {\n       \"apiGroup\": {\n        \"description\": \"APIGroup is the group for the resource being referenced. If APIGroup is not specified, the specified Kind must be in the core API group. For any other third-party types, APIGroup is required.\",\n        \"type\": \"string\"\n       },\n       \"icons\": {\n        \"description\": \"Icons is an optional list of icons for an application. Icon information includes the source, size, and mime type.\",\n        \"items\": {\n         \"description\": \"ImageSpec contains information about an image used as an icon.\",\n         \"properties\": {\n          \"size\": {\n           \"description\": \"(optional) The size of the image in pixels (e.g., 25x25).\",\n           \"type\": \"string\"\n          },\n          \"src\": {\n           \"description\": \"The source for image represented as either an absolute URL to the image or a Data URL containing the image. Data URLs are defined in RFC 2397.\",\n           \"type\": \"string\"\n          },\n          \"type\": {\n           \"description\": \"(optional) The mine type of the image (e.g., \\\"image/png\\\").\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"src\"\n         ],\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"kind\": {\n        \"description\": \"Kind is the type of resource being referenced\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"Name is the name of resource being referenced\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"kind\",\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"resource\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Resource Editor\",\n \"type\": \"object\"\n}",
+    "version": "ui.k8s.appscode.com/v1alpha1"
+  }
+}

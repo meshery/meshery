@@ -247,22 +247,22 @@ const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false, placehol
             startAdornment: (
               <InputAdornment position="start">
                 {' '}
-                <ContentFilterIcon fill={theme.palette.secondary.iconMain} />{' '}
+                <ContentFilterIcon fill={theme.palette.icon.default} />{' '}
               </InputAdornment>
             ),
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton onClick={handleClear}>
                   {filteringState.state !== FILTERING_STATE.IDLE && (
-                    <CrossCircleIcon fill={theme.palette.secondary.iconMain} />
+                    <CrossCircleIcon fill={theme.palette.icon.default} />
                   )}
                 </IconButton>
                 <IconButton onClick={toggleSuggestions}>
                   {filteringState.state !== FILTERING_STATE.IDLE && !anchorEl && (
-                    <ExpandMore fill={theme.palette.secondary.iconMain} />
+                    <ExpandMore fill={theme.palette.icon.default} />
                   )}
                   {filteringState.state !== FILTERING_STATE.IDLE && anchorEl && (
-                    <ExpandLess fill={theme.palette.secondary.iconMain} />
+                    <ExpandLess fill={theme.palette.icon.default} />
                   )}
                 </IconButton>
               </InputAdornment>
