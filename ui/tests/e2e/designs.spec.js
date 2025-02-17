@@ -24,3 +24,17 @@ test('Import a design using URI', async ({ page }) => {
   });
   await expect(notification).toBeVisible();
 });
+
+test('Delete design', async ({ page }) => {
+  const designLocator = page.locator(`text=${DESIGN_FILE_NAME}`);
+  await expect(designLocator).toBeVisible();
+  await designLocator.click();
+
+  await page.locator('svg[data-testid="DeleteIcon"]').click();
+  await page.locator('button:has-text("DELETE")').click();
+
+  const notification = page.locator('div.notistack-Snackbar', {
+    hasText: DELETE_NOTIFICATION(DESIGN_FILE_NAME),
+  });
+  await expect(notification).toBeVisible();
+});
