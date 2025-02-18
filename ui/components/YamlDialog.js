@@ -5,14 +5,24 @@ import {
   Divider,
   IconButton,
   Tooltip,
+  styled,
 } from '@layer5/sistent';
-import useStyles from './MesheryPatterns/Cards.styles';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
-import FullscreenExit from '@mui/icons-material/FullscreenExit';
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import Fullscreen from '@mui/icons-material/Fullscreen';
-import Save from '@mui/icons-material/Save';
-import { StyledDialog, YamlDialogTitleText } from './MesheryPatterns/style';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import SaveIcon from '@mui/icons-material/Save';
+import { YamlDialogTitleText, StyledDialog } from './MesheryPatterns/style';
+
+const StyledCodeMirrorWrapper = styled('div')(({ fullScreen }) => ({
+  height: fullScreen ? '100%' : 'auto',
+  width: '100%',
+  '& .CodeMirror': {
+    minHeight: '300px',
+    height: fullScreen ? '100%' : 'auto',
+    width: '100%',
+  },
+}));
 
 const YAMLDialog = ({
   fullScreen,
@@ -24,7 +34,6 @@ const YAMLDialog = ({
   updateHandler,
   isReadOnly = false,
 }) => {
-  const classes = useStyles();
   return (
     <Dialog
       aria-labelledby="filter-dialog-title"
@@ -35,39 +44,40 @@ const YAMLDialog = ({
     >
       <StyledDialog disableTypography id="filter-dialog-title">
         <YamlDialogTitleText variant="h6">{name}</YamlDialogTitleText>
-        <Tooltip title="Exit Fullscreen" arrow interactive placement="bottom">
-          <IconButton onClick={toggleFullScreen}>
-            {fullScreen ? <FullscreenExit /> : <Fullscreen />}
+        <Tooltip title="Exit Fullscreen" arrow placement="bottom">
+          <IconButton onClick={toggleFullScreen} size="large">
+            {fullScreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
           </IconButton>
         </Tooltip>
       </StyledDialog>
-      <Divider variant="fullWidth" light />
+      <Divider />
       <DialogContent>
-        <CodeMirror
-          value={config_file}
-          className={fullScreen ? classes.fullScreenCodeMirror : ''}
-          options={{
-            theme: 'material',
-            lineNumbers: true,
-            lineWrapping: true,
-            gutters: ['CodeMirror-lint-markers'],
-            lint: true,
-            mode: 'text/x-yaml',
-            readOnly: isReadOnly,
-          }}
-          onChange={(_, data, val) => setYaml(val)}
-        />
+        <StyledCodeMirrorWrapper fullScreen={fullScreen}>
+          <CodeMirror
+            value={config_file}
+            options={{
+              theme: 'material',
+              lineNumbers: true,
+              lineWrapping: true,
+              gutters: ['CodeMirror-lint-markers'],
+              lint: true,
+              mode: 'text/x-yaml',
+              readOnly: isReadOnly,
+            }}
+            onChange={(_, data, val) => setYaml(val)}
+          />
+        </StyledCodeMirrorWrapper>
       </DialogContent>
-      <Divider variant="fullWidth" light />
-      {isReadOnly ? null : (
+      <Divider />
+      {!isReadOnly && (
         <DialogActions>
           <Tooltip title="Update Pattern">
-            <IconButton aria-label="Update" color="primary" onClick={updateHandler}>
-              <Save />
+            <IconButton aria-label="Update" color="primary" onClick={updateHandler} size="large">
+              <SaveIcon />
             </IconButton>
           </Tooltip>
           <Tooltip title="Delete Filter">
-            <IconButton aria-label="Delete" color="primary" onClick={deleteHandler}>
+            <IconButton aria-label="Delete" color="primary" onClick={deleteHandler} size="large">
               <DeleteIcon />
             </IconButton>
           </Tooltip>
