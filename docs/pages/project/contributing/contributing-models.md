@@ -240,7 +240,77 @@ All of Meshery's Models can be found in the [Meshery Integrations spreadsheet](h
         <i class="fa fa-link"></i> URL Import
       </label>
       <section class="tabbed">
-        <p>Content for URL import will be added in the next iteration</p>
+        <p>The URL Import feature allows you to generate models in Meshery by providing URLs to source repositories or package registries. Here's how to use it:</p>
+
+        <h4>1. Access the Model Generation Interface</h4>
+        <p>Navigate to <a href="https://playground.meshery.io/settings?settingsCategory=Registry&tab=Models">Registry</a> in the Meshery UI. Click the "Generate" button to begin creating a new model. In the Upload Method dialog, select "URL Import" and click Next.</p>
+        <img>
+
+        <a href="/assets/img/registry/generate-model-from-UI.png">
+          <img src="/assets/img/registry/generate-model-from-UI.png" alt="registry generate model" style="width: 50%; max-width: 400px;">
+        </a>
+
+        <h4>2. Provide Source Location</h4>
+        <p>You can provide either a GitHub repository URL or an ArtifactHub package URL as your source:</p>
+
+        <p><strong>For GitHub repositories:</strong><br>
+        Enter a URL in the format: <code>git://github.com/[organization or username]/[repository]/[branch]/path/to/crds</code><br>
+        For example: <code>git://github.com/cert-manager/cert-manager/master/deploy/crds</code></p>
+
+        <p><strong>For ArtifactHub packages:</strong><br>
+        Enter a URL in the format: <code>https://artifacthub.io/packages/search?ts_query_web={model-name}</code></p>
+
+        <p>Incase nothing comes to mind you can go ahead and pick one from the <a href="https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" target="_blank" rel="noopener">Meshery Integration Sheet</a> to try out.</p>
+
+        <a href="/assets/img/registry/url-import-github-url.png">
+          <img src="/assets/img/registry/url-import-github-url.png" alt="registry generate model source selection" style="width: 50%; max-width: 400px;">
+        </a>
+
+        <h4>3. Configure Model Details</h4>
+        <p>Enter the required information for your model:</p>
+        <ul>
+          <li><strong>Model Name:</strong> Should be in lowercase with hyphens. For example, cert-manager.</li>
+          <li><strong>Display Name:</strong> How you want your model to be named. For example, Cert Manager.</li>
+        </ul>
+
+        <a href="/assets/img/registry/url-import-model-name.png">
+          <img src="/assets/img/registry/url-import-model-name.png" alt="registry generate model name" style="width: 50%; max-width: 400px;">
+        </a>
+
+        <h4>4. Set Model Categorization</h4>
+        <p>Choose appropriate category and subcategory for your model from the dropdown menus. If your model doesn't fit existing categories, select "Uncategorized". This helps organize models in the registry and makes them easier to find.</p>
+
+        <a href="/assets/img/registry/url-import-category.png">
+          <img src="/assets/img/registry/url-import-category.png" alt="registry generate model categorization" style="width: 50%; max-width: 400px;">
+        </a>
+
+        <h4>5. Configure Model Styling</h4>
+        <p>Customize your model's appearance:</p>
+        <ul>
+          <li>Upload logos for both dark and light themes</li>
+          <li>Set primary and secondary colors for visual elements</li>
+          <li>Select a shape for the model's icon in the UI</li>
+        </ul>
+        <p>Note: If you don't provide custom styling, Meshery's default values will be used. You can change these later in the model definition.</p>
+
+        <a href="/assets/img/registry/url-import-model-styling.png">
+          <img src="/assets/img/registry/url-import-model-styling.png" alt="registry generate model styling" style="width: 50%; max-width: 400px;">
+        </a>
+
+        <h4>6. Additional Settings</h4>
+        <p>Before finishing, you can:</p>
+        <ul>
+          <li>Choose to register the model immediately for instant availability in Meshery instance.</li>
+          <li>Specify if the model is for visual annotation only</li>
+        </ul>
+
+        {% include alert.html type="light" title="Visual Annotation Models" content="When a model is marked for visual annotation only, it means the model will be used purely for visualization and diagramming purposes within Meshery's interface, rather than for actual infrastructure management." %}
+
+        <a href="/assets/img/registry/url-import-model-additional-settings.png">
+          <img src="/assets/img/registry/url-import-model-additional-settings.png" alt="registry generate model additional settings" style="width: 50%; max-width: 400px;">
+        </a>
+
+        <p>After completing these steps, click "Finish" to generate your model. Once generated, you can find your model in the Registry section (if you checked "Register Model Immediately") else it'll download the generated model in an archive, ready for use in your Meshery environment.</p>
       </section>
 
       <!-- CSV Import Method -->
