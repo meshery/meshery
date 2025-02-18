@@ -1,5 +1,5 @@
 import React from "react";
-import { useTheme } from "@mui/material/styles";
+import { useTheme } from "@layer5/sistent";
 import { SistentThemeProviderWithoutBaseLine } from "@layer5/sistent";
 
 export const UsesSistent = ({ children }) => {

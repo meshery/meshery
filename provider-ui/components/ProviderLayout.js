@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import NoSsr from "@mui/material/NoSsr";
+import { NoSsr } from '@layer5/sistent'
 import { accentGrey, styled } from "@layer5/sistent";
 
 const RootContainer = styled("div")(() => ({

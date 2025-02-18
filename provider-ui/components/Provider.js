@@ -29,10 +29,7 @@ import {
   charcoal,
   accentGrey,
 } from "@layer5/sistent";
-
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import CloseIcon from "@mui/icons-material/Close";
-import ClickAwayListener from "@mui/material/ClickAwayListener";
+import { CloseIcon, ClickAwayListener, DropDownIcon } from "@layer5/sistent";
 function CustomDialogTitle(props) {
   const { children, onClose, ...other } = props;
 
@@ -188,7 +185,7 @@ export default function Provider() {
                 {selectedProvider !== ""
                   ? selectedProvider
                   : "Select your provider"}
-                <ArrowDropDownIcon />
+                <DropDownIcon />
               </Button>
             </StyledButtonGroup>
             <StyledPopover
