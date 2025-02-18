@@ -1,6 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Avatar, Button } from '@layer5/sistent';
-import NoSsr from '@mui/material/NoSsr';
+import { Avatar, Button, NoSsr } from '@layer5/sistent';
 import Link from 'next/link';
 import { Provider, connect } from 'react-redux';
 import { store } from '../store';

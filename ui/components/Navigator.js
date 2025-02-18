@@ -1,7 +1,5 @@
 import React from 'react';
-import NoSsr from '@mui/material/NoSsr';
 import RemoveIcon from '@mui/icons-material/Remove';
-import Zoom from '@mui/material/Zoom';
 import Link from 'next/link';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -45,6 +43,8 @@ import {
   List,
   Collapse,
   Box,
+  NoSsr,
+  Zoom,
 } from '@layer5/sistent';
 import { UsesSistent } from './SistentWrapper';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';

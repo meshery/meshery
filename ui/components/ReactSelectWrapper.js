@@ -1,9 +1,16 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import CreateSelect from 'react-select/creatable';
-import { styled } from '@mui/material/styles';
-import { Typography, TextField, Paper, Chip, MenuItem, useTheme } from '@layer5/sistent';
-import NoSsr from '@mui/material/NoSsr';
+import {
+  Typography,
+  TextField,
+  Paper,
+  Chip,
+  MenuItem,
+  useTheme,
+  styled,
+  NoSsr,
+} from '@layer5/sistent';
 import CancelIcon from '@mui/icons-material/Cancel';
 
 const StyledNoOptionsMessage = styled(Typography)(({ theme }) => ({
