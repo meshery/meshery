@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Radio, FormLabel } from '@mui/material';
 import UploadIcon from '@mui/icons-material/Upload';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
 import { getUnit8ArrayDecodedFile } from '../../utils/utils';
@@ -35,7 +34,6 @@ import {
   useLazyGetRegistrantsQuery,
   useImportMeshModelMutation,
 } from '@/rtk-query/meshModel';
-import NoSsr from '@mui/material/NoSsr';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 import _ from 'lodash';
 import {
@@ -61,6 +59,9 @@ import {
   FormControl,
   RadioGroup,
   MenuItem,
+  Radio,
+  FormLabel,
+  NoSsr,
 } from '@layer5/sistent';
 import BrushIcon from '@mui/icons-material/Brush';
 import CategoryIcon from '@mui/icons-material/Category';

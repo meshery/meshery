@@ -2,7 +2,16 @@
 import React, { useEffect, useRef, useState } from 'react';
 import CloseIcon from '@mui/icons-material/Close';
 import PatternIcon from '../../../assets/icons/Pattern';
-import { Typography, IconButton, Button, Grid, Avatar, Tooltip, Box } from '@layer5/sistent';
+import {
+  Typography,
+  IconButton,
+  Button,
+  Grid,
+  Avatar,
+  Tooltip,
+  Box,
+  CircularProgress,
+} from '@layer5/sistent';
 import { ActionContainer, CreatAtContainer, CopyLinkButton, ResourceName } from './styles';
 import { iconMedium, iconSmall } from '../../../css/icons.styles';
 import { getDesignVersion, getSharableCommonHostAndprotocolLink } from '../../../utils/utils';
@@ -20,7 +29,6 @@ import { EVENT_TYPES } from '../../../lib/event-types';
 import axios from 'axios';
 import _ from 'lodash';
 import RJSFWrapper from '../../MesheryMeshInterface/PatternService/RJSF_wrapper';
-import CircularProgress from '@mui/material/CircularProgress';
 import { Provider } from 'react-redux';
 import { store } from '../../../store';
 import { useGetUserByIdQuery } from '../../../rtk-query/user.js';
