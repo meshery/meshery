@@ -6,7 +6,6 @@ module.exports = {
     '@mui/material/Button': require('@mui/material/Button'),
     '@mui/material/Grid': require('@mui/material/Grid'),
     '@mui/material/ToggleButton': require('@mui/material/ToggleButton'),
-    '@mui/lab': require('@mui/lab'),
     '@mui/material/ListItem': require('@mui/material/ListItem'),
     '@mui/material/ListItemIcon': require('@mui/material/ListItemIcon'),
     '@mui/material/Tab': require('@mui/material/Tab'),
