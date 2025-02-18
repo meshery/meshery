@@ -64,7 +64,7 @@ Once the plugin is installed, you can generate a snapshot using either a package
 
 <pre class="codeblock-pre">
   <div class="codeblock">
-     <div class="clipboardjs">helm snapshot -f <chart-URI> [--name <snapshot-name>] [-e <email>]</div>
+     <div class="clipboardjs">helm snapshot --f &lt;chart-URI&gt; [--name &lt;snapshot-name&gt;] [--email &lt;email&gt;]</div>
    </div>
 </pre>
 
