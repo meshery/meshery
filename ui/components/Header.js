@@ -7,7 +7,7 @@ import User from './User';
 import { Edit, Search } from '@mui/icons-material';
 import { deleteKubernetesConfig } from '../utils/helpers/kubernetesHelpers';
 import { successHandlerGenerator, errorHandlerGenerator } from '../utils/helpers/common';
-import { _ConnectionChip } from './connections/ConnectionChip';
+import { ConnectionChip } from './connections/ConnectionChip';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateK8SConfig, updateProgress, updateCapabilities } from '../lib/store';
 import { bindActionCreators } from 'redux';
@@ -109,7 +109,7 @@ const K8sContextConnectionChip_ = ({
               <Checkbox checked={selected} onChange={() => onSelectChange(ctx.id)} />
             </UsesSistent>
           )}
-          <_ConnectionChip
+          <ConnectionChip
             title={ctx?.name}
             onDelete={onDelete ? () => onDelete(ctx.name, ctx.connection_id) : null}
             handlePing={() => ping(ctx.name, ctx.server, ctx.connection_id)}
@@ -424,12 +424,7 @@ class Header extends React.PureComponent {
     return (
       <NoSsr>
         <UsesSistent>
-          <HeaderAppBar
-            id="top-navigation-bar"
-            color="primary"
-            position="sticky"
-            isDrawerCollapsed={onDrawerCollapse}
-          >
+          <HeaderAppBar id="top-navigation-bar" color="primary" position="sticky">
             <StyledToolbar isDrawerCollapsed={onDrawerCollapse}>
               <Grid container alignItems="center">
                 <Hidden smUp>

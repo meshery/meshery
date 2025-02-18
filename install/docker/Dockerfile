@@ -9,7 +9,7 @@ WORKDIR /github.com/meshery/meshery
 ADD . .
 RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
 
-FROM node:18.13.0-alpine3.17 AS base-node
+FROM node:20-alpine as base-node
 
 # Installing NodeJS Dependencies
 FROM base-node AS meshery-ui-deps
@@ -45,7 +45,7 @@ RUN npm run build && npm run export
 FROM ubuntu AS wrk2
 RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*
 RUN apt-get -y update && apt-get -y  install build-essential libssl-dev git zlib1g-dev
-RUN git config --global user.email "meshery@layer5.io"
+RUN git config --global user.email "meshery@meshery.io"
 RUN git config --global user.name "meshery"
 RUN git clone --depth=1 https://github.com/layer5io/wrk2 && cd wrk2 && make
 

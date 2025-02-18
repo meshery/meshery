@@ -11,7 +11,7 @@ import { UnControlled as CodeMirror } from 'react-codemirror2';
 import FullscreenExit from '@mui/icons-material/FullscreenExit';
 import UndeployIcon from '../../public/static/img/UndeployIcon';
 import DoneAllIcon from '@mui/icons-material/DoneAll';
-import useStyles, {
+import {
   BottomContainer,
   CatalogCardButtons,
   UpdateDeleteButtons,
@@ -20,6 +20,7 @@ import useStyles, {
   CardHeaderRight,
   GridBtnText,
   GridCloneBtnText,
+  StyledCodeMirrorWrapper,
 } from './Cards.styles';
 import YAMLDialog from '../YamlDialog';
 import PublicIcon from '@mui/icons-material/Public';
@@ -70,7 +71,6 @@ function MesheryPatternCard_({
   isReadOnly = false,
 }) {
   const router = useRouter();
-  const classes = useStyles();
 
   const genericClickHandler = (ev, fn) => {
     ev.stopPropagation();
@@ -92,8 +92,8 @@ function MesheryPatternCard_({
   const editInConfigurator = () => {
     router.push('/configuration/designs/configurator?design_id=' + id);
   };
-  const userCanEdit =
-    CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject) || user?.user_id == pattern?.user_id; // allow if owner
+  const isOwner = user?.user_id == pattern?.user_id;
+  const userCanEdit = CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject) || isOwner;
 
   const formatPatternFile = (file) => {
     try {
@@ -242,7 +242,7 @@ function MesheryPatternCard_({
                 />
                 <GridBtnText> Download </GridBtnText>
               </TooltipButton>
-              {visibility === VISIBILITY.PRIVATE ? (
+              {visibility === VISIBILITY.PRIVATE && userCanEdit ? (
                 <TooltipButton
                   title="Design"
                   variant="contained"
@@ -341,21 +341,22 @@ function MesheryPatternCard_({
             <Grid item xs={12} onClick={(ev) => genericClickHandler(ev, () => {})}>
               <Divider variant="fullWidth" light />
               {catalogContentKeys.length === 0 ? (
-                <CodeMirror
-                  value={showCode && formatted_pattern_file}
-                  className={fullScreen ? classes.fullScreenCodeMirror : ''}
-                  options={{
-                    theme: 'material',
-                    lineNumbers: true,
-                    lineWrapping: true,
-                    gutters: ['CodeMirror-lint-markers'],
-                    // @ts-ignore
-                    lint: true,
-                    mode: 'text/x-yaml',
-                    readOnly: isReadOnly,
-                  }}
-                  onChange={(_, data, val) => setYaml(val)}
-                />
+                <StyledCodeMirrorWrapper fullScreen={fullScreen}>
+                  <CodeMirror
+                    value={showCode && formatted_pattern_file}
+                    options={{
+                      theme: 'material',
+                      lineNumbers: true,
+                      lineWrapping: true,
+                      gutters: ['CodeMirror-lint-markers'],
+                      // @ts-ignore
+                      lint: true,
+                      mode: 'text/x-yaml',
+                      readOnly: isReadOnly,
+                    }}
+                    onChange={(_, data, val) => setYaml(val)}
+                  />
+                </StyledCodeMirrorWrapper>
               ) : (
                 catalogContentKeys.map((title, index) => (
                   <>

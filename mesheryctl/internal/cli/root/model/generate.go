@@ -11,21 +11,21 @@ import (
 )
 
 var generateModelCmd = &cobra.Command{
-	Use:   "import",
-	Short: "Import models from mesheryctl command",
-	Long:  "Import models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name.",
+	Use:   "generate",
+	Short: "Generate models from mesheryctl command",
+	Long:  "Generate models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name.",
 	Example: `
-	mesehryctl model import -f [ URI ]
-	mesehryctl model import -f [ URI ] -t [ path to template file ] ( only required in case of URL )
-	mesehryctl model import -f [ URI ] -t [ path to template file ] -r ( to skip registration by default registration is true)
+	mesheryctl model generate -f [ URI ]
+	mesheryctl model generate -f [ URI ] -t [ path to template file ] ( only required in case of URL )
+	mesheryctl model generate -f [ URI ] -t [ path to template file ] -r ( to skip registration by default registration is true)
  
 	
-	mesehryctl model import --f /path/to/csv-drectory
-    mesehryctl model import --f http://example.com/model -t /path/to/template.json 
-	mesehryctl model import --f http://example.com/model -t /path/to/template.json -r
+	mesheryctl model generate --f /path/to/csv-drectory
+        mesheryctl model generate --f http://example.com/model -t /path/to/template.json 
+	mesheryctl model generate --f http://example.com/model -t /path/to/template.json -r
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl model import [ file | filePath | URL ]\nRun 'mesheryctl model import --help' to see detailed help message"
+		const errMsg = "Usage: mesheryctl model generate [ file | filePath | URL ]\nRun 'mesheryctl model generate --help' to see detailed help message"
 		if location == "" && len(args) == 0 {
 			return fmt.Errorf("[ file | filepath | URL ] isn't specified\n\n%v", errMsg)
 		} else if len(args) > 1 {

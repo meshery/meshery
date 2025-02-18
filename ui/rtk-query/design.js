@@ -26,6 +26,20 @@ export const designsApi = api
         },
         providesTags: () => [{ type: TAGS.DESIGNS }],
       }),
+      getUserDesigns: builder.query({
+        query: (queryArg) => {
+          const params = urlEncodeParams({
+            page: queryArg.page,
+            pagesize: queryArg.pagesize,
+            order: queryArg.order,
+            user_id: queryArg.user_id,
+            expandUser: queryArg.expandUser,
+            metrics: queryArg.metrics,
+          });
+          return `extensions/api/content/patterns?${params}`;
+        },
+        providesTags: () => [{ type: TAGS.DESIGNS }],
+      }),
       deployPattern: builder.mutation({
         query: ({
           pattern_file,
@@ -93,7 +107,7 @@ export const designsApi = api
       }),
       importPattern: builder.mutation({
         query: (queryArg) => ({
-          url: `pattern/${queryArg.type}`,
+          url: `pattern/import`,
           method: 'POST',
           body: queryArg.importBody,
         }),
@@ -126,6 +140,7 @@ export const designsApi = api
 
 export const {
   useGetPatternsQuery,
+  useGetUserDesignsQuery,
   useDeployPatternMutation,
   useUndeployPatternMutation,
   useClonePatternMutation,

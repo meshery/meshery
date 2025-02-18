@@ -1329,11 +1329,11 @@
       "11273": {
         "name": "ErrInvalidSchemaVersionCode",
         "code": "11273",
-        "severity": "Alert",
-        "long_description": "The `schemaVersion` key is either empty or has an incorrect value.",
-        "short_description": "Invalid schema version",
-        "probable_cause": "The schema is not of type 'relationship', 'component', 'model' , 'policy'.",
-        "suggested_remediation": "Verify that `schemaVersion` key should be either `relationships.meshery.io`, `component.meshery.io`, `model.meshery.io` or `policy.meshery.io`."
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       },
       "11274": {
         "name": "ErrFileWalkDirCode",
@@ -1397,6 +1397,186 @@
         "short_description": "Error while creating Google Sheets Service",
         "probable_cause": "Issue happened with Google Sheets Service",
         "suggested_remediation": "Make you provide valid JWT credentials and Spreadsheet ID"
+      },
+      "11281": {
+        "name": "ErrWritingIntoFileCode",
+        "code": "11281",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "Insufficient permissions to write into file\nfile might be corrupted",
+        "suggested_remediation": "check if sufficient permissions are givent to the file\ncheck if the file is corrupted"
+      },
+      "11282": {
+        "name": "ErrUnsupportedExtensionCode",
+        "code": "11282",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11283": {
+        "name": "ErrUnsupportedExtensionForOperationCode",
+        "code": "11283",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11284": {
+        "name": "ErrFailedToIdentifyFileCode",
+        "code": "11284",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11285": {
+        "name": "ErrSanitizingFileCode",
+        "code": "11285",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11286": {
+        "name": "ErrInvalidYamlCode",
+        "code": "11286",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11287": {
+        "name": "ErrInvalidJsonCode",
+        "code": "11287",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11288": {
+        "name": "ErrFailedToExtractTarCode",
+        "code": "11288",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11289": {
+        "name": "ErrUnsupportedFileTypeCode",
+        "code": "11289",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11290": {
+        "name": "ErrInvalidKubernetesManifestCode",
+        "code": "11290",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11291": {
+        "name": "ErrInvalidMesheryDesignCode",
+        "code": "11291",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11292": {
+        "name": "ErrInvalidHelmChartCode",
+        "code": "11292",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11293": {
+        "name": "ErrInvalidDockerComposeCode",
+        "code": "11293",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11294": {
+        "name": "ErrInvalidKustomizationCode",
+        "code": "11294",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11295": {
+        "name": "ErrNoTarInsideOCICode",
+        "code": "11295",
+        "severity": "Alert",
+        "long_description": "Unable to locate the compressed file(.tar.gz) inside the OCI image.",
+        "short_description": "No tar file found inside OCI image",
+        "probable_cause": "The OCI image does not contain a ziped file.",
+        "suggested_remediation": "Verify that the OCI image contains a ziped file."
+      },
+      "11296": {
+        "name": "ErrEmptyOCIImageCode",
+        "code": "11296",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11297": {
+        "name": "ErrUnCompressOCIArtifactCode",
+        "code": "11297",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to uncompress OCI artifact",
+        "probable_cause": "unable to uncompress OCI artifact\nOCI artifact may be corrupted",
+        "suggested_remediation": "check if the OCI artifact is valid and not corrupted"
+      },
+      "11298": {
+        "name": "ErrWaklingLocalDirectoryCode",
+        "code": "11298",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Failed to walk local directory",
+        "probable_cause": "unable to walk local directory\nlocal directory may be corrupted",
+        "suggested_remediation": "check if the local directory is valid and not corrupted"
+      },
+      "11299": {
+        "name": "ErrDecodePatternCode",
+        "code": "11299",
+        "severity": "Alert",
+        "long_description": "",
+        "short_description": "Error failed to decode design data into go slice",
+        "probable_cause": "",
+        "suggested_remediation": ""
+      },
+      "11300": {
+        "name": "ErrFileTypeNotSupportedForDesignConversionCode",
+        "code": "11300",
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       }
     }
   }

@@ -49,7 +49,7 @@ func (h *Handler) ServerEventConfigurationHandler(w http.ResponseWriter, req *ht
 	prefObj *models.Preference, user *models.User, provider models.Provider) {
 
 	switch req.Method {
-	case http.MethodPost:
+	case http.MethodPut:
 		h.ServerEventConfigurationSet(w, req, prefObj, user, provider)
 	case http.MethodGet:
 		h.ServerEventConfigurationGet(w, req, prefObj, user, provider)

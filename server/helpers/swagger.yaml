@@ -2617,6 +2617,8 @@ definitions:
                             type: integer
                         Kind:
                             type: string
+                        Model:
+                            type: string
                     type: object
                 type: array
                 x-go-name: Kinds
@@ -3004,6 +3006,7 @@ definitions:
         type: object
         x-go-package: github.com/meshery/schemas/models/v1beta1/model
     ModelDefinition:
+        description: ModelDefinition Meshery Models serve as a portable unit of packaging to define managed entities, their relationships, and capabilities.
         properties:
             category:
                 $ref: '#/definitions/CategoryDefinition'
@@ -8606,6 +8609,15 @@ paths:
                 "200":
                     $ref: '#/responses/mesheryPatternSourceContentResponseWrapper'
             summary: Handle GET request for Meshery Patterns with of source content
+            tags:
+                - PatternsAPI
+    /api/pattern/import:
+        post:
+            description: Handle design import
+            operationId: idPostPatternFile
+            responses:
+                "200":
+                    $ref: '#/responses/mesheryPatternResponseWrapper'
             tags:
                 - PatternsAPI
     /api/pattern/types:

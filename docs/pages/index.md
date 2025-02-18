@@ -227,29 +227,6 @@ list: exclude
           {% endfor %}
       </ul>
     </details>
-    <!-- EVERYTHING ELSE
-    <ul>
-      {% for item in sorted_pages %}
-      {% if item.type=="guides" and item.category!="mesheryctl" and item.category!="infrastructure" and item.category!="troubleshooting" and item.category!="performance" and item.category!="configuration" and item.category!="tutorials" and item.language=="en" -%}
-        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-        </li>
-        {% endif %}
-      {% endfor %}
-    </ul> -->
-    <!-- <h6><a href="{{ site.baseurl }}/service-meshes" class="text-black section-title">Service Mesh Specific Management</a></h6> -->
-    <!-- <ul>
-      {% for item in sorted_pages %}
-      {% if item.type=="service-mesh" and item.list!="exclude" and item.language!="es"  -%}
-        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-        </li>
-        {% endif %}
-      {% endfor %}
-      {% for adapter in site.adapters -%}
-      {% if adapter.project_status -%}
-        <li><img src="{{ adapter.image }}" style="width:20px;height:20px; transform:translateY(5px)"/> <a href="{{ site.baseurl }}{{ adapter.url }}">{{ adapter.name }}</a></li>
-      {% endif -%}
-      {% endfor %}
-    </ul> -->
   </div>
 
   <!-- Extensions -->
@@ -379,4 +356,4 @@ list: exclude
 
 </div>
 
-<p width="100%">Follow on <a href="https://twitter.com/mesheryio">Twitter</a> or subscribe to our <a href="https://meshery.io/subscribe">newsletter</a> for the latest updates. Get support on our <a href="http://discuss.meshery.io">forum</a>. Join our <a href="https://slack.meshery.io">Slack</a> to interact directly with other users and contributors.</p>
+<p width="100%">Follow on <a href="https://twitter.com/mesheryio">Twitter</a> or subscribe to our <a href="https://meshery.io/subscribe">newsletter</a> for the latest updates. Get support on our <a href="https://meshery.io/community#discussion-forums">forum</a>. Join our <a href="https://slack.meshery.io">Slack</a> to interact directly with other users and contributors.</p>

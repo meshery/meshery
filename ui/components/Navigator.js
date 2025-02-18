@@ -44,6 +44,7 @@ import {
   ListItem,
   List,
   Collapse,
+  Box,
 } from '@layer5/sistent';
 import { UsesSistent } from './SistentWrapper';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
@@ -298,7 +299,7 @@ const externlinks = [
   },
   {
     id: 'forum',
-    href: 'http://discuss.meshery.io',
+    href: 'https://meshery.io/community#community-forums',
     title: 'Discussion Forum',
     icon: <ChatIcon style={drawerIconsStyle} />,
     external_icon: ExternalLinkIcon,
@@ -486,7 +487,9 @@ class Navigator_ extends React.Component {
             height: '30px',
           }}
         >
-          <span onClick={() => this.props.updateExtensionType('navigator')}>{content}</span>
+          <Box width="100%" onClick={() => this.props.updateExtensionType('navigator')}>
+            {content}
+          </Box>
         </Link>
       );
     }
@@ -984,9 +987,6 @@ class Navigator_ extends React.Component {
               submenu,
               permission,
             }) => {
-              // if (typeof show !== "undefined" && !show) {
-              //   return "";
-              // }
               return (
                 <RootDiv key={childId}>
                   <SideBarListItem
@@ -1107,7 +1107,7 @@ class Navigator_ extends React.Component {
               </HelpListItem>
             );
           })}
-          <ListItem>
+          <ListItem style={{ display: isDrawerCollapsed ? 'inherit' : 'none' }}>
             <CustomTextTooltip title="Help" placement={isDrawerCollapsed ? 'right' : 'top'}>
               <HelpButton isCollapsed={isDrawerCollapsed} onClick={this.toggleSpacing}>
                 <HelpIcon
@@ -1183,7 +1183,12 @@ class Navigator_ extends React.Component {
               icon={faAngleLeft}
               fixedWidth
               size="2x"
-              style={{ margin: '0.75rem 0.2rem ', width: '0.8rem', verticalAlign: 'middle' }}
+              style={{
+                margin: '0.75rem 0.2rem ',
+                width: '0.8rem',
+                verticalAlign: 'middle',
+                color: isDrawerCollapsed ? '#fff' : 'inherit',
+              }}
               alt="Sidebar collapse toggle icon"
             />
           </UsesSistent>

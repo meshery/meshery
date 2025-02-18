@@ -1,198 +1,198 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "ServersTransport",
-   "schema": "{\n \"description\": \"ServersTransport is the CRD implementation of a ServersTransport.\\nIf no serversTransport is specified, the default@internal will be used.\\nThe default@internal serversTransport is created from the static configuration.\\nMore info: https://doc.traefik.io/traefik/v2.11/routing/services/#serverstransport_1\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ServersTransportSpec defines the desired state of a ServersTransport.\",\n   \"properties\": {\n    \"certificatesSecrets\": {\n     \"description\": \"CertificatesSecrets defines a list of secret storing client certificates for mTLS.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"disableHTTP2\": {\n     \"description\": \"DisableHTTP2 disables HTTP/2 for connections with backend servers.\",\n     \"type\": \"boolean\"\n    },\n    \"forwardingTimeouts\": {\n     \"description\": \"ForwardingTimeouts defines the timeouts for requests forwarded to the backend servers.\",\n     \"properties\": {\n      \"dialTimeout\": {\n       \"anyOf\": [\n        {\n         \"type\": \"integer\"\n        },\n        {\n         \"type\": \"string\"\n        }\n       ],\n       \"description\": \"DialTimeout is the amount of time to wait until a connection to a backend server can be established.\",\n       \"x-kubernetes-int-or-string\": true\n      },\n      \"idleConnTimeout\": {\n       \"anyOf\": [\n        {\n         \"type\": \"integer\"\n        },\n        {\n         \"type\": \"string\"\n        }\n       ],\n       \"description\": \"IdleConnTimeout is the maximum period for which an idle HTTP keep-alive connection will remain open before closing itself.\",\n       \"x-kubernetes-int-or-string\": true\n      },\n      \"pingTimeout\": {\n       \"anyOf\": [\n        {\n         \"type\": \"integer\"\n        },\n        {\n         \"type\": \"string\"\n        }\n       ],\n       \"description\": \"PingTimeout is the timeout after which the HTTP/2 connection will be closed if a response to ping is not received.\",\n       \"x-kubernetes-int-or-string\": true\n      },\n      \"readIdleTimeout\": {\n       \"anyOf\": [\n        {\n         \"type\": \"integer\"\n        },\n        {\n         \"type\": \"string\"\n        }\n       ],\n       \"description\": \"ReadIdleTimeout is the timeout after which a health check using ping frame will be carried out if no frame is received on the HTTP/2 connection.\",\n       \"x-kubernetes-int-or-string\": true\n      },\n      \"responseHeaderTimeout\": {\n       \"anyOf\": [\n        {\n         \"type\": \"integer\"\n        },\n        {\n         \"type\": \"string\"\n        }\n       ],\n       \"description\": \"ResponseHeaderTimeout is the amount of time to wait for a server's response headers after fully writing the request (including its body, if any).\",\n       \"x-kubernetes-int-or-string\": true\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"insecureSkipVerify\": {\n     \"description\": \"InsecureSkipVerify disables SSL certificate verification.\",\n     \"type\": \"boolean\"\n    },\n    \"maxIdleConnsPerHost\": {\n     \"description\": \"MaxIdleConnsPerHost controls the maximum idle (keep-alive) to keep per-host.\",\n     \"type\": \"integer\"\n    },\n    \"peerCertURI\": {\n     \"description\": \"PeerCertURI defines the peer cert URI used to match against SAN URI during the peer certificate verification.\",\n     \"type\": \"string\"\n    },\n    \"rootCAsSecrets\": {\n     \"description\": \"RootCAsSecrets defines a list of CA secret used to validate self-signed certificate.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"serverName\": {\n     \"description\": \"ServerName defines the server name used to contact the server.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Servers Transport\",\n \"type\": \"object\"\n}",
-   "version": "traefik.io/v1alpha1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Servers Transport",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Servers Transport",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Uncategorized"
-   },
-   "displayName": "Frinx Machine",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "defaultData": "",
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "frinx-machine",
+    "displayName": "Frinx Machine",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized"
+    },
+    "subCategory": "Uncategorized",
+    "metadata": {
+      "defaultData": "",
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "shapePolygonPoints": "",
+      "styleOverrides": "",
+      "styles": "",
+      "svgColor": "\u003csvg width=\"144\" height=\"146\" viewBox=\"0 0 144 146\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"#03AAFF\"/\u003e\n\u003cpath d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"#03AAFF\"/\u003e\n\u003cpath d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#0370FF\"/\u003e\n\u003c/svg\u003e\r",
+      "svgComplete": "",
+      "svgWhite": "\u003csvg width=\"144\" height=\"146\" viewBox=\"0 0 144 146\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#F0F0F0\"/\u003e\n\u003c/svg\u003e\r"
+    },
+    "model": {
+      "version": "8.0.1"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "shapePolygonPoints": "",
-    "styleOverrides": "",
-    "styles": "",
     "svgColor": "\u003csvg width=\"144\" height=\"146\" viewBox=\"0 0 144 146\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"#03AAFF\"/\u003e\n\u003cpath d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"#03AAFF\"/\u003e\n\u003cpath d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#0370FF\"/\u003e\n\u003c/svg\u003e\r",
-    "svgComplete": "",
     "svgWhite": "\u003csvg width=\"144\" height=\"146\" viewBox=\"0 0 144 146\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#F0F0F0\"/\u003e\n\u003c/svg\u003e\r"
-   },
-   "model": {
-    "version": "8.0.1"
-   },
-   "name": "frinx-machine",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Uncategorized",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "\u003csvg width=\"144\" height=\"146\" viewBox=\"0 0 144 146\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"#03AAFF\"/\u003e\n\u003cpath d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"#03AAFF\"/\u003e\n\u003cpath d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#0370FF\"/\u003e\n\u003c/svg\u003e\r",
-   "svgWhite": "\u003csvg width=\"144\" height=\"146\" viewBox=\"0 0 144 146\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#F0F0F0\"/\u003e\n\u003c/svg\u003e\r"
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "ServersTransport",
+    "schema": "{\n \"description\": \"ServersTransport is the CRD implementation of a ServersTransport.\\nIf no serversTransport is specified, the default@internal will be used.\\nThe default@internal serversTransport is created from the static configuration.\\nMore info: https://doc.traefik.io/traefik/v2.11/routing/services/#serverstransport_1\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ServersTransportSpec defines the desired state of a ServersTransport.\",\n   \"properties\": {\n    \"certificatesSecrets\": {\n     \"description\": \"CertificatesSecrets defines a list of secret storing client certificates for mTLS.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"disableHTTP2\": {\n     \"description\": \"DisableHTTP2 disables HTTP/2 for connections with backend servers.\",\n     \"type\": \"boolean\"\n    },\n    \"forwardingTimeouts\": {\n     \"description\": \"ForwardingTimeouts defines the timeouts for requests forwarded to the backend servers.\",\n     \"properties\": {\n      \"dialTimeout\": {\n       \"anyOf\": [\n        {\n         \"type\": \"integer\"\n        },\n        {\n         \"type\": \"string\"\n        }\n       ],\n       \"description\": \"DialTimeout is the amount of time to wait until a connection to a backend server can be established.\",\n       \"x-kubernetes-int-or-string\": true\n      },\n      \"idleConnTimeout\": {\n       \"anyOf\": [\n        {\n         \"type\": \"integer\"\n        },\n        {\n         \"type\": \"string\"\n        }\n       ],\n       \"description\": \"IdleConnTimeout is the maximum period for which an idle HTTP keep-alive connection will remain open before closing itself.\",\n       \"x-kubernetes-int-or-string\": true\n      },\n      \"pingTimeout\": {\n       \"anyOf\": [\n        {\n         \"type\": \"integer\"\n        },\n        {\n         \"type\": \"string\"\n        }\n       ],\n       \"description\": \"PingTimeout is the timeout after which the HTTP/2 connection will be closed if a response to ping is not received.\",\n       \"x-kubernetes-int-or-string\": true\n      },\n      \"readIdleTimeout\": {\n       \"anyOf\": [\n        {\n         \"type\": \"integer\"\n        },\n        {\n         \"type\": \"string\"\n        }\n       ],\n       \"description\": \"ReadIdleTimeout is the timeout after which a health check using ping frame will be carried out if no frame is received on the HTTP/2 connection.\",\n       \"x-kubernetes-int-or-string\": true\n      },\n      \"responseHeaderTimeout\": {\n       \"anyOf\": [\n        {\n         \"type\": \"integer\"\n        },\n        {\n         \"type\": \"string\"\n        }\n       ],\n       \"description\": \"ResponseHeaderTimeout is the amount of time to wait for a server's response headers after fully writing the request (including its body, if any).\",\n       \"x-kubernetes-int-or-string\": true\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"insecureSkipVerify\": {\n     \"description\": \"InsecureSkipVerify disables SSL certificate verification.\",\n     \"type\": \"boolean\"\n    },\n    \"maxIdleConnsPerHost\": {\n     \"description\": \"MaxIdleConnsPerHost controls the maximum idle (keep-alive) to keep per-host.\",\n     \"type\": \"integer\"\n    },\n    \"peerCertURI\": {\n     \"description\": \"PeerCertURI defines the peer cert URI used to match against SAN URI during the peer certificate verification.\",\n     \"type\": \"string\"\n    },\n    \"rootCAsSecrets\": {\n     \"description\": \"RootCAsSecrets defines a list of CA secret used to validate self-signed certificate.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"serverName\": {\n     \"description\": \"ServerName defines the server name used to contact the server.\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Servers Transport\",\n \"type\": \"object\"\n}",
+    "version": "traefik.io/v1alpha1"
+  }
+}

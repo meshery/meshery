@@ -127,7 +127,6 @@ export const PopupButton = styled(Button)(({ theme }) => ({
 }));
 
 export const Record = styled('div')(() => ({
-  // borderBottom: `1px solid ${theme.palette.secondary.modalTabs}60`,
   display: 'flex',
   flexDirection: 'row',
   padding: '5px 0',
@@ -136,6 +135,7 @@ export const Record = styled('div')(() => ({
 export const BulkSelectCheckbox = styled(Checkbox)({
   padding: 0,
   marginRight: '0.5rem',
+  height: '1.75rem',
   color: 'white',
   '&:hover': {
     color: 'white',
@@ -195,13 +195,13 @@ export const Status = styled('div')({
 
 export const StyledChip = styled('div')(({ theme }) => ({
   padding: '5px 6px',
-  color: theme.palette.secondary.text,
+  color: theme.palette.text.default,
   fontSize: '14px',
   textTransform: 'uppercase',
   fontWeight: 400,
   height: 'unset',
   borderRadius: '100px',
-  border: `0.5px solid ${theme.palette.secondary.default}`,
+  border: `0.5px solid ${theme.palette.background.default}`,
   background: theme.palette.background.constant.white,
   maxWidth: '230px',
   '& .MuiChip-avatar': {

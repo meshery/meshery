@@ -61,7 +61,7 @@ const MeshAdapterConfigComponent = (props) => {
   const [selectedAvailableAdapterError, setSelectedAvailableAdapterError] = useState(false);
   const [adapterStates, setAdapterStates] = useState(props.meshAdapterStates);
   const [meshLocationURL, setMeshLocationURL] = useState();
-  const [meshDeployURL, setMeshDeployURL] = useState();
+  const [meshDeployURL, setMeshDeployURL] = useState('');
   const [meshDeployURLError, setMeshDeployURLError] = useState();
   const [selectedAvailableAdapter, setSelectedAvailableAdapter] = useState();
   const { notify } = useNotification();

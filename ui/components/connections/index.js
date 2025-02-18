@@ -47,7 +47,7 @@ function ConnectionManagementPage(props) {
   const handleCreateConnectionSubmit = () => {};
 
   return (
-    <>
+    <UsesSistent>
       <Connections
         createConnectionModal={createConnectionModal}
         onOpenCreateConnectionModal={handleCreateConnectionModalOpen}
@@ -65,7 +65,7 @@ function ConnectionManagementPage(props) {
           submitBtnText="Connect"
         />
       )}
-    </>
+    </UsesSistent>
   );
 }
 function Connections(props) {
@@ -85,41 +85,39 @@ function Connections(props) {
   return (
     <NoSsr>
       {CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) ? (
-        <>
-          <UsesSistent>
-            <AppBar position="static" color="default" style={{ marginBottom: '3rem' }}>
-              <ConnectionTabs
-                value={tab}
-                onChange={(e, newTab) => {
-                  e.stopPropagation();
-                  setTab(newTab);
-                }}
-                indicatorColor="primary"
-                textColor="primary"
-                variant="fullWidth"
-                sx={{
-                  height: '10%',
-                }}
-              >
-                <ConnectionTab
-                  label={
-                    <ConnectionIconText>
-                      <span style={{ marginRight: '0.3rem' }}>Connections</span>
-                      <ConnectionIcon width="20" height="20" />
-                    </ConnectionIconText>
-                  }
-                />
-                <ConnectionTab
-                  label={
-                    <ConnectionIconText>
-                      <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
-                      <MeshsyncIcon width="20" height="20" />
-                    </ConnectionIconText>
-                  }
-                />
-              </ConnectionTabs>
-            </AppBar>
-          </UsesSistent>
+        <UsesSistent>
+          <AppBar position="static" color="default" style={{ marginBottom: '3rem' }}>
+            <ConnectionTabs
+              value={tab}
+              onChange={(e, newTab) => {
+                e.stopPropagation();
+                setTab(newTab);
+              }}
+              indicatorColor="primary"
+              textColor="primary"
+              variant="fullWidth"
+              sx={{
+                height: '10%',
+              }}
+            >
+              <ConnectionTab
+                label={
+                  <ConnectionIconText>
+                    <span style={{ marginRight: '0.3rem' }}>Connections</span>
+                    <ConnectionIcon width="20" height="20" />
+                  </ConnectionIconText>
+                }
+              />
+              <ConnectionTab
+                label={
+                  <ConnectionIconText>
+                    <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
+                    <MeshsyncIcon width="20" height="20" />
+                  </ConnectionIconText>
+                }
+              />
+            </ConnectionTabs>
+          </AppBar>
 
           {tab === 0 && CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) && (
             <ConnectionTable
@@ -134,7 +132,7 @@ function Connections(props) {
               k8sconfig={k8sconfig}
             />
           )}
-        </>
+        </UsesSistent>
       ) : (
         <DefaultError />
       )}

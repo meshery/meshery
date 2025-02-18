@@ -1,190 +1,190 @@
 {
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Tensorboard",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "kubeflow",
+    "displayName": "Kubeflow",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Machine Learning"
+    },
+    "metadata": {
+      "isAnnotation": false,
+      "source_uri": "https://github.com/alauda/kubeflow-chart/releases/download/kubeflow-1.6.2/kubeflow-1.6.2.tgz",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 184.9 183\" style=\"enable-background:new 0 0 184.9 183;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n        .st0{fill:#4279F4;}\n        .st1{fill:#0028AA;}\n        .st2{fill:#014BD1;}\n        .st3{fill:#BEDCFF;}\n        .st4{fill:#6CA1FF;}\n        .st5{fill:#A1C3FF;}\n\u003c/style\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M51.4,62.1l4.1,102.1l73.8-94.1c1.1-1.4,2.8-2.3,4.6-2.6c1.8-0.2,3.6,0.3,5,1.4l46,36.9l-15-65.6L51.4,62.1z\"\u003e\u003c/path\u003e\n\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" class=\"st1\" points=\"58.1,183 123.5,183 83.3,150.8 \"\u003e\u003c/polygon\u003e\n\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" class=\"st2\" points=\"135.7,83.9 91.7,140.1 138.6,177.7 183.1,121.9 \"\u003e\u003c/polygon\u003e\n\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" class=\"st3\" points=\"39.1,52.3 39.1,52.3 77.8,3.8 15.4,33.8 0,101.3 \"\u003e\u003c/polygon\u003e\n\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" class=\"st4\" points=\"0.9,122 42.3,174 38.4,75 \"\u003e\u003c/polygon\u003e\n\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" class=\"st5\" points=\"157.8,28.7 98.2,0 61.1,46.6 \"\u003e\u003c/polygon\u003e\n\u003c/svg\u003e",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 184.9 183\" style=\"enable-background:new 0 0 184.9 183;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n        .st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M51.4,62.1l4.1,102.1l73.8-94.1c1.1-1.4,2.8-2.3,4.6-2.6c1.8-0.2,3.6,0.3,5,1.4l46,36.9l-15-65.6L51.4,62.1z\"\u003e\u003c/path\u003e\n\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" points=\"58.1,183 123.5,183 83.3,150.8 \"\u003e\u003c/polygon\u003e\n\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" points=\"135.7,83.9 91.7,140.1 138.6,177.7 183.1,121.9 \"\u003e\u003c/polygon\u003e\n\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" points=\"39.1,52.3 39.1,52.3 77.8,3.8 15.4,33.8 0,101.3 \"\u003e\u003c/polygon\u003e\n\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" points=\"0.9,122 42.3,174 38.4,75 \"\u003e\u003c/polygon\u003e\n\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" points=\"157.8,28.7 98.2,0 61.1,46.6 \"\u003e\u003c/polygon\u003e\n\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "1.6.1"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
+    "primaryColor": "#014BD1",
+    "secondaryColor": "#6CA1FF",
+    "shape": "circle",
+    "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         viewBox=\"0 0 184.9 183\" style=\"enable-background:new 0 0 184.9 183;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n        .st0{fill:#4279F4;}\n        .st1{fill:#0028AA;}\n        .st2{fill:#014BD1;}\n        .st3{fill:#BEDCFF;}\n        .st4{fill:#6CA1FF;}\n        .st5{fill:#A1C3FF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M51.4,62.1l4.1,102.1l73.8-94.1c1.1-1.4,2.8-2.3,4.6-2.6c1.8-0.2,3.6,0.3,5,1.4l46,36.9l-15-65.6L51.4,62.1z\"/\u003e\n\u003cpolygon class=\"st1\" points=\"58.1,183 123.5,183 83.3,150.8 \"/\u003e\n\u003cpolygon class=\"st2\" points=\"135.7,83.9 91.7,140.1 138.6,177.7 183.1,121.9 \"/\u003e\n\u003cpolygon class=\"st3\" points=\"39.1,52.3 39.1,52.3 77.8,3.8 15.4,33.8 0,101.3 \"/\u003e\n\u003cpolygon class=\"st4\" points=\"0.9,122 42.3,174 38.4,75 \"/\u003e\n\u003cpolygon class=\"st5\" points=\"157.8,28.7 98.2,0 61.1,46.6 \"/\u003e\n\u003c/svg\u003e",
+    "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         viewBox=\"0 0 184.9 183\" style=\"enable-background:new 0 0 184.9 183;\" xml:space=\"preserve\" width='184.9' height='183'\u003e\n\u003cstyle type=\"text/css\"\u003e\n        .st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M51.4,62.1l4.1,102.1l73.8-94.1c1.1-1.4,2.8-2.3,4.6-2.6c1.8-0.2,3.6,0.3,5,1.4l46,36.9l-15-65.6L51.4,62.1z\"/\u003e\n\u003cpolygon class=\"st0\" points=\"58.1,183 123.5,183 83.3,150.8 \"/\u003e\n\u003cpolygon class=\"st0\" points=\"135.7,83.9 91.7,140.1 138.6,177.7 183.1,121.9 \"/\u003e\n\u003cpolygon class=\"st0\" points=\"39.1,52.3 39.1,52.3 77.8,3.8 15.4,33.8 0,101.3 \"/\u003e\n\u003cpolygon class=\"st0\" points=\"0.9,122 42.3,174 38.4,75 \"/\u003e\n\u003cpolygon class=\"st0\" points=\"157.8,28.7 98.2,0 61.1,46.6 \"/\u003e\n\u003c/svg\u003e"
+  },
   "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
   ],
-  "component": {
-   "kind": "Tensorboard",
-   "schema": "{\n \"description\": \"Tensorboard is the Schema for the tensorboards API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TensorboardSpec defines the desired state of Tensorboard\",\n   \"properties\": {\n    \"logspath\": {\n     \"description\": \"INSERT ADDITIONAL SPEC FIELDS - desired state of cluster Important: Run \\\"make\\\" to regenerate code after modifying this file\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"logspath\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Tensorboard\",\n \"type\": \"object\"\n}",
-   "version": "tensorboard.kubeflow.org/v1alpha1"
+  "status": "enabled",
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
   "configuration": null,
-  "description": "",
-  "displayName": "Tensorboard",
-  "format": "JSON",
-  "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false
-  },
-  "model": {
-   "category": {
-    "name": "Machine Learning"
-   },
-   "displayName": "Kubeflow",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
-    "source_uri": "https://github.com/alauda/kubeflow-chart/releases/download/kubeflow-1.6.2/kubeflow-1.6.2.tgz",
-    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 184.9 183\" style=\"enable-background:new 0 0 184.9 183;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n        .st0{fill:#4279F4;}\n        .st1{fill:#0028AA;}\n        .st2{fill:#014BD1;}\n        .st3{fill:#BEDCFF;}\n        .st4{fill:#6CA1FF;}\n        .st5{fill:#A1C3FF;}\n\u003c/style\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M51.4,62.1l4.1,102.1l73.8-94.1c1.1-1.4,2.8-2.3,4.6-2.6c1.8-0.2,3.6,0.3,5,1.4l46,36.9l-15-65.6L51.4,62.1z\"\u003e\u003c/path\u003e\n\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" class=\"st1\" points=\"58.1,183 123.5,183 83.3,150.8 \"\u003e\u003c/polygon\u003e\n\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" class=\"st2\" points=\"135.7,83.9 91.7,140.1 138.6,177.7 183.1,121.9 \"\u003e\u003c/polygon\u003e\n\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" class=\"st3\" points=\"39.1,52.3 39.1,52.3 77.8,3.8 15.4,33.8 0,101.3 \"\u003e\u003c/polygon\u003e\n\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" class=\"st4\" points=\"0.9,122 42.3,174 38.4,75 \"\u003e\u003c/polygon\u003e\n\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" class=\"st5\" points=\"157.8,28.7 98.2,0 61.1,46.6 \"\u003e\u003c/polygon\u003e\n\u003c/svg\u003e",
-    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 184.9 183\" style=\"enable-background:new 0 0 184.9 183;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cstyle xmlns=\"http://www.w3.org/2000/svg\" type=\"text/css\"\u003e\n        .st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" d=\"M51.4,62.1l4.1,102.1l73.8-94.1c1.1-1.4,2.8-2.3,4.6-2.6c1.8-0.2,3.6,0.3,5,1.4l46,36.9l-15-65.6L51.4,62.1z\"\u003e\u003c/path\u003e\n\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" points=\"58.1,183 123.5,183 83.3,150.8 \"\u003e\u003c/polygon\u003e\n\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" points=\"135.7,83.9 91.7,140.1 138.6,177.7 183.1,121.9 \"\u003e\u003c/polygon\u003e\n\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" points=\"39.1,52.3 39.1,52.3 77.8,3.8 15.4,33.8 0,101.3 \"\u003e\u003c/polygon\u003e\n\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" points=\"0.9,122 42.3,174 38.4,75 \"\u003e\u003c/polygon\u003e\n\u003cpolygon xmlns=\"http://www.w3.org/2000/svg\" class=\"st0\" points=\"157.8,28.7 98.2,0 61.1,46.6 \"\u003e\u003c/polygon\u003e\n\u003c/svg\u003e"
-   },
-   "model": {
-    "version": "1.6.1"
-   },
-   "name": "kubeflow",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "enabled",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
-  },
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "status": "enabled",
-  "styles": {
-   "primaryColor": "#014BD1",
-   "secondaryColor": "#6CA1FF",
-   "shape": "circle",
-   "svgColor": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         viewBox=\"0 0 184.9 183\" style=\"enable-background:new 0 0 184.9 183;\" xml:space=\"preserve\"\u003e\n\u003cstyle type=\"text/css\"\u003e\n        .st0{fill:#4279F4;}\n        .st1{fill:#0028AA;}\n        .st2{fill:#014BD1;}\n        .st3{fill:#BEDCFF;}\n        .st4{fill:#6CA1FF;}\n        .st5{fill:#A1C3FF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M51.4,62.1l4.1,102.1l73.8-94.1c1.1-1.4,2.8-2.3,4.6-2.6c1.8-0.2,3.6,0.3,5,1.4l46,36.9l-15-65.6L51.4,62.1z\"/\u003e\n\u003cpolygon class=\"st1\" points=\"58.1,183 123.5,183 83.3,150.8 \"/\u003e\n\u003cpolygon class=\"st2\" points=\"135.7,83.9 91.7,140.1 138.6,177.7 183.1,121.9 \"/\u003e\n\u003cpolygon class=\"st3\" points=\"39.1,52.3 39.1,52.3 77.8,3.8 15.4,33.8 0,101.3 \"/\u003e\n\u003cpolygon class=\"st4\" points=\"0.9,122 42.3,174 38.4,75 \"/\u003e\n\u003cpolygon class=\"st5\" points=\"157.8,28.7 98.2,0 61.1,46.6 \"/\u003e\n\u003c/svg\u003e",
-   "svgWhite": "\u003csvg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\"\n         viewBox=\"0 0 184.9 183\" style=\"enable-background:new 0 0 184.9 183;\" xml:space=\"preserve\" width='184.9' height='183'\u003e\n\u003cstyle type=\"text/css\"\u003e\n        .st0{fill:#FFFFFF;}\n\u003c/style\u003e\n\u003cpath class=\"st0\" d=\"M51.4,62.1l4.1,102.1l73.8-94.1c1.1-1.4,2.8-2.3,4.6-2.6c1.8-0.2,3.6,0.3,5,1.4l46,36.9l-15-65.6L51.4,62.1z\"/\u003e\n\u003cpolygon class=\"st0\" points=\"58.1,183 123.5,183 83.3,150.8 \"/\u003e\n\u003cpolygon class=\"st0\" points=\"135.7,83.9 91.7,140.1 138.6,177.7 183.1,121.9 \"/\u003e\n\u003cpolygon class=\"st0\" points=\"39.1,52.3 39.1,52.3 77.8,3.8 15.4,33.8 0,101.3 \"/\u003e\n\u003cpolygon class=\"st0\" points=\"0.9,122 42.3,174 38.4,75 \"/\u003e\n\u003cpolygon class=\"st0\" points=\"157.8,28.7 98.2,0 61.1,46.6 \"/\u003e\n\u003c/svg\u003e"
-  },
-  "version": "v1.0.0"
- }
+  "component": {
+    "kind": "Tensorboard",
+    "schema": "{\n \"description\": \"Tensorboard is the Schema for the tensorboards API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TensorboardSpec defines the desired state of Tensorboard\",\n   \"properties\": {\n    \"logspath\": {\n     \"description\": \"INSERT ADDITIONAL SPEC FIELDS - desired state of cluster Important: Run \\\"make\\\" to regenerate code after modifying this file\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"logspath\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Tensorboard\",\n \"type\": \"object\"\n}",
+    "version": "tensorboard.kubeflow.org/v1alpha1"
+  }
+}

@@ -11,16 +11,8 @@ import dataFetch from '../../../lib/data-fetch';
 import { updateProgress } from '../../../lib/store';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
 import bb, { area, line } from 'billboard.js';
-import {
-  IconButton,
-  Card,
-  CardContent,
-  CardHeader,
-  Tooltip,
-  LinearProgress,
-  Box,
-  styled,
-} from '@layer5/sistent';
+import { IconButton, Card, CardContent, CardHeader, Tooltip, Box, styled } from '@layer5/sistent';
+import { LinearProgress } from '@mui/material';
 import { UsesSistent } from '../../SistentWrapper';
 
 const StyledCard = styled(Card)(() => ({

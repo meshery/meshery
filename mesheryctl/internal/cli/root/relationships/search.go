@@ -16,7 +16,6 @@ package relationships
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -39,28 +38,22 @@ var (
 )
 
 // represents the mesheryctl exp relationship search [query-text] subcommand.
-var SearchComponentsCmd = &cobra.Command{
+var searchCmd = &cobra.Command{
 	Use:   "search",
 	Short: "Searches registered relationships",
 	Long:  "Searches and finds the realtionship used by different models based on the query-text.",
 	Example: `
 // Search for relationship using a query
-mesheryctl exp relationship search --[flag] [query-text]`,
+mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>] [query-text]`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp relationship search --[flag] [query-text] \nRun 'mesheryctl exp relationship search --help' to see detailed help message"
-		if len(args) == 1 {
-			return fmt.Errorf("flag is missing. Please provide flag \n\n%v", errMsg)
+		const usage = "mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>] [query-text]"
+		errMsg := fmt.Errorf("[--kind, --subtype or --type or --model] and [query-text] are required\n\nUsage: %s\nRun 'mesheryctl exp relationship search --help'", usage)
+
+		if searchKind == "" && searchSubType == "" && searchType == "" && searchModelName == "" {
+			err := utils.ErrInvalidArgument(errMsg)
+			return err
 		}
-		kind, _ := cmd.Flags().GetString("kind")
-		subType, _ := cmd.Flags().GetString("subtype")
-		relType, _ := cmd.Flags().GetString("type")
-		modelname, _ := cmd.Flags().GetString("model")
-		if kind == "" && subType == "" && relType == "" && modelname == "" {
-			if err := cmd.Usage(); err != nil {
-				return err
-			}
-			return utils.ErrInvalidArgument(errors.New("please provide a --kind, --subtype or --type or --model"))
-		}
+
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -71,17 +64,14 @@ mesheryctl exp relationship search --[flag] [query-text]`,
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		url := ""
-		kind, _ := cmd.Flags().GetString("kind")
-		subType, _ := cmd.Flags().GetString("subtype")
-		relType, _ := cmd.Flags().GetString("type")
-		modelname, _ := cmd.Flags().GetString("model")
-		if modelname == "" {
-			url = fmt.Sprintf("%s/api/meshmodels/relationships?type=%s&kind=%s&subType=%s&pagesize=all", baseUrl, relType, kind, subType)
+		if searchModelName == "" {
+			url = fmt.Sprintf("%s/api/meshmodels/relationships?type=%s&kind=%s&subType=%s&pagesize=all", baseUrl, searchType, searchKind, searchSubType)
 
 		} else {
-			url = fmt.Sprintf("%s/api/meshmodels/models/%s/relationships?type=%s&kind=%s&subType=%s&pagesize=all", baseUrl, modelname, relType, kind, subType)
+			url = fmt.Sprintf("%s/api/meshmodels/models/%s/relationships?type=%s&kind=%s&subType=%s&pagesize=all", baseUrl, searchModelName, searchType, searchKind, searchSubType)
 
 		}
+
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
@@ -179,11 +169,11 @@ mesheryctl exp relationship search --[flag] [query-text]`,
 }
 
 func init() {
-	SearchComponentsCmd.Flags().SetNormalizeFunc(func(f *pflag.FlagSet, name string) pflag.NormalizedName {
+	searchCmd.Flags().SetNormalizeFunc(func(f *pflag.FlagSet, name string) pflag.NormalizedName {
 		return pflag.NormalizedName(strings.ToLower(name))
 	})
-	SearchComponentsCmd.Flags().StringVarP(&searchKind, "kind", "k", "", "search particular kind of relationships")
-	SearchComponentsCmd.Flags().StringVarP(&searchSubType, "subtype", "s", "", "search particular subtype of relationships")
-	SearchComponentsCmd.Flags().StringVarP(&searchModelName, "model", "m", "", "search relationships of particular model name")
-	SearchComponentsCmd.Flags().StringVarP(&searchType, "type", "t", "", "search particular type of relationships")
+	searchCmd.Flags().StringVarP(&searchKind, "kind", "k", "", "search particular kind of relationships")
+	searchCmd.Flags().StringVarP(&searchSubType, "subtype", "s", "", "search particular subtype of relationships")
+	searchCmd.Flags().StringVarP(&searchModelName, "model", "m", "", "search relationships of particular model name")
+	searchCmd.Flags().StringVarP(&searchType, "type", "t", "", "search particular type of relationships")
 }
