@@ -56,7 +56,7 @@ Some portions of the workflow require secrets to accomplish their tasks. These s
 - `PLAYGROUND_CONFIG`: Configuration for playground environments
 - `PROVIDER_TOKEN`: General provider authentication token
 - `RELEASEDRAFTER_PAT`: Personal access token for Release Drafter
-- `RELEASE_NOTES_PAT`: Personal access token for release notes generation
+- `RELEASEDRAFTER_PAT`: Personal access token for release notes generation
 - `REMOTE_PROVIDER_USER_EMAIL`: Email used for authentication in Playwright tests
 - `REMOTE_PROVIDER_USER_PASS`: Password used for authentication in Playwright tests
 
