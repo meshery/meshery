@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Tooltip, Grid, FormControl, MenuItem, CustomTooltip, Table } from '@layer5/sistent';
-import { TableCell, TableRow } from '@mui/material';
 import { formatDate } from '../../DataFormatter';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
@@ -9,6 +8,8 @@ import {
   ResponsiveDataTable,
   SearchBar,
   UniversalFilter,
+  TableCell,
+  TableRow,
 } from '@layer5/sistent';
 import { MeshSyncDataFormatter } from '../metadata';
 import { getK8sClusterIdsFromCtxId } from '../../../utils/multi-ctx';
