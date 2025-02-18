@@ -107,6 +107,9 @@ All of Meshery's Models can be found in the [Meshery Integrations spreadsheet](h
       <li>Fork the <a href="https://github.com/meshery/meshery" target="_blank" rel="noopener">meshery/meshery repository.</a></li>
       <li>Install the Meshery CLI by following the <a href="https://docs.meshery.io/installation/" target="_blank" rel="noopener">installation instructions.</a></li>
     </ul>
+
+    {% include alert.html type="info" title="Generating Models does not require Meshery Server" content="Meshery Server is not required to generate models. The Meshery CLI can be used to generate models. Model and Component generation logic is MeshKit. `mesheryctl` and Meshery Server both utilize MeshKit’s libraries for ongoing programmatic generation of models and components." %}
+
     <br />
     <!-- Second Level Tabs under mesheryctl -->
     <div class="tab-container">
@@ -224,6 +227,19 @@ All of Meshery's Models can be found in the [Meshery Integrations spreadsheet](h
         <p>The model will be generated in <code>meshery/server/meshmodels/[YOUR_MODEL_NAME]</code></p>
       </section>
     </div>
+
+
+    {% include alert.html type="info" title="Using Meshery CLI with the Meshery Registry and Meshery Models" content="Meshery CLI has a set of commands that pertain to the lifecycle management of models:
+    <br />
+
+    - <code>mesheryctl registry</code> - interact with and update spreadsheets
+    <br />
+    - <code>mesheryctl models</code> - interact with and update Meshery Server
+    <br />
+    - <code>mesheryctl components</code> - interact with and update Meshery Server
+    <br />
+    - <code>mesheryctl relationships</code> - interact with and update Meshery Server" %}
+
   </section>
 
   <!-- First Level Tab: Meshery UI -->
@@ -244,7 +260,6 @@ All of Meshery's Models can be found in the [Meshery Integrations spreadsheet](h
 
         <h4>1. Access the Model Generation Interface</h4>
         <p>Navigate to <a href="https://playground.meshery.io/settings?settingsCategory=Registry&tab=Models">Registry</a> in the Meshery UI. Click the "Generate" button to begin creating a new model. In the Upload Method dialog, select "URL Import" and click Next.</p>
-        <img>
 
         <a href="/assets/img/registry/generate-model-from-UI.png">
           <img src="/assets/img/registry/generate-model-from-UI.png" alt="registry generate model" style="width: 50%; max-width: 400px;">
@@ -260,7 +275,7 @@ All of Meshery's Models can be found in the [Meshery Integrations spreadsheet](h
         <p><strong>For ArtifactHub packages:</strong><br>
         Enter a URL in the format: <code>https://artifacthub.io/packages/search?ts_query_web={model-name}</code></p>
 
-        <p>Incase nothing comes to mind you can go ahead and pick one from the <a href="https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" target="_blank" rel="noopener">Meshery Integration Sheet</a> to try out.</p>
+        <p><strong>Pro tip:</strong> Check the <code>sourceURL</code> column in the <a href="https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" target="_blank" rel="noopener">Meshery Integration Sheet</a> and try one of the listed sources.</p>
 
         <a href="/assets/img/registry/url-import-github-url.png">
           <img src="/assets/img/registry/url-import-github-url.png" alt="registry generate model source selection" style="width: 50%; max-width: 400px;">
@@ -316,64 +331,69 @@ All of Meshery's Models can be found in the [Meshery Integrations spreadsheet](h
       <!-- CSV Import Method -->
       <input type="radio" id="ui-csv-tab" name="ui-tabs">
       <label for="ui-csv-tab">
-        <i class="fa fa-list"></i> CSV Import
+        <i class="fa fa-list"></i> Using CSV
       </label>
       <section class="tabbed">
-        <p>Content for CSV import will be added in the next iteration</p>
+        <p>The CSV Import feature allows you to generate models in Meshery by providing template CSV files that define your model structure, components, and relationships. Here's a comprehensive guide on how to use this feature:</p>
+
+        <h4>1. Access the Model Generation Interface</h4>
+        <p>Navigate to <a href="https://playground.meshery.io/settings?settingsCategory=Registry&tab=Models">Registry</a> in the Meshery UI. Click the "Generate" button to begin creating a new model. In the Upload Method dialog, select "URL Import" and click Next.</p>
+
+        <a href="/assets/img/registry/generate-model-from-UI.png">
+          <img src="/assets/img/registry/generate-model-from-UI.png" alt="registry generate model" style="width: 50%; max-width: 400px;">
+        </a>
+
+        <a href="/assets/img/registry/csv-import.png">
+          <img src="/assets/img/registry/csv-import.png" alt="CSV Import Initial Screen" style="width: 50%; max-width: 400px;">
+        </a>
+
+        <h4>2. Prepare Your CSV Files</h4>
+        <p>You'll need three essential CSV files to define your model. You can find templates for these files in the <a href="https://github.com/meshery/meshery/tree/a514f8689260791077bde8171646933cff15dd08/mesheryctl/templates/template-csvs" target="_blank" rel="noopener noreferrer">Meshery repository</a>. Each file serves a specific purpose:</p>
+
+        <ul>
+          <li><strong>models.csv:</strong> Defines your model's core metadata, including name, version, and general properties</li>
+          <li><strong>components.csv:</strong> Describes the individual components that make up your model</li>
+          <li><strong>relationships.csv:</strong> Specifies how different components interact and connect with each other</li>
+        </ul>
+
+        <p><strong>Pro tip:</strong> Look at existing models in the <a href="https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw/edit?gid=0#gid=0" target="_blank" rel="noopener noreferrer">Meshery Integration Sheet</a> to understand how to structure your CSV files effectively.</p>
+
+        <h4>3. Upload Models, Components, and Relationships CSV</h4>
+
+        <a href="/assets/img/registry/csv-import-upload-model-csv.png">
+          <img src="/assets/img/registry/csv-import-upload-model-csv.png" alt="Model CSV Upload" style="width: 50%; max-width: 400px;">
+        </a>
+
+        <a href="/assets/img/registry/csv-import-upload-components-csv.png">
+          <img src="/assets/img/registry/csv-import-upload-components-csv.png" alt="Component CSV Upload" style="width: 50%; max-width: 400px;">
+        </a>
+
+        <a href="/assets/img/registry/csv-import-upload-relationship-csv.png">
+          <img src="/assets/img/registry/csv-import-upload-relationship-csv.png" alt="Relationship CSV Upload" style="width: 50%; max-width: 400px;">
+        </a>
+
+        <h4>6. Model Registration</h4>
+        <p>In the final step, you can choose to register your model immediately in your Meshery instance. This makes the model available for immediate use after generation.</p>
+
+        <a href="/assets/img/registry/csv-import-register-model.png">
+          <img src="/assets/img/registry/csv-import-register-model.png" alt="Model Registration Options" style="width: 50%; max-width: 400px;">
+        </a>
+
+        <p>After completing these steps and successfully generating your model, you can find it in the Registry section if you chose to register it immediately. Otherwise, you'll receive a downloaded archive containing your generated model files.</p>
       </section>
     </div>
   </section>
 </div>
 
-### Prerequisites: Spreadsheet and Credentials Setup
+### Importing Generated Models
 
-Before beginning model creation, you'll need to set up access to the spreadsheet:
+The generated model can be importing using both Mesheryctl and Meshery UI. Read [Importing Models]({{site.baseurl}}/guides/configuration-management/importing-models) for detailed instructions on how to import models.
 
-1. **Create Spreadsheet Copy**
+### Post Model Generation
 
-   - Make a copy of the [Meshery Integration Sheet](https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw)
-   - Note the spreadsheet ID from the URL (found between /d/ and /edit)
+During model generation, corresponding components are created. Next step is to enrich these component details and define their capabilities and relationships.
 
-2. **Configure Google Cloud**
-
-   - Create a [Google Cloud Project](https://developers.google.com/workspace/guides/create-project)
-   - [Enable the Google Sheets API](https://support.google.com/googleapi/answer/6158841)
-   - [Create Service Account Credentials](https://developers.google.com/workspace/guides/create-credentials#create_credentials_for_a_service_account)
-
-3. **Set Up Credentials**
-
-   ```bash
-   base64 -w 0 /path/to/your-service-account-creds.json
-   echo 'export SHEET_CRED="<paste-output-here>"' >> ~/.bashrc  # or ~/.zshrc
-   source ~/.bashrc
-   ```
-
-4. **Configure Spreadsheet Access**
-   - Share your spreadsheet with the service account email (ends with @developer.gserviceaccount.com)
-   - Grant "Editor" permissions
-   - Publish spreadsheet: File > Share > Publish to web > Select "Comma-separated values (.csv)"
-
-### Model Creation Steps
-
-1. **Create a Model Definition**
-
-   - Open the [Meshery Integrations spreadsheet](https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw/edit#)
-   - Create a new row (or comment to suggest a new row) to capture the specific details of your model
-   - As you fill in model details, reference each column's notes and comments for instructions and explanations of their purpose
-
-2. **Generate Components**
-   Once you have entered values into the required columns, proceed with either option:
-
-   - **Option A: Using mesheryctl**
-
-     ```bash
-     mesheryctl registry generate --spreadsheet-id "YOUR_SPREADSHEET_ID" --spreadsheet-cred "$SHEET_CRED"
-     ```
-
-   - **Option B: Using Model Generator**
-     Ask a maintainer to invoke the [Model Generator workflow](https://github.com/meshery/meshery/actions/workflows/model-generator.yml)
-
-3. **Enrich Component Details**
+1. **Enrich Component Details**
    When a Component is initially generated, a new Component definition is created with default properties (e.g. colors, icons, capabilities, etc.), some of which are inherited from their respective Model.
 
    - **3.1. Customize Shapes and Colors**
@@ -382,6 +402,7 @@ Before beginning model creation, you'll need to set up access to the spreadsheet
      - Consider enriching components' details based on what they represent
      - Reference Cytoscape [node types](https://js.cytoscape.org/demos/node-types/) for possible shapes
      - Example: Use a pentagon shape to represent a Deployment
+     - Know more about [components shapes and colors](https://docs.meshery.io/extensions/component-shape-guide)
 
    - **3.2. Customize Icons**
 
@@ -392,6 +413,8 @@ Before beginning model creation, you'll need to set up access to the spreadsheet
    - **3.3. Review Capabilities**
      - Review and confirm assigned capabilities
      - Modify capabilities as needed
+
+    See the [Contributing to Components]({{site.baseurl}}/project/contributing/contributing-components) for detailed instructions.
 
 4. **Identify Relationships**
 
@@ -407,26 +430,7 @@ Before beginning model creation, you'll need to set up access to the spreadsheet
    - **4.3. Create Definitions**
      Codify the relationships you have identified into a Relationship Definition
 
-{% include alert.html type="info" title="Using Meshery CLI with the Meshery Registry and Meshery Models" content="Meshery CLI has a set of commands that pertain to the lifecycle management of models:
-<br />
-
-- <code>mesheryctl registry</code> - interact with and update spreadsheets
-  <br />
-- <code>mesheryctl models</code> - interact with and update Meshery Server
-  <br />
-- <code>mesheryctl components</code> - interact with and update Meshery Server
-  <br />
-- <code>mesheryctl relationships</code> - interact with and update Meshery Server" %}
-
-### Instructions for creating a new Component
-
-See the [Contributing to Components]({{site.baseurl}}/project/contributing/contributing-components) for detailed instructions.
-
-### Instructions for creating a new Relationship
-
-See the [Contributing to Relationships]({{site.baseurl}}/project/contributing/contributing-relationships) for detailed instructions.
-
-{% include alert.html type="info" title="Generating Models does not require Meshery Server" content="Meshery Server is not required to generate models. The Meshery CLI can be used to generate models. Model and Component generation logic is MeshKit. `mesheryctl` and Meshery Server both utilize MeshKit’s libraries for ongoing programmatic generation of models and components." %}
+    See the [Contributing to Relationships]({{site.baseurl}}/project/contributing/contributing-relationships) for detailed instructions.
 
 <!-- ### Instructions for Creating a New Connection
 
