@@ -1,11 +1,10 @@
 import * as React from "react";
 import PropTypes from "prop-types";
 import Head from "next/head";
-import CssBaseline from "@mui/material/CssBaseline";
 import { CacheProvider } from "@emotion/react";
 import createEmotionCache from "../lib/createEmotionCache";
 import Footer from "../components/Footer";
-import { charcoal,Box, Paper, SistentThemeProvider, styled, useTheme } from "@layer5/sistent";
+import { CssBaseline, charcoal, Box, Paper, SistentThemeProvider, styled, useTheme } from "@layer5/sistent";
 
 //styled-components:
 const StyledBox = styled(Box)(() => ({

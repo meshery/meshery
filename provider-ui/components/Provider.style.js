@@ -1,9 +1,4 @@
-import { styled } from "@mui/material/styles";
-import MenuItem from "@mui/material/MenuItem";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import Typography from "@mui/material/Typography";
-import Popover from "@mui/material/Popover";
+import { styled, MenuItem, Dialog, DialogActions, Typography, Popover } from "@layer5/sistent"
 export const CustomDiv = styled("div")(({ theme }) => ({
   width : "60%",
   marginLeft : "auto",

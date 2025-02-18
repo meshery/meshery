@@ -29,25 +29,22 @@ import {
   charcoal,
   accentGrey,
 } from "@layer5/sistent";
-
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import CloseIcon from "@mui/icons-material/Close";
-import ClickAwayListener from "@mui/material/ClickAwayListener";
+import { CloseIcon, ClickAwayListener, DropDownIcon } from "@layer5/sistent";
 function CustomDialogTitle(props) {
   const { children, onClose, ...other } = props;
 
   return (
-    <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+    <DialogTitle sx={{ m : 0, p : 2 }} {...other}>
       {children}
       {onClose ? (
         <IconButton
           aria-label="close"
           onClick={onClose}
           sx={{
-            position: "absolute",
-            right: "1rem",
-            top: "1rem",
-            color: (theme) => theme.palette.grey[500],
+            position : "absolute",
+            right : "1rem",
+            top : "1rem",
+            color : (theme) => theme.palette.grey[500],
           }}
         >
           <CloseIcon />
@@ -58,41 +55,41 @@ function CustomDialogTitle(props) {
 }
 
 CustomDialogTitle.propTypes = {
-  children: PropTypes.node,
-  onClose: PropTypes.func.isRequired,
+  children : PropTypes.node,
+  onClose : PropTypes.func.isRequired,
 };
 //Styled-components:
 const StyledTypography = styled(Typography)(({ theme }) => ({
-  fontWeight: 500,
-  color: charcoal[100],
-  marginBottom: theme.spacing(2), // Equivalent to `gutterBottom`
+  fontWeight : 500,
+  color : charcoal[100],
+  marginBottom : theme.spacing(2), // Equivalent to `gutterBottom`
 }));
 const StyledTooltip = styled(Tooltip)(({ theme }) => ({
-  color: theme.palette.icon.brand,
-  cursor: "pointer",
-  fontWeight: 700,
+  color : theme.palette.icon.brand,
+  cursor : "pointer",
+  fontWeight : 700,
 }));
 
 const StyledCustomDialogTitle = styled(CustomDialogTitle)(({ theme }) => ({
-  background: theme.palette.background.tabs,
+  background : theme.palette.background.tabs,
 }));
 
 const StyledButton = styled(Button)(({ theme }) => ({
-  backgroundColor: theme.palette.background.tertiary,
+  backgroundColor : theme.palette.background.tertiary,
 }));
 const StyledButtonGroup = styled(ButtonGroup)(() => ({
-  border: "none",
-  "& .MuiButtonGroup-grouped": {
-    border: "none !important",
+  border : "none",
+  "& .MuiButtonGroup-grouped" : {
+    border : "none !important",
   },
 }));
 
 const StyledDialogBox = styled(DialogContentText)(({ theme }) => ({
-  color: theme.palette.text.default,
+  color : theme.palette.text.default,
 }));
 
 const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
-  backgroundColor: theme.palette.background.elevatedComponents,
+  backgroundColor : theme.palette.background.elevatedComponents,
 }));
 export default function Provider() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -122,8 +119,8 @@ export default function Provider() {
     dataFetch(
       "/api/providers",
       {
-        method: "GET",
-        credentials: "include",
+        method : "GET",
+        credentials : "include",
       },
       (result) => {
         if (typeof result !== "undefined") {
@@ -182,13 +179,13 @@ export default function Provider() {
                 {isLoading && (
                   <CircularProgress
                     size={20}
-                    sx={{ color: "white", marginRight: 8 }}
+                    sx={{ color : "white", marginRight : 8 }}
                   />
                 )}
                 {selectedProvider !== ""
                   ? selectedProvider
                   : "Select your provider"}
-                <ArrowDropDownIcon />
+                <DropDownIcon />
               </Button>
             </StyledButtonGroup>
             <StyledPopover
@@ -197,19 +194,19 @@ export default function Provider() {
               anchorEl={anchorEl}
               onClose={handleClose}
               anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "center",
+                vertical : "bottom",
+                horizontal : "center",
               }}
               transformOrigin={{
-                vertical: "top",
-                horizontal: "center",
+                vertical : "top",
+                horizontal : "center",
               }}
             >
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList
                   sx={{
-                    background: accentGrey[20],
-                    color: charcoal[100],
+                    background : accentGrey[20],
+                    color : charcoal[100],
                   }}
                   id="split-button-menu"
                   autoFocusItem
@@ -222,7 +219,7 @@ export default function Provider() {
                       {key}
                     </MenuItem>
                   ))}
-                  <Divider sx={{ my: 0.5 }} />
+                  <Divider sx={{ my : 0.5 }} />
                   <MenuProviderDisabled disabled={true} key="CNCF Labs">
                     CNCF Labs{"\u00A0"}
                     <span>Offline</span>
@@ -284,7 +281,7 @@ export default function Provider() {
             {Object.keys(availableProviders).map((key) => {
               return (
                 <React.Fragment key={availableProviders[key].provider_name}>
-                  <p style={{ fontWeight: 700 }}>
+                  <p style={{ fontWeight : 700 }}>
                     {availableProviders[key].provider_name}
                   </p>
                   <ul>
@@ -297,13 +294,13 @@ export default function Provider() {
                 </React.Fragment>
               );
             })}
-            <p style={{ fontWeight: 700 }}>MIT</p>
+            <p style={{ fontWeight : 700 }}>MIT</p>
             <ul>
               <li>Remote provider for performance testing</li>
               <li>Provides provenence of test results and their persistence</li>
               <li>Adaptive performance analysis - predictive optimization</li>
             </ul>
-            <p style={{ fontWeight: 700 }}>The University of Texas at Austin</p>
+            <p style={{ fontWeight : 700 }}>The University of Texas at Austin</p>
             <ul>
               <li>
                 Academic research and advanced studies by Ph.D. researchers
@@ -312,7 +309,7 @@ export default function Provider() {
                 Used by school of Electrical and Computer Engineering (ECE)
               </li>
             </ul>
-            <p style={{ fontWeight: 700 }}>
+            <p style={{ fontWeight : 700 }}>
               Cloud Native Computing Foundation Infrastructure Lab
             </p>
             <ul>
@@ -324,11 +321,11 @@ export default function Provider() {
                 Performance project
               </li>
             </ul>
-            <p style={{ fontWeight: 700 }}>HPE Security</p>
+            <p style={{ fontWeight : 700 }}>HPE Security</p>
             <ul>
               <li>Istio, SPIRE, and SPIFEE integration</li>
             </ul>
-            <p style={{ fontWeight: 700 }}>Equinix</p>
+            <p style={{ fontWeight : 700 }}>Equinix</p>
             <ul>
               <li>Identity services</li>
               <li>Bare-metal Kubernetes configuration</li>
