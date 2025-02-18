@@ -40,6 +40,6 @@
     "start-server-and-test": "^2.0.9"
   },
   "engines": {
-    "node": "^16 || ^18"
+    "node": "^18 || ^20"
   }
 }
