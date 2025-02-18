@@ -17,12 +17,9 @@ import (
 	"github.com/gorilla/mux"
 	mesheryctlUtils "github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
-	// "github.com/layer5io/meshery/server/helpers"
-	// "github.com/layer5io/meshery/server/helpers/utils"
-	// "github.com/layer5io/meshery/server/models"
-	"github.com/octocamocoder47/meshery/server/helpers"
-	"github.com/octocamocoder47/meshery/server/helpers/utils"
-	"github.com/octocamocoder47/meshery/server/models"
+	"github.com/layer5io/meshery/server/helpers"
+	"github.com/layer5io/meshery/server/helpers/utils"
+	"github.com/layer5io/meshery/server/models"
 
 	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshkit/models/events"
@@ -33,18 +30,14 @@ import (
 
 	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
-	schemav1beta1 "github.com/octocamocoder47/schemas/models/v1beta1"
+	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	_model "github.com/meshery/schemas/models/v1beta1/model"
 
-	// "github.com/layer5io/meshkit/models/meshmodel/entity"
-	// "github.com/layer5io/meshkit/models/meshmodel/registry"
-	// regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
-
-	"github.com/octocamocoder47/meshkit/models/meshmodel/entity"
-	"github.com/octocamocoder47/meshkit/models/meshmodel/registry"
-	regv1beta1 "github.com/octocamocoder47/meshkit/models/meshmodel/registry/v1beta1"
+	"github.com/layer5io/meshkit/models/meshmodel/entity"
+	"github.com/layer5io/meshkit/models/meshmodel/registry"
+	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 )
 
 /**Meshmodel endpoints **/
