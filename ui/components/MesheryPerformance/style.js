@@ -63,8 +63,8 @@ export const ResultContainerWrap = styled('div')(() => ({
 
 export const CalendarComponent = styled(Calendar)(({ theme }) => ({
   '& .rbc-off-range-bg': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#a9a9a9' : '#e6e6e6',
-    color: theme.palette.mode === 'dark' ? 'white' : 'black',
+    backgroundColor: theme.palette.background.secondary,
+    color: theme.palette.text.default,
   },
   '& .rbc-off-range ': {
     color: theme.palette.text.secondary,
@@ -73,28 +73,27 @@ export const CalendarComponent = styled(Calendar)(({ theme }) => ({
     color: theme.palette.text.secondary,
   },
   '& .rbc-toolbar button': {
-    color: theme.palette.text.secondary,
+    color: theme.palette.text.default,
   },
   '& .rbc-today': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#505050' : '#eaf6ff',
+    backgroundColor: theme.palette.background.tertiary,
   },
   '& .rbc-day-slot .rbc-time-slot': {
-    borderTop: `1px solid ${theme.palette.mode === 'dark' ? '#555555' : '#eaf6ff'}`,
+    borderTop: `1px solid ${theme.palette.border.default}`,
   },
   '& .rbc-toolbar button.rbc-active': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#505050' : '#eaf6ff',
-    color: theme.palette.mode === 'dark' ? 'white' : 'black',
+    backgroundColor: theme.palette.background.hover,
+    color: theme.palette.text.default,
   },
   '& .rbc-toolbar button:hover': {
-    backgroundColor:
-      theme.palette.mode === 'dark' ? 'rgba(0, 0, 0, 0.54)' : 'rgba(255, 255, 255, 0.54)',
+    backgroundColor: theme.palette.background.hover,
   },
   '& .rbc-toolbar button.rbc-active:hover': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#909090' : '#eaf6ff',
+    backgroundColor: theme.palette.background.supplementary,
   },
   '& .rbc-toolbar button:focus ': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#505050' : '#eaf6ff',
-    color: theme.palette.mode === 'dark' ? 'white' : 'black',
+    backgroundColor: theme.palette.background.hover,
+    color: theme.palette.text.default,
   },
 }));
 
