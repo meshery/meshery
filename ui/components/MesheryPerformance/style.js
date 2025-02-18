@@ -63,37 +63,37 @@ export const ResultContainerWrap = styled('div')(() => ({
 
 export const CalendarComponent = styled(Calendar)(({ theme }) => ({
   '& .rbc-off-range-bg': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#6b6b6b' : '#e6e6e6',
-    color: theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000',
+    backgroundColor: theme.palette.background.secondary,
+    color: theme.palette.text.default,
   },
   '& .rbc-off-range ': {
-    color: theme.palette.mode === 'dark' ? '#d3d3d3' : theme.palette.text.secondary,
+    color: theme.palette.text.secondary,
   },
   '& .rbc-btn-group': {
     color: theme.palette.text.secondary,
   },
   '& .rbc-toolbar button': {
-    color: theme.palette.text.primary,
+    color: theme.palette.text.default,
   },
   '& .rbc-today': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#404040' : '#eaf6ff', // Darker gray for better contrast
+    backgroundColor: theme.palette.background.tertiary,
   },
   '& .rbc-day-slot .rbc-time-slot': {
-    borderTop: `1px solid ${theme.palette.mode === 'dark' ? '#888888' : '#eaf6ff'}`, // Brighter lines in dark mode
+    borderTop: `1px solid ${theme.palette.border.default}`,
   },
   '& .rbc-toolbar button.rbc-active': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#505050' : '#eaf6ff',
-    color: theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000',
+    backgroundColor: theme.palette.background.hover,
+    color: theme.palette.text.default,
   },
   '& .rbc-toolbar button:hover': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#757575' : 'rgba(255, 255, 255, 0.54)',
+    backgroundColor: theme.palette.background.hover,
   },
   '& .rbc-toolbar button.rbc-active:hover': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#909090' : '#eaf6ff',
+    backgroundColor: theme.palette.background.supplementary,
   },
   '& .rbc-toolbar button:focus ': {
-    backgroundColor: theme.palette.mode === 'dark' ? '#505050' : '#eaf6ff',
-    color: theme.palette.mode === 'dark' ? '#FFFFFF' : '#000000',
+    backgroundColor: theme.palette.background.hover,
+    color: theme.palette.text.default,
   },
 }));
 
