@@ -19,8 +19,8 @@ import {
   WorkspaceTeamsTable,
   WorkspaceViewsTable,
   Grid,
+  TableCell,
 } from '@layer5/sistent';
-import { TableCell } from '@mui/material';
 import { useState } from 'react';
 import { useDeletePattern, usePublishPattern } from './hooks';
 import { useLegacySelector } from 'lib/store';

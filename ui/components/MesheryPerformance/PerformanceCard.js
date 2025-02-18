@@ -1,8 +1,6 @@
 //@ts-check
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import { Table, TableCell, TableRow } from '@mui/material';
-
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import {
@@ -14,6 +12,9 @@ import {
   Grid,
   IconButton,
   Link,
+  Table,
+  TableCell,
+  TableRow,
 } from '@layer5/sistent';
 import FlipCard from '../FlipCard';
 import PerformanceResults from './PerformanceResults';
