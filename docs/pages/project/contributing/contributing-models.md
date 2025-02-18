@@ -239,7 +239,6 @@ All of Meshery's Models can be found in the [Meshery Integrations spreadsheet](h
     - <code>mesheryctl components</code> - interact with and update Meshery Server
     <br />
     - <code>mesheryctl relationships</code> - interact with and update Meshery Server" %}
-
   </section>
 
   <!-- First Level Tab: Meshery UI -->
@@ -334,7 +333,7 @@ All of Meshery's Models can be found in the [Meshery Integrations spreadsheet](h
         <i class="fa fa-list"></i> Using CSV
       </label>
       <section class="tabbed">
-        <p>The CSV Import feature allows you to generate models in Meshery by providing template CSV files that define your model structure, components, and relationships. Here's a comprehensive guide on how to use this feature:</p>
+        <p>The CSV Import feature allows you to generate models in Meshery by providing <a href="https://github.com/meshery/meshery/tree/a514f8689260791077bde8171646933cff15dd08/mesheryctl/templates/template-csvs" target="_blank" rel="noopener noreferrer">template CSV files</a> that define your model structure, components, and relationships. Here's a comprehensive guide on how to use this feature:</p>
 
         <h4>1. Access the Model Generation Interface</h4>
         <p>Navigate to <a href="https://playground.meshery.io/settings?settingsCategory=Registry&tab=Models">Registry</a> in the Meshery UI. Click the "Generate" button to begin creating a new model. In the Upload Method dialog, select "URL Import" and click Next.</p>
@@ -348,7 +347,7 @@ All of Meshery's Models can be found in the [Meshery Integrations spreadsheet](h
         </a>
 
         <h4>2. Prepare Your CSV Files</h4>
-        <p>You'll need three essential CSV files to define your model. You can find templates for these files in the <a href="https://github.com/meshery/meshery/tree/a514f8689260791077bde8171646933cff15dd08/mesheryctl/templates/template-csvs" target="_blank" rel="noopener noreferrer">Meshery repository</a>. Each file serves a specific purpose:</p>
+        <p>You'll need three essential CSV files to define your model. CSV templates can be found in the <a href="https://github.com/meshery/meshery/tree/a514f8689260791077bde8171646933cff15dd08/mesheryctl/templates/template-csvs" target="_blank" rel="noopener noreferrer">Meshery repository</a>. Each file serves a specific purpose:</p>
 
         <ul>
           <li><strong>models.csv:</strong> Defines your model's core metadata, including name, version, and general properties</li>
