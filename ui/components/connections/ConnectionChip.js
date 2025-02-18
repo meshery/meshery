@@ -29,6 +29,7 @@ import { UsesSistent } from '../SistentWrapper';
 export const ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, width }) => {
   const chipStyle = { width };
   const theme = useTheme();
+
   return (
     <ChipWrapper
       label={title}
@@ -52,7 +53,7 @@ export const ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, w
           </BadgeAvatars>
         ) : (
           <Avatar src={iconSrc} sx={iconMedium}>
-            <img style={iconMedium} src="/static/img/kubernetes.svg" />
+            <img style={iconMedium} src="/static/img/kubernetes.svg" alt="kubernetes-icon" />
           </Avatar>
         )
       }
@@ -63,7 +64,7 @@ export const ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, w
   );
 };
 
-export const TootltipWrappedConnectionChip = (props) => {
+export const TooltipWrappedConnectionChip = (props) => {
   return (
     <UsesSistent>
       <CustomTooltip title={props.tooltip || props.title} placement="left">
