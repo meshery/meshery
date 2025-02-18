@@ -78,7 +78,7 @@
     "prop-types": "latest",
     "react": "^17.0.2",
     "react-big-calendar": "^1.13.4",
-    "react-codemirror2": "^7.2.1",
+    "react-codemirror2": "^8.0.1",
     "react-countdown-clock": "^2.11.0",
     "react-dom": "^17.0.2",
     "react-error-boundary": "^4.0.11",

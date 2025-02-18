@@ -5,7 +5,6 @@ import {
   Divider,
   IconButton,
   Tooltip,
-  styled,
 } from '@layer5/sistent';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
@@ -13,16 +12,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
 import SaveIcon from '@mui/icons-material/Save';
 import { YamlDialogTitleText, StyledDialog } from './MesheryPatterns/style';
-
-const StyledCodeMirrorWrapper = styled('div')(({ fullScreen }) => ({
-  height: fullScreen ? '100%' : 'auto',
-  width: '100%',
-  '& .CodeMirror': {
-    minHeight: '300px',
-    height: fullScreen ? '100%' : 'auto',
-    width: '100%',
-  },
-}));
+import { StyledCodeMirrorWrapper } from './MesheryPatterns/Cards.styles';
 
 const YAMLDialog = ({
   fullScreen,

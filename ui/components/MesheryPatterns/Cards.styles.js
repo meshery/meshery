@@ -1,14 +1,14 @@
 import { Grid, styled } from '@layer5/sistent';
 
-export const fullScreenCodeMirrorstyles = {
-  height: '100%',
+export const StyledCodeMirrorWrapper = styled('div')(({ fullScreen }) => ({
+  height: fullScreen ? '100%' : undefined,
   width: '100%',
   '& .CodeMirror': {
     minHeight: '300px',
-    height: '100%',
+    height: fullScreen ? '100%' : undefined,
     width: '100%',
   },
-};
+}));
 
 export const CardBackGrid = styled(Grid)(() => ({
   marginBottom: '0.25rem',
