@@ -172,10 +172,11 @@ const propertyFormatter = {
     <KeyValueInRow
       Key={'Labels'}
       Value={<LabelFormatter data={value?.data} selectedLabels={[]} />}
+      showFold={true}
     />
   ),
   annotations: (value) => (
-    <KeyValueInRow Key={'Annotations'} Value={<StatusFormatter status={value} />} />
+    <KeyValueInRow Key={'Annotations'} Value={<StatusFormatter status={value} />} showFold={true} />
   ),
   totalCapacity: (value) => {
     const readableData = Object.fromEntries(

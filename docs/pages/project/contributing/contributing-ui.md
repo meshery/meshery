@@ -60,7 +60,7 @@ The designs in this specification should result in enabling:
 
 ### Node Version Recommendations
 
-We recommend using Node 18 LTS. Meshery UI's build script supports other Node versions as well, including node16 and node17, but is recommended to use Node 18 LTS.
+We recommend using Node 20 LTS. Meshery UI's build script supports other Node versions as well, including node16, node17, node18 and node19, but is recommended to use Node 20 LTS.
 
 ### Linting-UI
 

@@ -26,7 +26,7 @@ import {
 import { iconMedium } from 'css/icons.styles';
 import { UsesSistent } from '../SistentWrapper';
 
-export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, width }) => {
+export const ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, width }) => {
   const chipStyle = { width };
   const theme = useTheme();
   return (
@@ -67,8 +67,8 @@ export const TootltipWrappedConnectionChip = (props) => {
   return (
     <UsesSistent>
       <CustomTooltip title={props.tooltip || props.title} placement="left">
-        <div>
-          <_ConnectionChip {...props} />
+        <div style={{ display: 'inline-block' }}>
+          <ConnectionChip {...props} />
         </div>
       </CustomTooltip>
     </UsesSistent>
