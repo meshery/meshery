@@ -38,17 +38,22 @@ To install the Meshery Snapshot Helm Plugin, use the following steps:
 
 1. Run the following command to install the Helm Kanvas Snapshot plugin:
 
-   ```bash
-   helm plugin install https://github.com/meshery/helm-kanvas-snapshot
-   ```
+<pre class="codeblock-pre">
+  <div class="codeblock">
+     <div class="clipboardjs"> helm plugin install https://github.com/meshery/helm-kanvas-snapshot </div>
+   </div>
+</pre>
 
 3. Verify the installation by running:
 
-   ```bash
-   helm plugin list
-   ```
 
-   You should see the Kanvas Snapshot listed as `snapshot`.
+<pre class="codeblock-pre">
+  <div class="codeblock">
+     <div class="clipboardjs">helm plugin list</div>
+   </div>
+</pre>
+
+   You should see the Kanvas Snapshot listed as `helm-kanvas-snapshot`.
 
 4. Set up the required environment variables (see the [Environment Variables](#environment-variables) section).
 
@@ -56,9 +61,12 @@ To install the Meshery Snapshot Helm Plugin, use the following steps:
 
 Once the plugin is installed, you can generate a snapshot using either a packaged or unpackaged Helm chart.
 
-```bash
-helm snapshot -f <chart-URI> [--name <snapshot-name>] [-e <email>]
-```
+
+<pre class="codeblock-pre">
+  <div class="codeblock">
+     <div class="clipboardjs">helm snapshot --f &lt;chart-URI&gt; [--name &lt;snapshot-name&gt;] [--email &lt;email&gt;]</div>
+   </div>
+</pre>
 
 - **`-f`**, **`--file`**: (required) path or URL to the Helm chart (required).
 - **`--name`**: (optional) name for the snapshot. If not provided, a name will be auto-generated based on the chart name.
@@ -68,9 +76,11 @@ helm snapshot -f <chart-URI> [--name <snapshot-name>] [-e <email>]
 
 To generate a snapshot for a Helm chart located at `https://meshery.io/charts/v0.8.0-meshery.tar.gz`, you can use:
 
-```bash
-helm snapshot -f https://meshery.io/charts/v0.8.0-meshery.tar.gz --name meshery-chart
-```
+<pre class="codeblock-pre">
+  <div class="codeblock">
+     <div class="clipboardjs">helm snapshot -f https://meshery.io/charts/v0.8.0-meshery.tar.gz --name meshery-chart</div>
+   </div>
+</pre>
 
 <hr />
 
