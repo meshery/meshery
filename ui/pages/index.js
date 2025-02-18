@@ -1,4 +1,4 @@
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import Head from 'next/head';
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
