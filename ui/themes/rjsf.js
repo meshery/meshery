@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme } from '@layer5/sistent';
 import createBreakpoints from '@mui/system/createTheme/createBreakpoints';
 
 const breakpoints = createBreakpoints({});

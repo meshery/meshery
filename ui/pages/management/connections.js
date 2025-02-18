@@ -1,6 +1,5 @@
 import React from 'react';
-import { NoSsr } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { NoSsr, styled } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import Head from 'next/head';
 import MesheryConnections from '../../components/connections';

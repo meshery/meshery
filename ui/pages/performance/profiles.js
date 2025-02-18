@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import PerformanceProfiles from '../../components/MesheryPerformance/PerformanceProfiles';
 import { updatepagepath } from '../../lib/store';
 import { connect } from 'react-redux';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import Head from 'next/head';
 import { WorkspacesComponent } from '../../components/Lifecycle';
