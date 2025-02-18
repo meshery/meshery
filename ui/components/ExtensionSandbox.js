@@ -276,7 +276,7 @@ function getComponentURIFromPathForUserPrefs(extensions) {
  */
 function getComponentURIFromPathForCollaborator(extensions) {
   if (Array.isArray(extensions)) {
-    return extensions.map((ext) => ext.component)[0];
+    return extensions.map((ext) => ext.component);
   }
 
   return [];
@@ -351,9 +351,9 @@ const ExtensionSandbox = React.memo(
       switch (type) {
         case 'collaborator': {
           const collaboratorUri = getComponentURIFromPathForCollaborator(extension, getPath());
-          return collaboratorUri ? (
-            <Extension url={createPathForRemoteComponent(collaboratorUri)} />
-          ) : null;
+          return collaboratorUri.map((uri) => (
+            <Extension url={createPathForRemoteComponent(uri)} key={uri} />
+          ));
         }
         case 'navigator': {
           const navigatorUri = getComponentURIFromPathForNavigator(extension, getPath());
