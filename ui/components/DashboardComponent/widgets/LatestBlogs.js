@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useTheme, PlainCard, BellIcon } from '@layer5/sistent';
-import { UsesSistent } from '@/components/SistentWrapper';
 
 const LatestBlogs = (props) => {
   const theme = useTheme();
@@ -38,19 +37,17 @@ const LatestBlogs = (props) => {
   }, [resources]);
 
   return (
-    <UsesSistent>
-      <PlainCard
-        resources={loading ? [{ name: 'Loading...' }] : resources}
-        icon={
-          <BellIcon
-            {...props.iconsProps}
-            fill={theme.palette.icon.default}
-            secondaryFill={theme.palette.background.brand.default}
-          />
-        }
-        title="LATEST BLOGS"
-      />
-    </UsesSistent>
+    <PlainCard
+      resources={loading ? [{ name: 'Loading...' }] : resources}
+      icon={
+        <BellIcon
+          {...props.iconsProps}
+          fill={theme.palette.icon.default}
+          secondaryFill={theme.palette.background.brand.default}
+        />
+      }
+      title="LATEST BLOGS"
+    />
   );
 };
 
