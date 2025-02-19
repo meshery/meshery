@@ -85,9 +85,7 @@ test.beforeEach(async ({ page, provider }) => {
   });
 
   // Visit Connections Page
-  await page.goto(`${ENV.MESHERY_SERVER_URL}`);
-  await page.getByRole('button', { name: 'Lifecycle' }).click();
-  await page.getByRole('button', { name: 'Connections' }).click();
+  await page.goto(`${ENV.MESHERY_SERVER_URL}/management/connections`);
 
   // Verify requests and responses expected on initial page load
   await connectionsReq;
