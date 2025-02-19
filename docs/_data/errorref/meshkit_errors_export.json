@@ -1329,11 +1329,11 @@
       "11273": {
         "name": "ErrInvalidSchemaVersionCode",
         "code": "11273",
-        "severity": "Alert",
-        "long_description": "The `schemaVersion` key is either empty or has an incorrect value.",
-        "short_description": "Invalid schema version",
-        "probable_cause": "The schema is not of type 'relationship', 'component', 'model' , 'policy'.",
-        "suggested_remediation": "Verify that `schemaVersion` key should be either `relationships.meshery.io`, `component.meshery.io`, `model.meshery.io` or `policy.meshery.io`."
+        "severity": "",
+        "long_description": "",
+        "short_description": "",
+        "probable_cause": "",
+        "suggested_remediation": ""
       },
       "11274": {
         "name": "ErrFileWalkDirCode",
