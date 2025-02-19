@@ -172,6 +172,15 @@ export const LOCAL_PROVIDER_LAYOUT = {
       x: 0,
       y: 0,
     },
+    {
+      h: 2,
+      i: 'LATEST_BLOGS',
+      moved: false,
+      static: false,
+      w: 3,
+      x: 0,
+      y: 0,
+    },
   ],
   md: [
     {
@@ -180,6 +189,15 @@ export const LOCAL_PROVIDER_LAYOUT = {
       moved: false,
       static: false,
       w: 16,
+      x: 0,
+      y: 0,
+    },
+    {
+      h: 2,
+      i: 'LATEST_BLOGS',
+      moved: false,
+      static: false,
+      w: 3,
       x: 0,
       y: 0,
     },
@@ -194,6 +212,15 @@ export const LOCAL_PROVIDER_LAYOUT = {
       x: 0,
       y: 0,
     },
+    {
+      h: 2,
+      i: 'LATEST_BLOGS',
+      moved: false,
+      static: false,
+      w: 3,
+      x: 0,
+      y: 0,
+    },
   ],
   xs: [
     {
@@ -205,6 +232,15 @@ export const LOCAL_PROVIDER_LAYOUT = {
       x: 0,
       y: 0,
     },
+    {
+      h: 2,
+      i: 'LATEST_BLOGS',
+      moved: false,
+      static: false,
+      w: 3,
+      x: 0,
+      y: 0,
+    },
   ],
   xxs: [
     {
@@ -213,6 +249,15 @@ export const LOCAL_PROVIDER_LAYOUT = {
       moved: false,
       static: false,
       w: 12,
+      x: 0,
+      y: 0,
+    },
+    {
+      h: 2,
+      i: 'LATEST_BLOGS',
+      moved: false,
+      static: false,
+      w: 3,
       x: 0,
       y: 0,
     },
