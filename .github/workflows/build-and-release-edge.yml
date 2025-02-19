@@ -15,8 +15,8 @@ on:
       - "install/**"
 
 jobs:
-  update-rest-api-docs:
-    name: Update REST API Documentation
+  update-api-docs:
+    name: Update REST and GraphQL API Documentation
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-22.04
     steps:
@@ -28,6 +28,8 @@ jobs:
           filters: |
             modified:
               - added|modified: "server/handlers/**"
+
+      # REST
       - name: Setup go-swagger
         if: steps.changes.outputs.modified == 'true'
         uses: minchao/setup-go-swagger@v1
@@ -42,29 +44,7 @@ jobs:
         run: |
           make swagger-docs-build
 
-      - name: Pull changes from remote
-        run: git pull origin master
-
-      - name: Commit changes
-        uses: stefanzweifel/git-auto-commit-action@v5
-        with:
-          file_pattern: docs
-          commit_user_name: l5io
-          commit_user_email: ci@layer5.io
-          commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          commit_options: "--signoff"
-          commit_message: "[Docs] Updated Swagger Docs for REST API"
-
-  update-graphql-docs:
-    name: Update GraphQL API Documentation
-    if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Check out code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-          ref: ${{ inputs.branch }}
+      # GraphQL
       - name: Check if schema was modified
         uses: dorny/paths-filter@v3
         id: filter
@@ -84,6 +64,7 @@ jobs:
           cd docs; bundle install; cd ..; \
           make graphql-docs-build
 
+
       - name: Pull changes from remote
         run: git pull origin master
 
@@ -95,7 +76,7 @@ jobs:
           commit_user_email: ci@layer5.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
-          commit_message: "[Docs] Updated GraphQL API Documentation"
+          commit_message: "[Docs] Updated REST and Graphql API Docs"
 
   docker-build-push:
     name: Docker build and push
