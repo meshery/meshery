@@ -93,7 +93,7 @@ test.beforeEach(async ({ page, provider }) => {
   const body = await res.json();
   verifyConnectionsResBody(body, provider);
 
-  connectionCount = body.connections.length;
+  connectionCount = body.total_count;
 });
 test('Verify that UI components are displayed', async ({ page }) => {
   // Verify that connections table is displayed (by checking for table headings)
