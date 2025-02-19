@@ -4,7 +4,7 @@
   "version": "v1.0.0",
   "name": "loxilb",
   "displayName": "LoxiLB",
-  "status": "ignored",
+  "status": "enabled",
   "registrant": {
     "id": "00000000-0000-0000-0000-000000000000",
     "name": "Github",

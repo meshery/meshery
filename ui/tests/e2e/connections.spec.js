@@ -95,17 +95,28 @@ test.beforeEach(async ({ page, provider }) => {
   const body = await res.json();
   verifyConnectionsResBody(body, provider);
 
-  connectionCount = body.connections.length;
+  connectionCount = body.total_count;
 });
-
 test('Verify that UI components are displayed', async ({ page }) => {
   // Verify that connections table is displayed (by checking for table headings)
-  for (const heading of ['Name', 'Environments', 'Kind', 'Category', 'Status', 'Actions']) {
+  for (const heading of [
+    'Name',
+    'Environments',
+    'Kind',
+    'Category',
+    'Connection ID',
+    'Status',
+    'Actions',
+  ]) {
     await expect(page.getByRole('columnheader', { name: heading })).toBeVisible();
   }
 
-  // Verify that all connections returned by server are displayed (by counting number of rows in the table)
-  expect((await page.locator('tr').count()) - 2).toEqual(connectionCount); // -2 for not considering header and footer
+  // Get total count from the table footer pagination text
+  const paginationText = await page.locator('.MuiTablePagination-displayedRows').textContent();
+  const totalCount = parseInt(paginationText.split('of')[1].trim());
+
+  // Verify that total count matches the connections count from the server
+  expect(totalCount).toEqual(connectionCount);
 });
 
 test(

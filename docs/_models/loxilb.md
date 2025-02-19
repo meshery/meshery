@@ -10,7 +10,31 @@ integrations-category: Cloud Native Network
 integrations-subcategory: Service Proxy
 registrant: Github
 components: 
-components-count: 0
+- name: bgp-peer-service
+  colorIcon: assets/img/integrations/loxilb/components/bgp-peer-service/icons/color/bgp-peer-service-color.svg
+  whiteIcon: assets/img/integrations/loxilb/components/bgp-peer-service/icons/white/bgp-peer-service-white.svg
+  description: 
+- name: bgp-policy-apply-service
+  colorIcon: assets/img/integrations/loxilb/components/bgp-policy-apply-service/icons/color/bgp-policy-apply-service-color.svg
+  whiteIcon: assets/img/integrations/loxilb/components/bgp-policy-apply-service/icons/white/bgp-policy-apply-service-white.svg
+  description: 
+- name: bgp-policy-defined-sets-service
+  colorIcon: assets/img/integrations/loxilb/components/bgp-policy-defined-sets-service/icons/color/bgp-policy-defined-sets-service-color.svg
+  whiteIcon: assets/img/integrations/loxilb/components/bgp-policy-defined-sets-service/icons/white/bgp-policy-defined-sets-service-white.svg
+  description: 
+- name: bgp-policy-definition-service
+  colorIcon: assets/img/integrations/loxilb/components/bgp-policy-definition-service/icons/color/bgp-policy-definition-service-color.svg
+  whiteIcon: assets/img/integrations/loxilb/components/bgp-policy-definition-service/icons/white/bgp-policy-definition-service-white.svg
+  description: 
+- name: egress
+  colorIcon: assets/img/integrations/loxilb/components/egress/icons/color/egress-color.svg
+  whiteIcon: assets/img/integrations/loxilb/components/egress/icons/white/egress-white.svg
+  description: 
+- name: loxi-url
+  colorIcon: assets/img/integrations/loxilb/components/loxi-url/icons/color/loxi-url-color.svg
+  whiteIcon: assets/img/integrations/loxilb/components/loxi-url/icons/white/loxi-url-white.svg
+  description: 
+components-count: 6
 relationships: 
 relationship-count: 0
 featureList: [

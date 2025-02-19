@@ -58,6 +58,9 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 
 	from := fromSet[0]
 	to := toSet[0]
+	if from.Patch == nil || from.Patch.MutatedRef == nil {
+		return alias, false
+	}
 	mutatedRefs := *from.Patch.MutatedRef
 
 	if len(mutatedRefs) == 0 {

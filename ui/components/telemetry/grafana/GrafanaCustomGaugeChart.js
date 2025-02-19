@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { Box, styled, useTheme } from '@layer5/sistent';
 import bb, { gauge } from 'billboard.js';
 import { UsesSistent } from '@/components/SistentWrapper';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 
 const ChartRoot = styled(Box)(() => ({
   width: '100%',

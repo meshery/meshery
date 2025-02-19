@@ -5,7 +5,7 @@ import { EVENT_TYPES } from './Enum';
 import _ from 'lodash';
 import { getWebAdress } from './webApis';
 import { APPLICATION, DESIGN, FILTER } from '../constants/navigator';
-import { Tooltip } from '@mui/material';
+import { Tooltip } from '@layer5/sistent';
 import jsyaml from 'js-yaml';
 import yaml from 'js-yaml';
 import { useLegacySelector } from '../lib/store';

@@ -14,10 +14,10 @@ import {
   CardContent,
   CardHeader,
   CustomTooltip,
+  NoSsr,
 } from '@layer5/sistent';
 import CopyIcon from '../../assets/icons/CopyIcon';
 import _ from 'lodash';
-import NoSsr from '@mui/material/NoSsr';
 import {
   StatsWrapper,
   ProviderCard,
