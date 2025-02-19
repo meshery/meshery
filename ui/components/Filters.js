@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 import React, { useState, useEffect, useRef } from 'react';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { connect } from 'react-redux';
