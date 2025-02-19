@@ -6,7 +6,7 @@ import ExtensionSandbox, {
   getComponentIsBetaFromPath,
 } from '../../components/ExtensionSandbox';
 import { Box, CircularProgress } from '@layer5/sistent';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import {
   updatepagepath,
   updatepagetitle,

@@ -4,8 +4,6 @@ on:
     secrets:
       NODE_VERSION:
         required: true
-      GO_VERSION:
-        required: true
 
 jobs:
   build-backend:

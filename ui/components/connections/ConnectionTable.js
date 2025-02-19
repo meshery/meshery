@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { TableCell, TableRow, Popover } from '@mui/material';
 import {
   CustomTooltip,
   CustomColumnVisibilityControl,
@@ -16,6 +15,9 @@ import {
   Button,
   FormControl,
   useTheme,
+  TableCell,
+  TableRow,
+  Popover,
 } from '@layer5/sistent';
 import {
   ContentContainer,
@@ -40,7 +42,7 @@ import SyncIcon from '@mui/icons-material/Sync';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '../../utils/Enum';
 import FormatConnectionMetadata from './metadata';
 import useKubernetesHook from '../hooks/useKubernetesHook';
-import { ConnectionStateChip, TootltipWrappedConnectionChip } from './ConnectionChip';
+import { ConnectionStateChip, TooltipWrappedConnectionChip } from './ConnectionChip';
 import { DefaultTableCell, SortableTableCell } from './common';
 import { getColumnValue } from '../../utils/utils';
 import { updateVisibleColumns } from '../../utils/responsive-column';
@@ -528,7 +530,7 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
           const kind = getColumnValue(tableMeta.rowData, 'kind', columns);
           return (
             <>
-              <TootltipWrappedConnectionChip
+              <TooltipWrappedConnectionChip
                 tooltip={'Server: ' + server}
                 title={kind === CONNECTION_KINDS.KUBERNETES ? name : value}
                 status={getColumnValue(tableMeta.rowData, 'status', columns)}

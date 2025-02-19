@@ -1,7 +1,20 @@
 import { CONNECTION_STATES } from '../../utils/Enum';
 import { notificationColors } from '../../themes';
-import { Box, Button, Chip, Grid, MenuItem, Select, styled, Tab, Tabs } from '@layer5/sistent';
-import { StepConnector, StepLabel, Stepper, TableContainer } from '@mui/material';
+import {
+  Box,
+  Button,
+  Chip,
+  Grid,
+  MenuItem,
+  Select,
+  styled,
+  Tab,
+  Tabs,
+  StepConnector,
+  StepLabel,
+  Stepper,
+  TableContainer,
+} from '@layer5/sistent';
 
 export const CreateButton = styled(Grid)({
   display: 'flex',

@@ -5,7 +5,7 @@ import { Pagination, PaginationItem } from '@layer5/sistent';
 import { withRouter } from 'next/router';
 import { debounce } from 'lodash';
 import { Delete } from '@mui/icons-material';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import { CreateButtonWrapper, BulkActionWrapper } from './styles';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 
