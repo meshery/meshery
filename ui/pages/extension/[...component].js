@@ -17,7 +17,7 @@ import {
 import { connect } from 'react-redux';
 import Head from 'next/head';
 import { bindActionCreators } from 'redux';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import RemoteComponent from '../../components/RemoteComponent';
 import _ from 'lodash';
 import { MesheryExtensionEarlyAccessCardPopup } from '../../components/Popup';
@@ -56,26 +56,23 @@ function matchComponentURI(extensionURI, currentURI) {
   return currentURI.includes(extensionURI);
 }
 
-class RemoteExtension extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      componentTitle: '',
-      isLoading: true,
-      capabilitiesRegistryObj: null,
-    };
-  }
+function RemoteExtension(props) {
+  const [componentTitle, setComponentTitle] = useState('');
+  const [isLoading, setIsLoading] = useState(true);
+  const [capabilitiesRegistryObj, setCapabilitiesRegistryObj] = useState(null);
 
-  componentWillUnmount() {
-    this.props.updateExtensionType({ extensionType: null });
-    this.setState({
-      componentTitle: '',
-      isLoading: true,
-      capabilitiesRegistryObj: null,
-    });
-  }
+  const {
+    extensionType,
+    capabilitiesRegistry,
+    updatepagepath,
+    updatepagetitle,
+    updatebetabadge,
+    updateExtensionType,
+    updateCapabilities,
+    router,
+  } = props;
 
-  componentDidMount() {
+  useEffect(() => {
     dataFetch(
       '/api/provider/capabilities',
       {
@@ -83,30 +80,27 @@ class RemoteExtension extends React.Component {
         credentials: 'include',
       },
       (result) => {
-        this.props.updatepagepath({ path: getPath() });
+        updatepagepath({ path: getPath() });
         if (result) {
-          this.setState({
-            capabilitiesRegistryObj: result,
-          });
-          this.props.updateCapabilities({ capabilitiesRegistry: result });
-          this.renderExtension();
+          setCapabilitiesRegistryObj(result);
+          updateCapabilities({ capabilitiesRegistry: result });
+          renderExtension(result);
         }
       },
       (err) => console.error(err),
     );
-  }
+  }, []);
 
-  componentDidUpdate(prevProps, prevState) {
+  useEffect(() => {
     if (
-      this.props.extensionType !== prevProps.extensionType ||
-      this.props.router.query.component != prevProps.router.query.component
+      extensionType !== props.extensionType ||
+      router.query.component !== props.router.query.component
     ) {
-      this.renderExtension();
+      renderExtension(capabilitiesRegistry);
     }
-  }
+  }, [extensionType, router.query.component, capabilitiesRegistry]);
 
-  renderExtension = () => {
-    let cap = this.props.capabilitiesRegistry;
+  const renderExtension = (cap) => {
     // load extension if capabilities are available
     if (cap !== null) {
       let extNames = [];
@@ -126,56 +120,58 @@ class RemoteExtension extends React.Component {
 
       extNames.forEach((ext) => {
         if (matchComponentURI(ext?.uri, getPath())) {
-          this.props.updateExtensionType({ extensionType: ext.name });
+          updateExtensionType({ extensionType: ext.name });
           let extensions = ExtensionPointSchemaValidator(ext.name)(cap?.extensions[ext.name]);
-          this.setState({
-            componentTitle: getComponentTitleFromPath(extensions, getPath()),
-            isLoading: false,
-          });
-          this.props.updatepagetitle({ title: getComponentTitleFromPath(extensions, getPath()) });
-          this.props.updatebetabadge({ isBeta: getComponentIsBetaFromPath(extensions, getPath()) });
+          setComponentTitle(getComponentTitleFromPath(extensions, getPath()));
+          setIsLoading(false);
+          updatepagetitle({ title: getComponentTitleFromPath(extensions, getPath()) });
+          updatebetabadge({ isBeta: getComponentIsBetaFromPath(extensions, getPath()) });
         }
       });
     }
     // else, show signup card
-    this.setState({ isLoading: false });
+    setIsLoading(false);
   };
 
-  render() {
-    const { extensionType, capabilitiesRegistry } = this.props;
-    const { componentTitle, isLoading } = this.state;
+  useEffect(() => {
+    return () => {
+      updateExtensionType({ extensionType: null });
+      setComponentTitle('');
+      setIsLoading(true);
+      setCapabilitiesRegistryObj(null);
+    };
+  }, []);
 
-    return (
-      <NoSsr>
-        <Head>
-          <title>{`${componentTitle} | Meshery` || ''}</title>
-        </Head>
-        <DynamicFullScrrenLoader isLoading={isLoading}>
-          {this.props.capabilitiesRegistry !== null && extensionType ? (
-            <NoSsr>
-              {extensionType === 'navigator' ? (
-                <ExtensionSandbox type={extensionType} Extension={NavigatorExtension} />
-              ) : (
-                <ExtensionSandbox
-                  type={extensionType}
-                  Extension={(url) => RemoteComponent({ url })}
-                />
-              )}
-            </NoSsr>
-          ) : !isLoading ? (
-            <Box display="flex" justifyContent="center">
-              <MesheryExtensionEarlyAccessCardPopup
-                rootStyle={{ position: 'relative' }}
-                capabilitiesRegistry={capabilitiesRegistry}
+  return (
+    <NoSsr>
+      <Head>
+        <title>{`${componentTitle} | Meshery` || ''}</title>
+      </Head>
+      <DynamicFullScrrenLoader isLoading={isLoading}>
+        {capabilitiesRegistry !== null && extensionType ? (
+          <NoSsr>
+            {extensionType === 'navigator' ? (
+              <ExtensionSandbox type={extensionType} Extension={NavigatorExtension} />
+            ) : (
+              <ExtensionSandbox
+                type={extensionType}
+                Extension={(url) => RemoteComponent({ url })}
               />
-            </Box>
-          ) : (
-            <CircularProgress />
-          )}
-        </DynamicFullScrrenLoader>
-      </NoSsr>
-    );
-  }
+            )}
+          </NoSsr>
+        ) : !isLoading ? (
+          <Box display="flex" justifyContent="center">
+            <MesheryExtensionEarlyAccessCardPopup
+              rootStyle={{ position: 'relative' }}
+              capabilitiesRegistry={capabilitiesRegistry}
+            />
+          </Box>
+        ) : (
+          <CircularProgress />
+        )}
+      </DynamicFullScrrenLoader>
+    </NoSsr>
+  );
 }
 
 const mapStateToProps = (state) => ({
