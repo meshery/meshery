@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr, TableRow, TableCell, TableSortLabel } from '@mui/material';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import MUIDataTable from 'mui-datatables';
@@ -13,7 +12,7 @@ import GrafanaCustomCharts from './telemetry/grafana/GrafanaCustomCharts';
 import MesheryResultDialog from './MesheryResultDialog';
 import { withNotify } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
-import { Box, IconButton } from '@layer5/sistent';
+import { Box, IconButton, NoSsr, TableRow, TableCell, TableSortLabel } from '@layer5/sistent';
 import { useLazyGetResultsQuery } from '@/rtk-query/meshResult';
 
 const DEFAULT_PAGE_SIZE = 10;

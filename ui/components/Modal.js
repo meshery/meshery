@@ -14,8 +14,9 @@ import {
 import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
 import { ArrowDropDown } from '@mui/icons-material';
 import { getSchema } from './MesheryMeshInterface/PatternService/helper';
-import { Alert, Snackbar } from '@mui/material';
 import { UsesSistent } from './SistentWrapper';
+import { useNotification } from '@/utils/hooks/useNotification';
+import { EVENT_TYPES } from 'lib/event-types';
 
 const SchemaVersion = ({ schema_array, type, schemaChangeHandler }) => {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -89,11 +90,10 @@ function Modal(props) {
   } = props;
 
   const [canNotSubmit, setCanNotSubmit] = useState(false);
-  const [snackbar, setSnackbar] = useState(false);
   const formStateRef = useRef({});
   const formRef = React.createRef();
   const [loadingSchema, setLoadingSchema] = useState(true);
-
+  const { notify } = useNotification();
   const handleFormSubmit = () => {
     if (formRef.current && formRef.current.validateForm()) {
       handleClose();
@@ -109,10 +109,9 @@ function Modal(props) {
 
       for (const word of forbiddenWords) {
         if (designName?.includes(word)) {
-          setSnackbar({
-            severity: 'warning',
+          notify({
+            event_type: EVENT_TYPES.WARNING,
             message: `Design name should not contain Untitled Design, Untitled, LFX`,
-            open: true,
           });
           setCanNotSubmit(true);
           break;
@@ -176,18 +175,6 @@ function Modal(props) {
             }}
           />
         </ModalFooter>
-        {snackbar && (
-          <Snackbar
-            anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            open={snackbar.open}
-            autoHideDuration={6000}
-            onClose={() => setSnackbar(null)}
-          >
-            <Alert onClose={() => setSnackbar(null)} severity={snackbar.severity}>
-              {snackbar.message}
-            </Alert>
-          </Snackbar>
-        )}
       </SistentModal>
     </UsesSistent>
   );
@@ -208,9 +195,8 @@ function RJSFModalWrapper({
   const formRef = useRef();
   const formStateRef = useRef();
   const [canNotSubmit, setCanNotSubmit] = useState(false);
-  const [snackbar, setSnackbar] = useState(false);
   const [loadingSchema, setLoadingSchema] = useState(true);
-
+  const { notify } = useNotification();
   useEffect(() => {
     setCanNotSubmit(false);
     const handleDesignNameCheck = () => {
@@ -219,10 +205,9 @@ function RJSFModalWrapper({
 
       for (const word of forbiddenWords) {
         if (designName?.includes(word)) {
-          setSnackbar({
-            severity: 'warning',
+          notify({
+            event_type: EVENT_TYPES.WARNING,
             message: `Design name should not contain Untitled Design, Untitled, LFX`,
-            open: true,
           });
           setCanNotSubmit(true);
           break;
@@ -279,18 +264,6 @@ function RJSFModalWrapper({
           }}
         />
       </ModalFooter>
-      {snackbar && (
-        <Snackbar
-          anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-          open={snackbar.open}
-          autoHideDuration={6000}
-          onClose={() => setSnackbar(null)}
-        >
-          <Alert onClose={() => setSnackbar(null)} severity={snackbar.severity}>
-            {snackbar.message}
-          </Alert>
-        </Snackbar>
-      )}
     </>
   );
 }

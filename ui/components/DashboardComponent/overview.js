@@ -1,5 +1,5 @@
 import React from 'react';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import { withRouter } from 'next/router';
 import { withNotify } from '../../utils/hooks/useNotification';
 import { connect, Provider } from 'react-redux';

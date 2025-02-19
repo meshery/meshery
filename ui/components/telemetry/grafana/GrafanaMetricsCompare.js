@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import { MenuItem, TextField, Box, styled } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import { UsesSistent } from '@/components/SistentWrapper';

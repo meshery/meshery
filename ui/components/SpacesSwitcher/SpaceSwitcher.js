@@ -15,7 +15,7 @@ import {
   Select,
   useTheme,
 } from '@layer5/sistent';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import { setKeys, setOrganization, setWorkspace } from '../../lib/store';
 import { connect, Provider } from 'react-redux';
 import { bindActionCreators } from 'redux';
