@@ -25,6 +25,7 @@ import dataFetch from '../../lib/data-fetch';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
 import { withRouter } from 'next/router';
 import { DynamicFullScrrenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
+import { useGetProviderCapabilitiesQuery } from '../../rtk-query/user';
 
 /**
  * getPath returns the current pathname
@@ -72,24 +73,16 @@ function RemoteExtension(props) {
     router,
   } = props;
 
+  const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
+
   useEffect(() => {
-    dataFetch(
-      '/api/provider/capabilities',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        updatepagepath({ path: getPath() });
-        if (result) {
-          setCapabilitiesRegistryObj(result);
-          updateCapabilities({ capabilitiesRegistry: result });
-          renderExtension(result);
-        }
-      },
-      (err) => console.error(err),
-    );
-  }, []);
+    if (capabilitiesData) {
+      updatepagepath({ path: getPath() });
+      setCapabilitiesRegistryObj(capabilitiesData);
+      updateCapabilities({ capabilitiesRegistry: capabilitiesData });
+      renderExtension(capabilitiesData);
+    }
+  }, [capabilitiesData]);
 
   useEffect(() => {
     if (
