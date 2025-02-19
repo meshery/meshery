@@ -45,17 +45,22 @@ is_rel_disabled(rel) := true  if {
 	not is_rel_enabled(rel)
 }
 
+relationship_is_implicated_by_model(rel,model) := true if {
+	rel.model.name == model.name
+}
+
+relationship_is_implicated_by_model(rel,model) := true if {
+	rel.metadata.alwaysEvaluate == true
+}
+
 
 
 relationships_to_evaluate_against := { rel |
     some rel in data.relationships
 	some model in models_in_design
 	rel_key := relationship_preference_key(rel)
-	# print("rel_key",rel_key)
-	model.name == rel.model.name
+	relationship_is_implicated_by_model(rel,model)
 	is_rel_enabled(rel) == true
-	# print("model implicated and rel is enabled",model.name,rel_key)
-	# print("is_rel_enabled",rel_key,is_rel_enabled(rel))
 }
 
 # Main evaluation function that processes relationships and updates the design.
