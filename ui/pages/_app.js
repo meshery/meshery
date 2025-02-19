@@ -1,4 +1,3 @@
-import { Hidden, NoSsr } from '@mui/material';
 import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -65,6 +64,8 @@ import {
   SistentThemeProvider,
   CssBaseline,
   Typography,
+  Hidden,
+  NoSsr,
 } from '@layer5/sistent';
 import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
 import { LoadSessionGuard } from '@/rtk-query/ability';

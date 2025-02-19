@@ -1,7 +1,4 @@
 import * as React from 'react';
-import { Modal } from '@mui/material';
-import { keyframes } from '@mui/material/styles';
-
 import {
   Typography,
   Accordion,
@@ -12,6 +9,8 @@ import {
   IconButton,
   InfoIcon,
   LIGHT_TEAL,
+  Modal,
+  keyframes,
 } from '@layer5/sistent';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CloseIcon from '@mui/icons-material/Close';

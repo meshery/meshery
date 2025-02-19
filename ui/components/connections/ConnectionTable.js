@@ -1,5 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { TableCell, TableRow, Popover } from '@mui/material';
 import {
   CustomTooltip,
   CustomColumnVisibilityControl,
@@ -16,6 +15,9 @@ import {
   Button,
   FormControl,
   useTheme,
+  TableCell,
+  TableRow,
+  Popover,
 } from '@layer5/sistent';
 import {
   ContentContainer,
