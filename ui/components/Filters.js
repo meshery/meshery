@@ -1305,8 +1305,6 @@ function MesheryFilters({
 const ImportModal = React.memo((props) => {
   const { handleClose, handleImportFilter } = props;
 
-  // const classes = useStyles();
-
   return (
     <UsesSistent>
       <SistentModal

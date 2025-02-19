@@ -1,0 +1,72 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Patch Baseline",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "aws-ssm-controller",
+    "displayName": "AWS Systems Manager",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Github",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "github",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Orchestration \u0026 Management"
+    },
+    "subCategory": "Management Governance",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#7AA116",
+      "shape": "rectangle",
+      "source_uri": "git://github.com/aws-controllers-k8s/ssm-controller/main/helm",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "v1.0.3"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
+    "primaryColor": "#7AA116",
+    "shape": "rectangle",
+    "svgColor": "",
+    "svgWhite": ""
+  },
+  "capabilities": null,
+  "status": "enabled",
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "git://github.com/aws-controllers-k8s/ssm-controller/main/helm"
+  },
+  "configuration": null,
+  "component": {
+    "kind": "PatchBaseline",
+    "schema": "{\n \"description\": \"PatchBaseline is the Schema for the PatchBaselines API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PatchBaselineSpec defines the desired state of PatchBaseline.\",\n   \"properties\": {\n    \"approvalRules\": {\n     \"description\": \"A set of rules used to include patches in the baseline.\",\n     \"properties\": {\n      \"patchRules\": {\n       \"items\": {\n        \"description\": \"Defines an approval rule for a patch baseline.\",\n        \"properties\": {\n         \"approveAfterDays\": {\n          \"format\": \"int64\",\n          \"type\": \"integer\"\n         },\n         \"approveUntilDate\": {\n          \"type\": \"string\"\n         },\n         \"complianceLevel\": {\n          \"type\": \"string\"\n         },\n         \"enableNonSecurity\": {\n          \"type\": \"boolean\"\n         },\n         \"patchFilterGroup\": {\n          \"description\": \"A set of patch filters, typically used for approval rules.\",\n          \"properties\": {\n           \"patchFilters\": {\n            \"items\": {\n             \"description\": \"Defines which patches should be included in a patch baseline.\\n\\nA patch filter consists of a key and a set of values. The filter key is a\\npatch property. For example, the available filter keys for WINDOWS are PATCH_SET,\\nPRODUCT, PRODUCT_FAMILY, CLASSIFICATION, and MSRC_SEVERITY.\\n\\nThe filter values define a matching criterion for the patch property indicated\\nby the key. For example, if the filter key is PRODUCT and the filter values\\nare [\\\"Office 2013\\\", \\\"Office 2016\\\"], then the filter accepts all patches where\\nproduct name is either \\\"Office 2013\\\" or \\\"Office 2016\\\". The filter values\\ncan be exact values for the patch property given as a key, or a wildcard\\n(*), which matches all values.\\n\\nYou can view lists of valid values for the patch properties by running the\\nDescribePatchProperties command. For information about which patch properties\\ncan be used with each major operating system, see DescribePatchProperties.\",\n             \"properties\": {\n              \"key\": {\n               \"type\": \"string\"\n              },\n              \"values\": {\n               \"items\": {\n                \"type\": \"string\"\n               },\n               \"type\": \"array\"\n              }\n             },\n             \"type\": \"object\"\n            },\n            \"type\": \"array\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"approvedPatches\": {\n     \"description\": \"A list of explicitly approved patches for the baseline.\\n\\nFor information about accepted formats for lists of approved patches and\\nrejected patches, see Package name formats for approved and rejected patch\\nlists (https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-approved-rejected-package-name-formats.html)\\nin the Amazon Web Services Systems Manager User Guide.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"approvedPatchesComplianceLevel\": {\n     \"description\": \"Defines the compliance level for approved patches. When an approved patch\\nis reported as missing, this value describes the severity of the compliance\\nviolation. The default value is UNSPECIFIED.\",\n     \"type\": \"string\"\n    },\n    \"approvedPatchesEnableNonSecurity\": {\n     \"description\": \"Indicates whether the list of approved patches includes non-security updates\\nthat should be applied to the managed nodes. The default value is false.\\nApplies to Linux managed nodes only.\",\n     \"type\": \"boolean\"\n    },\n    \"clientToken\": {\n     \"description\": \"User-provided idempotency token.\",\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"description\": \"A description of the patch baseline.\",\n     \"type\": \"string\"\n    },\n    \"globalFilters\": {\n     \"description\": \"A set of global filters used to include patches in the baseline.\\n\\nThe GlobalFilters parameter can be configured only by using the CLI or an\\nAmazon Web Services SDK. It can't be configured from the Patch Manager console,\\nand its value isn't displayed in the console.\",\n     \"properties\": {\n      \"patchFilters\": {\n       \"items\": {\n        \"description\": \"Defines which patches should be included in a patch baseline.\\n\\nA patch filter consists of a key and a set of values. The filter key is a\\npatch property. For example, the available filter keys for WINDOWS are PATCH_SET,\\nPRODUCT, PRODUCT_FAMILY, CLASSIFICATION, and MSRC_SEVERITY.\\n\\nThe filter values define a matching criterion for the patch property indicated\\nby the key. For example, if the filter key is PRODUCT and the filter values\\nare [\\\"Office 2013\\\", \\\"Office 2016\\\"], then the filter accepts all patches where\\nproduct name is either \\\"Office 2013\\\" or \\\"Office 2016\\\". The filter values\\ncan be exact values for the patch property given as a key, or a wildcard\\n(*), which matches all values.\\n\\nYou can view lists of valid values for the patch properties by running the\\nDescribePatchProperties command. For information about which patch properties\\ncan be used with each major operating system, see DescribePatchProperties.\",\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"The name of the patch baseline.\",\n     \"type\": \"string\"\n    },\n    \"operatingSystem\": {\n     \"description\": \"Defines the operating system the patch baseline applies to. The default value\\nis WINDOWS.\",\n     \"type\": \"string\"\n    },\n    \"rejectedPatches\": {\n     \"description\": \"A list of explicitly rejected patches for the baseline.\\n\\nFor information about accepted formats for lists of approved patches and\\nrejected patches, see Package name formats for approved and rejected patch\\nlists (https://docs.aws.amazon.com/systems-manager/latest/userguide/patch-manager-approved-rejected-package-name-formats.html)\\nin the Amazon Web Services Systems Manager User Guide.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"rejectedPatchesAction\": {\n     \"description\": \"The action for Patch Manager to take on patches included in the RejectedPackages\\nlist.\\n\\nALLOW_AS_DEPENDENCY\\n\\nLinux and macOS: A package in the rejected patches list is installed only\\nif it is a dependency of another package. It is considered compliant with\\nthe patch baseline, and its status is reported as INSTALLED_OTHER. This is\\nthe default action if no option is specified.\\n\\nWindows Server: Windows Server doesn't support the concept of package dependencies.\\nIf a package in the rejected patches list and already installed on the node,\\nits status is reported as INSTALLED_OTHER. Any package not already installed\\non the node is skipped. This is the default action if no option is specified.\\n\\n# BLOCK\\n\\nAll OSs: Packages in the rejected patches list, and packages that include\\nthem as dependencies, aren't installed by Patch Manager under any circumstances.\\nIf a package was installed before it was added to the rejected patches list,\\nor is installed outside of Patch Manager afterward, it's considered noncompliant\\nwith the patch baseline and its status is reported as INSTALLED_REJECTED.\",\n     \"type\": \"string\"\n    },\n    \"sources\": {\n     \"description\": \"Information about the patches to use to update the managed nodes, including\\ntarget operating systems and source repositories. Applies to Linux managed\\nnodes only.\",\n     \"items\": {\n      \"description\": \"Information about the patches to use to update the managed nodes, including\\ntarget operating systems and source repository. Applies to Linux managed\\nnodes only.\",\n      \"properties\": {\n       \"configuration\": {\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"products\": {\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"tags\": {\n     \"description\": \"Optional metadata that you assign to a resource. Tags enable you to categorize\\na resource in different ways, such as by purpose, owner, or environment.\\nFor example, you might want to tag a patch baseline to identify the severity\\nlevel of patches it specifies and the operating system family it applies\\nto. In this case, you could specify the following key-value pairs:\\n\\n  - Key=PatchSeverity,Value=Critical\\n\\n  - Key=OS,Value=Windows\\n\\nTo add tags to an existing patch baseline, use the AddTagsToResource operation.\",\n     \"items\": {\n      \"description\": \"Metadata that you assign to your Amazon Web Services resources. Tags enable\\nyou to categorize your resources in different ways, for example, by purpose,\\nowner, or environment. In Amazon Web Services Systems Manager, you can apply\\ntags to Systems Manager documents (SSM documents), managed nodes, maintenance\\nwindows, parameters, patch baselines, OpsItems, and OpsMetadata.\",\n      \"properties\": {\n       \"key\": {\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"name\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Patch Baseline\",\n \"type\": \"object\"\n}",
+    "version": "ssm.services.k8s.aws/v1alpha1"
+  }
+}

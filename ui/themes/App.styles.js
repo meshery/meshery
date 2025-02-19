@@ -93,7 +93,7 @@ const StyledSnackbarContent = styled(SnackbarContent)(({ theme, variant }) => {
     color: baseColor,
     pointerEvents: 'auto',
     borderRadius: '0.3rem',
-    boxShadow: `0 0px 6px ${theme.palette.background.tabs}`,
+    boxShadow: `0 0px 4px ${theme.palette.background.tabs}`,
   };
 });
 
@@ -126,11 +126,12 @@ export const ThemeResponsiveSnackbar = forwardRef((props, forwardedRef) => {
           display: 'flex',
           alignItems: 'center',
           padding: '0.5rem',
+          width: '100%',
         }}
       >
         {getIcon()}
         <BasicMarkdown content={message} />
-        <div style={{ marginLeft: '5px' }}>{action && action(key)}</div>
+        <div style={{ marginLeft: 'auto' }}>{action && action(key)}</div>
       </div>
     </StyledSnackbarContent>
   );

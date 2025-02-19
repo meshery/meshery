@@ -228,13 +228,13 @@ Assess your cloud native infrastructure configuration against deployment and ope
 
 <h3>Visually and collaboratively manage your infrastructure</h3>
 <br /><br />
-<p>Meshery uses [relationships](https://docs.meshery.io/concepts/logical/relationships) to define how and when components interrelate with one another. Meshery supports a variety of relationships between components. These relationships are categorized into two types: semantic and non-semantic.</p>
+<p>Meshery uses <a href="https://docs.meshery.io/concepts/logical/relationships">relationships</a> to define how and when components interrelate with one another. Meshery supports a variety of relationships between components. These relationships are categorized into two types: semantic and non-semantic.</p>
 <br /><br />
 
 <h3>Manage your connections with Environments</h3>
 <br /><br />  <img src=".github/assets/images/readme/environments.gif" class="screenshot"
                         alt="Multi-cluster Kubernetes Manager" loading="lazy" />
-<p>[Environments](https://docs.meshery.io/concepts/logical/environments) make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis.</p>
+<p><a href="https://docs.meshery.io/concepts/logical/environments">Environments</a>  make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis.</p>
 <br /><br />
 
 
@@ -270,7 +270,7 @@ Assess your cloud native infrastructure configuration against deployment and ope
 <h3>Access the Cloud Native Patterns for Kubernetes</h3>
 <br /><br />
 <img src = ".github/assets/images/readme/smp-video-poster-play.png">
-<p>Design and manage all of your cloud native infrastructure using the design configurator in Meshery or start from a template using the patterns from the [catalog](https://meshery.io/catalog).
+<p>Design and manage all of your cloud native infrastructure using the design configurator in Meshery or start from a template using the patterns from the <a href="https://meshery.io/catalog">catalog</a>
 </p>
 <br /><br />
 

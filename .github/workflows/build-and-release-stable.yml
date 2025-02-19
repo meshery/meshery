@@ -142,7 +142,7 @@ jobs:
       - name: goreleaser with tag
         uses: goreleaser/goreleaser-action@v6
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
+          GITHUB_TOKEN: ${{ secrets.RELEASEDRAFTER_PAT }}
           RELEASE_CHANNEL: "stable"
         with:
           version: 2
