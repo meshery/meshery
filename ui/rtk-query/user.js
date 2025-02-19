@@ -18,6 +18,7 @@ export const userApi = api
       getUserById: builder.query({
         query: (id) => `user/profile/${id}`,
         method: 'GET',
+        providesTags: [Tags.USER_PREF],
       }),
       getToken: builder.query({
         query: () => `token`,
