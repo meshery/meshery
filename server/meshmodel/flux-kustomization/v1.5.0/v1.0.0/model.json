@@ -1,0 +1,44 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "name": "flux-kustomization",
+  "displayName": "Flux Kustomization",
+  "status": "ignored",
+  "registrant": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "name": "Github",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "type": "registry",
+    "sub_type": "",
+    "kind": "github",
+    "status": "discovered",
+    "user_id": "00000000-0000-0000-0000-000000000000",
+    "created_at": "0001-01-01T00:00:00Z",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "deleted_at": "0001-01-01T00:00:00Z"
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "category": {
+    "name": "App Definition and Development"
+  },
+  "subCategory": "Continuous Integration \u0026 Delivery",
+  "metadata": {
+    "capabilities": null,
+    "isAnnotation": false,
+    "primaryColor": "#326ce5",
+    "secondaryColor": "#77B1FF",
+    "shape": "circle",
+    "styleOverrides": "",
+    "svgColor": "",
+    "svgComplete": "",
+    "svgWhite": ""
+  },
+  "model": {
+    "version": "v1.5.0"
+  },
+  "components": null,
+  "relationships": null,
+  "components_count": 0,
+  "relationships_count": 0
+}
