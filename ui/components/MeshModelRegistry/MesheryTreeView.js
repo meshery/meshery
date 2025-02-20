@@ -747,7 +747,7 @@ const MesheryTreeView = ({
                     view,
                   )}. Entries with identical name and version attributes are considered duplicates. [Learn More](https://docs.meshery.io/concepts/logical/models#models)`}
                 >
-                  <IconButton color="primary">
+                  <IconButton>
                     <InfoOutlinedIcon height={20} width={20} />
                   </IconButton>
                 </CustomTextTooltip>
