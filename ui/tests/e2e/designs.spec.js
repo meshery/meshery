@@ -25,6 +25,36 @@ test('Import a design using URI', async ({ page }) => {
   await expect(notification).toBeVisible();
 });
 
+test('Download a design', async ({ page }) => {
+  const designLocator = page.locator(`text=${DESIGN_FILE_NAME}`);
+  await expect(designLocator).toBeVisible();
+
+  await page.locator(`[data-testid="${DESIGN_FILE_NAME}"]`).click();
+
+  await page.getByTestId('Design File').click();
+  const notification1 = page.locator('div.notistack-Snackbar', {
+    hasText: `"${DESIGN_FILE_NAME}" design downloaded`,
+  });
+  await expect(notification1).toBeVisible();
+  await notification1.locator('[data-testid="CloseIcon"]').click();
+  await expect(notification1).toBeHidden();
+
+  await page.getByTestId('Kubernetes Manifest').click();
+  const notification2 = page.locator('div.notistack-Snackbar', {
+    hasText: `"${DESIGN_FILE_NAME}" design downloaded`,
+  });
+  await expect(notification2).toBeVisible();
+  await notification2.locator('[data-testid="CloseIcon"]').click();
+  await expect(notification2).toBeHidden();
+
+  await page.getByTestId('OCI Image').click();
+  const notification3 = page.locator('div.notistack-Snackbar', {
+    hasText: `"${DESIGN_FILE_NAME}" design downloaded`,
+  });
+  await expect(notification3).toBeVisible();
+  await notification3.locator('[data-testid="CloseIcon"]').click();
+});
+
 test('Delete design', async ({ page }) => {
   const designLocator = page.locator(`text=${DESIGN_FILE_NAME}`);
   await expect(designLocator).toBeVisible();

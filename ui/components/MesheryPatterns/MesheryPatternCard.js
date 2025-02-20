@@ -235,6 +235,7 @@ function MesheryPatternCard_({
                   padding: '6px 9px',
                   borderRadius: '8px',
                 }}
+                data-testid={name}
               >
                 <GetAppIcon
                   fill={theme.palette.background.constant.white}
