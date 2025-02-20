@@ -14,9 +14,9 @@ import data.core_utils.new_uuid
 import data.core_utils.object_get_nested
 import data.core_utils.pop_first
 import data.core_utils.to_component_id
+import data.core_utils.truncate_set
 import data.feasibility_evaluation_utils.is_relationship_feasible_from
 import data.feasibility_evaluation_utils.is_relationship_feasible_to
-import data.core_utils.truncate_set
 
 # Module: Alias Relationship Evaluator
 #
@@ -58,8 +58,7 @@ import data.core_utils.truncate_set
 #    - Remove alias component from design file
 #    - Clean up aliased configuration in parent component
 
-
-MAX_ALIASES := 20 
+MAX_ALIASES := 20
 
 # It is unlikely, that Meshery has a use case for supporting relationship.type == "child" aliases in the future.
 is_alias_relationship(relationship) if {
@@ -267,9 +266,7 @@ alias_components_to_add(design_file, alias_relationships) := {action |
 		"id": from.id,
 		"component": {"kind": from.kind},
 		"model": from.model,
-		"metadata": {
-			"isAnnotation":true
-		}
+		"metadata": {"isAnnotation": true},
 	}
 
 	action := {
@@ -308,20 +305,23 @@ action_phase(design_file, relationship_policy_identifier) := result if {
 		is_alias_relationship(rel)
 	}
 
-	components_to_add := truncate_set(alias_components_to_add(design_file, alias_relationships),MAX_ALIASES)
-	relationships_to_add :=  truncate_set({action |
-		some alias_rel in alias_relationships
-		alias_rel.status == "pending"
-		rel := json.patch(alias_rel, [{
-			"op": "replace",
-			"path": "/status",
-			"value": "approved",
-		}])
-		action := {
-			"op": "add_relationship",
-			"value": rel,
-		}
-	},MAX_ALIASES)
+	components_to_add := truncate_set(alias_components_to_add(design_file, alias_relationships), MAX_ALIASES)
+	relationships_to_add := truncate_set(
+		{action |
+			some alias_rel in alias_relationships
+			alias_rel.status == "pending"
+			rel := json.patch(alias_rel, [{
+				"op": "replace",
+				"path": "/status",
+				"value": "approved",
+			}])
+			action := {
+				"op": "add_relationship",
+				"value": rel,
+			}
+		},
+		MAX_ALIASES,
+	)
 
 	# Relationships that are deleted already at the validation phase
 	relationships_to_delete := {action |
