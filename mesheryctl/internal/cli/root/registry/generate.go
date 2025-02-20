@@ -70,7 +70,8 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 		}
 		// Check for the presence of the "server" directory as a marker for the repo root.
 		if _, err := os.Stat(filepath.Join(wd, "server")); os.IsNotExist(err) {
-			return errors.New("Error: it appears you are not running this command from the root of a cloned meshery/meshery repository (missing 'server' directory).\nPlease change directory to the repository root and try again.\nFor more information, see https://docs.meshery.io/project/contributing/contributing-models")
+			errorMsg :="Error: it appears you are not running this command from the root of a cloned meshery/meshery repository (missing 'server' directory).\nPlease change directory to the repository root and try again.\nFor more information, see https://docs.meshery.io/project/contributing/contributing-models"
+			return utils.RegistryError(errorMsg, "generate")
 		}
 
 		const errorMsg = "[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory ] isn't specified\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nRun 'mesheryctl registry generate --help' to see detailed help message"
