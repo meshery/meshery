@@ -50,7 +50,7 @@ var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "Generate Models",
 	Long:  "Prerequisite: Excecute this command from the root of a meshery/meshery repo fork.\n\nGiven a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories.\n\nGenerated Model files are written to local filesystem under `/server/models/<model-name>`.",
-	Example: `
+	Example: `fu
 // Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred $CRED
 // Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
@@ -70,8 +70,8 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 		}
 		// Check for the presence of the "server" directory as a marker for the repo root.
 		if _, err := os.Stat(filepath.Join(wd, "server")); os.IsNotExist(err) {
-			errorMsg :="Error: it appears you are not running this command from the root of a cloned meshery/meshery repository (missing 'server' directory).\nPlease change directory to the repository root and try again.\nFor more information, see https://docs.meshery.io/project/contributing/contributing-models"
-			return utils.RegistryError(errorMsg, "generate")
+			errorMsg := "Error: it appears you are not running this command from the root of a cloned meshery/meshery repository (missing 'server' directory).\nPlease change directory to the repository root and try again.\nFor more information, see https://docs.meshery.io/project/contributing/contributing-models"
+			return errors.New(utils.RegistryError(errorMsg, "generate"))
 		}
 
 		const errorMsg = "[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory ] isn't specified\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nRun 'mesheryctl registry generate --help' to see detailed help message"
