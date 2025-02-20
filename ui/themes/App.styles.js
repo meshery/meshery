@@ -112,7 +112,7 @@ export const ThemeResponsiveSnackbar = forwardRef((props, forwardedRef) => {
       case 'info':
         return <Info {...iconProps} />;
       case 'loading':
-        return <CircularProgress size={24} {...iconProps} />;
+        return <CircularProgress size={24} style={{ marginRight: '0.75rem' }} />;
       default:
         return null;
     }
