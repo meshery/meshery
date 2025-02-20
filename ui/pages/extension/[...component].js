@@ -113,21 +113,17 @@ function RemoteExtension(props) {
           updateExtensionType({ extensionType: ext.name });
           let extensions = ExtensionPointSchemaValidator(ext.name)(cap?.extensions[ext.name]);
           setComponentTitle(getComponentTitleFromPath(extensions, getPath()));
-          setIsLoading(false);
           updatepagetitle({ title: getComponentTitleFromPath(extensions, getPath()) });
           updatebetabadge({ isBeta: getComponentIsBetaFromPath(extensions, getPath()) });
         }
       });
     }
-    // else, show signup card
-    setIsLoading(false);
   };
 
   useEffect(() => {
     return () => {
       updateExtensionType({ extensionType: null });
       setComponentTitle('');
-      setIsLoading(true);
     };
   }, []);
 
