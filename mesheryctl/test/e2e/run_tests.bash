@@ -16,8 +16,8 @@ source ./setup_suite.bash
 ## server is started
 bats $FORMATTER prerequisites/*.bats
 
-# make server available for the following tests
-kubectl port-forward -n meshery service/meshery 9081:9081 &
+# make server available for the following tests by port-forwarding
+# kubectl port-forward -n meshery service/meshery 9081:9081 &
 
 # Run the tests
 bats $FORMATTER *-*/*.bats
