@@ -17,7 +17,7 @@ import Moment from 'react-moment';
 import FlipCard from '../FlipCard';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import FullscreenExit from '@mui/icons-material/FullscreenExit';
-import useStyles, {
+import {
   BottomContainer,
   CardBackGrid,
   CatalogCardButtons,
@@ -26,6 +26,7 @@ import useStyles, {
   GridBtnText,
   GridCloneBtnText,
   CardHeaderRight,
+  StyledCodeMirrorWrapper,
 } from '../MesheryPatterns/Cards.styles';
 import YAMLDialog from '../YamlDialog';
 import CloneIcon from '../../public/static/img/CloneIcon';
@@ -82,7 +83,6 @@ function FiltersCard_({
 
   const catalogContentKeys = Object.keys(description);
   const catalogContentValues = Object.values(description);
-  const classes = useStyles();
   const theme = useTheme();
 
   return (
@@ -254,20 +254,21 @@ function FiltersCard_({
               <Divider variant="fullWidth" light />
 
               {catalogContentKeys.length === 0 ? (
-                <CodeMirror
-                  value={showCode && filter_resource}
-                  className={fullScreen ? classes.fullScreenCodeMirror : ''}
-                  options={{
-                    theme: 'material',
-                    lineNumbers: true,
-                    lineWrapping: true,
-                    gutters: ['CodeMirror-lint-markers'],
-                    // @ts-ignore
-                    lint: true,
-                    mode: 'text/x-yaml',
-                  }}
-                  onChange={(_, data, val) => setYaml(val)}
-                />
+                <StyledCodeMirrorWrapper fullScreen={fullScreen}>
+                  <CodeMirror
+                    value={showCode && filter_resource}
+                    options={{
+                      theme: 'material',
+                      lineNumbers: true,
+                      lineWrapping: true,
+                      gutters: ['CodeMirror-lint-markers'],
+                      // @ts-ignore
+                      lint: true,
+                      mode: 'text/x-yaml',
+                    }}
+                    onChange={(_, data, val) => setYaml(val)}
+                  />
+                </StyledCodeMirrorWrapper>
               ) : (
                 catalogContentKeys.map((title, index) => (
                   <>

@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
-import NoSsr from '@mui/material/NoSsr';
 import {
   Button,
   Divider,
@@ -12,6 +11,7 @@ import {
   useTheme,
   gray,
   charcoal,
+  NoSsr,
 } from '@layer5/sistent';
 import PropTypes from 'prop-types';
 import { useRouter } from 'next/router';

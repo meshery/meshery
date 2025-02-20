@@ -11,8 +11,7 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { NavigationNavbar } from '@layer5/sistent';
-import { Popover } from '@mui/material';
+import { NavigationNavbar, Popover } from '@layer5/sistent';
 import { UsesSistent } from './SistentWrapper';
 import { IconButtonAvatar } from './Header.styles';
 

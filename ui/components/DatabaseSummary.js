@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { updateProgress } from '../lib/store';
-import { Button, Typography } from '@layer5/sistent';
+import { Button, Typography, ResponsiveDataTable } from '@layer5/sistent';
 import { Provider, connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import PropTypes from 'prop-types';
@@ -8,7 +8,6 @@ import resetDatabase from './graphql/queries/ResetDatabaseQuery';
 import debounce from '../utils/debounce';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
-import ResponsiveDataTable from '../utils/data-table';
 import SearchBar from '../utils/custom-search';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import { store } from '../store';

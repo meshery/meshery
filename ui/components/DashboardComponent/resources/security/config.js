@@ -3,7 +3,7 @@ import { timeAgo } from '../../../../utils/k8s-utils';
 import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
 import { Title } from '../../view';
-import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
+import { TooltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
@@ -92,7 +92,7 @@ export const SecurityTypesConfig = (
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   iconSrc={
                     connectionMetadataState
@@ -229,7 +229,7 @@ export const SecurityTypesConfig = (
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   iconSrc={
                     connectionMetadataState
@@ -335,7 +335,7 @@ export const SecurityTypesConfig = (
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   iconSrc={
                     connectionMetadataState
@@ -441,7 +441,7 @@ export const SecurityTypesConfig = (
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   iconSrc={
                     connectionMetadataState
@@ -547,7 +547,7 @@ export const SecurityTypesConfig = (
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   iconSrc={
                     connectionMetadataState

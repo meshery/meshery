@@ -1,6 +1,5 @@
 //@ts-check
 import React, { useEffect, useState, useRef } from 'react';
-import { NoSsr, Fade } from '@mui/material';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import MUIDataTable from 'mui-datatables';
@@ -22,7 +21,17 @@ import { TwitterShareButton, LinkedinShareButton, FacebookShareButton } from 're
 import subscribePerformanceProfiles from '../graphql/subscriptions/PerformanceResultSubscription';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
-import { Tab, Tabs, IconButton, Paper, Popper, ClickAwayListener, useTheme } from '@layer5/sistent';
+import {
+  Tab,
+  Tabs,
+  IconButton,
+  Paper,
+  Popper,
+  ClickAwayListener,
+  useTheme,
+  NoSsr,
+  Fade,
+} from '@layer5/sistent';
 import { UsesSistent } from '../SistentWrapper';
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
 import { clearResultsSelection, updateProgress, updateResultsSelection } from '../../lib/store';

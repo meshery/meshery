@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
 import { connect, Provider } from 'react-redux';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import { bindActionCreators } from 'redux';
 import { CustomTooltip, AppBar, Typography, styled, Tabs, Tab, Paper, Grid } from '@layer5/sistent';
 import DashboardMeshModelGraph from './DashboardComponent/charts/DashboardMeshModelGraph';

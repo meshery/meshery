@@ -1,6 +1,5 @@
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
-import { Grid, Typography } from '@layer5/sistent';
-import { TableCell, TableSortLabel } from '@mui/material';
+import { Grid, Typography, TableCell, TableSortLabel } from '@layer5/sistent';
 
 export const SortableTableCell = ({ index, columnData, columnMeta, onSort, icon, tooltip }) => {
   return (

@@ -7,7 +7,7 @@ import Head from 'next/head';
 import { promisifiedDataFetch } from '../../lib/data-fetch';
 import { ctxUrl } from '../../utils/multi-ctx';
 import React, { useEffect, useState } from 'react';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 
 const UserPref = (props) => {
   const [anonymousStats, setAnonymousStats] = useState(undefined);

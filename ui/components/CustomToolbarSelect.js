@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { IconButton, Tooltip, styled } from '@layer5/sistent';
 import IndeterminateCheckBoxIcon from '@mui/icons-material/IndeterminateCheckBox';
 import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import GetAppIcon from '@mui/icons-material/GetApp';

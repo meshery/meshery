@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme } from '@layer5/sistent';
 import createCache from '@emotion/cache';
 
 // Create a custom theme

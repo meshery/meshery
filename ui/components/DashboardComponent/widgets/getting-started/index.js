@@ -57,6 +57,7 @@ const GetStarted = (props) => {
         )}
         useLazyGetTeamsQuery={useLazyGetTeamsQuery}
         embedDesignPath="/static/img/getting-started/embedded-design-edge-stack.js"
+        isFromMeshery={true}
       />
     </>
   );

@@ -2,7 +2,6 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
-import { Autocomplete, NoSsr, Radio } from '@mui/material';
 import dataFetch from '../lib/data-fetch';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -22,6 +21,9 @@ import {
   CustomTooltip,
   useTheme,
   styled,
+  Autocomplete,
+  NoSsr,
+  Radio,
 } from '@layer5/sistent';
 
 const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];

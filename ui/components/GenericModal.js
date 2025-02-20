@@ -1,6 +1,5 @@
 import React from 'react';
-import { Modal, Backdrop, Box, styled } from '@layer5/sistent';
-import { Fade } from '@mui/material';
+import { Modal, Backdrop, Box, styled, Fade } from '@layer5/sistent';
 
 const StyledModal = styled(Modal)({
   display: 'flex',

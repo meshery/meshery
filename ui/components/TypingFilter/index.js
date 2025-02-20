@@ -6,10 +6,10 @@ import {
   List,
   Popper,
   useTheme,
+  Fade,
 } from '@layer5/sistent';
 import { Description, DropDown, InputField, Item, Label, Root } from './style';
 import { UsesSistent } from '../SistentWrapper';
-import { Fade } from '@mui/material';
 import ContentFilterIcon from '../../assets/icons/ContentFilterIcon';
 import { useEffect, useReducer, useRef, useState } from 'react';
 import CrossCircleIcon from '../../assets/icons/CrossCircleIcon';

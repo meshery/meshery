@@ -9,7 +9,7 @@ import {
   Popper,
   styled,
 } from '@layer5/sistent';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import {
   fortioResultToJsChartData,
   makeChart,

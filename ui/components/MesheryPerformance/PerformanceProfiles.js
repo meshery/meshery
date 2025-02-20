@@ -3,7 +3,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import Moment from 'react-moment';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
-import { TableCell, TableRow } from '@mui/material';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import AddIcon from '@mui/icons-material/AddCircleOutline';
 import EditIcon from '@mui/icons-material/Edit';
@@ -20,6 +19,8 @@ import {
   IconButton,
   useTheme,
   CustomTooltip,
+  TableCell,
+  TableRow,
 } from '@layer5/sistent';
 import MesheryPerformanceComponent from './index';
 import PerformanceProfileGrid from './PerformanceProfileGrid';

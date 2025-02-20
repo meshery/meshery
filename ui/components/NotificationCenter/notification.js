@@ -10,6 +10,8 @@ import {
   Typography,
   useTheme,
   Checkbox,
+  Popover,
+  alpha,
 } from '@layer5/sistent';
 import {
   OptionList,
@@ -26,8 +28,6 @@ import {
   Summary,
 } from './notificationCenter.style';
 import { UsesSistent } from '../SistentWrapper';
-import { Popover } from '@mui/material';
-import { alpha } from '@mui/material';
 import { SEVERITY, SEVERITY_STYLE, STATUS } from './constants';
 import { iconLarge, iconMedium } from '../../css/icons.styles';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
