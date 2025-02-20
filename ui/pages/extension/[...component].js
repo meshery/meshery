@@ -59,8 +59,6 @@ function matchComponentURI(extensionURI, currentURI) {
 
 function RemoteExtension(props) {
   const [componentTitle, setComponentTitle] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [capabilitiesRegistryObj, setCapabilitiesRegistryObj] = useState(null);
 
   const {
     extensionType,
@@ -73,12 +71,11 @@ function RemoteExtension(props) {
     router,
   } = props;
 
-  const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
+  const { data: capabilitiesData, isLoading } = useGetProviderCapabilitiesQuery();
 
   useEffect(() => {
     if (capabilitiesData) {
       updatepagepath({ path: getPath() });
-      setCapabilitiesRegistryObj(capabilitiesData);
       updateCapabilities({ capabilitiesRegistry: capabilitiesData });
       renderExtension(capabilitiesData);
     }
@@ -131,7 +128,6 @@ function RemoteExtension(props) {
       updateExtensionType({ extensionType: null });
       setComponentTitle('');
       setIsLoading(true);
-      setCapabilitiesRegistryObj(null);
     };
   }, []);
 
