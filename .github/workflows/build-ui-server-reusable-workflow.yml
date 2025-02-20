@@ -1,7 +1,7 @@
 name: Re-usable Workflow - Build UI and Server
 on:
   workflow_call:
-    secrets:
+    secrets: {}
 
 jobs:
   build-backend:
