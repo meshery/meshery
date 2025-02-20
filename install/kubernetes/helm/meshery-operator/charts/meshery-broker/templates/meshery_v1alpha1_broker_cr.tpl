@@ -1,4 +1,4 @@
-apiVersion: meshery.layer5.io/v1alpha1
+apiVersion: meshery.io/v1alpha1
 kind: Broker
 metadata:
   name: {{ .Values.name }}

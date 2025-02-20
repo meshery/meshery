@@ -8,8 +8,15 @@ docURL: https://docs.meshery.io/extensibility/integrations/confidential containe
 description: 
 integrations-category: Runtime
 integrations-subcategory: Security & Compliance
-registrant: Artifact Hub
+registrant: GitHub
 components: 
+- name: cc-runtime
+  colorIcon: assets/img/integrations/confidential-containers/components/cc-runtime/icons/color/cc-runtime-color.svg
+  whiteIcon: assets/img/integrations/confidential-containers/components/cc-runtime/icons/white/cc-runtime-white.svg
+  description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Allows cloud native application owners to enforce application security requirements.",
   "Transparent deployment of unmodified containers.",

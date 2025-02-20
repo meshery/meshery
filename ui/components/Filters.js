@@ -1,42 +1,27 @@
 /* eslint-disable react/display-name */
 import React, { useState, useEffect, useRef } from 'react';
-import { withStyles } from '@material-ui/core/styles';
-import {
-  NoSsr,
-  TableCell,
-  IconButton,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Divider,
-  Typography,
-  Button,
-} from '@material-ui/core';
+import { NoSsr } from '@layer5/sistent';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
-import DeleteIcon from '@material-ui/icons/Delete';
+import DeleteIcon from '@mui/icons-material/Delete';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import Moment from 'react-moment';
-import CloseIcon from '@material-ui/icons/Close';
-import EditIcon from '@material-ui/icons/Edit';
+import CloseIcon from '@mui/icons-material/Close';
+import EditIcon from '@mui/icons-material/Edit';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
-import dataFetch from '../lib/data-fetch';
-import PromptComponent from './PromptComponent';
-import FullscreenIcon from '@material-ui/icons/Fullscreen';
-import FullscreenExitIcon from '@material-ui/icons/FullscreenExit';
+import _PromptComponent from './PromptComponent';
+import FullscreenIcon from '@mui/icons-material/Fullscreen';
+import FullscreenExitIcon from '@mui/icons-material/FullscreenExit';
 import { FILE_OPS, MesheryFiltersCatalog, VISIBILITY } from '../utils/Enum';
 import ViewSwitch from './ViewSwitch';
 import FiltersGrid from './MesheryFilters/FiltersGrid';
 import { trueRandom } from '../lib/trueRandom';
-import GetAppIcon from '@material-ui/icons/GetApp';
-import PublicIcon from '@material-ui/icons/Public';
-import { ctxUrl } from '../utils/multi-ctx';
-import ConfirmationMsg from './ConfirmationModal';
-import PublishIcon from '@material-ui/icons/Publish';
+import GetAppIcon from '@mui/icons-material/GetApp';
+import PublicIcon from '@mui/icons-material/Public';
+import PublishIcon from '@mui/icons-material/Publish';
 import downloadContent from '../utils/fileDownloader';
 import CloneIcon from '../public/static/img/CloneIcon';
-import SaveIcon from '@material-ui/icons/Save';
+import SaveIcon from '@mui/icons-material/Save';
 import ConfigurationSubscription from './graphql/subscriptions/ConfigurationSubscription';
 import fetchCatalogFilter from './graphql/queries/CatalogFilterQuery';
 import { iconMedium } from '../css/icons.styles';
@@ -53,14 +38,26 @@ import {
   ResponsiveDataTable,
   SearchBar,
   UniversalFilter,
+  importFilterSchema,
+  importFilterUiSchema,
+  publishCatalogItemSchema,
+  publishCatalogItemUiSchema,
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogActions,
+  Divider,
+  Typography,
+  Button,
+  Box,
+  styled,
+  PROMPT_VARIANTS,
 } from '@layer5/sistent';
-import useStyles from '../assets/styles/general/tool.styles';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
-import { Box } from '@mui/material';
 import InfoModal from './Modals/Information/InfoModal';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
-import { SortableTableCell } from './connections/common/index.js';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import { DefaultTableCell, SortableTableCell } from './connections/common/index.js';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from './General/error-404/index';
@@ -77,64 +74,60 @@ import {
 } from '@/rtk-query/filter';
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 
-const styles = (theme) => ({
-  grid: {
-    padding: theme.spacing(2),
-  },
-  tableHeader: {
-    fontWeight: 'bolder',
-    fontSize: 18,
-  },
-  createButton: {
-    width: 'fit-content',
-    alignSelf: 'flex-start',
-  },
-  viewSwitchButton: {
-    justifySelf: 'flex-end',
-    paddingLeft: '1rem',
-  },
-  ymlDialogTitle: {
-    display: 'flex',
-    alignItems: 'center',
-  },
-  searchWrapper: {
-    justifySelf: 'flex-end',
-    marginLeft: 'auto',
-    paddingLeft: '1rem',
-    display: 'flex',
-  },
+const CreateButton = styled(Button)(() => ({
+  width: 'fit-content',
+  alignSelf: 'flex-start',
+  placeSelf: 'center',
+}));
 
-  ymlDialogTitleText: {
-    flexGrow: 1,
-  },
-  fullScreenCodeMirror: {
+const ViewSwitchButton = styled('div')(() => ({
+  justifySelf: 'flex-end',
+  paddingLeft: '1rem',
+}));
+
+const YmlDialogTitle = styled(DialogTitle)(() => ({
+  display: 'flex',
+  alignItems: 'center',
+}));
+
+const YmlDialogTitleText = styled(Typography)(() => ({
+  flexGrow: 1,
+}));
+
+const FullScreenCodeMirrorWrapper = styled('div')(() => ({
+  height: '100%',
+  '& .CodeMirror': {
+    minHeight: '300px',
     height: '100%',
-    '& .CodeMirror': {
-      minHeight: '300px',
-      height: '100%',
-    },
   },
-  visibilityImg: {
-    filter: theme.palette.secondary.img,
+}));
+
+const BtnText = styled('span')(({ theme }) => ({
+  display: 'block',
+  [theme.breakpoints.down('700')]: {
+    display: 'none',
   },
-  btnText: {
-    display: 'block',
-    '@media (max-width: 700px)': {
-      display: 'none',
-    },
-  },
-});
+}));
+
+const ActionsBox = styled(Box)(() => ({
+  display: 'flex',
+}));
 
 function TooltipIcon({ children, onClick, title }) {
   return (
-    <CustomTooltip title={title} placement="top" interactive>
-      <IconButton onClick={onClick}>{children}</IconButton>
-    </CustomTooltip>
+    <UsesSistent>
+      <CustomTooltip title={title} placement="top" interactive>
+        <div>
+          <IconButton onClick={onClick}>{children}</IconButton>
+        </div>
+      </CustomTooltip>
+    </UsesSistent>
   );
 }
 
-function YAMLEditor({ filter, onClose, onSubmit, classes }) {
+function YAMLEditor({ filter, onClose, onSubmit }) {
   const [fullScreen, setFullScreen] = useState(false);
 
   const toggleFullScreen = () => {
@@ -162,29 +155,32 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
       fullScreen={fullScreen}
       fullWidth={!fullScreen}
     >
-      <DialogTitle disableTypography id="filter-dialog-title" className={classes.ymlDialogTitle}>
-        <Typography variant="h6" className={classes.ymlDialogTitleText}>
-          {filter.name}
-        </Typography>
-        <TooltipIcon
-          title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
-          onClick={toggleFullScreen}
+      <YmlDialogTitle>
+        <DialogTitle
+          disableTypography
+          id="filter-dialog-title"
+          style={{ width: '100%', display: 'flex' }}
         >
-          {fullScreen ? (
-            <FullscreenExitIcon style={iconMedium} />
-          ) : (
-            <FullscreenIcon style={iconMedium} />
-          )}
-        </TooltipIcon>
-        <TooltipIcon title="Exit" onClick={onClose}>
-          <CloseIcon style={iconMedium} />
-        </TooltipIcon>
-      </DialogTitle>
+          <YmlDialogTitleText variant="h6">{filter.name}</YmlDialogTitleText>
+          <TooltipIcon
+            title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
+            onClick={toggleFullScreen}
+          >
+            {fullScreen ? (
+              <FullscreenExitIcon style={iconMedium} />
+            ) : (
+              <FullscreenIcon style={iconMedium} />
+            )}
+          </TooltipIcon>
+          <TooltipIcon title="Exit" onClick={onClose}>
+            <CloseIcon style={iconMedium} />
+          </TooltipIcon>
+        </DialogTitle>
+      </YmlDialogTitle>
       <Divider variant="fullWidth" light />
-      <DialogContent>
+      <FullScreenCodeMirrorWrapper>
         <CodeMirror
           value={config}
-          className={fullScreen ? classes.fullScreenCodeMirror : ''}
           options={{
             theme: 'material',
             lineNumbers: true,
@@ -195,7 +191,7 @@ function YAMLEditor({ filter, onClose, onSubmit, classes }) {
           }}
           onChange={(_, data, val) => setYaml(val)}
         />
-      </DialogContent>
+      </FullScreenCodeMirrorWrapper>
       <Divider variant="fullWidth" light />
       <DialogActions>
         <CustomTooltip title="Update Filter">
@@ -246,8 +242,6 @@ function resetSelectedFilter() {
 function MesheryFilters({
   updateProgress,
   user,
-  classes,
-  selectedK8sContexts,
   catalogVisibility,
   // toggleCatalogContent,
 }) {
@@ -260,9 +254,7 @@ function MesheryFilters({
   const [filters, setFilters] = useState([]);
   const [selectedFilter, setSelectedFilter] = useState(resetSelectedFilter());
   const [selectedRowData, setSelectedRowData] = useState(null);
-  const [setExtensionPreferences] = useState({});
   const [canPublishFilter, setCanPublishFilter] = useState(false);
-  const [importSchema, setImportSchema] = useState({});
   const [publishSchema, setPublishSchema] = useState({});
   const { width } = useWindowDimensions();
   const [meshModels, setMeshModels] = useState([]);
@@ -270,26 +262,15 @@ function MesheryFilters({
     /**  @type {TypeView} */
     ('grid'),
   );
-  const FILTER_URL = '/api/filter';
-  const DEPLOY_URL = FILTER_URL + '/deploy';
 
   //hooks
   const { notify } = useNotification();
-  const StyleClass = useStyles();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
 
   const [infoModal, setInfoModal] = useState({
     open: false,
     ownerID: '',
     selectedResource: {},
-  });
-
-  const [modalOpen, setModalOpen] = useState({
-    open: false,
-    filter_file: null,
-    deploy: false,
-    name: '',
-    count: 0,
   });
 
   const [importModal, setImportModal] = useState({
@@ -316,7 +297,7 @@ function MesheryFilters({
     pagesize: pageSize,
     search: search,
     order: sortOrder,
-    visibility: JSON.stringify([visibilityFilter]),
+    visibility: visibilityFilter ? JSON.stringify([visibilityFilter]) : '',
   });
 
   const { data: capabilitiesData } = useGetProviderCapabilitiesQuery();
@@ -386,45 +367,23 @@ function MesheryFilters({
    * Checking whether users are signed in under a provider that doesn't have
    * publish filter capability and setting the canPublishFilter state accordingly
    */
-  useEffect(() => {
-    dataFetch(
-      '/api/schema/resource/filter',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        setImportSchema(result);
-      },
-      handleError(ACTION_TYPES.SCHEMA_FETCH),
-    );
-    dataFetch(
-      '/api/schema/resource/publish',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      async (result) => {
-        try {
-          const { models } = await getMeshModels();
-          const modelNames = _.uniq(models?.map((model) => model.displayName));
-          modelNames.sort();
+  useEffect(async () => {
+    try {
+      const { models } = await getMeshModels();
+      const modelNames = _.uniq(models?.map((model) => model.displayName));
+      modelNames.sort();
 
-          // Modify the schema using the utility function
-          const modifiedSchema = modifyRJSFSchema(
-            result.rjsfSchema,
-            'properties.compatibility.items.enum',
-            modelNames,
-          );
-          setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: result.uiSchema });
-          setMeshModels(models);
-        } catch (err) {
-          console.error(err);
-          setPublishSchema(result);
-        }
-      },
-      handleError(ACTION_TYPES.SCHEMA_FETCH),
-    );
+      // Modify the schema using the utility function
+      const modifiedSchema = modifyRJSFSchema(
+        publishCatalogItemSchema,
+        'properties.compatibility.items.enum',
+        modelNames,
+      );
+      setPublishSchema({ rjsfSchema: modifiedSchema, uiSchema: publishCatalogItemUiSchema });
+      setMeshModels(models);
+    } catch (err) {
+      handleError(ACTION_TYPES.SCHEMA_FETCH);
+    }
 
     if (capabilitiesData) {
       const capabilitiesRegistry = capabilitiesData;
@@ -479,7 +438,7 @@ function MesheryFilters({
         let response = await modalRef.current.show({
           title: `Unpublish Catalog item?`,
           subtitle: `Are you sure that you want to unpublish "${filter?.name}"?`,
-          options: ['Yes', 'No'],
+          primaryOption: 'Yes',
           showInfoIcon: `Unpublishing a catolog item removes the item from the public-facing catalog (a public website accessible to anonymous visitors at meshery.io/catalog). The catalog item's visibility will change to either public (or private with a subscription). The ability to for other users to continue to access, edit, clone and collaborate on your content depends upon the assigned visibility level (public or private). Prior collaborators (users with whom you have shared your catalog item) will retain access. However, you can always republish it whenever you want.  Remember: unpublished catalog items can still be available to other users if that item is set to public visibility. For detailed information, please refer to the documentation https://docs.meshery.io/concepts/designs.`,
         });
         if (response === 'Yes') {
@@ -535,32 +494,11 @@ function MesheryFilters({
   //   );
   // };
 
-  const fetchUserPrefs = () => {
-    dataFetch(
-      '/api/user/prefs',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          setExtensionPreferences(result?.usersExtensionPreferences);
-        }
-      },
-      (err) => console.error(err),
-    );
-  };
-
   // const handleCatalogVisibility = () => {
   //   handleCatalogPreference(!catalogVisibilityRef.current);
   //   catalogVisibilityRef.current = !catalogVisibility;
   //   toggleCatalogContent({ catalogVisibility: !catalogVisibility });
   // };
-
-  useEffect(() => {
-    fetchUserPrefs();
-    handleSetFilters(filters);
-  }, [catalogVisibility]);
 
   useEffect(() => {
     catalogVisibilityRef.current = catalogVisibility;
@@ -584,31 +522,6 @@ function MesheryFilters({
       disposeConfSubscriptionRef.current?.dispose();
     };
   }, []);
-
-  const handleDeploy = (filter_file, name) => {
-    dataFetch(
-      ctxUrl(DEPLOY_URL, selectedK8sContexts),
-      { credentials: 'include', method: 'POST', body: filter_file },
-      () => {
-        console.log('FilterFile Deploy API', `/api/filter/deploy`);
-        notify({ message: `"${name}" filter deployed`, event_type: EVENT_TYPES.SUCCESS });
-        updateProgress({ showProgress: false });
-      },
-      handleError(ACTION_TYPES.DEPLOY_FILTERS),
-    );
-  };
-
-  const handleUndeploy = (filter_file, name) => {
-    dataFetch(
-      ctxUrl(DEPLOY_URL, selectedK8sContexts),
-      { credentials: 'include', method: 'DELETE', body: filter_file },
-      () => {
-        updateProgress({ showProgress: false });
-        notify({ message: `"${name}" filter undeployed`, event_type: EVENT_TYPES.SUCCESS });
-      },
-      handleError(ACTION_TYPES.UNDEPLOY_FILTERS),
-    );
-  };
 
   const handlePublish = (formData) => {
     const compatibilityStore = _.uniqBy(meshModels, (model) => _.toLower(model.displayName))
@@ -699,11 +612,15 @@ function MesheryFilters({
       disposeConfSubscriptionRef.current.dispose();
     }
     const configurationSubscription = ConfigurationSubscription(
-      (result) => {
-        setPage(result.configuration?.filters?.page || 0);
-        setPageSize(result.configuration?.filters?.page_size || 0);
-        setCount(result.configuration?.filters?.total_count || 0);
-        handleSetFilters(result.configuration?.filters?.filters);
+      () => {
+        /**
+         * We are not using filter subscription and this code is commented to prevent
+         * unnecessary state updates
+         */
+        // setPage(result.configuration?.filters?.page || 0);
+        // setPageSize(result.configuration?.filters?.page_size || 10);
+        // setCount(result.configuration?.filters?.total_count || 0);
+        // handleSetFilters(result.configuration?.filters?.filters);
       },
       {
         applicationSelector: {
@@ -729,15 +646,6 @@ function MesheryFilters({
     disposeConfSubscriptionRef.current = configurationSubscription;
   };
 
-  const handleModalClose = () => {
-    setModalOpen({
-      open: false,
-      filter_file: null,
-      name: '',
-      count: 0,
-    });
-  };
-
   function resetSelectedRowData() {
     return () => {
       setSelectedRowData(null);
@@ -749,7 +657,7 @@ function MesheryFilters({
     updateProgress({ showProgress: true });
     if (type === FILE_OPS.DELETE) {
       const response = await showmodal(1);
-      if (response == 'No') {
+      if (response !== 'Delete') {
         updateProgress({ showProgress: false });
         return;
       }
@@ -919,22 +827,9 @@ function MesheryFilters({
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }) {
-          return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
-            </TableCell>
-          );
+        customHeadRender: function CustomHead({ ...column }) {
+          return <DefaultTableCell columnData={column} />;
         },
-        //   customBodyRender: function CustomBody(_, tableMeta, value) {
-        //     const visibility = filters[tableMeta.rowIndex]?.visibility;
-        //     return (
-        //       // <>
-        //       //   <img className={classes.visibilityImg} src={`/static/img/${visibility}.svg`} />
-        //       // </>
-        //       {value}
-        //     );
-        //   },
       },
     },
     {
@@ -944,18 +839,14 @@ function MesheryFilters({
         filter: false,
         sort: false,
         searchable: false,
-        customHeadRender: function CustomHead({ index, ...column }) {
-          return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
-            </TableCell>
-          );
+        customHeadRender: function CustomHead({ ...column }) {
+          return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(_, tableMeta) {
           const rowData = filters[tableMeta.rowIndex];
           const visibility = filters[tableMeta.rowIndex]?.visibility;
           return (
-            <Box
+            <ActionsBox
               sx={{
                 display: 'flex',
               }}
@@ -970,7 +861,7 @@ function MesheryFilters({
                   }}
                   disabled={!CAN(keys.CLONE_WASM_FILTER.action, keys.CLONE_WASM_FILTER.subject)}
                 >
-                  <CloneIcon fill="currentColor" className={classes.iconPatt} />
+                  <CloneIcon fill="currentColor" />
                 </TooltipIcon>
               ) : (
                 <TooltipIcon
@@ -1021,7 +912,7 @@ function MesheryFilters({
                   <PublicIcon fill="#F91313" data-cy="unpublish-button" />
                 </TooltipIcon>
               )}
-            </Box>
+            </ActionsBox>
           );
         },
       },
@@ -1037,12 +928,11 @@ function MesheryFilters({
   async function showmodal(count) {
     let response = await modalRef.current.show({
       title: `Delete ${count ? count : ''} Filter${count > 1 ? 's' : ''}?`,
-
       subtitle: `Are you sure you want to delete ${count > 1 ? 'these' : 'this'} ${
         count ? count : ''
       } filter${count > 1 ? 's' : ''}?`,
-
-      options: ['Yes', 'No'],
+      primaryOption: 'Delete',
+      variant: PROMPT_VARIANTS.DANGER,
     });
     return response;
   }
@@ -1075,6 +965,10 @@ function MesheryFilters({
     page,
     print: false,
     download: false,
+    sortOrder: {
+      name: 'updated_at',
+      direction: 'desc',
+    },
     textLabels: {
       selectedRows: {
         text: 'filter(s) selected',
@@ -1087,7 +981,7 @@ function MesheryFilters({
     onRowsDelete: async function handleDelete(row) {
       let response = await showmodal(Object.keys(row.lookup).length);
       console.log(response);
-      if (response === 'Yes') {
+      if (response === 'Delete') {
         const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
         fid.forEach((fid) => deleteFilter(fid));
       }
@@ -1251,59 +1145,54 @@ function MesheryFilters({
   };
 
   if (isFiltersLoading) {
-    return <LoadingScreen animatedIcon="AnimatedFilter" message={`Loading Filters...`} />;
+    return (
+      <UsesSistent>
+        <LoadingScreen animatedIcon="AnimatedFilter" message={`Loading Filters...`} />
+      </UsesSistent>
+    );
   }
 
   return (
     <>
-      <NoSsr>
-        {CAN(keys.VIEW_FILTERS.action, keys.VIEW_FILTERS.subject) ? (
-          <>
-            {selectedRowData && Object.keys(selectedRowData).length > 0 && (
-              <YAMLEditor
-                filter={selectedRowData}
-                onClose={resetSelectedRowData()}
-                onSubmit={handleSubmit}
-                classes={classes}
-              />
-            )}
-            <div className={StyleClass.toolWrapper}>
-              {width < 600 && isSearchExpanded ? null : (
-                <div style={{ display: 'flex' }}>
-                  {!selectedFilter.show && (filters.length > 0 || viewType === 'table') && (
-                    <div className={classes.createButton}>
-                      <div>
+      <UsesSistent>
+        <NoSsr>
+          {CAN(keys.VIEW_FILTERS.action, keys.VIEW_FILTERS.subject) ? (
+            <>
+              {selectedRowData && Object.keys(selectedRowData).length > 0 && (
+                <YAMLEditor
+                  filter={selectedRowData}
+                  onClose={resetSelectedRowData()}
+                  onSubmit={handleSubmit}
+                />
+              )}
+              <ToolWrapper>
+                {width < 600 && isSearchExpanded ? null : (
+                  <div style={{ display: 'flex' }}>
+                    {!selectedFilter.show && (filters.length > 0 || viewType === 'table') && (
+                      <CreateButton>
                         <Button
                           aria-label="Add Filter"
                           variant="contained"
                           color="primary"
                           size="large"
-                          // @ts-ignore
                           onClick={handleUploadImport}
-                          style={{ marginRight: '2rem' }}
                           disabled={!CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject)}
                         >
-                          <PublishIcon
-                            style={iconMedium}
-                            className={classes.addIcon}
-                            data-cy="import-button"
-                          />
-                          <span className={classes.btnText}> Import Filters </span>
+                          <PublishIcon style={iconMedium} data-cy="import-button" />
+                          <BtnText> Import Filters </BtnText>
                         </Button>
-                      </div>
-                    </div>
-                  )}
-                  <div style={{ jdisplay: 'flex' }}>
-                    {/* <CatalogFilter
+                      </CreateButton>
+                    )}
+                    <ViewSwitchButton style={{ jdisplay: 'flex' }}>
+                      {/* <CatalogFilter
                       catalogVisibility={catalogVisibility}
                       handleCatalogVisibility={handleCatalogVisibility}
                       classes={classes}
                     /> */}
+                    </ViewSwitchButton>
                   </div>
-                </div>
-              )}
-              <div className={classes.searchWrapper} style={{ display: 'flex' }}>
-                <UsesSistent>
+                )}
+                <div style={{ display: 'flex', alignItems: 'center' }}>
                   <SearchBar
                     onSearch={(value) => {
                       setSearch(value);
@@ -1332,111 +1221,89 @@ function MesheryFilters({
                       customToolsProps={{ columnVisibility, setColumnVisibility }}
                     />
                   )}
-                </UsesSistent>
 
-                {!selectedFilter.show && (
-                  <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
-                )}
-              </div>
-            </div>
-            {!selectedFilter.show && viewType === 'table' && (
-              <UsesSistent>
+                  {!selectedFilter.show && (
+                    <ViewSwitch data-cy="table-view" view={viewType} changeView={setViewType} />
+                  )}
+                </div>
+              </ToolWrapper>
+              {!selectedFilter.show && viewType === 'table' && (
                 <ResponsiveDataTable
                   data={filters}
                   columns={columns}
                   tableCols={tableCols}
                   updateCols={updateCols}
                   columnVisibility={columnVisibility}
-                  // @ts-ignore
                   options={options}
-                  className={classes.muiRow}
-                />
-              </UsesSistent>
-            )}
-            {!selectedFilter.show && viewType === 'grid' && (
-              // grid view
-              <FiltersGrid
-                filters={filters}
-                handleDeploy={handleDeploy}
-                handleUndeploy={handleUndeploy}
-                handleSubmit={handleSubmit}
-                canPublishFilter={canPublishFilter}
-                handlePublish={handlePublish}
-                handleUnpublishModal={handleUnpublishModal}
-                handleUploadImport={handleUploadImport}
-                handleClone={handleClone}
-                handleDownload={handleDownload}
-                uploadHandler={uploadHandler}
-                setSelectedFilter={setSelectedFilter}
-                selectedFilter={selectedFilter}
-                pages={Math.ceil(count / pageSize)}
-                importSchema={importSchema}
-                setPage={setPage}
-                selectedPage={page}
-                publishModal={publishModal}
-                setPublishModal={setPublishModal}
-                publishSchema={publishSchema}
-                fetch={() => getFilters()}
-                handleInfoModal={handleInfoModal}
-              />
-            )}
-            <ConfirmationMsg
-              open={modalOpen.open}
-              handleClose={handleModalClose}
-              submit={{
-                deploy: () => handleDeploy(modalOpen.filter_file, modalOpen.name),
-                unDeploy: () => handleUndeploy(modalOpen.filter_file, modalOpen.name),
-              }}
-              isDelete={!modalOpen.deploy}
-              title={modalOpen.name}
-              componentCount={modalOpen.count}
-              tab={modalOpen.deploy ? 2 : 1}
-            />
-            {canPublishFilter &&
-              publishModal.open &&
-              CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject) && (
-                <PublishModal
-                  publishFormSchema={publishSchema}
-                  handleClose={handlePublishModalClose}
-                  title={publishModal.filter?.name}
-                  handleSubmit={handlePublish}
                 />
               )}
-            {importModal.open && CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject) && (
-              <ImportModal
-                importFormSchema={importSchema}
-                handleClose={handleUploadImportClose}
-                handleImportFilter={handleImportFilter}
-              />
-            )}
-            {infoModal.open &&
-              CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject) && (
-                <InfoModal
-                  infoModalOpen={true}
-                  handleInfoModalClose={handleInfoModalClose}
-                  dataName="filters"
-                  selectedResource={infoModal.selectedResource}
-                  resourceOwnerID={infoModal.ownerID}
-                  currentUserID={user?.id}
-                  formSchema={publishSchema}
-                  meshModels={meshModels}
-                  patternFetcher={() => getFilters()}
+              {!selectedFilter.show && viewType === 'grid' && (
+                // grid view
+                <FiltersGrid
+                  filters={filters}
+                  handleSubmit={handleSubmit}
+                  canPublishFilter={canPublishFilter}
+                  handlePublish={handlePublish}
+                  handleUnpublishModal={handleUnpublishModal}
+                  handleUploadImport={handleUploadImport}
+                  handleClone={handleClone}
+                  handleDownload={handleDownload}
+                  uploadHandler={uploadHandler}
+                  setSelectedFilter={setSelectedFilter}
+                  selectedFilter={selectedFilter}
+                  pages={Math.ceil(count / pageSize)}
+                  setPage={setPage}
+                  selectedPage={page}
+                  publishModal={publishModal}
+                  setPublishModal={setPublishModal}
+                  publishSchema={publishSchema}
+                  fetch={() => getFilters()}
+                  handleInfoModal={handleInfoModal}
                 />
               )}
-            <PromptComponent ref={modalRef} />
-          </>
-        ) : (
-          <DefaultError />
-        )}
-      </NoSsr>
+              {canPublishFilter &&
+                publishModal.open &&
+                CAN(keys.PUBLISH_WASM_FILTER.action, keys.PUBLISH_WASM_FILTER.subject) && (
+                  <PublishModal
+                    handleClose={handlePublishModalClose}
+                    title={publishModal.filter?.name}
+                    handleSubmit={handlePublish}
+                  />
+                )}
+              {importModal.open && CAN(keys.IMPORT_FILTER.action, keys.IMPORT_FILTER.subject) && (
+                <ImportModal
+                  handleClose={handleUploadImportClose}
+                  handleImportFilter={handleImportFilter}
+                />
+              )}
+              {infoModal.open &&
+                CAN(keys.DETAILS_OF_WASM_FILTER.action, keys.DETAILS_OF_WASM_FILTER.subject) && (
+                  <InfoModal
+                    handlePublish={handlePublish}
+                    infoModalOpen={true}
+                    handleInfoModalClose={handleInfoModalClose}
+                    dataName="filters"
+                    selectedResource={infoModal.selectedResource}
+                    resourceOwnerID={infoModal.ownerID}
+                    currentUser={user}
+                    formSchema={publishSchema}
+                    meshModels={meshModels}
+                    patternFetcher={() => getFilters()}
+                  />
+                )}
+              <_PromptComponent ref={modalRef} />
+            </>
+          ) : (
+            <DefaultError />
+          )}
+        </NoSsr>
+      </UsesSistent>
     </>
   );
 }
 
 const ImportModal = React.memo((props) => {
-  const { importFormSchema, handleClose, handleImportFilter } = props;
-
-  // const classes = useStyles();
+  const { handleClose, handleImportFilter } = props;
 
   return (
     <UsesSistent>
@@ -1444,18 +1311,14 @@ const ImportModal = React.memo((props) => {
         open={true}
         closeModal={handleClose}
         headerIcon={
-          <Filter
-            fill="#fff"
-            style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-            className={undefined}
-          />
+          <Filter fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
         }
         title="Import Design"
         maxWidth="sm"
       >
         <RJSFModalWrapper
-          schema={importFormSchema.rjsfSchema}
-          uiSchema={importFormSchema.uiSchema}
+          schema={importFilterSchema}
+          uiSchema={importFilterUiSchema}
           handleSubmit={handleImportFilter}
           submitBtnText="Import"
           handleClose={handleClose}
@@ -1466,18 +1329,14 @@ const ImportModal = React.memo((props) => {
 });
 
 const PublishModal = React.memo((props) => {
-  const { publishFormSchema, handleClose, handleSubmit, title } = props;
+  const { handleClose, handleSubmit, title } = props;
 
   return (
     <UsesSistent>
       <SistentModal
         open={true}
         headerIcon={
-          <Filter
-            fill="#fff"
-            style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-            className={undefined}
-          />
+          <Filter fill="#fff" style={{ height: '24px', width: '24px', fonSize: '1.45rem' }} />
         }
         closeModal={handleClose}
         aria-label="catalog publish"
@@ -1485,8 +1344,8 @@ const PublishModal = React.memo((props) => {
         maxWidth="sm"
       >
         <RJSFModalWrapper
-          schema={publishFormSchema.rjsfSchema}
-          uiSchema={publishFormSchema.uiSchema}
+          schema={publishCatalogItemSchema}
+          uiSchema={publishCatalogItemUiSchema}
           submitBtnText="Submit for Approval"
           handleSubmit={handleSubmit}
           helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
@@ -1510,5 +1369,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-// @ts-ignore
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(MesheryFilters));
+export default connect(mapStateToProps, mapDispatchToProps)(MesheryFilters);

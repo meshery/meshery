@@ -1,24 +1,24 @@
+import { useTheme } from '@layer5/sistent';
+
 const ServiceMeshIcon = (props) => {
-  const fill= props.fill ? props.fill : "currentColor"
+  const theme = useTheme();
+  const fill = props.fill ? props.fill : theme.palette.background.constant.white;
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 172.63 184.19"
-      width={props.width ? props.width : "24px"}
-      height={props.height ? props.height : "24px"}
-      fill={props.fill ? props.fill : "currentColor"}
+      width={props.width ? props.width : '24px'}
+      height={props.height ? props.height : '24px'}
+      fill={props.fill ? props.fill : theme.palette.background.constant.white}
       onClick={props.onClick}
       className={props.className}
-      color={props.color ? props.color : "unset"}
-      fontSize={props.fontSize ? props.fontSize : "unset"}
+      color={props.color ? props.color : 'unset'}
+      fontSize={props.fontSize ? props.fontSize : 'unset'}
       style={{ ...props.style }}
-
     >
       <defs>
         <style>
-          {
-          `.cls-1{fill:${fill}}.cls-3{opacity:0.8;fill:none;stroke:${fill};stroke-miterlimit:10;stroke-width:5px}`
-          }
+          {`.cls-1{fill:${fill}}.cls-3{opacity:0.8;fill:none;stroke:${fill};stroke-miterlimit:10;stroke-width:5px}`}
         </style>
       </defs>
       <g id="Layer_2" data-name="Layer 2">
@@ -29,7 +29,7 @@ const ServiceMeshIcon = (props) => {
           />
           <g
             style={{
-              opacity : 0.8,
+              opacity: 0.8,
             }}
           >
             <path
@@ -40,10 +40,7 @@ const ServiceMeshIcon = (props) => {
               d="M120 157.94c-4.78 0-7.17-16.46-9.56-32.91s-4.75-32.92-9.58-32.92"
               className="cls-3"
             />
-            <path
-              d="M100.82 92.09c4.79 0 7.18.09 9.57.17s4.78.17 9.57.17"
-              className="cls-3"
-            />
+            <path d="M100.82 92.09c4.79 0 7.18.09 9.57.17s4.78.17 9.57.17" className="cls-3" />
             <path
               d="M100.82 92.09c4.79 0 7.18.09 9.57.17s4.78.17 9.57.17M146.32 131.64c0-3.31.08-5 .16-6.62s.17-3.32.17-6.64"
               className="cls-3"
@@ -64,7 +61,7 @@ const ServiceMeshIcon = (props) => {
         </g>
       </g>
     </svg>
-  )
-}
+  );
+};
 
-export default ServiceMeshIcon
+export default ServiceMeshIcon;

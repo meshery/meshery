@@ -28,7 +28,7 @@ The `NotificationCenter` component of Meshery UI Switching to Graphql subscripti
 - Robust filtering support inspired by GitHub's notification filtering style.
   - Search is also included.
 - Proper hierarchial presentation of error details, including probable cause and suggested remeditation.
-- Suport for notification status (notifications can be marked as read and unread)
+- Support for notification status (notifications can be marked as read and unread)
   - *Future: Notifications can be acknowledged or resolved.*
 - Event-based notification via Graphql subscription (provided by Meshery Server and any upstream components or externally managed systems, like Kubernetes)
 - Infinite scroll for pagination.

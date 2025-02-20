@@ -1,9 +1,7 @@
 import { isNil, isUndefined } from 'lodash';
 import { useEffect, useState } from 'react';
 import { withRouter } from 'next/router';
-import { extensionStyles as styles } from '../../../css/icons.styles';
-import { Grid, Typography, Switch } from '@material-ui/core';
-import { withStyles } from '@material-ui/core/styles';
+import { CardContainer, FrontSideDescription, ImageWrapper } from '../../../css/icons.styles';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateProgress } from '../../../lib/store';
@@ -13,8 +11,10 @@ import { LARGE_6_MED_12_GRID_STYLE } from '../../../css/grid.style';
 import { promisifiedDataFetch } from '../../../lib/data-fetch';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
+import { Grid, Switch, Typography, useTheme } from '@layer5/sistent';
+import { UsesSistent } from '@/components/SistentWrapper';
 
-const Adapters = ({ updateProgress, classes }) => {
+const Adapters = ({ updateProgress }) => {
   // States.
   const [availableAdapters, setAvailableAdapters] = useState(adaptersList);
 
@@ -25,6 +25,8 @@ const Adapters = ({ updateProgress, classes }) => {
   useEffect(() => {
     handleAdapterSync();
   }, []);
+
+  const theme = useTheme();
 
   // Handlers.
   const handleAdapterSync = async (showLoader = true) => {
@@ -111,67 +113,66 @@ const Adapters = ({ updateProgress, classes }) => {
   // Render.
   return (
     <>
-      {Object.entries(availableAdapters).map(([adapterId, adapter]) => (
-        <Grid item {...LARGE_6_MED_12_GRID_STYLE} key={adapterId}>
-          <div className={classes.card}>
-            <Typography className={classes.frontContent} variant="h5" component="div">
-              Meshery Adapter for {adapter.name}
-            </Typography>
-
-            <Typography className={classes.frontSideDescription} variant="body">
-              <img className={classes.img} src={adapter.imageSrc} />
-              <div
-                style={{
-                  display: 'inline',
-                  position: 'relative',
-                }}
-              >
-                {adapter.description}
-              </div>
-            </Typography>
-
-            <Grid
-              container
-              spacing={2}
-              className={classes.grid}
-              direction="row"
-              justifyContent="space-between"
-              alignItems="baseline"
-              style={{
-                position: 'absolute',
-                paddingRight: '3rem',
-                paddingLeft: '.5rem',
-                bottom: '1.5rem',
-              }}
-            >
-              <Typography variant="subtitle2" style={{ fontStyle: 'italic' }}>
-                <a
-                  href="https://docs.meshery.io/concepts/architecture/adapters"
-                  target="_blank"
-                  rel="noreferrer"
-                  className={classes.link}
-                >
-                  Open Adapter docs
-                </a>
+      <UsesSistent>
+        {Object.entries(availableAdapters).map(([adapterId, adapter]) => (
+          <Grid item {...LARGE_6_MED_12_GRID_STYLE} key={adapterId}>
+            <CardContainer>
+              <Typography variant="h5" component="div">
+                Meshery Adapter for {adapter.name}
               </Typography>
 
-              <div style={{ textAlign: 'right' }}>
-                <Switch
-                  checked={adapter.enabled}
-                  onChange={() => handleToggle(adapter, adapterId)}
-                  name="OperatorSwitch"
-                  color="primary"
-                  classes={{
-                    switchBase: classes.switchBase,
-                    track: classes.track,
-                    checked: classes.checked,
+              <FrontSideDescription variant="body">
+                <ImageWrapper src={adapter.imageSrc} />
+                <div
+                  style={{
+                    display: 'inline',
+                    position: 'relative',
                   }}
-                />
-              </div>
-            </Grid>
-          </div>
-        </Grid>
-      ))}
+                >
+                  {adapter.description}
+                </div>
+              </FrontSideDescription>
+
+              <Grid
+                container
+                spacing={2}
+                direction="row"
+                justifyContent="space-between"
+                alignItems="baseline"
+                style={{
+                  position: 'absolute',
+                  paddingRight: '3rem',
+                  paddingLeft: '.5rem',
+                  bottom: '1.5rem',
+                }}
+              >
+                <Typography variant="subtitle2" style={{ fontStyle: 'italic' }}>
+                  <a
+                    href="https://docs.meshery.io/concepts/architecture/adapters"
+                    target="_blank"
+                    rel="noreferrer"
+                    style={{
+                      textDecoration: 'none',
+                      color: theme.palette.text.brand,
+                    }}
+                  >
+                    Open Adapter docs
+                  </a>
+                </Typography>
+
+                <div style={{ textAlign: 'right' }}>
+                  <Switch
+                    checked={adapter.enabled}
+                    onChange={() => handleToggle(adapter, adapterId)}
+                    name="OperatorSwitch"
+                    color="primary"
+                  />
+                </div>
+              </Grid>
+            </CardContainer>
+          </Grid>
+        ))}
+      </UsesSistent>
     </>
   );
 };
@@ -180,4 +181,4 @@ const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
 });
 
-export default withStyles(styles)(connect(() => {}, mapDispatchToProps)(withRouter(Adapters)));
+export default connect(() => {}, mapDispatchToProps)(withRouter(Adapters));

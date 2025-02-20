@@ -8,16 +8,11 @@ docURL: https://docs.meshery.io/extensibility/integrations/ondat-operator
 description: 
 integrations-category: Provisioning
 integrations-subcategory: Security & Compliance
-registrant: Artifact Hub
+registrant: Github
 components: 
-- name: storage-os-cluster
-  colorIcon: assets/img/integrations/ondat-operator/components/storage-os-cluster/icons/color/storage-os-cluster-color.svg
-  whiteIcon: assets/img/integrations/ondat-operator/components/storage-os-cluster/icons/white/storage-os-cluster-white.svg
-  description: 
-- name: storage-os-cluster
-  colorIcon: assets/img/integrations/ondat-operator/components/storage-os-cluster/icons/color/storage-os-cluster-color.svg
-  whiteIcon: assets/img/integrations/ondat-operator/components/storage-os-cluster/icons/white/storage-os-cluster-white.svg
-  description: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates Ondat deployment and management",
   "Provides persistent storage for Kubernetes",

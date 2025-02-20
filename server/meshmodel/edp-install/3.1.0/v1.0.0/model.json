@@ -1,21 +1,11 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "models.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "name": "edp-install",
-  "displayName": "EDP Install",
-  "description": "",
-  "status": "ignored",
-  "hostID": "00000000-0000-0000-0000-000000000000",
-  "registrant": {
-    "hostname": "artifacthub"
-  },
   "category": {
-    "name": "Uncategorized",
-    "metadata": null
+    "name": "Uncategorized"
   },
-  "subCategory": "Uncategorized",
+  "displayName": "EDP Install",
+  "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
+    "source_uri": "https://epam.github.io/edp-helm-charts/stable/packages/edp-install-3.6.0.tgz", 
     "isAnnotation": false,
     "published": false,
     "subCategory": "Uncategorized",
@@ -26,6 +16,25 @@
   "model": {
     "version": "3.1.0"
   },
+  "name": "edp-install",
+  "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "status": "ignored",
+  "subCategory": "Uncategorized",
+  "version": "v1.0.0",
   "components": null,
   "relationships": null
 }

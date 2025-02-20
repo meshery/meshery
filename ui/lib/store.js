@@ -4,7 +4,8 @@ import thunkMiddleware from 'redux-thunk';
 import { fromJS } from 'immutable';
 import { createContext } from 'react';
 import { createDispatchHook, createSelectorHook } from 'react-redux';
-
+import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
+import { mesheryEventBus } from '@/utils/eventBus';
 const initialState = fromJS({
   page: {
     path: '',
@@ -265,7 +266,15 @@ export const updateK8SConfig =
 export const setK8sContexts =
   ({ selectedK8sContexts }) =>
   (dispatch) => {
-    return dispatch({ type: actionTypes.SET_K8S_CONTEXT, selectedK8sContexts });
+    const result = dispatch({ type: actionTypes.SET_K8S_CONTEXT, selectedK8sContexts });
+    console.log('setK8sContexts', selectedK8sContexts);
+    mesheryEventBus.publish({
+      type: 'K8S_CONTEXTS_UPDATED',
+      data: {
+        selectedK8sContexts: selectedK8sContexts,
+      },
+    });
+    return result;
   };
 
 export const updateLoadTestData =
@@ -425,10 +434,11 @@ export const resultsMerge = (arr1, arr2) => {
 
 export const selectSelectedK8sClusters = (state) => {
   const selectedK8sContexts = state.get('selectedK8sContexts');
-  return selectedK8sContexts?.toJS?.() || selectedK8sContexts;
+  const contexts = selectedK8sContexts?.toJS?.() || selectedK8sContexts;
+  return getK8sClusterIdsFromCtxId(contexts, selectK8sConfig(state));
 };
 
-export const selectK8sContexts = (state) => {
+export const selectK8sConfig = (state) => {
   const k8scontext = state.get('k8sConfig');
   return k8scontext?.toJS?.() || k8scontext;
 };
@@ -436,4 +446,4 @@ export const selectK8sContexts = (state) => {
 export const LegacyStoreContext = createContext(null);
 
 export const useLegacySelector = createSelectorHook(LegacyStoreContext);
-export const useLegacyDispactch = createDispatchHook(LegacyStoreContext);
+export const useLegacyDispatch = createDispatchHook(LegacyStoreContext);

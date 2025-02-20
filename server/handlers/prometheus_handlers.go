@@ -238,7 +238,7 @@ func (h *Handler) PrometheusConfigHandler(w http.ResponseWriter, req *http.Reque
 			http.Error(w, _err.Error(), http.StatusInternalServerError)
 			return
 		}
-		connection, err := provider.SaveConnection(&models.ConnectionPayload{
+		connection, err := provider.SaveConnection(&connections.ConnectionPayload{
 			Kind:             "prometheus",
 			Type:             "observability",
 			SubType:          "monitoring",

@@ -1,0 +1,48 @@
+version: 0.0.5
+name: nginx-k8s-deployment
+displayName: nginx k8s deployment
+createdAt: "2024-08-13T23:14:15Z"
+description: |-
+    The design represented by the nginx-deployment.yaml file sets up a basic web server infrastructure using Kubernetes resources.
+
+    Key Components:
+    Namespace (nginx-namespace):
+
+    A separate namespace called nginx-namespace is created to isolate and organize the Nginx application and its resources from other applications running in the cluster.
+    Deployment (nginx-deployment):
+
+    Deploys a web server using the Nginx image (nginx:latest).
+    Two replicas (instances) of the Nginx server are created, ensuring high availability and load distribution across multiple pods.
+    Each pod in the deployment runs the Nginx container and listens on port 80.
+    Service (nginx-service):
+
+    Exposes the Nginx application to the external network via a LoadBalancer service type.
+    The service forwards traffic from external clients to the Nginx pods on port 80, making the web server accessible outside the cluster.
+    The service ensures that traffic is balanced between the two Nginx pods.
+    Purpose of the Design:
+    This design demonstrates how to deploy a simple, scalable web server using Kubernetes. By visualizing this in Meshery, you can:
+
+    Understand the relationship between different Kubernetes resources (Namespace, Deployment, and Service).
+    Observe how traffic flows from external clients through the LoadBalancer to the Nginx pods.
+    Learn the basics of deploying and managing stateless applications in Kubernetes.
+    Use this as a foundation to explore more advanced Kubernetes concepts like autoscaling, rolling updates, and integration with service meshes.
+    In summary, this design sets up a highly available Nginx web server with external access and load balancing, making it a fundamental example of how to deploy and expose applications using Kubernetes.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/29b94780-865c-460b-b852-cc5c31730561/0.0.5/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. LoadBalancer Requirement: Needs a cloud provider or environment that supports LoadBalancer services; otherwise, external access might not work.\n2. Namespace Conflicts: Ensure the nginx-namespace is properly managed to avoid conflicts with existing resources.\n3. Resource Availability: The cluster must have enough resources to run the two Nginx replicas.\nDefault Nginx Config: Uses basic Nginx settings; not suitable for production without customization. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 551da661-8632-415f-b69f-ecb298b88575
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/29b94780-865c-460b-b852-cc5c31730561-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/29b94780-865c-460b-b852-cc5c31730561-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

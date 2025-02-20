@@ -174,7 +174,7 @@ Using the use case where you want to make it such that when an edge is drawn fro
 
 \*\*<code>Relationships</code> have <code>metadata</code>, <code>selectors</code> and some optional parameters. </strong>
 
-As someone who creates `Designs` and `Components`, It would be useful If I can have some assistance in visualizing the relationships that exist between multiple `Components`. When some `Components` are related to each other in a `Design`, MeshMap should show how they are related visually to the extent possible.
+As someone who creates `Designs` and `Components`, It would be useful If I can have some assistance in visualizing the relationships that exist between multiple `Components`. When some `Components` are related to each other in a `Design`, Kanvas should show how they are related visually to the extent possible.
 
 Treating the Relationships the same way as that of Components is not the ideal approach since the use case for the Relationships are different. This approach will be replaced later with a better alternative like a Graph Database.
 
@@ -439,7 +439,7 @@ Metadata:
 	- self
 ```
 
-### RelationshipDefinition Example: MeshMap Compound Node
+### RelationshipDefinition Example: Kanvas Compound Node
 
 This Relationship identifies a component as being **child-capable**. In other words, this Relationship identifies the matching component as being a compound node.
 
@@ -447,7 +447,7 @@ This Relationship identifies a component as being **child-capable**. In other wo
 apiVersion: core.meshery.io/v1alpha1
 kind: RelationshipDefinition
 Metadata:
-	name: MeshMap Compound Node
+	name: Kanvas Compound Node
     Description: A component that is capable of having supporting children and any number of generations of their progeny.
 	type: hierarchical
 	sub-type: parent
@@ -706,7 +706,7 @@ Do we have an evaluation notification formatter in Notification Center?
 
 # Model Evaluation
 
-Models need to be evaluated in order to ensure their desired behavior is enforced. Evaluation might need to occur server-side or client-side. Server-side evaluation currently happens during pattern engine processing (DAG creation and execution). Client-side evaluation currently happens in MeshMap. The following depicts model evaluation in context of either server-side or client-side evaluation.
+Models need to be evaluated in order to ensure their desired behavior is enforced. Evaluation might need to occur server-side or client-side. Server-side evaluation currently happens during pattern engine processing (DAG creation and execution). Client-side evaluation currently happens in Kanvas. The following depicts model evaluation in context of either server-side or client-side evaluation.
 
 ## Model Evaluation Algorithm
 

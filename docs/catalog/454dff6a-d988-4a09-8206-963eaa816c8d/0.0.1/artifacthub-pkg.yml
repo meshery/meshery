@@ -1,0 +1,20 @@
+version: 0.0.1
+name: istio-control-plane
+displayName: Istio Control Plane
+createdAt: "2023-01-20T09:11:35Z"
+description: This design includes an Istio control plane, which will deploy to the istio-system namespace by default.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/454dff6a-d988-4a09-8206-963eaa816c8d/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "No namespaces are annotated for sidecar provisioning in this design. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a550f4d6-d3bd-44f1-9b4c-167114452062
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

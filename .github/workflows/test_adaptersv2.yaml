@@ -54,7 +54,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        k8s_version: ["v1.21.5", "v1.22.2", "v1.23.9", "v1.25.2", "v1.26.11", "v1.27.8", "v1.28.4", "v1.29.0"]
+        k8s_version: ['v1.31.4', 'v1.32.0']
     runs-on: ubuntu-22.04
     outputs:
       exitstatus: ${{ steps.runresources.outputs.exitstatus }}
@@ -66,9 +66,9 @@ jobs:
           echo "value=${USER_INPUT:-"meshery"}" >> $GITHUB_OUTPUT
       - name: Setting up minikube
         id: setk8s
-        uses: manusa/actions-setup-minikube@v2.10.0
+        uses: manusa/actions-setup-minikube@v2.13.0
         with:
-          minikube version: "v1.32.0"
+          minikube version: "v1.34.0"
           kubernetes version: "${{ matrix.k8s_version }}"
           driver: docker
           start args: --cni "${{ inputs.k8s_cni }}"
@@ -173,14 +173,14 @@ jobs:
       - name: Pattern apply
         run: |
           cat ./${{ inputs.patternfile_name }}
-          mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}
+          mesheryctl design apply -f ./${{ inputs.patternfile_name }}
 
       - name: Sleep 120 seconds
         run: sleep 120
       - name: Pattern apply, second iteration. [IDEMPOTENT]
         run: |
           cat ./${{ inputs.patternfile_name }}
-          mesheryctl pattern apply -f ./${{ inputs.patternfile_name }}
+          mesheryctl design apply -f ./${{ inputs.patternfile_name }}
       - name: Check adapter logs
         run: |
           if [ "${{ inputs.adapter_name }}" != "meshery" ];then

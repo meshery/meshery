@@ -1,22 +1,11 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "models.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "name": "kyverno",
-  "displayName": "Kyverno",
-  "description": "",
-  "status": "enabled",
-  "hostID": "00000000-0000-0000-0000-000000000000",
-  "registrant": {
-    "hostname": "github"
-  },
   "category": {
-    "name": "Provisioning",
-    "metadata": null
+    "name": "Provisioning"
   },
-  "subCategory": "Provisioning",
+  "displayName": "Kyverno",
+  "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
-    "capabilities": "",
+    "capabilities": null,
     "defaultData": "",
     "isAnnotation": false,
     "primaryColor": "#e77e5b",
@@ -32,6 +21,25 @@
   "model": {
     "version": "v1.12.4"
   },
+  "name": "kyverno",
+  "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "github",
+    "name": "Github",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "status": "enabled",
+  "subCategory": "Provisioning",
+  "version": "v1.0.0",
   "components": null,
   "relationships": null
 }

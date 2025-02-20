@@ -1,0 +1,19 @@
+{
+  "ROW3": [
+    "kubernetes",
+    "v1.25.2",
+    "Hierarchical",
+    "",
+    "Inventory",
+    "A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.\"",
+    "",
+    "",
+    "hierarchical_inventory_relationship",
+    "",
+    "",
+    "{\"kind\": \"PersistentVolume\",\r\n            \"model\": \"kubernetes\",\r\n            \"patch\": {\r\n              \"patchStrategy\": \"replace\",\r\n              \"mutatorRef\": [\r\n                [\"name\"]\r\n              ],\r\n              \"description\": \"PersistentVolume in Kubernetes provides durable storage for Pods, ensuring data persistence across Pod restarts and rescheduling.\"\r\n            }\r\n          }",
+    "{\"kind\": \"VolumeAttachment\",\r\n            \"model\": \"kubernetes\",\r\n            \"patch\": {\r\n              \"patchStrategy\": \"replace\",\r\n              \"mutatedRef\": [\r\n                [\"settings\", \"spec\", \"source\", \"persistentVolumeName\"]\r\n              ],\r\n              \"description\": \"VolumeAttachment in Kubernetes facilitates the attachment of a PersistentVolume to a node, enabling its utilization by Pods on that node.\"\r\n            }\r\n          }",
+    "{\"apiVersion\": \"core.meshery.io/v1alpha1\",\r\"kind\":\"Hierarchical\",\r\"metadata\": {\r  \"description\": \"A hierarchical inventory relationship in which the configuration of (parent) component is patched with the configuration of other (child) component. Eg: The configuration of the EnvoyFilter (parent) component is patched with the configuration as received from WASMFilter (child) component.\"\",\r  \"styles\": { \"\",}\r  },\r  \"model\": {\r    \"name\": \"kubernetes\",\r    \"version\": \"v1.25.2\",\r    \"category\": {\r      \"name\": \"Orchestration \\u0026 Management\",\r      \"metadata\": null\r    },\r    \"metadata\": {}\r},\r\"subType\": \"Inventory\",\r\"rego_query\": \"hierarchical_inventory_relationship\",\r\"selectors\": {\r  \"allow\": {\r    \"from\": [{\"kind\": \"PersistentVolume\",\r\r            \"model\": \"kubernetes\",\r\r            \"patch\": {\r\r              \"patchStrategy\": \"replace\",\r\r              \"mutatorRef\": [\r\r                [\"name\"]\r\r              ],\r\r              \"description\": \"PersistentVolume in Kubernetes provides durable storage for Pods, ensuring data persistence across Pod restarts and rescheduling.\"\r\r            }\r\r          }],\r    \"to\": [{\"kind\": \"VolumeAttachment\",\r\r            \"model\": \"kubernetes\",\r\r            \"patch\": {\r\r              \"patchStrategy\": \"replace\",\r\r              \"mutatedRef\": [\r\r                [\"settings\", \"spec\", \"source\", \"persistentVolumeName\"]\r\r              ],\r\r              \"description\": \"VolumeAttachment in Kubernetes facilitates the attachment of a PersistentVolume to a node, enabling its utilization by Pods on that node.\"\r\r            }\r\r          }]\r    },\r  \"deny\": {\r    \"from\": [],\r    \"to\": []\r    }\r  }\r}",
+    ""
+  ]
+}

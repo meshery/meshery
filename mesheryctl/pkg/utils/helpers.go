@@ -3,7 +3,6 @@ package utils
 import (
 	"bufio"
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"io"
 	"math/rand"
@@ -25,8 +24,8 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/constants"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/layer5io/meshkit/encoding"
 	"github.com/layer5io/meshkit/logger"
-	"github.com/layer5io/meshkit/utils"
 	"github.com/olekukonko/tablewriter"
 	"github.com/pkg/browser"
 	"github.com/pkg/errors"
@@ -67,9 +66,9 @@ const (
 	filterDeleteURL                = docsBaseURL + "reference/mesheryctl/filter/delete"
 	filterListURL                  = docsBaseURL + "reference/mesheryctl/filter/list"
 	filterViewURL                  = docsBaseURL + "reference/mesheryctl/filter/view"
-	patternUsageURL                = docsBaseURL + "reference/mesheryctl/pattern"
-	patternViewURL                 = docsBaseURL + "reference/mesheryctl/pattern/view"
-	patternExportURL               = docsBaseURL + "reference/mesheryctl/pattern/export"
+	designUsageURL                 = docsBaseURL + "reference/mesheryctl/design"
+	designViewURL                  = docsBaseURL + "reference/mesheryctl/design/view"
+	designExportURL                = docsBaseURL + "reference/mesheryctl/design/export"
 	contextDeleteURL               = docsBaseURL + "reference/mesheryctl/system/context/delete"
 	contextViewURL                 = docsBaseURL + "reference/mesheryctl/system/context/view"
 	contextCreateURL               = docsBaseURL + "reference/mesheryctl/system/context/create"
@@ -89,7 +88,10 @@ const (
 	modelListURL                   = docsBaseURL + "reference/mesheryctl/system/model/list"
 	modelImportURl                 = docsBaseURL + "reference/mesheryctl/system/model/import"
 	modelViewURL                   = docsBaseURL + "reference/mesheryctl/system/model/view"
-	registryUsageURL               = docsBaseURL + "reference/mesheryctl/system/registry"
+	registryUsageURL               = docsBaseURL + "reference/mesheryctl/registry"
+	registryPublishURL             = docsBaseURL + "reference/mesheryctl/registry/publish"
+	registryGenerateURL            = docsBaseURL + "reference/mesheryctl/registry/generate"
+	registryUpdateURL              = docsBaseURL + "reference/mesheryctl/registry/update"
 	relationshipUsageURL           = docsBaseURL + "reference/mesheryctl/relationships"
 	cmdRelationshipGenerateDocsURL = docsBaseURL + "reference/mesheryctl/relationships/generate"
 	relationshipViewURL            = docsBaseURL + "reference/mesheryctl/relationships/view"
@@ -135,9 +137,9 @@ const (
 	cmdFilterDelete             cmdType = "filter delete"
 	cmdFilterList               cmdType = "filter list"
 	cmdFilterView               cmdType = "filter view"
-	cmdPattern                  cmdType = "pattern"
-	cmdPatternView              cmdType = "pattern view"
-	cmdPatternExport            cmdType = "pattern export"
+	cmdDesign                   cmdType = "design"
+	cmdDesignView               cmdType = "design view"
+	cmdDesignExport             cmdType = "design export"
 	cmdContext                  cmdType = "context"
 	cmdContextDelete            cmdType = "delete"
 	cmdContextCreate            cmdType = "create"
@@ -157,8 +159,10 @@ const (
 	cmdModelList                cmdType = "model list"
 	cmdModelImport              cmdType = "model import"
 	cmdModelView                cmdType = "model view"
-	cmdRegistryPublish          cmdType = "registry publish"
 	cmdRegistry                 cmdType = "regisry"
+	cmdRegistryPublish          cmdType = "registry publish"
+	cmdRegistryGenerate         cmdType = "registry generate"
+	cmdRegistryUpdate           cmdType = "registry update"
 	cmdConnection               cmdType = "connection"
 	cmdConnectionList           cmdType = "connection list"
 	cmdConnectionDelete         cmdType = "connection delete"
@@ -282,7 +286,7 @@ var Services = map[string]Service{
 		Image:  "layer5/meshery:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Environment: []string{
-			"PROVIDER_BASE_URLS=https://meshery.layer5.io",
+			"PROVIDER_BASE_URLS=https://cloud.layer5.io",
 			"ADAPTER_URLS=meshery-istio:10000 meshery-linkerd:10001 meshery-consul:10002 meshery-nsm:10004 meshery-app-mesh:10005 meshery-kuma:10007 meshery-osm:10009 meshery-traefik-mesh:10006 meshery-nginx-sm:10010 meshery-cilium:10012",
 			"EVENT=mesheryLocal",
 			"PORT=9081",
@@ -296,7 +300,7 @@ var Services = map[string]Service{
 		Ports:  []string{"10000:10000"},
 	},
 	"meshery-linkerd": {
-		Image:  "layer5/meshery-linkerd:stable-latest",
+		Image:  "meshery/meshery-linkerd:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10001:10001"},
 	},
@@ -311,7 +315,7 @@ var Services = map[string]Service{
 		Ports:  []string{"10004:10004"},
 	},
 	"meshery-app-mesh": {
-		Image:  "layer5/meshery-app-mesh:stable-latest",
+		Image:  "meshery/meshery-app-mesh:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10005:10005"},
 	},
@@ -554,6 +558,9 @@ func TruncateID(id string) string {
 	ShortenedID := id[0:8]
 	return ShortenedID
 }
+func BoldString(s string) string {
+	return fmt.Sprintf("\033[1m%s\033[0m", s)
+}
 
 // PrintToTable prints the given data into a table format
 func PrintToTable(header []string, data [][]string) {
@@ -569,7 +576,14 @@ func PrintToTable(header []string, data [][]string) {
 	table.SetHeaderLine(false)
 	table.SetBorder(false)
 	table.SetTablePadding("\t")
-	table.SetNoWhiteSpace(true)
+	table.SetNoWhiteSpace(false)
+
+	boldHeader := make([]tablewriter.Colors, len(header))
+	for i := range header {
+		boldHeader[i] = tablewriter.Colors{tablewriter.Bold}
+	}
+	table.SetHeaderColor(boldHeader...)
+
 	table.AppendBulk(data) // The data in the table
 	table.Render()         // Render the table
 }
@@ -589,6 +603,13 @@ func PrintToTableWithFooter(header []string, data [][]string, footer []string) {
 	table.SetBorder(false)
 	table.SetTablePadding("\t")
 	table.SetNoWhiteSpace(true)
+
+	boldHeader := make([]tablewriter.Colors, len(header))
+	for i := range header {
+		boldHeader[i] = tablewriter.Colors{tablewriter.Bold}
+	}
+	table.SetHeaderColor(boldHeader...)
+
 	table.AppendBulk(data) // The data in the table
 	table.SetFooter(footer)
 	table.Render() // Render the table
@@ -631,7 +652,11 @@ func StringInSlice(str string, slice []string) bool {
 
 // GetID returns a array of IDs from meshery server endpoint /api/{configurations}
 func GetID(mesheryServerUrl, configuration string) ([]string, error) {
-	url := mesheryServerUrl + "/api/" + configuration + "?page_size=10000"
+	url := mesheryServerUrl + "/api/" + configuration + "?"
+	if configuration == "pattern" {
+		url += "populate=pattern_file&"
+	}
+	url += "page_size=10000"
 	configType := configuration + "s"
 	var idList []string
 	req, err := NewRequest("GET", url, nil)
@@ -650,7 +675,7 @@ func GetID(mesheryServerUrl, configuration string) ([]string, error) {
 		return idList, ErrReadResponseBody(err)
 	}
 	var dat map[string]interface{}
-	if err = json.Unmarshal(body, &dat); err != nil {
+	if err = encoding.Unmarshal(body, &dat); err != nil {
 		return idList, ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
 	}
 	if dat == nil {
@@ -686,7 +711,7 @@ func GetName(mesheryServerUrl, configuration string) (map[string]string, error) 
 		return nameIdMap, ErrReadResponseBody(err)
 	}
 	var dat map[string]interface{}
-	if err = json.Unmarshal(body, &dat); err != nil {
+	if err = encoding.Unmarshal(body, &dat); err != nil {
 		return nameIdMap, ErrUnmarshal(errors.Wrap(err, "failed to unmarshal response body"))
 	}
 	if dat == nil {
@@ -862,7 +887,7 @@ func GetSessionData(mctlCfg *config.MesheryCtlConfig) (*models.Preference, error
 	}
 
 	prefs := &models.Preference{}
-	err = utils.Unmarshal(string(body), prefs)
+	err = encoding.Unmarshal(body, prefs)
 	if err != nil {
 		return nil, errors.New("Failed to process JSON data. Please sign into Meshery")
 	}
@@ -1223,7 +1248,7 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 		whiteBoardPrinter.Print("Page: ", startIndex/pageSize+1)
 		fmt.Println()
 
-		whiteBoardPrinter.Println("Press Enter or ↓ to continue, Esc or Ctrl+C (Ctrl+Cmd for OS user) to exit")
+		whiteBoardPrinter.Println("Press Enter or ↓ to continue. Press Esc or Ctrl+C to exit.")
 
 		if len(footer) > 0 {
 			PrintToTableWithFooter(header, data[startIndex:endIndex], footer[0])
@@ -1279,4 +1304,11 @@ func GetPageQueryParameter(cmd *cobra.Command, page int) string {
 		return "pagesize=all"
 	}
 	return fmt.Sprintf("page=%d", page)
+}
+func IsValidUrl(path string) bool {
+	u, err := url.Parse(path)
+	if err != nil {
+		return false
+	}
+	return u.Scheme != "" && u.Host != ""
 }

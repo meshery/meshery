@@ -55,6 +55,13 @@ mesheryctl system dashboard --skip-browser
 </div>
 </pre> 
 
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+Note: Meshery's web-based user interface is embedded in Meshery Server and is available as soon as Meshery starts. The location and port that Meshery UI is exposed varies depending upon your mode of deployment. See accessing \"Meshery UI\" for additional deployment-specific options: https://docs.meshery.io/installation/accessing-meshery-ui.
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>

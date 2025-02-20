@@ -1,0 +1,32 @@
+version: 0.0.1
+name: fault-tolerant-batch-workloads-on-gke
+displayName: Fault-tolerant batch workloads on GKE
+createdAt: "2024-03-07T06:20:40Z"
+description: |-
+    A batch workload is a process typically designed to have a start and a completion point. You should consider batch workloads on GKE if your architecture involves ingesting, processing, and outputting data instead of using raw data. Areas like machine learning, artificial intelligence, and high performance computing (HPC) feature different kinds of batch workloads, such as offline model training, batched prediction, data analytics, simulation of physical systems, and video processing.
+
+    By designing containerized batch workloads, you can leverage the following GKE benefits:
+
+    An open standard, broad community, and managed service.
+    Cost efficiency from effective workload and infrastructure orchestration and specialized compute resources.
+    Isolation and portability of containerization, allowing the use of cloud as overflow capacity while maintaining data security.
+    Availability of burst capacity, followed by rapid scale down of GKE clusters.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/08379ae3-cd9e-4b55-a190-91a47a1ff638/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Ensure proper networking of components for efficient functioning \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 62b081a5-1273-4c58-807f-b6be539275d0
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/08379ae3-cd9e-4b55-a190-91a47a1ff638-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/08379ae3-cd9e-4b55-a190-91a47a1ff638-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

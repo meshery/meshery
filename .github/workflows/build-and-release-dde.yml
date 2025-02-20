@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout 🛎️ repo
-        uses: actions/checkout@master
+        uses: actions/checkout@v4
       - name: Identify Release Values
         if: "${{ github.event.inputs.release-ver}} != 'v' }}"
         run: |
@@ -79,12 +79,12 @@ jobs:
             type=raw,value=${{env.RELEASE_CHANNEL}}-latest
             type=raw,value=${{env.RELEASE_CHANNEL}}-${{env.GIT_VERSION}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
       - name: Login to DockerHub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build and Push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v6
         with:
           context: "{{defaultContext}}:install/docker-extension"
           push: true
@@ -103,4 +103,3 @@ jobs:
       #     password: ${{ secrets.DOCKER_PASSWORD }}
       #     repository: meshery/meshery-docker-extension
       #     readme-filepath: /install/docker-extension/README.md
-

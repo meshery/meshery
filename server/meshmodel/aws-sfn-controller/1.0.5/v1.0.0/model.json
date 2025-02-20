@@ -1,20 +1,9 @@
 {
-  "id": "00000000-0000-0000-0000-000000000000",
-  "schemaVersion": "models.meshery.io/v1beta1",
-  "version": "v1.0.0",
-  "name": "aws-sfn-controller",
-  "displayName": "AWS Step Functions",
-  "description": "",
-  "status": "enabled",
-  "hostID": "00000000-0000-0000-0000-000000000000",
-  "registrant": {
-    "hostname": "artifacthub"
-  },
   "category": {
-    "name": "Serverless",
-    "metadata": null
+    "name": "Serverless"
   },
-  "subCategory": "Serverless",
+  "displayName": "AWS Step Functions",
+  "id": "00000000-0000-0000-0000-000000000000",
   "metadata": {
     "isAnnotation": false,
     "published": true,
@@ -26,6 +15,25 @@
   "model": {
     "version": "1.0.5"
   },
+  "name": "aws-sfn-controller",
+  "registrant": {
+    "created_at": "0001-01-01T00:00:00Z",
+    "credential_id": "00000000-0000-0000-0000-000000000000",
+    "deleted_at": "0001-01-01T00:00:00Z",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "kind": "artifacthub",
+    "name": "Artifact Hub",
+    "status": "discovered",
+    "sub_type": "",
+    "type": "registry",
+    "updated_at": "0001-01-01T00:00:00Z",
+    "user_id": "00000000-0000-0000-0000-000000000000"
+  },
+  "connection_id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "models.meshery.io/v1beta1",
+  "status": "enabled",
+  "subCategory": "Serverless",
+  "version": "v1.0.0",
   "components": null,
   "relationships": null
 }

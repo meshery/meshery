@@ -1,0 +1,24 @@
+version: 0.0.1
+name: keda-setup
+displayName: KEDA Setup
+createdAt: "2024-06-04T20:10:13Z"
+description: KEDA is a Kubernetes-based Event Driven Autoscaling component. It provides event driven scale for any container running in Kubernetes. The design deploys essential KEDA components (including CRDs) to ensure your cluster is properly setup for autoscaling using KEDA.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/e958fd44-4a43-4096-9cd5-ef1e9204996f/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "For this design to function properly, Kubernetes version v1.23 or above is required. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: b6467d0a-f11e-4614-9eb2-ab80c4f1c58d
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/e958fd44-4a43-4096-9cd5-ef1e9204996f-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/e958fd44-4a43-4096-9cd5-ef1e9204996f-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

@@ -6,6 +6,9 @@ import (
 	mathrand "math/rand"
 	"strconv"
 	"strings"
+
+	"github.com/layer5io/meshkit/encoding"
+	"github.com/meshery/schemas/models/v1beta1"
 )
 
 // RecursiveCastMapStringInterfaceToMapStringInterface will convert a
@@ -107,4 +110,18 @@ func GetRandomAlphabetsOfDigit(length int) (s string) {
 		s += string(randomChar)
 	}
 	return
+}
+
+func IsDesignInAlpha2Format(patternFile string) (bool, error) {
+	design := map[string]interface{}{}
+	err := encoding.Unmarshal([]byte(patternFile), &design)
+	if err != nil {
+		return true, err
+	}
+
+	val, ok := design["schemaVersion"]
+	if ok && val == v1beta1.DesignSchemaVersion {
+		return false, nil
+	}
+	return true, nil
 }

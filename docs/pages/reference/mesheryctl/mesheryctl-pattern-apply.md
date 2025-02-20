@@ -10,7 +10,7 @@ command: pattern
 subcommand: apply
 ---
 
-# mesheryctl pattern apply
+# mesheryctl design apply
 
 Apply pattern file
 
@@ -19,7 +19,7 @@ Apply pattern file
 Apply pattern file will trigger deploy of the pattern file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern apply [flags]
+mesheryctl design apply [flags]
 
 </div>
 </pre> 
@@ -29,7 +29,7 @@ mesheryctl pattern apply [flags]
 apply a pattern file
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern apply -f [file | URL]
+mesheryctl design apply -f [file | URL]
 
 </div>
 </pre> 
@@ -37,7 +37,7 @@ mesheryctl pattern apply -f [file | URL]
 deploy a saved pattern
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern apply [pattern-name]
+mesheryctl design apply [pattern-name]
 
 </div>
 </pre> 
@@ -66,7 +66,7 @@ mesheryctl pattern apply [pattern-name]
 
 ## Screenshots
 
-Usage of mesheryctl pattern apply
+Usage of mesheryctl design apply
 ![pattern-apply-usage](/assets/img/mesheryctl/patternApply.png)
 
 ## See Also

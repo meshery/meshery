@@ -21,7 +21,6 @@ import (
 	"net/http"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models/environments"
 
@@ -36,32 +35,10 @@ var createEnvironmentCmd = &cobra.Command{
 	Long:  `Create a new environments by providing the name and description of the environment`,
 	Example: `
 // Create a new environment
-mesheryctl exp environment create --orgID [orgID] --name [name] --description [description] 
+mesheryctl environment create --orgId [orgId] --name [name] --description [description]
 // Documentation for environment can be found at:
-https://docs.layer5.io/cloud/spaces/environments/
+https://docs.meshery.io/concepts/logical/environments
 `,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return system.ErrGetCurrentContext(err)
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
-
 	Args: func(cmd *cobra.Command, args []string) error {
 		// Check if all three flags are set
 		orgIdFlag, _ := cmd.Flags().GetString("orgId")
@@ -107,10 +84,13 @@ https://docs.layer5.io/cloud/spaces/environments/
 			return err
 		}
 
-		resp, _ := utils.MakeRequest(req)
+		resp, err := utils.MakeRequest(req)
+		if err != nil {
+			return err
+		}
 
 		if resp.StatusCode == http.StatusOK {
-			utils.Log.Info("environment created successfully")
+			utils.Log.Info("environment created")
 			return nil
 		}
 		utils.Log.Info("Error creating environment")

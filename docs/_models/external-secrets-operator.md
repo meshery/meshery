@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/external-secrets-operator/components/external-secret/icons/color/external-secret-color.svg
   whiteIcon: assets/img/integrations/external-secrets-operator/components/external-secret/icons/white/external-secret-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates secret synchronization",
   "Supports multiple secret stores",

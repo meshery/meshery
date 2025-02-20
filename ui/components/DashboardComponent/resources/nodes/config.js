@@ -1,11 +1,11 @@
 import React from 'react';
-import { getResourceStr, resourceParsers, timeAgo } from '../../../../utils/k8s-utils';
+import { getResourceStr, resourceParsers, timeAgo, getStatus } from '../../../../utils/k8s-utils';
 import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
 
 import { Title } from '../../view';
 
-import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
+import { TooltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
@@ -16,6 +16,7 @@ export const NodeTableConfig = (
   meshSyncResources,
   k8sConfig,
   connectionMetadataState,
+  workloadType,
 ) => {
   const ping = useKubernetesHook();
   return {
@@ -23,13 +24,14 @@ export const NodeTableConfig = (
     colViews: [
       ['id', 'na'],
       ['metadata.name', 'xs'],
-      ['apiVersion', 's'],
+      ['apiVersion', 'na'],
       ['status.attribute', 'm'],
       ['status.attribute', 'm'],
       ['cluster_id', 'xs'],
       ['status.attribute', 'm'],
       ['status.attribute', 'm'],
       ['metadata.creationTimestamp', 'l'],
+      ['status.attribute', 'm'],
     ],
     columns: [
       {
@@ -37,6 +39,9 @@ export const NodeTableConfig = (
         label: 'ID',
         options: {
           display: false,
+          customHeadRender: function CustomHead({ ...column }) {
+            return <DefaultTableCell columnData={column} />;
+          },
           customBodyRender: (value) => <FormatId id={value} />,
         },
       },
@@ -52,12 +57,8 @@ export const NodeTableConfig = (
             return (
               <Title
                 onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                data={
-                  meshSyncResources[tableMeta.rowIndex]
-                    ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                    : {}
-                }
                 value={value}
+                kind={workloadType}
               />
             );
           },
@@ -134,7 +135,7 @@ export const NodeTableConfig = (
 
             return (
               <>
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   iconSrc={
                     connectionMetadataState
@@ -193,6 +194,32 @@ export const NodeTableConfig = (
           customBodyRender: function CustomBody(value) {
             let time = timeAgo(value);
             return <>{time}</>;
+          },
+        },
+      },
+      {
+        name: 'status.attribute',
+        label: 'Conditions',
+        options: {
+          sort: true,
+          sortThirdClickReset: true,
+          customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+            return (
+              <SortableTableCell
+                index={index}
+                columnData={column}
+                columnMeta={columnMeta}
+                onSort={() => sortColumn(index)}
+              />
+            );
+          },
+          customBodyRender: function CustomBody(val) {
+            let status = getStatus(val);
+            if (status) {
+              return <>{status}</>;
+            } else {
+              return <>-</>;
+            }
           },
         },
       },

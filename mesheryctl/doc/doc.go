@@ -64,16 +64,25 @@ func prepender(filename string) string {
 		url := "reference/" + words[0] + "/main"
 		return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[0], "nil")
 	}
-	if len(words) == 3 {
-		url := "reference/" + words[0] + "/" + words[1] + "/" + words[2]
-		return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[1], words[2])
-	}
-	if len(words) == 4 {
-		url := "reference/" + words[0] + "/" + words[1] + "/" + words[2] + "/" + words[3]
+	if len(words) >= 3 {
+		url := "reference/" + words[0] + "/" + strings.Join(words[1:], "/")
 		return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[1], words[2])
 	}
 	url := "reference/" + words[0] + "/" + words[1]
 	return fmt.Sprintf(markdownTemplateCommand, title, url, url, words[1], "nil")
+}
+
+// subLinkHandler is a function to generate the link for the subcommands. This is used for the "see also" section
+func subLinkHandler(name string) string {
+	base := strings.TrimSuffix(name, path.Ext(name))
+	words := strings.Split(base, "-")
+	var url string
+	if len(words) > 1 {
+		url = "/reference/mesheryctl/" + strings.Join(words, "/")
+	} else {
+		url = "/reference/mesheryctl/main"
+	}
+	return url
 }
 
 func linkHandler(name string) string {
@@ -222,6 +231,16 @@ func GenMarkdownCustom(cmd *cobra.Command, w io.Writer, manuallyAddedContent map
 					cmd.DisableAutoGenTag = c.DisableAutoGenTag
 				}
 			})
+			if cmd.HasAvailableSubCommands() {
+				for _, subCmd := range cmd.Commands() {
+					if subCmd.IsAvailableCommand() {
+						subCmdPathParts := strings.Split(subCmd.CommandPath(), " ")
+						subCmdString := strings.Join(subCmdPathParts[1:], "-")
+						buf.WriteString(fmt.Sprintf("* [%s](%s)\n", subCmd.CommandPath(), subLinkHandler(subCmdString)))
+					}
+				}
+				buf.WriteString("\n")
+			}
 		}
 		buf.WriteString("Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.")
 		buf.WriteString("\n")

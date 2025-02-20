@@ -1,6 +1,7 @@
 package models
 
 import (
+	"encoding/json"
 	"time"
 
 	"database/sql"
@@ -121,11 +122,14 @@ type MesheryClonePatternRequestBody struct {
 }
 
 // GetPatternName takes in a stringified patternfile and extracts the name from it
+// patternfile can be in yaml and json format
 func GetPatternName(stringifiedFile string) (string, error) {
 	out := map[string]interface{}{}
 
 	if err := yaml.Unmarshal([]byte(stringifiedFile), &out); err != nil {
-		return "", err
+		if err := json.Unmarshal([]byte(stringifiedFile), &out); err != nil {
+			return "", err
+		}
 	}
 
 	// Get Name from the file
@@ -138,6 +142,6 @@ func GetPatternName(stringifiedFile string) (string, error) {
 }
 
 type MesheryPatternFileDeployPayload struct {
-	PatternFile string `json:"pattern_file"`
-	PatternID   string `json:"pattern_id"`
+	PatternFile string    `json:"pattern_file"`
+	PatternID   uuid.UUID `json:"pattern_id"`
 }

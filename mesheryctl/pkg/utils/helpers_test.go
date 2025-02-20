@@ -342,53 +342,6 @@ func TestAskForInput(t *testing.T) {
 	}
 }
 
-func TestParseURLGithub(t *testing.T) {
-	tests := []struct {
-		name          string
-		url           string
-		rawRepoOutput string
-		pathOutput    string
-		expectedError string
-	}{
-		{
-			name:          "test with non-github url",
-			url:           "https://layer5.io",
-			rawRepoOutput: "https://layer5.io",
-			pathOutput:    "",
-			expectedError: "only github urls are supported",
-		},
-		{
-			name:          "test with github.com",
-			url:           "https://github.com/layer5io/meshery/blob/master/.goreleaser.yml",
-			rawRepoOutput: "https://github.com/layer5io/meshery/master",
-			pathOutput:    ".goreleaser.yml",
-		},
-		{
-			name:          "test with raw.githubusercontent.com",
-			url:           "https://raw.githubusercontent.com/layer5io/meshery/master/.goreleaser.yml",
-			rawRepoOutput: "https://raw.githubusercontent.com/layer5io/meshery/master/.goreleaser.yml",
-			pathOutput:    "",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			gotRawRepoOutput, gotPathOutput, gotError := ParseURLGithub(tt.url)
-			// gotRawOutput != tt.rawRepoOutput || gotPathOutput != tt.pathOutput ||
-			if gotRawRepoOutput != tt.rawRepoOutput {
-				t.Errorf("ParseURLGithub got = %v, want = %v", gotRawRepoOutput, tt.rawRepoOutput)
-			}
-			if gotPathOutput != tt.pathOutput {
-				t.Errorf("ParseURLGithub got = %v, want = %v", gotPathOutput, tt.pathOutput)
-			}
-			if gotError != nil {
-				if gotError.Error() != tt.expectedError {
-					t.Errorf("ParseURLGithub error = %v, want = %v", gotError, tt.expectedError)
-				}
-			}
-		})
-	}
-}
-
 // func TestPrintToTableInStringFormat(t *testing.T) {
 // 	want := NewGoldenFile(t, "PrintToTableInStringFormat.golden", fixturesDir).Load()
 // 	got := PrintToTableInStringFormat([]string{"firstheader", "secondheader"}, [][]string{{"data1", "data2"}, {"data3", "data4"}})

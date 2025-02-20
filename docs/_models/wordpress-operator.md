@@ -7,13 +7,16 @@ permalink: extensibility/integrations/wordpress-operator
 docURL: https://docs.meshery.io/extensibility/integrations/wordpress-operator
 description: 
 integrations-category: Tools
-integrations-subcategory: Uncategorized
+integrations-subcategory: Installable Platform
 registrant: Artifact Hub
 components: 
 - name: wordpress
   colorIcon: assets/img/integrations/wordpress-operator/components/wordpress/icons/color/wordpress-color.svg
   whiteIcon: assets/img/integrations/wordpress-operator/components/wordpress/icons/white/wordpress-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

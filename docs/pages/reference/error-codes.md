@@ -8,6 +8,7 @@ type: Reference
 language: en
 abstract: "Meshery Error Code Reference for all Meshery components so that you can troubleshoot issues."
 ---
+
 <style>
 
 .title {
@@ -78,6 +79,7 @@ td {
 Meshery and its components use a common framework (defined within MeshKit) to generate and document an event with a unique error code identifier as the combination of `[component type]-[component name]-[event moniker]-[numeric code]`. Each error code identifies the source component for the error and a standard set of information to describe the error and provide helpful details for troubleshooting the situation surrounding the specific error.
 
 {% include alert.html type="info" title="Error codes are combination of component type, component name, event moniker and numberic code" content="Error codes are a hyphenated collection of details that include:
+
 <ul>
 <li><b>Component Type</b> (string): The type of the component that emits this error event; e.g. <code>adapter</code></li>
 <li><b>Component Name</b> (string): The name of the component that emits this error event; e.g. <code>ameshery-istio</code></li>
@@ -85,6 +87,20 @@ Meshery and its components use a common framework (defined within MeshKit) to ge
 <li><b>Numberic Code</b> (number): Unique number identifying a specific error as scoped by a specific component; e.g. <code>a1000</code></li>
 </ul>
 The numeric portion of error codes are component-scoped. The numeric portion of error codes are allowed to overlap between Meshery components. The combination of the <code>[component type]-[component name]-[event moniker]-[numeric code]</code> is what makes a given error code globally unique." %}
+
+### See Also
+
+Troubleshooting guides to using Meshery's various features and components.
+
+{% assign sorted_guides = site.pages | sort: "type" | reverse %}
+
+<ul>
+    {% for item in sorted_guides %}
+    {% if item.type=="guides" and item.category=="troubleshooting" and item.list!="exclude"  -%}
+      <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
+      {% endif %}
+    {% endfor %}
+</ul>
 
 ## Error Code Categories by Component
 
@@ -107,6 +123,9 @@ The numeric portion of error codes are component-scoped. The numeric portion of 
             {% elsif component[1].component_type == 'component' %}
                {% capture link %}meshery-server{% endcapture %}
             {% else %}
+            {% elsif component[1].component_type == 'library' %}
+               {% capture link %}meshkit{% endcapture %}
+            {% else %}
               {% capture link %}{{ component[1].component_name  | camelcase }}-{{ component[1].component_type }}{% endcapture %}      
             {% endif %}
             <tr>
@@ -123,35 +142,34 @@ The numeric portion of error codes are component-scoped. The numeric portion of 
   <hr>
   <br>
 
-  {% for files in site.data.errorref %}    
-  {% for eachFile in files %}
-    {% for component in eachFile %}
-      {% capture thecycle %}{% cycle 'odd', 'even' %}{% endcapture %}
-      {% if thecycle == 'even' %}
-        {% if component[1].component_type == 'adapter' %}
-          {% capture heading %}
-            Meshery Adapter for {{ component[1].component_name }}
-          {% endcapture %}
-        {% elsif component[1].component_type == 'client' %}
-          {% capture heading %}
-            {{ component[1].component_name }} client
-          {% endcapture %}
-        {% elsif component[1].component_type == 'library' %}
-          {% capture heading %}
-            {{ component[1].component_name }} {{ component[1].component_type | camelcase }}
-          {% endcapture %}
-        {% elsif component[1].component_name == 'meshery-server' %}
-          {% capture heading %}
-            Meshery Server
-          {% endcapture %}
-        {% endif %}
-
+{% for files in site.data.errorref %}  
+ {% for eachFile in files %}
+{% for component in eachFile %}
+{% capture thecycle %}{% cycle 'odd', 'even' %}{% endcapture %}
+{% if thecycle == 'even' %}
+{% if component[1].component_type == 'adapter' %}
+{% capture heading %}
+Meshery Adapter for {{ component[1].component_name }}
+{% endcapture %}
+{% elsif component[1].component_type == 'client' %}
+{% capture heading %}
+{{ component[1].component_name }} client
+{% endcapture %}
+{% elsif component[1].component_type == 'library' %}
+{% capture heading %}
+{{ component[1].component_name }} {{ component[1].component_type | camelcase }}
+{% endcapture %}
+{% elsif component[1].component_name == 'meshery-server' %}
+{% capture heading %}
+Meshery Server
+{% endcapture %}
+{% endif %}
 
 <h2 class="title">{{ heading }}</h2>
 <table class="tbl">
   <thead>
     <tr class="tbl-head-row">
-      <th style="width:15%">Severity</th>
+      <th style="width:5%">Severity</th>
       <th class="error-name-code"><span>Error Name - Code</span></th>
       <th style="width:85%">Short Description</th>
       <th>Discussion</th>
@@ -160,11 +178,14 @@ The numeric portion of error codes are component-scoped. The numeric portion of 
   <tbody class="tbl-body">
     {% for err_code in component[1].errors %}
       {% if err_code[1]["severity"] == "Fatal" %}
-        {% assign severity = "background-color: #FF0101; color: white;" %}
+        {% assign severity = "background-color: #FF0101; color: white; writing-mode: vertical-rl;
+text-orientation: mixed;" %}
       {% elsif err_code[1]["severity"] == "Alert" %}
-        {% assign severity = "background-color: #FEA400; color: white;" %}
+        {% assign severity = "background-color: #FEA400; color: white; writing-mode: vertical-rl;
+text-orientation: mixed;" %}
       {% else %}
-        {% assign severity = "background-color: transparent; color: black;" %}
+        {% assign severity = "background-color: transparent; color: black; writing-mode: vertical-rl;
+text-orientation: mixed;" %}
       {% endif %}
       <tr class="tbl-body-row hover-effect" onclick="toggle_visibility('{{ component[1].component_name }}-{{ err_code[1]["name"] }}-more-info');">
         <td style="{{ severity }}">{{ err_code[1]["severity"] }}</td>
@@ -172,10 +193,10 @@ The numeric portion of error codes are component-scoped. The numeric portion of 
           <code>{{ err_code[1]["name"] | xml_escape }}-{{ err_code[1]["code"] }}</code>
         </td>
         <td>{{ err_code[1]["short_description"] | xml_escape }}</td>
-        <td><a href="https://discuss.layer5.io/search?q={{ err_code[1]['name'] | xml_escape }}-{{ err_code[1]['code'] }}" target="_blank">search forum</a></td>
+        <td><a href="https://meshery.io/community#discussion-forums/search?q={{ err_code[1]['name'] | xml_escape }}-{{ err_code[1]['code'] }}" target="_blank">search forum</a></td>
       </tr>
       <tr id="{{ component[1].component_name }}-{{ err_code[1]["name"] }}-more-info" class="tbl-hidden-row">
-        <td style="word-break:break-all;" colspan="3">
+        <td style="word-break:break-all;" colspan="4">
           <div class="error-heading">Long Description</div>
           <p class="error-details">{{ err_code[1]["long_description"] | xml_escape }}</p>
           <div class="error-heading">Probable Cause</div>
@@ -194,6 +215,3 @@ The numeric portion of error codes are component-scoped. The numeric portion of 
 {% endfor %}
 {% endfor %}
 {% endfor %}
-
-
-    

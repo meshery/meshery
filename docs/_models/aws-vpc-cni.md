@@ -18,6 +18,9 @@ components:
   colorIcon: assets/img/integrations/aws-vpc-cni/components/policy-endpoint/icons/color/policy-endpoint-color.svg
   whiteIcon: assets/img/integrations/aws-vpc-cni/components/policy-endpoint/icons/white/policy-endpoint-white.svg
   description: 
+components-count: 2
+relationships: 
+relationship-count: 0
 featureList: [
   "Keep revision history and audit trail of all configuration changes",
   "Use MeshMap&lsquo;s visual designer to explore your App Mesh configuration",

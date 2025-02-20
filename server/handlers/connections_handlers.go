@@ -27,7 +27,7 @@ func (h *Handler) ProcessConnectionRegistration(w http.ResponseWriter, req *http
 		return
 	}
 
-	connectionRegisterPayload := models.ConnectionPayload{}
+	connectionRegisterPayload := connections.ConnectionPayload{}
 	userUUID := uuid.FromStringOrNil(user.ID)
 	err := json.NewDecoder(req.Body).Decode(&connectionRegisterPayload)
 	if err != nil {
@@ -90,7 +90,7 @@ func (h *Handler) handleProcessTermination(w http.ResponseWriter, req *http.Requ
 	}
 }
 
-func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.Request, payload *models.ConnectionPayload) {
+func (h *Handler) handleRegistrationInitEvent(w http.ResponseWriter, req *http.Request, payload *connections.ConnectionPayload) {
 	compFilter := &regv1beta1.ComponentFilter{
 		Name:  fmt.Sprintf("%sConnection", payload.Kind),
 		Limit: 1,
@@ -137,7 +137,7 @@ func (h *Handler) SaveConnection(w http.ResponseWriter, req *http.Request, _ *mo
 		return
 	}
 
-	connection := models.ConnectionPayload{}
+	connection := connections.ConnectionPayload{}
 	err = json.Unmarshal(bd, &connection)
 	obj := "connection"
 
@@ -536,7 +536,7 @@ func (h *Handler) UpdateConnectionById(w http.ResponseWriter, req *http.Request,
 
 	eventBuilder := events.NewEvent().ActedUpon(connectionID).FromUser(userID).FromSystem(*h.SystemID).WithCategory("connection").WithAction("update")
 
-	connection := &models.ConnectionPayload{}
+	connection := &connections.ConnectionPayload{}
 	err = json.Unmarshal(bd, connection)
 	obj := "connection"
 	if err != nil {

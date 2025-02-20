@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import MUIDataTable from 'mui-datatables';
-import { TableCell, Tooltip, TableSortLabel } from '@material-ui/core';
-
+import { Tooltip, TableCell, TableSortLabel } from '@layer5/sistent';
 import debounce from '../utils/debounce';
 import { getDuplicateModels, getDuplicateComponents } from '../api/meshmodel';
 import { MODELS, COMPONENTS } from '../constants/navigator';

@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/edp-component-operator/components/edp-component/icons/color/edp-component-color.svg
   whiteIcon: assets/img/integrations/edp-component-operator/components/edp-component/icons/white/edp-component-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates component deployment and configuration",
   "Provides a declarative API for EDP components",

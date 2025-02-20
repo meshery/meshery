@@ -12,8 +12,7 @@ module.exports = {
     'eslint:recommended',
     'next',
     'plugin:react/recommended',
-    'plugin:@next/next/recommended',
-    "plugin:cypress/recommended",
+    'plugin:@next/next/recommended'
   ],
   overrides : [
   ],
@@ -31,8 +30,7 @@ module.exports = {
     sourceType : 'module'
   },
   plugins : [
-    'react',
-    'cypress'
+    'react'
   ],
   rules : {
     "@next/next/no-img-element" : "off", // turn off next img/image warning

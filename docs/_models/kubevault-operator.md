@@ -18,6 +18,9 @@ components:
   colorIcon: assets/img/integrations/kubevault-operator/components/recommendation/icons/color/recommendation-color.svg
   whiteIcon: assets/img/integrations/kubevault-operator/components/recommendation/icons/white/recommendation-white.svg
   description: 
+components-count: 2
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates Vault operations and lifecycle",
   "Handles Vault scaling and upgrades",

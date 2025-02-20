@@ -10,22 +10,21 @@ import {
 } from './styles';
 import { connect } from 'react-redux';
 import { withRouter } from 'next/router';
-import ErrorBoundary from '../../ErrorBoundary';
 import { Provider } from 'react-redux';
 import { store } from '../../../store';
-import NoSsr from '@material-ui/core/NoSsr';
+import { NoSsr } from '@layer5/sistent';
 import OrgIcon from 'assets/icons/OrgIcon';
-import { useTheme } from '@material-ui/core/styles';
+import { ErrorBoundary } from '@layer5/sistent';
+import CustomErrorFallback from '../ErrorBoundary';
 
 const CurrentSessionInfo = (props) => {
-  const theme = useTheme();
   const { organization } = props;
   const {
     data: rolesRes,
     // isSuccess: isRolesSuccess,
     // isError: isRolesError,
     // error: rolesError,
-  } = useGetUserOrgRolesQuery({ orgId: organization?.id });
+  } = useGetUserOrgRolesQuery({ orgId: organization?.id }, { skip: !organization?.id });
 
   const {
     data: providerRolesRes,
@@ -41,7 +40,7 @@ const CurrentSessionInfo = (props) => {
           Organization
         </StyledTypographyDisabled>
         <StyledBox>
-          <OrgIcon width="24" height="24" secondaryFill={theme.palette.darkSlateGray} />
+          <OrgIcon width="24" height="24" secondaryFill={'#294957'} />
           <OrgNameDisabled>{organization?.name}</OrgNameDisabled>
         </StyledBox>
       </div>
@@ -74,10 +73,7 @@ const CurrentSessionInfo = (props) => {
 const CurrentSessionInfoWithErrorBoundary = (props) => {
   return (
     <NoSsr>
-      <ErrorBoundary
-        FallbackComponent={() => null}
-        onError={(e) => console.error('Error in Spaces Prefs Component', e)}
-      >
+      <ErrorBoundary customFallback={CustomErrorFallback}>
         <Provider store={store}>
           <CurrentSessionInfo {...props} />
         </Provider>

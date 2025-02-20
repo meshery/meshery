@@ -10,6 +10,9 @@ integrations-category: Runtime
 integrations-subcategory: Cloud Native Storage
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Multiple Access Protocol Support.",
   "Elasticity, scalability and strong consistency of metadata.",

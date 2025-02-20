@@ -98,7 +98,7 @@ func (h *Handler) GrafanaConfigHandler(w http.ResponseWriter, req *http.Request,
 			http.Error(w, _err.Error(), http.StatusInternalServerError)
 			return
 		}
-		connection, err := p.SaveConnection(&models.ConnectionPayload{
+		connection, err := p.SaveConnection(&connections.ConnectionPayload{
 			Kind:             "grafana",
 			Type:             "observability",
 			SubType:          "monitoring",

@@ -25,7 +25,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/pkg/errors"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
@@ -42,27 +42,6 @@ var viewComponentCmd = &cobra.Command{
 // View details of a specific component
 mesheryctl components view [component-name]
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return err
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return err
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp component view [component-name]\nRun 'mesheryctl exp component view --help' to see detailed help message"
 		if len(args) == 0 {
@@ -79,19 +58,19 @@ mesheryctl components view [component-name]
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
-		component := args[0]
+		componentDefinition := args[0]
 
-		url := fmt.Sprintf("%s/api/meshmodels/components?search=%s&pagesize=all", baseUrl, component)
+		url := fmt.Sprintf("%s/api/meshmodels/components?search=%s&pagesize=all", baseUrl, componentDefinition)
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		resp, err := utils.MakeRequest(req)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		// defers the closing of the response body after its use, ensuring that the resources are properly released.
@@ -100,20 +79,20 @@ mesheryctl components view [component-name]
 		data, err := io.ReadAll(resp.Body)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
 		componentResponse := &models.MeshmodelComponentsAPIResponse{}
 		err = json.Unmarshal(data, componentResponse)
 		if err != nil {
 			utils.Log.Error(err)
-			return err
+			return nil
 		}
 
-		var selectedComponent v1beta1.ComponentDefinition
+		var selectedComponent component.ComponentDefinition
 
 		if componentResponse.Count == 0 {
-			fmt.Println("No component(s) found for the given name: ", component)
+			fmt.Println("No component(s) found for the given name: ", componentDefinition)
 			return nil
 		} else if componentResponse.Count == 1 {
 			selectedComponent = componentResponse.Components[0] // Update the type of selectedModel

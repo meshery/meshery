@@ -46,9 +46,13 @@ components:
   colorIcon: assets/img/integrations/meshery-core/components/generic-node/icons/color/generic-node-color.svg
   whiteIcon: assets/img/integrations/meshery-core/components/generic-node/icons/white/generic-node-white.svg
   description: 
-- name: pen-connector-node
-  colorIcon: assets/img/integrations/meshery-core/components/pen-connector-node/icons/color/pen-connector-node-color.svg
-  whiteIcon: assets/img/integrations/meshery-core/components/pen-connector-node/icons/white/pen-connector-node-white.svg
+- name: picture
+  colorIcon: assets/img/integrations/meshery-core/components/picture/icons/color/picture-color.svg
+  whiteIcon: assets/img/integrations/meshery-core/components/picture/icons/white/picture-white.svg
+  description: 
+- name: pen-terminal
+  colorIcon: assets/img/integrations/meshery-core/components/pen-terminal/icons/color/pen-terminal-color.svg
+  whiteIcon: assets/img/integrations/meshery-core/components/pen-terminal/icons/white/pen-terminal-white.svg
   description: 
 - name: anchor-node
   colorIcon: assets/img/integrations/meshery-core/components/anchor-node/icons/color/anchor-node-color.svg
@@ -70,6 +74,9 @@ components:
   colorIcon: assets/img/integrations/meshery-core/components/pencil/icons/color/pencil-color.svg
   whiteIcon: assets/img/integrations/meshery-core/components/pencil/icons/white/pencil-white.svg
   description: 
+components-count: 16
+relationships: 
+relationship-count: 0
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

@@ -23,7 +23,7 @@ export function ctxUrl(url, ctx) {
  * @returns
  */
 export const getK8sClusterIdsFromCtxId = (selectedContexts, k8sconfig) => {
-  if (selectedContexts.length === 0) {
+  if (!selectedContexts || !k8sconfig || selectedContexts.length === 0) {
     return [];
   }
 

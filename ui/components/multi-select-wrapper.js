@@ -1,16 +1,15 @@
 import { useState } from 'react';
 import { components } from 'react-select';
 import CreatableSelect from 'react-select/creatable';
-import theme, { Colors } from '../themes/app';
-import { MenuItem } from '@material-ui/core';
-import { Paper } from '@material-ui/core';
-import { FormControlLabel } from '@material-ui/core';
-import { Checkbox } from '@layer5/sistent';
+import { Colors } from '../themes/app';
+import { Checkbox, MenuItem, Paper, FormControlLabel } from '@layer5/sistent';
 import { UsesSistent } from './SistentWrapper';
+import { useTheme } from '@layer5/sistent';
 
 const MultiSelectWrapper = (props) => {
   const [selectInput, setSelectInput] = useState('');
   const allOption = { value: '*' };
+  const theme = useTheme();
 
   const filterOptions = (options, input) =>
     options?.filter(({ label }) => label?.toLowerCase().includes(input.toLowerCase()));
@@ -76,7 +75,7 @@ const MultiSelectWrapper = (props) => {
         {props.children}
       </components.Input>
     ) : (
-      <div style={{ border: '1px dotted gray' }}>
+      <div>
         <components.Input autoFocus={props.selectProps.menuIsOpen} {...props}>
           {props.children}
         </components.Input>
@@ -182,6 +181,10 @@ const MultiSelectWrapper = (props) => {
       ...base,
       backgroundColor: base.backgroundColor2,
     }),
+    input: (base) => ({
+      ...base,
+      color: theme.palette.text.primary,
+    }),
   };
 
   return (
@@ -205,8 +208,7 @@ const MultiSelectWrapper = (props) => {
         ...selectTheme,
         colors: {
           ...selectTheme.colors,
-          backgroundColor2:
-            theme.palette.type === 'dark' ? theme.palette.secondary.mainBackground : '#fff',
+          backgroundColor2: theme.palette.mode === 'dark' ? theme.palette.background.card : '#fff',
         },
       })}
       isMulti

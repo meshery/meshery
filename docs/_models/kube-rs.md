@@ -8,8 +8,15 @@ docURL: https://docs.meshery.io/extensibility/integrations/kube-rs
 description: 
 integrations-category: Runtime
 integrations-subcategory: Scheduling & Orchestration
-registrant: Artifact Hub
+registrant: Github
 components: 
+- name: document
+  colorIcon: assets/img/integrations/kube-rs/components/document/icons/color/document-color.svg
+  whiteIcon: assets/img/integrations/kube-rs/components/document/icons/white/document-white.svg
+  description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Provides a Rust interface for Kubernetes API",
   "Enables building Kubernetes tools in Rust",

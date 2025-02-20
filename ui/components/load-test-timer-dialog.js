@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { NoSsr } from '@material-ui/core';
+import { NoSsr } from '@layer5/sistent';
 
 let ReactCountdownClock;
 if (typeof window !== 'undefined') {

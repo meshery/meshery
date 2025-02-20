@@ -1,0 +1,183 @@
+{
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "version": "v1.0.0",
+  "kind": "edge",
+  "subType": "network",
+  "type": "non-binding",
+  "metadata": {
+    "description": "A relationship that defines network edges between components",
+    "animation": "marching-ants",
+    "capabilities": {
+      "designer": {
+        "edit": {
+          "style": true,
+          "config": true,
+          "label": false
+        }
+      }
+    }
+  },
+  "model": {
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "kubernetes",
+    "registrant": {
+      "kind": "artifacthub"
+    },
+    "model": {
+      "version": "v1.25.2"
+    },
+    "displayName": "Kubernetes",
+    "category": {
+      "name": "Orchestration \u0026 Management",
+      "metadata": null
+    },
+    "metadata": {}
+  },
+  "status": "enabled",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "kind": "Service",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatorRef": [
+                [
+                  "configuration",
+                  "spec",
+                  "selector"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "ports",
+                  "_",
+                  "targetPort"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "ports",
+                  "_",
+                  "protocol"
+                ]
+              ]
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Pod",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "metadata",
+                  "labels"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "containers",
+                  "0",
+                  "ports",
+                  "_",
+                  "containerPort"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "containers",
+                  "0",
+                  "ports",
+                  "_",
+                  "protocol"
+                ]
+              ]
+            }
+          },
+          {
+            "kind": "Deployment",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            },
+            "patch": {
+              "patchStrategy": "replace",
+              "mutatedRef": [
+                [
+                  "configuration",
+                  "metadata",
+                  "labels"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "template",
+                  "spec",
+                  "containers",
+                  "0",
+                  "ports",
+                  "_",
+                  "containerPort"
+                ],
+                [
+                  "configuration",
+                  "spec",
+                  "template",
+                  "spec",
+                  "containers",
+                  "0",
+                  "ports",
+                  "_",
+                  "protocol"
+                ]
+              ]
+            }
+          }
+        ]
+      },
+      "deny": {
+        "from": [
+          {
+            "kind": "Service",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
+          }
+        ],
+        "to": [
+          {
+            "kind": "Service",
+            "model": {
+              "name": "kubernetes",
+              "registrant": {
+                "kind": "artifacthub"
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
+}

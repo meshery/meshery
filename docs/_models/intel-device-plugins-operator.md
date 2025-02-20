@@ -46,6 +46,9 @@ components:
   colorIcon: assets/img/integrations/intel-device-plugins-operator/components/fpga-region/icons/color/fpga-region-color.svg
   whiteIcon: assets/img/integrations/intel-device-plugins-operator/components/fpga-region/icons/white/fpga-region-white.svg
   description: 
+components-count: 9
+relationships: 
+relationship-count: 0
 featureList: [
   "Support for the QAT, GPU, FPGA, SGX, DSA, IAA device plugins.",
   "Validation of container image references and extending of reported statuses.",

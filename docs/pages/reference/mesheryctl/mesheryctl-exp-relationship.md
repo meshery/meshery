@@ -50,6 +50,14 @@ mesheryctl exp relationships search --[flag] [query-text]
 </div>
 </pre> 
 
+//To generate a relationship documentation 
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp relationship generate  [google-sheets-credential] --sheetId [sheet-id]
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>
@@ -70,5 +78,10 @@ mesheryctl exp relationships search --[flag] [query-text]
 </pre>
 
 ## See Also
+
+* [mesheryctl exp relationship generate](/reference/mesheryctl/exp/relationship/generate)
+* [mesheryctl exp relationship list](/reference/mesheryctl/exp/relationship/list)
+* [mesheryctl exp relationship search](/reference/mesheryctl/exp/relationship/search)
+* [mesheryctl exp relationship view](/reference/mesheryctl/exp/relationship/view)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

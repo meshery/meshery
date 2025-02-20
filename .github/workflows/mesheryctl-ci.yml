@@ -26,11 +26,11 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.23"
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
-          version: v1.59
+          version: v1.63
           working-directory: mesheryctl
           args: --timeout 10m --verbose
           skip-cache: true
@@ -47,7 +47,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.23"
       - name: Setup Cache
         uses: actions/cache@v4
         with:
@@ -56,13 +56,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-go-
       - name: goreleaser WITHOUT tag
-        uses: goreleaser/goreleaser-action@v5
+        uses: goreleaser/goreleaser-action@v6
         if: success() && startsWith(github.ref, 'refs/tags/') == false
         env:
           RELEASE_CHANNEL: "edge"
         with:
-          version: latest
-          args: release --snapshot --skip-publish --clean
+          version: 2
+          args: release --snapshot --skip publish --clean -f .github/.goreleaser.yml
   mesheryctl_docs:
     if: "always() && github.event_name != 'pull_request' && github.repository == 'meshery/meshery' "
     runs-on: ubuntu-22.04
@@ -83,7 +83,7 @@ jobs:
       - name: Setup go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.21"
+          go-version: "1.23"
           check-latest: "true"
       - name: Run script 📜
         run: |

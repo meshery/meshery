@@ -7,7 +7,7 @@ import (
 
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
-	"gopkg.in/yaml.v2"
+	"github.com/layer5io/meshkit/models/patterns"
 )
 
 // ContentModifier To be used while adding metadata to patterns,filters and applicationss
@@ -78,33 +78,25 @@ func (mc *ContentModifier) AddMetadataForPatterns(ctx context.Context, contentBy
 }
 
 // isPatternSupported takes a patternfile and returns the status of its current support by using dry run
-func (mc *ContentModifier) isPatternSupported(ctx context.Context, patternfile string) (msg string, ok bool) {
-	var pattern map[string]interface{}
-	err := yaml.Unmarshal([]byte(patternfile), &pattern)
-	if err != nil {
-		return err.Error(), false
-	}
-	patternFile, err := core.NewPatternFile([]byte(patternfile))
-	if err != nil {
-		return err.Error(), false
-	}
+func (mc *ContentModifier) isPatternSupported(ctx context.Context, patternFileStr string) (msg string, ok bool) {
 
-	resp, err := _processPattern(
-		ctx,
-		mc.provider,
-		patternFile,
-		mc.prefObj,
-		mc.userID,
-		false,
-		true,
-		false,
-		true,
-		false,
-		true,
-		nil,
-		nil,
-		nil,
-	)
+	patternFile, err := patterns.GetPatternFormat(patternFileStr)
+	if err != nil {
+		return err.Error(), false
+	}
+	resp, err := _processPattern(&core.ProcessPatternOptions{
+		Context:                ctx,
+		Provider:               mc.provider,
+		Pattern:                *patternFile,
+		PrefObj:                mc.prefObj,
+		UserID:                 mc.userID,
+		IsDelete:               false,
+		Validate:               true,
+		DryRun:                 true,
+		SkipCRDAndOperator:     true,
+		UpgradeExistingRelease: false,
+		SkipPrintLogs:          true,
+	})
 	if err != nil {
 		return err.Error(), false
 	}
