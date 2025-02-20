@@ -1,11 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { styled } from "@mui/material/styles";
-import Typography from "@mui/material/Typography";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import WarningIcon from "@mui/icons-material/Warning";
+import { styled, Typography, Dialog, DialogTitle, DialogContent, DialogContentText, WarningIcon } from "@layer5/sistent"
 
 const SessionExpired = styled(DialogContentText)(() => ({
   minWidth : 400,
