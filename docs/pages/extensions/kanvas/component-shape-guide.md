@@ -30,3 +30,17 @@ Below are all the shapes with their current usage in a general context.
  guide_assests_folder="shapes"
 %}
  
+{% include alert.html type="light" title="Note" content="Because a Kubernetes Deployment can be a parent of other components, it displays as a rounded-rectangle (a limitation of the Javascript library being used to render Designs). There is a small badge, placed over the lefthand-side border that aids in identifying the component type." %}
+
+Here's how the Deployment component appears in different contexts:
+
+<div style="display: flex; flex-direction: column; align-items: center;">
+<img src="../../../assets/img/deployment-shape.png" style="width: 50%; height: auto; @media (max-width: 767px) { width: 40%; }" alt="Deployment Component Shape"/>
+Deployment component with its distinctive rounded-rectangle shape and badge
+</div>
+
+![Deployment in Icon Set](../../../assets/img/deployment-icon.png)
+Deployment icon in the component selection panel
+
+![Deployment in Dashboard](../../../assets/img/deployment-dashboard.png)
+Deployment component as seen in the cluster resource overview
