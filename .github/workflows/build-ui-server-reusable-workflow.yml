@@ -2,8 +2,6 @@ name: Re-usable Workflow - Build UI and Server
 on:
   workflow_call:
     secrets:
-      NODE_VERSION:
-        required: true
 
 jobs:
   build-backend:
