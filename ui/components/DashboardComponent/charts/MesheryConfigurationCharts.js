@@ -14,7 +14,7 @@ import { useRouter } from 'next/router';
 import { DashboardSection } from '../style';
 import ConnectCluster from './ConnectCluster';
 import { UsesSistent } from '@/components/SistentWrapper';
-import { Box, IconButton, Typography, useTheme } from '@layer5/sistent';
+import { Box, Typography, useTheme } from '@layer5/sistent';
 
 export default function MesheryConfigurationChart() {
   const router = useRouter();
@@ -94,20 +94,14 @@ export default function MesheryConfigurationChart() {
             <div onClick={(e) => e.stopPropagation()}>
               <CustomTextTooltip
                 placement="left"
-                interactive={true}
-                variant="standard"
-                leaveDelay={200}
                 title={`Meshery Designs are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured. [Learn more](https://docs.meshery.io/concepts/logical/designs)`}
               >
-                <IconButton disableRipple={true} disableFocusRipple={true}>
+                <div>
                   <InfoOutlined
                     color={theme.palette.icon.default}
                     style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
                   />
-                </IconButton>
+                </div>
               </CustomTextTooltip>
             </div>
           </div>

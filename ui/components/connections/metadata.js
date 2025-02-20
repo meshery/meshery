@@ -17,7 +17,7 @@ import useKubernetesHook, {
   useMeshsSyncController,
   useNatsController,
 } from '../hooks/useKubernetesHook';
-import { TootltipWrappedConnectionChip } from './ConnectionChip';
+import { TooltipWrappedConnectionChip } from './ConnectionChip';
 import { CONTROLLER_STATES } from '../../utils/Enum';
 import { formatToTitleCase } from '../../utils/utils';
 import { UsesSistent } from '../SistentWrapper';
@@ -87,7 +87,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
               <OperationButton item xs={12} md={5}>
                 <List>
                   <ListItem>
-                    <TootltipWrappedConnectionChip
+                    <TooltipWrappedConnectionChip
                       tooltip={`Server: ${metadata.server}`}
                       title={metadata.name}
                       status={connection.status}
@@ -148,7 +148,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
               <OperationButton item xs={12} md={4}>
                 <List>
                   <ListItem>
-                    <TootltipWrappedConnectionChip
+                    <TooltipWrappedConnectionChip
                       tooltip={operatorState ? `Version: ${operatorVersion}` : 'Not Available'}
                       title={'Operator'}
                       disabled={operatorState === CONTROLLER_STATES.UNDEPLOYED}
@@ -166,7 +166,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                   <Grid item xs={12} md={4}>
                     <List>
                       <ListItem>
-                        <TootltipWrappedConnectionChip
+                        <TooltipWrappedConnectionChip
                           tooltip={meshSyncState !== DISABLED ? `Ping MeshSync` : 'Not Available'}
                           title={'MeshSync'}
                           status={meshSyncState?.toLowerCase()}
@@ -180,7 +180,7 @@ const KubernetesMetadataFormatter = ({ meshsyncControllerState, connection, meta
                   <Grid item xs={12} md={4}>
                     <List>
                       <ListItem>
-                        <TootltipWrappedConnectionChip
+                        <TooltipWrappedConnectionChip
                           tooltip={natsState === 'Not Active' ? 'Not Available' : `Reconnect NATS`}
                           title={'NATS'}
                           status={natsState?.toLowerCase()}

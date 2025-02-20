@@ -1,197 +1,197 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "NexusBlobStore",
-   "schema": "{\n \"description\": \"NexusBlobStore is the Schema for the nexusblobstores API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NexusBlobStoreSpec defines the desired state of NexusBlobStore.\",\n   \"properties\": {\n    \"file\": {\n     \"description\": \"File type blobstore.\",\n     \"properties\": {\n      \"path\": {\n       \"description\": \"The path to the blobstore contents.\\nThis can be an absolute path to anywhere on the system Nexus Repository Manager has access to it or can be a path relative to the sonatype-work directory.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"Name of the BlobStore.\\nName should be unique across all BlobStores.\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"nexusRef\": {\n     \"description\": \"NexusRef is a reference to Nexus custom resource.\",\n     \"properties\": {\n      \"kind\": {\n       \"default\": \"Nexus\",\n       \"description\": \"Kind specifies the kind of the Nexus resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name specifies the name of the Nexus resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"s3\": {\n     \"description\": \"S3 type blobstore.\",\n     \"properties\": {\n      \"advancedBucketConnection\": {\n       \"description\": \"A custom endpoint URL, signer type and whether path style access is enabled.\",\n       \"properties\": {\n        \"endpoint\": {\n         \"description\": \"A custom endpoint URL for third party object stores using the S3 API.\",\n         \"type\": \"string\"\n        },\n        \"forcePathStyle\": {\n         \"default\": false,\n         \"description\": \"Setting this flag will result in path-style access being used for all requests.\",\n         \"type\": \"boolean\"\n        },\n        \"maxConnectionPoolSize\": {\n         \"description\": \"Setting this value will override the default connection pool size of Nexus of the s3 client for this blobstore.\",\n         \"format\": \"int32\",\n         \"type\": \"integer\"\n        },\n        \"signerType\": {\n         \"description\": \"An API signature version which may be required for third party object stores using the S3 API.\",\n         \"enum\": [\n          \"DEFAULT\",\n          \"S3SignerType\",\n          \"AWSS3V4SignerType\"\n         ],\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"bucket\": {\n       \"description\": \"Details of the S3 bucket such as name and region.\",\n       \"properties\": {\n        \"expiration\": {\n         \"default\": 3,\n         \"description\": \"How many days until deleted blobs are finally removed from the S3 bucket (-1 to disable).\",\n         \"format\": \"int32\",\n         \"type\": \"integer\"\n        },\n        \"name\": {\n         \"description\": \"The name of the S3 bucket.\",\n         \"type\": \"string\"\n        },\n        \"prefix\": {\n         \"description\": \"The S3 blob store (i.e. S3 object) key prefix.\",\n         \"type\": \"string\"\n        },\n        \"region\": {\n         \"default\": \"DEFAULT\",\n         \"description\": \"The AWS region to create a new S3 bucket in or an existing S3 bucket's region.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"bucketSecurity\": {\n       \"description\": \"Security details for granting access the S3 API.\",\n       \"properties\": {\n        \"accessKeyId\": {\n         \"description\": \"An IAM access key ID for granting access to the S3 bucket.\",\n         \"properties\": {\n          \"configMapKeyRef\": {\n           \"description\": \"Selects a key of a ConfigMap.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"The key to select.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"key\"\n           ],\n           \"type\": \"object\",\n           \"x-kubernetes-map-type\": \"atomic\"\n          },\n          \"secretKeyRef\": {\n           \"description\": \"Selects a key of a secret.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"The key of the secret to select from.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"key\"\n           ],\n           \"type\": \"object\",\n           \"x-kubernetes-map-type\": \"atomic\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"role\": {\n         \"description\": \"An IAM role to assume in order to access the S3 bucket.\",\n         \"type\": \"string\"\n        },\n        \"secretAccessKey\": {\n         \"description\": \"The secret access key associated with the specified IAM access key ID.\",\n         \"properties\": {\n          \"configMapKeyRef\": {\n           \"description\": \"Selects a key of a ConfigMap.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"The key to select.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"key\"\n           ],\n           \"type\": \"object\",\n           \"x-kubernetes-map-type\": \"atomic\"\n          },\n          \"secretKeyRef\": {\n           \"description\": \"Selects a key of a secret.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"The key of the secret to select from.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"key\"\n           ],\n           \"type\": \"object\",\n           \"x-kubernetes-map-type\": \"atomic\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"sessionToken\": {\n         \"description\": \"An AWS STS session token associated with temporary security credentials which grant access to the S3 bucket.\",\n         \"properties\": {\n          \"configMapKeyRef\": {\n           \"description\": \"Selects a key of a ConfigMap.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"The key to select.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"key\"\n           ],\n           \"type\": \"object\",\n           \"x-kubernetes-map-type\": \"atomic\"\n          },\n          \"secretKeyRef\": {\n           \"description\": \"Selects a key of a secret.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"The key of the secret to select from.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"key\"\n           ],\n           \"type\": \"object\",\n           \"x-kubernetes-map-type\": \"atomic\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"accessKeyId\",\n        \"secretAccessKey\"\n       ],\n       \"type\": \"object\"\n      },\n      \"encryption\": {\n       \"description\": \"The type of encryption to use if any.\",\n       \"properties\": {\n        \"encryptionKey\": {\n         \"description\": \"If using KMS encryption, you can supply a Key ID. If left blank, then the default will be used.\",\n         \"type\": \"string\"\n        },\n        \"encryptionType\": {\n         \"description\": \"The type of S3 server side encryption to use.\",\n         \"enum\": [\n          \"none\",\n          \"s3ManagedEncryption\",\n          \"kmsManagedEncryption\"\n         ],\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"bucket\"\n     ],\n     \"type\": \"object\"\n    },\n    \"softQuota\": {\n     \"description\": \"Settings to control the soft quota.\",\n     \"properties\": {\n      \"limit\": {\n       \"description\": \"The limit in MB.\",\n       \"format\": \"int64\",\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      },\n      \"type\": {\n       \"description\": \"Type of the soft quota.\",\n       \"enum\": [\n        \"spaceRemainingQuota\",\n        \"spaceUsedQuota\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"nexusRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Nexus Blob Store\",\n \"type\": \"object\"\n}",
-   "version": "edp.epam.com/v1alpha1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Nexus Blob Store",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false,
-   "source_uri": "https://epam.github.io/edp-helm-charts/snapshot/packages/nexus-operator-3.4.0-SNAPSHOT.1.tgz"
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Nexus Blob Store",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Uncategorized"
-   },
-   "displayName": "Nexus Operator",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "nexus-operator",
+    "displayName": "Nexus Operator",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized"
+    },
+    "subCategory": "Uncategorized",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://epam.github.io/edp-helm-charts/snapshot/packages/nexus-operator-3.4.0-SNAPSHOT.1.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "3.4.0-SNAPSHOT.1"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "source_uri": "https://epam.github.io/edp-helm-charts/snapshot/packages/nexus-operator-3.4.0-SNAPSHOT.1.tgz",
-    "styleOverrides": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "3.4.0-SNAPSHOT.1"
-   },
-   "name": "nexus-operator",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Uncategorized",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://epam.github.io/edp-helm-charts/snapshot/packages/nexus-operator-3.4.0-SNAPSHOT.1.tgz"
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "NexusBlobStore",
+    "schema": "{\n \"description\": \"NexusBlobStore is the Schema for the nexusblobstores API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NexusBlobStoreSpec defines the desired state of NexusBlobStore.\",\n   \"properties\": {\n    \"file\": {\n     \"description\": \"File type blobstore.\",\n     \"properties\": {\n      \"path\": {\n       \"description\": \"The path to the blobstore contents.\\nThis can be an absolute path to anywhere on the system Nexus Repository Manager has access to it or can be a path relative to the sonatype-work directory.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"Name of the BlobStore.\\nName should be unique across all BlobStores.\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"nexusRef\": {\n     \"description\": \"NexusRef is a reference to Nexus custom resource.\",\n     \"properties\": {\n      \"kind\": {\n       \"default\": \"Nexus\",\n       \"description\": \"Kind specifies the kind of the Nexus resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name specifies the name of the Nexus resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"s3\": {\n     \"description\": \"S3 type blobstore.\",\n     \"properties\": {\n      \"advancedBucketConnection\": {\n       \"description\": \"A custom endpoint URL, signer type and whether path style access is enabled.\",\n       \"properties\": {\n        \"endpoint\": {\n         \"description\": \"A custom endpoint URL for third party object stores using the S3 API.\",\n         \"type\": \"string\"\n        },\n        \"forcePathStyle\": {\n         \"default\": false,\n         \"description\": \"Setting this flag will result in path-style access being used for all requests.\",\n         \"type\": \"boolean\"\n        },\n        \"maxConnectionPoolSize\": {\n         \"description\": \"Setting this value will override the default connection pool size of Nexus of the s3 client for this blobstore.\",\n         \"format\": \"int32\",\n         \"type\": \"integer\"\n        },\n        \"signerType\": {\n         \"description\": \"An API signature version which may be required for third party object stores using the S3 API.\",\n         \"enum\": [\n          \"DEFAULT\",\n          \"S3SignerType\",\n          \"AWSS3V4SignerType\"\n         ],\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"bucket\": {\n       \"description\": \"Details of the S3 bucket such as name and region.\",\n       \"properties\": {\n        \"expiration\": {\n         \"default\": 3,\n         \"description\": \"How many days until deleted blobs are finally removed from the S3 bucket (-1 to disable).\",\n         \"format\": \"int32\",\n         \"type\": \"integer\"\n        },\n        \"name\": {\n         \"description\": \"The name of the S3 bucket.\",\n         \"type\": \"string\"\n        },\n        \"prefix\": {\n         \"description\": \"The S3 blob store (i.e. S3 object) key prefix.\",\n         \"type\": \"string\"\n        },\n        \"region\": {\n         \"default\": \"DEFAULT\",\n         \"description\": \"The AWS region to create a new S3 bucket in or an existing S3 bucket's region.\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"bucketSecurity\": {\n       \"description\": \"Security details for granting access the S3 API.\",\n       \"properties\": {\n        \"accessKeyId\": {\n         \"description\": \"An IAM access key ID for granting access to the S3 bucket.\",\n         \"properties\": {\n          \"configMapKeyRef\": {\n           \"description\": \"Selects a key of a ConfigMap.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"The key to select.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"key\"\n           ],\n           \"type\": \"object\",\n           \"x-kubernetes-map-type\": \"atomic\"\n          },\n          \"secretKeyRef\": {\n           \"description\": \"Selects a key of a secret.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"The key of the secret to select from.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"key\"\n           ],\n           \"type\": \"object\",\n           \"x-kubernetes-map-type\": \"atomic\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"role\": {\n         \"description\": \"An IAM role to assume in order to access the S3 bucket.\",\n         \"type\": \"string\"\n        },\n        \"secretAccessKey\": {\n         \"description\": \"The secret access key associated with the specified IAM access key ID.\",\n         \"properties\": {\n          \"configMapKeyRef\": {\n           \"description\": \"Selects a key of a ConfigMap.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"The key to select.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"key\"\n           ],\n           \"type\": \"object\",\n           \"x-kubernetes-map-type\": \"atomic\"\n          },\n          \"secretKeyRef\": {\n           \"description\": \"Selects a key of a secret.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"The key of the secret to select from.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"key\"\n           ],\n           \"type\": \"object\",\n           \"x-kubernetes-map-type\": \"atomic\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"sessionToken\": {\n         \"description\": \"An AWS STS session token associated with temporary security credentials which grant access to the S3 bucket.\",\n         \"properties\": {\n          \"configMapKeyRef\": {\n           \"description\": \"Selects a key of a ConfigMap.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"The key to select.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"key\"\n           ],\n           \"type\": \"object\",\n           \"x-kubernetes-map-type\": \"atomic\"\n          },\n          \"secretKeyRef\": {\n           \"description\": \"Selects a key of a secret.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"The key of the secret to select from.\",\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"key\"\n           ],\n           \"type\": \"object\",\n           \"x-kubernetes-map-type\": \"atomic\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"accessKeyId\",\n        \"secretAccessKey\"\n       ],\n       \"type\": \"object\"\n      },\n      \"encryption\": {\n       \"description\": \"The type of encryption to use if any.\",\n       \"properties\": {\n        \"encryptionKey\": {\n         \"description\": \"If using KMS encryption, you can supply a Key ID. If left blank, then the default will be used.\",\n         \"type\": \"string\"\n        },\n        \"encryptionType\": {\n         \"description\": \"The type of S3 server side encryption to use.\",\n         \"enum\": [\n          \"none\",\n          \"s3ManagedEncryption\",\n          \"kmsManagedEncryption\"\n         ],\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"bucket\"\n     ],\n     \"type\": \"object\"\n    },\n    \"softQuota\": {\n     \"description\": \"Settings to control the soft quota.\",\n     \"properties\": {\n      \"limit\": {\n       \"description\": \"The limit in MB.\",\n       \"format\": \"int64\",\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      },\n      \"type\": {\n       \"description\": \"Type of the soft quota.\",\n       \"enum\": [\n        \"spaceRemainingQuota\",\n        \"spaceUsedQuota\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"nexusRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Nexus Blob Store\",\n \"type\": \"object\"\n}",
+    "version": "edp.epam.com/v1alpha1"
+  }
+}

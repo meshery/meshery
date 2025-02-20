@@ -1,196 +1,196 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "ReplicaSchedulingPreference",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ReplicaSchedulingPreferenceSpec defines the desired state of ReplicaSchedulingPreference\",\n   \"properties\": {\n    \"clusters\": {\n     \"additionalProperties\": {\n      \"description\": \"Preferences regarding number of replicas assigned to a cluster workload object (dep, rs, ..) within a federated workload object.\",\n      \"properties\": {\n       \"maxReplicas\": {\n        \"description\": \"Maximum number of replicas that should be assigned to this cluster workload object. Unbounded if no value provided (default).\",\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       },\n       \"minReplicas\": {\n        \"description\": \"Minimum number of replicas that should be assigned to this cluster workload object. 0 by default.\",\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       },\n       \"weight\": {\n        \"description\": \"A number expressing the preference to put an additional replica to this cluster workload object. 0 by default.\",\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"description\": \"A mapping between cluster names and preferences regarding a local workload object (dep, rs, .. ) in these clusters. \\\"*\\\" (if provided) applies to all clusters if an explicit mapping is not provided. If omitted, clusters without explicit preferences should not have any replicas scheduled.\",\n     \"type\": \"object\"\n    },\n    \"intersectWithClusterSelector\": {\n     \"description\": \"If set to true, the placement of target kind will be determined using the instersection of RSP placement scheduling result and the clusterSelector (spec.placement.clusterSelector) specified on the target kind. If set to false or not defined, RSP placement scheduling result overwrites the clusters list in the spec.placement.clusters of the target resource.\",\n     \"type\": \"boolean\"\n    },\n    \"rebalance\": {\n     \"description\": \"If set to true then already scheduled and running replicas may be moved to other clusters in order to match current state to the specified preferences. Otherwise, if set to false, up and running replicas will not be moved.\",\n     \"type\": \"boolean\"\n    },\n    \"targetKind\": {\n     \"description\": \"TODO (@irfanurrehman); upgrade this to label selector only if need be. The idea of this API is to have a a set of preferences which can be used for a target FederatedDeployment or FederatedReplicaset. Although the set of preferences in question can be applied to multiple target objects using label selectors, but there are no clear advantages of doing that as of now. To keep the implementation and usage simple, matching ns/name of RSP resource to the target resource is sufficient and only additional information needed in RSP resource is a target kind (FederatedDeployment or FederatedReplicaset).\",\n     \"type\": \"string\"\n    },\n    \"totalReplicas\": {\n     \"description\": \"Total number of pods desired across federated clusters. Replicas specified in the spec for target deployment template or replicaset template will be discarded/overridden when scheduling preferences are specified.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"targetKind\",\n    \"totalReplicas\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Replica Scheduling Preference\",\n \"type\": \"object\"\n}",
-   "version": "scheduling.kubefed.io/v1alpha1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Replica Scheduling Preference",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Replica Scheduling Preference",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Uncategorized"
-   },
-   "displayName": "Kubefed",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "kubefed",
+    "displayName": "Kubefed",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized"
+    },
+    "subCategory": "Uncategorized",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://github.com/kubernetes-sigs/kubefed/releases/download/v0.10.0/kubefed-0.10.0.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "0.10.0"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "source_uri": "https://github.com/kubernetes-sigs/kubefed/releases/download/v0.10.0/kubefed-0.10.0.tgz",
-    "styleOverrides": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "0.10.0"
-   },
-   "name": "kubefed",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Uncategorized",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "ReplicaSchedulingPreference",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ReplicaSchedulingPreferenceSpec defines the desired state of ReplicaSchedulingPreference\",\n   \"properties\": {\n    \"clusters\": {\n     \"additionalProperties\": {\n      \"description\": \"Preferences regarding number of replicas assigned to a cluster workload object (dep, rs, ..) within a federated workload object.\",\n      \"properties\": {\n       \"maxReplicas\": {\n        \"description\": \"Maximum number of replicas that should be assigned to this cluster workload object. Unbounded if no value provided (default).\",\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       },\n       \"minReplicas\": {\n        \"description\": \"Minimum number of replicas that should be assigned to this cluster workload object. 0 by default.\",\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       },\n       \"weight\": {\n        \"description\": \"A number expressing the preference to put an additional replica to this cluster workload object. 0 by default.\",\n        \"format\": \"int64\",\n        \"type\": \"integer\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"description\": \"A mapping between cluster names and preferences regarding a local workload object (dep, rs, .. ) in these clusters. \\\"*\\\" (if provided) applies to all clusters if an explicit mapping is not provided. If omitted, clusters without explicit preferences should not have any replicas scheduled.\",\n     \"type\": \"object\"\n    },\n    \"intersectWithClusterSelector\": {\n     \"description\": \"If set to true, the placement of target kind will be determined using the instersection of RSP placement scheduling result and the clusterSelector (spec.placement.clusterSelector) specified on the target kind. If set to false or not defined, RSP placement scheduling result overwrites the clusters list in the spec.placement.clusters of the target resource.\",\n     \"type\": \"boolean\"\n    },\n    \"rebalance\": {\n     \"description\": \"If set to true then already scheduled and running replicas may be moved to other clusters in order to match current state to the specified preferences. Otherwise, if set to false, up and running replicas will not be moved.\",\n     \"type\": \"boolean\"\n    },\n    \"targetKind\": {\n     \"description\": \"TODO (@irfanurrehman); upgrade this to label selector only if need be. The idea of this API is to have a a set of preferences which can be used for a target FederatedDeployment or FederatedReplicaset. Although the set of preferences in question can be applied to multiple target objects using label selectors, but there are no clear advantages of doing that as of now. To keep the implementation and usage simple, matching ns/name of RSP resource to the target resource is sufficient and only additional information needed in RSP resource is a target kind (FederatedDeployment or FederatedReplicaset).\",\n     \"type\": \"string\"\n    },\n    \"totalReplicas\": {\n     \"description\": \"Total number of pods desired across federated clusters. Replicas specified in the spec for target deployment template or replicaset template will be discarded/overridden when scheduling preferences are specified.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"targetKind\",\n    \"totalReplicas\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Replica Scheduling Preference\",\n \"type\": \"object\"\n}",
+    "version": "scheduling.kubefed.io/v1alpha1"
+  }
+}

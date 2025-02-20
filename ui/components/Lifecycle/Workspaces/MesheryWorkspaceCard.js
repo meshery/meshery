@@ -23,6 +23,10 @@ const MesheryWorkspaceCard = ({
 }) => {
   const [skip, setSkip] = useState(true);
   const [skipEvents, setSkipEvents] = useState(true);
+  const isViewsVisible = CAN(keys.VIEW_VIEWS.action, keys.VIEW_VIEWS.subject);
+  const isDesignsVisible = CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject);
+  const isTeamsVisible = CAN(keys.VIEW_TEAMS.action, keys.VIEW_TEAMS.subject);
+  const isEnvironmentsVisible = CAN(keys.VIEW_ENVIRONMENTS.action, keys.VIEW_ENVIRONMENTS.subject);
 
   const deleted = workspaceDetails.deleted_at.Valid;
 
@@ -32,7 +36,7 @@ const MesheryWorkspaceCard = ({
       pagesize: 1,
     },
     {
-      skip,
+      skip: skip || !isEnvironmentsVisible,
     },
   );
 
@@ -42,7 +46,7 @@ const MesheryWorkspaceCard = ({
       pagesize: 1,
     },
     {
-      skip,
+      skip: skip || !isTeamsVisible,
     },
   );
 
@@ -51,18 +55,18 @@ const MesheryWorkspaceCard = ({
       workspaceId: workspaceDetails.id,
       pagesize: 1,
     },
-    // {
-    //   skip,
-    // },
+    {
+      skip: skip || !isViewsVisible,
+    },
   );
   const { data: designsOfWorkspace } = useGetDesignsOfWorkspaceQuery(
     {
       workspaceId: workspaceDetails.id,
       pagesize: 1,
     },
-    // {
-    //   skip,
-    // },
+    {
+      skip: skip || !isDesignsVisible,
+    },
   );
 
   const { data: events, isLoading: isEventsLoading } = useGetEventsOfWorkspaceQuery(
@@ -111,33 +115,36 @@ const MesheryWorkspaceCard = ({
         designAndViewOfWorkspaceCount={designsAndViewCount}
         isDeleteWorkspaceAllowed={CAN(keys.DELETE_WORKSPACE.action, keys.DELETE_WORKSPACE.subject)}
         isEditWorkspaceAllowed={CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)}
-        isDesignAndViewAllowed={
-          CAN(keys.ASSIGN_DESIGNS_TO_WORKSPACE.action, keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject) |
-          CAN(keys.ASSIGN_VIEWS_TO_WORKSPACE.action, keys.ASSIGN_VIEWS_TO_WORKSPACE.subject) |
-          CAN(
-            keys.REMOVE_DESIGNS_FROM_WORKSPACE.action,
-            keys.REMOVE_DESIGNS_FROM_WORKSPACE.subject,
-          ) |
+        isDesignAllowed={
+          CAN(keys.ASSIGN_DESIGNS_TO_WORKSPACE.action, keys.ASSIGN_DESIGNS_TO_WORKSPACE.subject) ||
+          CAN(keys.REMOVE_DESIGNS_FROM_WORKSPACE.action, keys.REMOVE_DESIGNS_FROM_WORKSPACE.subject)
+        }
+        isViewAllowed={
+          CAN(keys.ASSIGN_VIEWS_TO_WORKSPACE.action, keys.ASSIGN_VIEWS_TO_WORKSPACE.subject) ||
           CAN(keys.REMOVE_VIEWS_FROM_WORKSPACE.action, keys.REMOVE_VIEWS_FROM_WORKSPACE.subject)
         }
         isEnvironmentAllowed={
           CAN(
             keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.action,
             keys.ASSIGN_ENVIRONMENT_TO_WORKSPACE.subject,
-          ) |
+          ) ||
           CAN(
             keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.action,
             keys.REMOVE_ENVIRONMENT_FROM_WORKSPACE.subject,
           )
         }
         isTeamAllowed={
-          CAN(keys.ASSIGN_TEAM_TO_WORKSPACE.action, keys.ASSIGN_TEAM_TO_WORKSPACE.subject) |
+          CAN(keys.ASSIGN_TEAM_TO_WORKSPACE.action, keys.ASSIGN_TEAM_TO_WORKSPACE.subject) ||
           CAN(keys.REMOVE_TEAM_FROM_WORKSPACE.action, keys.REMOVE_TEAM_FROM_WORKSPACE.subject)
         }
         recentActivities={events?.data}
         loadingEvents={isEventsLoading}
         onFlip={() => setSkipEvents(false)}
         onFlipBack={() => setSkipEvents(true)}
+        isViewsVisible={isViewsVisible}
+        isDesignsVisible={isDesignsVisible}
+        isTeamsVisible={isTeamsVisible}
+        isEnvironmentsVisible={isEnvironmentsVisible}
       />
     </Grid>
   );

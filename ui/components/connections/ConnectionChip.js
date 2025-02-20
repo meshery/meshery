@@ -26,9 +26,10 @@ import {
 import { iconMedium } from 'css/icons.styles';
 import { UsesSistent } from '../SistentWrapper';
 
-export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, width }) => {
+export const ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, width }) => {
   const chipStyle = { width };
   const theme = useTheme();
+
   return (
     <ChipWrapper
       label={title}
@@ -43,7 +44,7 @@ export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, 
             color={
               status === CONNECTION_STATES.CONNECTED || status === CONTROLLER_STATES.DEPLOYED
                 ? theme.palette.background.brand.default
-                : theme.palette.text.default
+                : theme.palette.text.disabled
             }
           >
             <Avatar src={iconSrc} style={(status ? {} : { opacity: 0.2 }, iconMedium)}>
@@ -52,7 +53,7 @@ export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, 
           </BadgeAvatars>
         ) : (
           <Avatar src={iconSrc} sx={iconMedium}>
-            <img style={iconMedium} src="/static/img/kubernetes.svg" />
+            <img style={iconMedium} src="/static/img/kubernetes.svg" alt="kubernetes-icon" />
           </Avatar>
         )
       }
@@ -63,12 +64,12 @@ export const _ConnectionChip = ({ handlePing, onDelete, iconSrc, status, title, 
   );
 };
 
-export const TootltipWrappedConnectionChip = (props) => {
+export const TooltipWrappedConnectionChip = (props) => {
   return (
     <UsesSistent>
       <CustomTooltip title={props.tooltip || props.title} placement="left">
-        <div>
-          <_ConnectionChip {...props} />
+        <div style={{ display: 'inline-block' }}>
+          <ConnectionChip {...props} />
         </div>
       </CustomTooltip>
     </UsesSistent>

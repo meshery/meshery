@@ -8,6 +8,7 @@ import {
   FormControl,
   InputLabel,
   OutlinedInput,
+  Box,
 } from '@layer5/sistent';
 
 import {
@@ -19,7 +20,6 @@ import {
 import StepperContent from './StepperContentWrapper';
 import RJSFWrapper from '../../../MesheryMeshInterface/PatternService/RJSF_wrapper';
 import dataFetch from '../../../../lib/data-fetch';
-import { Box } from '@mui/material';
 import { selectCompSchema } from '../../../RJSFUtils/common';
 import { JsonParse, randomPatternNameGenerator } from '../../../../utils/utils';
 import Notification from './Notification';

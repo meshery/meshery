@@ -4,7 +4,7 @@ import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/
 import { FormatStructuredData, reorderObjectProperties } from '../DataFormatter';
 import { FormControl, Select, MenuItem, CircularProgress, useTheme, Button } from '@layer5/sistent';
 import DownloadIcon from '@mui/icons-material/Download';
-import { REGISTRY_ITEM_STATES, REGISTRY_ITEM_STATES_TO_TRANSITION_MAP } from '../../utils/Enum';
+import { REGISTRY_ITEM_STATES } from '../../utils/Enum';
 // import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 // import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import {
@@ -24,6 +24,7 @@ import {
   StyledKeyValuePropertyDiv,
   StyledKeyValueProperty,
 } from './MeshModel.style';
+import { iconSmall } from 'css/icons.styles';
 const ReactJson = dynamic(() => import('react-json-view'), { ssr: false });
 
 const ExportAvailable = true;
@@ -184,18 +185,16 @@ const ModelContents = ({ modelDef }) => {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <TitleWithImg displayName={modelDef.displayName} iconSrc={modelDef?.metadata?.svgColor} />
-        <div style={{ display: 'block' }}>
+        <div style={{ display: 'flex', gap: '1rem' }}>
           {ExportAvailable ? (
             <Button
               aria-label="Export Model"
               variant="contained"
-              color="primary"
-              size="medium"
               alt="Export Model to OCI Image"
               onClick={handleExport}
-              style={{ display: 'flex', width: '100%', marginBottom: '.25rem' }}
+              size="small"
             >
-              <DownloadIcon style={{ fontSize: '1.2rem' }} />
+              <DownloadIcon style={iconSmall} />
               Export
             </Button>
           ) : null}
@@ -385,13 +384,14 @@ const Description = ({ description }) => (
 );
 
 const TitleWithImg = ({ displayName, iconSrc }) => (
-  <div style={{ display: 'flex', alignItems: 'center', flexBasis: '60%' }}>
+  <div style={{ display: 'flex', alignItems: 'center' }}>
     {iconSrc && <img src={iconSrc} height="32px" width="32px" style={{ marginRight: '0.6rem' }} />}
     <StyledTitle>{displayName}</StyledTitle>
   </div>
 );
 
 const StatusChip = ({ entityData, entityType }) => {
+  console.log('amit entityData', entityData);
   const nextStatus = Object.values(REGISTRY_ITEM_STATES);
   const [updateEntityStatus] = useUpdateEntityStatusMutation();
   const { data: modelData, isSuccess } = useGetMeshModelsQuery({
@@ -406,7 +406,7 @@ const StatusChip = ({ entityData, entityType }) => {
     updateEntityStatus({
       entityType: _.toLower(entityType),
       body: {
-        id: data.id,
+        id: data?.id || entityData.id,
         status: e.target.value,
         displayname: entityData.displayName,
       },
@@ -419,48 +419,24 @@ const StatusChip = ({ entityData, entityType }) => {
   // };
 
   return (
-    <FormControl style={{ flexDirection: 'inherit', minWidth: '100%' }}>
+    <FormControl style={{ flexDirection: 'inherit' }}>
       {isSuccess ? (
         <Select
           labelId="entity-status-select-label"
           id={data?.id}
           key={data?.id}
-          value={data?.status}
-          defaultValue={data?.status}
-          onClick={(e) => e.stopPropagation()}
+          size="small"
+          value={data?.status || REGISTRY_ITEM_STATES.IGNORED}
+          defaultValue={data?.status || REGISTRY_ITEM_STATES.IGNORED}
           onChange={(e) => handleStatusChange(e)}
           sx={{
-            '& .MuiSelect-select': {
-              p: '0.5rem !important',
-              pr: '2rem !important',
-            },
+            textTransform: 'capitalize',
           }}
-          disableUnderline
           disabled={!isSuccess} // Disable the select when isSuccess is false
-          MenuProps={{
-            anchorOrigin: {
-              vertical: 'bottom',
-              horizontal: 'left',
-            },
-            transformOrigin: {
-              vertical: 'top',
-              horizontal: 'left',
-            },
-            getContentAnchorEl: null,
-            MenuListProps: { disablePadding: true },
-            PaperProps: { square: true },
-          }}
         >
           {nextStatus.map((status) => (
-            <MenuItem
-              disabled={status === data?.status}
-              style={{ display: status === data?.status ? 'none' : 'flex' }}
-              value={status}
-              key={status}
-            >
-              {status === data?.status
-                ? status
-                : REGISTRY_ITEM_STATES_TO_TRANSITION_MAP?.[status] || status}
+            <MenuItem style={{ textTransform: 'capitalize' }} value={status} key={status}>
+              {status}
             </MenuItem>
           ))}
         </Select>

@@ -1,7 +1,5 @@
 import React from 'react';
-import NoSsr from '@mui/material/NoSsr';
 import RemoveIcon from '@mui/icons-material/Remove';
-import Zoom from '@mui/material/Zoom';
 import Link from 'next/link';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -45,6 +43,8 @@ import {
   List,
   Collapse,
   Box,
+  NoSsr,
+  Zoom,
 } from '@layer5/sistent';
 import { UsesSistent } from './SistentWrapper';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
@@ -1107,7 +1107,7 @@ class Navigator_ extends React.Component {
               </HelpListItem>
             );
           })}
-          <ListItem>
+          <ListItem style={{ display: isDrawerCollapsed ? 'inherit' : 'none' }}>
             <CustomTextTooltip title="Help" placement={isDrawerCollapsed ? 'right' : 'top'}>
               <HelpButton isCollapsed={isDrawerCollapsed} onClick={this.toggleSpacing}>
                 <HelpIcon
@@ -1183,7 +1183,12 @@ class Navigator_ extends React.Component {
               icon={faAngleLeft}
               fixedWidth
               size="2x"
-              style={{ margin: '0.75rem 0.2rem ', width: '0.8rem', verticalAlign: 'middle' }}
+              style={{
+                margin: '0.75rem 0.2rem ',
+                width: '0.8rem',
+                verticalAlign: 'middle',
+                color: isDrawerCollapsed ? '#fff' : 'inherit',
+              }}
               alt="Sidebar collapse toggle icon"
             />
           </UsesSistent>
