@@ -4,7 +4,7 @@ import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/
 import { FormatStructuredData, reorderObjectProperties } from '../DataFormatter';
 import { FormControl, Select, MenuItem, CircularProgress, useTheme, Button } from '@layer5/sistent';
 import DownloadIcon from '@mui/icons-material/Download';
-import { REGISTRY_ITEM_STATES, REGISTRY_ITEM_STATES_TO_TRANSITION_MAP } from '../../utils/Enum';
+import { REGISTRY_ITEM_STATES } from '../../utils/Enum';
 // import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
 // import AssignmentTurnedInIcon from '@mui/icons-material/AssignmentTurnedIn';
 import {
