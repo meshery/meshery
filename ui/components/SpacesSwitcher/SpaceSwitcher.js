@@ -102,9 +102,8 @@ function OrgMenu(props) {
   let orgs = orgsResponse?.organizations || [];
   let uniqueOrgs = _.uniqBy(orgs, 'id');
   const { organization, setOrganization, open } = props;
-  const [skip, setSkip] = React.useState(true);
   const { notify } = useNotification();
-  useGetCurrentAbilities(organization, props.setKeys, skip);
+  useGetCurrentAbilities(organization, props.setKeys);
   useEffect(() => {
     if (isOrgsError) {
       notify({
@@ -118,7 +117,6 @@ function OrgMenu(props) {
     const id = e.target.value;
     const selected = orgs.find((org) => org.id === id);
     setOrganization({ organization: selected });
-    setSkip(false);
   };
   const theme = useTheme();
   return (
