@@ -75,7 +75,9 @@ const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
 const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) => {
   const { data: userData } = useGetUserPrefQuery();
   const [updateUserPref] = useUpdateUserPrefMutation();
-  const defaultLayout = userData?.remoteProviderPreferences ? DEFAULT_LAYOUT : LOCAL_PROVIDER_LAYOUT; //TODO: Use capability to determine default layout
+  const defaultLayout = userData?.remoteProviderPreferences
+    ? DEFAULT_LAYOUT
+    : LOCAL_PROVIDER_LAYOUT; //TODO: Use capability to determine default layout
   const { resourceCategory, changeResourceTab, selectedResource, handleChangeSelectedResource } =
     useDashboardRouter();
 
@@ -307,13 +309,8 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
         </WrapperPaper>
 
         <TabPanel value={resourceCategory} index={'Overview'}>
-          <Box display="flex">
-            <AddWidgetsToLayoutPanel
-              editMode={isEditMode}
-              widgetsToAdd={widgetsToAdd}
-              onAddWidget={onAddWidget}
-            />
-            <Box style={{ padding: 0, width: '100%' }}>
+          <Box display="flex" flexDirection={'column'} gap="1rem">
+            <Box padding={0} width={'100%'}>
               <Stack direction="row" useFlexGap gap="2rem" justifyContent="end">
                 {topBarActions.map(({ key, ...layoutAction }) => (
                   <LayoutActionButton {...layoutAction} key={key} />
@@ -327,7 +324,18 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
                 isDraggable={isEditMode}
                 cols={cols}
                 draggableHandle=".react-grid-dragHandleExample"
-                breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+                breakpoints={
+                  isEditMode
+                    ? {
+                        // -360
+                        lg: 840,
+                        md: 684,
+                        sm: 528,
+                        xs: 324,
+                        xxs: 0,
+                      }
+                    : { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }
+                }
                 onBreakpointChange={onBreakpointChange}
                 onLayoutChange={onLayoutChange}
                 measureBeforeMount={false}
@@ -352,6 +360,11 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
               </ResponsiveReactGridLayout>
               <LayoutActionButton {...LayoutActions.START_EDIT} />
             </Box>
+            <AddWidgetsToLayoutPanel
+              editMode={isEditMode}
+              widgetsToAdd={widgetsToAdd}
+              onAddWidget={onAddWidget}
+            />
           </Box>
         </TabPanel>
 
