@@ -458,7 +458,7 @@ class Navigator_ extends React.Component {
                   width: '20px',
                   filter:
                     window.location.pathname === href
-                      ? 'invert(50%) sepia(95%) saturate(2000%) hue-rotate(120deg)'
+                      ? 'invert(50%) sepia(30%) saturate(1000%) hue-rotate(120deg)'
                       : '',
                 }}
                 onMouseOver={(e) => {
@@ -630,7 +630,7 @@ class Navigator_ extends React.Component {
     let image = '/static/img/meshery-logo.png';
     let filter =
       window.location.pathname === href
-        ? 'invert(50%) sepia(95%) saturate(2000%) hue-rotate(120deg)'
+        ? 'invert(50%) sepia(30%) saturate(1000%) hue-rotate(120deg)'
         : '';
     let logoIcon = <img src={image} style={{ width: '20px' }} />;
     if (aName) {
