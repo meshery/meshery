@@ -16,13 +16,13 @@ jobs:
       uses: actions/checkout@master
       with:
         repository: meshery/meshery
-        token: ${{ secrets.RELEASEDRAFTER_PAT }}
+        token: ${{ secrets.RELEASE_NOTES_PAT }}
         path: meshery
     - name: Check out code for meshery-extensions
       uses: actions/checkout@master
       with:
         repository: layer5labs/meshery-extensions
-        token: ${{ secrets.RELEASEDRAFTER_PAT }}
+        token: ${{ secrets.RELEASE_NOTES_PAT }}
         path: meshery-extensions
     - name: Setup Go
       uses: actions/setup-go@master
