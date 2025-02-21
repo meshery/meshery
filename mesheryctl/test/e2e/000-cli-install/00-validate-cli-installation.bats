@@ -3,7 +3,7 @@
 # Basic tests to validate cli has been build and behave properly at root
 
 @test "assert cli installation is working" {
-  run curl -L https://meshery.io/install | DEPLOY_MESHERY=false bash -
+  curl -L https://meshery.io/install | DEPLOY_MESHERY=false bash -
   [ "$status" - eq 0 ]
 }
 
