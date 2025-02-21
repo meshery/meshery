@@ -52,7 +52,7 @@ export const AddWidgetsToLayoutPanel = ({ widgetsToAdd, editMode, onAddWidget })
             sx={{
               height: '18rem',
               width: '100%',
-              minWidth: '16rem',
+              maxWidth: '16rem',
             }}
           >
             <Stack direction="row" alignItems="center" justifyContent="space-between">
