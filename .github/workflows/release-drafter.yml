@@ -17,7 +17,7 @@ jobs:
         with:
           config-name: release-drafter.yml
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASEDRAFTER_PAT }}
+          GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
 
       # - name: Checkout
       #   uses: actions/checkout@master
