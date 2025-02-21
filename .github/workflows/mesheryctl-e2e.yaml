@@ -45,10 +45,10 @@ jobs:
           sudo chown -R $USER $HOME/.kube
           sudo chown -R $USER $HOME/.minikube
       - name: Setup Kubernetes
-        uses: medyagh/setup-minikube@v0.0.19
+        uses: manusa/actions-setup-minikube@v2.13.0
         with:
-          minikube-version: 'v1.33.0'
-          kubernetes-version: ${{ matrix.k8s_version }}
+          minikube version: 'v1.33.0'
+          kubernetes version: ${{ matrix.k8s_version }}
           driver: docker
       - name: Run minikube tunnel
         run: |
