@@ -5,7 +5,6 @@ import _ from 'lodash';
 import { useContext } from 'react';
 import { isEmptyAtAllDepths } from '../../utils/objects';
 import CopyIcon from '../../assets/icons/CopyIcon';
-
 const FormatterContext = React.createContext({
   propertyFormatters: {},
 });
@@ -248,6 +247,7 @@ export const SectionBody = ({ body, style = {} }) => {
     <TextWithLinks
       variant="body1"
       style={{
+        fontWeight: 'bold',
         wordWrap: 'break-word',
         color: theme.palette.text.tertiary,
         ...style,
@@ -362,21 +362,14 @@ export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema, 
   }
 
   return (
-    <FormatterContext.Provider
-      value={{
-        propertyFormatters: propertyFormatters,
-      }}
-    >
-      <Grid
-        container
-        style={{
-          wordBreak: 'break-word',
-          overflowWrap: 'break-word',
-          gap: '0.3rem 1rem',
+      <FormatterContext.Provider
+        value={{
+          propertyFormatters: propertyFormatters,
         }}
       >
-        <DynamicFormatter data={data} uiSchema={uiSchema} isLevel={isLevel} />
-      </Grid>
-    </FormatterContext.Provider>
+        <Grid container>
+          <DynamicFormatter data={data} uiSchema={uiSchema} isLevel={isLevel} />
+        </Grid>
+      </FormatterContext.Provider>
   );
 };

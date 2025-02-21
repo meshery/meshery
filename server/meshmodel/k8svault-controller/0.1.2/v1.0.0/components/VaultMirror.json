@@ -1,196 +1,196 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "VaultMirror",
-   "schema": "{\n \"description\": \"VaultMirror is the Schema for the vaultmirrors API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VaultMirrorSpec defines the desired state of VaultMirror\",\n   \"properties\": {\n    \"destination\": {\n     \"description\": \"Destination vault server\",\n     \"properties\": {\n      \"address\": {\n       \"description\": \"The http URL for the vault server By default the global VAULT_ADDRESS gets used.\",\n       \"type\": \"string\"\n      },\n      \"auth\": {\n       \"description\": \"Vault authentication parameters\",\n       \"properties\": {\n        \"role\": {\n         \"description\": \"Role is used to map the kubernetes serviceAccount to a vault role. A default VAULT_ROLE might be set for the controller. If neither is set the VaultMirror can not authenticate.\",\n         \"type\": \"string\"\n        },\n        \"tokenPath\": {\n         \"description\": \"TokenPath allows to use a different token path used for kubernetes authentication.\",\n         \"type\": \"string\"\n        },\n        \"type\": {\n         \"description\": \"Type is by default kubernetes authentication. The vault needs to be equipped with the kubernetes auth method. Currently only kubernetes is supported.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"path\": {\n       \"description\": \"The vault path, for example: /secret/myapp\",\n       \"type\": \"string\"\n      },\n      \"tlsConfig\": {\n       \"description\": \"Vault TLS configuration\",\n       \"properties\": {\n        \"caCert\": {\n         \"type\": \"string\"\n        },\n        \"caPath\": {\n         \"type\": \"string\"\n        },\n        \"clientCert\": {\n         \"type\": \"string\"\n        },\n        \"clientKey\": {\n         \"type\": \"string\"\n        },\n        \"insecure\": {\n         \"type\": \"boolean\"\n        },\n        \"serverName\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"path\"\n     ],\n     \"type\": \"object\"\n    },\n    \"fields\": {\n     \"description\": \"Define the secrets which must be mapped to vault\",\n     \"items\": {\n      \"description\": \"FieldMapping maps a secret field to the vault path\",\n      \"properties\": {\n       \"name\": {\n        \"description\": \"Name is the kubernetes secret field name\",\n        \"type\": \"string\"\n       },\n       \"rename\": {\n        \"description\": \"Rename is no required. Hovever it may be used to rewrite the field name\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"forceApply\": {\n     \"description\": \"By default existing matching fields in vault do not get overwritten\",\n     \"type\": \"boolean\"\n    },\n    \"interval\": {\n     \"description\": \"Vault does not provide a watch api, therefore the controller may reconcile a mirror in a specified interval\",\n     \"type\": \"string\"\n    },\n    \"source\": {\n     \"description\": \"Source vault server to mirror\",\n     \"properties\": {\n      \"address\": {\n       \"description\": \"The http URL for the vault server By default the global VAULT_ADDRESS gets used.\",\n       \"type\": \"string\"\n      },\n      \"auth\": {\n       \"description\": \"Vault authentication parameters\",\n       \"properties\": {\n        \"role\": {\n         \"description\": \"Role is used to map the kubernetes serviceAccount to a vault role. A default VAULT_ROLE might be set for the controller. If neither is set the VaultMirror can not authenticate.\",\n         \"type\": \"string\"\n        },\n        \"tokenPath\": {\n         \"description\": \"TokenPath allows to use a different token path used for kubernetes authentication.\",\n         \"type\": \"string\"\n        },\n        \"type\": {\n         \"description\": \"Type is by default kubernetes authentication. The vault needs to be equipped with the kubernetes auth method. Currently only kubernetes is supported.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"path\": {\n       \"description\": \"The vault path, for example: /secret/myapp\",\n       \"type\": \"string\"\n      },\n      \"tlsConfig\": {\n       \"description\": \"Vault TLS configuration\",\n       \"properties\": {\n        \"caCert\": {\n         \"type\": \"string\"\n        },\n        \"caPath\": {\n         \"type\": \"string\"\n        },\n        \"clientCert\": {\n         \"type\": \"string\"\n        },\n        \"clientKey\": {\n         \"type\": \"string\"\n        },\n        \"insecure\": {\n         \"type\": \"boolean\"\n        },\n        \"serverName\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"path\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"destination\",\n    \"source\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vault Mirror\",\n \"type\": \"object\"\n}",
-   "version": "vault.infra.doodle.com/v1beta1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Vault Mirror",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Vault Mirror",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Security \u0026 Compliance"
-   },
-   "displayName": "K8s Vault Controller",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "k8svault-controller",
+    "displayName": "K8s Vault Controller",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Security \u0026 Compliance"
+    },
+    "subCategory": "Security \u0026 Compliance",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#FFD814",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://github.com/DoodleScheduling/k8svault-controller/releases/download/k8svault-controller-0.1.2/k8svault-controller-0.1.2.tgz",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 73.6 72\" width=\"20\" height=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#FFD814\" id=\"a\" d=\"M37.6 36.8c1.2 0 2.1-1 2.1-2.1s-.9-2.1-2.1-2.1-2.1 1-2.1 2.1.9 2.1 2.1 2.1zM31.3 31c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-12.6-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-6.3-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s1 2.1 2.1 2.1zm-12.6 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s.9 2.1 2.1 2.1zM36.8 72L0 0h73.6L36.8 72z\"\u003e\u003c/path\u003e\u003c/defs\u003e\u003cuse xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#a\" overflow=\"visible\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"\u003e\u003c/use\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 73.6 72\" width=\"20\" height=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#fff\" id=\"a\" d=\"M37.6 36.8c1.2 0 2.1-1 2.1-2.1s-.9-2.1-2.1-2.1-2.1 1-2.1 2.1.9 2.1 2.1 2.1zM31.3 31c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-12.6-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-6.3-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s1 2.1 2.1 2.1zm-12.6 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s.9 2.1 2.1 2.1zM36.8 72L0 0h73.6L36.8 72z\"\u003e\u003c/path\u003e\u003c/defs\u003e\u003cuse xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#a\" overflow=\"visible\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"\u003e\u003c/use\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "0.1.2"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#FFD814",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "source_uri": "https://github.com/DoodleScheduling/k8svault-controller/releases/download/k8svault-controller-0.1.2/k8svault-controller-0.1.2.tgz",
-    "styleOverrides": "",
-    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 73.6 72\" width=\"20\" height=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#FFD814\" id=\"a\" d=\"M37.6 36.8c1.2 0 2.1-1 2.1-2.1s-.9-2.1-2.1-2.1-2.1 1-2.1 2.1.9 2.1 2.1 2.1zM31.3 31c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-12.6-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-6.3-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s1 2.1 2.1 2.1zm-12.6 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s.9 2.1 2.1 2.1zM36.8 72L0 0h73.6L36.8 72z\"\u003e\u003c/path\u003e\u003c/defs\u003e\u003cuse xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#a\" overflow=\"visible\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"\u003e\u003c/use\u003e\u003c/svg\u003e",
-    "svgComplete": "",
-    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 73.6 72\" width=\"20\" height=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#fff\" id=\"a\" d=\"M37.6 36.8c1.2 0 2.1-1 2.1-2.1s-.9-2.1-2.1-2.1-2.1 1-2.1 2.1.9 2.1 2.1 2.1zM31.3 31c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-12.6-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-6.3-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s1 2.1 2.1 2.1zm-12.6 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s.9 2.1 2.1 2.1zM36.8 72L0 0h73.6L36.8 72z\"\u003e\u003c/path\u003e\u003c/defs\u003e\u003cuse xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#a\" overflow=\"visible\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"\u003e\u003c/use\u003e\u003c/svg\u003e"
-   },
-   "model": {
-    "version": "0.1.2"
-   },
-   "name": "k8svault-controller",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "enabled",
-   "subCategory": "Security \u0026 Compliance",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
+    "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 73.6 72\" width=\"2500\" height=\"2446\"\u003e\u003cdefs\u003e\u003cpath fill=\"#FFD814\" id=\"a\" d=\"M37.6 36.8c1.2 0 2.1-1 2.1-2.1s-.9-2.1-2.1-2.1-2.1 1-2.1 2.1.9 2.1 2.1 2.1zM31.3 31c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-12.6-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-6.3-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s1 2.1 2.1 2.1zm-12.6 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s.9 2.1 2.1 2.1zM36.8 72L0 0h73.6L36.8 72z\"/\u003e\u003c/defs\u003e\u003cuse xlink:href=\"#a\" overflow=\"visible\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"/\u003e\u003c/svg\u003e",
+    "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 73.6 72\" width=\"2500\" height=\"2446\"\u003e\u003cdefs\u003e\u003cpath fill=\"#fff\" id=\"a\" d=\"M37.6 36.8c1.2 0 2.1-1 2.1-2.1s-.9-2.1-2.1-2.1-2.1 1-2.1 2.1.9 2.1 2.1 2.1zM31.3 31c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-12.6-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-6.3-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s1 2.1 2.1 2.1zm-12.6 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s.9 2.1 2.1 2.1zM36.8 72L0 0h73.6L36.8 72z\"/\u003e\u003c/defs\u003e\u003cuse xlink:href=\"#a\" overflow=\"visible\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"/\u003e\u003c/svg\u003e"
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#FFD814",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 73.6 72\" width=\"2500\" height=\"2446\"\u003e\u003cdefs\u003e\u003cpath fill=\"#FFD814\" id=\"a\" d=\"M37.6 36.8c1.2 0 2.1-1 2.1-2.1s-.9-2.1-2.1-2.1-2.1 1-2.1 2.1.9 2.1 2.1 2.1zM31.3 31c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-12.6-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-6.3-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s1 2.1 2.1 2.1zm-12.6 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s.9 2.1 2.1 2.1zM36.8 72L0 0h73.6L36.8 72z\"/\u003e\u003c/defs\u003e\u003cuse xlink:href=\"#a\" overflow=\"visible\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"/\u003e\u003c/svg\u003e",
-   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"0 0 73.6 72\" width=\"2500\" height=\"2446\"\u003e\u003cdefs\u003e\u003cpath fill=\"#fff\" id=\"a\" d=\"M37.6 36.8c1.2 0 2.1-1 2.1-2.1s-.9-2.1-2.1-2.1-2.1 1-2.1 2.1.9 2.1 2.1 2.1zM31.3 31c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-12.6-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1c0 1.2.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1 0 1.2 1 2.1 2.1 2.1zm-6.3-5.7c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1s-2.1 1-2.1 2.1.9 2.1 2.1 2.1zm6.3 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s1 2.1 2.1 2.1zm-12.6 0c1.2 0 2.1-1 2.1-2.1 0-1.2-.9-2.1-2.1-2.1-1.2 0-2.1 1-2.1 2.1s.9 2.1 2.1 2.1zM36.8 72L0 0h73.6L36.8 72z\"/\u003e\u003c/defs\u003e\u003cuse xlink:href=\"#a\" overflow=\"visible\" fill-rule=\"evenodd\" clip-rule=\"evenodd\"/\u003e\u003c/svg\u003e"
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "VaultMirror",
+    "schema": "{\n \"description\": \"VaultMirror is the Schema for the vaultmirrors API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VaultMirrorSpec defines the desired state of VaultMirror\",\n   \"properties\": {\n    \"destination\": {\n     \"description\": \"Destination vault server\",\n     \"properties\": {\n      \"address\": {\n       \"description\": \"The http URL for the vault server By default the global VAULT_ADDRESS gets used.\",\n       \"type\": \"string\"\n      },\n      \"auth\": {\n       \"description\": \"Vault authentication parameters\",\n       \"properties\": {\n        \"role\": {\n         \"description\": \"Role is used to map the kubernetes serviceAccount to a vault role. A default VAULT_ROLE might be set for the controller. If neither is set the VaultMirror can not authenticate.\",\n         \"type\": \"string\"\n        },\n        \"tokenPath\": {\n         \"description\": \"TokenPath allows to use a different token path used for kubernetes authentication.\",\n         \"type\": \"string\"\n        },\n        \"type\": {\n         \"description\": \"Type is by default kubernetes authentication. The vault needs to be equipped with the kubernetes auth method. Currently only kubernetes is supported.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"path\": {\n       \"description\": \"The vault path, for example: /secret/myapp\",\n       \"type\": \"string\"\n      },\n      \"tlsConfig\": {\n       \"description\": \"Vault TLS configuration\",\n       \"properties\": {\n        \"caCert\": {\n         \"type\": \"string\"\n        },\n        \"caPath\": {\n         \"type\": \"string\"\n        },\n        \"clientCert\": {\n         \"type\": \"string\"\n        },\n        \"clientKey\": {\n         \"type\": \"string\"\n        },\n        \"insecure\": {\n         \"type\": \"boolean\"\n        },\n        \"serverName\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"path\"\n     ],\n     \"type\": \"object\"\n    },\n    \"fields\": {\n     \"description\": \"Define the secrets which must be mapped to vault\",\n     \"items\": {\n      \"description\": \"FieldMapping maps a secret field to the vault path\",\n      \"properties\": {\n       \"name\": {\n        \"description\": \"Name is the kubernetes secret field name\",\n        \"type\": \"string\"\n       },\n       \"rename\": {\n        \"description\": \"Rename is no required. Hovever it may be used to rewrite the field name\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"forceApply\": {\n     \"description\": \"By default existing matching fields in vault do not get overwritten\",\n     \"type\": \"boolean\"\n    },\n    \"interval\": {\n     \"description\": \"Vault does not provide a watch api, therefore the controller may reconcile a mirror in a specified interval\",\n     \"type\": \"string\"\n    },\n    \"source\": {\n     \"description\": \"Source vault server to mirror\",\n     \"properties\": {\n      \"address\": {\n       \"description\": \"The http URL for the vault server By default the global VAULT_ADDRESS gets used.\",\n       \"type\": \"string\"\n      },\n      \"auth\": {\n       \"description\": \"Vault authentication parameters\",\n       \"properties\": {\n        \"role\": {\n         \"description\": \"Role is used to map the kubernetes serviceAccount to a vault role. A default VAULT_ROLE might be set for the controller. If neither is set the VaultMirror can not authenticate.\",\n         \"type\": \"string\"\n        },\n        \"tokenPath\": {\n         \"description\": \"TokenPath allows to use a different token path used for kubernetes authentication.\",\n         \"type\": \"string\"\n        },\n        \"type\": {\n         \"description\": \"Type is by default kubernetes authentication. The vault needs to be equipped with the kubernetes auth method. Currently only kubernetes is supported.\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"path\": {\n       \"description\": \"The vault path, for example: /secret/myapp\",\n       \"type\": \"string\"\n      },\n      \"tlsConfig\": {\n       \"description\": \"Vault TLS configuration\",\n       \"properties\": {\n        \"caCert\": {\n         \"type\": \"string\"\n        },\n        \"caPath\": {\n         \"type\": \"string\"\n        },\n        \"clientCert\": {\n         \"type\": \"string\"\n        },\n        \"clientKey\": {\n         \"type\": \"string\"\n        },\n        \"insecure\": {\n         \"type\": \"boolean\"\n        },\n        \"serverName\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"path\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"destination\",\n    \"source\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Vault Mirror\",\n \"type\": \"object\"\n}",
+    "version": "vault.infra.doodle.com/v1beta1"
+  }
+}

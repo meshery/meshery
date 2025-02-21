@@ -24,6 +24,8 @@ import getPageContext from '../components/PageContext';
 import { MESHERY_CONTROLLER_SUBSCRIPTION } from '../components/subscription/helpers';
 import { GQLSubscription } from '../components/subscription/subscriptionhandler';
 import dataFetch, { promisifiedDataFetch } from '../lib/data-fetch';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
 import {
   actionTypes,
   makeStore,

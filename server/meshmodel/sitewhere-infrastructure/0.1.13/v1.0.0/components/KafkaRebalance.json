@@ -1,189 +1,189 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "KafkaRebalance",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"The specification of the Kafka rebalance.\",\n   \"properties\": {\n    \"concurrentIntraBrokerPartitionMovements\": {\n     \"description\": \"The upper bound of ongoing partition replica movements between disks within each broker. Default is 2.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"concurrentLeaderMovements\": {\n     \"description\": \"The upper bound of ongoing partition leadership movements. Default is 1000.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"concurrentPartitionMovementsPerBroker\": {\n     \"description\": \"The upper bound of ongoing partition replica movements going into/out of each broker. Default is 5.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"excludedTopics\": {\n     \"description\": \"A regular expression where any matching topics will be excluded from the calculation of optimization proposals. This expression will be parsed by the java.util.regex.Pattern class; for more information on the supported formar consult the documentation for that class.\",\n     \"type\": \"string\"\n    },\n    \"goals\": {\n     \"description\": \"A list of goals, ordered by decreasing priority, to use for generating and executing the rebalance proposal. The supported goals are available at https://github.com/linkedin/cruise-control#goals. If an empty goals list is provided, the goals declared in the default.goals Cruise Control configuration parameter are used.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"replicaMovementStrategies\": {\n     \"description\": \"A list of strategy class names used to determine the execution order for the replica movements in the generated optimization proposal. By default BaseReplicaMovementStrategy is used, which will execute the replica movements in the order that they were generated.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"replicationThrottle\": {\n     \"description\": \"The upper bound, in bytes per second, on the bandwidth used to move replicas. There is no limit by default.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"skipHardGoalCheck\": {\n     \"description\": \"Whether to allow the hard goals specified in the Kafka CR to be skipped in optimization proposal generation. This can be useful when some of those hard goals are preventing a balance solution being found. Default is false.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kafka Rebalance\"\n}",
-   "version": "kafka.strimzi.io/v1alpha1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Kafka Rebalance",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Kafka Rebalance",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Uncategorized"
-   },
-   "displayName": "Sitewhere Infrastructure",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "source_uri": "https://sitewhere.io/helm-charts/sitewhere-infrastructure-0.1.13.tgz",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "sitewhere-infrastructure",
+    "displayName": "Sitewhere Infrastructure",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized"
+    },
+    "metadata": {
+      "source_uri": "https://sitewhere.io/helm-charts/sitewhere-infrastructure-0.1.13.tgz",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "0.1.13"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
     "svgColor": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "0.1.13"
-   },
-   "name": "sitewhere-infrastructure",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "KafkaRebalance",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"The specification of the Kafka rebalance.\",\n   \"properties\": {\n    \"concurrentIntraBrokerPartitionMovements\": {\n     \"description\": \"The upper bound of ongoing partition replica movements between disks within each broker. Default is 2.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"concurrentLeaderMovements\": {\n     \"description\": \"The upper bound of ongoing partition leadership movements. Default is 1000.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"concurrentPartitionMovementsPerBroker\": {\n     \"description\": \"The upper bound of ongoing partition replica movements going into/out of each broker. Default is 5.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"excludedTopics\": {\n     \"description\": \"A regular expression where any matching topics will be excluded from the calculation of optimization proposals. This expression will be parsed by the java.util.regex.Pattern class; for more information on the supported formar consult the documentation for that class.\",\n     \"type\": \"string\"\n    },\n    \"goals\": {\n     \"description\": \"A list of goals, ordered by decreasing priority, to use for generating and executing the rebalance proposal. The supported goals are available at https://github.com/linkedin/cruise-control#goals. If an empty goals list is provided, the goals declared in the default.goals Cruise Control configuration parameter are used.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"replicaMovementStrategies\": {\n     \"description\": \"A list of strategy class names used to determine the execution order for the replica movements in the generated optimization proposal. By default BaseReplicaMovementStrategy is used, which will execute the replica movements in the order that they were generated.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"replicationThrottle\": {\n     \"description\": \"The upper bound, in bytes per second, on the bandwidth used to move replicas. There is no limit by default.\",\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"skipHardGoalCheck\": {\n     \"description\": \"Whether to allow the hard goals specified in the Kafka CR to be skipped in optimization proposal generation. This can be useful when some of those hard goals are preventing a balance solution being found. Default is false.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Kafka Rebalance\"\n}",
+    "version": "kafka.strimzi.io/v1alpha1"
+  }
+}

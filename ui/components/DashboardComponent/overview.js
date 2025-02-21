@@ -1,16 +1,14 @@
 import React from 'react';
-import { NoSsr } from '@mui/material';
-import Popup from '../Popup';
+import { NoSsr } from '@layer5/sistent';
 import { withRouter } from 'next/router';
 import { withNotify } from '../../utils/hooks/useNotification';
 import { connect, Provider } from 'react-redux';
 import { store } from '@/store/index';
-import HoneycombComponent from './HoneyComb/HoneyCombComponent';
+import HoneycombComponent from './widgets/HoneyComb/HoneyCombComponent';
 import { useGetMeshSyncResourceKindsQuery } from '@/rtk-query/meshsync';
 import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
 import { bindActionCreators } from 'redux';
 import { setK8sContexts, updateProgress } from 'lib/store';
-
 import ConnectCluster from './charts/ConnectCluster';
 import { ErrorContainer, HoneycombRoot } from './style';
 import { ErrorIcon, Typography, useTheme } from '@layer5/sistent';
@@ -32,7 +30,7 @@ const ErrorDisplay = ({ theme }) => (
   </ErrorContainer>
 );
 
-const Overview = ({ selectedK8sContexts, k8scontext }) => {
+const Overview = ({ selectedK8sContexts, k8scontext, isEditMode }) => {
   const clusterIds = getK8sClusterIdsFromCtxId(selectedK8sContexts, k8scontext);
   const isClusterIdsEmpty = clusterIds.size === 0;
   const theme = useTheme();
@@ -58,7 +56,6 @@ const Overview = ({ selectedK8sContexts, k8scontext }) => {
       <div
         style={{
           background: theme.palette.background.default,
-          marginTop: '1rem',
         }}
       >
         <HoneycombRoot>
@@ -80,18 +77,17 @@ const Overview = ({ selectedK8sContexts, k8scontext }) => {
 
   return (
     <NoSsr>
-      <Popup />
       <Provider store={store}>
         <div
           style={{
             background: theme.palette.background.default,
-            marginTop: '1rem',
           }}
         >
           <HoneycombComponent
             kinds={clusterSummary?.kinds}
             isClusterLoading={isClusterLoading}
             isClusterIdsEmpty={isClusterIdsEmpty}
+            isEditMode={isEditMode}
           />
         </div>
       </Provider>

@@ -1,7 +1,8 @@
-import { Typography, IconButton, Paper, styled, Tab, Tabs, gray, charcoal } from '@layer5/sistent';
+import { Typography, Paper, styled, Tab, Tabs, gray, charcoal, Card } from '@layer5/sistent';
 
-export const DashboardSection = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.background.card,
+export const DashboardSection = styled(Card)(({ theme }) => ({
+  backgroundColor:
+    theme.palette.mode === 'dark' ? theme.palette.background.card : theme.palette.common.white,
   padding: theme.spacing(2),
   borderRadius: '4px',
   height: '100%',
@@ -9,7 +10,7 @@ export const DashboardSection = styled('div')(({ theme }) => ({
 
 export const ChartSectionWithColumn = styled('div')(({ theme }) => ({
   backgroundColor:
-    theme.palette.mode === 'dark' ? '#202020' : theme.palette.background.constant.white,
+    theme.palette.mode === 'dark' ? theme.palette.background.card : theme.palette.common.white,
   padding: theme.spacing(2),
   borderRadius: '4px',
   height: '100%',
@@ -42,12 +43,14 @@ export const ConnectClusterText = styled(Typography)({
   marginBottom: '0.5rem',
 });
 
-export const HoneycombRoot = styled('div')(({ theme }) => ({
+export const HoneycombRoot = styled(Card)(({ theme, isEditMode }) => ({
   backgroundColor:
-    theme.palette.mode === 'dark' ? '#202020' : theme.palette.background.constant.white,
+    theme.palette.mode === 'dark' ? theme.palette.background.card : theme.palette.common.white,
   padding: theme.spacing(2),
-  borderRadius: 4,
+  borderRadius: '4px',
   width: '100%',
+  height: isEditMode ? '20rem' : '25rem',
+  overflowY: 'auto',
 }));
 
 export const HoneycombCell = styled('li')(({ row, column }) => ({
@@ -153,10 +156,6 @@ export const ControlsContainer = styled('div')(({ theme }) => ({
     alignSelf: 'flex-end',
   },
 }));
-
-export const StyledIconButton = styled(IconButton)({
-  padding: '4px',
-});
 
 export const NoResourcesText = styled(Typography)({
   textAlign: 'center',
