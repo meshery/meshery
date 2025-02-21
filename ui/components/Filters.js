@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 import React, { useState, useEffect, useRef } from 'react';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { connect } from 'react-redux';
@@ -119,7 +119,9 @@ function TooltipIcon({ children, onClick, title }) {
   return (
     <UsesSistent>
       <CustomTooltip title={title} placement="top" interactive>
-        <IconButton onClick={onClick}>{children}</IconButton>
+        <div>
+          <IconButton onClick={onClick}>{children}</IconButton>
+        </div>
       </CustomTooltip>
     </UsesSistent>
   );
@@ -154,7 +156,11 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
       fullWidth={!fullScreen}
     >
       <YmlDialogTitle>
-        <DialogTitle disableTypography id="filter-dialog-title">
+        <DialogTitle
+          disableTypography
+          id="filter-dialog-title"
+          style={{ width: '100%', display: 'flex' }}
+        >
           <YmlDialogTitleText variant="h6">{filter.name}</YmlDialogTitleText>
           <TooltipIcon
             title={fullScreen ? 'Exit Fullscreen' : 'Enter Fullscreen'}
@@ -1298,8 +1304,6 @@ function MesheryFilters({
 
 const ImportModal = React.memo((props) => {
   const { handleClose, handleImportFilter } = props;
-
-  // const classes = useStyles();
 
   return (
     <UsesSistent>

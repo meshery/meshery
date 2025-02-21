@@ -18,7 +18,7 @@ Import a Meshery design
 
 
 		Import Helm Charts, Kubernetes Manifest, Docker Compose or Meshery designs by passing
-		remote URL or local file system path to the file. Source type must be provided.
+		remote URL or local file system path to the file. Providing source type is optional.
 
 		YAML and TGZ (with helm only) format of file is accepted, if you are importing Meshery Design OCI file format is also supported
 
@@ -38,6 +38,27 @@ Import design manifest
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design import -f [file/URL] -s [source-type] -n [name]
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl design import -f design.tar
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl design import -f design.yml -n design-name
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 
 </div>
 </pre> 

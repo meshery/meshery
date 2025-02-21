@@ -17,7 +17,6 @@ package design
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"os"
@@ -26,6 +25,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/schemas/models/core"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -37,7 +37,7 @@ var importCmd = &cobra.Command{
 	Short: "Import a Meshery design",
 	Long: `
 		Import Helm Charts, Kubernetes Manifest, Docker Compose or Meshery designs by passing
-		remote URL or local file system path to the file. Source type must be provided.
+		remote URL or local file system path to the file. Providing source type is optional.
 
 		YAML and TGZ (with helm only) format of file is accepted, if you are importing Meshery Design OCI file format is also supported
 
@@ -47,16 +47,16 @@ var importCmd = &cobra.Command{
 	Example: `
 // Import design manifest
 mesheryctl design import -f [file/URL] -s [source-type] -n [name]
+
+mesheryctl design import -f design.tar
+mesheryctl design import -f design.yml -n design-name
+mesheryctl design import -f design.yml -s "Kubernetes Manifest" -n design-name
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
+		const errMsg = "Usage: mesheryctl design import -f [file/URL] -s [source-type] -n [name]\n"
 		if file == "" {
-			utils.Log.Debug("manifest path not provided")
-			return ErrDesignManifest()
-		}
-
-		if sourceType == "" {
-			utils.Log.Debug("source-type not provided")
-			return ErrDesignSourceType()
+			utils.Log.Debug("File path not provided\n" + errMsg)
+			return ErrDesignFileNotProvided()
 		}
 
 		return nil
@@ -72,11 +72,26 @@ mesheryctl design import -f [file/URL] -s [source-type] -n [name]
 			return nil
 		}
 
-		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern"
+		patternURL := mctlCfg.GetBaseMesheryURL() + "/api/pattern/import"
 
 		// If pattern file is passed via flags
-		if sourceType, err = getFullSourceType(sourceType); err != nil {
-			return ErrInValidSource(sourceType, validSourceTypes)
+		if sourceType != "" {
+			if sourceType, err = getFullSourceType(sourceType); err != nil {
+				utils.Log.Debugf("%s is not a valid source type. Valid types are Helm Chart, Kubernetes Manifest, Docker Compose, Meshery Design", sourceType)
+				validSourceTypes := []string{"Helm Chart", "Kubernetes Manifest", "Docker Compose", "Meshery Design"}
+				return ErrInValidSource(sourceType, validSourceTypes)
+			}
+		}
+
+		switch sourceType {
+		case "Helm Chart":
+			sourceType = core.IacFileTypes.HELM_CHART
+		case "Kubernetes Manifest":
+			sourceType = core.IacFileTypes.KUBERNETES_MANIFEST
+		case "Meshery Design":
+			sourceType = core.IacFileTypes.MESHERY_DESIGN
+		case "Docker Compose":
+			sourceType = core.IacFileTypes.DOCKER_COMPOSE
 		}
 
 		pattern, err := importPattern(sourceType, file, patternURL, true)
@@ -85,7 +100,7 @@ mesheryctl design import -f [file/URL] -s [source-type] -n [name]
 			return nil
 		}
 
-		fmt.Printf("The design file '%s' has been imported. Design ID: %s, Source Type: %s ", pattern.Name, utils.TruncateID(pattern.ID.String()), sourceType)
+		utils.Log.Infof("The design file '%s' has been imported. Design ID: %s", pattern.Name, utils.TruncateID(pattern.ID.String()))
 
 		return nil
 	},
@@ -97,12 +112,16 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 
 	// If design name is not provided
 	// use file name as default
-	patternName := path.Base(file)
-	if name != "" {
+	var patternName string
+	fileName := path.Base(file)
+	if name == "" {
+		patternName = fileName
+	} else {
 		patternName = name
 	}
+
 	validURL := utils.IsValidUrl(file)
-	// Check if the pattern manifest is file or URL
+	// Check if the pattern is file or URL
 	if !validURL {
 		content, err := os.ReadFile(file)
 		if err != nil {
@@ -110,16 +129,14 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 		}
 
 		jsonValues, err := json.Marshal(map[string]interface{}{
-			"pattern_data": map[string]interface{}{
-				"name":         patternName,
-				"pattern_file": content,
-			},
-			"save": save,
+			"name":      patternName,
+			"file":      content,
+			"file_name": fileName,
 		})
 		if err != nil {
 			return nil, utils.ErrMarshal(err)
 		}
-		req, err = utils.NewRequest("POST", patternURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
+		req, err = utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 		if err != nil {
 			return nil, err
 		}
@@ -149,11 +166,10 @@ func importPattern(sourceType string, file string, patternURL string, save bool)
 
 		jsonValues, _ = json.Marshal(map[string]interface{}{
 			"url":  file,
-			"save": save,
 			"name": patternName,
 		})
 
-		req, err := utils.NewRequest("POST", patternURL+"/"+sourceType, bytes.NewBuffer(jsonValues))
+		req, err := utils.NewRequest("POST", patternURL, bytes.NewBuffer(jsonValues))
 		if err != nil {
 			return nil, utils.ErrCreatingRequest(err)
 		}

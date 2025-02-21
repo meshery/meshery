@@ -1,13 +1,12 @@
-import { styled, Button } from '@layer5/sistent';
-import { alpha } from '@mui/material';
+import { styled, Button, alpha } from '@layer5/sistent';
 import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
 
 export const DisableButton = styled(Button)(({ theme }) => ({
   '&.MuiButtonBase-root:disabled': {
     cursor: 'not-allowed',
     pointerEvents: 'auto',
-    backgroundColor: theme.palette.secondary.disableButtonBg,
-    color: theme.palette.secondary.disableButton,
+    backgroundColor: theme.palette.background.brand.disabled,
+    color: theme.palette.text.disabled,
   },
 }));
 

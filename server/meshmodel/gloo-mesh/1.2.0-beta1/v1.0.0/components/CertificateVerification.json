@@ -1,196 +1,196 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "CertificateVerification",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CertificateVerification is the resource by which a user can verify the traffic\\n   during a VirtualMesh certificate rotation.\\n\\n   To do this, a user would create a CertificateVerification containing:\\n   1. The step being verified\\n   2. The action which the user would like to kick off\\n   3. The VirtualMesh being rotated\\n\\n   An example of a Verification for a Virtual Mesh which has just added a new root successfully would be:\\n```yaml\\n   apiVersion: networking.enterprise.mesh.gloo.solo.io/v1beta1\\n   kind: CertificateVerification\\n   metadata:\\n     name: successful-verification\\n     namespace: gloo-mesh\\n   spec:\\n     action: CONTINUE\\n     virtualMesh:\\n       name: my-virtual-mesh\\n       namespace: gloo-mesh\\n     step: ADDING_NEW_ROOT\\n```\\n\\n An example of a Verification  for a Virtual Mesh which has failed to propagate the new intermediate would be\\n the following: In addition this example does not specify a namespace for the virtualMesh because it is\\n in the same namesapce as the CertificateVerification.\\n```yaml\\n   apiVersion: networking.enterprise.mesh.gloo.solo.io/v1beta1\\n   kind: CertificateVerification\\n   metadata:\\n     name: successful-verification\\n     namespace: gloo-mesh\\n   spec:\\n     action: ROLLBACK\\n     virtualMesh:\\n       name: my-virtual-mesh\\n     step: PROPAGATING_NEW_INTERMEDIATE\\n```\",\n   \"properties\": {\n    \"action\": {\n     \"description\": \"The action which this verification will kick off\",\n     \"enum\": [\n      \"CONTINUE\",\n      \"ROLLBACK\"\n     ],\n     \"type\": \"string\"\n    },\n    \"step\": {\n     \"description\": \"The rotation state to verify using this CertificateVerification.\\nThis must be an active state\\n1. ADDING_NEW_ROOT\\n2. PROPAGATING_NEW_INTERMEDIATE\\n3. DELETING_OLD_ROOT\\n4. PREVIOUS_CA\",\n     \"enum\": [\n      \"NOT_ROTATING\",\n      \"PREVIOUS_CA\",\n      \"ADDING_NEW_ROOT\",\n      \"PROPAGATING_NEW_INTERMEDIATE\",\n      \"DELETING_OLD_ROOT\",\n      \"VERIFYING\",\n      \"VERIFIED\",\n      \"ROLLING_BACK\",\n      \"FINISHED\",\n      \"FAILED\"\n     ],\n     \"type\": \"string\"\n    },\n    \"virtualMesh\": {\n     \"description\": \"The VirtualMesh being rotated which this resource should apply to.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"name of the resource being referenced\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"namespace of the resource being referenced\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Certificate Verification\",\n \"type\": \"object\"\n}",
-   "version": "networking.enterprise.mesh.gloo.solo.io/v1beta1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Certificate Verification",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Certificate Verification",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Cloud Native Network"
-   },
-   "displayName": "Gloo Mesh",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "gloo-mesh",
+    "displayName": "Gloo Mesh",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Cloud Native Network"
+    },
+    "subCategory": "Service Mesh",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://storage.googleapis.com/gloo-mesh/gloo-mesh/gloo-mesh-1.2.0-beta1.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "1.2.0-beta1"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "source_uri": "https://storage.googleapis.com/gloo-mesh/gloo-mesh/gloo-mesh-1.2.0-beta1.tgz",
-    "styleOverrides": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "1.2.0-beta1"
-   },
-   "name": "gloo-mesh",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Service Mesh",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "CertificateVerification",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"CertificateVerification is the resource by which a user can verify the traffic\\n   during a VirtualMesh certificate rotation.\\n\\n   To do this, a user would create a CertificateVerification containing:\\n   1. The step being verified\\n   2. The action which the user would like to kick off\\n   3. The VirtualMesh being rotated\\n\\n   An example of a Verification for a Virtual Mesh which has just added a new root successfully would be:\\n```yaml\\n   apiVersion: networking.enterprise.mesh.gloo.solo.io/v1beta1\\n   kind: CertificateVerification\\n   metadata:\\n     name: successful-verification\\n     namespace: gloo-mesh\\n   spec:\\n     action: CONTINUE\\n     virtualMesh:\\n       name: my-virtual-mesh\\n       namespace: gloo-mesh\\n     step: ADDING_NEW_ROOT\\n```\\n\\n An example of a Verification  for a Virtual Mesh which has failed to propagate the new intermediate would be\\n the following: In addition this example does not specify a namespace for the virtualMesh because it is\\n in the same namesapce as the CertificateVerification.\\n```yaml\\n   apiVersion: networking.enterprise.mesh.gloo.solo.io/v1beta1\\n   kind: CertificateVerification\\n   metadata:\\n     name: successful-verification\\n     namespace: gloo-mesh\\n   spec:\\n     action: ROLLBACK\\n     virtualMesh:\\n       name: my-virtual-mesh\\n     step: PROPAGATING_NEW_INTERMEDIATE\\n```\",\n   \"properties\": {\n    \"action\": {\n     \"description\": \"The action which this verification will kick off\",\n     \"enum\": [\n      \"CONTINUE\",\n      \"ROLLBACK\"\n     ],\n     \"type\": \"string\"\n    },\n    \"step\": {\n     \"description\": \"The rotation state to verify using this CertificateVerification.\\nThis must be an active state\\n1. ADDING_NEW_ROOT\\n2. PROPAGATING_NEW_INTERMEDIATE\\n3. DELETING_OLD_ROOT\\n4. PREVIOUS_CA\",\n     \"enum\": [\n      \"NOT_ROTATING\",\n      \"PREVIOUS_CA\",\n      \"ADDING_NEW_ROOT\",\n      \"PROPAGATING_NEW_INTERMEDIATE\",\n      \"DELETING_OLD_ROOT\",\n      \"VERIFYING\",\n      \"VERIFIED\",\n      \"ROLLING_BACK\",\n      \"FINISHED\",\n      \"FAILED\"\n     ],\n     \"type\": \"string\"\n    },\n    \"virtualMesh\": {\n     \"description\": \"The VirtualMesh being rotated which this resource should apply to.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"name of the resource being referenced\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"namespace of the resource being referenced\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Certificate Verification\",\n \"type\": \"object\"\n}",
+    "version": "networking.enterprise.mesh.gloo.solo.io/v1beta1"
+  }
+}

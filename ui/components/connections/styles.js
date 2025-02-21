@@ -1,7 +1,20 @@
 import { CONNECTION_STATES } from '../../utils/Enum';
 import { notificationColors } from '../../themes';
-import { Box, Button, Chip, Grid, MenuItem, Select, styled, Tab, Tabs } from '@layer5/sistent';
-import { StepConnector, StepLabel, Stepper, TableContainer } from '@mui/material';
+import {
+  Box,
+  Button,
+  Chip,
+  Grid,
+  MenuItem,
+  Select,
+  styled,
+  Tab,
+  Tabs,
+  StepConnector,
+  StepLabel,
+  Stepper,
+  TableContainer,
+} from '@layer5/sistent';
 
 export const CreateButton = styled(Grid)({
   display: 'flex',
@@ -76,7 +89,7 @@ export const ConnectionIconText = styled('div')({
   justifyContent: 'center',
 });
 
-export const ChipWrapper = styled(Chip)({
+export const ChipWrapper = styled(Chip)(({ theme }) => ({
   width: '13rem',
   maxWidth: '13rem',
   minWidth: '9rem',
@@ -89,7 +102,9 @@ export const ChipWrapper = styled(Chip)({
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
   border: '1px solid rgba(255, 255, 255, 0.23)',
-});
+  textTransform: 'lowercase',
+  color: theme.palette.text.primary,
+}));
 
 const baseChipStyles = {
   minWidth: '142px !important',

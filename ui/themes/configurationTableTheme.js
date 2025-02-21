@@ -1,4 +1,4 @@
-import { createTheme } from '@mui/material/styles';
+import { createTheme } from '@layer5/sistent';
 
 function configurationTableTheme(style = {}) {
   const theme = createTheme({

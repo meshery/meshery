@@ -1,27 +1,14 @@
 import { Grid, styled } from '@layer5/sistent';
-import { makeStyles } from '@mui/styles';
 
-const useStyles = makeStyles({
-  fullScreenCodeMirror: {
-    height: '100%',
-    width: '100%',
-    '& .CodeMirror': {
-      minHeight: '300px',
-      height: '100%',
-      width: '100%',
-    },
-  },
-});
-
-export const fullScreenCodeMirrorstyles = {
-  height: '100%',
+export const StyledCodeMirrorWrapper = styled('div')(({ fullScreen }) => ({
+  height: fullScreen ? '100%' : undefined,
   width: '100%',
   '& .CodeMirror': {
     minHeight: '300px',
-    height: '100%',
+    height: fullScreen ? '100%' : undefined,
     width: '100%',
   },
-};
+}));
 
 export const CardBackGrid = styled(Grid)(() => ({
   marginBottom: '0.25rem',
@@ -62,7 +49,6 @@ export const GridCloneBtnText = styled('span')(({ theme }) => ({
 
 export const CardImg = styled('img')(() => ({
   marginRight: '0.5rem',
-  // filter: theme.palette.secondary.img,
 }));
 
 export const CardNoPaper = styled('div')(() => ({
@@ -117,5 +103,3 @@ export const CatalogCardButtons = styled('div')(() => ({
   height: '100%',
   gap: '.5rem',
 }));
-
-export default useStyles;

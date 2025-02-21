@@ -1,6 +1,5 @@
 import React from 'react';
 import { donut } from 'billboard.js';
-import { Stack } from '@mui/material';
 import {
   Typography,
   SAFFRON,
@@ -8,6 +7,7 @@ import {
   KEPPEL,
   DARK_SLATE_GRAY,
   TEAL_BLUE,
+  Stack,
 } from '@layer5/sistent';
 import BBChart from '@/components/BBChart';
 import { getLegendTemplate } from './utils';

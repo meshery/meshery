@@ -1,7 +1,4 @@
 import * as React from 'react';
-import { Modal } from '@mui/material';
-import { keyframes } from '@mui/material/styles';
-
 import {
   Typography,
   Accordion,
@@ -12,6 +9,8 @@ import {
   IconButton,
   InfoIcon,
   LIGHT_TEAL,
+  Modal,
+  keyframes,
 } from '@layer5/sistent';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CloseIcon from '@mui/icons-material/Close';
@@ -132,7 +131,7 @@ const TroubleshootListitem = styled('li')({
 const KeyStyleContainer = styled('div')(({ theme }) => ({
   display: 'inline-block',
   padding: '0.1rem 0.5rem',
-  background: theme.palette.secondary.elevatedComponent,
+  background: theme.palette.background.tabs,
   margin: '0.3rem',
   borderRadius: '5px',
   boxShadow:
@@ -278,7 +277,7 @@ const TroubleshootingModal = (props) => {
                     <TroubleshootListitem>
                       {' '}
                       <TroubleshootHelpLink
-                        href="http://discuss.meshery.io/t/what-are-some-troubleshooting-tips-for-meshmap"
+                        href="https://meshery.io/community#community-forums/t/what-are-some-troubleshooting-tips-for-meshmap"
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -300,7 +299,11 @@ const TroubleshootingModal = (props) => {
                   email
                 </ContactHelpLink>{' '}
                 or{' '}
-                <ContactHelpLink href="http://discuss.meshery.io" target="_blank" rel="noreferrer">
+                <ContactHelpLink
+                  href="https://meshery.io/community#community-forums"
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   community forum
                 </ContactHelpLink>
                 .

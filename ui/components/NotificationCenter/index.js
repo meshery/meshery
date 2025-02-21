@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import {
   Divider,
   ClickAwayListener,
@@ -122,7 +122,7 @@ const EmptyState = () => {
       }}
     >
       <DoneIcon height="10rem" width="8rem" fill={theme.palette.icon.secondary} />
-      <Typography variant="h6" sx={{ margin: 'auto', color: theme.icon2 }}>
+      <Typography variant="h6" sx={{ margin: 'auto', color: theme.palette.text.primary }}>
         {' '}
         No notifications to show{' '}
       </Typography>
