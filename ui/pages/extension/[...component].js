@@ -17,7 +17,7 @@ import {
 import { connect } from 'react-redux';
 import Head from 'next/head';
 import { bindActionCreators } from 'redux';
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import RemoteComponent from '../../components/RemoteComponent';
 import _ from 'lodash';
 import { MesheryExtensionEarlyAccessCardPopup } from '../../components/Popup';
@@ -25,7 +25,6 @@ import dataFetch from '../../lib/data-fetch';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
 import { withRouter } from 'next/router';
 import { DynamicFullScrrenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
-import { useGetProviderCapabilitiesQuery } from '../../rtk-query/user';
 
 /**
  * getPath returns the current pathname
@@ -57,32 +56,57 @@ function matchComponentURI(extensionURI, currentURI) {
   return currentURI.includes(extensionURI);
 }
 
-function RemoteExtension(props) {
-  const [componentTitle, setComponentTitle] = useState('');
+class RemoteExtension extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      componentTitle: '',
+      isLoading: true,
+      capabilitiesRegistryObj: null,
+    };
+  }
 
-  const {
-    extensionType,
-    capabilitiesRegistry,
-    updatepagepath,
-    updatepagetitle,
-    updatebetabadge,
-    updateExtensionType,
-    updateCapabilities,
-    router,
-  } = props;
+  componentWillUnmount() {
+    this.props.updateExtensionType({ extensionType: null });
+    this.setState({
+      componentTitle: '',
+      isLoading: true,
+      capabilitiesRegistryObj: null,
+    });
+  }
 
-  const { data: capabilitiesData, isLoading } = useGetProviderCapabilitiesQuery();
+  componentDidMount() {
+    dataFetch(
+      '/api/provider/capabilities',
+      {
+        method: 'GET',
+        credentials: 'include',
+      },
+      (result) => {
+        this.props.updatepagepath({ path: getPath() });
+        if (result) {
+          this.setState({
+            capabilitiesRegistryObj: result,
+          });
+          this.props.updateCapabilities({ capabilitiesRegistry: result });
+          this.renderExtension();
+        }
+      },
+      (err) => console.error(err),
+    );
+  }
 
-  useEffect(() => {
+  componentDidUpdate(prevProps, prevState) {
     if (
-      extensionType !== props.extensionType ||
-      router.query.component !== props.router.query.component
+      this.props.extensionType !== prevProps.extensionType ||
+      this.props.router.query.component != prevProps.router.query.component
     ) {
-      renderExtension(capabilitiesRegistry);
+      this.renderExtension();
     }
-  }, [extensionType, router.query.component, capabilitiesRegistry]);
+  }
 
-  const renderExtension = (cap) => {
+  renderExtension = () => {
+    let cap = this.props.capabilitiesRegistry;
     // load extension if capabilities are available
     if (cap !== null) {
       let extNames = [];
@@ -102,53 +126,56 @@ function RemoteExtension(props) {
 
       extNames.forEach((ext) => {
         if (matchComponentURI(ext?.uri, getPath())) {
-          updateExtensionType({ extensionType: ext.name });
+          this.props.updateExtensionType({ extensionType: ext.name });
           let extensions = ExtensionPointSchemaValidator(ext.name)(cap?.extensions[ext.name]);
-          setComponentTitle(getComponentTitleFromPath(extensions, getPath()));
-          updatepagetitle({ title: getComponentTitleFromPath(extensions, getPath()) });
-          updatebetabadge({ isBeta: getComponentIsBetaFromPath(extensions, getPath()) });
+          this.setState({
+            componentTitle: getComponentTitleFromPath(extensions, getPath()),
+            isLoading: false,
+          });
+          this.props.updatepagetitle({ title: getComponentTitleFromPath(extensions, getPath()) });
+          this.props.updatebetabadge({ isBeta: getComponentIsBetaFromPath(extensions, getPath()) });
         }
       });
     }
+    // else, show signup card
+    this.setState({ isLoading: false });
   };
 
-  useEffect(() => {
-    return () => {
-      updateExtensionType({ extensionType: null });
-      setComponentTitle('');
-    };
-  }, []);
+  render() {
+    const { extensionType, capabilitiesRegistry } = this.props;
+    const { componentTitle, isLoading } = this.state;
 
-  return (
-    <NoSsr>
-      <Head>
-        <title>{`${componentTitle} | Meshery` || ''}</title>
-      </Head>
-      <DynamicFullScrrenLoader isLoading={isLoading}>
-        {capabilitiesRegistry !== null && extensionType ? (
-          <NoSsr>
-            {extensionType === 'navigator' ? (
-              <ExtensionSandbox type={extensionType} Extension={NavigatorExtension} />
-            ) : (
-              <ExtensionSandbox
-                type={extensionType}
-                Extension={(url) => RemoteComponent({ url })}
+    return (
+      <NoSsr>
+        <Head>
+          <title>{`${componentTitle} | Meshery` || ''}</title>
+        </Head>
+        <DynamicFullScrrenLoader isLoading={isLoading}>
+          {this.props.capabilitiesRegistry !== null && extensionType ? (
+            <NoSsr>
+              {extensionType === 'navigator' ? (
+                <ExtensionSandbox type={extensionType} Extension={NavigatorExtension} />
+              ) : (
+                <ExtensionSandbox
+                  type={extensionType}
+                  Extension={(url) => RemoteComponent({ url })}
+                />
+              )}
+            </NoSsr>
+          ) : !isLoading ? (
+            <Box display="flex" justifyContent="center">
+              <MesheryExtensionEarlyAccessCardPopup
+                rootStyle={{ position: 'relative' }}
+                capabilitiesRegistry={capabilitiesRegistry}
               />
-            )}
-          </NoSsr>
-        ) : !isLoading ? (
-          <Box display="flex" justifyContent="center">
-            <MesheryExtensionEarlyAccessCardPopup
-              rootStyle={{ position: 'relative' }}
-              capabilitiesRegistry={capabilitiesRegistry}
-            />
-          </Box>
-        ) : (
-          <CircularProgress />
-        )}
-      </DynamicFullScrrenLoader>
-    </NoSsr>
-  );
+            </Box>
+          ) : (
+            <CircularProgress />
+          )}
+        </DynamicFullScrrenLoader>
+      </NoSsr>
+    );
+  }
 }
 
 const mapStateToProps = (state) => ({
