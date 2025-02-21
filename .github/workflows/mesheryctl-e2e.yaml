@@ -27,16 +27,16 @@ jobs:
       fail-fast: false
       matrix:
         go: ['1.23']
-        k8s_version: ['v1.31.4']
-        platform: ['kubernetes']
+        k8s_version: ['v1.31.4', 'v1.32.0']
+        platform: ['docker', 'kubernetes']
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4.2.2
       - name: Set up Docker
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v3.9.0
       - name: Setup Bats and bats libs
         uses: bats-core/bats-action@3.0.0
-      - uses: actions/setup-go@v5
+      - uses: actions/setup-go@v5.3.0
         with:
           go-version: ${{ matrix.go }}
       - run: |
@@ -45,10 +45,10 @@ jobs:
           sudo chown -R $USER $HOME/.kube
           sudo chown -R $USER $HOME/.minikube
       - name: Setup Kubernetes
-        uses: manusa/actions-setup-minikube@v2.13.0
+        uses: medyagh/setup-minikube@v0.0.19
         with:
-          minikube version: 'v1.33.0'
-          kubernetes version: ${{ matrix.k8s_version }}
+          minikube-version: 'v1.33.0'
+          kubernetes-version: ${{ matrix.k8s_version }}
           driver: docker
       - name: Run minikube tunnel
         run: |
