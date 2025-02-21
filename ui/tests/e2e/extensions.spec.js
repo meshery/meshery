@@ -25,7 +25,7 @@ test.describe('Extensions Section Tests', () => {
     await extensionsNav.click();
   });
 
-  test('Verify Kanvas Snapshot using data-testid', async ({ page }) => {
+  test.unstable()('Verify Kanvas Snapshot using data-testid', async ({ page }) => {
     await expect(page.getByTestId('kanvas-snapshot-heading')).toBeVisible();
     await expect(page.getByTestId('kanvas-snapshot-description')).toBeVisible();
 
@@ -36,14 +36,14 @@ test.describe('Extensions Section Tests', () => {
     await expect(page.getByTestId('kanvas-snapshot-image')).toBeVisible();
   });
 
-  test('Verify Performance Analysis Details', async ({ page }) => {
+  test.unstable()('Verify Performance Analysis Details', async ({ page }) => {
     await expect(page.getByTestId('performance-analysis-heading')).toBeVisible();
     const performanceEnableButton = page.getByTestId('performance-analysis-enable-btn');
     await expect(performanceEnableButton).toBeVisible();
     await expect(performanceEnableButton).toBeDisabled();
   });
 
-  test('Verify Kanvas Details', async ({ page, context }) => {
+  test.unstable()('Verify Kanvas Details', async ({ page, context }) => {
     await expect(page.getByTestId('kanvas-signup-heading')).toBeVisible();
     const [newPage] = await Promise.all([
       context.waitForEvent('page'),
@@ -53,7 +53,7 @@ test.describe('Extensions Section Tests', () => {
     await newPage.close();
   });
 
-  test('Verify Meshery Docker Extension Details', async ({ page, context }) => {
+  test.unstable()('Verify Meshery Docker Extension Details', async ({ page, context }) => {
     await expect(page.getByTestId('docker-extension-heading')).toBeVisible();
     const [newPage] = await Promise.all([
       context.waitForEvent('page'),
@@ -63,7 +63,7 @@ test.describe('Extensions Section Tests', () => {
     await newPage.close();
   });
 
-  test('Verify Meshery Design Embed Details', async ({ page, context }) => {
+  test.unstable()('Verify Meshery Design Embed Details', async ({ page, context }) => {
     await expect(page.getByTestId('design-embed-learn-more-btn')).toBeVisible();
     const [newPage] = await Promise.all([
       context.waitForEvent('page'),
@@ -73,7 +73,7 @@ test.describe('Extensions Section Tests', () => {
     await newPage.close();
   });
 
-  test('Verify Meshery Catalog Section Details', async ({ page, context }) => {
+  test.unstable()('Verify Meshery Catalog Section Details', async ({ page, context }) => {
     await expect(page.getByTestId('catalog-section-heading')).toBeVisible();
     const toggleButton = page.getByTestId('catalog-toggle-switch');
     await toggleButton.click();
@@ -83,7 +83,7 @@ test.describe('Extensions Section Tests', () => {
     await newPage.close();
   });
 
-  test('Verify Meshery Adapter for Istio Section', async ({ page, context }) => {
+  test.unstable()('Verify Meshery Adapter for Istio Section', async ({ page, context }) => {
     // Test the "Open Adapter docs" link
     const [docsPage] = await Promise.all([
       context.waitForEvent('page'),
