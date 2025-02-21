@@ -18,10 +18,7 @@ import CheckIcon from '@/assets/icons/CheckIcon';
 import { useLegacySelector } from 'lib/store';
 import { DeploymentTargetContext, SelectTargetEnvironments } from './SelectDeploymentTarget';
 import { FinalizeDeployment } from './finalizeDeployment';
-import {
-  selectAllSelectedK8sConnections,
-  selectSelectedEnvs,
-} from '@/store/slices/globalEnvironmentContext';
+import { selectAllSelectedK8sConnections } from '@/store/slices/globalEnvironmentContext';
 import {
   useDryRunValidationResults,
   useIsValidatingDryRun,
@@ -199,8 +196,6 @@ export const UpdateDeploymentStepper = ({
   const [bypassDryRun, setBypassDryRun] = useState(false);
   const [openInOperator, setOpenInOperator] = useState(false);
 
-  const selectedEnvironments = useSelectorRtk(selectSelectedEnvs);
-  const selectedEnvCount = Object.keys(selectedEnvironments).length;
   const dryRunErrors = useDryRunValidationResults(validationMachine);
   const totalDryRunErrors = getTotalCountOfDeploymentErrors(dryRunErrors);
   const isDryRunning = useIsValidatingDryRun(validationMachine);
@@ -311,7 +306,7 @@ export const UpdateDeploymentStepper = ({
       nextAction: () => deployStepper.handleNext(),
     },
     1: {
-      canGoNext: () => selectedEnvCount > 0,
+      canGoNext: () => selectedK8sConnections.length > 0,
       nextButtonText: 'Next',
       nextAction: () => deployStepper.handleNext(),
     },

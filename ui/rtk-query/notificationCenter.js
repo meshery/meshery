@@ -88,7 +88,7 @@ export const notificationCenterApi = api
         query: ({ page = 0, filters = {} }) => {
           const parsedFilters = parseFilters(filters);
           return {
-            url: `v2/events`,
+            url: `system/events`,
             params: {
               ...parsedFilters,
               page: page,
@@ -100,10 +100,11 @@ export const notificationCenterApi = api
         },
         providesTags: [PROVIDER_TAGS.EVENT],
       }),
+
       getEventsSummary: builder.query({
         query: ({ status }) => {
           return {
-            url: `v2/events?page=0&pagesize=1&status=${status}`,
+            url: `system/events?page=0&pagesize=1&status=${status}`,
           };
         },
         transformResponse: (response) => {
@@ -117,7 +118,7 @@ export const notificationCenterApi = api
 
       updateStatus: builder.mutation({
         query: ({ id, status }) => ({
-          url: `events/status/${id}`,
+          url: `system/events/status/${id}`,
           method: 'PUT',
           body: {
             status: status,
@@ -132,7 +133,7 @@ export const notificationCenterApi = api
 
       deleteEvent: builder.mutation({
         query: ({ id }) => ({
-          url: `events/${id}`,
+          url: `system/events/${id}`,
           method: 'DELETE',
         }),
         async onQueryStarted({ id }, { dispatch, queryFulfilled }) {
@@ -143,13 +144,13 @@ export const notificationCenterApi = api
       }),
 
       getEventFilters: builder.query({
-        query: () => `events/types`,
+        query: () => `system/events/types`,
       }),
 
       //Bulk Operations
       updateEvents: builder.mutation({
         query: ({ ids, updatedFields }) => ({
-          url: `events/status/bulk`,
+          url: `system/events/status/bulk`,
           method: 'PUT',
           body: {
             ids,
@@ -177,7 +178,7 @@ export const notificationCenterApi = api
 
       deleteEvents: builder.mutation({
         query: ({ ids }) => ({
-          url: `events/bulk`,
+          url: `system/events/bulk`,
           method: 'DELETE',
           body: {
             ids,
@@ -186,6 +187,35 @@ export const notificationCenterApi = api
         async onQueryStarted({ ids }, { dispatch, queryFulfilled }) {
           const res = await safeQueryResolve(queryFulfilled);
           res && dispatch(deleteEvents({ ids }));
+        },
+        invalidatesTags: [PROVIDER_TAGS.EVENT],
+      }),
+
+      // Event Configuration Endpoints
+      // TODO: yet to be integrated
+      getEventConfig: builder.query({
+        query: () => ({
+          url: `system/events/config`,
+          method: 'GET',
+        }),
+        transformResponse: (response) => ({
+          logLevel: response.event_log_level,
+          availableLevels: response.available_levels,
+        }),
+        providesTags: [PROVIDER_TAGS.EVENT],
+      }),
+
+      updateEventConfig: builder.mutation({
+        query: (logLevel) => ({
+          url: `system/events/config`,
+          method: 'PUT',
+          body: {
+            event_log_level: logLevel,
+          },
+        }),
+        onQueryStarted: async (logLevel, { dispatch, queryFulfilled }) => {
+          const res = await safeQueryResolve(queryFulfilled);
+          res && dispatch();
         },
         invalidatesTags: [PROVIDER_TAGS.EVENT],
       }),

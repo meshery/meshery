@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import { TextField, Grid, Button, Chip, MenuItem, useTheme, styled, Box } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -13,7 +13,7 @@ const GrafanaRoot = styled(Box)(() => {
   const theme = useTheme();
   return {
     padding: theme.spacing(5),
-    backgroundColor: theme.palette.secondary.elevatedComponents,
+    backgroundColor: theme.palette.background.card,
     marginTop: theme.spacing(2),
     marginBottom: theme.spacing(2),
   };

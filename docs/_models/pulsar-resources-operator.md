@@ -74,7 +74,11 @@ components:
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/stream-native-cloud-connection/icons/color/stream-native-cloud-connection-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/stream-native-cloud-connection/icons/white/stream-native-cloud-connection-white.svg
   description: 
-components-count: 16
+- name: stream-native-cloud-connection
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/stream-native-cloud-connection/icons/color/stream-native-cloud-connection-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/stream-native-cloud-connection/icons/white/stream-native-cloud-connection-white.svg
+  description: 
+components-count: 17
 relationships: 
 relationship-count: 0
 featureList: [

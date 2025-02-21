@@ -39,7 +39,7 @@ var listEnvironmentCmd = &cobra.Command{
 mesheryctl environment list --orgID [orgId]
 
 // Documentation for environment can be found at:
-https://docs.layer5.io/cloud/spaces/environments/
+https://docs.meshery.io/concepts/logical/environments
 
 `,
 

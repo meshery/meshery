@@ -1,196 +1,196 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "Feature",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"chart\": {\n     \"description\": \"Chart specifies the chart information that will be used by the FluxCD to install the respective feature\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name specifies the name of the chart\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace where the respective feature resources will be deployed.\",\n       \"type\": \"string\"\n      },\n      \"sourceRef\": {\n       \"description\": \"SourceRef specifies the source of the chart\",\n       \"properties\": {\n        \"apiGroup\": {\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"version\": {\n       \"description\": \"Version specifies the version of the chart.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\",\n      \"sourceRef\"\n     ],\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"Description specifies a short description of the service this feature provides.\",\n     \"type\": \"string\"\n    },\n    \"featureSet\": {\n     \"description\": \"FeatureSet specifies the name of the FeatureSet where this feature belong to.\",\n     \"type\": \"string\"\n    },\n    \"icons\": {\n     \"description\": \"Icons is an optional list of icons for an application. Icon information includes the source, size, and mime type. These icons will be used in UI.\",\n     \"items\": {\n      \"description\": \"ImageSpec contains information about an image used as an icon.\",\n      \"properties\": {\n       \"size\": {\n        \"description\": \"(optional) The size of the image in pixels (e.g., 25x25).\",\n        \"type\": \"string\"\n       },\n       \"src\": {\n        \"description\": \"The source for image represented as either an absolute URL to the image or a Data URL containing the image. Data URLs are defined in RFC 2397.\",\n        \"type\": \"string\"\n       },\n       \"type\": {\n        \"description\": \"(optional) The mine type of the image (e.g., \\\"image/png\\\").\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"src\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"required\": {\n     \"description\": \"Required specify whether this feature is mandatory or not for enabling the respecting FeatureSet.\",\n     \"type\": \"boolean\"\n    },\n    \"requirements\": {\n     \"description\": \"Requirements specifies the requirements for this feature to consider enabled.\",\n     \"properties\": {\n      \"features\": {\n       \"description\": \"Features specifies a list of Feature names that must be enabled for using this feature.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"resources\": {\n       \"description\": \"Resources specifies the resources that should be registered to consider this feature as enabled.\",\n       \"items\": {\n        \"description\": \"GroupVersionKind unambiguously identifies a kind.  It doesn't anonymously include GroupVersion to avoid automatic coercion.  It doesn't use a GroupVersion to avoid custom marshalling\",\n        \"properties\": {\n         \"group\": {\n          \"type\": \"string\"\n         },\n         \"kind\": {\n          \"type\": \"string\"\n         },\n         \"version\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"group\",\n         \"kind\",\n         \"version\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"title\": {\n     \"description\": \"Title specify the title of this feature.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"description\",\n    \"featureSet\",\n    \"title\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Feature\",\n \"type\": \"object\"\n}",
-   "version": "ui.k8s.appscode.com/v1alpha1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Feature",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": false,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Feature",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Uncategorized"
-   },
-   "displayName": "AppsCode Opscenter Core",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "opscenter-core",
+    "displayName": "AppsCode Opscenter Core",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized"
+    },
+    "subCategory": "Uncategorized",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://charts.appscode.com/stable/opscenter-core/opscenter-core-v2022.06.14.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "2022.6.14"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "source_uri": "https://charts.appscode.com/stable/opscenter-core/opscenter-core-v2022.06.14.tgz",
-    "styleOverrides": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "2022.6.14"
-   },
-   "name": "opscenter-core",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Uncategorized",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": false,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "Feature",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"chart\": {\n     \"description\": \"Chart specifies the chart information that will be used by the FluxCD to install the respective feature\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name specifies the name of the chart\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace where the respective feature resources will be deployed.\",\n       \"type\": \"string\"\n      },\n      \"sourceRef\": {\n       \"description\": \"SourceRef specifies the source of the chart\",\n       \"properties\": {\n        \"apiGroup\": {\n         \"type\": \"string\"\n        },\n        \"kind\": {\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n         \"type\": \"string\"\n        },\n        \"namespace\": {\n         \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"name\"\n       ],\n       \"type\": \"object\"\n      },\n      \"version\": {\n       \"description\": \"Version specifies the version of the chart.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\",\n      \"sourceRef\"\n     ],\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"Description specifies a short description of the service this feature provides.\",\n     \"type\": \"string\"\n    },\n    \"featureSet\": {\n     \"description\": \"FeatureSet specifies the name of the FeatureSet where this feature belong to.\",\n     \"type\": \"string\"\n    },\n    \"icons\": {\n     \"description\": \"Icons is an optional list of icons for an application. Icon information includes the source, size, and mime type. These icons will be used in UI.\",\n     \"items\": {\n      \"description\": \"ImageSpec contains information about an image used as an icon.\",\n      \"properties\": {\n       \"size\": {\n        \"description\": \"(optional) The size of the image in pixels (e.g., 25x25).\",\n        \"type\": \"string\"\n       },\n       \"src\": {\n        \"description\": \"The source for image represented as either an absolute URL to the image or a Data URL containing the image. Data URLs are defined in RFC 2397.\",\n        \"type\": \"string\"\n       },\n       \"type\": {\n        \"description\": \"(optional) The mine type of the image (e.g., \\\"image/png\\\").\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"src\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"required\": {\n     \"description\": \"Required specify whether this feature is mandatory or not for enabling the respecting FeatureSet.\",\n     \"type\": \"boolean\"\n    },\n    \"requirements\": {\n     \"description\": \"Requirements specifies the requirements for this feature to consider enabled.\",\n     \"properties\": {\n      \"features\": {\n       \"description\": \"Features specifies a list of Feature names that must be enabled for using this feature.\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"resources\": {\n       \"description\": \"Resources specifies the resources that should be registered to consider this feature as enabled.\",\n       \"items\": {\n        \"description\": \"GroupVersionKind unambiguously identifies a kind.  It doesn't anonymously include GroupVersion to avoid automatic coercion.  It doesn't use a GroupVersion to avoid custom marshalling\",\n        \"properties\": {\n         \"group\": {\n          \"type\": \"string\"\n         },\n         \"kind\": {\n          \"type\": \"string\"\n         },\n         \"version\": {\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"group\",\n         \"kind\",\n         \"version\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"title\": {\n     \"description\": \"Title specify the title of this feature.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"description\",\n    \"featureSet\",\n    \"title\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Feature\",\n \"type\": \"object\"\n}",
+    "version": "ui.k8s.appscode.com/v1alpha1"
+  }
+}

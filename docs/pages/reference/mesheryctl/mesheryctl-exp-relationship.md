@@ -50,6 +50,14 @@ mesheryctl exp relationships search --[flag] [query-text]
 </div>
 </pre> 
 
+//To generate a relationship documentation 
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl exp relationship generate  [google-sheets-credential] --sheetId [sheet-id]
+
+</div>
+</pre> 
+
 ## Options
 
 <pre class='codeblock-pre'>

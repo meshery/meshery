@@ -20,7 +20,7 @@ Meshery Models and their packaged Components represent a standardized and reusab
 Semantic components represent actual infrastructure and application resources that Meshery can manage. These components map directly to real resources in your environment. For example:
 
 - Kubernetes resources like Deployments, Services, and Pods
-- Service mesh configurations like virtual services and gateways
+- Infrastructure configurations like virtual services and gateways
 - Cloud provider resources like load balancers and storage volumes
 
 Semantic components can be deployed, configured, and managed by Meshery's lifecycle management capabilities. They have real operational impact when used in Designs.

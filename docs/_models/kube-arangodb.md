@@ -86,7 +86,15 @@ components:
   colorIcon: assets/img/integrations/kube-arangodb/components/arango-scheduler-pod/icons/color/arango-scheduler-pod-color.svg
   whiteIcon: assets/img/integrations/kube-arangodb/components/arango-scheduler-pod/icons/white/arango-scheduler-pod-white.svg
   description: 
-components-count: 19
+- name: arango-platform-chart
+  colorIcon: assets/img/integrations/kube-arangodb/components/arango-platform-chart/icons/color/arango-platform-chart-color.svg
+  whiteIcon: assets/img/integrations/kube-arangodb/components/arango-platform-chart/icons/white/arango-platform-chart-white.svg
+  description: 
+- name: arango-platform-storage
+  colorIcon: assets/img/integrations/kube-arangodb/components/arango-platform-storage/icons/color/arango-platform-storage-color.svg
+  whiteIcon: assets/img/integrations/kube-arangodb/components/arango-platform-storage/icons/white/arango-platform-storage-white.svg
+  description: 
+components-count: 21
 relationships: 
 relationship-count: 0
 featureList: [

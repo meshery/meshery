@@ -42,7 +42,7 @@ Milestones on Meshery's high-level roadmap:
 
 - [Provider] Full Page / Navigation Menu Plugin
 - [MeshSync] - Resync
-  
+
 **Lifecycle Management**
 
 - [WASMFilters] - Basic support (CRUD)
@@ -59,7 +59,7 @@ Milestones on Meshery's high-level roadmap:
 
 - [UI] Notification Center
 
-### [v0.7.0](../../milestone/4)
+### [v0.7.0](./docs/_releases/roadmap-v0.7.md)
 
 
 **Sustainability**
@@ -86,7 +86,7 @@ Milestones on Meshery's high-level roadmap:
 
 - [Provider] GitOps Snapshots
 
-### [v0.8.0](../../milestone/5)
+### [v0.8.0](./docs/_releases/roadmap-v0.8.md)
 
 **Lifecycle Management**
 
@@ -116,7 +116,7 @@ Code coverage goal: 25%
 - [CLI] Deprecate: Full migration from Apps to Designs
 - [CLI] Mesheryctl Code coverage goal: 50%
 
-### [v0.9.0](../../milestone/6)
+### [v0.9.0](./docs/_releases/roadmap-v0.9.md)
 
 - [Server] Extensible Policies
 - [Server] GitOps: PR as an Action, Expand Flux and ArgoCD Integrations

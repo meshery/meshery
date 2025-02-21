@@ -170,8 +170,6 @@ export const ListButton = styled(Button)(() => ({
 }));
 
 export const Expanded = styled(Grid)(({ theme }) => ({
-  paddingBlock: '0.75rem',
-  paddingInline: '0.2rem',
   [theme.breakpoints.down('md')]: {
     padding: '0.5rem',
   },
@@ -191,7 +189,6 @@ export const ActorAvatar = styled(Grid)(() => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'start',
-  paddingTop: '1rem',
 }));
 
 export const Message = styled(Typography)(() => ({

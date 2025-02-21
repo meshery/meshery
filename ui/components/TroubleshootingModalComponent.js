@@ -1,7 +1,4 @@
 import * as React from 'react';
-import { Modal } from '@mui/material';
-import { keyframes } from '@mui/material/styles';
-
 import {
   Typography,
   Accordion,
@@ -12,6 +9,8 @@ import {
   IconButton,
   InfoIcon,
   LIGHT_TEAL,
+  Modal,
+  keyframes,
 } from '@layer5/sistent';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import CloseIcon from '@mui/icons-material/Close';
@@ -132,7 +131,7 @@ const TroubleshootListitem = styled('li')({
 const KeyStyleContainer = styled('div')(({ theme }) => ({
   display: 'inline-block',
   padding: '0.1rem 0.5rem',
-  background: theme.palette.secondary.elevatedComponent,
+  background: theme.palette.background.tabs,
   margin: '0.3rem',
   borderRadius: '5px',
   boxShadow:
@@ -182,7 +181,7 @@ const TroubleshootingModal = (props) => {
           <ModalContent>
             <ModalHeader>
               <Typography variant="h5"></Typography>
-              <ModelHeader variant="h5">Meshmap Troubleshooting Guide</ModelHeader>
+              <ModelHeader variant="h5">Extensions Troubleshooting Guide</ModelHeader>
               <IconContainer data-cy="modal-close-btn" onClick={handleClose}>
                 <IconStyle />
               </IconContainer>
@@ -257,43 +256,7 @@ const TroubleshootingModal = (props) => {
                 </ul>
               </AccDetailsContainer>
             </AccordionContainer>
-            <AccordionContainer expanded={expanded === 'panel3'} onChange={handleChange('panel3')}>
-              <AccordionSummaryStyled
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel3bh-content"
-                id="panel3bh-header"
-              >
-                <HeaderContainer>
-                  <Info />
-                  <HeaderText variant="h6">Incompatibility</HeaderText>
-                </HeaderContainer>
-              </AccordionSummaryStyled>
-              <AccDetailsContainer>
-                <AccDetailHead>
-                  <strong>GraphQL/Golang Plugin</strong>
-                </AccDetailHead>
-                <ul>
-                  <Typography>
-                    <TroubleshootListitem>
-                      <b>Building</b>: Ensure that <code>go.mod</code> in the{' '}
-                      <code>meshery/meshery</code> repository is identical to the{' '}
-                      <code>go.mod</code> in the <code>layer5labs/meshery-extensions</code>{' '}
-                      repository are identical.
-                    </TroubleshootListitem>
-                    <TroubleshootListitem>
-                      <b>Loading</b>: Confirm that the <code>plugin</code> version offered by
-                      Meshery Cloud (at{' '}
-                      <TroubleshootHelpLink href="https://cloud.layer5.io/capabilities">
-                        https://cloud.layer5.io/capabilities
-                      </TroubleshootHelpLink>
-                      ), from which MeshMap files are retreived, matches the <code>plugin</code>{' '}
-                      version that Meshery Server is using as the filesystem reference in{' '}
-                      <code>~/.meshery/provider/Meshery/vx.x.x/</code>.
-                    </TroubleshootListitem>
-                  </Typography>
-                </ul>
-              </AccDetailsContainer>
-            </AccordionContainer>
+
             <AccordionContainer expanded={expanded === 'panel4'} onChange={handleChange('panel4')}>
               <AccordionSummaryStyled
                 expandIcon={<ExpandMoreIcon />}
@@ -314,7 +277,7 @@ const TroubleshootingModal = (props) => {
                     <TroubleshootListitem>
                       {' '}
                       <TroubleshootHelpLink
-                        href="http://discuss.meshery.io/t/what-are-some-troubleshooting-tips-for-meshmap"
+                        href="https://meshery.io/community#community-forums/t/what-are-some-troubleshooting-tips-for-meshmap"
                         target="_blank"
                         rel="noreferrer"
                       >
@@ -328,11 +291,19 @@ const TroubleshootingModal = (props) => {
             <ModalFooter>
               <FooterText variant="h6">
                 Need help? Contact us via{' '}
-                <ContactHelpLink href="mailto:meshmap@layer5.io" target="_blank" rel="noreferrer">
+                <ContactHelpLink
+                  href="mailto:maintainers@meshery.io"
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   email
                 </ContactHelpLink>{' '}
                 or{' '}
-                <ContactHelpLink href="http://discuss.meshery.io" target="_blank" rel="noreferrer">
+                <ContactHelpLink
+                  href="https://meshery.io/community#community-forums"
+                  target="_blank"
+                  rel="noreferrer"
+                >
                   community forum
                 </ContactHelpLink>
                 .

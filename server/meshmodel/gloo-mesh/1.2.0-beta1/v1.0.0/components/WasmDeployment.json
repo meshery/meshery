@@ -1,196 +1,196 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "WasmDeployment",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Deploys one or more WASM Envoy Filters to selected Sidecars and Gateways in a Mesh.\",\n   \"properties\": {\n    \"filters\": {\n     \"description\": \"Specify WASM filter parameters.\",\n     \"items\": {\n      \"allOf\": [\n       {\n        \"oneOf\": [\n         {\n          \"not\": {\n           \"anyOf\": [\n            {\n             \"required\": [\n              \"localPathSource\"\n             ]\n            },\n            {\n             \"required\": [\n              \"httpUriSource\"\n             ]\n            },\n            {\n             \"required\": [\n              \"wasmImageSource\"\n             ]\n            }\n           ]\n          }\n         },\n         {\n          \"required\": [\n           \"localPathSource\"\n          ]\n         },\n         {\n          \"required\": [\n           \"httpUriSource\"\n          ]\n         },\n         {\n          \"required\": [\n           \"wasmImageSource\"\n          ]\n         }\n        ]\n       },\n       {\n        \"oneOf\": [\n         {\n          \"not\": {\n           \"anyOf\": [\n            {\n             \"required\": [\n              \"staticFilterConfig\"\n             ]\n            },\n            {\n             \"required\": [\n              \"dynamicFilterConfig\"\n             ]\n            }\n           ]\n          }\n         },\n         {\n          \"required\": [\n           \"staticFilterConfig\"\n          ]\n         },\n         {\n          \"required\": [\n           \"dynamicFilterConfig\"\n          ]\n         }\n        ]\n       }\n      ],\n      \"properties\": {\n       \"dynamicFilterConfig\": {\n        \"description\": \"Provide configuration from a dynamic configuration source.\\nThis is used to connect proxies to a user-provided configuration server\\nrather than using the WasmDeployment CR to update filter configuration.\\nNOTE: Not currently implemented. This field serves as a placeholder.\\npassing it to the plugin. `google.protobuf.BytesValue` and\\n`google.protobuf.StringValue` are passed directly without the wrapper.\\nTODO(ilackarms): implement with dynamic filter config source (FCDS) https://github.com/envoyproxy/envoy/issues/7867\",\n        \"type\": \"string\"\n       },\n       \"filterContext\": {\n        \"description\": \"The specific config generation context to which to attach the filter. Istio\\ngenerates envoy configuration in the context of a gateway,\\ninbound traffic to sidecar and outbound traffic from sidecar.\\nUses the Istio default (`ANY`).\",\n        \"enum\": [\n         \"ANY\",\n         \"SIDECAR_INBOUND\",\n         \"SIDECAR_OUTBOUND\",\n         \"GATEWAY\"\n        ],\n        \"type\": \"string\"\n       },\n       \"httpUriSource\": {\n        \"description\": \"Select `http_uri_source` to deploy the filter from an HTTP/S URI accessible\\nto the workload proxy. Note that Gloo Mesh cannot verify\\nwhether the target workload proxy containers have HTTP access the given URI.\\nIf filters do not load, please inspect the sidecar proxy logs.\\nTODO(ilackarms): see if we can somehow verify the filter exists in the proxy container and surface that on the WasmDeployment status\\nTODO(ilackarms): we may need to provide options for customizing the Cluster given to envoy along with the HTTP Fetch URI. currently Gloo Mesh will create a simple plaintext HTTP cluster from the Host/Port specified in the URI.\",\n        \"properties\": {\n         \"sha\": {\n          \"description\": \"Required. The Sha256 Checksum of the filter binary (will be verified by the proxy).\",\n          \"type\": \"string\"\n         },\n         \"uri\": {\n          \"description\": \"The HTTP URI from which to fetch the filter.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"insertBeforeFilter\": {\n        \"description\": \"The filter in the Envoy HTTP Filter Chain immediately before which the WASM filter will be\\ninserted.\\nDefaults to `envoy.router`.\",\n        \"type\": \"string\"\n       },\n       \"localPathSource\": {\n        \"description\": \"Select `local_path_source` to deploy the filter from a file accessible\\nto the workload proxy. Note that Gloo Mesh cannot verify\\nwhether the target workload proxy containers contain the given path.\\nIf filters do not load, please inspect the sidecar proxy logs.\\nTODO(ilackarms): see if we can somehow verify the filter exists in the proxy container and surface that on the WasmDeployment status\",\n        \"type\": \"string\"\n       },\n       \"rootId\": {\n        \"description\": \"The `root id` must match the `root id` defined inside the filter.\\nIf the user does not provide this field, Gloo Mesh will attempt to pull the image\\nand set it from the `filter_conf` contained in the image config.\\nNote that if the `filter_source` is not set to `wasm_image_source`, this field is required.\",\n        \"type\": \"string\"\n       },\n       \"staticFilterConfig\": {\n        \"description\": \"Provide configuration as a static\\n`google.protobuf.Struct` is serialized as JSON before\\npassing it to the plugin. `google.protobuf.BytesValue` and\\n`google.protobuf.StringValue` are passed directly without the wrapper.\",\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"vmId\": {\n        \"description\": \"An ID which will be used along with a hash of the wasm code\\n(or the name of the registered Null VM plugin) to determine which VM will be used to load the WASM filter.\\nAll filters on the same proxy which use the same `vm_id` and code within will use the same VM.\\nMay be left blank. Sharing a VM between plugins can reduce memory utilization and make sharing of data easier which may have security implications.\",\n        \"type\": \"string\"\n       },\n       \"wasmImageSource\": {\n        \"description\": \"fetch the image from a [WASM OCI Registry](https://webassemblyhub.io/)\\nImages can be built and pushed to registries using `meshctl` and `wasme`.\",\n        \"properties\": {\n         \"wasmImageTag\": {\n          \"description\": \"The full tag of the wasm image. It must include the registry address at the beginning, e.g. \\\"webassemblyhub.io/ilackarms/helloworld:v0.1\\\".\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"weight\": {\n     \"description\": \"Weight is used to determine the order of WASM Filters when applying\\nmultiple WasmDeployments to a single workload.\\nDeployed WASM filters will be sorted in order of\\nhighest to lowest weight. WasmDeployments with equal weights will be\\nsorted non-deterministically.\\nNote that all WASM Filters are currently inserted just before the Envoy router filter\\nin the HTTP Connection Manager's HTTP Filter Chain.\",\n     \"maximum\": 4294967295,\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"workloadSelector\": {\n     \"description\": \"Sidecars/Gateways whose Workloads match these selectors will attach the specified WASM Filters.\\nLeave empty to have all workloads in the mesh apply receive the WASM Filter.\",\n     \"items\": {\n      \"properties\": {\n       \"kubeWorkloadMatcher\": {\n        \"description\": \"Match Kubernetes workloads by their labels, namespaces, and/or clusters.\",\n        \"properties\": {\n         \"clusters\": {\n          \"description\": \"If specified, match Kubernetes workloads if they exist in one of the specified clusters.\\n           When used in a networking policy, omission matches any cluster.\\n           When used in a Gloo Mesh Role, a wildcard (`\\\"*\\\"`) must be specified to match any cluster.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"labels\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"description\": \"If specified, all labels must exist on Kubernetes workload.\\n       When used in a networking policy, omission matches any labels.\\n       When used in a Gloo Mesh Role, a wildcard (`\\\"*\\\"`) must be specified to match any label key and/or value.\",\n          \"type\": \"object\"\n         },\n         \"namespaces\": {\n          \"description\": \"If specified, match Kubernetes workloads if they exist in one of the specified namespaces.\\n           When used in a networking policy, omission matches any namespace.\\n           When used in a Gloo Mesh Role, a wildcard (`\\\"*\\\"`) must be specified to match any namespace.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Wasm Deployment\",\n \"type\": \"object\"\n}",
-   "version": "networking.enterprise.mesh.gloo.solo.io/v1beta1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Wasm Deployment",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Wasm Deployment",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Cloud Native Network"
-   },
-   "displayName": "Gloo Mesh",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "gloo-mesh",
+    "displayName": "Gloo Mesh",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Cloud Native Network"
+    },
+    "subCategory": "Service Mesh",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://storage.googleapis.com/gloo-mesh/gloo-mesh/gloo-mesh-1.2.0-beta1.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "1.2.0-beta1"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "source_uri": "https://storage.googleapis.com/gloo-mesh/gloo-mesh/gloo-mesh-1.2.0-beta1.tgz",
-    "styleOverrides": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "1.2.0-beta1"
-   },
-   "name": "gloo-mesh",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Service Mesh",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "WasmDeployment",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Deploys one or more WASM Envoy Filters to selected Sidecars and Gateways in a Mesh.\",\n   \"properties\": {\n    \"filters\": {\n     \"description\": \"Specify WASM filter parameters.\",\n     \"items\": {\n      \"allOf\": [\n       {\n        \"oneOf\": [\n         {\n          \"not\": {\n           \"anyOf\": [\n            {\n             \"required\": [\n              \"localPathSource\"\n             ]\n            },\n            {\n             \"required\": [\n              \"httpUriSource\"\n             ]\n            },\n            {\n             \"required\": [\n              \"wasmImageSource\"\n             ]\n            }\n           ]\n          }\n         },\n         {\n          \"required\": [\n           \"localPathSource\"\n          ]\n         },\n         {\n          \"required\": [\n           \"httpUriSource\"\n          ]\n         },\n         {\n          \"required\": [\n           \"wasmImageSource\"\n          ]\n         }\n        ]\n       },\n       {\n        \"oneOf\": [\n         {\n          \"not\": {\n           \"anyOf\": [\n            {\n             \"required\": [\n              \"staticFilterConfig\"\n             ]\n            },\n            {\n             \"required\": [\n              \"dynamicFilterConfig\"\n             ]\n            }\n           ]\n          }\n         },\n         {\n          \"required\": [\n           \"staticFilterConfig\"\n          ]\n         },\n         {\n          \"required\": [\n           \"dynamicFilterConfig\"\n          ]\n         }\n        ]\n       }\n      ],\n      \"properties\": {\n       \"dynamicFilterConfig\": {\n        \"description\": \"Provide configuration from a dynamic configuration source.\\nThis is used to connect proxies to a user-provided configuration server\\nrather than using the WasmDeployment CR to update filter configuration.\\nNOTE: Not currently implemented. This field serves as a placeholder.\\npassing it to the plugin. `google.protobuf.BytesValue` and\\n`google.protobuf.StringValue` are passed directly without the wrapper.\\nTODO(ilackarms): implement with dynamic filter config source (FCDS) https://github.com/envoyproxy/envoy/issues/7867\",\n        \"type\": \"string\"\n       },\n       \"filterContext\": {\n        \"description\": \"The specific config generation context to which to attach the filter. Istio\\ngenerates envoy configuration in the context of a gateway,\\ninbound traffic to sidecar and outbound traffic from sidecar.\\nUses the Istio default (`ANY`).\",\n        \"enum\": [\n         \"ANY\",\n         \"SIDECAR_INBOUND\",\n         \"SIDECAR_OUTBOUND\",\n         \"GATEWAY\"\n        ],\n        \"type\": \"string\"\n       },\n       \"httpUriSource\": {\n        \"description\": \"Select `http_uri_source` to deploy the filter from an HTTP/S URI accessible\\nto the workload proxy. Note that Gloo Mesh cannot verify\\nwhether the target workload proxy containers have HTTP access the given URI.\\nIf filters do not load, please inspect the sidecar proxy logs.\\nTODO(ilackarms): see if we can somehow verify the filter exists in the proxy container and surface that on the WasmDeployment status\\nTODO(ilackarms): we may need to provide options for customizing the Cluster given to envoy along with the HTTP Fetch URI. currently Gloo Mesh will create a simple plaintext HTTP cluster from the Host/Port specified in the URI.\",\n        \"properties\": {\n         \"sha\": {\n          \"description\": \"Required. The Sha256 Checksum of the filter binary (will be verified by the proxy).\",\n          \"type\": \"string\"\n         },\n         \"uri\": {\n          \"description\": \"The HTTP URI from which to fetch the filter.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"insertBeforeFilter\": {\n        \"description\": \"The filter in the Envoy HTTP Filter Chain immediately before which the WASM filter will be\\ninserted.\\nDefaults to `envoy.router`.\",\n        \"type\": \"string\"\n       },\n       \"localPathSource\": {\n        \"description\": \"Select `local_path_source` to deploy the filter from a file accessible\\nto the workload proxy. Note that Gloo Mesh cannot verify\\nwhether the target workload proxy containers contain the given path.\\nIf filters do not load, please inspect the sidecar proxy logs.\\nTODO(ilackarms): see if we can somehow verify the filter exists in the proxy container and surface that on the WasmDeployment status\",\n        \"type\": \"string\"\n       },\n       \"rootId\": {\n        \"description\": \"The `root id` must match the `root id` defined inside the filter.\\nIf the user does not provide this field, Gloo Mesh will attempt to pull the image\\nand set it from the `filter_conf` contained in the image config.\\nNote that if the `filter_source` is not set to `wasm_image_source`, this field is required.\",\n        \"type\": \"string\"\n       },\n       \"staticFilterConfig\": {\n        \"description\": \"Provide configuration as a static\\n`google.protobuf.Struct` is serialized as JSON before\\npassing it to the plugin. `google.protobuf.BytesValue` and\\n`google.protobuf.StringValue` are passed directly without the wrapper.\",\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"vmId\": {\n        \"description\": \"An ID which will be used along with a hash of the wasm code\\n(or the name of the registered Null VM plugin) to determine which VM will be used to load the WASM filter.\\nAll filters on the same proxy which use the same `vm_id` and code within will use the same VM.\\nMay be left blank. Sharing a VM between plugins can reduce memory utilization and make sharing of data easier which may have security implications.\",\n        \"type\": \"string\"\n       },\n       \"wasmImageSource\": {\n        \"description\": \"fetch the image from a [WASM OCI Registry](https://webassemblyhub.io/)\\nImages can be built and pushed to registries using `meshctl` and `wasme`.\",\n        \"properties\": {\n         \"wasmImageTag\": {\n          \"description\": \"The full tag of the wasm image. It must include the registry address at the beginning, e.g. \\\"webassemblyhub.io/ilackarms/helloworld:v0.1\\\".\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"weight\": {\n     \"description\": \"Weight is used to determine the order of WASM Filters when applying\\nmultiple WasmDeployments to a single workload.\\nDeployed WASM filters will be sorted in order of\\nhighest to lowest weight. WasmDeployments with equal weights will be\\nsorted non-deterministically.\\nNote that all WASM Filters are currently inserted just before the Envoy router filter\\nin the HTTP Connection Manager's HTTP Filter Chain.\",\n     \"maximum\": 4294967295,\n     \"minimum\": 0,\n     \"type\": \"integer\"\n    },\n    \"workloadSelector\": {\n     \"description\": \"Sidecars/Gateways whose Workloads match these selectors will attach the specified WASM Filters.\\nLeave empty to have all workloads in the mesh apply receive the WASM Filter.\",\n     \"items\": {\n      \"properties\": {\n       \"kubeWorkloadMatcher\": {\n        \"description\": \"Match Kubernetes workloads by their labels, namespaces, and/or clusters.\",\n        \"properties\": {\n         \"clusters\": {\n          \"description\": \"If specified, match Kubernetes workloads if they exist in one of the specified clusters.\\n           When used in a networking policy, omission matches any cluster.\\n           When used in a Gloo Mesh Role, a wildcard (`\\\"*\\\"`) must be specified to match any cluster.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"labels\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"description\": \"If specified, all labels must exist on Kubernetes workload.\\n       When used in a networking policy, omission matches any labels.\\n       When used in a Gloo Mesh Role, a wildcard (`\\\"*\\\"`) must be specified to match any label key and/or value.\",\n          \"type\": \"object\"\n         },\n         \"namespaces\": {\n          \"description\": \"If specified, match Kubernetes workloads if they exist in one of the specified namespaces.\\n           When used in a networking policy, omission matches any namespace.\\n           When used in a Gloo Mesh Role, a wildcard (`\\\"*\\\"`) must be specified to match any namespace.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Wasm Deployment\",\n \"type\": \"object\"\n}",
+    "version": "networking.enterprise.mesh.gloo.solo.io/v1beta1"
+  }
+}

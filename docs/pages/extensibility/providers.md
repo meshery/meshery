@@ -27,7 +27,7 @@ Some examples include:
   - Examples: Storage and retrieval of performance test results.
   - Examples: Storage and retrieval of user preferences.
 - **Enhanced Visualization**
-  - Examples: Creation of a visual service mesh topology.
+  - Examples: Creation of a visual cloud native infrastructure topology.
   - Examples: Different charts (metrics), debug (log viewer), distributed trace explorers.
 - **Reporting**
   - Examples: Using Meshery's GraphQL server to compose new dashboards.

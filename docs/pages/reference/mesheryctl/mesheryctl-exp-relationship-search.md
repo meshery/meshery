@@ -29,7 +29,7 @@ mesheryctl exp relationship search [flags]
 Search for relationship using a query
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship search --[flag] [query-text]
+mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>] [query-text]
 
 </div>
 </pre> 

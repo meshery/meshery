@@ -248,6 +248,7 @@ export const SectionBody = ({ body, style = {} }) => {
     <TextWithLinks
       variant="body1"
       style={{
+        fontWeight: 'bold',
         wordWrap: 'break-word',
         color: theme.palette.text.tertiary,
         ...style,
@@ -368,14 +369,7 @@ export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema, 
           propertyFormatters: propertyFormatters,
         }}
       >
-        <Grid
-          container
-          style={{
-            wordBreak: 'break-word',
-            overflowWrap: 'break-word',
-            gap: '0.3rem 1rem',
-          }}
-        >
+        <Grid container>
           <DynamicFormatter data={data} uiSchema={uiSchema} isLevel={isLevel} />
         </Grid>
       </FormatterContext.Provider>

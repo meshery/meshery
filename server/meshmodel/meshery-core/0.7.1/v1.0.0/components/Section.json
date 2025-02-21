@@ -1,121 +1,121 @@
 {
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Section",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "meshery-shapes",
+    "displayName": "Meshery Shapes",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Orchestration \u0026 Management"
+    },
+    "subCategory": "App Definition and Development",
+    "metadata": {
+      "isAnnotation": true,
+      "subCategory": "App Definition and Development",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 40 40\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M12.5137 36.6823C3.30027 32.2711 -0.593255 21.2252 3.81749 12.0105C5.93563 7.58552 9.7246 4.18328 14.3509 2.55224C18.9772 0.921197 24.0618 1.19497 28.4863 3.31331C37.6998 7.72454 41.5932 18.7705 37.1825 27.9851C32.7718 37.1997 21.7272 41.0935 12.5137 36.6823Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 28 28\" fill=\"none\"\u003e\n  \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M13.0064 10.0312C12.5024 7.03522 9.87043 4.73926 6.73448 4.73926C3.20654 4.73926 0.350586 7.59521 0.350586 11.1232C0.350586 14.2871 2.64655 16.8911 5.6425 17.395V12.3831C5.6425 11.0952 6.67848 10.0312 7.99446 10.0312H13.0064Z\" fill=\"#EAEFF1\"\u003e\u003c/path\u003e\n  \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M12.9219 18.459C12.5019 17.731 12.5019 16.835 12.9219 16.107L15.5258 11.5991H7.96595C7.54596 11.5991 7.20996 11.9351 7.20996 12.3551V22.4349C7.20996 22.8549 7.54596 23.1909 7.96595 23.1909H18.0458C18.4658 23.1909 18.8018 22.8549 18.8018 22.4349V19.635H14.9658C14.1258 19.635 13.3419 19.187 12.9219 18.459Z\" fill=\"#EAEFF1\"\u003e\u003c/path\u003e\n  \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M26.8385 16.9188L21.2386 7.20294C20.9586 6.69895 20.2026 6.69895 19.9226 7.20294L14.3227 16.9188C14.0427 17.4228 14.4067 18.0668 14.9947 18.0668H26.2225C26.7825 18.0668 27.1465 17.4228 26.8385 16.9188Z\" fill=\"#EAEFF1\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "0.7.1"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
+    "background-image": "none",
+    "background-opacity": 0,
+    "border-style": "dashed",
+    "border-width": 1,
+    "height": 30,
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "rectangle",
+    "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 25 24\" fill=\"none\"\u003e\n  \u003cpath d=\"M16.344 2.53516V7.16006C16.344 7.94938 16.0304 8.70637 15.4723 9.26451C14.9141 9.82265 14.1572 10.1362 13.3678 10.1362H3.03516V19.3371C3.037 19.9017 3.26208 20.4426 3.66129 20.8418C4.0605 21.241 4.60141 21.4661 5.16596 21.4679H19.8371C20.1182 21.4726 20.3974 21.4207 20.6581 21.3153C20.9187 21.2099 21.1555 21.0532 21.3543 20.8543C21.5532 20.6555 21.7099 20.4187 21.8153 20.1581C21.9207 19.8974 21.9726 19.6182 21.9679 19.3371V4.66596C21.9679 4.38777 21.9126 4.11234 21.8051 3.85576C21.6976 3.59917 21.5401 3.36655 21.3417 3.17147C21.1434 2.97638 20.9082 2.82274 20.6499 2.71949C20.3916 2.61624 20.1153 2.56545 19.8371 2.57009\" fill=\"#000\"\u003e\u003c/path\u003e\n  \u003cpath d=\"M4.51254 7.90848H12.7144C13.0626 7.86806 13.3809 7.69223 13.6006 7.41901C13.8202 7.14579 13.9235 6.79712 13.8881 6.44836V4.49919C13.9216 4.15079 13.8177 3.80309 13.5984 3.53029C13.3791 3.25749 13.0619 3.0812 12.7144 3.03906H4.51254C4.16508 3.0812 3.84785 3.25749 3.62856 3.53029C3.40928 3.80309 3.30531 4.15079 3.33885 4.49919V6.44836C3.30347 6.79712 3.40676 7.14579 3.62638 7.41901C3.84601 7.69223 4.16433 7.86806 4.51254 7.90848Z\" stroke=\"#000\" stroke-width=\"0.666667\" stroke-miterlimit=\"10\"\u003e\u003c/path\u003e\n\u003c/svg\u003e",
+    "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 25 24\" fill=\"none\"\u003e\n  \u003cpath d=\"M16.344 2.53516V7.16006C16.344 7.94938 16.0304 8.70637 15.4723 9.26451C14.9141 9.82265 14.1572 10.1362 13.3678 10.1362H3.03516V19.3371C3.037 19.9017 3.26208 20.4426 3.66129 20.8418C4.0605 21.241 4.60141 21.4661 5.16596 21.4679H19.8371C20.1182 21.4726 20.3974 21.4207 20.6581 21.3153C20.9187 21.2099 21.1555 21.0532 21.3543 20.8543C21.5532 20.6555 21.7099 20.4187 21.8153 20.1581C21.9207 19.8974 21.9726 19.6182 21.9679 19.3371V4.66596C21.9679 4.38777 21.9126 4.11234 21.8051 3.85576C21.6976 3.59917 21.5401 3.36655 21.3417 3.17147C21.1434 2.97638 20.9082 2.82274 20.6499 2.71949C20.3916 2.61624 20.1153 2.56545 19.8371 2.57009\" fill=\"#fff\"\u003e\u003c/path\u003e\n  \u003cpath d=\"M4.51254 7.90848H12.7144C13.0626 7.86806 13.3809 7.69223 13.6006 7.41901C13.8202 7.14579 13.9235 6.79712 13.8881 6.44836V4.49919C13.9216 4.15079 13.8177 3.80309 13.5984 3.53029C13.3791 3.25749 13.0619 3.0812 12.7144 3.03906H4.51254C4.16508 3.0812 3.84785 3.25749 3.62856 3.53029C3.40928 3.80309 3.30531 4.15079 3.33885 4.49919V6.44836C3.30347 6.79712 3.40676 7.14579 3.62638 7.41901C3.84601 7.69223 4.16433 7.86806 4.51254 7.90848Z\" stroke=\"#fff\" stroke-width=\"0.666667\" stroke-miterlimit=\"10\"\u003e\u003c/path\u003e\n\u003c/svg\u003e",
+    "width": 30
+  },
   "capabilities": [
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
   ],
-  "component": {
-   "kind": "Section",
-   "schema": "",
-   "version": "core.meshery.io/v1alpha1"
+  "status": "enabled",
+  "metadata": {
+    "genealogy": "parent",
+    "isAnnotation": true,
+    "isNamespaced": false,
+    "published": false
   },
   "configuration": null,
-  "description": "",
-  "displayName": "Section",
-  "format": "JSON",
-  "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "parent",
-   "isAnnotation": true,
-   "isNamespaced": false,
-   "published": false
-  },
-  "model": {
-   "category": {
-    "name": "Orchestration \u0026 Management"
-   },
-   "displayName": "Meshery Shapes",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": true,
-    "subCategory": "App Definition and Development",
-    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 40 40\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M12.5137 36.6823C3.30027 32.2711 -0.593255 21.2252 3.81749 12.0105C5.93563 7.58552 9.7246 4.18328 14.3509 2.55224C18.9772 0.921197 24.0618 1.19497 28.4863 3.31331C37.6998 7.72454 41.5932 18.7705 37.1825 27.9851C32.7718 37.1997 21.7272 41.0935 12.5137 36.6823Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
-    "svgComplete": "",
-    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 28 28\" fill=\"none\"\u003e\n  \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M13.0064 10.0312C12.5024 7.03522 9.87043 4.73926 6.73448 4.73926C3.20654 4.73926 0.350586 7.59521 0.350586 11.1232C0.350586 14.2871 2.64655 16.8911 5.6425 17.395V12.3831C5.6425 11.0952 6.67848 10.0312 7.99446 10.0312H13.0064Z\" fill=\"#EAEFF1\"\u003e\u003c/path\u003e\n  \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M12.9219 18.459C12.5019 17.731 12.5019 16.835 12.9219 16.107L15.5258 11.5991H7.96595C7.54596 11.5991 7.20996 11.9351 7.20996 12.3551V22.4349C7.20996 22.8549 7.54596 23.1909 7.96595 23.1909H18.0458C18.4658 23.1909 18.8018 22.8549 18.8018 22.4349V19.635H14.9658C14.1258 19.635 13.3419 19.187 12.9219 18.459Z\" fill=\"#EAEFF1\"\u003e\u003c/path\u003e\n  \u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M26.8385 16.9188L21.2386 7.20294C20.9586 6.69895 20.2026 6.69895 19.9226 7.20294L14.3227 16.9188C14.0427 17.4228 14.4067 18.0668 14.9947 18.0668H26.2225C26.7825 18.0668 27.1465 17.4228 26.8385 16.9188Z\" fill=\"#EAEFF1\"\u003e\u003c/path\u003e\n\u003c/svg\u003e"
-   },
-   "model": {
-    "version": "0.7.1"
-   },
-   "name": "meshery-shapes",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "enabled",
-   "subCategory": "App Definition and Development",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
-  },
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "status": "enabled",
-  "styles": {
-   "background-image": "none",
-   "background-opacity": 0,
-   "border-style": "dashed",
-   "border-width": 1,
-   "height": 30,
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "rectangle",
-   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 25 24\" fill=\"none\"\u003e\n  \u003cpath d=\"M16.344 2.53516V7.16006C16.344 7.94938 16.0304 8.70637 15.4723 9.26451C14.9141 9.82265 14.1572 10.1362 13.3678 10.1362H3.03516V19.3371C3.037 19.9017 3.26208 20.4426 3.66129 20.8418C4.0605 21.241 4.60141 21.4661 5.16596 21.4679H19.8371C20.1182 21.4726 20.3974 21.4207 20.6581 21.3153C20.9187 21.2099 21.1555 21.0532 21.3543 20.8543C21.5532 20.6555 21.7099 20.4187 21.8153 20.1581C21.9207 19.8974 21.9726 19.6182 21.9679 19.3371V4.66596C21.9679 4.38777 21.9126 4.11234 21.8051 3.85576C21.6976 3.59917 21.5401 3.36655 21.3417 3.17147C21.1434 2.97638 20.9082 2.82274 20.6499 2.71949C20.3916 2.61624 20.1153 2.56545 19.8371 2.57009\" fill=\"#000\"\u003e\u003c/path\u003e\n  \u003cpath d=\"M4.51254 7.90848H12.7144C13.0626 7.86806 13.3809 7.69223 13.6006 7.41901C13.8202 7.14579 13.9235 6.79712 13.8881 6.44836V4.49919C13.9216 4.15079 13.8177 3.80309 13.5984 3.53029C13.3791 3.25749 13.0619 3.0812 12.7144 3.03906H4.51254C4.16508 3.0812 3.84785 3.25749 3.62856 3.53029C3.40928 3.80309 3.30531 4.15079 3.33885 4.49919V6.44836C3.30347 6.79712 3.40676 7.14579 3.62638 7.41901C3.84601 7.69223 4.16433 7.86806 4.51254 7.90848Z\" stroke=\"#000\" stroke-width=\"0.666667\" stroke-miterlimit=\"10\"\u003e\u003c/path\u003e\n\u003c/svg\u003e",
-   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 25 24\" fill=\"none\"\u003e\n  \u003cpath d=\"M16.344 2.53516V7.16006C16.344 7.94938 16.0304 8.70637 15.4723 9.26451C14.9141 9.82265 14.1572 10.1362 13.3678 10.1362H3.03516V19.3371C3.037 19.9017 3.26208 20.4426 3.66129 20.8418C4.0605 21.241 4.60141 21.4661 5.16596 21.4679H19.8371C20.1182 21.4726 20.3974 21.4207 20.6581 21.3153C20.9187 21.2099 21.1555 21.0532 21.3543 20.8543C21.5532 20.6555 21.7099 20.4187 21.8153 20.1581C21.9207 19.8974 21.9726 19.6182 21.9679 19.3371V4.66596C21.9679 4.38777 21.9126 4.11234 21.8051 3.85576C21.6976 3.59917 21.5401 3.36655 21.3417 3.17147C21.1434 2.97638 20.9082 2.82274 20.6499 2.71949C20.3916 2.61624 20.1153 2.56545 19.8371 2.57009\" fill=\"#fff\"\u003e\u003c/path\u003e\n  \u003cpath d=\"M4.51254 7.90848H12.7144C13.0626 7.86806 13.3809 7.69223 13.6006 7.41901C13.8202 7.14579 13.9235 6.79712 13.8881 6.44836V4.49919C13.9216 4.15079 13.8177 3.80309 13.5984 3.53029C13.3791 3.25749 13.0619 3.0812 12.7144 3.03906H4.51254C4.16508 3.0812 3.84785 3.25749 3.62856 3.53029C3.40928 3.80309 3.30531 4.15079 3.33885 4.49919V6.44836C3.30347 6.79712 3.40676 7.14579 3.62638 7.41901C3.84601 7.69223 4.16433 7.86806 4.51254 7.90848Z\" stroke=\"#fff\" stroke-width=\"0.666667\" stroke-miterlimit=\"10\"\u003e\u003c/path\u003e\n\u003c/svg\u003e",
-   "width": 30
-  },
-  "version": "v1.0.0"
- }
+  "component": {
+    "kind": "Section",
+    "schema": "",
+    "version": "core.meshery.io/v1alpha1"
+  }
+}

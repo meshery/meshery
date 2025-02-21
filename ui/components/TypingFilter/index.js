@@ -6,10 +6,10 @@ import {
   List,
   Popper,
   useTheme,
+  Fade,
 } from '@layer5/sistent';
 import { Description, DropDown, InputField, Item, Label, Root } from './style';
 import { UsesSistent } from '../SistentWrapper';
-import { Fade } from '@mui/material';
 import ContentFilterIcon from '../../assets/icons/ContentFilterIcon';
 import { useEffect, useReducer, useRef, useState } from 'react';
 import CrossCircleIcon from '../../assets/icons/CrossCircleIcon';
@@ -247,22 +247,22 @@ const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false, placehol
             startAdornment: (
               <InputAdornment position="start">
                 {' '}
-                <ContentFilterIcon fill={theme.palette.secondary.iconMain} />{' '}
+                <ContentFilterIcon fill={theme.palette.icon.default} />{' '}
               </InputAdornment>
             ),
             endAdornment: (
               <InputAdornment position="end">
                 <IconButton onClick={handleClear}>
                   {filteringState.state !== FILTERING_STATE.IDLE && (
-                    <CrossCircleIcon fill={theme.palette.secondary.iconMain} />
+                    <CrossCircleIcon fill={theme.palette.icon.default} />
                   )}
                 </IconButton>
                 <IconButton onClick={toggleSuggestions}>
                   {filteringState.state !== FILTERING_STATE.IDLE && !anchorEl && (
-                    <ExpandMore fill={theme.palette.secondary.iconMain} />
+                    <ExpandMore fill={theme.palette.icon.default} />
                   )}
                   {filteringState.state !== FILTERING_STATE.IDLE && anchorEl && (
-                    <ExpandLess fill={theme.palette.secondary.iconMain} />
+                    <ExpandLess fill={theme.palette.icon.default} />
                   )}
                 </IconButton>
               </InputAdornment>

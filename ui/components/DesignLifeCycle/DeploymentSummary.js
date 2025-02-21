@@ -1,6 +1,6 @@
 import { NOTIFICATIONCOLORS } from '@/themes/index';
 import { Box, Stack, Typography, styled, useTheme } from '@layer5/sistent';
-import { alpha } from '@mui/material';
+
 import { FormatStructuredData, TextWithLinks } from '../DataFormatter';
 import { SEVERITY_STYLE } from '../NotificationCenter/constants';
 import { ErrorMetadataFormatter } from '../NotificationCenter/metadata';
@@ -11,10 +11,7 @@ import { UsesSistent } from '../SistentWrapper';
 import { openViewScopedToDesignInOperator, useIsOperatorEnabled } from '@/utils/utils';
 import { useRouter } from 'next/router';
 
-const StyledDetailBox = styled(Box)(({ theme, severityColor, bgOpacity }) => ({
-  padding: theme.spacing(2),
-  backgroundColor: alpha(severityColor, bgOpacity),
-  border: `1px solid ${theme.palette.divider}`,
+const StyledDetailBox = styled(Box)(() => ({
   display: 'flex',
 }));
 
@@ -79,7 +76,11 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
       >
         <TextWithLinks
           text={event?.description || ''}
-          style={{ color: theme.palette.text.default, textTransform: 'capitalize' }}
+          style={{
+            color: theme.palette.text.default,
+            textTransform: 'capitalize',
+            fontWeight: 'bold',
+          }}
         />
         {is_operator_enabled && (
           <Button

@@ -81,7 +81,7 @@ mesheryctl model search [model-name]
 ## See Also
 
 * [mesheryctl model export](/reference/mesheryctl/model/export)
-* [mesheryctl model import](/reference/mesheryctl/model/import)
+* [mesheryctl model generate](/reference/mesheryctl/model/generate)
 * [mesheryctl model import](/reference/mesheryctl/model/import)
 * [mesheryctl model list](/reference/mesheryctl/model/list)
 * [mesheryctl model search](/reference/mesheryctl/model/search)

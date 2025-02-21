@@ -1,192 +1,192 @@
 {
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "TLS Store",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "frinx-machine",
+    "displayName": "Frinx Machine",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized"
+    },
+    "subCategory": "Uncategorized",
+    "metadata": {
+      "isAnnotation": false,
+      "subCategory": "Uncategorized",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 144 146\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"#03AAFF\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"#03AAFF\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#0370FF\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 144 146\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#F0F0F0\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n"
+    },
+    "model": {
+      "version": "6.0.0"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
+    "svgColor": "\u003csvg width=\"144\" height=\"146\" viewBox=\"0 0 144 146\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"#03AAFF\"/\u003e\n\u003cpath d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"#03AAFF\"/\u003e\n\u003cpath d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#0370FF\"/\u003e\n\u003c/svg\u003e\r",
+    "svgWhite": "\u003csvg width=\"144\" height=\"146\" viewBox=\"0 0 144 146\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#F0F0F0\"/\u003e\n\u003c/svg\u003e\r"
+  },
   "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
   ],
-  "component": {
-   "kind": "TLSStore",
-   "schema": "{\n \"description\": \"TLSStore is the CRD implementation of a Traefik TLS Store.\\nFor the time being, only the TLSStore named default is supported.\\nThis means that you cannot have two stores that are named default in different Kubernetes namespaces.\\nMore info: https://doc.traefik.io/traefik/v2.11/https/tls/#certificates-stores\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TLSStoreSpec defines the desired state of a TLSStore.\",\n   \"properties\": {\n    \"certificates\": {\n     \"description\": \"Certificates is a list of secret names, each secret holding a key/certificate pair to add to the store.\",\n     \"items\": {\n      \"description\": \"Certificate holds a secret name for the TLSStore resource.\",\n      \"properties\": {\n       \"secretName\": {\n        \"description\": \"SecretName is the name of the referenced Kubernetes Secret to specify the certificate details.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"secretName\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"defaultCertificate\": {\n     \"description\": \"DefaultCertificate defines the default certificate configuration.\",\n     \"properties\": {\n      \"secretName\": {\n       \"description\": \"SecretName is the name of the referenced Kubernetes Secret to specify the certificate details.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"secretName\"\n     ],\n     \"type\": \"object\"\n    },\n    \"defaultGeneratedCert\": {\n     \"description\": \"DefaultGeneratedCert defines the default generated certificate configuration.\",\n     \"properties\": {\n      \"domain\": {\n       \"description\": \"Domain is the domain definition for the DefaultCertificate.\",\n       \"properties\": {\n        \"main\": {\n         \"description\": \"Main defines the main domain name.\",\n         \"type\": \"string\"\n        },\n        \"sans\": {\n         \"description\": \"SANs defines the subject alternative domain names.\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"resolver\": {\n       \"description\": \"Resolver is the name of the resolver that will be used to issue the DefaultCertificate.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"TLS Store\",\n \"type\": \"object\"\n}",
-   "version": "traefik.io/v1alpha1"
+  "status": "enabled",
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
   "configuration": null,
-  "description": "",
-  "displayName": "TLS Store",
-  "format": "JSON",
-  "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false
-  },
-  "model": {
-   "category": {
-    "name": "Uncategorized"
-   },
-   "displayName": "Frinx Machine",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
-    "subCategory": "Uncategorized",
-    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 144 146\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"#03AAFF\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"#03AAFF\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#0370FF\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
-    "svgComplete": "",
-    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 144 146\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"white\"\u003e\u003c/path\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#F0F0F0\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n"
-   },
-   "model": {
-    "version": "6.0.0"
-   },
-   "name": "frinx-machine",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Uncategorized",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
-  },
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "\u003csvg width=\"144\" height=\"146\" viewBox=\"0 0 144 146\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"#03AAFF\"/\u003e\n\u003cpath d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"#03AAFF\"/\u003e\n\u003cpath d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#0370FF\"/\u003e\n\u003c/svg\u003e\r",
-   "svgWhite": "\u003csvg width=\"144\" height=\"146\" viewBox=\"0 0 144 146\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M3 0H46L143.5 146H100.5L3 0Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M140.5 0H97.5L0 146H43L140.5 0Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M50.5 70.5L71.5 39L93 70.5L72 103L50.5 70.5Z\" fill=\"#F0F0F0\"/\u003e\n\u003c/svg\u003e\r"
-  },
-  "version": "v1.0.0"
- }
+  "component": {
+    "kind": "TLSStore",
+    "schema": "{\n \"description\": \"TLSStore is the CRD implementation of a Traefik TLS Store.\\nFor the time being, only the TLSStore named default is supported.\\nThis means that you cannot have two stores that are named default in different Kubernetes namespaces.\\nMore info: https://doc.traefik.io/traefik/v2.11/https/tls/#certificates-stores\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TLSStoreSpec defines the desired state of a TLSStore.\",\n   \"properties\": {\n    \"certificates\": {\n     \"description\": \"Certificates is a list of secret names, each secret holding a key/certificate pair to add to the store.\",\n     \"items\": {\n      \"description\": \"Certificate holds a secret name for the TLSStore resource.\",\n      \"properties\": {\n       \"secretName\": {\n        \"description\": \"SecretName is the name of the referenced Kubernetes Secret to specify the certificate details.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"secretName\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"defaultCertificate\": {\n     \"description\": \"DefaultCertificate defines the default certificate configuration.\",\n     \"properties\": {\n      \"secretName\": {\n       \"description\": \"SecretName is the name of the referenced Kubernetes Secret to specify the certificate details.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"secretName\"\n     ],\n     \"type\": \"object\"\n    },\n    \"defaultGeneratedCert\": {\n     \"description\": \"DefaultGeneratedCert defines the default generated certificate configuration.\",\n     \"properties\": {\n      \"domain\": {\n       \"description\": \"Domain is the domain definition for the DefaultCertificate.\",\n       \"properties\": {\n        \"main\": {\n         \"description\": \"Main defines the main domain name.\",\n         \"type\": \"string\"\n        },\n        \"sans\": {\n         \"description\": \"SANs defines the subject alternative domain names.\",\n         \"items\": {\n          \"type\": \"string\"\n         },\n         \"type\": \"array\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"resolver\": {\n       \"description\": \"Resolver is the name of the resolver that will be used to issue the DefaultCertificate.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"TLS Store\",\n \"type\": \"object\"\n}",
+    "version": "traefik.io/v1alpha1"
+  }
+}

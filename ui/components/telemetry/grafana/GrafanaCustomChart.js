@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import moment from 'moment';
@@ -17,9 +17,9 @@ import {
   CardContent,
   CardHeader,
   Tooltip,
-  LinearProgress,
   Box,
   styled,
+  LinearProgress,
 } from '@layer5/sistent';
 import { UsesSistent } from '../../SistentWrapper';
 

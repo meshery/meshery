@@ -1,4 +1,4 @@
-import { FormControlLabel, IconButton, useTheme } from '@material-ui/core';
+import { FormControlLabel, IconButton, useTheme } from '@layer5/sistent';
 import { labelValue, schemaRequiresTrueValue } from '@rjsf/utils';
 import React from 'react';
 import { CustomTextTooltip } from '../CustomTextTooltip';
@@ -54,7 +54,7 @@ export const CustomCheckboxWidget = (props) => {
                   <HelpOutlineIcon
                     width="14px"
                     height="14px"
-                    fill={theme.palette.type === 'dark' ? 'white' : 'gray'}
+                    fill={theme.palette.mode === 'dark' ? 'white' : 'gray'}
                     style={{ verticalAlign: 'middle', ...iconSmall }}
                   />
                 </IconButton>

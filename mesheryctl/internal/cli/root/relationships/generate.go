@@ -34,16 +34,16 @@ type CustomValueRange struct {
 	VisualizationExample string `json:"VisualizationExample"`
 }
 
-var GenerateRelationshipDocsCmd = &cobra.Command{
+var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "generate relationships docs",
 	Long:  "generate relationships docs from the google spreadsheets",
 	Example: `
-    // generate relationships docs
-    mesheryctl relationships generate $CRED
+// Generate relationships docs
+mesheryctl exp relationship generate [google-sheets-credential] --sheetId [sheet-id]
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp relationship generate $CRED [google-sheets-credential] --sheetId [sheet-id]\nRun 'mesheryctl exp relationship generate --help' to see detailed help message"
+		const errMsg = "Usage: mesheryctl exp relationship generate [google-sheets-credential] --sheetId [sheet-id]\nRun 'mesheryctl exp relationship generate --help' to see detailed help message"
 
 		if len(args) == 0 {
 			return errors.New(utils.RelationshipsError("Google Sheet Credentials is required\n"+errMsg, "generate"))
@@ -86,8 +86,9 @@ var GenerateRelationshipDocsCmd = &cobra.Command{
 }
 
 func init() {
-	GenerateRelationshipDocsCmd.PersistentFlags().StringVarP(&sheetID, "sheetId", "s", "", "Google Sheet ID")
+	generateCmd.PersistentFlags().StringVarP(&sheetID, "sheetId", "s", "", "Google Sheet ID")
 }
+
 func createJsonFile(resp *sheets.ValueRange, jsonFilePath string) error {
 
 	var customResp []CustomValueRange

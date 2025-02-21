@@ -303,17 +303,20 @@ ui-server: ui-meshery-build ui-provider-build server
 UI_BUILD_SCRIPT = build16
 UI_DEV_SCRIPT = dev16
 
-ifeq ($(findstring v19, $(shell node --version)), v19)
-	UI_BUILD_SCRIPT = build
-	UI_DEV_SCRIPT = dev
+ifeq ($(findstring v20, $(shell node --version)), v20)
+    UI_BUILD_SCRIPT = build
+    UI_DEV_SCRIPT = dev
+else ifeq ($(findstring v19, $(shell node --version)), v19)
+    UI_BUILD_SCRIPT = build
+    UI_DEV_SCRIPT = dev
 else ifeq ($(findstring v18, $(shell node --version)), v18)
-	UI_BUILD_SCRIPT = build
-	UI_DEV_SCRIPT = dev
+    UI_BUILD_SCRIPT = build
+    UI_DEV_SCRIPT = dev
 else ifeq ($(findstring v17, $(shell node --version)), v17)
-	UI_BUILD_SCRIPT = build
-	UI_DEV_SCRIPT = dev
-endif
+    UI_BUILD_SCRIPT = build
+    UI_DEV_SCRIPT = dev
 
+endif
 ## Install dependencies for building Meshery UI.
 ui-setup:
 	cd ui; npm i; cd ..

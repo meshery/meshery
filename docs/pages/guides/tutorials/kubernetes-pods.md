@@ -35,7 +35,7 @@ Learn how to create, manage, and explore _Kubernetes Pods and Services_ within t
 
 #### Access Meshery Playground
 
-- Log in to the [Meshery Playground](https://cloud.layer5.io/) using your credentials. On successful login, you should be at the dashboard. Press the **X** on the _Where do you want to start?_ popup to close it (if required).
+- Log in to the [Meshery Playground](https://play.meshery.io) using your credentials. On successful login, you should be at the dashboard. Press the **X** on the _Where do you want to start?_ popup to close it (if required).
 - Click **Explore** in the Cloud Native Playground tile to navigate to _Kanvas_.
 
 > **_NOTE:_** Kanvas is still in beta.

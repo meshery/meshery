@@ -12,6 +12,7 @@ import {
 } from '@layer5/sistent';
 
 export const ErrorMain = styled('main')(({ theme }) => ({
+  backgroundColor: theme.palette.background.default,
   padding: '4rem 8rem',
   minHeight: '100vh',
   [theme.breakpoints.down('sm')]: {
@@ -23,6 +24,7 @@ export const ErrorMain = styled('main')(({ theme }) => ({
 }));
 
 export const ErrorContainer = styled('div')(({ theme }) => ({
+  color: theme.palette.text.default,
   backgroundColor: theme.palette.background.card,
   boxShadow:
     '0px 2px 1px -1px rgb(0 0 0 / 20%), 0px 1px 1px 0px rgb(0 0 0 / 14%), 0px 1px 3px 1px rgb(0 0 0 / 12%)',

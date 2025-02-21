@@ -35,7 +35,6 @@ To contribute to Meshery, please follow the fork-and-pull request workflow descr
 
 Before **creating** an Issue i.e for `features`/`bugs`/`improvements` please follow these steps:
 
-
 1. Search existing Issues before creating a new Issue (look to see if the Issue has already been created).
 1. If it doesn't exist create a new Issue giving as much context as possible (please take note and select the correct Issue type, for example `bug`, `documentation` or `feature`.
 1. If you wish to work on the Issue once it has been triaged, please include this in your Issue description.
@@ -46,10 +45,10 @@ Before working on an existing Issue please follow these steps:
 
 1. Comment asking for the Issue to be assigned to you.
 1. To best position yourself for Issues assignment, we recommend that you:
-    1. Confirm that you have read the CONTRIBUTING.md.
-    1. Have a functional development environment (have built and are able to run the project).
-    1. Convey your intended approach to solving the issue.
-    1. Put each of these items in writing in one or more comments.
+   1. Confirm that you have read the CONTRIBUTING.md.
+   1. Have a functional development environment (have built and are able to run the project).
+   1. Convey your intended approach to solving the issue.
+   1. Put each of these items in writing in one or more comments.
 1. After the Issue is assigned to you, you can start working on it.
 1. In general, **only** start working on this Issue (and open a Pull Request) when it has been assigned to you. Doing so will prevent confusion, duplicate work (some of which may go unaccepted given its duplicity), incidental stepping on toes, and the headache involved for maintainers and contributors alike as Issue assignments collide and heads bump together.
 1. Reference the Issue in your Pull Request (for example `This PR fixes #123`). so that the corresponding Issue is automatically closed upon merge of your Pull Request.
@@ -136,10 +135,9 @@ Please contribute! Meshery documentation uses GitHub Pages to host the docs site
    `git push origin <my-changes>`
 1. Open a pull request (in your web browser) against our main repo: https://github.com/meshery/meshery.
 
-_Alternatively, LiveReload is available as an option during development: with jekyll serve --livereload no more manual page refresh.
+\_Alternatively, LiveReload is available as an option during development: with jekyll serve --livereload no more manual page refresh.
 
 `bundle exec jekyll serve --drafts --livereload --incremental --config _config_dev.yml`
-
 
 ## <a name="contributing-meshery">Meshery Contribution Flow</a>
 
@@ -187,13 +185,14 @@ Once the Meshery server is up and running, you should be able to access Meshery 
 
 Potential Solution:
 
--  Go to your meshery folder in your local-system where you’ve cloned it.
-Execute:
+- Go to your meshery folder in your local-system where you’ve cloned it.
+  Execute:
 
 - `git remote add upstream https://github.com/meshery/meshery`
 - `git fetch upstream`
 - Restart the meshery server
 - Additionally, before restarting the server, if you like to pull the latest changes, you can do: `git pull upstream master`
+
 ### UI Development Server
 
 If you want to work on the UI, it will be a good idea to use the included UI development server. You can run the UI development server by running the following command:
@@ -240,17 +239,20 @@ Meshery uses adapters to provision and interact with different infrastructure an
 1. Get the proto buf spec file from Meshery repo:
    `wget https://raw.githubusercontent.com/meshery/meshery/master/server/meshes/meshops.proto`
 1. Generate code
+
    1. Using Go as an example, do the following:
+
       - install the protocol buffer compiler: https://grpc.io/docs/protoc-installation/
       - add GOPATH to PATH: `export PATH=$PATH:$(go env GOPATH)/bin`
       - install the protocol compiler plugins for go:
-               `go install google.golang.org/protobuf/cmd/protoc-gen-go@latest`
-               `go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest`
+        `go install google.golang.org/protobuf/cmd/protoc-gen-go@latest`
+        `go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@latest`
       - create a directory _meshes_
       - Generate Go code:
-         	`protoc --proto_path=. --go_out=meshes --go_opt=paths=source_relative --go-grpc_out=meshes --go-grpc_opt=paths=source_relative meshops.proto`
+        `protoc --proto_path=. --go_out=meshes --go_opt=paths=source_relative --go-grpc_out=meshes --go-grpc_opt=paths=source_relative meshops.proto`
 
    1. For other languages, please refer to gRPC.io for language-specific guides.
+
 1. Implement the service methods and expose the gRPC server on a port of your choice (e.g. 10000).
 
 _Tip:_ The [Meshery adapter for Istio](https://github.com/meshery/meshery-istio) is a good reference adapter to use as an example of a Meshery adapter written in Go.
@@ -337,7 +339,6 @@ We are using ES-Lint to maintain code quality & consistency in our UI Code. To m
 - We will soon be adding Pre-Commit Hooks to make sure you get to know your errors before you commit the code.
 - In case you are unable to fix your lint errors, ping us on our [Slack](https://slack.meshery.io).
 
-
 # Using Sistent in Meshery UI
 
 ## Overview
@@ -365,8 +366,8 @@ To resolve theme conflicts and ensure proper functionality, a custom wrapper cal
 ### Example 1: Wrapping a custom component
 
 ```jsx
-import { UseSistent } from './UseSistent';
-import { Button, TextField } from 'sistent';
+import { UseSistent } from "./UseSistent";
+import { Button, TextField } from "sistent";
 
 const MyCustomForm = () => (
   <UseSistent>
@@ -381,8 +382,8 @@ const MyCustomForm = () => (
 ### Example 2: Wrapping an individual Sistent component
 
 ```jsx
-import { UseSistent } from './UseSistent';
-import { DataGrid } from 'sistent';
+import { UseSistent } from "./UseSistent";
+import { DataGrid } from "sistent";
 
 const MyDataGridComponent = ({ data }) => (
   <UseSistent>
@@ -394,9 +395,9 @@ const MyDataGridComponent = ({ data }) => (
 ### Example 3: Incorrect usage (avoid this)
 
 ```jsx
-import { UseSistent } from './UseSistent';
-import { Button } from 'sistent';
-import { TextField } from '@material-ui/core'; // MUI v4
+import { UseSistent } from "./UseSistent";
+import { Button } from "sistent";
+import { TextField } from "@mui/material"; // MUI v5
 
 // Don't do this!
 const IncorrectUsage = () => (
@@ -412,8 +413,6 @@ const IncorrectUsage = () => (
 1. Gradually migrate components to use Sistent instead of MUI v4 or v5.
 2. Always wrap Sistent components or custom components using Sistent with `UseSistent`.
 3. Keep MUI v4 components separate from Sistent components to avoid theme conflicts.
-
-
 
 ## <a name="contributing-mesheryctl">Mesheryctl Documentation</a>
 

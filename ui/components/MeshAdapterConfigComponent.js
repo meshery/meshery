@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Grid, Chip, Button, TextField, Tooltip, Avatar, styled } from '@layer5/sistent';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
@@ -61,7 +61,7 @@ const MeshAdapterConfigComponent = (props) => {
   const [selectedAvailableAdapterError, setSelectedAvailableAdapterError] = useState(false);
   const [adapterStates, setAdapterStates] = useState(props.meshAdapterStates);
   const [meshLocationURL, setMeshLocationURL] = useState();
-  const [meshDeployURL, setMeshDeployURL] = useState();
+  const [meshDeployURL, setMeshDeployURL] = useState('');
   const [meshDeployURLError, setMeshDeployURLError] = useState();
   const [selectedAvailableAdapter, setSelectedAvailableAdapter] = useState();
   const { notify } = useNotification();

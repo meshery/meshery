@@ -1,8 +1,7 @@
-import { styled, alpha } from '@mui/system';
-import { TextField, Typography } from '@layer5/sistent';
-export const Root = styled('div')(({ theme }) => ({
+import { alpha } from '@mui/system';
+import { TextField, Typography, styled } from '@layer5/sistent';
+export const Root = styled('div')(() => ({
   position: 'relative',
-  backgroundColor: theme.palette.background?.default,
 }));
 
 export const InputField = styled(TextField)(({ theme }) => ({
@@ -41,7 +40,7 @@ export const Item = styled('div')(({ theme }) => ({
 }));
 export const Label = styled(Typography)(({ theme }) => ({
   fontWeight: 500,
-  color: theme.palette.secondary.icon,
+  color: theme.palette.text.primary,
 }));
 
 export const Description = styled(Typography)(({ theme }) => ({
