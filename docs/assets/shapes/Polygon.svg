@@ -1,17 +1,8 @@
-<<<<<<< Updated upstream
-<svg viewBox="0 0 41 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M20.5 38L4 15L12 2H29L37 15L20.5 38Z" fill="#00B39F" fill-opacity="0.1" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
-  <path d="M4 15L37 15" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
-  <path d="M12 2L20.5 15" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
-  <path d="M29 2L20.5 15" stroke="#00B39F" stroke-width="1" stroke-miterlimit="10"/>
-=======
-<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40">
-  <path 
-    d="M2,35 L4,15 L15,25 L25,5 L35,12 L32,35 Z" 
-    fill="#00B39F"
-    fill-opacity="0.1"
-    stroke="#00B39F" 
-    stroke-miterlimit="10"
+<svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+  <path
+    d="M 40,150 L 40,150 L 80,150 L 100,100 L 120,150 L 160,150 L 160,150"
+    stroke="#1a365d"
+    stroke-width="4"
+    fill="none"
   />
->>>>>>> Stashed changes
 </svg>
