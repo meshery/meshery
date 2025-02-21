@@ -23,6 +23,7 @@ import (
 	"sync"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/sirupsen/logrus"
 
@@ -115,7 +116,7 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 			// Collect list of corresponding relationship by name from spreadsheet
 			relationshipSpredsheetGID = GetSheetIDFromTitle(resp, "Relationships")
 		} else {
-			modelCSVFilePath, componentCSVFilePath, relationshipCSVFilePath, err = utils.GetCsv(csvDirectory)
+			modelCSVFilePath, componentCSVFilePath, relationshipCSVFilePath, err = meshkitRegistryUtils.GetCsv(csvDirectory)
 			if err != nil {
 				return fmt.Errorf("error reading the directory: %v", err)
 			}
@@ -145,7 +146,9 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 
 		utils.Log.UpdateLogOutput(multiWriter)
 		utils.LogError.UpdateLogOutput(multiErrorWriter)
-		err = utils.InvokeGenerationFromSheet(&wg, registryLocation, sheetGID, componentSpredsheetGID, spreadsheeetID, modelName, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath, relationshipSpredsheetGID, srv)
+		fmt.Printf("\nPath: %s", modelCSVFilePath)
+		fmt.Printf("\nGID: %d", sheetGID)
+		err = meshkitRegistryUtils.InvokeGenerationFromSheet(&wg, registryLocation, sheetGID, componentSpredsheetGID, spreadsheeetID, modelName, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath, relationshipSpredsheetGID, srv)
 		if err != nil {
 			// meshkit
 			utils.LogError.Error(err)
