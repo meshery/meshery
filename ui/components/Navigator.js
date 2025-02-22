@@ -186,8 +186,8 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
         icon: (
           <UsesSistent>
             <CatalogIcon
-              primaryFill="#FFFFFF"
-              secondaryFill="#FFFFFFb3"
+              primaryFill={window.location.pathname === '/configuration/catalog' ? '#FFFFFF' : ''}
+              secondaryFill={window.location.pathname === '/configuration/catalog' ? '#FFFFFF' : ''}
               tertiaryFill="transparent"
               style={{ ...drawerIconsStyle }}
             />
@@ -456,6 +456,10 @@ class Navigator_ extends React.Component {
                 src={icon}
                 style={{
                   width: '20px',
+                  filter:
+                    window.location.pathname === href
+                      ? 'invert(50%) sepia(30%) saturate(1000%) hue-rotate(120deg)'
+                      : '',
                 }}
                 onMouseOver={(e) => {
                   e.target.style.transform = 'translate(-20%, -25%)';
@@ -626,7 +630,7 @@ class Navigator_ extends React.Component {
     let image = '/static/img/meshery-logo.png';
     let filter =
       window.location.pathname === href
-        ? 'invert(50%) sepia(78%) saturate(2392%) hue-rotate(160deg) brightness(93%) contrast(101%)'
+        ? 'invert(50%) sepia(30%) saturate(1000%) hue-rotate(120deg)'
         : '';
     let logoIcon = <img src={image} style={{ width: '20px' }} />;
     if (aName) {

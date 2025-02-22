@@ -28,68 +28,83 @@ import {
   styled,
   charcoal,
   accentGrey,
+  CHINESE_SILVER,
+  DARK_PRIMARY_COLOR,
+  DARK_SLATE_GRAY,
+  SILVER_GRAY,
+  KEPPEL,
 } from "@layer5/sistent";
 import { CloseIcon, ClickAwayListener, DropDownIcon } from "@layer5/sistent";
 function CustomDialogTitle(props) {
   const { children, onClose, ...other } = props;
 
   return (
-    <DialogTitle sx={{ m : 0, p : 2 }} {...other}>
+    <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
       {children}
       {onClose ? (
         <IconButton
           aria-label="close"
           onClick={onClose}
           sx={{
-            position : "absolute",
-            right : "1rem",
-            top : "1rem",
-            color : (theme) => theme.palette.grey[500],
+            position: "absolute",
+            right: "1rem",
+            top: "1rem",
+            color: (theme) => theme.palette.grey[500],
           }}
         >
           <CloseIcon />
         </IconButton>
-      ) : null}
+      ): null}
     </DialogTitle>
   );
 }
 
 CustomDialogTitle.propTypes = {
-  children : PropTypes.node,
-  onClose : PropTypes.func.isRequired,
+  children: PropTypes.node,
+  onClose: PropTypes.func.isRequired,
 };
 //Styled-components:
 const StyledTypography = styled(Typography)(({ theme }) => ({
-  fontWeight : 500,
-  color : charcoal[100],
-  marginBottom : theme.spacing(2), // Equivalent to `gutterBottom`
+  fontWeight: 500,
+  color: charcoal[100],
+  marginBottom: theme.spacing(2), // Equivalent to `gutterBottom`
+  '& a': {
+    fontWeight: "normal"
+  },
+  "& :hover": {
+    color: CHINESE_SILVER,
+  }
 }));
+
 const StyledTooltip = styled(Tooltip)(({ theme }) => ({
-  color : theme.palette.icon.brand,
-  cursor : "pointer",
-  fontWeight : 700,
+  color: theme.palette.text.inverse,
+  cursor: "pointer",
+  fontWeight: "normal",
 }));
 
 const StyledCustomDialogTitle = styled(CustomDialogTitle)(({ theme }) => ({
-  background : theme.palette.background.tabs,
+  background:accentGrey[10],
+  color: theme.palette.text.inverse,
 }));
 
 const StyledButton = styled(Button)(({ theme }) => ({
-  backgroundColor : theme.palette.background.tertiary,
+  backgroundColor: theme.palette.IconButton,
 }));
 const StyledButtonGroup = styled(ButtonGroup)(() => ({
-  border : "none",
-  "& .MuiButtonGroup-grouped" : {
-    border : "none !important",
+  border: "none",
+  "& .MuiButtonGroup-grouped": {
+    border: "none !important",
   },
 }));
 
 const StyledDialogBox = styled(DialogContentText)(({ theme }) => ({
-  color : theme.palette.text.default,
+  color: theme.palette.text.inverse,
+  backgroundColor: charcoal[40],
+  padding: "1.2rem",
 }));
 
 const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
-  backgroundColor : theme.palette.background.elevatedComponents,
+  backgroundColor: theme.palette.background.elevatedComponents,
 }));
 export default function Provider() {
   const [anchorEl, setAnchorEl] = useState(null);
@@ -109,7 +124,7 @@ export default function Provider() {
   };
 
   const open = Boolean(anchorEl);
-  const id = open ? "popover" : undefined;
+  const id = open ? "popover": undefined;
 
   useEffect(() => {
     loadProvidersFromServer();
@@ -119,8 +134,8 @@ export default function Provider() {
     dataFetch(
       "/api/providers",
       {
-        method : "GET",
-        credentials : "include",
+        method: "GET",
+        credentials: "include",
       },
       (result) => {
         if (typeof result !== "undefined") {
@@ -179,12 +194,12 @@ export default function Provider() {
                 {isLoading && (
                   <CircularProgress
                     size={20}
-                    sx={{ color : "white", marginRight : 8 }}
+                    sx={{ color: "white", marginRight: 8 }}
                   />
                 )}
                 {selectedProvider !== ""
                   ? selectedProvider
-                  : "Select your provider"}
+                 : "Select your provider"}
                 <DropDownIcon />
               </Button>
             </StyledButtonGroup>
@@ -194,19 +209,19 @@ export default function Provider() {
               anchorEl={anchorEl}
               onClose={handleClose}
               anchorOrigin={{
-                vertical : "bottom",
-                horizontal : "center",
+                vertical: "bottom",
+                horizontal: "center",
               }}
               transformOrigin={{
-                vertical : "top",
-                horizontal : "center",
+                vertical: "top",
+                horizontal: "center",
               }}
             >
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList
                   sx={{
-                    background : accentGrey[20],
-                    color : charcoal[100],
+                    background: charcoal[20],
+                    color: (theme) => theme.palette.text.inverse,
                   }}
                   id="split-button-menu"
                   autoFocusItem
@@ -215,12 +230,13 @@ export default function Provider() {
                     <MenuItem
                       key={key}
                       onClick={(e) => handleMenuItemClick(e, key)}
+                      sx={{ "&:hover": {backgroundColor: accentGrey[20]}}}
                     >
                       {key}
                     </MenuItem>
                   ))}
-                  <Divider sx={{ my : 0.5 }} />
-                  <MenuProviderDisabled disabled={true} key="CNCF Labs">
+                  <Divider sx={{ my: 0.5, backgroundColor: accentGrey[40], width: "80%", margin: "auto", marginBottom: "0px" }} />
+                  <MenuProviderDisabled sx={{ marginTop: "0px"}} disabled={true} key="CNCF Labs">
                     CNCF Labs{"\u00A0"}
                     <span>Offline</span>
                   </MenuProviderDisabled>
@@ -246,15 +262,14 @@ export default function Provider() {
           </Fragment>
         )}
       </CustomDiv>
-      <LearnMore>
+      <LearnMore onClick={handleModalOpen}>
         <StyledTypography variant="h6" gutterBottom>
-          Learn more about
-          <StyledTooltip
-            title="Learn more about providers"
+        <StyledTooltip
+            title="Learn more about Meshery remote providers"
             placement="bottom"
             data-cy="providers-tooltip"
-          >
-            <a onClick={handleModalOpen}> providers </a>
+          > 
+          Learn more about providers
           </StyledTooltip>
         </StyledTypography>
       </LearnMore>
@@ -271,17 +286,17 @@ export default function Provider() {
         >
           <CustomTypography>Choosing a Provider</CustomTypography>
         </StyledCustomDialogTitle>
-        <StyledDialogContent dividers>
+        
           <StyledDialogBox id="customized-dialog-content">
             Login to Meshery by choosing from the available providers. Providers
             extend Meshery by offering various plugins and services, including
             identity services, long-term persistence, advanced performance
             analysis, multi-player user collaboration, and so on.
-            <h3>Available Providers</h3>
+            <h2>Available Providers</h2>
             {Object.keys(availableProviders).map((key) => {
               return (
                 <React.Fragment key={availableProviders[key].provider_name}>
-                  <p style={{ fontWeight : 700 }}>
+                  <p style={{ fontWeight: 700 }}>
                     {availableProviders[key].provider_name}
                   </p>
                   <ul>
@@ -294,13 +309,13 @@ export default function Provider() {
                 </React.Fragment>
               );
             })}
-            <p style={{ fontWeight : 700 }}>MIT</p>
+            <p style={{ fontWeight: 700 }}>MIT</p>
             <ul>
               <li>Remote provider for performance testing</li>
               <li>Provides provenence of test results and their persistence</li>
               <li>Adaptive performance analysis - predictive optimization</li>
             </ul>
-            <p style={{ fontWeight : 700 }}>The University of Texas at Austin</p>
+            <p style={{ fontWeight: 700 }}>The University of Texas at Austin</p>
             <ul>
               <li>
                 Academic research and advanced studies by Ph.D. researchers
@@ -309,7 +324,7 @@ export default function Provider() {
                 Used by school of Electrical and Computer Engineering (ECE)
               </li>
             </ul>
-            <p style={{ fontWeight : 700 }}>
+            <p style={{ fontWeight: 700 }}>
               Cloud Native Computing Foundation Infrastructure Lab
             </p>
             <ul>
@@ -317,21 +332,20 @@ export default function Provider() {
                 Performance and compatibility-centric research and validation
               </li>
               <li>
-                Used by various service meshes and by the Service Mesh
-                Performance project
+                Used by various cloud native projects
               </li>
             </ul>
-            <p style={{ fontWeight : 700 }}>HPE Security</p>
+            <p style={{ fontWeight: 700 }}>HPE Security</p>
             <ul>
               <li>Istio, SPIRE, and SPIFEE integration</li>
             </ul>
-            <p style={{ fontWeight : 700 }}>Equinix</p>
+            <p style={{ fontWeight: 700 }}>Equinix</p>
             <ul>
               <li>Identity services</li>
               <li>Bare-metal Kubernetes configuration</li>
             </ul>
           </StyledDialogBox>
-        </StyledDialogContent>
+      
         <CustomDialogActions>
           <div className="learnmore">
             <a href="https://docs.meshery.io/extensibility/providers">
@@ -343,6 +357,7 @@ export default function Provider() {
           <StyledButton
             onClick={handleModalClose}
             data-cy="providers-modal-button-ok"
+            sx={{background: KEPPEL, marginRight: "1rem", color:(theme) =>  theme.palette.text.inverse}}
           >
             {" "}
             OK

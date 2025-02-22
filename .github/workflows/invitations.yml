@@ -6,7 +6,7 @@ on:
 jobs:
   automate_invite:
     if: contains(github.event.issue.labels.*.name, 'issue/invite') && github.repository == 'meshery/'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Invite on label
         uses: vj-abigo/invite-on-label@v1.2
@@ -16,7 +16,7 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
           comment: "We are sending you an invitation to join the Layer5 GitHub Organization. :partying_face: <b>Welcome to the community! 🎉</b><br /><br />&nbsp;&nbsp;&nbsp;Be sure to :star: [star the projects](../stargazers), if you haven't already.<br />"
         env:
-          INVITE_TOKEN: ${{ secrets.RELEASEDRAFTER_PAT }}
+          INVITE_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
 
       - name: View context attributes
         uses: actions/github-script@v4

@@ -6,12 +6,12 @@ on:
 
 jobs:
   update_release_notes_docs:
-      runs-on: ubuntu-22.04
+      runs-on: ubuntu-24.04
       steps:
         - name: Checkout
           uses: actions/checkout@master
           with:
-            token: ${{ secrets.RELEASEDRAFTER_PAT }}
+            token: ${{ secrets.RELEASE_NOTES_PAT }}
             ref: 'master'
 
         - name: Get Release Info

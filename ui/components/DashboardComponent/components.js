@@ -35,7 +35,7 @@ export const AddWidgetsToLayoutPanel = ({ widgetsToAdd, editMode, onAddWidget })
       flexDirection="column"
       gap="0.5rem"
       p={2}
-      width="22rem"
+      width="100%"
       bgcolor={theme.palette.background.card}
       boxShadow="0px 2px 10px rgba(0, 0, 0, 0.2)"
       marginBlock={'1rem'}
@@ -45,32 +45,34 @@ export const AddWidgetsToLayoutPanel = ({ widgetsToAdd, editMode, onAddWidget })
         <Typography variant="h6"> All widgets added to the layout </Typography>
       )}
 
-      {widgetsToAdd.map(({ key, ...widget }) => (
-        <StyledCard
-          key={key}
-          sx={{
-            height: '18rem',
-            width: '100%',
-            minWidth: '16rem',
-          }}
-        >
-          <Stack direction="row" alignItems="center" justifyContent="space-between">
-            <Typography variant="button">{widget.title}</Typography>
-            <IconButton onClick={() => onAddWidget(widget, key)}>
-              <AddIcon {...iconsProps} />
-            </IconButton>
-          </Stack>
-          <img
-            src={widget.thumbnail}
-            alt={widget.title}
-            style={{
+      <Box display="flex" flexWrap="wrap" gap="1rem">
+        {widgetsToAdd.map(({ key, ...widget }) => (
+          <StyledCard
+            key={key}
+            sx={{
+              height: '18rem',
               width: '100%',
-              height: 'auto',
-              objectFit: 'contain',
+              maxWidth: '16rem',
             }}
-          />
-        </StyledCard>
-      ))}
+          >
+            <Stack direction="row" alignItems="center" justifyContent="space-between">
+              <Typography variant="button">{widget.title}</Typography>
+              <IconButton onClick={() => onAddWidget(widget, key)}>
+                <AddIcon {...iconsProps} />
+              </IconButton>
+            </Stack>
+            <img
+              src={widget.thumbnail}
+              alt={widget.title}
+              style={{
+                width: '100%',
+                height: 'auto',
+                objectFit: 'contain',
+              }}
+            />
+          </StyledCard>
+        ))}
+      </Box>
     </Box>
   );
 };

@@ -1,12 +1,12 @@
 name: Re-usable Workflow - Build UI and Server
 on:
   workflow_call:
-    secrets:
+    secrets: {}
 
 jobs:
   build-backend:
     name: Backend build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -26,7 +26,7 @@ jobs:
           path: ./main
   ui-build:
     name: UI build
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out code
         uses: actions/checkout@v4
