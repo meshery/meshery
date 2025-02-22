@@ -41,7 +41,7 @@ export default function Footer() {
             component="p"
           >
             <ClickableSpan onClick={handleL5CommunityClick}>
-              Built with <StyledFavoriteIcon sx={{color: "blue"}} /> by the Layer5 Community
+              Built with <StyledFavoriteIcon sx={{ color: "blue" }} /> by the Layer5 Community
             </ClickableSpan>
           </Typography>
         </Item>

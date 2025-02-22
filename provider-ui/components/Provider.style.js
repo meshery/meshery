@@ -1,4 +1,12 @@
-import { styled, MenuItem, Dialog, DialogActions, Typography, Popover, accentGrey, charcoal } from "@layer5/sistent"
+import {
+  styled,
+  MenuItem,
+  Dialog,
+  DialogActions,
+  Typography,
+  Popover,
+  charcoal,
+} from "@layer5/sistent";
 export const CustomDiv = styled("div")(({ theme }) => ({
   width: "60%",
   marginLeft: "auto",
@@ -30,7 +38,7 @@ export const MenuProviderDisabled = styled(MenuItem)(({ theme }) => ({
   justifyContent: "space-between",
   backgroundColor: theme.palette.text.default,
   "> span": {
-    fontStyle: "italic"
+    fontStyle: "italic",
   },
   textOverflow: "ellipsis",
 }));
@@ -39,7 +47,6 @@ export const CustomDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root": {
     padding: theme.spacing(2),
     background: theme.palette.background.elevatedComponents,
-    
   },
   "& .MuiDialogActions-root": {
     padding: theme.spacing(1),
@@ -57,15 +64,13 @@ export const CustomDialogActions = styled(DialogActions)(({ theme }) => ({
   },
   "& div > a": {
     color: theme.palette.text.inverse,
-    paddingLeft:"1rem",
-
+    paddingLeft: "1rem",
   },
 }));
 export const StyledPopover = styled(Popover)(({ theme }) => ({
   ".MuiPaper-root": {
     backgroundColor: theme.palette.background.brand.disabled,
     color: theme.palette.text.default,
-    
   },
 }));
 export const LearnMore = styled("div")(() => ({
@@ -74,6 +79,6 @@ export const LearnMore = styled("div")(() => ({
   marginRight: "auto",
   marginTop: "3rem",
   "& :hover": {
-    cursor: "pointer"
-  }
+    cursor: "pointer",
+  },
 }));
