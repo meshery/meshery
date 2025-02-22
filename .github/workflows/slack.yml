@@ -6,7 +6,7 @@ jobs:
   star-notify:
     if: github.event_name == 'watch'
     name: Notify Slack on star
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - name: Get current star count
       run: |
@@ -20,7 +20,7 @@ jobs:
   good-first-issue-notify:
     if:  github.event_name == 'issues' && github.event.label.name == 'good first issue' || github.event.label.name == 'first-timers-only' 
     name: Notify Slack for new good-first-issue
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Notify slack
         env:

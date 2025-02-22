@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import moment from 'moment';
@@ -11,8 +11,16 @@ import dataFetch from '../../../lib/data-fetch';
 import { updateProgress } from '../../../lib/store';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
 import bb, { area, line } from 'billboard.js';
-import { IconButton, Card, CardContent, CardHeader, Tooltip, Box, styled } from '@layer5/sistent';
-import { LinearProgress } from '@mui/material';
+import {
+  IconButton,
+  Card,
+  CardContent,
+  CardHeader,
+  Tooltip,
+  Box,
+  styled,
+  LinearProgress,
+} from '@layer5/sistent';
 import { UsesSistent } from '../../SistentWrapper';
 
 const StyledCard = styled(Card)(() => ({
