@@ -302,6 +302,28 @@ This example relationship demonstrates how the `WASMFilter` and `EBPFFilter` com
 
 </details>
 
+#### Understanding Selector Sets
+
+Meshery relationship selectors are interpreted as a means to define how components interact with each other. **Selectors are organized as an array, with each item containing a distinct set of selectors that share a common functionality**. This structure provides flexibility in defining relationships, even when different components are involved.
+
+Here's a breakdown of how selectors are interpreted:
+
+* **Logical Union of Selector Sets:** Sets of selectors are interpreted as a **logical UNION**. This means that if multiple selector sets are provided, a relationship will be created if *any* of the sets match the components.
+* **Logical AND Within Selectors**: Inside each selector set, the properties `allow` and `deny` are interpreted as a **logical AND**. Both `allow` and `deny` conditions must be met for the relationship to be created or restricted.
+* **Combinatorial Pairs with `from` and `to`**: The `from` and `to` properties within `allow` and `deny` represent a **UNION** of a set of combinatorial pairs. This means the relationship is created between all components that match the `from` selectors and all components that match the `to` selectors.
+* **Optional Selectors:** Selectors are optional. If no selector is specified, the relationship applies to all components.
+* **`allow` Selectors**: The `allow` property defines relationships that are permitted. This section specifies the components that are allowed to participate in the relationship. The `from` and `to` properties within `allow` specify the source and destination of the relationship.
+* **`deny` Selectors**: The `deny` property defines relationships that should not be created or are restricted. Similar to `allow`, it uses `from` and `to` to specify the components involved in restricted relationships.
+* **Matching Components**: Selectors are used to match components based on various criteria, including `kind` and `model`. The absence of a field in the `from` or `to` selector implies a wildcard, meaning it matches any value.
+* **`match` Property**: The `match` property provides additional criteria for matching components, and uses `from` and `to` to match one component's fields to another component's fields.
+    *   The `mutatorRef` and `mutatedRef` properties are used within the `match` criteria.
+        *   The `mutatorRef` property specifies the JSON path to a value in the destination component, where the value from the source component (defined by `mutatedRef`) will be applied.
+        *   The `mutatedRef` property specifies the JSON path to a value in the source component that will be used for matching or patching.
+*   **Patching**: Relationship selectors can also specify how components should be patched. The `patch` property defines how a component is modified or updated, and can use a `patchStrategy` such as `add`, `remove`, `copy`, `move`, or `test`.
+
+In summary, Meshery relationship selectors offer a flexible and powerful way to define connections between components by using a combination of logical operations, matching criteria, and patching mechanisms.
+
+
 #### Understanding Relationship Policies and their Evaluation
 
 The `evaluationQuery` property in your relationship definition is used to identity the name of the policy to be used by Meshery's evaluation engine. Meshery embeds Open Policy Agent as it's policy engine
