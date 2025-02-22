@@ -194,19 +194,25 @@ export const ActorAvatar = styled(Grid)(() => ({
 export const Message = styled(Typography)(() => ({
   overflow: 'hidden',
   textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
-  overflowWrap: 'break-word',
-  // max of min of 20rem or 50vw
+  whiteSpace: 'normal', // Change from nowrap to normal to allow wrapping
+  wordBreak: 'break-word', // Ensures long words break correctly
   maxWidth: 'min(25rem, 50vw)',
   width: '100%',
+  display: '-webkit-box',
+  WebkitLineClamp: 2, // Limits text to 2 lines (Adjust as needed)
+  WebkitBoxOrient: 'vertical',
 }));
+
 
 export const GridItem = styled(Grid)(() => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'start',
   gap: '0.25rem',
+  flexWrap: 'wrap', // Ensures content wraps properly
+  maxWidth: '100%',
 }));
+
 export const MenuPaper = styled(Box)(({ theme }) => ({
   color: theme.palette.icon.secondary,
   boxShadow: theme.shadows[4],
@@ -251,10 +257,18 @@ export const Root = styled('div')(({ notificationcolor, status }) => ({
   border: `0.1rem solid ${notificationcolor}`,
   borderLeftWidth: status === STATUS.UNREAD ? '0.5rem' : '0.1rem',
   marginBlock: '0.5rem',
+  overflow: 'hidden', // Prevents content overflow
+  wordWrap: 'break-word', // Allows breaking inside the container
 }));
+
 export const Summary = styled(Grid)(({ notificationcolor }) => ({
   paddingBlock: '0.5rem',
   paddingInline: '0.25rem',
   cursor: 'pointer',
   backgroundColor: alpha(notificationcolor, 0.2),
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'normal', // Allows multiple lines
+  wordBreak: 'break-word',
 }));
+
