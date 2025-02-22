@@ -43,19 +43,21 @@ export default function MyApp(props) {
             display : "flex",
             flexDirection : "column",
             minHeight : "100vh",
-
+            overflowY: "hidden",
           }}
         >
-          <Box sx={{ display : "flex", flexGrow : 1 }}>
+          <Box sx={{ overflowY: "hidden",display : "flex", flexGrow : 1 }}>
             <StyledBox>
               <Box
                 sx={{
                   flex : 1,
-                  padding : "48px 36px 24px",
+                  alignContent: "center",
+                  padding: "auto",
+                  margin: "auto"
                   // background: theme.palette.background.brand.default
                 }}
               >
-                <Paper>
+                <Paper sx={{background: "none",}}>
                   <Component {...pageProps} />
                 </Paper>
               </Box>
