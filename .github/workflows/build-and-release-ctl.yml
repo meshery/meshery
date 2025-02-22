@@ -37,6 +37,7 @@ jobs:
         with:
           formula-name: mesheryctl
           download-url: https://github.com/meshery/meshery.git
+          tag-name: ${{inputs.release-tag}}
         env:
           COMMITTER_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
  
