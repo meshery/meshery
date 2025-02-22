@@ -1,11 +1,10 @@
-import { ThemeProvider } from '@mui/material/styles';
 import { withTheme } from '@rjsf/core';
 import { Theme as MaterialUITheme } from '@rjsf/mui';
 import ajv8validator from '@rjsf/validator-ajv8';
 import React, { useEffect } from 'react';
 import { rjsfTheme } from '../../../themes';
 import darkRjsfTheme from '../../../themes/rjsf';
-import { useTheme } from '@layer5/sistent';
+import { useTheme, ThemeProvider } from '@layer5/sistent';
 import { CustomTextTooltip } from './CustomTextTooltip';
 import MesheryArrayFieldTemplate from './RJSFCustomComponents/ArrayFieldTemlate';
 import CustomDateTimeWidget from './RJSFCustomComponents/CustomDateTimeWidget';

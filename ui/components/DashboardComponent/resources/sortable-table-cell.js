@@ -1,6 +1,5 @@
 import { UsesSistent } from '@/components/SistentWrapper';
-import { Grid, Tooltip, Typography } from '@layer5/sistent';
-import { TableCell, TableSortLabel } from '@mui/material';
+import { Grid, Tooltip, Typography, TableCell, TableSortLabel } from '@layer5/sistent';
 
 export const SortableTableCell = ({ index, columnData, columnMeta, onSort, icon, tooltip }) => {
   return (

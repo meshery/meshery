@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import MesheryFilters from '../../components/Filters';
 import { updatepagepath } from '../../lib/store';
 import { connect } from 'react-redux';
