@@ -300,7 +300,6 @@ class PrometheusComponent extends Component {
   };
 
   render() {
-    const { classes } = this.props;
     const {
       urlError,
       prometheusURL,
@@ -317,8 +316,7 @@ class PrometheusComponent extends Component {
               boardPanelConfigs={selectedPrometheusBoardsConfigs}
               deleteSelectedBoardPanelConfig={this.deleteSelectedBoardPanelConfig}
             />
-
-            <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+            <Typography variant="h6" gutterBottom>
               Prometheus charts
             </Typography>
             {/* <GrafanaCharts
