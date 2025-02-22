@@ -57,12 +57,7 @@ Follow the steps below to install Meshery in your EKS cluster.
 
 ## Installation: Using `mesheryctl`
 
-Use Meshery's CLI to streamline your connection to your EKS cluster. Configure Meshery to connect to your EKS cluster by executing:
-
-{% capture code_content %}$ mesheryctl system config eks{% endcapture %}
-{% include code.html code=code_content %}
-
-Once configured, execute the following command to start Meshery.
+Execute <a href='/reference/mesheryctl/system/start'>mesheryctl system start</a> command to start Meshery.
 
 {% capture code_content %}$ mesheryctl system start{% endcapture %}
 {% include code.html code=code_content %}
