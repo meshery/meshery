@@ -203,7 +203,6 @@ export const Message = styled(Typography)(() => ({
   WebkitBoxOrient: 'vertical',
 }));
 
-
 export const GridItem = styled(Grid)(() => ({
   display: 'flex',
   alignItems: 'center',
@@ -271,4 +270,3 @@ export const Summary = styled(Grid)(({ notificationcolor }) => ({
   whiteSpace: 'normal', // Allows multiple lines
   wordBreak: 'break-word',
 }));
-
