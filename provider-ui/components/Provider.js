@@ -29,6 +29,10 @@ import {
   charcoal,
   accentGrey,
   CHINESE_SILVER,
+  DARK_PRIMARY_COLOR,
+  DARK_SLATE_GRAY,
+  SILVER_GRAY,
+  KEPPEL,
 } from "@layer5/sistent";
 import { CloseIcon, ClickAwayListener, DropDownIcon } from "@layer5/sistent";
 function CustomDialogTitle(props) {
@@ -79,11 +83,12 @@ const StyledTooltip = styled(Tooltip)(({ theme }) => ({
 }));
 
 const StyledCustomDialogTitle = styled(CustomDialogTitle)(({ theme }) => ({
-  background: theme.palette.background.tabs,
+  background:accentGrey[10],
+  color: theme.palette.text.inverse,
 }));
 
 const StyledButton = styled(Button)(({ theme }) => ({
-  backgroundColor: theme.palette.background.tertiary,
+  backgroundColor: theme.palette.IconButton,
 }));
 const StyledButtonGroup = styled(ButtonGroup)(() => ({
   border: "none",
@@ -93,7 +98,9 @@ const StyledButtonGroup = styled(ButtonGroup)(() => ({
 }));
 
 const StyledDialogBox = styled(DialogContentText)(({ theme }) => ({
-  color: theme.palette.text.default,
+  color: theme.palette.text.inverse,
+  backgroundColor: charcoal[40],
+  padding: "1.2rem",
 }));
 
 const StyledDialogContent = styled(DialogContent)(({ theme }) => ({
@@ -279,13 +286,13 @@ export default function Provider() {
         >
           <CustomTypography>Choosing a Provider</CustomTypography>
         </StyledCustomDialogTitle>
-        <StyledDialogContent dividers>
+        
           <StyledDialogBox id="customized-dialog-content">
             Login to Meshery by choosing from the available providers. Providers
             extend Meshery by offering various plugins and services, including
             identity services, long-term persistence, advanced performance
             analysis, multi-player user collaboration, and so on.
-            <h3>Available Providers</h3>
+            <h2>Available Providers</h2>
             {Object.keys(availableProviders).map((key) => {
               return (
                 <React.Fragment key={availableProviders[key].provider_name}>
@@ -338,7 +345,7 @@ export default function Provider() {
               <li>Bare-metal Kubernetes configuration</li>
             </ul>
           </StyledDialogBox>
-        </StyledDialogContent>
+      
         <CustomDialogActions>
           <div className="learnmore">
             <a href="https://docs.meshery.io/extensibility/providers">
@@ -350,6 +357,7 @@ export default function Provider() {
           <StyledButton
             onClick={handleModalClose}
             data-cy="providers-modal-button-ok"
+            sx={{background: KEPPEL, marginRight: "1rem", color:(theme) =>  theme.palette.text.inverse}}
           >
             {" "}
             OK
