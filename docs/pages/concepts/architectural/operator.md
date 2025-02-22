@@ -55,3 +55,7 @@ Meshery UI offers more granular control over the deployment of Meshery Operator 
 
 ### Does the Meshery Operator use an SDK or framework? 
 Yes, Meshery Operator used the Operator SDK.
+
+### Where can I find troubleshooting instructions for Meshery Operator, MeshSync, and Broker?
+
+For a comprehensive guide on troubleshooting Meshery Operator and its custom controllers, including MeshSync and Broker, refer to the [Meshery Troubleshooting Guide](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync). This guide provides step-by-step instructions to help resolve common issues and ensure a smooth Meshery deployment.

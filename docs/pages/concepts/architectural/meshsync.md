@@ -87,23 +87,23 @@ The informer in MeshSync actively listens to changes in resources and updates th
 
 _TODO: Include example of how to invoke this built-in check._
 
-# Scalability and Performance
+## Scalability and Performance
 
 One Meshery Operator and one MeshSync are deployed to each Kuberentes cluster under management.
 
-## Tiered Discovery
+### Tiered Discovery
 
 Kubernetes clusters may grow very large with thousands of objects on them. The process of positively identifying and classifying resources by type, aligning them with Meshery's object model can be intense. Discovery tiers (for speed and scalability of MeshSync) successively refine the process of infrastructure identification (see [Composite Prints](#composite-fingerprints)).
 
 For efficient management of large Kubernetes clusters, MeshSync uses tiered discovery. This approach progressively refines the identification of relevant infrastructure, optimizing the speed and scalability of MeshSync. You have control over the depth of object discovery, enabling you to strike the right balance between granularity and performance for efficient cluster management.
 
-## Event-Driven Implementation
+### Event-Driven Implementation
 
 Meshery's event-driven approach ensures high-speed operations, making it suitable for managing both small and large clusters. [Meshery Broker](./broker) uses NATS as the messaging bus to ensure continuous communication between MeshSync and Meshery Server. In case of connectivity interruptions, MeshSync data is persisted in NATS topics.
 
-# MeshSync FAQs
+## MeshSync FAQs
 
-## How to configure MeshSync's resource discovery behavior: Can specific, "uninteresting" resources be blacklisted?
+### How to configure MeshSync's resource discovery behavior: Can specific, "uninteresting" resources be blacklisted?
 
 MeshSync is managed by [Meshery Operator]({{site.baseurl}}/concepts/architecture/operator), which watches for changes on the `meshsync` CRD for changes and updates the deployed MeshSync instance accordingly. You can blacklist specific Kubernetes resources from being discovered and watched by MeshSync. In order to identify the list of one or more resources for MeshSync to ignore, update the `meshsync` CRD using kubectl:
 
@@ -111,13 +111,17 @@ MeshSync is managed by [Meshery Operator]({{site.baseurl}}/concepts/architecture
 - Open the downloaded file and edit the field `informer_config` to blacklist all the types of resources that you don't want updates from.
 - Apply the new definition with `kubectl apply -f meshsync.yaml`
 
-# Roadmap
+### Where can I find troubleshooting instructions for Meshery Operator, MeshSync, and Broker?
 
-## Non-Kubernetes Deployments
+For a comprehensive guide on troubleshooting Meshery Operator and its custom controllers, including MeshSync and Broker, refer to the [Meshery Troubleshooting Guide](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync). This guide provides step-by-step instructions to help resolve common issues and ensure a smooth Meshery deployment.
+
+## Roadmap
+
+### Non-Kubernetes Deployments
 
 Even if you're not using Kubernetes, Meshery empowers you to manage your infrastructure efficiently, providing a unified solution for different deployment environments.
 
-# Recap
+## Recap
 
 MeshSync maintains an up-to-date snapshot of your cluster, ensuring you always have an accurate view of your infrastructure. This snapshot is refreshed in real-time through event-based updates. Whether you're starting fresh or adopting Meshery into existing setups, MeshSync supports both greenfield and brownfield discovery of your environment.
 
