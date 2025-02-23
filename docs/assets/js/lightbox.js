@@ -58,26 +58,21 @@ function setGallery(el) {
 				link_element.classList.add('gallery');
 			});
 		}
-		// 获取当前索引（修复1：使用正确的方式获取数字索引）
         var gallery_elements = Array.from(document.querySelectorAll('a.gallery'));
         var currentkey = gallery_elements.findIndex(item => 
             item.classList.contains('current')
         );
 
-        // 计算导航键（修复2：使用模运算确保循环）
         var nextkey = (currentkey + 1) % gallery_elements.length;
         var prevkey = (currentkey - 1 + gallery_elements.length) % gallery_elements.length;
 
-        // 安全绑定事件（修复3：添加元素存在性检查）
         var nextBtn = document.getElementById('next');
         var prevBtn = document.getElementById('prev');
         
         if(nextBtn && prevBtn) {
-            // 移除旧监听器防止重复绑定
             nextBtn.replaceWith(nextBtn.cloneNode(true));
             prevBtn.replaceWith(prevBtn.cloneNode(true));
             
-            // 重新获取新按钮引用
             nextBtn = document.getElementById('next');
             prevBtn = document.getElementById('prev');
 
