@@ -110,9 +110,3 @@ transform-origin: 50% 50%;
 /* Opera */
 -o-transform: rotate(45deg);
 }
-
-@keyframes pulse {
-    0% { opacity: 0.6; }
-    50% { opacity: 1; }
-    100% { opacity: 0.6; }
-}
