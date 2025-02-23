@@ -16,7 +16,7 @@ on:
         required: true
         default: "warning"
 
-permissions: read-allgo mod tidy
+permissions: read-all
 
 jobs:
   ui-build:
