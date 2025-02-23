@@ -24,7 +24,7 @@ Optionally, you can [navigate all integrations visually](https://meshery.io/inte
 
 <!--
 UNCOMMENT WHEN INTEGRATIONS COLLECTION IS READY
-### All Integrations by Name ({{ site.integrations.size }}) 
+### All Integrations by Name ({{ site.integrations.size }})
 update: @vishalvivekm: integration collection is now models accessible via site.models and directory is docs/_models/
 total: {{ site.models.size }}
 -->

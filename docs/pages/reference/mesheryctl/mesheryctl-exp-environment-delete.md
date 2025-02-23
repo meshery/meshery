@@ -17,30 +17,33 @@ delete a new environments
 ## Synopsis
 
 delete a new environments by providing the name and description of the environment
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp environment delete [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 delete a new environment
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp environment delete [environmentId]
 
 </div>
-</pre> 
+</pre>
 
 Documentation for environment can be found at:
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 https://docs.meshery.io/concepts/logical/environments
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

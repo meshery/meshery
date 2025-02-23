@@ -17,38 +17,42 @@ List performance profiles
 ## Synopsis
 
 List all the available performance profiles
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf profile [profile-name] [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 List performance profiles (maximum 25 profiles)
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf profile
 
 </div>
-</pre> 
+</pre>
 
 List performance profiles with search (maximum 25 profiles)
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf profile test 2
 
 </div>
-</pre> 
+</pre>
 
 View single performance profile with detailed information
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf profile test --view
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

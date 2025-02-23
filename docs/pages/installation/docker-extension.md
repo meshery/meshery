@@ -5,7 +5,7 @@ permalink: installation/docker/docker-extension
 type: installation
 category: docker
 redirect_from:
-- installation/platforms/docker-extension
+  - installation/platforms/docker-extension
 display-title: "false"
 language: en
 list: include
@@ -18,7 +18,6 @@ abstract: Install Docker Extension for Meshery
 The Docker Extension for Meshery extends Docker Desktop’s position as the developer’s go-to Kubernetes environment with easy access to full the capabilities of Meshery's collaborative cloud native management features.
 
 {% include alert.html type="info" title="Prerequisites" content="You need Docker Desktop version of 4.10 or higher for this." %}
-
 
 ## Install the Docker Meshery Extension
 
@@ -58,7 +57,7 @@ Another way to install the Meshery Docker Extension is from the Docker Hub. Navi
 
 ### Using Docker CLI
 
-Finally, you can also install the Meshery Docker Extension using the Docker CLI. Follow the commands in the clipboard below. 
+Finally, you can also install the Meshery Docker Extension using the Docker CLI. Follow the commands in the clipboard below.
 
 <!--
 {% capture code_content %}docker extension install meshery/docker-extension-meshery{% endcapture %} -->
@@ -84,7 +83,7 @@ It runs as a set of one or more containers inside your Docker Desktop virtual ma
 
 ## Remove Meshery Docker Extension
 
-You can remove the Docker Extension from Docker Desktop interface or from the CLI. 
+You can remove the Docker Extension from Docker Desktop interface or from the CLI.
 
 ### Removing from Docker Desktop
 
@@ -101,7 +100,7 @@ To remove the extension from the command line, use the `docker extension rm` com
 
 ### Additional Cleanup
 
-There could be redisual Images and Networks to remove after removing/uninstalling the extension. Follow the steps below to do so. 
+There could be redisual Images and Networks to remove after removing/uninstalling the extension. Follow the steps below to do so.
 
 **Remove Meshery Images (if necessary)**
 
@@ -110,7 +109,6 @@ Meshery pulls Docker images for deploying the extension and there could be addit
 {% capture code_content %}$ docker rmi layer5/meshery:stable-latest{% endcapture %}
 {% include code.html code=code_content %}
 
-
 **Remove Meshery Docker Networks (if necessary)**
 
 Meshery creates custom Docker networks, and they could still be left after the extension uninstall. These can be removed using the `docker network rm` command. For example:
@@ -118,7 +116,6 @@ Meshery creates custom Docker networks, and they could still be left after the e
 {% capture code_content %}$ docker network rm meshery_default{% endcapture %}
 {% include code.html code=code_content %}
 <br />
-
 
 <script src="{{ site.baseurl }}/assets/js/terminal.js" data-termynal-container="#termynal2"></script>
 

@@ -17,30 +17,33 @@ Stop, then start Meshery
 ## Synopsis
 
 Restart all Meshery containers / pods.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system restart [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Restart all Meshery containers, their instances and their connected volumes
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system restart
 
 </div>
-</pre> 
+</pre>
 
 (optional) skip checking for new updates available in Meshery.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system restart --skip-update
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

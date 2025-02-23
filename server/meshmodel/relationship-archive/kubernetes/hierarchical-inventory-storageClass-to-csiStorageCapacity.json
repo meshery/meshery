@@ -39,11 +39,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "displayName"
-                ]
-              ],
+              "mutatorRef": [["displayName"]],
               "description": "StorageClass is used in conjunction with PVC that allow Pods to dynamically request a new storage."
             }
           }
@@ -59,13 +55,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "storageClassName"
-                ]
-              ],
+              "mutatedRef": [["configuration", "spec", "storageClassName"]],
               "description": "A CSIStorageCapacity gets produced by a CSI driver in the namespace where the driver is installed. Each CSIStorageCapacity contains capacity information for one Storage Class and defines which nodes have access to that storage."
             }
           }

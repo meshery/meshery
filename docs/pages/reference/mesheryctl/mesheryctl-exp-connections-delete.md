@@ -18,22 +18,24 @@ Delete a connection
 
 Delete
 a connection
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp connections delete [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Delete a connection
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp connections delete [connection_id]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

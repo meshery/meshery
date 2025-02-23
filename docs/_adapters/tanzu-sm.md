@@ -16,19 +16,19 @@ language: en
 
 {% assign sorted_tests_group = site.compatibility | group_by: "meshery-component" %}
 {% for group in sorted_tests_group %}
-      {% if group.name == "meshery-tanzu-mesh" %}
-        {% assign items = group.items | sort: "meshery-component-version" | reverse %}
-        {% for item in items %}
-          {% if item.meshery-component-version != "edge" %}
-            {% if item.overall-status == "passing" %}
-              {% assign adapter_version_dynamic = item.meshery-component-version %}
-              {% break %}
-            {% elsif item.overall-status == "failing" %}
-              {% continue %}
-            {% endif %}
-          {% endif %}
-        {% endfor %} 
-      {% endif %}
+{% if group.name == "meshery-tanzu-mesh" %}
+{% assign items = group.items | sort: "meshery-component-version" | reverse %}
+{% for item in items %}
+{% if item.meshery-component-version != "edge" %}
+{% if item.overall-status == "passing" %}
+{% assign adapter_version_dynamic = item.meshery-component-version %}
+{% break %}
+{% elsif item.overall-status == "failing" %}
+{% continue %}
+{% endif %}
+{% endif %}
+{% endfor %}
+{% endif %}
 {% endfor %}
 
 {% include compatibility/adapter-status.html %}
@@ -40,7 +40,6 @@ The {{page.name}} can install **{{page.earliest_version}}** of {{page.component}
 The {{ page.name }} is currently under construction ({{ page.project_status }} state), which means that the adapter is not functional and cannot be interacted with through the <a href="{{ site.baseurl }}/installation#6-you-will-now-be-directed-to-the-meshery-ui"> Meshery UI </a>at the moment. Check back here to see updates.
 
 Want to contribute? Check our [progress]({{page.github_link}}).
-
 
 ### Suggested Reading
 

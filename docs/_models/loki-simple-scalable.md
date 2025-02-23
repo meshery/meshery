@@ -9,51 +9,52 @@ description: Loki is a horizontally scalable, highly available, multi-tenant log
 integrations-category: Observability and Analysis
 integrations-subcategory: Logging
 registrant: Artifact Hub
-components: 
-- name: prometheus-rule
-  colorIcon: assets/img/integrations/loki-simple-scalable/components/prometheus-rule/icons/color/prometheus-rule-color.svg
-  whiteIcon: assets/img/integrations/loki-simple-scalable/components/prometheus-rule/icons/white/prometheus-rule-white.svg
-  description: 
-- name: service-monitor
-  colorIcon: assets/img/integrations/loki-simple-scalable/components/service-monitor/icons/color/service-monitor-color.svg
-  whiteIcon: assets/img/integrations/loki-simple-scalable/components/service-monitor/icons/white/service-monitor-white.svg
-  description: 
-- name: pod-monitor
-  colorIcon: assets/img/integrations/loki-simple-scalable/components/pod-monitor/icons/color/pod-monitor-color.svg
-  whiteIcon: assets/img/integrations/loki-simple-scalable/components/pod-monitor/icons/white/pod-monitor-white.svg
-  description: 
-- name: probe
-  colorIcon: assets/img/integrations/loki-simple-scalable/components/probe/icons/color/probe-color.svg
-  whiteIcon: assets/img/integrations/loki-simple-scalable/components/probe/icons/white/probe-white.svg
-  description: 
-- name: grafana-agent
-  colorIcon: assets/img/integrations/loki-simple-scalable/components/grafana-agent/icons/color/grafana-agent-color.svg
-  whiteIcon: assets/img/integrations/loki-simple-scalable/components/grafana-agent/icons/white/grafana-agent-white.svg
-  description: 
-- name: integration
-  colorIcon: assets/img/integrations/loki-simple-scalable/components/integration/icons/color/integration-color.svg
-  whiteIcon: assets/img/integrations/loki-simple-scalable/components/integration/icons/white/integration-white.svg
-  description: 
-- name: logs-instance
-  colorIcon: assets/img/integrations/loki-simple-scalable/components/logs-instance/icons/color/logs-instance-color.svg
-  whiteIcon: assets/img/integrations/loki-simple-scalable/components/logs-instance/icons/white/logs-instance-white.svg
-  description: 
-- name: metrics-instance
-  colorIcon: assets/img/integrations/loki-simple-scalable/components/metrics-instance/icons/color/metrics-instance-color.svg
-  whiteIcon: assets/img/integrations/loki-simple-scalable/components/metrics-instance/icons/white/metrics-instance-white.svg
-  description: 
-- name: pod-logs
-  colorIcon: assets/img/integrations/loki-simple-scalable/components/pod-logs/icons/color/pod-logs-color.svg
-  whiteIcon: assets/img/integrations/loki-simple-scalable/components/pod-logs/icons/white/pod-logs-white.svg
-  description: 
+components:
+  - name: prometheus-rule
+    colorIcon: assets/img/integrations/loki-simple-scalable/components/prometheus-rule/icons/color/prometheus-rule-color.svg
+    whiteIcon: assets/img/integrations/loki-simple-scalable/components/prometheus-rule/icons/white/prometheus-rule-white.svg
+    description:
+  - name: service-monitor
+    colorIcon: assets/img/integrations/loki-simple-scalable/components/service-monitor/icons/color/service-monitor-color.svg
+    whiteIcon: assets/img/integrations/loki-simple-scalable/components/service-monitor/icons/white/service-monitor-white.svg
+    description:
+  - name: pod-monitor
+    colorIcon: assets/img/integrations/loki-simple-scalable/components/pod-monitor/icons/color/pod-monitor-color.svg
+    whiteIcon: assets/img/integrations/loki-simple-scalable/components/pod-monitor/icons/white/pod-monitor-white.svg
+    description:
+  - name: probe
+    colorIcon: assets/img/integrations/loki-simple-scalable/components/probe/icons/color/probe-color.svg
+    whiteIcon: assets/img/integrations/loki-simple-scalable/components/probe/icons/white/probe-white.svg
+    description:
+  - name: grafana-agent
+    colorIcon: assets/img/integrations/loki-simple-scalable/components/grafana-agent/icons/color/grafana-agent-color.svg
+    whiteIcon: assets/img/integrations/loki-simple-scalable/components/grafana-agent/icons/white/grafana-agent-white.svg
+    description:
+  - name: integration
+    colorIcon: assets/img/integrations/loki-simple-scalable/components/integration/icons/color/integration-color.svg
+    whiteIcon: assets/img/integrations/loki-simple-scalable/components/integration/icons/white/integration-white.svg
+    description:
+  - name: logs-instance
+    colorIcon: assets/img/integrations/loki-simple-scalable/components/logs-instance/icons/color/logs-instance-color.svg
+    whiteIcon: assets/img/integrations/loki-simple-scalable/components/logs-instance/icons/white/logs-instance-white.svg
+    description:
+  - name: metrics-instance
+    colorIcon: assets/img/integrations/loki-simple-scalable/components/metrics-instance/icons/color/metrics-instance-color.svg
+    whiteIcon: assets/img/integrations/loki-simple-scalable/components/metrics-instance/icons/white/metrics-instance-white.svg
+    description:
+  - name: pod-logs
+    colorIcon: assets/img/integrations/loki-simple-scalable/components/pod-logs/icons/color/pod-logs-color.svg
+    whiteIcon: assets/img/integrations/loki-simple-scalable/components/pod-logs/icons/white/pod-logs-white.svg
+    description:
 components-count: 9
-relationships: 
+relationships:
 relationship-count: 0
-featureList: [
-  "Easy deployment and configuration",
-  "Scalable architecture",
-  "Integrates with Grafana for visualization"
-]
+featureList:
+  [
+    "Easy deployment and configuration",
+    "Scalable architecture",
+    "Integrates with Grafana for visualization",
+  ]
 howItWorks: "Deploys Loki Simple Scalable with Helm"
 howItWorksDetails: "Simplified Loki deployment and management in Kubernetes"
 language: en

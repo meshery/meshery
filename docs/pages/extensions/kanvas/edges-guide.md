@@ -20,8 +20,6 @@ From a design perspective, edge styles provide a clear and intuitive way to unde
 
 Meshery Designs carefully consider the visual style used for edges, imbuing meaning behind their weight, color, stroke, and arrowhead styles. The following list represents all edge styles and their current meaning in a general context.
 
-
-
 {% include extension-guide.html
  data_file="edges"
  guide_title="Edge"

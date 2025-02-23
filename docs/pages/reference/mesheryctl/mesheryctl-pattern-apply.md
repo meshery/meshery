@@ -17,30 +17,33 @@ Apply pattern file
 ## Synopsis
 
 Apply pattern file will trigger deploy of the pattern file
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design apply [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 apply a pattern file
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design apply -f [file | URL]
 
 </div>
-</pre> 
+</pre>
 
 deploy a saved pattern
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design apply [pattern-name]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

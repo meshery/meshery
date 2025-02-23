@@ -4,14 +4,22 @@ import Head from "next/head";
 import { CacheProvider } from "@emotion/react";
 import createEmotionCache from "../lib/createEmotionCache";
 import Footer from "../components/Footer";
-import { CssBaseline, charcoal, Box, Paper, SistentThemeProvider, styled, useTheme } from "@layer5/sistent";
+import {
+  CssBaseline,
+  charcoal,
+  Box,
+  Paper,
+  SistentThemeProvider,
+  styled,
+  useTheme,
+} from "@layer5/sistent";
 
 //styled-components:
 const StyledBox = styled(Box)(() => ({
-  display : "flex",
-  flex : 1,
-  flexDirection : "column",
-  background : charcoal[10],
+  display: "flex",
+  flex: 1,
+  flexDirection: "column",
+  background: charcoal[10],
 }));
 
 // Client-side cache, shared for the whole session of the user in the browser.
@@ -40,24 +48,24 @@ export default function MyApp(props) {
         <CssBaseline />
         <Box
           sx={{
-            display : "flex",
-            flexDirection : "column",
-            minHeight : "100vh",
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "100vh",
             overflowY: "hidden",
           }}
         >
-          <Box sx={{ overflowY: "hidden",display : "flex", flexGrow : 1 }}>
+          <Box sx={{ overflowY: "hidden", display: "flex", flexGrow: 1 }}>
             <StyledBox>
               <Box
                 sx={{
-                  flex : 1,
+                  flex: 1,
                   alignContent: "center",
                   padding: "auto",
-                  margin: "auto"
+                  margin: "auto",
                   // background: theme.palette.background.brand.default
                 }}
               >
-                <Paper sx={{background: "none",}}>
+                <Paper sx={{ background: "none" }}>
                   <Component {...pageProps} />
                 </Paper>
               </Box>
@@ -71,7 +79,7 @@ export default function MyApp(props) {
 }
 
 MyApp.propTypes = {
-  Component : PropTypes.elementType.isRequired,
-  emotionCache : PropTypes.object,
-  pageProps : PropTypes.object.isRequired,
+  Component: PropTypes.elementType.isRequired,
+  emotionCache: PropTypes.object,
+  pageProps: PropTypes.object.isRequired,
 };

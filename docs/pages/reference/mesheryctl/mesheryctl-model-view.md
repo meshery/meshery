@@ -17,22 +17,24 @@ view model
 ## Synopsis
 
 view a model queried by its name
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model view [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 View current provider
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model view [model-name]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

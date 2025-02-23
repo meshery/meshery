@@ -55,7 +55,7 @@ Environments in Meshery follow a defined lifecycle that helps maintain organizat
 3. Optionally add tags for better organization
 4. Start assigning connections and credentials
 
-### Managing Environments 
+### Managing Environments
 
 - Add or remove connections and credentials as needed
 - Monitor the health and status of resources within the environment

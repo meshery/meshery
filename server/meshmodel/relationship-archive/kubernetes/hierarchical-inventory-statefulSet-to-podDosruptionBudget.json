@@ -39,14 +39,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "selector",
-                  "labels"
-                ]
-              ],
+              "mutatorRef": [["configuration", "spec", "selector", "labels"]],
               "description": "StatefulSets are used for stateful applications that require stable, unique network identifiers and persistent storage. PDBs can be used with StatefulSets to control pod disruptions and ensure data integrity during maintenance or scaling."
             }
           }
@@ -63,12 +56,7 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "selector",
-                  "matchLabels"
-                ]
+                ["configuration", "spec", "selector", "matchLabels"]
               ]
             },
             "description": "In Kubernetes, Pod Distribution Budgets (PDBs) are used to ensure that a certain number or percentage of pods are running on particular nodes or within particular zones."

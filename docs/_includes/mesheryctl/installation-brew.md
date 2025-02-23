@@ -1,5 +1,3 @@
-
-
 ### Prerequisites
 
 You need to have `Brew` installed on your **Linux** or **macOS** system to perform these actions.

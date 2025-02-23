@@ -18,24 +18,19 @@ You can publish design into Meshery's Catalog using Extensions. Let's discuss th
 
 **Step 1: Access the Extensions UI**
 
-
 Note: To publish a design you must be the author of the design.
 
-
 **Step 2: Navigate to the Designs Tab and Select your Design**
-
 
 Once you have accessed the Extension's UI, navigate to the Designs tab. In this tab you can see all your designs with their "<b>Name</b>" and "<b>Date Modified</b>". From the designs table, you can click or drag and drop your design onto the canvas.
 
 <a href="{{ site.baseurl }}/assets/img/kanvas/design.png"><img style="border-radius: 0.5%;" alt="Import-Application" style="width:800px;height:auto;" src="{{ site.baseurl }}/assets/img/kanvas/design.png" /></a>
 
-
 **Step 3: Select Publish actions on the design**
 
-To select actions, hover over your design in the table and choose <b>publish</b>. 
+To select actions, hover over your design in the table and choose <b>publish</b>.
 
 <a href="{{ site.baseurl }}/assets/img/kanvas/action-publish.png"><img style="border-radius: 0.5%;" alt="Import-Application" style="width:800px;height:auto;" src="{{ site.baseurl }}/assets/img/kanvas/action-publish.png" /></a>
-
 
 **Step 4: Confirm additional information about your design**
 

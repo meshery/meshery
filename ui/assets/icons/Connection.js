@@ -1,6 +1,13 @@
-import React from "react";
+import React from 'react';
 
-const ConnectionIcon = ({ width, height, fill="#ccc", primaryFill="#00B39F", secondaryFill="#00D3A9", style = {} }) => (
+const ConnectionIcon = ({
+  width,
+  height,
+  fill = '#ccc',
+  primaryFill = '#00B39F',
+  secondaryFill = '#00D3A9',
+  style = {},
+}) => (
   <svg
     style={style}
     xmlns="http://www.w3.org/2000/svg"
@@ -44,20 +51,14 @@ const ConnectionIcon = ({ width, height, fill="#ccc", primaryFill="#00B39F", sec
       />
       <path d="M9.12207 7.32129V9.29045L10.8281 8.30298L9.12207 7.32129Z" fill={primaryFill} />
       <path d="M9.12207 9.70068V11.68L10.844 10.6954L9.12207 9.70068Z" fill={primaryFill} />
-      <path
-        d="M8.87574 9.27571V7.33691L7.19141 8.30414L8.87574 9.27571Z"
-        fill={secondaryFill}
-      />
+      <path d="M8.87574 9.27571V7.33691L7.19141 8.30414L8.87574 9.27571Z" fill={secondaryFill} />
       <path
         d="M5.49609 11.6726C5.82718 12.2047 6.27393 12.6543 6.80308 12.9883V10.9165L5.49609 11.6726Z"
         fill={secondaryFill}
       />
       <path d="M8.87617 11.67V9.71533L7.1875 10.6941L8.87617 11.67Z" fill={secondaryFill} />
       <path d="M7.0498 12.8642L8.76017 11.8869L7.0498 10.8979V12.8642Z" fill={primaryFill} />
-      <path
-        d="M10.9609 12.8745V10.9111L9.25195 11.8885L10.9609 12.8745Z"
-        fill={secondaryFill}
-      />
+      <path d="M10.9609 12.8745V10.9111L9.25195 11.8885L10.9609 12.8745Z" fill={secondaryFill} />
       <path
         d="M12.6323 11.4445C12.9244 10.8994 13.0892 10.2951 13.1152 9.67773L11.3369 10.6956L12.6323 11.4445Z"
         fill={secondaryFill}
@@ -107,10 +108,7 @@ const ConnectionIcon = ({ width, height, fill="#ccc", primaryFill="#00B39F", sec
         d="M9.12207 13.6205C9.75388 13.6031 10.3727 13.4398 10.9307 13.1419L9.12207 12.0938V13.6205Z"
         fill={primaryFill}
       />
-      <path
-        d="M6.80293 10.4729V8.52686L5.11426 9.49553L6.80293 10.4729Z"
-        fill={secondaryFill}
-      />
+      <path d="M6.80293 10.4729V8.52686L5.11426 9.49553L6.80293 10.4729Z" fill={secondaryFill} />
     </g>
     <defs>
       <clipPath id="clip0_11326_34264">

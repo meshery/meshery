@@ -86,12 +86,7 @@
             },
             "patch": {
               "patchStrategy": "merge",
-              "mutatorRef": [
-                [
-                  "spec",
-                  "dbInstanceIdentifier"
-                ]
-              ]
+              "mutatorRef": [["spec", "dbInstanceIdentifier"]]
             }
           }
         ],
@@ -134,12 +129,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "status",
-                  "snapshotCreateTime"
-                ]
-              ]
+              "mutatedRef": [["status", "snapshotCreateTime"]]
             }
           }
         ]

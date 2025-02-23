@@ -17,22 +17,24 @@ Searches registered relationships
 ## Synopsis
 
 Searches and finds the realtionship used by different models based on the query-text.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp relationship search [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Search for relationship using a query
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>] [query-text]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-const TipsIcon = ({ width="127", height="156", fill="#00B39F", style = {} }) => (
+const TipsIcon = ({ width = '127', height = '156', fill = '#00B39F', style = {} }) => (
   <svg
     width={width}
     height={height}
@@ -13,21 +13,9 @@ const TipsIcon = ({ width="127", height="156", fill="#00B39F", style = {} }) => 
       d="M65.5547 152.888C64.7849 154.221 62.8604 154.221 62.0906 152.888L42.3059 118.62C41.5361 117.286 42.4984 115.62 44.038 115.62H83.6073C85.1469 115.62 86.1091 117.286 85.3393 118.62L65.5547 152.888Z"
       fill={fill}
     />
-    <circle
-      cx="63.5"
-      cy="63.5"
-      r="63.5"
-      transform="rotate(90 63.5 63.5)"
-      fill={fill}
-    />
+    <circle cx="63.5" cy="63.5" r="63.5" transform="rotate(90 63.5 63.5)" fill={fill} />
     <g filter="url(#filter0_d_13672_38173)">
-      <circle
-        cx="63.5"
-        cy="63.5"
-        r="53.5"
-        transform="rotate(90 63.5 63.5)"
-        fill={fill}
-      />
+      <circle cx="63.5" cy="63.5" r="53.5" transform="rotate(90 63.5 63.5)" fill={fill} />
       <circle
         cx="63.5"
         cy="63.5"
@@ -61,15 +49,8 @@ const TipsIcon = ({ width="127", height="156", fill="#00B39F", style = {} }) => 
         <feOffset dy="4" />
         <feGaussianBlur stdDeviation="2" />
         <feComposite in2="hardAlpha" operator="out" />
-        <feColorMatrix
-          type="matrix"
-          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"
-        />
-        <feBlend
-          mode="normal"
-          in2="BackgroundImageFix"
-          result="effect1_dropShadow_13672_38173"
-        />
+        <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0" />
+        <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_13672_38173" />
         <feBlend
           mode="normal"
           in="SourceGraphic"

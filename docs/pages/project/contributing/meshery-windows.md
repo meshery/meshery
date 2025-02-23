@@ -7,9 +7,10 @@ language: en
 type: project
 category: contributing
 list: include
---- 
+---
 
 Meshery can be run on the Windows platform in three different modes.
+
 1. Windows native mode
 2. Under WSL or WSL2
 3. Using Hyper-V to install a Linux VM to run Meshery.
@@ -46,10 +47,10 @@ Please research the internet to install these components. However, here are a fe
 - nodejs (for npm): [https://phoenixnap.com/kb/install-node-js-npm-on-windows](https://phoenixnap.com/kb/install-node-js-npm-on-windows)
 - go: [https://go.dev/doc/install](https://go.dev/doc/install)
 
-
 ## Compatibility
 
 The following minimum Windows build versions are required:
+
 <table id="compatibility-table">
   <tr>
     <th id="model">Name</th>
@@ -75,13 +76,16 @@ The following minimum Windows build versions are required:
 
 Note
 <br />Run the following command on Powershell to check your Windows build and version:
+
  <pre class="codeblock-pre"><div class="codeblock">
  <div class="clipboardjs">[System.Environment]::OSVersion.Version</div></div>
  </pre>
+
 ### Steps
+
 Perform the following steps in order:
 
-### 1. <a name="step1" href="https://docs.microsoft.com/en-us/windows/wsl/install-win10"><b>Install Windows Subsystem for Linux (WSL)</b></a> 
+### 1. <a name="step1" href="https://docs.microsoft.com/en-us/windows/wsl/install-win10"><b>Install Windows Subsystem for Linux (WSL)</b></a>
 
 Open Powershell in administrator mode and run:
 
@@ -111,7 +115,7 @@ Set WSL2 as the default version:
 <h6><b><a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10" name="wsl1"> WSL1 </a></b></h6>
 
 <b>Warning:</b>
-It is recommended to update to <a href="#wsl2">WSL2</a> as WSL1 doesn't support the Docker Desktop application for Windows. Instead, it only supports the deprecated version, [Docker Toolbox](https://docs.docker.com/toolbox/toolbox_install_windows/). 
+It is recommended to update to <a href="#wsl2">WSL2</a> as WSL1 doesn't support the Docker Desktop application for Windows. Instead, it only supports the deprecated version, [Docker Toolbox](https://docs.docker.com/toolbox/toolbox_install_windows/).
 
 If you still wish to continue, follow the instructions for <button class="toggle-button" onclick="HideToggleFunction()"><b>WSL1</b></button>
 
@@ -124,16 +128,16 @@ If you still wish to continue, follow the instructions for <button class="toggle
 <b>Warning</b>: Docker Toolbox is a deprecated version. It is recommended to update your system and install the Docker Desktop application with WSL2. <br/><br />
 
 Docker Toolbox uses Linux-specific kernel features, and can’t run natively on Windows. Instead, it creates and uses a small Linux VM on your machine along with <a href="https://docs.docker.com/machine/overview/"><b>docker-machine</b></a>, and uses VirtualBox to run Docker. <br />
-    <ul>
-       <li>  Go to <a href="https://github.com/docker/toolbox/releases">Toolbox Releases</a> and download the latest release <b>.exe</b> file </li>
-       <li> Follow these <a href="https://docs.docker.com/toolbox/toolbox_install_windows/#step-2-install-docker-toolbox">instructions</a> to successfully set up the Docker Toolbox application. </li>
-    </ul>
+<ul>
+<li> Go to <a href="https://github.com/docker/toolbox/releases">Toolbox Releases</a> and download the latest release <b>.exe</b> file </li>
+<li> Follow these <a href="https://docs.docker.com/toolbox/toolbox_install_windows/#step-2-install-docker-toolbox">instructions</a> to successfully set up the Docker Toolbox application. </li>
+</ul>
 
 </p>
 </div>
 
-
 ### 2. <b>[Install a new distro](https://docs.microsoft.com/en-us/windows/wsl/install-win10#install-your-linux-distribution-of-choice)</b>
+
 In this tutorial, [Ubuntu 18.04](https://www.microsoft.com/en-us/p/ubuntu-1804-lts/9n9tngvndl3q?activetab=pivot:overviewtab) will be the distro used. Feel free to use any distro of your choice.
 
 <strong>Note:</strong> If you choose to run Meshery without installing a distro, skip [step 2](#2-install-a-new-distro).
@@ -157,15 +161,12 @@ The Docker Desktop application for Windows includes a comprehensive set of tools
   </tr>
 </table>
 
-
-
-
-
 ## Using Hyper-V to install a linux VM
 
 Here is a link to install linux VM using Hyper-V: [https://wiki.ubuntu.com/Hyper-V](https://wiki.ubuntu.com/Hyper-V)
 
-### Git Bash  
+### Git Bash
+
 Git Bash is a terminal emulator which provides git command line experience. This will make working with git easier. You can download it from here: [https://git-scm.com/downloads](https://git-scm.com/downloads)
 
 ### Get the code

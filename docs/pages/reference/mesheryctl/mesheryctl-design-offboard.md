@@ -17,22 +17,24 @@ Offboard design
 ## Synopsis
 
 Offboard design will trigger undeploy of design
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design offboard [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Offboard design by providing file path
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design offboard -f [filepath]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

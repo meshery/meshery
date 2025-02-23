@@ -17,22 +17,24 @@ Reset Meshery's configuration
 ## Synopsis
 
 Reset Meshery to it's default configuration.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system reset [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Resets meshery.yaml file with a copy from Meshery repo
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system reset
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

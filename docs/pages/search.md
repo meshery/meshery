@@ -1,10 +1,10 @@
 ---
-title: Search 
+title: Search
 sitemap: false
 permalink: /search/
 not_editable: true
 excluded_in_search: true
-display-title : "false"
+display-title: "false"
 list: exclude
 ---
 

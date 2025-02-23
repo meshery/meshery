@@ -21,12 +21,13 @@ You can specify the design by its name or ID and optionally define the type of d
 The command also supports specifying an output directory where the exported design will be saved.
 By default, the exported design will be saved in the current directory. The different types of design
 type allowed are oci, original, and current. The default design type is current.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design export [pattern-name | ID] [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -35,56 +36,56 @@ mesheryctl design export [pattern-name | ID] [flags]
 	# Export a design with a specific ID
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 	mesheryctl design export [pattern-name | ID]
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 	# Export a design with a specific ID and type
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 	mesheryctl design export [pattern-name | ID] --type [design-type]
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 	# Export a design and save it to a specific directory
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 	mesheryctl design export [pattern-name | ID] --output ./designs
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 	# Export a design with a specific type and save it to a directory
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 	mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exports
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

@@ -121,4 +121,3 @@ Envoy proxy runs the WASM filter in a stack-based virtual machine so that the fi
 ### Q: What is Image Hub ?
 
 Image Hub is a sample application which was first officially demonstrated at DockerCon 2020. This sample application is written to run on consul to explore the WebAssembly (WASM) modules in the Envoy filter. This application is written in the RUST programming language. These modules are used to implement the multi-tenancy or to implement the per user rate limiting in the applications endpoint.
-

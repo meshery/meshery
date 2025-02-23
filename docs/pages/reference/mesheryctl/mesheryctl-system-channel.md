@@ -17,54 +17,60 @@ Switch between release channels
 ## Synopsis
 
 Subscribe to a release channel. Choose between either 'stable' or 'edge' channels.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system channel [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Subscribe to release channel or version
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system channel
 
 </div>
-</pre> 
+</pre>
 
 To set the channel
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
 </div>
-</pre> 
+</pre>
 
 To pin/set the channel to a specific version
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system channel set stable-v0.6.0
 
 </div>
-</pre> 
+</pre>
 
 To view release channel and version
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system channel view
 
 </div>
-</pre> 
+</pre>
 
 To switch release channel and version
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -89,8 +95,8 @@ mesheryctl system channel switch [stable|stable-version|edge|edge-version]
 
 ## See Also
 
-* [mesheryctl system channel set](/reference/mesheryctl/system/channel/set)
-* [mesheryctl system channel switch](/reference/mesheryctl/system/channel/switch)
-* [mesheryctl system channel view](/reference/mesheryctl/system/channel/view)
+- [mesheryctl system channel set](/reference/mesheryctl/system/channel/set)
+- [mesheryctl system channel switch](/reference/mesheryctl/system/channel/switch)
+- [mesheryctl system channel view](/reference/mesheryctl/system/channel/view)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

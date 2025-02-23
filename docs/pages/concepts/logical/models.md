@@ -7,7 +7,7 @@ abstract: Meshery uses a set of resource models to define concrete boundaries to
 language: en
 list: include
 redirect_from:
-- concepts/models
+  - concepts/models
 ---
 
 Models are units of packaging for definitions of Meshery's logical object representations. Each model is versioned and encompasses a collection of components, relationships, policies, connections, and credentials. Meshery's internal object model provides a consistent and extensible way of capturing and characterizing the resources (applications, services, and infrastructure) under Meshery's management. Each model is versioned and bundles definitions of any number of components, relationships, policies, connections and credentials. Additionally, models can be exported as OCI-compatible images, defining the managed infrastructure, their interrelationships, and specific management details.
@@ -16,18 +16,18 @@ Models are units of packaging for definitions of Meshery's logical object repres
 
 Models serve as the foundational packaging units for Meshery's logical object representations. Each model is versioned and encompasses a collection of components, relationships, policies, connections, and credentials. Designed for consistency and extensibility, Meshery's internal object model effectively captures and characterizes the resources—such as applications, services, and infrastructure—under its management. Additionally, models can be exported as OCI-compatible images, defining the managed infrastructure, their interrelationships, and specific management details.
 
-* **Logical Representation:** Models offer a logical representation of entities under Meshery's management, abstracting away system-specific details.
-* **Packaging:** Model packages can be imported and exported as OCI-compatible images, ensuring portability and encapsulation of intellectual property.
-* **Components:** Components within a Model represent the capabilities of the underlying platform and are used by operators to build applications.
-* **Relationships:** Relationships define interactions and dependencies between components within a model.
-* **Policies:** Policies govern the behavior and constraints of components and relationships, ensuring adherence to desired operational practices.
-* **Extensibility:** Models are highly extensible, allowing you to define custom components, relationships, and policies. 
+- **Logical Representation:** Models offer a logical representation of entities under Meshery's management, abstracting away system-specific details.
+- **Packaging:** Model packages can be imported and exported as OCI-compatible images, ensuring portability and encapsulation of intellectual property.
+- **Components:** Components within a Model represent the capabilities of the underlying platform and are used by operators to build applications.
+- **Relationships:** Relationships define interactions and dependencies between components within a model.
+- **Policies:** Policies govern the behavior and constraints of components and relationships, ensuring adherence to desired operational practices.
+- **Extensibility:** Models are highly extensible, allowing you to define custom components, relationships, and policies.
 
 {% include alert.html title="Creating your own models" type="light" content="If you would like to create your own, augment existing models, or contribute new models, please refer to the <a href='/project/contributing/contributing-models'>Contributing to Models</a> guide." %}
 
 See [Contributing to Models](/project/contributing/contributing-models).
 
-As a cloud native manager that provides a comprehensive set of tools for managing multi-cloud and cloud native applications and infrastructure, Meshery needs object models that can granularly characterize a wide range of systems under management from simple applications to complex microservices architectures and their infrastructure. This document describes the Meshery Model and its constituent set of entities  used to represent and manage cloud and cloud native systems.
+As a cloud native manager that provides a comprehensive set of tools for managing multi-cloud and cloud native applications and infrastructure, Meshery needs object models that can granularly characterize a wide range of systems under management from simple applications to complex microservices architectures and their infrastructure. This document describes the Meshery Model and its constituent set of entities used to represent and manage cloud and cloud native systems.
 
 Using Meshery Models, users can define and manage cloud-native systems, including applications, services, and infrastructure. Models provide a way to represent the desired state of the system, and they can be used to deploy, monitor, and manage cloud-native applications. Models are designed to be extensible, allowing users to define new constructs as needed. They are also machine-readable, allowing them to be used by automation tools.
 
@@ -37,10 +37,10 @@ Each model (package) can be imported and exported from Meshery Server as OCI-com
 
 Models are stored in Meshery's [registry](/concepts/logical/registry) where they can be:
 
-* Discovered and reused by teams
-* Versioned and tagged
-* Shared publicly or kept private
-* Extended and customized
+- Discovered and reused by teams
+- Versioned and tagged
+- Shared publicly or kept private
+- Extended and customized
 
 The registry provides a central location for managing and distributing your infrastructure models.
 
@@ -52,10 +52,10 @@ Most registrants configure a specific infrastructure platform (either cloud or s
 
 Meshery Models adhere to several design principles, including establishing a set of constructs, clearly defining construct boundaries, allowing construct extension, reusing existing models, being user-centric, and simplifying complex networking and distributed systems. Meshery Models is designed to meet the following goals:
 
-* **Comprehensive:** The model should be able to represent a wide range of cloud and cloud native resources.
-* **Extensible:** The model should be extensible, allowing new constructs to be added as needed.
-* **User-centric:** The model should be easy for users to understand and use.
-* **Machine-readable:** The model should be machine-readable, allowing it to be used by automation tools.
+- **Comprehensive:** The model should be able to represent a wide range of cloud and cloud native resources.
+- **Extensible:** The model should be extensible, allowing new constructs to be added as needed.
+- **User-centric:** The model should be easy for users to understand and use.
+- **Machine-readable:** The model should be machine-readable, allowing it to be used by automation tools.
 
 ## Models as the Unit of Packaging
 
@@ -68,7 +68,7 @@ _Figure: Model Construct Classification_
 
 ## Key aspects and characteristics
 
-You might not fully comprehend the Meshery Models figure above. The following analogy offers an alternative viewpoint from which to comprehend the Capabilities Registry (where Models are imported and their capabilities registered for use).  
+You might not fully comprehend the Meshery Models figure above. The following analogy offers an alternative viewpoint from which to comprehend the Capabilities Registry (where Models are imported and their capabilities registered for use).
 
 ![Meshery Models Analogy]({{ site.baseurl }}/assets/img/concepts/meshery-models-analogy.svg)
 _Figure: Registrar's Office and Meshery Models Analogy_

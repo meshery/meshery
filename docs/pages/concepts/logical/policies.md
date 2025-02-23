@@ -14,7 +14,6 @@ Policies offer an evaluation algorithm to ensure desired behavior enforcement. P
 
 The relationships are a powerful way to design your infrastructure and each of them are backed by one or more policies. Policies evaluate the designs for potential relationships and the decide whether to create/delete/update the relationships.
 
-
 [![Meshery Models Policy Evaluation]({{ site.baseurl }}/assets/img/concepts/meshery-models-policy-evaluation.svg
 )]({{ site.baseurl }}/assets/img/concepts/meshery-models-policy-evaluation.svg)
 
@@ -28,7 +27,7 @@ In any given Meshery deployment, you can reference and search the full set of re
 
 1. Each time the design is updated.
 2. A Design/HelmChart/K8s Manifest/Docker Compose app is imported/uploaded.
-3. Ad-hoc invocation from the Actions Center (coming soon). 
+3. Ad-hoc invocation from the Actions Center (coming soon).
 -->
 
 ### How are conflicts resolved?

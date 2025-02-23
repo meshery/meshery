@@ -17,16 +17,15 @@ List registered orgs
 ## Synopsis
 
 Print all registered organizations with their id, name and date of creation. Organization will be returned based on provider you logged in.
-	
-	Documentation for organizations can be found at 
-	https://docs.layer5.io/cloud/identity/organizations/
-	
+Documentation for organizations can be found at
+https://docs.layer5.io/cloud/identity/organizations/
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp org list [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -35,28 +34,28 @@ mesheryctl exp org list [flags]
 	// list all organizations
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 	mesheryctl exp org list
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 	// list organizations (using flags)
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 	mesheryctl exp org --page [page_no] --size [size]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

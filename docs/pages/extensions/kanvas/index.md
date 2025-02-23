@@ -39,7 +39,6 @@ For developers, Kanvas is valuable as it enables them to manage their infrastruc
 
 See on YouTube: [Kanvas Designer Walkthrough](https://www.youtube.com/watch?v=qaoYRP3oLok)
 
-
 <div class="alert alert-dark" role="alert">
 <h4 class="alert-heading">Discussion Forum</h4>
 Not finding what you're looking for? Ask on the <a href="https://meshery.io/community#discussion-forums">Discussion Forum</a>.

@@ -17,22 +17,24 @@ Display pattern(s)
 ## Synopsis
 
 Displays the contents of a specific pattern based on name or id
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design view pattern name [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 view a pattern
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design view [pattern-name | ID]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

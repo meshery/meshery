@@ -39,14 +39,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "selector",
-                  "labels"
-                ]
-              ],
+              "mutatorRef": [["configuration", "spec", "selector", "labels"]],
               "description": " Deployments manage ReplicaSets and provide features such as rolling updates and rollback functionality. PDBs can be associated with Deployments to maintain availability during updates and ensure a minimum number of pods are available during the transition."
             }
           }
@@ -63,12 +56,7 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "selector",
-                  "matchLabels"
-                ]
+                ["configuration", "spec", "selector", "matchLabels"]
               ]
             },
             "description": "In Kubernetes, Pod Distribution Budgets (PDBs) are used to ensure that a certain number or percentage of pods are running on particular nodes or within particular zones."

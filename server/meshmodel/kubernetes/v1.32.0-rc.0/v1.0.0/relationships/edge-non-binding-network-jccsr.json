@@ -153,16 +153,8 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                [
-                  "displayName"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "ports",
-                  "_",
-                  "port"
-                ]
+                ["displayName"],
+                ["configuration", "spec", "ports", "_", "port"]
               ]
             }
           }

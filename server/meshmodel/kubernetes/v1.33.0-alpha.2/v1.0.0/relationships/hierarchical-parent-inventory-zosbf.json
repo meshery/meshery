@@ -87,22 +87,10 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                [
-                  "displayName"
-                ],
-                [
-                  "configuration",
-                  "metadata",
-                  "namespace"
-                ],
-                [
-                  "component",
-                  "kind"
-                ],
-                [
-                  "component",
-                  "version"
-                ]
+                ["displayName"],
+                ["configuration", "metadata", "namespace"],
+                ["component", "kind"],
+                ["component", "version"]
               ]
             }
           }
@@ -147,26 +135,10 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [
-                  "configuration",
-                  "regarding",
-                  "name"
-                ],
-                [
-                  "configuration",
-                  "regarding",
-                  "namespace"
-                ],
-                [
-                  "configuration",
-                  "regarding",
-                  "kind"
-                ],
-                [
-                  "configuration",
-                  "regarding",
-                  "apiVersion"
-                ]
+                ["configuration", "regarding", "name"],
+                ["configuration", "regarding", "namespace"],
+                ["configuration", "regarding", "kind"],
+                ["configuration", "regarding", "apiVersion"]
               ]
             }
           }

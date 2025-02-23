@@ -51,17 +51,13 @@
               "from": [
                 {
                   "kind": "self",
-                  "mutatedRef": [
-                    []
-                  ]
+                  "mutatedRef": [[]]
                 }
               ],
               "to": [
                 {
                   "kind": "NetworkPolicy",
-                  "mutatorRef": [
-                    []
-                  ]
+                  "mutatorRef": [[]]
                 }
               ]
             }
@@ -80,17 +76,13 @@
               "from": [
                 {
                   "kind": "NetworkPolicy",
-                  "mutatedRef": [
-                    []
-                  ]
+                  "mutatedRef": [[]]
                 }
               ],
               "to": [
                 {
                   "kind": "self",
-                  "mutatorRef": [
-                    []
-                  ]
+                  "mutatorRef": [[]]
                 }
               ]
             }

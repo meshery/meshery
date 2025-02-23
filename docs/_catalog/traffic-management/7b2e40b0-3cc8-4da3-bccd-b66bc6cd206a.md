@@ -6,8 +6,8 @@ userId: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
 userName: Deepak Reddy
 userAvatarURL: https://lh3.googleusercontent.com/a/ACg8ocIGbiDtE0q65qVvAUdzHw8Qky81rM0kSAknIqbgysfDCw=s96-c
 type: traffic-management
-compatibility: 
-    - kubernetes
+compatibility:
+  - kubernetes
 patternId: 7b2e40b0-3cc8-4da3-bccd-b66bc6cd206a
 image: /assets/images/logos/service-mesh-pattern.svg
 patternInfo: |
@@ -15,6 +15,6 @@ patternInfo: |
 patternCaveats: |
   This%20is%20an%20sample%20network%20%20policy%20with%20ingress%2Cegress%20defined%20%2C%20change%20according%20to%20your%20requirements
 permalink: catalog/traffic-management/network-policy-7b2e40b0-3cc8-4da3-bccd-b66bc6cd206a.html
-URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/7b2e40b0-3cc8-4da3-bccd-b66bc6cd206a/0.0.1/design.yml'
+URL: "https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/7b2e40b0-3cc8-4da3-bccd-b66bc6cd206a/0.0.1/design.yml"
 downloadLink: 7b2e40b0-3cc8-4da3-bccd-b66bc6cd206a/design.yml
 ---

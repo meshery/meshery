@@ -17,15 +17,12 @@ In Meshery, a [Components](/concepts/logical/components) is a fundamental buildi
 **Prework:**
 
 <!-- 1. [Component Identification](#component-identification) -->
-1. [Component Classification](#component-classification) 
 
-**Development:**
-2. [Component Definition](#component-definitions)
-3. [Component Customization](#component-customization)
+1. [Component Classification](#component-classification)
 
-**Postwork:**
-4. [Component Testing](#component-testing)
-5. [Component Contribution](#component-contribution)
+**Development:** 2. [Component Definition](#component-definitions) 3. [Component Customization](#component-customization)
+
+**Postwork:** 4. [Component Testing](#component-testing) 5. [Component Contribution](#component-contribution)
 
 ## Prework
 
@@ -58,11 +55,11 @@ Meshery UI uses the `react-jsonschema-form` library to render forms. See the [RJ
 
 Meshery contributors who want to customize the visual representation of a Meshery component can do so by modifying the component's metadata. This metadata includes fields for specifying the component's:
 
-* **SVG**: The SVG file used to represent the component visually.
-* **Primary Color**: The primary color used for the component in hex format.
-* **Secondary Color**: The secondary color used for the component in hex format.
-* **Shape**: The basic shape of the component, such as a circle or square.
-* **isAnnotation**: A boolean value that indicates whether the component is an annotation or is [semantically meaningful]({{site.baseurl}}/concepts/logical/components).
+- **SVG**: The SVG file used to represent the component visually.
+- **Primary Color**: The primary color used for the component in hex format.
+- **Secondary Color**: The secondary color used for the component in hex format.
+- **Shape**: The basic shape of the component, such as a circle or square.
+- **isAnnotation**: A boolean value that indicates whether the component is an annotation or is [semantically meaningful]({{site.baseurl}}/concepts/logical/components).
 
 <details>
 <summary>Example Component Metadata</summary>
@@ -103,7 +100,7 @@ Component icons will be written to the `/meshmodel/components/<model-name>/icon/
 
 ### 3. Create a Component Definition as a JSON file
 
-Create a relationship definition as a JSON file, placing this new definition file into its respective model folder (see [Contributing to Models](./models)). Relationship definition files are commonly named  `relationships.yaml` as a convention, however, this name is not required. A model may include any number of relationship definitions. Include the following attributes in your relationship definition:
+Create a relationship definition as a JSON file, placing this new definition file into its respective model folder (see [Contributing to Models](./models)). Relationship definition files are commonly named `relationships.yaml` as a convention, however, this name is not required. A model may include any number of relationship definitions. Include the following attributes in your relationship definition:
 
 - `kind`: The genre of component (e.g., `Pod`).
 - `model`: The model to which the component belongs (e.g., `kubernetes`).

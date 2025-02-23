@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-const EnvironmentIcon = ({ width, height, fill, style = {}, secondaryFill = "#fff", }) => (
+const EnvironmentIcon = ({ width, height, fill, style = {}, secondaryFill = '#fff' }) => (
   <svg
     style={style}
     width={width}

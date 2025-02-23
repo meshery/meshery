@@ -30,19 +30,20 @@ Meshery utilizes CASL (JS-based permission framework) to evaluate any given user
 
 An example of how CASL evaluate permission in UI.
 {% capture code_content %}<React.Fragment>
-	{!CAN(keys.DELETE_CONNECTION.action, keys.DELETE_CONNECTION.subject) && (
-		<Button id="delete-connection">Delete<Button/>
-	)}
-</React.Fragment> 
+{!CAN(keys.DELETE_CONNECTION.action, keys.DELETE_CONNECTION.subject) && (
+<Button id="delete-connection">Delete<Button/>
+)}
+</React.Fragment>
 {% endcapture %}
 {% include code.html code=code_content %}
 
- Once a user has logged in, the backend will send a response with the permissions that the user has. Those permissions will be used to create abilities on the frontend, CASL gets updated with those abilities. The UI maintains a constant file containing all allowed permissions, referred to as keys. With the help of these keys, CAN function evaluates the permissions during runtime and renders UI.
+Once a user has logged in, the backend will send a response with the permissions that the user has. Those permissions will be used to create abilities on the frontend, CASL gets updated with those abilities. The UI maintains a constant file containing all allowed permissions, referred to as keys. With the help of these keys, CAN function evaluates the permissions during runtime and renders UI.
 
 <div class="alert alert-dark" role="alert">
 <h4 class="alert-heading">Note</h4>
 
 It's important to understand not all pages uses CASL authorization, means even if you are not assigned with any role within organization you might access preferences page and Meshery UI dashboard.
+
 </div>
 
 ## Authorization using Local Provider
@@ -50,4 +51,3 @@ It's important to understand not all pages uses CASL authorization, means even i
 Meshery's built-in identity provider, "Local" Provider, operates with a large set of predefined keys interspersed throughout Meshery UI and persisted in [Meshery Database](/concepts/architecture/database). These keys are used to evaluate the permissions of a given user and render the UI accordingly. The keys are grouped into three categories: `action`, `subject`, and `object`.
 
 {% include discuss.html %}
-

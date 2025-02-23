@@ -16,7 +16,7 @@ list: include
    1. What policies are loaded by default?
    2. What happens in conflict?
 2. What controls are exposed to model contributors?
-3. Are there any global Meshery defaults (can user change them?) 
+3. Are there any global Meshery defaults (can user change them?)
 4. Instructions for Creating a New Connection
 5. Instructions for Creating a New Component -->
 
@@ -98,31 +98,30 @@ All of Meshery's Model be found in the <a href='https://docs.google.com/spreadsh
 To add or update a model, follow these steps:
 
 1. **Create a Model Definition.**
-Open the <a href='https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw/edit#'>Meshery Integrations spreadsheet</a>. Create a new row (or comment to suggest a new row) to capture the specific details of your model. As you fill-in model details, referernce each column's notes and comments as instructions and an explanation of their purpose.
+   Open the <a href='https://docs.google.com/spreadsheets/d/1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw/edit#'>Meshery Integrations spreadsheet</a>. Create a new row (or comment to suggest a new row) to capture the specific details of your model. As you fill-in model details, referernce each column's notes and comments as instructions and an explanation of their purpose.
 2. **Generate Components.**
-Once you have entered values into the required columns, either execute step 2.a. or 2.b.
-    Option 2.a.) Execute the following command to generate components for your model.
-{% capture code_content %}$ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred “${{SPREADSHEET_CRED}}"{% endcapture %}
- {% include code.html code=code_content %}
-    Option 2.b.) Ask a maintainer to invoke the [Model Generator workflow](https://github.com/meshery/meshery/actions/workflows/model-generator.yml).
+   Once you have entered values into the required columns, either execute step 2.a. or 2.b.
+   Option 2.a.) Execute the following command to generate components for your model.
+   {% capture code_content %}$ mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred “${{SPREADSHEET_CRED}}"{% endcapture %}
+   {% include code.html code=code_content %}
+   Option 2.b.) Ask a maintainer to invoke the [Model Generator workflow](https://github.com/meshery/meshery/actions/workflows/model-generator.yml).
 3. **Enrich Component Details.**
-When a Component is initially generated a new Component definition is created with default properties (e.g. colors, icons, capabilities and so on), some of which are inherited from their respective Model. 
-    3.1. Customize the shapes and colors of each component. The default shape a for new components is a circle. Consider enriching your components' details appropos what they represent. Refer to the Cytoscape [node types](https://js.cytoscape.org/demos/node-types/) for a list of possible shapes. Propose a specific shape, best-suited to visually represent the Component. _Example - Deployment as a pentagon._
-    3.2. Customize the icons of each component. By default Components will inherit the icon (i.e. colored and white SVGs) of their respetive Model. Propose a specific icon, best-suited icon to visually represent the Component. _Example - DaemonSet as a skull icon._
-    3.3. Review and confirm or change the assigned Capabilities. 
+   When a Component is initially generated a new Component definition is created with default properties (e.g. colors, icons, capabilities and so on), some of which are inherited from their respective Model.
+   3.1. Customize the shapes and colors of each component. The default shape a for new components is a circle. Consider enriching your components' details appropos what they represent. Refer to the Cytoscape [node types](https://js.cytoscape.org/demos/node-types/) for a list of possible shapes. Propose a specific shape, best-suited to visually represent the Component. _Example - Deployment as a pentagon._
+   3.2. Customize the icons of each component. By default Components will inherit the icon (i.e. colored and white SVGs) of their respetive Model. Propose a specific icon, best-suited icon to visually represent the Component. _Example - DaemonSet as a skull icon._
+   3.3. Review and confirm or change the assigned Capabilities.
 4. **Identify Relationships**
-    4.1. Review and familiarize with the available set of predefined relationship kinds, types, and subtypes. See ["Relationships logical concepts"]({{ site.baseurl }}/concepts/logical/relationships).
-    4.2. Identify appropriate relationships for your new components. Consider how each component interrelates to each other component within the same model and with each other component in other models.
-    4.3. Codify the relationships that you have identified into a [Relationship Definition](#definition).
-   
+   4.1. Review and familiarize with the available set of predefined relationship kinds, types, and subtypes. See ["Relationships logical concepts"]({{ site.baseurl }}/concepts/logical/relationships).
+   4.2. Identify appropriate relationships for your new components. Consider how each component interrelates to each other component within the same model and with each other component in other models.
+   4.3. Codify the relationships that you have identified into a [Relationship Definition](#definition).
 
 {% capture data %}Meshery CLI has a set of commands that pertain to the lifecycle management of models:<br />
+
 <div><li><a href='{{ site.baseurl }}/reference/mesheryctl#meshery-registry'><code>mesheryctl registry</code></a>- interact with and update spreadsheets.</li>
 <li><a href='{{ site.baseurl }}/reference/mesheryctl#meshery-models'><code>mesheryctl models</code></a> - interact with and update Meshery Server.</li>
 <li><a href='{{ site.baseurl }}/reference/mesheryctl#meshery-models'><code>mesheryctl components</code></a> - interact with and update Meshery Server.</li>
 <li><a href='{{ site.baseurl }}/reference/mesheryctl#meshery-models'><code>mesheryctl relationships</code></a> - interact with and update Meshery Server.</li></div>{% endcapture %}
 {% include alert.html type="info" title="Using Meshery CLI with the Meshery Registry and Meshery Models" content=data %}
-
 
 ### Instructions for creating a new Component
 
@@ -133,7 +132,6 @@ See the [Contributing to Components]({{site.baseurl}}/project/contributing/contr
 See the [Contributing to Relationships]({{site.baseurl}}/project/contributing/contributing-relationships) for detailed instructions.
 
 {% include alert.html type="info" title="Generating Models does not require Meshery Server" content="Meshery Server is not required to generate models. The Meshery CLI can be used to generate models. Model and Component generation logic is MeshKit. `mesheryctl` and Meshery Server both utilize MeshKit’s libraries for ongoing programmatic generation of models and components." %}
-
 
 <!-- ### Instructions for Creating a New Connection
 
@@ -150,10 +148,10 @@ Connections can be:
 
 The Meshery team is currently working on the following:
 
-* Extending the model to support additional entities
-* Improving the tooling for working with models
-* Defining relationships between components and embedding those policies within models
+- Extending the model to support additional entities
+- Improving the tooling for working with models
+- Defining relationships between components and embedding those policies within models
 
 We encourage you to get involved in the development of Meshery Models and to share your feedback.
-  
-  {% include alert.html type="info" title="Meshery Models are extensible" content="Meshery Models are designed to be extensible, allowing you to define new components as needed. If you have an idea for a new component, please create one and share it with the Meshery community." %}
+
+{% include alert.html type="info" title="Meshery Models are extensible" content="Meshery Models are designed to be extensible, allowing you to define new components as needed. If you have an idea for a new component, please create one and share it with the Meshery community." %}

@@ -7,8 +7,9 @@ abstract: Meshery uses one or more Credentials when authenticating to a managed 
 language: en
 list: include
 redirect_from:
-- concepts/credentials
+  - concepts/credentials
 ---
+
 Meshery uses one or more Credentials when authenticating to a managed or unmanaged Connection. Credentials are based on the Meshery's [Credential Schema](https://github.com/meshery/schemas/blob/master/openapi/schemas/credentials.yml) with defined attributes.
 
 ## Understanding Credentials in Meshery
@@ -54,5 +55,3 @@ When setting up a new Connection in Meshery:
 4. Credential status is monitored and alerts are generated if they become invalid
 
 For detailed instructions on managing credentials, see the [Credential Management Guide](/guides/credential-management).
-
-

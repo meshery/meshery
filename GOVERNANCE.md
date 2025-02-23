@@ -68,7 +68,7 @@ The aforementioned responsibilities come with the following benefits:
 
 #### Relinquishment of Role
 
-Maintainers can voluntarily step down from their role at any time.  If you decide to step down, please inform the other maintainers of your decision and explain your reasons.  Before stepping down, please help identify and train your replacement(s), and ensure a seamless transition of responsibilities to prevent any disruption of work. When ready, you or another maintainer will submit a pull request removing your name from the MAINTAINERS.md file and into the list below. Another maintainer will adjust your various permissions / access levels  to various project systems accordingly.
+Maintainers can voluntarily step down from their role at any time. If you decide to step down, please inform the other maintainers of your decision and explain your reasons. Before stepping down, please help identify and train your replacement(s), and ensure a seamless transition of responsibilities to prevent any disruption of work. When ready, you or another maintainer will submit a pull request removing your name from the MAINTAINERS.md file and into the list below. Another maintainer will adjust your various permissions / access levels to various project systems accordingly.
 
 #### Abandonment of Role
 

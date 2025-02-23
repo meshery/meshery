@@ -3,9 +3,9 @@ import { CHART_COLORS, topicsList } from "../utils/constants";
 import { bar } from "billboard.js";
 import { ChartDiv } from "./style";
 
-const groupItemsByTypeCount = data => {
+const groupItemsByTypeCount = (data) => {
   const dataByTypeCount = {};
-  data.forEach(item => {
+  data.forEach((item) => {
     const type = item?.catalog_data?.type;
 
     if (type) {
@@ -17,12 +17,12 @@ const groupItemsByTypeCount = data => {
   return dataByTypeCount;
 };
 
-const dataToColors = data => {
-  const columns = data.map(item => item[0]);
+const dataToColors = (data) => {
+  const columns = data.map((item) => item[0]);
   const colors = {};
   let colorIdx = 0;
 
-  columns.forEach(col => {
+  columns.forEach((col) => {
     if (colorIdx >= CHART_COLORS.length) {
       colorIdx = 0;
     }
@@ -33,9 +33,9 @@ const dataToColors = data => {
   return colors;
 };
 
-const CatalogChart = ({filter, pattern, isTheme: isDarkTheme }) => {
+const CatalogChart = ({ filter, pattern, isTheme: isDarkTheme }) => {
   const groupedDataToArray = (groupedData, topics) => {
-    return topics.map(topic => groupedData[topic] || 0);
+    return topics.map((topic) => groupedData[topic] || 0);
   };
 
   const filtersByType = groupItemsByTypeCount(filter ? filter.filters : []);
@@ -44,13 +44,13 @@ const CatalogChart = ({filter, pattern, isTheme: isDarkTheme }) => {
   let topics = new Set([
     ...topicsList.map(({ label }) => label),
     ...Object.keys(filtersByType),
-    ...Object.keys(patternsByType)
+    ...Object.keys(patternsByType),
   ]);
   topics = [...topics];
 
   const data = [
     ["Filters", ...groupedDataToArray(filtersByType, topics)],
-    ["Designs", ...groupedDataToArray(patternsByType, topics)]
+    ["Designs", ...groupedDataToArray(patternsByType, topics)],
   ];
 
   const options = {
@@ -59,16 +59,20 @@ const CatalogChart = ({filter, pattern, isTheme: isDarkTheme }) => {
       columns: [["x", ...topics], ...data],
       groups: [["Filters", "Designs"]],
       type: bar(),
-      colors: dataToColors(data)
+      colors: dataToColors(data),
     },
     axis: {
       x: {
-        type: "category"
-      }
+        type: "category",
+      },
     },
   };
 
-  return <ChartDiv style={{ background:  isDarkTheme ? '#666A75' : '#D7DADE' }}>{<BBChart options={options} />}</ChartDiv>
-}
+  return (
+    <ChartDiv style={{ background: isDarkTheme ? "#666A75" : "#D7DADE" }}>
+      {<BBChart options={options} />}
+    </ChartDiv>
+  );
+};
 
 export default CatalogChart;

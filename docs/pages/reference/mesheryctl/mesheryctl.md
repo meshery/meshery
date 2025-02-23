@@ -23,40 +23,43 @@ As a self-service engineering platform, Meshery enables collaborative design and
 mesheryctl [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Base command:
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl
 
 </div>
-</pre> 
+</pre>
 
 Display help about command/subcommand:
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl --help
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system start --help
 
 </div>
-</pre> 
+</pre>
 
 For viewing verbose output:
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl -v [or] --verbose
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

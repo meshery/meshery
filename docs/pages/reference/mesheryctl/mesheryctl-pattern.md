@@ -23,41 +23,45 @@ Manage cloud and cloud native infrastructure using predefined patterns.
 mesheryctl design [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Apply pattern file:
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design apply --file [path to design file | URL of the file]
 
 </div>
-</pre> 
+</pre>
 
 Delete pattern file:
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design delete --file [path to design file]
 
 </div>
-</pre> 
+</pre>
 
 View pattern file:
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design view [design name | ID]
 
 </div>
-</pre> 
+</pre>
 
 List all patterns:
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design list
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

@@ -31,4 +31,3 @@ You can import your design by clicking on the “Browse” button and selecting 
 <a href="{{ site.baseurl }}/assets/img/kanvas/apps-modal.png"><img style="border-radius: 0.5%;" alt="Import-Application" style="width:800px;height:auto;" src="{{ site.baseurl }}/assets/img/kanvas/import-design.png" /></a>
 
 Once the Meshery Design has been created, you can use Meshery Extension to manage, operate and observe your cloud native infrastructure. You can also use Meshery Extension to deploy your Meshery Design to your infrastructure.
-

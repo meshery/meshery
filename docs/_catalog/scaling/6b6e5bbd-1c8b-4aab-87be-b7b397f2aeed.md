@@ -1,13 +1,13 @@
 ---
 layout: item
-name: 'K8''s-Cluster-overprovisioner '
+name: "K8's-Cluster-overprovisioner "
 publishedVersion: 0.0.5
 userId: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
 userName: Deepak Reddy
 userAvatarURL: https://lh3.googleusercontent.com/a/ACg8ocIGbiDtE0q65qVvAUdzHw8Qky81rM0kSAknIqbgysfDCw=s96-c
 type: scaling
-compatibility: 
-    - kubernetes
+compatibility:
+  - kubernetes
 patternId: 6b6e5bbd-1c8b-4aab-87be-b7b397f2aeed
 image: /assets/images/logos/service-mesh-pattern.svg
 patternInfo: |
@@ -15,6 +15,6 @@ patternInfo: |
 patternCaveats: |
   get%20info%20from%20this%20https%3A%2F%2Fgithub.com%2Fkubernetes%2Fautoscaler%2Fblob%2Fmaster%2Fcluster-autoscaler%2FFAQ.md%23how-can-i-configure-overprovisioning-with-cluster-autoscaler
 permalink: catalog/scaling/k8-s-cluster-overprovisioner-6b6e5bbd-1c8b-4aab-87be-b7b397f2aeed.html
-URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/6b6e5bbd-1c8b-4aab-87be-b7b397f2aeed/0.0.5/design.yml'
+URL: "https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/6b6e5bbd-1c8b-4aab-87be-b7b397f2aeed/0.0.5/design.yml"
 downloadLink: 6b6e5bbd-1c8b-4aab-87be-b7b397f2aeed/design.yml
 ---

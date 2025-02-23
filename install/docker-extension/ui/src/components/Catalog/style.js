@@ -11,11 +11,11 @@ export const ChartDiv = styled(Box)(() => ({
 }));
 
 export const DesignCardUrl = styled("a")(() => ({
-  textDecoration: "none"
+  textDecoration: "none",
 }));
 
 export const CopyButton = styled("div")(() => ({
-  textDecoration: "none"
+  textDecoration: "none",
 }));
 
 export const DesignCard = styled("div")(() => ({
@@ -35,7 +35,7 @@ export const DesignCard = styled("div")(() => ({
   transition: "all .9s",
   "&:hover": {
     cursor: "pointer",
-    transform: "rotateY(180deg)"
+    transform: "rotateY(180deg)",
   },
 }));
 
@@ -47,7 +47,7 @@ export const DesignInnerCard = styled("div")(() => ({
   transition: "transform 0.6s",
   transformStyle: "preserve-3d",
   boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
-  borderRadius: "0.9375rem"
+  borderRadius: "0.9375rem",
 }));
 
 export const CardFront = styled("div")(() => ({
@@ -59,7 +59,7 @@ export const CardFront = styled("div")(() => ({
   borderRadius: "0.9375rem",
   backfaceVisibility: "hidden",
   background:
-    "linear-gradient(to left bottom, #f1f3f5, #f4f5f7, #f7f7f9, #ffffff, #ffffff, #ffffff, #ffffff, #ffffff, #ffffff, #f7f7f9, #f4f5f7, #f1f3f5);"
+    "linear-gradient(to left bottom, #f1f3f5, #f4f5f7, #f7f7f9, #ffffff, #ffffff, #ffffff, #ffffff, #ffffff, #ffffff, #f7f7f9, #f4f5f7, #f1f3f5);",
 }));
 
 export const CardBack = styled("div")(() => ({
@@ -72,7 +72,8 @@ export const CardBack = styled("div")(() => ({
   backfaceVisibility: "hidden",
   color: "white",
   transform: "rotateY(180deg)",
-  background: "linear-gradient(250deg, #477e96 0%, #00b39f 35%, rgb(60, 73, 79) 100%)"
+  background:
+    "linear-gradient(250deg, #477e96 0%, #00b39f 35%, rgb(60, 73, 79) 100%)",
 }));
 
 export const DesignType = styled("span")(() => ({
@@ -85,7 +86,7 @@ export const DesignType = styled("span")(() => ({
   textTransform: "capitalize",
   color: "black",
   borderRadius: "0 1rem 0 2rem",
-  background: "rgb(0, 211, 169)"
+  background: "rgb(0, 211, 169)",
 }));
 
 export const DesignName = styled("h5")(() => ({
@@ -108,8 +109,8 @@ export const DesignName = styled("h5")(() => ({
     right: "0",
     width: "70%",
     background:
-      "linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 50%)"
-  }
+      "linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 1) 50%)",
+  },
 }));
 
 export const DesignId = styled("p")(() => ({
@@ -121,7 +122,7 @@ export const DesignId = styled("p")(() => ({
   gap: "0.5rem",
   position: "absolute",
   bottom: "15px",
-  width: "100%"
+  width: "100%",
 }));
 
 export const DesignVisibility = styled("div")(() => ({
@@ -133,7 +134,7 @@ export const DesignVisibility = styled("div")(() => ({
   fontSize: "0.7rem",
   textTransform: "capitalize",
   color: "rgba(26, 26, 26, .8)",
-  borderRadius: "0.4rem"
+  borderRadius: "0.4rem",
 }));
 
 export const DesignDetailsDiv = styled("div")(() => ({
@@ -156,5 +157,5 @@ export const DesignDetails = styled("p")(() => ({
   margin: 0,
   width: "100%",
   overflow: "hidden",
-  textAlign: "left"
+  textAlign: "left",
 }));

@@ -17,22 +17,24 @@ search models
 ## Synopsis
 
 search a models by search string
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model search [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 View current provider
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model search [query-text]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

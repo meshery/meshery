@@ -39,11 +39,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "displayName"
-                ]
-              ],
+              "mutatorRef": [["displayName"]],
               "description": "StorageClass is used in conjunction with PVC that allow Pods to dynamically request a new storage."
             }
           }
@@ -59,13 +55,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "storageClassName"
-                ]
-              ],
+              "mutatedRef": [["configuration", "spec", "storageClassName"]],
               "description": "A PersistentVolumeClaim in Kubernetes requests storage from a StorageClass, defining the requirements for dynamically provisioned volumes."
             }
           }

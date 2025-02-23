@@ -17,38 +17,42 @@ List registered components
 ## Synopsis
 
 List all components registered in Meshery Server
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl components list [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 View list of components
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl components list
 
 </div>
-</pre> 
+</pre>
 
 View list of components with specified page number (25 components per page)
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl components list --page 2
 
 </div>
-</pre> 
+</pre>
 
 To view the number of components present in Meshery
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl components list --count
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

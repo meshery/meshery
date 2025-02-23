@@ -17,46 +17,50 @@ View filter(s)
 ## Synopsis
 
 Displays the contents of a specific filter based on name or id
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl filter view [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 View the specified WASM filter
 A unique prefix of the name or ID can also be provided. If the prefix is not unique, the first match will be returned.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl filter view "[filter-name | ID]"
 
 </div>
-</pre> 
+</pre>
 
 View all filter files
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl filter view --all
 
 </div>
-</pre> 
+</pre>
 
 //View multi-word named filter files. Multi-word filter names should be enclosed in quotes
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl filter view "filter name"
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
         
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

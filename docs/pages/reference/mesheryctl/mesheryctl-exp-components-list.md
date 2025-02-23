@@ -17,12 +17,13 @@ List registered components
 ## Synopsis
 
 List all components registered in Meshery Server
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp components list [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -31,30 +32,32 @@ mesheryctl exp components list [flags]
 	// View list of components
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp components list
 
 </div>
-</pre> 
+</pre>
 
 View list of components with specified page number (25 components per page)
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp components list --page 2
 
 </div>
-</pre> 
+</pre>
 
 View Total number of components
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp components list --count
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

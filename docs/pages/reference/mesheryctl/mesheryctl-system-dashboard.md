@@ -19,48 +19,52 @@ Open Meshery UI in browser.
 mesheryctl system dashboard [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Open Meshery UI in browser
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system dashboard
 
 </div>
-</pre> 
+</pre>
 
 Open Meshery UI in browser and use port-forwarding (if default port is taken already)
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system dashboard --port-forward
 
 </div>
-</pre> 
+</pre>
 
 Open Meshery UI in browser and use port-forwarding, listen on port 9081 locally, forwarding traffic to meshery server in the pod
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system dashboard --port-forward -p 9081
 
 </div>
-</pre> 
+</pre>
 
 (optional) skip opening of MesheryUI in browser.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system dashboard --skip-browser
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 Note: Meshery's web-based user interface is embedded in Meshery Server and is available as soon as Meshery starts. The location and port that Meshery UI is exposed varies depending upon your mode of deployment. See accessing \"Meshery UI\" for additional deployment-specific options: https://docs.meshery.io/installation/accessing-meshery-ui.
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -86,8 +90,8 @@ Note: Meshery's web-based user interface is embedded in Meshery Server and is av
 </div>
 </pre>
 
-
 {% include mesheryctl/system-dashboard.md %}
+
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

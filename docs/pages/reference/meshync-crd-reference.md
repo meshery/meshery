@@ -75,6 +75,7 @@ metadata:
 spec:
   size: 1
 ```
+
 ## MeshSync CRD
 
 The MeshSync CRD is used as a configuration tool the [MeshSync](https://docs.meshery.io/concepts/architecture/MeshSync). The CRD is used to control the replica count for MeshSync instances, [Broker](https://docs.meshery.io/concepts/architecture/broker) configuration and the resources that MeshSync watches and listens to in a cluster.
@@ -194,4 +195,3 @@ spec:
     data:
       whitelist: '[{"Resource":"namespaces.v1.","Events":["ADDED","MODIFIED","DELETED"]}]'
 ```
-

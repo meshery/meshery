@@ -1,6 +1,6 @@
-import React from "react";
-const ModelIcon = ({ width = 24, height = 24,...props}) => (
-    <svg
+import React from 'react';
+const ModelIcon = ({ width = 24, height = 24, ...props }) => (
+  <svg
     xmlns="http://www.w3.org/2000/svg"
     width={width}
     height={height}

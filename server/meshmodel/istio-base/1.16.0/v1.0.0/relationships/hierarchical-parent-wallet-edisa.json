@@ -87,14 +87,8 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                [
-                  "configuration",
-                  "config"
-                ],
-                [
-                  "configuration",
-                  "wasm-filter"
-                ]
+                ["configuration", "config"],
+                ["configuration", "wasm-filter"]
               ]
             }
           }
@@ -139,13 +133,7 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [
-                  "configuration",
-                  "configPatches",
-                  "_",
-                  "patch",
-                  "value"
-                ]
+                ["configuration", "configPatches", "_", "patch", "value"]
               ]
             }
           }

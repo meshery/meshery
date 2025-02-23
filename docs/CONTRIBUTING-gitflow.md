@@ -11,6 +11,7 @@
 <p><img src="/.github/assets/images/fork.png" align="center"></p>
 
 ( You will see this on Top Right of Github Repository !)<br><br>
+
 <li><h3>Clone your fork to your local machine</h3></li><br>
 <img width="50%" align="center"  src="/.github/assets/images/clone.png"><br>
 ( Click on the Green Code button and Copy the link `https://github.com/........` )<br><br>
@@ -20,8 +21,9 @@
 
 `git clone <insert-link>`
 <br>
-```(NOTE: In Place of insert-link paste the link you copied)```
+`(NOTE: In Place of insert-link paste the link you copied)`
 <br>
+
 <h3>Project Cloned in System🌟</h3>
 <br><br>
 
@@ -38,11 +40,13 @@ In order to get the latest updates from the development trunk do a one-time setu
 
 `git remote -v`
 <br><br>
+
 <li><h3>Fetch from upstream remote</h3></li><br>
 You'll need to fetch the upstream repo's branches and newest commits to bring them into your repository whenever you wish to update your fork with the latest upstream changes:<br><br>
 
 `git fetch upstream`
 <br><br>
+
 <li><h3>Checkout your master branch and merge upstream</h3></li>
 <br>
 Now, checkout your master branch and merge it with the master branch of the upstream repo:<br><br>
@@ -53,6 +57,7 @@ Now, checkout your master branch and merge it with the master branch of the upst
 If the local master branch has no unique commits, git will simply execute a fast-forward. However, if you've been making modifications to master (which, in the vast majority of circumstances, you shouldn't be - see the next section), you may run into issues. Always keep in mind the changes made upstream when doing so.
 <br>
 Your local master branch is now up to date with everything that has been changed upstream.<br><br>
+
 <li><h3>Create a Branch (to avoid conflicts)</h3></li>
 <br>
 It's essential to create a new branch whenever you start working on a new feature or bugfix. Not only is it a standard git workflow, but it also organises and separates your modifications from the main branch, allowing you to simply submit and manage several pull requests for each task you finish.
@@ -63,25 +68,26 @@ Follow the steps below to establish a new branch and begin working on it.
 
 `git checkout master`
 <br><br>
+
 <li><h3>Create a new branch</h3></li> (Give your branch a simple, informative name.)
 <br>
 For continuous integration changes use<br><br>
 
-`ci/your_username/issue#`  <br>OR<br>
- `feature/your_username/name_of_feature`
+`ci/your_username/issue#` <br>OR<br>
+`feature/your_username/name_of_feature`
 <br><br>
 For bugs use
 
-`bug/your_username/issue#` 
- <br>OR<br>
- `bug/your_username/name_of_bug`
+`bug/your_username/issue#`
+<br>OR<br>
+`bug/your_username/name_of_bug`
 <br>
 
 `git branch feature/jdoe/567`
 <br><br><li><h3>Switch to your new branch</h3></li><br>
 
 `git checkout feature/jdoe/567`<br>
-```(NOTE: Use the name of the branch you created instead of 'feature/jdoe/567'.)```
+`(NOTE: Use the name of the branch you created instead of 'feature/jdoe/567'.)`
 <br><br>
 Now you may start hacking and make any changes you desire.🚀
 <br><br>
@@ -90,14 +96,14 @@ Now you may start hacking and make any changes you desire.🚀
 
 `git add [files-changed]`
 <br>
-```(NOTE: This will stage all the changes you have made.)```
+`(NOTE: This will stage all the changes you have made.)`
 <br><br>
 
 <li><h3>Commit Changes</h3></li><br>
 
 `git commit -m "MESSAGE"`
 <br>
-```(NOTE: Instead of 'MESSAGE,' include a commit message so the maintainer can see what you've done.Also make sure to get the DCO signed.)```
+`(NOTE: Instead of 'MESSAGE,' include a commit message so the maintainer can see what you've done.Also make sure to get the DCO signed.)`
 <br><br>
 
 <li><h3>Creating Pull Request on Github</h3></li>
@@ -123,6 +129,7 @@ If any commits to the upstream master branch have been made during the period yo
 <br><br>
 Now, it may be desirable to squash some of your smaller commits down into a small number of larger more cohesive commits. You can do this with an interactive rebase:
 <br><br>
+
 <li><h3>Rebase all commits on your development branch</li></h3>
 <br>
 
@@ -132,6 +139,7 @@ Now, it may be desirable to squash some of your smaller commits down into a smal
 
 This will open up a text editor where you can specify which commits to squash.
 <br><br>
+
 <li><h3>References</h3></li>
 <a href="https://git-scm.com/docs">Git Reference Docs</a>
 <br>

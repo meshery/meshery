@@ -86,12 +86,7 @@
             },
             "patch": {
               "patchStrategy": "merge",
-              "mutatorRef": [
-                [
-                  "spec",
-                  "dbSubnetGroupName"
-                ]
-              ]
+              "mutatorRef": [["spec", "dbSubnetGroupName"]]
             }
           }
         ],
@@ -134,12 +129,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "status",
-                  "subnetIDs"
-                ]
-              ]
+              "mutatedRef": [["status", "subnetIDs"]]
             }
           }
         ]

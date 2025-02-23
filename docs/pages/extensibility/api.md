@@ -31,7 +31,6 @@ Each of Meshery's APIs are subject to the following authentication and authoriza
 
 <section class="tabbed" id="content2">
 
-
 <p>Meshery Server's GraphQl API is available at <code>{hostname]:[port]/api/graphql/query</code>. A GraphQL request can be made as a POST request to the endpoint with the query as the payload. Meshery Server's GraphQL API can be used to perform three operations:</p>
 
 <ul>
@@ -86,4 +85,3 @@ Alternatively, [Remote Providers](./providers) can extend Meshery's endpoints be
 ## Authorization
 
 While Meshery only requires a valid token in order to allow clients to invoke its APIs, Remote Providers can optionally enforce key-based permissions.
-

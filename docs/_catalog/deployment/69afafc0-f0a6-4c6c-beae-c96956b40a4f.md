@@ -4,10 +4,10 @@ name: RuntimeClass
 publishedVersion: 0.0.1
 userId: 62b081a5-1273-4c58-807f-b6be539275d0
 userName: Shubham Pandey
-userAvatarURL: 
+userAvatarURL:
 type: deployment
-compatibility: 
-    - kubernetes
+compatibility:
+  - kubernetes
 patternId: 69afafc0-f0a6-4c6c-beae-c96956b40a4f
 image: /assets/images/logos/service-mesh-pattern.svg
 patternInfo: |
@@ -15,6 +15,6 @@ patternInfo: |
 patternCaveats: |
   The%20name%20of%20the%20Runtime%20Class%20is%20referenced%20by%20the%20other%20Kubernetes%20Components
 permalink: catalog/deployment/runtimeclass-69afafc0-f0a6-4c6c-beae-c96956b40a4f.html
-URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/69afafc0-f0a6-4c6c-beae-c96956b40a4f/0.0.1/design.yml'
+URL: "https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/69afafc0-f0a6-4c6c-beae-c96956b40a4f/0.0.1/design.yml"
 downloadLink: 69afafc0-f0a6-4c6c-beae-c96956b40a4f/design.yml
 ---

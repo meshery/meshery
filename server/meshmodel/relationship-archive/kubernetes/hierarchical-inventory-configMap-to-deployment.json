@@ -40,15 +40,8 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                [
-                  "displayName"
-                ],
-                [
-                  "configuration",
-                  "metadata",
-                  "namespace"
-                ]
-                
+                ["displayName"],
+                ["configuration", "metadata", "namespace"]
               ],
               "description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubnernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
             }
@@ -78,11 +71,7 @@
                   "configMapRef",
                   "name"
                 ],
-                [
-                  "configuration",
-                  "metadata",
-                  "namespace"
-                ]
+                ["configuration", "metadata", "namespace"]
               ],
               "description": "Deployments can reference ConfigMaps to inject configuration data into the Pods they manage. This is useful for maintaining consistent configuration across replica sets.\n\nThe keys from the ConfigMap will be exposed as environment variables to the containers within the pods managed by the Deployment."
             }

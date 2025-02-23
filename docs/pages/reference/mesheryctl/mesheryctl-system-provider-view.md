@@ -17,22 +17,24 @@ view provider
 ## Synopsis
 
 View provider of context in focus
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system provider view [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 View current provider
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system provider view
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

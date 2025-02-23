@@ -5,14 +5,13 @@ permalink: installation/windows
 type: installation
 category: mesheryctl
 redirect_from:
-- installation/platforms/windows
+  - installation/platforms/windows
 display-title: "true"
 language: en
 list: include
 image: /assets/img/platforms/wsl2.png
 abstract: Install Meshery CLI on Windows
 ---
-
 
 On Windows systems, `mesheryctl` can be installed via Scoop or can be [downloaded directly](https://github.com/meshery/meshery/releases/latest).
 
@@ -21,12 +20,12 @@ On Windows systems, `mesheryctl` can be installed via Scoop or can be [downloade
 ## Install `mesheryctl` as a direct download
 
 Follow the installation steps to install the mesheryctl CLI. Then, execute:
+
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">./mesheryctl system start</div></div>
 </pre>
 
 Optionally, move the mesheryctl binary to a directory in your PATH.
-
 
 <!-- Meshery server supports customizing authentication flow callback URL, which can be configured in the following way
   <pre class="codeblock-pre">

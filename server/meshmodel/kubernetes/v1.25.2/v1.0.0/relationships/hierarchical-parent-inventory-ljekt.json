@@ -86,11 +86,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "displayName"
-                ]
-              ]
+              "mutatorRef": [["displayName"]]
             }
           }
         ],
@@ -133,15 +129,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "drivers",
-                  "_",
-                  "name"
-                ]
-              ]
+              "mutatedRef": [["configuration", "spec", "drivers", "_", "name"]]
             }
           }
         ]

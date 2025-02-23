@@ -5,7 +5,7 @@ permalink: installation/codespaces
 type: installation
 category: kubernetes
 redirect_from:
-- installation/platforms/codespaces
+  - installation/platforms/codespaces
 display-title: "false"
 language: en
 list: include
@@ -42,7 +42,6 @@ Follow the steps below to install Meshery in your Minikube cluster.
 Read through the following considerations prior to deploying Meshery on Minikube.
 
 ### Preflight: Cluster Connectivity
-
 
 You can develop and run Meshery in a GitHub Codespace using your choice of tool:
 

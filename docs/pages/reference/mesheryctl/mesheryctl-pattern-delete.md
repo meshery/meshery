@@ -17,22 +17,24 @@ Delete pattern file
 ## Synopsis
 
 delete pattern file will trigger deletion of the pattern file
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design delete [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 delete a pattern file
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design delete [file | URL]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

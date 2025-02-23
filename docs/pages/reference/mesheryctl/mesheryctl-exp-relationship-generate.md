@@ -17,22 +17,24 @@ generate relationships docs
 ## Synopsis
 
 generate relationships docs from the google spreadsheets
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp relationship generate [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Generate relationships docs
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp relationship generate [google-sheets-credential] --sheetId [sheet-id]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

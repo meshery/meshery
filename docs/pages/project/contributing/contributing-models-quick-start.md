@@ -35,7 +35,7 @@ The following instructions are a no-fluff guide to creating your own Meshery Mod
    </ol>
 </li>
 <li>Generate your new models using a Meshery Server (optionally, use the <a href="https://playground.meshery.io">Meshery Playground</a>). Click the "Generate" button after navigating to Meshery UI --> Settings --> Registry.</li>
-<li> 
+<li>
 
 <details>
    <summary>Or use Meshery CLI</summary>
@@ -64,4 +64,3 @@ The following instructions are a no-fluff guide to creating your own Meshery Mod
 We encourage you to get involved in the development of Meshery Models and to share your feedback.
 
 {% include alert.html type="info" title="Meshery Models are extensible" content="Meshery Models are designed to be extensible, allowing you to define new components as needed. If you have an idea for a new component, please create one and share it with the Meshery community." %}
-

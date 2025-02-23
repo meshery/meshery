@@ -87,32 +87,10 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [
-                  "spec",
-                  "limits",
-                  "_",
-                  "default",
-                  "memory"
-                ],
-                [
-                  "spec",
-                  "limits",
-                  "_",
-                  "default",
-                  "cpu"
-                ],
-                [
-                  "spec",
-                  "limits",
-                  "defaultRequest",
-                  "memory"
-                ],
-                [
-                  "spec",
-                  "limits",
-                  "defaultRequest",
-                  "cpu"
-                ]
+                ["spec", "limits", "_", "default", "memory"],
+                ["spec", "limits", "_", "default", "cpu"],
+                ["spec", "limits", "defaultRequest", "memory"],
+                ["spec", "limits", "defaultRequest", "cpu"]
               ]
             }
           }

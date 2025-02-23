@@ -86,12 +86,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "template"
-                ]
-              ]
+              "mutatorRef": [["configuration", "template"]]
             }
           }
         ],
@@ -135,13 +130,7 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "jobTemplate",
-                  "spec",
-                  "template"
-                ]
+                ["configuration", "spec", "jobTemplate", "spec", "template"]
               ]
             }
           }

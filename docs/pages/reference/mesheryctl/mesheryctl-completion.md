@@ -17,103 +17,113 @@ Output shell completion code
 ## Synopsis
 
 Output shell completion code
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl completion [bash|zsh|fish]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 ### bash <= 3.2
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 source /dev/stdin <<< "$(mesheryctl completion bash)"
 
 </div>
-</pre> 
+</pre>
 
 bash <= 3.2 on osx
 ensure you have bash-completion 1.3+
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 brew install bash-completion 
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
 
 </div>
-</pre> 
+</pre>
 
 ### bash >= 4.0
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 source <(mesheryctl completion bash)
 
 </div>
-</pre> 
+</pre>
 
 bash >= 4.0 on osx
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 brew install bash-completion@2
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl completion bash > $(brew --prefix)/etc/bash_completion.d/mesheryctl
 
 </div>
-</pre> 
+</pre>
 
 ### zsh
+
 If shell completion is not already enabled in your environment you will need
-to enable it.  You can execute the following once:
+to enable it. You can execute the following once:
 Might need to start a new shell for this setup to take effect.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 $ echo "autoload -U compinit; compinit" >> ~/.zshrc
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 source <(mesheryctl completion zsh)
 
 </div>
-</pre> 
+</pre>
 
 zsh on osx / oh-my-zsh
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 COMPLETION_DIR=$(echo $fpath | grep -o '[^ ]*completions' | grep -v cache) && mkdir -p $COMPLETION_DIR && mesheryctl completion zsh > "${COMPLETION_DIR}/_mesheryctl"
 
 </div>
-</pre> 
+</pre>
 
 ### fish:
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl completion fish | source
 
 </div>
-</pre> 
+</pre>
 
 To load fish shell completions for each session, execute once:
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl completion fish > ~/.config/fish/completions/mesheryctl.fish
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

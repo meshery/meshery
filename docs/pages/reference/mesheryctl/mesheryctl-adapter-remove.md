@@ -17,37 +17,40 @@ remove cloud and cloud native infrastructure
 ## Synopsis
 
 remove cloud and cloud native infrastructure
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl adapter remove [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Remove Linkerd deployment
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl adapter remove linkerd
 
 </div>
-</pre> 
+</pre>
 
 Remove a Linkerd control plane found under a specific namespace (linkerd-ns)
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl adapter remove linkerd --namespace linkerd-ns
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 		
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

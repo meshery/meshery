@@ -164,4 +164,3 @@ Verification
 
 - Examine [Meshery's architecture]({{ site.baseurl }}/architecture) and how adapters fit in as a component.
 - Learn more about [Meshery Adapters]({{ site.baseurl }}/architecture/adapters).
-

@@ -1,6 +1,6 @@
 import React from 'react';
 
-const ExpandAllIcon = ({ width = 24, height = 24, fill = "currentColor", style = {} }) => (
+const ExpandAllIcon = ({ width = 24, height = 24, fill = 'currentColor', style = {} }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 36 35"

@@ -6,7 +6,7 @@ type: tasks
 language: en
 published: false
 ---
-{% include alert.html type="info" title="Validating SMI Conformance with Meshery" content="<p>Meshery is SMI's 
+{% include alert.html type="info" title="Validating SMI Conformance with Meshery" content="<p>Meshery is SMI's
 <a href='https://smi-spec.io/blog/validating-smi-conformance-with-meshery'>official tool for validating conformance</a>.</p> <p>The <a href='https://meshery.io/service-mesh-interface'>SMI Conformance dashboard</a> displays the current and historical test results of each of the service mesh projects.</p>" %}
 
 As service mesh providers and the surrounding ecosystem start adopting Service Mesh Interface, there is a growing need for validating the SMI implementation.
@@ -50,7 +50,7 @@ The following list highlights the sequence of steps taken to perform conformance
 
 Each of the participating service mesh projects can leverage the [Meshery SMI Conformance GitHub action](https://github.com/layer5io/meshery-smi-conformance-action) to incorporate SMI conformance into their CI/CD pipelines.
 
-The conformance tool will run the test suite and automatically update the conformance dashboard when the test is complete. In order to ensure provenance of test results that represent a given service mesh, each project will be asked to identify one or more GitHub accounts that will be used for publishing the tests. 
+The conformance tool will run the test suite and automatically update the conformance dashboard when the test is complete. In order to ensure provenance of test results that represent a given service mesh, each project will be asked to identify one or more GitHub accounts that will be used for publishing the tests.
 
 Ideally, this GitHub account is a service-robot account used within the project’s CI pipeline.
 

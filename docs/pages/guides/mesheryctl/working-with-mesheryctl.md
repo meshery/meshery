@@ -96,10 +96,9 @@ Aligned with the Meshery container image, instead of leaving the implicit :stabl
 {% capture code_content %}bash
 version: '3'
 services:
-  meshery:
-    image: layer5/meshery:v0.5.0
-    labels:
-      - "com.centurylinklabs.watchtower.enable=true"{% endcapture %}
+meshery:
+image: layer5/meshery:v0.5.0
+labels: - "com.centurylinklabs.watchtower.enable=true"{% endcapture %}
 {% include code.html code=code_content %}
 
 ### Suggested Reading
@@ -238,4 +237,3 @@ To upgrade `mesheryctl`, execute the following command:
 -->
 
 {% include discuss.html %}
-

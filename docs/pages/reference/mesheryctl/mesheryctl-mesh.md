@@ -17,7 +17,7 @@ Cloud Native Lifecycle Management
 ## Synopsis
 
 Provisioning, configuration, and on-going operational management of cloud and cloud native infrastructure.
-	
+
 ## Options
 
 <pre class='codeblock-pre'>

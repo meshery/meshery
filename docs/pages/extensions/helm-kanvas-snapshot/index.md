@@ -46,21 +46,19 @@ To install the Meshery Snapshot Helm Plugin, use the following steps:
 
 3. Verify the installation by running:
 
-
 <pre class="codeblock-pre">
   <div class="codeblock">
      <div class="clipboardjs">helm plugin list</div>
    </div>
 </pre>
 
-   You should see the Kanvas Snapshot listed as `helm-kanvas-snapshot`.
+You should see the Kanvas Snapshot listed as `helm-kanvas-snapshot`.
 
 4. Set up the required environment variables (see the [Environment Variables](#environment-variables) section).
 
 ### Usage
 
 Once the plugin is installed, you can generate a snapshot using either a packaged or unpackaged Helm chart.
-
 
 <pre class="codeblock-pre">
   <div class="codeblock">

@@ -17,22 +17,24 @@ view registered components
 ## Synopsis
 
 view a component registered in Meshery Server
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp components view [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 View details of a specific component
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp components view [component-name]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

@@ -17,29 +17,31 @@ Onboard design
 ## Synopsis
 
 Command will trigger deploy of design
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design onboard [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Onboard design by providing file path
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design onboard -f [filepath] -s [source type]
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

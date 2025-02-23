@@ -96,24 +96,14 @@
                 {
                   "id": null,
                   "kind": "ConsulResolver",
-                  "mutatedRef": [
-                    [
-                      "spec",
-                      "address"
-                    ]
-                  ]
+                  "mutatedRef": [["spec", "address"]]
                 }
               ],
               "to": [
                 {
                   "id": null,
                   "kind": "ConsulService",
-                  "mutatorRef": [
-                    [
-                      "metadata",
-                      "name"
-                    ]
-                  ]
+                  "mutatorRef": [["metadata", "name"]]
                 }
               ]
             },

@@ -17,22 +17,24 @@ Display a design content
 ## Synopsis
 
 Display the content of a specific design based on name or id
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design view design name [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 view a design
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design view [design-name | ID]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

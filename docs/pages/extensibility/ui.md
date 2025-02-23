@@ -39,8 +39,7 @@ Meshery leverages remote providers for identity management. These providers can 
 
 The user avatar behavior, which changes based on the user's status, can be customized by extending the [User Component](https://github.com/meshery/meshery/blob/7de49ef4928f114080f923f2ad261f4433ca91d6/ui/components/User.js#L46).
 
-
-###  Build-Time UI Extensibility
+### Build-Time UI Extensibility
 
 Meshery offers powerful customization options for its web application user interface at build time. This feature allows developers to tailor the UI to specific needs by modifying component behavior, managing routes, and applying custom themes.
 
@@ -50,7 +49,7 @@ The build-time UI customization is controlled through the `ui.config.js` file. T
 
 ##### Current Features
 
-*Component Management*
+_Component Management_
 
 You can control the visibility and behavior of various UI components. For example:
 
@@ -63,7 +62,7 @@ module.exports = {
 };
 ```
 
-*Upcoming Features*
+_Upcoming Features_
 
 Meshery is continuously expanding its UI extensibility capabilities. The following features are planned for future releases:
 
@@ -78,7 +77,6 @@ To customize the Meshery UI:
 1. Locate the `ui.config.js` file in your Meshery project.
 1. Modify the configuration options according to your requirements.
 1. Rebuild the Meshery application to apply your changes.
-
 
 #### Passing new custom prop to forms:
 
@@ -145,4 +143,3 @@ With both of these props, Remote Providers can customize the wrapper and can als
 
 from _ui/components/MesheryMeshInterface/PatternService/index.js_
 {% include code.html code="function PatternService({ formData, jsonSchema, onChange, type, onSubmit, onDelete, RJSFWrapperComponent, RJSFFormChildComponent })" %}
-

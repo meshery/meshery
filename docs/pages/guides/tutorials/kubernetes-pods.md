@@ -45,22 +45,22 @@ Learn how to create, manage, and explore _Kubernetes Pods and Services_ within t
 1. In the Kanvas screen, rename the design from _Untitled Design_ to a name of choice. This helps in identifying the design later easily.
 2. Click **Components** tab.
 3. Search for **Pod** in the list of components.
-    ![](./kubernetes-pods/2024-02-22_18-20.png)
+   ![](./kubernetes-pods/2024-02-22_18-20.png)
 4. Scroll down, _select and drag_ the **Pod** component from the search results to the design canvas on the right.
-    ![](./kubernetes-pods/2024-02-22_18-32.png)
+   ![](./kubernetes-pods/2024-02-22_18-32.png)
 5. You should now have a pod in the design canvas for further configuration. It has a default name assigned to it.
-    Click the pod component to load the configuration modal.
+   Click the pod component to load the configuration modal.
 6. Rename the pod, if necessary.
-    ![](./kubernetes-pods/2024-02-22_18-35.png)
+   ![](./kubernetes-pods/2024-02-22_18-35.png)
 
 #### Add a container to the Pod
 
 The pod at this stage does not have a container, so we will add one. This is similar to defining the containers in the _spec:_ section of a YAML file. For this hands-on we will make some basic and necessary configurations only.
 
 7. Scroll down within the Pod configuration modal to the Containers section. Click **+** to add a container.
-    ![](./kubernetes-pods/2024-02-23_11-54.png)
+   ![](./kubernetes-pods/2024-02-23_11-54.png)
 8. Expand **Containers-0**.
-    ![](./kubernetes-pods/2024-02-23_11-54_1.png)
+   ![](./kubernetes-pods/2024-02-23_11-54_1.png)
 9. Next, fill out some of the required container specifications. Start by entering the container image, we will use _nginx:latest_ for this exercise.
 10. Give the container a name.
     ![](./kubernetes-pods/2024-02-23_11-57.png)
@@ -164,4 +164,3 @@ To recreate, use the **Deploy** option.
 ### Conclusion
 
 Congratulations! You've successfully completed the lab on exploring Kubernetes Pods using Meshery Playground. This hands-on experience should have provided valuable insights into the deployment, management, and interaction with Pods in a Kubernetes environment. Continue exploring more scenarios in the Meshery Playground to enhance your skills.
-

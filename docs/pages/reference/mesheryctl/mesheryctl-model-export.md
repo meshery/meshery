@@ -17,57 +17,59 @@ export registered models
 ## Synopsis
 
 export the registered model to the specified output type
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model export [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Export a model by name
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model export [model-name] -o [oci|tar]  (default is oci)
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model export [model-name] -t json (default is yaml)
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model export [model-name] -l /home/meshery/
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model export [model-name] --discard-components --discard-relationships
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model export [model-name] --version v0.7.3
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
     
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

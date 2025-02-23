@@ -86,12 +86,7 @@
             },
             "patch": {
               "patchStrategy": "merge",
-              "mutatorRef": [
-                [
-                  "spec",
-                  "dbClusterIdentifier"
-                ]
-              ]
+              "mutatorRef": [["spec", "dbClusterIdentifier"]]
             }
           }
         ],
@@ -134,12 +129,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "status",
-                  "dbClusterSnapshot"
-                ]
-              ]
+              "mutatedRef": [["status", "dbClusterSnapshot"]]
             }
           }
         ]

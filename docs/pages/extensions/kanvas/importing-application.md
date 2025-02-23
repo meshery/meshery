@@ -16,17 +16,13 @@ Importing apps into Meshery Extension as Meshery Apps is a powerful feature that
 
 **Step 1: Access the Extensions UI**
 
-
 Note: You can import three types of application: Docker Compose, Helm Chart, Kubernetes Manifest.
 
-
 **Step 2: Navigate to the Applications Tab and Select your Import**
-
 
 Once you have accessed the Extension's UI, navigate to the Applications tab. In this tab you can see all your application with their "<b>Name</b>" and "<b>Date Modified</b>". From the top right of the table click on import application which opens import modal.
 
 <a href="{{ site.baseurl }}/assets/img/kanvas/application-tab.png"><img style="border-radius: 0.5%;" alt="Import-Application" style="width:800px;height:auto;" src="{{ site.baseurl }}/assets/img/kanvas/application-tab.png" /></a>
-
 
 **Step 3: Import the Application**
 
@@ -35,4 +31,3 @@ You can import your application by select File Type from the options and clickin
 <a href="{{ site.baseurl }}/assets/img/kanvas/apps-modal.png"><img style="border-radius: 0.5%;" alt="Import-Application" style="width:800px;height:auto;" src="{{ site.baseurl }}/assets/img/kanvas/apps-modal.png" /></a>
 
 Once the Meshery Application has been created, you can use Meshery Extension to manage, operate and observe your cloud native infrastructure. You can also use Meshery Extension to deploy your Meshery Application to your infrastructure.
-

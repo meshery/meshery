@@ -7,7 +7,7 @@ type: guides
 category: configuration
 language: en
 list: include
-abstract: 'Meshery applies DRY principle when managing the configuration of cloud native infrastructure .'
+abstract: "Meshery applies DRY principle when managing the configuration of cloud native infrastructure ."
 ---
 
 {% include alert.html
@@ -15,7 +15,7 @@ abstract: 'Meshery applies DRY principle when managing the configuration of clou
     title="What are Cloud Native Patterns?"
     content='This feature area is under active development. Patterns will be importable and exportable as OCI images in v0.8.0.' %}
 
-Patterns are essentially atomic designs with one or more components made in composed into an atomic, reusable design. Patterns are a way to apply the DRY principle when managing the configuration of cloud native infrastructure.  
+Patterns are essentially atomic designs with one or more components made in composed into an atomic, reusable design. Patterns are a way to apply the DRY principle when managing the configuration of cloud native infrastructure.
 
 ## Use Meshery to Deploy a Cloud Native Pattern
 
@@ -31,7 +31,6 @@ You may bring your own patterns or find them available through your chosen provi
     type="info"
     title="Repository of Cloud Native Patterns"
     content="A central set of design patterns is available in Meshery Catalog (<a href='/concepts/catalog'>concept</a>, <a href='https://meshery.io/catalog'>site</a>)." %}
-
 
 ## Importing Patterns
 
@@ -60,7 +59,6 @@ _To upload from url click the link icon_
 <a href="{{ site.baseurl }}/assets/img/patterns/UrlImport.png">
     <img src="{{ site.baseurl }}/assets/img/patterns/UrlImport.png" style="width: 60%" />
 </a>
-
 
 #### To deploy a pattern, execute this command:
 

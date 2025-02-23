@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export default function Github({ height, width, className }) {
   return (

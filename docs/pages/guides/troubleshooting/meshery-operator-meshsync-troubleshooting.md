@@ -61,7 +61,7 @@ Some common failure situations that Meshery users might face are described below
 1. **Situation:** No deployment of Meshery Operator, MeshSync, and Broker.
    1. **Probable cause:** Meshery Server cannot connect to Kubernetes cluster; cluster unreachable or kubeconfig without proper permissions needed to deploy Meshery Operator; Kubernetes config initialization issues.
 1. **Situation:** Meshery Operator with MeshSync and Broker deployed, but Meshery Server is not receiving data from MeshSync or data the [Meshery Database]({{site.baseurl}}/concepts/architecture/database) is stale.
-   1. **Probable cause:** 
+   1. **Probable cause:**
    2. Meshery Server lost subscription to Meshery Broker; Broker server not exposed to external IP; MeshSync not connected to Broker; MeshSync not running; Meshery Database is stale.
    3. The SQL database in Meshery serves as a cache for cluster state. A single button allows users to dump/reset the Meshery Database.
    4. Orphaned MeshSync and Broker controllers - Meshery Operator is not present, but MeshSync and Broker controllers are running.
@@ -117,4 +117,3 @@ Future Enhancements for Troubleshooting:
 - [Troubleshooting Errors while running Meshery](guides/troubleshooting/meshery-server)
 
 {% include related-discussions.html tag="meshery" %}
-

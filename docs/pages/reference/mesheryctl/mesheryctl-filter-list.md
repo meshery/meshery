@@ -17,38 +17,42 @@ List filters
 ## Synopsis
 
 Display list of all available filter files.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl filter list [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 List all WASM filter files present
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl filter list	(maximum 25 filters)
 
 </div>
-</pre> 
+</pre>
 
 Search for filter
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl filter list Test (maximum 25 filters)
 
 </div>
-</pre> 
+</pre>
 
 Search for filter with space
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl filter list 'Test Filter' (maximum 25 filters)
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

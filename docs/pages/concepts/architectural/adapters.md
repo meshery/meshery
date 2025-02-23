@@ -21,7 +21,8 @@ Meshery has lifecycle adapters for managing the following cloud native infrastru
 {% assign sorted = site.adapters | sort: "project_status" | reverse %}
 
 | Adapter Status | Adapter | Port | Earliest Version supported |
-| :------------: | :----------: | :--: | :------------------------: |
+| :------------: | :-----: | :--: | :------------------------: |
+
 {% for adapter in sorted -%}
 {% if adapter.project_status -%}
 | {{ adapter.project_status }} | <img src="{{ adapter.image }}" style="width:20px" data-logo-for-dark="{{ adapter.white_image }}" data-logo-for-light="{{ adapter.image }}" id="logo-dark-light" loading="lazy"/> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.port }} | {{adapter.earliest_version}} |
@@ -34,11 +35,11 @@ _v0.8.0 Roadmap:_ The `meshery-nighthawk` adapter externalizes Nighthawk as an M
 
 Meshery Server allows users to generate traffic load tests using Nighthawk, fortio, and wrk2. Using the `meshery-nigthhawk` adapter, you can schedule, control, and execute performance tests.
 
-Run the `meshery-nighthawk` adapter as an externalized load generator when you: 
+Run the `meshery-nighthawk` adapter as an externalized load generator when you:
 
 1. Need a smaller sized container image for Meshery. Nighthawk binaries are dynamically linked (C++) and they need other dependencies to work. This causes bloat in Meshery Server’s image which doesn’t need them.
-1. Need *adaptive load control* of your performance tests, controlling the variability by which the system under test receives load. Use Meshery Server to run adaptive load tests.
-1. Need *distributed load testing* and the ability to horizontally scale Nighthawk, using Nighthawk’s execution forwarding service and results sink.
+1. Need _adaptive load control_ of your performance tests, controlling the variability by which the system under test receives load. Use Meshery Server to run adaptive load tests.
+1. Need _distributed load testing_ and the ability to horizontally scale Nighthawk, using Nighthawk’s execution forwarding service and results sink.
 
 ## Adapter Deployment and Registration
 

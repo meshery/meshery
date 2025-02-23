@@ -140,12 +140,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "spec",
-                  "name"
-                ]
-              ]
+              "mutatedRef": [["spec", "name"]]
             }
           }
         ]

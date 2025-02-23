@@ -17,30 +17,33 @@ Create a new workspace
 ## Synopsis
 
 Create a new workspace by providing the name, description, and organization ID.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp workspace create [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Create a new workspace
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
 
 </div>
-</pre> 
+</pre>
 
 Documentation for workspace can be found at:
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 https://docs.layer5.io/cloud/spaces/workspaces/
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

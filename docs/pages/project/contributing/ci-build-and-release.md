@@ -23,11 +23,11 @@ Artifacts produced in the build processes are published and persisted in differe
 
 | Location   | Project                                         | Repository                                                                                                           |
 | ---------- | ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| Docker Hub | Meshery                                         | [https://hub.docker.com/r/meshery/meshery](https://hub.docker.com/r/meshery/meshery)                                   |
-| GitHub     | mesheryctl                                      | [https://github.com/meshery/meshery/releases](https://github.com/meshery/meshery/releases)                         |
-| Docker Hub | Meshery Adapter for \<adapter-name\>            | https://hub.docker.com/r/meshery/meshery-\<adapter-name>\>                                                             |
+| Docker Hub | Meshery                                         | [https://hub.docker.com/r/meshery/meshery](https://hub.docker.com/r/meshery/meshery)                                 |
+| GitHub     | mesheryctl                                      | [https://github.com/meshery/meshery/releases](https://github.com/meshery/meshery/releases)                           |
+| Docker Hub | Meshery Adapter for \<adapter-name\>            | https://hub.docker.com/r/meshery/meshery-\<adapter-name>\>                                                           |
 | Docs       | Meshery Documentation                           | [https://docs.meshery.io](https://docs.meshery.io)                                                                   |
-| GitHub     | [Cloud Native Performance](https://smp-spec.io) | [https://github.com/service-mesh-performance](https://github.com/service-mesh-performance/service-mesh-performance)         |
+| GitHub     | [Cloud Native Performance](https://smp-spec.io) | [https://github.com/service-mesh-performance](https://github.com/service-mesh-performance/service-mesh-performance)  |
 | Github     | Helm charts                                     | [https://github.com/meshery/meshery.io/tree/master/charts](https://github.com/meshery/meshery.io/tree/master/charts) |
 
 ## Secrets
@@ -204,7 +204,7 @@ The artifacts will be made available as a tar.gz archive for all the operating s
 
 ##### Homebrew
 
-GoReleaser facilitates the creation of a brew formula for mesheryctl. The [homebrew-tap](https://github.com/meshery/homebrew-tap) repository is the location for `mesheryctl`'s brew formulas. Releases of mesheryctl are  published in the official homebrew-core tap at https://github.com/Homebrew/homebrew-core/pkgs/container/core%2Fmesheryctl.
+GoReleaser facilitates the creation of a brew formula for mesheryctl. The [homebrew-tap](https://github.com/meshery/homebrew-tap) repository is the location for `mesheryctl`'s brew formulas. Releases of mesheryctl are published in the official homebrew-core tap at https://github.com/Homebrew/homebrew-core/pkgs/container/core%2Fmesheryctl.
 
 ##### Scoop
 
@@ -250,17 +250,20 @@ Meshery uses several types of release documents to standardize the purpose, styl
 ### Types of Release Documents
 
 - **Changelogs**
+
   - Comprehensive list of all changes since the prior release
   - Generated automatically by tools like ReleaseDrafter
   - Contains detailed, technical information
 
 - **Release Notes**
+
   - Curated, bulleted list of highlights
   - Summarized and categorized in human-readable format
   - Includes some engineering terminology and issue references
   - Based on ReleaseDrafter output, but human-summarized and refined
 
 - **Release Announcement**
+
   - Human-written summary highlighting significant items
   - Includes caveats (e.g., incompatibility on upgrade)
   - Provides links to other information sources (upgrade guide, feature blogs, full bug fix list)
@@ -268,6 +271,7 @@ Meshery uses several types of release documents to standardize the purpose, styl
   - Distributed via #announcements Slack channel and public mailing list (for stable releases)
 
 - **User and Upgrade Docs**
+
   - How-to guides for new features
   - Updates to user-facing documentation
   - Includes Upgrade Guide updates for version-to-version considerations
@@ -283,19 +287,23 @@ The Meshery Release Lead plays a crucial role in coordinating and executing the 
 ### Pre-Release Phase (1 month)
 
 - **Release Planning**
+
   - Schedule and organize release planning meetings
   - Define and communicate release timelines
   - Coordinate with development, testing, and documentation teams
 
 - **Feature Management**
+
   - Oversee feature implementation and prioritization
   - Ensure all planned features are completed or properly deferred
 
 - **Quality Assurance**
+
   - Coordinate with QA team to ensure thorough testing
   - Address and prioritize bug fixes
 
 - **Documentation Preparation**
+
   - Ensure all new features and changes are properly documented
   - Oversee the creation and updating of release notes
 
@@ -307,19 +315,23 @@ The Meshery Release Lead plays a crucial role in coordinating and executing the 
 ### Active Maintenance Phase (6 months)
 
 - **Ongoing Releases**
+
   - Manage minor releases every 3 weeks
   - Coordinate vulnerability fix integrations
   - Oversee cherry-pick decisions for backports
 
 - **Monitoring and Issue Resolution**
+
   - Monitor for release blockers
   - Coordinate resolution of critical issues
 
 - **Communication**
+
   - Lead weekly Meshery build and release meetings
   - Provide regular status updates to the community
 
 - **Documentation Updates**
+
   - Ensure documentation remains current throughout the maintenance phase
   - Oversee updates to user guides and upgrade instructions
 
@@ -482,4 +494,3 @@ For older releases we have to travel back in time. Using the `Tags` in github we
 ## Bi-Weekly Meetings
 
 If you are passionate about CI/CD pipelines, DevOps, automated testing, managing deployments, or if you want to learn how to use Meshery and its features, you are invited to join the bi-weekly Build and Release meetings. Find meeting details and agenda in the [community calendar](https://meshery.io/calendar) and the [meeting minutes document](https://docs.google.com/document/d/1GrVdGHZAYeu6wHNLLoiaKNqBtk7enXE9XeDRCvdA4bY/edit#). The meetings are open to everyone and recorded for later viewing. We hope to see you there!
-

@@ -1,8 +1,10 @@
 # Security Policy
+
 We are very grateful to the security researchers and users that report
 back Meshery security vulnerabilities. We investigate every report thoroughly.
 
 ## Reporting a vulnerability
+
 To make a report, send an email to the private
 [security@meshery.dev](mailto:security@meshery.dev)
 mailing list with the vulnerability details. For normal product bugs
@@ -16,7 +18,7 @@ Send us a report whenever you:
 - Think Meshery has a potential security vulnerability.
 - Are unsure whether or how a vulnerability affects Meshery.
 - Think a vulnerability is present in another project that Meshery
-depends on (Docker for example).
+  depends on (Docker for example).
 
 ### When not to report a security vulnerability?
 
@@ -44,8 +46,8 @@ premature disclosure of the vulnerability.
 
 ## Early disclosure
 
-The Meshery project maintains a mailing list for private early disclosure of security vulnerabilities. 
-The list is used to provide actionable information to close Meshery partners. The list is not intended 
+The Meshery project maintains a mailing list for private early disclosure of security vulnerabilities.
+The list is used to provide actionable information to close Meshery partners. The list is not intended
 for individuals to find out about security issues.
 
 ## Public disclosure
@@ -53,7 +55,7 @@ for individuals to find out about security issues.
 On the day chosen for public disclosure, a sequence of activities takes place as quickly as possible:
 
 - Changes are merged from the private GitHub repository holding the fix into the appropriate set of public
-branches.
+  branches.
 - Meshery team ensures all necessary binaries are promptly built and published.
 - Once the binaries are available, an announcement is sent out on the following channels:
   - The [Meshery blog](https://meshery.io/blog/)
@@ -61,5 +63,4 @@ branches.
   - The #announcements channel on Slack
 
 As much as possible this announcement will be actionable, and include any mitigating steps customers can take prior to
-upgrading to a fixed version. 
-
+upgrading to a fixed version.

@@ -61,7 +61,6 @@ Milestones on Meshery's high-level roadmap:
 
 ### [v0.7.0](./docs/_releases/roadmap-v0.7.md)
 
-
 **Sustainability**
 
 - [Docs] Catch up with the code
@@ -95,7 +94,7 @@ Milestones on Meshery's high-level roadmap:
 - [Server/UI] Model Import/Export, OCI, Extensible
 - [Server] Initial GCP and AWS as Models
 - [Server] Initial Environments and Workspaces
-Code coverage goal: 25%
+  Code coverage goal: 25%
 
 **Configuration Management**
 
@@ -171,8 +170,8 @@ Code coverage goal: 25%
 - [Adapter] Distributed performance management
 - [Adapter] Adaptive load optimizers
 
-
 **CLI**
+
 - [CLI] Multi-cluster meshconfig support
 - [CLI] `system report` - diagnostics reporting
 - [CLI] Refactoring `system config` for AKS, EKS

@@ -2,8 +2,8 @@
 
 **Today’s Facilitators**: Vivek Vishal, Hargun Kaur, Sudhanshu Dasgupta, Saurabh Singh
 
+**Attendees**:
 
-**Attendees**: 
 - Aribisala Adetomiwa
 - Vivek Vishal
 - Ankur Tiwari
@@ -15,7 +15,7 @@
 - Gift Asor
 - Moaz Farrukh
 - Shivanshu Gupta
-- Aman Mishra 
+- Aman Mishra
 - Asmae ELAZRAK
 - Subhendu Mondal
 - Denish Tomar
@@ -27,6 +27,5 @@
 - Ayush Sharma
 - Deep Trivedi
 - Anushka Saxena
-
 
 Notes:

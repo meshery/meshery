@@ -5,27 +5,28 @@ subtitle: Collaborative and visual infrastructure as design for AWS ElasticSearc
 image: /assets/img/integrations/aws-elasticsearchservice-controller/icons/color/aws-elasticsearchservice-controller-color.svg
 permalink: extensibility/integrations/aws-elasticsearchservice-controller
 docURL: https://docs.meshery.io/extensibility/integrations/aws-elasticsearchservice-controller
-description: 
+description:
 integrations-category: Observability and Analysis
 integrations-subcategory: Logging
 registrant: GitHub
-components: 
-- name: elasticsearch-domain
-  colorIcon: assets/img/integrations/aws-elasticsearchservice-controller/components/elasticsearch-domain/icons/color/elasticsearch-domain-color.svg
-  whiteIcon: assets/img/integrations/aws-elasticsearchservice-controller/components/elasticsearch-domain/icons/white/elasticsearch-domain-white.svg
-  description: 
-- name: adopted-resource
-  colorIcon: assets/img/integrations/aws-elasticsearchservice-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
-  whiteIcon: assets/img/integrations/aws-elasticsearchservice-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
-  description: 
+components:
+  - name: elasticsearch-domain
+    colorIcon: assets/img/integrations/aws-elasticsearchservice-controller/components/elasticsearch-domain/icons/color/elasticsearch-domain-color.svg
+    whiteIcon: assets/img/integrations/aws-elasticsearchservice-controller/components/elasticsearch-domain/icons/white/elasticsearch-domain-white.svg
+    description:
+  - name: adopted-resource
+    colorIcon: assets/img/integrations/aws-elasticsearchservice-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
+    whiteIcon: assets/img/integrations/aws-elasticsearchservice-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
+    description:
 components-count: 2
-relationships: 
+relationships:
 relationship-count: 0
-featureList: [
-  "Scalable search and analytics",
-  "Easy to deploy and manage",
-  "Integrates with other AWS services"
-]
+featureList:
+  [
+    "Scalable search and analytics",
+    "Easy to deploy and manage",
+    "Integrates with other AWS services",
+  ]
 howItWorks: "Deploys and manages Elasticsearch"
 howItWorksDetails: "Simplified Elasticsearch management and integration with AWS"
 language: en

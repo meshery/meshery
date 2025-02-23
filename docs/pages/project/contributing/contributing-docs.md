@@ -11,7 +11,7 @@ list: include
 
 {% include alert.html type="info" title="Important" content="Before contributing, please review the <a href='https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow'>Documentation Contribution Flow</a>." %}
 
-Use the following steps to set up your development environment depending on your Operating System of choice, fork the repository, install dependencies and run the site locally.  You can then make changes, test locally, sign-off and commit, and push the changes made for review.
+Use the following steps to set up your development environment depending on your Operating System of choice, fork the repository, install dependencies and run the site locally. You can then make changes, test locally, sign-off and commit, and push the changes made for review.
 
 {% include alert.html type="info" title="Meshery Documentation Design Specification" content="See the <a href='https://docs.google.com/document/d/17guuaxb0xsfutBCzyj2CT6OZiFnMu9w4PzoILXhRXSo/edit#'>Meshery Documentation Design Specification</a> which serves to provide an overview of the tooling and approach used to create Meshery’s documentation and it information architecture." %}
 
@@ -47,14 +47,13 @@ Meshery documentation is built using the following components:
   </code>
   </div></pre>
 
-  
   If `gpg --keyserver` gives an error, you can use:
 
   <pre class="codeblock-pre"><div class="codeblock">
   <code class="clipboardjs">sudo gpg --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3
   </code>
   </div></pre>
-  
+
   OR
 
   <pre class="codeblock-pre"><div class="codeblock">
@@ -74,7 +73,7 @@ Meshery documentation is built using the following components:
     gem install jekyll bundler
     </code>
     </div></pre>
-  
+
 - Update the Gemfile located in meshery/docs directory
 
     <pre class="codeblock-pre"><div class="codeblock">
@@ -83,30 +82,28 @@ Meshery documentation is built using the following components:
     </div></pre>
 
   <strong>Note:</strong> In place of `3.0.2` add your installed version
-  
+
 - Also add this to the next line in the _Gemfile_.
     <pre class="codeblock-pre"><div class="codeblock">
     <code class="clipboardjs">gem 'wdm','>=0.1.0' if Gem.win_platform?
     </code>
     </div></pre>
-  
+
 {% include alert.html type="warning" title="Don't Commit Gemfile" content="This is just a workaround for your local machine. So, do not commit or push the modified Gemfile or Gemfile.lock during Pull Requests." %}
-  
-- Next, navigate to the following folder 
-  ```C:\Ruby24-x64\lib\ruby\gems\2.4.0\gems\eventmachine-1.2.5-x64-mingw32\lib```
-  
-- Add ```require 'em/pure_ruby' ``` in the first line of the <strong>eventmachine.rb</strong> file
+
+- Next, navigate to the following folder
+  `C:\Ruby24-x64\lib\ruby\gems\2.4.0\gems\eventmachine-1.2.5-x64-mingw32\lib`
+- Add `require 'em/pure_ruby' ` in the first line of the <strong>eventmachine.rb</strong> file
 
 ### For Linux
 
 - Prerequisites
-  
-  <pre class="codeblock-pre"><div class="codeblock">
-  <code class="clipboardjs">sudo apt-get update
-  sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev
-  </code>
-  </div></pre>
-{% include alert.html type="info" title="Note" content="The latest versions of Debian-based OS'es do not support <code>libgdbm3</code>, so if you encounter an issue with it's installation, try replacing <code>libgdbm3</code> with <code>libgdbm5</code> or <code>libgdbm6</code>." %}
+    <pre class="codeblock-pre"><div class="codeblock">
+    <code class="clipboardjs">sudo apt-get update
+    sudo apt-get install autoconf bison build-essential libssl-dev libyaml-dev libreadline6-dev zlib1g-dev libncurses5-dev libffi-dev libgdbm3 libgdbm-dev
+    </code>
+    </div></pre>
+  {% include alert.html type="info" title="Note" content="The latest versions of Debian-based OS'es do not support <code>libgdbm3</code>, so if you encounter an issue with it's installation, try replacing <code>libgdbm3</code> with <code>libgdbm5</code> or <code>libgdbm6</code>." %}
 
 #### Installing rbenv
 
@@ -155,7 +152,7 @@ Meshery documentation is built using the following components:
   <code class="clipboardjs">git clone https://github.com/rbenv/ruby-build.git "$(rbenv root)"/plugins/ruby-build
   </code>
   </div></pre>
-  
+
 #### Install Ruby
 
 - rbenv install version
@@ -202,14 +199,14 @@ Meshery documentation is built using the following components:
   </div></pre>
 
 - Change to the docs directory
-  
+
   <pre class="codeblock-pre"><div class="codeblock">
   <code class="clipboardjs">cd docs
   </code>
   </div></pre>
 
 - Install any Ruby dependencies
-  
+
   <pre class="codeblock-pre"><div class="codeblock">
   <code class="clipboardjs">gem install bundler
   bundle install
@@ -221,25 +218,24 @@ Meshery documentation is built using the following components:
 ### Serve the site
 
 - Serve the code locally.
-  
+
   <pre class="codeblock-pre"><div class="codeblock">
   <code class="clipboardjs">make docs
   </code>
   </div></pre>
 
 - If that gives an error run:
-  
+
   <pre class="codeblock-pre"><div class="codeblock">
   <code class="clipboardjs">bundle exec jekyll serve --drafts --config _config_dev.yml
   </code>
   </div></pre>
 
-  
   _From the `Makefile`, this command runs `$ bundle exec jekyll serve --drafts --livereload --config _config_dev.yml`. If this command results in an error, try running the server without Livereload using the command: `$ bundle exec jekyll serve --drafts --config _config_dev.yml`. Note that you will have to manually restart the server to reflect any changes made without Livereload. There are two Jekyll configurations, `jekyll serve` for local development and `jekyll build` to generate site artefacts for production deployment._
 
 ### Using Docker
 
-If you've Docker and `make` installed in your system, then you can serve the site locally. This doesn't require the need to install _Jekyll_ and _Ruby_ in your system. 
+If you've Docker and `make` installed in your system, then you can serve the site locally. This doesn't require the need to install _Jekyll_ and _Ruby_ in your system.
 
 {% include alert.html type="info" content="This may not work in Windows." %}
 
@@ -247,7 +243,6 @@ Run the following command from the _docs_ folder, else it will fail.
 
 {% capture code_content %}make docker{% endcapture %}
 {% include code.html code=code_content %}
-
 
 #### Troubleshooting Note
 
@@ -266,12 +261,13 @@ The reason for this error is because Jekyll always considers the exact version o
   </code>
   </div></pre>
 
-The `Gemfile.lock` will be updated automatically once the `make docs` command is run. 
+The `Gemfile.lock` will be updated automatically once the `make docs` command is run.
 (For Windows, run `bundle exec jekyll serve` if WSL2 isn't present)
 
 {% include alert.html type="warning" title="Don't Commit Gemfile" content="If you have followed the third step then please don't commit the changes made on `Gemfile` and `Gemfile.lock` in your branch to preserve integrity, else the CI action will fail to generate the site preview during PR." %}
 
 ### Using Gitpod
+
 - Ensure you have an account on <a href="https://www.gitpod.io/" class="meshery-light">Gitpod</a> and add the <a href="https://chromewebstore.google.com/detail/gitpod/dodmmooeoklaejobgleioelladacbeki" class="meshery-light">Gitpod extension</a> to your browser.
 - Open your forked Meshery repository on GitHub.
 - Click on the "**Gitpod**" button in the top right corner of the repository page (it is only visible with the <a href="https://chromewebstore.google.com/detail/gitpod/dodmmooeoklaejobgleioelladacbeki" class="meshery-light">Gitpod browser extension</a> installed).
@@ -279,14 +275,14 @@ The `Gemfile.lock` will be updated automatically once the `make docs` command is
 {% include alert.html type="dark" title="About Gitpod" content="Gitpod will automatically clone and open the repository for you in a browser-based version of Visual Studio Code. It will also automatically build the project for you on launch, comes with Docker and other tools pre-installed, making it one of the fastest ways to spin up a development environment for <a href='https://github.com/meshery/meshery'>Meshery.</a>" %}
 
 - After opening the project on Gitpod, change to the docs directory.
-  
+
   <pre class="codeblock-pre"><div class="codeblock">
   <code class="clipboardjs">cd docs
   </code>
   </div></pre>
 
 - Serve the code locally.
-  
+
   <pre class="codeblock-pre"><div class="codeblock">
   <code class="clipboardjs">make docs
   </code>
@@ -303,14 +299,14 @@ You should be able to access the site on port `4000`. If you want to access it i
 {% include alert.html type="dark" title="About Github Codespaces" content="Github Codespaces will automatically clone and open the repository for you in a browser-based version of Visual Studio Code. It comes with pre-installed tools which are quiet helpful to spin up the development environment for <a href='https://github.com/meshery/meshery'>Meshery.</a>" %}
 
 - After opening the project on Github Codespaces, change to the docs directory.
-  
+
   <pre class="codeblock-pre"><div class="codeblock">
   <code class="clipboardjs">cd docs
   </code>
   </div></pre>
 
 - Serve the code locally.
-  
+
   <pre class="codeblock-pre"><div class="codeblock">
   <code class="clipboardjs">make docs
   </code>
@@ -319,23 +315,23 @@ You should be able to access the site on port `4000`. If you want to access it i
 You should be able to access the site on port `4000`. If you want to access it in your localhost just click the `code` button on your forked repository and select open with Visual Studio Code under your Github Codespace this will launch a Github Codespace instance in your local machine and connects with the remote Github Codespace environment after that run `cd docs` then `make docs` and it will start the development server on port `4000`.
 
 ### Make Necessary Changes
+
 - Make changes as required based on the issue you are solving.
 - Ensure to verify that your changes reflect correctly by serving the site locally using `make docs`.
 
 {% include alert.html type="light" title="Note" content="If the issue requires making new doc page that replaces the old page, please don't forget to add a redirect link on the old page. This redirect link field should have the link of the new page created." %}
 
-
 ### Create a Pull Request
 
 - After making changes, don't forget to commit with the sign-off flag (-s)!
-  
+
   <pre class="codeblock-pre"><div class="codeblock">
   <code class="clipboardjs">git commit -s -m “my commit message w/signoff”
   </code>
   </div></pre>
 
 - Once all changes have been committed, push the changes.
-  
+
   <pre class="codeblock-pre"><div class="codeblock">
   <code class="clipboardjs">git push origin [branch-name]
   </code>
@@ -355,6 +351,7 @@ Most popular clipboard plugins like Clipboard JS require the manual creation of 
 
 {% capture code_content %}<pre class="codeblock-pre"><div class="codeblock">
 <code class="clipboardjs">code_snippet_here</code>
+
 </div></pre>{% endcapture %}
 {% include code.html code=code_content %}
 
@@ -363,7 +360,8 @@ You can also use the `code` component created for this feature to make it easy t
 If the code snippet does not contain any special characters then, it can be used directly as below:
 ```{% raw %}{% include code.html code="code_snippet_here" %}{% endraw %}````
 
-If the code snippet has special characters then it must be captured first in variable `code_content`,  and then pass it to the component. 
+If the code snippet has special characters then it must be captured first in variable `code_content`, and then pass it to the component.
+
 ```
 {% raw %}{% capture code_content%}code_snippet_here{% endcapture %}{% endraw %}
 {% raw %}{% include code.html code=code_content %}{% endraw %}
@@ -372,7 +370,7 @@ If the code snippet has special characters then it must be captured first in var
 Don't use `code` component when the snippet is in between an ordered list, this breaks the order and next item in the list will start numbering from 1. Instead, use `<pre class="codeblock_pre">...</pre>` method described above."
 
 **A full block:**
-{% capture code_content %}```code snippet```{% endcapture %}
+{% capture code_content %}`code snippet`{% endcapture %}
 {% include code.html code=code_content %}
 
 **Inline formatting:**
@@ -384,6 +382,7 @@ Don't use `code` component when the snippet is in between an ordered list, this 
 
 {% capture code_content %}```(language name)
 code snippet
+
 ```{% endcapture %}
 {% include code.html code=code_content %}
 
@@ -415,24 +414,29 @@ The following is a concise summary of the steps to contribute to Meshery documen
 Sidebars use toc to create a table of contents. It is written in the following manner:
 
 ```
+
     toc:
-  - title: Group 1
-    subfolderitems:
-      - page: Thing 1
-        url: /thing1.html
-      - page: Thing 2
-        url: /thing2.html
-      - page: Thing 3
-        url: /thing3.html
+
+- title: Group 1
+  subfolderitems:
+  - page: Thing 1
+    url: /thing1.html
+  - page: Thing 2
+    url: /thing2.html
+  - page: Thing 3
+    url: /thing3.html
+
 ```
 
 The output of the code snippet would be:
 
 ```
+
     Group 1
       Thing 1
       Thing 2
       Thing 3
+
 ```
 
 In this example, **Group 1** is a ``parent`` section within the Table of Contents, and **Thing 1**, **Thing 2**, and **Thing 3** are ``children`` of **Group 1**. This is a direct hierarchy with a single level of children under the parent.
@@ -440,31 +444,36 @@ In this example, **Group 1** is a ``parent`` section within the Table of Content
 ``Grandchildren`` are added in the sidebars in the following manner:
 
 ```
+
     toc:
-  - title: Group 1
+
+- title: Group 1
+  subfolderitems:
+  - page: Thing 1
+    url: /thing1.html
     subfolderitems:
-      - page: Thing 1
-        url: /thing1.html
-        subfolderitems:
-          - page: Subthing 1.1
-            url: /subthing1_1.html
-          - page: Subthing 1.2
-            url: /subthing1_2.html
-      - page: Thing 2
-        url: /thing2.html
-      - page: Thing 3
-        url: /thing3.html
+    - page: Subthing 1.1
+      url: /subthing1_1.html
+    - page: Subthing 1.2
+      url: /subthing1_2.html
+  - page: Thing 2
+    url: /thing2.html
+  - page: Thing 3
+    url: /thing3.html
+
 ```
 
 The output of the code snippet would be:
 
 ```
+
     Group 1
       Thing 1
        Subthing 1.1
        Subthing 1.2
       Thing 2
       Thing 3
+
 ```
 
 Here, **Subthing 1.1** and **Subthing 1.2** are the ``grandchildren`` of **Thing 1**.
@@ -472,7 +481,7 @@ Here, **Subthing 1.1** and **Subthing 1.2** are the ``grandchildren`` of **Thing
 In `docs/_includes/sidebar.html` contains three levels of navigation hierarchy.
 
 - **Parent**: It serves as a top level category for related content.
-- **Children**: They are immediate subsections or topics that fall under the parent section. 
+- **Children**: They are immediate subsections or topics that fall under the parent section.
 - **Grandchildren**: They are nested under Thing 1 and provide a more detailed breakdown of information within the child section. Grandchildren are used to organize content further, offering a more detailed structure for a specific topic.
 
 These sections create a hierarchical and organized navigation experience for readers.
@@ -482,7 +491,9 @@ These sections create a hierarchical and organized navigation experience for rea
 {% include alert.html type="info" title="What is an alert?" content="An alert is a box that can stand out to indicate important information. You can choose from levels success, warning, danger, info, and primary. This example is an info box, and the code for another might look like this:" %}
 
 ```
+
 {%raw%}{% include alert.html type="info" title="Here is another!" %}{%endraw%}
+
 ```
 
 Just for fun, here are all the types:
@@ -502,16 +513,18 @@ Just for fun, here are all the types:
 Meshery Docs has a common include file [alert.html](https://github.com/meshery/meshery/blob/master/docs/_includes/alert.html), to provide consistent formatting for notes, warnings, and various informative callouts intended for the readers.
 
 To use the `alert.html` feature in our documentation include the following code:
-``` 
-  {%raw%}{% include alert.html type="info" title="Here is another!" %}{%endraw%}
 ```
+
+{%raw%}{% include alert.html type="info" title="Here is another!" %}{%endraw%}
+
+````
 
 
 Other supported alert types include `warning`, `danger`,`success`,`primary`, `secondary`, `light`, `dark` .
 
 ### Quotes
 
-You can include block quotes to emphasize text. 
+You can include block quotes to emphasize text.
 
 > Here is an example. Isn't this much more prominent to the user?
 
@@ -519,7 +532,7 @@ You can include block quotes to emphasize text.
 
 ### Adding Integration Specific Information to Individual Integration Pages
 
-Integration pages ([example](https://docs.meshery.io/extensibility/integrations/aws)) are automatically generated, however, integration specific documentation is often needed. 
+Integration pages ([example](https://docs.meshery.io/extensibility/integrations/aws)) are automatically generated, however, integration specific documentation is often needed.
 
 [modelscustominfo](https://github.com/meshery/meshery/tree/master/docs/_modelscustominfo) collection holds custom markdown files. Follow these steps:
 
@@ -528,7 +541,7 @@ Integration pages ([example](https://docs.meshery.io/extensibility/integrations/
 
 The content that follows the frontmatter in this file will be automatically parsed and rendered on the integration page
 
-Example: 
+Example:
 
 file: `_modelscustominfo/aad.md`
 
@@ -539,7 +552,7 @@ title: Azure Active Directory (AAD)
 
 <h2>Azure Active Directory (AAD)</h2>
 
-```
+````
 
 In this example, the heading "<b>Azure Active Directory</b>" will be displayed on the integration page:
 [Azure Active Directory Integration Page](https://docs.meshery.io/extensibility/integrations/aad-pod-identity)
@@ -561,7 +574,7 @@ Set to `true` (make "editable" toolbar visible) or `false` (hide "editable" tool
 This executes the block of code only if the given condition is true. It is executed in the following manner:
 
 {% capture code_content %}{{ "{% if product.title == 'Awesome Shoes' " }}%}
-  These shoes are awesome!
+These shoes are awesome!
 {{ "{% endif " }}%}
 {% endcapture %}
 {% include code.html code=code_content %}
@@ -577,7 +590,7 @@ If the condition is true, the output would be:
 The for statement executes a block of code repeatedly. It is wriiten in the following manner:
 
 {% capture code_content %}{{ "{% for names in collection.names " }}%}
-  {{ "{{ name.title "}}}}
+{{ "{{ name.title "}}}}
 {{ "{% endfor " }}%}{% endcapture %}
 {% include code.html code=code_content %}
 

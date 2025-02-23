@@ -39,11 +39,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "displayName"
-                ]
-              ],
+              "mutatorRef": [["displayName"]],
               "description": "PriorityClass in Kubernetes assigns importance levels to Pods, influencing scheduling decisions. The name of the PriorityClass is referenced by other Kubernetes components for scheduling preference."
             }
           }
@@ -59,13 +55,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "priorityClassName"
-                ]
-              ],
+              "mutatedRef": [["configuration", "spec", "priorityClassName"]],
               "description": "Pods inherit the name of PriorityClass, dictating a Pod's priority in scheduling."
             }
           }

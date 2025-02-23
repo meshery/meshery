@@ -31,9 +31,8 @@ Meshery supports different types of relationships to cater to various use cases:
 - **Sibling Relationships:** These represent relationships between components that are not directly dependent on each other but may still interact or influence each other's behavior; they describe components that share a common origin but operate independently (siblings, cousins, etc.).
 - **Edge Relationships:** These represent relationships that are visually depicted as edges connecting components in MeshMap. Edge relationships are used to define how components interact with each other, such as network connections, bindings, or permissions. They are also used to identify interdependencies between components.
 - **TagSets Relationships:** These represent relationships between components of same Labels or Annotations key/value pairs. Labels and Annotations are two different types of Tags. Labels are often used to identify components and are visible on the design canvas. Annotations are often used to provide additional information about components.
- 
-Relationships are are categorized into different kinds, types, and subtypes, so that can be expressive of the specific manner in which one or more components relate to one another. Each type of relationship can be interpretted by Meshery UI (or other [extensions](/extensibility/extensions)) and mapped to a specific visual paradigm for the given kind relationship. Let's look at some examples of these visual paradigms; let's explore examples of way in which relationships are represented in Meshery.
 
+Relationships are are categorized into different kinds, types, and subtypes, so that can be expressive of the specific manner in which one or more components relate to one another. Each type of relationship can be interpretted by Meshery UI (or other [extensions](/extensibility/extensions)) and mapped to a specific visual paradigm for the given kind relationship. Let's look at some examples of these visual paradigms; let's explore examples of way in which relationships are represented in Meshery.
 
 <!-- Broadly, here is a list of the different types of relationships that Meshery supports:
 
@@ -47,7 +46,7 @@ Relationships are are categorized into different kinds, types, and subtypes, so 
       2. Permission
 2. Heirarchical
    1. Inventory
-   2. Parent 
+   2. Parent
 3. TagSets -->
 
 {% include relationships.html %}
@@ -185,7 +184,7 @@ Kubernetes Network Policy for controlling ingress and egress traffic from Pod-to
 
 This relationship type defines the associations between components based on shared Labels or Annotations.
 
-**Example**: An label-based tag-set relationship between a NodePort service and an application. 
+**Example**: An label-based tag-set relationship between a NodePort service and an application.
 
 <details close><summary>Visual Representation of Tag-Sets Relationship</summary>
           <br>
@@ -194,7 +193,7 @@ This relationship type defines the associations between components based on shar
           </figure>        
 </details>
 
-### 8. Edge - Annotation 
+### 8. Edge - Annotation
 
 This relationship depicts connections between components without conveying specific semantic meaning.
 
@@ -241,6 +240,7 @@ Selectors can be applied to various components, enabling a wide range of relatio
 </table>
 
 The above relationships pairs have hierarchical inventory relationships, and visual paradigm remain consistent across different components. A snippet of the selector backing this relationship is listed below.
+
 <details>
 <summary>Example Relationship Selector</summary>
 <code><pre>
@@ -328,7 +328,7 @@ Patches in Meshery relationships utilize strategies and references (mutatorRef/m
 ### Caveats and Considerations
 
 1. If the user creates a `Hierarchical Inventory` relationship between `Pod`, `Job`, and any other high-level Kubernetes resources like `Deployment`, `StatefulSet`, or `CronJobs`, after the relationship has been established unfortunately, there’s no system to remove the extra pod configuration automatically.
-If the design is not configured with `labels` `selectors` and `replicas` appropriately, there's a possibility of additional resources getting provisioned when deployed. eg: The relationship between a Pod and deployment can result in 2 Pods (1 pod coming as part of deployment resource) and 1 Deployment.  It’s important to be aware of this possibility and manage configurations carefully to avoid unexpected issues during deployment
+   If the design is not configured with `labels` `selectors` and `replicas` appropriately, there's a possibility of additional resources getting provisioned when deployed. eg: The relationship between a Pod and deployment can result in 2 Pods (1 pod coming as part of deployment resource) and 1 Deployment. It’s important to be aware of this possibility and manage configurations carefully to avoid unexpected issues during deployment
 
 # Itemizing your Relationship Definitions in your Meshery deployment
 

@@ -8,7 +8,6 @@ language: en
 #redirect_from: extensibility
 ---
 
-
 ## Guiding Principles of Adapter Design
 
 Adapters allow Meshery to interface with the different cloud native infrastructure. Review the list of all available [Meshery Adapters](../concepts/architecture/adapters). See the [Meshery Architecture](../concepts/architecture/architecture.md) diagrams for visuals on how adapters relate to other Meshery components.
@@ -16,14 +15,18 @@ Adapters allow Meshery to interface with the different cloud native infrastructu
 Meshery upholds the following guiding principles for adapter design:
 
 1. **Adapters allow Meshery to interface with the different cloud native infrastructure, exposing their differentiated value to users.**
-  - Cloud native infrastructure projects should be encouraged to maintain their own adapters. Allowing them to expose their differentiated capabilities encourages this.
+
+- Cloud native infrastructure projects should be encouraged to maintain their own adapters. Allowing them to expose their differentiated capabilities encourages this.
+
 1. **Adapters should avoid wheel reinvention, but seek to leverage the functionality provided by cloud native infrastructure under management.**
-  - This both reduces sustaining costs and improves reliability.
+
+- This both reduces sustaining costs and improves reliability.
 
 ## Adapters
 
 | Adapter | Earliest Version |
-| :----------: | :--------------: |
+| :-----: | :--------------: |
+
 {% for adapter in site.adapters -%}
 {% if adapter.port -%}
 | <img src="{{ adapter.image }}" style="width:20px" /> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) |&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {{ adapter.earliest_version }} |
@@ -49,6 +52,7 @@ The predefined operation types are:
 ### [MeshKit](https://github.com/meshery/meshkit)
 
 The code hierarchy is pluggable and independent from one another. There can be N number of packages depending upon the use case.
+
 - `errors/` - holds the implementations and the error handlers and error codes which are used across projects.
 - `logger/` - holds the implementations of logging handler and custom attributes to add if any.
 - `utils/` - holds all the utility functions that are specific to meshery projects and are to be used generically across all of them.
@@ -61,6 +65,7 @@ Each package inside a meshkit is a handler interface implementation, the impleme
 This section contains a high level overview of the meshery-adapter-library, its purpose and architecture. For details, the reader is referred to the documentation and the code in the repository.
 
 The main purpose of the meshery-adapter-library is to:
+
 - provide a set of interfaces, some with default implementations, to be used and extended by adapters.
 - implement common cross cutting concerns like logging, errors, and tracing
 - provide a mini framework implementing the gRPC server that allows plugging in the mesh specific configuration and - operations implemented in the adapters.

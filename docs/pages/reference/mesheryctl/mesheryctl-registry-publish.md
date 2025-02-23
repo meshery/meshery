@@ -17,85 +17,94 @@ Publish Meshery Models to Websites, Remote Provider, Meshery Server
 ## Synopsis
 
 Publishes metadata about Meshery Models to Websites, Remote Provider, or Meshery Server, including model and component icons by reading from a Google Spreadsheet and outputing to markdown or json format.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Publish To System
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry publish [system] [google-sheet-credential] [sheet-id] [models-output-path] [imgs-output-path] -o [output-format]
 
 </div>
-</pre> 
+</pre>
 
 Publish To Meshery
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry publish meshery GoogleCredential GoogleSheetID [repo]/server/meshmodel
 
 </div>
-</pre> 
+</pre>
 
 Publish To Remote Provider
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry publish remote-provider GoogleCredential GoogleSheetID [repo]/meshmodels/models [repo]/ui/public/img/meshmodels
 
 </div>
-</pre> 
+</pre>
 
 Publish To Website
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry publish website GoogleCredential GoogleSheetID [repo]/integrations [repo]/ui/public/img/meshmodels
 
 </div>
-</pre> 
+</pre>
 
 Publishing to meshery docs
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 cd docs;
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw docs/pages/integrations docs/assets/img/integrations -o md
 
 </div>
-</pre> 
+</pre>
 
 Publishing to mesheryio site
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw meshery.io/integrations meshery.io/assets/images/integration -o js
 
 </div>
-</pre> 
+</pre>
 
 Publishing to layer5 site
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw layer5/src/collections/integrations layer5/src/collections/integrations -o mdx
 
 </div>
-</pre> 
+</pre>
 
 Publishing to any website
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry publish website $CRED 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw path/to/models path/to/icons -o mdx
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

@@ -17,62 +17,69 @@ Start Meshery
 ## Synopsis
 
 Start Meshery and each of its cloud native components.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system start [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Start meshery
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system start
 
 </div>
-</pre> 
+</pre>
 
 (optional) skip opening of MesheryUI in browser.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system start --skip-browser
 
 </div>
-</pre> 
+</pre>
 
 (optional) skip checking for new updates available in Meshery.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system start --skip-update
 
 </div>
-</pre> 
+</pre>
 
 Reset Meshery's configuration file to default settings.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system start --reset
 
 </div>
-</pre> 
+</pre>
 
 Specify Platform to deploy Meshery to.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system start -p docker
 
 </div>
-</pre> 
+</pre>
 
 Specify Provider to use.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system start --provider Meshery
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

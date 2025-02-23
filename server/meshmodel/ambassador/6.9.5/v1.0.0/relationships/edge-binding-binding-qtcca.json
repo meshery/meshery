@@ -97,12 +97,7 @@
                   "id": null,
                   "kind": "Host",
                   "mutatedRef": [
-                    [
-                      "spec",
-                      "requestPolicy",
-                      "authentication",
-                      "auth_service"
-                    ]
+                    ["spec", "requestPolicy", "authentication", "auth_service"]
                   ]
                 }
               ],
@@ -110,12 +105,7 @@
                 {
                   "id": null,
                   "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "metadata",
-                      "name"
-                    ]
-                  ]
+                  "mutatorRef": [["metadata", "name"]]
                 }
               ]
             },

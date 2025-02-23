@@ -6,8 +6,8 @@ userId: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
 userName: Deepak Reddy
 userAvatarURL: https://lh3.googleusercontent.com/a/ACg8ocIGbiDtE0q65qVvAUdzHw8Qky81rM0kSAknIqbgysfDCw=s96-c
 type: observability
-compatibility: 
-    - kubernetes
+compatibility:
+  - kubernetes
 patternId: cce763fc-508a-4d3d-95da-0cfcf722d7cf
 image: /assets/images/logos/service-mesh-pattern.svg
 patternInfo: |
@@ -15,6 +15,6 @@ patternInfo: |
 patternCaveats: |
   for%20Caveats%20And%20Considerations%20consider%20checking%20this%20docs%20https%3A%2F%2Fwww.ibm.com%2Fproducts%2Finstana%0A
 permalink: catalog/observability/instana-agent-for-kubernetes-cce763fc-508a-4d3d-95da-0cfcf722d7cf.html
-URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/cce763fc-508a-4d3d-95da-0cfcf722d7cf/0.0.1/design.yml'
+URL: "https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/cce763fc-508a-4d3d-95da-0cfcf722d7cf/0.0.1/design.yml"
 downloadLink: cce763fc-508a-4d3d-95da-0cfcf722d7cf/design.yml
 ---

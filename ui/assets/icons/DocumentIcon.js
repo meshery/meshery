@@ -1,16 +1,16 @@
-import React from "react";
+import React from 'react';
 
 const DocumentIcon = (props) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width={props.width ? props.width : "24px"}
-      height={props.height ? props.height : "24px"}
-      fill={props.fill ? props.fill : "currentColor"}
+      width={props.width ? props.width : '24px'}
+      height={props.height ? props.height : '24px'}
+      fill={props.fill ? props.fill : 'currentColor'}
       onClick={props.onClick}
       className={props.className}
-      color={props.color ? props.color : "unset"}
-      fontSize={props.fontSize ? props.fontSize : "unset"}
+      color={props.color ? props.color : 'unset'}
+      fontSize={props.fontSize ? props.fontSize : 'unset'}
       style={{ ...props.style }}
       viewBox="0 0 512 512"
     >
@@ -35,4 +35,3 @@ const DocumentIcon = (props) => {
 };
 
 export default DocumentIcon;
-

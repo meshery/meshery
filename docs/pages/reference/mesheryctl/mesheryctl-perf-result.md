@@ -17,38 +17,42 @@ List performance test results
 ## Synopsis
 
 List all the available test results of a performance profile
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf result [profile-name] [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 List Test results (maximum 25 results)
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf result saturday-profile
 
 </div>
-</pre> 
+</pre>
 
 View other set of performance results with --page (maximum 25 results)
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf result saturday-profile --page 2
 
 </div>
-</pre> 
+</pre>
 
 View single performance result with detailed information
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf result saturday-profile --view
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

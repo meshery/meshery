@@ -7,7 +7,7 @@ abstract: "Meshery Designs are descriptive, declarative characterizations of how
 language: en
 list: include
 redirect_from:
-- concepts/designs
+  - concepts/designs
 ---
 
 Like a Google Doc, Designs are your primary tool for collaborative authorship of your infrastructure and services. A Design describes all the resources and their properties that you want for a single deployment based on Meshery’s declarative syntax (see [Meshery Schemas repo](https://github.com/meshery/schemas)). By default, Designs are stored in your user account, but can be manually exported, programmatically snapshotted, or automatically synchronized to any OCI-compatible registry (e.g. Docker Hub, AWS ECR, and so on), or Git-based repositories (coming in v0.8). You can share designs and collaborate in real-time on their creation. Designs can be imported, exported, versioned, forked, merged, snapshotted, published, shared, embedded, templatized, and more.
@@ -18,12 +18,12 @@ As the deployable unit in Meshery, a Design consists of [Components]({{site.base
 
 - Designs belong to only one Workspace at any given time. Designs can be transferred between Workspaces.
 - Designs can be shared with other users or teams.
-- The user who creates a Design is the Design **Owner**. The Design Owner can grant other users *read* or *write* access to the Design and can *delete* the Design.
-  
+- The user who creates a Design is the Design **Owner**. The Design Owner can grant other users _read_ or _write_ access to the Design and can _delete_ the Design.
+
 ### Features of Designs
 
 - Designs can be **cloned**. Cloning a Design creates a new Design that is a copy of the original Design. The new Design is owned by the user who cloned it.
-- Designs can be **merged**. Merging a Design combines two Designs into a single Design. 
+- Designs can be **merged**. Merging a Design combines two Designs into a single Design.
   <!-- - Designs can be forked. Forking a Design creates a new Design that is a copy of the original Design. The new Design is owned by the user who forked it. -->
 - Designs can be exported as JSON files or OCI images.
 - [Designs can be listed in Artifact Hub](https://artifacthub.io/packages/search?kind=24&sort=relevance&page=1) repos.

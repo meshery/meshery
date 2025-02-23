@@ -82,10 +82,12 @@ Name: **“None”**
 Meshery's Remote Provider extensibility framework is designed to enable the following functionalities:
 
 1. **Pluggable UI Functionality**
+
    - Out-of-tree custom UI components with seamless user experience.
    - A system of remote retrieval of extension packages (ReactJS components and Golang binaries).
 
 1. **Pluggable Backend Functionality**
+
    - Remote Providers have any number of capabilities unbeknownst to Meshery.
 
 1. **Pluggable AuthZ**
@@ -105,13 +107,13 @@ When Meshery is updated to a newer version of Golang, extension providers need t
 
 Interwoven into Meshery’s web-based user interface are a variety of extension points. Each extension point is carefully carved out to afford a seamless user experience. Each extension point is identified by a name and type. The following Meshery UI extension points are available:
 
-|**Name**   |**Type**   | **Description**  |
-|---|---|---|
-|navigator |Menu Items   |This is supposed to be a full page extension which will get a dedicated endpoint in the meshery UI. And will be listed in the meshery UI’s navigator/sidebar. Menu items may refer to full page extensions.   |
-|user_prefs   |Single Component   |This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. As of now, the only place where this extension can be loaded is the “User Preference” section under meshery settings.   |
-|account   |Full Page   |Remote Reactjs components (or other) are placed in a pre-existing page and will have dedicated endpoint: `/extension/account`.   |
-|collaborator |Single Component|This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. Currently, placed at the Header component of Mehery UI. Its work is to show active Meshery users under the same remote provider.|
-  |/extension/\<your name here>|Full Page|The Provider package is unzipped into Meshery server filesystem under `/app/provider-pkg/<package-name>`.|
+| **Name**                     | **Type**         | **Description**                                                                                                                                                                                                                                                      |
+| ---------------------------- | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| navigator                    | Menu Items       | This is supposed to be a full page extension which will get a dedicated endpoint in the meshery UI. And will be listed in the meshery UI’s navigator/sidebar. Menu items may refer to full page extensions.                                                          |
+| user_prefs                   | Single Component | This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. As of now, the only place where this extension can be loaded is the “User Preference” section under meshery settings.            |
+| account                      | Full Page        | Remote Reactjs components (or other) are placed in a pre-existing page and will have dedicated endpoint: `/extension/account`.                                                                                                                                       |
+| collaborator                 | Single Component | This is supposed to be remote react components which will get placed in a pre-existing page and will not have a dedicated endpoint. Currently, placed at the Header component of Mehery UI. Its work is to show active Meshery users under the same remote provider. |
+| /extension/\<your name here> | Full Page        | The Provider package is unzipped into Meshery server filesystem under `/app/provider-pkg/<package-name>`.                                                                                                                                                            |
 
 Remote Providers must fulfill the following endpoints:
 
@@ -134,6 +136,7 @@ The Navigator extension point loads a set of menu items to be displayed in the m
 ## Capabilities Endpoint Example
 
 Meshery Server will proxy all requests to remote provider endpoints. Endpoints are dynamically determined and identified in the _**capabilities**_ section of the `/capabilities` endpoint. Providers as an object have the following attributes (this must be returned as a response to `/capabilities` endpoint):
+
 <details>
 <summary>Capabilities Endpoint Example</summary>
 {% capture code_content %}{
@@ -313,12 +316,12 @@ On successful authentication with the remote provider, Meshery server registers 
 Example of the request body:
 
 {% capture code_content %}
-  {
-    "server_id": "xxxx-xxxxx-xxxx-xxxx",
-    "server_version": "vx.x.x",
-    "server_build-sha": "xxxx-xxxxx",
-    "server_location": "<protocol>://<hostname>:<port>”
-  }
+{
+"server_id": "xxxx-xxxxx-xxxx-xxxx",
+"server_version": "vx.x.x",
+"server_build-sha": "xxxx-xxxxx",
+"server_location": "<protocol>://<hostname>:<port>”
+}
 {% endcapture %}
 {% include code.html code=code_content %}
 
@@ -338,13 +341,13 @@ You can define a custom callback URL by setting up the `MESHERY_SERVER_CALLBACK_
 **Example using Helm**
 
 First, construct the URL in the format
-```https://[CUSTOM_URL]/api/user/token```
+`https://[CUSTOM_URL]/api/user/token`
 
 - Where `[CUSTOM_URL]` is the URL where **Meshery server** will be or is installed. For example, `https://k8s-staging.test.io/`.
 - And `api/user/token` is the **Auth Endpoint** and is append at the end of your custom URL.
 
 So, the final URL would look similar to
-```https://k8s-staging.test.io/api/user/token```
+`https://k8s-staging.test.io/api/user/token`
 
 {% include alert.html type="info" title="Note" content="Callback URL is not the same as Provider URL. In scenarios where Meshery server and Provider is installed on same server, pay attention to paths or subdomains." %}
 

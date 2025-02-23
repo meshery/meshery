@@ -17,12 +17,13 @@ View token
 ## Synopsis
 
 View a specific token in meshery config
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system token view [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -31,14 +32,14 @@ mesheryctl system token view [flags]
 mesheryctl system token view [token-name]
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system token view (show token of current context)
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

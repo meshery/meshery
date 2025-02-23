@@ -17,45 +17,49 @@ list registered models
 ## Synopsis
 
 list name of all registered models
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model list [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 View list of models
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model list
 
 </div>
-</pre> 
+</pre>
 
 View list of models with specified page number (25 models per page)
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model list --page 2
 
 </div>
-</pre> 
+</pre>
 
 View number of available models in Meshery
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model list --count
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
     
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

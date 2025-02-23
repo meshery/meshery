@@ -43,18 +43,9 @@
             },
             "patch": {
               "mutatorRef": [
-                [
-                  "displayName"
-                ],
-                [
-                  "configuration",
-                  "metadata",
-                  "namespace"
-                ],
-                [
-                  "component",
-                  "kind"
-                ]
+                ["displayName"],
+                ["configuration", "metadata", "namespace"],
+                ["component", "kind"]
               ],
               "description": "Kubernetes components manage containerized applications, while AWS Field Export exports data from AWS CloudFront. Kubernetes can run applications that generate data ingested by CloudFront, facilitating efficient content delivery and scaling in AWS environments."
             }
@@ -71,27 +62,9 @@
             },
             "patch": {
               "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "from",
-                  "resource",
-                  "name"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "from",
-                  "resource",
-                  "namespace"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "from",
-                  "resource",
-                  "type"
-                ]
+                ["configuration", "spec", "from", "resource", "name"],
+                ["configuration", "spec", "from", "resource", "namespace"],
+                ["configuration", "spec", "from", "resource", "type"]
               ],
               "description": "AWS CloudFront Field Export allows users to extract and export logs data stored in AWS CloudFront distributions for further analysis."
             }

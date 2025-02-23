@@ -40,22 +40,10 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                [
-                  "displayName"
-                ],
-                [
-                  "configuration",
-                  "metadata",
-                  "namespace"
-                ],
-                [
-                  "component",
-                  "kind"
-                ],
-                [
-                  "component",
-                  "version"
-                ]
+                ["displayName"],
+                ["configuration", "metadata", "namespace"],
+                ["component", "kind"],
+                ["component", "version"]
               ],
               "description": "A ConfigMap forms an inventory relationship with Events. ConfigMap specifications are patched with Event specifications, allowing the monitoring of ConfigMap events such as creation, updates, and usage, enabling dynamic configuration management within the cluster."
             }
@@ -73,26 +61,10 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [
-                  "configuration",
-                  "regarding",
-                  "name"
-                ],
-                [
-                  "configuration",
-                  "regarding",
-                  "namespace"
-                ],
-                [
-                  "configuration",
-                  "regarding",
-                  "kind"
-                ],
-                [
-                  "configuration",
-                  "regarding",
-                  "apiVersion"
-                ]
+                ["configuration", "regarding", "name"],
+                ["configuration", "regarding", "namespace"],
+                ["configuration", "regarding", "kind"],
+                ["configuration", "regarding", "apiVersion"]
               ],
               "description": "In Kubernetes, Events serve as a crucial mechanism for observing and tracking the state changes and activities within the cluster. They offer valuable information about resource creation, updates, errors, and other significant occurrences, aiding administrators and developers in troubleshooting, monitoring, and maintaining the health and performance of their applications."
             }

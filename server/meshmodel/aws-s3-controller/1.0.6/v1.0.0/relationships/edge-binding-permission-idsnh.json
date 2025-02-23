@@ -87,11 +87,7 @@
             "patch": {
               "patchStrategy": "merge",
               "mutatorRef": [
-                [
-                  "metadata",
-                  "annotations",
-                  "eks.amazonaws.com/role-arn"
-                ]
+                ["metadata", "annotations", "eks.amazonaws.com/role-arn"]
               ]
             }
           }
@@ -135,12 +131,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "spec",
-                  "name"
-                ]
-              ]
+              "mutatedRef": [["spec", "name"]]
             }
           }
         ]

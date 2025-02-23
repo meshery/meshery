@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 function Google({ height, width, className }) {
   return (
@@ -16,7 +16,7 @@ function Google({ height, width, className }) {
         fontSize="none"
         fontWeight="none"
         textAnchor="none"
-        style={{ mixBlendMode: "normal" }}
+        style={{ mixBlendMode: 'normal' }}
       >
         <path d="M0 256V0h256v256z"></path>
       </g>
@@ -27,7 +27,7 @@ function Google({ height, width, className }) {
         fontSize="none"
         fontWeight="none"
         textAnchor="none"
-        style={{ mixBlendMode: "normal" }}
+        style={{ mixBlendMode: 'normal' }}
       >
         <path
           fill="#ffc107"

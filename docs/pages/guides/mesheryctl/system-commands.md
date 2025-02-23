@@ -11,7 +11,9 @@ abstract: Mesheryctl system commands for managing Meshery deployments.
 Let's get familiar with mesheryctl system commands. The syntax of the mesheryctl commands goes as follws : `mesheryctl <Main_command> <Argument> <Flags>`
 
 ## Main_command : system
-### start 
+
+### start
+
 `mesheryctl system start` : This will initiate Meshery & automatically open it in your default web browser.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/start.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/start.png" /></a>
@@ -30,8 +32,8 @@ Let's get familiar with mesheryctl system commands. The syntax of the mesheryctl
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/platform.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/platform.png" /></a>
 
+### stop
 
-### stop 
 `mesheryctl system stop` : It stops Meshery resources & delete its associated namespaces.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/stop.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/stop.png" /></a>
@@ -49,6 +51,7 @@ Let's get familiar with mesheryctl system commands. The syntax of the mesheryctl
 <a href="{{ site.baseurl }}/assets/img/syscmd/force stop.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/force stop.png" /></a>
 
 ### update
+
 `mesheryctl system update` : This updates Meshery itself, not the mesheryctl. Ensure Meshery is running when using this.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/system update.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/system update.png" /></a>
@@ -58,24 +61,27 @@ Let's get familiar with mesheryctl system commands. The syntax of the mesheryctl
 <a href="{{ site.baseurl }}/assets/img/syscmd/update skip reset.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/update skip reset.png" /></a>
 
 ### reset
+
 `mesheryctl system reset` : Resets Meshery to its default configuration.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/reset.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/reset.png" /></a>
 
-### restart 
+### restart
+
 `meshryctl system restart` : Stops Meshery and then starts it again. Opens the website in your default browser.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/restart.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/restart.png" /></a>
 
-### status 
+### status
+
 `mesheryctl system status` : Displays the status of Meshery components.
 
 `mesheryctl system status --verbose` : Provides additional data along with Meshery and its component status.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/system status.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/system status.png" /></a>
 
-
 ### dashboard
+
 `mesheryctl system dashboard` : Opens the Meshery dashboard in your default browser.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/system dahboard.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/system dahboard.png" /></a>
@@ -88,13 +94,14 @@ Let's get familiar with mesheryctl system commands. The syntax of the mesheryctl
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/portforward.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/portforward.png" /></a>
 
+### login
 
-### login 
 `mesheryctl system login` : Authenticates you with your selected provider.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/system login.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/system login.png" /></a>
 
 ### check
+
 `mesheryctl system check` : Performs checks for both pre & post mesh deployment scenarios on Meshery.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/system check.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/system check.png" /></a>
@@ -110,7 +117,9 @@ Let's get familiar with mesheryctl system commands. The syntax of the mesheryctl
 `mesheryctl system check --operator` : Runs checks for Meshery Operator
 
 ## Main_command : system channel
+
 ### channel
+
 `mesheryctl system channel set [stable|stable-version|edge|edge-version]` : Used to set the channel.
 
 `mesheryctl system channel switch [stable|stable-version|edge|edge-version]` : Used to switch between channels.
@@ -123,9 +132,10 @@ Let's get familiar with mesheryctl system commands. The syntax of the mesheryctl
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/channel view.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/channel view.png" /></a>
 
-
 ## Main_command : system context
-### create 
+
+### create
+
 `mesheryctl system context create 'context-name'` : Creates a new context with default parameters.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/context create.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/context create.png" /></a>
@@ -134,51 +144,56 @@ Let's get familiar with mesheryctl system commands. The syntax of the mesheryctl
 
 `mesheryctl system context create --platform string` : Specifies the platform.
 
-`mesheryctl system context create --set` : Sets this  context as default context.
+`mesheryctl system context create --set` : Sets this context as default context.
 
 `mesheryctl system context create --url string` : Specifies the target URL.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/context flag.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/context flag.png" /></a>
 
+### switch
 
-###  switch
 `mesheryctl system context switch` : Easily switch between different contexts.
 
-###  list
+### list
+
 `mesheryctl system context list` : Lists all your available Meshery contexts.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/context list.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/context list.png" /></a>
 
-###  delete
+### delete
+
 `mesheryctl system context delete` : Delete context.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/context delete.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/context delete.png" /></a>
 
+### view
 
-###  view
 `mesheryctl system context view` : Display all your contexts with additional information.
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/context view.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/context view.png" /></a>
 
-
 ## Main_command : system provider
+
 ### switch
+
 `mesheryctl system provider switch` : Changes your provider
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/pro switch.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/pro switch.png" /></a>
 
 ### list
+
 `mesheryctl system provider list` : Lists all available providers
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/pro list.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/pro list.png" /></a>
 
 ### set
+
 `mesheryctl system provider set` : Set your provider
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/pro set.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/pro set.png" /></a>
 
 ### view
+
 `mesheryctl system provider view` : Lists your current context and provider
 
 <a href="{{ site.baseurl }}/assets/img/syscmd/pro view.png"><img alt="skip-browser" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/syscmd/pro view.png" /></a>
-

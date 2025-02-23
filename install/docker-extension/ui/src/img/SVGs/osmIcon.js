@@ -1,7 +1,7 @@
 import React from "react";
 
-const OsmIcon = ({width, height, props}) => (
-    <svg
+const OsmIcon = ({ width, height, props }) => (
+  <svg
     width={38}
     height={45}
     fill="none"
@@ -83,13 +83,6 @@ const OsmIcon = ({width, height, props}) => (
       }}
     />
   </svg>
-
 );
-
-
-
-
-
-
 
 export default OsmIcon;

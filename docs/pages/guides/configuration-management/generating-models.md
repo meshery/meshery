@@ -1,7 +1,7 @@
 ---
 layout: default
 title: Generating Models
-abstract: Generating Model 
+abstract: Generating Model
 permalink: guides/configuration-management/generating-models
 category: configuration
 type: guides
@@ -16,10 +16,9 @@ Generating Models annotation and existing custom resource definition (CRD) into 
 
 Before you can use the Meshery CLI to generate a [Model](/concepts/logical/models), you must first install it. You can install Meshery CLI by [following the instructions]({{site.baseurl}}/installation#install-mesheryctl).
 
-
 **Step 2: Generate the Model**
 
-Model can generated in 2 different format ```URL, CSV```. A template file is required that contains some required properties: Registrant, Model name, Model DisplayName, Category. The template file is only required when you use URL for generation of model from a crd. This command enable users to import their new models from CRD and existing Meshery Model
+Model can generated in 2 different format `URL, CSV`. A template file is required that contains some required properties: Registrant, Model name, Model DisplayName, Category. The template file is only required when you use URL for generation of model from a crd. This command enable users to import their new models from CRD and existing Meshery Model
 
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">mesheryctl model generate -f [file/url] </div></div>
@@ -27,15 +26,15 @@ Model can generated in 2 different format ```URL, CSV```. A template file is req
 
 The supported registrant for generating from URL is `github` and `artifacthub`.The URL format must be in this order.
 
-
 Registrant `Artifacthub`:
-- https://artifacthub.io/packages/search?ts_query_web={ model-name } 
-- https://istio-release.storage.googleapis.com/charts/base-1.19.0-alpha.1.tgz&sa=D&source=editors&ust=1726839249773905&usg=AOvVaw0j88gkt6FOS1LLSRCYq95X 
+
+- https://artifacthub.io/packages/search?ts_query_web={ model-name }
+- https://istio-release.storage.googleapis.com/charts/base-1.19.0-alpha.1.tgz&sa=D&source=editors&ust=1726839249773905&usg=AOvVaw0j88gkt6FOS1LLSRCYq95X
 
 Registrant `Github`:
+
 - git:://github.com/cert-manager/cert-manager/master/deploy/crds
 - https://github.com/UffizziCloud/uffizzi_controller/releases/download/uffizzi-controller-2.0.1/uffizzi-controller-2.0.1.tgz&sa=D&source=editors&ust=1726839320133140&usg=AOvVaw2AryFwXIPKFnWRjRRTApzp
-
 
 **Example :**
 
@@ -43,20 +42,14 @@ Registrant `Github`:
 <div class="codeblock"><div class="clipboardjs">mesheryctl model generate -f "git:://github.com/cert-manager/cert-manager/master/deploy/crds" -t template.json</div></div>
 </pre>
 
-
 **Note:** A `-r` flag is present to skip registaration. If the flag is used then no new model would be registered though they would be generated and stored inside `.meshery/models` directory.
 The `template.json` can be viewed [here](#).In template.json if the field `isAnnotaion` is true then we would only consider that component as an annotation (svg icon) rather than a normal component.
 
-
-
 **Example :**
-
 
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">mesheryctl model generate -f "git:://github.com/cert-manager/cert-manager/master/deploy/crds" -t template.json -r</div></div>
 </pre>
-
-
 
 ## Generate Models Using Meshery UI
 
@@ -77,19 +70,19 @@ On the **Registry** page, you can generate your model by clicking the **Generate
 ---
 
 #### **From CSV**
+
 1. **Upload CSV Files**: You can generate your model by uploading a **components model CSV**. Uploading a **relationships CSV** is optional.
-   
-2. **Template CSV**: If you don’t have a CSV file ready, you can use our [Spreasheet template](https://docs.google.com/spreadsheets/d/19JEpqvHrG8UL-Bc-An9UIcubf1NVhlfnQSN1TD7JOZ4/) to create one. Simply  fill in your details, download the template as csv, and upload it to generate your model.
+2. **Template CSV**: If you don’t have a CSV file ready, you can use our [Spreasheet template](https://docs.google.com/spreadsheets/d/19JEpqvHrG8UL-Bc-An9UIcubf1NVhlfnQSN1TD7JOZ4/) to create one. Simply fill in your details, download the template as csv, and upload it to generate your model.
 
 ---
-<a href="{{ site.baseurl }}/assets/img/generate/CsvTemplate.gif"><img alt="Import-Model" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/generate/CsvTemplate.gif" /></a>
 
+<a href="{{ site.baseurl }}/assets/img/generate/CsvTemplate.gif"><img alt="Import-Model" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/generate/CsvTemplate.gif" /></a>
 
 <a href="{{ site.baseurl }}/assets/img/generate/GenerateFromCsv.gif"><img alt="Import-Model" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/generate/GenerateFromCsv.gif" /></a>
 
-
 #### **From URL**
-1. **Paste URL**: Enter the URL of your model. 
+
+1. **Paste URL**: Enter the URL of your model.
 
 2. **Fill in Values**: After entering the URL, you will be prompted to fill in the values corresponding to your model's details.
 
@@ -98,6 +91,5 @@ On the **Registry** page, you can generate your model by clicking the **Generate
 Once you complete these steps, click **Next** to continue with the model generation process.
 
 ---
+
 <a href="{{ site.baseurl }}/assets/img/generate/GenerateFromURl.gif"><img alt="Import-Model" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/generate/GenerateFromURl.gif" /></a>
-
-

@@ -39,12 +39,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "template"
-                ]
-              ],
+              "mutatorRef": [["configuration", "template"]],
               "description": "A Pod template is a blueprint defining the configuration for creating Kubernetes pods, encapsulating specifications for containers, volumes, and other settings"
             }
           }
@@ -60,13 +55,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "template"
-                ]
-              ],
+              "mutatedRef": [["configuration", "spec", "template"]],
               "description": "Jobs use pod templates to specify the container images, commands, and resources required for executing batch processing tasks reliably within Kubernetes clusters, ensuring consistency and repeatability in job execution."
             }
           }

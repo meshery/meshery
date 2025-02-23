@@ -36,11 +36,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "displayName"
-                ]
-              ],
+              "mutatorRef": [["displayName"]],
               "description": "The Workspace component's configuration is updated based on specifications from other components, like AlertManagerDefinition, ensuring alignment with connected systems."
             }
           }
@@ -57,13 +53,7 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "workspaceRef",
-                  "from",
-                  "name"
-                ]
+                ["configuration", "spec", "workspaceRef", "from", "name"]
               ],
               "description": "RuleGroupsNamespace component provides specific configuration settings to patch or update the Workspace, enabling seamless integration with the RuleGroupsNamespace system."
             }

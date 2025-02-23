@@ -39,12 +39,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "template"
-                ]
-              ],
+              "mutatorRef": [["configuration", "template"]],
               "description": "A Pod template is a blueprint defining the configuration for creating Kubernetes pods, encapsulating specifications for containers, volumes, and other settings"
             }
           }
@@ -61,13 +56,7 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "jobTemplate",
-                  "spec",
-                  "template"
-                ]
+                ["configuration", "spec", "jobTemplate", "spec", "template"]
               ],
               "description": "CronJobs employ pod templates to define periodic or scheduled tasks' configurations, automating the creation and execution of pods based on defined schedules, enabling efficient handling of repetitive tasks within Kubernetes clusters."
             }

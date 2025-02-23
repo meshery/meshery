@@ -86,12 +86,7 @@
             },
             "patch": {
               "patchStrategy": "merge",
-              "mutatorRef": [
-                [
-                  "spec",
-                  "resourceName"
-                ]
-              ]
+              "mutatorRef": [["spec", "resourceName"]]
             }
           }
         ],
@@ -134,12 +129,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "status",
-                  "ackResourceMetadata"
-                ]
-              ]
+              "mutatedRef": [["status", "ackResourceMetadata"]]
             }
           }
         ]

@@ -47,4 +47,3 @@ From the Command Line: Guides to using Meshery's various features and components
 <h2 id="{{guide[0] | uri_escape | downcase }}">{{guide[0] | capitalize}}</h2>
 
 {% endfor %} -->
-

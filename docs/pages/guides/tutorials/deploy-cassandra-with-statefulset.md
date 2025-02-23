@@ -56,27 +56,28 @@ These YAML files contain the Cassandra Service and Cassandra StatefulSet manifes
 1. In the left sidebar, click on the upward arrow symbol(import icon) to import the designs into Meshery.
 
 2. In the modal that appears:
+
    - Enter a name for your design in the "Design File Name" field (e.g.`cassandra-service`).
 
    - Select `Kubernetes Manifest` from the "Design Type" dropdown menu.
 
-        ![Import modal](./screenshots/cassandra-1.png)
+     ![Import modal](./screenshots/cassandra-1.png)
 
    - Choose `File Upload` for the upload method, and select the file you just downloaded.
 
    - Then, click on `Import`
 
-        ![Import cassandra-service](./screenshots/cassandra-2.png)
+     ![Import cassandra-service](./screenshots/cassandra-2.png)
 
 3. Under the "Designs" tab, you will see that we have successfully imported the `cassandra-service` design.
 
    When you click on the names of the designs on the `Designs` tab, you can see the visual representations of the various Kubernetes resources and their relationships on the canvas.
 
-    ![Imported designs on canvas](./screenshots/cassandra-3.png)
+   ![Imported designs on canvas](./screenshots/cassandra-3.png)
 
 4. Now, follow the same steps to import the `cassandra-statefulset` file.
 
-    ![cassandra-statefulset](./screenshots/cassandra-4.png)
+   ![cassandra-statefulset](./screenshots/cassandra-4.png)
 
 #### Merging the Designs
 
@@ -86,15 +87,15 @@ To merge the Service deployment design with the StatefulSet deployment design:
 
 1. Click and drag the `cassandra-service` design from the left panel and drop it onto the design canvas of the `cassandra-statefulset`.
 
-    ![drag and drop design](./screenshots/cassandra-5.png)
+   ![drag and drop design](./screenshots/cassandra-5.png)
 
 2. This action will open a merge modal asking if you want to merge the design, Click on `Merge`.
 
-    ![merge modal](./screenshots/cassandra-6.png)
+   ![merge modal](./screenshots/cassandra-6.png)
 
 3. Click on `Save As` and enter `cassandra-service-statefulset` as the new file name.
 
-    ![save design](./screenshots/cassandra-7.png)
+   ![save design](./screenshots/cassandra-7.png)
 
 #### Visualizing the Deployed Resources
 
@@ -103,14 +104,14 @@ To view the resources deployed we will use the Visualize section of the _MeshMap
 1. Move to the Visualize tab.
 2. Click the filter icon and choose the appropriate filters
 
-    - For "Kinds" select `StatefulSet`, `Service` and `StorageClass`
-    - For the "label" select `dev=tutorial`
+   - For "Kinds" select `StatefulSet`, `Service` and `StorageClass`
+   - For the "label" select `dev=tutorial`
 
 3. You can also use the icons on the right sidebar to filter the resources.
 
-    After selecting your filters, you should see a view displaying only your relevant resources, as shown in the image below.
+   After selecting your filters, you should see a view displaying only your relevant resources, as shown in the image below.
 
-    ![Filter resources](./screenshots/cassandra-8.png)
+   ![Filter resources](./screenshots/cassandra-8.png)
 
 #### Resource Details
 

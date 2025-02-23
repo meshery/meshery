@@ -110,4 +110,3 @@ Add-on resources can be applied **or** deleted using this custom configuration o
 
 - Examine [Meshery's architecture]({{ site.baseurl }}/architecture) and how adapters fit in as a component.
 - Learn more about [Meshery Adapters]({{ site.baseurl }}/architecture/adapters).
-

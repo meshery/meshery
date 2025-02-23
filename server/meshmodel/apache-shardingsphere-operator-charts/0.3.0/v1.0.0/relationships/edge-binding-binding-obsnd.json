@@ -96,25 +96,14 @@
                 {
                   "id": null,
                   "kind": "ComputeNode",
-                  "mutatedRef": [
-                    [
-                      "spec",
-                      "proxyRef",
-                      "name"
-                    ]
-                  ]
+                  "mutatedRef": [["spec", "proxyRef", "name"]]
                 }
               ],
               "to": [
                 {
                   "id": null,
                   "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "metadata",
-                      "name"
-                    ]
-                  ]
+                  "mutatorRef": [["metadata", "name"]]
                 }
               ]
             },

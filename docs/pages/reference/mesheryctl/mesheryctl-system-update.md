@@ -17,30 +17,33 @@ Pull new Meshery images/manifest files.
 ## Synopsis
 
 Pull new Meshery container images and manifests from artifact repository.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system update [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Pull new Meshery images from Docker Hub. This does not update mesheryctl. This command may be executed while Meshery is running.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system update
 
 </div>
-</pre> 
+</pre>
 
 Pull the latest manifest files alone
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system update --skip-reset
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

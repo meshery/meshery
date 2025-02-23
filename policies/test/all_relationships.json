@@ -372,18 +372,9 @@
               },
               "patch": {
                 "mutatorRef": [
-                  [
-                    "displayName"
-                  ],
-                  [
-                    "configuration",
-                    "metadata",
-                    "namespace"
-                  ],
-                  [
-                    "component",
-                    "kind"
-                  ]
+                  ["displayName"],
+                  ["configuration", "metadata", "namespace"],
+                  ["component", "kind"]
                 ]
               }
             }
@@ -425,27 +416,9 @@
               },
               "patch": {
                 "mutatorRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "from",
-                    "resource",
-                    "name"
-                  ],
-                  [
-                    "configuration",
-                    "spec",
-                    "from",
-                    "resource",
-                    "namespace"
-                  ],
-                  [
-                    "configuration",
-                    "spec",
-                    "from",
-                    "resource",
-                    "type"
-                  ]
+                  ["configuration", "spec", "from", "resource", "name"],
+                  ["configuration", "spec", "from", "resource", "namespace"],
+                  ["configuration", "spec", "from", "resource", "type"]
                 ]
               }
             }
@@ -551,11 +524,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -597,13 +566,7 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "workspaceRef",
-                    "from",
-                    "name"
-                  ]
+                  ["configuration", "spec", "workspaceRef", "from", "name"]
                 ]
               }
             }
@@ -709,11 +672,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -755,13 +714,7 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatorRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "workspaceRef",
-                    "from",
-                    "name"
-                  ]
+                  ["configuration", "spec", "workspaceRef", "from", "name"]
                 ]
               }
             }
@@ -867,11 +820,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -913,13 +862,7 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatorRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "workspaceRef",
-                    "from",
-                    "name"
-                  ]
+                  ["configuration", "spec", "workspaceRef", "from", "name"]
                 ]
               }
             }
@@ -1025,12 +968,7 @@
               },
               "patch": {
                 "patchStrategy": "merge",
-                "mutatorRef": [
-                  [
-                    "spec",
-                    "parameters"
-                  ]
-                ]
+                "mutatorRef": [["spec", "parameters"]]
               }
             }
           ],
@@ -1071,12 +1009,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "status",
-                    "parameterOverrides"
-                  ]
-                ]
+                "mutatedRef": [["status", "parameterOverrides"]]
               }
             }
           ]
@@ -1181,12 +1114,7 @@
               },
               "patch": {
                 "patchStrategy": "merge",
-                "mutatorRef": [
-                  [
-                    "spec",
-                    "parameters"
-                  ]
-                ]
+                "mutatorRef": [["spec", "parameters"]]
               }
             }
           ],
@@ -1227,12 +1155,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "status",
-                    "dbParameterGroupName"
-                  ]
-                ]
+                "mutatedRef": [["status", "dbParameterGroupName"]]
               }
             }
           ]
@@ -1337,12 +1260,7 @@
               },
               "patch": {
                 "patchStrategy": "merge",
-                "mutatorRef": [
-                  [
-                    "spec",
-                    "dbClusterParameterGroupName"
-                  ]
-                ]
+                "mutatorRef": [["spec", "dbClusterParameterGroupName"]]
               }
             }
           ],
@@ -1383,12 +1301,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "spec",
-                    "parameters"
-                  ]
-                ]
+                "mutatedRef": [["spec", "parameters"]]
               }
             }
           ]
@@ -1633,12 +1546,7 @@
               },
               "patch": {
                 "patchStrategy": "merge",
-                "mutatorRef": [
-                  [
-                    "spec",
-                    "dbInstanceIdentifiers"
-                  ]
-                ]
+                "mutatorRef": [["spec", "dbInstanceIdentifiers"]]
               }
             }
           ],
@@ -1679,12 +1587,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "status",
-                    "dbProxyEndpoint"
-                  ]
-                ]
+                "mutatedRef": [["status", "dbProxyEndpoint"]]
               }
             }
           ]
@@ -1789,12 +1692,7 @@
               },
               "patch": {
                 "patchStrategy": "merge",
-                "mutatorRef": [
-                  [
-                    "spec",
-                    "dbSubnetGroupName"
-                  ]
-                ]
+                "mutatorRef": [["spec", "dbSubnetGroupName"]]
               }
             }
           ],
@@ -1835,12 +1733,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "status",
-                    "subnetIDs"
-                  ]
-                ]
+                "mutatedRef": [["status", "subnetIDs"]]
               }
             }
           ]
@@ -1945,12 +1838,7 @@
               },
               "patch": {
                 "patchStrategy": "merge",
-                "mutatorRef": [
-                  [
-                    "spec",
-                    "dbProxyName"
-                  ]
-                ]
+                "mutatorRef": [["spec", "dbProxyName"]]
               }
             }
           ],
@@ -1991,12 +1879,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "status",
-                    "proxyEndpoint"
-                  ]
-                ]
+                "mutatedRef": [["status", "proxyEndpoint"]]
               }
             }
           ]
@@ -2101,12 +1984,7 @@
               },
               "patch": {
                 "patchStrategy": "merge",
-                "mutatorRef": [
-                  [
-                    "spec",
-                    "dbSubnetGroupName"
-                  ]
-                ]
+                "mutatorRef": [["spec", "dbSubnetGroupName"]]
               }
             }
           ],
@@ -2147,12 +2025,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "status",
-                    "subnetIDs"
-                  ]
-                ]
+                "mutatedRef": [["status", "subnetIDs"]]
               }
             }
           ]
@@ -2257,12 +2130,7 @@
               },
               "patch": {
                 "patchStrategy": "merge",
-                "mutatorRef": [
-                  [
-                    "spec",
-                    "globalClusterIdentifier"
-                  ]
-                ]
+                "mutatorRef": [["spec", "globalClusterIdentifier"]]
               }
             }
           ],
@@ -2303,12 +2171,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "status",
-                    "globalClusterMember"
-                  ]
-                ]
+                "mutatedRef": [["status", "globalClusterMember"]]
               }
             }
           ]
@@ -2413,12 +2276,7 @@
               },
               "patch": {
                 "patchStrategy": "merge",
-                "mutatorRef": [
-                  [
-                    "spec",
-                    "dbClusterIdentifier"
-                  ]
-                ]
+                "mutatorRef": [["spec", "dbClusterIdentifier"]]
               }
             }
           ],
@@ -2459,12 +2317,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "spec",
-                    "dbInstanceIdentifier"
-                  ]
-                ]
+                "mutatedRef": [["spec", "dbInstanceIdentifier"]]
               }
             }
           ]
@@ -2569,12 +2422,7 @@
               },
               "patch": {
                 "patchStrategy": "merge",
-                "mutatorRef": [
-                  [
-                    "spec",
-                    "globalClusterIdentifier"
-                  ]
-                ]
+                "mutatorRef": [["spec", "globalClusterIdentifier"]]
               }
             }
           ],
@@ -2615,12 +2463,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "status",
-                    "globalClusterMember"
-                  ]
-                ]
+                "mutatedRef": [["status", "globalClusterMember"]]
               }
             }
           ]
@@ -2725,12 +2568,7 @@
               },
               "patch": {
                 "patchStrategy": "merge",
-                "mutatorRef": [
-                  [
-                    "spec",
-                    "globalClusterIdentifier"
-                  ]
-                ]
+                "mutatorRef": [["spec", "globalClusterIdentifier"]]
               }
             }
           ],
@@ -2771,12 +2609,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "status",
-                    "dbClusterIdentifier"
-                  ]
-                ]
+                "mutatedRef": [["status", "dbClusterIdentifier"]]
               }
             }
           ]
@@ -2881,12 +2714,7 @@
               },
               "patch": {
                 "patchStrategy": "merge",
-                "mutatorRef": [
-                  [
-                    "spec",
-                    "dbInstanceIdentifier"
-                  ]
-                ]
+                "mutatorRef": [["spec", "dbInstanceIdentifier"]]
               }
             }
           ],
@@ -2927,12 +2755,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "status",
-                    "snapshotCreateTime"
-                  ]
-                ]
+                "mutatedRef": [["status", "snapshotCreateTime"]]
               }
             }
           ]
@@ -3037,12 +2860,7 @@
               },
               "patch": {
                 "patchStrategy": "merge",
-                "mutatorRef": [
-                  [
-                    "spec",
-                    "dbClusterIdentifier"
-                  ]
-                ]
+                "mutatorRef": [["spec", "dbClusterIdentifier"]]
               }
             }
           ],
@@ -3083,12 +2901,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "status",
-                    "dbClusterSnapshot"
-                  ]
-                ]
+                "mutatedRef": [["status", "dbClusterSnapshot"]]
               }
             }
           ]
@@ -3193,12 +3006,7 @@
               },
               "patch": {
                 "patchStrategy": "merge",
-                "mutatorRef": [
-                  [
-                    "spec",
-                    "exportSource"
-                  ]
-                ]
+                "mutatorRef": [["spec", "exportSource"]]
               }
             }
           ],
@@ -3239,12 +3047,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "status",
-                    "resourceState"
-                  ]
-                ]
+                "mutatedRef": [["status", "resourceState"]]
               }
             }
           ]
@@ -3349,12 +3152,7 @@
               },
               "patch": {
                 "patchStrategy": "merge",
-                "mutatorRef": [
-                  [
-                    "spec",
-                    "name"
-                  ]
-                ]
+                "mutatorRef": [["spec", "name"]]
               }
             }
           ],
@@ -3395,12 +3193,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "status",
-                    "exportStatus"
-                  ]
-                ]
+                "mutatedRef": [["status", "exportStatus"]]
               }
             }
           ]
@@ -3505,12 +3298,7 @@
               },
               "patch": {
                 "patchStrategy": "merge",
-                "mutatorRef": [
-                  [
-                    "spec",
-                    "volumeName"
-                  ]
-                ]
+                "mutatorRef": [["spec", "volumeName"]]
               }
             }
           ],
@@ -3551,12 +3339,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "spec",
-                    "name"
-                  ]
-                ]
+                "mutatedRef": [["spec", "name"]]
               }
             }
           ]
@@ -3662,11 +3445,7 @@
               "patch": {
                 "patchStrategy": "merge",
                 "mutatorRef": [
-                  [
-                    "metadata",
-                    "annotations",
-                    "eks.amazonaws.com/role-arn"
-                  ]
+                  ["metadata", "annotations", "eks.amazonaws.com/role-arn"]
                 ]
               }
             }
@@ -3708,12 +3487,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "spec",
-                    "name"
-                  ]
-                ]
+                "mutatedRef": [["spec", "name"]]
               }
             }
           ]
@@ -3818,13 +3592,7 @@
               },
               "patch": {
                 "patchStrategy": "merge",
-                "mutatorRef": [
-                  [
-                    "spec",
-                    "credentials",
-                    "secretRef"
-                  ]
-                ]
+                "mutatorRef": [["spec", "credentials", "secretRef"]]
               }
             }
           ],
@@ -3865,12 +3633,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "data",
-                    "awsAccessKey"
-                  ]
-                ]
+                "mutatedRef": [["data", "awsAccessKey"]]
               }
             }
           ]
@@ -4027,12 +3790,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "spec",
-                    "name"
-                  ]
-                ]
+                "mutatedRef": [["spec", "name"]]
               }
             }
           ]
@@ -4189,12 +3947,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "spec",
-                    "name"
-                  ]
-                ]
+                "mutatedRef": [["spec", "name"]]
               }
             }
           ]
@@ -4299,12 +4052,7 @@
               },
               "patch": {
                 "patchStrategy": "merge",
-                "mutatorRef": [
-                  [
-                    "spec",
-                    "resourceName"
-                  ]
-                ]
+                "mutatorRef": [["spec", "resourceName"]]
               }
             }
           ],
@@ -4345,12 +4093,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "status",
-                    "ackResourceMetadata"
-                  ]
-                ]
+                "mutatedRef": [["status", "ackResourceMetadata"]]
               }
             }
           ]
@@ -4423,12 +4166,7 @@
               "id": null,
               "kind": "FieldExport",
               "match": {
-                "refs": [
-                  [
-                    "spec",
-                    "exportConfigMapRef"
-                  ]
-                ]
+                "refs": [["spec", "exportConfigMapRef"]]
               },
               "model": {
                 "category": {
@@ -4468,12 +4206,7 @@
               "id": null,
               "kind": "ConfigMap",
               "match": {
-                "refs": [
-                  [
-                    "metadata",
-                    "labels"
-                  ]
-                ]
+                "refs": [["metadata", "labels"]]
               },
               "model": {
                 "category": {
@@ -4609,11 +4342,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -4654,14 +4383,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "ca",
-                    "secretName"
-                  ]
-                ]
+                "mutatedRef": [["configuration", "spec", "ca", "secretName"]]
               }
             }
           ]
@@ -4767,13 +4489,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "routes"
-                  ]
-                ]
+                "mutatorRef": [["configuration", "spec", "routes"]]
               }
             },
             {
@@ -4812,13 +4528,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "policies"
-                  ]
-                ]
+                "mutatorRef": [["configuration", "spec", "policies"]]
               }
             },
             {
@@ -4857,12 +4567,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "configuration",
-                    "spec"
-                  ]
-                ]
+                "mutatorRef": [["configuration", "spec"]]
               }
             },
             {
@@ -4902,16 +4607,8 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatorRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "topic"
-                  ],
-                  [
-                    "configuration",
-                    "spec",
-                    "routes"
-                  ]
+                  ["configuration", "spec", "topic"],
+                  ["configuration", "spec", "routes"]
                 ]
               }
             }
@@ -4953,12 +4650,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "configuration",
-                    "args"
-                  ]
-                ]
+                "mutatedRef": [["configuration", "args"]]
               }
             }
           ]
@@ -5032,9 +4724,7 @@
               "id": null,
               "kind": "Resiliency",
               "match": {
-                "refs": [
-                  []
-                ]
+                "refs": [[]]
               },
               "model": {
                 "category": {
@@ -5072,9 +4762,7 @@
               "id": null,
               "kind": "Subscription",
               "match": {
-                "refs": [
-                  []
-                ]
+                "refs": [[]]
               },
               "model": {
                 "category": {
@@ -5112,9 +4800,7 @@
               "id": null,
               "kind": "Configuration",
               "match": {
-                "refs": [
-                  []
-                ]
+                "refs": [[]]
               },
               "model": {
                 "category": {
@@ -5154,9 +4840,7 @@
               "id": null,
               "kind": "Component",
               "match": {
-                "refs": [
-                  []
-                ]
+                "refs": [[]]
               },
               "model": {
                 "category": {
@@ -5575,11 +5259,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -5621,13 +5301,7 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "servers",
-                    "tls",
-                    "credentialName"
-                  ]
+                  ["configuration", "spec", "servers", "tls", "credentialName"]
                 ]
               }
             }
@@ -5735,14 +5409,8 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatorRef": [
-                  [
-                    "configuration",
-                    "config"
-                  ],
-                  [
-                    "configuration",
-                    "wasm-filter"
-                  ]
+                  ["configuration", "config"],
+                  ["configuration", "wasm-filter"]
                 ]
               }
             }
@@ -5785,15 +5453,8 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "configuration",
-                    "pluginConfig"
-                  ],
-                  [
-                    "configuration",
-                    "spec",
-                    "url"
-                  ]
+                  ["configuration", "pluginConfig"],
+                  ["configuration", "spec", "url"]
                 ]
               }
             }
@@ -5901,14 +5562,8 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatorRef": [
-                  [
-                    "configuration",
-                    "config"
-                  ],
-                  [
-                    "configuration",
-                    "wasm-filter"
-                  ]
+                  ["configuration", "config"],
+                  ["configuration", "wasm-filter"]
                 ]
               }
             }
@@ -5951,13 +5606,7 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "configuration",
-                    "configPatches",
-                    "_",
-                    "patch",
-                    "value"
-                  ]
+                  ["configuration", "configPatches", "_", "patch", "value"]
                 ]
               }
             }
@@ -6069,12 +5718,7 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "scaleTargetRef",
-                    "service"
-                  ]
+                  ["configuration", "spec", "scaleTargetRef", "service"]
                 ]
               }
             }
@@ -6116,11 +5760,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ]
@@ -6194,9 +5834,7 @@
               "id": null,
               "kind": "ServiceMonitor",
               "match": {
-                "refs": [
-                  []
-                ]
+                "refs": [[]]
               },
               "model": {
                 "category": {
@@ -6236,9 +5874,7 @@
               "id": null,
               "kind": "Service",
               "match": {
-                "refs": [
-                  []
-                ]
+                "refs": [[]]
               },
               "model": {
                 "category": {
@@ -6343,9 +5979,7 @@
               "id": null,
               "kind": "PodMonitor",
               "match": {
-                "refs": [
-                  []
-                ]
+                "refs": [[]]
               },
               "model": {
                 "category": {
@@ -6385,9 +6019,7 @@
               "id": null,
               "kind": "Pod",
               "match": {
-                "refs": [
-                  []
-                ]
+                "refs": [[]]
               },
               "model": {
                 "category": {
@@ -6524,11 +6156,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -6682,11 +6310,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -6840,11 +6464,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -6998,11 +6618,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -7156,11 +6772,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -7314,11 +6926,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -7472,11 +7080,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -7630,11 +7234,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -7760,18 +7360,14 @@
                   {
                     "id": null,
                     "kind": "self",
-                    "mutatedRef": [
-                      []
-                    ]
+                    "mutatedRef": [[]]
                   }
                 ],
                 "to": [
                   {
                     "id": null,
                     "kind": "NetworkPolicy",
-                    "mutatorRef": [
-                      []
-                    ]
+                    "mutatorRef": [[]]
                   }
                 ]
               },
@@ -7817,18 +7413,14 @@
                   {
                     "id": null,
                     "kind": "NetworkPolicy",
-                    "mutatedRef": [
-                      []
-                    ]
+                    "mutatedRef": [[]]
                   }
                 ],
                 "to": [
                   {
                     "id": null,
                     "kind": "self",
-                    "mutatorRef": [
-                      []
-                    ]
+                    "mutatorRef": [[]]
                   }
                 ]
               },
@@ -7955,11 +7547,7 @@
                   {
                     "id": null,
                     "kind": "PersistentVolumeClaim",
-                    "mutatorRef": [
-                      [
-                        "displayName"
-                      ]
-                    ]
+                    "mutatorRef": [["displayName"]]
                   }
                 ]
               },
@@ -8006,17 +7594,8 @@
                     "id": null,
                     "kind": "PersistentVolumeClaim",
                     "mutatedRef": [
-                      [
-                        "configuration",
-                        "spec",
-                        "volumeName"
-                      ],
-                      [
-                        "configuration",
-                        "spec",
-                        "selector",
-                        "matchLabels"
-                      ]
+                      ["configuration", "spec", "volumeName"],
+                      ["configuration", "spec", "selector", "matchLabels"]
                     ]
                   }
                 ],
@@ -8025,14 +7604,8 @@
                     "id": null,
                     "kind": "self",
                     "mutatorRef": [
-                      [
-                        "displayName"
-                      ],
-                      [
-                        "configuration",
-                        "metadata",
-                        "labels"
-                      ]
+                      ["displayName"],
+                      ["configuration", "metadata", "labels"]
                     ]
                   }
                 ]
@@ -8222,15 +7795,7 @@
                   {
                     "id": null,
                     "kind": "self",
-                    "mutatorRef": [
-                      [
-                        "component",
-                        "kind"
-                      ],
-                      [
-                        "displayName"
-                      ]
-                    ]
+                    "mutatorRef": [["component", "kind"], ["displayName"]]
                   }
                 ],
                 "to": [
@@ -8238,16 +7803,8 @@
                     "id": null,
                     "kind": "ClusterRoleBinding",
                     "mutatedRef": [
-                      [
-                        "configuration",
-                        "roleRef",
-                        "kind"
-                      ],
-                      [
-                        "configuration",
-                        "roleRef",
-                        "name"
-                      ]
+                      ["configuration", "roleRef", "kind"],
+                      ["configuration", "roleRef", "name"]
                     ]
                   }
                 ]
@@ -8292,15 +7849,7 @@
                   {
                     "id": null,
                     "kind": "self",
-                    "mutatorRef": [
-                      [
-                        "component",
-                        "kind"
-                      ],
-                      [
-                        "displayName"
-                      ]
-                    ]
+                    "mutatorRef": [["component", "kind"], ["displayName"]]
                   }
                 ],
                 "to": [
@@ -8308,16 +7857,8 @@
                     "id": null,
                     "kind": "RoleBinding",
                     "mutatedRef": [
-                      [
-                        "configuration",
-                        "roleRef",
-                        "kind"
-                      ],
-                      [
-                        "configuration",
-                        "roleRef",
-                        "name"
-                      ]
+                      ["configuration", "roleRef", "kind"],
+                      ["configuration", "roleRef", "name"]
                     ]
                   }
                 ]
@@ -8364,25 +7905,14 @@
                   {
                     "id": null,
                     "kind": "ClusterRoleBinding",
-                    "mutatedRef": [
-                      [
-                        "configuration",
-                        "subjects",
-                        "_",
-                        "name"
-                      ]
-                    ]
+                    "mutatedRef": [["configuration", "subjects", "_", "name"]]
                   }
                 ],
                 "to": [
                   {
                     "id": null,
                     "kind": "self",
-                    "mutatorRef": [
-                      [
-                        "displayName"
-                      ]
-                    ]
+                    "mutatorRef": [["displayName"]]
                   }
                 ]
               },
@@ -8426,25 +7956,14 @@
                   {
                     "id": null,
                     "kind": "RoleBinding",
-                    "mutatedRef": [
-                      [
-                        "configuration",
-                        "subjects",
-                        "_",
-                        "name"
-                      ]
-                    ]
+                    "mutatedRef": [["configuration", "subjects", "_", "name"]]
                   }
                 ],
                 "to": [
                   {
                     "id": null,
                     "kind": "self",
-                    "mutatorRef": [
-                      [
-                        "displayName"
-                      ]
-                    ]
+                    "mutatorRef": [["displayName"]]
                   }
                 ]
               },
@@ -8878,25 +8397,9 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatorRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "selector"
-                  ],
-                  [
-                    "configuration",
-                    "spec",
-                    "ports",
-                    "_",
-                    "targetPort"
-                  ],
-                  [
-                    "configuration",
-                    "spec",
-                    "ports",
-                    "_",
-                    "protocol"
-                  ]
+                  ["configuration", "spec", "selector"],
+                  ["configuration", "spec", "ports", "_", "targetPort"],
+                  ["configuration", "spec", "ports", "_", "protocol"]
                 ]
               }
             }
@@ -8939,11 +8442,7 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "configuration",
-                    "metadata",
-                    "labels"
-                  ],
+                  ["configuration", "metadata", "labels"],
                   [
                     "configuration",
                     "spec",
@@ -9002,11 +8501,7 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "configuration",
-                    "metadata",
-                    "labels"
-                  ],
+                  ["configuration", "metadata", "labels"],
                   [
                     "configuration",
                     "spec",
@@ -9278,16 +8773,8 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatorRef": [
-                  [
-                    "displayName"
-                  ],
-                  [
-                    "configuration",
-                    "spec",
-                    "ports",
-                    "_",
-                    "port"
-                  ]
+                  ["displayName"],
+                  ["configuration", "spec", "ports", "_", "port"]
                 ]
               }
             }
@@ -9394,11 +8881,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -9439,13 +8922,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "ingressClassName"
-                  ]
-                ]
+                "mutatedRef": [["configuration", "spec", "ingressClassName"]]
               }
             }
           ]
@@ -9551,11 +9028,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -9710,11 +9183,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -9872,11 +9341,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -10037,17 +9502,9 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatorRef": [
-                  [
-                    "displayName"
-                  ],
-                  [
-                    "component",
-                    "kind"
-                  ],
-                  [
-                    "component",
-                    "version"
-                  ]
+                  ["displayName"],
+                  ["component", "kind"],
+                  ["component", "version"]
                 ]
               }
             }
@@ -10090,21 +9547,9 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "ownerReferences",
-                    "_",
-                    "name"
-                  ],
-                  [
-                    "ownerReferences",
-                    "_",
-                    "kind"
-                  ],
-                  [
-                    "ownerReferences",
-                    "_",
-                    "apiVersion"
-                  ]
+                  ["ownerReferences", "_", "name"],
+                  ["ownerReferences", "_", "kind"],
+                  ["ownerReferences", "_", "apiVersion"]
                 ]
               }
             }
@@ -10211,12 +9656,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "configuration",
-                    "spec"
-                  ]
-                ]
+                "mutatorRef": [["configuration", "spec"]]
               }
             }
           ],
@@ -10257,14 +9697,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "template",
-                    "spec"
-                  ]
-                ]
+                "mutatedRef": [["configuration", "spec", "template", "spec"]]
               }
             }
           ]
@@ -10370,11 +9803,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -10415,13 +9844,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "priorityClassName"
-                  ]
-                ]
+                "mutatedRef": [["configuration", "spec", "priorityClassName"]]
               }
             }
           ]
@@ -10527,11 +9950,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "namespace"
-                  ]
-                ]
+                "mutatedRef": [["namespace"]]
               }
             }
           ],
@@ -10675,14 +10094,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "selector",
-                    "labels"
-                  ]
-                ]
+                "mutatorRef": [["configuration", "spec", "selector", "labels"]]
               }
             }
           ],
@@ -10724,12 +10136,7 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "selector",
-                    "matchLabels"
-                  ]
+                  ["configuration", "spec", "selector", "matchLabels"]
                 ]
               }
             }
@@ -10836,11 +10243,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -10882,12 +10285,7 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "source",
-                    "persistentVolumeName"
-                  ]
+                  ["configuration", "spec", "source", "persistentVolumeName"]
                 ]
               }
             }
@@ -10994,12 +10392,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "configuration",
-                    "template"
-                  ]
-                ]
+                "mutatorRef": [["configuration", "template"]]
               }
             }
           ],
@@ -11040,13 +10433,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "template"
-                  ]
-                ]
+                "mutatedRef": [["configuration", "spec", "template"]]
               }
             }
           ]
@@ -11152,11 +10539,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -11312,32 +10695,10 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "spec",
-                    "limits",
-                    "_",
-                    "default",
-                    "memory"
-                  ],
-                  [
-                    "spec",
-                    "limits",
-                    "_",
-                    "default",
-                    "cpu"
-                  ],
-                  [
-                    "spec",
-                    "limits",
-                    "defaultRequest",
-                    "memory"
-                  ],
-                  [
-                    "spec",
-                    "limits",
-                    "defaultRequest",
-                    "cpu"
-                  ]
+                  ["spec", "limits", "_", "default", "memory"],
+                  ["spec", "limits", "_", "default", "cpu"],
+                  ["spec", "limits", "defaultRequest", "memory"],
+                  ["spec", "limits", "defaultRequest", "cpu"]
                 ]
               }
             }
@@ -11530,11 +10891,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -11575,13 +10932,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "storageClassName"
-                  ]
-                ]
+                "mutatedRef": [["configuration", "spec", "storageClassName"]]
               }
             }
           ]
@@ -11687,11 +11038,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -11851,11 +11198,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -12015,12 +11358,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "configuration",
-                    "spec"
-                  ]
-                ]
+                "mutatorRef": [["configuration", "spec"]]
               }
             }
           ],
@@ -12061,14 +11399,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "jobTemplate",
-                    "spec"
-                  ]
-                ]
+                "mutatedRef": [["configuration", "spec", "jobTemplate", "spec"]]
               }
             }
           ]
@@ -12174,11 +11505,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -12335,14 +11662,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "selector",
-                    "labels"
-                  ]
-                ]
+                "mutatorRef": [["configuration", "spec", "selector", "labels"]]
               }
             }
           ],
@@ -12384,12 +11704,7 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "selector",
-                    "matchLabels"
-                  ]
+                  ["configuration", "spec", "selector", "matchLabels"]
                 ]
               }
             }
@@ -12496,11 +11811,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -12661,32 +11972,10 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "spec",
-                    "limits",
-                    "_",
-                    "default",
-                    "memory"
-                  ],
-                  [
-                    "spec",
-                    "limits",
-                    "_",
-                    "default",
-                    "cpu"
-                  ],
-                  [
-                    "spec",
-                    "limits",
-                    "defaultRequest",
-                    "memory"
-                  ],
-                  [
-                    "spec",
-                    "limits",
-                    "defaultRequest",
-                    "cpu"
-                  ]
+                  ["spec", "limits", "_", "default", "memory"],
+                  ["spec", "limits", "_", "default", "cpu"],
+                  ["spec", "limits", "defaultRequest", "memory"],
+                  ["spec", "limits", "defaultRequest", "cpu"]
                 ]
               }
             }
@@ -12879,14 +12168,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "selector",
-                    "labels"
-                  ]
-                ]
+                "mutatorRef": [["configuration", "spec", "selector", "labels"]]
               }
             }
           ],
@@ -12928,12 +12210,7 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "selector",
-                    "matchLabels"
-                  ]
+                  ["configuration", "spec", "selector", "matchLabels"]
                 ]
               }
             }
@@ -13040,12 +12317,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "configuration",
-                    "spec"
-                  ]
-                ]
+                "mutatorRef": [["configuration", "spec"]]
               }
             }
           ],
@@ -13086,14 +12358,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "template",
-                    "spec"
-                  ]
-                ]
+                "mutatedRef": [["configuration", "spec", "template", "spec"]]
               }
             }
           ]
@@ -13199,11 +12464,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -13363,11 +12624,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -13525,11 +12782,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -13687,13 +12940,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "configuration",
-                    "metadata",
-                    "namespace"
-                  ]
-                ]
+                "mutatedRef": [["configuration", "metadata", "namespace"]]
               }
             }
           ],
@@ -13734,11 +12981,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ]
@@ -14142,32 +13385,10 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "spec",
-                    "limits",
-                    "_",
-                    "default",
-                    "memory"
-                  ],
-                  [
-                    "spec",
-                    "limits",
-                    "_",
-                    "default",
-                    "cpu"
-                  ],
-                  [
-                    "spec",
-                    "limits",
-                    "defaultRequest",
-                    "memory"
-                  ],
-                  [
-                    "spec",
-                    "limits",
-                    "defaultRequest",
-                    "cpu"
-                  ]
+                  ["spec", "limits", "_", "default", "memory"],
+                  ["spec", "limits", "_", "default", "cpu"],
+                  ["spec", "limits", "defaultRequest", "memory"],
+                  ["spec", "limits", "defaultRequest", "cpu"]
                 ]
               }
             }
@@ -14360,11 +13581,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -14405,13 +13622,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "storageClassName"
-                  ]
-                ]
+                "mutatedRef": [["configuration", "spec", "storageClassName"]]
               }
             }
           ]
@@ -14517,11 +13728,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -14563,13 +13770,7 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "drivers",
-                    "_",
-                    "name"
-                  ]
+                  ["configuration", "spec", "drivers", "_", "name"]
                 ]
               }
             }
@@ -14677,32 +13878,10 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "spec",
-                    "limits",
-                    "_",
-                    "default",
-                    "memory"
-                  ],
-                  [
-                    "spec",
-                    "limits",
-                    "_",
-                    "default",
-                    "cpu"
-                  ],
-                  [
-                    "spec",
-                    "limits",
-                    "defaultRequest",
-                    "memory"
-                  ],
-                  [
-                    "spec",
-                    "limits",
-                    "defaultRequest",
-                    "cpu"
-                  ]
+                  ["spec", "limits", "_", "default", "memory"],
+                  ["spec", "limits", "_", "default", "cpu"],
+                  ["spec", "limits", "defaultRequest", "memory"],
+                  ["spec", "limits", "defaultRequest", "cpu"]
                 ]
               }
             }
@@ -14888,11 +14067,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -15050,11 +14225,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -15213,17 +14384,9 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatorRef": [
-                  [
-                    "component",
-                    "version"
-                  ],
-                  [
-                    "displayName"
-                  ],
-                  [
-                    "component",
-                    "kind"
-                  ]
+                  ["component", "version"],
+                  ["displayName"],
+                  ["component", "kind"]
                 ]
               }
             }
@@ -15266,24 +14429,9 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "scaleTargetRef",
-                    "apiVersion"
-                  ],
-                  [
-                    "configuration",
-                    "spec",
-                    "scaleTargetRef",
-                    "name"
-                  ],
-                  [
-                    "configuration",
-                    "spec",
-                    "scaleTargetRef",
-                    "kind"
-                  ]
+                  ["configuration", "spec", "scaleTargetRef", "apiVersion"],
+                  ["configuration", "spec", "scaleTargetRef", "name"],
+                  ["configuration", "spec", "scaleTargetRef", "kind"]
                 ]
               }
             }
@@ -15390,11 +14538,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -15554,12 +14698,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "configuration",
-                    "template"
-                  ]
-                ]
+                "mutatorRef": [["configuration", "template"]]
               }
             }
           ],
@@ -15600,13 +14739,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "template"
-                  ]
-                ]
+                "mutatedRef": [["configuration", "spec", "template"]]
               }
             }
           ]
@@ -15712,11 +14845,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -15871,11 +15000,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -16030,11 +15155,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -16195,17 +15316,9 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatorRef": [
-                  [
-                    "component",
-                    "version"
-                  ],
-                  [
-                    "displayName"
-                  ],
-                  [
-                    "component",
-                    "kind"
-                  ]
+                  ["component", "version"],
+                  ["displayName"],
+                  ["component", "kind"]
                 ]
               }
             }
@@ -16248,24 +15361,9 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "scaleTargetRef",
-                    "apiVersion"
-                  ],
-                  [
-                    "configuration",
-                    "spec",
-                    "scaleTargetRef",
-                    "name"
-                  ],
-                  [
-                    "configuration",
-                    "spec",
-                    "scaleTargetRef",
-                    "kind"
-                  ]
+                  ["configuration", "spec", "scaleTargetRef", "apiVersion"],
+                  ["configuration", "spec", "scaleTargetRef", "name"],
+                  ["configuration", "spec", "scaleTargetRef", "kind"]
                 ]
               }
             }
@@ -16373,14 +15471,8 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatorRef": [
-                  [
-                    "displayName"
-                  ],
-                  [
-                    "configuration",
-                    "metadata",
-                    "namespace"
-                  ]
+                  ["displayName"],
+                  ["configuration", "metadata", "namespace"]
                 ]
               }
             }
@@ -16435,11 +15527,7 @@
                     "configMapRef",
                     "name"
                   ],
-                  [
-                    "configuration",
-                    "metadata",
-                    "namespace"
-                  ]
+                  ["configuration", "metadata", "namespace"]
                 ]
               }
             }
@@ -16546,11 +15634,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -16711,32 +15795,10 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "spec",
-                    "limits",
-                    "_",
-                    "default",
-                    "memory"
-                  ],
-                  [
-                    "spec",
-                    "limits",
-                    "_",
-                    "default",
-                    "cpu"
-                  ],
-                  [
-                    "spec",
-                    "limits",
-                    "defaultRequest",
-                    "memory"
-                  ],
-                  [
-                    "spec",
-                    "limits",
-                    "defaultRequest",
-                    "cpu"
-                  ]
+                  ["spec", "limits", "_", "default", "memory"],
+                  ["spec", "limits", "_", "default", "cpu"],
+                  ["spec", "limits", "defaultRequest", "memory"],
+                  ["spec", "limits", "defaultRequest", "cpu"]
                 ]
               }
             }
@@ -16929,11 +15991,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -17095,11 +16153,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -17254,11 +16308,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -17417,17 +16467,9 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatorRef": [
-                  [
-                    "displayName"
-                  ],
-                  [
-                    "component",
-                    "kind"
-                  ],
-                  [
-                    "component",
-                    "version"
-                  ]
+                  ["displayName"],
+                  ["component", "kind"],
+                  ["component", "version"]
                 ]
               }
             }
@@ -17470,21 +16512,9 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "ownerReferences",
-                    "_",
-                    "name"
-                  ],
-                  [
-                    "ownerReferences",
-                    "_",
-                    "kind"
-                  ],
-                  [
-                    "ownerReferences",
-                    "_",
-                    "apiVersion"
-                  ]
+                  ["ownerReferences", "_", "name"],
+                  ["ownerReferences", "_", "kind"],
+                  ["ownerReferences", "_", "apiVersion"]
                 ]
               }
             }
@@ -17591,11 +16621,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -17757,12 +16783,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "configuration",
-                    "template"
-                  ]
-                ]
+                "mutatorRef": [["configuration", "template"]]
               }
             }
           ],
@@ -17803,13 +16824,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "template"
-                  ]
-                ]
+                "mutatedRef": [["configuration", "spec", "template"]]
               }
             }
           ]
@@ -17916,32 +16931,10 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "spec",
-                    "limits",
-                    "_",
-                    "default",
-                    "memory"
-                  ],
-                  [
-                    "spec",
-                    "limits",
-                    "_",
-                    "default",
-                    "cpu"
-                  ],
-                  [
-                    "spec",
-                    "limits",
-                    "defaultRequest",
-                    "memory"
-                  ],
-                  [
-                    "spec",
-                    "limits",
-                    "defaultRequest",
-                    "cpu"
-                  ]
+                  ["spec", "limits", "_", "default", "memory"],
+                  ["spec", "limits", "_", "default", "cpu"],
+                  ["spec", "limits", "defaultRequest", "memory"],
+                  ["spec", "limits", "defaultRequest", "cpu"]
                 ]
               }
             }
@@ -18134,11 +17127,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -18180,14 +17169,7 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "volumes",
-                    "_",
-                    "csi",
-                    "driver"
-                  ]
+                  ["configuration", "spec", "volumes", "_", "csi", "driver"]
                 ]
               }
             }
@@ -18294,12 +17276,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "configuration",
-                    "template"
-                  ]
-                ]
+                "mutatorRef": [["configuration", "template"]]
               }
             }
           ],
@@ -18341,13 +17318,7 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "jobTemplate",
-                    "spec",
-                    "template"
-                  ]
+                  ["configuration", "spec", "jobTemplate", "spec", "template"]
                 ]
               }
             }
@@ -18454,12 +17425,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "configuration",
-                    "spec"
-                  ]
-                ]
+                "mutatorRef": [["configuration", "spec"]]
               }
             }
           ],
@@ -18500,14 +17466,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "template",
-                    "spec"
-                  ]
-                ]
+                "mutatedRef": [["configuration", "spec", "template", "spec"]]
               }
             }
           ]
@@ -18614,22 +17573,10 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatorRef": [
-                  [
-                    "displayName"
-                  ],
-                  [
-                    "configuration",
-                    "metadata",
-                    "namespace"
-                  ],
-                  [
-                    "component",
-                    "kind"
-                  ],
-                  [
-                    "component",
-                    "version"
-                  ]
+                  ["displayName"],
+                  ["configuration", "metadata", "namespace"],
+                  ["component", "kind"],
+                  ["component", "version"]
                 ]
               }
             }
@@ -18672,26 +17619,10 @@
               "patch": {
                 "patchStrategy": "replace",
                 "mutatedRef": [
-                  [
-                    "configuration",
-                    "regarding",
-                    "name"
-                  ],
-                  [
-                    "configuration",
-                    "regarding",
-                    "namespace"
-                  ],
-                  [
-                    "configuration",
-                    "regarding",
-                    "kind"
-                  ],
-                  [
-                    "configuration",
-                    "regarding",
-                    "apiVersion"
-                  ]
+                  ["configuration", "regarding", "name"],
+                  ["configuration", "regarding", "namespace"],
+                  ["configuration", "regarding", "kind"],
+                  ["configuration", "regarding", "apiVersion"]
                 ]
               }
             }
@@ -18766,13 +17697,7 @@
               "id": null,
               "kind": "*",
               "match": {
-                "refs": [
-                  [
-                    "configuration",
-                    "metadata",
-                    "labels"
-                  ]
-                ]
+                "refs": [["configuration", "metadata", "labels"]]
               },
               "model": {
                 "category": {
@@ -18812,13 +17737,7 @@
               "id": null,
               "kind": "*",
               "match": {
-                "refs": [
-                  [
-                    "configuration",
-                    "metadata",
-                    "labels"
-                  ]
-                ]
+                "refs": [["configuration", "metadata", "labels"]]
               },
               "model": {
                 "category": {
@@ -19241,11 +18160,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatorRef": [
-                  [
-                    "displayName"
-                  ]
-                ]
+                "mutatorRef": [["displayName"]]
               }
             }
           ],
@@ -19286,14 +18201,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "policies",
-                    "name"
-                  ]
-                ]
+                "mutatedRef": [["configuration", "spec", "policies", "name"]]
               }
             },
             {
@@ -19332,14 +18240,7 @@
               },
               "patch": {
                 "patchStrategy": "replace",
-                "mutatedRef": [
-                  [
-                    "configuration",
-                    "spec",
-                    "policies",
-                    "name"
-                  ]
-                ]
+                "mutatedRef": [["configuration", "spec", "policies", "name"]]
               }
             }
           ]

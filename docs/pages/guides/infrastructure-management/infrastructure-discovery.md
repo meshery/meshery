@@ -33,7 +33,7 @@ Tasks performed during registration:
 
 Meshery Server writes updates from MeshSync to the server database:
 
-Meshery uses the component's Group, Version, Kind to perform the initial tier of fingerprinting. 
+Meshery uses the component's Group, Version, Kind to perform the initial tier of fingerprinting.
 
 ### MeshSync Endpoint
 
@@ -66,7 +66,4 @@ During credential registration, users can assign credentials to one or more conn
 
 The benefit of normalizing and extracting the status of a component as a direct property of the connection is to allow different systems to connect to the same component with different states. For example, multiple Meshery servers can connect to the same Kubernetes cluster, each having its own individual connection with a unique status.
 
-Now that you are familiar with MeshSync and its powerful features, you are ready to streamline your Kubernetes cluster management. 
-
-
-
+Now that you are familiar with MeshSync and its powerful features, you are ready to streamline your Kubernetes cluster management.

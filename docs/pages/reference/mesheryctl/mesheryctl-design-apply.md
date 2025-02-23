@@ -17,30 +17,33 @@ Apply design file
 ## Synopsis
 
 Apply design will trigger deploy of the design file
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design apply [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 apply a design file
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design apply -f [file | URL]
 
 </div>
-</pre> 
+</pre>
 
 deploy a saved design
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design apply [design-name]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

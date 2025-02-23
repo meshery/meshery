@@ -7,9 +7,10 @@ abstract: "Meshery Connections are managed and unmanaged resources that either t
 language: en
 list: include
 redirect_from:
-- concepts/connections
+  - concepts/connections
 ---
-Meshery Connections are managed and unmanaged resources that either through discovery or manual entry are tracked by Meshery. Connections can be assigned as resources to an Environment. 
+
+Meshery Connections are managed and unmanaged resources that either through discovery or manual entry are tracked by Meshery. Connections can be assigned as resources to an Environment.
 
 {% include alert.html type="info" title="Connections as resources in Environments" content="Meshery Environments allow you to logically group related <a href='/concepts/logical/connections'>Connections</a> and their associated <a href='/concepts/logical/credentials'>Credentials</a>. Environments make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis." %}
 

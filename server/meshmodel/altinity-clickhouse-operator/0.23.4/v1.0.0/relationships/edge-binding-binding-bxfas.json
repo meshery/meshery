@@ -96,29 +96,14 @@
                 {
                   "id": null,
                   "kind": "ClickHouseInstallation",
-                  "mutatedRef": [
-                    [
-                      "spec",
-                      "zookeeper",
-                      "nodes",
-                      "_",
-                      "host"
-                    ]
-                  ]
+                  "mutatedRef": [["spec", "zookeeper", "nodes", "_", "host"]]
                 }
               ],
               "to": [
                 {
                   "id": null,
                   "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "status",
-                      "endpoints",
-                      "_",
-                      "host"
-                    ]
-                  ]
+                  "mutatorRef": [["status", "endpoints", "_", "host"]]
                 }
               ]
             },

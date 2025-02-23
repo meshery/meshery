@@ -17,30 +17,33 @@ Create a new context (a named Meshery deployment)
 ## Synopsis
 
 Add a new context to Meshery config.yaml file
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context create context-name [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Create new context
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context create [context-name]
 
 </div>
-</pre> 
+</pre>
 
 Create new context and provide list of components, platform & URL
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context create context-name --components meshery-nsm --platform docker --url http://localhost:9081 --set --yes
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

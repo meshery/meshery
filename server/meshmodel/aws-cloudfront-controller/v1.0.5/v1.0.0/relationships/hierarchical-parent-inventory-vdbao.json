@@ -86,18 +86,9 @@
             },
             "patch": {
               "mutatorRef": [
-                [
-                  "displayName"
-                ],
-                [
-                  "configuration",
-                  "metadata",
-                  "namespace"
-                ],
-                [
-                  "component",
-                  "kind"
-                ]
+                ["displayName"],
+                ["configuration", "metadata", "namespace"],
+                ["component", "kind"]
               ]
             }
           }
@@ -141,27 +132,9 @@
             },
             "patch": {
               "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "from",
-                  "resource",
-                  "name"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "from",
-                  "resource",
-                  "namespace"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "from",
-                  "resource",
-                  "type"
-                ]
+                ["configuration", "spec", "from", "resource", "name"],
+                ["configuration", "spec", "from", "resource", "namespace"],
+                ["configuration", "spec", "from", "resource", "type"]
               ]
             }
           }

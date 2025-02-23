@@ -52,9 +52,7 @@
             "id": null,
             "kind": "Resiliency",
             "match": {
-              "refs": [
-                []
-              ]
+              "refs": [[]]
             },
             "model": {
               "category": {
@@ -94,9 +92,7 @@
             "id": null,
             "kind": "Subscription",
             "match": {
-              "refs": [
-                []
-              ]
+              "refs": [[]]
             },
             "model": {
               "category": {
@@ -136,9 +132,7 @@
             "id": null,
             "kind": "Configuration",
             "match": {
-              "refs": [
-                []
-              ]
+              "refs": [[]]
             },
             "model": {
               "category": {
@@ -180,9 +174,7 @@
             "id": null,
             "kind": "Component",
             "match": {
-              "refs": [
-                []
-              ]
+              "refs": [[]]
             },
             "model": {
               "category": {

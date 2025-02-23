@@ -1,4 +1,4 @@
-Name: Akash Babu Kushwah 
+Name: Akash Babu Kushwah
 
 GitHub: "https://github.com/akashk6697"
 

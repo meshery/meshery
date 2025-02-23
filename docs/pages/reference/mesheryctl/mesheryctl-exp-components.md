@@ -17,30 +17,33 @@ View list of components and detail of components
 ## Synopsis
 
 View list of components and detailed information of a specific component
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp components [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 To view list of components
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp components list
 
 </div>
-</pre> 
+</pre>
 
 To view a specific component
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp components view [component-name]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

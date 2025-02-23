@@ -17,30 +17,33 @@ List registered environments
 ## Synopsis
 
 List name of all registered environments
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl environment list [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 List all registered environment
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl environment list --orgID [orgId]
 
 </div>
-</pre> 
+</pre>
 
 Documentation for environment can be found at:
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 https://docs.meshery.io/concepts/logical/environments
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

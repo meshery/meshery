@@ -87,14 +87,7 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "template",
-                  "spec",
-                  "containers",
-                  "_"
-                ]
+                ["configuration", "spec", "template", "spec", "containers", "_"]
               ]
             }
           }
@@ -139,14 +132,7 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "template",
-                  "spec",
-                  "containers",
-                  "_"
-                ]
+                ["configuration", "spec", "template", "spec", "containers", "_"]
               ]
             }
           }

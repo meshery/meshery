@@ -17,30 +17,33 @@ Configure Meshery to use AKS cluster
 ## Synopsis
 
 Configure Meshery to connect to AKS cluster
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system config aks [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Configure Meshery to connect to AKS cluster using auth token
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system config aks --token auth.json
 
 </div>
-</pre> 
+</pre>
 
 Configure Meshery to connect to AKS cluster (if session is logged in using login subcommand)
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system config aks
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

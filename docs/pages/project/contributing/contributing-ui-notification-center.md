@@ -29,7 +29,7 @@ The `NotificationCenter` component of Meshery UI Switching to Graphql subscripti
   - Search is also included.
 - Proper hierarchial presentation of error details, including probable cause and suggested remeditation.
 - Support for notification status (notifications can be marked as read and unread)
-  - *Future: Notifications can be acknowledged or resolved.*
+  - _Future: Notifications can be acknowledged or resolved._
 - Event-based notification via Graphql subscription (provided by Meshery Server and any upstream components or externally managed systems, like Kubernetes)
 - Infinite scroll for pagination.
 
@@ -61,8 +61,8 @@ The state for filtering is managed by a state machine created using a reducer. `
 The `TypingFilter` component is designed to provide an interactive filtering experience in your application. Here's how you can use it:
 
 ```javascript
-import React from 'react';
-import TypingFilter from './path-to-TypingFilter';
+import React from "react";
+import TypingFilter from "./path-to-TypingFilter";
 
 function MyComponent() {
   // Define a filter schema that describes the available filter options.
@@ -73,7 +73,7 @@ function MyComponent() {
       value: "severity",
       description: "Filter by severity",
       values: ["Low", "Medium", "High"],
-      multiple : true // default
+      multiple: true, // default
     },
     // Add more filter categories as needed
   };
@@ -104,13 +104,13 @@ export default MyComponent;
 The `TypingFilter` component accepts the following props:
 
 - `filterSchema` (object, required): An object that defines available filter options. Each property of this object represents a filter category with the following properties:
+
   - `value` (string, required): The filter name used for filtering within the category.
   - `description` (string, required): Description of the filter category.
   - `type` (string, optional): The data type of the filter (e.g., "string", "number").
   - `values` (array, optional): Possible values for the filter.
 
 - `handleFilter` (function, required): A callback function that is called when the user applies a filter. This function receives the filtered data as an argument.
-
 
 ## Finite State Machine (FSM) for `TypingFilter` Component
 
@@ -131,6 +131,7 @@ The FSM code defines three sets of constants to represent important elements wit
 #### 1. `FILTERING_STATE`
 
 Defines the possible states that the `TypingFilter` component can be in. These states include:
+
 - `IDLE`: Represents the initial state when the component is not actively filtering.
 - `SELECTING_FILTER`: Indicates that the user is selecting a filter.
 - `SELECTING_VALUE`: Indicates that the user is entering a filter value.
@@ -138,6 +139,7 @@ Defines the possible states that the `TypingFilter` component can be in. These s
 #### 2. `FILTER_EVENTS`
 
 Represents the events that trigger state transitions within the FSM. Some of the events include:
+
 - `START`: Initiates the filtering process.
 - `SELECT`: Indicates the selection of a filter.
 - `INPUT_CHANGE`: Represents a change in the filter input.
@@ -147,6 +149,7 @@ Represents the events that trigger state transitions within the FSM. Some of the
 #### 3. `Delimiter`
 
 Defines delimiters used to separate filter and value entries within the component. Delimiters include:
+
 - `FILTER`: Separates multiple filters.
 - `FILTER_VALUE`: Separates filters from their corresponding values.
 
@@ -190,7 +193,6 @@ To ensure a seamless user experience with bulk operations in the Notification Ce
 - Implement error handling to gracefully handle any issues that may arise during the operation and communicate errors to the user.
 - Consider offering a confirmation dialog before initiating a bulk operation to prevent accidental actions.
 
-
 ## Metadata Formatter
 
 When an event is received from the server, it adheres to a fixed schema containing information that is valuable for presentation to the user. This information typically includes details such as the description, date, user_id, system_id, action, and acted-upon resources. Additionally, sometimes there may be a detailed traceback, a summary, or a comprehensive error log, all of which are dynamically generated data encapsulated within the metadata of the event. Presenting this structured data in a user-friendly manner is a crucial task because it contains valuable insights into ongoing operations.
@@ -199,23 +201,27 @@ To accomplish this task, we employ metadata formatters that transform structured
 
 1. **Metadata Specific Formatters:** These formatters are specifically designed for particular types of metadata, such as Error and DryRunResponse. Metadata Specific Formatters are implemented as React components that take the metadata as input and render it within the component.
 2. **Dynamic Formatter:** Since metadata can vary significantly in structure, it is not practical to create a specific formatter for each kind. Dynamic formatters analyze the schema's structure and apply custom-defined rules for formatting:
-     - Text strings are rendered using the BodySectionRenderer (more on this later).
-     - Arrays are rendered using the ArrayRenderer.
-     - Key-value pairs are rendered using the KeyValueRenderer.
-     - Nested objects are recursively rendered.
+   - Text strings are rendered using the BodySectionRenderer (more on this later).
+   - Arrays are rendered using the ArrayRenderer.
+   - Key-value pairs are rendered using the KeyValueRenderer.
+   - Nested objects are recursively rendered.
 
 ### BodySectionRenderer
+
 The BodySectionRenderer is responsible for formatting and rendering raw text strings into React components. During this process, it parses the string to replace external links with `<Link>` components and checks if the link matches predefined sites to render the link accordingly.
 
 ### ArrayRenderer
+
 The ArrayRenderer is responsible for rendering an array of items in a recursive manner, presenting them as a bulletized list using the MetdataFormatter.
 
 ### KeyValueRenderer
+
 Object properties with string values are considered key-value pairs and are rendered as such.
 
 ### The Metadata Specific Formatter
+
 Certain metadata, such as Kubernetes responses and Errors, hold high importance and have dedicated renderers. These dedicated renderers can still utilize the dynamic formatter to format specific parts of the response, such as DryRunResponse.
 
 ### Reusability
-While this system was initially developed for our events and notification center, the components it comprises are highly reusable and can be employed in other contexts where dynamic formatting of structured data is required.
 
+While this system was initially developed for our events and notification center, the components it comprises are highly reusable and can be employed in other contexts where dynamic formatting of structured data is required.

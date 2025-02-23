@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from 'react';
 const PatternConfigureIcon = ({ height = '24', width = '24', fill = 'currentColor', ...props }) => (
   <svg
     id="Capa_1"
@@ -13,11 +13,11 @@ const PatternConfigureIcon = ({ height = '24', width = '24', fill = 'currentColo
     <defs>
       <style>
         {
-          ".cls-1{fill:fill;}.cls-2{fill:fill;}.cls-3{fill:white;stroke:none;stroke-miterlimit:10;stroke-width:10px;}.cls-4{fill:fill;}"
+          '.cls-1{fill:fill;}.cls-2{fill:fill;}.cls-3{fill:white;stroke:none;stroke-miterlimit:10;stroke-width:10px;}.cls-4{fill:fill;}'
         }
       </style>
     </defs>
-    <title>{"pattern-configure-color"}</title>
+    <title>{'pattern-configure-color'}</title>
     <path
       className="cls-1"
       d="M337.18,102.41c10,12.47,17.31,26.45,22.92,41.3,7.23,19.15,10.52,39.07,6.4,59.27-5.55,27.11-21.4,46.2-47.92,55.38-10.3,3.56-21,5-31.64.54a14.45,14.45,0,0,1-4.07-2.22,26.72,26.72,0,0,1-6.73,17.12,16,16,0,0,1,4.37-1.25c1.47-.27,2.95-.48,4.44-.61,14.19-1.17,27.85-4.17,40.82-10.37,20-9.59,36.76-23.25,51-40.14A137.44,137.44,0,0,0,397,190.08a173.76,173.76,0,0,0,14.29-52.66c1.83-15.69,1.34-31.08-.23-46.62-.38-3.75-2-5.3-5.37-5.9-8.67-1.54-17.34-3.27-25.85-5.34-22.28-5.41-44.74-10-67.06-15.16-7.94-1.85-15.92-3.52-23.87-5.28,5.84,5.57,12.11,10.15,18.18,15C317.88,82.7,328.5,91.53,337.18,102.41Z"
@@ -57,4 +57,4 @@ const PatternConfigureIcon = ({ height = '24', width = '24', fill = 'currentColo
     />
   </svg>
 );
-export default PatternConfigureIcon
+export default PatternConfigureIcon;

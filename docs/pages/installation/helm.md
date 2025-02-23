@@ -5,12 +5,13 @@ permalink: installation/kubernetes/helm
 type: installation
 category: kubernetes
 redirect_from:
-- installation/platforms/helm
+  - installation/platforms/helm
 display-title: "false"
 language: en
 list: include
 abstract: Install Meshery on Kubernetes using Helm. Deploy Meshery in Kubernetes in-cluster.
 ---
+
 # Install Meshery on Kubernetes Using Helm
 
 <div class="prereqs"><h4>Prerequisites</h4>

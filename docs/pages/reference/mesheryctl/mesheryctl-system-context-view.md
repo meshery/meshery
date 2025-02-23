@@ -17,46 +17,51 @@ view current context
 ## Synopsis
 
 Display active Meshery context
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context view [context-name | --context context-name| --all] --flags [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 View default context
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context view
 
 </div>
-</pre> 
+</pre>
 
 View specified context
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context view context-name
 
 </div>
-</pre> 
+</pre>
 
 View specified context with context flag
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context view --context context-name
 
 </div>
-</pre> 
+</pre>
 
 View config of all contexts
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context view --all
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

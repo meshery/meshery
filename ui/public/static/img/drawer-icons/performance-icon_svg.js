@@ -1,5 +1,5 @@
 const cls1 = { opacity: 0.4 };
-const cls2 = { fill: "#fff" };
+const cls2 = { fill: '#fff' };
 const cls3 = { opacity: 0.8 };
 const cls4 = { opacity: 0.2 };
 const cls5 = { opacity: 0.6 };
@@ -17,7 +17,10 @@ const Performance = ({ fill, className, ...rest }) => (
     <title>smp-white</title>
     <g id="Gauge-4" data-name="Gauge">
       <g style={cls1}>
-        <path style={cls2} d="M123.07,73.31a284,284,0,0,1,31.8-14.4l-2.7-13.3a324.4,324.4,0,0,0-33.5,19Z" />
+        <path
+          style={cls2}
+          d="M123.07,73.31a284,284,0,0,1,31.8-14.4l-2.7-13.3a324.4,324.4,0,0,0-33.5,19Z"
+        />
       </g>
       <g style={cls3}>
         <path
@@ -61,7 +64,10 @@ const Performance = ({ fill, className, ...rest }) => (
         />
       </g>
       <g style={cls5}>
-        <path style={cls2} d="M161.37,56.41a272.38,272.38,0,0,1,33.5-9.4L196,28a300.05,300.05,0,0,0-37.3,14.5Z" />
+        <path
+          style={cls2}
+          d="M161.37,56.41a272.38,272.38,0,0,1,33.5-9.4L196,28a300.05,300.05,0,0,0-37.3,14.5Z"
+        />
       </g>
     </g>
     <g id="Needle" style={cls3}>

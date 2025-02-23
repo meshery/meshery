@@ -5,23 +5,24 @@ subtitle: Collaborative and visual infrastructure as design for Slack Operator
 image: /assets/img/integrations/slack-operator/icons/color/slack-operator-color.svg
 permalink: extensibility/integrations/slack-operator
 docURL: https://docs.meshery.io/extensibility/integrations/slack-operator
-description: 
+description:
 integrations-category: Tools
 integrations-subcategory: Uncategorized
 registrant: Artifact Hub
-components: 
-- name: channel
-  colorIcon: assets/img/integrations/slack-operator/components/channel/icons/color/channel-color.svg
-  whiteIcon: assets/img/integrations/slack-operator/components/channel/icons/white/channel-white.svg
-  description: 
+components:
+  - name: channel
+    colorIcon: assets/img/integrations/slack-operator/components/channel/icons/color/channel-color.svg
+    whiteIcon: assets/img/integrations/slack-operator/components/channel/icons/white/channel-white.svg
+    description:
 components-count: 1
-relationships: 
+relationships:
 relationship-count: 0
-featureList: [
-  "Automates Slack notification sending",
-  "Customizable notification templates",
-  "Integrates with Kubernetes events"
-]
+featureList:
+  [
+    "Automates Slack notification sending",
+    "Customizable notification templates",
+    "Integrates with Kubernetes events",
+  ]
 howItWorks: "Integrates Slack notifications"
 howItWorksDetails: "Improved incident response and communication within Kubernetes"
 language: en

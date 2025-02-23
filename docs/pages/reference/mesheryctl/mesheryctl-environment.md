@@ -17,38 +17,42 @@ View list of environments and detail of environments
 ## Synopsis
 
 View list of environments and detailed information of a specific environments
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl environment [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 To view a list environments
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl environment list --orgID [orgId]
 
 </div>
-</pre> 
+</pre>
 
 To create a environment
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl environment create --orgID [orgId] --name [name] --description [description]
 
 </div>
-</pre> 
+</pre>
 
 Documentation for environment can be found at:
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 https://docs.meshery.io/concepts/logical/environments
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -71,9 +75,9 @@ https://docs.meshery.io/concepts/logical/environments
 
 ## See Also
 
-* [mesheryctl environment create](/reference/mesheryctl/environment/create)
-* [mesheryctl environment delete](/reference/mesheryctl/environment/delete)
-* [mesheryctl environment list](/reference/mesheryctl/environment/list)
-* [mesheryctl environment view](/reference/mesheryctl/environment/view)
+- [mesheryctl environment create](/reference/mesheryctl/environment/create)
+- [mesheryctl environment delete](/reference/mesheryctl/environment/delete)
+- [mesheryctl environment list](/reference/mesheryctl/environment/list)
+- [mesheryctl environment view](/reference/mesheryctl/environment/view)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

@@ -86,11 +86,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "namespace"
-                ]
-              ]
+              "mutatedRef": [["namespace"]]
             }
           }
         ],

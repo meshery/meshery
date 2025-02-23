@@ -5,7 +5,7 @@ permalink: installation/kubernetes/eks
 type: installation
 category: kubernetes
 redirect_from:
-- installation/platforms/eks
+  - installation/platforms/eks
 display-title: "false"
 language: en
 list: include
@@ -48,12 +48,12 @@ Follow the steps below to install Meshery in your EKS cluster.
 1. Verify your connection to an Elastic Kubernetes Services Cluster using AWS CLI.
 1. Login to AWS account using [aws configure](https://docs.aws.amazon.com/cli/latest/userguide/cli-authentication-user.html), if you are using a different method of authentication in AWS, please refer to AWS documentation.
 1. After successful login, set the cluster context.
-{% capture code_content %}aws eks update-kubeconfig --name [YOUR_CLUSTER_NAME] --region [YOUR_REGION]{% endcapture %}
-{% include code.html code=code_content %}
+   {% capture code_content %}aws eks update-kubeconfig --name [YOUR_CLUSTER_NAME] --region [YOUR_REGION]{% endcapture %}
+   {% include code.html code=code_content %}
 1. _Optional:_ If you are using `eksctl`, follow the [AWS documentation steps](https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html).
 1. Verify your kubeconfig's current context.
-{% capture code_content %}kubectl config current-context{% endcapture %}
-{% include code.html code=code_content %}
+   {% capture code_content %}kubectl config current-context{% endcapture %}
+   {% include code.html code=code_content %}
 
 ## Installation: Using `mesheryctl`
 

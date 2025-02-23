@@ -7,8 +7,9 @@ abstract: "Meshery Components identify and characterize infrastructure under man
 language: en
 list: include
 redirect_from:
-- concepts/components
+  - concepts/components
 ---
+
 In Meshery, a **Component** is a fundamental building block used to represent and define the infrastructure under management. Each component provides granular and specific support for your infrastructure and applications. Each component represents a distinct capability or feature, like a specific service, protocol, or configuration element. Components can be semantically meaningful (orchestratable) or non-semantically meaningful (an annotation).
 
 ## Components as building blocks
@@ -54,7 +55,7 @@ Components having the same `kind`, `apiVersion` and `model.name` attributes are 
 
 <!-- [![Meshery Components]({{ site.baseurl }}/assets/img/architecture/meshery-components.svg
 )]({{ site.baseurl }}/assets/img/architecture/meshery-components.svg) -->
-<!-- 
+<!--
  @leecalcote - This is mumbo jumbo to users and needs to be re-written.
 
  ## Component Status

@@ -86,12 +86,7 @@
             },
             "patch": {
               "patchStrategy": "merge",
-              "mutatorRef": [
-                [
-                  "spec",
-                  "exportSource"
-                ]
-              ]
+              "mutatorRef": [["spec", "exportSource"]]
             }
           }
         ],
@@ -134,12 +129,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "status",
-                  "resourceState"
-                ]
-              ]
+              "mutatedRef": [["status", "resourceState"]]
             }
           }
         ]

@@ -54,9 +54,7 @@
     {
       "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
       "displayName": "Performance Test",
-      "entityState": [
-        "instance"
-      ],
+      "entityState": ["instance"],
       "key": "",
       "kind": "action",
       "metadata": null,
@@ -69,9 +67,7 @@
     {
       "description": "Configure the workload specific setting of a component",
       "displayName": "Workload Configuration",
-      "entityState": [
-        "declaration"
-      ],
+      "entityState": ["declaration"],
       "key": "",
       "kind": "mutate",
       "metadata": null,
@@ -84,9 +80,7 @@
     {
       "description": "Configure Labels And Annotations for  the component ",
       "displayName": "Labels and Annotations Configuration",
-      "entityState": [
-        "declaration"
-      ],
+      "entityState": ["declaration"],
       "key": "",
       "kind": "mutate",
       "metadata": null,
@@ -99,10 +93,7 @@
     {
       "description": "View relationships for the component",
       "displayName": "Relationships",
-      "entityState": [
-        "declaration",
-        "instance"
-      ],
+      "entityState": ["declaration", "instance"],
       "key": "",
       "kind": "view",
       "metadata": null,
@@ -115,10 +106,7 @@
     {
       "description": "View Component Definition ",
       "displayName": "Json Schema",
-      "entityState": [
-        "declaration",
-        "instance"
-      ],
+      "entityState": ["declaration", "instance"],
       "key": "",
       "kind": "view",
       "metadata": null,
@@ -131,9 +119,7 @@
     {
       "description": "Configure the visual styles for the component",
       "displayName": "Styling",
-      "entityState": [
-        "declaration"
-      ],
+      "entityState": ["declaration"],
       "key": "",
       "kind": "mutate",
       "metadata": null,
@@ -146,9 +132,7 @@
     {
       "description": "Change the shape of the component",
       "displayName": "Change Shape",
-      "entityState": [
-        "declaration"
-      ],
+      "entityState": ["declaration"],
       "key": "",
       "kind": "mutate",
       "metadata": null,
@@ -161,9 +145,7 @@
     {
       "description": "Drag and Drop a component into a parent component in graph view",
       "displayName": "Compound Drag And Drop",
-      "entityState": [
-        "declaration"
-      ],
+      "entityState": ["declaration"],
       "key": "",
       "kind": "interaction",
       "metadata": null,

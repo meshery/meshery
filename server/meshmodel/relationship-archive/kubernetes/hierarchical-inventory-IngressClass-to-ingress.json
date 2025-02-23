@@ -39,11 +39,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "displayName"
-                ]
-              ],
+              "mutatorRef": [["displayName"]],
               "description": "IngressClass is a resource to specify class for Ingress to be used by the IngressController."
             }
           }
@@ -59,13 +55,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "ingressClassName"
-                ]
-              ],
+              "mutatedRef": [["configuration", "spec", "ingressClassName"]],
               "description": "Ingress is a collection of rules that allow inbound connections to reach the services. IngressClass configures the class of Ingress resource which is then used by the Ingress Controller."
             }
           }

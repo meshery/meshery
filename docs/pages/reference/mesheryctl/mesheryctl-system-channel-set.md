@@ -17,22 +17,24 @@ set release channel and version
 ## Synopsis
 
 Set release channel and version of context in focus
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system channel set [stable|stable-version|edge|edge-version] [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Subscribe to release channel or version
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system channel set [stable|stable-version|edge|edge-version]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

@@ -10,7 +10,8 @@ suggested-reading: false
 language: en
 list: exclude
 ---
-<!-- PROJECT 
+
+<!-- PROJECT
 {% assign project = site.pages | sort: "name" | alphabetical %}
 <ul>
   {% for item in project %}
@@ -21,7 +22,7 @@ list: exclude
   {% endfor %}
 </ul>
 -->
-<!-- CONTRIBUTING 
+<!-- CONTRIBUTING
 <details>
   <summary>
     <p style="display:inline">

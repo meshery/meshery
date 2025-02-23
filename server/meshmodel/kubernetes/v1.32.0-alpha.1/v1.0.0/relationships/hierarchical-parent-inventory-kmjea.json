@@ -86,13 +86,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "metadata",
-                  "namespace"
-                ]
-              ]
+              "mutatedRef": [["configuration", "metadata", "namespace"]]
             }
           }
         ],
@@ -135,11 +129,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "displayName"
-                ]
-              ]
+              "mutatorRef": [["displayName"]]
             }
           }
         ]

@@ -17,30 +17,33 @@ Manage Meshery connections
 ## Synopsis
 
 View and manage your Meshery connections
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp connections [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 List all the connections
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp connections list
 
 </div>
-</pre> 
+</pre>
 
 Delete a connection
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp connections delete [connection_id]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -63,7 +66,7 @@ mesheryctl exp connections delete [connection_id]
 
 ## See Also
 
-* [mesheryctl exp connections delete](/reference/mesheryctl/exp/connections/delete)
-* [mesheryctl exp connections list](/reference/mesheryctl/exp/connections/list)
+- [mesheryctl exp connections delete](/reference/mesheryctl/exp/connections/delete)
+- [mesheryctl exp connections list](/reference/mesheryctl/exp/connections/list)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

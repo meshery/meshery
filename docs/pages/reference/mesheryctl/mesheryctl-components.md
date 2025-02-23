@@ -17,46 +17,51 @@ View list of components and detail of components
 ## Synopsis
 
 View list of components and detailed information of a specific component
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl components [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 To view total of available components
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model --count
 
 </div>
-</pre> 
+</pre>
 
 To view list of components
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl components list
 
 </div>
-</pre> 
+</pre>
 
 To view a specific component
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl components view [component-name]
 
 </div>
-</pre> 
+</pre>
 
 To search for a specific component
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl components search [component-name]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -80,8 +85,8 @@ mesheryctl components search [component-name]
 
 ## See Also
 
-* [mesheryctl components list](/reference/mesheryctl/components/list)
-* [mesheryctl components search](/reference/mesheryctl/components/search)
-* [mesheryctl components view](/reference/mesheryctl/components/view)
+- [mesheryctl components list](/reference/mesheryctl/components/list)
+- [mesheryctl components search](/reference/mesheryctl/components/search)
+- [mesheryctl components view](/reference/mesheryctl/components/view)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

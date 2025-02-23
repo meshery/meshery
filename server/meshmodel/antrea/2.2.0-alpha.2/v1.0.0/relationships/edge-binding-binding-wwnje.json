@@ -96,26 +96,14 @@
                 {
                   "id": null,
                   "kind": "Egress",
-                  "mutatedRef": [
-                    [
-                      "spec",
-                      "appliedTo",
-                      "_",
-                      "group"
-                    ]
-                  ]
+                  "mutatedRef": [["spec", "appliedTo", "_", "group"]]
                 }
               ],
               "to": [
                 {
                   "id": null,
                   "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "metadata",
-                      "name"
-                    ]
-                  ]
+                  "mutatorRef": [["metadata", "name"]]
                 }
               ]
             },

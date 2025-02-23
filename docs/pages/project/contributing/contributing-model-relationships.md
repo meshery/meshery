@@ -19,13 +19,9 @@ list: include
 1. [Relationship Identification](#relationship-identification)
 2. [Relationship Classification](#relationship-visualizations)
 
-**Development:**
-3. [Relationship Definition](#relationship-definitions)
-4. [Relationship Scopes](#relationship-scopes)
+**Development:** 3. [Relationship Definition](#relationship-definitions) 4. [Relationship Scopes](#relationship-scopes)
 
-**Postwork:**
-5. [Relationship Testing](#relationship-testing)
-6. [Relationship Contribution](#relationship-contribution)
+**Postwork:** 5. [Relationship Testing](#relationship-testing) 6. [Relationship Contribution](#relationship-contribution)
 
 ## Prework
 
@@ -65,9 +61,10 @@ For example, you might know that a Kubernetes `Service` can have a network-based
    }]
 
 </code></pre>
+
 </details>
 
-You might *also* know that this relationship is constrained by the presence of a Kubernetes `Deployment` as the parent of the Kubernetes `Pod`. This constraint would be codified in the relationship definition by including the <code>deny</code> function in your selector.
+You might _also_ know that this relationship is constrained by the presence of a Kubernetes `Deployment` as the parent of the Kubernetes `Pod`. This constraint would be codified in the relationship definition by including the <code>deny</code> function in your selector.
 
 <details close>
 <summary>Example Relationship with Constraints</summary>
@@ -144,13 +141,13 @@ Once selected, note the relationship's `kind`, `type`, and `subtype` of your sel
 
 ### 3. Create a Relationship Definition as a JSON file
 
-Create a relationship definition as a JSON file, placing this new definition file into its respective model folder (see [Contributing to Models](./contributing-models)). Relationship definition files are commonly named  `relationships.yaml` as a convention, however, this name is not required. A model may include any number of relationship definitions. Include the following attributes in your relationship definition:
+Create a relationship definition as a JSON file, placing this new definition file into its respective model folder (see [Contributing to Models](./contributing-models)). Relationship definition files are commonly named `relationships.yaml` as a convention, however, this name is not required. A model may include any number of relationship definitions. Include the following attributes in your relationship definition:
 
 - `kind`: The genre of relationship (e.g., hierarchical, edge, sibling).
 - `type`: The augmentative category of the relationship (e.g., binding, non-binding, inventory).
 - `subType`: The specific representative visual paradigm (e.g., parent, mount, network, wallet, badge).
 - `selectors`: The scope of the relationship, including the components involved and any constraints. Selector specify to which component(s) the relationship applies or does not apply (think of in terms of the `AND` operators in a query). Selector Sets are used to combine multiple selectors for more granular control over the logic used when matchmaking (establishing a relationship) between components (think of in terms of the `OR` operators in a query).
-- `evaluationQuery`: Name of the policy or policies (Open Policy Agent rego file(s)) to invoke for relationship evaluation. Identify an existing OPA policy as the `evaluationQuery` suitable to the relationship. If no policy exists, propose a new policy (rego). *(rarely necessary)* Create a new policy for the evaluation of your relationship using Rego. *This step is only necessary and can typically be skipped. Contact a maintainer if the relationship requires a new policy to evaluate the relationship.*
+- `evaluationQuery`: Name of the policy or policies (Open Policy Agent rego file(s)) to invoke for relationship evaluation. Identify an existing OPA policy as the `evaluationQuery` suitable to the relationship. If no policy exists, propose a new policy (rego). _(rarely necessary)_ Create a new policy for the evaluation of your relationship using Rego. _This step is only necessary and can typically be skipped. Contact a maintainer if the relationship requires a new policy to evaluate the relationship._
 - `description`: A characterization of the relationship, its purpose, and any constraints or considerations of its application.
 
 {% include alert.html title="Use Existing Relationships as Examples" type="info" content="Browse the <a href='https://github.com/meshery/meshery/tree/master/server/meshmodel'>existing relationships in the Meshery repository</a> to find examples of how to existing relationships, using them as a template. Alternatively, you can review a prior pull request as an example as well, for example <a href='https://github.com/meshery/meshery/pull/9880/files'>PR #9880</a>." %}
@@ -159,7 +156,7 @@ Create a relationship definition as a JSON file, placing this new definition fil
 
 ### 4. Configuring the Scope of Relationships
 
-The extent to which a relationship affects components within a model or beyond a model is defined and controlled using scopes. Scopes exist at two levels in Meshery relationships. 
+The extent to which a relationship affects components within a model or beyond a model is defined and controlled using scopes. Scopes exist at two levels in Meshery relationships.
 
 #### Global Scope
 
@@ -181,118 +178,118 @@ Only the components within the same selector relate to each other via 1:many kin
 
 When defining relationships that involve a large number of combinations between `from` and `to`, selectors sets provide a mechanism to organize and manage these relationships. This prevents the need for crafting complex deny attributes and facilitates easier maintenance. Use of selector sets enhances flexibility and reusability in the definition and configuration of relationships among components.
 
-*Note: When defining Hierarchical relationships, remember that the `from` field represents the child component, while the `to` field represents the parent component.*
+_Note: When defining Hierarchical relationships, remember that the `from` field represents the child component, while the `to` field represents the parent component._
 
 <details close>
 <summary>Relationship Selector Example</summary>
 
 {% highlight yaml %}
 selector: [
-   {
-      "allow": {
-         "from": [
-            {
-               "kind": "WASMFilter",
-               "model": "istio-base",
-               "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                     [
-                        "settings",
-                        "config"
-                     ],
-                     [
-                        "settings",
-                        "wasm-filter"
-                     ]
-                  ],
-                  "description": "WASM filter configuration to be applied to Envoy Filter."
-               }
-            },
-            {
-               "kind": "EBPFFilter",
-   .....
-            }
-         ],
-         "to": [
-            {
-               "kind": "EnvoyFilter",
-               "model": "istio-base",
-               "patch": {
-                  "patchStrategy": "replace",
-                  "mutatedRef": [
-                     [
-                        "settings",
-                        "configPatches",
-                        "_",
-                        "patch",
-                        "value"
-                     ]
-                  ],
-                  "description": "Receive the WASM filter configuration."
-               }
-            },
-            {
-               "kind": "WASMPlugin",
-   ....
-            }
-   ...
-         ]
-      },
-      "deny": {
-   ...
-      }
-   },
-   {
-      "allow": {
-         "from": [
-            {
-               "kind": "ConfigMap",
-               "model": "kubernetes",
-               "patch": {
-                  "patchStrategy": "replace",
-                  "mutatorRef": [
-                     [
-                        "name"
-                     ]
-                  ],
-                  "description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
-               }
-            }
-         ],
-         "to": [
-            {
-               "kind": "Deployment",
-               "model": "kubernetes",
-               "patch": {
-                  "patchStrategy": "replace",
-                  "mutatedRef": [
-                     [
-                        "spec",
-                        "containers",
-                        "_",
-                        "envFrom",
-                        "configMapRef",
-                        "name"
-                     ]
-                  ],
-                  "description": "Deployments can reference ConfigMaps to inject configuration data into the Pods they manage. This is useful for maintaining consistent configuration across replica sets.\n\nThe keys from the ConfigMap will be exposed as environment variables to the containers within the pods managed by the Deployment."
-               }
-            },
-            {
-               "kind": "StatefulSets",
-               "model": "kubernetes",
-               "patch": {
-   ....
-               }
-            }
-   ...
-         ]
-      },
-      "deny": {
-   ...
-      }
-   }
+{
+"allow": {
+"from": [
+{
+"kind": "WASMFilter",
+"model": "istio-base",
+"patch": {
+"patchStrategy": "replace",
+"mutatorRef": [
+[
+"settings",
+"config"
+],
+[
+"settings",
+"wasm-filter"
+]
+],
+"description": "WASM filter configuration to be applied to Envoy Filter."
+}
+},
+{
+"kind": "EBPFFilter",
+.....
+}
+],
+"to": [
+{
+"kind": "EnvoyFilter",
+"model": "istio-base",
+"patch": {
+"patchStrategy": "replace",
+"mutatedRef": [
+[
+"settings",
+"configPatches",
+"_",
+"patch",
+"value"
+]
+],
+"description": "Receive the WASM filter configuration."
+}
+},
+{
+"kind": "WASMPlugin",
+....
+}
+...
+]
+},
+"deny": {
+...
+}
+},
+{
+"allow": {
+"from": [
+{
+"kind": "ConfigMap",
+"model": "kubernetes",
+"patch": {
+"patchStrategy": "replace",
+"mutatorRef": [
+[
+"name"
+]
+],
+"description": "In Kubernetes, ConfigMaps are a versatile resource that can be referenced by various other resources to provide configuration data to applications or other Kubernetes resources.\n\nBy referencing ConfigMaps in these various contexts, you can centralize and manage configuration data more efficiently, allowing for easier updates, versioning, and maintenance of configurations in a Kubernetes environment."
+}
+}
+],
+"to": [
+{
+"kind": "Deployment",
+"model": "kubernetes",
+"patch": {
+"patchStrategy": "replace",
+"mutatedRef": [
+[
+"spec",
+"containers",
+"_",
+"envFrom",
+"configMapRef",
+"name"
+]
+],
+"description": "Deployments can reference ConfigMaps to inject configuration data into the Pods they manage. This is useful for maintaining consistent configuration across replica sets.\n\nThe keys from the ConfigMap will be exposed as environment variables to the containers within the pods managed by the Deployment."
+}
+},
+{
+"kind": "StatefulSets",
+"model": "kubernetes",
+"patch": {
+....
+}
+}
+...
+]
+},
+"deny": {
+...
+}
+}
 ]
 {% endhighlight %}
 
@@ -308,7 +305,7 @@ The `evaluationQuery` property in your relationship definition is used to identi
 
 **How should you determine the value for `evaluationQuery`**
 
-All relationship definitions are backed by OPA policies and each relationship depends on their `kind`, `type`, and `subType` in order to be properly evaluated. Which evaluation policy or set of policies used during the evaluation moment is defined by the `evaluationQuery` property, which follows the naming convention of combining each of their  `kind`, `type`, and `subType`  properties with an underscore and the word "_relationship", like so: `kind_type_subtype_relationship`.
+All relationship definitions are backed by OPA policies and each relationship depends on their `kind`, `type`, and `subType` in order to be properly evaluated. Which evaluation policy or set of policies used during the evaluation moment is defined by the `evaluationQuery` property, which follows the naming convention of combining each of their `kind`, `type`, and `subType` properties with an underscore and the word "\_relationship", like so: `kind_type_subtype_relationship`.
 
 So, for example, if you are defining or updating a relationship definition with `kind: edge` and `type: network`, the value for the attribute `evaluationQuery` should be `edge_network_relationship`.
 

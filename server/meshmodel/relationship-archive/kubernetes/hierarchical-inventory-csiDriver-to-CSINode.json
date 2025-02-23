@@ -39,11 +39,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "displayName"
-                ]
-              ],
+              "mutatorRef": [["displayName"]],
               "description": "CSI drivers are responsible for the actual operations of a CSI volume. They are responsible for communicating with the external storage provider and exposing the volume to the kubelet.\n\nCSI drivers are installed on the cluster as a CustomResourceDefinition (CRD) and a DaemonSet. The CRD is used to create a CSIDriver object, which is used to configure the CSI driver. The DaemonSet is used to deploy the CSI driver to each node in the cluster."
             }
           }
@@ -59,15 +55,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "drivers",
-                  "_",
-                  "name"
-                ]
-              ],
+              "mutatedRef": [["configuration", "spec", "drivers", "_", "name"]],
               "description": "CSI drivers generate node specific information. Instead of storing this in the Kubernetes Node API Object, a new CSI specific Kubernetes CSINode object is used which can reference the CSI Drivers."
             }
           }

@@ -5,19 +5,20 @@ subtitle: Collaborative and visual infrastructure as design for Inclavare Contai
 image: /assets/img/integrations/inclavare-containers/icons/color/inclavare-containers-color.svg
 permalink: extensibility/integrations/inclavare-containers
 docURL: https://docs.meshery.io/extensibility/integrations/inclavare containers
-description: 
+description:
 integrations-category: Runtime
 integrations-subcategory: Container Runtime
 registrant: Artifact Hub
-components: 
+components:
 components-count: 0
-relationships: 
+relationships:
 relationship-count: 0
-featureList: [
-  "Securely isolates sensitive workloads",
-  "Protects data in use and at rest",
-  "Enhances container security"
-]
+featureList:
+  [
+    "Securely isolates sensitive workloads",
+    "Protects data in use and at rest",
+    "Enhances container security",
+  ]
 howItWorks: "Integrates Inclavare Containers"
 howItWorksDetails: "Confidential computing for sensitive applications in Kubernetes"
 language: en

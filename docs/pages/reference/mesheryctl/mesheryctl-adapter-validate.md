@@ -17,30 +17,33 @@ Validate conformance to predefined standards
 ## Synopsis
 
 Validate predefined conformance to different standard specifications
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl adapter validate [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Validate conformance to predefined standards
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl adapter validate [mesh name] --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
 
 </div>
-</pre> 
+</pre>
 
 Validate Istio to predefined standards
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl adapter validate istio --adapter meshery-istio --spec smi
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

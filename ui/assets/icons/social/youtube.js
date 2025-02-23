@@ -5,15 +5,15 @@ export default function Youtube({ height, width, className }) {
       width={width}
       className={className}
       style={{
-        enableBackground: "new 0 0 400 400"
+        enableBackground: 'new 0 0 400 400',
       }}
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 400 400"
     >
-      <g id="Dark_Blue" style={{ display: "none" }}>
+      <g id="Dark_Blue" style={{ display: 'none' }}>
         <path
           fill="#FFFFFF"
-          style={{ display: "inline" }}
+          style={{ display: 'inline' }}
           d="M350,400H50c-27.6,0-50-22.4-50-50V50C0,22.4,22.4,0,50,0h300c27.6,0,50,22.4,50,50v300
         C400,377.6,377.6,400,350,400z"
         />

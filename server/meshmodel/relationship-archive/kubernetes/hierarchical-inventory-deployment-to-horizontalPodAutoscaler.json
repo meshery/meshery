@@ -40,17 +40,9 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                [
-                  "component",
-                  "version"
-                ],
-                [
-                  "displayName"
-                ],
-                [
-                  "component",
-                  "kind"
-                ]
+                ["component", "version"],
+                ["displayName"],
+                ["component", "kind"]
               ],
               "description": "Allow Horizontal Pod Autoscaler to scale based on observed metrics for Deployments."
             }
@@ -68,24 +60,9 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "scaleTargetRef",
-                  "apiVersion"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "scaleTargetRef",
-                  "name"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "scaleTargetRef",
-                  "kind"
-                ]
+                ["configuration", "spec", "scaleTargetRef", "apiVersion"],
+                ["configuration", "spec", "scaleTargetRef", "name"],
+                ["configuration", "spec", "scaleTargetRef", "kind"]
               ],
               "description": "Horizontal Pod Autoscaler automatically scales the number of pods in a replication controller, deployment, replica set or stateful set based on observed CPU utilization (or, with custom metrics support, on some other application-provided metrics). Horizontal Pod Autoscaling does not apply to objects that can't be scaled, for example, DaemonSets."
             }

@@ -1,6 +1,12 @@
 import React, { Fragment } from "react";
-import { NoSsr } from '@layer5/sistent'
-import { FavoriteIcon, Typography, Paper, styled, accentGrey } from "@layer5/sistent";
+import { NoSsr } from "@layer5/sistent";
+import {
+  FavoriteIcon,
+  Typography,
+  Paper,
+  styled,
+  accentGrey,
+} from "@layer5/sistent";
 const Item = styled(Paper)(({ theme }) => ({
   backgroundColor: accentGrey[20],
   padding: theme.spacing(2),
@@ -19,7 +25,7 @@ const ClickableSpan = styled("span")(({ theme }) => ({
 const StyledFavoriteIcon = styled(FavoriteIcon)(({ theme }) => ({
   display: "inline",
   verticalAlign: "top",
-  fill: theme.palette.icon.brand
+  fill: theme.palette.icon.brand,
 }));
 
 export default function Footer() {
@@ -41,7 +47,8 @@ export default function Footer() {
             component="p"
           >
             <ClickableSpan onClick={handleL5CommunityClick}>
-              Built with <StyledFavoriteIcon sx={{color: "blue"}} /> by the Layer5 Community
+              Built with <StyledFavoriteIcon sx={{ color: "blue" }} /> by the
+              Layer5 Community
             </ClickableSpan>
           </Typography>
         </Item>

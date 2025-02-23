@@ -103,4 +103,3 @@ github.com/layer5io/meshkit => ../meshkit
     <p>Remember to remove this go.mod change when creating pull requests.</p>
   </li>
 </ol>
-

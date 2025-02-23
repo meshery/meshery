@@ -17,22 +17,24 @@ set provider
 ## Synopsis
 
 Set provider of context in focus. Run `mesheryctl system provider list` to see the available providers.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system provider set [provider] [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Set provider
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system provider set [provider]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

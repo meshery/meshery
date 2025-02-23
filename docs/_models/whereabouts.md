@@ -9,23 +9,24 @@ description: Whereabouts is a CNI IPAM plugin for Kubernetes clusters. It dynami
 integrations-category: Cloud Native Network
 integrations-subcategory: CNI
 registrant: GitHub
-components: 
-- name: ip-pool
-  colorIcon: assets/img/integrations/whereabouts/components/ip-pool/icons/color/ip-pool-color.svg
-  whiteIcon: assets/img/integrations/whereabouts/components/ip-pool/icons/white/ip-pool-white.svg
-  description: 
-- name: overlapping-range-ip-reservation
-  colorIcon: assets/img/integrations/whereabouts/components/overlapping-range-ip-reservation/icons/color/overlapping-range-ip-reservation-color.svg
-  whiteIcon: assets/img/integrations/whereabouts/components/overlapping-range-ip-reservation/icons/white/overlapping-range-ip-reservation-white.svg
-  description: 
+components:
+  - name: ip-pool
+    colorIcon: assets/img/integrations/whereabouts/components/ip-pool/icons/color/ip-pool-color.svg
+    whiteIcon: assets/img/integrations/whereabouts/components/ip-pool/icons/white/ip-pool-white.svg
+    description:
+  - name: overlapping-range-ip-reservation
+    colorIcon: assets/img/integrations/whereabouts/components/overlapping-range-ip-reservation/icons/color/overlapping-range-ip-reservation-color.svg
+    whiteIcon: assets/img/integrations/whereabouts/components/overlapping-range-ip-reservation/icons/white/overlapping-range-ip-reservation-white.svg
+    description:
 components-count: 2
-relationships: 
+relationships:
 relationship-count: 0
-featureList: [
-  "Automates IP address allocation",
-  "Supports IPv4 and IPv6",
-  "Integrates with various CNI plugins"
-]
+featureList:
+  [
+    "Automates IP address allocation",
+    "Supports IPv4 and IPv6",
+    "Integrates with various CNI plugins",
+  ]
 howItWorks: "Manages IP addresses with Whereabouts"
 howItWorksDetails: "Simplified IP address management in Kubernetes"
 language: en

@@ -6,17 +6,17 @@
   "status": "",
   "hostID": "00000000-0000-0000-0000-000000000000",
   "registrant": {
-   "hostname": ""
+    "hostname": ""
   },
   "category": {
-   "name": "",
-   "metadata": null
+    "name": "",
+    "metadata": null
   },
   "subCategory": "",
   "metadata": null,
   "model": {
-   "version": "v0.0.0-non-release-version"
+    "version": "v0.0.0-non-release-version"
   },
   "components": null,
   "relationships": null
- }
+}

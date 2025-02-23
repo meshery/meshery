@@ -6,8 +6,8 @@ userId: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
 userName: Deepak Reddy
 userAvatarURL: https://lh3.googleusercontent.com/a/ACg8ocIGbiDtE0q65qVvAUdzHw8Qky81rM0kSAknIqbgysfDCw=s96-c
 type: workloads
-compatibility: 
-    - kubernetes
+compatibility:
+  - kubernetes
 patternId: 0b6b1ff8-cb2e-41d4-baff-e0a053f7e4d9
 image: /assets/images/logos/service-mesh-pattern.svg
 patternInfo: |
@@ -15,6 +15,6 @@ patternInfo: |
 patternCaveats: |
   Make%20sure%20to%20fill%20out%20your%20own%20postgres%20username%20%2Cpassword%2C%20host%2Cport%20etc%20to%20see%20airflow%20working%20as%20per%20your%20database%20requirements.%20pass%20them%20as%20environment%20variables%20or%20create%20secrets%20%20%20for%20password%20and%20config%20map%20for%20ports%20%2Chost%20.
 permalink: catalog/workloads/apache-airflow-0b6b1ff8-cb2e-41d4-baff-e0a053f7e4d9.html
-URL: 'https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/0b6b1ff8-cb2e-41d4-baff-e0a053f7e4d9/0.0.1/design.yml'
+URL: "https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/0b6b1ff8-cb2e-41d4-baff-e0a053f7e4d9/0.0.1/design.yml"
 downloadLink: 0b6b1ff8-cb2e-41d4-baff-e0a053f7e4d9/design.yml
 ---

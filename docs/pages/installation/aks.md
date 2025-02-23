@@ -31,10 +31,10 @@ Also see: [Install Meshery on Kubernetes]({{ site.baseurl }}/installation/kubern
 ## Available Deployment Methods
 
 - [In-cluster Installation](#in-cluster-installation)
-    - [Preflight Checks](#preflight-checks)
-    - [Preflight: Cluster Connectivity](#preflight-cluster-connectivity)
-    - [Installation: Using `mesheryctl`](#installation-using-mesheryctl)
-    - [Installation: Using Helm](#installation-using-helm)
+  - [Preflight Checks](#preflight-checks)
+  - [Preflight: Cluster Connectivity](#preflight-cluster-connectivity)
+  - [Installation: Using `mesheryctl`](#installation-using-mesheryctl)
+  - [Installation: Using Helm](#installation-using-helm)
   - [Post-Installation Steps](#post-installation-steps)
 
 # In-cluster Installation
@@ -50,11 +50,11 @@ Read through the following considerations prior to deploying Meshery on AKS.
 1. Verify you connection to an Azure Kubernetes Services Cluster using Azure CLI.
 1. Login to Azure account using [az login](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli).
 1. After a successful login, identify the subscription associated with your AKS cluster:
-{% capture code_content %} az account set --subscription [SUBSCRIPTION_ID] {% endcapture %}
-{% include code.html code=code_content %}
+   {% capture code_content %} az account set --subscription [SUBSCRIPTION_ID] {% endcapture %}
+   {% include code.html code=code_content %}
 1. After setting the subscription, set the cluster context.
-{% capture code_content %}az aks get-credentials --resource-group [RESOURCE_GROUP] --name [AKS_SERVICE_NAME]{% endcapture %}
-{% include code.html code=code_content %}
+   {% capture code_content %}az aks get-credentials --resource-group [RESOURCE_GROUP] --name [AKS_SERVICE_NAME]{% endcapture %}
+   {% include code.html code=code_content %}
 
 ### Installation: Using `mesheryctl`
 

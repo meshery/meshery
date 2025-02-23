@@ -1,5 +1,5 @@
-import React from "react";
-const HelmIcon = ({ height = 20, fill="#0f1689", width = 20, style }) => (
+import React from 'react';
+const HelmIcon = ({ height = 20, fill = '#0f1689', width = 20, style }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     id="Layer_1"

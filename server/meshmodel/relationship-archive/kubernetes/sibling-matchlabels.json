@@ -38,9 +38,7 @@
               }
             },
             "match": {
-              "refs": [
-                ["configuration", "metadata", "labels"]
-              ]
+              "refs": [["configuration", "metadata", "labels"]]
             }
           }
         ],
@@ -54,13 +52,7 @@
               }
             },
             "match": {
-              "refs": [
-                [
-                    "configuration",
-                    "metadata",
-                    "labels"
-                  ]
-              ]
+              "refs": [["configuration", "metadata", "labels"]]
             }
           }
         ]

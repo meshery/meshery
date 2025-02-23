@@ -39,14 +39,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "selector",
-                  "labels"
-                ]
-              ],
+              "mutatorRef": [["configuration", "spec", "selector", "labels"]],
               "description": "DaemonSets ensure that a copy of a pod runs on each node in the cluster. PDBs can be used to prevent too many pods from being disrupted simultaneously during node maintenance or upgrades, ensuring that essential services provided by DaemonSets remain available."
             }
           }
@@ -63,12 +56,7 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "selector",
-                  "matchLabels"
-                ]
+                ["configuration", "spec", "selector", "matchLabels"]
               ]
             },
             "description": "In Kubernetes, Pod Distribution Budgets (PDBs) are used to ensure that a certain number or percentage of pods are running on particular nodes or within particular zones."

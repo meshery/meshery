@@ -19,9 +19,7 @@ Although the usage of the components is divided into categories, some shapes ser
 
 Below are all the shapes with their current usage in a general context.
 
-
-
-{% include extension-guide.html 
+{% include extension-guide.html
  data_file="shapes"
  guide_title="Shape"
  guide_description="Description"
@@ -29,4 +27,3 @@ Below are all the shapes with their current usage in a general context.
  guide_svg="SVG"
  guide_assests_folder="shapes"
 %}
- 

@@ -17,54 +17,60 @@ Switch between providers
 ## Synopsis
 
 Enforce a provider. Choose between available Meshery providers
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system provider [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 To view provider
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system provider view
 
 </div>
-</pre> 
+</pre>
 
 To list all available providers
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system provider list
 
 </div>
-</pre> 
+</pre>
 
 To set a provider
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system provider set [provider]
 
 </div>
-</pre> 
+</pre>
 
 To switch provider and redeploy Meshery
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system provider switch [provider]
 
 </div>
-</pre> 
+</pre>
 
 To reset provider to default
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system provider reset
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -89,10 +95,10 @@ mesheryctl system provider reset
 
 ## See Also
 
-* [mesheryctl system provider list](/reference/mesheryctl/system/provider/list)
-* [mesheryctl system provider reset](/reference/mesheryctl/system/provider/reset)
-* [mesheryctl system provider set](/reference/mesheryctl/system/provider/set)
-* [mesheryctl system provider switch](/reference/mesheryctl/system/provider/switch)
-* [mesheryctl system provider view](/reference/mesheryctl/system/provider/view)
+- [mesheryctl system provider list](/reference/mesheryctl/system/provider/list)
+- [mesheryctl system provider reset](/reference/mesheryctl/system/provider/reset)
+- [mesheryctl system provider set](/reference/mesheryctl/system/provider/set)
+- [mesheryctl system provider switch](/reference/mesheryctl/system/provider/switch)
+- [mesheryctl system provider view](/reference/mesheryctl/system/provider/view)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

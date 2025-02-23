@@ -21,53 +21,58 @@ Prerequisite: Excecute this command from the root of a meshery/meshery repo fork
 Given a Google Sheet with a list of model names and source locations, generate models and components any Registrant (e.g. GitHub, Artifact Hub) repositories.
 
 Generated Model files are written to local filesystem under `/server/models/<model-name>`.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry generate [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Generate Meshery Models from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred $CRED
 
 </div>
-</pre> 
+</pre>
 
 Directly generate models from one of the supported registrants by using Registrant Connection Definition and (optional) Registrant Credential Definition
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry generate --registrant-def [path to connection definition] --registrant-cred [path to credential definition]
 
 </div>
-</pre> 
+</pre>
 
 Generate a specific Model from a Google Spreadsheet (i.e. "Meshery Integrations" spreadsheet).
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry generate --spreadsheet-id "1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw" --spreadsheet-cred --model "[model-name]"
 
 </div>
-</pre> 
+</pre>
 
 Generate Meshery Models and Component from csv files in a local directory.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl registry generate --directory <DIRECTORY_PATH>
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
     
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

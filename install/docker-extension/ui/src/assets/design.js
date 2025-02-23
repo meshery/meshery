@@ -5,7 +5,7 @@ const Design = ({
   height,
   primaryFill = "#00b39f",
   secondaryFill = "#00d3a9",
-  style = {}
+  style = {},
 }) => (
   <svg
     width={width}

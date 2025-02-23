@@ -5,19 +5,20 @@ subtitle: Collaborative and visual infrastructure as design for OpenGitOps
 image: /assets/img/integrations/opengitops/icons/color/opengitops-color.svg
 permalink: extensibility/integrations/opengitops
 docURL: https://docs.meshery.io/extensibility/integrations/opengitops
-description: 
+description:
 integrations-category: App Definition and Development
 integrations-subcategory: Continuous Integration & Delivery
 registrant: Artifact Hub
-components: 
+components:
 components-count: 0
-relationships: 
+relationships:
 relationship-count: 0
-featureList: [
-  "Declarative infrastructure as code",
-  "Version control and collaboration",
-  "Continuous deployment and reconciliation"
-]
+featureList:
+  [
+    "Declarative infrastructure as code",
+    "Version control and collaboration",
+    "Continuous deployment and reconciliation",
+  ]
 howItWorks: "Integrates OpenGitOps workflows"
 howItWorksDetails: "Streamlined and auditable infrastructure management in Kubernetes"
 language: en

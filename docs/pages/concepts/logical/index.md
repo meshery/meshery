@@ -42,10 +42,10 @@ The logical concepts included in Meshery establish a set of foundational constru
 Every construct is represented in each of the following forms:
 
 - **Schema** (static) - the skeletal structure representing a logical view of the size, shape, characteristics of a construct.
-  - *Example: Component schema found in github.com/meshery/schemas*
+  - _Example: Component schema found in github.com/meshery/schemas_
 - **Definition** (static) - An implementation of the Schema containing specific configuration for the construct at-hand.
-  - *Example: Component definition generically describing a Kubernetes Pod*
+  - _Example: Component definition generically describing a Kubernetes Pod_
 - **Declaration** (static) - A defined construct; A specific deof the Definition.
-  - *Example: Component configuration of an NGINX container as a Kubernetes Pod*
+  - _Example: Component configuration of an NGINX container as a Kubernetes Pod_
 - **Instance** (dynamic) - A realized construct (deployed/discovered); An instantiation of the Declaration.
-  - *Example: NGINX-as234z2 pod running in cluster*
+  - _Example: NGINX-as234z2 pod running in cluster_

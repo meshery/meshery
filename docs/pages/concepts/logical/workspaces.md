@@ -7,7 +7,7 @@ abstract: "Meshery Workspaces act as central collaboration point for teams."
 language: en
 list: include
 redirect_from:
-- concepts/workspaces
+  - concepts/workspaces
 ---
 
 Like a Google Drive, Meshery Workspaces serve as a virtual space for your team-based work. Create a Workspace to organize your work and to serve as the central point of collaboration for you and your teams and a central point of access control to Environments and their resources.
@@ -58,6 +58,7 @@ See "[Meshery Designs](/concepts/logical/designs)" section for more information.
 - Remote Providers can extend Meshery to offer fine-grained permissions and access control to resources like Workspaces, Designs, Environments, and so on.
 
 Learn more about [extensible authorization](/extensibility/authorization).
+
  <!-- "[Organizations](/extensions/team-management)" section for more information. -->
 
 <!-- ### Teams
@@ -85,4 +86,3 @@ To make the most of Meshery Workspaces, here are some best practices:
 - Regularly review and update your Workspace's resources and configurations.
 
 Meshery Workspaces enhance collaboration within your teams, providing a structured environment for sharing and managing resources. By following best practices and understanding the core components of Workspaces, you can maximize the benefits of this feature in Meshery.
-

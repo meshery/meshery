@@ -5,7 +5,7 @@ permalink: installation/kubernetes/kind
 type: installation
 category: kubernetes
 redirect_from:
-- installation/platforms/kind
+  - installation/platforms/kind
 display-title: "false"
 language: en
 list: include
@@ -67,6 +67,7 @@ Verify that your current Meshery context is set for an in-cluster deployment (`p
 
 {% capture code_content %}$ mesheryctl system context view{% endcapture %}
 {% include code.html code=code_content %}
+
 <p>
 If the context is not set to <code>platform: kubernetes</code>, you can create a new context with Kubernetes as the platform using the following command.
 </p>
@@ -74,6 +75,7 @@ If the context is not set to <code>platform: kubernetes</code>, you can create a
 {% capture code_content %}$ mesheryctl system context create context-name --platform kubernetes --url http://localhost:9081 --set --yes{% endcapture %}
 {% include code.html code=code_content %}
 <br/>
+
 </details>
 
 With your KIND cluster configured your `current-context`, start Meshery.

@@ -17,22 +17,24 @@ view relationships of a model by its name
 ## Synopsis
 
 view a relationship queried by the model name
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp relationship view [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 View relationships of a model
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp relationship view [model-name]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

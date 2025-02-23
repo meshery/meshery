@@ -17,22 +17,24 @@ List designs
 ## Synopsis
 
 Display list of all available design files.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design list [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 list all available designs
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl design list
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

@@ -26,4 +26,3 @@ Extensions in Meshery are additional plugins or add-ons that provide extra funct
       {% endif %}
     {% endfor %}
 </ul>
-

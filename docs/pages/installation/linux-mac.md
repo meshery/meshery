@@ -5,11 +5,11 @@ permalink: installation/linux-mac
 type: installation
 category: mesheryctl
 redirect_from:
-- installation/platforms/linux-mac
+  - installation/platforms/linux-mac
 display-title: "false"
 language: en
 list: include
-image: /assets/img/platforms/linux_mac.png 
+image: /assets/img/platforms/linux_mac.png
 abstract: Install Meshery CLI on Linux or Mac
 ---
 
@@ -47,7 +47,7 @@ Guides to using Meshery's various features and components.
 
 {:toc}
 
-<!-- 
+<!--
 1. You can either use **Bash** or **Brew** to install <a href="/guides/mesheryctl">mesheryctl</a> ( Meshery command line interface ).
 2. To run **Meshery**, execute the following command.
 

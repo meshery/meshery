@@ -17,22 +17,24 @@ search registered components
 ## Synopsis
 
 search components registered in Meshery Server
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp components search [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Search for components using a query
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp components search [query-text]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

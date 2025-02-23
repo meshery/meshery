@@ -2,14 +2,14 @@
 layout: default
 title: Managing Connections
 permalink: guides/infrastructure-management/lifecycle-management
-redirect_from: 
-- tasks/lifecycle-management
-- guides/infrastructure-management/managing-connections
+redirect_from:
+  - tasks/lifecycle-management
+  - guides/infrastructure-management/managing-connections
 type: guides
 category: infrastructure
 language: en
 list: include
-abstract: 'Manage the lifecycle of your infrastructure by registering each infrastructure element with Meshery.'
+abstract: "Manage the lifecycle of your infrastructure by registering each infrastructure element with Meshery."
 ---
 
 <a name="lifecycle-management"></a>

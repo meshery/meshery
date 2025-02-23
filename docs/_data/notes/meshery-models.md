@@ -741,4 +741,3 @@ then APPLY policy allow
 - “self” and “other”
 - “self” and “nonself”
 - “initiator” and “receiver”
-

@@ -33,6 +33,7 @@ Global Flags:
 -c, --context string (optional) temporarily change the current context.
 -v, --verbose verbose output
 -y, --yes (optional) assume yes for user interactive prompts.</div></div>
+
 </pre>
 
 ## Deployment checks
@@ -149,4 +150,3 @@ Guides to using Meshery's various features and components.
 {% endcapture %}
 
 {% include related-discussions.html tag="mesheryctl" %}
-

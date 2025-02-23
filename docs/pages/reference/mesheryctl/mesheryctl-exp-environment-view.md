@@ -17,22 +17,24 @@ view registered environmnents
 ## Synopsis
 
 view a environments registered in Meshery Server
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp environment view [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 View details of a specific environment
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp environment view --orgID [orgId]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

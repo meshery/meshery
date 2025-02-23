@@ -42,8 +42,7 @@ The <a href="https://github.com/marketplace/actions/performance-testing-with-mes
 name: Meshery SMP Action
 on:
   push:
-    branches:
-      'master'
+    branches: "master"
 
 jobs:
   performance-test:
@@ -53,13 +52,13 @@ jobs:
       - name: checkout
         uses: actions/checkout@v2
         with:
-          ref: 'perf'
+          ref: "perf"
 
       - name: Deploy k8s-minikube
         uses: manusa/actions-setup-minikube@v2.4.1
         with:
-          minikube version: 'v1.21.0'
-          kubernetes version: 'v1.20.7'
+          minikube version: "v1.21.0"
+          kubernetes version: "v1.20.7"
           driver: docker
 
       - name: Run Performance Test
@@ -78,17 +77,17 @@ id:
 name: Istio Performance Test
 labels: {}
 clients:
-- internal: false
-  load_generator: fortio
-  protocol: 1
-  connections: 2
-  rps: 10
-  headers: {}
-  cookies: {}
-  body: ""
-  content_type: ""
-  endpoint_urls:
-  - http://localhost:2323/productpage
+  - internal: false
+    load_generator: fortio
+    protocol: 1
+    connections: 2
+    rps: 10
+    headers: {}
+    cookies: {}
+    body: ""
+    content_type: ""
+    endpoint_urls:
+      - http://localhost:2323/productpage
 duration: "30m"
 ```
 
@@ -117,7 +116,6 @@ The <a href="https://github.com/layer5io/meshery-smi-conformance-action">Meshery
 
 Conformance of SMI specifications is defined as a series of test assertions. These test assertions are categorised by SMI specification (of which, there are currently four specifications) and comprise the complete suite of SMI conformance tests. Conformance requirements will change appropriately as each new version of the SMI spec is released. Refer to Meshery's documentation for details of how <a href="{{ site.baseurl }}/tasks/service-mesh-interface">Meshery performs SMI conformance</a>.
 
-
 <h3>Using Meshery's SMI Conformance GitHub Action</h3>
 
 The <a href="https://github.com/marketplace/actions/service-mesh-interface-conformance-with-meshery">Service Mesh Interface Conformance GitHub Action</a> is available in the GitHub Marketplace. You can configure this action to trigger with each of your releases, on every pull request. or any GitHub workflow trigger event.
@@ -132,10 +130,10 @@ on:
       - 'v*'
 
 jobs:
-  smi-conformance:
-    name: SMI Conformance
-    runs-on: ubuntu-latest
-    steps:
+smi-conformance:
+name: SMI Conformance
+runs-on: ubuntu-latest
+steps:
 
       - name: SMI conformance tests
         uses: layer5io/mesheryctl-smi-conformance-action@master
@@ -143,6 +141,7 @@ jobs:
           provider_token: ${{ secrets.MESHERY_PROVIDER_TOKEN }}
           service_mesh: open_service_mesh
           mesh_deployed: false
+
 </code>
 
 You can also bring in their own cluster with specific capabilities and with a service mesh already installed.

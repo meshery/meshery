@@ -86,11 +86,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "displayName"
-                ]
-              ]
+              "mutatorRef": [["displayName"]]
             }
           }
         ],
@@ -133,13 +129,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "storageClassName"
-                ]
-              ]
+              "mutatedRef": [["configuration", "spec", "storageClassName"]]
             }
           }
         ]

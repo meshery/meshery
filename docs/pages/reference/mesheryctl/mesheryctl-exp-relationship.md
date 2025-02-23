@@ -17,46 +17,51 @@ View list of relationships and details of relationship
 ## Synopsis
 
 Meshery uses relationships to define how interconnected components interact. View list of relationships and detailed information of a specific relationship
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp relationship [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 To view list of relationships
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp relationships list
 
 </div>
-</pre> 
+</pre>
 
 To view a specific relationship
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp relationships view [model-name]
 
 </div>
-</pre> 
+</pre>
 
 //To search a specific relationship
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp relationships search --[flag] [query-text]
 
 </div>
-</pre> 
+</pre>
 
-//To generate a relationship documentation 
+//To generate a relationship documentation
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp relationship generate  [google-sheets-credential] --sheetId [sheet-id]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -79,9 +84,9 @@ mesheryctl exp relationship generate  [google-sheets-credential] --sheetId [shee
 
 ## See Also
 
-* [mesheryctl exp relationship generate](/reference/mesheryctl/exp/relationship/generate)
-* [mesheryctl exp relationship list](/reference/mesheryctl/exp/relationship/list)
-* [mesheryctl exp relationship search](/reference/mesheryctl/exp/relationship/search)
-* [mesheryctl exp relationship view](/reference/mesheryctl/exp/relationship/view)
+- [mesheryctl exp relationship generate](/reference/mesheryctl/exp/relationship/generate)
+- [mesheryctl exp relationship list](/reference/mesheryctl/exp/relationship/list)
+- [mesheryctl exp relationship search](/reference/mesheryctl/exp/relationship/search)
+- [mesheryctl exp relationship view](/reference/mesheryctl/exp/relationship/view)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

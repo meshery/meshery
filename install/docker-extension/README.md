@@ -67,6 +67,7 @@ From `/install/docker-extension`, familiarize with available `make` targets by e
 ```
 make
 ```
+
 Review the available targets and their purpose. In general, follow this sequence when building and testing changes:
 
 ```
@@ -90,4 +91,3 @@ docker extension update meshery/docker-extension-meshery:edge-latest
 </p>
 <p style="text-align:center; width:100%;" align="center">
 <h3 style="text-align:center;" align="center"><em>Have questions? Need help?</em> <strong>Ask in the <a href="https://meshery.io/community#community-forums">Community Forum</a></strong>.</h3></p>
-

@@ -17,30 +17,33 @@ List registered workspaces
 ## Synopsis
 
 List name of all registered workspaces
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp workspace list [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 List all registered workspace
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp workspace list --orgId [orgId]
 
 </div>
-</pre> 
+</pre>
 
 Documentation for workspace can be found at:
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 https://docs.layer5.io/cloud/spaces/workspaces/
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

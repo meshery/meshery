@@ -51,4 +51,3 @@ Click <b>Merge</b> to confirm the merge operation.
 <h4 class="alert-heading">Discussion Forum</h4>
 Not finding what you're looking for? Ask on the <a href="https://meshery.io/community#discussion-forums">Discussion Forum</a>.
 </div>
-

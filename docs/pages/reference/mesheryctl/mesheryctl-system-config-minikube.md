@@ -17,30 +17,33 @@ Configure Meshery to use minikube cluster
 ## Synopsis
 
 Configure Meshery to connect to minikube cluster
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system config minikube [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Configure Meshery to connect to minikube cluster using auth token
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system config minikube --token auth.json
 
 </div>
-</pre> 
+</pre>
 
 Configure Meshery to connect to minikube cluster (if session is logged in using login subcommand)
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system config minikube
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

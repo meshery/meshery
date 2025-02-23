@@ -17,12 +17,13 @@ view list of registered orgs
 ## Synopsis
 
 view list of registered orgs with their name,id and date of creation
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp org [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -31,28 +32,28 @@ mesheryctl exp org [flags]
 	// Number of  registered orgs
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 	mesheryctl org --count 
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 	// List registerd orgs
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 	mesheryctl org list
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -76,6 +77,6 @@ mesheryctl exp org [flags]
 
 ## See Also
 
-* [mesheryctl exp org list](/reference/mesheryctl/exp/org/list)
+- [mesheryctl exp org list](/reference/mesheryctl/exp/org/list)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

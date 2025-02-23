@@ -17,127 +17,138 @@ Run a Performance test
 ## Synopsis
 
 Run Performance test using existing profiles or using flags
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply [profile-name] [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Execute a Performance test with the specified performance profile
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply meshery-profile [flags]
 
 </div>
-</pre> 
+</pre>
 
 Execute a Performance test with creating a new performance profile
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply meshery-profile-new --url "https://google.com"
 
 </div>
-</pre> 
+</pre>
 
-Execute a Performance test creating a new performance profile and pass certificate to be used 
+Execute a Performance test creating a new performance profile and pass certificate to be used
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --cert-path path/to/cert.pem
 
 </div>
-</pre> 
+</pre>
 
 Execute a performance profile without using the certificate present in the profile
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply meshery-profile --url "https://google.com" --disable-cert
 
 </div>
-</pre> 
+</pre>
 
 Run Performance test using SMP compatible test configuration
 If the profile already exists, the test will be run overriding the values with the ones provided in the configuration file
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply meshery-profile -f path/to/perf-config.yaml
 
 </div>
-</pre> 
+</pre>
 
 Run performance test using SMP compatible test configuration and override values with flags
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply meshery-profile -f path/to/perf-config.yaml [flags]
 
 </div>
-</pre> 
+</pre>
 
 Choice of load generator - fortio, wrk2 or nighthawk (default: fortio)
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply meshery-profile --load-generator wrk2
 
 </div>
-</pre> 
+</pre>
 
 Execute a Performance test with specified queries per second
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --qps 30
 
 </div>
-</pre> 
+</pre>
 
 Execute a Performance test with specified infrastructure
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply meshery-profile --url https://192.168.1.15/productpage --mesh istio
 
 </div>
-</pre> 
+</pre>
 
 Execute a Performance test creating a new performance profile and pass options to the load generator used
-If any options are already present in the profile or passed through flags, the --options flag will take precedence over the profile and flag options 
+If any options are already present in the profile or passed through flags, the --options flag will take precedence over the profile and flag options
 Options for nighthawk - https://github.com/layer5io/getnighthawk/blob/v1.0.5/pkg/proto/options.pb.go#L882-L1018
 Options for fortio - https://github.com/fortio/fortio/blob/v1.57.0/fhttp/httprunner.go#L77-L84
 Options for wrk2 - https://github.com/layer5io/gowrk2/blob/v0.6.1/api/gowrk2.go#L47-L53
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --options [filepath|json-string]
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --options path/to/options.json
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator nighthawk --options '{"requests_per_second": 10, "max_pending_requests": 5}'
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator fortio --options '{"MethodOverride": "POST"}'
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply meshery-profile-new --url "https://google.com" --load-generator wrk2 --options '{"DurationInSeconds": 15, "Thread": 3}'
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

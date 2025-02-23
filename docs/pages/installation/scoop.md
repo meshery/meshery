@@ -5,13 +5,14 @@ permalink: installation/windows/scoop
 type: installation
 category: mesheryctl
 redirect_from:
-- installation/platforms/scoop
+  - installation/platforms/scoop
 display-title: "false"
 language: en
 list: include
 image: /assets/img/platforms/scoop.png
 abstract: Install Meshery CLI on Windows with Scoop
 ---
+
 # Install Meshery CLI with Scoop
 
 {% include mesheryctl/installation-scoop.md %}
@@ -33,4 +34,3 @@ Guides to using Meshery's various features and components.
   {% endfor %}
     <li><a href="{{ site.baseurl }}/installation/upgrades#upgrading-meshery-cli">Upgrading Meshery CLI</a></li>
 </ul>
-

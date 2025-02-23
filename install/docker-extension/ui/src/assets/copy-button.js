@@ -5,7 +5,7 @@ const CopyIcon = ({
   height,
   primaryFill = "#51636B",
   secondaryFill = "#fff",
-  style = {}
+  style = {},
 }) => (
   <svg
     width={width}

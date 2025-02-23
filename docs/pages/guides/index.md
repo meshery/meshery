@@ -2,9 +2,9 @@
 layout: default
 title: Guides
 permalink: guides
-redirect_from: 
-- guides/
-- tasks
+redirect_from:
+  - guides/
+  - tasks
 language: en
 list: exclude
 abstract: Using, operating, and troubleshooting Meshery.
@@ -14,7 +14,7 @@ Guides to using, operating, and troubleshooting Meshery's various features and c
 
 <!-- {% assign sorted_guides = site.pages | sort: "type" | reverse %} -->
 
-<!-- ### General 
+<!-- ### General
 
 <ul>
     {% for item in sorted_guides %}

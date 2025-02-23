@@ -52,12 +52,7 @@
             "id": null,
             "kind": "FieldExport",
             "match": {
-              "refs": [
-                [
-                  "spec",
-                  "exportConfigMapRef"
-                ]
-              ]
+              "refs": [["spec", "exportConfigMapRef"]]
             },
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",
@@ -99,12 +94,7 @@
             "id": null,
             "kind": "ConfigMap",
             "match": {
-              "refs": [
-                [
-                  "metadata",
-                  "labels"
-                ]
-              ]
+              "refs": [["metadata", "labels"]]
             },
             "model": {
               "id": "00000000-0000-0000-0000-000000000000",

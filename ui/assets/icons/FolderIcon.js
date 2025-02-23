@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-const FolderIcon = ({ width="1.5rem", height="1.5rem", fill, style = {} }) => (
+const FolderIcon = ({ width = '1.5rem', height = '1.5rem', fill, style = {} }) => (
   <svg
     width={width}
     height={height}

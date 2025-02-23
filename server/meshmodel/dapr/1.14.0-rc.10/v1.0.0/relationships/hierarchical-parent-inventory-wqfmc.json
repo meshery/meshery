@@ -86,13 +86,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "routes"
-                ]
-              ]
+              "mutatorRef": [["configuration", "spec", "routes"]]
             }
           },
           {
@@ -133,13 +127,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "policies"
-                ]
-              ]
+              "mutatorRef": [["configuration", "spec", "policies"]]
             }
           },
           {
@@ -180,12 +168,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec"
-                ]
-              ]
+              "mutatorRef": [["configuration", "spec"]]
             }
           },
           {
@@ -227,16 +210,8 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "topic"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "routes"
-                ]
+                ["configuration", "spec", "topic"],
+                ["configuration", "spec", "routes"]
               ]
             }
           }
@@ -280,12 +255,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "args"
-                ]
-              ]
+              "mutatedRef": [["configuration", "args"]]
             }
           }
         ]

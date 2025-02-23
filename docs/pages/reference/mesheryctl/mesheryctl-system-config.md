@@ -17,30 +17,33 @@ Configure Meshery
 ## Synopsis
 
 Configure the Kubernetes cluster used by Meshery.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system config [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Set configuration according to k8s cluster
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system config [aks|eks|gke|minikube]
 
 </div>
-</pre> 
+</pre>
 
 Path to token for authenticating to Meshery API (optional, can be done alternatively using "login")
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system config --token "~/Downloads/auth.json"
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -65,9 +68,9 @@ mesheryctl system config --token "~/Downloads/auth.json"
 
 ## See Also
 
-* [mesheryctl system config aks](/reference/mesheryctl/system/config/aks)
-* [mesheryctl system config eks](/reference/mesheryctl/system/config/eks)
-* [mesheryctl system config gke](/reference/mesheryctl/system/config/gke)
-* [mesheryctl system config minikube](/reference/mesheryctl/system/config/minikube)
+- [mesheryctl system config aks](/reference/mesheryctl/system/config/aks)
+- [mesheryctl system config eks](/reference/mesheryctl/system/config/eks)
+- [mesheryctl system config gke](/reference/mesheryctl/system/config/gke)
+- [mesheryctl system config minikube](/reference/mesheryctl/system/config/minikube)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

@@ -17,53 +17,58 @@ Deploy infrastructure to the Kubernetes cluster
 ## Synopsis
 
 Deploy infrastructure to the connected Kubernetes cluster
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl mesh deploy [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Deploy a infrastructure from an interactive on the default namespace
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl mesh deploy
 
 </div>
-</pre> 
+</pre>
 
 Deploy infrastructure
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl mesh deploy linkerd
 
 </div>
-</pre> 
+</pre>
 
 Deploy Linkerd mesh on a specific namespace
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl mesh deploy linkerd --namespace linkerd-ns
 
 </div>
-</pre> 
+</pre>
 
 Deploy Linkerd mesh and wait for it to be deployed
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl mesh deploy linkerd --watch
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 		
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

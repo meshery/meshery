@@ -22,7 +22,7 @@ See the figure below for additional details of the data formats supported and ty
 Meshery Database has several kinds of database implementations to support various usecases. They are listed below:
 {% assign sorted = site.adapters | sort: "project_status" | reverse %}
 
-| Component      | Library                               |
-| :------------- | :------------------------------------ |
-| Bitcask        | git.mills.io/prologic/bitcask         |
-| SQLite         | gorm.io/gorm, gorm.io/driver/sqlite   |
+| Component | Library                             |
+| :-------- | :---------------------------------- |
+| Bitcask   | git.mills.io/prologic/bitcask       |
+| SQLite    | gorm.io/gorm, gorm.io/driver/sqlite |

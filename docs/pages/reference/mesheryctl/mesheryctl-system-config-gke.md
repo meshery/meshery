@@ -17,30 +17,33 @@ Configure Meshery to use GKE cluster
 ## Synopsis
 
 Configure Meshery to connect to GKE cluster
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system config gke [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Configure Meshery to connect to GKE cluster using auth token
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system config gke --token auth.json
 
 </div>
-</pre> 
+</pre>
 
 Configure Meshery to connect to GKE cluster (if session is logged in using login subcommand)
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system config gke
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

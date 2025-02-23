@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-const LeftArrowIcon = ({ width, height, primaryFill = "#455a64", style={} }) => {
+const LeftArrowIcon = ({ width, height, primaryFill = '#455a64', style = {} }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"

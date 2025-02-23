@@ -23,48 +23,52 @@ Performance Management & Benchmarking.
 mesheryctl perf [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Run performance test:
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf apply test-3 --name "a quick stress test" --url http://192.168.1.15/productpage --qps 300 --concurrent-requests 2 --duration 30s
 
 </div>
-</pre> 
+</pre>
 
 List performance profiles:
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf profile sam-test
 
 </div>
-</pre> 
+</pre>
 
 List performance results:
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf result sam-test
 
 </div>
-</pre> 
+</pre>
 
 Display Perf profile in JSON or YAML:
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf result -o json
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl perf result -o yaml
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -90,8 +94,8 @@ mesheryctl perf result -o yaml
 
 ## See Also
 
-* [mesheryctl perf apply](/reference/mesheryctl/perf/apply)
-* [mesheryctl perf profile](/reference/mesheryctl/perf/profile)
-* [mesheryctl perf result](/reference/mesheryctl/perf/result)
+- [mesheryctl perf apply](/reference/mesheryctl/perf/apply)
+- [mesheryctl perf profile](/reference/mesheryctl/perf/profile)
+- [mesheryctl perf result](/reference/mesheryctl/perf/result)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

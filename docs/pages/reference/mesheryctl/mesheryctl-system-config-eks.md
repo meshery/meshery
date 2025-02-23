@@ -17,30 +17,33 @@ Configure Meshery to use EKS cluster
 ## Synopsis
 
 Configure Meshery to connect to EKS cluster
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system config eks [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Configure Meshery to connect to EKS cluster using auth token
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system config eks --token auth.json
 
 </div>
-</pre> 
+</pre>
 
 Configure Meshery to connect to EKS cluster (if session is logged in using login subcommand)
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system config eks
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

@@ -17,62 +17,69 @@ Meshery environment check
 ## Synopsis
 
 Verify environment pre/post-deployment of Meshery.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system check [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Run system checks for both pre and post mesh deployment scenarios on Meshery
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system check
 
 </div>
-</pre> 
+</pre>
 
 Run Pre-mesh deployment checks (Docker and Kubernetes)
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system check --preflight
 
 </div>
-</pre> 
+</pre>
 
 Run checks on specific mesh adapter
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system check --adapter meshery-istio:10000
 
 </div>
-</pre> 
+</pre>
 
 or
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system check --adapter meshery-istio
 
 </div>
-</pre> 
+</pre>
 
 Run checks for all the mesh adapters
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system check --adapters
 
 </div>
-</pre> 
+</pre>
 
 Verify the health of Meshery Operator's deployment with MeshSync and Broker
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system check --operator
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

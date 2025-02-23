@@ -65,8 +65,6 @@ Concepts for understanding Meshery's various features and components.
     </details>
   </div>
 
-
-
 <!-- {% assign sorted_pages = site.pages | sort: "name" %}
 
 <h2>Architectural Components</h2>

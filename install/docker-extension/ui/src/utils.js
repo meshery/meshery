@@ -3,5 +3,5 @@ export function trueRandom() {
 }
 
 export function randomApplicationNameGenerator() {
-  return "meshery_compose_" + Math.floor(trueRandom() * 100)
+  return "meshery_compose_" + Math.floor(trueRandom() * 100);
 }

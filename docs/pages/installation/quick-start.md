@@ -96,20 +96,20 @@ You may now proceed to managed any cloud native infrastructure supported by Mesh
 {% assign tutorials = site.pages | where: "category", "tutorials" %}
 {% assign items_grouped = tutorials | group_by: 'model' %}
 {% for group in items_grouped %}
-  {% if group.name != "" %}
- <strong>{{ group.name | upcase }}></strong>
+{% if group.name != "" %}
+<strong>{{ group.name | upcase }}></strong>
 
-  {% capture tutorials %}
-  {% for item in group.items %}
-    <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
-  {% endfor %}
-  {% endcapture %}
+{% capture tutorials %}
+{% for item in group.items %}
+<li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
+{% endfor %}
+{% endcapture %}
 
   <ul style="list-style-type: circle;">
   {{ tutorials }}
   </ul>
 
-  {% endif %}
+{% endif %}
 {% endfor %}
 
 </div>

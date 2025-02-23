@@ -39,12 +39,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "configuration",
-                  "spec"
-                ]
-              ],
+              "mutatorRef": [["configuration", "spec"]],
               "description": "A Pod is the basic execution unit of a Kubernetes application, representing a single instance of a running process in a cluster."
             }
           }
@@ -60,14 +55,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "template",
-                  "spec"
-                ]
-              ],
+              "mutatedRef": [["configuration", "spec", "template", "spec"]],
               "description": "StatefulSets use pods to define the desired state of applications. Whenever a Pod is dragged near to the StatefulSet, the pod specification becomes part of the StatefulSet."
             }
           }

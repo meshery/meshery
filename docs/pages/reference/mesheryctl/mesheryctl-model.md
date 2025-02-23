@@ -17,46 +17,51 @@ View list of models and detail of models
 ## Synopsis
 
 View list of models and detailed information of a specific model
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 To view total of available models
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model --count
 
 </div>
-</pre> 
+</pre>
 
 To view list of models
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model list
 
 </div>
-</pre> 
+</pre>
 
 To view a specific model
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model view [model-name]
 
 </div>
-</pre> 
+</pre>
 
 To search for a specific model
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model search [model-name]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -80,11 +85,11 @@ mesheryctl model search [model-name]
 
 ## See Also
 
-* [mesheryctl model export](/reference/mesheryctl/model/export)
-* [mesheryctl model generate](/reference/mesheryctl/model/generate)
-* [mesheryctl model import](/reference/mesheryctl/model/import)
-* [mesheryctl model list](/reference/mesheryctl/model/list)
-* [mesheryctl model search](/reference/mesheryctl/model/search)
-* [mesheryctl model view](/reference/mesheryctl/model/view)
+- [mesheryctl model export](/reference/mesheryctl/model/export)
+- [mesheryctl model generate](/reference/mesheryctl/model/generate)
+- [mesheryctl model import](/reference/mesheryctl/model/import)
+- [mesheryctl model list](/reference/mesheryctl/model/list)
+- [mesheryctl model search](/reference/mesheryctl/model/search)
+- [mesheryctl model view](/reference/mesheryctl/model/view)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

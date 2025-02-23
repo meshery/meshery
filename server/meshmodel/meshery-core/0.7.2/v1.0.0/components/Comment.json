@@ -66,9 +66,7 @@
     {
       "description": "Configure the workload specific setting of a component",
       "displayName": "Workload Configuration",
-      "entityState": [
-        "declaration"
-      ],
+      "entityState": ["declaration"],
       "key": "",
       "kind": "mutate",
       "metadata": null,
@@ -81,9 +79,7 @@
     {
       "description": "Configure the visual styles for the component",
       "displayName": "Styling",
-      "entityState": [
-        "declaration"
-      ],
+      "entityState": ["declaration"],
       "key": "",
       "kind": "mutate",
       "metadata": null,
@@ -96,9 +92,7 @@
     {
       "description": "Change the shape of the component",
       "displayName": "Change Shape",
-      "entityState": [
-        "declaration"
-      ],
+      "entityState": ["declaration"],
       "key": "",
       "kind": "mutate",
       "metadata": null,
@@ -111,9 +105,7 @@
     {
       "description": "Drag and Drop a component into a parent component in graph view",
       "displayName": "Compound Drag And Drop",
-      "entityState": [
-        "declaration"
-      ],
+      "entityState": ["declaration"],
       "key": "",
       "kind": "interaction",
       "metadata": null,
@@ -126,10 +118,7 @@
     {
       "description": "Change the status of a component to resolved",
       "displayName": "Resolve Component",
-      "entityState": [
-        "declaration",
-        "instance"
-      ],
+      "entityState": ["declaration", "instance"],
       "key": "",
       "kind": "mutate",
       "metadata": null,

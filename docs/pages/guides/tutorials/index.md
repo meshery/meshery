@@ -10,13 +10,15 @@ abstract: "Explore the tutorials to learn how to use Meshery for collaboratively
 permalink: guides/tutorials
 redirect_from: guides/tutorials/
 ---
+
 🧑‍🔬 Explore these tutorials to learn how to use Meshery for collaboratively managing infrastructure. Access the [Meshery Playground]({{site.baseurl}}/installation/playground) as a convenient resource for the labs in these tutorials.
 
 {% assign tutorials = site.pages | where: "category", "tutorials" %}
 
 {% assign items_grouped = tutorials | group_by: 'model' %}
 {% for group in items_grouped %}
-  {% if group.name != "" %}
+{% if group.name != "" %}
+
   <h2>{{ group.name | capitalize }} </h2>
   
     {% for item in group.items %}

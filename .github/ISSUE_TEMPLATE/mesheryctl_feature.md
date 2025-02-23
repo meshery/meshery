@@ -1,27 +1,33 @@
 ---
 name: ⌨️ 💡 mesheryctl Feature Request
 about: Request an enhancement in Meshery's CLI
-title: '[mesheryctl]'
+title: "[mesheryctl]"
 labels: component/mesheryctl, language/go, kind/enhancement
-assignees: ''
+assignees: ""
 ---
 
 <!-- Please update the mesheryctl Command Tracker spreadsheet -->
+
 _See [mesheryctl Command Tracker](https://bit.ly/3dqXy1q) for current status of commands._
 
 ### Current Behavior
+
 <!-- A brief description of what the problem is. (e.g. I need to be able to...) -->
 
 ### Desired Behavior
+
 <!-- A brief description of the enhancement. -->
 
 ### Implementation
+
 <!-- Specifics on the approach to fulfilling the feature request. -->
 
 ### Acceptance Tests
+
 <!-- Stipulations of functional behavior or non-functional items that must be in-place in order for the issue to be closed. -->
 
 ### Mockups
+
 <!-- Any visual diagrams of the desired user interface. -->
 
 ---

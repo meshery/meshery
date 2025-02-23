@@ -50,25 +50,9 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatorRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "selector"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "ports",
-                  "_",
-                  "targetPort"
-                ],
-                [
-                  "configuration",
-                  "spec",
-                  "ports",
-                  "_",
-                  "protocol"
-                ]
+                ["configuration", "spec", "selector"],
+                ["configuration", "spec", "ports", "_", "targetPort"],
+                ["configuration", "spec", "ports", "_", "protocol"]
               ]
             }
           }
@@ -85,11 +69,7 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [
-                  "configuration",
-                  "metadata",
-                  "labels"
-                ],
+                ["configuration", "metadata", "labels"],
                 [
                   "configuration",
                   "spec",
@@ -122,11 +102,7 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [
-                  "configuration",
-                  "metadata",
-                  "labels"
-                ],
+                ["configuration", "metadata", "labels"],
                 [
                   "configuration",
                   "spec",

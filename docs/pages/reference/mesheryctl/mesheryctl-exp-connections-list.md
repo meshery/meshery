@@ -17,30 +17,33 @@ List all the connections
 ## Synopsis
 
 List all the connections
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp connections list [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 List all the connections
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp connections list
 
 </div>
-</pre> 
+</pre>
 
 List all the connections with page number
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp connections list --page 2
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

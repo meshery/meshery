@@ -17,12 +17,13 @@ Import models from mesheryctl command
 ## Synopsis
 
 Import models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model import [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -31,35 +32,35 @@ mesheryctl model import [flags]
 	mesehryctl model import -f [ URI ]
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 	mesehryctl model import -f URL 
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 	mesehryctl model import -f OCI 
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 	mesehryctl model import -f model.tar.gz 
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 	mesehryctl model import -f /path/to/models
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

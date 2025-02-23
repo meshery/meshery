@@ -13,9 +13,9 @@ list: include
 
 ### Introduction
 
-Meshery is a powerful multi-cloud management platform that enables you to configure, deploy, and manage AWS resources, such as EC2 instances. In order to manage AWS resources, Meshery uses [AWS Controllers for Kubernetes (ACK)](https://aws.amazon.com/blogs/containers/aws-controllers-for-kubernetes-ack/). ACK facilitates the bridge between Kubernetes and AWS services, enabling Meshery to manage AWS resources and Meshery enabling you to benefit from the enhanced experience that Meshery and its extensions offer. 
+Meshery is a powerful multi-cloud management platform that enables you to configure, deploy, and manage AWS resources, such as EC2 instances. In order to manage AWS resources, Meshery uses [AWS Controllers for Kubernetes (ACK)](https://aws.amazon.com/blogs/containers/aws-controllers-for-kubernetes-ack/). ACK facilitates the bridge between Kubernetes and AWS services, enabling Meshery to manage AWS resources and Meshery enabling you to benefit from the enhanced experience that Meshery and its extensions offer.
 
-Meshery has a number of extensions, adapters, and plugins. In this tutorial, we will use the [Kanvas]({{site.baseurl}}/extensions/kanvas) extension to provide an intuitive, visual experience for configuring and deploying an AWS EC2 instance. Among other aspects, Kanvas provides an alternative to command-line tools like `kubectl` by offering infrastructure as design. Once you connect your Kubernetes cluster to Meshery, you can configure, deploy, and manage AWS resources directly from the Kanvas interface, making deployments more intuitive and collaborative 
+Meshery has a number of extensions, adapters, and plugins. In this tutorial, we will use the [Kanvas]({{site.baseurl}}/extensions/kanvas) extension to provide an intuitive, visual experience for configuring and deploying an AWS EC2 instance. Among other aspects, Kanvas provides an alternative to command-line tools like `kubectl` by offering infrastructure as design. Once you connect your Kubernetes cluster to Meshery, you can configure, deploy, and manage AWS resources directly from the Kanvas interface, making deployments more intuitive and collaborative
 
 In this guide, you’ll explore how to deploy AWS resources, including setup and architecture details. This guide also covers how to access pre-configured designs from [Meshery Catalog](https://meshery.io/catalog) and demonstrates how to visualize deployed resources using Kanvas' operator mode, offering a comprehensive understanding of AWS resource management.
 
@@ -59,7 +59,7 @@ To begin, connect your Kubernetes cluster to Meshery. This guide uses `minikube`
 
 - **Out-of-Cluster Deployment**: Runs Meshery in Docker containers, allowing external connectivity to the Minikube cluster.
 
-For this guide, the `in-cluster deployment` method is used.  Follow this [setup guide for Meshery on Minikube](https://docs.meshery.io/installation/kubernetes/minikube) to deploy Meshery in-cluster. After the deployment, open the Meshery UI at `localhost:9081` to verify that the cluster is listed. Click on the cluster name to ping and confirm connectivity.
+For this guide, the `in-cluster deployment` method is used. Follow this [setup guide for Meshery on Minikube](https://docs.meshery.io/installation/kubernetes/minikube) to deploy Meshery in-cluster. After the deployment, open the Meshery UI at `localhost:9081` to verify that the cluster is listed. Click on the cluster name to ping and confirm connectivity.
 
 ![Connect Minikube Cluster](./aws-controllers/aws-connection.png)
 
@@ -69,16 +69,16 @@ In this section, you will set up the EC2 controller and configure it to connect 
 
 1. **Clone the EC2 Controller Design**: Start by [cloning the EC2 controller design](https://cloud.layer5.io/catalog/content/catalog/ec2-controller-design-28a7fad9-c7ef-440a-a8f0-7614e072b866?source=%257B%257D) from the catalog. To do this, click on **Clone** on the catalog page. Once cloned, open the design in the playground, and you will see it displayed on the Kanvas.
 
-    ![EC2 Controller Chart](./aws-controllers/controller-chart.png)
+   ![EC2 Controller Chart](./aws-controllers/controller-chart.png)
 
 1. **Set the Deployment Namespace**: This design has been configured to be deployed in the `ack-system` namespace.
 
 This EC2 controller design includes:
 
- -  **The EC2 Controller Pod**: This runs the main EC2 controller. This pod is responsible for managing the lifecycle of EC2 instances and their associated resources.
- -  **Custom Resource Definitions (CRDs)**: These CRDs define the desired state of various AWS resources, such as VPCs, subnets, NAT gateways, and other networking components.By utilizing these CRDs, the EC2 controller can interact with the AWS API to create, update, and manage these resources.
- -  **Service Account**: The service account associated with the controller pod has the necessary IAM permissions. These permissions allow the controller to perform essential functions, such as creating and managing AWS resources.
- - **AWS Credentials secret**: The AWS credentials secret stores your AWS access keys and secret access keys securely. This secret is essential for authenticating the AWS controller with your AWS account.
+- **The EC2 Controller Pod**: This runs the main EC2 controller. This pod is responsible for managing the lifecycle of EC2 instances and their associated resources.
+- **Custom Resource Definitions (CRDs)**: These CRDs define the desired state of various AWS resources, such as VPCs, subnets, NAT gateways, and other networking components.By utilizing these CRDs, the EC2 controller can interact with the AWS API to create, update, and manage these resources.
+- **Service Account**: The service account associated with the controller pod has the necessary IAM permissions. These permissions allow the controller to perform essential functions, such as creating and managing AWS resources.
+- **AWS Credentials secret**: The AWS credentials secret stores your AWS access keys and secret access keys securely. This secret is essential for authenticating the AWS controller with your AWS account.
 
 #### Configure the AWS Secret
 
@@ -87,12 +87,13 @@ To connect the EC2 controller to AWS, create a Kubernetes secret containing your
 1. Double-click the Secret component to open its configuration.
 
 1. Under **Data**, add the base 64 encoded values of your AWS keys.
-    - **AWS_ACCESS_KEY_ID**: `<base64-encoded-key>`
-    - **AWS_SECRET_ACCESS_KEY**: `<base64-encoded-secret>`
 
-    Encode your AWS key and secret with a [base64 encoder](https://www.base64encode.org/), then enter them in the configuration.
+   - **AWS_ACCESS_KEY_ID**: `<base64-encoded-key>`
+   - **AWS_SECRET_ACCESS_KEY**: `<base64-encoded-secret>`
 
-    ![Configure Secret](./aws-controllers/configure-secret.png)
+   Encode your AWS key and secret with a [base64 encoder](https://www.base64encode.org/), then enter them in the configuration.
+
+   ![Configure Secret](./aws-controllers/configure-secret.png)
 
 #### Configure the EC2 Controller Pod to Use the Secret
 
@@ -102,8 +103,8 @@ While this step is already handled in the design, but it's worth clarifying how 
 
 1. In the **Containers** section, scroll to **env** and click the **+** to add two environment variables:
 
-    - **AWS_ACCESS_KEY_ID**: For the name, put in `AWS_ACCESS_KEY_ID`, click on the `secret Key Ref` dropdown and put in the **key** as `AWS_ACCESS_KEY_ID` and the secret resource **name** as `aws_creds`.
-    - **AWS_SECRET_ACCESS_KEY**: Set the `AWS_SECRET_ACCESS_KEY` similarly, using the same secret key reference.
+   - **AWS_ACCESS_KEY_ID**: For the name, put in `AWS_ACCESS_KEY_ID`, click on the `secret Key Ref` dropdown and put in the **key** as `AWS_ACCESS_KEY_ID` and the secret resource **name** as `aws_creds`.
+   - **AWS_SECRET_ACCESS_KEY**: Set the `AWS_SECRET_ACCESS_KEY` similarly, using the same secret key reference.
 
 #### Deploy EC2 Controller Design
 
@@ -111,15 +112,15 @@ After configuring your design, the next step is deployment. To learn more about 
 
 1. Click the **Actions** button at the top of the Kanvas and click **Deploy**.
 
-1. Once the deployment is complete, click **Open in Visualizer** to switch to Operator mode and see a pre-filtered view of your just deployed resources in the cluster. Alternatively, you can click *Operate* at the top of the Kanvas to enter Operater mode.
+1. Once the deployment is complete, click **Open in Visualizer** to switch to Operator mode and see a pre-filtered view of your just deployed resources in the cluster. Alternatively, you can click _Operate_ at the top of the Kanvas to enter Operater mode.
 
-    ![Operator Mode](./aws-controllers/controller-operator-mode.png)
+   ![Operator Mode](./aws-controllers/controller-operator-mode.png)
 
 To get the filtered view shown above, click the filter icon and adjust the following settings:
 
-  - For `view Selector` select `single namespace`
-  - For `Kinds` select `Deployment, Pod, secret`
-  - For `namspace` select `ack-system`
+- For `view Selector` select `single namespace`
+- For `Kinds` select `Deployment, Pod, secret`
+- For `namspace` select `ack-system`
 
 ### 3. Deploy the VPC Workflow
 

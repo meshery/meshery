@@ -17,38 +17,42 @@ View list of environments and detail of environments
 ## Synopsis
 
 View list of environments and detailed information of a specific environments
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp environment [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 To view a list environments
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp environment list --orgID [orgId]
 
 </div>
-</pre> 
+</pre>
 
 To create a environment
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp environment create --orgID [orgId] --name [name] --description [description]
 
 </div>
-</pre> 
+</pre>
 
 Documentation for environment can be found at:
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 https://docs.meshery.io/concepts/logical/environments
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

@@ -10,6 +10,3 @@ type: "project"
 service-mesh: "meshery-istio"
 subheading: "Meshery-Istio"
 ---
-
-
-

@@ -86,12 +86,7 @@
             },
             "patch": {
               "patchStrategy": "merge",
-              "mutatorRef": [
-                [
-                  "spec",
-                  "parameters"
-                ]
-              ]
+              "mutatorRef": [["spec", "parameters"]]
             }
           }
         ],
@@ -134,12 +129,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "status",
-                  "dbParameterGroupName"
-                ]
-              ]
+              "mutatedRef": [["status", "dbParameterGroupName"]]
             }
           }
         ]

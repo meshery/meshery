@@ -128,31 +128,15 @@
               "from": [
                 {
                   "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "component",
-                      "kind"
-                    ],
-                    [
-                      "displayName"
-                    ]
-                  ]
+                  "mutatorRef": [["component", "kind"], ["displayName"]]
                 }
               ],
               "to": [
                 {
                   "kind": "ClusterRoleBinding",
                   "mutatedRef": [
-                    [
-                      "configuration",
-                      "roleRef",
-                      "kind"
-                    ],
-                    [
-                      "configuration",
-                      "roleRef",
-                      "name"
-                    ]
+                    ["configuration", "roleRef", "kind"],
+                    ["configuration", "roleRef", "name"]
                   ]
                 }
               ]
@@ -170,31 +154,15 @@
               "from": [
                 {
                   "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "component",
-                      "kind"
-                    ],
-                    [
-                      "displayName"
-                    ]
-                  ]
+                  "mutatorRef": [["component", "kind"], ["displayName"]]
                 }
               ],
               "to": [
                 {
                   "kind": "RoleBinding",
                   "mutatedRef": [
-                    [
-                      "configuration",
-                      "roleRef",
-                      "kind"
-                    ],
-                    [
-                      "configuration",
-                      "roleRef",
-                      "name"
-                    ]
+                    ["configuration", "roleRef", "kind"],
+                    ["configuration", "roleRef", "name"]
                   ]
                 }
               ]
@@ -214,24 +182,13 @@
               "from": [
                 {
                   "kind": "ClusterRoleBinding",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "subjects",
-                      "_",
-                      "name"
-                    ]
-                  ]
+                  "mutatedRef": [["configuration", "subjects", "_", "name"]]
                 }
               ],
               "to": [
                 {
                   "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
+                  "mutatorRef": [["displayName"]]
                 }
               ]
             }
@@ -248,24 +205,13 @@
               "from": [
                 {
                   "kind": "RoleBinding",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "subjects",
-                      "_",
-                      "name"
-                    ]
-                  ]
+                  "mutatedRef": [["configuration", "subjects", "_", "name"]]
                 }
               ],
               "to": [
                 {
                   "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
+                  "mutatorRef": [["displayName"]]
                 }
               ]
             }

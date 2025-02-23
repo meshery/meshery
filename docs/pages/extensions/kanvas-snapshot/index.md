@@ -25,6 +25,7 @@ Kanvas Snapshot is a screenshot service provided via Kanvas for your designs. Vi
 <h3>Installing Kanvas Snapshot: Github Pull Request</h3>
 
 Connect MeshMap to your GitHub repo and see changes pull request-to-pull request. Get snapshots of your infrastructure directly in your PRs.
+
 <ul>
 <li>Step 1: Log in to your Meshery Dashboard.</li>
 <li>Step 2: Navigate to Extensions and Enable GitHub Action: Kanvas Snapshot.</li>
@@ -72,7 +73,6 @@ jobs:
           application_type: "Kubernetes Manifest" # your application type, could be any of three: "Kubernetes Manifest", "Docker Compose", "Helm Chart"
           filePath: "action/__tests__/manifest-test" # relative file-path from the root directory in the github-runner env, you might require to checkout the repository as described in step 2
 ```
-
 
 ### When Infrastructure is identified via URL
 
@@ -200,7 +200,6 @@ After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/
 
 [Kanvas Snapshot Release Page](https://github.com/layer5labs/kanvas-snapshot/releases)
 
-
 ```
  - id: test_result
         uses: layer5labs/MeshMap-Snapshot@v0.0.5 # <-- Update the version to latest from the Kanvas-Snapshot release page
@@ -212,4 +211,3 @@ After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/
 
 1. Given changes done in `action.yml` in Kanvas Snapshot, updating the workflows is required.
 2. Given changes done other than in `action.yml` in Kanvas Snapshot, the update in the `.github/worflows` is not a hard requirement, but doesnt hurt.
-

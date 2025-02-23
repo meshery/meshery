@@ -72,11 +72,7 @@
                 {
                   "id": null,
                   "kind": "PersistentVolumeClaim",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
+                  "mutatorRef": [["displayName"]]
                 }
               ]
             },
@@ -125,17 +121,8 @@
                   "id": null,
                   "kind": "PersistentVolumeClaim",
                   "mutatedRef": [
-                    [
-                      "configuration",
-                      "spec",
-                      "volumeName"
-                    ],
-                    [
-                      "configuration",
-                      "spec",
-                      "selector",
-                      "matchLabels"
-                    ]
+                    ["configuration", "spec", "volumeName"],
+                    ["configuration", "spec", "selector", "matchLabels"]
                   ]
                 }
               ],
@@ -144,14 +131,8 @@
                   "id": null,
                   "kind": "self",
                   "mutatorRef": [
-                    [
-                      "displayName"
-                    ],
-                    [
-                      "configuration",
-                      "metadata",
-                      "labels"
-                    ]
+                    ["displayName"],
+                    ["configuration", "metadata", "labels"]
                   ]
                 }
               ]

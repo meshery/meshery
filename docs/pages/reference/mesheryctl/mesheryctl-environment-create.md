@@ -17,30 +17,33 @@ Create a new environments
 ## Synopsis
 
 Create a new environments by providing the name and description of the environment
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl environment create [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Create a new environment
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl environment create --orgId [orgId] --name [name] --description [description]
 
 </div>
-</pre> 
+</pre>
 
 Documentation for environment can be found at:
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 https://docs.meshery.io/concepts/logical/environments
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

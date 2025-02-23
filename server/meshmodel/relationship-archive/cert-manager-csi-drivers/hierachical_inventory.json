@@ -31,11 +31,7 @@
             "model": "kubernetes",
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "displayName"
-                ]
-              ],
+              "mutatorRef": [["displayName"]],
               "description": "In Kubernetes, Secrets are versatile resources that can be referenced by various other resources to provide configuration data to applications or other Kubernetes resources securely.\n\nIn cert-manager-csi-driver-cacerts, a secret may contain certificate data, and the Issuer resource references the secret resource by name to access the certificates."
             }
           }
@@ -46,14 +42,7 @@
             "model": "cert-manager-csi-driver-cacerts",
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "ca",
-                  "secretName"
-                ]
-              ],
+              "mutatedRef": [["configuration", "spec", "ca", "secretName"]],
               "description": "In cert-manager-csi-driver-cacerts, Issuer represents certificate authorities (CAs) able to sign certificates in response to certificate signing requests. A secret may contain certificate data, and the Issuer resource references the secret resource to access the certificates."
             }
           }

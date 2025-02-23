@@ -1,5 +1,3 @@
-
-
 ## Prerequisites
 
 You need to have `scoop` installed on your Windows system to perform these actions.

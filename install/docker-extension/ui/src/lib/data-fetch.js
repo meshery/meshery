@@ -1,4 +1,4 @@
-import fetch from 'isomorphic-unfetch';
+import fetch from "isomorphic-unfetch";
 
 const dataFetch = (url, options = {}, successFn, errorFn) => {
   // const controller = new AbortController();
@@ -6,9 +6,9 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
   // options.signal = signal;
   // setTimeout(() => controller.abort(), 10000); // nice to have but will mess with the load test
   fetch(url, options)
-    .then(res => {
+    .then((res) => {
       if (res.status === 401 || res.redirected) {
-        if (window.location.host.endsWith('3000')) {
+        if (window.location.host.endsWith("3000")) {
           window.location = "/user/login"; // for local dev thru node server
         } else {
           window.location.reload(); // for use with Go server
@@ -17,23 +17,22 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
 
       let result;
       if (res.ok) {
-        result = res.text()
-          .then(text => {
-            try {
-              return JSON.parse(text);
-            } catch (e) {
-              return text;
-            }
-          })
+        result = res.text().then((text) => {
+          try {
+            return JSON.parse(text);
+          } catch (e) {
+            return text;
+          }
+        });
 
         return result;
       } else {
         res.text().then(errorFn);
       }
-
-    }).then(successFn)
+    })
+    .then(successFn)
     .catch(errorFn);
-}
+};
 
 /**
  * promisifiedDataFetch adds a promise wrapper to the dataFetch function
@@ -44,7 +43,12 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
  */
 export function promisifiedDataFetch(url, options = {}) {
   return new Promise((resolve, reject) => {
-    dataFetch(url, options, result => resolve(result), err => reject(err));
+    dataFetch(
+      url,
+      options,
+      (result) => resolve(result),
+      (err) => reject(err),
+    );
   });
 }
 

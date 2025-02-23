@@ -52,13 +52,7 @@
             "id": null,
             "kind": "*",
             "match": {
-              "refs": [
-                [
-                  "configuration",
-                  "metadata",
-                  "labels"
-                ]
-              ]
+              "refs": [["configuration", "metadata", "labels"]]
             },
             "model": {
               "category": {
@@ -100,13 +94,7 @@
             "id": null,
             "kind": "*",
             "match": {
-              "refs": [
-                [
-                  "configuration",
-                  "metadata",
-                  "labels"
-                ]
-              ]
+              "refs": [["configuration", "metadata", "labels"]]
             },
             "model": {
               "category": {

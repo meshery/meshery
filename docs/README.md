@@ -70,9 +70,9 @@ Alternatively, if you are running Windows 10, you may install the Windows Subsys
 
 **Goal:** Offer comprehensive, organized, and accessible documentation for diverse audiences, from new users to expert contributors.
 **Target Audience:**
+
 - **Personas:** Beginners, developers, admins, operators, security specialists, contributors, users of all experience levels.
 - **Needs:** Varied - learning fundamentals, managing tasks, understanding advanced concepts, contributing code.
-
 
 ## High-Level Outline
 
@@ -157,4 +157,5 @@ A component tool reference page shows the description and flag options output fo
 - **FAQ:** Answers to frequently asked questions.
 
 This high-level outline provides a comprehensive framework for structuring the Meshery documentation, catering to diverse user needs while ensuring information is readily accessible and actionable. By further refining each section with specific content recommendations and considering the needs of specific personas, the documentation can effectively serve as a valuable resource for everyone interacting with Meshery.
+
 </details>

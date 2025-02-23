@@ -56,15 +56,7 @@
                 {
                   "id": null,
                   "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "component",
-                      "kind"
-                    ],
-                    [
-                      "displayName"
-                    ]
-                  ]
+                  "mutatorRef": [["component", "kind"], ["displayName"]]
                 }
               ],
               "to": [
@@ -72,16 +64,8 @@
                   "id": null,
                   "kind": "ClusterRoleBinding",
                   "mutatedRef": [
-                    [
-                      "configuration",
-                      "roleRef",
-                      "kind"
-                    ],
-                    [
-                      "configuration",
-                      "roleRef",
-                      "name"
-                    ]
+                    ["configuration", "roleRef", "kind"],
+                    ["configuration", "roleRef", "name"]
                   ]
                 }
               ]
@@ -128,15 +112,7 @@
                 {
                   "id": null,
                   "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "component",
-                      "kind"
-                    ],
-                    [
-                      "displayName"
-                    ]
-                  ]
+                  "mutatorRef": [["component", "kind"], ["displayName"]]
                 }
               ],
               "to": [
@@ -144,16 +120,8 @@
                   "id": null,
                   "kind": "RoleBinding",
                   "mutatedRef": [
-                    [
-                      "configuration",
-                      "roleRef",
-                      "kind"
-                    ],
-                    [
-                      "configuration",
-                      "roleRef",
-                      "name"
-                    ]
+                    ["configuration", "roleRef", "kind"],
+                    ["configuration", "roleRef", "name"]
                   ]
                 }
               ]
@@ -202,25 +170,14 @@
                 {
                   "id": null,
                   "kind": "ClusterRoleBinding",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "subjects",
-                      "_",
-                      "name"
-                    ]
-                  ]
+                  "mutatedRef": [["configuration", "subjects", "_", "name"]]
                 }
               ],
               "to": [
                 {
                   "id": null,
                   "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
+                  "mutatorRef": [["displayName"]]
                 }
               ]
             },
@@ -266,25 +223,14 @@
                 {
                   "id": null,
                   "kind": "RoleBinding",
-                  "mutatedRef": [
-                    [
-                      "configuration",
-                      "subjects",
-                      "_",
-                      "name"
-                    ]
-                  ]
+                  "mutatedRef": [["configuration", "subjects", "_", "name"]]
                 }
               ],
               "to": [
                 {
                   "id": null,
                   "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "displayName"
-                    ]
-                  ]
+                  "mutatorRef": [["displayName"]]
                 }
               ]
             },

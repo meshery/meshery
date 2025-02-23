@@ -12,8 +12,6 @@ subcommand: nil
 
 # test
 
-
-
 ## Options
 
 <pre class='codeblock-pre'>

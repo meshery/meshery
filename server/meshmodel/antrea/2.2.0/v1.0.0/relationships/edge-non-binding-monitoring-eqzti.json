@@ -96,25 +96,14 @@
                 {
                   "id": null,
                   "kind": "NodeLatencyMonitor",
-                  "mutatedRef": [
-                    [
-                      "spec",
-                      "nodes",
-                      "_"
-                    ]
-                  ]
+                  "mutatedRef": [["spec", "nodes", "_"]]
                 }
               ],
               "to": [
                 {
                   "id": null,
                   "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "metadata",
-                      "name"
-                    ]
-                  ]
+                  "mutatorRef": [["metadata", "name"]]
                 }
               ]
             },

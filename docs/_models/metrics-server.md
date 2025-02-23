@@ -9,15 +9,16 @@ description: Metrics Server is a scalable, efficient source of container resourc
 integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
 registrant: GitHub
-components: 
+components:
 components-count: 0
-relationships: 
+relationships:
 relationship-count: 0
-featureList: [
-  "Fast autoscaling, collecting metrics every 15 seconds.",
-  "Resource efficiency, using 1 mili core of CPU and 2 MB of memory for each node in a cluster.",
-  "Scalable support up to 5,000 node clusters."
-]
+featureList:
+  [
+    "Fast autoscaling, collecting metrics every 15 seconds.",
+    "Resource efficiency, using 1 mili core of CPU and 2 MB of memory for each node in a cluster.",
+    "Scalable support up to 5,000 node clusters.",
+  ]
 howItWorks: "Collaborative Infrastructure as Design"
 howItWorksDetails: "Collaboratively manage infrastructure with your coworkers synchronously sharing the same designs."
 language: en

@@ -1,9 +1,466 @@
+import cytoscape from "https://cdn.jsdelivr.net/npm/cytoscape@3.27.0/+esm";
+const data = {
+  elements: {
+    nodes: [
+      {
+        data: {
+          id: "38ed4b60-7e98-4f95-afec-c1ed9ad1b7a6",
+          label: "wasm-plugin-mg",
+          schemaId: "components.meshery.io/v1beta1",
+          badges: {
+            inventoryBadge: {
+              $componentId: "38ed4b60-7e98-4f95-afec-c1ed9ad1b7a6",
+              id: "inventoryBadge",
+              html: '<span\n         id="38ed4b60-7e98-4f95-afec-c1ed9ad1b7a6-inventoryWalletBadge"\n         style="width:5rem;height:5rem;border-radius:50%;font-size:2rem;color:white;display:flex;justify-content:center;align-items:center;background-color:#A020F0;z-index:101;user-select:none;-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;position:absolute;transform:translate(-1.9rem, -2.1rem)"\n         >\n         1\n       </span>',
+              pos: { halign: "right", valign: "bottom" },
+            },
+          },
+        },
+        position: { x: 1495.9952283311475, y: 419.1272019197314 },
+        group: "nodes",
+        removed: false,
+        selected: false,
+        selectable: true,
+        locked: false,
+        grabbable: true,
+        pannable: false,
+        classes: "",
+      },
+    ],
+  },
+  elementStyles: {
+    "38ed4b60-7e98-4f95-afec-c1ed9ad1b7a6": {
+      events: "yes",
+      "text-events": "no",
+      textEvents: "no",
+      "transition-property": "none",
+      transitionProperty: "none",
+      "transition-duration": "0ms",
+      transitionDuration: "0ms",
+      "transition-delay": "0ms",
+      transitionDelay: "0ms",
+      "transition-timing-function": "linear",
+      transitionTimingFunction: "linear",
+      display: "element",
+      visibility: "visible",
+      opacity: "1",
+      "text-opacity": "1",
+      textOpacity: "1",
+      "min-zoomed-font-size": "12px",
+      minZoomedFontSize: "12px",
+      "z-compound-depth": "auto",
+      zCompoundDepth: "auto",
+      "z-index-compare": "manual",
+      zIndexCompare: "manual",
+      "z-index": "0",
+      zIndex: "0",
+      "overlay-padding": "10px",
+      overlayPadding: "10px",
+      "overlay-color": "rgb(0,0,0)",
+      overlayColor: "rgb(0,0,0)",
+      "overlay-opacity": "0",
+      overlayOpacity: "0",
+      "overlay-shape": "round-rectangle",
+      overlayShape: "round-rectangle",
+      "underlay-padding": "10px",
+      underlayPadding: "10px",
+      "underlay-color": "rgb(0,0,0)",
+      underlayColor: "rgb(0,0,0)",
+      "underlay-opacity": "0",
+      underlayOpacity: "0",
+      "underlay-shape": "round-rectangle",
+      underlayShape: "round-rectangle",
+      ghost: "no",
+      "ghost-offset-x": "0px",
+      ghostOffsetX: "0px",
+      "ghost-offset-y": "0px",
+      ghostOffsetY: "0px",
+      "ghost-opacity": "0",
+      ghostOpacity: "0",
+      "text-valign": "bottom",
+      textValign: "bottom",
+      "text-halign": "center",
+      textHalign: "center",
+      color: "rgb(0,0,0)",
+      "text-outline-color": "rgb(0,0,0)",
+      textOutlineColor: "rgb(0,0,0)",
+      "text-outline-opacity": "1",
+      textOutlineOpacity: "1",
+      "text-background-color": "rgb(210,212,210)",
+      textBackgroundColor: "rgb(210,212,210)",
+      "text-background-opacity": "0.7",
+      textBackgroundOpacity: "0.7",
+      "text-background-padding": "2px",
+      textBackgroundPadding: "2px",
+      "text-border-opacity": "0",
+      textBorderOpacity: "0",
+      "text-border-color": "rgb(0,0,0)",
+      textBorderColor: "rgb(0,0,0)",
+      "text-border-width": "0px",
+      textBorderWidth: "0px",
+      "text-border-style": "solid",
+      textBorderStyle: "solid",
+      "text-background-shape": "round-rectangle",
+      textBackgroundShape: "round-rectangle",
+      "text-justification": "auto",
+      textJustification: "auto",
+      "font-family": "Qanelas Soft, sans-serif",
+      fontFamily: "Qanelas Soft, sans-serif",
+      "font-style": "normal",
+      fontStyle: "normal",
+      "font-weight": "300",
+      fontWeight: "300",
+      "font-size": "8px",
+      fontSize: "8px",
+      "text-transform": "none",
+      textTransform: "none",
+      "text-wrap": "ellipsis",
+      textWrap: "ellipsis",
+      "text-overflow-wrap": "whitespace",
+      textOverflowWrap: "whitespace",
+      "text-max-width": "80px",
+      textMaxWidth: "80px",
+      "text-outline-width": "0px",
+      textOutlineWidth: "0px",
+      "line-height": "1",
+      lineHeight: "1",
+      label: "wasm-plugin-mg",
+      "text-rotation": "none",
+      textRotation: "none",
+      "text-margin-x": "0px",
+      textMarginX: "0px",
+      "text-margin-y": "7px",
+      textMarginY: "7px",
+      "source-label": "",
+      sourceLabel: "",
+      "source-text-rotation": "none",
+      sourceTextRotation: "none",
+      "source-text-margin-x": "0px",
+      sourceTextMarginX: "0px",
+      "source-text-margin-y": "0px",
+      sourceTextMarginY: "0px",
+      "source-text-offset": "0px",
+      sourceTextOffset: "0px",
+      "target-label": "",
+      targetLabel: "",
+      "target-text-rotation": "none",
+      targetTextRotation: "none",
+      "target-text-margin-x": "0px",
+      targetTextMarginX: "0px",
+      "target-text-margin-y": "0px",
+      targetTextMarginY: "0px",
+      "target-text-offset": "0px",
+      targetTextOffset: "0px",
+      height: "24px",
+      width: "24px",
+      shape: "ellipse",
+      "shape-polygon-points": "-1 -1 1 -1 1 1 -1 1",
+      shapePolygonPoints: "-1 -1 1 -1 1 1 -1 1",
+      "background-color": "rgb(70,107,176)",
+      backgroundColor: "rgb(70,107,176)",
+      "background-fill": "solid",
+      backgroundFill: "solid",
+      "background-opacity": "1",
+      backgroundOpacity: "1",
+      "background-blacken": "0",
+      backgroundBlacken: "0",
+      "background-gradient-stop-colors": "rgb(153,153,153)",
+      backgroundGradientStopColors: "rgb(153,153,153)",
+      "background-gradient-stop-positions": "0%",
+      backgroundGradientStopPositions: "0%",
+      "background-gradient-direction": "to-bottom",
+      backgroundGradientDirection: "to-bottom",
+      padding: "6px",
+      "padding-relative-to": "width",
+      paddingRelativeTo: "width",
+      "bounds-expansion": "0px",
+      boundsExpansion: "0px",
+      "border-color": "rgb(0,211,169)",
+      borderColor: "rgb(0,211,169)",
+      "border-opacity": "1",
+      borderOpacity: "1",
+      "border-width": "0px",
+      borderWidth: "0px",
+      "border-style": "solid",
+      borderStyle: "solid",
+      "outline-color": "rgb(153,153,153)",
+      outlineColor: "rgb(153,153,153)",
+      "outline-opacity": "1",
+      outlineOpacity: "1",
+      "outline-width": "0px",
+      outlineWidth: "0px",
+      "outline-style": "solid",
+      outlineStyle: "solid",
+      "outline-offset": "0px",
+      outlineOffset: "0px",
+      "background-image":
+        "url(data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSI2LjM4NjI3MDA0NjIzNDEzMSAzLjc0MTk0MDAyMTUxNDg5MjYgMTguMjI3NDMwODIwNDY1MDg4IDI1LjI1ODA1OTk3ODQ4NTEwNyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0nMTguMjI3NDMwODIwNDY1JyBoZWlnaHQ9JzI1LjI1ODA1OTk3ODQ4NTEnPjxwYXRoIGQ9Ik02LjM4NjI3IDI0Ljc5MDRMMTMuMjIxNSAyMy43MzhWMTIuMTYxM0w2LjM4NjI3IDI0Ljc5MDRaIiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik02LjM4NjI3IDI1Ljg0MjdIMjQuNjEzN0wxMy4yMjE1IDI5TDYuMzg2MjcgMjUuODQyN1oiIGZpbGw9IndoaXRlIi8+PHBhdGggZD0iTTE0LjM2MDggMjMuNzM3OUwyNC42MTM3IDI0Ljc5MDRMMTQuMzYwOCAzLjc0MTk0VjIzLjczNzlaIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==)",
+      backgroundImage:
+        "url(data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSI2LjM4NjI3MDA0NjIzNDEzMSAzLjc0MTk0MDAyMTUxNDg5MjYgMTguMjI3NDMwODIwNDY1MDg4IDI1LjI1ODA1OTk3ODQ4NTEwNyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0nMTguMjI3NDMwODIwNDY1JyBoZWlnaHQ9JzI1LjI1ODA1OTk3ODQ4NTEnPjxwYXRoIGQ9Ik02LjM4NjI3IDI0Ljc5MDRMMTMuMjIxNSAyMy43MzhWMTIuMTYxM0w2LjM4NjI3IDI0Ljc5MDRaIiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik02LjM4NjI3IDI1Ljg0MjdIMjQuNjEzN0wxMy4yMjE1IDI5TDYuMzg2MjcgMjUuODQyN1oiIGZpbGw9IndoaXRlIi8+PHBhdGggZD0iTTE0LjM2MDggMjMuNzM3OUwyNC42MTM3IDI0Ljc5MDRMMTQuMzYwOCAzLjc0MTk0VjIzLjczNzlaIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==)",
+      "background-image-crossorigin": "anonymous",
+      backgroundImageCrossorigin: "anonymous",
+      "background-image-opacity": "1",
+      backgroundImageOpacity: "1",
+      "background-image-containment": "inside",
+      backgroundImageContainment: "inside",
+      "background-image-smoothing": "yes",
+      backgroundImageSmoothing: "yes",
+      "background-position-x": "50%",
+      backgroundPositionX: "50%",
+      "background-position-y": "50%",
+      backgroundPositionY: "50%",
+      "background-width-relative-to": "inner",
+      backgroundWidthRelativeTo: "inner",
+      "background-height-relative-to": "inner",
+      backgroundHeightRelativeTo: "inner",
+      "background-repeat": "no-repeat",
+      backgroundRepeat: "no-repeat",
+      "background-fit": "contain",
+      backgroundFit: "contain",
+      "background-clip": "none",
+      backgroundClip: "none",
+      "background-width": "auto",
+      backgroundWidth: "auto",
+      "background-height": "auto",
+      backgroundHeight: "auto",
+      "background-offset-x": "0px",
+      backgroundOffsetX: "0px",
+      "background-offset-y": "0px",
+      backgroundOffsetY: "0px",
+      "pie-size": "100%",
+      pieSize: "100%",
+      "pie-1-background-color": "rgb(0,0,0)",
+      pie1BackgroundColor: "rgb(0,0,0)",
+      "pie-1-background-size": "0%",
+      pie1BackgroundSize: "0%",
+      "pie-1-background-opacity": "1",
+      pie1BackgroundOpacity: "1",
+      "pie-2-background-color": "rgb(0,0,0)",
+      pie2BackgroundColor: "rgb(0,0,0)",
+      "pie-2-background-size": "0%",
+      pie2BackgroundSize: "0%",
+      "pie-2-background-opacity": "1",
+      pie2BackgroundOpacity: "1",
+      "pie-3-background-color": "rgb(0,0,0)",
+      pie3BackgroundColor: "rgb(0,0,0)",
+      "pie-3-background-size": "0%",
+      pie3BackgroundSize: "0%",
+      "pie-3-background-opacity": "1",
+      pie3BackgroundOpacity: "1",
+      "pie-4-background-color": "rgb(0,0,0)",
+      pie4BackgroundColor: "rgb(0,0,0)",
+      "pie-4-background-size": "0%",
+      pie4BackgroundSize: "0%",
+      "pie-4-background-opacity": "1",
+      pie4BackgroundOpacity: "1",
+      "pie-5-background-color": "rgb(0,0,0)",
+      pie5BackgroundColor: "rgb(0,0,0)",
+      "pie-5-background-size": "0%",
+      pie5BackgroundSize: "0%",
+      "pie-5-background-opacity": "1",
+      pie5BackgroundOpacity: "1",
+      "pie-6-background-color": "rgb(0,0,0)",
+      pie6BackgroundColor: "rgb(0,0,0)",
+      "pie-6-background-size": "0%",
+      pie6BackgroundSize: "0%",
+      "pie-6-background-opacity": "1",
+      pie6BackgroundOpacity: "1",
+      "pie-7-background-color": "rgb(0,0,0)",
+      pie7BackgroundColor: "rgb(0,0,0)",
+      "pie-7-background-size": "0%",
+      pie7BackgroundSize: "0%",
+      "pie-7-background-opacity": "1",
+      pie7BackgroundOpacity: "1",
+      "pie-8-background-color": "rgb(0,0,0)",
+      pie8BackgroundColor: "rgb(0,0,0)",
+      "pie-8-background-size": "0%",
+      pie8BackgroundSize: "0%",
+      "pie-8-background-opacity": "1",
+      pie8BackgroundOpacity: "1",
+      "pie-9-background-color": "rgb(0,0,0)",
+      pie9BackgroundColor: "rgb(0,0,0)",
+      "pie-9-background-size": "0%",
+      pie9BackgroundSize: "0%",
+      "pie-9-background-opacity": "1",
+      pie9BackgroundOpacity: "1",
+      "pie-10-background-color": "rgb(0,0,0)",
+      pie10BackgroundColor: "rgb(0,0,0)",
+      "pie-10-background-size": "0%",
+      pie10BackgroundSize: "0%",
+      "pie-10-background-opacity": "1",
+      pie10BackgroundOpacity: "1",
+      "pie-11-background-color": "rgb(0,0,0)",
+      pie11BackgroundColor: "rgb(0,0,0)",
+      "pie-11-background-size": "0%",
+      pie11BackgroundSize: "0%",
+      "pie-11-background-opacity": "1",
+      pie11BackgroundOpacity: "1",
+      "pie-12-background-color": "rgb(0,0,0)",
+      pie12BackgroundColor: "rgb(0,0,0)",
+      "pie-12-background-size": "0%",
+      pie12BackgroundSize: "0%",
+      "pie-12-background-opacity": "1",
+      pie12BackgroundOpacity: "1",
+      "pie-13-background-color": "rgb(0,0,0)",
+      pie13BackgroundColor: "rgb(0,0,0)",
+      "pie-13-background-size": "0%",
+      pie13BackgroundSize: "0%",
+      "pie-13-background-opacity": "1",
+      pie13BackgroundOpacity: "1",
+      "pie-14-background-color": "rgb(0,0,0)",
+      pie14BackgroundColor: "rgb(0,0,0)",
+      "pie-14-background-size": "0%",
+      pie14BackgroundSize: "0%",
+      "pie-14-background-opacity": "1",
+      pie14BackgroundOpacity: "1",
+      "pie-15-background-color": "rgb(0,0,0)",
+      pie15BackgroundColor: "rgb(0,0,0)",
+      "pie-15-background-size": "0%",
+      pie15BackgroundSize: "0%",
+      "pie-15-background-opacity": "1",
+      pie15BackgroundOpacity: "1",
+      "pie-16-background-color": "rgb(0,0,0)",
+      pie16BackgroundColor: "rgb(0,0,0)",
+      "pie-16-background-size": "0%",
+      pie16BackgroundSize: "0%",
+      "pie-16-background-opacity": "1",
+      pie16BackgroundOpacity: "1",
+      position: "origin",
+      "compound-sizing-wrt-labels": "include",
+      compoundSizingWrtLabels: "include",
+      "min-width": "0px",
+      minWidth: "0px",
+      "min-width-bias-left": "0px",
+      minWidthBiasLeft: "0px",
+      "min-width-bias-right": "0px",
+      minWidthBiasRight: "0px",
+      "min-height": "0px",
+      minHeight: "0px",
+      "min-height-bias-top": "0px",
+      minHeightBiasTop: "0px",
+      "min-height-bias-bottom": "0px",
+      minHeightBiasBottom: "0px",
+      "line-style": "solid",
+      lineStyle: "solid",
+      "line-color": "rgb(153,153,153)",
+      lineColor: "rgb(153,153,153)",
+      "line-fill": "solid",
+      lineFill: "solid",
+      "line-cap": "butt",
+      lineCap: "butt",
+      "line-opacity": "1",
+      lineOpacity: "1",
+      "line-dash-pattern": "6 3",
+      lineDashPattern: "6 3",
+      "line-dash-offset": "0",
+      lineDashOffset: "0",
+      "line-gradient-stop-colors": "rgb(153,153,153)",
+      lineGradientStopColors: "rgb(153,153,153)",
+      "line-gradient-stop-positions": "0%",
+      lineGradientStopPositions: "0%",
+      "curve-style": "haystack",
+      curveStyle: "haystack",
+      "haystack-radius": "0",
+      haystackRadius: "0",
+      "source-endpoint": "outside-to-node",
+      sourceEndpoint: "outside-to-node",
+      "target-endpoint": "outside-to-node",
+      targetEndpoint: "outside-to-node",
+      "control-point-step-size": "40px",
+      controlPointStepSize: "40px",
+      "control-point-weights": "0.5",
+      controlPointWeights: "0.5",
+      "segment-distances": "20px",
+      segmentDistances: "20px",
+      "segment-weights": "0.5",
+      segmentWeights: "0.5",
+      "taxi-turn": "50%",
+      taxiTurn: "50%",
+      "taxi-turn-min-distance": "10px",
+      taxiTurnMinDistance: "10px",
+      "taxi-direction": "auto",
+      taxiDirection: "auto",
+      "edge-distances": "intersection",
+      edgeDistances: "intersection",
+      "arrow-scale": "1",
+      arrowScale: "1",
+      "loop-direction": "-45deg",
+      loopDirection: "-45deg",
+      "loop-sweep": "-90deg",
+      loopSweep: "-90deg",
+      "source-distance-from-node": "0px",
+      sourceDistanceFromNode: "0px",
+      "target-distance-from-node": "0px",
+      targetDistanceFromNode: "0px",
+      "source-arrow-shape": "none",
+      sourceArrowShape: "none",
+      "mid-source-arrow-shape": "none",
+      midSourceArrowShape: "none",
+      "target-arrow-shape": "none",
+      targetArrowShape: "none",
+      "mid-target-arrow-shape": "none",
+      midTargetArrowShape: "none",
+      "source-arrow-color": "rgb(153,153,153)",
+      sourceArrowColor: "rgb(153,153,153)",
+      "mid-source-arrow-color": "rgb(153,153,153)",
+      midSourceArrowColor: "rgb(153,153,153)",
+      "target-arrow-color": "rgb(153,153,153)",
+      targetArrowColor: "rgb(153,153,153)",
+      "mid-target-arrow-color": "rgb(153,153,153)",
+      midTargetArrowColor: "rgb(153,153,153)",
+      "source-arrow-fill": "filled",
+      sourceArrowFill: "filled",
+      "mid-source-arrow-fill": "filled",
+      midSourceArrowFill: "filled",
+      "target-arrow-fill": "filled",
+      targetArrowFill: "filled",
+      "mid-target-arrow-fill": "filled",
+      midTargetArrowFill: "filled",
+      "source-arrow-width": "1px",
+      sourceArrowWidth: "1px",
+      "mid-source-arrow-width": "1px",
+      midSourceArrowWidth: "1px",
+      "target-arrow-width": "1px",
+      targetArrowWidth: "1px",
+      "mid-target-arrow-width": "1px",
+      midTargetArrowWidth: "1px",
+      "selection-box-color": "rgb(221,221,221)",
+      selectionBoxColor: "rgb(221,221,221)",
+      "selection-box-opacity": "0.65",
+      selectionBoxOpacity: "0.65",
+      "selection-box-border-color": "rgb(170,170,170)",
+      selectionBoxBorderColor: "rgb(170,170,170)",
+      "selection-box-border-width": "1px",
+      selectionBoxBorderWidth: "1px",
+      "active-bg-color": "rgb(0,0,0)",
+      activeBgColor: "rgb(0,0,0)",
+      "active-bg-opacity": "0.15",
+      activeBgOpacity: "0.15",
+      "active-bg-size": "30px",
+      activeBgSize: "30px",
+      "outside-texture-bg-color": "rgb(0,0,0)",
+      outsideTextureBgColor: "rgb(0,0,0)",
+      "outside-texture-bg-opacity": "0.125",
+      outsideTextureBgOpacity: "0.125",
+      content: "wasm-plugin-mg",
+      "control-point-weight": "0.5",
+      controlPointWeight: "0.5",
+      "edge-text-rotation": "none",
+      edgeTextRotation: "none",
+      "padding-left": "6px",
+      paddingLeft: "6px",
+      "padding-right": "6px",
+      paddingRight: "6px",
+      "padding-top": "6px",
+      paddingTop: "6px",
+      "padding-bottom": "6px",
+      paddingBottom: "6px",
+    },
+  },
+};
 
-       import cytoscape from 'https://cdn.jsdelivr.net/npm/cytoscape@3.27.0/+esm'
-       const data = {"elements":{"nodes":[{"data":{"id":"38ed4b60-7e98-4f95-afec-c1ed9ad1b7a6","label":"wasm-plugin-mg","schemaId":"components.meshery.io/v1beta1","badges":{"inventoryBadge":{"$componentId":"38ed4b60-7e98-4f95-afec-c1ed9ad1b7a6","id":"inventoryBadge","html":"<span\n         id=\"38ed4b60-7e98-4f95-afec-c1ed9ad1b7a6-inventoryWalletBadge\"\n         style=\"width:5rem;height:5rem;border-radius:50%;font-size:2rem;color:white;display:flex;justify-content:center;align-items:center;background-color:#A020F0;z-index:101;user-select:none;-webkit-touch-callout:none;-webkit-user-select:none;-khtml-user-select:none;-moz-user-select:none;-ms-user-select:none;position:absolute;transform:translate(-1.9rem, -2.1rem)\"\n         >\n         1\n       </span>","pos":{"halign":"right","valign":"bottom"}}}},"position":{"x":1495.9952283311475,"y":419.1272019197314},"group":"nodes","removed":false,"selected":false,"selectable":true,"locked":false,"grabbable":true,"pannable":false,"classes":""}]},"elementStyles":{"38ed4b60-7e98-4f95-afec-c1ed9ad1b7a6":{"events":"yes","text-events":"no","textEvents":"no","transition-property":"none","transitionProperty":"none","transition-duration":"0ms","transitionDuration":"0ms","transition-delay":"0ms","transitionDelay":"0ms","transition-timing-function":"linear","transitionTimingFunction":"linear","display":"element","visibility":"visible","opacity":"1","text-opacity":"1","textOpacity":"1","min-zoomed-font-size":"12px","minZoomedFontSize":"12px","z-compound-depth":"auto","zCompoundDepth":"auto","z-index-compare":"manual","zIndexCompare":"manual","z-index":"0","zIndex":"0","overlay-padding":"10px","overlayPadding":"10px","overlay-color":"rgb(0,0,0)","overlayColor":"rgb(0,0,0)","overlay-opacity":"0","overlayOpacity":"0","overlay-shape":"round-rectangle","overlayShape":"round-rectangle","underlay-padding":"10px","underlayPadding":"10px","underlay-color":"rgb(0,0,0)","underlayColor":"rgb(0,0,0)","underlay-opacity":"0","underlayOpacity":"0","underlay-shape":"round-rectangle","underlayShape":"round-rectangle","ghost":"no","ghost-offset-x":"0px","ghostOffsetX":"0px","ghost-offset-y":"0px","ghostOffsetY":"0px","ghost-opacity":"0","ghostOpacity":"0","text-valign":"bottom","textValign":"bottom","text-halign":"center","textHalign":"center","color":"rgb(0,0,0)","text-outline-color":"rgb(0,0,0)","textOutlineColor":"rgb(0,0,0)","text-outline-opacity":"1","textOutlineOpacity":"1","text-background-color":"rgb(210,212,210)","textBackgroundColor":"rgb(210,212,210)","text-background-opacity":"0.7","textBackgroundOpacity":"0.7","text-background-padding":"2px","textBackgroundPadding":"2px","text-border-opacity":"0","textBorderOpacity":"0","text-border-color":"rgb(0,0,0)","textBorderColor":"rgb(0,0,0)","text-border-width":"0px","textBorderWidth":"0px","text-border-style":"solid","textBorderStyle":"solid","text-background-shape":"round-rectangle","textBackgroundShape":"round-rectangle","text-justification":"auto","textJustification":"auto","font-family":"Qanelas Soft, sans-serif","fontFamily":"Qanelas Soft, sans-serif","font-style":"normal","fontStyle":"normal","font-weight":"300","fontWeight":"300","font-size":"8px","fontSize":"8px","text-transform":"none","textTransform":"none","text-wrap":"ellipsis","textWrap":"ellipsis","text-overflow-wrap":"whitespace","textOverflowWrap":"whitespace","text-max-width":"80px","textMaxWidth":"80px","text-outline-width":"0px","textOutlineWidth":"0px","line-height":"1","lineHeight":"1","label":"wasm-plugin-mg","text-rotation":"none","textRotation":"none","text-margin-x":"0px","textMarginX":"0px","text-margin-y":"7px","textMarginY":"7px","source-label":"","sourceLabel":"","source-text-rotation":"none","sourceTextRotation":"none","source-text-margin-x":"0px","sourceTextMarginX":"0px","source-text-margin-y":"0px","sourceTextMarginY":"0px","source-text-offset":"0px","sourceTextOffset":"0px","target-label":"","targetLabel":"","target-text-rotation":"none","targetTextRotation":"none","target-text-margin-x":"0px","targetTextMarginX":"0px","target-text-margin-y":"0px","targetTextMarginY":"0px","target-text-offset":"0px","targetTextOffset":"0px","height":"24px","width":"24px","shape":"ellipse","shape-polygon-points":"-1 -1 1 -1 1 1 -1 1","shapePolygonPoints":"-1 -1 1 -1 1 1 -1 1","background-color":"rgb(70,107,176)","backgroundColor":"rgb(70,107,176)","background-fill":"solid","backgroundFill":"solid","background-opacity":"1","backgroundOpacity":"1","background-blacken":"0","backgroundBlacken":"0","background-gradient-stop-colors":"rgb(153,153,153)","backgroundGradientStopColors":"rgb(153,153,153)","background-gradient-stop-positions":"0%","backgroundGradientStopPositions":"0%","background-gradient-direction":"to-bottom","backgroundGradientDirection":"to-bottom","padding":"6px","padding-relative-to":"width","paddingRelativeTo":"width","bounds-expansion":"0px","boundsExpansion":"0px","border-color":"rgb(0,211,169)","borderColor":"rgb(0,211,169)","border-opacity":"1","borderOpacity":"1","border-width":"0px","borderWidth":"0px","border-style":"solid","borderStyle":"solid","outline-color":"rgb(153,153,153)","outlineColor":"rgb(153,153,153)","outline-opacity":"1","outlineOpacity":"1","outline-width":"0px","outlineWidth":"0px","outline-style":"solid","outlineStyle":"solid","outline-offset":"0px","outlineOffset":"0px","background-image":"url(data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSI2LjM4NjI3MDA0NjIzNDEzMSAzLjc0MTk0MDAyMTUxNDg5MjYgMTguMjI3NDMwODIwNDY1MDg4IDI1LjI1ODA1OTk3ODQ4NTEwNyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0nMTguMjI3NDMwODIwNDY1JyBoZWlnaHQ9JzI1LjI1ODA1OTk3ODQ4NTEnPjxwYXRoIGQ9Ik02LjM4NjI3IDI0Ljc5MDRMMTMuMjIxNSAyMy43MzhWMTIuMTYxM0w2LjM4NjI3IDI0Ljc5MDRaIiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik02LjM4NjI3IDI1Ljg0MjdIMjQuNjEzN0wxMy4yMjE1IDI5TDYuMzg2MjcgMjUuODQyN1oiIGZpbGw9IndoaXRlIi8+PHBhdGggZD0iTTE0LjM2MDggMjMuNzM3OUwyNC42MTM3IDI0Ljc5MDRMMTQuMzYwOCAzLjc0MTk0VjIzLjczNzlaIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==)","backgroundImage":"url(data:image/svg+xml;base64,PHN2ZyB2aWV3Qm94PSI2LjM4NjI3MDA0NjIzNDEzMSAzLjc0MTk0MDAyMTUxNDg5MjYgMTguMjI3NDMwODIwNDY1MDg4IDI1LjI1ODA1OTk3ODQ4NTEwNyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0nMTguMjI3NDMwODIwNDY1JyBoZWlnaHQ9JzI1LjI1ODA1OTk3ODQ4NTEnPjxwYXRoIGQ9Ik02LjM4NjI3IDI0Ljc5MDRMMTMuMjIxNSAyMy43MzhWMTIuMTYxM0w2LjM4NjI3IDI0Ljc5MDRaIiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik02LjM4NjI3IDI1Ljg0MjdIMjQuNjEzN0wxMy4yMjE1IDI5TDYuMzg2MjcgMjUuODQyN1oiIGZpbGw9IndoaXRlIi8+PHBhdGggZD0iTTE0LjM2MDggMjMuNzM3OUwyNC42MTM3IDI0Ljc5MDRMMTQuMzYwOCAzLjc0MTk0VjIzLjczNzlaIiBmaWxsPSJ3aGl0ZSIvPjwvc3ZnPg==)","background-image-crossorigin":"anonymous","backgroundImageCrossorigin":"anonymous","background-image-opacity":"1","backgroundImageOpacity":"1","background-image-containment":"inside","backgroundImageContainment":"inside","background-image-smoothing":"yes","backgroundImageSmoothing":"yes","background-position-x":"50%","backgroundPositionX":"50%","background-position-y":"50%","backgroundPositionY":"50%","background-width-relative-to":"inner","backgroundWidthRelativeTo":"inner","background-height-relative-to":"inner","backgroundHeightRelativeTo":"inner","background-repeat":"no-repeat","backgroundRepeat":"no-repeat","background-fit":"contain","backgroundFit":"contain","background-clip":"none","backgroundClip":"none","background-width":"auto","backgroundWidth":"auto","background-height":"auto","backgroundHeight":"auto","background-offset-x":"0px","backgroundOffsetX":"0px","background-offset-y":"0px","backgroundOffsetY":"0px","pie-size":"100%","pieSize":"100%","pie-1-background-color":"rgb(0,0,0)","pie1BackgroundColor":"rgb(0,0,0)","pie-1-background-size":"0%","pie1BackgroundSize":"0%","pie-1-background-opacity":"1","pie1BackgroundOpacity":"1","pie-2-background-color":"rgb(0,0,0)","pie2BackgroundColor":"rgb(0,0,0)","pie-2-background-size":"0%","pie2BackgroundSize":"0%","pie-2-background-opacity":"1","pie2BackgroundOpacity":"1","pie-3-background-color":"rgb(0,0,0)","pie3BackgroundColor":"rgb(0,0,0)","pie-3-background-size":"0%","pie3BackgroundSize":"0%","pie-3-background-opacity":"1","pie3BackgroundOpacity":"1","pie-4-background-color":"rgb(0,0,0)","pie4BackgroundColor":"rgb(0,0,0)","pie-4-background-size":"0%","pie4BackgroundSize":"0%","pie-4-background-opacity":"1","pie4BackgroundOpacity":"1","pie-5-background-color":"rgb(0,0,0)","pie5BackgroundColor":"rgb(0,0,0)","pie-5-background-size":"0%","pie5BackgroundSize":"0%","pie-5-background-opacity":"1","pie5BackgroundOpacity":"1","pie-6-background-color":"rgb(0,0,0)","pie6BackgroundColor":"rgb(0,0,0)","pie-6-background-size":"0%","pie6BackgroundSize":"0%","pie-6-background-opacity":"1","pie6BackgroundOpacity":"1","pie-7-background-color":"rgb(0,0,0)","pie7BackgroundColor":"rgb(0,0,0)","pie-7-background-size":"0%","pie7BackgroundSize":"0%","pie-7-background-opacity":"1","pie7BackgroundOpacity":"1","pie-8-background-color":"rgb(0,0,0)","pie8BackgroundColor":"rgb(0,0,0)","pie-8-background-size":"0%","pie8BackgroundSize":"0%","pie-8-background-opacity":"1","pie8BackgroundOpacity":"1","pie-9-background-color":"rgb(0,0,0)","pie9BackgroundColor":"rgb(0,0,0)","pie-9-background-size":"0%","pie9BackgroundSize":"0%","pie-9-background-opacity":"1","pie9BackgroundOpacity":"1","pie-10-background-color":"rgb(0,0,0)","pie10BackgroundColor":"rgb(0,0,0)","pie-10-background-size":"0%","pie10BackgroundSize":"0%","pie-10-background-opacity":"1","pie10BackgroundOpacity":"1","pie-11-background-color":"rgb(0,0,0)","pie11BackgroundColor":"rgb(0,0,0)","pie-11-background-size":"0%","pie11BackgroundSize":"0%","pie-11-background-opacity":"1","pie11BackgroundOpacity":"1","pie-12-background-color":"rgb(0,0,0)","pie12BackgroundColor":"rgb(0,0,0)","pie-12-background-size":"0%","pie12BackgroundSize":"0%","pie-12-background-opacity":"1","pie12BackgroundOpacity":"1","pie-13-background-color":"rgb(0,0,0)","pie13BackgroundColor":"rgb(0,0,0)","pie-13-background-size":"0%","pie13BackgroundSize":"0%","pie-13-background-opacity":"1","pie13BackgroundOpacity":"1","pie-14-background-color":"rgb(0,0,0)","pie14BackgroundColor":"rgb(0,0,0)","pie-14-background-size":"0%","pie14BackgroundSize":"0%","pie-14-background-opacity":"1","pie14BackgroundOpacity":"1","pie-15-background-color":"rgb(0,0,0)","pie15BackgroundColor":"rgb(0,0,0)","pie-15-background-size":"0%","pie15BackgroundSize":"0%","pie-15-background-opacity":"1","pie15BackgroundOpacity":"1","pie-16-background-color":"rgb(0,0,0)","pie16BackgroundColor":"rgb(0,0,0)","pie-16-background-size":"0%","pie16BackgroundSize":"0%","pie-16-background-opacity":"1","pie16BackgroundOpacity":"1","position":"origin","compound-sizing-wrt-labels":"include","compoundSizingWrtLabels":"include","min-width":"0px","minWidth":"0px","min-width-bias-left":"0px","minWidthBiasLeft":"0px","min-width-bias-right":"0px","minWidthBiasRight":"0px","min-height":"0px","minHeight":"0px","min-height-bias-top":"0px","minHeightBiasTop":"0px","min-height-bias-bottom":"0px","minHeightBiasBottom":"0px","line-style":"solid","lineStyle":"solid","line-color":"rgb(153,153,153)","lineColor":"rgb(153,153,153)","line-fill":"solid","lineFill":"solid","line-cap":"butt","lineCap":"butt","line-opacity":"1","lineOpacity":"1","line-dash-pattern":"6 3","lineDashPattern":"6 3","line-dash-offset":"0","lineDashOffset":"0","line-gradient-stop-colors":"rgb(153,153,153)","lineGradientStopColors":"rgb(153,153,153)","line-gradient-stop-positions":"0%","lineGradientStopPositions":"0%","curve-style":"haystack","curveStyle":"haystack","haystack-radius":"0","haystackRadius":"0","source-endpoint":"outside-to-node","sourceEndpoint":"outside-to-node","target-endpoint":"outside-to-node","targetEndpoint":"outside-to-node","control-point-step-size":"40px","controlPointStepSize":"40px","control-point-weights":"0.5","controlPointWeights":"0.5","segment-distances":"20px","segmentDistances":"20px","segment-weights":"0.5","segmentWeights":"0.5","taxi-turn":"50%","taxiTurn":"50%","taxi-turn-min-distance":"10px","taxiTurnMinDistance":"10px","taxi-direction":"auto","taxiDirection":"auto","edge-distances":"intersection","edgeDistances":"intersection","arrow-scale":"1","arrowScale":"1","loop-direction":"-45deg","loopDirection":"-45deg","loop-sweep":"-90deg","loopSweep":"-90deg","source-distance-from-node":"0px","sourceDistanceFromNode":"0px","target-distance-from-node":"0px","targetDistanceFromNode":"0px","source-arrow-shape":"none","sourceArrowShape":"none","mid-source-arrow-shape":"none","midSourceArrowShape":"none","target-arrow-shape":"none","targetArrowShape":"none","mid-target-arrow-shape":"none","midTargetArrowShape":"none","source-arrow-color":"rgb(153,153,153)","sourceArrowColor":"rgb(153,153,153)","mid-source-arrow-color":"rgb(153,153,153)","midSourceArrowColor":"rgb(153,153,153)","target-arrow-color":"rgb(153,153,153)","targetArrowColor":"rgb(153,153,153)","mid-target-arrow-color":"rgb(153,153,153)","midTargetArrowColor":"rgb(153,153,153)","source-arrow-fill":"filled","sourceArrowFill":"filled","mid-source-arrow-fill":"filled","midSourceArrowFill":"filled","target-arrow-fill":"filled","targetArrowFill":"filled","mid-target-arrow-fill":"filled","midTargetArrowFill":"filled","source-arrow-width":"1px","sourceArrowWidth":"1px","mid-source-arrow-width":"1px","midSourceArrowWidth":"1px","target-arrow-width":"1px","targetArrowWidth":"1px","mid-target-arrow-width":"1px","midTargetArrowWidth":"1px","selection-box-color":"rgb(221,221,221)","selectionBoxColor":"rgb(221,221,221)","selection-box-opacity":"0.65","selectionBoxOpacity":"0.65","selection-box-border-color":"rgb(170,170,170)","selectionBoxBorderColor":"rgb(170,170,170)","selection-box-border-width":"1px","selectionBoxBorderWidth":"1px","active-bg-color":"rgb(0,0,0)","activeBgColor":"rgb(0,0,0)","active-bg-opacity":"0.15","activeBgOpacity":"0.15","active-bg-size":"30px","activeBgSize":"30px","outside-texture-bg-color":"rgb(0,0,0)","outsideTextureBgColor":"rgb(0,0,0)","outside-texture-bg-opacity":"0.125","outsideTextureBgOpacity":"0.125","content":"wasm-plugin-mg","control-point-weight":"0.5","controlPointWeight":"0.5","edge-text-rotation":"none","edgeTextRotation":"none","padding-left":"6px","paddingLeft":"6px","padding-right":"6px","paddingRight":"6px","padding-top":"6px","paddingTop":"6px","padding-bottom":"6px","paddingBottom":"6px"}}} ;
-
-       const addStyles = () => {
-        var css = ` 
+const addStyles = () => {
+  var css = ` 
 
     .embed-design-container {
         position: relative;
@@ -50,24 +507,26 @@
         font-size: 1.25rem;
    }
      `,
-        head = document.head || document.getElementsByTagName('head')[0],
-        style = document.createElement('style');
+    head = document.head || document.getElementsByTagName("head")[0],
+    style = document.createElement("style");
 
-        head.appendChild(style);
+  head.appendChild(style);
 
-        style.type = 'text/css';
-        if (style.styleSheet){
-          // This is required for IE8 and below.
-          style.styleSheet.cssText = css;
-        } else {
-          style.appendChild(document.createTextNode(css));
-        }
-      }
+  style.type = "text/css";
+  if (style.styleSheet) {
+    // This is required for IE8 and below.
+    style.styleSheet.cssText = css;
+  } else {
+    style.appendChild(document.createTextNode(css));
+  }
+};
 
-       const CreateToolBar = () => {
-        const cyContainer = document.getElementById("embedded-design-d0987b9a-b20e-4bc1-b47c-69ca3078d380");
-        const toolbar = document.createElement("div");
-        toolbar.innerHTML = `
+const CreateToolBar = () => {
+  const cyContainer = document.getElementById(
+    "embedded-design-d0987b9a-b20e-4bc1-b47c-69ca3078d380",
+  );
+  const toolbar = document.createElement("div");
+  toolbar.innerHTML = `
     <div class="toolbar ">
         <a class="water-mark" href="https://meshery.io" target="_blank">
           <span> 
@@ -110,41 +569,43 @@
     </div>
 
     `;
-        toolbar.style.cssText = "position: absolute;z-index: 99999;right: 0.5rem;bottom: 0.5rem;margin: 0.5rem";
-        cyContainer.appendChild(toolbar);
-      };
+  toolbar.style.cssText =
+    "position: absolute;z-index: 99999;right: 0.5rem;bottom: 0.5rem;margin: 0.5rem";
+  cyContainer.appendChild(toolbar);
+};
 
-       document.addEventListener("DOMContentLoaded", function () {
-        const embedContainer = document.getElementById("embedded-design-d0987b9a-b20e-4bc1-b47c-69ca3078d380");
-        embedContainer.classList.add("embed-design-container");
-        const cyContainer = document.createElement("div");
-        cyContainer.id = "embedded-design-d0987b9a-b20e-4bc1-b47c-69ca3078d380-cy";
-        cyContainer.classList.add("embed-canvas-container");
-        embedContainer.appendChild(cyContainer);
-        addStyles();
+document.addEventListener("DOMContentLoaded", function () {
+  const embedContainer = document.getElementById(
+    "embedded-design-d0987b9a-b20e-4bc1-b47c-69ca3078d380",
+  );
+  embedContainer.classList.add("embed-design-container");
+  const cyContainer = document.createElement("div");
+  cyContainer.id = "embedded-design-d0987b9a-b20e-4bc1-b47c-69ca3078d380-cy";
+  cyContainer.classList.add("embed-canvas-container");
+  embedContainer.appendChild(cyContainer);
+  addStyles();
 
-        var cy = (window.cy = cytoscape({
-          container: document.getElementById("embedded-design-d0987b9a-b20e-4bc1-b47c-69ca3078d380-cy"),
+  var cy = (window.cy = cytoscape({
+    container: document.getElementById(
+      "embedded-design-d0987b9a-b20e-4bc1-b47c-69ca3078d380-cy",
+    ),
 
-          autounselectify: true,
+    autounselectify: true,
 
-          boxSelectionEnabled: false,
-          minZoom: 0.5,
-          maxZoom: 6.6,
-          layout: {
-            name: "preset",
-          },
-          elements: data.elements,
-          style: data.style,
-        }));
+    boxSelectionEnabled: false,
+    minZoom: 0.5,
+    maxZoom: 6.6,
+    layout: {
+      name: "preset",
+    },
+    elements: data.elements,
+    style: data.style,
+  }));
 
-        Object.keys(data.elementStyles).forEach((id) => {
-          cy.getElementById(id).style(data.elementStyles[id]);
-        });
+  Object.keys(data.elementStyles).forEach((id) => {
+    cy.getElementById(id).style(data.elementStyles[id]);
+  });
 
-        cy.style().update();
-        CreateToolBar();
-
-      });
-
-    
+  cy.style().update();
+  CreateToolBar();
+});

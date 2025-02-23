@@ -5,7 +5,7 @@ permalink: installation/kubernetes
 type: installation
 category: kubernetes
 redirect_from:
-- installation/platforms/kubernetes
+  - installation/platforms/kubernetes
 display-title: "false"
 language: en
 list: include
@@ -85,6 +85,7 @@ Install Meshery on Docker (out-of-cluster) and connect it to your Kubernetes clu
 - Upload the generated config file by navigating to _Settings > Environment > Out of Cluster Deployment_ in the Web UI and using the _"Upload kubeconfig"_ option. -->
 
 ## Set up Ingress on Minikube with the NGINX Ingress Controller
+
 - Run the below command to enable the NGINX Ingress controller for your cluster:
 
  <pre class="codeblock-pre"><div class="codeblock">
@@ -92,11 +93,12 @@ Install Meshery on Docker (out-of-cluster) and connect it to your Kubernetes clu
  </pre>
 
 - To check if NGINX Ingress controller is running
- <pre class="codeblock-pre"><div class="codeblock">
- <div class="clipboardjs">kubectl get pods -n ingress-nginx</div></div>
- </pre>
+<pre class="codeblock-pre"><div class="codeblock">
+<div class="clipboardjs">kubectl get pods -n ingress-nginx</div></div>
+</pre>
 
- ## Installing cert-manager with kubectl
+## Installing cert-manager with kubectl
+
 - Run the below command to install cert-manager for your cluster:
 
  <pre class="codeblock-pre"><div class="codeblock">

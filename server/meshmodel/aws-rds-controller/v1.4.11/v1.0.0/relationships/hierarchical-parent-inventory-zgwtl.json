@@ -86,12 +86,7 @@
             },
             "patch": {
               "patchStrategy": "merge",
-              "mutatorRef": [
-                [
-                  "spec",
-                  "globalClusterIdentifier"
-                ]
-              ]
+              "mutatorRef": [["spec", "globalClusterIdentifier"]]
             }
           }
         ],
@@ -134,12 +129,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatedRef": [
-                [
-                  "status",
-                  "globalClusterMember"
-                ]
-              ]
+              "mutatedRef": [["status", "globalClusterMember"]]
             }
           }
         ]

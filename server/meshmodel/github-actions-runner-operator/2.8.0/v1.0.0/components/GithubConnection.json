@@ -14,15 +14,13 @@
     "genealogy": "",
     "isAnnotation": false,
     "isModelAnnotation": "FALSE",
-     "isNamespaced": true,
+    "isNamespaced": true,
     "logoURL": "",
     "model": "github-actions-runner-operator",
     "modelDisplayName": "Github Actions Runner Operator",
     "published": false,
     "transitions": {
-      "connected": [
-        "deleted"
-      ],
+      "connected": ["deleted"],
       "deleted": []
     }
   },

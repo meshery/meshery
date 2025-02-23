@@ -87,12 +87,7 @@
             "patch": {
               "patchStrategy": "replace",
               "mutatedRef": [
-                [
-                  "configuration",
-                  "spec",
-                  "scaleTargetRef",
-                  "service"
-                ]
+                ["configuration", "spec", "scaleTargetRef", "service"]
               ]
             }
           }
@@ -136,11 +131,7 @@
             },
             "patch": {
               "patchStrategy": "replace",
-              "mutatorRef": [
-                [
-                  "displayName"
-                ]
-              ]
+              "mutatorRef": [["displayName"]]
             }
           }
         ]

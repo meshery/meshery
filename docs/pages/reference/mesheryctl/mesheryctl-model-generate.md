@@ -17,12 +17,13 @@ Generate models from mesheryctl command
 ## Synopsis
 
 Generate models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model generate [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
@@ -31,42 +32,42 @@ mesheryctl model generate [flags]
 	mesheryctl model generate -f [ URI ]
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 	mesheryctl model generate -f [ URI ] -t [ path to template file ] ( only required in case of URL )
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 	mesheryctl model generate -f [ URI ] -t [ path to template file ] -r ( to skip registration by default registration is true)
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 	mesheryctl model generate --f /path/to/csv-drectory
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
         mesheryctl model generate --f http://example.com/model -t /path/to/template.json 
 
 </div>
-</pre> 
+</pre>
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 	mesheryctl model generate --f http://example.com/model -t /path/to/template.json -r
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

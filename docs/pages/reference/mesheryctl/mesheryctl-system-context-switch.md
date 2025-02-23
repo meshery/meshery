@@ -17,22 +17,24 @@ switch context
 ## Synopsis
 
 Configure mesheryctl to actively use one one context vs. another context
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context switch context-name [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Switch to context named "sample"
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl system context switch sample
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 

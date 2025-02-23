@@ -17,30 +17,33 @@ Create a new environments
 ## Synopsis
 
 Create a new environments by providing the name and description of the environment
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp environment create [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 Create a new environment
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp environment create --orgId [orgId] --name [name] --description [description] 
 
 </div>
-</pre> 
+</pre>
 
 Documentation for environment can be found at:
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 https://docs.meshery.io/concepts/logical/environments
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -64,8 +67,8 @@ https://docs.meshery.io/concepts/logical/environments
 </div>
 </pre>
 
-
 {% include alert.html type="info" title="Note :" content="If a valid UUID is not provided for --orgId, a default 'zero UUID' will be used." %}
+
 ## See Also
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

@@ -10,9 +10,11 @@ list: include
 ---
 
 ## Background
-Meshery has a built-in policy engine, based on [Open Policy Agent (OPA)](https://www.openpolicyagent.org/docs/latest/). Meshery uses the [Rego](https://www.openpolicyagent.org/docs/latest/policy-language/) query language to create these [policies](https://docs.meshery.io/concepts/logical/policies). 
+
+Meshery has a built-in policy engine, based on [Open Policy Agent (OPA)](https://www.openpolicyagent.org/docs/latest/). Meshery uses the [Rego](https://www.openpolicyagent.org/docs/latest/policy-language/) query language to create these [policies](https://docs.meshery.io/concepts/logical/policies).
 
 ## Prerequisites
+
 To start contributing to Meshery Policy Engine, make sure you have [OPA CLI](https://www.openpolicyagent.org/docs/latest/#running-opa) installed on your system. You will also need to clone the [Meshery Server](https://github.com/meshery/meshery/) project from Github.
 
 ## Components of Meshery Policy Engine
@@ -27,13 +29,12 @@ The Meshery Policy Engine is invoked by calling the [evaluation endpoint](https:
 
 Working with the Meshery Policy Engine can feel complex because of the large number of different relationships a Meshery Design might contain. Contributors must then be careful to test any changes thoroughly to avoid unexpected results. When working with the Rego policies themselves it makes testing and development easier to be able to test the policies directly without running the entire Meshery Server. When working on the policies keep the following in mind:
 
-- Since we will be running these policies using the OPA CLI directly without the Go bootstrap code we need to provide the necessary context for the policy engine. This means providing a data structure containing the valid Meshery Relationships the policy engine will evaluate against. 
+- Since we will be running these policies using the OPA CLI directly without the Go bootstrap code we need to provide the necessary context for the policy engine. This means providing a data structure containing the valid Meshery Relationships the policy engine will evaluate against.
 - The input to the policy engine is a Meshery Design as a JSON data structure. When testing the Meshery Policy Engine you will need to provide this design as input. If you are working on a bug you will need to get the design from the issue or directly from the individual who reported the bug.
 
-## Executing OPA 
+## Executing OPA
 
 You can evaluate the Rego policies against test data stored in the `policies/test` folder:
 
 {% capture code_content %}make rego-eval{% endcapture %}
 {% include code.html code=code_content %}
-

@@ -54,7 +54,7 @@ function CustomDialogTitle(props) {
         >
           <CloseIcon />
         </IconButton>
-      ): null}
+      ) : null}
     </DialogTitle>
   );
 }
@@ -68,12 +68,12 @@ const StyledTypography = styled(Typography)(({ theme }) => ({
   fontWeight: 500,
   color: charcoal[100],
   marginBottom: theme.spacing(2), // Equivalent to `gutterBottom`
-  '& a': {
-    fontWeight: "normal"
+  "& a": {
+    fontWeight: "normal",
   },
   "& :hover": {
     color: CHINESE_SILVER,
-  }
+  },
 }));
 
 const StyledTooltip = styled(Tooltip)(({ theme }) => ({
@@ -83,7 +83,7 @@ const StyledTooltip = styled(Tooltip)(({ theme }) => ({
 }));
 
 const StyledCustomDialogTitle = styled(CustomDialogTitle)(({ theme }) => ({
-  background:accentGrey[10],
+  background: accentGrey[10],
   color: theme.palette.text.inverse,
 }));
 
@@ -124,7 +124,7 @@ export default function Provider() {
   };
 
   const open = Boolean(anchorEl);
-  const id = open ? "popover": undefined;
+  const id = open ? "popover" : undefined;
 
   useEffect(() => {
     loadProvidersFromServer();
@@ -149,7 +149,7 @@ export default function Provider() {
       },
       (error) => {
         console.log(`there was an error fetching providers: ${error}`);
-      }
+      },
     );
   }
 
@@ -199,7 +199,7 @@ export default function Provider() {
                 )}
                 {selectedProvider !== ""
                   ? selectedProvider
-                 : "Select your provider"}
+                  : "Select your provider"}
                 <DropDownIcon />
               </Button>
             </StyledButtonGroup>
@@ -230,13 +230,25 @@ export default function Provider() {
                     <MenuItem
                       key={key}
                       onClick={(e) => handleMenuItemClick(e, key)}
-                      sx={{ "&:hover": {backgroundColor: accentGrey[20]}}}
+                      sx={{ "&:hover": { backgroundColor: accentGrey[20] } }}
                     >
                       {key}
                     </MenuItem>
                   ))}
-                  <Divider sx={{ my: 0.5, backgroundColor: accentGrey[40], width: "80%", margin: "auto", marginBottom: "0px" }} />
-                  <MenuProviderDisabled sx={{ marginTop: "0px"}} disabled={true} key="CNCF Labs">
+                  <Divider
+                    sx={{
+                      my: 0.5,
+                      backgroundColor: accentGrey[40],
+                      width: "80%",
+                      margin: "auto",
+                      marginBottom: "0px",
+                    }}
+                  />
+                  <MenuProviderDisabled
+                    sx={{ marginTop: "0px" }}
+                    disabled={true}
+                    key="CNCF Labs"
+                  >
                     CNCF Labs{"\u00A0"}
                     <span>Offline</span>
                   </MenuProviderDisabled>
@@ -264,12 +276,12 @@ export default function Provider() {
       </CustomDiv>
       <LearnMore onClick={handleModalOpen}>
         <StyledTypography variant="h6" gutterBottom>
-        <StyledTooltip
+          <StyledTooltip
             title="Learn more about Meshery remote providers"
             placement="bottom"
             data-cy="providers-tooltip"
-          > 
-          Learn more about providers
+          >
+            Learn more about providers
           </StyledTooltip>
         </StyledTypography>
       </LearnMore>
@@ -286,66 +298,60 @@ export default function Provider() {
         >
           <CustomTypography>Choosing a Provider</CustomTypography>
         </StyledCustomDialogTitle>
-        
-          <StyledDialogBox id="customized-dialog-content">
-            Login to Meshery by choosing from the available providers. Providers
-            extend Meshery by offering various plugins and services, including
-            identity services, long-term persistence, advanced performance
-            analysis, multi-player user collaboration, and so on.
-            <h2>Available Providers</h2>
-            {Object.keys(availableProviders).map((key) => {
-              return (
-                <React.Fragment key={availableProviders[key].provider_name}>
-                  <p style={{ fontWeight: 700 }}>
-                    {availableProviders[key].provider_name}
-                  </p>
-                  <ul>
-                    {availableProviders[key].provider_description?.map(
-                      (desc, i) => (
-                        <li key={`desc-${i}`}>{desc}</li>
-                      )
-                    )}
-                  </ul>
-                </React.Fragment>
-              );
-            })}
-            <p style={{ fontWeight: 700 }}>MIT</p>
-            <ul>
-              <li>Remote provider for performance testing</li>
-              <li>Provides provenence of test results and their persistence</li>
-              <li>Adaptive performance analysis - predictive optimization</li>
-            </ul>
-            <p style={{ fontWeight: 700 }}>The University of Texas at Austin</p>
-            <ul>
-              <li>
-                Academic research and advanced studies by Ph.D. researchers
-              </li>
-              <li>
-                Used by school of Electrical and Computer Engineering (ECE)
-              </li>
-            </ul>
-            <p style={{ fontWeight: 700 }}>
-              Cloud Native Computing Foundation Infrastructure Lab
-            </p>
-            <ul>
-              <li>
-                Performance and compatibility-centric research and validation
-              </li>
-              <li>
-                Used by various cloud native projects
-              </li>
-            </ul>
-            <p style={{ fontWeight: 700 }}>HPE Security</p>
-            <ul>
-              <li>Istio, SPIRE, and SPIFEE integration</li>
-            </ul>
-            <p style={{ fontWeight: 700 }}>Equinix</p>
-            <ul>
-              <li>Identity services</li>
-              <li>Bare-metal Kubernetes configuration</li>
-            </ul>
-          </StyledDialogBox>
-      
+
+        <StyledDialogBox id="customized-dialog-content">
+          Login to Meshery by choosing from the available providers. Providers
+          extend Meshery by offering various plugins and services, including
+          identity services, long-term persistence, advanced performance
+          analysis, multi-player user collaboration, and so on.
+          <h2>Available Providers</h2>
+          {Object.keys(availableProviders).map((key) => {
+            return (
+              <React.Fragment key={availableProviders[key].provider_name}>
+                <p style={{ fontWeight: 700 }}>
+                  {availableProviders[key].provider_name}
+                </p>
+                <ul>
+                  {availableProviders[key].provider_description?.map(
+                    (desc, i) => (
+                      <li key={`desc-${i}`}>{desc}</li>
+                    ),
+                  )}
+                </ul>
+              </React.Fragment>
+            );
+          })}
+          <p style={{ fontWeight: 700 }}>MIT</p>
+          <ul>
+            <li>Remote provider for performance testing</li>
+            <li>Provides provenence of test results and their persistence</li>
+            <li>Adaptive performance analysis - predictive optimization</li>
+          </ul>
+          <p style={{ fontWeight: 700 }}>The University of Texas at Austin</p>
+          <ul>
+            <li>Academic research and advanced studies by Ph.D. researchers</li>
+            <li>Used by school of Electrical and Computer Engineering (ECE)</li>
+          </ul>
+          <p style={{ fontWeight: 700 }}>
+            Cloud Native Computing Foundation Infrastructure Lab
+          </p>
+          <ul>
+            <li>
+              Performance and compatibility-centric research and validation
+            </li>
+            <li>Used by various cloud native projects</li>
+          </ul>
+          <p style={{ fontWeight: 700 }}>HPE Security</p>
+          <ul>
+            <li>Istio, SPIRE, and SPIFEE integration</li>
+          </ul>
+          <p style={{ fontWeight: 700 }}>Equinix</p>
+          <ul>
+            <li>Identity services</li>
+            <li>Bare-metal Kubernetes configuration</li>
+          </ul>
+        </StyledDialogBox>
+
         <CustomDialogActions>
           <div className="learnmore">
             <a href="https://docs.meshery.io/extensibility/providers">
@@ -357,7 +363,11 @@ export default function Provider() {
           <StyledButton
             onClick={handleModalClose}
             data-cy="providers-modal-button-ok"
-            sx={{background: KEPPEL, marginRight: "1rem", color:(theme) =>  theme.palette.text.inverse}}
+            sx={{
+              background: KEPPEL,
+              marginRight: "1rem",
+              color: (theme) => theme.palette.text.inverse,
+            }}
           >
             {" "}
             OK

@@ -21,6 +21,7 @@ list: include
 Sistent leverages Material UI libraries and provides a custom theme on top of it for a consistent look and feel. It includes components, icons, and design tokens that developers can readily integrate into their applications. By using Sistent, developers can save time and effort while maintaining a high-quality user experience throughout Meshery.
 
 **Example**
+
 - This `Modal` is a Sistent Standard Modal used in validation of design.
 
 <a href="{{ site.baseurl }}/assets/img/sistent/sistent-modal.png">
@@ -36,9 +37,9 @@ Sistent leverages Material UI libraries and provides a custom theme on top of it
 - [Examples](#examples)
 
 The Sistent design system includes a variety of base components such as `Button`, `Textfield`, `Checkbox`, and more, which can be found [here](https://github.com/layer5io/sistent/tree/master/src/base)
- Additionally, it provides custom components like `Modal`, `TransferList`, and others, which are available [here](https://github.com/layer5io/sistent/tree/master/src/custom)
+Additionally, it provides custom components like `Modal`, `TransferList`, and others, which are available [here](https://github.com/layer5io/sistent/tree/master/src/custom)
 
-###  Usage
+### Usage
 
 - **Import any base or custom component from `@layer5/sistent`**. Here's how you can do it:
 
@@ -62,44 +63,42 @@ export default MyComponent;
 ```
 
 - **Wrap the Sistent component with `UsesSistent` wrapper**.<br/>
-This `UsesSistent` wrapper ensures that the correct theme is applied to the Sistent component based on the current theme of the Meshery UI.
-Here how you can do it:
+  This `UsesSistent` wrapper ensures that the correct theme is applied to the Sistent component based on the current theme of the Meshery UI.
+  Here how you can do it:
 
 ```javascript
-import { UsesSistent } from '<path>/SistentWrapper';
+import { UsesSistent } from "<path>/SistentWrapper";
 
 function MyComponent() {
-    return (
+  return (
     <div>
-    <UsesSistent>
-      <Button
-        variant="contained"
-        onClick={onClick}
-      >
-      {/* Text to display */}
-      </Button>
-    </UsesSistent>
+      <UsesSistent>
+        <Button variant="contained" onClick={onClick}>
+          {/* Text to display */}
+        </Button>
+      </UsesSistent>
     </div>
   );
 }
 
 export default MyComponent;
 ```
+
 ### How to use `Tokens/Colors` from Sistent theme
 
 Let's start with a few of the common terms that we will come across frequently, as understanding what they mean will inform us of applicable use cases and proper procedures that should not be overlooked.
 
 - **Theme:**
- A theme provides a cohesive and consistent look and feel for a product, achieved through harmonious color palettes, legible fonts, and layout patterns. Sistent specifies both light and dark themes.
+  A theme provides a cohesive and consistent look and feel for a product, achieved through harmonious color palettes, legible fonts, and layout patterns. Sistent specifies both light and dark themes.
 
 - **Value:**
-A value is a unique visual attribute assigned to a token via themes, such as hex codes or RGBA values, used to highlight specific colors. Avoid referencing exact values directly to ensure consistency; instead, use tokens to manage and implement reusable values.
+  A value is a unique visual attribute assigned to a token via themes, such as hex codes or RGBA values, used to highlight specific colors. Avoid referencing exact values directly to ensure consistency; instead, use tokens to manage and implement reusable values.
 
 - **Tokens:**
-Tokens serve as a shared language between design and development, detailing how to build user interfaces. Tokens represent context (background, text, component), role (success, warning, brand, inverse), and modifiers (secondary, tertiary, hover) derived from the [color palette](https://github.com/layer5io/sistent/blob/master/src/theme/palette.ts).
+  Tokens serve as a shared language between design and development, detailing how to build user interfaces. Tokens represent context (background, text, component), role (success, warning, brand, inverse), and modifiers (secondary, tertiary, hover) derived from the [color palette](https://github.com/layer5io/sistent/blob/master/src/theme/palette.ts).
 
 - **Role:**
-Roles specify the context for applying colors. Different roles can share the same value but will have different use cases due to the token structure. These values can vary depending on the current theme.
+  Roles specify the context for applying colors. Different roles can share the same value but will have different use cases due to the token structure. These values can vary depending on the current theme.
 
 #### How to use these tokens/colors from sistent theme.
 

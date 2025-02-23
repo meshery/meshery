@@ -96,25 +96,14 @@
                 {
                   "id": null,
                   "kind": "ShardingSphereProxy",
-                  "mutatedRef": [
-                    [
-                      "spec",
-                      "storageNodeRefs",
-                      "_"
-                    ]
-                  ]
+                  "mutatedRef": [["spec", "storageNodeRefs", "_"]]
                 }
               ],
               "to": [
                 {
                   "id": null,
                   "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "metadata",
-                      "name"
-                    ]
-                  ]
+                  "mutatorRef": [["metadata", "name"]]
                 }
               ]
             },

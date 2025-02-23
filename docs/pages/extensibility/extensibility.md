@@ -3,7 +3,7 @@ layout: default
 title: Extensibility
 permalink: extensibility
 type: Extensibility
-abstract: 'Meshery has an extensible architecture with several different types of extension points.'
+abstract: "Meshery has an extensible architecture with several different types of extension points."
 # redirect_from:
 #   - reference/extensibility
 #   - extensibility/
@@ -23,16 +23,16 @@ Meshery is not just an application. It is a set of microservices where the centr
 
 _Figure: Extension points available throughout Meshery_
 
-<!-- 
+<!--
 1. [Adapters]({{site.baseurl}}/extensibility/adapters)
-   -  Messaging Framework (CloudEvents and NATS) 
+   -  Messaging Framework (CloudEvents and NATS)
 1. [GraphQL API](/extensibility/api#graphql)
 1. [Load Generators]({{site.baseurl}}/extensibility/load-generators)
 1. [Providers]({{site.baseurl}}/extensibility/providers)
 1. [REST API](/extensibility/api#rest)
 1. [UI Plugins](extensibility/ui)
 1. [Integrations](/extensibility/integrations)
-1. [Extensions](/extensibility/extensions) 
+1. [Extensions](/extensibility/extensions)
 -->
 
 ## Types of Extension Points

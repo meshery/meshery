@@ -18,10 +18,9 @@ Import your existing Models and existing custom resource definition (CRD) into M
 
 Before you can use the Meshery CLI to import a [Model](/concepts/logical/models), you must first install it. You can install Meshery CLI by [following the instructions]({{site.baseurl}}/installation#install-mesheryctl).
 
-
 **Step 2: Import the Model**
 
-Model can imported in 2 different format ```URL, File```.The only cretiria for this import is the model should be a Meshery exported Model.
+Model can imported in 2 different format `URL, File`.The only cretiria for this import is the model should be a Meshery exported Model.
 
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">mesheryctl model import -f [file/url] </div></div>
@@ -40,9 +39,6 @@ https://github.com/{owner}/{repo}/raw/refs/heads/main/filename
 <pre class="codeblock-pre">
 <div class="codeblock"><div class="clipboardjs">mesheryctl model import -f "https://github.com/{owner}/{repo}/raw/refs/heads/main/filename"</div></div>
 </pre>
-
-
-
 
 ## Import Models Using Meshery UI
 
@@ -63,5 +59,3 @@ On the Registry page, you can import your model clicking the import button in re
 This Meshery model will include components, relationships.
 
 <a href="{{ site.baseurl }}/assets/img/import/ImportModel.gif"><img alt="Import-Model" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/import/ImportModel.gif" /></a>
-
-

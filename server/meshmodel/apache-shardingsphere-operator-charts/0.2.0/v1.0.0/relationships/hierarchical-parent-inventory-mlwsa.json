@@ -96,28 +96,14 @@
                 {
                   "id": null,
                   "kind": "StorageProvider",
-                  "mutatedRef": [
-                    [
-                      "spec",
-                      "storageNodeTemplates",
-                      "_",
-                      "name"
-                    ]
-                  ]
+                  "mutatedRef": [["spec", "storageNodeTemplates", "_", "name"]]
                 }
               ],
               "to": [
                 {
                   "id": null,
                   "kind": "self",
-                  "mutatorRef": [
-                    [
-                      "metadata",
-                      "ownerReferences",
-                      "_",
-                      "name"
-                    ]
-                  ]
+                  "mutatorRef": [["metadata", "ownerReferences", "_", "name"]]
                 }
               ]
             },

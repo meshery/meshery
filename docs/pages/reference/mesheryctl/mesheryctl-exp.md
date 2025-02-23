@@ -17,12 +17,13 @@ Experimental commands for mesheryctl
 ## Synopsis
 
 Commands under the Experimental group are for testing and evaluation prior to promotion to general availability. Experimental commands are subject to change.
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -45,9 +46,9 @@ mesheryctl exp [flags]
 
 ## See Also
 
-* [mesheryctl exp connections](/reference/mesheryctl/exp/connections)
-* [mesheryctl exp org](/reference/mesheryctl/exp/org)
-* [mesheryctl exp relationship](/reference/mesheryctl/exp/relationship)
-* [mesheryctl exp workspace](/reference/mesheryctl/exp/workspace)
+- [mesheryctl exp connections](/reference/mesheryctl/exp/connections)
+- [mesheryctl exp org](/reference/mesheryctl/exp/org)
+- [mesheryctl exp relationship](/reference/mesheryctl/exp/relationship)
+- [mesheryctl exp workspace](/reference/mesheryctl/exp/workspace)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

@@ -17,38 +17,42 @@ View list of workspaces and detail of workspaces
 ## Synopsis
 
 View list of workspaces and detailed information of a specific workspaces
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp workspace [flags]
 
 </div>
-</pre> 
+</pre>
 
 ## Examples
 
 To view a list workspaces
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp workspace list --orgId [orgId]
 
 </div>
-</pre> 
+</pre>
 
 To create a workspace
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp workspace create --orgId [orgId] --name [name] --description [description]
 
 </div>
-</pre> 
+</pre>
 
 Documentation for workspace can be found at:
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 https://docs.layer5.io/cloud/spaces/workspaces/
 
 </div>
-</pre> 
+</pre>
 
 ## Options
 
@@ -71,7 +75,7 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 
 ## See Also
 
-* [mesheryctl exp workspace create](/reference/mesheryctl/exp/workspace/create)
-* [mesheryctl exp workspace list](/reference/mesheryctl/exp/workspace/list)
+- [mesheryctl exp workspace create](/reference/mesheryctl/exp/workspace/create)
+- [mesheryctl exp workspace list](/reference/mesheryctl/exp/workspace/list)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

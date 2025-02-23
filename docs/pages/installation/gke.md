@@ -5,7 +5,7 @@ permalink: installation/kubernetes/gke
 type: installation
 category: kubernetes
 redirect_from:
-- installation/platforms/gke
+  - installation/platforms/gke
 display-title: "false"
 language: en
 list: include
@@ -51,15 +51,15 @@ Read through the following considerations prior to deploying Meshery on GKE.
 1. Verfiy you connection to an Google Kubernetes Engine Cluster using gCloud CLI.
 1. Login to GCP account using [gcloud auth login](https://cloud.google.com/sdk/gcloud/reference/auth/login).
 1. After a successful login, set the Project Id:
-{% capture code_content %}gcloud config set project [PROJECT_ID]
-{% endcapture %}
-{% include code.html code=code_content %}
+   {% capture code_content %}gcloud config set project [PROJECT_ID]
+   {% endcapture %}
+   {% include code.html code=code_content %}
 1. After setting the Project Id, set the cluster context.
-{% capture code_content %}gcloud container clusters get-credentials [CLUSTER_NAME] --zone [CLUSTER_ZONE] {% endcapture %}
-{% include code.html code=code_content %}
+   {% capture code_content %}gcloud container clusters get-credentials [CLUSTER_NAME] --zone [CLUSTER_ZONE] {% endcapture %}
+   {% include code.html code=code_content %}
 1. Verify your kubeconfig's current context.
-{% capture code_content %}kubectl config current-context{% endcapture %}
-{% include code.html code=code_content %}
+   {% capture code_content %}kubectl config current-context{% endcapture %}
+   {% include code.html code=code_content %}
 
 ### Preflight: Plan your access to Meshery UI
 

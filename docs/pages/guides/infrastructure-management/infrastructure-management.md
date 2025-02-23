@@ -2,14 +2,14 @@
 layout: default
 title: Infrastructure Management
 permalink: guides/infrastructure-management/overview
-redirect_from: 
-- tasks/application-management
-- tasks/infrastructure-management
+redirect_from:
+  - tasks/application-management
+  - tasks/infrastructure-management
 type: guides
 category: infrastructure
 language: en
 list: include
-abstract: 'Meshery provides the ability to manage infrastructure for agility, maintainability, diversity, reliability and isolation, security, and speed.'
+abstract: "Meshery provides the ability to manage infrastructure for agility, maintainability, diversity, reliability and isolation, security, and speed."
 ---
 
 ## Using Meshery Designs to Manage Your Infrastructure
@@ -53,6 +53,7 @@ See [Importing Applications]({{site.baseurl}}guides/configuration-management/imp
 Meshery automates the deployment of Custom Resource Definitions (CRDs) and operators based on the source from which a particular component was registered. Currently, by default Meshery automatically deploys components that are sourced from Artifact Hub (utilizing Helm Charts). (_Support for OCI registries is expected in the near future._)
 
 {% include alert.html title="Upcoming Features" type="info" content="<p>Meshery is actively developing the ability to import custom models and components, expanding the platform's flexibility. Support for OCI registries is expected in the near future.</p>
+
 <p>1. <b>Custom Models and Components:</b>
   Meshery is actively developing the ability to import custom models and components, expanding the platform's flexibility.</p>
 <p>2. <b>OCI Registry Support:</b>
