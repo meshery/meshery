@@ -121,13 +121,6 @@ func InvokeCompUpdate() error {
 
 	url := GoogleSpreadSheetURL + spreadsheeetID
 
-	// set meshkit logger for registry logs
-	err := meshkitRegistryUtils.SetLogger(true)
-	if err != nil {
-		utils.Log.Info(err, "Error setting logger")
-		utils.Log.Info("Error setting logger", err)
-	}
-
 	componentCSVHelper, err := meshkitRegistryUtils.NewComponentCSVHelper(url, "Components", sheetGID, componentCSVFilePath)
 	if err != nil {
 		return err

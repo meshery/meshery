@@ -123,12 +123,6 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 			}
 		}
 
-		// set meshkit logger for registry logs
-		err = meshkitRegistryUtils.SetLogger(true)
-		if err != nil {
-			utils.Log.Info(err, "Error setting logger")
-			utils.Log.Info("Error setting logger", err)
-		}
 		err = meshkitRegistryUtils.InvokeGenerationFromSheet(&wg, registryLocation, sheetGID, componentSpredsheetGID, spreadsheeetID, modelName, modelCSVFilePath, componentCSVFilePath, spreadsheeetCred, relationshipCSVFilePath, relationshipSpredsheetGID, srv)
 		if err != nil {
 			// meshkit
