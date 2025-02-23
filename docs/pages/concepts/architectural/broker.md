@@ -31,3 +31,5 @@ The Broker instance is deployed inside the kubernetes cluster as a `Statefulset`
 - Make sure the pods corresponding to the `Statefulset` is up and running.
 - Make sure the kubernetes cluster has support for kubernetes `Service` type `LoadBalancer` or `NodePort`.
 - Ensure connectivity between the Meshery-Server and the Broker service endpoint.
+
+For more detailed troubleshooting steps, refer to the [Meshery Operator and MeshSync Troubleshooting Guide](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync).
