@@ -385,6 +385,7 @@ const MesheryTreeViewModel = ({
   isModelFetching,
   showDetailsData,
 }) => {
+  const filteredData = filter.map(modelDef => modelDef?.metadata?.svgColor);
   return (
     <TreeView
       aria-label="controlled"
@@ -397,7 +398,7 @@ const MesheryTreeViewModel = ({
       expanded={expanded}
       selected={selected}
     >
-      {data.map((modelDef, index) => (
+       {filteredData.map((modelDef, index) => (
         <MesheryTreeViewItem
           key={index}
           modelDef={modelDef}
