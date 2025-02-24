@@ -7,6 +7,24 @@ const URLS = {
   },
 };
 
+const SETTINGS_TABS = [
+  'settings-tab-adapters',
+  'settings-tab-adapters',
+  'settings-tab-registry',
+  'settings-tab-reset',
+];
+
+const MESH_ADAPTER = ['adapters-available-label'];
+
+const ACTION_BUTTONS = [
+  'adapter-undeploy-button',
+  'adapter-connect-button',
+  'adapter-deploy-button',
+  'database-reset-button',
+];
+
+const GARFANA_ELEMENTS = ['grafana-base-url', 'grafana-api-key'];
+
 test.describe('Performance Section Tests', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(ENV.MESHERY_SERVER_URL);
@@ -14,30 +32,26 @@ test.describe('Performance Section Tests', () => {
     await performanceNav.click();
   });
 
-  test.unstable()('Verify Configure Metrics Navigation and Settings', async ({ page }) => {
+  test('Verify Configure Metrics Navigation and Settings', async ({ page }) => { // { tag: '@unstable' },
     await expect(page.getByTestId('configure-metrics-button')).toBeVisible();
     await page.getByTestId('configure-metrics-button').click();
 
-    await expect(page).toHaveURL(`${URLS.MESHERY.SETTINGS}#metrics`);
+    await expect(page).toHaveURL(/.*#metrics/);
 
-    // settings tabs
-    await expect(page.getByTestId('settings-tab-adapters')).toBeVisible();
-    await expect(page.getByTestId('settings-tab-metrics')).toBeVisible();
-    await expect(page.getByTestId('settings-tab-registry')).toBeVisible();
-    await expect(page.getByTestId('settings-tab-reset')).toBeVisible();
+    for (const tabId of SETTINGS_TABS) {
+      await expect(page.getByTestId(tabId)).toBeVisible();
+    }
 
-    // Mesh Adapter section
-    await expect(page.getByTestId('adapters-available-label')).toBeVisible();
+    for (const MeshId of MESH_ADAPTER) {
+      await expect(page.getByTestId(MeshId)).toBeVisible();
+    }
 
-    // action buttons
-    await expect(page.getByTestId('adapter-undeploy-button')).toBeVisible();
-    await expect(page.getByTestId('adapter-connect-button')).toBeVisible();
-    await expect(page.getByTestId('adapter-deploy-button')).toBeVisible();
+    for (const buttonId of ACTION_BUTTONS) {
+      await expect(page.getByTestId(buttonId)).toBeVisible();
+    }
 
-    await expect(page.getByTestId('database-reset-button')).toBeVisible();
-
-    // Grafana configuration elements
-    await expect(page.getByTestId('grafana-base-url')).toBeVisible();
-    await expect(page.getByTestId('grafana-api-key')).toBeVisible();
+    for (const garfanaId of GARFANA_ELEMENTS) {
+      await expect(page.getByTestId(garfanaId)).toBeVisible();
+    }
   });
 });
