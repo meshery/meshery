@@ -189,7 +189,6 @@ export const KeyValue = ({ Key, Value }) => {
         alignItems: 'flex-start',
         gap: '0.25rem',
         flexWrap: 'wrap',
-        fontFamily: 'Qanelas Soft, sans-serif',
       }}
     >
       <SectionBody

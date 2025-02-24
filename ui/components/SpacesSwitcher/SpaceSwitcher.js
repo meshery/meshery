@@ -66,9 +66,6 @@ export const StyledTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInput-underline:after': {
     borderBottomColor: theme.palette.mode === 'dark' ? '#00B39F' : theme.palette.text.default, // change the color here
   },
-  '& .MuiInput': {
-    fontFamily: 'Qanelas Soft, sans-serif',
-  },
 }));
 
 export const StyledHeader = styled(Typography)(({ theme }) => ({
