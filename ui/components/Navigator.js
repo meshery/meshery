@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import HelpIcon from '@mui/icons-material/Help';
 import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
@@ -21,12 +20,6 @@ import GithubIcon from '../assets/icons/GithubIcon';
 import ChatIcon from '../assets/icons/ChatIcon';
 import ServiceMeshIcon from '../assets/icons/ServiceMeshIcon';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import {
-  faAngleLeft,
-  faCaretDown,
-  faExternalLinkAlt,
-  faDigitalTachograph,
-} from '@fortawesome/free-solid-svg-icons';
 import {
   updatepagetitle,
   updatebetabadge,
@@ -45,6 +38,10 @@ import {
   Box,
   NoSsr,
   Zoom,
+  CaretDownIcon,
+  ExternalLinkIcon as IconExternalLink,
+  TachographDigitalIcon,
+  LeftAngledArrowIcon,
 } from '@layer5/sistent';
 import { UsesSistent } from './SistentWrapper';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
@@ -244,7 +241,8 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
       {
         id: PROFILES,
         icon: (
-          <FontAwesomeIcon icon={faDigitalTachograph} style={{ fontSize: 24, color: 'white' }} />
+          // <FontAwesomeIcon icon={faDigitalTachograph} style={{ fontSize: 24, color: 'white' }} />
+          <TachographDigitalIcon style={{ ...drawerIconsStyle }} />
         ),
         href: '/performance/profiles',
         title: 'Profiles',
@@ -275,7 +273,7 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
 ];
 
 const ExternalLinkIcon = (
-  <FontAwesomeIcon style={externalLinkIconStyle} icon={faExternalLinkAlt} transform="shrink-7" />
+  <IconExternalLink style={{ ...externalLinkIconStyle }} transform="shrink-7" />
 );
 
 const externlinks = [
@@ -1046,7 +1044,8 @@ class Navigator_ extends React.Component {
                       </NavigatorLink>
                     </Link>
                     <ExpandMoreIcon
-                      icon={faCaretDown}
+                      // icon={faCaretDown}
+                      icon={CaretDownIcon}
                       onClick={() => this.toggleItemCollapse(childId)}
                       isCollapsed={this.state.openItems.includes(childId)} // Pass collapsed state
                       isDrawerCollapsed={isDrawerCollapsed} // Pass drawer state
@@ -1184,7 +1183,8 @@ class Navigator_ extends React.Component {
         >
           <UsesSistent>
             <ChevronIcon
-              icon={faAngleLeft}
+              // icon={faAngleLeft}
+              icon={LeftAngledArrowIcon}
               fixedWidth
               size="2x"
               style={{

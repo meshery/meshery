@@ -11,9 +11,9 @@ import {
   styled,
   Drawer,
   charcoal,
+  IconProps,
 } from '@layer5/sistent';
 import { disabledStyleWithOutOpacity } from '../../css/disableComponent.styles';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const FallbackWrapper = styled(Box)(() => ({
   margin: '2rem',
@@ -209,7 +209,7 @@ export const SideBarListItem = styled(ListItem, {
   fontSize: '14px',
 }));
 
-export const ExpandMoreIcon = styled(FontAwesomeIcon, {
+export const ExpandMoreIcon = styled(IconProps, {
   shouldForwardProp: (prop) => prop !== 'isCollapsed' && prop !== 'hasChildren',
 })(({ isCollapsed, hasChildren, theme }) => ({
   opacity: 0,
@@ -266,7 +266,7 @@ export const SecondaryDivider = styled(Divider)(({ theme }) => ({
   borderColor: '#404854',
 }));
 
-export const ChevronIcon = styled(FontAwesomeIcon)(({ theme }) => ({
+export const ChevronIcon = styled(IconProps)(({ theme }) => ({
   color: theme.palette.icon.default,
   cursor: 'pointer',
   margin: '0.75rem 0.2rem',

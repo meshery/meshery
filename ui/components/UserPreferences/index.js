@@ -15,6 +15,7 @@ import {
   CardHeader,
   CustomTooltip,
   NoSsr,
+  TachometerIcon,
 } from '@layer5/sistent';
 import CopyIcon from '../../assets/icons/CopyIcon';
 import _ from 'lodash';
@@ -41,8 +42,6 @@ import SettingsCellIcon from '@mui/icons-material/SettingsCell';
 import ExtensionSandbox from '../ExtensionSandbox';
 import RemoteComponent from '../RemoteComponent';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import MesherySettingsPerformanceComponent from '../MesherySettingsPerformanceComponent';
 import { iconMedium } from '../../css/icons.styles';
 import { EVENT_TYPES } from '../../lib/event-types';
@@ -517,7 +516,7 @@ const UserPreference = (props) => {
             </CustomTooltip>
             <CustomTooltip title="Choose Performance Test Defaults" placement="top">
               <Tab
-                icon={<FontAwesomeIcon icon={faTachometerAlt} style={iconMedium} />}
+                icon={<TachometerIcon style={iconMedium} fill="#fff" />}
                 label={<TabLabel>Performance</TabLabel>}
               />
             </CustomTooltip>
