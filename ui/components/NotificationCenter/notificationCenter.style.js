@@ -194,11 +194,7 @@ export const ActorAvatar = styled(Grid)(() => ({
 export const Message = styled(Typography)(() => ({
   overflow: 'hidden',
   textOverflow: 'ellipsis',
-  whiteSpace: 'nowrap',
   overflowWrap: 'break-word',
-  // max of min of 20rem or 50vw
-  maxWidth: 'min(25rem, 50vw)',
-  width: '100%',
 }));
 
 export const GridItem = styled(Grid)(() => ({
@@ -254,7 +250,6 @@ export const Root = styled('div')(({ notificationcolor, status }) => ({
 }));
 export const Summary = styled(Grid)(({ notificationcolor }) => ({
   paddingBlock: '0.5rem',
-  paddingInline: '0.25rem',
   cursor: 'pointer',
   backgroundColor: alpha(notificationcolor, 0.2),
 }));
