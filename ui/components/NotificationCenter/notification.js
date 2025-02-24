@@ -63,7 +63,7 @@ export const eventstopPropagation = (e) => {
   e.stopPropagation();
 };
 
-export const MAX_NOTIFICATION_DESCRIPTION_LENGTH = 45;
+export const MAX_NOTIFICATION_DESCRIPTION_LENGTH = 65;
 
 export const canTruncateDescription = (description) => {
   return description.length > MAX_NOTIFICATION_DESCRIPTION_LENGTH;
@@ -82,7 +82,7 @@ const AvatarStack = ({ avatars, direction }) => {
             <Box
               sx={{
                 zIndex: avatars.length - index,
-                mt: '-0.4rem',
+                ml: '-0.4rem',
               }}
             >
               <Avatar alt={avatar.name} src={avatar.avatar_url} />
@@ -274,15 +274,15 @@ export const Notification = ({ event_id }) => {
   ];
 
   const Detail = () => (
-    <Expanded container>
+    <Expanded container style={{
+      backgroundColor: alpha(eventStyle.color, 0.1), color: theme.palette.text.default,
+      borderTop: `1px solid ${notificationColor}`,
+    }}>
       <Grid
         item
         xs={12}
         sx={{
-          color: theme.palette.text.default,
-          borderTop: `1px solid ${notificationColor}`,
           padding: '1rem',
-          backgroundColor: alpha(eventStyle.color, 0.1),
         }}
       >
         <ActorAvatar item sm={1}>
@@ -310,8 +310,8 @@ export const Notification = ({ event_id }) => {
         unmountOnExit
       >
         <Root notificationcolor={notificationColor} status={event?.status}>
-          <Summary container notificationcolor={notificationColor} onClick={handleExpandClick}>
-            <GridItem item xs="auto" sm={2}>
+          <Summary container notificationcolor={notificationColor} onClick={handleExpandClick} spacing={0} style={{ flexWrap: 'nowrap' }}>
+            <GridItem item xs="auto">
               <Checkbox
                 onClick={eventstopPropagation}
                 checked={Boolean(event.checked)}
@@ -321,14 +321,15 @@ export const Notification = ({ event_id }) => {
 
               <severityStyles.icon {...iconLarge} fill={severityStyles?.color} />
             </GridItem>
-            <GridItem item xs={8} sm={6}>
+            <GridItem item xs={8} sm>
               <Message variant="body1">
+
                 {truncate(event.description, {
                   length: MAX_NOTIFICATION_DESCRIPTION_LENGTH,
                 })}
               </Message>
             </GridItem>
-            <GridItem item xs={1} sm={4} sx={{ justifyContent: 'space-around' }}>
+            <GridItem item xs="auto" style={{ justifyContent: 'end', gap: '0rem' }}>
               <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
                 <Typography variant="body1">{formatTimestamp(event.created_at)}</Typography>
               </Box>
