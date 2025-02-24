@@ -1,12 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { ENV } from './env';
 
-const URLS = {
-  MESHERY: {
-    SETTINGS: `${ENV.MESHERY_SERVER_URL}/settings`,
-  },
-};
-
 const SETTINGS_TABS = [
   'settings-tab-adapters',
   'settings-tab-adapters',
@@ -32,7 +26,8 @@ test.describe('Performance Section Tests', () => {
     await performanceNav.click();
   });
 
-  test('Verify Configure Metrics Navigation and Settings', async ({ page }) => { // { tag: '@unstable' },
+  test('Verify Configure Metrics Navigation and Settings', async ({ page }) => {
+    // { tag: '@unstable' },
     await expect(page.getByTestId('configure-metrics-button')).toBeVisible();
     await page.getByTestId('configure-metrics-button').click();
 
