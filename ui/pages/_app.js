@@ -104,7 +104,6 @@ async function fetchContexts(number = 10, search = '') {
   );
 }
 
-//some comment to trigger a ui build 
 export const mesheryExtensionRoute = '/extension/meshmap';
 function isMesheryUiRestrictedAndThePageIsNotPlayground(capabilitiesRegistry) {
   return (
