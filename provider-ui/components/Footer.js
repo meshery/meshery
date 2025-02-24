@@ -19,7 +19,7 @@ const ClickableSpan = styled("span")(({ theme }) => ({
 const StyledFavoriteIcon = styled(FavoriteIcon)(({ theme }) => ({
   display : "inline",
   verticalAlign : "top",
-  color : theme.palette.icon.brand,
+  fill : theme.palette.icon.brand
 }));
 
 export default function Footer() {
@@ -41,7 +41,7 @@ export default function Footer() {
             component="p"
           >
             <ClickableSpan onClick={handleL5CommunityClick}>
-              Built with <StyledFavoriteIcon /> by the Layer5 Community
+              Built with <StyledFavoriteIcon sx={{ color : "blue" }} /> by the Layer5 Community
             </ClickableSpan>
           </Typography>
         </Item>

@@ -1,7 +1,8 @@
 run:
   timeout: 5m
 
-  skip-files:
-    # https://github.com/meshery/meshery/issues/7761
+issues:
+  exclude-files:
     - server/handlers/doc.go
     - server/models/meshmodel/core/register.go
+ 

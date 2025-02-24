@@ -85,9 +85,7 @@ test.beforeEach(async ({ page, provider }) => {
   });
 
   // Visit Connections Page
-  await page.goto(`${ENV.MESHERY_SERVER_URL}`);
-  await page.getByRole('button', { name: 'Lifecycle' }).click();
-  await page.getByRole('button', { name: 'Connections' }).click();
+  await page.goto(`${ENV.MESHERY_SERVER_URL}/management/connections`);
 
   // Verify requests and responses expected on initial page load
   await connectionsReq;
@@ -95,7 +93,7 @@ test.beforeEach(async ({ page, provider }) => {
   const body = await res.json();
   verifyConnectionsResBody(body, provider);
 
-  connectionCount = body.connections.length;
+  connectionCount = body.total_count;
 });
 test('Verify that UI components are displayed', async ({ page }) => {
   // Verify that connections table is displayed (by checking for table headings)

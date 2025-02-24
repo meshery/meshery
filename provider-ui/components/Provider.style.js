@@ -1,4 +1,4 @@
-import { styled, MenuItem, Dialog, DialogActions, Typography, Popover } from "@layer5/sistent"
+import { styled, MenuItem, Dialog, DialogActions, Typography, Popover, charcoal } from "@layer5/sistent"
 export const CustomDiv = styled("div")(({ theme }) => ({
   width : "60%",
   marginLeft : "auto",
@@ -16,7 +16,7 @@ export const CustomTypography = styled(Typography)(({ theme }) => ({
   fontSize : "1.5rem",
   lineHeight : "2rem",
   letterSpacing : "0.01em",
-  color : theme.palette.text.default,
+  color : theme.palette.text.inverse,
 }));
 
 export const MesheryLogo = styled("img")(({ theme }) => ({
@@ -25,14 +25,21 @@ export const MesheryLogo = styled("img")(({ theme }) => ({
   height : "auto",
 }));
 
-export const MenuProviderDisabled = styled(MenuItem)(() => ({
+export const MenuProviderDisabled = styled(MenuItem)(({ theme }) => ({
   display : "flex",
   justifyContent : "space-between",
+  backgroundColor : theme.palette.text.default,
+  "> span" : {
+    fontStyle : "italic"
+  },
+  textOverflow : "ellipsis",
 }));
 
 export const CustomDialog = styled(Dialog)(({ theme }) => ({
   "& .MuiDialogContent-root" : {
     padding : theme.spacing(2),
+    background : theme.palette.background.elevatedComponents,
+
   },
   "& .MuiDialogActions-root" : {
     padding : theme.spacing(1),
@@ -44,16 +51,21 @@ export const CustomDialog = styled(Dialog)(({ theme }) => ({
 export const CustomDialogActions = styled(DialogActions)(({ theme }) => ({
   display : "flex",
   justifyContent : "space-between",
-  background : theme.palette.background.tabs,
-  padding : theme.spacing(2),
+  background : charcoal[20],
+  "& div" : {
+    margin : ".8rem",
+  },
   "& div > a" : {
-    color : theme.palette.text.default,
+    color : theme.palette.text.inverse,
+    paddingLeft : "1rem",
+
   },
 }));
 export const StyledPopover = styled(Popover)(({ theme }) => ({
   ".MuiPaper-root" : {
     backgroundColor : theme.palette.background.brand.disabled,
     color : theme.palette.text.default,
+
   },
 }));
 export const LearnMore = styled("div")(() => ({
@@ -61,4 +73,7 @@ export const LearnMore = styled("div")(() => ({
   marginLeft : "auto",
   marginRight : "auto",
   marginTop : "3rem",
+  "& :hover" : {
+    cursor : "pointer"
+  }
 }));
