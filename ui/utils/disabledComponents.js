@@ -7,7 +7,6 @@ function recursivelySearchObjKey(obj, arr, index) {
 
   const objectKeys = Object.keys(obj);
 
-  // eslint-disable-next-line no-unused-vars
   for (let _key in objectKeys) {
     const keyName = arr[index];
     if (obj[keyName]) {
