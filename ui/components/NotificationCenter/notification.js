@@ -274,10 +274,14 @@ export const Notification = ({ event_id }) => {
   ];
 
   const Detail = () => (
-    <Expanded container style={{
-      backgroundColor: alpha(eventStyle.color, 0.1), color: theme.palette.text.default,
-      borderTop: `1px solid ${notificationColor}`,
-    }}>
+    <Expanded
+      container
+      style={{
+        backgroundColor: alpha(eventStyle.color, 0.1),
+        color: theme.palette.text.default,
+        borderTop: `1px solid ${notificationColor}`,
+      }}
+    >
       <Grid
         item
         xs={12}
@@ -310,7 +314,13 @@ export const Notification = ({ event_id }) => {
         unmountOnExit
       >
         <Root notificationcolor={notificationColor} status={event?.status}>
-          <Summary container notificationcolor={notificationColor} onClick={handleExpandClick} spacing={0} style={{ flexWrap: 'nowrap' }}>
+          <Summary
+            container
+            notificationcolor={notificationColor}
+            onClick={handleExpandClick}
+            spacing={0}
+            style={{ flexWrap: 'nowrap' }}
+          >
             <GridItem item xs="auto">
               <Checkbox
                 onClick={eventstopPropagation}
@@ -323,7 +333,6 @@ export const Notification = ({ event_id }) => {
             </GridItem>
             <GridItem item xs={8} sm>
               <Message variant="body1">
-
                 {truncate(event.description, {
                   length: MAX_NOTIFICATION_DESCRIPTION_LENGTH,
                 })}

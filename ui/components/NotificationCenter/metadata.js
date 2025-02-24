@@ -242,7 +242,7 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
                   padding: '0',
                   pb: 1,
                   '& ul': { paddingInlineStart: hashedError ? '20px' : '0px' },
-                  '& p': { lineHeight: '1.2rem' }
+                  '& p': { lineHeight: '1.2rem' },
                 }}
               >
                 <RenderMarkdown content={error} />
