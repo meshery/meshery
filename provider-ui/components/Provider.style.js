@@ -8,29 +8,29 @@ import {
   charcoal,
 } from "@layer5/sistent";
 export const CustomDiv = styled("div")(({ theme }) => ({
-  width : "60%",
-  marginLeft : "auto",
-  marginRight : "auto",
-  marginTop : theme.spacing(3),
+  width: "60%",
+  marginLeft: "auto",
+  marginRight: "auto",
+  marginTop: theme.spacing(3),
 }));
 
 export const CustomTypography = styled(Typography)(({ theme }) => ({
-  "@font-face" : {
-    fontFamily : "Qanelas Soft",
-    src : "url('/provider/static/fonts/qanelas-soft/QanelasSoftRegular.otf') format('opentype')",
+  "@font-face": {
+    fontFamily: "Qanelas Soft",
+    src: "url('/provider/static/fonts/qanelas-soft/QanelasSoftRegular.otf') format('opentype')",
   },
-  fontWeight : 400,
-  fontStyle : "normal",
-  fontSize : "1.5rem",
-  lineHeight : "2rem",
-  letterSpacing : "0.01em",
-  color : theme.palette.text.inverse,
+  fontWeight: 400,
+  fontStyle: "normal",
+  fontSize: "1.5rem",
+  lineHeight: "2rem",
+  letterSpacing: "0.01em",
+  color: theme.palette.text.inverse,
 }));
 
 export const MesheryLogo = styled("img")(({ theme }) => ({
-  width : theme.spacing(50),
-  maxWidth : "100%",
-  height : "auto",
+  width: theme.spacing(50),
+  maxWidth: "100%",
+  height: "auto",
 }));
 
 export const MenuProviderDisabled = styled(MenuItem)(({ theme }) => ({
@@ -40,7 +40,7 @@ export const MenuProviderDisabled = styled(MenuItem)(({ theme }) => ({
   "> span": {
     fontStyle: "italic",
   },
-  textOverflow : "ellipsis",
+  textOverflow: "ellipsis",
 }));
 
 export const CustomDialog = styled(Dialog)(({ theme }) => ({
@@ -48,19 +48,19 @@ export const CustomDialog = styled(Dialog)(({ theme }) => ({
     padding: theme.spacing(2),
     background: theme.palette.background.elevatedComponents,
   },
-  "& .MuiDialogActions-root" : {
-    padding : theme.spacing(1),
+  "& .MuiDialogActions-root": {
+    padding: theme.spacing(1),
   },
-  "& .MuiDialogContentText-root > a" : {
-    color : "#222",
+  "& .MuiDialogContentText-root > a": {
+    color: "#222",
   },
 }));
 export const CustomDialogActions = styled(DialogActions)(({ theme }) => ({
-  display : "flex",
-  justifyContent : "space-between",
-  background : charcoal[20],
-  "& div" : {
-    margin : ".8rem",
+  display: "flex",
+  justifyContent: "space-between",
+  background: charcoal[20],
+  "& div": {
+    margin: ".8rem",
   },
   "& div > a": {
     color: theme.palette.text.inverse,
