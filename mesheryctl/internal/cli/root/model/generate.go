@@ -61,6 +61,12 @@ var generateModelCmd = &cobra.Command{
 			utils.Log.Info("Model can be accessed from ", locationForModel)
 			return nil
 		} else {
+
+			err := meshkitRegistryUtils.SetLogger(true)
+			if err != nil {
+				utils.Log.Info("Error setting logger: ", err)
+			}
+
 			modelcsvpath, componentcsvpath, relationshipcsvpath, err := meshkitRegistryUtils.GetCsv(path)
 			if err == nil {
 				modelData, err := os.ReadFile(modelcsvpath)
