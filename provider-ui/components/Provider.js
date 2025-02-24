@@ -35,17 +35,17 @@ function CustomDialogTitle(props) {
   const { children, onClose, ...other } = props;
 
   return (
-    <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
+    <DialogTitle sx={{ m : 0, p : 2 }} {...other}>
       {children}
       {onClose ? (
         <IconButton
           aria-label="close"
           onClick={onClose}
           sx={{
-            position: "absolute",
-            right: "1rem",
-            top: "1rem",
-            color: (theme) => theme.palette.grey[500],
+            position : "absolute",
+            right : "1rem",
+            top : "1rem",
+            color : (theme) => theme.palette.grey[500],
           }}
         >
           <CloseIcon />
@@ -56,8 +56,8 @@ function CustomDialogTitle(props) {
 }
 
 CustomDialogTitle.propTypes = {
-  children: PropTypes.node,
-  onClose: PropTypes.func.isRequired,
+  children : PropTypes.node,
+  onClose : PropTypes.func.isRequired,
 };
 //Styled-components:
 const StyledTypography = styled(Typography)(({ theme }) => ({
@@ -73,9 +73,9 @@ const StyledTypography = styled(Typography)(({ theme }) => ({
 }));
 
 const StyledTooltip = styled(Tooltip)(({ theme }) => ({
-  color: theme.palette.text.inverse,
-  cursor: "pointer",
-  fontWeight: "normal",
+  color : theme.palette.text.inverse,
+  cursor : "pointer",
+  fontWeight : "normal",
 }));
 
 const StyledCustomDialogTitle = styled(CustomDialogTitle)(({ theme }) => ({
@@ -84,19 +84,19 @@ const StyledCustomDialogTitle = styled(CustomDialogTitle)(({ theme }) => ({
 }));
 
 const StyledButton = styled(Button)(({ theme }) => ({
-  backgroundColor: theme.palette.IconButton,
+  backgroundColor : theme.palette.IconButton,
 }));
 const StyledButtonGroup = styled(ButtonGroup)(() => ({
-  border: "none",
-  "& .MuiButtonGroup-grouped": {
-    border: "none !important",
+  border : "none",
+  "& .MuiButtonGroup-grouped" : {
+    border : "none !important",
   },
 }));
 
 const StyledDialogBox = styled(DialogContentText)(({ theme }) => ({
-  color: theme.palette.text.inverse,
-  backgroundColor: charcoal[40],
-  padding: "1.2rem",
+  color : theme.palette.text.inverse,
+  backgroundColor : charcoal[40],
+  padding : "1.2rem",
 }));
 
 export default function Provider() {
@@ -127,8 +127,8 @@ export default function Provider() {
     dataFetch(
       "/api/providers",
       {
-        method: "GET",
-        credentials: "include",
+        method : "GET",
+        credentials : "include",
       },
       (result) => {
         if (typeof result !== "undefined") {
@@ -187,11 +187,12 @@ export default function Provider() {
                 {isLoading && (
                   <CircularProgress
                     size={20}
-                    sx={{ color: "white", marginRight: 8 }}
+                    sx={{ color : "white", marginRight : 8 }}
                   />
                 )}
                 {selectedProvider !== ""
                   ? selectedProvider
+                  : "Select your provider"}
                   : "Select your provider"}
                 <DropDownIcon />
               </Button>
@@ -202,19 +203,19 @@ export default function Provider() {
               anchorEl={anchorEl}
               onClose={handleClose}
               anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "center",
+                vertical : "bottom",
+                horizontal : "center",
               }}
               transformOrigin={{
-                vertical: "top",
-                horizontal: "center",
+                vertical : "top",
+                horizontal : "center",
               }}
             >
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList
                   sx={{
-                    background: charcoal[20],
-                    color: (theme) => theme.palette.text.inverse,
+                    background : charcoal[20],
+                    color : (theme) => theme.palette.text.inverse,
                   }}
                   id="split-button-menu"
                   autoFocusItem
@@ -258,9 +259,11 @@ export default function Provider() {
       <LearnMore onClick={handleModalOpen}>
         <StyledTypography variant="h6" gutterBottom>
           <StyledTooltip
+          <StyledTooltip
             title="Learn more about Meshery remote providers"
             placement="bottom"
             data-cy="providers-tooltip"
+          >
           >
           Learn more about providers
           </StyledTooltip>
@@ -279,6 +282,8 @@ export default function Provider() {
         >
           <CustomTypography>Choosing a Provider</CustomTypography>
         </StyledCustomDialogTitle>
+
+        <StyledDialogBox id="customized-dialog-content">
 
         <StyledDialogBox id="customized-dialog-content">
             Login to Meshery by choosing from the available providers. Providers
@@ -314,6 +319,8 @@ export default function Provider() {
                 Academic research and advanced studies by Ph.D. researchers
             </li>
             <li>
+            </li>
+            <li>
                 Used by school of Electrical and Computer Engineering (ECE)
             </li>
           </ul>
@@ -322,7 +329,12 @@ export default function Provider() {
           </p>
           <ul>
             <li>
+          </p>
+          <ul>
+            <li>
                 Performance and compatibility-centric research and validation
+            </li>
+            <li>
             </li>
             <li>
                 Used by various cloud native projects
