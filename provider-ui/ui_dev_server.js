@@ -13,7 +13,7 @@ const httpProxy = require('http-proxy');
 const proxy = httpProxy.createProxyServer({});
 
 proxy.on("error", function (err, req, res) {
-  res.writeHead(500, { "Content-Type" : "text/plain" });
+  res.writeHead(500, { "Content-Type": "text/plain" });
   res.end('Proxy issue in Meshery Provider-UI');
 });
 
@@ -28,7 +28,7 @@ app.prepare().then(() => {
       if (pathname.startsWith('/api') ||
                 pathname.startsWith('/user/logout') ||
                 pathname.startsWith('/user/login')) {
-        proxy.web(req, res, { target : `http://${hostname}:9081`, })
+        proxy.web(req, res, { target: `http://${hostname}:9081`, })
       } else {
         if (req.url.startsWith('/provider')) {
           req.url = req.url.replace('/provider', '')
