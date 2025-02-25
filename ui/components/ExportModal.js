@@ -58,6 +58,7 @@ const ExportOption = ({
           sx={{
             marginLeft: '0.5rem',
           }}
+          data-testid={title}
         >
           <DownloadIcon fill={theme.palette.icon.default} />
         </IconButton>
