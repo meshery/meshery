@@ -21,12 +21,12 @@ class MyReporter {
     this.totalTests = `- Total tests cases: ${suite.allTests().length}`;
   }
 
-  onStdOut(chunk, _test, _result) {
+  onStdOut(chunk) {
     const text = chunk.toString('utf-8');
     process.stdout.write(text);
   }
 
-  onStdErr(chunk, _test, _result) {
+  onStdErr(chunk) {
     const text = chunk.toString('utf-8');
     process.stderr.write(text);
   }

@@ -5,16 +5,12 @@ function recursivelySearchObjKey(obj, arr, index) {
     return obj;
   }
 
-  const objectKeys = Object.keys(obj);
-
-  for (let _key in objectKeys) {
-    const keyName = arr[index];
-    if (obj[keyName]) {
-      return recursivelySearchObjKey(obj[keyName], arr, index + 1);
-    }
-
-    return false;
+  const keyName = arr[index];
+  if (obj[keyName]) {
+    return recursivelySearchObjKey(obj[keyName], arr, index + 1);
   }
+
+  return false;
 }
 
 export class CapabilitiesRegistry {
