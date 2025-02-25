@@ -272,16 +272,22 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
   return (
     <>
       <WrapperContainer>
-        <WrapperPaper square>
+        <WrapperPaper
+          square
+          style={{
+            maxWidth: width < 1080 ? '85vw' : '100vw',
+          }}
+        >
           <Tabs
             value={getResourceCategoryIndex(resourceCategory)}
             indicatorColor="primary"
             onChange={(_e, val) => {
               changeResourceTab(getResourceCategory(val));
             }}
-            variant={width < 1280 ? 'scrollable' : 'fullWidth'}
-            scrollButtons="on"
+            variant={width < 1080 ? 'scrollable' : 'fullWidth'}
+            scrollButtons={false}
             textColor="primary"
+            centered
           >
             {ResourceCategoryTabs.map((resource, idx) => {
               return (
@@ -313,7 +319,13 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
         <TabPanel value={resourceCategory} index={'Overview'}>
           <Box display="flex" flexDirection={'column'} gap="1rem">
             <Box padding={0} width={'100%'}>
-              <Stack direction="row" useFlexGap gap="2rem" justifyContent="end">
+              <Stack
+                direction="row"
+                useFlexGap
+                gap="0rem 2rem"
+                justifyContent="end"
+                flexWrap={'wrap-reverse'}
+              >
                 {topBarActions.map(({ key, ...layoutAction }) => (
                   <LayoutActionButton {...layoutAction} key={key} />
                 ))}

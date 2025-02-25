@@ -121,16 +121,11 @@ export const ErrorContainer = styled(Paper)(({ theme }) => ({
 
 export const WrapperContainer = styled('div')(({ theme }) => ({
   flexGrow: 1,
-  [theme.breakpoints.down('sm')]: {
-    maxWidth: '80vw',
-  },
-  maxWidth: '100vw',
   height: 'auto',
 }));
 
 export const WrapperPaper = styled(Paper)({
   flexGrow: 1,
-  maxWidth: '100vw',
   height: 'auto',
 });
 
