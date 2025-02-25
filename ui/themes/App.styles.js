@@ -39,7 +39,7 @@ export const StyledAppContent = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   position: 'relative',
-  overflow: 'visible',
+  overflowX: 'hidden',
 });
 
 export const StyledContentWrapper = styled('div')({
