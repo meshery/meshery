@@ -509,6 +509,42 @@ To use the `alert.html` feature in our documentation include the following code:
 
 Other supported alert types include `warning`, `danger`,`success`,`primary`, `secondary`, `light`, `dark` .
 
+
+### Image Handling
+
+Control image display in documentation pages using the following methods.
+
+#### Default Image Size in Markdown Format
+
+Using the Markdown image syntax:
+
+{% capture code_content %}[![Image Title]({{ site.baseurl }}/assets/img/your-image.png)]({{ site.baseurl }}/assets/img/your-image.png){% endcapture %}
+{% include code.html code=code_content %}
+
+This renders as:
+
+{% capture code_content %}<a href="/assets/img/your-image.png">
+    <img src="/assets/img/your-image.png" alt="Image Title">
+</a>{% endcapture %}
+{% include code.html code=code_content %}
+
+**Effect:**
+- Image is displayed at its original resolution, limited by global CSS (`max-width: 100%; height: auto;`)
+- Clickable, opening in Lightbox if the format is supported
+
+#### Custom Image Size (for Control)
+
+If you need to specify dimensions, use:
+
+{% capture code_content %}<a href="{{ site.baseurl }}/assets/img/your-image.png">
+    <img src="{{ site.baseurl }}/assets/img/your-image.png" style="width:500px; height:auto;" alt="Image Title">
+</a>{% endcapture %}
+{% include code.html code=code_content %}
+
+**Effect:**
+- Image width is fixed at `500px`, maintaining aspect ratio
+- Clickable, opening in Lightbox for full-size viewing
+
 ### Quotes
 
 You can include block quotes to emphasize text. 
