@@ -32,10 +32,15 @@ export const useGetUserAbilities = (org, skip) => {
 export const useGetCurrentAbilities = (org, setKeys) => {
   const shouldSkip = !org || !org.id;
   const res = useGetUserAbilities(org, shouldSkip);
+
   if (res?.abilities) {
     ability.update(res.abilities);
+  }
+
+  if (res?.keys) {
     setKeys({ keys: res.keys });
   }
+
   return res;
 };
 
