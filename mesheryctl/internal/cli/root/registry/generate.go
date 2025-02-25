@@ -64,10 +64,15 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 		// Prerequisite check is needed - https://github.com/meshery/meshery/issues/10369
 		// TODO: Include a prerequisite check to confirm that this command IS being the executED from within a fork of the Meshery repo, and is being executed at the root of that fork.
 		// Prerequisite check: ensure that the command is executed from the root of a cloned meshery/meshery repo.
+
 		wd, err := os.Getwd()
 		if err != nil {
-			errorMsg := "Error: it appears you are not running this command from the root of a cloned meshery/meshery repository (missing 'server' directory).\nPlease change directory to the repository root and try again.\nFor more information, see https://docs.meshery.io/project/contributing/contributing-models"
-		 	return errors.New(utils.RegistryError(errorMsg, "generate"))
+			utils.Log.Warn("Unable to determine current working directory, proceeding with default value")
+			wd = "."
+		}
+		// Check for the presence of the "server" directory as a marker for the repo root.
+		if _, err := os.Stat(filepath.Join(wd, "server")); os.IsNotExist(err) {
+			utils.Log.Warn("It is recommended to run this command from the root of a cloned meshery/meshery repository (missing 'server' directory). Continuing anyway.")
 		}
 
 		const errorMsg = "[ Spreadsheet ID | Registrant Connection Definition Path | Local Directory ] isn't specified\n\nUsage: \nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nmesheryctl registry generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED --model \"[model-name]\"\nRun 'mesheryctl registry generate --help' to see detailed help message"
@@ -96,14 +101,20 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var wg sync.WaitGroup
-		cwd, _ = os.Getwd()
-		registryLocation = filepath.Join(cwd, outputLocation)
-
-		if pathToRegistrantConnDefinition != "" {
-			utils.Log.Info("Model generation from Registrant definitions not yet supported.")
-			return nil
-		}
 		var err error
+		cwd, err = os.Getwd()
+		if err != nil {
+			utils.Log.Warnf("Could not determine current working directory, proceeding with default: %v", err)
+			cwd = "."
+		}
+
+		// Warn if not running from the preferred directory ("mesheryctl")
+		if filepath.Base(cwd) != "mesheryctl" {
+			utils.Log.Warn("It is recommended to run this command from the 'mesheryctl' directory for proper relative path resolution, but continuing anyway.")
+		}
+
+		registryLocation = filepath.Join(cwd, outputLocation)
+		utils.Log.Debugf("Output directory is set to: %s", registryLocation)
 
 		if csvDirectory == "" {
 			srv, err = mutils.NewSheetSRV(spreadsheeetCred)
@@ -130,8 +141,10 @@ mesheryctl registry generate --directory <DIRECTORY_PATH>
 				return fmt.Errorf("ModelCSV, ComponentCSV and RelationshipCSV files must be present in the directory")
 			}
 		}
+		utils.Log.Infof("Creating log directory at: %s", logDirPath)
 		err = os.MkdirAll(logDirPath, 0755)
 		if err != nil {
+			utils.Log.Error("Failed to create log directory at %s: %v", logDirPath, err)
 			return ErrUpdateRegistry(err, modelLocation)
 		}
 		utils.Log.SetLevel(logrus.DebugLevel)
