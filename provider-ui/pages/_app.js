@@ -5,6 +5,7 @@ import { CacheProvider } from "@emotion/react";
 import createEmotionCache from "../lib/createEmotionCache";
 import Footer from "../components/Footer";
 import { CssBaseline, charcoal, Box, Paper, SistentThemeProvider, styled, useTheme } from "@layer5/sistent";
+import '../public/static/style/index.css'
 
 //styled-components:
 const StyledBox = styled(Box)(() => ({
