@@ -219,6 +219,7 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
   const formattedErrorCode = errorCode ? `${errorCode}-${code}` : code;
   const errorLink = `https://docs.meshery.io/reference/error-codes#${formattedErrorCode}`;
   const ErrorDetailsObjectFormatter = ({ heading, value }) => {
+    const isUnorderedList = heading === 'Details' && value.length <= 1;
     return (
       <Box>
         <Typography variant="body1">
@@ -226,7 +227,7 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
         </Typography>
         <List
           sx={{
-            listStyleType: value.length > 1 ? 'decimal' : 'none',
+            listStyleType: isUnorderedList ? 'none' : 'decimal',
             pl: 3,
           }}
         >
@@ -237,9 +238,11 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
                 key={idx}
                 sx={{
                   display: hashedError ? 'block' : 'list-item',
+                  lineHeight: '1.2rem',
                   padding: '0',
                   pb: 1,
                   '& ul': { paddingInlineStart: hashedError ? '20px' : '0px' },
+                  '& p': { lineHeight: '1.2rem' },
                 }}
               >
                 <RenderMarkdown content={error} />
