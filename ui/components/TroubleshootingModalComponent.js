@@ -50,7 +50,6 @@ const FooterText = styled(Typography)(() => ({
   color: 'white',
   fontSize: '.85rem',
   textDecoration: 'italics',
-  fontFamily: 'Qanelas Soft, sans-serif',
 }));
 
 const ModalHeader = styled(Typography)(({ theme }) => ({
@@ -120,7 +119,6 @@ const AccordionSummaryStyled = styled(AccordionSummary)(({ theme }) => ({
 
 const AccDetailHead = styled(Typography)(({ theme }) => ({
   color: theme.palette.mode === 'dark' ? '#f1f1f1' : '#444',
-  fontFamily: 'Qanelas Soft, sans-serif',
 }));
 
 const TroubleshootListitem = styled('li')({

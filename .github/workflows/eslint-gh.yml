@@ -1,5 +1,9 @@
 name: eslint-check
-on: [pull_request]
+on:
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - 'README.md'
 jobs:
   eslint:
     name: runner / eslint

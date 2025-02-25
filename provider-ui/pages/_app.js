@@ -8,10 +8,10 @@ import { CssBaseline, charcoal, Box, Paper, SistentThemeProvider, styled, useThe
 
 //styled-components:
 const StyledBox = styled(Box)(() => ({
-  display : "flex",
-  flex : 1,
-  flexDirection : "column",
-  background : charcoal[10],
+  display: "flex",
+  flex: 1,
+  flexDirection: "column",
+  background: charcoal[10],
 }));
 
 // Client-side cache, shared for the whole session of the user in the browser.
@@ -40,24 +40,24 @@ export default function MyApp(props) {
         <CssBaseline />
         <Box
           sx={{
-            display : "flex",
-            flexDirection : "column",
-            minHeight : "100vh",
-            overflowY : "hidden",
+            display: "flex",
+            flexDirection: "column",
+            minHeight: "100vh",
+            overflowY: "hidden",
           }}
         >
-          <Box sx={{ overflowY : "hidden",display : "flex", flexGrow : 1 }}>
+          <Box sx={{ overflowY: "hidden",display: "flex", flexGrow: 1 }}>
             <StyledBox>
               <Box
                 sx={{
-                  flex : 1,
-                  alignContent : "center",
-                  padding : "auto",
-                  margin : "auto"
+                  flex: 1,
+                  alignContent: "center",
+                  padding: "auto",
+                  margin: "auto"
                   // background: theme.palette.background.brand.default
                 }}
               >
-                <Paper sx={{ background : "none", }}>
+                <Paper sx={{ background: "none", }}>
                   <Component {...pageProps} />
                 </Paper>
               </Box>
@@ -71,7 +71,7 @@ export default function MyApp(props) {
 }
 
 MyApp.propTypes = {
-  Component : PropTypes.elementType.isRequired,
-  emotionCache : PropTypes.object,
-  pageProps : PropTypes.object.isRequired,
+  Component: PropTypes.elementType.isRequired,
+  emotionCache: PropTypes.object,
+  pageProps: PropTypes.object.isRequired,
 };
