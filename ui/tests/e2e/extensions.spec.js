@@ -53,15 +53,19 @@ test.describe('Extensions Section Tests', () => {
     await newPage.close();
   });
 
-  test('Verify Meshery Docker Extension Details', { tag: '@unstable' }, async ({ page, context }) => {
-    await expect(page.getByTestId('docker-extension-heading')).toBeVisible();
-    const [newPage] = await Promise.all([
-      context.waitForEvent('page'),
-      page.getByTestId('docker-extension-download-btn').click(),
-    ]);
-    await expect(newPage).toHaveURL(URLS.DOCKER.EXTENSION);
-    await newPage.close();
-  });
+  test(
+    'Verify Meshery Docker Extension Details',
+    { tag: '@unstable' },
+    async ({ page, context }) => {
+      await expect(page.getByTestId('docker-extension-heading')).toBeVisible();
+      const [newPage] = await Promise.all([
+        context.waitForEvent('page'),
+        page.getByTestId('docker-extension-download-btn').click(),
+      ]);
+      await expect(newPage).toHaveURL(URLS.DOCKER.EXTENSION);
+      await newPage.close();
+    },
+  );
 
   test('Verify Meshery Design Embed Details', { tag: '@unstable' }, async ({ page, context }) => {
     await expect(page.getByTestId('design-embed-learn-more-btn')).toBeVisible();
@@ -73,23 +77,31 @@ test.describe('Extensions Section Tests', () => {
     await newPage.close();
   });
 
-  test('Verify Meshery Catalog Section Details', { tag: '@unstable' }, async ({ page, context }) => {
-    await expect(page.getByTestId('catalog-section-heading')).toBeVisible();
-    const toggleButton = page.getByTestId('catalog-toggle-switch');
-    await toggleButton.click();
-    const catalogLink = page.locator('a[href="https://meshery.io/catalog"]');
-    const [newPage] = await Promise.all([context.waitForEvent('page'), catalogLink.click()]);
-    await expect(newPage).toHaveURL(URLS.MESHERY.CATALOG);
-    await newPage.close();
-  });
+  test(
+    'Verify Meshery Catalog Section Details',
+    { tag: '@unstable' },
+    async ({ page, context }) => {
+      await expect(page.getByTestId('catalog-section-heading')).toBeVisible();
+      const toggleButton = page.getByTestId('catalog-toggle-switch');
+      await toggleButton.click();
+      const catalogLink = page.locator('a[href="https://meshery.io/catalog"]');
+      const [newPage] = await Promise.all([context.waitForEvent('page'), catalogLink.click()]);
+      await expect(newPage).toHaveURL(URLS.MESHERY.CATALOG);
+      await newPage.close();
+    },
+  );
 
-  test('Verify Meshery Adapter for Istio Section', { tag: '@unstable' }, async ({ page, context }) => {
-    // Test the "Open Adapter docs" link
-    const [docsPage] = await Promise.all([
-      context.waitForEvent('page'),
-      page.getByRole('link', { name: 'Open Adapter docs' }).click(),
-    ]);
-    await expect(docsPage).toHaveURL(URLS.MESHERY.ADATPER_DOCS);
-    await docsPage.close();
-  });
+  test(
+    'Verify Meshery Adapter for Istio Section',
+    { tag: '@unstable' },
+    async ({ page, context }) => {
+      // Test the "Open Adapter docs" link
+      const [docsPage] = await Promise.all([
+        context.waitForEvent('page'),
+        page.getByRole('link', { name: 'Open Adapter docs' }).click(),
+      ]);
+      await expect(docsPage).toHaveURL(URLS.MESHERY.ADATPER_DOCS);
+      await docsPage.close();
+    },
+  );
 });
