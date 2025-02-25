@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
 	"github.com/spf13/cobra"
 	"github.com/spf13/pflag"
 )
@@ -60,7 +61,13 @@ var generateModelCmd = &cobra.Command{
 			utils.Log.Info("Model can be accessed from ", locationForModel)
 			return nil
 		} else {
-			modelcsvpath, componentcsvpath, relationshipcsvpath, err := utils.GetCsv(path)
+
+			err := meshkitRegistryUtils.SetLogger(true)
+			if err != nil {
+				utils.Log.Info("Error setting logger: ", err)
+			}
+
+			modelcsvpath, componentcsvpath, relationshipcsvpath, err := meshkitRegistryUtils.GetCsv(path)
 			if err == nil {
 				modelData, err := os.ReadFile(modelcsvpath)
 				if err != nil {
