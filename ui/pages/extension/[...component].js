@@ -19,7 +19,6 @@ import Head from 'next/head';
 import { bindActionCreators } from 'redux';
 import React from 'react';
 import RemoteComponent from '../../components/RemoteComponent';
-import _ from 'lodash';
 import { MesheryExtensionEarlyAccessCardPopup } from '../../components/Popup';
 import dataFetch from '../../lib/data-fetch';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';

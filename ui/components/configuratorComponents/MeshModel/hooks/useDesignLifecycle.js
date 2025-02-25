@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
 import jsYaml from 'js-yaml';
-// eslint-disable-next-line no-unused-vars
-import * as Types from './types';
 import { promisifiedDataFetch } from '../../../../lib/data-fetch';
 import { useNotification } from '../../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../../lib/event-types';
