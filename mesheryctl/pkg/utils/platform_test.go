@@ -20,32 +20,6 @@ import (
 
 // The function are related to download should be test in meshkit package, please do not add test here.
 
-func TestPlatform(t *testing.T) {
-	t.Run("GetManifestTreeURL", func(t *testing.T) {
-		_, err := GetManifestTreeURL("master")
-		if err != nil {
-			t.Fatal(err)
-		}
-	})
-}
-
-func TestGetManifestURL(t *testing.T) {
-	t.Run("GetManifestURL with empty manifest", func(t *testing.T) {
-		manifest := Manifest{
-			Typ:  "blob",
-			Path: "testdata/manifest.yaml",
-		}
-		rawManifestsURL := "https://raw.githubusercontent.com/meshery/meshery/master/mesheryctl/pkg/utils/"
-
-		manifestURL := GetManifestURL(manifest, rawManifestsURL)
-		expectedURL := "https://raw.githubusercontent.com/meshery/meshery/master/mesheryctl/pkg/utils/testdata/manifest.yaml"
-
-		if manifestURL != expectedURL {
-			t.Errorf("GetManifestURL failed: expected %s, but got %s", expectedURL, manifestURL)
-		}
-	})
-}
-
 func TestListManifests(t *testing.T) {
 	t.Run("ListManifests with empty manifest", func(t *testing.T) {
 		url := "https://api.github.com/repos/meshery/meshery/git/trees/47c634a49e6d143a54d734437a26ad233146ddf5"
