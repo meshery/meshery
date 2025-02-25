@@ -26,6 +26,7 @@ function PatternCardGridItem({
   pattern,
   handleDeploy,
   handleVerify,
+  quickHandleVerify,
   handleDryRun,
   handlePublishModal,
   handleUnpublishModal,
@@ -56,6 +57,7 @@ function PatternCardGridItem({
           requestSizeRestore={() => setGridProps(INITIAL_GRID_SIZE)}
           handleDeploy={handleDeploy}
           handleVerify={handleVerify}
+          quickHandleVerify={quickHandleVerify}
           handleDryRun={handleDryRun}
           handlePublishModal={handlePublishModal}
           handleUnDeploy={handleUnDeploy}
@@ -144,6 +146,7 @@ function MesheryPatternGrid({
   handleInfoModal,
   openDeployModal,
   openValidationModal,
+  quickValidationModal,
   openUndeployModal,
   openDryRunModal,
   hideVisibility = false,
@@ -228,6 +231,9 @@ function MesheryPatternGrid({
                 }
                 handleVerify={(e) =>
                   openValidationModal(e, pattern.pattern_file, pattern.name, pattern.id)
+                }
+                quickHandleVerify={(e) =>
+                  quickValidationModal(e, pattern.pattern_file, pattern.name, pattern.id)
                 }
                 handlePublishModal={() => handlePublishModal(pattern)}
                 handleUnpublishModal={(e) => handleUnpublishModal(e, pattern)()}

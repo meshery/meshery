@@ -11,16 +11,18 @@ import {
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { UsesSistent } from '../SistentWrapper';
 
-export default function ActionButton({ defaultActionClick, options }) {
+export default function ActionButton({ options }) {
   const [open, setOpen] = React.useState(false);
+  const [dropdownMode, setDropdownMode] = React.useState('withLabel');
   const anchorRef = React.useRef(null);
 
   const handleMenuItemClick = () => {
     setOpen(false);
   };
 
-  const handleToggle = (event) => {
+  const handleToggle = (event, mode) => {
     event.stopPropagation();
+    setDropdownMode(mode);
     setOpen((prevOpen) => !prevOpen);
   };
 
@@ -46,7 +48,7 @@ export default function ActionButton({ defaultActionClick, options }) {
               padding: '6px 9px',
               borderRadius: '8px',
             }}
-            onClick={defaultActionClick}
+            onClick={(e) => handleToggle(e, 'withLabel')} // Show names + icons
             variant="outlined"
           >
             Action
@@ -57,7 +59,7 @@ export default function ActionButton({ defaultActionClick, options }) {
               borderRadius: '8px',
             }}
             size="small"
-            onClick={handleToggle}
+            onClick={(e) => handleToggle(e, 'icon-only')} // Show icons only
             variant="outlined"
           >
             <ArrowDropDownIcon />
@@ -77,6 +79,7 @@ export default function ActionButton({ defaultActionClick, options }) {
             vertical: 'top',
             horizontal: 'left',
           }}
+          placement={dropdownMode === 'icon-only' ? 'bottom-end' : 'bottom'}
         >
           <Paper>
             <ClickAwayListener onClickAway={handleClose}>
@@ -87,11 +90,17 @@ export default function ActionButton({ defaultActionClick, options }) {
                     key={option}
                     onClick={(event) => {
                       handleMenuItemClick(event);
-                      option.onClick(event, index);
+                      option.onClick(event, index, dropdownMode);
                     }}
                   >
-                    <div style={{ marginRight: '0.5rem' }}>{option.icon}</div>
-                    {option.label}
+                    {dropdownMode === 'icon-only' ? (
+                      <div>{option.icon}</div>
+                    ) : (
+                      <div style={{ display: 'flex' }}>
+                        <div style={{ marginRight: '0.5rem' }}>{option.icon}</div>
+                        {option.label}
+                      </div>
+                    )}
                   </MenuItem>
                 ))}
               </MenuList>
