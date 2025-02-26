@@ -18,7 +18,6 @@ export const CopyLinkButton = styled(Button)(({ theme }) => ({
 }));
 
 export const ResourceName = styled(Typography)(() => ({
-  fontFamily: 'Qanelas Soft, sans-serif',
   textAlign: 'left',
   marginTop: '0.5rem',
   overflow: 'hidden',

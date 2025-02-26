@@ -189,7 +189,6 @@ export const KeyValue = ({ Key, Value }) => {
         alignItems: 'flex-start',
         gap: '0.25rem',
         flexWrap: 'wrap',
-        fontFamily: 'Qanelas Soft, sans-serif',
       }}
     >
       <SectionBody
@@ -369,7 +368,13 @@ export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema, 
           propertyFormatters: propertyFormatters,
         }}
       >
-        <Grid container>
+        <Grid
+          container
+          style={{
+            wordBreak: 'break-word',
+            overflowWrap: 'break-word',
+          }}
+        >
           <DynamicFormatter data={data} uiSchema={uiSchema} isLevel={isLevel} />
         </Grid>
       </FormatterContext.Provider>
