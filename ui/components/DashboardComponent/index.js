@@ -194,7 +194,7 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
       Icon: EditIcon,
       action: toggleEditMode,
       description: 'Configure dashboard layout for the current organization',
-      isShown: !isEditMode && CAN(keys.EDIT_ORGANIZATION.action, keys.EDIT_ORGANIZATION.subject),
+      isShown: !isEditMode,
     },
     CANCEL_EDIT: {
       label: 'Cancel',
