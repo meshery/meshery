@@ -179,7 +179,6 @@ export default function DesignConfigurator() {
               <div>
                 <IconButton
                   aria-label="Save"
-                  color="primary"
                   onClick={designSave}
                   disabled={!CAN(keys.CREATE_NEW_DESIGN.action, keys.CREATE_NEW_DESIGN.subject)}
                 >
@@ -193,7 +192,6 @@ export default function DesignConfigurator() {
                   <div>
                     <IconButton
                       aria-label="Update"
-                      color="primary"
                       onClick={designUpdate}
                       disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                     >
@@ -205,7 +203,6 @@ export default function DesignConfigurator() {
                   <div>
                     <IconButton
                       aria-label="Delete"
-                      color="primary"
                       onClick={designDelete}
                       disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
                     >
