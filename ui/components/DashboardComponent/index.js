@@ -31,8 +31,6 @@ import { WrapperPaper } from './style';
 import _ from 'lodash';
 import { AddWidgetsToLayoutPanel, LayoutActionButton, LayoutWidget } from './components';
 import { Responsive, WidthProvider } from 'react-grid-layout';
-import CAN from '@/utils/can';
-import { keys } from '@/utils/permission_constants';
 import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT, OVERVIEW_LAYOUT } from './defaultLayout';
 import Popup from '../Popup';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
