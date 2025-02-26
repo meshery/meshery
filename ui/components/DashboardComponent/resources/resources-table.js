@@ -228,7 +228,15 @@ const ResourcesTable = (props) => {
           {view === ALL_VIEW && (
             <>
               <ToolWrapper style={{ marginBottom: '5px', marginTop: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'end', width: '100%' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'end',
+                    width: '100%',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                  }}
+                >
                   <SearchBar
                     onSearch={(value) => {
                       setSearch(value);

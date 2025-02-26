@@ -119,11 +119,6 @@ export const ErrorContainer = styled(Paper)(({ theme }) => ({
   borderRadius: 4,
 }));
 
-export const WrapperContainer = styled('div')({
-  flexGrow: 1,
-  height: 'auto',
-});
-
 export const WrapperPaper = styled(Paper)({
   flexGrow: 1,
   height: 'auto',

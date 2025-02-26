@@ -30,7 +30,7 @@ export const StyledMainContent = styled('main')(({ theme }) => ({
   flex: 1,
   padding: '48px 36px 24px',
   [theme.breakpoints.down('sm')]: {
-    padding: '24px 5px 16px 5px',
+    padding: '24px 10px 16px 10px',
   },
 }));
 
