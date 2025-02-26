@@ -99,6 +99,7 @@ import {
   SidebarDrawer,
 } from './General/style';
 import DashboardIcon from '@/assets/icons/DashboardIcon';
+import { useMediaQuery } from '@mui/material';
 
 const drawerIconsStyle = { height: '1.21rem', width: '1.21rem', fontSize: '1.45rem', ...iconSmall };
 const externalLinkIconStyle = { width: '1.11rem', fontSize: '1.11rem' };
@@ -312,6 +313,18 @@ const externlinks = [
     external_icon: ExternalLinkIcon,
   },
 ];
+
+const NavigatorWrapper = (props) => {
+  const isMobile = useMediaQuery('(max-width:599px)');
+
+  React.useEffect(() => {
+    if (isMobile && !props.isDrawerCollapsed) {
+      props.toggleDrawer({ isDrawerCollapsed: true });
+    }
+  }, [isMobile]);
+
+  return <Navigator_ {...props} />;
+};
 
 class Navigator_ extends React.Component {
   constructor(props) {
@@ -1248,7 +1261,7 @@ const mapStateToProps = (state) => {
 export const NavigatorWithRedux = connect(
   mapStateToProps,
   mapDispatchToProps,
-)(withRouter(Navigator_));
+)(withRouter(NavigatorWrapper));
 
 export const Navigator = NavigatorWithRedux;
 
