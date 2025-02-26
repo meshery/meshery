@@ -49,7 +49,6 @@ A self-service engineering platform, <a href="https://meshery.io">Meshery</a>, i
 </p>
 <br />
 
-<!-- [Meshery](https://meshery.io) is the cloud native management plane offering lifecycle, configuration, and performance management of Kubernetes, service meshes, and your workloads. -->
 <div align="center" width="100%">
  <a href="https://youtu.be/Do7htKrRzDA"><img src=".github/assets/images/readme/thumbnail.png" width="800px" /></a>
  <p><i>Example extension. See other <a href="https://meshery.io/extensions">Meshery Extensions</a>.</i></p>
@@ -211,20 +210,11 @@ Assess your cloud native infrastructure configuration against deployment and ope
 <img alt="OPA Logo" src=".github/assets/images/readme/opa-logo.svg" style="margin-right:10px;" width="10%" align="left" />
 <h3>Context-Aware Policies For Applications</h3>
 <br /><br />
-<p>Leverage built-in relationships to enforce configuration best practices consistently from code to Kubernetes. Enhance development process by building custom rules in Open Policy Agent's Rego query language.
-<img alt="Meshery and Open Policy Agent Integration" src=".github/assets/images/readme/meshery-policies-2.png" style="margin-right:10px;" width="70%" />
+<p>Leverage built-in relationships to enforce configuration best practices consistently from code to Kubernetes. Configure your infrastructure with confidence without needing to know or write Open Policy Agent's Rego query language.
+<img alt="Meshery and Open Policy Agent Integration" src=".github/assets/images/readme/meshery-policies-2.png" style="margin-right:10px;" width="50%" />
 </p>
 <br /><br />
 <p style="clear:both;">
-
-<img alt="WebAssembly Logo" src="https://docs.meshery.io/assets/img/readme/webassembly_logo.svg" style="margin-right:10px;" width="10%" align="left" />
-<h3> Manage data plane intelligence with WebAssembly filters </h3>
-<p>Dynamically load and manage your own WebAssembly filters in Envoy-based service meshes.</p>
-<br /><br />
-<a href=".github/assets/images/readme/meshery-wasm.png"><img alt="WebAssembly filters" src=".github/assets/images/readme/meshery-wasm.png"  style="margin-right:10px; margin-bottom:10px;" width="70%" /></a>
-<p>See <a href="https://github.com/layer5io/image-hub">Image Hub</a>.</p>
-</p>
-<br /><br />
 
 <h3>Visually and collaboratively manage your infrastructure</h3>
 <br /><br />
@@ -232,25 +222,21 @@ Assess your cloud native infrastructure configuration against deployment and ope
 <br /><br />
 
 <h3>Manage your connections with Environments</h3>
-<br /><br />  <img src=".github/assets/images/readme/environments.gif" class="screenshot"
+<br /><br />  <img src=".github/assets/images/readme/environments.gif" width="50%"
                         alt="Multi-cluster Kubernetes Manager" loading="lazy" />
 <p><a href="https://docs.meshery.io/concepts/logical/environments">Environments</a>  make it easier for you to manage, share, and work with a collection of resources as a group, instead of dealing with all your Connections and Credentials on an individual basis.</p>
 <br /><br />
 
 
 <h3>Workspaces: Your team's Google Drive for cloud native projects</h3>
-<br /><br /> <img src=".github/assets/images/readme/workspace.gif" class="screenshot"
+<br /><br /> <img src=".github/assets/images/readme/workspace.gif" width="50%"
                         alt="Multi-cluster Kubernetes Manager" loading="lazy" />
 <p>Workspaces let you organize your work and serve as the central point of collaboration for you and your teams and point of access control to Environments and their resources.</p>
 <br /><br />
 
-<h3>Manage infra performance with Performance Profiles</h3>
-<br /><br /><img src=".github/assets/images/readme/performance-metrics.gif" class="screenshot"
-                    alt="Multi-cluster Kubernetes Manager" loading="lazy" />
-<p>Create and reuse performance profiles for consistent characterization of the configuration of your infrastructure in context of how it performs.</p>
-<br /><br />
 
-<img alt="WebAssembly Logo" src="https://docs.meshery.io/assets/img/readme/webassembly_logo.svg" style="margin-right:10px;" width="10%" align="left" />
+<!-- <img alt="WebAssembly Logo" src="https://docs.meshery.io/assets/img/readme/webassembly_logo.svg" style="margin-right:10px;" width="10%" align="left" /> -->
+
 <h3> See changes to your infra before you merge</h3>
 <p>Get snapshots of your infrastructure directly in your PRs. Preview your deployment, view changes pull request-to-pull request and get infrastructure snapshots within your PRs by connecting Kanvas to your GitHub repositories.
 </p>
@@ -266,12 +252,26 @@ Assess your cloud native infrastructure configuration against deployment and ope
 <p>Whether managing multiple Meshery deployments, importing designs, discoverying Kubernetes clusters, do so with ease using Meshery CLI in your terminal.</p>
 <br /><br />
 
+<h3>Platform Engineering with Meshery's Extension Points</h3>
+<br /><br />
+<p>Meshery includes both REST APIs and GraphQL APIs, pluggable adapters via gRPCs, hot-loadable ReactJS and hot-loadable Golang binaries. The great number of extension points in Meshery make it ideal as the foundation of your internal developer platform.
+</p>
+<br /><br />
 
 <h3>Access the Cloud Native Patterns for Kubernetes</h3>
 <br /><br />
 <img src = ".github/assets/images/readme/smp-video-poster-play.png">
 <p>Design and manage all of your cloud native infrastructure using the design configurator in Meshery or start from a template using the patterns from the <a href="https://meshery.io/catalog">catalog</a>
 </p>
+<br /><br />
+
+<h2>Performance Management</h2>
+
+<details>
+ <summary><h3>Manage infra performance with Performance Profiles</h3></summary>
+<br /><br /><img src=".github/assets/images/readme/performance-metrics.gif" class="screenshot"
+                    alt="Multi-cluster Kubernetes Manager" loading="lazy" />
+<p>Create and reuse performance profiles for consistent characterization of the configuration of your infrastructure in context of how it performs.</p>
 <br /><br />
 
 <h3>Manage the performance of your infrastructure and its workloads</h3>
@@ -285,36 +285,49 @@ Assess your cloud native infrastructure configuration against deployment and ope
 - Compare performance across infrastructure deployments.
 </p>
 <br /><br />
+</details>
 
-<h3>Platform Engineering with Meshery's Extension Points</h3>
-<br /><br />
-<p>Meshery includes both REST APIs and GraphQL APIs, pluggable adapters via gRPCs, hot-loadable ReactJS and hot-loadable Golang binaries. The great number of extension points in Meshery make it ideal as the foundation of your internal developer platform.
-</p>
-<br /><br />
-
-<h2>Performance Management</h2>
-
-<h3>Adhering to Cloud Native Standards</h3>
+<details>
+<summary><h3>Load Generation and Microservice Performance Characteristization</h3></summary>
 
 <picture align="left">
   <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/layer5io/layer5/master/src/assets/images/service-mesh-performance/stacked/smp-light-text.svg"  width="18%" align="left" style="margin-left:10px;" />
   <img alt="Shows an illustrated light mode meshery logo in light color mode and a dark mode meshery logo dark color mode." src="https://raw.githubusercontent.com/layer5io/layer5/master/src/assets/images/service-mesh-performance/stacked/smp-light-text.svg" width="18%" align="left" style="margin-left:10px;" />
 </picture>
 
-In an effort to produce service mesh agnostic tooling, Meshery uses the <a href="https://smp-spec.io">Service Mesh Performance</a> specification as a common format to capture and measure your infrastructure's performance against a universal cloud native performance index. As an implementation of Service Mesh Interface (SMI), Meshery participates in advancing cloud native infrastructure adoption through the standardization of APIs.
-<br /><br />
-<p style="clear:both;">
+Meshery offers load generation and performance characterization to help you assess and optimize the performance of your applications and infrastructure. Here's how it works:   
 
-<!-- <a href="https://raw.githubusercontent.com/layer5io/meshery/master/assets/img/readme/Meshery-Grafana-Charts.png"><img alt="Meshery Grafana Boards" src="https://docs.meshery.io/assets/img/readme/Meshery-Grafana-Charts.png" style="padding-top:10px;margin-left:10px;" width="45%" align="right" /></a> -->
+- **Multiple Load Generators:** Meshery supports various load generators, including Fortio, Wrk2, and Nighthawk, allowing users to choose the tool that best suits your needs.   
+- **Configurable Performance Profiles:** Meshery provides a highly configurable set of load profiles with tunable facets, enabling users to generate TCP, gRPC, and HTTP load. You can customize parameters such as duration, concurrent threads, concurrent generators, and load generator type. Save your load test configurations as Performance Profiles, making it easy to rerun tests with the same settings and track performance variations over time.
+</details>
 
-<h4>Standardized Cloud Native Performance Management</h4>
+<details>
+<summary><h3>Performance Characterization</h3></summary>
 
-Meshery is the cloud native utility for uniformly managing the performance of microservices and the infrastructure that run them. As an implementation of the Service Mesh Performance ([SMP](https://smp-spec.io/)), Meshery enables you to measure the value provided by Docker, Kubernetes, or a service mesh in the context of the overhead incurred.
+- **Metrics Collection:** Meshery can connect to one or more Prometheus instances to gather telemetric data, including Kubernetes and application metrics. It also integrates with Grafana, allowing users to import existing dashboards and visualize performance data.   
+- **Statistical Analysis:** Meshery performs statistical analysis on the results of performance tests, presenting data in the form of histograms with latency buckets. This helps users understand the distribution of response times and identify potential bottlenecks.   
+- **Performance Test Profiles:** Meshery allows users to customize and save their load test configuration in the form of a Performance Test Profile. This enables users to easily return to Meshery to run the same set of customized tests again and again, tracking variations in performance over time.   
+Comparison of Test Results: Meshery enables users to compare the difference in request performance (latency and throughput) between independent performance tests.   
+- **Kubernetes Cluster and Workload Metrics:** Meshery provides performance test results alongside environment metrics, including control and data plane metrics
+ as well as cluster node resource metrics, so that operators may easily understand the overhead of their control plane and data plane in context of the overhead incurred on nodes within the cluster.   
+
+<p>In an effort to produce infrastructure agnostic tooling, Meshery uses the <a href="https://smp-spec.io">Cloud Native Performance</a> specification as a common format to capture and measure your infrastructure's performance against a universal cloud native performance index. Meshery participates in advancing cloud native infrastructure adoption through the standardization of APIs. Meshery enables you to measure the value provided by Docker, Kubernetes, or a service mesh in the context of the overhead incurred.</p>
 
 <a href="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service-mesh-performance-example.gif"><img alt="Performance Management" src="https://raw.githubusercontent.com/meshery/meshery/master/.github/assets/images/smp/service-mesh-performance-example.gif" style="margin-left:10px;margin-bottom:10px;" width="100%" align="center" /></a>
 <br /><br />
 
+</details>
+
+<details>
+ <summary><h3>Manage data plane intelligence with WebAssembly filters</h3></summary>
+<img alt="WebAssembly Logo" src="https://docs.meshery.io/assets/img/readme/webassembly_logo.svg" style="margin-right:10px;" width="10%" align="left" />
+<p>Dynamically load and manage your own WebAssembly filters in Envoy-based service meshes.</p>
+<br /><br />
+<a href=".github/assets/images/readme/meshery-wasm.png"><img alt="WebAssembly filters" src=".github/assets/images/readme/meshery-wasm.png"  style="margin-right:10px; margin-bottom:10px;" width="70%" /></a>
+<p>See <a href="https://github.com/layer5io/image-hub">Image Hub</a>.</p>
 </p>
+<br /><br />
+</details>
 
 ## Meshery Architecture
 
