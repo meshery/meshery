@@ -26,7 +26,7 @@ After your cluster has been added as a connection, you can use Meshery to make i
 1. Deploying Meshery in minikube [(in-cluster)](#in-cluster-installation).
 1. Deploying Meshery using Docker and connect it to minikube [(out-of-cluster)](#out-of-cluster-installation).
 
-**_Note: It is advisable to Install Meshery in your Minikube clusters_**
+**_Note: It is advisable to install Meshery in your Minikube clusters_**
 
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisites</strong> </p> 
   <ol>
