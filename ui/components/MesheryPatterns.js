@@ -226,7 +226,6 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
             <CustomTooltip title="Update Pattern">
               <IconButton
                 aria-label="Update"
-                color="primary"
                 disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                 onClick={() =>
                   onSubmit({
@@ -244,7 +243,6 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
             <CustomTooltip title="Delete Pattern">
               <IconButton
                 aria-label="Delete"
-                color="primary"
                 disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
                 onClick={() =>
                   onSubmit({

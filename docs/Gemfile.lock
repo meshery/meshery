@@ -478,6 +478,7 @@ PLATFORMS
   arm64-darwin-21
   arm64-darwin-22
   arm64-darwin-23
+  arm64-darwin-24
   x64-mingw-ucrt
   x64-unknown
   x86_64-darwin-22

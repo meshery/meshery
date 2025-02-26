@@ -154,6 +154,10 @@ class PrometheusSelectionComponent extends Component {
             panel.targets !== undefined &&
             panel.targets.some((target) => target.datasource.type.toLowerCase() === 'prometheus'),
         );
+
+        if (panels.length == 0) {
+          return self.props.handleError('No panels found with target datasource as prometheus.');
+        }
         if (typeof result !== 'undefined') {
           this.setState({
             grafanaBoardObject: result,
