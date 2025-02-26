@@ -346,6 +346,7 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
                 style={{
                   backgroundColor: 'transparent',
                 }}
+                containerPadding={[0, 8]}
               >
                 {widgetsToRenderForLayout(dashboardLayout, currentBreakPoint).map((widget) => {
                   return (
