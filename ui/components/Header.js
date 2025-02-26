@@ -332,7 +332,6 @@ function K8sContextMenu({
                                   ? setActiveContexts([])
                                   : setActiveContexts('all')
                               }
-                              color="primary"
                             />
                           </UsesSistent>
                           <span style={{ fontWeight: 'bolder' }}>select all</span>
