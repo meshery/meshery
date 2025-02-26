@@ -529,7 +529,8 @@ This renders as:
 {% include code.html code=code_content %}
 
 **Effect:**
-- Image is displayed at its original resolution, limited by global CSS (`max-width: 100%; height: auto;`)
+- Image is displayed at its original resolution, limited by global CSS (`max-width: 90vw; max-height: 90vh; height: auto; width: auto;`)
+- On larger screens (`min-width: 1200px`), image width can be up to `1200px`
 - Clickable, opening in Lightbox if the format is supported
 
 #### Custom Image Size (for Control)
@@ -543,6 +544,7 @@ If you need to specify dimensions, use:
 
 **Effect:**
 - Image width is fixed at `500px`, maintaining aspect ratio
+- If `500px` exceeds `90vw`, it will be constrained to `90vw`
 - Clickable, opening in Lightbox for full-size viewing
 
 ### Quotes
