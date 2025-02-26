@@ -117,7 +117,7 @@ export default function Provider() {
   };
 
   const open = Boolean(anchorEl);
-  const id = open ? "popover": undefined;
+  const id = open ? "popover" : undefined;
 
   useEffect(() => {
     loadProvidersFromServer();
@@ -169,6 +169,10 @@ export default function Provider() {
     <ProviderLayout>
       <MesheryLogo
         src="/provider/static/img/meshery-logo/meshery-logo-dark-text-noBG.png"
+        onError={(e) =>
+          (e.target.src =
+            "/static/img/meshery-logo/meshery-logo-dark-text-noBG.png")
+        }
         alt="logo"
       />
       <CustomDiv>
@@ -193,9 +197,6 @@ export default function Provider() {
                 {selectedProvider !== ""
                   ? selectedProvider
                   : "Select your provider"}
-
-
-
 
                 <DropDownIcon />
               </Button>
@@ -232,8 +233,20 @@ export default function Provider() {
                       {key}
                     </MenuItem>
                   ))}
-                  <Divider sx={{ my: 0.5, backgroundColor: accentGrey[40], width: "80%", margin: "auto", marginBottom: "0px" }} />
-                  <MenuProviderDisabled sx={{ marginTop: "0px" }} disabled={true} key="CNCF Labs">
+                  <Divider
+                    sx={{
+                      my: 0.5,
+                      backgroundColor: accentGrey[40],
+                      width: "80%",
+                      margin: "auto",
+                      marginBottom: "0px",
+                    }}
+                  />
+                  <MenuProviderDisabled
+                    sx={{ marginTop: "0px" }}
+                    disabled={true}
+                    key="CNCF Labs"
+                  >
                     CNCF Labs{"\u00A0"}
                     <span>Offline</span>
                   </MenuProviderDisabled>
@@ -261,14 +274,12 @@ export default function Provider() {
       </CustomDiv>
       <LearnMore onClick={handleModalOpen}>
         <StyledTypography variant="h6" gutterBottom>
-
           <StyledTooltip
             title="Learn more about Meshery remote providers"
             placement="bottom"
             data-cy="providers-tooltip"
           >
-
-          Learn more about providers
+            Learn more about providers
           </StyledTooltip>
         </StyledTypography>
       </LearnMore>
@@ -286,14 +297,11 @@ export default function Provider() {
           <CustomTypography>Choosing a Provider</CustomTypography>
         </StyledCustomDialogTitle>
 
-
-
-
         <StyledDialogBox id="customized-dialog-content">
-            Login to Meshery by choosing from the available providers. Providers
-            extend Meshery by offering various plugins and services, including
-            identity services, long-term persistence, advanced performance
-            analysis, multi-player user collaboration, and so on.
+          Login to Meshery by choosing from the available providers. Providers
+          extend Meshery by offering various plugins and services, including
+          identity services, long-term persistence, advanced performance
+          analysis, multi-player user collaboration, and so on.
           <h2>Available Providers</h2>
           {Object.keys(availableProviders).map((key) => {
             return (
@@ -319,30 +327,19 @@ export default function Provider() {
           </ul>
           <p style={{ fontWeight: 700 }}>The University of Texas at Austin</p>
           <ul>
-            <li>
-                Academic research and advanced studies by Ph.D. researchers
-            </li>
-            <li>
-            </li>
-            <li>
-                Used by school of Electrical and Computer Engineering (ECE)
-            </li>
+            <li>Academic research and advanced studies by Ph.D. researchers</li>
+            <li></li>
+            <li>Used by school of Electrical and Computer Engineering (ECE)</li>
           </ul>
           <p style={{ fontWeight: 700 }}>
-              Cloud Native Computing Foundation Infrastructure Lab
+            Cloud Native Computing Foundation Infrastructure Lab
           </p>
-
-
-
           <ul>
             <li>
-                Performance and compatibility-centric research and validation
+              Performance and compatibility-centric research and validation
             </li>
-            <li>
-            </li>
-            <li>
-                Used by various cloud native projects
-            </li>
+            <li></li>
+            <li>Used by various cloud native projects</li>
           </ul>
           <p style={{ fontWeight: 700 }}>HPE Security</p>
           <ul>
@@ -359,14 +356,25 @@ export default function Provider() {
           <div className="learnmore">
             <a href="https://docs.meshery.io/extensibility/providers">
               Providers in Meshery Docs
-              <img src="/provider/static/img/external-link.svg" width="16px" />
+              <img
+                src="/provider/static/img/external-link.svg"
+                onError={(e) =>
+                  (e.target.src =
+                    "/static/img/external-link.svg")
+                }
+                width="16px"
+              />
             </a>
           </div>
 
           <StyledButton
             onClick={handleModalClose}
             data-cy="providers-modal-button-ok"
-            sx={{ background: KEPPEL, marginRight: "1rem", color: (theme) =>  theme.palette.text.inverse }}
+            sx={{
+              background: KEPPEL,
+              marginRight: "1rem",
+              color: (theme) => theme.palette.text.inverse,
+            }}
           >
             {" "}
             OK
