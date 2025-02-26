@@ -15,10 +15,6 @@ export const CustomDiv = styled("div")(({ theme }) => ({
 }));
 
 export const CustomTypography = styled(Typography)(({ theme }) => ({
-  "@font-face": {
-    fontFamily: "Qanelas Soft",
-    src: "url('/provider/static/fonts/qanelas-soft/QanelasSoftRegular.otf') format('opentype')",
-  },
   fontWeight: 400,
   fontStyle: "normal",
   fontSize: "1.5rem",
@@ -74,7 +70,6 @@ export const StyledPopover = styled(Popover)(({ theme }) => ({
   },
 }));
 export const LearnMore = styled("div")(() => ({
-  width: "60%",
   marginLeft: "auto",
   marginRight: "auto",
   marginTop: "3rem",

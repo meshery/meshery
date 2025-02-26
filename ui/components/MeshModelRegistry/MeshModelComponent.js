@@ -724,16 +724,8 @@ const GenerateModal = React.memo((props) => {
               value={uploadMethod}
               onChange={handleChange}
             >
-              <FormControlLabel
-                value="url"
-                control={<Radio color="primary" />}
-                label="URL Import"
-              />
-              <FormControlLabel
-                value="csv"
-                control={<Radio color="primary" />}
-                label="CSV Import"
-              />
+              <FormControlLabel value="url" control={<Radio />} label="URL Import" />
+              <FormControlLabel value="csv" control={<Radio />} label="CSV Import" />
             </RadioGroup>
           </FormControl>
           <ModalFooter
