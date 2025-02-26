@@ -27,7 +27,7 @@ import {
   useTheme,
   ErrorBoundary,
 } from '@layer5/sistent';
-import { WrapperContainer, WrapperPaper } from './style';
+import { WrapperPaper } from './style';
 import _ from 'lodash';
 import { AddWidgetsToLayoutPanel, LayoutActionButton, LayoutWidget } from './components';
 import { Responsive, WidthProvider } from 'react-grid-layout';
@@ -37,6 +37,7 @@ import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT, OVERVIEW_LAYOUT } from './defaul
 import Popup from '../Popup';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import getWidgets from './widgets/getWidgets';
+import { tabsClasses } from '@mui/material';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -271,23 +272,23 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
 
   return (
     <>
-      <WrapperContainer>
-        <WrapperPaper
-          square
-          style={{
-            maxWidth: width < 1080 ? '85vw' : '100vw',
-          }}
-        >
+      <>
+        <WrapperPaper>
           <Tabs
+            sx={{
+              [`& .${tabsClasses.scrollButtons}`]: {
+                '&.Mui-disabled': { display: 'none' },
+              },
+            }}
             value={getResourceCategoryIndex(resourceCategory)}
             indicatorColor="primary"
             onChange={(_e, val) => {
               changeResourceTab(getResourceCategory(val));
             }}
             variant={width < 1080 ? 'scrollable' : 'fullWidth'}
-            scrollButtons={false}
+            allowScrollButtonsMobile
+            scrollButtons
             textColor="primary"
-            centered
           >
             {ResourceCategoryTabs.map((resource, idx) => {
               return (
@@ -416,7 +417,7 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
             </TabPanel>
           );
         })}
-      </WrapperContainer>
+      </>
       <Popup />
     </>
   );
