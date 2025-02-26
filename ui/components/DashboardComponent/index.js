@@ -27,16 +27,17 @@ import {
   useTheme,
   ErrorBoundary,
 } from '@layer5/sistent';
-import { WrapperContainer, WrapperPaper } from './style';
+import { WrapperPaper } from './style';
 import _ from 'lodash';
 import { AddWidgetsToLayoutPanel, LayoutActionButton, LayoutWidget } from './components';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT } from './defaultLayout';
+import { DEFAULT_LAYOUT, LOCAL_PROVIDER_LAYOUT, OVERVIEW_LAYOUT } from './defaultLayout';
 import Popup from '../Popup';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
 import getWidgets from './widgets/getWidgets';
+import { tabsClasses } from '@mui/material';
 
 const ResponsiveReactGridLayout = WidthProvider(Responsive);
 
@@ -73,11 +74,13 @@ const useDashboardRouter = () => {
 const ResourceCategoryTabs = ['Overview', ...Object.keys(ResourcesConfig)];
 
 const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) => {
-  const { data: userData } = useGetUserPrefQuery();
+  const { data: userData, isLoading } = useGetUserPrefQuery();
   const [updateUserPref] = useUpdateUserPrefMutation();
-  const defaultLayout = userData?.remoteProviderPreferences
-    ? DEFAULT_LAYOUT
-    : LOCAL_PROVIDER_LAYOUT; //TODO: Use capability to determine default layout
+  const defaultLayout = isLoading
+    ? OVERVIEW_LAYOUT
+    : userData?.remoteProviderPreferences
+      ? DEFAULT_LAYOUT
+      : LOCAL_PROVIDER_LAYOUT; //TODO: Use capability to determine default layout
   const { resourceCategory, changeResourceTab, selectedResource, handleChangeSelectedResource } =
     useDashboardRouter();
 
@@ -269,16 +272,22 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
 
   return (
     <>
-      <WrapperContainer>
-        <WrapperPaper square>
+      <>
+        <WrapperPaper>
           <Tabs
+            sx={{
+              [`& .${tabsClasses.scrollButtons}`]: {
+                '&.Mui-disabled': { display: 'none' },
+              },
+            }}
             value={getResourceCategoryIndex(resourceCategory)}
             indicatorColor="primary"
             onChange={(_e, val) => {
               changeResourceTab(getResourceCategory(val));
             }}
-            variant={width < 1280 ? 'scrollable' : 'fullWidth'}
-            scrollButtons="on"
+            variant={width < 1080 ? 'scrollable' : 'fullWidth'}
+            allowScrollButtonsMobile
+            scrollButtons
             textColor="primary"
           >
             {ResourceCategoryTabs.map((resource, idx) => {
@@ -311,7 +320,13 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
         <TabPanel value={resourceCategory} index={'Overview'}>
           <Box display="flex" flexDirection={'column'} gap="1rem">
             <Box padding={0} width={'100%'}>
-              <Stack direction="row" useFlexGap gap="2rem" justifyContent="end">
+              <Stack
+                direction="row"
+                useFlexGap
+                gap="0rem 2rem"
+                justifyContent="end"
+                flexWrap={'wrap-reverse'}
+              >
                 {topBarActions.map(({ key, ...layoutAction }) => (
                   <LayoutActionButton {...layoutAction} key={key} />
                 ))}
@@ -324,18 +339,7 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
                 isDraggable={isEditMode}
                 cols={cols}
                 draggableHandle=".react-grid-dragHandleExample"
-                breakpoints={
-                  isEditMode
-                    ? {
-                        // -360
-                        lg: 840,
-                        md: 684,
-                        sm: 528,
-                        xs: 324,
-                        xxs: 0,
-                      }
-                    : { lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }
-                }
+                breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
                 onBreakpointChange={onBreakpointChange}
                 onLayoutChange={onLayoutChange}
                 measureBeforeMount={false}
@@ -413,7 +417,7 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
             </TabPanel>
           );
         })}
-      </WrapperContainer>
+      </>
       <Popup />
     </>
   );

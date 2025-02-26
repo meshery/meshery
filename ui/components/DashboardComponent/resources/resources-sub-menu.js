@@ -4,10 +4,11 @@ import { withNotify } from '../../../utils/hooks/useNotification';
 import ResourcesTable from './resources-table';
 import { TabPanel } from '../tabpanel';
 import { UsesSistent } from '@/components/SistentWrapper';
-import { SecondaryTab, SecondaryTabs, WrapperContainer, WrapperPaper } from '../style';
+import { SecondaryTab, SecondaryTabs, WrapperPaper } from '../style';
 import GetKubernetesNodeIcon from '../utils';
 import { iconMedium } from 'css/icons.styles';
 import { styled } from '@layer5/sistent';
+import { tabsClasses } from '@mui/material';
 
 const DashboardIconText = styled('div')({
   display: 'flex',
@@ -65,16 +66,24 @@ const ResourcesSubMenu = (props) => {
   return (
     <>
       <UsesSistent>
-        <WrapperContainer>
+        <>
           <WrapperPaper>
             <SecondaryTabs
+              sx={{
+                [`& .${tabsClasses.scrollButtons}`]: {
+                  '&.Mui-disabled': { display: 'none' },
+                },
+                '& .MuiTabs-scroller': {
+                  flexGrow: '0',
+                },
+                justifyContent: 'center',
+              }}
               value={getResourceCategoryIndex(selectedResource)}
               onChange={(_e, v) => handleChangeSelectedResource(getResourceCategory(v))}
-              variant="scrollable"
-              scrollButtons="on"
-              indicatorColor="primary"
-              textColor="primary"
-              centered={true}
+              variant={'scrollable'}
+              allowScrollButtonsMobile
+              scrollButtons="auto"
+              centered
             >
               {TABS.map((key, index) => {
                 const title = isCRDS ? key : resource.tableConfig()[key].name;
@@ -110,7 +119,7 @@ const ResourcesSubMenu = (props) => {
               />
             </TabPanel>
           ))}
-        </WrapperContainer>
+        </>
       </UsesSistent>
     </>
   );

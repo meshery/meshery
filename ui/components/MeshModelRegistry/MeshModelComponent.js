@@ -486,11 +486,13 @@ const MeshModelComponent_ = ({
           },
           true,
         );
-        const updatedRegistrant = {
-          ...registrant,
-          models: removeDuplicateVersions(modelRes.models) || [],
-        };
-        tempResourcesDetail.push(updatedRegistrant);
+        if (modelRes.models && modelRes.models.length > 0) {
+          const updatedRegistrant = {
+            ...registrant,
+            models: removeDuplicateVersions(modelRes.models) || [],
+          };
+          tempResourcesDetail.push(updatedRegistrant);
+        }
       }
       response = {
         data: {
@@ -501,7 +503,6 @@ const MeshModelComponent_ = ({
     setRowsPerPage(25);
     return response;
   };
-
   const handleTabClick = (selectedView) => {
     handleChangeSelectedTab(selectedView);
     if (view !== selectedView) {

@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import { NoSsr } from '@layer5/sistent';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import GrafanaDateRangePicker from './GrafanaDateRangePicker';
-import { ExpansionPanel, ExpansionPanelSummary } from '../../ExpansionPanels';
+import { StyledAccordion, StyledAccordionSummary } from '../../StyledAccordion';
 import GrafanaCustomChart from './GrafanaCustomChart';
 import {
   Grid,
-  ExpansionPanelDetails,
+  AccordionDetails,
   Typography,
   Dialog,
   Button,
@@ -235,8 +235,8 @@ class GrafanaCustomCharts extends Component {
 
               {boardPanelConfigs.map((config, ind) => (
                 // <ExpansionPanel defaultExpanded={ind === 0?true:false}>
-                <ExpansionPanel key={ind} square defaultExpanded={ind === 0}>
-                  <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
+                <StyledAccordion key={ind} square defaultExpanded={ind === 0}>
+                  <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
                     <Column>
                       <StyledHeading variant="subtitle1" gutterBottom>
                         {config.board && config.board.title
@@ -253,8 +253,8 @@ class GrafanaCustomCharts extends Component {
                         </SecondaryHeading>
                       </Column>
                     )}
-                  </ExpansionPanelSummary>
-                  <ExpansionPanelDetails>
+                  </StyledAccordionSummary>
+                  <AccordionDetails>
                     <Grid container spacing={3}>
                       {config.panels.map(
                         (panel, i) => (
@@ -294,8 +294,8 @@ class GrafanaCustomCharts extends Component {
                         // } else return '';
                       )}
                     </Grid>
-                  </ExpansionPanelDetails>
-                </ExpansionPanel>
+                  </AccordionDetails>
+                </StyledAccordion>
               ))}
             </GrafanaRoot>
           </React.Fragment>

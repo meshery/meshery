@@ -30,7 +30,7 @@ export const StyledMainContent = styled('main')(({ theme }) => ({
   flex: 1,
   padding: '48px 36px 24px',
   [theme.breakpoints.down('sm')]: {
-    padding: '24px 16px 16px',
+    padding: '24px 10px 16px 10px',
   },
 }));
 
@@ -39,7 +39,7 @@ export const StyledAppContent = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   position: 'relative',
-  overflow: 'visible',
+  overflowX: 'hidden',
 });
 
 export const StyledContentWrapper = styled('div')({
