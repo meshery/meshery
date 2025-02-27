@@ -8,7 +8,7 @@ import HoneycombComponent from './widgets/HoneyComb/HoneyCombComponent';
 import { useGetMeshSyncResourceKindsQuery } from '@/rtk-query/meshsync';
 import { getK8sClusterIdsFromCtxId } from '@/utils/multi-ctx';
 import { bindActionCreators } from 'redux';
-import { setK8sContexts, updateProgress } from 'lib/store';
+import { updateProgress } from 'lib/store';
 import ConnectCluster from './charts/ConnectCluster';
 import { ErrorContainer, HoneycombRoot } from './style';
 import { ErrorIcon, Typography, useTheme } from '@layer5/sistent';
@@ -104,7 +104,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => ({
   updateProgress: bindActionCreators(updateProgress, dispatch),
-  setK8sContexts: bindActionCreators(setK8sContexts, dispatch),
+  // setK8sContexts: bindActionCreators(setK8sContexts, dispatch),
 });
 
 export default withRouter(withNotify(connect(mapStateToProps, mapDispatchToProps)(Overview)));
