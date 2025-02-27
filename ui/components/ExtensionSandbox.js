@@ -334,7 +334,7 @@ const ExtensionSandbox = React.memo(
       } else {
         setIsLoading(true);
       }
-
+      // necessary to cleanup states on each unmount to prevent memory leaks and unwanted clashes between extension points
       return () => {
         setExtension([]);
         setIsLoading(true);
