@@ -26,7 +26,7 @@ To install cloud native infrastructure, see [this guide]({{ site.baseurl }}/serv
 
 Meshery also comes with a set of [sample applications](h{{ site.baseurl }}/guides/sample-apps) that you can quickly deploy to test out the capabilities of your cloud native infrastructure.
 
-Next, we navigate to the main Performance Testing dashboard. See [Performance Management]({{ site.baseurl }}/tasks/performance/managing-performance) to learn more about performance profiles, load generators, Kubernetes cluster, and all kinds of cloud native infrastructure metrics.
+Next, we navigate to the main Performance Testing dashboard. See [Performance Management]({{ site.baseurl }}/guides/performance-management/managing-performance) to learn more about performance profiles, load generators, Kubernetes cluster, and all kinds of cloud native infrastructure metrics.
 
 ## Running Performance Benchmarks Through Meshery UI
 
