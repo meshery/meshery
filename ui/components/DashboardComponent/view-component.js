@@ -36,8 +36,13 @@ const FormatterContext = React.createContext({
 const LevelContext = React.createContext(0);
 
 export const ColourContainer = styled('div')(({ theme }) => ({
-  backgroundColor: theme.palette.mode === 'dark' ? '#212121' : '#e9eff1',
+  backgroundColor: theme.palette.background.card,
   padding: '1rem',
+  [theme.breakpoints.down(599)]: {
+    width: '60vw',
+  },
+  width: '100%',
+  overflow: 'scroll',
 }));
 
 export const JSONViewFormatter = ({ data }) => {
@@ -135,7 +140,7 @@ const propertyFormatter = {
     return (
       <>
         {value.links.map((linkObj) => {
-          const { label, nodeName, namespace, serviceAccount } = linkObj;
+          const { label, nodeName, namespace, serviceAccount, resourceCategory } = linkObj;
           const name = nodeName || namespace || serviceAccount;
           if (!name) return null;
           return (
@@ -143,19 +148,19 @@ const propertyFormatter = {
               key={label}
               title={label}
               value={name}
-              // onClick={() => {
-              //   return value.router.push(
-              //     {
-              //       pathname: value.router.pathname,
-              //       query: {
-              //         resourceCategory: resourceCategory || label,
-              //         resourceName: name,
-              //       },
-              //     },
-              //     undefined,
-              //     { shallow: true },
-              //   );
-              // }}
+              onClick={() => {
+                return value.router.push(
+                  {
+                    pathname: value.router.pathname,
+                    query: {
+                      resourceCategory: resourceCategory || label,
+                      resourceName: name,
+                    },
+                  },
+                  undefined,
+                  { shallow: true },
+                );
+              }}
             />
           );
         })}
@@ -172,11 +177,15 @@ const propertyFormatter = {
     <KeyValueInRow
       Key={'Labels'}
       Value={<LabelFormatter data={value?.data} selectedLabels={[]} />}
-      showFold={true}
+      showFold={value?.data?.length > 7}
     />
   ),
   annotations: (value) => (
-    <KeyValueInRow Key={'Annotations'} Value={<StatusFormatter status={value} />} showFold={true} />
+    <KeyValueInRow
+      Key={'Annotations'}
+      Value={<StatusFormatter status={value} />}
+      showFold={value?.length > 7}
+    />
   ),
   totalCapacity: (value) => {
     const readableData = Object.fromEntries(

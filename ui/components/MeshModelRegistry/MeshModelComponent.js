@@ -486,11 +486,13 @@ const MeshModelComponent_ = ({
           },
           true,
         );
-        const updatedRegistrant = {
-          ...registrant,
-          models: removeDuplicateVersions(modelRes.models) || [],
-        };
-        tempResourcesDetail.push(updatedRegistrant);
+        if (modelRes.models && modelRes.models.length > 0) {
+          const updatedRegistrant = {
+            ...registrant,
+            models: removeDuplicateVersions(modelRes.models) || [],
+          };
+          tempResourcesDetail.push(updatedRegistrant);
+        }
       }
       response = {
         data: {
@@ -501,7 +503,6 @@ const MeshModelComponent_ = ({
     setRowsPerPage(25);
     return response;
   };
-
   const handleTabClick = (selectedView) => {
     handleChangeSelectedTab(selectedView);
     if (view !== selectedView) {
@@ -723,16 +724,8 @@ const GenerateModal = React.memo((props) => {
               value={uploadMethod}
               onChange={handleChange}
             >
-              <FormControlLabel
-                value="url"
-                control={<Radio color="primary" />}
-                label="URL Import"
-              />
-              <FormControlLabel
-                value="csv"
-                control={<Radio color="primary" />}
-                label="CSV Import"
-              />
+              <FormControlLabel value="url" control={<Radio />} label="URL Import" />
+              <FormControlLabel value="csv" control={<Radio />} label="CSV Import" />
             </RadioGroup>
           </FormControl>
           <ModalFooter

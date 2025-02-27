@@ -10,19 +10,19 @@ jobs:
   sync:
     if: github.repository == 'meshery/meshery'
     name: sync
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - name: check out code for meshery
       uses: actions/checkout@master
       with:
         repository: meshery/meshery
-        token: ${{ secrets.RELEASEDRAFTER_PAT }}
+        token: ${{ secrets.RELEASE_NOTES_PAT }}
         path: meshery
     - name: Check out code for meshery-extensions
       uses: actions/checkout@master
       with:
         repository: layer5labs/meshery-extensions
-        token: ${{ secrets.RELEASEDRAFTER_PAT }}
+        token: ${{ secrets.RELEASE_NOTES_PAT }}
         path: meshery-extensions
     - name: Setup Go
       uses: actions/setup-go@master

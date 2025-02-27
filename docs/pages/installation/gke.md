@@ -15,7 +15,7 @@ abstract: Install Meshery on Google Kubernetes Engine. Deploy Meshery in GKE in-
 
 <h1>Quick Start with {{ page.title }} <img src="{{ page.image }}" style="width:35px;height:35px;" /></h1>
 
-Manage your GKE clusters with Meshery. Deploy Meshery in GKE [in-cluster](#in-cluster-installation) or outside of GKE [out-of-cluster](#out-of-cluster-installation). **_Note: It is advisable to [Install Meshery in your GKE clusters](#in-cluster-installation)_**
+Manage your GKE clusters with Meshery. Deploy Meshery in GKE [in-cluster](#in-cluster-installation) or outside of GKE [out-of-cluster](#out-of-cluster-installation). **_Note: It is advisable to install Meshery in your GKE clusters_**
 
 <div class="prereqs"><p><strong style="font-size: 20px;">Prerequisites</strong> </p> 
   <ol>
@@ -88,7 +88,7 @@ If you encounter any authentication issues, you can use `mesheryctl system login
 
 ## Installation: Using Helm
 
-For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/helm) guide.
+For detailed instructions on installing Meshery using Helm V3, please refer to the [Helm Installation](/installation/kubernetes/helm) guide.
 
 ## Post-Installation Steps
 

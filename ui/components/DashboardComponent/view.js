@@ -32,6 +32,7 @@ const Header = styled('div')({
   justifyItems: 'center',
   textTransform: 'uppercase',
   fontSize: '.9rem',
+  flexWrap: 'wrap',
   alignItems: 'center',
   justifyContent: 'space-between',
 });

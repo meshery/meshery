@@ -37,12 +37,7 @@ import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
-import {
-  encodeDesignFile,
-  getUnit8ArrayDecodedFile,
-  getUnit8ArrayForDesign,
-  parseDesignFile,
-} from '../utils/utils';
+import { encodeDesignFile, getUnit8ArrayDecodedFile, parseDesignFile } from '../utils/utils';
 import ViewSwitch from './ViewSwitch';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
 import UndeployIcon from '../public/static/img/UndeployIcon';
@@ -102,6 +97,7 @@ import PatternConfigureIcon from '@/assets/icons/PatternConfigure';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import TooltipButton from '@/utils/TooltipButton';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
+import yaml from 'js-yaml';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -226,7 +222,6 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
             <CustomTooltip title="Update Pattern">
               <IconButton
                 aria-label="Update"
-                color="primary"
                 disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                 onClick={() =>
                   onSubmit({
@@ -244,7 +239,6 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
             <CustomTooltip title="Delete Pattern">
               <IconButton
                 aria-label="Delete"
-                color="primary"
                 disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
                 onClick={() =>
                   onSubmit({
@@ -883,14 +877,14 @@ function MesheryPatterns({
     }
 
     if (type === FILE_OPS.UPDATE) {
+      const design = yaml.load(data);
+
       updatePattern({
         updateBody: JSON.stringify({
-          pattern_data: {
-            id,
-            pattern_file: getUnit8ArrayForDesign(data),
-            catalog_data,
-          },
-          save: true,
+          id,
+          name: data.name,
+          design_file: design,
+          catalog_data,
         }),
       })
         .unwrap()
