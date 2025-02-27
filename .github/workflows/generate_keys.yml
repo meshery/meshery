@@ -11,6 +11,7 @@ on:
 jobs:
   fetch-keys:
     name: Fetch Keys
+    if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
     steps:
       - name: Check out code
