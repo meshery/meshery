@@ -100,6 +100,10 @@ import {
 } from './General/style';
 import DashboardIcon from '@/assets/icons/DashboardIcon';
 import { useMediaQuery } from '@mui/material';
+import {
+  getProviderCapabilities,
+  getSystemVersion,
+} from '@/rtk-query/user';
 
 const drawerIconsStyle = { height: '1.21rem', width: '1.21rem', fontSize: '1.45rem', ...iconSmall };
 const externalLinkIconStyle = { width: '1.11rem', fontSize: '1.11rem' };
@@ -389,49 +393,39 @@ const Navigator_ = (props) => {
     updateState({ path });
   }, [props.meshAdapters, props.meshAdaptersts, window.location.pathname]);
 
-  const fetchCapabilities = () => {
-    dataFetch(
-      '/api/provider/capabilities',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          const capabilitiesRegistryObj = new CapabilitiesRegistry(result);
-          const navigatorComponents = createNavigatorComponents(capabilitiesRegistryObj);
+  const fetchCapabilities = async () => {
+    const { data: result, isSuccess, isError, error } = await getProviderCapabilities();
 
-          updateState({
-            navigator: ExtensionPointSchemaValidator('navigator')(result?.extensions?.navigator),
-            capabilitiesRegistryObj,
-            navigatorComponents,
-          });
-          props.updateCapabilities({ capabilitiesRegistry: result });
-        }
-      },
-      (err) => console.error(err),
-    );
+    if (isSuccess) {
+      const capabilitiesRegistryObj = new CapabilitiesRegistry(result);
+      const navigatorComponents = createNavigatorComponents(capabilitiesRegistryObj);
+      updateState({
+        navigator: ExtensionPointSchemaValidator('navigator')(result?.extensions?.navigator),
+        capabilitiesRegistryObj,
+        navigatorComponents,
+      });
+      props.updateCapabilities({ capabilitiesRegistry: result });
+    }
+    if (isError) {
+      console.error('Error fetching capabilities', error);
+    }
   };
 
-  const fetchVersionDetails = () => {
-    dataFetch(
-      '/api/system/version',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        updateState({
-          versionDetail: result || {
-            build: 'Unknown',
-            latest: 'Unknown',
-            outdated: false,
-            commitsha: 'Unknown',
-          },
-        });
-      },
-      (err) => console.error(err),
-    );
+  const fetchVersionDetails = async () => {
+    const { data: result, isSuccess, isError, error } = await getSystemVersion();
+    if (isSuccess) {
+      updateState({
+        versionDetail: result || {
+          build: 'Unknown',
+          latest: 'Unknown',
+          outdated: false,
+          commitsha: 'Unknown',
+        },
+      });
+    }
+    if (isError) {
+      console.error('Error fetching version details', error);
+    }
   };
 
   const createNavigatorComponents = (capabilityRegistryObj) => {
