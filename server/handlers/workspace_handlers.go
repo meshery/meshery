@@ -3,11 +3,13 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
 	"io"
 	"net/http"
 
+	"github.com/gorilla/mux"
+
 	"github.com/layer5io/meshery/server/models"
+	"github.com/meshery/schemas/models/v1beta1"
 )
 
 // swagger:route GET /api/workspaces WorkspacesAPI idGetWorkspaces
@@ -85,7 +87,7 @@ func (h *Handler) SaveWorkspaceHandler(w http.ResponseWriter, req *http.Request,
 		return
 	}
 
-	workspace := models.WorkspacePayload{}
+	workspace := v1beta1.WorkspacePayload{}
 	err = json.Unmarshal(bd, &workspace)
 	obj := "workspace"
 
@@ -145,7 +147,7 @@ func (h *Handler) UpdateWorkspaceHandler(w http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	workspace := models.WorkspacePayload{}
+	workspace := v1beta1.WorkspacePayload{}
 	err = json.Unmarshal(bd, &workspace)
 	obj := "workspace"
 

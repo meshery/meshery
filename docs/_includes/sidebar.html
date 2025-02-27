@@ -41,7 +41,7 @@
         <div class="toggle"  data-toggle="collapse" data-target="#section{{ forloop.index0 }}" aria-expanded="false" aria-controls="section{{forloop.index0}}"> ⇅ </div>
         <a
           href="{% if section.url %}{{ site.baseurl }}{{ linkUrlSelected }}/{{ section.url }}{% else %}{{
-		  section.external_url }}{% endif %}"
+		  section.external_url }}{% endif %}"  class="toggle"  data-toggle="collapse" data-target="#section{{ forloop.index0 }}" aria-expanded="false" aria-controls="section{{forloop.index0}}"
           class="align-left pl-0 pr-2 td-sidebar-link td-sidebar-link__section {% if pageUrl == sectionUrl %} active {% endif %}"
           > {{ section.title }}
         </a>

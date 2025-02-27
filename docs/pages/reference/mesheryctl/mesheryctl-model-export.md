@@ -29,28 +29,35 @@ mesheryctl model export [flags]
 Export a model by name
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model export <modelname> -o json
+mesheryctl model export [model-name] -o [oci|tar]  (default is oci)
 
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model export <modelname> -o yaml
+mesheryctl model export [model-name] -t json (default is yaml)
 
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model export <modelname> -l /home/meshery/
+mesheryctl model export [model-name] -l /home/meshery/
 
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model export <modelname> --include-components true --include-relationships true
+mesheryctl model export [model-name] --discard-components --discard-relationships
+
+</div>
+</pre> 
+
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl model export [model-name] --version v0.7.3
 
 </div>
 </pre> 
@@ -66,11 +73,13 @@ mesheryctl model export <modelname> --include-components true --include-relation
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+  -c, --discard-components       (optional) whether to discard components in the exported model definition (default = false)
+  -r, --discard-relationships    (optional) whether to discard relationships in the exported model definition (default = false)
   -h, --help                     help for export
-  -c, --include-components       whether to include components in the model definition (default = false)
-  -r, --include-relationships    whether to include components in the model definition (default = false)
+  -t, --output-format string     (optional) format to display in [json|yaml] (default = yaml) (default "yaml")
   -l, --output-location string   (optional) output location (default = current directory) (default "./")
-  -o, --output-type string       (optional) format to display in [json|yaml] (default = yaml) (default "yaml")
+  -o, --output-type string       (optional) format to display in [oci|tar] (default = oci) (default "oci")
+      --version string           (optional) model version to export (default = "")
 
 </div>
 </pre>

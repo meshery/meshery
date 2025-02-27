@@ -18,10 +18,9 @@ import (
 	"fmt"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
 	"github.com/manifoldco/promptui"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -31,15 +30,15 @@ import (
 var (
 	outFormatFlag        string
 	pageNumberFlag       int
-	availableSubcommands = []*cobra.Command{ViewRelationshipsCmd, GenerateRelationshipDocsCmd, listRelationshipsCmd, SearchComponentsCmd}
+	availableSubcommands = []*cobra.Command{viewCmd, generateCmd, listCmd, searchCmd}
 	maxRowsPerPage       = 25
 )
 
 type MeshmodelRelationshipsAPIResponse struct {
-	Page          int                               `json:"page"`
-	PageSize      int                               `json:"page_size"`
-	Count         int64                             `json:"total_count"`
-	Relationships []v1alpha2.RelationshipDefinition `json:"relationships"`
+	Page          int                                   `json:"page"`
+	PageSize      int                                   `json:"page_size"`
+	Count         int64                                 `json:"total_count"`
+	Relationships []relationship.RelationshipDefinition `json:"relationships"`
 }
 
 var RelationshipCmd = &cobra.Command{
@@ -56,28 +55,9 @@ mesheryctl exp relationships view [model-name]
 //To search a specific relationship
 mesheryctl exp relationships search --[flag] [query-text]
 
+//To generate a relationship documentation 
+mesheryctl exp relationship generate  [google-sheets-credential] --sheetId [sheet-id]
 	`,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return system.ErrGetCurrentContext(err)
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 {
 			errMsg := "Usage: mesheryctl exp relationships [subcommand]\nRun 'mesheryctl exp relationships --help' to see detailed help message"
@@ -103,17 +83,17 @@ mesheryctl exp relationships search --[flag] [query-text]
 }
 
 func init() {
-	ViewRelationshipsCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json| yaml]")
+	viewCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json| yaml]")
 	RelationshipCmd.AddCommand(availableSubcommands...)
 }
 
 // selectModelPrompt lets user to select a relation if relations are more than one
-func selectRelationshipPrompt(relationship []v1alpha2.RelationshipDefinition) *v1alpha2.RelationshipDefinition {
+func selectRelationshipPrompt(relationship []relationship.RelationshipDefinition) *relationship.RelationshipDefinition {
 	relationshipNames := []string{}
 
 	for _, _rel := range relationship {
 		// here display Kind and EvaluationQuery as relationship name
-		relationshipName := fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", _rel.Kind, _rel.EvaluationQuery, _rel.SubType)
+		relationshipName := fmt.Sprintf("kind: %s, EvaluationPolicy: %s, SubType: %s", _rel.Kind, *_rel.EvaluationQuery, _rel.SubType)
 		relationshipNames = append(relationshipNames, relationshipName)
 	}
 

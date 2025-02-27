@@ -54,6 +54,9 @@ components:
   colorIcon: assets/img/integrations/argo-workflows/components/workflow-template/icons/color/workflow-template-color.svg
   whiteIcon: assets/img/integrations/argo-workflows/components/workflow-template/icons/white/workflow-template-white.svg
   description: 
+components-count: 11
+relationships: 
+relationship-count: 0
 featureList: [
   "UI to visualize and manage Workflows.",
   "Workflow templating to store commonly used Workflows in the cluster.",

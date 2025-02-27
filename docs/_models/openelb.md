@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/openelb/components/eip/icons/color/eip-color.svg
   whiteIcon: assets/img/integrations/openelb/components/eip/icons/white/eip-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Bare-metal load balancing",
   "Layer 2/3 load balancing",

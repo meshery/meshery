@@ -1,3 +1,4 @@
+import { urlEncodeParams } from '@/utils/utils';
 import { api } from './index';
 
 const TAGS = {
@@ -18,7 +19,7 @@ const meshSyncApi = api
             pagesize: queryArg.pagesize,
             search: queryArg.search,
             order: queryArg.order,
-            kind: queryArg.kind,
+            ...(queryArg.kind ? { kind: queryArg.kind } : {}), // empty object to avoid undefined as no kind signifies all resources
             clusterIds: queryArg.clusterIds,
             label: queryArg.label,
             status: queryArg.status,
@@ -30,18 +31,18 @@ const meshSyncApi = api
         }),
         providesTags: () => [{ type: TAGS.MESH_SYNC }],
       }),
+
       getMeshSyncResourceKinds: builder.query({
-        query: (queryArg) => ({
-          url: `system/meshsync/resources/kinds`,
-          params: {
-            page: queryArg.page,
-            pagesize: queryArg.pagesize,
-            search: queryArg.search,
-            order: queryArg.order,
-            clusterIds: queryArg.clusterIds,
-          },
-          method: 'GET',
-        }),
+        query: ({ clusterIds = ['all'], namespaces = [], pagesize, order }) => {
+          const params = urlEncodeParams({
+            clusterId: clusterIds,
+            namespace: namespaces,
+            pagesize,
+            order,
+          });
+          return `system/meshsync/resources/summary?${params}`;
+        },
+
         providesTags: () => [{ type: TAGS.MESH_SYNC }],
       }),
       deleteMeshsyncResource: builder.mutation({

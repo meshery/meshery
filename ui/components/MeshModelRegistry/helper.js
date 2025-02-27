@@ -111,3 +111,36 @@ export const removeDuplicateVersions = (data) => {
 
   return result;
 };
+
+/**
+ * To style JSON viewing in react-json-tree.
+ * Refer to base-16 theme styling guidelines for more info.
+ * https://github.com/chriskempson/base16/blob/main/styling.md
+ * @type {Object}
+ * @property {string} base00 - BACKGROUND_COLOR
+ * @property {string} base02 - OBJECT_OUTLINE_COLOR
+ * @property {string} base04 - OBJECT_DETAILS_COLOR
+ * @property {string} base07 - OBJECT_KEY_COLOR
+ * @property {string} base09 - ITEM_STRING_COLOR, DATE_COLOR, STRING_COLOR
+ * @property {string} base0A - SYMBOL_COLOR, FUNCTION_COLOR, UNDEFINED_COLOR, NULL_COLOR
+ * @property {string} base0D - ITEM_STRING_EXPANDED_COLOR, ARROW_COLOR
+ * @property {string} base0E - BOOLEAN_COLOR, NUMBER_COLOR
+ */
+export const reactJsonTheme = (themeType) => ({
+  base00: themeType === 'dark' ? '#303030' : '#ffffff',
+  base01: '#444c56',
+  base02: themeType === 'dark' ? '#586069' : '#abb2bf',
+  base03: '#6a737d',
+  base04: '#477E96',
+  base05: '#9ea7a6',
+  base06: '#d8dee9',
+  base07: themeType === 'dark' ? '#FFF3C5' : '#002B36',
+  base08: '#2a5491',
+  base09: '#d19a66',
+  base0A: '#EBC017',
+  base0B: '#237986',
+  base0C: '#56b6c2',
+  base0D: '#B1B6B8',
+  base0E: '#e1e6cf',
+  base0F: '#647881',
+});

@@ -1,0 +1,1182 @@
+name: Istio HTTP Header Filter (Clone)
+version: 0.0.4
+services:
+  Bottom Round Rectangle:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery
+    name: Bottom Round Rectangle
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: Bottom Round Rectangle-0.503346460481552
+        label: Bottom Round Rectangle
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Meshery
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/meshery/color/broker-color.svg
+            svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+          name: meshery
+          version: v1.0.0
+        meshmodel-metadata:
+          genealogy: ""
+          isAnnotation: true
+          isNamespaced: false
+          logoURL: ""
+          model: meshery
+          modelDisplayName: Meshery
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A27'
+          shape: bottom-round-rectangle
+          styleOverrides:
+            z-index: 10009
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery/color/broker-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+        position:
+          posX: 1130
+          posY: 410
+        whiteboardData:
+          style:
+            backgroundColor: brown
+            backgroundOpacity: 0.6
+            borderColor: '#417505'
+            borderStyle: dashed
+            borderWidth: 16px
+            height: 164.1177707421223
+            width: 201.57405596793956
+            z-index: 10005
+    type: BottomRoundRectangle
+    version: v1.0.0
+  Hexagon:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery
+    name: Hexagon
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 2369acb1-6c51-4ffa-8181-6cc39bf8ecf5
+        label: Hexagon
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Meshery
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/meshery/color/broker-color.svg
+            svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+          name: meshery
+          version: v1.0.0
+        meshmodel-metadata:
+          genealogy: ""
+          isAnnotation: true
+          isNamespaced: false
+          logoURL: ""
+          model: meshery
+          modelDisplayName: Meshery
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A13'
+          shape: hexagon
+          styleOverrides:
+            z-index: 10006
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery/color/broker-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+        position:
+          posX: 1170
+          posY: 250
+        whiteboardData:
+          style:
+            z-index: 10001
+    type: Hexagon
+    version: v1.0.0
+  Rectangle:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery
+    name: Rectangle
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 4cb7d4aa-79a4-420d-828c-941419137759
+        label: Rectangle
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Meshery
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/meshery/color/broker-color.svg
+            svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+          name: meshery
+          version: v1.0.0
+        meshmodel-metadata:
+          genealogy: ""
+          isAnnotation: true
+          isNamespaced: false
+          logoURL: ""
+          model: meshery
+          modelDisplayName: Meshery
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: rectangle
+          styleOverrides: ""
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery/color/broker-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+        position:
+          posX: 1050
+          posY: 310
+        whiteboardData:
+          style:
+            backgroundOpacity: 0.1
+            z-index: 10006
+    type: Rectangle
+    version: v1.0.0
+  Round Barrel:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery
+    name: Round Barrel
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: e3628639-d325-4bbe-8b1b-9670232e3193
+        label: Round Barrel
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Meshery
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/meshery/color/broker-color.svg
+            svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+          name: meshery
+          version: v1.0.0
+        meshmodel-metadata:
+          genealogy: ""
+          isAnnotation: true
+          isNamespaced: false
+          logoURL: ""
+          model: meshery
+          modelDisplayName: Meshery
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: circle
+          styleOverrides:
+            z-index: 10000
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery/color/broker-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+        position:
+          posX: 1330
+          posY: 350
+        whiteboardData:
+          style:
+            z-index: 10002
+    type: RoundBarrel
+    version: v1.0.0
+  Round Tag:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery
+    name: Round Tag
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 88e6dc98-45be-42e7-9c15-222f347e4667
+        label: Round Tag
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Meshery
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/meshery/color/broker-color.svg
+            svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+          name: meshery
+          version: v1.0.0
+        meshmodel-metadata:
+          genealogy: ""
+          isAnnotation: true
+          isNamespaced: false
+          logoURL: ""
+          model: meshery
+          modelDisplayName: Meshery
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A20'
+          shape: round-tag
+          styleOverrides:
+            height: 25px
+            width: 25px
+            x: 3.5px
+            "y": 2px
+            z-index: 10001
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery/color/broker-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+        position:
+          posX: 1690
+          posY: 250
+        whiteboardData:
+          style:
+            z-index: 10003
+    type: RoundTag
+    version: v1.0.0
+  Round Triangle:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery
+    name: Round Triangle
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 74c18193-6ea1-4d1c-a859-f9904b5d428e
+        label: Round Triangle
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Meshery
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/meshery/color/broker-color.svg
+            svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+          name: meshery
+          version: v1.0.0
+        meshmodel-metadata:
+          genealogy: ""
+          isAnnotation: true
+          isNamespaced: false
+          logoURL: ""
+          model: meshery
+          modelDisplayName: Meshery
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A9'
+          shape: round-triangle
+          styleOverrides:
+            z-index: 10007
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery/color/broker-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+        position:
+          posX: 830
+          posY: 710
+        whiteboardData:
+          style:
+            height: 259.2324655791349
+            width: 202.66798808509571
+            z-index: 10007
+    type: RoundTriangle
+    version: v1.0.0
+  comment-yt:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery
+    name: comment-yt
+    namespace: ""
+    settings:
+      usersMessages:
+      - avatarUrl: https://avatars.githubusercontent.com/u/7570704?v=4
+        firstName: Lee
+        lastName: Calcote
+        message: Looks, good did you configured GitHub creds?
+        timestamp: "2023-09-24T21:52:36.636Z"
+        userid: b9029c89-926f-42cd-bbe7-7c0281ca16e7
+      - avatarUrl: https://layer5.io/static/eae4fdbc2821af8482c01638a7e47b30/6c7e0/xin-huang.webp
+        firstName: Xin
+        lastName: Huang
+        message: Oh, right... no, I didn't connect the GH app...
+        timestamp: "2023-09-24T21:53:23.733Z"
+        userid: b26fc444-c246-4be8-9863-dfffeb70c41f
+      - avatarUrl: https://layer5.io/static/eae4fdbc2821af8482c01638a7e47b30/6c7e0/xin-huang.webp
+        firstName: Xin
+        lastName: Huang
+        message: |
+          ok, that's ok, though.
+        timestamp: "2023-09-24T21:53:32.505Z"
+        userid: b26fc444-c246-4be8-9863-dfffeb70c41f
+      - avatarUrl: https://avatars.githubusercontent.com/u/7570704?v=4
+        firstName: Lee
+        lastName: Calcote
+        message: Ok, let's try EnvoyFilter next time.
+        timestamp: "2023-09-24T21:53:57.265Z"
+        userid: b9029c89-926f-42cd-bbe7-7c0281ca16e7
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 3b336987-bdad-4baa-b2a6-d65f821d05ca
+        label: comment-yt
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Meshery
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/meshery/color/broker-color.svg
+            svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+          name: meshery
+          version: v1.0.0
+        meshmodel-metadata:
+          genealogy: ""
+          isAnnotation: true
+          isNamespaced: false
+          logoURL: ""
+          model: meshery
+          modelDisplayName: Meshery
+          primaryColor: '#FFDE00'
+          published: true
+          secondaryColor: '#FFDE00'
+          shape: tag
+          styleOverrides:
+            height: 22px
+            width: 22px
+            x: 3.5px
+            "y": 3.5px
+            z-index: 10002
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery/color/comment-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/meshery/color/comment-color.svg
+        position:
+          posX: 490
+          posY: 430
+        whiteboardData:
+          style:
+            z-index: 10011
+    type: Comment
+    version: v1.0.0
+  default-jnsoj:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: default
+    namespace: ""
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 14883a29-a901-4710-aab0-7d0e8a248ff2
+        label: default
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: parent
+          isCustomResource: false
+          isNamespaced: false
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: rectangle
+          styleOverrides:
+            background-image: none
+            background-opacity: 0.5
+            border-style: dashed
+            border-width: 2
+            z-index: 10004
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/namespace-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/namespace-color.svg
+        position:
+          posX: 370
+          posY: 630
+        whiteboardData: {}
+    type: Namespace
+    version: v1.25.2
+  default-rxvmu:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: default
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: default-0.36666712957812786
+        label: default
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 10010
+        position:
+          posX: 430
+          posY: 770
+        whiteboardData:
+          style:
+            z-index: 10012
+    type: Namespace
+    version: v1.25.2
+  default-vnzcz:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: default
+    namespace: default
+    settings: {}
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 90a03569-99e7-4ec4-96c1-972d36723e05
+        label: default
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 10003
+        position:
+          posX: 715
+          posY: 469
+        whiteboardData:
+          style:
+            z-index: 10004
+    type: Namespace
+    version: v1.25.2
+  httpbin-dxnjc:
+    annotations: {}
+    apiVersion: v1
+    dependsOn:
+    - default-vnzcz
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: httpbin
+    namespace: default
+    settings:
+      image Pull Secrets: []
+      secrets: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: ab411c34-abb3-49c4-abaa-f62855c1849d
+        label: httpbin
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          styleOverrides:
+            z-index: 10015
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/serviceaccount-color.svg
+        parent: 90a03569-99e7-4ec4-96c1-972d36723e05
+        position:
+          posX: 630
+          posY: 430
+        whiteboardData:
+          style:
+            z-index: 10017
+    type: ServiceAccount
+    version: ""
+  httpbin-ehnfl:
+    annotations: {}
+    apiVersion: apps/v1
+    dependsOn:
+    - default-vnzcz
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: httpbin
+    namespace: default
+    settings:
+      spec:
+        replicas: 1
+        selector:
+          match Labels:
+            app: httpbin
+            version: v1
+        template:
+          metadata:
+            annotations:
+              sidecar.istio.io/log Level: info
+              sidecar.istio.io/user Volume: '[{"name":"http-filter","persistentVolumeClaim":
+                {"claimName":"wasm-pvc"}}]'
+              sidecar.istio.io/user Volume Mount: '[{"mountPath":"/var/local/wasm/http-filter.wasm","name":"http-filter",
+                "readonly": true}]'
+            labels:
+              app: httpbin
+              version: v1
+          spec:
+            containers:
+            - image: docker.io/kennethreitz/httpbin
+              image Pull Policy: IfNotPresent
+              name: httpbin
+              ports:
+              - container Port: 80
+            service Account Name: httpbin
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 81bd72b3-7e41-4e76-9a91-1290da80d615
+            metadata:
+              port: 8000
+              protocol: TCP
+            source: f2b498d5-e5bb-4657-ada4-54e6300572ce
+            subType: Network
+            target: 6cea8f56-695c-4523-91c9-97596ac7c827
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: 6cea8f56-695c-4523-91c9-97596ac7c827
+        label: httpbin
+        meshmodel-metadata:
+          styleOverrides:
+            z-index: 10011
+        parent: 90a03569-99e7-4ec4-96c1-972d36723e05
+        position:
+          posX: 810
+          posY: 530
+        whiteboardData:
+          style:
+            z-index: 10020
+    type: Deployment
+    version: ""
+  httpbin-opiwp:
+    annotations: {}
+    apiVersion: v1
+    dependsOn:
+    - default-vnzcz
+    id: null
+    isAnnotation: null
+    labels:
+      app: httpbin
+      service: httpbin
+    model: kubernetes
+    name: httpbin
+    namespace: default
+    settings:
+      spec:
+        ports:
+        - name: http
+          port: 8000
+          protocol: TCP
+          target Port: 80
+        selector:
+          app: httpbin
+        type: NodePort
+    traits:
+      meshmap:
+        edges:
+        - data:
+            id: 81bd72b3-7e41-4e76-9a91-1290da80d615
+            metadata:
+              port: 8000
+              protocol: TCP
+            source: f2b498d5-e5bb-4657-ada4-54e6300572ce
+            subType: Network
+            target: 6cea8f56-695c-4523-91c9-97596ac7c827
+          style:
+            control-point-distances: null
+            control-point-weights: "0.5"
+            curve-style: bezier
+            haystack-radius: "0"
+            line-color: rgb(153,153,153)
+            line-style: dotted
+            opacity: "1"
+            segment-distances: 20px
+            segment-weights: "0.5"
+            target-arrow-shape: vee
+            taxi-direction: auto
+            taxi-turn: 50%
+            taxi-turn-min-distance: 10px
+            width: 1.5px
+        fieldRefData: {}
+        id: f2b498d5-e5bb-4657-ada4-54e6300572ce
+        label: httpbin
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-triangle
+          styleOverrides:
+            background-fit: none
+            background-position-y: 4.5
+            height: 16
+            padding: 12
+            width: 17
+            z-index: 10012
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/apiservice-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/apiservice-white.svg
+        parent: 90a03569-99e7-4ec4-96c1-972d36723e05
+        position:
+          posX: 730
+          posY: 510
+        whiteboardData:
+          style:
+            z-index: 10016
+    type: Service
+    version: ""
+  persistent-volume-claim-tk:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: persistent-volume-claim-tk
+    namespace: default
+    settings:
+      spec:
+        access Modes:
+        - ReadOnlyMany
+        resources:
+          limits:
+            "2": Gi
+          requests:
+            newKey: New Value
+        storage Class Name: default
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 3f8a1626-ce96-4738-bc48-0bc7cd36362d
+        label: persistent-volume-claim-tk
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: cylinder
+          styleOverrides: '{"height":32,"width":32,"pading":0,"background-clip":"none","background-image-containment":"over","border-opacity":0,"background-opacity":0,"bounds-expansion":20,
+            "z-index": 9999}'
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/persistentvolume-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/persistentvolume-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/persistentvolume-color.svg
+        position:
+          posX: 710
+          posY: 330
+        whiteboardData:
+          style:
+            z-index: 10013
+    type: PersistentVolumeClaim
+    version: v1.25.2
+  pod-hq:
+    annotations: {}
+    apiVersion: v1
+    dependsOn:
+    - default-vnzcz
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: pod-hq
+    namespace: default
+    settings:
+      spec:
+        containers:
+        - image: ng
+          name: g
+        volumes:
+        - name: wa
+          persistent Volume Claim:
+            claim Name: persistent-volume-claim-tk
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 4f630f86-c29f-4149-9dc7-d88026d96769
+        label: pod-hq
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Kubernetes
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+          name: kubernetes
+          version: v1.25.2
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: round-rectangle
+          styleOverrides:
+            z-index: 10014
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/kubernetes-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/white/kubernetes-white.svg
+        parent: 90a03569-99e7-4ec4-96c1-972d36723e05
+        position:
+          posX: 710
+          posY: 390
+        whiteboardData:
+          style:
+            z-index: 10014
+    type: Pod
+    version: v1.25.2
+  polygon-ks:
+    annotations: {}
+    apiVersion: core.meshery.io/v1alpha1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: meshery
+    name: polygon-ks
+    namespace: ""
+    settings:
+      user Messages: []
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: Polygon-0.5463084785412085
+        label: polygon-ks
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Orchestration & Management
+          displayName: Meshery
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            svgColor: ui/public/static/img/meshmodels/meshery/color/broker-color.svg
+            svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+          name: meshery
+          version: v1.0.0
+        meshmodel-metadata:
+          genealogy: ""
+          isAnnotation: true
+          isNamespaced: false
+          logoURL: ""
+          model: meshery
+          modelDisplayName: Meshery
+          primaryColor: '#00B39F'
+          published: true
+          secondaryColor: '#00D3A21'
+          shape: polygon
+          styleOverrides:
+            height: 18px
+            width: 18px
+            x: 11px
+            "y": 11px
+            z-index: 10005
+          subCategory: App Definition and Development
+          svgColor: ui/public/static/img/meshmodels/meshery/color/broker-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/aws-node-termination-handler-2/white/terminator-white.svg
+        position:
+          posX: 1110
+          posY: 110
+        whiteboardData:
+          style:
+            height: 119.89819537987994
+            width: 212.45089086039047
+            z-index: 10000
+    type: Polygon
+    version: v1.0.0
+  prometheus-agent-kq-lxnmd:
+    annotations: {}
+    apiVersion: monitoring.coreos.com/v1alpha1
+    dependsOn:
+    - default-rxvmu
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kube-prometheus-stack
+    name: prometheus-agent-kq
+    namespace: default
+    settings:
+      spec:
+        port Name: web
+        scrape Interval: 30s
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: prometheus-agent-kq-0.20041823475786713
+        label: prometheus-agent-kq
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Observability and Analysis
+          displayName: Kube Prometheus Stack
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            source_uri: https://github.com/prometheus-community/helm-charts/releases/download/kube-prometheus-stack-48.3.1/kube-prometheus-stack-48.3.1.tgz
+            svgColor: ui/public/static/img/meshmodels/kube-prometheus-stack/color/alertmanager-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kube-prometheus-stack/white/alertmanager-white.svg
+          name: kube-prometheus-stack
+          version: 45.7.1
+        meshmodel-metadata:
+          genealogy: ""
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/examples/graduated.md#prometheus-logos
+          model: kube-prometheus-stack
+          modelDisplayName: Kube Prometheus Stack
+          primaryColor: '#e75225'
+          published: true
+          secondaryColor: '#ec7551'
+          shape: circle
+          styleOverrides:
+            z-index: 10013
+          subCategory: Monitoring
+          svgColor: ui/public/static/img/meshmodels/kube-prometheus-stack/color/alertmanager-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kube-prometheus-stack/white/alertmanager-white.svg
+        parent: default-0.36666712957812786
+        position:
+          posX: 430
+          posY: 770
+        whiteboardData:
+          style:
+            z-index: 10018
+    type: PrometheusAgent
+    version: 45.7.1
+  prometheus-agent-kq-xhltu:
+    annotations: {}
+    apiVersion: monitoring.coreos.com/v1alpha1
+    dependsOn:
+    - default-vnzcz
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kube-prometheus-stack
+    name: prometheus-agent-kq
+    namespace: default
+    settings:
+      spec:
+        port Name: web
+        scrape Interval: 30s
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 92c6c4e0-8d61-46a9-ab77-2cd5e949eb76
+        label: prometheus-agent-kq
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Observability and Analysis
+          displayName: Kube Prometheus Stack
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            source_uri: https://github.com/prometheus-community/helm-charts/releases/download/kube-prometheus-stack-48.3.1/kube-prometheus-stack-48.3.1.tgz
+            svgColor: ui/public/static/img/meshmodels/kube-prometheus-stack/color/alertmanager-color.svg
+            svgWhite: ui/public/static/img/meshmodels/kube-prometheus-stack/white/alertmanager-white.svg
+          name: kube-prometheus-stack
+          version: 45.7.1
+        meshmodel-metadata:
+          genealogy: ""
+          isNamespaced: true
+          logoURL: https://github.com/cncf/artwork/blob/master/examples/graduated.md#prometheus-logos
+          model: kube-prometheus-stack
+          modelDisplayName: Kube Prometheus Stack
+          primaryColor: '#e75225'
+          published: true
+          secondaryColor: '#ec7551'
+          shape: circle
+          styleOverrides:
+            z-index: 10016
+          subCategory: Monitoring
+          svgColor: ui/public/static/img/meshmodels/kube-prometheus-stack/color/alertmanager-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/kube-prometheus-stack/white/alertmanager-white.svg
+        parent: 90a03569-99e7-4ec4-96c1-972d36723e05
+        position:
+          posX: 630
+          posY: 530
+        whiteboardData:
+          style:
+            z-index: 10019
+    type: PrometheusAgent
+    version: 45.7.1
+  wasm-plugin-dp:
+    annotations: {}
+    apiVersion: extensions.istio.io/v1alpha1
+    dependsOn:
+    - default-vnzcz
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: istio-base
+    name: wasm-plugin-dp
+    namespace: default
+    settings:
+      spec:
+        plugin Config: ""
+        url: https://meshery.layer5.io/api/content/filters/download/076cc384-c1ba-43dc-8c79-a74ec2f92e79
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: 923546cc-7ef6-42ae-bcd4-86175dba7292
+        label: wasm-plugin-dp
+        meshmodel-data:
+          category:
+            metadata: null
+            name: Cloud Native Network
+          displayName: Istio
+          displayhostname: ""
+          hostID: 00000000-0000-0000-0000-000000000000
+          hostname: ""
+          metadata:
+            source_uri: https://github.com/kubeslice/kubeslice/releases/download/istio-base-1.16.0/istio-base-1.16.0.tgz
+            svgColor: ui/public/static/img/meshmodels/istio-base/color/authorizationpolicy-color.svg
+            svgWhite: ui/public/static/img/meshmodels/istio-base/white/authorizationpolicy-white.svg
+          name: istio-base
+          version: 1.16.0
+        meshmodel-metadata:
+          genealogy: ""
+          isNamespaced: true
+          logoURL: https://github.com/istio/istio/blob/master/logo/istio-bluelogo-whitebackground-unframed.svg
+          model: istio-base
+          modelDisplayName: Istio
+          primaryColor: '#466BB0'
+          published: true
+          secondaryColor: '#93b0e7'
+          shape: circle
+          styleOverrides:
+            z-index: 10017
+          subCategory: Service Mesh
+          svgColor: ui/public/static/img/meshmodels/istio-base/color/authorizationpolicy-color.svg
+          svgComplete: ""
+          svgWhite: ui/public/static/img/meshmodels/istio-base/white/authorizationpolicy-white.svg
+        parent: 90a03569-99e7-4ec4-96c1-972d36723e05
+        position:
+          posX: 810
+          posY: 450
+        whiteboardData:
+          style:
+            z-index: 10015
+    type: WasmPlugin
+    version: 1.16.0
+  wasm-pvc:
+    annotations: {}
+    apiVersion: v1
+    dependsOn: []
+    id: null
+    isAnnotation: null
+    labels: {}
+    model: kubernetes
+    name: wasm-pvc
+    namespace: default
+    settings:
+      spec:
+        access Modes:
+        - ReadWriteOnce
+        capacity:
+          storage: 1Mi
+        host Path:
+          path: /Users/shabana/Documents/OpenSource/k8s-test/proxy-wasm-go-sdk/examples/http_headers/main.go.wasm
+        persistent Volume Reclaim Policy: Recycle
+        storage Class Name: slow
+        volume Mode: Filesystem
+    traits:
+      meshmap:
+        edges: []
+        fieldRefData: {}
+        id: e38ddd90-4777-41d9-af1c-835ade57638b
+        label: wasm-pvc
+        meshmodel-metadata:
+          genealogy: ""
+          isCustomResource: false
+          isNamespaced: false
+          logoURL: https://github.com/cncf/artwork/blob/master/projects/kubernetes/icon/white/kubernetes-icon-white.svg
+          model: kubernetes
+          modelDisplayName: Kubernetes
+          primaryColor: '#326CE5'
+          published: true
+          secondaryColor: '#7aa1f0'
+          shape: cylinder
+          styleOverrides:
+            background-clip: none
+            background-image-containment: over
+            background-opacity: 0
+            border-opacity: 0
+            bounds-expansion: 20
+            height: 32
+            pading: 0
+            width: 32
+            z-index: 10008
+          subCategory: Scheduling & Orchestration
+          svgColor: ui/public/static/img/meshmodels/kubernetes/color/persistentvolume-color.svg
+          svgComplete: ui/public/static/img/meshmodels/kubernetes/complete/persistentvolume-complete.svg
+          svgWhite: ui/public/static/img/meshmodels/kubernetes/color/persistentvolume-color.svg
+        position:
+          posX: 750
+          posY: 350
+        whiteboardData:
+          style:
+            z-index: 10010
+    type: PersistentVolume
+    version: ""

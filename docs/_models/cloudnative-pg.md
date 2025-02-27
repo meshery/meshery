@@ -34,6 +34,21 @@ components:
   colorIcon: assets/img/integrations/cloudnative-pg/components/scheduled-backup/icons/color/scheduled-backup-color.svg
   whiteIcon: assets/img/integrations/cloudnative-pg/components/scheduled-backup/icons/white/scheduled-backup-white.svg
   description: 
+- name: database
+  colorIcon: assets/img/integrations/cloudnative-pg/components/database/icons/color/database-color.svg
+  whiteIcon: assets/img/integrations/cloudnative-pg/components/database/icons/white/database-white.svg
+  description: 
+- name: publication
+  colorIcon: assets/img/integrations/cloudnative-pg/components/publication/icons/color/publication-color.svg
+  whiteIcon: assets/img/integrations/cloudnative-pg/components/publication/icons/white/publication-white.svg
+  description: 
+- name: subscription
+  colorIcon: assets/img/integrations/cloudnative-pg/components/subscription/icons/color/subscription-color.svg
+  whiteIcon: assets/img/integrations/cloudnative-pg/components/subscription/icons/white/subscription-white.svg
+  description: 
+components-count: 9
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates PostgreSQL deployment and management",
   "High availability and disaster recovery",

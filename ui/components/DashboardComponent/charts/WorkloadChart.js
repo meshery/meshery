@@ -1,5 +1,4 @@
 import React from 'react';
-import { Box, Typography, MenuItem, Select } from '@material-ui/core';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { dataToColors, isValidColumnName } from '../../../utils/charts';
@@ -7,6 +6,8 @@ import ConnectClustersBtn from '../../General/ConnectClustersBtn';
 import Link from 'next/link';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { Box, MenuItem, Select, Typography } from '@layer5/sistent';
+import { UsesSistent } from '@/components/SistentWrapper';
 
 export default function WorkloadChart({
   classes,
@@ -54,70 +55,72 @@ export default function WorkloadChart({
   };
 
   return (
-    <div
-      className={classes.dashboardSection}
-      style={{
-        padding: '0.5rem',
-        paddingTop: '2rem',
-      }}
-    >
+    <UsesSistent>
       <div
+        className={classes.dashboardSection}
         style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
+          padding: '0.5rem',
+          paddingTop: '2rem',
         }}
       >
-        <Link
-          href="/management/connections"
+        <div
           style={{
-            pointerEvents: !CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)
-              ? 'none'
-              : 'auto',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
           }}
         >
-          <Typography variant="h6" gutterBottom className={classes.link}>
-            Workloads
-          </Typography>
-        </Link>
-        {namespaces?.length > 0 && (
-          <Select value={selectedNamespace} onChange={(e) => handleSetNamespace(e.target.value)}>
-            {namespaces.map((ns) => (
-              <MenuItem key={ns.uniqueID} value={ns}>
-                {ns}
-              </MenuItem>
-            ))}
-          </Select>
-        )}
-      </div>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          alignContent: 'center',
-          height: '100%',
-        }}
-      >
-        {chartData.length > 0 ? (
-          <BBChart options={chartOptions} />
-        ) : (
-          <div
+          <Link
+            href="/management/connections"
             style={{
-              padding: '2rem',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              flexDirection: 'column',
+              pointerEvents: !CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)
+                ? 'none'
+                : 'auto',
             }}
           >
-            <Typography style={{ fontSize: '1.5rem', marginBottom: '1rem' }} align="center">
-              No workloads found in your cluster(s).
+            <Typography variant="h6" gutterBottom className={classes.link}>
+              Workloads
             </Typography>
-            <ConnectClustersBtn />
-          </div>
-        )}
-      </Box>
-    </div>
+          </Link>
+          {namespaces?.length > 0 && (
+            <Select value={selectedNamespace} onChange={(e) => handleSetNamespace(e.target.value)}>
+              {namespaces.map((ns) => (
+                <MenuItem key={ns.uniqueID} value={ns}>
+                  {ns}
+                </MenuItem>
+              ))}
+            </Select>
+          )}
+        </div>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            alignContent: 'center',
+            height: '100%',
+          }}
+        >
+          {chartData.length > 0 ? (
+            <BBChart options={chartOptions} />
+          ) : (
+            <div
+              style={{
+                padding: '2rem',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'column',
+              }}
+            >
+              <Typography style={{ fontSize: '1.5rem', marginBottom: '1rem' }} align="center">
+                No workloads found in your cluster(s).
+              </Typography>
+              <ConnectClustersBtn />
+            </div>
+          )}
+        </Box>
+      </div>
+    </UsesSistent>
   );
 }

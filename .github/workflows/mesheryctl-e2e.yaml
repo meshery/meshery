@@ -21,20 +21,25 @@ on:
 jobs:
   manual-test:
     name: Manual e2e Test
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     if: ${{ github.event_name == 'workflow_dispatch' }}
     strategy:
       fail-fast: false
       matrix:
-        k8s_version: ['v1.29.2', 'v1.28.7']
+        k8s_version: ['v1.31.4', 'v1.32.0']
         platform: ['docker', 'kubernetes']
     steps:
       - name: Setup Kubernetes
-        uses: manusa/actions-setup-minikube@v2.10.0
+        uses: manusa/actions-setup-minikube@v2.13.0
         with:
-          minikube version: 'v1.32.0'
+          minikube version: 'v1.33.0'
           kubernetes version: ${{ matrix.k8s_version }}
           driver: docker
+      - run: |
+          mkdir -p $HOME/.kube
+          mkdir -p $HOME/.minikube
+          sudo chown -R $USER $HOME/.kube
+          sudo chown -R $USER $HOME/.minikube
 
       - name: Run minikube tunnel
         run: |
@@ -61,7 +66,7 @@ jobs:
       - name: Deploy Service Mesh
         run: |
           cat ~/auth.json
-          echo | mesheryctl mesh deploy meshery-istio --namespace istio-system -t ~/auth.json ISTIO
+          echo | mesheryctl adapter deploy meshery-istio --namespace istio-system -t ~/auth.json ISTIO
           sleep 50
         shell: '/bin/bash {0}'
 
@@ -72,21 +77,21 @@ jobs:
           platform: ${{ matrix.platform }}
           pattern_url: ${{ github.event.inputs.pattern_url }}
           pattern_file: ${{ github.event.inputs.pattern_file }}
-  
+
   scheduled-test:
     name: Scheduled e2e Test
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     if: ${{ github.event_name == 'schedule' && github.repository == 'meshery/meshery' }}
     strategy:
       fail-fast: false
       matrix:
-        k8s_version: ['v1.29.2', 'v1.28.7']
+        k8s_version: ['v1.31.4', 'v1.32.0']
         platform: ['docker', 'kubernetes']
     steps:
       - name: Setup Kubernetes
-        uses: manusa/actions-setup-minikube@v2.10.0
+        uses: manusa/actions-setup-minikube@v2.11.0
         with:
-          minikube version: 'v1.32.0'
+          minikube version: 'v1.34.0'
           kubernetes version: ${{ matrix.k8s_version }}
           driver: docker
 
@@ -111,10 +116,10 @@ jobs:
           profile_name: integration-e2e-workflow
           profile_filename: integration-test-config.yaml
           test_name: '${{ steps.date.outputs.date }}'
-      
+
       - name: Deploy Service Mesh
         run: |
-          echo | mesheryctl mesh deploy meshery-istio --namespace istio-system -t ~/auth.json ISTIO
+          echo | mesheryctl adapter deploy meshery-istio --namespace istio-system -t ~/auth.json ISTIO
           sleep 50
         shell: '/bin/bash {0}'
 
@@ -137,4 +142,4 @@ jobs:
         with:
           provider_token: ${{ secrets.PROVIDER_TOKEN }}
           platform: ${{ matrix.platform }}
-          pattern_url: https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/9d3b33bf-eaf6-4d06-9dd6-64aa725ab383.yaml 
+          pattern_url: https://raw.githubusercontent.com/meshery/meshery.io/master/catalog/9d3b33bf-eaf6-4d06-9dd6-64aa725ab383.yaml

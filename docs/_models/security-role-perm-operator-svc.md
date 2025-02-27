@@ -18,6 +18,9 @@ components:
   colorIcon: assets/img/integrations/security-role-perm-operator-svc/components/mojaloop-role/icons/color/mojaloop-role-color.svg
   whiteIcon: assets/img/integrations/security-role-perm-operator-svc/components/mojaloop-role/icons/white/mojaloop-role-white.svg
   description: 
+components-count: 2
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates RBAC role and permission management",
   "Enforces security policies",

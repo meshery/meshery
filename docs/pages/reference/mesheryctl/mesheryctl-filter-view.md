@@ -43,6 +43,14 @@ mesheryctl filter view --all
 </div>
 </pre> 
 
+//View multi-word named filter files. Multi-word filter names should be enclosed in quotes
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl filter view "filter name"
+
+</div>
+</pre> 
+
 <pre class='codeblock-pre'>
 <div class='codeblock'>
         

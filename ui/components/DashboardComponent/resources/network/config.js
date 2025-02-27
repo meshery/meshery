@@ -1,11 +1,11 @@
 import React from 'react';
-import { timeAgo } from '../../../../utils/k8s-utils';
+import { getStatus, timeAgo } from '../../../../utils/k8s-utils';
 import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
 
 import { Title } from '../../view';
 
-import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
+import { TooltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
@@ -16,6 +16,7 @@ export const NetWorkTableConfig = (
   meshSyncResources,
   k8sConfig,
   connectionMetadataState,
+  workloadType,
 ) => {
   const ping = useKubernetesHook();
   return {
@@ -24,7 +25,7 @@ export const NetWorkTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['spec.attribute', 's'],
         ['spec.attribute', 's'],
         ['status.attribute', 'na'],
@@ -32,6 +33,7 @@ export const NetWorkTableConfig = (
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
+        ['status.attribute', 's'],
       ],
       columns: [
         {
@@ -39,6 +41,9 @@ export const NetWorkTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: (value) => <FormatId id={value} />,
           },
         },
@@ -54,12 +59,8 @@ export const NetWorkTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -192,23 +193,6 @@ export const NetWorkTableConfig = (
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
           },
         },
         {
@@ -232,7 +216,7 @@ export const NetWorkTableConfig = (
 
               return (
                 <>
-                  <TootltipWrappedConnectionChip
+                  <TooltipWrappedConnectionChip
                     title={context.name}
                     iconSrc={
                       connectionMetadataState
@@ -260,6 +244,20 @@ export const NetWorkTableConfig = (
             },
           },
         },
+        {
+          name: 'status.attribute',
+          label: 'Status',
+          options: {
+            sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
+            customBodyRender: function CustomBody(value) {
+              const status = getStatus(value);
+              return <>{status}</>;
+            },
+          },
+        },
       ],
     },
     Endpoints: {
@@ -267,7 +265,7 @@ export const NetWorkTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
@@ -278,6 +276,9 @@ export const NetWorkTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: (value) => <FormatId id={value} />,
           },
         },
@@ -293,12 +294,8 @@ export const NetWorkTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -330,23 +327,6 @@ export const NetWorkTableConfig = (
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
           },
         },
         {
@@ -367,7 +347,7 @@ export const NetWorkTableConfig = (
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   iconSrc={
                     connectionMetadataState
@@ -396,13 +376,12 @@ export const NetWorkTableConfig = (
         },
       ],
     },
-    Ingress: {
-      name: 'Ingress',
+    EndpointSlice: {
+      name: 'EndpointSlice',
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
-        ['spec.attribute', 'm'],
+        ['apiVersion', 'na'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
@@ -421,19 +400,12 @@ export const NetWorkTableConfig = (
           label: 'Name',
           options: {
             sort: false,
-            customHeadRender: function CustomHead({ ...column }) {
-              return <DefaultTableCell columnData={column} />;
-            },
             customBodyRender: function CustomBody(value, tableMeta) {
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -458,6 +430,126 @@ export const NetWorkTableConfig = (
           },
         },
         {
+          name: 'metadata.namespace',
+          label: 'Namespace',
+          options: {
+            sort: false,
+          },
+        },
+        {
+          name: 'cluster_id',
+          label: 'Cluster',
+          options: {
+            sort: true,
+            customBodyRender: function CustomBody(val) {
+              let context = getK8sContextFromClusterId(val, k8sConfig);
+              return (
+                <TooltipWrappedConnectionChip
+                  title={context.name}
+                  iconSrc={
+                    connectionMetadataState
+                      ? connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                      : ''
+                  }
+                  handlePing={() => ping(context.name, context.server, context.connection_id)}
+                />
+              );
+            },
+          },
+        },
+        {
+          name: 'metadata.creationTimestamp',
+          label: 'Age',
+          options: {
+            sort: false,
+            customBodyRender: function CustomBody(value) {
+              let time = timeAgo(value);
+              return <>{time}</>;
+            },
+          },
+        },
+      ],
+    },
+    Ingress: {
+      name: 'Ingress',
+      colViews: [
+        ['id', 'na'],
+        ['metadata.name', 'xs'],
+        ['apiVersion', 'na'],
+        ['status.attribute', 'm'],
+        ['spec.attribute', 'm'],
+        ['spec.attribute', 'm'],
+        ['metadata.namespace', 'm'],
+        ['cluster_id', 'xs'],
+        ['metadata.creationTimestamp', 'l'],
+      ],
+      columns: [
+        {
+          name: 'id',
+          label: 'ID',
+          options: {
+            display: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
+            customBodyRender: (value) => <FormatId id={value} />,
+          },
+        },
+        {
+          name: 'metadata.name',
+          label: 'Name',
+          options: {
+            sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
+            customBodyRender: function CustomBody(value, tableMeta) {
+              return (
+                <Title
+                  onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
+                  value={value}
+                  kind={workloadType}
+                />
+              );
+            },
+          },
+        },
+        {
+          name: 'apiVersion',
+          label: 'API version',
+          options: {
+            sort: true,
+            sortThirdClickReset: true,
+            customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+              return (
+                <SortableTableCell
+                  index={index}
+                  columnData={column}
+                  columnMeta={columnMeta}
+                  onSort={() => sortColumn(index)}
+                />
+              );
+            },
+          },
+        },
+        {
+          name: 'status.attribute',
+          label: 'LoadBalancer IP',
+          options: {
+            sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
+            customBodyRender: function CustomBody(val) {
+              let attribute = JSON.parse(val);
+              let loadBalancer = attribute?.loadBalancer;
+              let ingress = loadBalancer?.ingress;
+              const IPs = ingress?.map((ingress) => ingress.ip);
+              return <>{IPs?.join(',')}</>;
+            },
+          },
+        },
+        {
           name: 'spec.attribute',
           label: 'Rules',
           options: {
@@ -467,14 +559,15 @@ export const NetWorkTableConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let ingressRules = attribute?.ingressRule;
+
+              let rules = attribute?.rules;
               return (
                 <>
-                  {ingressRules?.map((rule, i) => {
+                  {rules?.map((rule, i) => {
                     return (
                       <>
                         {`${rule.host}`}
-                        {i < ingressRules.length - 1 && ','}
+                        {i < rules.length - 1 && ','}
                       </>
                     );
                   })}
@@ -490,23 +583,6 @@ export const NetWorkTableConfig = (
             sort: false,
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
-            },
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
             },
           },
         },
@@ -530,7 +606,7 @@ export const NetWorkTableConfig = (
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
                 <>
-                  <TootltipWrappedConnectionChip
+                  <TooltipWrappedConnectionChip
                     title={context.name}
                     iconSrc={
                       connectionMetadataState
@@ -565,7 +641,7 @@ export const NetWorkTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['spec.attribute', 'm'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
@@ -577,6 +653,9 @@ export const NetWorkTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: (value) => <FormatId id={value} />,
           },
         },
@@ -592,12 +671,8 @@ export const NetWorkTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -644,23 +719,6 @@ export const NetWorkTableConfig = (
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
           },
         },
         {
@@ -683,7 +741,7 @@ export const NetWorkTableConfig = (
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
                 <>
-                  <TootltipWrappedConnectionChip
+                  <TooltipWrappedConnectionChip
                     title={context.name}
                     iconSrc={
                       connectionMetadataState
@@ -718,7 +776,7 @@ export const NetWorkTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['spec.attribute', 'm'],
         ['metadata.namespace', 'm'],
         ['cluster_id', 'xs'],
@@ -745,12 +803,8 @@ export const NetWorkTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -808,23 +862,6 @@ export const NetWorkTableConfig = (
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
           },
         },
         {
@@ -846,7 +883,7 @@ export const NetWorkTableConfig = (
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   iconSrc={
                     connectionMetadataState

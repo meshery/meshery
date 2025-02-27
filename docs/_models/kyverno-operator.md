@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/kyverno-operator/components/kyverno-operator/icons/color/kyverno-operator-color.svg
   whiteIcon: assets/img/integrations/kyverno-operator/components/kyverno-operator/icons/white/kyverno-operator-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Use Meshery&ldquos GitHub Actions to test policies and validate resources without need for the Kyverno CLI.",
   "Use Meshery with Kyverno to inspect image metadata and 

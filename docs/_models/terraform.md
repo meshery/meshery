@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/terraform/components/workspace/icons/color/workspace-color.svg
   whiteIcon: assets/img/integrations/terraform/components/workspace/icons/white/workspace-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Declarative infrastructure configuration",
   "Multi-cloud support",

@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/kubedb-metrics/components/metrics-configuration/icons/color/metrics-configuration-color.svg
   whiteIcon: assets/img/integrations/kubedb-metrics/components/metrics-configuration/icons/white/metrics-configuration-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "KubeDB simplifies many of the difficult or tedious management tasks of running a production grade databases on private and public clouds. Maintain one stack for all your stateless and stateful applications and simplify the operational complexity.",
   "Standard Kubernetes is all you need. If you can run Kubernetes, you can provision and manage databases using KubeDB. Use standard Kubernetes CLI and API to provision and manage databases.",

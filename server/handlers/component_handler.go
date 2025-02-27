@@ -1,27 +1,41 @@
 package handlers
 
 import (
+	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
+	"sync"
 
 	"github.com/gofrs/uuid"
 	"github.com/gorilla/mux"
+	mesheryctlUtils "github.com/layer5io/meshery/mesheryctl/pkg/utils"
+
 	"github.com/layer5io/meshery/server/helpers"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/core"
-
 	"github.com/layer5io/meshkit/models/events"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1alpha2"
-	"github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+
+	meshkitOci "github.com/layer5io/meshkit/models/oci"
+	"github.com/layer5io/meshkit/models/registration"
+	meshkitutils "github.com/layer5io/meshkit/utils"
+
+	_models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/meshery/schemas/models/v1alpha3/relationship"
+	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
+	"github.com/meshery/schemas/models/v1beta1/component"
+	"github.com/meshery/schemas/models/v1beta1/connection"
+	_model "github.com/meshery/schemas/models/v1beta1/model"
+
 	"github.com/layer5io/meshkit/models/meshmodel/entity"
 	"github.com/layer5io/meshkit/models/meshmodel/registry"
-	meshkitutils "github.com/layer5io/meshkit/utils"
 
 	regv1beta1 "github.com/layer5io/meshkit/models/meshmodel/registry/v1beta1"
 )
@@ -71,9 +85,9 @@ func (h *Handler) GetMeshmodelModelsByCategories(rw http.ResponseWriter, r *http
 		filter.DisplayName = search
 	}
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	var modelDefs []v1beta1.Model
+	var modelDefs []_model.ModelDefinition
 	for _, model := range entities {
-		model, ok := model.(*v1beta1.Model)
+		model, ok := model.(*_model.ModelDefinition)
 		if ok {
 			modelDefs = append(modelDefs, *model)
 		}
@@ -143,9 +157,9 @@ func (h *Handler) GetMeshmodelModelsByCategoriesByModel(rw http.ResponseWriter, 
 		Annotations: returnAnnotationComp,
 	})
 
-	var modelDefs []v1beta1.Model
+	var modelDefs []_model.ModelDefinition
 	for _, model := range entities {
-		model, ok := model.(*v1beta1.Model)
+		model, ok := model.(*_model.ModelDefinition)
 		if ok {
 			modelDefs = append(modelDefs, *model)
 		}
@@ -200,6 +214,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	returnAnnotationComp := queryParams.Get("annotations")
 
 	filter := &regv1beta1.ModelFilter{
+		Id:          queryParams.Get("id"),
 		Registrant:  queryParams.Get("registrant"),
 		Version:     v,
 		Limit:       limit,
@@ -211,6 +226,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 		Components:    queryParams.Get("components") == "true",
 		Relationships: queryParams.Get("relationships") == "true",
 		Status:        queryParams.Get("status"),
+		Trim:          queryParams.Get("trim") == "true",
 	}
 	if search != "" {
 		filter.DisplayName = search
@@ -218,9 +234,9 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	entities, count, _, _ := h.registryManager.GetEntities(filter)
-	var modelDefs []v1beta1.Model
+	var modelDefs []_model.ModelDefinition
 	for _, model := range entities {
-		model, ok := model.(*v1beta1.Model)
+		model, ok := model.(*_model.ModelDefinition)
 		if ok {
 			modelDefs = append(modelDefs, *model)
 		}
@@ -291,9 +307,9 @@ func (h *Handler) GetMeshmodelModelsByName(rw http.ResponseWriter, r *http.Reque
 		Relationships: queryParams.Get("relationships") == "true",
 	})
 
-	var modelDefs []v1beta1.Model
+	var modelDefs []_model.ModelDefinition
 	for _, model := range entities {
-		model, ok := model.(*v1beta1.Model)
+		model, ok := model.(*_model.ModelDefinition)
 		if ok {
 			modelDefs = append(modelDefs, *model)
 		}
@@ -759,6 +775,7 @@ func (h *Handler) GetMeshmodelComponentByModel(rw http.ResponseWriter, r *http.R
 
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &regv1beta1.ComponentFilter{
+		Id:          queryParams.Get("id"),
 		ModelName:   typ,
 		Version:     v,
 		Trim:        queryParams.Get("trim") == "true",
@@ -974,6 +991,7 @@ func (h *Handler) GetAllMeshmodelComponents(rw http.ResponseWriter, r *http.Requ
 	v := queryParams.Get("version")
 	returnAnnotationComp := queryParams.Get("annotations")
 	filter := &regv1beta1.ComponentFilter{
+		Id:          queryParams.Get("id"),
 		Version:     v,
 		Trim:        queryParams.Get("trim") == "true",
 		APIVersion:  queryParams.Get("apiVersion"),
@@ -1028,7 +1046,7 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 		http.Error(rw, err.Error(), http.StatusBadRequest)
 		return
 	}
-	var c v1beta1.ComponentDefinition
+	var c component.ComponentDefinition
 	switch cc.EntityType {
 	case entity.ComponentDefinition:
 		var isModelError bool
@@ -1039,8 +1057,8 @@ func (h *Handler) RegisterMeshmodelComponents(rw http.ResponseWriter, r *http.Re
 			return
 		}
 		utils.WriteSVGsOnFileSystem(&c)
-		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Host, &c)
-		helpers.HandleError(cc.Host, &c, err, isModelError, isRegistranError)
+		isRegistranError, isModelError, err = h.registryManager.RegisterEntity(cc.Connection, &c)
+		helpers.HandleError(cc.Connection, &c, err, isModelError, isRegistranError)
 	}
 	err = helpers.WriteLogsToFiles()
 	if err != nil {
@@ -1076,7 +1094,7 @@ func (h *Handler) GetMeshmodelRegistrants(rw http.ResponseWriter, r *http.Reques
 	enc := json.NewEncoder(rw)
 	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
 
-	filter := &v1beta1.HostFilter{
+	filter := &_models.HostFilter{
 		Limit:   limit,
 		Offset:  offset,
 		Sort:    sort,
@@ -1162,10 +1180,10 @@ func (h *Handler) UpdateEntityStatus(rw http.ResponseWriter, r *http.Request, _ 
 	rw.WriteHeader(http.StatusNoContent)
 }
 
-func prettifyCompDefSchema(entities []entity.Entity) []v1beta1.ComponentDefinition {
-	var comps []v1beta1.ComponentDefinition
+func prettifyCompDefSchema(entities []entity.Entity) []component.ComponentDefinition {
+	var comps []component.ComponentDefinition
 	for _, r := range entities {
-		comp, ok := r.(*v1beta1.ComponentDefinition)
+		comp, ok := r.(*component.ComponentDefinition)
 		if ok {
 			m := make(map[string]interface{})
 			_ = json.Unmarshal([]byte(comp.Component.Schema), &m)
@@ -1178,7 +1196,7 @@ func prettifyCompDefSchema(entities []entity.Entity) []v1beta1.ComponentDefiniti
 	return comps
 }
 
-// swagger:route POST /api/meshmodel/register RegisterMeshmodels idRegisterMeshmodels
+// swagger:route POST /api/meshmodels/register RegisterMeshmodels idRegisterMeshmodels
 // Handle POST request for registering entites like components and relationships model.
 //
 // Register model based on thier Schema Version.
@@ -1187,174 +1205,522 @@ func prettifyCompDefSchema(entities []entity.Entity) []v1beta1.ComponentDefiniti
 // 	200: noContentWrapper
 
 // request content byte in form value and header of the type in form
+
 func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ *models.Preference, user *models.User, provider models.Provider) {
-	var compCount, relCount int
-	dirPath := r.FormValue("dir")
-	if dirPath != "" {
-		tempFile, err := os.CreateTemp("", "upload-*.tar.gz")
+	var response models.RegistryAPIResponse
+	regErrorStore := models.NewRegistrationFailureLogHandler()
+	var tempFile *os.File
+	var mu sync.Mutex
+	defer func() {
+		_ = r.Body.Close()
+	}()
+	userID := uuid.FromStringOrNil(user.ID)
+	var message string
+
+	//Here the codes handles to decode and store the data from the payload
+	var importRequest schemav1beta1.ImportRequest
+
+	err := json.NewDecoder(r.Body).Decode(&importRequest)
+	if err != nil {
+		h.log.Info("Error in unmarshalling request body")
+		h.sendErrorEvent(userID, provider, "Error in unmarshalling request body", err)
+		http.Error(rw, "Invalid request format", http.StatusBadRequest)
+		return
+	}
+
+	registrationHelper := registration.NewRegistrationHelper(
+		utils.UI,
+		h.registryManager,
+		regErrorStore,
+	)
+	var dir registration.Dir
+	switch importRequest.UploadType {
+	case "csv":
+		err := mesheryctlUtils.SetLogger(false)
 		if err != nil {
-			err = meshkitutils.ErrCreateFile(err, "/tmp/upload-*.tar.gz")
-			h.log.Error(err)
-			http.Error(rw, err.Error(), http.StatusBadRequest)
+			h.handleError(rw, err, "Error setting logger")
+			h.sendErrorEvent(userID, provider, "Error setting logger", err)
+		}
+		fetchBase64DataFromDataURL := func(dataURL string) ([]byte, error) {
+			if strings.HasPrefix(dataURL, "data:text/csv;base64,") {
+				base64Data := strings.TrimPrefix(dataURL, "data:text/csv;base64,")
+				return base64.StdEncoding.DecodeString(base64Data)
+			}
+			return nil, ErrFileType("file is not of type csv")
+		}
+		modelCSVData, err := fetchBase64DataFromDataURL(importRequest.ImportBody.ModelCsv)
+		if err != nil {
+			h.handleError(rw, err, "Error fetching or decoding Model CSV")
+			h.sendErrorEvent(userID, provider, "Error fetching or decoding Model CSV", err)
+			return
+		}
+		modelCsvFile, err := os.CreateTemp("", "model-*.csv")
+		if err != nil {
+			err = ErrCreateFile(err, "Error creating temp file for Model CSV")
+			h.handleError(rw, err, "Error creating temp file for Model CSV")
+			h.sendErrorEvent(userID, provider, "Error creating temp file for Model CSV", err)
+			return
+		}
+		defer modelCsvFile.Close()
+
+		_, err = modelCsvFile.Write(modelCSVData)
+		if err != nil {
+			err = ErrWritingIntoFile(err, "Error writing Model CSV to temp file")
+			h.handleError(rw, err, "Error writing Model CSV to temp file")
+			h.sendErrorEvent(userID, provider, "Error writing Model CSV to temp file", err)
+			return
+		}
+
+		componentCSVData, err := fetchBase64DataFromDataURL(importRequest.ImportBody.ComponentCsv)
+		if err != nil {
+			h.handleError(rw, err, "Error fetching or decoding Component CSV")
+			h.sendErrorEvent(userID, provider, "Error fetching or decoding Component CSV", err)
+			return
+		}
+
+		componentCsvFile, err := os.CreateTemp("", "component-*.csv")
+		if err != nil {
+			err = ErrCreateFile(err, "Error creating temp file for Component CSV")
+			h.handleError(rw, err, "Error creating temp file for Component CSV")
+			h.sendErrorEvent(userID, provider, "Error creating temp file for Component CSV", err)
+			return
+		}
+		defer componentCsvFile.Close()
+
+		_, err = componentCsvFile.Write(componentCSVData)
+		if err != nil {
+			err = ErrWritingIntoFile(err, "Error writing Component CSV to temp file")
+			h.handleError(rw, err, "Error writing Component CSV to temp file")
+			h.sendErrorEvent(userID, provider, "Error writing Component CSV to temp file", err)
+			return
+		}
+
+		relationshipCSVData, err := fetchBase64DataFromDataURL(importRequest.ImportBody.RelationshipCSV)
+		if err != nil {
+			h.handleError(rw, err, "Error fetching or decoding Model CSV")
+			h.sendErrorEvent(userID, provider, "Error fetching or decoding Model CSV", err)
+			return
+		}
+		relationshipCsvFile, err := os.CreateTemp("", "relationship-*.csv")
+		if err != nil {
+			err = ErrCreateFile(err, "Error creating temp file for Model CSV")
+			h.handleError(rw, err, "Error creating temp file for Model CSV")
+			h.sendErrorEvent(userID, provider, "Error creating temp file for Model CSV", err)
+			return
+		}
+		defer relationshipCsvFile.Close()
+
+		_, err = relationshipCsvFile.Write(relationshipCSVData)
+		if err != nil {
+			err = ErrWritingIntoFile(err, "Error writing Model CSV to temp file")
+			h.handleError(rw, err, "Error writing Model CSV to temp file")
+			h.sendErrorEvent(userID, provider, "Error writing Model CSV to temp file", err)
+			return
+		}
+
+		var wg sync.WaitGroup
+		modelLocation := filepath.Join(os.Getenv("HOME"), utils.RegistryLocation)
+		if _, err := os.Stat(modelLocation); os.IsNotExist(err) {
+			_ = os.MkdirAll(modelLocation, 0755)
+		}
+
+		tempDir, err := os.MkdirTemp("", "tempData")
+		if err != nil {
+			h.handleError(rw, err, "Error creating temporary directory")
+			h.sendErrorEvent(userID, provider, "Error creating temporary directory", err)
+			return
+		}
+		defer os.RemoveAll(tempDir)
+
+		err = mesheryctlUtils.InvokeGenerationFromSheet(&wg, tempDir, 0, 0, "", "", modelCsvFile.Name(), componentCsvFile.Name(), "", relationshipCsvFile.Name(), 0, nil)
+		if err != nil {
+			h.handleError(rw, err, "Error invoking generation from sheet")
+			h.sendErrorEvent(userID, provider, "Error invoking generation from sheet", err)
+			return
+		}
+
+		h.sendEventForImport(userID, provider, 0, "", true)
+		modelDirPaths, err := models.GetModelDirectoryPaths(tempDir)
+		if err != nil {
+			h.log.Error(models.ErrSeedingComponents(err))
+		}
+		if importRequest.Register {
+			for _, dirPath := range modelDirPaths {
+				dir := registration.NewDir(dirPath)
+				registrationHelper.Register(dir)
+			}
+		} else {
+			return
+		}
+
+		if _, err := os.Stat(modelLocation); os.IsNotExist(err) {
+			_ = os.MkdirAll(modelLocation, 0755)
+		}
+
+		err = utils.CopyDirectory(tempDir, modelLocation)
+		if err != nil {
+			h.handleError(rw, err, "Error copying data to model location")
+			h.sendErrorEvent(userID, provider, "Error copying data to model location", err)
+			return
+		}
+
+	//Case when it is URL and them the model is generated from the URL
+	case "url":
+
+		model := &mesheryctlUtils.ModelCSV{
+			Model:            importRequest.ImportBody.Model.Model,
+			ModelDisplayName: importRequest.ImportBody.Model.ModelDisplayName,
+			PrimaryColor:     importRequest.ImportBody.Model.PrimaryColor,
+			SecondaryColor:   importRequest.ImportBody.Model.SecondaryColor,
+			Category:         importRequest.ImportBody.Model.Category,
+
+			Registrant:        importRequest.ImportBody.Model.Registrant,
+			Shape:             importRequest.ImportBody.Model.Shape,
+			SubCategory:       importRequest.ImportBody.Model.SubCategory,
+			SVGColor:          importRequest.ImportBody.Model.SvgColor,
+			SVGWhite:          importRequest.ImportBody.Model.SvgWhite,
+			SVGComplete:       importRequest.ImportBody.Model.SvgComplete,
+			IsAnnotation:      strconv.FormatBool(importRequest.ImportBody.Model.IsAnnotation),
+			PublishToRegistry: strconv.FormatBool(importRequest.ImportBody.Model.PublishToRegistry),
+		}
+		setDefaultValues(model)
+		//Model generation strats from here
+		model.Model = strings.ToLower(model.Model)
+
+		pkg, version, err := mesheryctlUtils.GenerateModels(model.Registrant, importRequest.ImportBody.Url, model.Model)
+		if err != nil {
+			h.handleError(rw, err, "Error generating model")
+			h.sendErrorEvent(userID, provider, "Error generating model", err)
+			return
+		}
+		modelDirPath, compDirPath, err := utils.CreateVersionedDirectoryForModelAndComp(version, model.Model)
+		if err != nil {
+			h.handleError(rw, err, "Error decoding JSON into ModelCSV")
+			h.sendErrorEvent(userID, provider, "Error decoding JSON into ModelCSV", err)
+			return
+		}
+		filePath := filepath.Join(modelDirPath, model.Model+".json")
+		modelDef := model.CreateModelDefinition(version, utils.DefVersion)
+		err = modelDef.WriteModelDefinition(filePath, "json")
+		if err != nil {
+			h.handleError(rw, err, "Error decoding JSON into ModelCSV")
+			h.sendErrorEvent(userID, provider, "Error decoding JSON into ModelCSV", err)
+			return
+		}
+
+		//Component generation starts here
+		lengthofComps, _, err := mesheryctlUtils.GenerateComponentsFromPkg(pkg, compDirPath, utils.DefVersion, modelDef)
+		if err != nil {
+			h.handleError(rw, err, "Error generating components")
+			h.sendErrorEvent(userID, provider, "Error generating components", err)
+			return
+		}
+
+		//Event when the URL is used to show that we g
+		h.sendEventForImport(userID, provider, lengthofComps, model.Model, false)
+		if importRequest.Register {
+			dir = registration.NewDir(modelDirPath)
+			registrationHelper.Register(dir)
+		} else {
+			return
+		}
+
+	case "file":
+		base64Data, err := json.Marshal(importRequest.ImportBody.ModelFile)
+		if err != nil {
+			http.Error(rw, "Internal server error", http.StatusInternalServerError)
+			return
+		}
+		base64String := string(base64Data)
+		// Remove double quotes
+		base64String = base64String[1 : len(base64String)-1]
+
+		decodedBytes, err := base64.StdEncoding.DecodeString(base64String)
+		if err != nil {
+			http.Error(rw, "Invalid base64 data", http.StatusBadRequest)
+			return
+		}
+		tempFile, err = CreateTemp(importRequest.ImportBody.FileName, decodedBytes)
+		if err != nil {
+			err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
+			h.handleError(rw, err, err.Error())
+			h.sendErrorEvent(userID, provider, "Error creating temp file", err)
 			return
 		}
 		defer os.Remove(tempFile.Name())
 
-		_, err = tempFile.Write([]byte(dirPath))
+		dir = registration.NewDir(tempFile.Name())
+		if importRequest.Register {
+			registrationHelper.Register(dir)
+			tempFile.Close()
+		}
+	case "urlImport":
+		downloadFile := func(url string) ([]byte, error) {
+			resp, err := http.Get(url)
+			if err != nil {
+				return nil, fmt.Errorf("error downloading file from URL: %v", err)
+			}
+			defer resp.Body.Close()
+
+			if resp.StatusCode != http.StatusOK {
+				return nil, fmt.Errorf("failed to download file, status code: %d", resp.StatusCode)
+			}
+
+			fileData, err := io.ReadAll(resp.Body)
+			if err != nil {
+				return nil, fmt.Errorf("error reading downloaded file: %v", err)
+			}
+
+			return fileData, nil
+		}
+
+		// Download the file from the provided URL
+		fileData, err := downloadFile(importRequest.ImportBody.Url)
 		if err != nil {
-			err = meshkitutils.ErrWriteFile(err, tempFile.Name())
+			h.handleError(rw, err, "Error downloading file from URL")
+			h.sendErrorEvent(userID, provider, "Error downloading file from URL", err)
+			return
+		}
+		isOCI := meshkitOci.IsOCIArtifact(fileData)
+		fileType := ".tar"
+		if !isOCI {
+			fileType = detectFileType(fileData)
+		}
+		name := "model" + fileType
+		//write the file to a temp file
+		tempFile, err = CreateTemp(name, fileData)
+		if err != nil {
+			err = meshkitutils.ErrCreateFile(err, "Error creating temp file")
+			h.handleError(rw, err, "Error creating temp file")
+			h.sendErrorEvent(userID, provider, "Error creating temp file", err)
+			return
+		}
+		defer os.Remove(tempFile.Name())
+
+		dir = registration.NewDir(tempFile.Name())
+		if importRequest.Register {
+			registrationHelper.Register(dir)
+			tempFile.Close()
+		}
+	}
+
+	h.handleRegistrationAndError(registrationHelper, &mu, &response, regErrorStore)
+	var errMsg string
+	message = writeMessageString(&response)
+	if response.EntityCount.TotalErrCount > 0 {
+		errMsg = ErrMsgContruct(&response)
+	}
+
+	h.sendSuccessResponse(rw, userID, provider, message, errMsg, &response)
+
+}
+
+// swagger:route GET /api/meshmodels/export ExportModel idExportModel
+// Handle GET request for exporting a model.
+//
+// # Export model with the given id in the output format specified
+//
+// ```?id={id}```
+// ```?output_format={output_format}``` Can be `json`, `yaml`, or `oci`. Default is `oci`
+//
+// responses:
+//
+//	200: []byte
+
+func (h *Handler) ExportModel(rw http.ResponseWriter, r *http.Request) {
+	modelId := r.URL.Query().Get("id")
+	name := r.URL.Query().Get("name")
+	version := r.URL.Query().Get("version")
+	outputFormat := r.URL.Query().Get("output_format")
+	fileTypes := r.URL.Query().Get("file_type")
+	if fileTypes == "" {
+		fileTypes = "oci"
+	}
+	if outputFormat == "" {
+		outputFormat = "json"
+	}
+	hasComponents, err := strconv.ParseBool(r.URL.Query().Get("components"))
+	if err != nil {
+		hasComponents = true
+	}
+
+	hasRelationships, err := strconv.ParseBool(r.URL.Query().Get("relationships"))
+	if err != nil {
+		hasRelationships = true
+	}
+
+	// 1. Get the model data
+	modelFilter := &regv1beta1.ModelFilter{
+		Id:            modelId,
+		Name:          name,
+		Components:    hasComponents,
+		Relationships: hasRelationships,
+		Greedy:        true,
+		Version:       version,
+	}
+	e, _, _, err := h.registryManager.GetEntities(modelFilter)
+	if err != nil {
+		h.log.Error(ErrGetMeshModels(err))
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+		return
+	}
+	if len(e) == 0 {
+		h.log.Error(ErrGetMeshModels(err))
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+	}
+	model := e[0].(*_model.ModelDefinition)
+	//This path is used to so that the function can be aware of where the svg file is
+	//This is for relative path as we are inside meshery/server/cmd/main.go
+	//File is stored in Ui folder so we need to move 2 directories back
+	//We do this because we use this in mesheryctl as well
+	err = model.ReplaceSVGData("../../")
+	if err != nil {
+		h.log.Error(err)
+	}
+	// 2. Convert it to oci
+	temp := os.TempDir()
+	modelDir := filepath.Join(temp, model.Name)
+	versionDir := filepath.Join(modelDir, model.Model.Version, model.Version)
+
+	// Create necessary directories: {modelName}/v1.0.0/1.0.0/{components, relationships}
+	dirs := []string{
+		versionDir,
+		filepath.Join(versionDir, "components"),
+		filepath.Join(versionDir, "relationships"),
+	}
+
+	for _, dir := range dirs {
+		err = os.MkdirAll(dir, 0700)
+		if err != nil {
+			err = meshkitutils.ErrCreateDir(err, "Error creating temp directory")
 			h.log.Error(err)
-			http.Error(rw, err.Error(), http.StatusBadRequest)
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			return
+		}
+	}
+	defer os.RemoveAll(modelDir)
+
+	components := model.Components.([]component.ComponentDefinition)
+	rels := model.Relationships.([]relationship.RelationshipDefinition)
+
+	model.Relationships = nil
+	model.Components = nil
+	// Write model.json to {modelname}/v1.0.0/1.0.0/model.json
+	err = model.WriteModelDefinition(filepath.Join(versionDir, fmt.Sprintf("model.%s", outputFormat)), outputFormat)
+	if err != nil {
+		h.log.Error(err)
+		http.Error(rw, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	componentsDir := filepath.Join(versionDir, "components")
+	relationshipsDir := filepath.Join(versionDir, "relationships")
+
+	for _, comp := range components {
+		_ = comp.ReplaceSVGData("../../")
+		comp.Model = *model
+		_, err := comp.WriteComponentDefinition(componentsDir, outputFormat)
+		if err != nil {
+			h.log.Error(err)
+		}
+
+	}
+	for _, rel := range rels {
+		rel.Model = *model
+		err := rel.WriteRelationshipDefinition(relationshipsDir, outputFormat)
+		if err != nil {
+			h.log.Error(err)
+		}
+
+	}
+
+	// Write components into {modelname}/v1.0.0/1.0.0/components
+
+	// At this point, the data has been written to the directories:
+	// {modelname}/v1.0.0/1.0.0/model.json
+	// {modelname}/v1.0.0/1.0.0/components/*.json
+	// {modelname}/v1.0.0/1.0.0/relationships/*.json
+
+	// Build OCI image for the model from the modelDir
+	var tarfileName string
+	var byt []byte
+	if fileTypes == "oci" {
+		img, err := meshkitOci.BuildImage(modelDir)
+		if err != nil {
+			h.log.Error(err) // TODO: Add appropriate meshkit error
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
 			return
 		}
 
-		err = processUploadedFile(tempFile.Name(), h, &compCount, &relCount)
+		// Save OCI artifact into a tar file
+		tarfileName := filepath.Join(modelDir, "model.tar")
+		err = meshkitOci.SaveOCIArtifact(img, tarfileName, model.Name)
 		if err != nil {
 			h.log.Error(err)
-			http.Error(rw, err.Error(), http.StatusBadRequest)
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		message := writeMessageString(compCount, relCount)
-		if message.Len() > 0 {
-			h.log.Info(message.String())
-		}
-		rw.WriteHeader(http.StatusOK)
-		_, _ = rw.Write([]byte(message.String()))
-		return
-	}
 
-	file, _, err := r.FormFile("file")
-	if err != nil {
-		err = ErrRetrieveData(err)
-		http.Error(rw, err.Error(), http.StatusBadRequest)
-		return
-	}
-	defer file.Close()
-
-	fileContent, err := io.ReadAll(file)
-	if err != nil {
-		err = meshkitutils.ErrReadFile(err, string(fileContent))
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	entityType, err := meshkitutils.FindEntityType(fileContent)
-	if err != nil {
-		h.log.Error(err)
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	if entityType == "" {
-		err = meshkitutils.ErrInvalidSchemaVersion
-		h.log.Error(err)
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	err = RegisterEntity(fileContent, entityType, h)
-	if err != nil {
-		h.log.Error(err)
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	message := ""
-	if entityType == entity.ComponentDefinition {
-		message = "Registered Component"
+		// 3. Send response
+		byt, _ = os.ReadFile(tarfileName)
+		rw.Header().Add("Content-Type", "application/x-tar")
+		rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.tar\"", model.Name))
+		rw.Header().Set("Content-Length", fmt.Sprintf("%d", len(byt)))
 	} else {
-		message = "Registered Relationship"
-	}
-	h.log.Info(message)
-	rw.WriteHeader(http.StatusOK)
-	_, _ = rw.Write([]byte(message))
-}
-func writeMessageString(compCount int, relCount int) strings.Builder {
-
-	var message strings.Builder
-
-	if compCount > 0 {
-		message.WriteString(fmt.Sprintf("Total Components Registered: %d", compCount))
-	}
-
-	if relCount > 0 {
-		if message.Len() > 0 {
-			message.WriteString(" and ")
-		}
-		message.WriteString(fmt.Sprintf("Registered Relationships: %d", relCount))
-	}
-	return message
-}
-func processUploadedFile(filePath string, h *Handler, compCount *int, relCount *int) error {
-	tempDir, err := os.MkdirTemp("", "extracted-")
-	if err != nil {
-		return ErrCreateDir(err, "Error creating temp dir")
-	}
-	defer os.RemoveAll(tempDir)
-
-	err = utils.ExtractFile(filePath, tempDir)
-	if err != nil {
-		return err
-	}
-	err = filepath.Walk(tempDir, func(path string, info os.FileInfo, err error) error {
+		var tarData bytes.Buffer
+		err := meshkitutils.Compress(modelDir, &tarData)
 		if err != nil {
-			return meshkitutils.ErrFileWalkDir(err, path)
+			h.log.Error(err)
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			return
 		}
-		if !info.IsDir() {
-			if meshkitutils.IsYaml(path) {
-				content, err := os.ReadFile(path)
-				if err != nil {
-					return meshkitutils.ErrReadFile(err, path)
-				}
-				entityType, err := meshkitutils.FindEntityType(content)
-				if err != nil {
-					return err
-				}
-				if entityType != "" {
-					err = RegisterEntity(content, entityType, h)
-					if err != nil {
-						return err
-					}
-					if entityType == entity.ComponentDefinition {
-						*compCount++
-					} else {
-						*relCount++
-					}
-				}
+		tarfileName = filepath.Join(modelDir, "model.tar.gz")
+		err = os.WriteFile(tarfileName, tarData.Bytes(), 0644)
+		if err != nil {
+			h.log.Error(err)
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		byt, _ = os.ReadFile(tarfileName)
+		rw.Header().Add("Content-Type", "application/gzip")
+		rw.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename=\"%s.tar.gz\"", model.Name))
 
-			}
-			if meshkitutils.IsTarGz(path) || meshkitutils.IsZip(path) {
-				return processUploadedFile(path, h, compCount, relCount)
-			}
-		}
-		return nil
-	})
-	return err
+	}
+
+	// 3. Send response
+	rw.Header().Set("Content-Length", fmt.Sprintf("%d", len(byt)))
+	_, err = rw.Write(byt)
+	if err != nil {
+		h.log.Error(ErrGetMeshModels(err))
+		http.Error(rw, ErrGetMeshModels(err).Error(), http.StatusInternalServerError)
+	}
 }
+
 func RegisterEntity(content []byte, entityType entity.EntityType, h *Handler) error {
 	switch entityType {
 	case entity.ComponentDefinition:
-		var c v1beta1.ComponentDefinition
+		var c component.ComponentDefinition
 		err := json.Unmarshal(content, &c)
 		if err != nil {
 			return meshkitutils.ErrUnmarshal(err)
 		}
-		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Host{
-			Hostname: c.Model.Registrant.Hostname,
+		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(connection.Connection{
+			Kind: c.Model.Registrant.Kind,
 		}, &c)
-		helpers.HandleError(v1beta1.Host{
-			Hostname: c.Model.Registrant.Hostname,
+		helpers.HandleError(connection.Connection{
+			Kind: c.Model.Registrant.Kind,
 		}, &c, err, isModelError, isRegistrantError)
 		return nil
 	case entity.RelationshipDefinition:
-		var r v1alpha2.RelationshipDefinition
+		var r relationship.RelationshipDefinition
 		err := json.Unmarshal(content, &r)
 		if err != nil {
 			return meshkitutils.ErrUnmarshal(err)
 		}
-		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(v1beta1.Host{
-			Hostname: r.Model.Registrant.Hostname,
+		isRegistrantError, isModelError, err := h.registryManager.RegisterEntity(connection.Connection{
+			Kind: r.Model.Registrant.Kind,
 		}, &r)
-		helpers.HandleError(v1beta1.Host{
-			Hostname: r.Model.Registrant.Hostname,
+		helpers.HandleError(connection.Connection{
+			Kind: r.Model.Registrant.Kind,
 		}, &r, err, isModelError, isRegistrantError)
 		return nil
 	}

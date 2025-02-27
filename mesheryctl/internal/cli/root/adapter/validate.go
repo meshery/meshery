@@ -1,0 +1,123 @@
+// Copyright Meshery Authors
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//     http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package adapter
+
+import (
+	"fmt"
+	"strings"
+
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/pkg/errors"
+	log "github.com/sirupsen/logrus"
+	"github.com/spf13/cobra"
+	"github.com/spf13/viper"
+)
+
+// Operation is the common body type to be passed for Mesh Ops
+type Operation struct {
+	Adapter    string `json:"adapter"`
+	CustomBody string `json:"customBody"`
+	DeleteOp   string `json:"deleteOp"`
+	Namespace  string `json:"namespace"`
+	Query      string `json:"query"`
+}
+
+var spec string
+
+var linkDocMeshValidate = map[string]string{
+	"link":    "![mesh-validate-usage](/assets/img/mesheryctl/mesh-validate.png)",
+	"caption": "Usage of mesheryctl adapter validate",
+}
+
+// validateCmd represents the infrastructure validation command
+var validateCmd = &cobra.Command{
+	Use:   "validate",
+	Short: "Validate conformance to predefined standards",
+	Example: `
+// Validate conformance to predefined standards
+mesheryctl adapter validate [mesh name] --adapter [name of the adapter] --tokenPath [path to token for authentication] --spec [specification to be used for conformance test] --namespace [namespace to be used]
+
+// Validate Istio to predefined standards
+mesheryctl adapter validate istio --adapter meshery-istio --spec smi
+	`,
+	Annotations: linkDocMeshValidate,
+	Long:        `Validate predefined conformance to different standard specifications`,
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		log.Infof("Verifying prerequisites...")
+
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			utils.Log.Error(err)
+			return nil
+		}
+
+		prefs, err := utils.GetSessionData(mctlCfg)
+		if err != nil {
+			utils.Log.Error((ErrGettingSessionData(err)))
+		}
+		//resolve adapterUrl to adapter Location
+		for _, adapter := range prefs.MeshAdapters {
+			adapterName := strings.Split(adapter.Location, ":")
+			if adapterName[0] == adapterURL {
+				adapterURL = adapter.Location
+				meshName = adapter.Location
+			}
+		}
+		//sync with available adapters
+		if err = validateAdapter(mctlCfg, meshName); err != nil {
+			utils.Log.Error(ErrValidatingAdapters(errors.Wrap(err, "Unable to sync with available adapters. \n")))
+		}
+		log.Info("verified prerequisites")
+		return nil
+	},
+	RunE: func(cmd *cobra.Command, args []string) error {
+		log.Infof("Starting cloud and cloud native infrastructure validation...")
+
+		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
+		if err != nil {
+			utils.Log.Error(err)
+			return nil
+		}
+		s := utils.CreateDefaultSpinner(fmt.Sprintf("Validating %s", meshName), fmt.Sprintf("\n%s validation successful", meshName))
+		s.Start()
+		_, err = sendOperationRequest(mctlCfg, meshName, false, spec)
+		if err != nil {
+			utils.Log.Error(err)
+			return nil
+		}
+		s.Stop()
+
+		if watch {
+			log.Infof("Verifying Operation")
+			_, err = waitForValidateResponse(mctlCfg, "Smi conformance test")
+			if err != nil {
+				utils.Log.Error(ErrWaitValidateResponse(err))
+				return nil
+			}
+		}
+
+		return nil
+	},
+}
+
+func init() {
+	validateCmd.Flags().StringVarP(&spec, "spec", "s", "smi", "(Required) specification to be used for conformance test (smi/istio-vet)")
+	_ = validateCmd.MarkFlagRequired("spec")
+	validateCmd.Flags().StringVarP(&adapterURL, "adapter", "a", "meshery-nsm", "(Required) Adapter to use for validation")
+	_ = validateCmd.MarkFlagRequired("adapter")
+	validateCmd.Flags().StringVarP(&utils.TokenFlag, "token", "t", "", "Path to token for authenticating to Meshery API")
+	validateCmd.Flags().BoolVarP(&watch, "watch", "w", false, "Watch for events and verify operation (in beta testing)")
+}

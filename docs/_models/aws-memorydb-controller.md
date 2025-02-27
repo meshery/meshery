@@ -42,6 +42,9 @@ components:
   colorIcon: assets/img/integrations/aws-memorydb-controller/components/adopted-resource/icons/color/adopted-resource-color.svg
   whiteIcon: assets/img/integrations/aws-memorydb-controller/components/adopted-resource/icons/white/adopted-resource-white.svg
   description: 
+components-count: 8
+relationships: 
+relationship-count: 0
 featureList: [
   "Amazon MemoryDB for Redis enables machine learning (ML) and generative artificial intelligence (AI) models to work with data stored in Amazon MemoryDB in real-time and without moving your data.",
   "Amazon MemoryDB provides native support for JavaScript Object Notation (JSON) documents in addition to the data structures included in open source Redis, at no additional cost.",

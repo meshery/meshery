@@ -88,7 +88,11 @@ func MakeRequest(req *http.Request) (*http.Response, error) {
 
 	// failsafe for bad api call
 	if resp.StatusCode != 200 && resp.StatusCode != 201 {
-		return nil, ErrFailReqStatus(resp.StatusCode)
+		bodyBytes, err := io.ReadAll(resp.Body)
+		if err != nil {
+			return nil, ErrReadResponseBody(err)
+		}
+		return nil, ErrFailReqStatus(resp.StatusCode, string(bodyBytes))
 	}
 
 	return resp, nil
@@ -328,7 +332,7 @@ func initiateRemoteProviderAuth(provider Provider) (string, error) {
 			return
 		}
 
-		fmt.Fprint(rw, "successfully logged in, you can close this window now")
+		fmt.Fprint(rw, "you have logged in, you can close this window now")
 		tokenChan <- token
 	})
 	if err != nil {

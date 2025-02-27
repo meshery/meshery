@@ -19,7 +19,7 @@ spec:
       containers:
         - env:
             - name: PROVIDER_BASE_URLS
-              value: https://meshery.layer5.io
+              value: https://cloud.layer5.io
             - name: PROVIDER
               value: Meshery
             - name: PLAYGROUND

@@ -20,7 +20,6 @@ import (
 	"github.com/layer5io/meshery/server/internal/store"
 	"github.com/layer5io/meshery/server/machines"
 	mhelpers "github.com/layer5io/meshery/server/machines/helpers"
-	meshmodelhelper "github.com/layer5io/meshery/server/meshmodel"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/connections"
 	mesherymeshmodel "github.com/layer5io/meshery/server/models/meshmodel"
@@ -48,8 +47,7 @@ var (
 
 const (
 	// DefaultProviderURL is the provider url for the "none" provider
-	DefaultProviderURL = "https://meshery.layer5.io"
-	PoliciesPath       = "../meshmodel/kubernetes/v1.25.2/v1.0.0/policies"
+	DefaultProviderURL = "https://cloud.layer5.io"
 	RelationshipsPath  = "../meshmodel/kubernetes/"
 )
 
@@ -203,6 +201,7 @@ func main() {
 		&models.PatternResource{},
 		&models.MesheryApplication{},
 		&models.UserPreference{},
+		&models.UserCapabilities{},
 		&models.PerformanceTestConfig{},
 		&models.SmiResultWithID{},
 		models.K8sContext{},
@@ -211,6 +210,9 @@ func main() {
 		connections.Connection{},
 		v1beta1.Environment{},
 		v1beta1.EnvironmentConnectionMapping{},
+		v1beta1.Workspace{},
+		v1beta1.WorkspacesEnvironmentsMapping{},
+		v1beta1.WorkspacesDesignsMapping{},
 		_events.Event{},
 	)
 	if err != nil {
@@ -221,6 +223,7 @@ func main() {
 	lProv := &models.DefaultLocalProvider{
 		ProviderBaseURL:                 DefaultProviderURL,
 		MapPreferencePersister:          preferencePersister,
+		UserCapabilitiesPersister:       &models.UserCapabilitiesPersister{DB: dbHandler},
 		ResultPersister:                 &models.MesheryResultsPersister{DB: dbHandler},
 		SmiResultPersister:              &models.SMIResultsPersister{DB: dbHandler},
 		TestProfilesPersister:           &models.TestProfilesPersister{DB: dbHandler},
@@ -232,12 +235,15 @@ func main() {
 		MesheryK8sContextPersister:      &models.MesheryK8sContextPersister{DB: dbHandler},
 		OrganizationPersister:           &models.OrganizationPersister{DB: dbHandler},
 		ConnectionPersister:             &models.ConnectionPersister{DB: dbHandler},
-		EnvironmentPersister:			 &models.EnvironmentPersister{DB: dbHandler},
+		EnvironmentPersister:            &models.EnvironmentPersister{DB: dbHandler},
+		WorkspacePersister:              &models.WorkspacePersister{DB: dbHandler},
 		KeyPersister:                    &models.KeyPersister{DB: dbHandler},
 		EventsPersister:                 &models.EventsPersister{DB: dbHandler},
 		GenericPersister:                dbHandler,
 		Log:                             log,
 	}
+
+	// Local remote provider is initalized here.
 	lProv.Initialize()
 
 	hc := &models.HandlerConfig{
@@ -256,10 +262,9 @@ func main() {
 		PrometheusClient:         models.NewPrometheusClient(&log),
 		PrometheusClientForQuery: models.NewPrometheusClientWithHTTPClient(&http.Client{Timeout: time.Second}, &log),
 
-		ApplicationChannel:        models.NewBroadcaster(),
-		PatternChannel:            models.NewBroadcaster(),
-		FilterChannel:             models.NewBroadcaster(),
-		EventBroadcaster:          models.NewBroadcaster(),
+		PatternChannel:            models.NewBroadcaster("Patterns"),
+		FilterChannel:             models.NewBroadcaster("Filters"),
+		EventBroadcaster:          models.NewBroadcaster("Events"),
 		DashboardK8sResourcesChan: models.NewDashboardK8sResourcesHelper(),
 		MeshModelSummaryChannel:   mesherymeshmodel.NewSummaryHelper(),
 
@@ -272,14 +277,17 @@ func main() {
 		os.Exit(1)
 	}
 	//seed the local meshmodel components
-	ch := meshmodelhelper.NewEntityRegistrationHelper(hc, regManager, log)
 	rego := policies.Rego{}
+
 	go func() {
-		ch.SeedComponents()
-		r, err := policies.NewRegoInstance(PoliciesPath, regManager)
-		rego = *r
+		// This is where models are seeded from meshmodel directory to registry
+		models.SeedComponents(log, hc, regManager)
+		// Rego is intialized for passing of policy if the policies are made to be per model base this needs to be removed.
+		r, err := policies.NewRegoInstance(models.PoliciesPath, regManager)
 		if err != nil {
-			log.Warn(ErrCreatingOPAInstance)
+			log.Warn(handlers.ErrCreatingOPAInstance(err))
+		} else {
+			rego = *r
 		}
 		krh.SeedKeys(viper.GetString("KEYS_PATH"))
 		hc.MeshModelSummaryChannel.Publish()
@@ -303,6 +311,7 @@ func main() {
 			TokenStore:                 make(map[string]string),
 			LoginCookieDuration:        1 * time.Hour,
 			SessionPreferencePersister: &models.SessionPreferencePersister{DB: dbHandler},
+			UserCapabilitiesPersister:  &models.UserCapabilitiesPersister{DB: dbHandler},
 			ProviderVersion:            version,
 			SmiResultPersister:         &models.SMIResultsPersister{DB: dbHandler},
 			GenericPersister:           dbHandler,
@@ -336,7 +345,9 @@ func main() {
 
 	models.InitMeshSyncRegistrationQueue()
 	mhelpers.InitRegistrationHelperSingleton(dbHandler, log, &connToInstanceTracker, hc.EventBroadcaster)
+	policies.SyncRelationship.Lock()
 	h := handlers.NewHandlerInstance(hc, meshsyncCh, log, brokerConn, k8sComponentsRegistrationHelper, mctrlHelper, dbHandler, events.NewEventStreamer(), regManager, providerEnvVar, &rego, &connToInstanceTracker)
+	policies.SyncRelationship.Unlock()
 
 	b := broadcast.NewBroadcaster(100)
 	defer b.Close()

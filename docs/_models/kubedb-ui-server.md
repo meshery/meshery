@@ -58,6 +58,9 @@ components:
   colorIcon: assets/img/integrations/kubedb-ui-server/components/redis-sentinel/icons/color/redis-sentinel-color.svg
   whiteIcon: assets/img/integrations/kubedb-ui-server/components/redis-sentinel/icons/white/redis-sentinel-white.svg
   description: 
+components-count: 12
+relationships: 
+relationship-count: 0
 featureList: [
   "KubeDB simplifies many of the difficult or tedious management tasks of running a production grade databases on private and public clouds. Maintain one stack for all your stateless and stateful applications and simplify the operational complexity.",
   "Standard Kubernetes is all you need. If you can run Kubernetes, you can provision and manage databases using KubeDB. Use standard Kubernetes CLI and API to provision and manage databases.",

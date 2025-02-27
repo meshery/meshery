@@ -3,20 +3,24 @@ layout: default
 title: Meshery Operator, MeshSync, Broker Troubleshooting Guide
 permalink: guides/troubleshooting/meshery-operator-meshsync
 language: en
-abstract: This documentation provides comprehensive guidance on troubleshooting in Meshery Operator, MeshSync and Broker, ensuring you can address common issues efficiently.
+abstract: Comprehensive guidance for troubleshooting Meshery Operator, MeshSync and Broker deployments under various scenarios.
 type: guides
 category: troubleshooting
 ---
 
-{% include alert.html type="dark" title="Meshery Error Code Reference" content="Have specific error with an error code? See the <a href='/reference/error-codes'>Meshery Error Code Reference</a> for probable cause and suggested remediations." %}
+{% include alert.html type="info" title="What is Meshery Operator?" content="<a href='/concepts/architecture/operator'>Meshery Operator</a> controls and monitors the lifecycle of components deployed inside Meshery-managed Kubernetes clusters. Learn more about <a href='/concepts'>Meshery's architecture</a>." %}
 
-There are common issues Meshery users may face while operating the [Meshery Operator]({{site.baseurl}}/concepts/architecture/operator/) and its custom controllers, [MeshSync]({{site.baseurl}}/concepts/architecture/meshsync) and [Broker]({{site.baseurl}}/concepts/architecture/broker), that can be resolved by performing specific actions. This documentation aims to empower users by providing a set of troubleshooting tools and actions.
+This guide offers comprehensive for troubleshooting instructions for [Meshery Operator]({{site.baseurl}}/concepts/architecture/operator) and its custom controllers, [MeshSync]({{site.baseurl}}/concepts/architecture/meshsync) and [Broker]({{site.baseurl}}/concepts/architecture/broker). Follow the steps outlined in this document to ensure a smooth Meshery deployment.
+
+First, understand the [Meshery Operator Deployment Scenarios](#meshery-operator-deployment-scenarios) and the [Status of Meshery Operator, MeshSync, and Meshery Broker](#understanding-the-status-of-meshery-operator-meshsync-and-meshery-broker) to identify the deployment model fitting of your environment. Then, follow the guidance under the respective scenario to troubleshoot accordingly.
+
+{% include alert.html type="dark" title="Meshery Error Code Reference" content="Have specific error with an error code? See the <a href='/reference/error-codes'>Meshery Error Code Reference</a> for probable cause and suggested remediations." %}
 
 ## Understanding the Status of Meshery Operator, MeshSync, and Meshery Broker
 
-The following table describes the various states of MeshSync and Meshery Broker and their implications.
+Each Meshery Operator controller offers a health status that you can use to understand their current health in your deployment. Their health statuses and meanings are described below.of MeshSync and Meshery Broker.
 
-**MeshSync:**
+### MeshSync Health Status
 
 - **ENABLED:** Custom Resource present. MeshSync Controller is not connected to Broker.
 - **DEPLOYED:** Custom Resource present. MeshSync Controller is present but the state is not RUNNING or ERRDISABLE, though
@@ -24,22 +28,21 @@ The following table describes the various states of MeshSync and Meshery Broker 
 - **CONNECTED:** Deployed and connected to Broker.
 - **UNDEPLOYED:** Custom Resource not present.
 
-**Meshery Broker:**
+### Meshery Broker Health Status
 
 - **DEPLOYED:** External IP not exposed OR External IP exposed but Meshery Server is not connected as a client to Broker hence data is not being published.
-
 - **UNDEPLOYED:** Custom Resource not deployed.
 - **CONNECTED:** Deployed, sending data to Meshery Server.
 
 ## Meshery Operator Deployment Scenarios
 
-Because Meshery is versatile in its deployment models, there are a number of scenarios in which you may need to troubleshoot the health of the operator. The following sections describe the various scenarios and the steps you can take to troubleshoot them.
+Because Meshery is versatile in its deployment models, there are different of scenarios in which you may need to troubleshoot the health of Meshery Operator. Identify the deployment model fitting of your environment and follow the guidance under the respective scenario to troublshoot accordingly.
 
 ### In-Cluster Deployment
 
 <!-- Meshery Operator, MeshSync, and Broker are deployed in the same cluster as Meshery Server. This is the default deployment scenario when using `mesheryctl system start` or `make run-local`. -->
 
-Whether using [`mesheryctl system start`](][{{site.baseurl}}/installation]), `[helm install]({{site.baseurl}}/installation/kubernetes/helm)` or `make run-local`, Meshery Server will automatically connect to any available Kubernetes clusters found in your kubeconfig (under `$HOME/.kube/config`). Once connected, operator, broker(NATS) and meshsync will automatically get deployed in the same clusters.
+Whether using [`mesheryctl system start`]({{site.baseurl}}/installation), [`helm install`]({{site.baseurl}}/installation/kubernetes/helm) or `make run-local`, Meshery Server will automatically connect to any available Kubernetes clusters found in your kubeconfig (under `$HOME/.kube/config`). Once connected, operator, broker(NATS) and meshsync will automatically get deployed in the same clusters.
 
 If everything is fine, by viewing the connection in Meshery UI, MeshSync should be in **CONNECTED:** state. Otherwise, check the Operator's pod logs:
 
@@ -51,16 +54,17 @@ If everything is fine, by viewing the connection in Meshery UI, MeshSync should 
    _or_
 2. Meshery is managing multiple clusters, some of which are not the cluster unto which Meshery Server is deployed.
 
-## Fault Scenarios
+## Common Failure Scenarios
 
-Common failure situations that Meshery users might face are described below.
+Some common failure situations that Meshery users might face are described below.
 
-1. No deployment of Meshery Operator, MeshSync, and Broker.
-   1. Probable cause: Meshery Server cannot connect to Kubernetes cluster; cluster unreachable or kubeconfig without proper permissions needed to deploy Meshery Operator; Kubernetes config initialization issues.
-1. Meshery Operator with MeshSync and Broker deployed, but Meshery Server is not receiving data from MeshSync or data the [Meshery Database]({{site.baseurl}}/concepts/architecture/database) is stale.
-   1. Probable cause: Meshery Server lost subscription to Meshery Broker; Broker server not exposed to external IP; MeshSync not connected to Broker; MeshSync not running; Meshery Database is stale.
-   2. The SQL database in Meshery serves as a cache for cluster state. A single button allows users to dump/reset the Meshery Database.
-1. Orphaned MeshSync and Broker controllers - Meshery Operator is not present, but MeshSync and Broker controllers are running.
+1. **Situation:** No deployment of Meshery Operator, MeshSync, and Broker.
+   1. **Probable cause:** Meshery Server cannot connect to Kubernetes cluster; cluster unreachable or kubeconfig without proper permissions needed to deploy Meshery Operator; Kubernetes config initialization issues.
+1. **Situation:** Meshery Operator with MeshSync and Broker deployed, but Meshery Server is not receiving data from MeshSync or data the [Meshery Database]({{site.baseurl}}/concepts/architecture/database) is stale.
+   1. **Probable cause:** 
+   2. Meshery Server lost subscription to Meshery Broker; Broker server not exposed to external IP; MeshSync not connected to Broker; MeshSync not running; Meshery Database is stale.
+   3. The SQL database in Meshery serves as a cache for cluster state. A single button allows users to dump/reset the Meshery Database.
+   4. Orphaned MeshSync and Broker controllers - Meshery Operator is not present, but MeshSync and Broker controllers are running.
 
 ## Operating Meshery without Meshery Operator
 
@@ -107,7 +111,10 @@ Future Enhancements for Troubleshooting:
 
 </div>
 
-This documentation provides comprehensive guidance on troubleshooting in Meshery, ensuring users can address common issues efficiently.
+## See Also
+
+- [Troubleshooting Meshery Installations](/guides/troubleshooting/installation)
+- [Troubleshooting Errors while running Meshery](guides/troubleshooting/meshery-server)
 
 {% include related-discussions.html tag="meshery" %}
 

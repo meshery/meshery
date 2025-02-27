@@ -1,28 +1,21 @@
-import { useGetComponentsByModelAndKindQuery } from '@/rtk-query/meshModel';
 import { NOTIFICATIONCOLORS } from '@/themes/index';
 import { Box, Stack, Typography, styled, useTheme } from '@layer5/sistent';
-import { alpha } from '@mui/material';
+
 import { FormatStructuredData, TextWithLinks } from '../DataFormatter';
 import { SEVERITY_STYLE } from '../NotificationCenter/constants';
 import { ErrorMetadataFormatter } from '../NotificationCenter/metadata';
 import { ComponentIcon } from './common';
 import { Button } from '@layer5/sistent';
-import { ExternalLinkIcon } from '@layer5/sistent';
+import { ExternalLinkIcon, componentIcon } from '@layer5/sistent';
 import { UsesSistent } from '../SistentWrapper';
+import { openViewScopedToDesignInOperator, useIsOperatorEnabled } from '@/utils/utils';
+import { useRouter } from 'next/router';
 
-const StyledDetailBox = styled(Box)(({ theme, severityColor, bgOpacity }) => ({
-  padding: theme.spacing(2),
-  backgroundColor: alpha(severityColor, bgOpacity),
-  border: `1px solid ${theme.palette.divider}`,
+const StyledDetailBox = styled(Box)(() => ({
   display: 'flex',
 }));
 
 const DeployementComponentFormatter = ({ componentDetail }) => {
-  const { data } = useGetComponentsByModelAndKindQuery({
-    model: componentDetail.Model || 'kubernetes',
-    component: componentDetail.Kind,
-  });
-  const componentDef = data?.components?.[0];
   return (
     <StyledDetailBox
       severityColor={
@@ -34,14 +27,18 @@ const DeployementComponentFormatter = ({ componentDetail }) => {
       flexDirection="column"
     >
       <Stack direction="row" spacing={2} alignItems={'center'}>
-        {componentDef?.metadata?.svgColor && (
-          <ComponentIcon
-            iconSrc={`/${componentDef?.metadata?.svgColor}`}
-            alt={componentDetail.Kind}
-          />
-        )}
-        <Typography variant="textB1Regular" style={{ textTransform: 'capitalize' }}>
-          {componentDetail.Message}
+        <ComponentIcon
+          iconSrc={componentIcon({
+            kind: componentDetail.Kind,
+            model: componentDetail.Model,
+            color: 'color',
+          })}
+          alt={componentDetail.Kind}
+        />
+        <Typography variant="textB1Regular">
+          {componentDetail.Success
+            ? `Deployed ${componentDetail.Kind} "${componentDetail.CompName}"`
+            : `Failed to deploy ${componentDetail.Kind} "${componentDetail.CompName}"`}
         </Typography>
       </Stack>
       {componentDetail.Error && <ErrorMetadataFormatter metadata={componentDetail.Error} />}
@@ -54,7 +51,7 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
   const theme = useTheme();
   const eventStyle = SEVERITY_STYLE[event?.severity] || {};
   const errors = event.metadata?.error;
-
+  const router = useRouter();
   const componentsDetails = Object.values(event.metadata?.summary || {}).flatMap(
     (perComponentDetail) => {
       perComponentDetail = perComponentDetail?.flatMap ? perComponentDetail : [];
@@ -67,6 +64,8 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
     },
   );
 
+  const is_operator_enabled = useIsOperatorEnabled();
+
   return (
     <Box>
       <StyledDetailBox
@@ -77,16 +76,26 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
       >
         <TextWithLinks
           text={event?.description || ''}
-          style={{ color: theme.palette.text.default, textTransform: 'capitalize' }}
+          style={{
+            color: theme.palette.text.default,
+            textTransform: 'capitalize',
+            fontWeight: 'bold',
+          }}
         />
-        {event?.metadata?.view_link && (
+        {is_operator_enabled && (
           <Button
             variant="contained"
             color="primary"
-            onClick={() => window.open(event.metadata?.view_link, '_blank')}
+            onClick={() =>
+              openViewScopedToDesignInOperator(
+                event?.metadata?.design_name,
+                event?.metadata?.design_id,
+                router,
+              )
+            }
             style={{ gap: '0.25rem' }}
           >
-            Open In Visualizer <ExternalLinkIcon fill={theme.palette.common.white} />
+            Open In Operator <ExternalLinkIcon fill={theme.palette.background.constant.white} />
           </Button>
         )}
       </StyledDetailBox>

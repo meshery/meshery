@@ -22,7 +22,7 @@ type User struct {
 	AvatarURL string `json:"avatar_url,omitempty"`
 	Provider  string `json:"provider,omitempty" db:"provider"`
 	Email     string `json:"email,omitempty" db:"email"`
-	Status    string `json:"string,omitempty"`
+	Status    string `json:"status,omitempty"`
 	Bio       string `json:"bio,omitempty" db:"bio"`
 
 	RoleNames []string `json:"role_names,omitempty" db:"-"`

@@ -172,7 +172,7 @@ func DownloadManifests(manifestArr []Manifest, rawManifestsURL string) error {
 			// download the manifest files to ~/.meshery/manifests folder
 			filepath := filepath.Join(MesheryFolder, ManifestsFolder, manifest.Path)
 			if err := meshkitutils.DownloadFile(filepath, manifestFile); err != nil {
-				return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", filepath, manifestFile)))
+				return errors.Wrapf(err, "failed to download %s file from %s", filepath, manifestFile)
 			}
 		}
 	}
@@ -184,19 +184,19 @@ func DownloadOperatorManifest() error {
 	operatorFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperator)
 	err := meshkitutils.DownloadFile(operatorFilepath, OperatorURL)
 	if err != nil {
-		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", operatorFilepath, MesheryOperator)))
+		return errors.Wrapf(err, "failed to download %s file from %s operator file", operatorFilepath, MesheryOperator)
 	}
 
 	brokerFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorBroker)
 	err = meshkitutils.DownloadFile(brokerFilepath, BrokerURL)
 	if err != nil {
-		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", brokerFilepath, MesheryOperatorBroker)))
+		return errors.Wrapf(err, "failed to download %s file from %s operator file", brokerFilepath, MesheryOperatorBroker)
 	}
 
 	meshsyncFilepath := filepath.Join(MesheryFolder, ManifestsFolder, MesheryOperatorMeshsync)
 	err = meshkitutils.DownloadFile(meshsyncFilepath, MeshsyncURL)
 	if err != nil {
-		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s operator file", meshsyncFilepath, MesheryOperatorMeshsync)))
+		return errors.Wrapf(err, "failed to download %s file from %s operator file", meshsyncFilepath, MesheryOperatorMeshsync)
 	}
 
 	return nil
@@ -403,7 +403,7 @@ func DownloadDockerComposeFile(ctx *config.Context, force bool) error {
 		}
 
 		if err := meshkitutils.DownloadFile(DockerComposeFile, fileURL); err != nil {
-			return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to download %s file from %s", DockerComposeFile, fileURL)))
+			return errors.Wrapf(err, "failed to download %s file from %s", DockerComposeFile, fileURL)
 		}
 	}
 	return nil
@@ -615,7 +615,7 @@ func CreateManifestsFolder() error {
 	log.Debug("creating " + ManifestsFolder + "folder...")
 	// create a manifests folder under ~/.meshery to store the manifest files
 	if err := os.MkdirAll(filepath.Join(MesheryFolder, ManifestsFolder), os.ModePerm); err != nil {
-		return errors.Wrapf(err, SystemError(fmt.Sprintf("failed to make %s directory", ManifestsFolder)))
+		return errors.Wrapf(err, "failed to make %s directory", ManifestsFolder)
 	}
 	log.Debug("created manifests folder...")
 

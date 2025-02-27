@@ -1,16 +1,21 @@
 import * as React from 'react';
-import Button from '@material-ui/core/Button';
 import TroubleshootingModal from './TroubleshootingModalComponent';
-import Modal, { RJSFModalWrapper } from './Modal';
-import { helpAndSupportModalSchema, helpAndSupportModalUiSchema } from '@layer5/sistent';
+import { RJSFModalWrapper } from './Modal';
+import {
+  Modal,
+  helpAndSupportModalSchema,
+  helpAndSupportModalUiSchema,
+  Button,
+} from '@layer5/sistent';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { useGetLoggedInUserQuery } from '@/rtk-query/user';
 import SupportIcon from '@/assets/icons/support';
 import { EVENT_TYPES } from 'lib/event-types';
 import { UsesSistent } from './SistentWrapper';
 import { useSupportWebHookMutation } from '@/rtk-query/webhook';
+import { StickyFeedbackButton } from './General/feedback';
 
-const Troubleshoot = (props) => {
+const Troubleshoot = ({ errorMessage, ...props }) => {
   const [open, setOpen] = React.useState(true);
   const [openForm, setOpenForm] = React.useState(false);
   const { notify } = useNotification();
@@ -95,6 +100,11 @@ const Troubleshoot = (props) => {
           />
         </Modal>
       </UsesSistent>
+      <StickyFeedbackButton
+        containerStyles={{ zIndex: 11 }}
+        defaultMessage={errorMessage}
+        defaultOpen={true}
+      />
     </div>
   );
 };

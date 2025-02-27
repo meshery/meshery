@@ -22,6 +22,9 @@ components:
   colorIcon: assets/img/integrations/kubegems-edge/components/edge-task/icons/color/edge-task-color.svg
   whiteIcon: assets/img/integrations/kubegems-edge/components/edge-task/icons/white/edge-task-white.svg
   description: 
+components-count: 3
+relationships: 
+relationship-count: 0
 featureList: [
   "Simplified deployment for edge environments",
   "Optimized for resource-constrained devices",

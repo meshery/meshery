@@ -78,6 +78,17 @@ components:
   colorIcon: assets/img/integrations/aws-ec2-controller/components/vpc-endpoint-service-configuration/icons/color/vpc-endpoint-service-configuration-color.svg
   whiteIcon: assets/img/integrations/aws-ec2-controller/components/vpc-endpoint-service-configuration/icons/white/vpc-endpoint-service-configuration-white.svg
   description: 
+- name: capacity-reservation
+  colorIcon: assets/img/integrations/aws-ec2-controller/components/capacity-reservation/icons/color/capacity-reservation-color.svg
+  whiteIcon: assets/img/integrations/aws-ec2-controller/components/capacity-reservation/icons/white/capacity-reservation-white.svg
+  description: 
+- name: capacity-reservation
+  colorIcon: assets/img/integrations/aws-ec2-controller/components/capacity-reservation/icons/color/capacity-reservation-color.svg
+  whiteIcon: assets/img/integrations/aws-ec2-controller/components/capacity-reservation/icons/white/capacity-reservation-white.svg
+  description: 
+components-count: 19
+relationships: 
+relationship-count: 0
 featureList: [
   "Optimized CPU Configurations",
   "High Packet-Per-Second Performance and Low Latency with Enhanced Networking",

@@ -200,7 +200,7 @@ What library does Docker Hub CLI tool use under the hood? <Althaf>
 Number of registries supported.
 How frequently does ORAS/Flux discover the latest tags?
 Support mesheryctl design import as a new command.
-Consolidate mesheryctl app command into mesheryctl pattern
+Consolidate mesheryctl app command into mesheryctl design
 Improve descriptions of parent and subcommands.
 Pulling container images from OCI registries for
 Meshery Models

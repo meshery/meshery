@@ -58,3 +58,7 @@ opa:
 - changed-files:
   - any-glob-to-any-file:
     - "*.rego"
+tests:
+- changed-files:
+  - any-glob-to-any-file:
+    - "ui/tests/**/*"

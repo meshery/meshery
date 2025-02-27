@@ -9,16 +9,17 @@ display-title: "false"
 list: include
 
 ---
+
 # Meshery Registry: A Central Hub for Capabilities
 
 The Meshery Registry is a vital component within Meshery, serving as a centralized repository for managing a diverse range of cloud and cloud native resources. It stores and organizes crucial information such as models, categories, components, and relationships, enabling efficient interaction and utilization of these resources within the Meshery ecosystem. You can conveniently [access and manage registry data](#interacting-with-the-meshery-registry) through Meshery UI, and through Meshery CLI ([mesheryctl registry]({{site.baseurl}}/reference/mesheryctl/#meshery-registry-management)).
 
-As the central repository for all capabilities known to Meshery, contains various entities.
+As the central repository for all capabilities known to Meshery, the registry contains various entities.
 
 <details>
   <summary>Contents of the Registry</summary>
   <br /><br />
-  <a href="../models">Models</a>: Blueprints defining configurations for interacting with cloud-native infrastructure. They consist of operations, components, relationships, and policies.
+  <a href="../models">Models</a>: Blueprints defining configurations for interacting with cloud native infrastructure. They consist of operations, components, relationships, and policies.
   <ul>
     <li><a href="../components">Components</a>: Reusable building blocks for depicting capabilities defined within models.</li>
     <li><a href="../relationships">Relationships</a>: Define the nature of connections between components within a model, describing how they interact and depend on each other.</li>
@@ -54,7 +55,7 @@ Use either Meshery UI or CLI to interact with the Registry. Meshery UI offers a 
 
 ### Model Generation
 
-The process of generating a Model (and its entities) is a multi-step process and does not require use of Meshery Server. The process begins with the sourcing of the model information from an authoratitive source: a Registrant. Registrants are responsible for providing all the necessary information to Meshery to generate the model.
+The process of generating a Model (and its entities) is a multi-step process and does not require use of Meshery Server. The process begins with the sourcing of the model information from an authoritative source: a Registrant. Registrants are responsible for providing all the necessary information to Meshery to generate the model.
 
 #### Using Meshery CLI to Generate Models
 

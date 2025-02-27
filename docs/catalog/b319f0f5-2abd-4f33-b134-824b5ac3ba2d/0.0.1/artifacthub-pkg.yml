@@ -1,0 +1,20 @@
+version: 0.0.1
+name: persistent-volume
+displayName: Persistent Volume
+createdAt: "2024-01-12T12:45:20Z"
+description: The "Persistent Volume" design enables Kubernetes clusters to manage stateful applications by providing a reliable and consistent storage solution. This design ensures that data remains intact and accessible even if pods are rescheduled or fail.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/b319f0f5-2abd-4f33-b134-824b5ac3ba2d/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "1. Ensure that the selected storage class supports your desired storage backend and meets the performance and availability requirements of your applications.\n2. Misconfigurations can lead to suboptimal performance or even data loss. \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: a7b465ad-21eb-4f3f-9c84-56de76aebe62
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

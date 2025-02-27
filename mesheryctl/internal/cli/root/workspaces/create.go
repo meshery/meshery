@@ -21,7 +21,6 @@ import (
 	"net/http"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 
@@ -41,25 +40,6 @@ mesheryctl exp workspace create --orgId [orgId] --name [name] --description [des
 // Documentation for workspace can be found at:
 https://docs.layer5.io/cloud/spaces/workspaces/
 `,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		// Check prerequisites
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-		if err := utils.IsServerRunning(mctlCfg.GetBaseMesheryURL()); err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return system.ErrGetCurrentContext(err)
-		}
-		if err := ctx.ValidateVersion(); err != nil {
-			return err
-		}
-		return nil
-	},
 
 	Args: func(cmd *cobra.Command, args []string) error {
 		// Check if all three flags are set
@@ -114,7 +94,7 @@ https://docs.layer5.io/cloud/spaces/workspaces/
 		}
 
 		if resp.StatusCode == http.StatusCreated {
-			utils.Log.Info("Workspace ", nameFlag, " created successfully")
+			utils.Log.Info("Workspace ", nameFlag, " created")
 			return nil
 		}
 

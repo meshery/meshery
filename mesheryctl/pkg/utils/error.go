@@ -11,37 +11,47 @@ import (
 // https://docs.meshery.io/project/contributing/contributing-error
 // https://github.com/meshery/meshkit/blob/master/errors/errors.go
 var (
-	ErrFailRequestCode        = "mesheryctl-1090"
-	ErrInvalidTokenCode       = "mesheryctl-1091"
-	ErrFailReqStatusCode      = "mesheryctl-1092"
-	ErrAttachAuthTokenCode    = "mesheryctl-1093"
-	ErrUnmarshalCode          = "mesheryctl-1094"
-	ErrFileReadCode           = "mesheryctl-1095"
-	ErrCreatingRequestCode    = "mesheryctl-1096"
-	ErrMarshalCode            = "mesheryctl-1097"
-	ErrReadResponseBodyCode   = "mesheryctl-1098"
-	ErrParsingUrlCode         = "mesheryctl-1099"
-	ErrNotFoundCode           = "mesheryctl-1100"
-	ErrUnauthenticatedCode    = "mesheryctl-1101"
-	ErrInvalidFileCode        = "mesheryctl-1102"
-	ErrInvalidNameOrIDCode    = "mesheryctl-1103"
-	ErrInvalidAPIResponseCode = "mesheryctl-1104"
-	ErrReadConfigFileCode     = "mesheryctl-1105"
-	ErrMarshalIndentCode      = "mesheryctl-1106"
-	ErrLoadConfigCode         = "mesheryctl-1107"
-	ErrResponseStatusBodyCode = "mesheryctl-1108"
-	ErrResponseStatusCode     = "mesheryctl-1109"
-	ErrJSONToYAMLCode         = "mesheryctl-1110"
-	ErrOutFormatFlagCode      = "mesheryctl-1111"
-	ErrParseGithubFileCode    = "mesheryctl-1112"
-	ErrReadTokenCode          = "mesheryctl-1113"
-	ErrRequestResponseCode    = "mesheryctl-1114"
-	ErrMarshalStructToCSVCode = "mesheryctl-1115"
-	ErrAppendToSheetCode      = "mesheryctl-1116"
-	ErrBadRequestCode         = "mesheryctl-1117"
-	ErrInvalidArgumentCode    = "mesheryctl-1118"
-	ErrGeneratingIconsCode    = "mesheryctl-1119"
-	ErrClearLineCode          = "mesheryctl-1120"
+	ErrFailRequestCode            = "mesheryctl-1090"
+	ErrInvalidTokenCode           = "mesheryctl-1091"
+	ErrFailReqStatusCode          = "mesheryctl-1092"
+	ErrAttachAuthTokenCode        = "mesheryctl-1093"
+	ErrUnmarshalCode              = "mesheryctl-1094"
+	ErrFileReadCode               = "mesheryctl-1095"
+	ErrCreatingRequestCode        = "mesheryctl-1096"
+	ErrMarshalCode                = "mesheryctl-1097"
+	ErrReadResponseBodyCode       = "mesheryctl-1098"
+	ErrParsingUrlCode             = "mesheryctl-1099"
+	ErrNotFoundCode               = "mesheryctl-1100"
+	ErrUnauthenticatedCode        = "mesheryctl-1101"
+	ErrInvalidFileCode            = "mesheryctl-1102"
+	ErrInvalidNameOrIDCode        = "mesheryctl-1103"
+	ErrInvalidAPIResponseCode     = "mesheryctl-1104"
+	ErrReadConfigFileCode         = "mesheryctl-1105"
+	ErrMarshalIndentCode          = "mesheryctl-1106"
+	ErrLoadConfigCode             = "mesheryctl-1107"
+	ErrResponseStatusBodyCode     = "mesheryctl-1108"
+	ErrResponseStatusCode         = "mesheryctl-1109"
+	ErrJSONToYAMLCode             = "mesheryctl-1110"
+	ErrOutFormatFlagCode          = "mesheryctl-1111"
+	ErrParseGithubFileCode        = "mesheryctl-1112"
+	ErrReadTokenCode              = "mesheryctl-1113"
+	ErrRequestResponseCode        = "mesheryctl-1114"
+	ErrMarshalStructToCSVCode     = "mesheryctl-1115"
+	ErrAppendToSheetCode          = "mesheryctl-1116"
+	ErrBadRequestCode             = "mesheryctl-1117"
+	ErrInvalidArgumentCode        = "mesheryctl-1118"
+	ErrGeneratingIconsCode        = "mesheryctl-1119"
+	ErrClearLineCode              = "mesheryctl-1120"
+	ErrUpdateToSheetCode          = "mesheryctl-1129"
+	ErrUpdateRelationshipFileCode = "mesheryctl-1130"
+	ErrGeneratesModelCode         = "mesheryctl-1132"
+	ErrGeneratesComponentCode     = "mesheryctl-1133"
+	ErrUpdateComponentsCode       = "mesheryctl-1134"
+	ErrCSVFileNotFoundCode        = "mesheryctl-1135"
+	ErrReadCSVRowCode             = "mesheryctl-1136"
+	ErrMissingCommandsCode        = "mesheryctl-1137"
+	ErrKubernetesConnectivityCode = "mesheryctl-1138"
+	ErrKubernetesQueryCode        = "mesheryctl-1139"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -179,6 +189,10 @@ func RegistryError(msg string, cmd string) string {
 	switch cmd {
 	case "publish":
 		return formatError(msg, cmdRegistryPublish)
+	case "generate":
+		return formatError(msg, cmdRegistryGenerate)
+	case "update":
+		return formatError(msg, cmdRegistryUpdate)
 	default:
 		return formatError(msg, cmdRegistry)
 	}
@@ -234,14 +248,14 @@ func FilterViewError(msg string) string {
 	return formatError(msg, cmdFilterView)
 }
 
-// PatternError returns a formatted error message with a link to 'pattern' command usage page in addition to the error message
-func PatternError(msg string) string {
-	return formatError(msg, cmdPattern)
+// DesignError returns a formatted error message with a link to 'design' command usage page in addition to the error message
+func DesignError(msg string) string {
+	return formatError(msg, cmdDesign)
 }
 
-// PatternViewError returns a formatted error message with a link to the 'pattern view' commad usage page in addition to the error message
-func PatternViewError(msg string) string {
-	return formatError(msg, cmdPatternView)
+// DesignViewError returns a formatted error message with a link to the 'design view' commad usage page in addition to the error message
+func DesignViewError(msg string) string {
+	return formatError(msg, cmdDesignView)
 }
 
 // formatError returns a formatted error message with a link to the meshery command URL
@@ -277,12 +291,12 @@ func formatError(msg string, cmd cmdType) string {
 		return formatUsageDetails(msg, filterListURL)
 	case cmdFilterView:
 		return formatUsageDetails(msg, filterViewURL)
-	case cmdPattern:
-		return formatUsageDetails(msg, patternUsageURL)
-	case cmdPatternView:
-		return formatUsageDetails(msg, patternViewURL)
-	case cmdPatternExport:
-		return formatUsageDetails(msg, patternExportURL)
+	case cmdDesign:
+		return formatUsageDetails(msg, designUsageURL)
+	case cmdDesignView:
+		return formatUsageDetails(msg, designViewURL)
+	case cmdDesignExport:
+		return formatUsageDetails(msg, designExportURL)
 	case cmdContextDelete:
 		return formatUsageDetails(msg, contextDeleteURL)
 	case cmdContextCreate:
@@ -323,6 +337,12 @@ func formatError(msg string, cmd cmdType) string {
 		return formatUsageDetails(msg, modelViewURL)
 	case cmdRegistry:
 		return formatUsageDetails(msg, registryUsageURL)
+	case cmdRegistryPublish:
+		return formatUsageDetails(msg, registryPublishURL)
+	case cmdRegistryGenerate:
+		return formatUsageDetails(msg, registryGenerateURL)
+	case cmdRegistryUpdate:
+		return formatUsageDetails(msg, registryUpdateURL)
 	case cmdEnvironment:
 		return formatUsageDetails(msg, environmentUsageURL)
 	case cmdEnvironmentCreate:
@@ -474,19 +494,21 @@ func ErrInvalidNameOrID(err error) error {
 func ErrAttachAuthToken(err error) error {
 	return errors.New(ErrAttachAuthTokenCode, errors.Alert,
 		[]string{"Authentication token Not Found"},
-		[]string{"Authentication token not found: " + err.Error()},
+		[]string{"Authentication token not found: " + err.Error() + "\nLog in with `mesheryctl system login`"},
 		[]string{"The user is not logged in to generate a token."},
 		[]string{"Log in with `mesheryctl system login` or supply a valid user token using the --token (or -t) flag."})
 }
 
-func ErrFailReqStatus(statusCode int) error {
+func ErrFailReqStatus(statusCode int, obj string) error {
 	return errors.New(ErrFailReqStatusCode, errors.Alert,
 		[]string{"Failed response server error"},
-		[]string{"Response Status Code " + strconv.Itoa(statusCode) + ", possibly Server error"},
+		[]string{"Response Status Code " + strconv.Itoa(statusCode) + ". Server emitted an error: " + obj},
 		[]string{"Invalid API call"},
 		[]string{"Check your network connection and the status of Meshery Server via `mesheryctl system status`."})
 }
-
+func ErrGenerateModel(err error, modelName string) error {
+	return errors.New(ErrGeneratesModelCode, errors.Alert, []string{fmt.Sprintf("error generating model: %s", modelName)}, []string{fmt.Sprintf("Error generating model: %s\n %s", modelName, err.Error())}, []string{"Registrant used for the model is not supported", "Verify the model's source URL.", "Failed to create a local directory in the filesystem for this model."}, []string{"Ensure that each kind of registrant used is a supported kind.", "Ensure correct model source URL is provided and properly formatted.", "Ensure sufficient permissions to allow creation of model directory."})
+}
 func ErrMarshalIndent(err error) error {
 	return errors.New(ErrMarshalIndentCode, errors.Alert,
 		[]string{"Error indenting JSON body"},
@@ -590,7 +612,19 @@ func ErrAppendToSheet(err error, id string) error {
 		[]string{"Error occurred while appending to the spreadsheet", "The credential might be incorrect/expired"},
 		[]string{"Ensure correct append range (A1 notation) is used", "Ensure correct credential is used"})
 }
-
+func ErrUpdateToSheet(err error, id string) error {
+	return errors.New(ErrUpdateToSheetCode, errors.Alert,
+		[]string{fmt.Sprintf("Failed to update data into sheet %s", id)},
+		[]string{err.Error()},
+		[]string{"Error occurred while updating to the spreadsheet", "The credential might be incorrect/expired"},
+		[]string{"Ensure correct update range (A1 notation) is used", "Ensure correct credential is used"})
+}
+func ErrUpdateRelationshipFile(err error) error {
+	return errors.New(ErrUpdateRelationshipFileCode, errors.Alert, []string{"error while comparing files"},
+		[]string{err.Error()},
+		[]string{"Error occurred while comapring the new file and the existing relationship file generated from the spreadsheet"},
+		[]string{"Ensure that the new file is in the correct format and has the correct data"})
+}
 func ErrBadRequest(err error) error {
 	return errors.New(ErrBadRequestCode, errors.Alert,
 		[]string{"Failed to delete the connection"},
@@ -620,4 +654,28 @@ func ErrClearLine(err error) error {
 		[]string{err.Error()},
 		[]string{"Error occurred while attempting to clear the command-line interface"},
 		[]string{"Check if the required clear commands ('clear' or 'cls') are available in the system's PATH"})
+}
+func ErrGenerateComponent(err error, modelName, compName string) error {
+	return errors.New(ErrGeneratesComponentCode, errors.Alert, []string{"error generating comp %s of model %s", compName, modelName}, []string{err.Error()}, []string{}, []string{})
+}
+func ErrUpdateComponent(err error, modelName, compName string) error {
+	return errors.New(ErrUpdateComponentsCode, errors.Alert, []string{fmt.Sprintf("error updating component %s of model %s ", compName, modelName)}, []string{err.Error()}, []string{"Component does not exist", "Component definition is corrupted"}, []string{"Ensure existence of component, check for typo in component name", "Regenerate corrupted component"})
+}
+func ErrCSVFileNotFound(path string) error {
+	return errors.New(ErrCSVFileNotFoundCode, errors.Alert, []string{"error reading csv file", path}, []string{fmt.Sprintf("inside the directory %s either the model csv or component csv is missing or they are not of write format", path)}, []string{"Either or both model csv or component csv are absent, the csv is not of correct template"}, []string{fmt.Sprintf("verify both the csv are present in the directory:%s", path), "verify the csv template"})
+}
+func ErrReadCSVRow(err error, obj string) error {
+	return errors.New(ErrReadCSVRowCode, errors.Alert, []string{"error reading csv ", obj}, []string{err.Error()}, []string{fmt.Sprintf("the %s of the csv is broken", obj)}, []string{fmt.Sprintf("verify the csv %s", obj)})
+}
+
+func ErrMissingCommands(err error) error {
+	return errors.New(ErrMissingCommandsCode, errors.Alert, []string{"Missing required commands"}, []string{err.Error()}, []string{"Required commands are not installed or not in PATH"}, []string{"Install the missing commands and ensure they are in PATH"})
+}
+
+func ErrKubernetesConnectivity(err error) error {
+	return errors.New(ErrKubernetesConnectivityCode, errors.Alert, []string{"Failed to connect to Kubernetes API server"}, []string{err.Error()}, []string{"Kubernetes API server is not reachable"}, []string{"Ensure your Kubernetes cluster is running and accessible"})
+}
+
+func ErrKubernetesQuery(err error) error {
+	return errors.New(ErrKubernetesQueryCode, errors.Alert, []string{"Failed to query Kubernetes API"}, []string{err.Error()}, []string{"Kubernetes API query failed"}, []string{"Ensure your Kubernetes cluster is running and accessible"})
 }

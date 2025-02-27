@@ -1,0 +1,24 @@
+version: 0.0.15
+name: elastic-stack
+displayName: elastic-stack
+createdAt: "2024-08-18T11:02:49Z"
+description: This YAML file deploys an Elasticsearch cluster (version 8.9.0) in Kubernetes, configured with roles including master, data, ingest, ML, and remote cluster client. It sets up a pod disruption budget to maintain high availability and specifies resource requests and limits for CPU, memory, and storage. Persistent storage is configured with a 2Gi volume using the standard-rwo storage class.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/b7782414-0dd6-486d-ba77-888577e9fa2e/0.0.15/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Version Compatibility: Ensure Elasticsearch 8.9.0 matches your Kubernetes version and other components.\nResource Management: Adjust CPU, memory, and storage settings based on your specific needs.\nStorage Class: Confirm that the standard-rwo storage class is appropriate for your environment.\nPod Disruption: Verify the pod disruption budget settings align with your high-availability requirements.\nNode Selector: Modify the node selector if not using Google Cloud Platform.\nTesting: Test the configuration in a staging environment before production deployment.\n\n\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 65a09154-3ae0-47c4-b19a-e0185ffb694f
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/b7782414-0dd6-486d-ba77-888577e9fa2e-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/b7782414-0dd6-486d-ba77-888577e9fa2e-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

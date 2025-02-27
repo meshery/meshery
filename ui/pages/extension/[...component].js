@@ -5,7 +5,8 @@ import ExtensionSandbox, {
   getComponentTitleFromPath,
   getComponentIsBetaFromPath,
 } from '../../components/ExtensionSandbox';
-import { Box, CircularProgress, NoSsr } from '@material-ui/core';
+import { Box, CircularProgress } from '@layer5/sistent';
+import { NoSsr } from '@layer5/sistent';
 import {
   updatepagepath,
   updatepagetitle,
@@ -19,10 +20,11 @@ import { bindActionCreators } from 'redux';
 import React from 'react';
 import RemoteComponent from '../../components/RemoteComponent';
 import _ from 'lodash';
-import { MeshMapEarlyAccessCard } from '../../components/Popup';
+import { MesheryExtensionEarlyAccessCardPopup } from '../../components/Popup';
 import dataFetch from '../../lib/data-fetch';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
 import { withRouter } from 'next/router';
+import { DynamicFullScrrenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
 
 /**
  * getPath returns the current pathname
@@ -148,27 +150,29 @@ class RemoteExtension extends React.Component {
         <Head>
           <title>{`${componentTitle} | Meshery` || ''}</title>
         </Head>
-        {this.props.capabilitiesRegistry !== null && extensionType ? (
-          <NoSsr>
-            {extensionType === 'navigator' ? (
-              <ExtensionSandbox type={extensionType} Extension={NavigatorExtension} />
-            ) : (
-              <ExtensionSandbox
-                type={extensionType}
-                Extension={(url) => RemoteComponent({ url })}
+        <DynamicFullScrrenLoader isLoading={isLoading}>
+          {this.props.capabilitiesRegistry !== null && extensionType ? (
+            <NoSsr>
+              {extensionType === 'navigator' ? (
+                <ExtensionSandbox type={extensionType} Extension={NavigatorExtension} />
+              ) : (
+                <ExtensionSandbox
+                  type={extensionType}
+                  Extension={(url) => RemoteComponent({ url })}
+                />
+              )}
+            </NoSsr>
+          ) : !isLoading ? (
+            <Box display="flex" justifyContent="center">
+              <MesheryExtensionEarlyAccessCardPopup
+                rootStyle={{ position: 'relative' }}
+                capabilitiesRegistry={capabilitiesRegistry}
               />
-            )}
-          </NoSsr>
-        ) : !isLoading ? (
-          <Box display="flex" justifyContent="center">
-            <MeshMapEarlyAccessCard
-              rootStyle={{ position: 'relative' }}
-              capabilitiesRegistry={capabilitiesRegistry}
-            />
-          </Box>
-        ) : (
-          <CircularProgress />
-        )}
+            </Box>
+          ) : (
+            <CircularProgress />
+          )}
+        </DynamicFullScrrenLoader>
       </NoSsr>
     );
   }

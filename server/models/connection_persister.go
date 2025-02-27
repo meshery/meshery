@@ -7,6 +7,7 @@ import (
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/helpers/utils"
 	"github.com/layer5io/meshery/server/models/connections"
+	"github.com/layer5io/meshery/server/models/environments"
 	"github.com/layer5io/meshkit/database"
 	"gorm.io/gorm"
 )
@@ -49,11 +50,17 @@ func (cp *ConnectionPersister) GetConnections(search, order string, page, pageSi
 	count := int64(0)
 
 	connectionsFetched := []*connections.Connection{}
-
 	query.Table("connections").Count(&count)
-
+	environmentsFetched := []environments.EnvironmentData{}
 	Paginate(uint(page), uint(pageSize))(query).Find(&connectionsFetched)
-	// query.Table("connections").Count(&count).Find(&connectionsFetched)
+
+	for _, connectionFetched := range connectionsFetched {
+		cp.DB.Table("environment_connection_mappings").Joins("LEFT JOIN environments ON environments.id = environment_connection_mappings.environment_id").Select("environments.*").
+			Where("connection_id = ?", connectionFetched.ID).
+			Find(&environmentsFetched)
+
+		connectionFetched.Environments = environmentsFetched
+	}
 	connectionsPage := &connections.ConnectionPage{
 		Page:        page,
 		PageSize:    pageSize,

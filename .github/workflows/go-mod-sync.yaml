@@ -10,28 +10,29 @@ jobs:
   sync:
     if: github.repository == 'meshery/meshery'
     name: sync
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - name: check out code for meshery
       uses: actions/checkout@master
       with:
         repository: meshery/meshery
-        token: ${{ secrets.RELEASEDRAFTER_PAT }}
+        token: ${{ secrets.RELEASE_NOTES_PAT }}
         path: meshery
     - name: Check out code for meshery-extensions
       uses: actions/checkout@master
       with:
         repository: layer5labs/meshery-extensions
-        token: ${{ secrets.RELEASEDRAFTER_PAT }}
+        token: ${{ secrets.RELEASE_NOTES_PAT }}
         path: meshery-extensions
     - name: Setup Go
       uses: actions/setup-go@master
       with:
-        go-version: "1.21"
+        go-version: "1.23"
     - name: Go mod sync utility
       run: cd meshery-extensions;make graphql-sync;
 
     - name: Pull changes from remote
+      working-directory: ./meshery-extensions
       run: git pull origin master
 
     - name: Commit
@@ -45,7 +46,7 @@ jobs:
         commit_message: 'Upgrading go.mod in response to meshery/meshery'
         branch: master
   notify-via-email:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs:
       - sync
     if: ${{ always() && contains(needs.*.result, 'failure') }}

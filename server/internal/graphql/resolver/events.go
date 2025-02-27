@@ -2,7 +2,6 @@ package resolver
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/server/internal/graphql/model"
@@ -16,7 +15,7 @@ func (r *Resolver) eventsResolver(ctx context.Context, provider models.Provider,
 
 	eventsChan := make(chan *model.Event)
 	go func(userID uuid.UUID) {
-		r.Log.Info("Events Subscription started for %s", user.ID)
+		r.Log.Infof("Events Subscription started for %s", user.ID)
 		for {
 			select {
 			case ech := <-ch:
@@ -38,13 +37,12 @@ func (r *Resolver) eventsResolver(ctx context.Context, provider models.Provider,
 					SystemID:    event.SystemID.String(),
 				}
 
-				r.Log.Info(fmt.Sprintf("event received for id %s %v: ", userID, ch))
 				eventsChan <- _event
 			case <-ctx.Done():
 				unsubscribe()
 				close(eventsChan)
 
-				r.Log.Info("Events Subscription stopped for %s", userID)
+				r.Log.Infof("Events Subscription stopped for %s", userID)
 				return
 			}
 		}

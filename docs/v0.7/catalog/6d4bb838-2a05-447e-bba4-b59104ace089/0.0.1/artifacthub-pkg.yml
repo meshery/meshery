@@ -1,0 +1,20 @@
+version: 0.0.1
+name: redis_using_configmap
+displayName: Redis_using_configmap
+createdAt: "2023-11-10T18:30:27Z"
+description: The "Redis Using ConfigMap" design configures and deploys a Redis instance on Kubernetes using ConfigMaps to manage configuration settings. This design leverages Kubernetes ConfigMaps to store and inject Redis configuration files, allowing for dynamic and centralized management of configuration parameters without altering the Redis container image. By decoupling the configuration from the application, it facilitates easier updates and management of Redis settings, improving maintainability and operational efficiency. This approach is ideal for scenarios where configuration flexibility and quick adjustments are crucial, such as in development, testing, and production environments.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/6d4bb838-2a05-447e-bba4-b59104ace089/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "While ConfigMaps simplify configuration management, changes to the ConfigMap require a pod restart to take effect. Ensure that updates are carefully planned to avoid unintended downtime.\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 4a508c2f-5bdf-41ba-b00f-8b81953b86e0
+screenshots:
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

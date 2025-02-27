@@ -146,6 +146,9 @@ components:
   colorIcon: assets/img/integrations/vault-config-operator/components/gcp-auth-engine-role/icons/color/gcp-auth-engine-role-color.svg
   whiteIcon: assets/img/integrations/vault-config-operator/components/gcp-auth-engine-role/icons/white/gcp-auth-engine-role-white.svg
   description: 
+components-count: 34
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates Vault configuration management",
   "Simplifies secret management",

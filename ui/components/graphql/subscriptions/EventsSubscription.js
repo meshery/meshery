@@ -22,12 +22,13 @@ const eventsSubscription = graphql`
   }
 `;
 
-export default function subscribeEvents(dataCB) {
+export default function subscribeEvents(dataCB, onError) {
   const environment = createRelayEnvironment({});
 
   return requestSubscription(environment, {
     subscription: eventsSubscription,
     onNext: dataCB,
-    onError: (error) => console.log(`An error occured:`, error),
+    onError:
+      onError || ((error) => console.error('An error occurred in subscription to events:', error)),
   });
 }

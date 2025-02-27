@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/kiali-operator/components/kiali/icons/color/kiali-color.svg
   whiteIcon: assets/img/integrations/kiali-operator/components/kiali/icons/white/kiali-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Kiali Operator is a Kubernetes operator for managing Kiali, a service mesh observability tool.",
   "Automates Kiali deployment and configuration",

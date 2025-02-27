@@ -4,7 +4,6 @@ import {
   getDependencies,
   createRequires,
 } from '@paciolan/remote-component';
-// import CircularProgress from "@material-ui/core/CircularProgress";
 import LoadingScreen from './LoadingComponents/LoadingComponent';
 
 const requires = createRequires(getDependencies);

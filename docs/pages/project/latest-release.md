@@ -9,7 +9,7 @@ type: project
 category: none
 list: exclude
 ---
-{% assign sorted_release = site.releases | sort: 'date' | reverse %}
+{% assign sorted_release = site.releases | where: "prerelease", false | sort: 'date' | reverse %}
 {%- for release in sorted_release limit:1 offset:0 -%}
-  {{ release.tags }}
+  {{ release.tags }}  
 {% endfor %}

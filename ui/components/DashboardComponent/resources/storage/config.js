@@ -4,7 +4,7 @@ import { getK8sContextFromClusterId } from '../../../../utils/multi-ctx';
 import { SINGLE_VIEW } from '../config';
 import { Title } from '../../view';
 
-import { TootltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
+import { TooltipWrappedConnectionChip } from '../../../connections/ConnectionChip';
 import useKubernetesHook from '../../../hooks/useKubernetesHook';
 import { DefaultTableCell, SortableTableCell } from '../sortable-table-cell';
 import { CONNECTION_KINDS } from '../../../../utils/Enum';
@@ -15,15 +15,18 @@ export const StorageTableConfig = (
   meshSyncResources,
   k8sConfig,
   connectionMetadataState,
+  workloadType,
 ) => {
   const ping = useKubernetesHook();
+
   return {
     PersistentVolume: {
       name: 'PersistentVolume',
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
+        ['spec.attribute', 's'],
         ['spec.attribute', 's'],
         ['spec.attribute', 's'],
         ['status.attribute', 'm'],
@@ -36,6 +39,9 @@ export const StorageTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: (value) => <FormatId id={value} />,
           },
         },
@@ -51,12 +57,8 @@ export const StorageTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -90,8 +92,24 @@ export const StorageTableConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let storageClassName = attribute?.StorageClassName;
+              let storageClassName = attribute?.storageClassName;
               return <>{storageClassName}</>;
+            },
+          },
+        },
+        {
+          name: 'spec.attribute',
+          label: 'Claim',
+          options: {
+            sort: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
+            customBodyRender: function CustomBody(val) {
+              let attribute = JSON.parse(val);
+              let claimRef = attribute?.claimRef;
+              let name = claimRef?.name;
+              return <>{name}</>;
             },
           },
         },
@@ -146,7 +164,7 @@ export const StorageTableConfig = (
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
                 <>
-                  <TootltipWrappedConnectionChip
+                  <TooltipWrappedConnectionChip
                     title={context.name}
                     iconSrc={
                       connectionMetadataState
@@ -181,7 +199,7 @@ export const StorageTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['spec.attribute', 's'],
         ['spec.attribute', 's'],
         ['status.attribute', 'm'],
@@ -194,6 +212,9 @@ export const StorageTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: (value) => <FormatId id={value} />,
           },
         },
@@ -209,12 +230,8 @@ export const StorageTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -248,7 +265,7 @@ export const StorageTableConfig = (
             },
             customBodyRender: function CustomBody(val) {
               let attribute = JSON.parse(val);
-              let storageClassName = attribute?.StorageClassName;
+              let storageClassName = attribute?.storageClassName;
               return <>{storageClassName}</>;
             },
           },
@@ -293,23 +310,6 @@ export const StorageTableConfig = (
             customHeadRender: function CustomHead({ ...column }) {
               return <DefaultTableCell columnData={column} />;
             },
-            customBodyRender: function CustomBody(value, tableMeta) {
-              return (
-                <>
-                  <div
-                    style={{
-                      color: 'inherit',
-                      textDecorationLine: 'underline',
-                      cursor: 'pointer',
-                      marginBottom: '0.5rem',
-                    }}
-                    onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  >
-                    {value}
-                  </div>
-                </>
-              );
-            },
           },
         },
         {
@@ -331,7 +331,7 @@ export const StorageTableConfig = (
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   iconSrc={
                     connectionMetadataState
@@ -365,7 +365,7 @@ export const StorageTableConfig = (
       colViews: [
         ['id', 'na'],
         ['metadata.name', 'xs'],
-        ['apiVersion', 's'],
+        ['apiVersion', 'na'],
         ['cluster_id', 'xs'],
         ['metadata.creationTimestamp', 'l'],
       ],
@@ -375,6 +375,9 @@ export const StorageTableConfig = (
           label: 'ID',
           options: {
             display: false,
+            customHeadRender: function CustomHead({ ...column }) {
+              return <DefaultTableCell columnData={column} />;
+            },
             customBodyRender: (value) => <FormatId id={value} />,
           },
         },
@@ -390,12 +393,8 @@ export const StorageTableConfig = (
               return (
                 <Title
                   onClick={() => switchView(SINGLE_VIEW, meshSyncResources[tableMeta.rowIndex])}
-                  data={
-                    meshSyncResources[tableMeta.rowIndex]
-                      ? meshSyncResources[tableMeta.rowIndex]?.component_metadata
-                      : {}
-                  }
                   value={value}
+                  kind={workloadType}
                 />
               );
             },
@@ -438,7 +437,7 @@ export const StorageTableConfig = (
             customBodyRender: function CustomBody(val) {
               let context = getK8sContextFromClusterId(val, k8sConfig);
               return (
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   iconSrc={
                     connectionMetadataState

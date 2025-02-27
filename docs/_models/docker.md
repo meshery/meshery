@@ -10,6 +10,9 @@ integrations-category: Runtime
 integrations-subcategory: Container Runtime
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Scan your kubeconfigs and select your current Kubernetes environment. Switch from one environment to another one.",
   "Convert your Docker Compose apps to Kubernetes apps.",

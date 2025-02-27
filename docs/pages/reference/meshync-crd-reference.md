@@ -20,7 +20,7 @@ The CRD is used to configure [Broker]({{site.baseurl}}/concepts/architecture/bro
 The following section shows a summary of the structure of the Custom Resource and the required fields.
 
 ```yaml
-apiVersion: meshery.layer5.io/v1alpha1
+apiVersion: meshery.io/v1alpha1
 kind: Broker
 metadata:
   name:
@@ -52,7 +52,7 @@ The following section outlines the fields and their descriptions
     - **meshery/component-type**: The component type pf this custom resource with respect to meshery design, for this case **management-plane**
 - **spec**
   The specification section defines the desired state of our custom resource that Kubernetes can then use to take corrective measures to bring the cluster to.
-  - **size**: The size is an integer value denoting the number of Broker instances that that should be in one cluster, currently it is adviced to have one Broker instance in a cluster but that can be scaled vertically up or down depending on load.
+  - **size**: The size is an integer value denoting the number of Broker instances that that should be in one cluster, currently it is advised to have one Broker instance in a cluster but that can be scaled vertically up or down depending on load.
 
 ### Usage
 
@@ -61,7 +61,7 @@ The following section defines the usage for this Custom Resource.
 ### Example Use
 
 ```yaml
-apiVersion: meshery.layer5.io/v1alpha1
+apiVersion: meshery.io/v1alpha1
 kind: Broker
 metadata:
   name: meshery-broker
@@ -84,7 +84,7 @@ The MeshSync CRD is used as a configuration tool the [MeshSync](https://docs.mes
 The following section shows a summary of the structure of the Custom Resource and the required fields.
 
 ```yaml
-apiVersion: meshery.layer5.io/v1alpha1
+apiVersion: meshery.io/v1alpha1
 kind: MeshSync
 metadata:
   name:
@@ -172,7 +172,7 @@ The Custom Resource is used to configure the [Broker](https://docs.meshery.io/co
 #### Example Use
 
 ```yaml
-apiVersion: meshery.layer5.io/v1alpha1
+apiVersion: meshery.io/v1alpha1
 kind: MeshSync
 metadata:
   name: meshery-MeshSync

@@ -54,6 +54,41 @@ components:
   colorIcon: assets/img/integrations/knative/components/trigger/icons/color/trigger-color.svg
   whiteIcon: assets/img/integrations/knative/components/trigger/icons/white/trigger-white.svg
   description: 
+- name: cluster-ingress
+  colorIcon: assets/img/integrations/knative/components/cluster-ingress/icons/color/cluster-ingress-color.svg
+  whiteIcon: assets/img/integrations/knative/components/cluster-ingress/icons/white/cluster-ingress-white.svg
+  description: 
+- name: ingress
+  colorIcon: assets/img/integrations/knative/components/ingress/icons/color/ingress-color.svg
+  whiteIcon: assets/img/integrations/knative/components/ingress/icons/white/ingress-white.svg
+  description: 
+- name: pod-autoscaler
+  colorIcon: assets/img/integrations/knative/components/pod-autoscaler/icons/color/pod-autoscaler-color.svg
+  whiteIcon: assets/img/integrations/knative/components/pod-autoscaler/icons/white/pod-autoscaler-white.svg
+  description: 
+- name: serverless-service
+  colorIcon: assets/img/integrations/knative/components/serverless-service/icons/color/serverless-service-color.svg
+  whiteIcon: assets/img/integrations/knative/components/serverless-service/icons/white/serverless-service-white.svg
+  description: 
+- name: configuration
+  colorIcon: assets/img/integrations/knative/components/configuration/icons/color/configuration-color.svg
+  whiteIcon: assets/img/integrations/knative/components/configuration/icons/white/configuration-white.svg
+  description: 
+- name: revision
+  colorIcon: assets/img/integrations/knative/components/revision/icons/color/revision-color.svg
+  whiteIcon: assets/img/integrations/knative/components/revision/icons/white/revision-white.svg
+  description: 
+- name: route
+  colorIcon: assets/img/integrations/knative/components/route/icons/color/route-color.svg
+  whiteIcon: assets/img/integrations/knative/components/route/icons/white/route-white.svg
+  description: 
+- name: service
+  colorIcon: assets/img/integrations/knative/components/service/icons/color/service-color.svg
+  whiteIcon: assets/img/integrations/knative/components/service/icons/white/service-white.svg
+  description: 
+components-count: 19
+relationships: 
+relationship-count: 0
 featureList: [
   "Provides building blocks for serverless",
   "Simplifies event-driven architecture",

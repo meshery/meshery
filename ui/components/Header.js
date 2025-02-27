@@ -1,34 +1,17 @@
-import React, { useEffect, useLayoutEffect } from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import AppBar from '@material-ui/core/AppBar';
-import Grid from '@material-ui/core/Grid';
-import Hidden from '@material-ui/core/Hidden';
-import IconButton from '@material-ui/core/IconButton';
-import MenuIcon from '@material-ui/icons/Menu';
-import Toolbar from '@material-ui/core/Toolbar';
-import { withStyles } from '@material-ui/core/styles';
 import { connect, useSelector } from 'react-redux';
-import NoSsr from '@material-ui/core/NoSsr';
-import Link from 'next/link';
 import { NotificationDrawerButton } from './NotificationCenter';
 import User from './User';
-import Slide from '@material-ui/core/Slide';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
-import { Checkbox, Button } from '@material-ui/core';
-import AddIcon from '@material-ui/icons/Add';
-import { Search } from '@material-ui/icons';
-import { TextField } from '@material-ui/core';
-import { Paper } from '@material-ui/core';
-import { deleteKubernetesConfig } from './ConnectionWizard/helpers/kubernetesHelpers';
-import { successHandlerGenerator, errorHandlerGenerator } from './ConnectionWizard/helpers/common';
-import { _ConnectionChip } from './connections/ConnectionChip';
+import { Edit, Search } from '@mui/icons-material';
+import { deleteKubernetesConfig } from '../utils/helpers/kubernetesHelpers';
+import { successHandlerGenerator, errorHandlerGenerator } from '../utils/helpers/common';
+import { ConnectionChip } from './connections/ConnectionChip';
 import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateK8SConfig, updateProgress, updateCapabilities } from '../lib/store';
 import { bindActionCreators } from 'redux';
-import { SETTINGS } from '../constants/navigator';
-import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
-import PromptComponent, { PROMPT_VARIANTS } from './PromptComponent';
-import { iconMedium } from '../css/icons.styles';
+import _PromptComponent from './PromptComponent';
+import { iconMedium, iconSmall } from '../css/icons.styles';
 import ExtensionSandbox from './ExtensionSandbox';
 import RemoteComponent from './RemoteComponent';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
@@ -38,164 +21,44 @@ import { useNotification, withNotify } from '../utils/hooks/useNotification';
 import useKubernetesHook, { useControllerStatus } from './hooks/useKubernetesHook';
 import { formatToTitleCase } from '../utils/utils';
 import { CONNECTION_KINDS } from '../utils/Enum';
-import { OutlinedSettingsIcon } from '@layer5/sistent';
+import SettingsIcon from '@mui/icons-material/Settings';
+import {
+  Checkbox,
+  Box,
+  CustomTooltip,
+  Typography,
+  styled,
+  PROMPT_VARIANTS,
+  TextField,
+  ClickAwayListener,
+  IconButton,
+  Grid,
+  Slide,
+  Hidden,
+  NoSsr,
+} from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
-import { Colors } from '@/themes/app';
-import CAN from '@/utils/can';
+import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
-
-const lightColor = 'rgba(255, 255, 255, 0.7)';
-const styles = (theme) => ({
-  secondaryBar: { zIndex: 0 },
-  menuButton: { marginLeft: -theme.spacing(1) },
-  iconButtonAvatar: { padding: 4 },
-  link: {
-    textDecoration: 'none',
-    color: theme.palette.secondary.link,
-  },
-  button: { borderColor: lightColor },
-  notifications: {
-    paddingLeft: theme.spacing(4),
-    paddingRight: theme.spacing(0),
-    marginLeft: theme.spacing(4),
-  },
-  userContainer: {
-    paddingLeft: 1,
-    display: 'flex',
-
-    alignItems: 'center',
-  },
-  userSpan: { marginLeft: theme.spacing(1) },
-  pageTitleWrapper: {
-    flexGrow: 1,
-    marginRight: 'auto',
-  },
-  appBarOnDrawerOpen: {
-    backgroundColor: theme.palette.secondary.mainBackground,
-    shadowColor: ' #808080',
-    [theme.breakpoints.between(635, 732)]: { padding: theme.spacing(0.75, 1.4) },
-    [theme.breakpoints.between(600, 635)]: { padding: theme.spacing(0.4, 1.4) },
-  },
-  appBarOnDrawerClosed: {
-    backgroundColor: theme.palette.secondary.mainBackground,
-  },
-  toolbarOnDrawerClosed: {
-    minHeight: 59,
-    padding: theme.spacing(2.4),
-    paddingLeft: 34,
-    paddingRight: 34,
-    backgroundColor: theme.palette.secondary.mainBackground,
-    boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
-  },
-  toolbarOnDrawerOpen: {
-    minHeight: 58,
-    padding: theme.spacing(2.4),
-    paddingLeft: 34,
-    paddingRight: 34,
-    backgroundColor: theme.palette.secondary.mainBackground,
-    [theme.breakpoints.between(620, 732)]: { minHeight: 68, paddingLeft: 20, paddingRight: 20 },
-    boxShadow: `3px 0px 4px ${theme.palette.secondary.focused}`,
-  },
-  itemActiveItem: { fill: '#00B39F' },
-  headerIcons: {
-    fontSize: '1.5rem',
-    height: '1.5rem',
-    width: '1.5rem',
-    fill: theme.palette.secondary.whiteIcon,
-    '&:hover': {
-      fill: Colors.keppelGreen,
-    },
-  },
-  cbadge: {
-    fontSize: '0.65rem',
-    backgroundColor: 'white',
-    borderRadius: '50%',
-    color: 'black',
-    height: '1.30rem',
-    width: '1.30rem',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'absolute',
-    zIndex: 1,
-    right: '-0.75rem',
-    top: '-0.29rem',
-  },
-  cbadgeContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    position: 'relative',
-  },
-  icon: {
-    width: 24,
-    height: 24,
-  },
-  Chip: {
-    width: '12.8rem',
-    textAlign: 'center',
-    cursor: 'pointer',
-    '& .MuiChip-label': {
-      flexGrow: 1,
-    },
-    overflow: 'hidden',
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-  },
-  cMenuContainer: {
-    backgroundColor: theme.palette.secondary.headerColor,
-    marginTop: '-0.7rem',
-    borderRadius: '3px',
-    padding: '1rem',
-    // zIndex: 1201,
-    boxShadow: '20px #979797',
-    transition: 'linear .2s',
-    transitionProperty: 'height',
-  },
-  alertEnter: {
-    opacity: '0',
-    transform: 'scale(0.9)',
-  },
-  alertEnterActive: {
-    opacity: '1',
-    transform: 'translateX(0)',
-    transition: 'opacity 300ms, transform 300ms',
-  },
-  chip: {
-    margin: '0.25rem 0',
-  },
-  AddIcon: {
-    width: theme.spacing(2.5),
-    paddingRight: theme.spacing(0.5),
-  },
-  searchIcon: {
-    width: theme.spacing(3.5),
-  },
-  darkThemeToggle: {
-    marginLeft: '1.5em',
-  },
-
-  toggle: {
-    appearance: 'none',
-    outline: 'none',
-    cursor: 'pointer',
-    width: '1.5rem',
-    height: '1.5rem',
-    boxShadow: 'inset calc(1.5rem * 0.33) calc(1.5rem * -0.25) 0',
-    borderRadius: '999px',
-    color: '#00B39F',
-    transition: 'all 500ms',
-    zIndex: '1',
-    '&:checked': {
-      width: '1.5rem',
-      height: '1.5rem',
-      borderRadius: '50%',
-      background: 'orange',
-      boxShadow: '0 0 10px orange, 0 0 60px orange,0 0 200px yellow, inset 0 0 80px yellow',
-    },
-  },
-});
+import { UsesSistent } from './SistentWrapper';
+import Router from 'next/router';
+import HeaderMenu from './HeaderMenu';
+import ConnectionModal from './Modals/ConnectionModal';
+import MesherySettingsEnvButtons from './MesherySettingsEnvButtons';
+import {
+  HeaderAppBar,
+  UserContainer,
+  PageTitleWrapper,
+  CBadgeContainer,
+  CMenuContainer,
+  HeaderIcons,
+  MenuIconButton,
+  UserSpan,
+  CBadge,
+  StyledToolbar,
+  UserInfoContainer,
+} from './Header.styles';
 
 async function loadActiveK8sContexts() {
   try {
@@ -210,25 +73,8 @@ async function loadActiveK8sContexts() {
   }
 }
 
-function LoadTheme({ themeSetter }) {
-  const defaultTheme = 'light';
-
-  useLayoutEffect(() => {
-    // disable dark mode in extension
-
-    if (localStorage.getItem('Theme') === null) {
-      themeSetter(defaultTheme);
-    } else {
-      themeSetter(localStorage.getItem('Theme'));
-    }
-  }, []);
-
-  return <></>;
-}
-
 const K8sContextConnectionChip_ = ({
   ctx,
-  classes,
   selectable = false,
   onSelectChange,
   connectionMetadataState,
@@ -244,8 +90,11 @@ const K8sContextConnectionChip_ = ({
   );
 
   return (
-    <div id={ctx.id} className={classes.chip}>
+    <Box id={ctx.id} sx={{ margin: '0.25rem 0' }}>
       <CustomTextTooltip
+        placement="left-end"
+        leaveDelay={200}
+        interactive={true}
         title={`Server: ${ctx.server},  Operator: ${formatToTitleCase(
           operatorState,
         )}, MeshSync: ${formatToTitleCase(meshSyncState)}, Broker: ${formatToTitleCase(natsState)}`}
@@ -258,32 +107,32 @@ const K8sContextConnectionChip_ = ({
           }}
         >
           {selectable && (
-            <Checkbox checked={selected} onChange={() => onSelectChange(ctx.id)} color="primary" />
+            <UsesSistent>
+              <Checkbox checked={selected} onChange={() => onSelectChange(ctx.id)} />
+            </UsesSistent>
           )}
-          <_ConnectionChip
+          <ConnectionChip
             title={ctx?.name}
             onDelete={onDelete ? () => onDelete(ctx.name, ctx.connection_id) : null}
             handlePing={() => ping(ctx.name, ctx.server, ctx.connection_id)}
             iconSrc={
-              connectionMetadataState
+              connectionMetadataState && connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
                 ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
-                : ''
-            } // chnage to use connection def
+                : '/static/img/kubernetes.svg'
+            } // TODO: Make this a dyanmic referernce to the respective Connection's color SVG
             status={operatorState}
           />
         </div>
       </CustomTextTooltip>
-    </div>
+    </Box>
   );
 };
 
-export const K8sContextConnectionChip = withStyles(styles)(K8sContextConnectionChip_);
+export const K8sContextConnectionChip = K8sContextConnectionChip_;
 
 function K8sContextMenu({
-  classes = {},
   contexts = {},
   activeContexts = [],
-  show,
   updateK8SConfig,
   setActiveContexts = () => {},
   searchContexts = () => {},
@@ -300,21 +149,53 @@ function K8sContextMenu({
     position: 'absolute',
     left: '-7rem',
     zIndex: '-1',
-    bottom: showFullContextMenu ? '-55%' : '-110%',
+    bottom: showFullContextMenu ? '40%' : '-110%',
     transform: showFullContextMenu ? `translateY(${transformProperty}%)` : 'translateY(0)',
   };
 
-  const ctxStyle = {
-    ...disabledStyle,
-    marginRight: '0.5rem',
-  };
-
+  const StateTransitionDetails = styled(Box)(({ theme }) => ({
+    backgroundColor: theme.palette.background.secondary,
+    padding: '1rem',
+    borderRadius: '0.5rem',
+    textAlign: 'left',
+  }));
   const handleKubernetesDelete = async (name, connectionID) => {
     let responseOfDeleteK8sCtx = await deleteCtxtRef.current.show({
-      title: `Delete ${name} context ?`,
-      subtitle: `Are you sure you want to delete ${name} cluster from Meshery?`,
-      options: ['CONFIRM', 'CANCEL'],
+      title: `Delete Kubernetes connection?`,
+      subtitle: (
+        <>
+          <Typography variant="body">
+            {' '}
+            Are you sure you want to delete Kubernetes connection &quot;{name}&quot; and associated
+            credential?
+          </Typography>
+          <details>
+            <summary style={{ textAlign: 'left', marginTop: '1rem', cursor: 'pointer' }}>
+              <strong>What does this mean?</strong>
+            </summary>
+
+            <StateTransitionDetails>
+              <Typography variant="body2">
+                Deleting a connection administratively removes the cluster from Meshery&apos;s
+                purview of management, which includes the removal of Meshery Operator from the
+                cluster. Record of this Kubernetes connection and all associated data collected
+                through MeshSync for this connection will be purged from Meshery&apos;s database.
+                Note: By deleting this connection, you are not deleting the Kubernetes cluster
+                itself.
+              </Typography>
+              <Typography variant="body2" sx={{ marginTop: '1rem' }}>
+                <strong>Reconnecting:</strong> You can always reconnect Meshery to the cluster
+                again. By default, Meshery will automatically reconnect to the cluster when next
+                presented with the same kubeconfig file / context. If you wish to prevent
+                reconnection, *disconnect* this connection instead of *deleting* this connection.
+              </Typography>
+            </StateTransitionDetails>
+          </details>
+        </>
+      ),
+      primaryOption: 'CONFIRM',
       variant: PROMPT_VARIANTS.DANGER,
+      showInfoIcon: `Learn more about the [lifecycle of connections](https://docs.meshery.io/concepts/logical/connections) and what it means to delete a connection.`,
     });
     if (responseOfDeleteK8sCtx === 'CONFIRM') {
       const successCallback = async () => {
@@ -324,8 +205,12 @@ function K8sContextMenu({
         }
       };
       deleteKubernetesConfig(
-        successHandlerGenerator(notify, `Kubernetes config removed for ${name}`, successCallback),
-        errorHandlerGenerator(notify, `Not able to remove config for ${name}`),
+        successHandlerGenerator(notify, `Kubernetes connection "${name}" removed`, successCallback),
+        errorHandlerGenerator(
+          notify,
+          `Failed to remove Kubernetes connection "
+          ${name}"`,
+        ),
         connectionID,
       );
     }
@@ -341,138 +226,157 @@ function K8sContextMenu({
       (prev) => prev + (contexts.total_count ? contexts.total_count * 3.125 : 0),
     );
   }, []);
+  const [isConnectionOpenModal, setIsConnectionOpenModal] = React.useState(false);
 
   return (
     <>
-      <div style={show ? cursorNotAllowed : {}}>
-        <IconButton
-          aria-label="contexts"
-          className="k8s-icon-button"
-          disabled={
-            !CAN(
-              keys.VIEW_ALL_KUBERNETES_CLUSTERS.action,
-              keys.VIEW_ALL_KUBERNETES_CLUSTERS.subject,
-            )
-          }
-          onClick={(e) => {
-            e.preventDefault();
-            setShowFullContextMenu((prev) => !prev);
-          }}
-          onMouseOver={(e) => {
-            e.preventDefault();
-            setAnchorEl(true);
-          }}
-          onMouseLeave={(e) => {
-            e.preventDefault();
-            setAnchorEl(false);
-          }}
-          aria-owns={open ? 'menu-list-grow' : undefined}
-          aria-haspopup="true"
-          style={show ? ctxStyle : { marginRight: '0.5rem' }}
-        >
-          <div className={classes.cbadgeContainer}>
-            <img
-              className="k8s-image"
-              src={
-                connectionMetadataState
-                  ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
-                  : '/static/img/kubernetes.svg'
-              }
-              width="24px"
-              height="24px"
-              // style={{ zIndex: '2' }}
-            />
-            <div className={classes.cbadge}>{contexts?.total_count || 0}</div>
-          </div>
-        </IconButton>
-      </div>
-
-      <Slide
-        direction="down"
-        style={styleSlider}
-        timeout={400}
-        in={open}
-        mountOnEnter
-        unmountOnExit
-      >
-        <div>
-          <ClickAwayListener
-            onClickAway={(e) => {
-              if (
-                typeof e.target.className == 'string' &&
-                !e.target.className?.includes('cbadge') &&
-                e.target?.className != 'k8s-image' &&
-                !e.target.className.includes('k8s-icon-button')
-              ) {
-                setAnchorEl(false);
-                setShowFullContextMenu(false);
-              }
+      <div>
+        <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS}>
+          <IconButton
+            aria-label="contexts"
+            className="k8s-icon-button"
+            onClick={(e) => {
+              e.preventDefault();
+              setShowFullContextMenu((prev) => !prev);
+            }}
+            onMouseOver={(e) => {
+              e.preventDefault();
+              setAnchorEl(true);
+            }}
+            onMouseLeave={(e) => {
+              e.preventDefault();
+              setAnchorEl(false);
+            }}
+            aria-owns={open ? 'menu-list-grow' : undefined}
+            aria-haspopup="true"
+            style={{
+              marginRight: '0.5rem',
             }}
           >
-            <Paper className={classes.cMenuContainer}>
-              <div>
-                <TextField
-                  id="search-ctx"
-                  label="Search"
-                  size="small"
-                  variant="outlined"
-                  onChange={(ev) => searchContexts(ev.target.value)}
-                  style={{
-                    width: '100%',
-                    backgroundColor: 'rgba(102, 102, 102, 0.12)',
-                    margin: '1px 0px',
-                  }}
-                  InputProps={{
-                    endAdornment: <Search className={classes.searchIcon} style={iconMedium} />,
-                  }}
-                />
-              </div>
-              <div>
-                {contexts?.total_count ? (
-                  <>
-                    <Checkbox
-                      checked={activeContexts.includes('all')}
-                      onChange={() => setActiveContexts('all')}
-                      color="primary"
-                    />
-                    <span style={{ fontWeight: 'bolder' }}>select all</span>
-                  </>
-                ) : (
-                  <Link href="/settings">
-                    <Button
-                      type="submit"
-                      variant="contained"
-                      color="primary"
-                      size="large"
-                      style={{ margin: '0.5rem 0.5rem', whiteSpace: 'nowrap' }}
-                    >
-                      <AddIcon className={classes.AddIcon} style={iconMedium} />
-                      Connect Clusters
-                    </Button>
-                  </Link>
-                )}
-                {contexts?.contexts?.map((ctx) => {
-                  return (
-                    <K8sContextConnectionChip
-                      key={ctx.id}
-                      classes={classes}
-                      ctx={ctx}
-                      selectable
-                      onDelete={handleKubernetesDelete}
-                      selected={activeContexts.includes(ctx.id)}
-                      onSelectChange={() => setActiveContexts(ctx.id)}
-                      meshsyncControllerState={meshsyncControllerState}
-                      connectionMetadataState={connectionMetadataState}
-                    />
-                  );
-                })}
-              </div>
-            </Paper>
-          </ClickAwayListener>
-        </div>
-      </Slide>
+            <CBadgeContainer>
+              <img
+                className="k8s-image"
+                src={
+                  connectionMetadataState &&
+                  connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
+                    ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
+                    : '/static/img/kubernetes.svg'
+                }
+                onError={(e) => {
+                  e.target.src = '/static/img/kubernetes.svg';
+                }}
+                width="24px"
+                height="24px"
+                style={{ objectFit: 'contain' }}
+              />
+              <CBadge>{contexts?.total_count || 0}</CBadge>
+            </CBadgeContainer>
+          </IconButton>
+        </CanShow>
 
-      <PromptComponent ref={deleteCtxtRef} />
+        <Slide
+          direction="down"
+          style={styleSlider}
+          timeout={400}
+          in={open}
+          mountOnEnter
+          unmountOnExit
+        >
+          <div>
+            <CanShow Key={keys.VIEW_ALL_KUBERNETES_CLUSTERS} invert_action={['hide']}>
+              <ClickAwayListener
+                onClickAway={(e) => {
+                  if (
+                    typeof e.target.className == 'string' &&
+                    !e.target.className?.includes('cbadge') &&
+                    e.target?.className != 'k8s-image' &&
+                    !e.target.className.includes('k8s-icon-button')
+                  ) {
+                    setAnchorEl(false);
+                    setShowFullContextMenu(false);
+                  }
+                }}
+              >
+                <CMenuContainer>
+                  <div>
+                    <TextField
+                      id="search-ctx"
+                      label="Search"
+                      size="small"
+                      variant="outlined"
+                      onChange={(ev) => searchContexts(ev.target.value)}
+                      style={{
+                        width: '100%',
+                        backgroundColor: 'rgba(102, 102, 102, 0.12)',
+                        margin: '1px 0px',
+                      }}
+                      InputProps={{
+                        endAdornment: <Search style={iconMedium} width={24} />,
+                      }}
+                    />
+                  </div>
+                  <div>
+                    {contexts?.total_count > 0 && (
+                      <div
+                        style={{
+                          display: 'flex',
+                          justifyContent: 'space-between',
+                          alignItems: 'center',
+                        }}
+                      >
+                        <div>
+                          <UsesSistent>
+                            <Checkbox
+                              checked={activeContexts.includes('all')}
+                              onChange={() =>
+                                activeContexts.includes('all')
+                                  ? setActiveContexts([])
+                                  : setActiveContexts('all')
+                              }
+                            />
+                          </UsesSistent>
+                          <span style={{ fontWeight: 'bolder' }}>select all</span>
+                        </div>
+                        <CustomTooltip title="Configure Connections">
+                          <div>
+                            <IconButton size="small" onClick={() => setIsConnectionOpenModal(true)}>
+                              <Edit style={{ ...iconSmall }} />
+                            </IconButton>
+                          </div>
+                        </CustomTooltip>
+                      </div>
+                    )}
+                    {contexts?.contexts?.map((ctx) => {
+                      return (
+                        <K8sContextConnectionChip
+                          key={ctx.id}
+                          ctx={ctx}
+                          selectable
+                          onDelete={handleKubernetesDelete}
+                          selected={activeContexts.includes(ctx.id)}
+                          onSelectChange={() => setActiveContexts(ctx.id)}
+                          meshsyncControllerState={meshsyncControllerState}
+                          connectionMetadataState={connectionMetadataState}
+                        />
+                      );
+                    })}
+                    <Box sx={{ marginTop: '1rem' }}>
+                      <MesherySettingsEnvButtons />
+                    </Box>
+                  </div>
+                </CMenuContainer>
+              </ClickAwayListener>
+            </CanShow>
+          </div>
+        </Slide>
+      </div>
+      <_PromptComponent ref={deleteCtxtRef} />
+      <ConnectionModal
+        isOpenModal={isConnectionOpenModal}
+        setIsOpenModal={setIsConnectionOpenModal}
+        meshsyncControllerState={meshsyncControllerState}
+        connectionMetadataState={connectionMetadataState}
+      />
     </>
   );
 }
@@ -515,53 +419,48 @@ class Header extends React.PureComponent {
   };
 
   render() {
-    const {
-      classes,
-      title,
-      onDrawerToggle,
-      isBeta,
-      theme,
-      themeSetter,
-      onDrawerCollapse,
-      abilityUpdated,
-    } = this.props;
+    const { title, onDrawerToggle, isBeta, onDrawerCollapse, abilityUpdated } = this.props;
     const loaderType = 'circular';
 
     return (
       <NoSsr>
-        <React.Fragment>
-          <LoadTheme theme={theme} themeSetter={themeSetter} />
-          <AppBar
-            color="primary"
-            position="sticky"
-            // elevation={1}
-            className={onDrawerCollapse ? classes.appBarOnDrawerClosed : classes.appBarOnDrawerOpen}
-          >
-            <Toolbar
-              className={
-                onDrawerCollapse ? classes.toolbarOnDrawerClosed : classes.toolbarOnDrawerOpen
-              }
-            >
+        <UsesSistent>
+          <HeaderAppBar id="top-navigation-bar" color="primary" position="sticky">
+            <StyledToolbar isDrawerCollapsed={onDrawerCollapse}>
               <Grid container alignItems="center">
                 <Hidden smUp>
-                  <Grid item>
-                    <IconButton
+                  <Grid item style={{ display: 'none' }}>
+                    <MenuIconButton
                       color="inherit"
                       aria-label="Open drawer"
                       onClick={onDrawerToggle}
-                      className={classes.menuButton}
                     >
-                      <MenuIcon className={classes.headerIcons} style={iconMedium} />
-                    </IconButton>
+                      <HeaderIcons style={iconMedium} />
+                    </MenuIconButton>
                   </Grid>
                 </Hidden>
-                <Grid item xs container alignItems="center" className={classes.pageTitleWrapper}>
+                <Grid item xs container alignItems="center" component={PageTitleWrapper}>
+                  {/* Extension Point for   Logo */}
+                  <div
+                    id="nav-header-logo"
+                    style={{
+                      height: '100%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      minWidth: '34px',
+                      justifyContent: 'center',
+                    }}
+                  ></div>
                   <SpaceSwitcher title={title} isBeta={isBeta} />
                 </Grid>
-                <Grid
-                  item
-                  className={classes.userContainer}
-                  style={{ position: 'relative', right: '-27px' }}
+                <Box
+                  component={UserContainer}
+                  style={{
+                    position: 'relative',
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: '1rem 0.5rem',
+                  }}
                 >
                   {/* According to the capabilities load the component */}
                   {this.state.collaboratorExt && (
@@ -570,84 +469,55 @@ class Header extends React.PureComponent {
                       Extension={(url) => RemoteComponent({ url, loaderType })}
                     />
                   )}
-                  <div className={classes.userSpan} style={{ position: 'relative' }}>
-                    <K8sContextMenu
-                      classes={classes}
-                      contexts={this.props.contexts}
-                      show={!this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS])}
-                      activeContexts={this.props.activeContexts}
-                      setActiveContexts={this.props.setActiveContexts}
-                      searchContexts={this.props.searchContexts}
-                      runningStatus={{
-                        operatorStatus: this.props.operatorState,
-                        meshSyncStatus: this.props.meshSyncState,
-                      }}
-                      updateK8SConfig={this.props.updateK8SConfig}
-                      updateProgress={this.props.updateProgress}
-                    />
-                  </div>
+                  <UserInfoContainer>
+                    <UserSpan style={{ position: 'relative' }}>
+                      <K8sContextMenu
+                        contexts={this.props.contexts}
+                        activeContexts={this.props.activeContexts}
+                        setActiveContexts={this.props.setActiveContexts}
+                        searchContexts={this.props.searchContexts}
+                        runningStatus={{
+                          operatorStatus: this.props.operatorState,
+                          meshSyncStatus: this.props.meshSyncState,
+                        }}
+                        updateK8SConfig={this.props.updateK8SConfig}
+                        updateProgress={this.props.updateProgress}
+                      />
+                    </UserSpan>
 
-                  <div
-                    data-test="settings-button"
-                    aria-describedby={abilityUpdated}
-                    style={
-                      !this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS])
-                        ? cursorNotAllowed
-                        : {}
-                    }
-                  >
-                    <Link href="/settings">
-                      <IconButton
-                        style={
-                          !this.state.capabilityregistryObj?.isHeaderComponentEnabled([SETTINGS])
-                            ? disabledStyle
-                            : {}
-                        }
+                    <div data-testid="settings-button" aria-describedby={abilityUpdated}>
+                      <CanShow Key={keys.VIEW_SETTINGS}>
+                        <IconButton onClick={() => Router.push('/settings')} color="inherit">
+                          <SettingsIcon style={iconMedium} />
+                        </IconButton>
+                      </CanShow>
+                    </div>
+
+                    <div data-testid="notification-button">
+                      <NotificationDrawerButton />
+                    </div>
+
+                    <UserSpan>
+                      <User color="inherit" updateExtensionType={this.props.updateExtensionType} />
+                    </UserSpan>
+                    <UserSpan>
+                      <HeaderMenu
                         color="inherit"
-                        disabled={!CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject)}
-                      >
-                        <OutlinedSettingsIcon
-                          // fill={WHITE}
-                          className={
-                            classes.headerIcons +
-                            ' ' +
-                            (title === 'Settings' ? classes.itemActiveItem : '')
-                          }
-                          style={iconMedium}
-                        />
-                      </IconButton>
-                    </Link>
-                  </div>
-
-                  <div data-test="notification-button">
-                    <NotificationDrawerButton />
-                  </div>
-                  <span className={classes.userSpan}>
-                    <User
-                      classes={classes}
-                      theme={theme}
-                      themeSetter={themeSetter}
-                      color="inherit"
-                      iconButtonClassName={classes.iconButtonAvatar}
-                      avatarClassName={classes.avatar}
-                      updateExtensionType={this.props.updateExtensionType}
-                    />
-                  </span>
-                  {/* <div className="dark-theme-toggle">
-                      <input id="toggle" className="toggle" type="checkbox" onChange={themeToggler} checked={!themeToggle} />
-                    </div> */}
-                </Grid>
+                        updateExtensionType={this.props.updateExtensionType}
+                      />
+                    </UserSpan>
+                  </UserInfoContainer>
+                </Box>
               </Grid>
-            </Toolbar>
-          </AppBar>
-        </React.Fragment>
+            </StyledToolbar>
+          </HeaderAppBar>
+        </UsesSistent>
       </NoSsr>
     );
   }
 }
 
 Header.propTypes = {
-  classes: PropTypes.object.isRequired,
   onDrawerToggle: PropTypes.func.isRequired,
 };
 
@@ -669,4 +539,4 @@ const mapDispatchToProps = (dispatch) => ({
   updateCapabilities: bindActionCreators(updateCapabilities, dispatch),
 });
 
-export default withStyles(styles)(connect(mapStateToProps, mapDispatchToProps)(withNotify(Header)));
+export default connect(mapStateToProps, mapDispatchToProps)(withNotify(Header));

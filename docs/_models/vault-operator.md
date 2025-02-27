@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/vault-operator/components/vault/icons/color/vault-color.svg
   whiteIcon: assets/img/integrations/vault-operator/components/vault/icons/white/vault-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates Vault deployment and scaling",
   "Manages Vault configuration",

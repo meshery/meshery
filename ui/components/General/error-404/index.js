@@ -1,5 +1,4 @@
 import { ErrorTypes } from '@/constants/common';
-import { useTheme } from '@material-ui/core/styles';
 import {
   ErrorSection,
   ErrorSectionContainer,
@@ -15,7 +14,7 @@ import {
   StyledDivider,
   ErrorLink,
 } from './styles';
-import { Typography, InfoCircleIcon, CustomTooltip } from '@layer5/sistent';
+import { Typography, InfoCircleIcon, CustomTooltip, useTheme } from '@layer5/sistent';
 import OrgSwitcher from './OrgSwitcher';
 // import RequestForm from './RequestForm';
 import CurrentSessionInfo from './CurrentSession';
@@ -63,14 +62,20 @@ const DefaultError = (props) => {
             <Logo src="/static/img/meshery-logo/meshery-logo.svg" alt="Meshery logo" />
             <LogoText
               src={
-                theme.palette.type === 'dark'
+                theme.palette.mode === 'dark'
                   ? '/static/img/meshery-logo/meshery-white.svg'
                   : '/static/img/meshery-logo/meshery-black.svg'
               }
               alt="Meshery logo text"
             />
           </ImageContainer>
-          <Typography variant="h4" component="h4" align="center" className="errormsg">
+          <Typography
+            variant="h4"
+            component="h4"
+            align="center"
+            className="errormsg"
+            style={{ color: theme.palette.text.default }}
+          >
             {errorTitle
               ? errorTitle
               : "Oops! It seems like you don't have the necessary permissions to view this page."}
@@ -79,6 +84,7 @@ const DefaultError = (props) => {
             <UnknownServerSideError errorContent={errorContent} />
           ) : null}
         </div>
+
         <ErrorContainer>
           <ErrorSectionContainer>
             <ErrorSection>
@@ -117,8 +123,11 @@ const DefaultError = (props) => {
         </StyledButton>
         <Typography variant="textB1Regular" component="p" align="center">
           For more help, please inquire on the
-          <ErrorLink href="https://discuss.layer5.io"> discussion forum</ErrorLink> or the{' '}
-          <ErrorLink href="https://slack.layer5.io"> Slack workspace</ErrorLink>.
+          <ErrorLink href="https://meshery.io/community#community-forums">
+            {' '}
+            discussion forum
+          </ErrorLink>{' '}
+          or the <ErrorLink href="https://slack.layer5.io"> Slack workspace</ErrorLink>.
         </Typography>
       </ErrorMain>
     </UsesSistent>

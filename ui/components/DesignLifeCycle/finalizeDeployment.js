@@ -1,9 +1,9 @@
 import { useSelectorRtk } from '@/store/hooks';
 import { selectSelectedEnvs } from '@/store/slices/globalEnvironmentContext';
-import { useSelector } from 'react-redux';
+import { useLegacySelector } from 'lib/store';
 const { Box, Typography, Stack, EnvironmentIcon, useTheme, styled } = require('@layer5/sistent');
 const { processDesign, CheckBoxField, StepHeading } = require('./common');
-const _ = require('lodash');
+import { isOperatorEnabled } from '@/utils/utils';
 
 const StyledSummaryItem = styled(Box)(({ theme }) => ({
   borderRadius: '0.5rem',
@@ -19,18 +19,16 @@ const StyledEnvironment = styled(Box)(({ theme }) => ({
   color: theme.palette.text.neutral.default,
 }));
 
-const isVisualizerEnabled = (capabilitiesRegistry) => {
-  const navigatorExtension = _.get(capabilitiesRegistry, 'extensions.navigator') || [];
-  return navigatorExtension.some((ext) => ext.title === 'MeshMap');
-};
-
 export const FinalizeDeployment = ({ design, openInVisualizer, setOpenInVisualizer }) => {
   const { configurableComponents } = processDesign(design);
   const selectedEnvironments = useSelectorRtk(selectSelectedEnvs);
   const envNames = Object.values(selectedEnvironments).map((env) => env.name);
 
-  const capabilitiesRegistry = useSelector((state) => state.get('capabilitiesRegistry'));
-  const visualizerEnabled = isVisualizerEnabled(capabilitiesRegistry);
+  const capabilitiesRegistry = useLegacySelector((state) => {
+    return state.get('capabilitiesRegistry');
+  });
+
+  const visualizerEnabled = isOperatorEnabled(capabilitiesRegistry);
   const theme = useTheme();
   const palette = theme.palette;
   return (
@@ -45,9 +43,7 @@ export const FinalizeDeployment = ({ design, openInVisualizer, setOpenInVisualiz
             {envNames.map((env) => (
               <StyledEnvironment key={env}>
                 <EnvironmentIcon fill={palette.text.neutral.default} />
-                <Typography variant="textB1Regular" key={env}>
-                  {env}
-                </Typography>
+                <Typography key={env}>{env}</Typography>
               </StyledEnvironment>
             ))}
           </Stack>
@@ -59,11 +55,15 @@ export const FinalizeDeployment = ({ design, openInVisualizer, setOpenInVisualiz
           justifyContent={'center'}
         >
           <Box display="flex" alignItems="baseline">
-            <Typography variant="textH1Bold" color={palette.text.neutral.default}>
+            <Typography
+              sx={{
+                fontSize: '3.2rem',
+              }}
+              color={palette.text.neutral.default}
+            >
               {configurableComponents.length}
             </Typography>
             <Typography
-              variant="textB2SemiBold"
               color={palette.text.disabled}
               style={{
                 textTransform: 'lowercase',
@@ -77,9 +77,9 @@ export const FinalizeDeployment = ({ design, openInVisualizer, setOpenInVisualiz
       <Stack mt={3} gap={1}>
         {visualizerEnabled && (
           <CheckBoxField
-            label="Open in Visualizer"
+            label="Open in Operator"
             checked={openInVisualizer}
-            helpText="Opens the deployed design in visualizer"
+            helpText="Opens the deployed design in operator"
             onChange={() => setOpenInVisualizer(!openInVisualizer)}
           />
         )}

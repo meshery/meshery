@@ -1,4 +1,4 @@
-// Copyright 2024 Layer5, Inc.
+// Copyright Meshery Authorsayer5, Inc.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -19,7 +19,6 @@ import (
 	"net/http"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/system"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
 	"github.com/pkg/errors"
@@ -33,31 +32,10 @@ var deleteEnvironmentCmd = &cobra.Command{
 	Long:  `delete a new environments by providing the name and description of the environment`,
 	Example: `
 // delete a new environment
-mesheryctl exp environment delete [environmentId]
+mesheryctl environment delete [environmentId]
 // Documentation for environment can be found at:
-https://docs.layer5.io/cloud/spaces/environments/
+https://docs.meshery.io/concepts/logical/environments
 `,
-	PreRunE: func(cmd *cobra.Command, args []string) error {
-		//Check prerequisite
-
-		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
-		if err != nil {
-			return utils.ErrLoadConfig(err)
-		}
-		err = utils.IsServerRunning(mctlCfg.GetBaseMesheryURL())
-		if err != nil {
-			return err
-		}
-		ctx, err := mctlCfg.GetCurrentContext()
-		if err != nil {
-			return system.ErrGetCurrentContext(err)
-		}
-		err = ctx.ValidateVersion()
-		if err != nil {
-			return err
-		}
-		return nil
-	},
 
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
@@ -92,7 +70,7 @@ https://docs.layer5.io/cloud/spaces/environments/
 
 		// Check if the response status code is 200
 		if resp.StatusCode == http.StatusOK {
-			utils.Log.Info("Connection deleted successfully")
+			utils.Log.Info("Connection deleted")
 			return nil
 		}
 
