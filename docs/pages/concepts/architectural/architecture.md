@@ -168,15 +168,15 @@ See the [**Adapters**]({{ site.baseurl }}/concepts/architecture/adapters) sectio
 
 ### **Meshery Connections and their Actions**
 
-| Connection Type | **Connect mesheryctl** | **Connect Meshery UI** | **Disconnect** | **Ad hoc Connectivity Test** | **Ongoing Connectivity Test** | **Synthetic Check** | **Deploy mesheryctl** | **Undeploy mesheryctl** | **Deploy Meshery UI** | **Undeploy Meshery UI** |  |
+| Connection Type | **Connect mesheryctl** | **Connect Meshery UI** | **Disconnect** | **Ad hoc Connectivity Test** | **Ongoing Connectivity Test** | **Synthetic Check** | **Deploy mesheryctl** | **Undeploy mesheryctl** | **Deploy Meshery UI** | **Undeploy Meshery UI** |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| Kubernetes clusters | `system start` | Upload kubeconfig | Click "X" on chip | On click of connection chip | Yes, via MeshSync | No | No | No | No | No |  |
-| Grafana Servers | No | Enter IP/hostname into Meshery UI | Click "X" on chip | On click of connection chip | No | No | No | No | No | No |  |
-| Prometheus Servers | No | Enter IP/hostname into Meshery UI | Click "X" on chip | On click of connection chip | Yes, when metrics are configured in a dashboard | Yes | No | No | No | No |  |
-| [Meshery Adapters](/concepts/architecture/adapters) | `system check` | Server to Adapter on every UI refresh | Click "X on" chip | Server to Adapter every click on adapter chip in UI | Server to Adapter every 10 seconds | - | Yes, as listed in meshconfig contexts | Yes, as listed in meshconfig contexts | Toggle switch needed | Toggle switch needed |  |
-| [Meshery Operator](/concepts/architecture/operator) | `system check` | Upon upload of kubeconfig | No | On click of connection chip in UI to Server to Kubernetes to Meshery Operator | No | - | `system start` | `system stop` | Upon upload of kubeconfig & Toggle of switch | Toggle of switch |  |
-| [MeshSync](/concepts/architecture/meshsync) | `system check` | follows the lifecycle of Meshery Operator | No | On click of connection chip in UI to Server to Kubernetes to Meshery Operator to MeshSync | Managed by Meshery Operator | On click of connection chip | follows the lifecycle of Meshery Operator | follows the lifecycle of Meshery Operator | follows the lifecycle of Meshery Operator | follows the lifecycle of Meshery Operator |  |
-| [Broker](/concepts/architecture/broker) | `system check` | follows the lifecycle of Meshery Operator | No | On click of connection chip in UI to Server to Brokers exposed service port | NATS Topic Subscription | On click of connection chip | follows the lifecycle of Meshery Operator | follows the lifecycle of Meshery Operator | follows the lifecycle of Meshery Operator | follows the lifecycle of Meshery Operator |  |
+| Kubernetes clusters | `system start` | Upload kubeconfig | Click "X" on chip | On click of connection chip | Yes, via MeshSync | No | No | No | No | No |
+| Grafana Servers | No | Enter IP/hostname into Meshery UI | Click "X" on chip | On click of connection chip | No | No | No | No | No | No |
+| Prometheus Servers | No | Enter IP/hostname into Meshery UI | Click "X" on chip | On click of connection chip | Yes, when metrics are configured in a dashboard | Yes | No | No | No | No |
+| [Meshery Adapters](/concepts/architecture/adapters) | `system check` | Server to Adapter on every UI refresh | Click "X on" chip | Server to Adapter every click on adapter chip in UI | Server to Adapter every 10 seconds | - | Yes, as listed in meshconfig contexts | Yes, as listed in meshconfig contexts | Toggle switch needed | Toggle switch needed |
+| [Meshery Operator](/concepts/architecture/operator) | `system check` | Upon upload of kubeconfig | No | On click of connection chip in UI to Server to Kubernetes to Meshery Operator | No | - | `system start` | `system stop` | Upon upload of kubeconfig & Toggle of switch | Toggle of switch |
+| [MeshSync](/concepts/architecture/meshsync) | `system check` | follows the lifecycle of Meshery Operator | No | On click of connection chip in UI to Server to Kubernetes to Meshery Operator to MeshSync | Managed by Meshery Operator | On click of connection chip | follows the lifecycle of Meshery Operator | follows the lifecycle of Meshery Operator | follows the lifecycle of Meshery Operator | follows the lifecycle of Meshery Operator |
+| [Broker](/concepts/architecture/broker) | `system check` | follows the lifecycle of Meshery Operator | No | On click of connection chip in UI to Server to Brokers exposed service port | NATS Topic Subscription | On click of connection chip | follows the lifecycle of Meshery Operator | follows the lifecycle of Meshery Operator | follows the lifecycle of Meshery Operator | follows the lifecycle of Meshery Operator |
 
 <br>
 
