@@ -473,16 +473,16 @@ const Header = ({
                 <UserInfoContainer>
                   <UserSpan style={{ position: 'relative' }}>
                     <K8sContextMenu
-                      contexts={this.props.contexts}
-                      activeContexts={this.props.activeContexts}
-                      setActiveContexts={this.props.setActiveContexts}
-                      searchContexts={this.props.searchContexts}
+                      contexts={contexts}
+                      activeContexts={activeContexts}
+                      setActiveContexts={setActiveContexts}
+                      searchContexts={searchContexts}
                       runningStatus={{
-                        operatorStatus: this.props.operatorState,
-                        meshSyncStatus: this.props.meshSyncState,
+                        operatorStatus: operatorState,
+                        meshSyncStatus: meshSyncState,
                       }}
-                      updateK8SConfig={this.props.updateK8SConfig}
-                      updateProgress={this.props.updateProgress}
+                      updateK8SConfig={updateK8SConfig}
+                      updateProgress={updateProgress}
                     />
                   </UserSpan>
 
@@ -499,13 +499,10 @@ const Header = ({
                   </div>
 
                   <UserSpan>
-                    <User color="inherit" updateExtensionType={this.props.updateExtensionType} />
+                    <User color="inherit" updateExtensionType={updateExtensionType} />
                   </UserSpan>
                   <UserSpan>
-                    <HeaderMenu
-                      color="inherit"
-                      updateExtensionType={this.props.updateExtensionType}
-                    />
+                    <HeaderMenu color="inherit" updateExtensionType={updateExtensionType} />
                   </UserSpan>
                 </UserInfoContainer>
               </Box>
