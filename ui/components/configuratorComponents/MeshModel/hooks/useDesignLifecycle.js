@@ -95,11 +95,9 @@ export default function useDesignLifecycle() {
   function designSave() {
     promisifiedDataFetch('/api/pattern', {
       body: JSON.stringify({
-        pattern_data: {
-          name: designJson.name,
-          pattern_file: getUnit8ArrayForDesign(designYaml),
-        },
-        save: true,
+        id: designJson.id,
+        name: designJson.name,
+        design_file: designJson,
       }),
       method: 'POST',
     })
@@ -123,11 +121,11 @@ export default function useDesignLifecycle() {
     try {
       await promisifiedDataFetch('/api/pattern', {
         body: JSON.stringify({
-          pattern_data: {
+        
             name: designJson.name,
-            pattern_file: getUnit8ArrayForDesign(designYaml),
+            design_file: designJson,
             id: designId,
-          },
+          
         }),
         method: 'POST',
       });
