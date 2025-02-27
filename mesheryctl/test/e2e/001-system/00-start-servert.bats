@@ -17,7 +17,7 @@ setup() {
     # wait for deployment
     sleep 40
 
-    run verify "there are 1 pods named 'meshery'"
+    run verify "there are 4 pods named 'meshery-.*'"
 	[ "$status" -eq 0 ]
 	
 	run verify "there is 1 service named 'meshery'"
