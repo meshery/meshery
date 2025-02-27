@@ -48,7 +48,6 @@ import {
 } from '@layer5/sistent';
 import { UsesSistent } from './SistentWrapper';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
-import dataFetch from '../lib/data-fetch';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import {
@@ -100,10 +99,7 @@ import {
 } from './General/style';
 import DashboardIcon from '@/assets/icons/DashboardIcon';
 import { useMediaQuery } from '@mui/material';
-import {
-  getProviderCapabilities,
-  getSystemVersion,
-} from '@/rtk-query/user';
+import { getProviderCapabilities, getSystemVersion } from '@/rtk-query/user';
 
 const drawerIconsStyle = { height: '1.21rem', width: '1.21rem', fontSize: '1.45rem', ...iconSmall };
 const externalLinkIconStyle = { width: '1.11rem', fontSize: '1.11rem' };
