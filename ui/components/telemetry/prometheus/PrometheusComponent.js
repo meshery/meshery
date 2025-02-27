@@ -211,11 +211,12 @@ class PrometheusComponent extends Component {
     submitPrometheusConfigure(this);
   };
 
-  handleError = () => {
-    this.props.updateProgress({ showProgress: false });
-    const notify = this.props.notify;
+  handleError = (message = 'There was an error communicating with Prometheus') => {
+    this.props.updateProgress?.({ showProgress: false });
+
+    const notify = this.props.notify ?? (({ message }) => console.error(message)); // Default fallback
     notify({
-      message: 'There was an error communicating with Prometheus',
+      message,
       event_type: EVENT_TYPES.ERROR,
     });
   };
@@ -300,7 +301,6 @@ class PrometheusComponent extends Component {
   };
 
   render() {
-    const { classes } = this.props;
     const {
       urlError,
       prometheusURL,
@@ -317,8 +317,7 @@ class PrometheusComponent extends Component {
               boardPanelConfigs={selectedPrometheusBoardsConfigs}
               deleteSelectedBoardPanelConfig={this.deleteSelectedBoardPanelConfig}
             />
-
-            <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+            <Typography variant="h6" gutterBottom>
               Prometheus charts
             </Typography>
             {/* <GrafanaCharts

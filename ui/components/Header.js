@@ -55,6 +55,7 @@ import {
   UserSpan,
   CBadge,
   StyledToolbar,
+  UserInfoContainer,
 } from './Header.styles';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import { EVENT_TYPES } from 'lib/event-types';
@@ -332,7 +333,6 @@ function K8sContextMenu({
                                   ? setActiveContexts([])
                                   : setActiveContexts('all')
                               }
-                              color="primary"
                             />
                           </UsesSistent>
                           <span style={{ fontWeight: 'bolder' }}>select all</span>
@@ -454,7 +454,15 @@ const Header = ({
                 ></div>
                 <SpaceSwitcher title={title} isBeta={isBeta} />
               </Grid>
-              <Grid item component={UserContainer} style={{ position: 'relative' }}>
+              <Box
+                component={UserContainer}
+                style={{
+                  position: 'relative',
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  gap: '1rem 0.5rem',
+                }}
+              >
                 {/* According to the capabilities load the component */}
                 {collaboratorExt && (
                   <ExtensionSandbox
@@ -462,40 +470,45 @@ const Header = ({
                     Extension={(url) => RemoteComponent({ url, loaderType })}
                   />
                 )}
-                <UserSpan style={{ position: 'relative' }}>
-                  <K8sContextMenu
-                    contexts={contexts}
-                    activeContexts={activeContexts}
-                    setActiveContexts={setActiveContexts}
-                    searchContexts={searchContexts}
-                    runningStatus={{
-                      operatorStatus: operatorState,
-                      meshSyncStatus: meshSyncState,
-                    }}
-                    updateK8SConfig={updateK8SConfig}
-                    updateProgress={updateProgress}
-                  />
-                </UserSpan>
+                <UserInfoContainer>
+                  <UserSpan style={{ position: 'relative' }}>
+                    <K8sContextMenu
+                      contexts={this.props.contexts}
+                      activeContexts={this.props.activeContexts}
+                      setActiveContexts={this.props.setActiveContexts}
+                      searchContexts={this.props.searchContexts}
+                      runningStatus={{
+                        operatorStatus: this.props.operatorState,
+                        meshSyncStatus: this.props.meshSyncState,
+                      }}
+                      updateK8SConfig={this.props.updateK8SConfig}
+                      updateProgress={this.props.updateProgress}
+                    />
+                  </UserSpan>
 
-                <div data-testid="settings-button" aria-describedby={abilityUpdated}>
-                  <CanShow Key={keys.VIEW_SETTINGS}>
-                    <IconButton onClick={() => Router.push('/settings')} color="inherit">
-                      <SettingsIcon style={iconMedium} />
-                    </IconButton>
-                  </CanShow>
-                </div>
+                  <div data-testid="settings-button" aria-describedby={abilityUpdated}>
+                    <CanShow Key={keys.VIEW_SETTINGS}>
+                      <IconButton onClick={() => Router.push('/settings')} color="inherit">
+                        <SettingsIcon style={iconMedium} />
+                      </IconButton>
+                    </CanShow>
+                  </div>
 
-                <div data-testid="notification-button">
-                  <NotificationDrawerButton />
-                </div>
+                  <div data-testid="notification-button">
+                    <NotificationDrawerButton />
+                  </div>
 
-                <UserSpan>
-                  <User color="inherit" updateExtensionType={updateExtensionType} />
-                </UserSpan>
-                <UserSpan>
-                  <HeaderMenu color="inherit" updateExtensionType={updateExtensionType} />
-                </UserSpan>
-              </Grid>
+                  <UserSpan>
+                    <User color="inherit" updateExtensionType={this.props.updateExtensionType} />
+                  </UserSpan>
+                  <UserSpan>
+                    <HeaderMenu
+                      color="inherit"
+                      updateExtensionType={this.props.updateExtensionType}
+                    />
+                  </UserSpan>
+                </UserInfoContainer>
+              </Box>
             </Grid>
           </StyledToolbar>
         </HeaderAppBar>

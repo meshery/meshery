@@ -391,7 +391,6 @@ const TitleWithImg = ({ displayName, iconSrc }) => (
 );
 
 const StatusChip = ({ entityData, entityType }) => {
-  console.log('amit entityData', entityData);
   const nextStatus = Object.values(REGISTRY_ITEM_STATES);
   const [updateEntityStatus] = useUpdateEntityStatusMutation();
   const { data: modelData, isSuccess } = useGetMeshModelsQuery({
