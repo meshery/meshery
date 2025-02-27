@@ -55,6 +55,13 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdwizOJmeMw --spreadsheet-cred $CRED --model "[model-name]"
 	`,
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		spreadsheetID, _ := cmd.Flags().GetString("spreadsheet-id")
+		spreadsheetCred, _ := cmd.Flags().GetString("spreadsheet-cred")
+
+		if spreadsheetID == "" || spreadsheetCred == "" {
+			utils.Log.Error(fmt.Errorf("missing required fields: spredsheet ID and credentials"))
+			return cmd.Help()
+		}
 
 		err := os.MkdirAll(logDirPath, 0755)
 		if err != nil {
@@ -69,7 +76,6 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-
 		srv, err := mutils.NewSheetSRV(spreadsheeetCred)
 		if err != nil {
 			utils.Log.Error(ErrUpdateRegistry(err, modelLocation))
@@ -92,9 +98,8 @@ mesheryctl registry update --spreadsheet-id 1DZHnzxYWOlJ69Oguz4LkRVTFM79kC2tuvdw
 		return nil
 	},
 }
-var (
-	ExcludeDirs = []string{"relationships", "policies"}
-)
+
+var ExcludeDirs = []string{"relationships", "policies"}
 
 type compUpdateTracker struct {
 	totalComps        int
@@ -271,5 +276,4 @@ func init() {
 	updateCmd.PersistentFlags().StringVarP(&modelName, "model", "m", "", "specific model name to be generated")
 
 	updateCmd.MarkFlagsRequiredTogether("spreadsheet-id", "spreadsheet-cred")
-
 }
