@@ -41,6 +41,7 @@ import {
   encodeDesignFile,
   getUnit8ArrayDecodedFile,
   getUnit8ArrayForDesign,
+  JsonParse,
   parseDesignFile,
 } from '../utils/utils';
 import ViewSwitch from './ViewSwitch';
@@ -102,6 +103,7 @@ import PatternConfigureIcon from '@/assets/icons/PatternConfigure';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import TooltipButton from '@/utils/TooltipButton';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
+import yaml from 'js-yaml';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -883,14 +885,14 @@ function MesheryPatterns({
     }
 
     if (type === FILE_OPS.UPDATE) {
+      const design = yaml.load(data);
+
       updatePattern({
         updateBody: JSON.stringify({
-          pattern_data: {
-            id,
-            pattern_file: getUnit8ArrayForDesign(data),
-            catalog_data,
-          },
-          save: true,
+          id,
+          name: data.name,
+          design_file: design,
+          catalog_data,
         }),
       })
         .unwrap()
