@@ -266,11 +266,228 @@ const MesheryDesignEmbedExtension = () => {
   );
 };
 
+//new modifications starts here
+const Layer5CloudLogo = () => {
+  return (
+    <img
+      style={{
+        paddingRight: '1rem',
+        height: 'auto',
+        width: 'auto',
+        maxWidth: '120px',
+        maxHeight: '75px',
+      }}
+      src="/static/img/layer5-cloud-icon.svg"
+      data-testid="layer5-cloud-image"
+    />
+  );
+};
+
+const Layer5CloudExtension = () => {
+  const handleLearnMore = (e) => {
+    window.open('https://meshery.io/extensions/layer5-cloud', '_blank');
+    e.stopPropagation();
+  };
+
+  return (
+    <UsesSistent>
+      <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
+        <CardContainer>
+          <Typography data-testid="layer5-cloud-heading" variant="h5" component="div">
+            Layer5 Cloud
+          </Typography>
+
+          <FrontSideDescription variant="body">
+            <Layer5CloudLogo />A comprehensive platform offering identity and collaboration
+            services, private catalogs, GitOps, and multi-Meshery management. Leverage its
+            extensible authorization framework and organizational hierarchy for streamlined cloud
+            infrastructure management.
+          </FrontSideDescription>
+
+          <div style={{ textAlign: 'right' }}>
+            <Button
+              variant="contained"
+              color="primary"
+              data-testid="layer5-cloud-learn-more-btn"
+              onClick={(e) => handleLearnMore(e)}
+            >
+              Learn More
+            </Button>
+          </div>
+        </CardContainer>
+      </Grid>
+    </UsesSistent>
+  );
+};
+
+const HelmPluginLogo = () => {
+  return (
+    <img
+      style={{
+        paddingRight: '1rem',
+        height: 'auto',
+        width: 'auto',
+        maxWidth: '120px',
+        maxHeight: '75px',
+      }}
+      src="/static/img/helm-icon.svg"
+      data-testid="helm-plugin-image"
+    />
+  );
+};
+
+const HelmPluginExtension = () => {
+  const handleLearnMore = (e) => {
+    window.open('https://meshery.io/extensions/helm-kanvas-snapshot', '_blank');
+    e.stopPropagation();
+  };
+
+  return (
+    <UsesSistent>
+      <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
+        <CardContainer>
+          <Typography data-testid="helm-plugin-heading" variant="h5" component="div">
+            Helm Plugin for Kanvas Snapshot
+          </Typography>
+
+          <FrontSideDescription variant="body">
+            <HelmPluginLogo />
+            Generate visual snapshots of your Helm charts directly from the command line. Helm
+            charts into Kanvas Snapshots with support for both packaged and unpackaged charts.
+            Receive snapshots via email or terminal URL display.
+          </FrontSideDescription>
+
+          <div style={{ textAlign: 'right' }}>
+            <Button
+              variant="contained"
+              color="primary"
+              data-testid="helm-plugin-learn-more-btn"
+              onClick={(e) => handleLearnMore(e)}
+            >
+              Learn More
+            </Button>
+          </div>
+        </CardContainer>
+      </Grid>
+    </UsesSistent>
+  );
+};
+
+const KubectlPluginLogo = () => {
+  return (
+    <img
+      style={{
+        paddingRight: '1rem',
+        height: 'auto',
+        width: 'auto',
+        maxWidth: '120px',
+        maxHeight: '75px',
+      }}
+      src="/static/img/kubectl-icon.svg"
+      data-testid="kubectl-plugin-image"
+    />
+  );
+};
+
+const KubectlPluginExtension = () => {
+  const handleLearnMore = (e) => {
+    window.open('https://docs.meshery.io/extensions/kubectl-kanvas-snapshot', '_blank');
+    e.stopPropagation();
+  };
+
+  return (
+    <UsesSistent>
+      <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
+        <CardContainer>
+          <Typography data-testid="kubectl-plugin-heading" variant="h5" component="div">
+            Kubectl Plugin for Kanvas Snapshot
+          </Typography>
+
+          <FrontSideDescription variant="body">
+            <KubectlPluginLogo />
+            Generate visual snapshots of your Kubernetes manifests directly from kubectl. cluster
+            configurations and workflows with Kanvas Snapshots. Receive snapshots via email or get
+            instant terminal URL display.
+          </FrontSideDescription>
+
+          <div style={{ textAlign: 'right' }}>
+            <Button
+              variant="contained"
+              color="primary"
+              data-testid="kubectl-plugin-learn-more-btn"
+              onClick={(e) => handleLearnMore(e)}
+            >
+              Learn More
+            </Button>
+          </div>
+        </CardContainer>
+      </Grid>
+    </UsesSistent>
+  );
+};
+
+const KubectlMeshSyncLogo = () => {
+  return (
+    <img
+      style={{
+        paddingRight: '1rem',
+        height: 'auto',
+        width: 'auto',
+        maxWidth: '120px',
+        maxHeight: '75px',
+      }}
+      src="/static/img/kubectl-meshsync-icon.svg"
+      data-testid="kubectl-meshsync-image"
+    />
+  );
+};
+
+const KubectlMeshSyncExtension = () => {
+  const handleLearnMore = (e) => {
+    window.open('https://docs.meshery.io/extensions/kubectl-meshsync-snapshot', '_blank');
+    e.stopPropagation();
+  };
+
+  return (
+    <UsesSistent>
+      <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
+        <CardContainer>
+          <Typography data-testid="kubectl-meshsync-heading" variant="h5" component="div">
+            Kubectl Plugin for MeshSync Snapshot
+          </Typography>
+
+          <FrontSideDescription variant="body">
+            <KubectlMeshSyncLogo />
+            Capture cluster state directly from kubectl with simplified networking and access
+            requirements. Generate MeshSync snapshots for offline management and visualization in
+            Meshery Server, without requiring full Meshery Operator deployment.
+          </FrontSideDescription>
+
+          <div style={{ textAlign: 'right' }}>
+            <Button
+              variant="contained"
+              color="primary"
+              data-testid="kubectl-meshsync-learn-more-btn"
+              onClick={(e) => handleLearnMore(e)}
+            >
+              Learn More
+            </Button>
+          </div>
+        </CardContainer>
+      </Grid>
+    </UsesSistent>
+  );
+};
+
 export const WrappedMeshMapSignupCard = MeshMapSignUpcard;
 export const WrappedMeshMapSnapShopCard = MeshMapSnapShotCard;
 export const WrappedMesheryPerformanceAction = MesheryPerformanceAction;
 export const WrappedMesheryDockerExtension = MesheryDockerExtension;
 export const WrappedMesheryEmbedDesignExtension = MesheryDesignEmbedExtension;
+export const WrappedLayer5CloudExtension = Layer5CloudExtension;
+export const WrappedHelmPluginExtension = HelmPluginExtension;
+export const WrappedKubectlPluginExtension = KubectlPluginExtension;
+export const WrappedKubectlMeshSyncExtension = KubectlMeshSyncExtension;
 const Extensions = ({ toggleCatalogContent, capabilitiesRegistry }) => {
   const [catalogContent, setCatalogContent] = useState(true);
   const [extensionPreferences, setExtensionPreferences] = useState({});
@@ -342,6 +559,10 @@ const Extensions = ({ toggleCatalogContent, capabilitiesRegistry }) => {
             <WrappedMeshMapSignupCard hasAccessToMeshMap={hasAccessToMeshMap} />
             <WrappedMesheryDockerExtension />
             <WrappedMesheryEmbedDesignExtension />
+            <WrappedLayer5CloudExtension />
+            <WrappedHelmPluginExtension />
+            <WrappedKubectlPluginExtension />
+            <WrappedKubectlMeshSyncExtension />
             <Grid item {...INITIAL_GRID_SIZE}>
               <CardContainer>
                 <Typography data-testid="catalog-section-heading" variant="h5" component="div">
