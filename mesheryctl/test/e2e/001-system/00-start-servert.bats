@@ -3,7 +3,7 @@
 setup() {
     load "$SUPPORT_DESTDIR/load"
     load "$ASSERT_DESTDIR/load"
-    load "$DETIK_DESTDIR/load"
+    load "$DETIK_DESTDIR/detik.bash"
 
     DETIK_CLIENT_NAMESPACE=meshery
 }
