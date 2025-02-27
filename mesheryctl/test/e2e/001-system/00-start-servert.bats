@@ -1,10 +1,10 @@
 #!/usr/bin/env bats
 
 setup() {
-    load "$HELPERS_LIBS/bats-support/load"
-    load "$HELPERS_LIBS/bats-assert/load"
-    load "$HELPERS_LIBS/bats-detik/lib/util"
-    load "$HELPERS_LIBS/bats-detik/lib/detik"
+    load "$SUPPORT_DESTDIR/load"
+    load "$ASSERT_DESTDIR/load"
+    load "$DETIK_DESTDIR/lib/util"
+    load "$DETIK_DESTDIR/lib/detik"
 
     DETIK_CLIENT_NAMESPACE=meshery
 }
