@@ -347,9 +347,7 @@ const Navigator_ = (props) => {
     },
     navigatorComponents: [],
   });
-  useEffect(() => {
-    console.log('amit state', state);
-  }, [state]);
+
   const updateState = (updates) => {
     setState((prevState) => ({
       ...prevState,
