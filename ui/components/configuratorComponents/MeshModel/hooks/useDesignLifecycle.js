@@ -5,7 +5,6 @@ import * as Types from './types';
 import { promisifiedDataFetch } from '../../../../lib/data-fetch';
 import { useNotification } from '../../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../../lib/event-types';
-import { getUnit8ArrayForDesign } from '@/utils/utils';
 
 export default function useDesignLifecycle() {
   const [designId, setDesignId] = useState();
@@ -121,11 +120,9 @@ export default function useDesignLifecycle() {
     try {
       await promisifiedDataFetch('/api/pattern', {
         body: JSON.stringify({
-        
-            name: designJson.name,
-            design_file: designJson,
-            id: designId,
-          
+          name: designJson.name,
+          design_file: designJson,
+          id: designId,
         }),
         method: 'POST',
       });

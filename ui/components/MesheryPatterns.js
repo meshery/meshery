@@ -37,13 +37,7 @@ import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
-import {
-  encodeDesignFile,
-  getUnit8ArrayDecodedFile,
-  getUnit8ArrayForDesign,
-  JsonParse,
-  parseDesignFile,
-} from '../utils/utils';
+import { encodeDesignFile, getUnit8ArrayDecodedFile, parseDesignFile } from '../utils/utils';
 import ViewSwitch from './ViewSwitch';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
 import UndeployIcon from '../public/static/img/UndeployIcon';
