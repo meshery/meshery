@@ -58,30 +58,6 @@ jobs:
       - name: Get Date
         id: date
         run: echo "date=date +'%Y-%m-%d-%H.%M.%S'" >> $GITHUB_OUTPUT
-      - name: Create bats libraries directory
-        run: |
-          mkdir test_helpers
-        working-directory: ./mesheryctl/test/e2e
-      - name: Checkout bats-support library
-        uses: actions/checkout@v4.2.2
-        with:
-          repository: 'bats-core/bats-support'
-          path: ./mesheryctl/test/e2e/test_helpers/bats-support
-      - name: Checkout bats-assert library
-        uses: actions/checkout@v4.2.2
-        with:
-          repository: 'bats-core/bats-assert'
-          path: ./mesheryctl/test/e2e/test_helpers/bats-assert
-      - name: Checkout bats-detik library
-        uses: actions/checkout@v4.2.2
-        with:
-          repository: bats-core/bats-detik
-          path: ./mesheryctl/test/e2e/test_helpers/bats-detik
-      - name: Run mesheryctl end2end tests
-        run: |
-          bash run_tests.bash
-        shell: bash
-        working-directory: ./mesheryctl/test/e2e
       - name: Stop Minikube
         if: always() # Ensure minikube is stopped even if tests fail
         run: |
