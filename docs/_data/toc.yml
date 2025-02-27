@@ -102,12 +102,6 @@
 - title: 📚 Guides & Tutorials
   url: guides
   links:
-    # - title: Deploying Designs
-    #   url: guides/deploying-designs
-    # - title: Deploying Sample Applications
-    #   url: guides/sample-apps
-    # - title: Running SMI Conformance Tests
-    # url: guides/smi-conformance
     - title: ⚙️ Infrastructure Management ↆ
       url: guides/infrastructure-management/overview
       children:
