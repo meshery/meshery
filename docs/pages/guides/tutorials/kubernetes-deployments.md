@@ -68,21 +68,21 @@ spec:
 
 1. In the Kanvas page, start by renaming the design to a name of your choice for easier identification later.
 2. From the floating dock, click **Kubernetes** icon and select **Deployment** from the list. This should create the deployment component on the design canvas. 
-    ![](./screenshots/kubernetes-deployments/2024-04-30_00-19.png)
+    ![](./kubernetes-deployments/2024-04-30_00-19.png)
 3. Click the component to load the configuration modal.
 4. Change the Name of the deployment and the Namespace if required.
 5. A deployment consits of replicas. Set a value for Replicas. If nothing is set, the default is 1. For this example we will set it to 2.
-    ![](./screenshots/kubernetes-deployments/2024-05-05_20-05.png)
+    ![](./kubernetes-deployments/2024-05-05_20-05.png)
 6. Expand Selector, click Match Labels and set a matchLabel pair.
-    ![](./screenshots/kubernetes-deployments/2024-05-05_19-50.png)
+    ![](./kubernetes-deployments/2024-05-05_19-50.png)
 7. Next, expand Template and click Metadata to load the pod's metadata.
 8. Set a name for the pods and importantly set the Labels. Click **+** next to Labels to set one. For this example, the name is podinfo and the label is `tutorial:deployment`. Close the metadata modal.
-    ![](./screenshots/kubernetes-deployments/2024-05-05_20-19.png)
+    ![](./kubernetes-deployments/2024-05-05_20-19.png)
 8. Next, click on Spec under Template to load the pod specification modal.
 5. Scroll down to **Containers** and then click **+** to define the container specs. Expand **Containers-0** to set the values.
-    ![](./screenshots/kubernetes-deployments/2024-05-05_19-59.png)
+    ![](./kubernetes-deployments/2024-05-05_19-59.png)
 6. Fill in the mandatory details such as _Image_ and _Name_. For this example the following image has been used `meshery/meshery-milestone:latest`. You may use any other image of your choice.
-    ![](./screenshots/kubernetes-deployments/2024-05-05_19-57.png)
+    ![](./kubernetes-deployments/2024-05-05_19-57.png)
 
 
 #### Validating and deploying the Deployment
@@ -90,23 +90,23 @@ spec:
 Let's validate the design before deploying it.
 
 To do this, click **Actions** and then **Validate** from the top menu.
-![](./screenshots/kubernetes-deployments/2024-05-05_22-55.png)
+![](./kubernetes-deployments/2024-05-05_22-55.png)
 
 This should show a pop-up with details such as the number of components, annotations and errors (if any).
 
 Ensure there are no errors before deploying. If there are errors, ensure that you have set _.spec.selector.matchLabels_ and _.spec.template.metadata.labels_ and they are same.
 
 To deploy, click **Actions** and then **Deploy** to load the deployment workflow.
-![](./screenshots/kubernetes-deployments/2024-05-05_22-56.png)
+![](./kubernetes-deployments/2024-05-05_22-56.png)
 
 The Validate Design step should already be error free. Click **Next**.
-![](./screenshots/kubernetes-deployments/2024-05-05_23-28.png)
+![](./kubernetes-deployments/2024-05-05_23-28.png)
 
 Click **Next** again in the Select Environment step.
-![](./screenshots/kubernetes-deployments/2024-05-05_23-29.png)
+![](./kubernetes-deployments/2024-05-05_23-29.png)
 
 Finally, click **Deploy** in the Dry Run step. 
-![](./screenshots/kubernetes-deployments/2024-05-05_23-30.png)
+![](./kubernetes-deployments/2024-05-05_23-30.png)
 
 If there are errors in the dry run step, resolve them and restart the deployment process.
 
@@ -125,10 +125,10 @@ To view the resources deployed we will use the **Operate** section of the _Kanva
 #### Viewing Deployment and Pod information
 
 Select the deployment from the _View_ to load the deployment details to the right. Ensure the _Details_ tab is selected.
-![](./screenshots/kubernetes-deployments/2024-05-06_14-55.png)
+![](./kubernetes-deployments/2024-05-06_14-55.png)
 
 Now, select one of the pods in the deployment to display the pod details. 
-![](./screenshots/kubernetes-deployments/2024-05-06_14-56.png)
+![](./kubernetes-deployments/2024-05-06_14-56.png)
 
 
 #### Deleting the Deployment
