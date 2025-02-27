@@ -174,7 +174,7 @@ jobs:
   #   secrets: inherit
   deploy-delay:
     name: Playground Deploy Delay
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs:
       - build
     steps:
