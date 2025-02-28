@@ -20,7 +20,7 @@ list: include
 4. Instructions for Creating a New Connection
 5. Instructions for Creating a New Component -->
 
-# Understanding the internals of Meshery's logical object model
+## Understanding the internals of Meshery's logical object model
 
 Meshery's internal object model is designed to provide a consistent and extensible way of capturing and characterizing the resources under Meshery's management and the capabilities Meshery has at its disposal. Meshery Models serve as the unit of packaging for the object models that define a registered capability or a type of managed infrastructure and their relationships, and details specifics of how to manage them.Models often represent infrastructure and application technologies, however, they are also capable of defining other types of entities like annotations, like shapes (infrastructure ambiguous components). Models are used to define the capabilities of Meshery. _See [Models]({{site.baseurl}}/concepts/logical/models) to learn more about models as a logical concept._
 
@@ -395,7 +395,7 @@ During model generation, corresponding components are created. Next step is to e
 1. **Enrich Component Details**
    When a Component is initially generated, a new Component definition is created with default properties (e.g. colors, icons, capabilities, etc.), some of which are inherited from their respective Model.
 
-   - **3.1. Customize Shapes and Colors**
+   - **1.1. Customize Shapes and Colors**
 
      - Default shape for new components is a circle
      - Consider enriching components' details based on what they represent
@@ -403,30 +403,30 @@ During model generation, corresponding components are created. Next step is to e
      - Example: Use a pentagon shape to represent a Deployment
      - Know more about [components shapes and colors](https://docs.meshery.io/extensions/component-shape-guide)
 
-   - **3.2. Customize Icons**
+   - **1.2. Customize Icons**
 
      - Components inherit the icon (colored and white SVGs) of their respective Model by default
      - Propose specific icons best suited to visually represent each component
      - Example: Use a skull icon for a DaemonSet
 
-   - **3.3. Review Capabilities**
+   - **1.3. Review Capabilities**
      - Review and confirm assigned capabilities
      - Modify capabilities as needed
 
     See the [Contributing to Components]({{site.baseurl}}/project/contributing/contributing-components) for detailed instructions.
 
-4. **Identify Relationships**
+2. **Identify Relationships**
 
-   - **4.1. Review Available Types**
+   - **2.1. Review Available Types**
      Review and familiarize yourself with the predefined relationship kinds, types, and subtypes. See ["Relationships logical concepts"]({{ site.baseurl }}/concepts/logical/relationships)
 
-   - **4.2. Map Component Relationships**
+   - **2.2. Map Component Relationships**
 
      - Identify appropriate relationships for your new components
      - Consider how components relate to others within the same model
      - Consider relationships with components in other models
 
-   - **4.3. Create Definitions**
+   - **2.3. Create Definitions**
      Codify the relationships you have identified into a Relationship Definition
 
     See the [Contributing to Relationships]({{site.baseurl}}/project/contributing/contributing-relationships) for detailed instructions.
