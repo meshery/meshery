@@ -69,7 +69,6 @@ import BrushIcon from '@mui/icons-material/Brush';
 import CategoryIcon from '@mui/icons-material/Category';
 import SourceIcon from '@/assets/icons/SourceIcon';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
-import { UsesSistent } from '../SistentWrapper';
 import { RJSFModalWrapper } from '../Modal';
 import { useRef } from 'react';
 import { updateProgress } from 'lib/store';
@@ -586,10 +585,10 @@ const MeshModelComponent_ = ({
           handleCsvStepper={handleCsvStepper}
         />
       )}
-      <UsesSistent>
+      <>
         <SistentModal maxWidth="sm" {...urlModal}></SistentModal>
         <SistentModal maxWidth="sm" {...csvModal}></SistentModal>
-      </UsesSistent>
+      </>
       <MainContainer isAnimated={animate}>
         <InnerContainer isAnimated={animate}>
           <TabCard
@@ -670,8 +669,6 @@ const ImportModal = React.memo((props) => {
   const { handleClose, handleImportModel } = props;
 
   return (
-    <>
-      <UsesSistent>
         <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Import Model">
           <RJSFModalWrapper
             schema={importModelSchema}
@@ -681,8 +678,6 @@ const ImportModal = React.memo((props) => {
             handleClose={handleClose}
           />
         </SistentModal>
-      </UsesSistent>
-    </>
   );
 });
 
@@ -692,8 +687,6 @@ const GenerateModal = React.memo((props) => {
   const { handleClose, uploadMethod, handleChange, handleUrlStepper, handleCsvStepper } = props;
 
   return (
-    <>
-      <UsesSistent>
         <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Generate Model">
           <FormControl style={{ padding: '10px' }}>
             <FormLabel id="upload-method-choices" sx={{ marginBottom: '1rem' }}>
@@ -707,12 +700,12 @@ const GenerateModal = React.memo((props) => {
             >
               <FormControlLabel
                 value="url"
-                control={<Radio color="primary" />}
+                control={<Radio />}
                 label="URL Import"
               />
               <FormControlLabel
                 value="csv"
-                control={<Radio color="primary" />}
+                control={<Radio />}
                 label="CSV Import"
               />
             </RadioGroup>
@@ -734,8 +727,6 @@ const GenerateModal = React.memo((props) => {
             />
           </ModalFooter>
         </SistentModal>
-      </UsesSistent>
-    </>
   );
 });
 
