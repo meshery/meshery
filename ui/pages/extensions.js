@@ -290,6 +290,7 @@ const Layer5CloudExtension = () => {
   };
 
   return (
+    <>
       <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
         <CardContainer>
           <Typography data-testid="layer5-cloud-heading" variant="h5" component="div">
@@ -315,6 +316,7 @@ const Layer5CloudExtension = () => {
           </div>
         </CardContainer>
       </Grid>
+    </>
   );
 };
 
@@ -341,6 +343,7 @@ const HelmPluginExtension = () => {
   };
 
   return (
+    <>
       <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
         <CardContainer>
           <Typography data-testid="helm-plugin-heading" variant="h5" component="div">
@@ -366,6 +369,7 @@ const HelmPluginExtension = () => {
           </div>
         </CardContainer>
       </Grid>
+    </>
   );
 };
 
@@ -392,6 +396,7 @@ const KubectlPluginExtension = () => {
   };
 
   return (
+    <>
       <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
         <CardContainer>
           <Typography data-testid="kubectl-plugin-heading" variant="h5" component="div">
@@ -417,6 +422,7 @@ const KubectlPluginExtension = () => {
           </div>
         </CardContainer>
       </Grid>
+    </>
   );
 };
 
@@ -443,6 +449,7 @@ const KubectlMeshSyncExtension = () => {
   };
 
   return (
+    <>
       <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
         <CardContainer>
           <Typography data-testid="kubectl-meshsync-heading" variant="h5" component="div">
@@ -468,6 +475,7 @@ const KubectlMeshSyncExtension = () => {
           </div>
         </CardContainer>
       </Grid>
+    </>
   );
 };
 
