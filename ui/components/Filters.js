@@ -61,7 +61,6 @@ import { DefaultTableCell, SortableTableCell } from './connections/common/index.
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from './General/error-404/index';
-import { UsesSistent } from './SistentWrapper';
 import { Modal as SistentModal } from '@layer5/sistent';
 import {
   useGetFiltersQuery,
@@ -117,13 +116,13 @@ const ActionsBox = styled(Box)(() => ({
 
 function TooltipIcon({ children, onClick, title }) {
   return (
-    <UsesSistent>
+    <>
       <CustomTooltip title={title} placement="top" interactive>
         <div>
           <IconButton onClick={onClick}>{children}</IconButton>
         </div>
       </CustomTooltip>
-    </UsesSistent>
+    </>
   );
 }
 
@@ -197,7 +196,6 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
         <CustomTooltip title="Update Filter">
           <IconButton
             aria-label="Update"
-            color="primary"
             disabled={!CAN(keys.EDIT_WASM_FILTER.action, keys.EDIT_WASM_FILTER.subject)}
             onClick={() =>
               onSubmit({
@@ -215,7 +213,6 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
         <CustomTooltip title="Delete Filter">
           <IconButton
             aria-label="Delete"
-            color="primary"
             disabled={!CAN(keys.DELETE_WASM_FILTER.action, keys.DELETE_WASM_FILTER.subject)}
             onClick={() =>
               onSubmit({
@@ -1146,15 +1143,15 @@ function MesheryFilters({
 
   if (isFiltersLoading) {
     return (
-      <UsesSistent>
+      <>
         <LoadingScreen animatedIcon="AnimatedFilter" message={`Loading Filters...`} />
-      </UsesSistent>
+      </>
     );
   }
 
   return (
     <>
-      <UsesSistent>
+      <>
         <NoSsr>
           {CAN(keys.VIEW_FILTERS.action, keys.VIEW_FILTERS.subject) ? (
             <>
@@ -1297,7 +1294,7 @@ function MesheryFilters({
             <DefaultError />
           )}
         </NoSsr>
-      </UsesSistent>
+      </>
     </>
   );
 }
@@ -1306,7 +1303,7 @@ const ImportModal = React.memo((props) => {
   const { handleClose, handleImportFilter } = props;
 
   return (
-    <UsesSistent>
+    <>
       <SistentModal
         open={true}
         closeModal={handleClose}
@@ -1324,7 +1321,7 @@ const ImportModal = React.memo((props) => {
           handleClose={handleClose}
         />
       </SistentModal>
-    </UsesSistent>
+    </>
   );
 });
 
@@ -1332,7 +1329,7 @@ const PublishModal = React.memo((props) => {
   const { handleClose, handleSubmit, title } = props;
 
   return (
-    <UsesSistent>
+    <>
       <SistentModal
         open={true}
         headerIcon={
@@ -1352,7 +1349,7 @@ const PublishModal = React.memo((props) => {
           handleClose={handleClose}
         />
       </SistentModal>
-    </UsesSistent>
+    </>
   );
 });
 

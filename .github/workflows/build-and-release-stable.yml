@@ -9,7 +9,7 @@ jobs:
   update-rest-api-docs:
     name: Update REST API Documentation
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Check if handlers were modified
@@ -49,7 +49,7 @@ jobs:
   update-graphql-docs:
     name: Update GraphQL API Documentation
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -142,7 +142,7 @@ jobs:
       - name: goreleaser with tag
         uses: goreleaser/goreleaser-action@v6
         env:
-          GITHUB_TOKEN: ${{ secrets.RELEASEDRAFTER_PAT }}
+          GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
           RELEASE_CHANNEL: "stable"
         with:
           version: 2
@@ -174,7 +174,7 @@ jobs:
   #   secrets: inherit
   deploy-delay:
     name: Playground Deploy Delay
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     needs:
       - build
     steps:

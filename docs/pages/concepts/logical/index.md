@@ -32,7 +32,7 @@ The logical concepts included in Meshery establish a set of foundational constru
 3. Composable (see [Patterns]({{ site.baseurl }}/concepts/logical/patterns))
 4. Portable (see Export/Import of [Designs]({{ site.baseurl }}/concepts/logical/designs) and [Models]({{ site.baseurl }}/concepts/logical/models))
 5. Interoperable (see [Compatibility Matrix]({{ site.baseurl }}/installation/compatibility-matrix))
-6. Configurable (see [Lifecycle Management]({{ site.baseurl }}/guides/lifecycle-management))
+6. Configurable (see [Lifecycle Management]({{ site.baseurl }}/guides/infrastructure-management/lifecycle-management))
 7. Documented (_you are here_)
 8. Testable
 9. Maintainable

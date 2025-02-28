@@ -1,31 +1,25 @@
-/* eslint-disable no-unused-vars */
-
 import NavigatorExtension from '../../components/NavigatorExtension';
 import ExtensionSandbox, {
   getComponentTitleFromPath,
   getComponentIsBetaFromPath,
 } from '../../components/ExtensionSandbox';
-import { Box, CircularProgress } from '@layer5/sistent';
-import { NoSsr } from '@layer5/sistent';
+import { Box, CircularProgress, NoSsr } from '@layer5/sistent';
 import {
   updatepagepath,
   updatepagetitle,
   updateExtensionType,
-  updateCapabilities,
   updatebetabadge,
+  updateCapabilities,
 } from '../../lib/store';
-import { connect } from 'react-redux';
 import Head from 'next/head';
-import { bindActionCreators } from 'redux';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useCallback, useState } from 'react';
 import RemoteComponent from '../../components/RemoteComponent';
-import _ from 'lodash';
 import { MesheryExtensionEarlyAccessCardPopup } from '../../components/Popup';
-import dataFetch from '../../lib/data-fetch';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
-import { withRouter } from 'next/router';
+import { useRouter } from 'next/router';
 import { DynamicFullScrrenLoader } from '@/components/LoadingComponents/DynamicFullscreenLoader';
-import { useGetProviderCapabilitiesQuery } from '../../rtk-query/user';
+import { useDispatch, useSelector } from 'react-redux';
+import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 
 /**
  * getPath returns the current pathname
@@ -33,17 +27,6 @@ import { useGetProviderCapabilitiesQuery } from '../../rtk-query/user';
  */
 function getPath() {
   return window.location.pathname;
-}
-
-/**
- * extractComponentURI extracts the last part of the
- * given path
- * @param {string} path
- * @returns {string}
- */
-function extractComponentURI(path) {
-  const pathSplit = path.split('/');
-  return pathSplit[pathSplit.length - 1];
 }
 
 /**
@@ -57,67 +40,54 @@ function matchComponentURI(extensionURI, currentURI) {
   return currentURI.includes(extensionURI);
 }
 
-function RemoteExtension(props) {
+function RemoteExtension() {
   const [componentTitle, setComponentTitle] = useState('');
+  const router = useRouter();
+  const dispatch = useDispatch();
 
-  const {
-    extensionType,
-    capabilitiesRegistry,
-    updatepagepath,
-    updatepagetitle,
-    updatebetabadge,
-    updateExtensionType,
-    updateCapabilities,
-    router,
-  } = props;
+  const extensionType = useSelector((state) => state.get('extensionType'));
+  const { data: capabilitiesRegistry, isLoading } = useGetProviderCapabilitiesQuery();
+  const renderExtension = useCallback(() => {
+    if (!capabilitiesRegistry?.extensions) return;
+    dispatch(updateCapabilities({ capabilitiesRegistry: capabilitiesRegistry }));
 
-  const { data: capabilitiesData, isLoading } = useGetProviderCapabilitiesQuery();
-
-  useEffect(() => {
-    if (
-      extensionType !== props.extensionType ||
-      router.query.component !== props.router.query.component
-    ) {
-      renderExtension(capabilitiesRegistry);
-    }
-  }, [extensionType, router.query.component, capabilitiesRegistry]);
-
-  const renderExtension = (cap) => {
-    // load extension if capabilities are available
-    if (cap !== null) {
-      let extNames = [];
-      for (var key of Object.keys(cap?.extensions)) {
-        if (Array.isArray(cap?.extensions[key])) {
-          cap?.extensions[key].forEach((comp) => {
-            if (comp?.type === 'full_page') {
-              let ext = {
-                name: key,
-                uri: comp?.href?.uri,
-              };
-              extNames.push(ext);
-            }
-          });
-        }
+    let extNames = [];
+    for (var key of Object.keys(capabilitiesRegistry.extensions)) {
+      if (Array.isArray(capabilitiesRegistry.extensions[key])) {
+        capabilitiesRegistry.extensions[key].forEach((comp) => {
+          if (comp?.type === 'full_page') {
+            let ext = {
+              name: key,
+              uri: comp?.href?.uri,
+            };
+            extNames.push(ext);
+          }
+        });
       }
-
-      extNames.forEach((ext) => {
-        if (matchComponentURI(ext?.uri, getPath())) {
-          updateExtensionType({ extensionType: ext.name });
-          let extensions = ExtensionPointSchemaValidator(ext.name)(cap?.extensions[ext.name]);
-          setComponentTitle(getComponentTitleFromPath(extensions, getPath()));
-          updatepagetitle({ title: getComponentTitleFromPath(extensions, getPath()) });
-          updatebetabadge({ isBeta: getComponentIsBetaFromPath(extensions, getPath()) });
-        }
-      });
     }
-  };
+
+    extNames.forEach((ext) => {
+      if (matchComponentURI(ext?.uri, getPath())) {
+        dispatch(updateExtensionType({ extensionType: ext.name }));
+        let extensions = ExtensionPointSchemaValidator(ext.name)(
+          capabilitiesRegistry.extensions[ext.name],
+        );
+        setComponentTitle(getComponentTitleFromPath(extensions, getPath()));
+        dispatch(updatepagetitle({ title: getComponentTitleFromPath(extensions, getPath()) }));
+        dispatch(updatebetabadge({ isBeta: getComponentIsBetaFromPath(extensions, getPath()) }));
+        dispatch(updatepagepath({ path: getPath() }));
+      }
+    });
+  }, [capabilitiesRegistry, dispatch]);
 
   useEffect(() => {
+    renderExtension();
+
     return () => {
-      updateExtensionType({ extensionType: null });
+      dispatch(updateExtensionType({ extensionType: null }));
       setComponentTitle('');
     };
-  }, []);
+  }, [capabilitiesRegistry, extensionType, router.query.component, renderExtension, dispatch]);
 
   return (
     <NoSsr>
@@ -151,17 +121,4 @@ function RemoteExtension(props) {
   );
 }
 
-const mapStateToProps = (state) => ({
-  extensionType: state.get('extensionType'),
-  capabilitiesRegistry: state.get('capabilitiesRegistry'),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  updatepagepath: bindActionCreators(updatepagepath, dispatch),
-  updatepagetitle: bindActionCreators(updatepagetitle, dispatch),
-  updatebetabadge: bindActionCreators(updatebetabadge, dispatch),
-  updateExtensionType: bindActionCreators(updateExtensionType, dispatch),
-  updateCapabilities: bindActionCreators(updateCapabilities, dispatch),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(withRouter(RemoteExtension));
+export default RemoteExtension;

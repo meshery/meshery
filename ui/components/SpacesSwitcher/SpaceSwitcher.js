@@ -25,7 +25,7 @@ import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
 import { iconXLarge } from 'css/icons.styles';
 import { useGetCurrentAbilities } from '@/rtk-query/ability';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
-import { UsesSistent } from '../SistentWrapper';
+
 import _ from 'lodash';
 
 export const SlideInMenu = styled('div')(() => ({
@@ -66,9 +66,6 @@ export const StyledTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInput-underline:after': {
     borderBottomColor: theme.palette.mode === 'dark' ? '#00B39F' : theme.palette.text.default, // change the color here
   },
-  '& .MuiInput': {
-    fontFamily: 'Qanelas Soft, sans-serif',
-  },
 }));
 
 export const StyledHeader = styled(Typography)(({ theme }) => ({
@@ -102,9 +99,8 @@ function OrgMenu(props) {
   let orgs = orgsResponse?.organizations || [];
   let uniqueOrgs = _.uniqBy(orgs, 'id');
   const { organization, setOrganization, open } = props;
-  const [skip, setSkip] = React.useState(true);
   const { notify } = useNotification();
-  useGetCurrentAbilities(organization, props.setKeys, skip);
+  useGetCurrentAbilities(organization, props.setKeys);
   useEffect(() => {
     if (isOrgsError) {
       notify({
@@ -118,7 +114,6 @@ function OrgMenu(props) {
     const id = e.target.value;
     const selected = orgs.find((org) => org.id === id);
     setOrganization({ organization: selected });
-    setSkip(false);
   };
   const theme = useTheme();
   return (
@@ -301,16 +296,15 @@ function SpaceSwitcher(props) {
   return (
     <NoSsr>
       <Provider store={store}>
-        <UsesSistent>
-          <StyledSwitcher>
-            <Button
-              onClick={() => setOrgOpen(!orgOpen)}
-              style={{ marginRight: orgOpen ? '1rem' : '0' }}
-            >
-              <OrgOutlinedIcon {...iconXLarge} fill={'#eee'} />
-            </Button>
-            <OrgMenu {...props} open={orgOpen} />/
-            {/* /
+        <StyledSwitcher>
+          <Button
+            onClick={() => setOrgOpen(!orgOpen)}
+            style={{ marginRight: orgOpen ? '1rem' : '0' }}
+          >
+            <OrgOutlinedIcon {...iconXLarge} fill={'#eee'} />
+          </Button>
+          <OrgMenu {...props} open={orgOpen} />/
+          {/* /
           <Button
             onClick={() => setWorkspaceOpen(!workspaceOpen)}
             style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
@@ -318,13 +312,9 @@ function SpaceSwitcher(props) {
             <WorkspaceOutlinedIcon {...iconXLarge} />
           </Button>
           <WorkspaceSwitcher {...props} open={workspaceOpen} />/ */}
-            <div
-              id="meshery-dynamic-header"
-              style={{ marginLeft: DynamicComponent ? '1rem' : '' }}
-            />
-            {!DynamicComponent && <DefaultHeader title={props.title} isBeta={props.isBeta} />}
-          </StyledSwitcher>
-        </UsesSistent>
+          <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />
+          {!DynamicComponent && <DefaultHeader title={props.title} isBeta={props.isBeta} />}
+        </StyledSwitcher>
       </Provider>
     </NoSsr>
   );

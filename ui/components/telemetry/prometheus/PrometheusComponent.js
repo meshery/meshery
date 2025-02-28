@@ -16,7 +16,6 @@ import { withNotify } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '@/utils/Enum';
 import { withTelemetryHook } from '@/components/hooks/useTelemetryHook';
-import { UsesSistent } from '../../SistentWrapper';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   '& .buttons': {
@@ -211,11 +210,12 @@ class PrometheusComponent extends Component {
     submitPrometheusConfigure(this);
   };
 
-  handleError = () => {
-    this.props.updateProgress({ showProgress: false });
-    const notify = this.props.notify;
+  handleError = (message = 'There was an error communicating with Prometheus') => {
+    this.props.updateProgress?.({ showProgress: false });
+
+    const notify = this.props.notify ?? (({ message }) => console.error(message)); // Default fallback
     notify({
-      message: 'There was an error communicating with Prometheus',
+      message,
       event_type: EVENT_TYPES.ERROR,
     });
   };
@@ -300,7 +300,6 @@ class PrometheusComponent extends Component {
   };
 
   render() {
-    const { classes } = this.props;
     const {
       urlError,
       prometheusURL,
@@ -317,8 +316,7 @@ class PrometheusComponent extends Component {
               boardPanelConfigs={selectedPrometheusBoardsConfigs}
               deleteSelectedBoardPanelConfig={this.deleteSelectedBoardPanelConfig}
             />
-
-            <Typography variant="h6" gutterBottom className={classes.chartTitle}>
+            <Typography variant="h6" gutterBottom>
               Prometheus charts
             </Typography>
             {/* <GrafanaCharts
@@ -334,36 +332,32 @@ class PrometheusComponent extends Component {
       }
 
       return (
-        <UsesSistent>
-          <NoSsr>
-            <StyledBox>
-              <PrometheusSelectionComponent
-                prometheusURL={prometheusURL}
-                handlePrometheusChipDelete={this.handlePrometheusChipDelete}
-                addSelectedBoardPanelConfig={this.addSelectedBoardPanelConfig}
-                handlePrometheusClick={this.handlePrometheusClick}
-                handleError={this.handleError}
-                connectionID={connectionID}
-              />
-              {displaySelec}
-            </StyledBox>
-          </NoSsr>
-        </UsesSistent>
+        <NoSsr>
+          <StyledBox>
+            <PrometheusSelectionComponent
+              prometheusURL={prometheusURL}
+              handlePrometheusChipDelete={this.handlePrometheusChipDelete}
+              addSelectedBoardPanelConfig={this.addSelectedBoardPanelConfig}
+              handlePrometheusClick={this.handlePrometheusClick}
+              handleError={this.handleError}
+              connectionID={connectionID}
+            />
+            {displaySelec}
+          </StyledBox>
+        </NoSsr>
       );
     }
     return (
-      <UsesSistent>
-        <NoSsr>
-          <StyledBox>
-            <PrometheusConfigComponent
-              prometheusURL={prometheusURL && { label: prometheusURL, value: prometheusURL }}
-              urlError={urlError}
-              handleChange={this.handleChange}
-              handlePrometheusConfigure={this.handlePrometheusConfigure}
-            />
-          </StyledBox>
-        </NoSsr>
-      </UsesSistent>
+      <NoSsr>
+        <StyledBox>
+          <PrometheusConfigComponent
+            prometheusURL={prometheusURL && { label: prometheusURL, value: prometheusURL }}
+            urlError={urlError}
+            handleChange={this.handleChange}
+            handlePrometheusConfigure={this.handlePrometheusConfigure}
+          />
+        </StyledBox>
+      </NoSsr>
     );
   }
 }

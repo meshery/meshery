@@ -4005,11 +4005,21 @@ func (l *RemoteProvider) GetConnectionByIDAndKind(token string, connectionID uui
 		return nil, http.StatusInternalServerError, ErrFetch(err, "connection", http.StatusInternalServerError)
 	}
 	if resp.StatusCode == http.StatusOK {
-		var conn connections.Connection
-		if err = json.Unmarshal(bdr, &conn); err != nil {
+		connectionPage := &connections.ConnectionPage{}
+		if err = json.Unmarshal(bdr, connectionPage); err != nil {
+			l.Log.Error(ErrUnmarshal(err, "connection"))
 			return nil, http.StatusInternalServerError, ErrUnmarshal(err, "connection")
 		}
-		return &conn, resp.StatusCode, nil
+
+		if len(connectionPage.Connections) < 1 {
+			l.Log.Error(ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", http.StatusNotFound))
+			return nil, http.StatusNotFound, ErrFetch(fmt.Errorf("unable to retrieve connection with id %s", connectionID), "connection", http.StatusNotFound)
+		}
+
+		if len(connectionPage.Connections) > 1 {
+			l.Log.Warn(fmt.Errorf("multiple connections returned; expected exactly one. using the first connection."))
+		}
+		return connectionPage.Connections[0], resp.StatusCode, nil
 	}
 
 	l.Log.Debug(string(bdr))
