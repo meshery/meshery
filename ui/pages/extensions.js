@@ -266,7 +266,6 @@ const MesheryDesignEmbedExtension = () => {
   );
 };
 
-//new modifications starts here
 const Layer5CloudLogo = () => {
   return (
     <img
