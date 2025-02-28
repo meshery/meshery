@@ -165,7 +165,7 @@ func InvokeCompUpdate() error {
 				totalCompsUpdatedPerModelPerVersion := 0
 
 				if content.IsDir() {
-					if meshkitRegistryUtils.Contains(content.Name(), ExcludeDirs) != -1 {
+					if mutils.Locate(content.Name(), ExcludeDirs) != -1 {
 						continue
 					}
 
