@@ -37,6 +37,7 @@ Learn how to create, manage, and explore _Kubernetes Deployments_ within the con
 
 - Log in to the [Meshery Playground](https://playground.meshery.io) using your credentials. On successful login, you should be at the dashboard. Press the **X** on the _Where do you want to start?_ popup to close it (if required).
 - Click **Kanvas** from the left menu to navigate to the _Kanvas_ design page.
+
   ![](./kubernetes-deployments/2025-02-27_16-59.png)
 
 > **_NOTE:_** Kanvas is still in beta.
