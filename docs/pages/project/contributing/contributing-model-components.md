@@ -17,7 +17,7 @@ In Meshery, a [Components](/concepts/logical/components) is a fundamental buildi
 **Prework:**
 
 <!-- 1. [Component Identification](#component-identification) -->
-1. [Component Classification](#component-classification) 
+1. [Component Classification](#component-classification)
 
 **Development:**
 2. [Component Definition](#component-definitions)
@@ -103,7 +103,7 @@ Component icons will be written to the `/meshmodel/components/<model-name>/icon/
 
 ### 3. Create a Component Definition as a JSON file
 
-Create a relationship definition as a JSON file, placing this new definition file into its respective model folder (see [Contributing to Models](./models)). Relationship definition files are commonly named  `relationships.yaml` as a convention, however, this name is not required. A model may include any number of relationship definitions. Include the following attributes in your relationship definition:
+Create a relationship definition as a JSON file, placing this new definition file into its respective model folder (see [Contributing to Models](/project/contributing/contributing-models)). Relationship definition files are commonly named  `relationships.yaml` as a convention, however, this name is not required. A model may include any number of relationship definitions. Include the following attributes in your relationship definition:
 
 - `kind`: The genre of component (e.g., `Pod`).
 - `model`: The model to which the component belongs (e.g., `kubernetes`).
