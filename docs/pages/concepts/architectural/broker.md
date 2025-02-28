@@ -42,4 +42,4 @@ This guide provides:
 ✅ **Insights into Meshery's custom controllers** to help you diagnose issues.  
 ✅ **Best practices** for maintaining a smooth and stable Meshery deployment.  
 
-Whether you're dealing with **installation problems, connectivity issues, or unexpected behavior**, this guide will walk you through resolving them efficiently. 🚀
+Whether you're dealing with **installation problems, connectivity issues, or unexpected behavior**, this guide will walk you through resolving them efficiently.
