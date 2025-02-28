@@ -391,7 +391,7 @@ Whenever the code tags are detected, the clipboard javascript file is automatica
 
 ## Documentation Contribution Flow Summary
 
-{% include alert.html type="light" title="Note" content="For contributing `mesheryctl` reference section, refer <a href='/contributing-cli'>Contributing CLI</a>" %}
+{% include alert.html type="light" title="Note" content="For contributing `mesheryctl` reference section, refer <a href='/project/contributing/contributing-cli'>Contributing CLI</a>" %}
 
 
 The following is a concise summary of the steps to contribute to Meshery documentation.

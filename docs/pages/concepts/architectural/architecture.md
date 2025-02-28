@@ -57,8 +57,7 @@ Meshery's REST API may be consumed by any number of clients. Clients need to pre
 <a href="{{ site.baseurl }}/assets/img/architecture/Meshery-client-architecture.svg" class="lightbox-image">
 <img src="{{ site.baseurl }}/assets/img/architecture/Meshery-client-architecture.svg" width="50%" /></a>
 
-
-_Figure: Clients use Meshery's [REST API](extensibility/api#rest), [GraphQL API](extensibility/api#graphql), or a combination of both._
+_Figure: Clients use Meshery's [REST API](/extensibility/api#rest), [GraphQL API](/extensibility/api#graphql), or a combination of both._
 
 ### Providers
 
@@ -104,7 +103,7 @@ Meshery Server's database is responsible for collecting and centralizing the sta
 
 _See the [**Database**]({{ site.baseurl }}/concepts/architecture/database) section for more information on the function of the database._
 
-## Meshery Docker Extension 
+## Meshery Docker Extension
 
 Meshery's Docker extension provides a simple and flexible way to design and operate cloud native infrastructure on top of Kubernetes using Docker containers. The architecture of this extension is designed to be modular and extensible, with each component serving a specific purpose within the overall deployment process.
 
@@ -114,10 +113,9 @@ Meshery's Docker extension provides a simple and flexible way to design and oper
   <figcaption>Figure: Meshery Docker Extension</figcaption>
 </figure>
 
-## Meshery CLI 
+## Meshery CLI
 
 The Command Line Interface ( also known as [mesheryctl](/guides/mesheryctl/working-with-mesheryctl) ) that is used to manage Meshery. Use `mesheryctl` to both manage the lifecycle of Meshery itself and to access and invoke any of Meshery's application and cloud native management functions.
-
 
 ### **Statefulness in Meshery components**
 
@@ -155,8 +153,7 @@ Meshery uses the following list of network ports to interface with its various c
 | [Meshery Broker](/concepts/architecture/broker)            | 7422/tcp | Incoming/outgoing leaf node connections. Unused as of Meshery v0.6.0-rc-2 |
 | [Meshery Broker](/concepts/architecture/broker)            | 7522/tcp | Gateway to gateway communication. Unused as of Meshery v0.6.0-rc-2 |
 | [Meshery Broker](/concepts/architecture/broker)            | 7777/tcp | used for Prometheus NATS Exporter. Unused as of Meshery v0.6.0-rc-2 |
-| Learn Layer5 Application | 10011/tcp  | SMI conformance testing                        |
-| [Meshery Remote Providers]((/extensibility/providers)) | 443/tcp    | e.g. Meshery Cloud                             |
+| [Meshery Remote Providers](/extensibility/providers)      | 443/tcp    | e.g. Meshery Cloud                             |
 {% for adapter in site.adapters -%}
 {% if adapter.port -%}
 | <img src="{{ adapter.image }}" style="width:20px" data-logo-for-dark="{{ adapter.white_image }}" data-logo-for-light="{{ adapter.image }}" id="logo-dark-light" loading="lazy"/> [{{ adapter.name }}]({{ site.baseurl }}{{ adapter.url }}) | {{ adapter.port }} | Communication with Meshery Server |
@@ -165,7 +162,6 @@ Meshery uses the following list of network ports to interface with its various c
 | [Meshery Perf]({{ site.baseurl }}/guides/performance-management/managing-performance) | 10013/gRPC    | Performance Management|
 
 See the [**Adapters**]({{ site.baseurl }}/concepts/architecture/adapters) section for more information on the function of an adapter.
-
 
 ### **Meshery Connections and their Actions**
 
