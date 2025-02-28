@@ -34,7 +34,7 @@ Just as Meshery automates the provisioning of various cloud native infrastructur
 
 Users may bring their applications (perform workload onboarding) on the infrastructure using the Custom Configuration operation.
 
-Commonly adjoining each infrastructure is a sample application that facilitates demonstration of the value of the given infrastructure. Meshery allows you to efficiently [install sample applications]({{ site.baseurl }}/guides/sample-apps) across different infrastructurees.
+Commonly adjoining each infrastructure is a sample application that facilitates demonstration of the value of the given infrastructure. Meshery allows you to efficiently [install sample applications]({{ site.baseurl }}/guides/infrastructure-management/sample-apps) across different infrastructurees.
 
 ## Configuration Management
 
