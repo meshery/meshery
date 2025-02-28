@@ -46,7 +46,6 @@ import {
   NoSsr,
   Zoom,
 } from '@layer5/sistent';
-import { UsesSistent } from './SistentWrapper';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
@@ -185,14 +184,14 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
       {
         id: CATALOG,
         icon: (
-          <UsesSistent>
+          <>
             <CatalogIcon
               primaryFill={window.location.pathname === '/configuration/catalog' ? '#FFFFFF' : ''}
               secondaryFill={window.location.pathname === '/configuration/catalog' ? '#FFFFFF' : ''}
               tertiaryFill="transparent"
               style={{ ...drawerIconsStyle }}
             />
-          </UsesSistent>
+          </>
         ),
         href: '/configuration/catalog',
         title: 'Catalog',
@@ -654,7 +653,7 @@ const Navigator_ = (props) => {
 
   const extensionPointContent = (icon, href, name, drawerCollapsed) => {
     let content = (
-      <UsesSistent>
+      <>
         <LinkContainer data-cy={name}>
           <CustomTooltip
             title={name}
@@ -687,7 +686,7 @@ const Navigator_ = (props) => {
           </CustomTooltip>
           <SideBarText drawerCollapsed={drawerCollapsed}>{name}</SideBarText>
         </LinkContainer>
-      </UsesSistent>
+      </>
     );
 
     if (href) {
@@ -718,7 +717,7 @@ const Navigator_ = (props) => {
     updatenavigatorComponentsMenus();
     if (idname != LIFECYCLE && children && children.length > 0) {
       return (
-        <UsesSistent>
+        <>
           <List disablePadding>
             {children.map(
               ({
@@ -758,14 +757,14 @@ const Navigator_ = (props) => {
               },
             )}
           </List>
-        </UsesSistent>
+        </>
       );
     }
 
     if (idname == LIFECYCLE) {
       if (children && children.length > 0) {
         return (
-          <UsesSistent>
+          <>
             <List disablePadding>
               {children.map(
                 ({
@@ -811,7 +810,7 @@ const Navigator_ = (props) => {
                 },
               )}
             </List>
-          </UsesSistent>
+          </>
         );
       }
       if (children && children.length === 1) {
@@ -823,7 +822,7 @@ const Navigator_ = (props) => {
 
   const linkContent = (iconc, titlec, hrefc, linkc, drawerCollapsed) => {
     let linkContent = (
-      <UsesSistent>
+      <>
         <LinkContainer>
           <CustomTooltip
             title={titlec}
@@ -836,7 +835,7 @@ const Navigator_ = (props) => {
           </CustomTooltip>
           <SideBarText drawerCollapsed={drawerCollapsed}>{titlec}</SideBarText>
         </LinkContainer>
-      </UsesSistent>
+      </>
     );
 
     if (linkc && hrefc) {
@@ -853,7 +852,7 @@ const Navigator_ = (props) => {
           : {}
       }
     >
-      <UsesSistent>
+      <>
         <StyledListItem
           component="a"
           onClick={handleTitleClick}
@@ -874,12 +873,12 @@ const Navigator_ = (props) => {
             </>
           )}
         </StyledListItem>
-      </UsesSistent>
+      </>
     </div>
   );
 
   const Menu = (
-    <UsesSistent>
+    <>
       <HideScrollbar disablePadding>
         {state.navigatorComponents.map(
           ({
@@ -974,11 +973,11 @@ const Navigator_ = (props) => {
         ) : null}
         <SecondaryDivider />
       </HideScrollbar>
-    </UsesSistent>
+    </>
   );
 
   const HelpIcons = (
-    <UsesSistent>
+    <>
       <NavigatorHelpIcons
         isCollapsed={props.isDrawerCollapsed}
         size="large"
@@ -1039,7 +1038,7 @@ const Navigator_ = (props) => {
           </CustomTextTooltip>
         </ListItem>
       </NavigatorHelpIcons>
-    </UsesSistent>
+    </>
   );
 
   const Version = (
@@ -1087,7 +1086,7 @@ const Navigator_ = (props) => {
         }
         onClick={toggleMiniDrawer}
       >
-        <UsesSistent>
+        <>
           <ChevronIcon
             icon={faAngleLeft}
             fixedWidth
@@ -1100,7 +1099,7 @@ const Navigator_ = (props) => {
             }}
             alt="Sidebar collapse toggle icon"
           />
-        </UsesSistent>
+        </>
       </div>
     </ChevronButtonWrapper>
   );

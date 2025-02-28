@@ -16,7 +16,6 @@ import { useGetSchemaQuery } from '@/rtk-query/schema';
 import { withRouter } from 'next/router';
 import CustomErrorFallback from '../General/ErrorBoundary';
 import ConnectionTable from './ConnectionTable';
-import { UsesSistent } from '../SistentWrapper';
 
 /**
  * Parent Component for Connection Component
@@ -47,7 +46,7 @@ function ConnectionManagementPage(props) {
   const handleCreateConnectionSubmit = () => {};
 
   return (
-    <UsesSistent>
+    <>
       <Connections
         createConnectionModal={createConnectionModal}
         onOpenCreateConnectionModal={handleCreateConnectionModalOpen}
@@ -65,7 +64,7 @@ function ConnectionManagementPage(props) {
           submitBtnText="Connect"
         />
       )}
-    </UsesSistent>
+    </>
   );
 }
 function Connections(props) {
@@ -85,7 +84,7 @@ function Connections(props) {
   return (
     <NoSsr>
       {CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) ? (
-        <UsesSistent>
+        <>
           <AppBar position="static" color="default" style={{ marginBottom: '3rem' }}>
             <ConnectionTabs
               value={tab}
@@ -132,7 +131,7 @@ function Connections(props) {
               k8sconfig={k8sconfig}
             />
           )}
-        </UsesSistent>
+        </>
       ) : (
         <DefaultError />
       )}

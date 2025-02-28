@@ -15,7 +15,7 @@ import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
 import { camelcaseToSnakecase } from '../../../utils/utils';
 import { useSelector } from 'react-redux';
-import { UsesSistent } from '@/components/SistentWrapper';
+
 import { useRouter } from 'next/router';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 
@@ -253,16 +253,14 @@ const ResourcesTable = (props) => {
                   />
                 </div>
               </ToolWrapper>
-              <UsesSistent>
-                <ResponsiveDataTable
-                  data={meshSyncResources}
-                  columns={tableConfig.columns}
-                  options={options}
-                  tableCols={tableCols}
-                  updateCols={updateCols}
-                  columnVisibility={columnVisibility}
-                />
-              </UsesSistent>
+              <ResponsiveDataTable
+                data={meshSyncResources}
+                columns={tableConfig.columns}
+                options={options}
+                tableCols={tableCols}
+                updateCols={updateCols}
+                columnVisibility={columnVisibility}
+              />
             </>
           )}
         </div>

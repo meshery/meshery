@@ -7,7 +7,6 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { CONNECTION_KINDS, CONNECTION_STATES } from '@/utils/Enum';
 import dataFetch from 'lib/data-fetch';
-import { UsesSistent } from '@/components/SistentWrapper';
 
 const Wrapper = styled('div')(({ theme }) => ({
   padding: theme.spacing(5),
@@ -56,60 +55,58 @@ function GrafanaConfigComponent({
   }, []);
 
   return (
-    <UsesSistent>
-      <NoSsr>
-        <React.Fragment>
-          <Wrapper>
-            <Grid container spacing={1}>
-              <Grid item xs={12} md={6}>
-                <InputContainer>
-                  <ReactSelectWrapper
-                    onChange={(select) => handleChange('grafanaURL')(select)}
-                    options={availableGrafanaConnection.map((connection) => ({
-                      value: connection?.metadata?.url,
-                      label: connection?.metadata?.url,
-                      ...connection,
-                    }))}
-                    value={grafanaURL}
-                    label="Grafana Base URL"
-                    data-testid="grafana-base-url"
-                    error={urlError}
-                    placeholder="Address of Grafana Server"
-                    noOptionsMessage="No Grafana servers discovered"
-                  />
-                </InputContainer>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <TextField
-                  id="grafanaAPIKey"
-                  name="grafanaAPIKey"
-                  data-testid="grafana-api-key"
-                  label="API Key"
-                  fullWidth
-                  value={grafanaAPIKey}
-                  margin="normal"
-                  variant="outlined"
-                  onKeyDown={(e) => e.key === 'Enter' && handleGrafanaConfigure()}
-                  onChange={handleChangeApiKey}
+    <NoSsr>
+      <React.Fragment>
+        <Wrapper>
+          <Grid container spacing={1}>
+            <Grid item xs={12} md={6}>
+              <InputContainer>
+                <ReactSelectWrapper
+                  onChange={(select) => handleChange('grafanaURL')(select)}
+                  options={availableGrafanaConnection.map((connection) => ({
+                    value: connection?.metadata?.url,
+                    label: connection?.metadata?.url,
+                    ...connection,
+                  }))}
+                  value={grafanaURL}
+                  label="Grafana Base URL"
+                  data-testid="grafana-base-url"
+                  error={urlError}
+                  placeholder="Address of Grafana Server"
+                  noOptionsMessage="No Grafana servers discovered"
                 />
-              </Grid>
+              </InputContainer>
             </Grid>
-            <ButtonContainer>
-              <StyledButton
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={handleGrafanaConfigure}
-                disabled={!CAN(keys.CONNECT_METRICS.action, keys.CONNECT_METRICS.subject)}
-              >
-                Submit
-              </StyledButton>
-            </ButtonContainer>
-          </Wrapper>
-        </React.Fragment>
-      </NoSsr>
-    </UsesSistent>
+            <Grid item xs={12} md={6}>
+              <TextField
+                id="grafanaAPIKey"
+                name="grafanaAPIKey"
+                data-testid="grafana-api-key"
+                label="API Key"
+                fullWidth
+                value={grafanaAPIKey}
+                margin="normal"
+                variant="outlined"
+                onKeyDown={(e) => e.key === 'Enter' && handleGrafanaConfigure()}
+                onChange={handleChangeApiKey}
+              />
+            </Grid>
+          </Grid>
+          <ButtonContainer>
+            <StyledButton
+              type="submit"
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={handleGrafanaConfigure}
+              disabled={!CAN(keys.CONNECT_METRICS.action, keys.CONNECT_METRICS.subject)}
+            >
+              Submit
+            </StyledButton>
+          </ButtonContainer>
+        </Wrapper>
+      </React.Fragment>
+    </NoSsr>
   );
 }
 

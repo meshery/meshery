@@ -1,15 +1,6 @@
 import React from 'react';
-// import AnimatedMeshery from './Animations/AnimatedMesheryCSS';
 import PropTypes from 'prop-types';
 import uiConfig from '../../ui.config';
-// import { Typography } from '@layer5/sistent';
-// import { UsesSistent } from '../SistentWrapper';
-
-// const StyledAnimatedLogoDark = styled(uiConfig.AnimatedLogoDark)(({ theme }) => ({
-//   height: '100px',
-//   margin: '4px 0px 8px',
-//   fill: theme.palette.mode === 'dark' ? '#fff' : '',
-// }));
 
 function LoadingScreen(props) {
   const { message, children, isLoading, ...other } = props;
