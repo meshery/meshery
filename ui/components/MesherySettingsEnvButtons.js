@@ -20,12 +20,11 @@ import { updateProgress } from '../lib/store';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { CONNECTION_STATES } from '../utils/Enum';
-import { TootltipWrappedConnectionChip, ConnectionStateChip } from './connections/ConnectionChip';
+import { TooltipWrappedConnectionChip, ConnectionStateChip } from './connections/ConnectionChip';
 import useKubernetesHook from './hooks/useKubernetesHook';
 import { keys } from '@/utils/permission_constants';
 import useTestIDsGenerator from './hooks/useTestIDs';
 import CAN from '@/utils/can';
-import { UsesSistent } from './SistentWrapper';
 
 const styles = styled((theme) => ({
   ctxIcon: {
@@ -202,7 +201,7 @@ const MesherySettingsEnvButtons = () => {
 
   return (
     <div>
-      <UsesSistent>
+      <>
         <Button
           type="submit"
           variant="contained"
@@ -227,7 +226,7 @@ const MesherySettingsEnvButtons = () => {
             Add Cluster
           </Typography>
         </Button>
-      </UsesSistent>
+      </>
       <_PromptComponent ref={ref} />
     </div>
   );
@@ -306,7 +305,7 @@ const K8sConnectionItems = ({ status, contexts, ping }) => {
                 whiteSpace="no-wrap"
                 textOverflow="ellipsis"
               >
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   handlePing={() => {
                     ping(context.name, context.server, context.connection_id);

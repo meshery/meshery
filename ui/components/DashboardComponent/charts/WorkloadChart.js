@@ -7,7 +7,6 @@ import Link from 'next/link';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { Box, MenuItem, Select, Typography } from '@layer5/sistent';
-import { UsesSistent } from '@/components/SistentWrapper';
 
 export default function WorkloadChart({
   classes,
@@ -55,72 +54,70 @@ export default function WorkloadChart({
   };
 
   return (
-    <UsesSistent>
+    <div
+      className={classes.dashboardSection}
+      style={{
+        padding: '0.5rem',
+        paddingTop: '2rem',
+      }}
+    >
       <div
-        className={classes.dashboardSection}
         style={{
-          padding: '0.5rem',
-          paddingTop: '2rem',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
         }}
       >
-        <div
+        <Link
+          href="/management/connections"
           style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
+            pointerEvents: !CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)
+              ? 'none'
+              : 'auto',
           }}
         >
-          <Link
-            href="/management/connections"
+          <Typography variant="h6" gutterBottom className={classes.link}>
+            Workloads
+          </Typography>
+        </Link>
+        {namespaces?.length > 0 && (
+          <Select value={selectedNamespace} onChange={(e) => handleSetNamespace(e.target.value)}>
+            {namespaces.map((ns) => (
+              <MenuItem key={ns.uniqueID} value={ns}>
+                {ns}
+              </MenuItem>
+            ))}
+          </Select>
+        )}
+      </div>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          alignContent: 'center',
+          height: '100%',
+        }}
+      >
+        {chartData.length > 0 ? (
+          <BBChart options={chartOptions} />
+        ) : (
+          <div
             style={{
-              pointerEvents: !CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject)
-                ? 'none'
-                : 'auto',
+              padding: '2rem',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              flexDirection: 'column',
             }}
           >
-            <Typography variant="h6" gutterBottom className={classes.link}>
-              Workloads
+            <Typography style={{ fontSize: '1.5rem', marginBottom: '1rem' }} align="center">
+              No workloads found in your cluster(s).
             </Typography>
-          </Link>
-          {namespaces?.length > 0 && (
-            <Select value={selectedNamespace} onChange={(e) => handleSetNamespace(e.target.value)}>
-              {namespaces.map((ns) => (
-                <MenuItem key={ns.uniqueID} value={ns}>
-                  {ns}
-                </MenuItem>
-              ))}
-            </Select>
-          )}
-        </div>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            alignContent: 'center',
-            height: '100%',
-          }}
-        >
-          {chartData.length > 0 ? (
-            <BBChart options={chartOptions} />
-          ) : (
-            <div
-              style={{
-                padding: '2rem',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column',
-              }}
-            >
-              <Typography style={{ fontSize: '1.5rem', marginBottom: '1rem' }} align="center">
-                No workloads found in your cluster(s).
-              </Typography>
-              <ConnectClustersBtn />
-            </div>
-          )}
-        </Box>
-      </div>
-    </UsesSistent>
+            <ConnectClustersBtn />
+          </div>
+        )}
+      </Box>
+    </div>
   );
 }

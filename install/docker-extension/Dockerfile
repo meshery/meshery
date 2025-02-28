@@ -66,4 +66,4 @@ RUN tar -xzf /mesheryctl/linux/mesheryctl_${GIT_STRIPPED_VERSION}_Linux_x86_64.t
 COPY meshery-logo-light.svg .
 COPY --from=client-builder /ui/build ui
 EXPOSE 7877/tcp
-CMD ./service
+CMD ["./service"]

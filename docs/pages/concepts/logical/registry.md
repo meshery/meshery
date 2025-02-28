@@ -23,7 +23,7 @@ As the central repository for all capabilities known to Meshery, the registry co
   <ul>
     <li><a href="../components">Components</a>: Reusable building blocks for depicting capabilities defined within models.</li>
     <li><a href="../relationships">Relationships</a>: Define the nature of connections between components within a model, describing how they interact and depend on each other.</li>
-    <li><a href="../policies">Policies</a>: Enforce specific rules and governance for system behavior under Meshery's management.</li>
+    <li><a href="../logical/policies">Policies</a>: Enforce specific rules and governance for system behavior under Meshery's management.</li>
     <li><a href="../connections">Connections</a>: Managed and unmanaged resources that Meshery can interact with.</li>
     <li><a href="../credentials">Credentials</a>: Optionally, included secrets associated with connections contained in a model.</li>
   </ul>
