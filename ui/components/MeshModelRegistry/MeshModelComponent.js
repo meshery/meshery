@@ -69,6 +69,7 @@ import BrushIcon from '@mui/icons-material/Brush';
 import CategoryIcon from '@mui/icons-material/Category';
 import SourceIcon from '@/assets/icons/SourceIcon';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
+
 import { RJSFModalWrapper } from '../Modal';
 import { useRef } from 'react';
 import { updateProgress } from 'lib/store';
@@ -486,11 +487,13 @@ const MeshModelComponent_ = ({
           },
           true,
         );
-        const updatedRegistrant = {
-          ...registrant,
-          models: removeDuplicateVersions(modelRes.models) || [],
-        };
-        tempResourcesDetail.push(updatedRegistrant);
+        if (modelRes.models && modelRes.models.length > 0) {
+           const updatedRegistrant = {
+             ...registrant,
+             models: removeDuplicateVersions(modelRes.models) || [],
+           };
+           tempResourcesDetail.push(updatedRegistrant);
+         }
       }
       response = {
         data: {
