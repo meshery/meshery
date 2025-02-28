@@ -39,7 +39,6 @@ import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomT
 import { CanShow } from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import SpaceSwitcher from './SpacesSwitcher/SpaceSwitcher';
-import { UsesSistent } from './SistentWrapper';
 import Router from 'next/router';
 import HeaderMenu from './HeaderMenu';
 import ConnectionModal from './Modals/ConnectionModal';
@@ -107,9 +106,9 @@ const K8sContextConnectionChip_ = ({
           }}
         >
           {selectable && (
-            <UsesSistent>
+            <>
               <Checkbox checked={selected} onChange={() => onSelectChange(ctx.id)} />
-            </UsesSistent>
+            </>
           )}
           <ConnectionChip
             title={ctx?.name}
@@ -325,7 +324,7 @@ function K8sContextMenu({
                         }}
                       >
                         <div>
-                          <UsesSistent>
+                          <>
                             <Checkbox
                               checked={activeContexts.includes('all')}
                               onChange={() =>
@@ -334,7 +333,7 @@ function K8sContextMenu({
                                   : setActiveContexts('all')
                               }
                             />
-                          </UsesSistent>
+                          </>
                           <span style={{ fontWeight: 'bolder' }}>select all</span>
                         </div>
                         <CustomTooltip title="Configure Connections">
@@ -429,7 +428,7 @@ const Header = ({
 
   return (
     <NoSsr>
-      <UsesSistent>
+      <>
         <HeaderAppBar id="top-navigation-bar" color="primary" position="sticky">
           <StyledToolbar isDrawerCollapsed={onDrawerCollapse}>
             <Grid container alignItems="center">
@@ -509,7 +508,7 @@ const Header = ({
             </Grid>
           </StyledToolbar>
         </HeaderAppBar>
-      </UsesSistent>
+      </>
     </NoSsr>
   );
 };

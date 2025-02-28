@@ -25,7 +25,6 @@ import useKubernetesHook from './hooks/useKubernetesHook';
 import { keys } from '@/utils/permission_constants';
 import useTestIDsGenerator from './hooks/useTestIDs';
 import CAN from '@/utils/can';
-import { UsesSistent } from './SistentWrapper';
 
 const styles = styled((theme) => ({
   ctxIcon: {
@@ -202,7 +201,7 @@ const MesherySettingsEnvButtons = () => {
 
   return (
     <div>
-      <UsesSistent>
+      <>
         <Button
           type="submit"
           variant="contained"
@@ -227,7 +226,7 @@ const MesherySettingsEnvButtons = () => {
             Add Cluster
           </Typography>
         </Button>
-      </UsesSistent>
+      </>
       <_PromptComponent ref={ref} />
     </div>
   );
