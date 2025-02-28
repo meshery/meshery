@@ -250,19 +250,17 @@ const TypingFilter = ({ filterSchema, handleFilter, autoFilter = false, placehol
           ),
           endAdornment: (
             <InputAdornment position="end">
-              <IconButton onClick={handleClear}>
-                {filteringState.state !== FILTERING_STATE.IDLE && (
+              {filteringState.state !== FILTERING_STATE.IDLE && (
+                <IconButton onClick={handleClear}>
                   <CrossCircleIcon fill={theme.palette.icon.default} />
-                )}
-              </IconButton>
-              <IconButton onClick={toggleSuggestions}>
-                {filteringState.state !== FILTERING_STATE.IDLE && !anchorEl && (
-                  <ExpandMore fill={theme.palette.icon.default} />
-                )}
-                {filteringState.state !== FILTERING_STATE.IDLE && anchorEl && (
-                  <ExpandLess fill={theme.palette.icon.default} />
-                )}
-              </IconButton>
+                </IconButton>
+              )}
+              {filteringState.state !== FILTERING_STATE.IDLE && (
+                <IconButton onClick={toggleSuggestions}>
+                  {!anchorEl && <ExpandMore fill={theme.palette.icon.default} />}
+                  {anchorEl && <ExpandLess fill={theme.palette.icon.default} />}
+                </IconButton>
+              )}
             </InputAdornment>
           ),
         }}
