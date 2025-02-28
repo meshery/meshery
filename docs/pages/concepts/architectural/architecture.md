@@ -16,16 +16,17 @@ Meshery and its components are written using the following languages and technol
 | Components                                                           | Languages and Technologies                                                        |
 | :------------------------------------------------------------------- | :-------------------------------------------------------------------------------- |
 | Meshery Server                                                       | Golang, gRPC, GraphQL, [SMP](https://smp-spec.io)                                 |
-| [Meshery Adapters](/concepts/architecture/adapters)                  | Golang, gRPC, [CloudEvents](https://cloudevents.io/), [SMI](https://smi-spec.io), [OAM](https://oam.dev)  |
-| [Meshery WASM Filters](https://github.com/layer5io/wasm-filters)     | Rust and C++                                                                      |
+|   [Meshery Database](/concepts/architecture/database)                | Golang, SQLlite                                                                   |
 | Meshery UI                                                           | ReactJS, NextJS, BillboardJS                                                      |
 | Meshery Provider UI                                                  | ReactJS, NextJS                                                                   |
-| [Meshery Remote Providers](/extensibility/providers)                 | _any_ - must adhere to Meshery [Extension Points]({{site.baseurl}}/extensibility) |
 | [Meshery Operator](/concepts/architecture/operator)                  | Golang                                                                            |
-| [MeshSync](/concepts/architecture/meshsync)                          | Golang                                                                            |
-| [Broker](/concepts/architecture/broker)                              | Golang, NATS                                                                      |
-| [Meshery Database](/concepts/architecture/database)                  | Golang, SQLlite                                                                   | 
-| [Meshery CLI](#meshery-cli) | Golang                                                                            |
+|   [MeshSync](/concepts/architecture/meshsync)                        | Golang                                                                            |
+|   [Broker](/concepts/architecture/broker)                            | Golang, NATS                                                                      |
+| [Meshery CLI](#meshery-cli)                                          | Golang                                                                            |
+| --- [Extensions](/extensions) ---                                    |                                                                                   |
+| [Meshery Adapters](/concepts/architecture/adapters)                  | Golang, gRPC, [CloudEvents](https://cloudevents.io/)                              |
+| [Meshery Remote Providers](/extensibility/providers)                 | _any_ - must adhere to Meshery [Extension Points]({{site.baseurl}}/extensibility) |
+| [Envoy WASM Filters](https://github.com/layer5io/wasm-filters)     | Rust and C++                                                                      |
 
 ## Deployments
 
