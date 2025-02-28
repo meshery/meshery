@@ -10,7 +10,7 @@ language: en
 
 ## Meshery's APIs
 
-Each of Meshery's APIs are subject to the following authentication and authorization system. The REST and GraphQL APIs are available on the same network port you use to connect to Meshery UI, which is `9081/tcp` by default. Each of the API endpoints are exposed through [server.go](https://github.com/meshery/meshery/blob/master/server/router/server.go). Endpoints are grouped by function (e.g. `/api/system/version`). Additionally, [Remote Providers](./providers) can extend Meshery's endpoints behind the `/api/extensions/` endpoint.
+Each of Meshery's APIs are subject to the following authentication and authorization system. The REST and GraphQL APIs are available on the same network port you use to connect to Meshery UI, which is `9081/tcp` by default. Each of the API endpoints are exposed through [server.go](https://github.com/meshery/meshery/blob/master/server/router/server.go). Endpoints are grouped by function (e.g. `/api/system/version`). Additionally, [Remote Providers](/extensibility/providers) can extend Meshery's endpoints behind the `/api/extensions/` endpoint.
 
 ### API Reference
 
