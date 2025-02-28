@@ -70,7 +70,6 @@ import { keys } from '@/utils/permission_constants';
 import ExportModal from './ExportModal';
 import { useModal, Modal as SistentModal, ModalBody } from '@layer5/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
-import { UsesSistent } from './SistentWrapper';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import { useActorRef } from '@xstate/react';
 import { designValidationMachine } from 'machines/validator/designValidator';
@@ -148,7 +147,7 @@ const YamlDialogTitleText = styled(Typography)(() => ({
 
 function TooltipIcon({ children, onClick, title, placement, disabled }) {
   return (
-    <UsesSistent>
+    <>
       <CustomTooltip title={title} placement={placement} interactive>
         <div>
           <IconButton disabled={disabled} onClick={onClick}>
@@ -156,7 +155,7 @@ function TooltipIcon({ children, onClick, title, placement, disabled }) {
           </IconButton>
         </div>
       </CustomTooltip>
-    </UsesSistent>
+    </>
   );
 }
 
@@ -1355,9 +1354,9 @@ function MesheryPatterns({
 
   if (ispatternsLoading) {
     return (
-      <UsesSistent>
+      <>
         <LoadingScreen animatedIcon="AnimatedMeshPattern" message={`Loading ${pageTitle}...`} />
-      </UsesSistent>
+      </>
     );
   }
 
@@ -1437,7 +1436,7 @@ function MesheryPatterns({
   };
 
   return (
-    <UsesSistent>
+    <>
       <NoSsr>
         {CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject) ? (
           <>
@@ -1506,7 +1505,7 @@ function MesheryPatterns({
                 </CreateButton>
               )}
               <SearchWrapper style={{ display: 'flex' }}>
-                <UsesSistent>
+                <>
                   <SearchBar
                     onSearch={(value) => {
                       setSearch(value);
@@ -1537,7 +1536,7 @@ function MesheryPatterns({
                       customToolsProps={{ columnVisibility, setColumnVisibility }}
                     />
                   )}
-                </UsesSistent>
+                </>
 
                 {!selectedPattern.show && (
                   <ViewSwitchButton>
@@ -1640,7 +1639,7 @@ function MesheryPatterns({
           <DefaultError />
         )}
       </NoSsr>
-    </UsesSistent>
+    </>
   );
 }
 
@@ -1649,7 +1648,7 @@ const ImportModal = React.memo((props) => {
 
   return (
     <>
-      <UsesSistent>
+      <>
         <SistentModal
           open={true}
           closeModal={handleClose}
@@ -1667,7 +1666,7 @@ const ImportModal = React.memo((props) => {
             handleClose={handleClose}
           />
         </SistentModal>
-      </UsesSistent>
+      </>
     </>
   );
 });
@@ -1677,7 +1676,7 @@ const PublishModal = React.memo((props) => {
 
   return (
     <>
-      <UsesSistent>
+      <>
         <SistentModal
           open={true}
           closeModal={handleClose}
@@ -1697,7 +1696,7 @@ const PublishModal = React.memo((props) => {
             helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
           />
         </SistentModal>
-      </UsesSistent>
+      </>
     </>
   );
 });

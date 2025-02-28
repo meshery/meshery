@@ -25,7 +25,7 @@ import OrgOutlinedIcon from '@/assets/icons/OrgOutlinedIcon';
 import { iconXLarge } from 'css/icons.styles';
 import { useGetCurrentAbilities } from '@/rtk-query/ability';
 import { useDynamicComponent } from '@/utils/context/dynamicContext';
-import { UsesSistent } from '../SistentWrapper';
+
 import _ from 'lodash';
 
 export const SlideInMenu = styled('div')(() => ({
@@ -296,16 +296,15 @@ function SpaceSwitcher(props) {
   return (
     <NoSsr>
       <Provider store={store}>
-        <UsesSistent>
-          <StyledSwitcher>
-            <Button
-              onClick={() => setOrgOpen(!orgOpen)}
-              style={{ marginRight: orgOpen ? '1rem' : '0' }}
-            >
-              <OrgOutlinedIcon {...iconXLarge} fill={'#eee'} />
-            </Button>
-            <OrgMenu {...props} open={orgOpen} />/
-            {/* /
+        <StyledSwitcher>
+          <Button
+            onClick={() => setOrgOpen(!orgOpen)}
+            style={{ marginRight: orgOpen ? '1rem' : '0' }}
+          >
+            <OrgOutlinedIcon {...iconXLarge} fill={'#eee'} />
+          </Button>
+          <OrgMenu {...props} open={orgOpen} />/
+          {/* /
           <Button
             onClick={() => setWorkspaceOpen(!workspaceOpen)}
             style={{ marginRight: workspaceOpen ? '1rem' : '0' }}
@@ -313,13 +312,9 @@ function SpaceSwitcher(props) {
             <WorkspaceOutlinedIcon {...iconXLarge} />
           </Button>
           <WorkspaceSwitcher {...props} open={workspaceOpen} />/ */}
-            <div
-              id="meshery-dynamic-header"
-              style={{ marginLeft: DynamicComponent ? '1rem' : '' }}
-            />
-            {!DynamicComponent && <DefaultHeader title={props.title} isBeta={props.isBeta} />}
-          </StyledSwitcher>
-        </UsesSistent>
+          <div id="meshery-dynamic-header" style={{ marginLeft: DynamicComponent ? '1rem' : '' }} />
+          {!DynamicComponent && <DefaultHeader title={props.title} isBeta={props.isBeta} />}
+        </StyledSwitcher>
       </Provider>
     </NoSsr>
   );

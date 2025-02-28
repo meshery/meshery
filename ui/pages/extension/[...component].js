@@ -9,6 +9,7 @@ import {
   updatepagetitle,
   updateExtensionType,
   updatebetabadge,
+  updateCapabilities,
 } from '../../lib/store';
 import Head from 'next/head';
 import React, { useEffect, useCallback, useState } from 'react';
@@ -45,10 +46,10 @@ function RemoteExtension() {
   const dispatch = useDispatch();
 
   const extensionType = useSelector((state) => state.get('extensionType'));
-  const { data: capabilitiesRegistry, isLoading } = useGetProviderCapabilitiesQuery(); // Fixed: added parentheses
-
+  const { data: capabilitiesRegistry, isLoading } = useGetProviderCapabilitiesQuery();
   const renderExtension = useCallback(() => {
     if (!capabilitiesRegistry?.extensions) return;
+    dispatch(updateCapabilities({ capabilitiesRegistry: capabilitiesRegistry }));
 
     let extNames = [];
     for (var key of Object.keys(capabilitiesRegistry.extensions)) {

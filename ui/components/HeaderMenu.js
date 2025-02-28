@@ -12,7 +12,6 @@ import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { NavigationNavbar, Popover } from '@layer5/sistent';
-import { UsesSistent } from './SistentWrapper';
 import { IconButtonAvatar } from './Header.styles';
 
 function exportToJsonFile(jsonData, filename) {
@@ -158,7 +157,7 @@ const HeaderMenu = (props) => {
   const id = open ? 'menu-popover' : undefined;
 
   return (
-    <UsesSistent>
+    <>
       <IconButtonAvatar aria-describedby={id} onClick={handleClick} color={props.color}>
         <MenuIcon />
       </IconButtonAvatar>
@@ -189,7 +188,7 @@ const HeaderMenu = (props) => {
           }}
         />
       </Popover>
-    </UsesSistent>
+    </>
   );
 };
 
