@@ -34,14 +34,14 @@ export const StyledMainContent = styled('main')(({ theme }) => ({
   },
 }));
 
-export const StyledAppContent = styled('div')(({ theme }) => ({
+export const StyledAppContent = styled('div')(({ theme, canShowNav }) => ({
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
   position: 'relative',
   overflowX: 'hidden',
   [theme.breakpoints.down('sm')]: {
-    marginLeft: '4.25rem',
+    marginLeft: canShowNav ? '4.25rem' : '0',
   },
 }));
 
