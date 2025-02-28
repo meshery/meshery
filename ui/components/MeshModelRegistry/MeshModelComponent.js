@@ -62,12 +62,14 @@ import {
   Radio,
   FormLabel,
   NoSsr,
+  importModelSchema,
+  importModelUiSchema,
 } from '@layer5/sistent';
 import BrushIcon from '@mui/icons-material/Brush';
 import CategoryIcon from '@mui/icons-material/Category';
 import SourceIcon from '@/assets/icons/SourceIcon';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
-
+import { UsesSistent } from '../SistentWrapper';
 import { RJSFModalWrapper } from '../Modal';
 import { useRef } from 'react';
 import { updateProgress } from 'lib/store';
@@ -141,7 +143,6 @@ const MeshModelComponent_ = ({
   const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
   const [view, setView] = useState(OVERVIEW);
   const [convert, setConvert] = useState(false);
-  const [importSchema, setImportSchema] = useState({});
   const [importModal, setImportModal] = useState({
     open: false,
   });
@@ -486,13 +487,11 @@ const MeshModelComponent_ = ({
           },
           true,
         );
-        if (modelRes.models && modelRes.models.length > 0) {
-          const updatedRegistrant = {
-            ...registrant,
-            models: removeDuplicateVersions(modelRes.models) || [],
-          };
-          tempResourcesDetail.push(updatedRegistrant);
-        }
+        const updatedRegistrant = {
+          ...registrant,
+          models: removeDuplicateVersions(modelRes.models) || [],
+        };
+        tempResourcesDetail.push(updatedRegistrant);
       }
       response = {
         data: {
@@ -503,6 +502,7 @@ const MeshModelComponent_ = ({
     setRowsPerPage(25);
     return response;
   };
+
   const handleTabClick = (selectedView) => {
     handleChangeSelectedTab(selectedView);
     if (view !== selectedView) {
@@ -563,22 +563,6 @@ const MeshModelComponent_ = ({
   useEffect(() => {
     fetchData();
   }, [view, page, rowsPerPage, checked, searchText, modelFilters, registrantFilters]);
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/api/schema/resource/model', {
-          method: 'GET',
-          credentials: 'include',
-        });
-        const result = await response.json();
-        setImportSchema(result);
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   return (
     <div data-test="workloads">
@@ -589,7 +573,6 @@ const MeshModelComponent_ = ({
       />
       {importModal.open && (
         <ImportModal
-          importFormSchema={importSchema}
           handleClose={handleUploadImportClose}
           handleImportModel={handleImportModel}
         />
@@ -603,10 +586,10 @@ const MeshModelComponent_ = ({
           handleCsvStepper={handleCsvStepper}
         />
       )}
-      <>
+      <UsesSistent>
         <SistentModal maxWidth="sm" {...urlModal}></SistentModal>
         <SistentModal maxWidth="sm" {...csvModal}></SistentModal>
-      </>
+      </UsesSistent>
       <MainContainer isAnimated={animate}>
         <InnerContainer isAnimated={animate}>
           <TabCard
@@ -684,20 +667,22 @@ const MeshModelComponent_ = ({
   );
 };
 const ImportModal = React.memo((props) => {
-  const { importFormSchema, handleClose, handleImportModel } = props;
+  const { handleClose, handleImportModel } = props;
 
   return (
-    <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Import Model">
-      <RJSFModalWrapper
-        schema={importFormSchema.rjsfSchema}
-        uiSchema={{
-          ...importFormSchema.uiSchema,
-        }}
-        handleSubmit={handleImportModel}
-        submitBtnText="Import"
-        handleClose={handleClose}
-      />
-    </SistentModal>
+    <>
+      <UsesSistent>
+        <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Import Model">
+          <RJSFModalWrapper
+            schema={importModelSchema}
+            uiSchema={importModelUiSchema}
+            handleSubmit={handleImportModel}
+            submitBtnText="Import"
+            handleClose={handleClose}
+          />
+        </SistentModal>
+      </UsesSistent>
+    </>
   );
 });
 
@@ -707,38 +692,50 @@ const GenerateModal = React.memo((props) => {
   const { handleClose, uploadMethod, handleChange, handleUrlStepper, handleCsvStepper } = props;
 
   return (
-    <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Generate Model">
-      <FormControl style={{ padding: '10px' }}>
-        <FormLabel id="upload-method-choices" sx={{ marginBottom: '1rem' }}>
-          Upload Method
-        </FormLabel>
-        <RadioGroup
-          aria-labelledby="upload-method-choices"
-          name="uploadMethod"
-          value={uploadMethod}
-          onChange={handleChange}
-        >
-          <FormControlLabel value="url" control={<Radio />} label="URL Import" />
-          <FormControlLabel value="csv" control={<Radio />} label="CSV Import" />
-        </RadioGroup>
-      </FormControl>
-      <ModalFooter
-        variant="filled"
-        helpText="URL Import supports Artifacthub and Github. Csv Import supports bulk generation and import."
-      >
-        <PrimaryActionButtons
-          primaryText="Next"
-          secondaryText="Cancel"
-          primaryButtonProps={{
-            onClick: uploadMethod === 'url' ? handleUrlStepper : handleCsvStepper,
-            disabled: !uploadMethod,
-          }}
-          secondaryButtonProps={{
-            onClick: handleClose,
-          }}
-        />
-      </ModalFooter>
-    </SistentModal>
+    <>
+      <UsesSistent>
+        <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Generate Model">
+          <FormControl style={{ padding: '10px' }}>
+            <FormLabel id="upload-method-choices" sx={{ marginBottom: '1rem' }}>
+              Upload Method
+            </FormLabel>
+            <RadioGroup
+              aria-labelledby="upload-method-choices"
+              name="uploadMethod"
+              value={uploadMethod}
+              onChange={handleChange}
+            >
+              <FormControlLabel
+                value="url"
+                control={<Radio color="primary" />}
+                label="URL Import"
+              />
+              <FormControlLabel
+                value="csv"
+                control={<Radio color="primary" />}
+                label="CSV Import"
+              />
+            </RadioGroup>
+          </FormControl>
+          <ModalFooter
+            variant="filled"
+            helpText="URL Import supports Artifacthub and Github. Csv Import supports bulk generation and import."
+          >
+            <PrimaryActionButtons
+              primaryText="Next"
+              secondaryText="Cancel"
+              primaryButtonProps={{
+                onClick: uploadMethod === 'url' ? handleUrlStepper : handleCsvStepper,
+                disabled: !uploadMethod,
+              }}
+              secondaryButtonProps={{
+                onClick: handleClose,
+              }}
+            />
+          </ModalFooter>
+        </SistentModal>
+      </UsesSistent>
+    </>
   );
 });
 
