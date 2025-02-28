@@ -488,12 +488,12 @@ const MeshModelComponent_ = ({
           true,
         );
         if (modelRes.models && modelRes.models.length > 0) {
-           const updatedRegistrant = {
-             ...registrant,
-             models: removeDuplicateVersions(modelRes.models) || [],
-           };
-           tempResourcesDetail.push(updatedRegistrant);
-         }
+          const updatedRegistrant = {
+            ...registrant,
+            models: removeDuplicateVersions(modelRes.models) || [],
+          };
+          tempResourcesDetail.push(updatedRegistrant);
+        }
       }
       response = {
         data: {
