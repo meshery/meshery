@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test.describe('Index Page UI Tests', () => {
   test.beforeEach(async ({ page }) => {
-    // Visit Index Page
+    // Visit Index Page (Dasboard)
     await page.goto('/');
   });
 
