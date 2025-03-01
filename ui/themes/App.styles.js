@@ -30,17 +30,20 @@ export const StyledMainContent = styled('main')(({ theme }) => ({
   flex: 1,
   padding: '48px 36px 24px',
   [theme.breakpoints.down('sm')]: {
-    padding: '24px 5px 16px 5px',
+    padding: '24px 10px 16px 10px',
   },
 }));
 
-export const StyledAppContent = styled('div')({
+export const StyledAppContent = styled('div')(({ theme, canShowNav }) => ({
   flex: 1,
   display: 'flex',
   flexDirection: 'column',
   position: 'relative',
   overflowX: 'hidden',
-});
+  [theme.breakpoints.down('sm')]: {
+    marginLeft: canShowNav ? '4.25rem' : '0',
+  },
+}));
 
 export const StyledContentWrapper = styled('div')({
   flex: 1,
@@ -72,6 +75,9 @@ export const StyledDrawer = styled('nav', {
   paddingRight: '4rem',
   [theme.breakpoints.up('xs')]: {
     paddingRight: '0',
+  },
+  [theme.breakpoints.down('sm')]: {
+    position: 'absolute',
   },
 }));
 
