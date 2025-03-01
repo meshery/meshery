@@ -204,6 +204,7 @@ func main() {
 		&models.UserCapabilities{},
 		&models.PerformanceTestConfig{},
 		&models.SmiResultWithID{},
+		models.Credential{},
 		models.K8sContext{},
 		models.Organization{},
 		models.Key{},
