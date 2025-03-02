@@ -13,7 +13,6 @@ import {
   charcoal,
 } from '@layer5/sistent';
 import { disabledStyleWithOutOpacity } from '../../css/disableComponent.styles';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 export const FallbackWrapper = styled(Box)(() => ({
   margin: '2rem',
@@ -209,21 +208,6 @@ export const SideBarListItem = styled(ListItem, {
   fontSize: '14px',
 }));
 
-export const ExpandMoreIcon = styled(FontAwesomeIcon, {
-  shouldForwardProp: (prop) => prop !== 'isCollapsed' && prop !== 'hasChildren',
-})(({ isCollapsed, hasChildren, theme }) => ({
-  opacity: 0,
-  visibility: 'hidden',
-  cursor: 'pointer',
-  display: hasChildren ? 'inline-block' : 'none',
-  transform: isCollapsed ? 'rotate(180deg) translateX(-0.8px)' : 'translateX(3px)',
-  transition:
-    'transform 200ms ease-in-out, opacity 200ms ease-in-out, visibility 200ms ease-in-out',
-  '&:hover': {
-    color: theme.palette.background.brand.default,
-  },
-}));
-
 export const SideBarText = styled(ListItemText)(({ drawerCollapsed }) => ({
   opacity: drawerCollapsed ? 0 : 1,
   transition: drawerCollapsed ? 'opacity 200ms ease-in-out' : 'opacity 200ms ease-in-out',
@@ -264,14 +248,6 @@ export const SecondaryDivider = styled(Divider)(({ theme }) => ({
   marginTop: theme.spacing(1),
   marginBottom: theme.spacing(1),
   borderColor: '#404854',
-}));
-
-export const ChevronIcon = styled(FontAwesomeIcon)(({ theme }) => ({
-  color: theme.palette.icon.default,
-  cursor: 'pointer',
-  margin: '0.75rem 0.2rem',
-  width: '0.8rem',
-  verticalAlign: 'middle',
 }));
 
 export const MainListIcon = styled(ListItemIcon)(({ theme }) => ({

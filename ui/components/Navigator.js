@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import HelpIcon from '@mui/icons-material/Help';
 import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
@@ -21,12 +20,6 @@ import GithubIcon from '../assets/icons/GithubIcon';
 import ChatIcon from '../assets/icons/ChatIcon';
 import ServiceMeshIcon from '../assets/icons/ServiceMeshIcon';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import {
-  faAngleLeft,
-  faCaretDown,
-  faExternalLinkAlt,
-  faDigitalTachograph,
-} from '@fortawesome/free-solid-svg-icons';
 import {
   updatepagetitle,
   updatebetabadge,
@@ -45,6 +38,11 @@ import {
   Box,
   NoSsr,
   Zoom,
+  LeftArrowIcon,
+  CaretDownIcon,
+  ExternalLinkIcon as IconExternalLink,
+  TachographDigitalIcon,
+  useTheme,
 } from '@layer5/sistent';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
@@ -69,8 +67,6 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import {
-  ChevronIcon,
-  ExpandMoreIcon,
   HideScrollbar,
   LinkContainer,
   ListIconSide,
@@ -243,9 +239,7 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
     children: [
       {
         id: PROFILES,
-        icon: (
-          <FontAwesomeIcon icon={faDigitalTachograph} style={{ fontSize: 24, color: 'white' }} />
-        ),
+        icon: <TachographDigitalIcon fill="#fff" />,
         href: '/performance/profiles',
         title: 'Profiles',
         show: capabilityRegistryObj.isNavigatorComponentEnabled([PERFORMANCE, PROFILES]),
@@ -275,7 +269,7 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
 ];
 
 const ExternalLinkIcon = (
-  <FontAwesomeIcon style={externalLinkIconStyle} icon={faExternalLinkAlt} transform="shrink-7" />
+  <IconExternalLink {...externalLinkIconStyle} transform="shrink-7" fill="#fff" />
 );
 
 const externlinks = [
@@ -327,6 +321,8 @@ const NavigatorWrapper = (props) => {
 
 const Navigator_ = (props) => {
   const { meshAdapters: initialMeshAdapters } = props;
+
+  const theme = useTheme();
 
   const [state, setState] = useState({
     path: '',
@@ -947,13 +943,22 @@ const Navigator_ = (props) => {
                       <SideBarText drawerCollapsed={props.isDrawerCollapsed}>{title}</SideBarText>
                     </NavigatorLink>
                   </Link>
-                  <ExpandMoreIcon
-                    icon={faCaretDown}
-                    onClick={() => toggleItemCollapse(childId)}
-                    isCollapsed={state.openItems.includes(childId)} // Pass collapsed state
-                    isDrawerCollapsed={props.isDrawerCollapsed} // Pass drawer state
-                    hasChildren={!!children}
-                  />
+                  {children && children.length ? (
+                    <CaretDownIcon
+                      fill={
+                        state.openItems.includes(childId)
+                          ? theme.palette.icon.brand
+                          : theme.palette.icon.default
+                      }
+                      style={{
+                        marginLeft: 'auto',
+                        transition: 'transform 0.3s',
+                        transform: state.openItems.includes(childId)
+                          ? 'rotate(180deg)'
+                          : 'rotate(0)',
+                      }}
+                    />
+                  ) : null}
                 </SideBarListItem>
                 <Collapse
                   in={state.openItems.includes(childId)}
@@ -1086,20 +1091,17 @@ const Navigator_ = (props) => {
         }
         onClick={toggleMiniDrawer}
       >
-        <>
-          <ChevronIcon
-            icon={faAngleLeft}
-            fixedWidth
-            size="2x"
-            style={{
-              margin: '0.75rem 0.2rem ',
-              width: '0.8rem',
-              verticalAlign: 'middle',
-              color: props.isDrawerCollapsed ? '#fff' : 'inherit',
-            }}
-            alt="Sidebar collapse toggle icon"
-          />
-        </>
+        <LeftArrowIcon
+          alt="Sidebar collapse toggle"
+          style={{
+            cursor: 'pointer',
+            verticalAlign: 'middle',
+          }}
+          fill={theme.palette.icon.default}
+          stroke={theme.palette.icon.default}
+          width="1.2rem"
+          height="2.8rem"
+        />
       </div>
     </ChevronButtonWrapper>
   );
