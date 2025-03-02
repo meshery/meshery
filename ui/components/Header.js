@@ -500,7 +500,7 @@ const Header = ({
                   <UserSpan>
                     <User color="inherit" updateExtensionType={updateExtensionType} />
                   </UserSpan>
-                  <UserSpan>
+                  <UserSpan data-testid="header-menu">
                     <HeaderMenu color="inherit" updateExtensionType={updateExtensionType} />
                   </UserSpan>
                 </UserInfoContainer>

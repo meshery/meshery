@@ -6,7 +6,7 @@ test.describe('Logout Page Tests', { tag: '@unstable' }, () => {
     await page.goto(`${ENV.MESHERY_SERVER_URL}`);
   });
   test('Logout from current user session', async ({ page }) => {
-    await page.locator('span:nth-child(5) > div > .MuiButtonBase-root').click();
+    await page.getByTestId('header-menu').click();
     await page.getByRole('menuitem', { name: 'Logout' }).click();
     await expect(page).toHaveURL(
       `${ENV.MESHERY_SERVER_URL}/provider` || `https://cloud.layer5.io/login`,
