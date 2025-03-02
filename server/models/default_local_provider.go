@@ -1324,11 +1324,27 @@ func (l *DefaultLocalProvider) Cleanup() error {
 }
 
 func (l *DefaultLocalProvider) SaveUserCredential(token string, credential *Credential) (*Credential, error) {
-	result := l.GetGenericPersister().Table("credentials").Create(&credential)
-	if result.Error != nil {
-		return nil, fmt.Errorf("error saving user credentials: %v", result.Error)
+
+	if credential.ID == uuid.Nil {
+		id, err := uuid.NewV4()
+		if err != nil {
+			return nil, ErrGenerateUUID(err)
+		}
+		credential.ID = id
 	}
-	return nil, nil
+	err := l.GetGenericPersister().Transaction(func(tx *gorm.DB) error {
+		existingCred := Credential{}
+
+		if err := tx.First(&existingCred, "id = ?", credential.ID).Error; err == nil {
+			return err
+		}
+
+		return tx.Save(&credential).Error
+	})
+	if err != nil {
+		return nil, ErrPersistCredential(err)
+	}
+	return credential, nil
 }
 
 func (l *DefaultLocalProvider) GetCredentialByID(token string, credentialID uuid.UUID) (*Credential, int, error) {
