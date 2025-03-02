@@ -46,9 +46,9 @@ var EnvironmentCmd = &cobra.Command{
 	Long:  "View list of environments and detailed information of a specific environments",
 	Example: `
 // To view a list environments
-mesheryctl environment list --orgID [orgId]
+mesheryctl environment list --orgId [orgId]
 // To create a environment
-mesheryctl environment create --orgID [orgId] --name [name] --description [description]
+mesheryctl environment create --orgId [orgId] --name [name] --description [description]
 // Documentation for environment can be found at:
 https://docs.meshery.io/concepts/logical/environments
 	`,
@@ -79,6 +79,7 @@ https://docs.meshery.io/concepts/logical/environments
 
 func init() {
 	listEnvironmentCmd.Flags().StringVarP(&orgID, "orgId", "o", "", "Organization ID")
+	viewEnvironmentCmd.Flags().StringVarP(&orgID, "orgId", "i", "", "Organization ID")
 	viewEnvironmentCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 	viewEnvironmentCmd.Flags().BoolVarP(&saveFlag, "save", "s", false, "(optional) save output as a JSON/YAML file")
 	createEnvironmentCmd.Flags().StringVarP(&orgID, "orgId", "o", "", "Organization ID")

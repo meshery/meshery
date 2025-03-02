@@ -39,7 +39,7 @@ var viewEnvironmentCmd = &cobra.Command{
 	Long:  "view a environments registered in Meshery Server",
 	Example: `
 // View details of a specific environment
-mesheryctl environment view --orgID [orgId]
+mesheryctl environment view --orgId [orgId]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		orgIdFlag, _ := cmd.Flags().GetString("orgId")
@@ -60,8 +60,7 @@ mesheryctl environment view --orgID [orgId]
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 
-		orgid := args[0]
-		url := fmt.Sprintf("%s/api/environments?orgID=%s", baseUrl, orgid)
+		url := fmt.Sprintf("%s/api/environments?orgID=%s", baseUrl, orgID)
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			return err
@@ -89,7 +88,7 @@ mesheryctl environment view --orgID [orgId]
 		var selectedEnvironment environments.EnvironmentData
 
 		if environmentResponse.TotalCount == 0 {
-			utils.Log.Info("No environment(s) found for the given ID: ", orgid)
+			utils.Log.Info("No environment(s) found for the given ID: ", orgID)
 			return nil
 		} else if environmentResponse.TotalCount == 1 {
 			selectedEnvironment = environmentResponse.Environments[0] // Update the type of selectedModel
