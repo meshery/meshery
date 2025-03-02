@@ -19,7 +19,6 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import MesheryAdapterPlayComponent from './MesheryAdapterPlayComponent';
 import { bindActionCreators } from 'redux';
 import { setAdapter } from '../lib/store';
-import { UsesSistent } from './SistentWrapper';
 
 const StyledButton = styled(Button)(({ theme }) => ({
   marginTop: theme.spacing(3),
@@ -154,7 +153,7 @@ const MesheryPlayComponent = (props) => {
   if (meshAdapters.size === 0) {
     return (
       <NoSsr>
-        <UsesSistent>
+        <>
           <AlreadyConfigured>
             <Typography variant="h6">Adapter Unavailable</Typography>
             <Typography variant="subtitle1">Connect Meshery Adapter(s) in Settings</Typography>
@@ -168,7 +167,7 @@ const MesheryPlayComponent = (props) => {
               Configure Settings
             </StyledButton>
           </AlreadyConfigured>
-        </UsesSistent>
+        </>
       </NoSsr>
     );
   }
@@ -183,7 +182,7 @@ const MesheryPlayComponent = (props) => {
   const imageIcon = pickImage(adapter);
 
   return (
-    <UsesSistent>
+    <>
       <NoSsr>
         <PlayRoot>
           <Grid container>
@@ -240,7 +239,7 @@ const MesheryPlayComponent = (props) => {
           <MesheryAdapterPlayComponent adapter={adapter} adapter_icon={imageIcon} />
         )}
       </NoSsr>
-    </UsesSistent>
+    </>
   );
 };
 
