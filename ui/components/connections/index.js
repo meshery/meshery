@@ -70,12 +70,15 @@ function ConnectionManagementPage(props) {
 function Connections(props) {
   const {
     updateProgress,
-    /*onOpenCreateConnectionModal,*/ operatorState,
+    operatorState,
     selectedK8sContexts,
     k8sconfig,
     connectionMetadataState,
     meshsyncControllerState,
   } = props;
+  console.log('amit props', {
+    props,
+  });
   const [_operatorState] = useState(operatorState || []);
   const [tab, setTab] = useState(0);
   const _operatorStateRef = useRef(_operatorState);
