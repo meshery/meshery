@@ -7,7 +7,6 @@ import { bindActionCreators } from 'redux';
 import dataFetch from '../../../lib/data-fetch';
 import { updateProgress } from '../../../lib/store';
 import { trueRandom } from '../../../lib/trueRandom';
-import { UsesSistent } from '@/components/SistentWrapper';
 
 const GrafanaRoot = styled(Box)(() => {
   const theme = useTheme();
@@ -242,136 +241,134 @@ class GrafanaSelectionComponent extends Component {
       templateVarOptions,
     } = this.state;
     return (
-      <UsesSistent>
-        <NoSsr>
-          <GrafanaRoot>
-            <AlignRight>
-              <StyledChip
-                label={grafanaURL}
-                onDelete={handleGrafanaChipDelete}
-                onClick={handleGrafanaClick}
-                icon={<GrafanaIcon src="/static/img/grafana_icon.svg" />}
-                key="graf-key"
+      <NoSsr>
+        <GrafanaRoot>
+          <AlignRight>
+            <StyledChip
+              label={grafanaURL}
+              onDelete={handleGrafanaChipDelete}
+              onClick={handleGrafanaClick}
+              icon={<GrafanaIcon src="/static/img/grafana_icon.svg" />}
+              key="graf-key"
+              variant="outlined"
+            />
+          </AlignRight>
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={6}>
+              <StyledTextField
+                id="grafanaBoardSearch"
+                name="grafanaBoardSearch"
+                label="Board Search"
+                fullWidth
+                value={grafanaBoardSearch}
                 variant="outlined"
+                onChange={handleGrafanaBoardSearchChange('grafanaBoardSearch')}
               />
-            </AlignRight>
-            <Grid container spacing={1}>
-              <Grid item xs={12} sm={6}>
-                <StyledTextField
-                  id="grafanaBoardSearch"
-                  name="grafanaBoardSearch"
-                  label="Board Search"
-                  fullWidth
-                  value={grafanaBoardSearch}
-                  variant="outlined"
-                  onChange={handleGrafanaBoardSearchChange('grafanaBoardSearch')}
-                />
-              </Grid>
-              <Grid item xs={12} sm={6}>
-                <StyledTextField
-                  select
-                  id="grafanaBoard"
-                  name="grafanaBoard"
-                  label="Board"
-                  fullWidth
-                  value={grafanaBoard}
-                  variant="outlined"
-                  onChange={this.handleChange('grafanaBoard')}
-                >
-                  {grafanaBoards?.map((board) => (
-                    <MenuItem key={`bd_---_${board.uri}`} value={board.uri}>
-                      {board.title}
-                    </MenuItem>
-                  ))}
-                </StyledTextField>
-              </Grid>
-
-              {templateVars.length > 0 &&
-                templateVars.map(({ name }, ind) => {
-                  if (ind === 0 || typeof this.getSelectedTemplateVar(ind - 1) !== 'undefined') {
-                    return (
-                      <Grid item xs={12} sm={4} key={ind}>
-                        <StyledTextField
-                          select
-                          id={`template_var_${ind}`}
-                          name={`template_var_${ind}`}
-                          label={`Template variable: ${name}`}
-                          fullWidth
-                          value={this.getSelectedTemplateVar(ind)}
-                          variant="outlined"
-                          onChange={this.handleChange(`template_var_${ind}`)}
-                        >
-                          <MenuItem
-                            key={`tmplVarOpt__-___${ind}_${this.genRandomNumberForKey()}`}
-                            value=""
-                          />
-                          {templateVarOptions[ind]?.map((opt) => (
-                            <MenuItem
-                              key={`tmplVarOpt__-__${name}_${opt}_${ind}_${this.genRandomNumberForKey()}`}
-                              value={opt}
-                            >
-                              {opt}
-                            </MenuItem>
-                          ))}
-                        </StyledTextField>
-                      </Grid>
-                    );
-                  }
-                  return null;
-                })}
-
-              <Grid item xs={12}>
-                <StyledTextField
-                  select
-                  id="panels"
-                  name="panels"
-                  label="Panels"
-                  fullWidth
-                  value={selectedPanels}
-                  variant="outlined"
-                  onChange={this.handleChange('selectedPanels')}
-                  SelectProps={{
-                    multiple: true,
-                    renderValue: (selected) => (
-                      <PanelChips>
-                        {selected.map((value) => {
-                          let selVal = '';
-                          let panelId = '';
-                          panels.forEach((panel) => {
-                            if (panel.id === value) {
-                              selVal = panel.title;
-                              panelId = panel.id;
-                            }
-                          });
-                          return <StyledChip key={`pl_--_${panelId}`} label={selVal} />;
-                        })}
-                      </PanelChips>
-                    ),
-                  }}
-                >
-                  {panels?.map((panel) => (
-                    <MenuItem key={`panel_-__-${panel.id}`} value={panel.id}>
-                      {panel.title}
-                    </MenuItem>
-                  ))}
-                </StyledTextField>
-              </Grid>
+            </Grid>
+            <Grid item xs={12} sm={6}>
+              <StyledTextField
+                select
+                id="grafanaBoard"
+                name="grafanaBoard"
+                label="Board"
+                fullWidth
+                value={grafanaBoard}
+                variant="outlined"
+                onChange={this.handleChange('grafanaBoard')}
+              >
+                {grafanaBoards?.map((board) => (
+                  <MenuItem key={`bd_---_${board.uri}`} value={board.uri}>
+                    {board.title}
+                  </MenuItem>
+                ))}
+              </StyledTextField>
             </Grid>
 
-            <ButtonContainer>
-              <StyledButton
-                type="submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={this.addSelectedBoardPanelConfig}
+            {templateVars.length > 0 &&
+              templateVars.map(({ name }, ind) => {
+                if (ind === 0 || typeof this.getSelectedTemplateVar(ind - 1) !== 'undefined') {
+                  return (
+                    <Grid item xs={12} sm={4} key={ind}>
+                      <StyledTextField
+                        select
+                        id={`template_var_${ind}`}
+                        name={`template_var_${ind}`}
+                        label={`Template variable: ${name}`}
+                        fullWidth
+                        value={this.getSelectedTemplateVar(ind)}
+                        variant="outlined"
+                        onChange={this.handleChange(`template_var_${ind}`)}
+                      >
+                        <MenuItem
+                          key={`tmplVarOpt__-___${ind}_${this.genRandomNumberForKey()}`}
+                          value=""
+                        />
+                        {templateVarOptions[ind]?.map((opt) => (
+                          <MenuItem
+                            key={`tmplVarOpt__-__${name}_${opt}_${ind}_${this.genRandomNumberForKey()}`}
+                            value={opt}
+                          >
+                            {opt}
+                          </MenuItem>
+                        ))}
+                      </StyledTextField>
+                    </Grid>
+                  );
+                }
+                return null;
+              })}
+
+            <Grid item xs={12}>
+              <StyledTextField
+                select
+                id="panels"
+                name="panels"
+                label="Panels"
+                fullWidth
+                value={selectedPanels}
+                variant="outlined"
+                onChange={this.handleChange('selectedPanels')}
+                SelectProps={{
+                  multiple: true,
+                  renderValue: (selected) => (
+                    <PanelChips>
+                      {selected.map((value) => {
+                        let selVal = '';
+                        let panelId = '';
+                        panels.forEach((panel) => {
+                          if (panel.id === value) {
+                            selVal = panel.title;
+                            panelId = panel.id;
+                          }
+                        });
+                        return <StyledChip key={`pl_--_${panelId}`} label={selVal} />;
+                      })}
+                    </PanelChips>
+                  ),
+                }}
               >
-                Add
-              </StyledButton>
-            </ButtonContainer>
-          </GrafanaRoot>
-        </NoSsr>
-      </UsesSistent>
+                {panels?.map((panel) => (
+                  <MenuItem key={`panel_-__-${panel.id}`} value={panel.id}>
+                    {panel.title}
+                  </MenuItem>
+                ))}
+              </StyledTextField>
+            </Grid>
+          </Grid>
+
+          <ButtonContainer>
+            <StyledButton
+              type="submit"
+              variant="contained"
+              color="primary"
+              size="large"
+              onClick={this.addSelectedBoardPanelConfig}
+            >
+              Add
+            </StyledButton>
+          </ButtonContainer>
+        </GrafanaRoot>
+      </NoSsr>
     );
   }
 }

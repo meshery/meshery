@@ -18,7 +18,7 @@ import { reactJsonTheme } from './helper';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Accordion, AccordionDetails, AccordionSummary, styled } from '@layer5/sistent';
 import dynamic from 'next/dynamic';
-import { UsesSistent } from '../SistentWrapper';
+
 import {
   StyledKeyValueFormattedValue,
   StyledKeyValuePropertyDiv,
@@ -391,7 +391,6 @@ const TitleWithImg = ({ displayName, iconSrc }) => (
 );
 
 const StatusChip = ({ entityData, entityType }) => {
-  console.log('amit entityData', entityData);
   const nextStatus = Object.values(REGISTRY_ITEM_STATES);
   const [updateEntityStatus] = useUpdateEntityStatusMutation();
   const { data: modelData, isSuccess } = useGetMeshModelsQuery({
@@ -471,11 +470,9 @@ const MeshModelDetails = ({ view, showDetailsData }) => {
   };
 
   return (
-    <UsesSistent>
-      <DetailsContainer isEmpty={isEmptyDetails}>
-        {isEmptyDetails ? renderEmptyDetails() : getContent(showDetailsData.type)}
-      </DetailsContainer>
-    </UsesSistent>
+    <DetailsContainer isEmpty={isEmptyDetails}>
+      {isEmptyDetails ? renderEmptyDetails() : getContent(showDetailsData.type)}
+    </DetailsContainer>
   );
 };
 

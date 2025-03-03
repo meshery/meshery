@@ -391,7 +391,7 @@ Whenever the code tags are detected, the clipboard javascript file is automatica
 
 ## Documentation Contribution Flow Summary
 
-{% include alert.html type="light" title="Note" content="For contributing `mesheryctl` reference section, refer <a href='/contributing-cli'>Contributing CLI</a>" %}
+{% include alert.html type="light" title="Note" content="For contributing `mesheryctl` reference section, refer <a href='/project/contributing/contributing-cli'>Contributing CLI</a>" %}
 
 
 The following is a concise summary of the steps to contribute to Meshery documentation.
@@ -508,6 +508,44 @@ To use the `alert.html` feature in our documentation include the following code:
 
 
 Other supported alert types include `warning`, `danger`,`success`,`primary`, `secondary`, `light`, `dark` .
+
+
+### Image Handling
+
+Control image display in documentation pages using the following methods.
+
+#### Default Image Size in Markdown Format
+
+Using the Markdown image syntax:
+
+{% capture code_content %}[![Image Title]({{ site.baseurl }}/assets/img/your-image.png)]({{ site.baseurl }}/assets/img/your-image.png){% endcapture %}
+{% include code.html code=code_content %}
+
+This renders as:
+
+{% capture code_content %}<a href="/assets/img/your-image.png">
+    <img src="/assets/img/your-image.png" alt="Image Title">
+</a>{% endcapture %}
+{% include code.html code=code_content %}
+
+**Effect:**
+- Image is displayed at its original resolution, limited by global CSS (`max-width: 90vw; max-height: 90vh; height: auto; width: auto;`)
+- On larger screens (`min-width: 1200px`), image width can be up to `1200px`
+- Clickable, opening in Lightbox if the format is supported
+
+#### Custom Image Size (for Control)
+
+If you need to specify dimensions, use:
+
+{% capture code_content %}<a href="{{ site.baseurl }}/assets/img/your-image.png">
+    <img src="{{ site.baseurl }}/assets/img/your-image.png" style="width:500px; height:auto;" alt="Image Title">
+</a>{% endcapture %}
+{% include code.html code=code_content %}
+
+**Effect:**
+- Image width is fixed at `500px`, maintaining aspect ratio
+- If `500px` exceeds `90vw`, it will be constrained to `90vw`
+- Clickable, opening in Lightbox for full-size viewing
 
 ### Quotes
 

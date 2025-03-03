@@ -35,68 +35,68 @@ function CustomDialogTitle(props) {
   const { children, onClose, ...other } = props;
 
   return (
-    <DialogTitle sx={{ m : 0, p : 2 }} {...other}>
+    <DialogTitle sx={{ m: 0, p: 2 }} {...other}>
       {children}
       {onClose ? (
         <IconButton
           aria-label="close"
           onClick={onClose}
           sx={{
-            position : "absolute",
-            right : "1rem",
-            top : "1rem",
-            color : (theme) => theme.palette.grey[500],
+            position: "absolute",
+            right: "1rem",
+            top: "1rem",
+            color: (theme) => theme.palette.grey[500],
           }}
         >
           <CloseIcon />
         </IconButton>
-      ): null}
+      ) : null}
     </DialogTitle>
   );
 }
 
 CustomDialogTitle.propTypes = {
-  children : PropTypes.node,
-  onClose : PropTypes.func.isRequired,
+  children: PropTypes.node,
+  onClose: PropTypes.func.isRequired,
 };
 //Styled-components:
 const StyledTypography = styled(Typography)(({ theme }) => ({
-  fontWeight : 500,
-  color : charcoal[100],
-  marginBottom : theme.spacing(2), // Equivalent to `gutterBottom`
-  '& a' : {
-    fontWeight : "normal"
+  fontWeight: 500,
+  color: charcoal[100],
+  marginBottom: theme.spacing(2), // Equivalent to `gutterBottom`
+  "& a": {
+    fontWeight: "normal",
   },
-  "& :hover" : {
-    color : CHINESE_SILVER,
-  }
+  "& :hover": {
+    color: CHINESE_SILVER,
+  },
 }));
 
 const StyledTooltip = styled(Tooltip)(({ theme }) => ({
-  color : theme.palette.text.inverse,
-  cursor : "pointer",
-  fontWeight : "normal",
+  color: theme.palette.text.inverse,
+  cursor: "pointer",
+  fontWeight: "normal",
 }));
 
 const StyledCustomDialogTitle = styled(CustomDialogTitle)(({ theme }) => ({
-  background : accentGrey[10],
-  color : theme.palette.text.inverse,
+  background: accentGrey[10],
+  color: theme.palette.text.inverse,
 }));
 
 const StyledButton = styled(Button)(({ theme }) => ({
-  backgroundColor : theme.palette.IconButton,
+  backgroundColor: theme.palette.IconButton,
 }));
 const StyledButtonGroup = styled(ButtonGroup)(() => ({
-  border : "none",
-  "& .MuiButtonGroup-grouped" : {
-    border : "none !important",
+  border: "none",
+  "& .MuiButtonGroup-grouped": {
+    border: "none !important",
   },
 }));
 
 const StyledDialogBox = styled(DialogContentText)(({ theme }) => ({
-  color : theme.palette.text.inverse,
-  backgroundColor : charcoal[40],
-  padding : "1.2rem",
+  color: theme.palette.text.inverse,
+  backgroundColor: charcoal[40],
+  padding: "1.2rem",
 }));
 
 export default function Provider() {
@@ -117,7 +117,7 @@ export default function Provider() {
   };
 
   const open = Boolean(anchorEl);
-  const id = open ? "popover": undefined;
+  const id = open ? "popover" : undefined;
 
   useEffect(() => {
     loadProvidersFromServer();
@@ -127,8 +127,8 @@ export default function Provider() {
     dataFetch(
       "/api/providers",
       {
-        method : "GET",
-        credentials : "include",
+        method: "GET",
+        credentials: "include",
       },
       (result) => {
         if (typeof result !== "undefined") {
@@ -169,6 +169,10 @@ export default function Provider() {
     <ProviderLayout>
       <MesheryLogo
         src="/provider/static/img/meshery-logo/meshery-logo-dark-text-noBG.png"
+        onError={(e) =>
+          (e.target.src =
+            "/static/img/meshery-logo/meshery-logo-dark-text-noBG.png")
+        }
         alt="logo"
       />
       <CustomDiv>
@@ -187,12 +191,13 @@ export default function Provider() {
                 {isLoading && (
                   <CircularProgress
                     size={20}
-                    sx={{ color : "white", marginRight : 8 }}
+                    sx={{ color: "white", marginRight: 8 }}
                   />
                 )}
                 {selectedProvider !== ""
                   ? selectedProvider
                   : "Select your provider"}
+
                 <DropDownIcon />
               </Button>
             </StyledButtonGroup>
@@ -202,19 +207,19 @@ export default function Provider() {
               anchorEl={anchorEl}
               onClose={handleClose}
               anchorOrigin={{
-                vertical : "bottom",
-                horizontal : "center",
+                vertical: "bottom",
+                horizontal: "center",
               }}
               transformOrigin={{
-                vertical : "top",
-                horizontal : "center",
+                vertical: "top",
+                horizontal: "center",
               }}
             >
               <ClickAwayListener onClickAway={handleClose}>
                 <MenuList
                   sx={{
-                    background : charcoal[20],
-                    color : (theme) => theme.palette.text.inverse,
+                    background: charcoal[20],
+                    color: (theme) => theme.palette.text.inverse,
                   }}
                   id="split-button-menu"
                   autoFocusItem
@@ -223,13 +228,25 @@ export default function Provider() {
                     <MenuItem
                       key={key}
                       onClick={(e) => handleMenuItemClick(e, key)}
-                      sx={{ "&:hover" : { backgroundColor : accentGrey[20] } }}
+                      sx={{ "&:hover": { backgroundColor: accentGrey[20] } }}
                     >
                       {key}
                     </MenuItem>
                   ))}
-                  <Divider sx={{ my : 0.5, backgroundColor : accentGrey[40], width : "80%", margin : "auto", marginBottom : "0px" }} />
-                  <MenuProviderDisabled sx={{ marginTop : "0px" }} disabled={true} key="CNCF Labs">
+                  <Divider
+                    sx={{
+                      my: 0.5,
+                      backgroundColor: accentGrey[40],
+                      width: "80%",
+                      margin: "auto",
+                      marginBottom: "0px",
+                    }}
+                  />
+                  <MenuProviderDisabled
+                    sx={{ marginTop: "0px" }}
+                    disabled={true}
+                    key="CNCF Labs"
+                  >
                     CNCF Labs{"\u00A0"}
                     <span>Offline</span>
                   </MenuProviderDisabled>
@@ -262,7 +279,7 @@ export default function Provider() {
             placement="bottom"
             data-cy="providers-tooltip"
           >
-          Learn more about providers
+            Learn more about providers
           </StyledTooltip>
         </StyledTypography>
       </LearnMore>
@@ -281,15 +298,15 @@ export default function Provider() {
         </StyledCustomDialogTitle>
 
         <StyledDialogBox id="customized-dialog-content">
-            Login to Meshery by choosing from the available providers. Providers
-            extend Meshery by offering various plugins and services, including
-            identity services, long-term persistence, advanced performance
-            analysis, multi-player user collaboration, and so on.
+          Login to Meshery by choosing from the available providers. Providers
+          extend Meshery by offering various plugins and services, including
+          identity services, long-term persistence, advanced performance
+          analysis, multi-player user collaboration, and so on.
           <h2>Available Providers</h2>
           {Object.keys(availableProviders).map((key) => {
             return (
               <React.Fragment key={availableProviders[key].provider_name}>
-                <p style={{ fontWeight : 700 }}>
+                <p style={{ fontWeight: 700 }}>
                   {availableProviders[key].provider_name}
                 </p>
                 <ul>
@@ -302,37 +319,33 @@ export default function Provider() {
               </React.Fragment>
             );
           })}
-          <p style={{ fontWeight : 700 }}>MIT</p>
+          <p style={{ fontWeight: 700 }}>MIT</p>
           <ul>
             <li>Remote provider for performance testing</li>
             <li>Provides provenence of test results and their persistence</li>
             <li>Adaptive performance analysis - predictive optimization</li>
           </ul>
-          <p style={{ fontWeight : 700 }}>The University of Texas at Austin</p>
+          <p style={{ fontWeight: 700 }}>The University of Texas at Austin</p>
           <ul>
-            <li>
-                Academic research and advanced studies by Ph.D. researchers
-            </li>
-            <li>
-                Used by school of Electrical and Computer Engineering (ECE)
-            </li>
+            <li>Academic research and advanced studies by Ph.D. researchers</li>
+            <li></li>
+            <li>Used by school of Electrical and Computer Engineering (ECE)</li>
           </ul>
-          <p style={{ fontWeight : 700 }}>
-              Cloud Native Computing Foundation Infrastructure Lab
+          <p style={{ fontWeight: 700 }}>
+            Cloud Native Computing Foundation Infrastructure Lab
           </p>
           <ul>
             <li>
-                Performance and compatibility-centric research and validation
+              Performance and compatibility-centric research and validation
             </li>
-            <li>
-                Used by various cloud native projects
-            </li>
+            <li></li>
+            <li>Used by various cloud native projects</li>
           </ul>
-          <p style={{ fontWeight : 700 }}>HPE Security</p>
+          <p style={{ fontWeight: 700 }}>HPE Security</p>
           <ul>
             <li>Istio, SPIRE, and SPIFEE integration</li>
           </ul>
-          <p style={{ fontWeight : 700 }}>Equinix</p>
+          <p style={{ fontWeight: 700 }}>Equinix</p>
           <ul>
             <li>Identity services</li>
             <li>Bare-metal Kubernetes configuration</li>
@@ -343,14 +356,25 @@ export default function Provider() {
           <div className="learnmore">
             <a href="https://docs.meshery.io/extensibility/providers">
               Providers in Meshery Docs
-              <img src="/provider/static/img/external-link.svg" width="16px" />
+              <img
+                src="/provider/static/img/external-link.svg"
+                onError={(e) =>
+                  (e.target.src =
+                    "/static/img/external-link.svg")
+                }
+                width="16px"
+              />
             </a>
           </div>
 
           <StyledButton
             onClick={handleModalClose}
             data-cy="providers-modal-button-ok"
-            sx={{ background : KEPPEL, marginRight : "1rem", color : (theme) =>  theme.palette.text.inverse }}
+            sx={{
+              background: KEPPEL,
+              marginRight: "1rem",
+              color: (theme) => theme.palette.text.inverse,
+            }}
           >
             {" "}
             OK
