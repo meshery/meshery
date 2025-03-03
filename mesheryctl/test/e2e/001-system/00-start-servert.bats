@@ -12,8 +12,31 @@ setup() {
 @test "mesheryctl system start on kubernetes is succeeded" {
     run $MESHERYCTL_BIN system start -p kubernetes
     [ "$status" -eq 0 ]
+}
 
-	run verify "there is 1 service named 'meshery'"
+@test "meshery pods are deployed" {
+	run verify "there is 1 pod named '"^meshery-[a-z0-9]{10}-[a-z0-9]{5}$"'"
+	[ "$status" -eq 0 ]
+
+	run verify "there is 1 pod named '^meshery-broker$'"
+	[ "$status" -eq 0 ]
+
+    run verify "there is 1 pod named '^meshery-operator$'"
+	[ "$status" -eq 0 ]
+
+	run verify "there is 1 pod named '^meshery-operator$'"
 	[ "$status" -eq 0 ]
 }
 
+
+@test "meshery services are deployed" {
+	run verify "there is 1 service named '^meshery$'"
+	[ "$status" -eq 0 ]
+
+	run verify "there is 1 service named '^meshery-broker$'"
+	[ "$status" -eq 0 ]
+
+
+	run verify "there is 1 service named '^meshery-operator$'"
+	[ "$status" -eq 0 ]
+}
