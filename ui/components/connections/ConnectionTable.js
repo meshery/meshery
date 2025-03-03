@@ -183,17 +183,15 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
     updateCols(columns);
     if (isEnvironmentsError) {
       notify({
-        message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${environmentsError}`,
+        message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${environmentsError.error}`,
         event_type: EVENT_TYPES.ERROR,
-        details: environmentsError.toString(),
       });
     }
 
     if (isConnectionError) {
       notify({
-        message: `${ACTION_TYPES.FETCH_CONNECTIONS.error_msg}: ${connectionError}`,
+        message: `${ACTION_TYPES.FETCH_CONNECTIONS.error_msg}: ${connectionError.error}`,
         event_type: EVENT_TYPES.ERROR,
-        details: connectionError.toString(),
       });
     }
   }, [environmentsError, connectionError, isEnvironmentsSuccess]);
@@ -230,8 +228,8 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
     ['status', 'xs'],
     ['Actions', 'xs'],
     ['ConnectionID', 'na'],
+    ['ConnectionID', 'na'],
   ];
-
   const addConnectionToEnvironment = async (
     environmentId,
     environmentName,
@@ -559,11 +557,16 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
               {kind == 'kubernetes' && (
                 <CustomTextTooltip
                   placement="top"
-                  interactive={true}
                   title="Learn more about connection status and how to [troubleshoot Kubernetes connections](https://docs.meshery.io/guides/troubleshooting/meshery-operator-meshsync)"
                 >
                   <div style={{ display: 'inline-block' }}>
-                    <IconButton color="default">
+                    <IconButton
+                      color="default"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        e.preventDefault();
+                      }}
+                    >
                       <InfoOutlinedIcon height={20} width={20} />
                     </IconButton>
                   </div>
@@ -943,17 +946,17 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
       direction: 'asc',
     },
     customToolbarSelect: (selected) => (
-      <Button
-        color="error"
-        variant="contained"
-        size="large"
-        onClick={() => handleDeleteConnections(selected)}
-        sx={{ backgroundColor: `${theme.palette.error.dark} !important`, marginRight: '10px' }}
-        disabled={!CAN(keys.DELETE_A_CONNECTION.action, keys.DELETE_A_CONNECTION.subject)}
-      >
-        <DeleteIcon style={iconMedium} fill={theme.palette.common.white}  />
-        Delete
-      </Button>
+      <>
+        <Button
+          variant="contained"
+          onClick={() => handleDeleteConnections(selected)}
+          disabled={!CAN(keys.DELETE_A_CONNECTION.action, keys.DELETE_A_CONNECTION.subject)}
+          startIcon={<DeleteIcon style={iconMedium} fill={theme.palette.common.white} />}
+          style={{ background: theme.palette.error.dark }}
+        >
+          Delete
+        </Button>
+      </>
     ),
     enableNestedDataAccess: '.',
     onTableChange: (action, tableState) => {
@@ -997,28 +1000,26 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
       const colSpan = rowData.length;
       const connection = connections && connections[tableMeta.rowIndex];
       return (
-        <TableCell colSpan={colSpan}>
-          <InnerTableContainer>
-            <Table>
-              <TableRow style={{ padding: 0 }}>
-                <TableCell style={{ padding: '20px 0', overflowX: 'hidden' }}>
-                  <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
-                    <ContentContainer item xs={12} md={12}>
-                      <Grid container spacing={1}>
-                        <ContentContainer item xs={12} md={12}>
-                          <FormatConnectionMetadata
-                            connection={connection}
-                            meshsyncControllerState={meshsyncControllerState}
-                          />
-                        </ContentContainer>
-                      </Grid>
-                    </ContentContainer>
-                  </Grid>
-                </TableCell>
-              </TableRow>
-            </Table>
-          </InnerTableContainer>
-        </TableCell>
+        <>
+          <TableCell colSpan={colSpan}>
+            <InnerTableContainer>
+              <Table>
+                <TableRow style={{ padding: 0 }}>
+                  <TableCell style={{ overflowX: 'hidden', padding: 0 }}>
+                    <Grid container style={{ textTransform: 'lowercase' }}>
+                      <ContentContainer item xs={12} md={12}>
+                        <FormatConnectionMetadata
+                          connection={connection}
+                          meshsyncControllerState={meshsyncControllerState}
+                        />
+                      </ContentContainer>
+                    </Grid>
+                  </TableCell>
+                </TableRow>
+              </Table>
+            </InnerTableContainer>
+          </TableCell>
+        </>
       );
     },
   };
@@ -1035,24 +1036,6 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
     return initialVisibility;
   });
 
-  useEffect(() => {
-    updateCols(columns);
-    if (isEnvironmentsError) {
-      notify({
-        message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${environmentsError}`,
-        event_type: EVENT_TYPES.ERROR,
-        details: environmentsError.toString(),
-      });
-    }
-
-    if (isConnectionError) {
-      notify({
-        message: `${ACTION_TYPES.FETCH_CONNECTIONS.error_msg}: ${connectionError}`,
-        event_type: EVENT_TYPES.ERROR,
-        details: connectionError.toString(),
-      });
-    }
-  }, [environmentsError, connectionError, isEnvironmentsSuccess]);
   return (
     <>
       <ToolWrapper style={{ marginBottom: '5px', marginTop: '-30px' }}>
@@ -1101,6 +1084,7 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
         updateCols={updateCols}
         columnVisibility={columnVisibility}
       />
+
       <_PromptComponent ref={modalRef} />
       <Popover
         open={open}
