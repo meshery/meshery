@@ -5,7 +5,8 @@ setup() {
     load "$ASSERT_DESTDIR/load"
     load "$DETIK_DESTDIR/detik.bash"
 
-    DETIK_CLIENT_NAMESPACE=meshery
+    DETIK_CLIENT_NAMESPACE="meshery"
+    DETIK_CLIENT_NAME="kubectl"
 }
 
 @test "mesheryctl system start on kubernetes is succeeded" {
