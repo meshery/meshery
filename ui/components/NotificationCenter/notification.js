@@ -51,7 +51,7 @@ import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { FacebookShareButton, LinkedinShareButton, TwitterShareButton } from 'react-share';
 import ReadIcon from '../../assets/icons/ReadIcon';
 import UnreadIcon from '../../assets/icons/UnreadIcon';
-import { FormattedMetadata } from './metadata';
+import { FormattedMetadata, TitleLink } from './metadata';
 
 import { truncate } from 'lodash';
 
@@ -228,8 +228,37 @@ export const ChangeStatus = ({ event }) => {
     </UsesSistent>
   );
 };
+export const getErrorCodesFromEvent = (event) => {
+  if (!event || !event.metadata) return null;
+
+  let errorCodes = new Set();
+  if (event.metadata.error) {
+    if (Array.isArray(event.metadata.error)) {
+      event.metadata.error.forEach((err) => {
+        if (err.Code) errorCodes.add(err.Code);
+      });
+    } else if (event.metadata.error.Code) {
+      errorCodes.add(event.metadata.error.Code);
+    }
+  }
+
+  if (event.metadata.ModelDetails) {
+    Object.values(event.metadata.ModelDetails).forEach((detail) => {
+      if (Array.isArray(detail.Errors)) {
+        detail.Errors.forEach((error) => {
+          if (error.error?.Code) {
+            errorCodes.add(error.error.Code);
+          }
+        });
+      }
+    });
+  }
+
+  return [...errorCodes];
+};
 
 export const Notification = ({ event_id }) => {
+  // console.log(eventData);
   const event = useSelector((state) => selectEventById(state, event_id));
   const isVisible = useSelector((state) => selectIsEventVisible(state, event.id));
   const severityStyles = SEVERITY_STYLE[event.severity] || SEVERITY_STYLE[SEVERITY.INFO];
@@ -242,7 +271,10 @@ export const Notification = ({ event_id }) => {
     e.stopPropagation();
     setExpanded(!expanded);
   };
-
+  const errorCodes = getErrorCodesFromEvent(event) || [];
+  const formattedErrorCodes = errorCodes.length > 0 ? errorCodes : '';
+  const errorLink =
+    errorCodes.length > 0 ? `https://docs.meshery.io/reference/error-codes#${errorCodes[0]}` : '#';
   const { data: user } = useGetUserByIdQuery(event.user_id || '');
 
   const userName = `${user?.first_name || ''} ${user?.last_name || ''}`;
@@ -277,7 +309,7 @@ export const Notification = ({ event_id }) => {
     <Expanded
       container
       style={{
-        backgroundColor: alpha(eventStyle.color, 0.1),
+        backgroundColor: alpha(eventStyle?.color || "#2196F3", 0.1),
         color: theme.palette.text.default,
         borderTop: `1px solid ${notificationColor}`,
       }}
@@ -289,15 +321,27 @@ export const Notification = ({ event_id }) => {
           padding: '1rem',
         }}
       >
-        <ActorAvatar item sm={1}>
-          <AvatarStack
-            avatars={eventActors}
-            direction={{
-              xs: 'row',
-              md: 'row',
-            }}
-          />
-        </ActorAvatar>
+        <Grid
+          item
+          xs={12}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+          }}
+        >
+          <ActorAvatar item sm={1}>
+            <AvatarStack
+              avatars={eventActors}
+              direction={{
+                xs: 'row',
+                md: 'row',
+              }}
+            />
+          </ActorAvatar>
+
+          {errorCodes.length > 0 && <TitleLink href={errorLink}>{formattedErrorCodes}</TitleLink>}
+        </Grid>
         <FormattedMetadata event={event} />
       </Grid>
     </Expanded>
