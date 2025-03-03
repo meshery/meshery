@@ -1,3 +1,13 @@
+---
+layout: page
+title: "Meshery Dashboard Contribution Guide"
+permalink: project\contributing\contributing-ui-dashboards.md
+abstract: "Guidelines for contributing to Meshery's dashboard framework, including customization, integration, and best practices."
+language: en
+type: project
+category: contributing
+list: include
+---
 # Contributing to Meshery Dashboards
 
 Meshery's dashboard framework is designed to be highly extensible, allowing developers to create custom widgets and layouts that enhance the user experience. This guide will walk you through the process of extending Meshery's dashboards, including customization options, integration points, and best practices.
@@ -470,6 +480,7 @@ optionalPermissions:
   - "create:alerts"
 ```
 For detailed publishing guidelines, see the [Meshery Extensions Marketplace Documentation](https://docs.meshery.io/extensions).
+
 
 ## 8. Best Practices
 ### 8.1 Performance Considerations
