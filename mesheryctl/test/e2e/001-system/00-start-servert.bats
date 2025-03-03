@@ -12,6 +12,8 @@ setup() {
 @test "mesheryctl system start on kubernetes is succeeded" {
     run $MESHERYCTL_BIN system start -p kubernetes
     [ "$status" -eq 0 ]
+
+    sleep 30
 }
 
 @test "meshery pods are deployed" {
