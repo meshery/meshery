@@ -76,9 +76,6 @@ function Connections(props) {
     connectionMetadataState,
     meshsyncControllerState,
   } = props;
-  console.log('amit props', {
-    props,
-  });
   const [_operatorState] = useState(operatorState || []);
   const [tab, setTab] = useState(0);
   const _operatorStateRef = useRef(_operatorState);

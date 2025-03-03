@@ -952,7 +952,7 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
           onClick={() => handleDeleteConnections(selected)}
           disabled={!CAN(keys.DELETE_A_CONNECTION.action, keys.DELETE_A_CONNECTION.subject)}
           startIcon={<DeleteIcon style={iconMedium} fill={theme.palette.common.white} />}
-          style={{ background: theme.palette.error.dark }}
+          style={{ background: theme.palette.error.dark, marginRight: '1rem' }}
         >
           Delete
         </Button>
