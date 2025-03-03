@@ -29,6 +29,7 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/pkg/errors"
+	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -449,33 +450,27 @@ func parseDryRunFailure(settings map[string]interface{}, name string) *core.DryR
 	if err != nil {
 		return nil
 	}
-	var a metav1.Status
-	err = json.Unmarshal(byt, &a)
+	var kubeStatus metav1.Status
+	err = json.Unmarshal(byt, &kubeStatus)
 	if err != nil {
 		return nil
 	}
 	dResp := core.DryRunResponse{}
-	if a.Status != "" {
-		dResp.Status = a.Status
+	if kubeStatus.Status != "" {
+		dResp.Status = kubeStatus.Status
 	}
-	if a.Details != nil {
-		dResp.Causes = make([]core.DryRunFailureCause, 0)
-		for _, c := range a.Details.Causes {
-			msg := ""
-			field := ""
-			typ := ""
-			if c.Message != "" {
-				msg = c.Message
-			}
-			if c.Field != "" {
-				field = name + "." + getComponentFieldPathFromK8sFieldPath(c.Field)
-			}
-			if c.Type != "" {
-				typ = string(c.Type)
-			}
-			failureCase := core.DryRunFailureCause{Message: msg, FieldPath: field, Type: typ}
-			dResp.Causes = append(dResp.Causes, failureCase)
-		}
+
+	_, longDescription, _, _ := utils.ParseKubeStatusErr(&kubeerror.StatusError{
+		ErrStatus: kubeStatus,
+	})
+
+	dResp.Causes = make([]core.DryRunFailureCause, 0)
+	for _, ld := range longDescription {
+		msg := ld
+		field := "unknown"
+		typ := "Failure"
+		failureCase := core.DryRunFailureCause{Message: msg, FieldPath: field, Type: typ}
+		dResp.Causes = append(dResp.Causes, failureCase)
 	}
 	return &dResp
 }
