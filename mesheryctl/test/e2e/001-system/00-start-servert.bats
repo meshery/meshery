@@ -15,16 +15,16 @@ setup() {
 }
 
 @test "meshery pods are deployed" {
-	run verify "there is 1 pod named '"^meshery-[a-z0-9]{10}-[a-z0-9]{5}$"'"
+	run verify "there is 1 pod named '^meshery-[a-z0-9]{10}-[a-z0-9]{5}$'"
 	[ "$status" -eq 0 ]
 
-	run verify "there is 1 pod named '^meshery-broker$'"
+	run verify "there is 1 pod named '^meshery-broker-[0-9]+$'"
+	[ "$status" -eq 0 ]
+    
+    run verify "there is 1 pod named '^meshery-meshsync-[a-z0-9]{10}-[a-z0-9]{5}$'"
 	[ "$status" -eq 0 ]
 
-    run verify "there is 1 pod named '^meshery-operator$'"
-	[ "$status" -eq 0 ]
-
-	run verify "there is 1 pod named '^meshery-operator$'"
+	run verify "there is 1 pod named '^meshery-operator-[a-z0-9]{10}-[a-z0-9]{5}$'"
 	[ "$status" -eq 0 ]
 }
 
