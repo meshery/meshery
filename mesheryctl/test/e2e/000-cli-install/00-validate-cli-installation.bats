@@ -8,7 +8,7 @@
 }
 
 @test "mesheryctl version return Client and Server" {
-  actual_output=$($MESHERYCTL_BIN version | grep -e "Client|Server" )
+  actual_output=$($MESHERYCTL_BIN version | grep -E "Client|Server" | wc -l)
   [[ "$tatus" -eq 0 ]]
   [[ "$actual_output" -eq 2 ]]
 }
