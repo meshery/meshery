@@ -1,15 +1,3 @@
----
-layout: page
-title: "Meshery Dashboard Contribution Guide"
-permalink: project\contributing\contributing-ui-dashboards.md
-abstract: "Guidelines for contributing to Meshery's dashboard framework, including customization, integration, and best practices."
-language: en
-type: project
-category: contributing
-list: include
----
-
-
 # Contributing to Meshery Dashboards
 
 Meshery's dashboard framework is designed to be highly extensible, allowing developers to create custom widgets and layouts that enhance the user experience. This guide will walk you through the process of extending Meshery's dashboards, including customization options, integration points, and best practices.
@@ -46,112 +34,12 @@ Dashboards use a 12-column grid layout that supports responsive design principle
 }
 ```
 
-### 1.3 Widget Registry
 
-All widgets must be registered in the widget registry before they can be used in dashboards. The registry maintains metadata about each widget, including its type, display name, and component reference.
-
-For more information on the core dashboard architecture, see the [Dashboard Architecture Documentation](https://docs.meshery.io/concepts/architectural/dashboard).
-
-## 2. Setting Up the Development Environment
-
-Before you can start extending Meshery's dashboards, you need to set up your development environment. This section provides a step-by-step guide to get you started.
-
-### 2.1 Prerequisites
-
-Make sure you have the following installed on your system:
-
-- [Go](https://golang.org/doc/install) (version 1.18 or later)
-- [Node.js](https://nodejs.org/) (version 16 or later)
-- [npm](https://www.npmjs.com/) (version 8 or later)
-- [Docker](https://docs.docker.com/get-docker/) (for running dependencies)
-- [Git](https://git-scm.com/downloads)
-
-### 2.2 Forking and Cloning the Repository
-
-1. Fork the Meshery repository on GitHub by visiting [https://github.com/meshery/meshery](https://github.com/meshery/meshery) and clicking the "Fork" button.
-
-2. Clone your forked repository:
-
-```bash
-git clone https://github.com/YOUR-USERNAME/meshery.git
-cd meshery
-```
-
-3. Add the upstream repository as a remote:
-
-```bash
-git remote add upstream https://github.com/meshery/meshery.git
-```
-
-### 2.3 Setting Up the UI Development Environment
-
-The Meshery UI is built with Next.js and React. To set up the UI development environment:
-
-1. Navigate to the UI directory:
-
-```bash
-cd ui
-```
-
-2. Install dependencies:
-
-```bash
-npm install
-```
-
-3. Create a `.env.local` file in the `ui` directory with the following content:
-
-```
-NEXT_PUBLIC_MESHERY_API=http://localhost:9081
-```
-
-4. Start the UI development server:
-
-```bash
-npm run dev
-```
-
-This will start the UI on `http://localhost:3000`.
-
-### 2.4 Setting Up the Server
-
-In a separate terminal, you'll need to run the Meshery server:
-
-1. Navigate to the root directory of the Meshery repository.
-
-2. Build and run the server:
-
-```bash
-make run-backend
-```
-
-This will start the Meshery server on `http://localhost:9081`.
-
-### 2.5 Development Workflow
-
-The recommended workflow for dashboard development is:
-
-1. Run the Meshery server (`make run-backend`)
-2. Run the UI development server (`cd ui && npm run dev`)
-3. Access the Meshery UI at `http://localhost:3000`
-4. Make changes to the UI code in the `ui/components` and `ui/pages` directories
-5. The UI will automatically reload when you save changes
-
-### 2.6 Useful Development Commands
-
-- `npm run lint` - Run linting checks
-- `npm run test` - Run UI tests
-- `npm run build` - Build the UI for production
-- `make build-ui` - Build the UI from the root directory
-- `make docker` - Build a Docker image with your changes
-
-For more detailed setup instructions, refer to the [Meshery Development Guide](https://docs.meshery.io/project/contributing/contributing-server).
-
-## 3. Local vs. Remote Provider Considerations
+## 2. Local vs. Remote Provider Considerations
 
 When developing dashboard extensions, it's important to understand the differences between local and remote providers, as they affect how dashboard configurations are stored and synchronized.
 
-### 3.1 Local Provider
+### 2.1 Local Provider
 
 With a local provider:
 - Dashboard configurations are stored in the browser's local storage
@@ -161,7 +49,7 @@ With a local provider:
 
 When developing widgets for local provider use, ensure they can function without requiring authenticated API access.
 
-### 3.2 Remote Provider
+### 2.2 Remote Provider
 
 With a remote provider (such as Meshery Cloud):
 - Dashboard configurations are stored on the server and synced across devices
@@ -173,452 +61,390 @@ When developing widgets for remote provider use, you can take advantage of authe
 
 For more information on providers, refer to the [Meshery Providers Documentation](https://docs.meshery.io/concepts/logical/providers).
 
-## 4. Creating a Custom Widget
+## 3. Widget Thumbnails and User Preferences
 
-### 4.1 Widget Structure
+### 3.1 Widget Thumbnails
 
-A Meshery widget consists of:
-1. A React component that renders the widget content
-2. Configuration metadata for the dashboard framework
-3. Optional API integrations to fetch and display data
+Widget thumbnails are preview images that represent available widgets in the dashboard. They help users quickly identify and select the widgets they want to add to their dashboards.
 
-### 4.2 Widget File Structure
+To add a thumbnail to your widget:
 
-Organize your widget files following this recommended structure:
+1. Create a PNG image with a resolution of 200x150 pixels.
+2. Save the image in the ui/public/images/widgets directory.
+3. Reference the image in your widget configuration.
 
-```
-ui/
-├── components/
-│   ├── DashboardComponents/
-│   │   ├── Widgets/
-│   │   │   ├── MyCustomWidget/
-│   │   │   │   ├── index.js           # Main widget component
-│   │   │   │   ├── styles.js          # Component styles
-│   │   │   │   ├── helpers.js         # Helper functions
-│   │   │   │   ├── config.js          # Widget configuration
-│   │   │   │   └── README.md          # Documentation
+Example:
+
+```javascript
+// Example widget layout configuration with thumbnail
+{
+  id: "my-custom-widget",
+  title: "My Custom Widget",
+  component: MyCustomWidgetComponent,
+  thumbnail: "/images/widgets/my-custom-widget.png"
+}
 ```
 
-### 4.3 Example Widget Implementation
+## 3.2 User Preferences
+User preferences allow users to customize their dashboard experience. These preferences are stored and persisted between sessions, providing a consistent experience across devices.
 
-Below is an example of a simple metrics widget:
+The dashboard framework automatically manages user preferences, including:
 
-```jsx
-import React, { useState, useEffect } from 'react';
-import { useQuery } from '@apollo/client';
-import { GET_METRICS_DATA } from '../graphql/queries';
-import { Card, CardContent, Typography } from '@material-ui/core';
-import { LineChart, Line, XAxis, YAxis, Tooltip } from 'recharts';
+Widget positions and sizes
+Dashboard layout
+Theme settings
+Other user-specific settings
+To access and modify user preferences:
 
-const MetricsWidget = ({ widgetId, refreshInterval = 30000 }) => {
-  const { loading, error, data, refetch } = useQuery(GET_METRICS_DATA, {
-    variables: { widgetId },
-    fetchPolicy: 'network-only',
-  });
+1. Use the useDashboardPreferences hook.
+2. Get or set preferences using the provided API.
 
-  // Refresh data at specified interval
-  useEffect(() => {
-    const interval = setInterval(() => {
-      refetch();
-    }, refreshInterval);
-    
-    return () => clearInterval(interval);
-  }, [refetch, refreshInterval]);
+Example:
+```javascript
+import { useDashboardPreferences } from "../hooks/useDashboardPreferences";
 
-  if (loading) return <Typography>Loading metrics...</Typography>;
-  if (error) return <Typography color="error">Error loading metrics: {error.message}</Typography>;
+function MyWidget() {
+  const { preferences, setPreferences } = useDashboardPreferences();
+
+  const handleThemeChange = (theme) => {
+    setPreferences({ ...preferences, theme: theme });
+  };
 
   return (
-    <Card>
-      <CardContent>
-        <Typography variant="h6">Service Metrics</Typography>
-        <LineChart width={300} height={200} data={data.metrics}>
-          <XAxis dataKey="timestamp" />
-          <YAxis />
-          <Tooltip />
-          <Line type="monotone" dataKey="value" stroke="#8884d8" />
-        </LineChart>
-      </CardContent>
-    </Card>
+    <div>
+      <h2>My Widget</h2>
+      <button onClick={() => handleThemeChange("light")}>Light Theme</button>
+      <button onClick={() => handleThemeChange("dark")}>Dark Theme</button>
+    </div>
   );
-};
-
-export default MetricsWidget;
+}
 ```
+## 4. API Integrations
 
-### 4.4 Registering the Widget
-
-To make your widget available in the dashboard, you need to register it in the widget registry:
+### 4.1 REST API
+Meshery provides a REST API for interacting with various resources. When developing widgets, you can use the REST API to fetch data and perform actions.
+Meshery provides a REST API available through the default port of 9081/tcp at <hostname>:<port>/api/. 
 
 ```javascript
-import { registerWidget } from '../utils/widgetUtils';
-import MetricsWidget from '../components/MetricsWidget';
-
-registerWidget({
-  id: 'metrics-widget',
-  name: 'Service Metrics',
-  description: 'Displays real-time service metrics',
-  component: MetricsWidget,
-  category: 'metrics',
-  thumbnail: '/images/widgets/metrics-thumbnail.png',
-  defaultSize: {
-    w: 4,
-    h: 2,
-    minW: 2,
-    minH: 1,
-  }
-});
-```
-
-For a complete example of widget implementation, see the [Example Widgets Directory](https://docs.meshery.io/guides/sample-apps/widgets-examples).
-
-## 5. API Integration
-
-Meshery provides both REST and GraphQL APIs that can be used to fetch data for your widgets.
-
-### 5.1 REST API
-
-The REST API is ideal for simple data retrieval and actions. When integrating with the REST API:
-
-- Use the Meshery API client library when available
-- Include proper authentication headers for authenticated endpoints
-- Implement error handling and loading states
-- Consider caching strategies for performance optimization
-
-Example REST API integration:
-
-```javascript
-import { mesheryApiClient } from '../utils/apiUtils';
-
-async function fetchPerformanceData(serviceId) {
+async function fetchPerformanceData() {
   try {
-    const response = await mesheryApiClient.get(`/api/performance/results/${serviceId}`);
-    return response.data;
+    const response = await fetch('/api/performance');
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data = await response.json();
+    return data;
   } catch (error) {
     console.error('Error fetching performance data:', error);
     throw error;
   }
 }
 ```
+For more information, refer to the [Meshery REST API Documentation](https://docs.meshery.io/extensibility/api).
 
-For more information, refer to the [Meshery REST API Documentation](https://docs.meshery.io/guides/meshery-api).
+### 4.2 GraphQL API
+Meshery provides a GraphQL API for more flexible data queries. The GraphQL API is available through the default port of 9081/tcp at `<hostname>:<port>/api/graphql/query`. Relay is the client used for interacting with the GraphQL API.
 
-### 5.2 GraphQL API
-
-The GraphQL API provides more flexibility and is ideal for complex data requirements. Benefits include:
-
-- Fetching only the required data fields
-- Combining multiple data requirements in a single request
-- Built-in subscription support for real-time updates
-
-Example GraphQL integration:
+Example GraphQL query:
 
 ```javascript
-import { useQuery, gql } from '@apollo/client';
+import { graphql } from 'react-relay';
 
-const GET_MESH_DATA = gql`
-  query GetMeshData($meshId: ID!) {
-    mesh(id: $meshId) {
+const query = graphql`
+  query MyWidgetQuery {
+    performance {
       id
       name
-      services {
-        id
-        name
-        status
-        metrics {
-          cpu
-          memory
-          latency
-        }
-      }
+      value
     }
   }
 `;
 
-function MeshOverviewWidget({ meshId }) {
-  const { loading, error, data } = useQuery(GET_MESH_DATA, {
-    variables: { meshId },
-    pollInterval: 10000,
+async function fetchGraphQLData() {
+  const response = await fetch('/api/graphql/query', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: query.loc.source.body,
+    }),
   });
-  
-  // Component rendering logic
+  const result = await response.json();
+  return result.data;
 }
 ```
+For more information, refer to the [Meshery GraphQL API Documentation](https://docs.meshery.io/extensibility/api).
 
-For complete API reference, see the [Meshery GraphQL API Documentation](https://docs.meshery.io/guides/meshery-graphql).
-
-## 6. Permissions
-
+## 5. Permissions
 Meshery's permission system is a crucial aspect of dashboard and widget development. Understanding and properly implementing permissions ensures that users only access functionality and data appropriate to their role and authorization level.
 
-### 6.1 Permission Architecture
-
+### 5.1 Permission Architecture
 Meshery uses a role-based access control (RBAC) system with the following key components:
 
-- **Roles**: Collections of permissions assigned to users (e.g., Admin, Operator, Viewer)
-- **Resources**: Items that can be accessed or manipulated (e.g., dashboards, services, policies)
-- **Actions**: Operations that can be performed on resources (e.g., view, create, edit, delete)
-- **Permission Keys**: Unique identifiers that represent the combination of actions and resources
+Roles: Collections of permissions assigned to users (e.g., Admin, Operator, Viewer)
+Resources: Items that can be accessed or manipulated (e.g., dashboards, services, policies)
+Actions: Operations that can be performed on resources (e.g., view, create, edit, delete)
+Permission Keys: Unique identifiers that represent the combination of actions and resources
 
-### 6.2 Permission Keys
-
-Permission keys follow the format: `{action}:{resource}[:{subresource}]`
+### 5.2 Permission Keys
+Permission keys follow the format: {action}:{resource}[:{subresource}]
 
 Examples:
-- `view:dashboards` - Permission to view all dashboards
-- `edit:dashboards:system` - Permission to edit system dashboards
-- `create:widgets:performance` - Permission to create performance widgets
 
-### 6.3 Implementing Permission-Aware Widgets
+1. view:dashboards - Permission to view all dashboards
+2. edit:dashboards:system - Permission to edit system dashboards
+3. create:widgets:performance - Permission to create performance widgets
 
-When developing widgets, follow these best practices for permissions:
+## 6. Additional Examples
+### Widget Implementation Examples.
 
-#### 6.3.1 Check Permissions Before Rendering Sensitive UI Elements
+The `MyDesignsWidget` is an excellent reference implementation of a dashboard widget. This widget manages designs, allowing users to create, choose templates, or import from GitHub.
 
-```jsx
-import { usePermissions } from '../hooks/usePermissions';
+```javascript
+import React, { useEffect, useState } from 'react';
+import { createTheme, darken, lighten, useMediaQuery } from '@material-ui/core';
+import { useTheme } from '@material-ui/styles';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { Box, Button, CircularProgress, Grid, Paper, Typography } from '@material-ui/core';
+import { updateProgress } from '../../../lib/store';
+import { DASHBOARD_DESIGN_LINK } from '../../../constants/navigator';
+import useStyles from '../../../assets/styles/general/tool.styles';
+import DesignConfigurator from '../../configuratorComponents/MeshModel';
+import dataFetch from '../../../lib/data-fetch';
+import { iconMedium } from '../../../css/icons.styles';
 
-function ConfigurableWidget({ resourceId }) {
-  const { checkPermission } = usePermissions();
-  
-  const canView = checkPermission('view', `widgets:${resourceId}`);
-  const canEdit = checkPermission('edit', `widgets:${resourceId}`);
-  const canDelete = checkPermission('delete', `widgets:${resourceId}`);
-  
-  if (!canView) {
-    return <AccessDeniedPlaceholder />;
-  }
-  
-  return (
-    <div className="widget-container">
-      <div className="widget-content">
-        {/* Widget main content here */}
-      </div>
-      
-      <div className="widget-actions">
-        {canEdit && <EditButton onClick={handleEdit} />}
-        {canDelete && <DeleteButton onClick={handleDelete} />}
-      </div>
-    </div>
-  );
-}
-```
+const MyDesignsWidget = ({ updateProgress }) => {
+  const router = useRouter();
+  const classes = useStyles();
 
-#### 6.3.2 Permission-Based API Requests
+  // Widget states
+  const [designs, setDesigns] = useState([]);
+  const [selectedDesign, setSelectedDesign] = useState(null);
+  const [page, setPage] = useState(0);
+  const [count, setCount] = useState(0);
+  const [pageSize, setPageSize] = useState(10);
+  const [importConfig, setImportConfig] = useState({
+    showImportModal: false,
+    selectedProject: '',
+    githubURL: '',
+    isLocalFile: false,
+  });
+  const [loadingDesigns, setLoadingDesigns] = useState(false);
 
-Filter API requests based on user permissions to prevent unnecessary or unauthorized calls:
-
-```jsx
-import { useEffect, useState } from 'react';
-import { usePermissions } from '../hooks/usePermissions';
-import { fetchDetailedMetrics, fetchBasicMetrics } from '../api/metrics';
-
-function MetricsWidget() {
-  const [metrics, setMetrics] = useState(null);
-  const { checkPermission } = usePermissions();
-  const hasAdvancedAccess = checkPermission('view', 'metrics:detailed');
-  
+  // Fetch designs on component mount
   useEffect(() => {
-    async function loadData() {
-      try {
-        if (hasAdvancedAccess) {
-          const detailedData = await fetchDetailedMetrics();
-          setMetrics(detailedData);
-        } else {
-          const basicData = await fetchBasicMetrics();
-          setMetrics(basicData);
+    fetchDesigns();
+  }, [page, pageSize]);
+
+  // Fetch designs from API
+  const fetchDesigns = () => {
+    setLoadingDesigns(true);
+    updateProgress({ showProgress: true });
+
+    dataFetch(
+      `/api/designs?page=${page}&pagesize=${pageSize}`,
+      {
+        credentials: 'include',
+        method: 'GET',
+      },
+      (result) => {
+        updateProgress({ showProgress: false });
+        setLoadingDesigns(false);
+        if (result) {
+          setDesigns(result.designs || []);
+          setCount(result.total_count || 0);
+          setPageSize(result.page_size || 10);
         }
-      } catch (error) {
-        console.error('Failed to load metrics:', error);
-      }
-    }
-    
-    loadData();
-  }, [hasAdvancedAccess]);
-  
-  // Render logic
-}
-```
-
-#### 6.3.3 Graceful Permission Handling
-
-Instead of showing error messages or blank screens, implement graceful fallbacks:
-
-```jsx
-function DashboardWidget({ widgetType }) {
-  const { checkPermission } = usePermissions();
-  
-  // Different widget types require different permissions
-  const permissionMap = {
-    'performance': 'view:performance',
-    'security': 'view:security',
-    'config': 'view:configuration'
-  };
-  
-  const requiredPermission = permissionMap[widgetType];
-  const hasPermission = checkPermission(requiredPermission);
-  
-  if (!hasPermission) {
-    return (
-      <div className="limited-access-widget">
-        <h3>Limited Access</h3>
-        <p>This widget shows {widgetType} metrics that require additional permissions.</p>
-        <a href="/docs/permissions">Learn more about permissions</a>
-      </div>
+      },
+      handleError,
     );
-  }
-  
-  // Full widget implementation
-}
-```
-
-### 6.4 Declaring Required Permissions
-
-When registering widgets, declare required permissions to help the dashboard framework make intelligent decisions about widget visibility and behavior:
-
-```javascript
-registerWidget({
-  id: 'advanced-metrics-widget',
-  name: 'Advanced Service Metrics',
-  description: 'Displays detailed service metrics with advanced controls',
-  component: AdvancedMetricsWidget,
-  category: 'metrics',
-  requiredPermissions: [
-    'view:metrics:detailed',
-    'view:services'
-  ],
-  // Optional permissions that enable additional features
-  optionalPermissions: {
-    'edit:metrics:thresholds': 'Enables threshold configuration',
-    'create:alerts': 'Enables alert creation from the widget'
-  }
-});
-```
-
-### 6.5 Widget Adaptation Based on Permissions
-
-Design widgets to adapt their functionality based on available permissions:
-
-```jsx
-function AdaptiveWidget() {
-  const { checkPermission } = usePermissions();
-  
-  // Check various permission levels
-  const permissionLevels = {
-    basic: checkPermission('view:basic'),
-    intermediate: checkPermission('view:intermediate'),
-    advanced: checkPermission('view:advanced'),
-    admin: checkPermission('view:admin')
   };
-  
-  // Determine the highest permission level the user has
-  let activeLevel = 'basic';
-  if (permissionLevels.admin) activeLevel = 'admin';
-  else if (permissionLevels.advanced) activeLevel = 'advanced';
-  else if (permissionLevels.intermediate) activeLevel = 'intermediate';
-  
-  // Render appropriate content based on permission level
+
+  // Error handling
+  const handleError = (error) => {
+    updateProgress({ showProgress: false });
+    setLoadingDesigns(false);
+    console.error('Error fetching designs:', error);
+  };
+
+  // Navigate to create new design
+  const handleNewDesign = () => {
+    router.push(DASHBOARD_DESIGN_LINK);
+  };
+
+  // Render design cards
+  const renderDesigns = () => {
+    if (loadingDesigns) {
+      return (
+        <Box display="flex" justifyContent="center" alignItems="center" p={2}>
+          <CircularProgress />
+        </Box>
+      );
+    }
+
+    if (designs.length === 0) {
+      return (
+        <Box p={2}>
+          <Typography variant="body1" align="center">
+            No designs found. Create your first design!
+          </Typography>
+        </Box>
+      );
+    }
+
+    return (
+      <Grid container spacing={2}>
+        {designs.slice(0, 3).map((design) => (
+          <Grid item xs={12} md={4} key={design.id}>
+            <Paper 
+              className={classes.designCard}
+              onClick={() => router.push(`/designs/${design.id}`)}
+            >
+              <Typography variant="h6" noWrap title={design.name}>
+                {design.name}
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                {design.pattern_file ? 'Pattern' : 'Component'}
+              </Typography>
+              <Typography variant="caption" color="textSecondary">
+                Last updated: {new Date(design.updated_at).toLocaleDateString()}
+              </Typography>
+            </Paper>
+          </Grid>
+        ))}
+      </Grid>
+    );
+  };
+
   return (
-    <div className="adaptive-widget">
-      <WidgetHeader level={activeLevel} />
-      
-      {/* Base content visible to all users */}
-      <BasicContent />
-      
-      {/* Progressive enhancement based on permissions */}
-      {permissionLevels.intermediate && <IntermediateContent />}
-      {permissionLevels.advanced && <AdvancedContent />}
-      {permissionLevels.admin && <AdminContent />}
+    <div className={classes.widgetContainer}>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={2}
+      >
+        <Typography variant="h6">My Designs</Typography>
+        <Button
+          variant="contained"
+          color="primary"
+          size="small"
+          onClick={handleNewDesign}
+        >
+          Create
+        </Button>
+      </Box>
+      {renderDesigns()}
+      {designs.length > 0 && (
+        <Box mt={2} display="flex" justifyContent="flex-end">
+          <Link href="/designs">
+            <Button color="primary">View All</Button>
+          </Link>
+        </Box>
+      )}
     </div>
   );
-}
+};
+
+const mapDispatchToProps = (dispatch) => ({
+  updateProgress: bindActionCreators(updateProgress, dispatch),
+});
+
+export default connect(null, mapDispatchToProps)(MyDesignsWidget);
+
+// Widget configuration for dashboard
+export const MyDesignsWidgetConfig = {
+  id: 'my-designs',
+  title: 'My Designs',
+  component: MyDesignsWidget,
+  thumbnail: '/static/img/designs-light.svg',
+  minW: 4,
+  minH: 2,
+  defaultW: 6,
+  defaultH: 3
+};
 ```
 
-### 6.6 Testing with Different Permission Levels
+### Adding Your Widget to the Dashboard
 
-When developing widgets, test with various permission configurations:
-
-1. Create test user accounts with different roles
-2. Implement a permission override mode during development
-3. Use permission mocking in unit and integration tests
-
-Example test helper:
+To make your widget available in the dashboard, you need to include it in the `getWidgets.js` file. Here's how widgets are typically structured in this file:
 
 ```javascript
-// permissionTestHelper.js
-export function mockPermissions(permissions) {
-  // Store original implementation
-  const original = window.meshery.checkPermission;
-  
-  // Override with mock
-  window.meshery.checkPermission = (action, resource) => {
-    const key = `${action}:${resource}`;
-    return permissions.includes(key);
-  };
-  
-  // Return cleanup function
-  return () => {
-    window.meshery.checkPermission = original;
-  };
+import MyDesignsWidget from './MyDesignsWidget';
+import WorkspaceActivityWidget from './WorkspaceActivityWidget';
+import HelpCenterWidget from './HelpCenterWidget';
+// Other widget imports...
+
+export function getWidgets() {
+  return [
+    {
+      id: "my-designs",
+      title: "My Designs",
+      x: 0,
+      y: 0,
+      w: 4,
+      h: 2,
+      component: MyDesignsWidget,
+      minW: 2,
+      minH: 1
+    },
+    {
+      id: "workspace-activity",
+      title: "Workspace Activity",
+      x: 4,
+      y: 0,
+      w: 4,
+      h: 2,
+      component: WorkspaceActivityWidget,
+      minW: 2,
+      minH: 1
+    },
+    {
+      id: "help-center",
+      title: "Help Center",
+      x: 8,
+      y: 0,
+      w: 4,
+      h: 2,
+      component: HelpCenterWidget,
+      minW: 2,
+      minH: 1
+    },
+    // Other widget configurations...
+  ];
 }
-
-// In tests
-import { mockPermissions } from './permissionTestHelper';
-
-describe('AdminWidget', () => {
-  test('shows all controls with admin permissions', () => {
-    const cleanup = mockPermissions(['view:admin', 'edit:settings', 'delete:resources']);
-    // Test widget with admin permissions
-    cleanup();
-  });
-  
-  test('hides sensitive controls without admin permissions', () => {
-    const cleanup = mockPermissions(['view:basic']);
-    // Test widget with basic permissions
-    cleanup();
-  });
-});
 ```
 
-For more information on the permission system, see the [Meshery RBAC Documentation](https://docs.meshery.io/concepts/logical/identity).
+## More Widget Examples
 
-## 7. Additional Examples
+For additional examples of different widget implementations, Meshery offers several reference widgets:
 
-Here are other examples of dashboard extensions to inspire your development:
+1. **WorkspaceActivityWidget**: Displays recent activities in the workspace.
 
-### 7.1 Performance Testing Widget
+2. **HelpCenterWidget**: Provides links to help resources like documentation, support, and forums.
 
-A widget that allows users to run performance tests and view results directly from the dashboard.
+3. **LatestBlogs**: Displays the latest blog posts from the Meshery community.
 
-See the [Performance Widget Example](https://docs.meshery.io/guides/performance-management/widgets).
+4. **ClusterStatus**: Shows the status of Kubernetes clusters.
 
-### 7.2 Service Mesh Topology Viewer
+For a complete list of available widgets and their configurations, you can refer to the `getWidgets.js` file in the Meshery codebase.
 
-A widget that visualizes the topology of a service mesh, showing connections between services.
+## 7. Publishing Extensions
+Once you've developed and tested your dashboard extension, you can publish it to the Meshery Extensions Marketplace. The Meshery Extension Hub at [meshery.io/extensions](https://meshery.io/extensions) serves as the central repository for all Meshery extensions, including dashboard widgets and components.
 
-See the [Topology Widget Example](https://docs.meshery.io/guides/service-mesh-management/topology-widget).
-
-### 7.3 Policy Compliance Dashboard
-
-A widget that displays compliance status for various policies applied to the mesh.
-
-See the [Policy Widget Example](https://docs.meshery.io/guides/policies/policy-widgets).
-
-## 8. Publishing Extensions
-
-Once you've developed and tested your dashboard extension, you can publish it to the Meshery Extensions Marketplace.
-
-### 8.1 Requirements
-
+### 7.1 Requirements
 To publish your extension:
-
 1. Create a GitHub repository for your extension
 2. Include comprehensive documentation
 3. Provide usage examples
 4. Ensure code quality and test coverage
 5. Create a release with semantic versioning
 
-### 8.2 Submission Process
+### 7.2 Submission Process
 
 1. Fork the Meshery Extensions repository
 2. Add your extension metadata to the catalog
@@ -626,7 +452,7 @@ To publish your extension:
 4. Address any review comments
 5. Once approved, your extension will be listed on the marketplace
 
-### 8.3 Extension Metadata
+### 7.3 Extension Metadata
 
 ```yaml
 name: "My Custom Dashboard Widget"
@@ -643,88 +469,51 @@ optionalPermissions:
   - "edit:metrics:thresholds"
   - "create:alerts"
 ```
-
 For detailed publishing guidelines, see the [Meshery Extensions Marketplace Documentation](https://docs.meshery.io/extensions).
 
-## 9. Best Practices
-
-### 9.1 Performance Considerations
-
+## 8. Best Practices
+### 8.1 Performance Considerations
 - Implement efficient data fetching and caching strategies
 - Use pagination for large datasets
 - Implement virtualization for long lists
 - Optimize rendering cycles
 
-### 9.2 User Experience
+### 8.2 User Experience
 
 - Provide loading and error states
 - Use consistent styling with Meshery's design system
 - Implement responsive layouts
 - Provide tooltips and help text for complex functionality
 
-### 9.3 Code Quality
-
+### 8.3 Code Quality
 - Write unit and integration tests
 - Document your code thoroughly
 - Follow Meshery's coding conventions
 - Use TypeScript for type safety
 
-### 9.4 Accessibility
+### 8.4 Accessibility
 
 - Ensure proper color contrast
 - Add ARIA attributes where needed
 - Support keyboard navigation
 - Test with screen readers
 
-### 9.5 Permission-Related Best Practices
+### 8.5 Permission-Related Best Practices
 
 - **Granular Permission Checks**: Check specific permissions rather than general role access
 - **Progressive Enhancement**: Build UIs that enhance functionality as more permissions are available
 - **Helpful Access Denied Messages**: Explain why content is unavailable and how to request access
 - **Performance Optimization**: Cache permission check results to avoid redundant checks
-- **Documentation**: Document all required and optional permissions for your widget
-- **Testing**: Test widgets with various permission combinations to ensure proper behavior
-- **Security First**: Always validate permissions on both client and server sides
-- **Error Handling**: Implement graceful error handling for permission-related API failures
+- **Data not loading**: Check API endpoints and authentication
+- **Layout issues**: Verify the grid configuration and responsive behavior
+- **Performance problems**: Look for unnecessary re-renders or inefficient data fetching
+- **Permission issues**: Verify that permission keys match the expected format and that permission checks are implemented correctly.
 
-## 10. Troubleshooting
+For more troubleshooting guidance, see the [Meshery Troubleshooting Guide](https://docs.meshery.io/reference/error-codes).
 
-Common issues and solutions when developing dashboard extensions:
-
-### 10.1 Development Environment Issues
-
-- **UI not connecting to backend**: Verify that your `.env.local` file has the correct API URL and that the backend server is running
-- **Hot reloading not working**: Restart the development server with `npm run dev`
-- **Module not found errors**: Run `npm install` to ensure all dependencies are installed
-
-### 10.2 Widget Development Issues
-
-1. **Widget not appearing in dashboard**: Ensure it's properly registered in the widget registry
-2. **Data not loading**: Check API endpoints and authentication
-3. **Layout issues**: Verify the grid configuration and responsive behavior
-4. **Performance problems**: Look for unnecessary re-renders or inefficient data fetching
-5. **Permission issues**: Verify that permission keys match the expected format and that permission checks are implemented correctly
-
-### 10.3 Common Error Messages
-
-- **"Failed to fetch"**: Check that your backend server is running and accessible
-- **"Widget registration failed"**: Ensure your widget ID is unique and that the component is properly exported
-- **"Permission denied"**: Check that you have the required permissions for the action you're attempting
-
-For more troubleshooting guidance, see the [Meshery Troubleshooting Guide](https://docs.meshery.io/reference/troubleshooting).
-
-## 11. Contributing Back
-
+## 10. Contributing Back
 If you've developed a useful dashboard extension, consider contributing it back to the Meshery project:
-
 1. Open an issue describing your extension
 2. Submit a pull request with your code
 3. Work with the maintainers to integrate it into the Meshery codebase
-
-## 12. Resources
-
-- [Meshery UI Architecture](https://docs.meshery.io/project/contributing/contributing-ui)
-- [Dashboard API Reference](https://docs.meshery.io/reference/api/dashboard)
-- [Widget Component Library](https://docs.meshery.io/reference/ui-components)
-- [Extension Examples Repository](https://github.com/meshery/meshery-extensions-examples)
-- [Meshery Community Slack](https://slack.meshery.io) - Join the #ui-extensions channel
+For more information on contributing to Meshery, see the [Contributing Guidelines](https://docs.meshery.io/project/contributing).
