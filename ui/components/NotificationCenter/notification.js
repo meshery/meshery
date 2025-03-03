@@ -309,7 +309,7 @@ export const Notification = ({ event_id }) => {
     <Expanded
       container
       style={{
-        backgroundColor: alpha(eventStyle?.color || "#2196F3", 0.1),
+        backgroundColor: alpha(eventStyle?.color || '#2196F3', 0.1),
         color: theme.palette.text.default,
         borderTop: `1px solid ${notificationColor}`,
       }}
