@@ -13,7 +13,8 @@ setup() {
     run $MESHERYCTL_BIN system start -p kubernetes
     [ "$status" -eq 0 ]
 
-    sleep 30
+    # give time to pods and services to be deployed to prevent flaky test
+    sleep 40
 }
 
 @test "meshery pods are deployed" {
