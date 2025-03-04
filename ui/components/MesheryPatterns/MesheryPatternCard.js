@@ -87,7 +87,7 @@ function MesheryPatternCard_({
   const catalogContentKeys = Object.keys(description);
   const catalogContentValues = Object.values(description);
   const theme = useTheme();
-
+  console.log('amit theme is here', theme);
   const editInConfigurator = () => {
     router.push('/configuration/designs/configurator?design_id=' + id);
   };
