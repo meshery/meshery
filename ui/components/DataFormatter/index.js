@@ -179,6 +179,10 @@ export const TextWithLinks = ({ text, ...typographyProps }) => {
 };
 
 export const KeyValue = ({ Key, Value }) => {
+  const formatDate = (value) => {
+    const date = new Date(value);
+    return !isNaN(date) ? date.toLocaleString() : value;
+  };
   const theme = useTheme();
   return (
     <div
@@ -204,13 +208,12 @@ export const KeyValue = ({ Key, Value }) => {
         Value
       ) : (
         <SectionBody
-          body={Value}
+          body={formatDate(Value)}
           style={{
             color: theme.palette.text.tertiary,
             textOverflow: 'ellipsis',
             wordBreak: 'break-all',
             overflow: 'hidden',
-            whiteSpace: 'nowrap',
           }}
         />
       )}

@@ -401,7 +401,7 @@ const EventsView = ({ handleLoadNextPage, isFetching, hasMore }) => {
     <>
       {events.map((event, idx) => (
         <div key={event.id + idx}>
-          <Notification event_id={event.id} />
+          <Notification eventData={event} event_id={event.id} />
         </div>
       ))}
 
