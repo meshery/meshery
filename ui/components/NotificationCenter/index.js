@@ -71,7 +71,6 @@ import { useSelectorRtk } from '@/store/hooks';
 import { ErrorBoundary } from '@layer5/sistent';
 import CustomErrorFallback from '../General/ErrorBoundary';
 import { alpha } from '@mui/system';
-import { UsesSistent } from '../SistentWrapper';
 
 export const NotificationCenterContext = React.createContext({
   drawerAnchorEl: null,
@@ -227,35 +226,33 @@ const Header = ({ handleFilter, handleClose }) => {
   };
 
   return (
-    <UsesSistent>
-      <NotificationContainer>
-        <Title>
-          <TitleBellIcon onClick={handleClose}>
-            <BellIcon height="30" width="30" fill="#fff" />
-          </TitleBellIcon>
-          <Typography variant="h6"> Notifications</Typography>
-        </Title>
-        <SeverityChips>
-          {Object.values(SEVERITY).map((severity) => (
-            <NotificationCountChip
-              key={severity}
-              severity={severity}
-              handleClick={() => onClickSeverity(severity)}
-              notificationStyle={SEVERITY_STYLE[severity]}
-              type={`Unread ${severity}(s)`}
-              count={getSeverityCount(count_by_severity_level, severity)}
-            />
-          ))}
+    <NotificationContainer>
+      <Title>
+        <TitleBellIcon onClick={handleClose}>
+          <BellIcon height="30" width="30" fill="#fff" />
+        </TitleBellIcon>
+        <Typography variant="h6"> Notifications</Typography>
+      </Title>
+      <SeverityChips>
+        {Object.values(SEVERITY).map((severity) => (
           <NotificationCountChip
-            notificationStyle={STATUS_STYLE[STATUS.READ]}
-            handleClick={() => onClickStatus(STATUS.READ)}
-            type={STATUS.READ}
-            severity={STATUS.READ}
-            count={read_count}
+            key={severity}
+            severity={severity}
+            handleClick={() => onClickSeverity(severity)}
+            notificationStyle={SEVERITY_STYLE[severity]}
+            type={`Unread ${severity}(s)`}
+            count={getSeverityCount(count_by_severity_level, severity)}
           />
-        </SeverityChips>
-      </NotificationContainer>
-    </UsesSistent>
+        ))}
+        <NotificationCountChip
+          notificationStyle={STATUS_STYLE[STATUS.READ]}
+          handleClick={() => onClickStatus(STATUS.READ)}
+          type={STATUS.READ}
+          severity={STATUS.READ}
+          count={read_count}
+        />
+      </SeverityChips>
+    </NotificationContainer>
   );
 };
 
@@ -618,13 +615,11 @@ const NotificationCenter = (props) => {
 
   return (
     <NoSsr>
-      <UsesSistent>
-        <ErrorBoundary customFallback={CustomErrorFallback}>
-          <Provider store={store}>
-            <NotificationCenterDrawer {...props} />
-          </Provider>
-        </ErrorBoundary>
-      </UsesSistent>
+      <ErrorBoundary customFallback={CustomErrorFallback}>
+        <Provider store={store}>
+          <NotificationCenterDrawer {...props} />
+        </Provider>
+      </ErrorBoundary>
     </NoSsr>
   );
 };

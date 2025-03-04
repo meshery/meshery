@@ -71,7 +71,7 @@ The `provider.PersistEvent(event)` method stores all events in Meshery's local d
 
 The `provider.PublishEventToProvider(token, event)` method enables event synchronization with remote providers (like Meshery Cloud). For Local providers, this method is a no-op (does nothing), while Remote providers use it to send events to their remote services.
 
-To see it in action and gain a better understanding, you can explore the [design_engine_handler.go](https://github.com/meshery/meshery/blob/8810d2ae75f8c69d42dd8bd329446f8df24bf1/server/handlers/design_engine_handler.go#L193-L207) file.
+To see it in action and gain a better understanding, you can explore the [design_engine_handler.go](https://github.com/meshery/meshery/blob/master/server/handlers/design_engine_handler.go) file.
 
 ## An Example in Code
 

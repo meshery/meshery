@@ -5,7 +5,6 @@ import { useModal } from '@layer5/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
 import { ListItem } from '@layer5/sistent';
 import { ListItemIcon } from '@layer5/sistent';
-import { UsesSistent } from './SistentWrapper';
 import { ModalBody } from '@layer5/sistent';
 import { Colors } from '@/themes/app';
 import { InfoTooltip } from '@layer5/sistent';
@@ -112,7 +111,7 @@ const ExportModal = (props) => {
     headerIcon: <PatternIcon fill={'#fff'} height={'2rem'} width="2rem" />,
   });
   return (
-    <UsesSistent>
+    <>
       <Modal
         {...exportModal}
         open={downloadModal.open}
@@ -134,7 +133,7 @@ const ExportModal = (props) => {
           ))}
         </ModalBody>
       </Modal>
-    </UsesSistent>
+    </>
   );
 };
 
