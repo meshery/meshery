@@ -63,13 +63,8 @@ jobs:
           bash run_tests.bash
         shell: bash
         working-directory: ./mesheryctl/test/e2e
-      - name: Stop Minikube
-        if: always() # Ensure minikube is stopped even if tests fail
-        run: |
-          minikube stop --all
-          minikube delete --all
-        shell: bash
-
+        env:
+          MESHERY_PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
 
   manual-test:
     name: Manual e2e Test
