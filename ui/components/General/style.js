@@ -108,6 +108,44 @@ export const MainLogoText = styled('img')(({ theme }) => ({
   borderRadius: 'unset',
 }));
 
+export const ExpandMoreIcon = styled('svg', {
+  shouldForwardProp: (prop) => prop !== 'isCollapsed' && prop !== 'hasChildren',
+})(({ isCollapsed, hasChildren, theme }) => ({
+  opacity: 0, // Initially hidden
+  visibility: 'hidden',
+  cursor: 'pointer',
+  display: hasChildren ? 'inline-block' : 'none',
+  transform: isCollapsed ? 'rotate(180deg) translateX(-0.8px)' : 'translateX(3px)',
+  transition:
+    'transform 200ms ease-in-out, opacity 200ms ease-in-out, visibility 200ms ease-in-out',
+
+  // Show icon when the parent element is hovered
+  '&:hover, *:hover > &': {
+    opacity: 1,
+    visibility: 'visible',
+  },
+
+  '&:hover': {
+    fill: theme?.palette?.background?.brand?.default || 'black',
+  },
+}));
+
+export const ExpandMore = ({ isCollapsed, hasChildren, ...props }) => (
+  <ExpandMoreIcon
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    width="20"
+    height="20"
+    isCollapsed={isCollapsed}
+    hasChildren={hasChildren}
+    {...props}
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512">
+      <path d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z" />
+    </svg>
+  </ExpandMoreIcon>
+);
+
 export const NavigatorList = styled(List)({
   padding: 0,
 });

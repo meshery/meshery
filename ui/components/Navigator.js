@@ -39,7 +39,6 @@ import {
   NoSsr,
   Zoom,
   LeftArrowIcon,
-  CaretDownIcon,
   ExternalLinkIcon as IconExternalLink,
   TachographDigitalIcon,
   useTheme,
@@ -91,6 +90,7 @@ import {
   ChevronButtonWrapper,
   FixedSidebarFooter,
   SidebarDrawer,
+  ExpandMore,
 } from './General/style';
 import DashboardIcon from '@/assets/icons/DashboardIcon';
 import { useMediaQuery } from '@mui/material';
@@ -943,22 +943,12 @@ const Navigator_ = (props) => {
                       <SideBarText drawerCollapsed={props.isDrawerCollapsed}>{title}</SideBarText>
                     </NavigatorLink>
                   </Link>
-                  {children && children.length ? (
-                    <CaretDownIcon
-                      fill={
-                        state.openItems.includes(childId)
-                          ? theme.palette.icon.brand
-                          : theme.palette.icon.default
-                      }
-                      style={{
-                        marginLeft: 'auto',
-                        transition: 'transform 0.3s',
-                        transform: state.openItems.includes(childId)
-                          ? 'rotate(180deg)'
-                          : 'rotate(0)',
-                      }}
-                    />
-                  ) : null}
+                  <ExpandMore
+                    onClick={() => toggleItemCollapse(childId)}
+                    isCollapsed={state.openItems.includes(childId)}
+                    isDrawerCollapsed={props.isDrawerCollapsed} // Pass drawer state
+                    hasChildren={!!children}
+                  />
                 </SideBarListItem>
                 <Collapse
                   in={state.openItems.includes(childId)}

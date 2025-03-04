@@ -167,6 +167,14 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
     setFullScreen(!fullScreen);
   };
 
+  const FullScreenCodeMirrorWrapper = styled('div')(() => ({
+    height: '100%',
+    '& .CodeMirror': {
+      minHeight: '300px',
+      height: fullScreen ? '80vh' : '30vh',
+    },
+  }));
+
   return (
     <Dialog
       onClose={onClose}
@@ -199,20 +207,22 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
       </YamlDialogTitle>
       <Divider variant="fullWidth" light />
       <DialogContent>
-        <CodeMirror
-          value={pattern.pattern_file}
-          options={{
-            theme: 'material',
-            lineNumbers: true,
-            lineWrapping: true,
-            gutters: ['CodeMirror-lint-markers'],
-            // @ts-ignore
-            lint: true,
-            mode: 'text/x-yaml',
-            readOnly: isReadOnly,
-          }}
-          onChange={(_, data, val) => setYaml(val)}
-        />
+        <FullScreenCodeMirrorWrapper>
+          <CodeMirror
+            value={pattern.pattern_file}
+            options={{
+              theme: 'material',
+              lineNumbers: true,
+              lineWrapping: true,
+              gutters: ['CodeMirror-lint-markers'],
+              // @ts-ignore
+              lint: true,
+              mode: 'text/x-yaml',
+              readOnly: isReadOnly,
+            }}
+            onChange={(_, data, val) => setYaml(val)}
+          />
+        </FullScreenCodeMirrorWrapper>
       </DialogContent>
       <Divider variant="fullWidth" light />
       <DialogActions>
@@ -564,11 +574,11 @@ function MesheryPatterns({
     catalogVisibilityRef.current = catalogVisibility;
 
     /*
-                                     Below is a graphql query that fetches the catalog patterns that is published so
-                                     when catalogVisibility is true, we fetch the catalog patterns and set it to the patterns state
-                                     which show the catalog patterns only in the UI at the top of the list always whether we filter for public or private patterns.
-                                     Meshery's REST API already fetches catalog items with `published` visibility, hence this function is commented out.
-                                    */
+                                       Below is a graphql query that fetches the catalog patterns that is published so
+                                       when catalogVisibility is true, we fetch the catalog patterns and set it to the patterns state
+                                       which show the catalog patterns only in the UI at the top of the list always whether we filter for public or private patterns.
+                                       Meshery's REST API already fetches catalog items with `published` visibility, hence this function is commented out.
+                                      */
     // const fetchCatalogPatterns = fetchCatalogPattern({
     //   selector: {
     //     search: '',
@@ -1156,15 +1166,15 @@ function MesheryPatterns({
 
               {/* Publish action can be done through Info modal so we might not need separate publish action */}
               {/* {canPublishPattern && visibility !== VISIBILITY.PUBLISHED && (
-                <TooltipIcon
-                  placement="bottom"
-                  title="Publish"
-                  disabled={!CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject)}
-                  onClick={(ev) => handlePublishModal(ev, rowData)}
-                >
-                  <PublicIcon fill="#F91313" data-cy="publish-button" />
-                </TooltipIcon>
-              )} */}
+                  <TooltipIcon
+                    placement="bottom"
+                    title="Publish"
+                    disabled={!CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject)}
+                    onClick={(ev) => handlePublishModal(ev, rowData)}
+                  >
+                    <PublicIcon fill="#F91313" data-cy="publish-button" />
+                  </TooltipIcon>
+                )} */}
 
               {visibility === VISIBILITY.PUBLISHED && (
                 <TooltipIcon
@@ -1494,12 +1504,12 @@ function MesheryPatterns({
                   {!selectedPattern.show && (
                     <div style={{ display: 'flex' }}>
                       {/* <StyledCatalogFilter>
-                    <CatalogFilter
-                      catalogVisibility={catalogVisibility}
-                      handleCatalogVisibility={handleCatalogVisibility}
-                      classes={classes}
-                    />
-                    </StyledCatalogFilter>*/}
+                      <CatalogFilter
+                        catalogVisibility={catalogVisibility}
+                        handleCatalogVisibility={handleCatalogVisibility}
+                        classes={classes}
+                      />
+                      </StyledCatalogFilter>*/}
                     </div>
                   )}
                 </CreateButton>

@@ -18,6 +18,7 @@ import {
   DatabaseIcon,
   FileIcon,
   MendeleyIcon,
+  useTheme,
 } from '@layer5/sistent';
 import DashboardMeshModelGraph from './DashboardComponent/charts/DashboardMeshModelGraph';
 import Link from 'next/link';
@@ -135,6 +136,7 @@ const settingsRouter = (router) => {
 const MesherySettings = (props) => {
   const { k8sconfig, meshAdapters, grafana, prometheus, router, classes } = props;
   const { selectedSettingsCategory, selectedTab } = settingsRouter(router);
+  const theme = useTheme();
 
   const [state, setState] = useState({
     k8sconfig,
@@ -276,7 +278,7 @@ const MesherySettings = (props) => {
                   value={ADAPTERS}
                 >
                   <Tab
-                    icon={<MendeleyIcon {...iconMedium} fill="#fff" />}
+                    icon={<MendeleyIcon {...iconMedium} fill={theme.palette.icon.default} />}
                     label="Adapters"
                     data-cy="tabServiceMeshes"
                     value={ADAPTERS}
@@ -290,7 +292,7 @@ const MesherySettings = (props) => {
                 </CustomTooltip>
                 <CustomTooltip title="Configure Metrics backends" placement="top" value={METRICS}>
                   <Tab
-                    icon={<PollIcon {...iconMedium} fill="#fff" />}
+                    icon={<PollIcon {...iconMedium} fill={theme.palette.icon.default} />}
                     label="Metrics"
                     data-testid="settings-tab-metrics"
                     // tab="tabMetrics"
@@ -300,7 +302,7 @@ const MesherySettings = (props) => {
                 </CustomTooltip>
                 <CustomTooltip title="Registry" placement="top" value={REGISTRY}>
                   <Tab
-                    icon={<FileIcon {...iconMedium} fill="#fff" />}
+                    icon={<FileIcon {...iconMedium} fill={theme.palette.icon.default} />}
                     label="Registry"
                     data-testid="settings-tab-registry"
                     // tab="registry"
@@ -311,7 +313,7 @@ const MesherySettings = (props) => {
 
                 <CustomTooltip title="Reset System" placement="top" value={RESET}>
                   <Tab
-                    icon={<DatabaseIcon {...iconMedium} fill="#fff" />}
+                    icon={<DatabaseIcon {...iconMedium} fill={theme.palette.icon.default} />}
                     label="Reset"
                     data-testid="settings-tab-reset"
                     // tab="systemReset"
