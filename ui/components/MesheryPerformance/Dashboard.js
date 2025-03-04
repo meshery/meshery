@@ -32,8 +32,6 @@ const StyledPaper = styled(Paper)({
   padding: '1rem',
 });
 
-const StyledButton = styled(Button)(() => ({ padding: '0.5rem' }));
-
 const ResultContainer = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
@@ -195,13 +193,13 @@ function Dashboard({ updateProgress, grafana, router }) {
                         </Typography>
                       </div>
                       <div style={{ margin: '2rem 0 0 auto', width: 'fit-content' }}>
-                        <StyledButton
+                        <Button
                           onClick={() => setRunTest(true)}
                           disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
                           variant="contained"
                         >
                           Run Test
-                        </StyledButton>
+                        </Button>
                       </div>
                     </StyledPaper>
                     <Separator vertical />
@@ -224,12 +222,12 @@ function Dashboard({ updateProgress, grafana, router }) {
                         </Typography>
                       </div>
                       <div style={{ margin: '2rem 0 0 auto', width: 'fit-content' }}>
-                        <StyledButton
+                        <Button
                           variant="contained"
                           onClick={() => router.push('/performance/profiles')}
                         >
                           Manage Profiles
-                        </StyledButton>
+                        </Button>
                       </div>
                     </StyledPaper>
                   </ResultContainer>

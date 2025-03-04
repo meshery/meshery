@@ -176,10 +176,7 @@ export const StyledChip = styled(Chip)(() => ({
 }));
 
 export const StyledFormButton = styled(Button)(() => ({
-  '&.MuiButton-root': {
-    borderRadius: '10px',
-    padding: '10px',
-  },
+  '&.MuiButton-root': {},
 }));
 
 export const StyledButton = styled(Button)(() => ({

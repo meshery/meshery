@@ -43,7 +43,6 @@ import {
   Link,
   Skeleton,
 } from '@layer5/sistent';
-import TooltipButton from '@/utils/TooltipButton';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import { filterEmptyFields } from '@/utils/objects';
@@ -436,9 +435,7 @@ const InfoModal_ = React.memo((props) => {
           variant="filled"
         >
           <ActionContainer>
-            <TooltipButton title={'Copy Design Link'} onClick={handleCopy}>
-              <CopyLinkButton>Copy Link</CopyLinkButton>
-            </TooltipButton>
+            <CopyLinkButton onClick={handleCopy}>Copy Link</CopyLinkButton>
 
             <ModalButtonSecondary
               data-testid="publish-button"

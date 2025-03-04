@@ -34,7 +34,6 @@ const Notification = ({ type, message, retry, onRetry }) => {
             style={{
               backgroundColor: '#ff0000',
               padding: '0.5rem',
-              borderRadius: '0.5rem',
               border: '0',
               color: '#fff',
               height: '2rem',
