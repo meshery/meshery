@@ -51,3 +51,10 @@
 | ----------------------  | -----------  | -------------- |
 | Nikhil Ladha            | Nikhil-Ladha | Red Hat        |
 | Aaditya Narayan Subedy  | asubedy      | Fast Retailing |
+
+### Meshery Extensions Maintainers
+
+| Name                    | GitHub         | Affiliation    |
+| ----------------------  | -------------- | -------------- |
+| Ijeoma Eti              | Aijeyomah      | Manufactured   |
+| Pranav Singh            | theBeginner86  | Intel          |
