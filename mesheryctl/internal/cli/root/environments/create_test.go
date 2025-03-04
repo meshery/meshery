@@ -59,8 +59,16 @@ func TestCreateEnvironmentCmd(t *testing.T) {
 			Fixture:          "create.environment.response.golden",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectedResponse: "create.environment.output.golden",
-			ExpectedError:      false,
+			ExpectedError:    false,
 		},	
+		{
+			Name:             "Failed API Request",
+			Args:             []string{"create", "--orgId", "422595a1-bbe3-4355-ac80-5efa0b35c9da", "--name", "TestEnv", "--description", "This is a test environment"},
+			URL:              testContext.BaseURL + "/api/environments",
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectedResponse: "create.environment.server.error.golden",
+			ExpectedError:    true,		
+		},
 		}
 
 	for _, tt := range tests {
@@ -73,6 +81,12 @@ func TestCreateEnvironmentCmd(t *testing.T) {
 				httpmock.RegisterResponder("POST", tt.URL,
 					httpmock.NewStringResponder(200, apiResponse))
 
+			} else if(tt.ExpectedError && tt.Token!=""){
+				utils.TokenFlag = tt.Token
+				
+				// mock response
+				httpmock.RegisterResponder("POST", tt.URL,
+					httpmock.NewStringResponder(500, "Internal Server Error"))
 			}
 
 			// Expected response
