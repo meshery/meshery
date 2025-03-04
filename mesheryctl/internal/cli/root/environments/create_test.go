@@ -97,7 +97,7 @@ func TestCreateEnvironmentCmd(t *testing.T) {
 			cmd.SetArgs(tt.Args)
 
 			b := utils.SetupMeshkitLoggerTesting(t, false)
-			cmd.SetOutput(b)
+			cmd.SetOut(b)
 			err:=cmd.Execute()
 
 			if err != nil {
