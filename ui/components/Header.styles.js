@@ -102,9 +102,10 @@ export const CMenuContainer = styled(Paper)(({ theme }) => ({
   transitionProperty: 'height',
 }));
 
-export const IconButtonAvatar = styled(IconButton)({
+export const IconButtonAvatar = styled(IconButton)(({ theme }) => ({
   padding: 4,
-});
+  color: theme.palette.common.white,
+}));
 
 export const UserInfoContainer = styled('div')(({ theme }) => ({
   display: 'flex',

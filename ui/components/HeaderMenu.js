@@ -158,7 +158,7 @@ const HeaderMenu = (props) => {
 
   return (
     <>
-      <IconButtonAvatar aria-describedby={id} onClick={handleClick} color={props.color}>
+      <IconButtonAvatar aria-describedby={id} onClick={handleClick}>
         <MenuIcon />
       </IconButtonAvatar>
 
