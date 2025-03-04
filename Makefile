@@ -18,7 +18,7 @@ include install/Makefile.show-help.mk
 #-----------------------------------------------------------------------------
 # Docker-based Builds
 #-----------------------------------------------------------------------------
-.PHONY: docker-build docker-local-cloud docker-cloud docker-playground-build docker-testing-env-build docker-testing-env 
+.PHONY: docker-build docker-local-cloud docker-cloud docker-playground-build docker-testing-env-build docker-testing-env
 
 ## Build Meshery Server and UI container.
 docker-build:
@@ -303,17 +303,20 @@ ui-server: ui-meshery-build ui-provider-build server
 UI_BUILD_SCRIPT = build16
 UI_DEV_SCRIPT = dev16
 
-ifeq ($(findstring v19, $(shell node --version)), v19)
-	UI_BUILD_SCRIPT = build
-	UI_DEV_SCRIPT = dev
+ifeq ($(findstring v20, $(shell node --version)), v20)
+    UI_BUILD_SCRIPT = build
+    UI_DEV_SCRIPT = dev
+else ifeq ($(findstring v19, $(shell node --version)), v19)
+    UI_BUILD_SCRIPT = build
+    UI_DEV_SCRIPT = dev
 else ifeq ($(findstring v18, $(shell node --version)), v18)
-	UI_BUILD_SCRIPT = build
-	UI_DEV_SCRIPT = dev
+    UI_BUILD_SCRIPT = build
+    UI_DEV_SCRIPT = dev
 else ifeq ($(findstring v17, $(shell node --version)), v17)
-	UI_BUILD_SCRIPT = build
-	UI_DEV_SCRIPT = dev
-endif
+    UI_BUILD_SCRIPT = build
+    UI_DEV_SCRIPT = dev
 
+endif
 ## Install dependencies for building Meshery UI.
 ui-setup:
 	cd ui; npm i; cd ..
@@ -462,7 +465,7 @@ test-e2e-ci:
 #-----------------------------------------------------------------------------
 # Rego Policies
 #-----------------------------------------------------------------------------
-rego-eval:	
+rego-eval:
 	opa eval -i policies/test/design_all_relationships.yaml -d relationships:policies/test/all_relationships.json -d server/meshmodel/meshery-core/0.7.2/v1.0.0/policies/ \
 	'data.relationship_evaluation_policy.evaluate' --format=pretty
 

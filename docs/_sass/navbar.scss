@@ -1,45 +1,4 @@
-// div .td-sidebar__search {
-//   padding-top: 2.5rem;
-// }
-
-.breadcrumb {
-  font-size: 1.05rem;
-  line-height: .925rem;
-  padding: 0;
-}
-
-// div .td-toc {
-//   padding-top: 2rem;
-// }
-
-// @media (min-width:768px) and (max-width:995px) {
-//   div .td-sidebar__search {
-//     padding-top: 2.5rem;
-//     margin-top: 1rem;
-//   }
-// }
-
-// @media (min-width: 768px) {
-//   .td-navbar {
-//     position: fixed;
-//     top: 0;
-//     width: 100%;
-//     padding: .8vw 4vw !important;
-//     background: var(--background-light-cards);
-//     box-shadow: var(--box-shadow-navbar);
-//   }
-// }
-
-// @media (min-width: 768px) {
-//   .td-sidebar-nav {
-//     max-height: -webkit-calc(100vh - 11.5rem);
-//     max-height: calc(100vh - 11.5rem);
-//     overflow-y: auto;
-//   }
-// }
-
-//New Code ////////////////////////////////////////////////////////////////////////////////////////////////////
-
+// Header base styles
 header {
   position: sticky;
   top: 0;
@@ -56,6 +15,13 @@ header {
   }
 }
 
+// Scroll behavior fixes
+html {
+  scroll-padding-top: var(--navbar-height);
+  scroll-behavior: smooth;
+}
+
+// Navbar styles
 .navbar {
   width: 100%;
   height: var(--navbar-height);
@@ -65,6 +31,10 @@ header {
   display: flex;
   align-items: center;
   z-index: 10;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
 
   @media (max-width: 600px) {
     height: calc(var(--navbar-height) - 2.5rem);
@@ -90,7 +60,7 @@ header {
       background: none;
       border: none;
 
-      &>img {
+      & > img {
         padding: 0 !important;
         margin-left: 10%;
         width: 2.2rem;
@@ -104,16 +74,6 @@ header {
           height: 1.8rem;
         }
       }
-
-      @media (max-width: 1140px) {
-        // margin-left: .5rem !important;
-        // margin-top: .5rem !important;
-      }
-
-      @media (max-width: 840px) {
-        // margin-left: 1rem !important;
-        // margin-top: .5rem !important;
-      }
     }
 
     & .nav-toggle-btn {
@@ -124,7 +84,6 @@ header {
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      // box-shadow: inset 3px 3px 7px #eff0f1, inset -3px -3px 2px #fff;
       display: none;
       background: none;
 
@@ -165,22 +124,9 @@ header {
     line-height: inherit;
     white-space: nowrap;
 
-    &>.navbar-logo {
+    & > .navbar-logo {
       display: flex;
       align-items: center;
-
-      // @media (max-width: 1200px) {
-      //   font-size: 2rem;
-      // }
-
-      // @media (max-width: 600px) {
-      //   justify-content: center;
-      //   flex-direction: column;
-
-      //   & > span {
-      //     margin-left: .5rem;
-      //   }
-      // }
 
       & img,
       svg {
@@ -196,14 +142,9 @@ header {
           display: none;
         }
       }
-
-      // & > span {
-      //   font-weight: 600 !important;
-      //   color: var(--color-secondary-medium);
-      // }
     }
 
-    &>.mobile {
+    & > .mobile {
       display: flex;
       align-items: center;
 
@@ -271,7 +212,7 @@ header {
           width: fit-content;
         }
 
-        & a>* {
+        & a > * {
           color: var(--color-secondary-dark);
         }
 
@@ -305,10 +246,23 @@ header {
         padding: 5px;
         cursor: pointer;
 
-        &>* {
+        & > * {
           background: var(--color-primary-dark);
         }
       }
     }
   }
+}
+
+// Ensure content is properly spaced
+.main-container {
+  padding-top: var(--navbar-height);
+}
+
+// Breadcrumb styles
+.breadcrumb {
+  font-size: 1.05rem;
+  line-height: 0.925rem;
+  padding: 0;
+  margin-top: var(--navbar-height);
 }

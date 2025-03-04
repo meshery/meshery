@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { withStyles } from '@material-ui/core/styles';
+import { NoSsr } from '@layer5/sistent';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import GrafanaDateRangePicker from './GrafanaDateRangePicker';
+import { StyledAccordion, StyledAccordionSummary } from '../../StyledAccordion';
+import GrafanaCustomChart from './GrafanaCustomChart';
 import {
-  NoSsr,
   Grid,
-  ExpansionPanelDetails,
+  AccordionDetails,
   Typography,
   Dialog,
   Button,
@@ -12,38 +15,56 @@ import {
   DialogContent,
   DialogTitle,
   Chip,
-} from '@material-ui/core';
-import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import GrafanaDateRangePicker from './GrafanaDateRangePicker';
-import { ExpansionPanel, ExpansionPanelSummary } from '../../ExpansionPanels';
-import GrafanaCustomChart from './GrafanaCustomChart';
+  styled,
+  useTheme,
+} from '@layer5/sistent';
 
-const grafanaStyles = (theme) => ({
-  grafanaRoot: { width: '100%' },
-  column: { flex: '1' },
-  heading: { fontSize: theme.typography.pxToRem(15) },
-  secondaryHeading: {
+const GrafanaRoot = styled('div')({
+  width: '100%',
+});
+
+const Column = styled('div')({
+  flex: '1',
+});
+
+const StyledHeading = styled(Typography)(({ theme }) => ({
+  fontSize: theme.typography.pxToRem(15),
+}));
+
+const SecondaryHeading = styled(Typography)(() => {
+  const theme = useTheme();
+  return {
     fontSize: theme.typography.pxToRem(15),
     color: theme.palette.text.secondary,
-  },
-  dateRangePicker: {
+  };
+});
+
+const DateRangePickerContainer = styled('div')({
+  display: 'flex',
+  justifyContent: 'flex-end',
+});
+
+const ChartsHeaderOptions = styled('div')(() => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginBottom: '1rem',
+  marginTop: '1rem',
+}));
+
+const StyledIcon = styled('img')(({ theme }) => ({
+  width: theme.spacing(2.5),
+}));
+
+const StyledChip = styled(Chip)({
+  width: '100%',
+});
+
+const StyledDialogTitle = styled(DialogTitle)({
+  '& > *': {
     display: 'flex',
-    justifyContent: 'flex-end',
-  },
-  chartsHeaderOptions: {
-    display: 'flex',
-    justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: '1rem',
-    marginTop: '1rem',
-  },
-  icon: { width: theme.spacing(2.5) },
-  dialogTitle: {
-    '&>*': {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-    },
+    justifyContent: 'space-between',
   },
 });
 
@@ -97,13 +118,11 @@ class GrafanaCustomCharts extends Component {
   };
 
   GrafanaChip(grafanaURL) {
-    const { classes } = this.props;
     return (
-      <Chip
+      <StyledChip
         label={grafanaURL}
         onClick={() => window.open(grafanaURL)}
-        icon={<img src="/static/img/grafana_icon.svg" className={classes.icon} />}
-        className={classes.chip}
+        icon={<StyledIcon src="/static/img/grafana_icon.svg" />}
         variant="outlined"
       />
     );
@@ -122,7 +141,7 @@ class GrafanaCustomCharts extends Component {
       chartDialogPanelData,
       sparkline,
     } = this.state;
-    const { classes, boardPanelConfigs, boardPanelData } = this.props;
+    const { boardPanelConfigs, boardPanelData } = this.props;
     const { grafanaURL, grafanaAPIKey, prometheusURL, connectionID } = this.props;
     const { enableGrafanaChip } = this.props;
     // we are now proxying. . .
@@ -132,11 +151,11 @@ class GrafanaCustomCharts extends Component {
     return (
       <NoSsr>
         <React.Fragment>
-          <div className={classes.grafanaRoot}>
+          <GrafanaRoot>
             {!(boardPanelData && boardPanelData !== null) && (
-              <div className={classes.chartsHeaderOptions}>
+              <ChartsHeaderOptions>
                 {enableGrafanaChip && <div>{this.GrafanaChip(grafanaURL)}</div>}
-                <div className={classes.dateRangePicker}>
+                <DateRangePickerContainer>
                   <GrafanaDateRangePicker
                     from={from}
                     startDate={startDate}
@@ -146,9 +165,10 @@ class GrafanaCustomCharts extends Component {
                     refresh={refresh}
                     updateDateRange={this.updateDateRange}
                   />
-                </div>
-              </div>
+                </DateRangePickerContainer>
+              </ChartsHeaderOptions>
             )}
+
             <Dialog
               fullWidth
               maxWidth="md"
@@ -156,14 +176,14 @@ class GrafanaCustomCharts extends Component {
               onClose={this.chartDialogClose()}
               aria-labelledby="max-width-dialog-title"
             >
-              <DialogTitle classes={{ root: classes.dialogTitle }} id="max-width-dialog-title">
+              <StyledDialogTitle id="max-width-dialog-title">
                 <div>{chartDialogPanel.title}</div>
                 {!(
                   chartDialogPanelData &&
                   chartDialogPanelData !== null &&
                   Object.keys(chartDialogPanelData).length > 0
                 ) ? (
-                  <div className={classes.dateRangePicker}>
+                  <DateRangePickerContainer>
                     <GrafanaDateRangePicker
                       from={from}
                       startDate={startDate}
@@ -173,11 +193,11 @@ class GrafanaCustomCharts extends Component {
                       refresh={refresh}
                       updateDateRange={this.updateDateRange}
                     />
-                  </div>
+                  </DateRangePickerContainer>
                 ) : (
                   <div></div>
                 )}
-              </DialogTitle>
+              </StyledDialogTitle>
               <DialogContent>
                 <GrafanaCustomChart
                   board={chartDialogBoard}
@@ -213,30 +233,31 @@ class GrafanaCustomCharts extends Component {
 
             {boardPanelConfigs.map((config, ind) => (
               // <ExpansionPanel defaultExpanded={ind === 0?true:false}>
-              <ExpansionPanel key={ind} square defaultExpanded={ind === 0}>
-                <ExpansionPanelSummary expandIcon={<ExpandMoreIcon />}>
-                  <div className={classes.column}>
-                    <Typography variant="subtitle1" gutterBottom>
+              <StyledAccordion key={ind} square defaultExpanded={ind === 0}>
+                <StyledAccordionSummary expandIcon={<ExpandMoreIcon />}>
+                  <Column>
+                    <StyledHeading variant="subtitle1" gutterBottom>
                       {config.board && config.board.title
                         ? config.board.title
                         : config.title
-                        ? config.title
-                        : ''}
-                    </Typography>
-                  </div>
+                          ? config.title
+                          : ''}
+                    </StyledHeading>
+                  </Column>
                   {config.templateVars && config.templateVars.length > 0 && (
-                    <div className={classes.column}>
-                      <Typography variant="subtitle2">
+                    <Column>
+                      <SecondaryHeading variant="subtitle2">
                         {`Template variables: ${config.templateVars.join(' ')}`}
-                      </Typography>
-                    </div>
+                      </SecondaryHeading>
+                    </Column>
                   )}
-                </ExpansionPanelSummary>
-                <ExpansionPanelDetails>
+                </StyledAccordionSummary>
+                <AccordionDetails>
                   <Grid container spacing={3}>
                     {config.panels.map(
                       (panel, i) => (
                         // if(panel.type === 'graph'){
+
                         <Grid key={`grafana-chart-${i}`} item xs={12} lg={sparkline ? 12 : 6}>
                           <GrafanaCustomChart
                             connectionID={connectionID}
@@ -271,10 +292,10 @@ class GrafanaCustomCharts extends Component {
                       // } else return '';
                     )}
                   </Grid>
-                </ExpansionPanelDetails>
-              </ExpansionPanel>
+                </AccordionDetails>
+              </StyledAccordion>
             ))}
-          </div>
+          </GrafanaRoot>
         </React.Fragment>
       </NoSsr>
     );
@@ -282,7 +303,6 @@ class GrafanaCustomCharts extends Component {
 }
 
 GrafanaCustomCharts.propTypes = {
-  classes: PropTypes.object.isRequired,
   // grafanaURL: PropTypes.string.isRequired,
   // grafanaAPIKey: PropTypes.string.isRequired,
   boardPanelConfigs: PropTypes.array.isRequired,
@@ -290,4 +310,4 @@ GrafanaCustomCharts.propTypes = {
   // boardPanelData:
 };
 
-export default withStyles(grafanaStyles)(GrafanaCustomCharts);
+export default GrafanaCustomCharts;

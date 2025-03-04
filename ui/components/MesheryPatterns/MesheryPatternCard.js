@@ -1,26 +1,34 @@
 import React, { useState } from 'react';
-import { Avatar, Divider, Grid, IconButton, Typography, Link } from '@material-ui/core';
-import { CustomTooltip } from '@layer5/sistent';
-import DeleteIcon from '@material-ui/icons/Delete';
-import Save from '@material-ui/icons/Save';
-import Fullscreen from '@material-ui/icons/Fullscreen';
+import { Avatar, Divider, Grid, IconButton, Typography, Link, useTheme } from '@layer5/sistent';
+import { CustomTooltip, VisibilityChipMenu } from '@layer5/sistent';
+import DeleteIcon from '@mui/icons-material/Delete';
+import Save from '@mui/icons-material/Save';
+import Fullscreen from '@mui/icons-material/Fullscreen';
 import Moment from 'react-moment';
-import GetAppIcon from '@material-ui/icons/GetApp';
+import GetAppIcon from '@mui/icons-material/GetApp';
 import FlipCard from '../FlipCard';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
-import FullscreenExit from '@material-ui/icons/FullscreenExit';
+import FullscreenExit from '@mui/icons-material/FullscreenExit';
 import UndeployIcon from '../../public/static/img/UndeployIcon';
-import DoneAllIcon from '@material-ui/icons/DoneAll';
-import useStyles from './Cards.styles';
+import DoneAllIcon from '@mui/icons-material/DoneAll';
+import {
+  BottomContainer,
+  CatalogCardButtons,
+  UpdateDeleteButtons,
+  CardBackGrid,
+  YamlDialogTitleGrid,
+  CardHeaderRight,
+  GridBtnText,
+  GridCloneBtnText,
+  StyledCodeMirrorWrapper,
+} from './Cards.styles';
 import YAMLDialog from '../YamlDialog';
-import PublicIcon from '@material-ui/icons/Public';
+import PublicIcon from '@mui/icons-material/Public';
 import TooltipButton from '@/utils/TooltipButton';
 import CloneIcon from '../../public/static/img/CloneIcon';
-import { VISIBILITY } from '@/utils/Enum';
-import { useTheme } from '@material-ui/core/styles';
 import { useRouter } from 'next/router';
-import { Edit } from '@material-ui/icons';
-import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
+import { Edit, Lock, Public } from '@mui/icons-material';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
 import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { Provider } from 'react-redux';
@@ -30,8 +38,10 @@ import { keys } from '@/utils/permission_constants';
 import ActionButton from './ActionButton';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import CheckIcon from '@/assets/icons/CheckIcon';
+import { VISIBILITY } from '@/utils/Enum';
 import PatternIcon from '@/assets/icons/Pattern';
-import { iconLarge } from 'css/icons.styles';
+import { iconLarge, iconMedium } from 'css/icons.styles';
+import { VIEW_VISIBILITY } from '../Modals/Information/InfoModal';
 const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
 
 function MesheryPatternCard_({
@@ -76,14 +86,13 @@ function MesheryPatternCard_({
   const { data: owner } = useGetUserByIdQuery(pattern.user_id || '');
   const catalogContentKeys = Object.keys(description);
   const catalogContentValues = Object.values(description);
-  const classes = useStyles();
   const theme = useTheme();
 
   const editInConfigurator = () => {
     router.push('/configuration/designs/configurator?design_id=' + id);
   };
-  const userCanEdit =
-    CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject) || user?.user_id == pattern?.user_id; // allow if owner
+  const isOwner = user?.user_id == pattern?.user_id;
+  const userCanEdit = CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject) || isOwner;
 
   const formatPatternFile = (file) => {
     try {
@@ -129,7 +138,7 @@ function MesheryPatternCard_({
                   whiteSpace: 'nowrap',
                   overflow: 'hidden',
                   textOverflow: 'ellipsis',
-                  width: '20rem',
+                  width: '100%',
                 }}
                 variant="h6"
                 component="div"
@@ -139,10 +148,20 @@ function MesheryPatternCard_({
               {hideVisibility ? (
                 <PatternIcon {...iconLarge} color={true} />
               ) : (
-                <img className={classes.img} src={`/static/img/${visibility}.svg`} />
+                <div>
+                  <VisibilityChipMenu
+                    value={visibility}
+                    onChange={() => {}}
+                    enabled={false}
+                    options={[
+                      [VIEW_VISIBILITY.PUBLIC, Public],
+                      [VIEW_VISIBILITY.PRIVATE, Lock],
+                    ]}
+                  />
+                </div>
               )}
             </div>
-            <div className={classes.lastRunText}>
+            <div style={{ marginRight: '0.5rem' }}>
               <div>
                 {updated_at ? (
                   <Typography
@@ -160,18 +179,21 @@ function MesheryPatternCard_({
               </div>
             </div>
           </div>
-          <div className={classes.bottomPart}>
-            <div className={classes.cardButtons}>
+          <BottomContainer>
+            <CatalogCardButtons>
               {visibility === VISIBILITY.PUBLISHED && (
                 <TooltipButton
-                  variant="contained"
+                  variant="outlined"
                   title="Unpublish"
-                  className={classes.testsButton}
+                  style={{
+                    padding: '6px 9px',
+                    borderRadius: '8px',
+                  }}
                   onClick={(ev) => genericClickHandler(ev, handleUnpublishModal)}
                   disabled={!CAN(keys.UNPUBLISH_DESIGN.action, keys.UNPUBLISH_DESIGN.subject)}
                 >
-                  <PublicIcon className={classes.iconPatt} />
-                  <span className={classes.btnText}> Unpublish </span>
+                  <PublicIcon style={iconMedium} />
+                  <GridBtnText> Unpublish </GridBtnText>
                 </TooltipButton>
               )}
               <ActionButton
@@ -179,25 +201,25 @@ function MesheryPatternCard_({
                 options={[
                   {
                     label: 'Validate',
-                    icon: <CheckIcon className={classes.iconPatt} />,
+                    icon: <CheckIcon style={iconMedium} />,
                     onClick: (e) => genericClickHandler(e, handleVerify),
                     disabled: !CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject),
                   },
                   {
                     label: 'Dry Run',
-                    icon: <DryRunIcon className={classes.iconPatt} />,
+                    icon: <DryRunIcon style={iconMedium} />,
                     onClick: (e) => genericClickHandler(e, handleDryRun),
                     disabled: !CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject),
                   },
                   {
                     label: 'Deploy',
-                    icon: <DoneAllIcon className={classes.iconPatt} />,
+                    icon: <DoneAllIcon style={iconMedium} />,
                     onClick: (e) => genericClickHandler(e, handleDeploy),
                     disabled: !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject),
                   },
                   {
                     label: 'Undeploy',
-                    icon: <UndeployIcon fill={'currentColor'} className={classes.iconPatt} />,
+                    icon: <UndeployIcon fill={'currentColor'} style={iconMedium} />,
                     onClick: (e) => genericClickHandler(e, handleUnDeploy),
                     disabled: !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject),
                   },
@@ -208,26 +230,35 @@ function MesheryPatternCard_({
                 variant="contained"
                 color="primary"
                 onClick={handleDownload}
-                className={classes.testsButton}
+                style={{
+                  padding: '6px 9px',
+                  borderRadius: '8px',
+                }}
               >
-                <GetAppIcon data-cy="download-button" />
-                <span className={classes.btnText}> Download </span>
+                <GetAppIcon
+                  fill={theme.palette.background.constant.white}
+                  data-cy="download-button"
+                />
+                <GridBtnText> Download </GridBtnText>
               </TooltipButton>
-              {visibility === VISIBILITY.PRIVATE ? (
+              {visibility === VISIBILITY.PRIVATE && userCanEdit ? (
                 <TooltipButton
                   title="Design"
                   variant="contained"
                   color="primary"
                   onClick={(ev) => genericClickHandler(ev, setSelectedPatterns)}
-                  className={classes.testsButton}
+                  style={{
+                    padding: '6px 9px',
+                    borderRadius: '8px',
+                  }}
                   disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                 >
-                  <Avatar
+                  <img
                     src="/static/img/pattern_trans.svg"
-                    className={classes.iconPatt}
-                    imgProps={{ height: '16px', width: '16px' }}
+                    style={{ borderRadius: '50%', ...iconMedium }}
+                    // imgProps={{ height: '16px', width: '16px' }}
                   />
-                  <span className={classes.btnText}> Design </span>
+                  <GridBtnText> Design </GridBtnText>
                 </TooltipButton>
               ) : (
                 <TooltipButton
@@ -235,11 +266,14 @@ function MesheryPatternCard_({
                   variant="contained"
                   color="primary"
                   onClick={(ev) => genericClickHandler(ev, handleClone)}
-                  className={classes.testsButton}
+                  style={{
+                    padding: '6px 9px',
+                    borderRadius: '8px',
+                  }}
                   disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)}
                 >
-                  <CloneIcon fill="#ffffff" className={classes.iconPatt} />
-                  <span className={classes.cloneBtnText}> Clone </span>
+                  <CloneIcon fill={theme.palette.background.constant.white} style={iconMedium} />
+                  <GridCloneBtnText> Clone </GridCloneBtnText>
                 </TooltipButton>
               )}
 
@@ -250,10 +284,13 @@ function MesheryPatternCard_({
                   color="primary"
                   onClick={(ev) => genericClickHandler(ev, editInConfigurator)}
                   disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
-                  className={classes.testsButton}
+                  style={{
+                    padding: '6px 9px',
+                    borderRadius: '8px',
+                  }}
                 >
-                  <Edit style={{ fill: '#fff' }} className={classes.iconPatt} />
-                  <span className={classes.cloneBtnText}> Edit </span>
+                  <Edit style={{ fill: theme.palette.background.constant.white, ...iconMedium }} />
+                  <GridCloneBtnText> Edit </GridCloneBtnText>
                 </TooltipButton>
               )}
               <TooltipButton
@@ -261,30 +298,27 @@ function MesheryPatternCard_({
                 variant="contained"
                 color="primary"
                 onClick={(ev) => genericClickHandler(ev, handleInfoModal)}
-                className={classes.testsButton}
+                style={{
+                  padding: '6px 9px',
+                  borderRadius: '8px',
+                }}
                 disabled={!CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject)}
               >
-                <InfoOutlinedIcon style={{ fill: '#fff' }} className={classes.iconPatt} />
-                <span className={classes.btnText}> Info </span>
+                <InfoOutlinedIcon
+                  style={{ fill: theme.palette.background.constant.white, ...iconMedium }}
+                />
+                <GridBtnText> Info </GridBtnText>
               </TooltipButton>
-            </div>
-          </div>
+            </CatalogCardButtons>
+          </BottomContainer>
         </div>
 
         {/* BACK PART */}
         <>
-          <Grid
-            className={classes.backGrid}
-            container
-            spacing={1}
-            alignContent="space-between"
-            alignItems="center"
-          >
-            <Grid item xs={12} className={classes.yamlDialogTitle}>
-              <Typography variant="h6" className={classes.yamlDialogTitleText}>
-                {name}
-              </Typography>
-              <div className={classes.cardHeaderRight}>
+          <CardBackGrid container spacing={1} alignContent="space-between" alignItems="center">
+            <YamlDialogTitleGrid item xs={12}>
+              <Typography variant="h6">{name}</Typography>
+              <CardHeaderRight>
                 <Link href={`${MESHERY_CLOUD_PROD}/user/${pattern?.user_id}`} target="_blank">
                   <Avatar alt="profile-avatar" src={owner?.avatar_url} />
                 </Link>
@@ -301,32 +335,31 @@ function MesheryPatternCard_({
                     {fullScreen ? <FullscreenExit /> : <Fullscreen />}
                   </IconButton>
                 </CustomTooltip>
-              </div>
-            </Grid>
+              </CardHeaderRight>
+            </YamlDialogTitleGrid>
             <Grid item xs={12} onClick={(ev) => genericClickHandler(ev, () => {})}>
               <Divider variant="fullWidth" light />
               {catalogContentKeys.length === 0 ? (
-                <CodeMirror
-                  value={showCode && formatted_pattern_file}
-                  className={fullScreen ? classes.fullScreenCodeMirror : ''}
-                  options={{
-                    theme: 'material',
-                    lineNumbers: true,
-                    lineWrapping: true,
-                    gutters: ['CodeMirror-lint-markers'],
-                    // @ts-ignore
-                    lint: true,
-                    mode: 'text/x-yaml',
-                    readOnly: isReadOnly,
-                  }}
-                  onChange={(_, data, val) => setYaml(val)}
-                />
+                <StyledCodeMirrorWrapper fullScreen={fullScreen}>
+                  <CodeMirror
+                    value={showCode && formatted_pattern_file}
+                    options={{
+                      theme: 'material',
+                      lineNumbers: true,
+                      lineWrapping: true,
+                      gutters: ['CodeMirror-lint-markers'],
+                      // @ts-ignore
+                      lint: true,
+                      mode: 'text/x-yaml',
+                      readOnly: isReadOnly,
+                    }}
+                    onChange={(_, data, val) => setYaml(val)}
+                  />
+                </StyledCodeMirrorWrapper>
               ) : (
                 catalogContentKeys.map((title, index) => (
                   <>
-                    <Typography variant="h6" className={classes.yamlDialogTitleText}>
-                      {title}
-                    </Typography>
+                    <Typography variant="h6">{title}</Typography>
                     <Typography variant="body2">{catalogContentValues[index]}</Typography>
                   </>
                 ))
@@ -334,7 +367,7 @@ function MesheryPatternCard_({
             </Grid>
 
             <Grid item xs={8}>
-              <div className={classes.lastRunText}>
+              <div style={{ marginRight: '0.5rem' }}>
                 <div>
                   {created_at ? (
                     <Typography
@@ -354,14 +387,14 @@ function MesheryPatternCard_({
             </Grid>
             <Grid item xs={12}>
               {isReadOnly ? null : (
-                <div className={classes.updateDeleteButtons}>
+                <UpdateDeleteButtons>
                   {/* Save button */}
                   <CustomTooltip title="Save" arrow interactive placement="bottom">
                     <IconButton
                       disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                       onClick={(ev) => genericClickHandler(ev, updateHandler)}
                     >
-                      <Save color="primary" />
+                      <Save fill={theme.palette.background.constant.white} />
                     </IconButton>
                   </CustomTooltip>
 
@@ -371,13 +404,13 @@ function MesheryPatternCard_({
                       disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
                       onClick={(ev) => genericClickHandler(ev, deleteHandler)}
                     >
-                      <DeleteIcon color="primary" />
+                      <DeleteIcon fill={theme.palette.background.constant.white} />
                     </IconButton>
                   </CustomTooltip>
-                </div>
+                </UpdateDeleteButtons>
               )}
             </Grid>
-          </Grid>
+          </CardBackGrid>
         </>
       </FlipCard>
     </>

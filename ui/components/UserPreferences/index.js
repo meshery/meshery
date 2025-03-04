@@ -1,33 +1,43 @@
-//import useState from "react"
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
-import { withStyles } from '@material-ui/core/styles';
-import CopyIcon from '../../assets/icons/CopyIcon';
-import _ from 'lodash';
 import {
+  Tab,
+  Tabs,
   Typography,
   Grid,
-  FormControl,
-  FormLabel,
   FormGroup,
   FormControlLabel,
   Switch,
   IconButton,
-  Card,
   CardContent,
   CardHeader,
-  Box,
-} from '@material-ui/core';
-import { CustomTooltip } from '@layer5/sistent';
-import NoSsr from '@material-ui/core/NoSsr';
+  CustomTooltip,
+  NoSsr,
+} from '@layer5/sistent';
+import CopyIcon from '../../assets/icons/CopyIcon';
+import _ from 'lodash';
+import {
+  StatsWrapper,
+  ProviderCard,
+  RootContainer,
+  BoxWrapper,
+  Divider,
+  GridCapabilityHeader,
+  GridExtensionHeader,
+  GridExtensionItem,
+  StyledPaper,
+  TabLabel,
+  HideScrollbar,
+  IconStyled,
+  FormLegend,
+  FormContainerWrapper,
+  FormGroupWrapper,
+} from './style';
 import { updateUser, updateProgress, toggleCatalogContent } from '../../lib/store';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
-import { Paper } from '@material-ui/core';
-import SettingsRemoteIcon from '@material-ui/icons/SettingsRemote';
-import SettingsCellIcon from '@material-ui/icons/SettingsCell';
+import SettingsRemoteIcon from '@mui/icons-material/SettingsRemote';
+import SettingsCellIcon from '@mui/icons-material/SettingsCell';
 import ExtensionSandbox from '../ExtensionSandbox';
 import RemoteComponent from '../RemoteComponent';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
@@ -46,140 +56,19 @@ import {
 } from '@/rtk-query/user';
 import { ThemeTogglerCore } from '@/themes/hooks';
 
-const styles = (theme) => ({
-  statsWrapper: {
-    // padding : theme.spacing(2),
-    maxWidth: '100%',
-    height: 'auto',
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
-    borderBottomLeftRadius: 3,
-    borderBottomRightRadius: 3,
-  },
-  paperRoot: {
-    flexGrow: 1,
-    maxWidth: '100%',
-    marginLeft: 0,
-    borderTopLeftRadius: 3,
-    borderTopRightRadius: 3,
-  },
-  tabs: {
-    width: '100%',
-    marginLeft: 0,
-    '& .MuiTabs-indicator': {
-      backgroundColor: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
-    },
-  },
-  tab: {
-    width: '42%',
-    // maxWidth: 'min(33%, 200px)',
-    // minWidth: '50px',
-    margin: 0,
-    '&.Mui-selected': {
-      color: theme.palette.type === 'dark' ? '#00B39F' : theme.palette.primary,
-    },
-  },
-  icon: {
-    display: 'inline',
-    verticalAlign: 'text-top',
-    width: theme.spacing(1.75),
-    marginLeft: theme.spacing(0.5),
-  },
-  iconText: {
-    display: 'inline',
-    verticalAlign: 'middle',
-  },
-  backToPlay: { margin: theme.spacing(2) },
-  link: { cursor: 'pointer' },
-  formContainer: {
-    display: 'flex',
-    'flex-wrap': 'wrap',
-    'justify-content': 'space-evenly',
-    padding: 50,
-  },
-  formGrp: {
-    padding: 20,
-    border: '1.5px solid #969696',
-    display: 'flex',
-    width: '70%',
-  },
-  formLegend: { fontSize: 20 },
-  formLegendSmall: { fontSize: 16 },
-  switchBase: {
-    color: '#647881',
-    '&$checked': { color: '#00b39f' },
-    '&$checked + $track': { backgroundColor: 'rgba(0,179,159,0.5)' },
-  },
-  track: { backgroundColor: 'rgba(100,120,129,0.5)' },
-  checked: {},
-  tabLabel: {
-    [theme.breakpoints.up('sm')]: {
-      fontSize: '1em',
-    },
-    [theme.breakpoints.between('xs', 'sm')]: {
-      fontSize: '0.8em',
-    },
-  },
-  hideScrollbar: {
-    overflowX: 'auto',
-    '&::-webkit-scrollbar': {
-      display: 'none',
-    },
-    '&::-moz-scrollbar': {
-      display: 'none',
-    },
-  },
-  card: {
-    border: '1px solid rgba(0,179,159,0.3)',
-    margin: '20px 0px',
-    backgroundColor: theme.palette.type === 'dark' ? '#293B43' : '#C9DBE3',
-    // display: 'flex',
-    // flexWrap: 'wrap',
-  },
-  box: {
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'space-between',
-    whiteSpace: 'nowrap',
-    paddingRight: '10px',
-  },
-  gridCapabilityHeader: {
-    backgroundColor: theme.palette.type === 'dark' ? '#293B43' : '#7493A1',
-  },
-  gridExtensionHeader: {
-    backgroundColor: theme.palette.type === 'dark' ? '#293B43 ' : '#C9DBE3',
-  },
-  gridExtensionItem: {
-    backgroundColor: theme.palette.type === 'dark' ? '#3D4F57 ' : '#E7EFF3',
-  },
-  line: {
-    border: '1px solid rgba(116,147,161, 0.3)',
-    width: '100%',
-    margin: '30px 0',
-  },
-  root: {
-    width: '100%',
-    paddingLeft: theme.spacing(15),
-    paddingRight: theme.spacing(15),
-    paddingBottom: theme.spacing(10),
-    paddingTop: theme.spacing(5),
-  },
-});
+import { SecondaryTab, SecondaryTabs } from '../DashboardComponent/style';
 
-const ThemeToggler = ({ classes }) => {
+const ThemeToggler = ({ handleUpdateUserPref }) => {
   const Component = ({ mode, toggleTheme }) => {
     return (
       <div>
         <Switch
           color="primary"
-          classes={{
-            switchBase: classes.switchBase,
-            track: classes.track,
-            checked: classes.checked,
-            font: classes.checked,
-          }}
           checked={mode === 'dark'}
-          onChange={toggleTheme}
+          onChange={() => {
+            toggleTheme();
+            handleUpdateUserPref(mode === 'dark' ? 'light' : 'dark');
+          }}
         />
         Dark Mode
       </div>
@@ -350,249 +239,251 @@ const UserPreference = (props) => {
 
     return (
       <NoSsr>
-        <div className={props.classes.root}>
-          <Typography variant="h5">Provider Information</Typography>
-          <Grid container spacing={2}>
+        <>
+          <RootContainer>
+            <Typography variant="h5">Provider Information</Typography>
+            <Grid container spacing={2}>
+              {providerInfo &&
+                Object.entries(providerInfo).map(
+                  ([providerName, provider], index) =>
+                    (index < 2 || index === 3) && (
+                      <Grid key={index} item md={4} xs={12}>
+                        <ProviderCard>
+                          <CardHeader
+                            title={
+                              <Typography
+                                variant="h6"
+                                style={{
+                                  textDecoration: 'underline',
+                                  textDecorationColor: 'rgba(116,147,161,0.5)',
+                                  textUnderlineOffset: 10,
+                                }}
+                              >
+                                {convertToTitleCase(providerName)}
+                              </Typography>
+                            }
+                          />
+                          <CardContent>
+                            {' '}
+                            <BoxWrapper>
+                              <Typography
+                                variant="body1"
+                                component={HideScrollbar}
+                                style={{ marginRight: '20px' }}
+                              >
+                                {provider}
+                              </Typography>
+                            </BoxWrapper>
+                          </CardContent>
+                        </ProviderCard>
+                      </Grid>
+                    ),
+                )}
+            </Grid>
             {providerInfo &&
               Object.entries(providerInfo).map(
                 ([providerName, provider], index) =>
-                  (index < 2 || index === 3) && (
-                    <Grid key={index} item md={4} xs={12}>
-                      <Card className={props.classes.card}>
-                        <CardHeader
-                          title={
-                            <Typography
-                              variant="h6"
-                              style={{
-                                textDecoration: 'underline',
-                                textDecorationColor: 'rgba(116,147,161,0.5)',
-                                textUnderlineOffset: 10,
-                              }}
+                  (index === 2 || index === 5) && (
+                    <ProviderCard key={index} sx={{ margin: '20px' }}>
+                      <CardHeader
+                        title={
+                          <Typography
+                            variant="h6"
+                            style={{
+                              textDecoration: 'underline',
+                              textDecorationColor: 'rgba(116,147,161,0.5)',
+                              textUnderlineOffset: 10,
+                            }}
+                          >
+                            {convertToTitleCase(providerName)}
+                          </Typography>
+                        }
+                      />
+                      <CardContent>
+                        {' '}
+                        <BoxWrapper>
+                          <Typography
+                            variant="body1"
+                            component={HideScrollbar}
+                            style={{ marginRight: '20px' }}
+                          >
+                            {provider}
+                          </Typography>
+
+                          <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
+                            <IconButton
+                              onClick={() => copyToClipboard(provider)}
+                              style={{ padding: '0.25rem', float: 'right' }}
                             >
-                              {convertToTitleCase(providerName)}
-                            </Typography>
-                          }
-                        />
-                        <CardContent>
-                          {' '}
-                          <Box className={props.classes.box}>
-                            <Typography
-                              variant="body1"
-                              className={props.classes.hideScrollbar}
-                              style={{ marginRight: '20px' }}
-                            >
-                              {provider}
-                            </Typography>
-                          </Box>
-                        </CardContent>
-                      </Card>
-                    </Grid>
+                              <CopyIcon />
+                            </IconButton>
+                          </CustomTooltip>
+                        </BoxWrapper>
+                      </CardContent>
+                    </ProviderCard>
                   ),
               )}
-          </Grid>
-          {providerInfo &&
-            Object.entries(providerInfo).map(
-              ([providerName, provider], index) =>
-                (index === 2 || index === 5) && (
-                  <Card key={index} className={props.classes.card} sx={{ margin: '20px' }}>
-                    <CardHeader
-                      title={
-                        <Typography
-                          variant="h6"
-                          style={{
-                            textDecoration: 'underline',
-                            textDecorationColor: 'rgba(116,147,161,0.5)',
-                            textUnderlineOffset: 10,
-                          }}
-                        >
-                          {convertToTitleCase(providerName)}
-                        </Typography>
-                      }
-                    />
-                    <CardContent>
-                      {' '}
-                      <Box className={props.classes.box}>
-                        <Typography
-                          variant="body1"
-                          className={props.classes.hideScrollbar}
-                          style={{ marginRight: '20px' }}
-                        >
-                          {provider}
-                        </Typography>
 
-                        <CustomTooltip title={copied ? 'Copied!' : 'Copy'} placement="top">
-                          <IconButton
-                            onClick={() => copyToClipboard(provider)}
-                            style={{ padding: '0.25rem', float: 'right' }}
-                          >
-                            <CopyIcon />
-                          </IconButton>
-                        </CustomTooltip>
-                      </Box>
-                    </CardContent>
-                  </Card>
-                ),
-            )}
-
-          <Card className={props.classes.card}>
-            <CardHeader
-              title={
-                <Typography
-                  variant="h6"
-                  style={{
-                    textDecoration: 'underline',
-                    textDecorationColor: 'rgba(116,147,161,0.5)',
-                    textUnderlineOffset: 10,
-                  }}
-                >
-                  Description
+            <ProviderCard>
+              <CardHeader
+                title={
+                  <Typography
+                    variant="h6"
+                    style={{
+                      textDecoration: 'underline',
+                      textDecorationColor: 'rgba(116,147,161,0.5)',
+                      textUnderlineOffset: 10,
+                    }}
+                  >
+                    Description
+                  </Typography>
+                }
+              />
+              <CardContent>
+                <Typography>
+                  <ul>
+                    {providerInfo.provider_description &&
+                      providerInfo.provider_description.map((desc, index) => (
+                        <li key={index}>
+                          <Typography>{desc}</Typography>
+                        </li>
+                      ))}
+                  </ul>
                 </Typography>
-              }
-            />
-            <CardContent>
-              <Typography>
-                <ul>
-                  {providerInfo.provider_description &&
-                    providerInfo.provider_description.map((desc, index) => (
-                      <li key={index}>
-                        <Typography>{desc}</Typography>
-                      </li>
-                    ))}
-                </ul>
-              </Typography>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </ProviderCard>
 
-          <hr className={props.classes.line} />
-          <Typography variant="h5" style={{ margin: '20px 0' }}>
-            Capabilities
-          </Typography>
+            <Divider />
+            <Typography variant="h5" style={{ margin: '20px 0' }}>
+              Capabilities
+            </Typography>
 
-          <Grid container spacing={2} style={{ display: 'flex', justifyContent: 'space-between' }}>
             <Grid
-              item
-              xs={6}
-              className={props.classes.gridCapabilityHeader}
-              style={{ borderRadius: '10px 0 0 0', padding: '10px 20px' }}
+              container
+              spacing={2}
+              style={{ display: 'flex', justifyContent: 'space-between' }}
             >
-              <Typography variant="body1" style={{ fontWeight: 'bold' }}>
-                Feature
-              </Typography>
+              <GridCapabilityHeader
+                item
+                xs={6}
+                style={{ borderRadius: '10px 0 0 0', padding: '10px 20px' }}
+              >
+                <Typography variant="body1" style={{ fontWeight: 'bold' }}>
+                  Feature
+                </Typography>
+              </GridCapabilityHeader>
+              <GridCapabilityHeader
+                item
+                xs={6}
+                style={{ borderRadius: '0 10px 0 0', padding: '10px 20px' }}
+              >
+                <Typography variant="body1" style={{ fontWeight: 'bold' }}>
+                  Endpoint
+                </Typography>
+              </GridCapabilityHeader>
+              {providerInfo.capabilities &&
+                providerInfo.capabilities.map((capability, index) => (
+                  <>
+                    <GridCapabilityHeader
+                      item
+                      key={`${index}-${capability.feature}`}
+                      xs={6}
+                      style={{
+                        padding: '20px 20px',
+                        backgroundColor:
+                          userData?.remoteProviderPreferences?.theme === 'dark'
+                            ? index % 2 === 0
+                              ? '#3D4F57'
+                              : '#293B43'
+                            : index % 2 === 0
+                              ? '#E7EFF3'
+                              : '#C9DBE3',
+                      }}
+                    >
+                      <Typography variant="body1">{capability.feature}</Typography>
+                    </GridCapabilityHeader>
+                    <GridCapabilityHeader
+                      item
+                      key={`${index}-${capability.endpoint}`}
+                      xs={6}
+                      style={{
+                        padding: '20px 20px',
+                        backgroundColor:
+                          userData?.remoteProviderPreferences?.theme === 'dark'
+                            ? index % 2 === 0
+                              ? '#3D4F57'
+                              : '#293B43'
+                            : index % 2 === 0
+                              ? '#E7EFF3'
+                              : '#C9DBE3',
+                      }}
+                    >
+                      <Typography variant="body1">{capability.endpoint}</Typography>
+                    </GridCapabilityHeader>
+                  </>
+                ))}
             </Grid>
-            <Grid
-              item
-              xs={6}
-              className={props.classes.gridCapabilityHeader}
-              style={{ borderRadius: '0 10px 0 0', padding: '10px 20px' }}
-            >
-              <Typography variant="body1" style={{ fontWeight: 'bold' }}>
-                Endpoint
-              </Typography>
-            </Grid>
-            {providerInfo.capabilities &&
-              providerInfo.capabilities.map((capability, index) => (
-                <>
-                  <Grid
-                    item
-                    key={`${index}-${capability.feature}`}
-                    xs={6}
-                    style={{
-                      padding: '20px 20px',
-                      backgroundColor:
-                        userData?.remoteProviderPreferences?.theme === 'dark'
-                          ? index % 2 === 0
-                            ? '#3D4F57'
-                            : '#293B43'
-                          : index % 2 === 0
-                          ? '#E7EFF3'
-                          : '#C9DBE3',
-                    }}
-                  >
-                    <Typography variant="body1">{capability.feature}</Typography>
+            <Divider />
+            <Typography variant="h5" style={{ margin: '20px 0' }}>
+              Extensions
+            </Typography>
+            {providerInfo.extensions &&
+              Object.entries(providerInfo.extensions).map(([extensionName, extension], index) => (
+                <div key={index} margin="20px 0px">
+                  <Typography variant="h6"> {convertToTitleCase(extensionName)}</Typography>
+                  <Grid container spacing={2} style={{ margin: '10px 0 20px 0' }}>
+                    <GridExtensionHeader
+                      item
+                      xs={6}
+                      style={{
+                        borderRadius: '10px 0 0 0',
+                        padding: '10px 20px',
+                      }}
+                    >
+                      <Typography variant="body1" style={{ fontWeight: 'bold' }}>
+                        Component
+                      </Typography>
+                    </GridExtensionHeader>
+                    <GridExtensionHeader
+                      item
+                      xs={6}
+                      style={{
+                        borderRadius: '0 10px 0 0',
+                        padding: '10px 20px',
+                      }}
+                    >
+                      <Typography variant="body1" style={{ fontWeight: 'bold' }}>
+                        Type
+                      </Typography>
+                    </GridExtensionHeader>
+
+                    <GridExtensionItem
+                      item
+                      xs={6}
+                      style={{
+                        borderRadius: '0 0 0 10px',
+                        padding: '20px 20px',
+                      }}
+                    >
+                      <Typography variant="body1">{extension[0].component}</Typography>
+                    </GridExtensionItem>
+                    <GridExtensionItem
+                      item
+                      xs={6}
+                      style={{
+                        borderRadius: '0 0 10px 0',
+                        padding: '20px 20px',
+                      }}
+                    >
+                      <Typography variant="body1">
+                        {convertToTitleCase(extension[0].type)}
+                      </Typography>
+                    </GridExtensionItem>
                   </Grid>
-                  <Grid
-                    item
-                    key={`${index}-${capability.endpoint}`}
-                    xs={6}
-                    style={{
-                      padding: '20px 20px',
-                      backgroundColor:
-                        userData?.remoteProviderPreferences?.theme === 'dark'
-                          ? index % 2 === 0
-                            ? '#3D4F57'
-                            : '#293B43'
-                          : index % 2 === 0
-                          ? '#E7EFF3'
-                          : '#C9DBE3',
-                    }}
-                  >
-                    <Typography variant="body1">{capability.endpoint}</Typography>
-                  </Grid>
-                </>
+                </div>
               ))}
-          </Grid>
-          <hr className={props.classes.line} />
-          <Typography variant="h5" style={{ margin: '20px 0' }}>
-            Extensions
-          </Typography>
-          {providerInfo.extensions &&
-            Object.entries(providerInfo.extensions).map(([extensionName, extension], index) => (
-              <div key={index} margin="20px 0px">
-                <Typography variant="h6"> {convertToTitleCase(extensionName)}</Typography>
-                <Grid container spacing={2} style={{ margin: '10px 0 20px 0' }}>
-                  <Grid
-                    item
-                    xs={6}
-                    className={props.classes.gridExtensionHeader}
-                    style={{
-                      borderRadius: '10px 0 0 0',
-                      padding: '10px 20px',
-                    }}
-                  >
-                    <Typography variant="body1" style={{ fontWeight: 'bold' }}>
-                      Component
-                    </Typography>
-                  </Grid>
-                  <Grid
-                    item
-                    xs={6}
-                    className={props.classes.gridExtensionHeader}
-                    style={{
-                      borderRadius: '0 10px 0 0',
-                      padding: '10px 20px',
-                    }}
-                  >
-                    <Typography variant="body1" style={{ fontWeight: 'bold' }}>
-                      Type
-                    </Typography>
-                  </Grid>
-
-                  <Grid
-                    item
-                    xs={6}
-                    className={props.classes.gridExtensionItem}
-                    style={{
-                      borderRadius: '0 0 0 10px',
-                      padding: '20px 20px',
-                    }}
-                  >
-                    <Typography variant="body1">{extension[0].component}</Typography>
-                  </Grid>
-                  <Grid
-                    item
-                    xs={6}
-                    className={props.classes.gridExtensionItem}
-                    style={{
-                      borderRadius: '0 0 10px 0',
-                      padding: '20px 20px',
-                    }}
-                  >
-                    <Typography variant="body1">{convertToTitleCase(extension[0].type)}</Typography>
-                  </Grid>
-                </Grid>
-              </div>
-            ))}
-        </div>
+          </RootContainer>
+        </>
       </NoSsr>
     );
   };
@@ -602,181 +493,147 @@ const UserPreference = (props) => {
     updateUserPrefWithContext(updates);
   };
   return (
-    <NoSsr>
-      <Paper square className={props.classes.paperRoot}>
-        <Tabs
-          value={tabVal}
-          onChange={handleTabValChange}
-          variant={width < 600 ? 'scrollable' : 'fullWidth'}
-          scrollButtons="on"
-          allowScrollButtonsMobile={true}
-          indicatorColor="primary"
-          textColor="primary"
-          className={props.classes.tabs}
-          centered
-        >
-          <CustomTooltip title="General preferences" placement="top">
-            <Tab
-              className={props.classes.tab}
-              icon={<SettingsCellIcon style={iconMedium} />}
-              label={<span className={props.classes.tabLabel}>General</span>}
-            />
-          </CustomTooltip>
-          <CustomTooltip title="Choose Performance Test Defaults" placement="top">
-            <Tab
-              className={props.classes.tab}
-              icon={<FontAwesomeIcon icon={faTachometerAlt} style={iconMedium} />}
-              label={<span className={props.classes.tabLabel}>Performance</span>}
-            />
-          </CustomTooltip>
-          {/* NOTE: This tab's appearance is logical hence it must be put at last here! Otherwise added logic will need to be added for tab numbers!*/}
-          {userPrefs && providerType != 'local' && (
-            <CustomTooltip title="Remote Provider preferences" placement="top">
+    <>
+      <NoSsr>
+        <StyledPaper>
+          <Tabs
+            value={tabVal}
+            onChange={handleTabValChange}
+            variant={width < 600 ? 'scrollable' : 'fullWidth'}
+            scrollButtons="on"
+            allowScrollButtonsMobile={true}
+            indicatorColor="primary"
+            textColor="primary"
+            centered
+          >
+            <CustomTooltip title="General preferences" placement="top">
               <Tab
-                className={props.classes.tab}
-                icon={<SettingsRemoteIcon style={iconMedium} />}
-                label={<span className={props.classes.tabLabel}>Remote Provider</span>}
+                icon={<IconStyled as={SettingsCellIcon} />}
+                label={<TabLabel>General</TabLabel>}
               />
             </CustomTooltip>
+            <CustomTooltip title="Choose Performance Test Defaults" placement="top">
+              <Tab
+                icon={<FontAwesomeIcon icon={faTachometerAlt} style={iconMedium} />}
+                label={<TabLabel>Performance</TabLabel>}
+              />
+            </CustomTooltip>
+            {/* NOTE: This tab's appearance is logical hence it must be put at last here! Otherwise added logic will need to be added for tab numbers!*/}
+            {userPrefs && providerType != 'local' && (
+              <CustomTooltip title="Remote Provider preferences" placement="top">
+                <Tab
+                  icon={<SettingsRemoteIcon style={iconMedium} />}
+                  label={<TabLabel>Remote Provider</TabLabel>}
+                />
+              </CustomTooltip>
+            )}
+          </Tabs>
+        </StyledPaper>
+        <StatsWrapper>
+          {tabVal === 0 && (
+            <>
+              <FormContainerWrapper>
+                <FormGroupWrapper component="fieldset">
+                  <FormLegend component="legend">Extensions</FormLegend>
+                  <FormGroup>
+                    <FormControlLabel
+                      key="CatalogContentPreference"
+                      control={
+                        <Switch
+                          checked={catalogContent}
+                          onChange={handleCatalogContentToggle}
+                          color="primary"
+                          data-cy="CatalogContentPreference"
+                        />
+                      }
+                      labelPlacement="end"
+                      label="Meshery Catalog Content"
+                    />
+                  </FormGroup>
+                </FormGroupWrapper>
+              </FormContainerWrapper>
+              <FormContainerWrapper>
+                <FormGroupWrapper component="fieldset">
+                  <FormLegend component="legend">Analytics and Improvement Program</FormLegend>
+                  <FormGroup>
+                    <FormControlLabel
+                      key="UsageStatsPreference"
+                      control={
+                        <Switch
+                          checked={anonymousStats}
+                          onChange={handleToggle('anonymousUsageStats')}
+                          color="primary"
+                          data-cy="UsageStatsPreference"
+                        />
+                      }
+                      labelPlacement="end"
+                      label="Send Anonymous Usage Statistics"
+                    />
+                    <FormControlLabel
+                      key="PerfResultPreference"
+                      control={
+                        <Switch
+                          checked={perfResultStats}
+                          onChange={handleToggle('anonymousPerfResults')}
+                          color="primary"
+                          data-cy="PerfResultPreference"
+                        />
+                      }
+                      labelPlacement="end"
+                      label="Send Anonymous Performance Results"
+                    />
+                  </FormGroup>
+                </FormGroupWrapper>
+              </FormContainerWrapper>
+              <FormContainerWrapper>
+                <FormGroupWrapper component="fieldset">
+                  <FormLegend component="legend">Theme</FormLegend>
+
+                  <FormGroup>
+                    <ThemeToggler
+                      handleUpdateUserPref={handleUpdateUserPref}
+                      classes={props.classes}
+                    />
+                  </FormGroup>
+                </FormGroupWrapper>
+              </FormContainerWrapper>
+            </>
           )}
-        </Tabs>
-      </Paper>
-      <Paper className={props.classes.statsWrapper}>
-        {tabVal === 0 && (
-          <>
-            <div className={props.classes.formContainer}>
-              <FormControl component="fieldset" className={props.classes.formGrp}>
-                <FormLabel component="legend" className={props.classes.formLegend}>
-                  Extensions
-                </FormLabel>
-                <FormGroup>
-                  <FormControlLabel
-                    key="CatalogContentPreference"
-                    control={
-                      <Switch
-                        checked={catalogContent}
-                        onChange={handleCatalogContentToggle}
-                        color="primary"
-                        classes={{
-                          switchBase: props.classes.switchBase,
-                          track: props.classes.track,
-                          checked: props.classes.checked,
-                        }}
-                        data-cy="CatalogContentPreference"
-                      />
-                    }
-                    labelPlacement="end"
-                    label="Meshery Catalog Content"
-                  />
-                </FormGroup>
-              </FormControl>
-            </div>
-            <div className={props.classes.formContainer}>
-              <FormControl component="fieldset" className={props.classes.formGrp}>
-                <FormLabel component="legend" className={props.classes.formLegend}>
-                  Analytics and Improvement Program
-                </FormLabel>
-                <FormGroup>
-                  <FormControlLabel
-                    key="UsageStatsPreference"
-                    control={
-                      <Switch
-                        checked={anonymousStats}
-                        onChange={handleToggle('anonymousUsageStats')}
-                        color="primary"
-                        classes={{
-                          switchBase: props.classes.switchBase,
-                          track: props.classes.track,
-                          checked: props.classes.checked,
-                        }}
-                        data-cy="UsageStatsPreference"
-                      />
-                    }
-                    labelPlacement="end"
-                    label="Send Anonymous Usage Statistics"
-                  />
-                  <FormControlLabel
-                    key="PerfResultPreference"
-                    control={
-                      <Switch
-                        checked={perfResultStats}
-                        onChange={handleToggle('anonymousPerfResults')}
-                        color="primary"
-                        classes={{
-                          switchBase: props.classes.switchBase,
-                          track: props.classes.track,
-                          checked: props.classes.checked,
-                        }}
-                        data-cy="PerfResultPreference"
-                      />
-                    }
-                    labelPlacement="end"
-                    label="Send Anonymous Performance Results"
-                  />
-                </FormGroup>
-              </FormControl>
-            </div>
+          {tabVal === 1 && <MesherySettingsPerformanceComponent />}
+          {tabVal === 2 && userPrefs && providerType !== 'local' && (
+            <>
+              <SecondaryTabs
+                value={value}
+                onChange={handleValChange}
+                variant={width < 600 ? 'scrollable' : 'fullWidth'}
+                scrollButtons="on"
+                allowScrollButtonsMobile={true}
+                indicatorColor="primary"
+                textColor="primary"
+                centered
+              >
+                <CustomTooltip title="Details" placement="top">
+                  <SecondaryTab label={<TabLabel>Details</TabLabel>} />
+                </CustomTooltip>
+                <CustomTooltip title="Plugins" placement="top">
+                  <SecondaryTab label={<TabLabel>Plugins</TabLabel>} />
+                </CustomTooltip>
+              </SecondaryTabs>
+              <StatsWrapper>
+                {value === 0 && <RemoteProviderInfoTab />}
 
-            <div className={props.classes.formContainer}>
-              <FormControl component="fieldset" className={props.classes.formGrp}>
-                <FormLabel component="legend" className={props.classes.formLegend}>
-                  Theme
-                </FormLabel>
-
-                <FormGroup>
-                  <FormControlLabel
-                    key="ThemePreference"
-                    control={
-                      <ThemeToggler
-                        handleUpdateUserPref={handleUpdateUserPref}
-                        classes={props.classes}
-                      />
-                    }
-                    labelPlacement="end"
+                {value === 1 && (
+                  <ExtensionSandbox
+                    type="user_prefs"
+                    Extension={(url) => RemoteComponent({ url })}
                   />
-                </FormGroup>
-              </FormControl>
-            </div>
-          </>
-        )}
-        {tabVal === 1 && <MesherySettingsPerformanceComponent />}
-        {tabVal === 2 && userPrefs && providerType !== 'local' && (
-          <>
-            <Tabs
-              value={value}
-              onChange={handleValChange}
-              variant={width < 600 ? 'scrollable' : 'fullWidth'}
-              scrollButtons="on"
-              allowScrollButtonsMobile={true}
-              indicatorColor="primary"
-              textColor="primary"
-              className={props.classes.tabs}
-              centered
-            >
-              <CustomTooltip title="Details" placement="top">
-                <Tab
-                  className={props.classes.tab}
-                  label={<span className={props.classes.tabLabel}>Details</span>}
-                />
-              </CustomTooltip>
-              <CustomTooltip title="Plugins" placement="top">
-                <Tab
-                  className={props.classes.tab}
-                  label={<span className={props.classes.tabLabel}>Plugins</span>}
-                />
-              </CustomTooltip>
-            </Tabs>
-            <Paper className={props.classes.statsWrapper}>
-              {value === 0 && <RemoteProviderInfoTab />}
-
-              {value === 1 && (
-                <ExtensionSandbox type="user_prefs" Extension={(url) => RemoteComponent({ url })} />
-              )}
-            </Paper>
-          </>
-        )}
-      </Paper>
-    </NoSsr>
+                )}
+              </StatsWrapper>
+            </>
+          )}
+        </StatsWrapper>
+      </NoSsr>
+    </>
   );
 };
 
@@ -797,6 +654,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-export default withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(UserPreference)),
-);
+export default connect(mapStateToProps, mapDispatchToProps)(withRouter(UserPreference));

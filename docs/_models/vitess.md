@@ -42,6 +42,9 @@ components:
   colorIcon: assets/img/integrations/vitess/components/vitess-shard/icons/color/vitess-shard-color.svg
   whiteIcon: assets/img/integrations/vitess/components/vitess-shard/icons/white/vitess-shard-white.svg
   description: 
+components-count: 8
+relationships: 
+relationship-count: 0
 featureList: [
   "Drag-n-drop cloud native infrastructure designer to configure, model, and deploy your workloads.",
   "Invite anyone to review and make changes to your private designs.",

@@ -10,6 +10,9 @@ integrations-category: Provisioning
 integrations-subcategory: Security & Compliance
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Verifies software build and release processes",
   "Provides end-to-end supply chain security",

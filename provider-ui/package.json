@@ -18,15 +18,15 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@babel/eslint-parser": "^7.25.9",
-    "@emotion/cache": "^11.10.5",
-    "@emotion/react": "^11.13.5",
+    "@emotion/cache": "^11.14.0",
+    "@emotion/react": "^11.14.0",
     "@emotion/server": "^11.11.0",
-    "@emotion/styled": "^11.13.5",
-    "@mui/icons-material": "^5.15.16",
-    "@mui/material": "^5.15.11",
+    "@emotion/styled": "^11.14.0",
+    "@layer5/sistent": "^0.14.156",
     "babel-plugin-istanbul": "^7.0.0",
     "http-proxy": "^1.18.1",
     "isomorphic-unfetch": "^4.0.2",
+    "mui-datatables": "^4.3.0",
     "next": "^13.5.4",
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
@@ -34,10 +34,10 @@
   },
   "devDependencies": {
     "eslint": "^8.57.0",
-    "eslint-config-next": "^15.0.3",
-    "start-server-and-test": "^2.0.8"
+    "eslint-config-next": "^15.2.0",
+    "start-server-and-test": "^2.0.9"
   },
   "engines": {
-    "node": "^16 || ^18"
+    "node": "^18 || ^20"
   }
 }

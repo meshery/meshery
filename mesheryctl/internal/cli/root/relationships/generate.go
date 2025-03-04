@@ -34,16 +34,16 @@ type CustomValueRange struct {
 	VisualizationExample string `json:"VisualizationExample"`
 }
 
-var GenerateRelationshipDocsCmd = &cobra.Command{
+var generateCmd = &cobra.Command{
 	Use:   "generate",
 	Short: "generate relationships docs",
 	Long:  "generate relationships docs from the google spreadsheets",
 	Example: `
-    // generate relationships docs
-    mesheryctl relationships generate $CRED
+// Generate relationships docs
+mesheryctl exp relationship generate [google-sheets-credential] --sheetId [sheet-id]
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp relationship generate $CRED [google-sheets-credential] --sheetId [sheet-id]\nRun 'mesheryctl exp relationship generate --help' to see detailed help message"
+		const errMsg = "Usage: mesheryctl exp relationship generate [google-sheets-credential] --sheetId [sheet-id]\nRun 'mesheryctl exp relationship generate --help' to see detailed help message"
 
 		if len(args) == 0 {
 			return errors.New(utils.RelationshipsError("Google Sheet Credentials is required\n"+errMsg, "generate"))
@@ -75,20 +75,21 @@ var GenerateRelationshipDocsCmd = &cobra.Command{
 		}
 
 		// If no error, fetch the data from the sheet
-		err = createJsonFile(resp)
+		err = createJsonFile(resp, "../docs/_data/RelationshipsData.json")
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
 		}
-		utils.Log.Info("Relationships data generated successfully in docs/_data/RelationshipsData.json")
+		utils.Log.Info("Relationships data generated in docs/_data/RelationshipsData.json")
 		return nil
 	},
 }
 
 func init() {
-	GenerateRelationshipDocsCmd.PersistentFlags().StringVarP(&sheetID, "sheetId", "s", "", "Google Sheet ID")
+	generateCmd.PersistentFlags().StringVarP(&sheetID, "sheetId", "s", "", "Google Sheet ID")
 }
-func createJsonFile(resp *sheets.ValueRange) error {
+
+func createJsonFile(resp *sheets.ValueRange, jsonFilePath string) error {
 
 	var customResp []CustomValueRange
 
@@ -120,7 +121,7 @@ func createJsonFile(resp *sheets.ValueRange) error {
 		return nil
 	}
 
-	jsonFile, err := os.Create("../docs/_data/RelationshipsData.json")
+	jsonFile, err := os.Create(jsonFilePath)
 	if err != nil {
 		utils.Log.Error(err)
 		return nil

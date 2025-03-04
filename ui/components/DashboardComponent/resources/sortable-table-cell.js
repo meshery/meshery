@@ -1,4 +1,4 @@
-import { Grid, TableCell, TableSortLabel, Tooltip, Typography } from '@material-ui/core';
+import { Grid, Tooltip, Typography, TableCell, TableSortLabel } from '@layer5/sistent';
 
 export const SortableTableCell = ({ index, columnData, columnMeta, onSort, icon, tooltip }) => {
   return (

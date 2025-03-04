@@ -10,6 +10,9 @@ integrations-category: Orchestration & Management
 integrations-subcategory: Coordination & Service Discovery
 registrant: Artifact Hub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Serves zone data from a file; both DNSSEC (NSEC only) and DNS are supported (file and auto).",
   "Retrieves zone data from primaries, i.e., act as a secondary server (AXFR only) (secondary).",

@@ -5,7 +5,6 @@ import * as Types from './types';
 import { promisifiedDataFetch } from '../../../../lib/data-fetch';
 import { useNotification } from '../../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../../lib/event-types';
-import { getUnit8ArrayForDesign } from '@/utils/utils';
 
 export default function useDesignLifecycle() {
   const [designId, setDesignId] = useState();
@@ -95,18 +94,16 @@ export default function useDesignLifecycle() {
   function designSave() {
     promisifiedDataFetch('/api/pattern', {
       body: JSON.stringify({
-        pattern_data: {
-          name: designJson.name,
-          pattern_file: getUnit8ArrayForDesign(designYaml),
-        },
-        save: true,
+        id: designJson.id,
+        name: designJson.name,
+        design_file: designJson,
       }),
       method: 'POST',
     })
       .then((data) => {
         setDesignId(data[0].id);
         notify({
-          message: `"${designJson.name}" saved successfully`,
+          message: `"${designJson.name}" saved`,
           event_type: EVENT_TYPES.SUCCESS,
         });
       })
@@ -123,16 +120,14 @@ export default function useDesignLifecycle() {
     try {
       await promisifiedDataFetch('/api/pattern', {
         body: JSON.stringify({
-          pattern_data: {
-            name: designJson.name,
-            pattern_file: getUnit8ArrayForDesign(designYaml),
-            id: designId,
-          },
+          name: designJson.name,
+          design_file: designJson,
+          id: designId,
         }),
         method: 'POST',
       });
       notify({
-        message: `"${designJson.name}" updated successfully`,
+        message: `"${designJson.name}" updated`,
         event_type: EVENT_TYPES.SUCCESS,
       });
     } catch (err) {

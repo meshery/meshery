@@ -1,14 +1,8 @@
-import MomentUtils from '@date-io/moment';
-import { NoSsr, Typography } from '@material-ui/core';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Hidden from '@material-ui/core/Hidden';
-import { ThemeProvider, withStyles } from '@material-ui/core/styles';
-import { CheckCircle, Error, Info, Warning } from '@material-ui/icons';
-import FavoriteIcon from '@material-ui/icons/Favorite';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-// import 'billboard.js/dist/theme/insight.min.css';
+import { CheckCircle, Error, Info, Warning } from '@mui/icons-material';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 import 'billboard.js/dist/theme/dark.min.css';
-// import 'billboard.js/dist/billboard. min.css';
 import 'codemirror/addon/lint/lint.css';
 // codemirror + js-yaml imports when added to a page was preventing to navigating to that page using nextjs
 // link clicks, hence attempting to add them here
@@ -19,8 +13,7 @@ import _ from 'lodash';
 import withRedux from 'next-redux-wrapper';
 import App from 'next/app';
 import Head from 'next/head';
-import { SnackbarContent, SnackbarProvider } from 'notistack';
-import PropTypes from 'prop-types';
+import { SnackbarProvider } from 'notistack';
 import React, { useEffect } from 'react';
 import { connect, Provider, useSelector } from 'react-redux';
 import Header from '../components/Header';
@@ -30,6 +23,8 @@ import getPageContext from '../components/PageContext';
 import { MESHERY_CONTROLLER_SUBSCRIPTION } from '../components/subscription/helpers';
 import { GQLSubscription } from '../components/subscription/subscriptionhandler';
 import dataFetch, { promisifiedDataFetch } from '../lib/data-fetch';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
 import {
   actionTypes,
   makeStore,
@@ -37,13 +32,12 @@ import {
   updateTelemetryUrls,
   setConnectionMetadata,
   LegacyStoreContext,
+  setK8sContexts,
 } from '../lib/store';
-import { styles } from '../themes';
 import { getConnectionIDsFromContextIds, getK8sConfigIdsFromK8sConfig } from '../utils/multi-ctx';
 import './../public/static/style/index.css';
 import subscribeK8sContext from '../components/graphql/subscriptions/K8sContextSubscription';
 import { bindActionCreators } from 'redux';
-import { darkTheme, lightTheme } from '../themes/app';
 import './styles/AnimatedFilter.css';
 import './styles/AnimatedMeshery.css';
 import './styles/AnimatedMeshPattern.css';
@@ -60,19 +54,34 @@ import { CONNECTION_KINDS, CONNECTION_KINDS_DEF, CONNECTION_STATES } from '../ut
 import CAN, { ability } from '../utils/can';
 import { getCredentialByID } from '@/api/credentials';
 import { DynamicComponentProvider } from '@/utils/context/dynamicContext';
-import { useTheme } from '@material-ui/core/styles';
 import { store } from '../store';
 import { RTKContext } from '@/store/hooks';
-import classNames from 'classnames';
-import { forwardRef } from 'react';
 import { formatToTitleCase } from '@/utils/utils';
 import { useThemePreference } from '@/themes/hooks';
-import { BasicMarkdown, CircularProgress, ErrorBoundary } from '@layer5/sistent';
+import {
+  ErrorBoundary,
+  useTheme,
+  SistentThemeProvider,
+  CssBaseline,
+  Typography,
+  Hidden,
+  NoSsr,
+} from '@layer5/sistent';
 import LoadingScreen from '@/components/LoadingComponents/LoadingComponentServer';
 import { LoadSessionGuard } from '@/rtk-query/ability';
 import { randomLoadingMessage } from '@/components/LoadingComponents/loadingMessages';
 import { keys } from '@/utils/permission_constants';
 import CustomErrorFallback from '@/components/General/ErrorBoundary';
+import {
+  StyledAppContent,
+  StyledDrawer,
+  StyledFooterBody,
+  StyledFooterText,
+  StyledMainContent,
+  StyledContentWrapper,
+  StyledRoot,
+  ThemeResponsiveSnackbar,
+} from '../themes/App.styles';
 
 if (typeof window !== 'undefined') {
   require('codemirror/mode/yaml/yaml');
@@ -107,7 +116,7 @@ export function isExtensionOpen() {
   return window.location.pathname.startsWith(mesheryExtensionRoute);
 }
 
-const Footer = ({ classes, capabilitiesRegistry, handleL5CommunityClick }) => {
+const Footer = ({ capabilitiesRegistry, handleL5CommunityClick }) => {
   const theme = useTheme();
 
   const extension = useSelector((state) => {
@@ -119,25 +128,19 @@ const Footer = ({ classes, capabilitiesRegistry, handleL5CommunityClick }) => {
   }
 
   return (
-    <footer
-      className={
-        capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted
-          ? classes.playgFooter
-          : theme.palette.type === 'dark'
-          ? classes.footerDark
-          : classes.footer
-      }
-    >
+    <StyledFooterBody>
       <Typography
         variant="body2"
         align="center"
-        color="textSecondary"
         component="p"
-        style={
-          capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? { color: '#000' } : {}
-        }
+        style={{
+          color:
+            theme.palette.mode === 'light'
+              ? theme.palette.text.default
+              : theme.palette.text.disabled,
+        }}
       >
-        <span onClick={handleL5CommunityClick} className={classes.footerText}>
+        <StyledFooterText onClick={handleL5CommunityClick}>
           {capabilitiesRegistry?.restrictedAccess?.isMesheryUiRestricted ? (
             'ACCESS LIMITED IN MESHERY PLAYGROUND. DEPLOY MESHERY TO ACCESS ALL FEATURES.'
           ) : (
@@ -146,17 +149,17 @@ const Footer = ({ classes, capabilitiesRegistry, handleL5CommunityClick }) => {
               Built with{' '}
               <FavoriteIcon
                 style={{
-                  color:
-                    theme.palette.type === 'dark' ? theme.palette.secondary.focused : '#00b39f',
+                  color: theme.palette.background.brand.default,
+                  display: 'inline',
+                  verticalAlign: 'bottom',
                 }}
-                className={classes.footerIcon}
               />{' '}
               by the Layer5 Community
             </>
           )}
-        </span>
+        </StyledFooterText>
       </Typography>
-    </footer>
+    </StyledFooterBody>
   );
 };
 
@@ -386,10 +389,7 @@ class MesheryApp extends App {
     if (activeK8sContexts.includes('all')) {
       activeK8sContexts = ['all'];
     }
-    this.props.store.dispatch({
-      type: actionTypes.SET_K8S_CONTEXT,
-      selectedK8sContexts: activeK8sContexts,
-    });
+    this.props.store.dispatch(setK8sContexts({ selectedK8sContexts: activeK8sContexts }));
   };
 
   setActiveContexts = (id) => {
@@ -651,86 +651,8 @@ class MesheryApp extends App {
   }
 
   render() {
-    const { Component, pageProps, classes, isDrawerCollapsed, relayEnvironment } = this.props;
+    const { Component, pageProps, isDrawerCollapsed, relayEnvironment } = this.props;
     const setAppState = this.setAppState.bind(this);
-
-    //eslint-disable-next-line
-    const ThemeResponsiveSnackbar = forwardRef((props, forwardedRef) => {
-      const { variant, message, action, key } = props;
-
-      const styleMap = {
-        info: {
-          dark: classes.darknotifInfo,
-          light: classes.notifInfo,
-        },
-        success: {
-          dark: classes.darknotifSuccess,
-          light: classes.notifSuccess,
-        },
-        warning: {
-          dark: classes.darknotifWarn,
-          light: classes.notifWarn,
-        },
-        error: {
-          dark: classes.darknotifError,
-          light: classes.notifError,
-        },
-        loading: {
-          dark: classes.darknotifInfo,
-          light: classes.notifInfo,
-        },
-        default: {
-          dark: classes.darknotifInfo,
-          light: classes.notifInfo,
-        },
-      };
-
-      const theme = this.state.theme === 'dark' ? 'dark' : 'light';
-      const currentStyle = styleMap?.[variant]?.[theme] || styleMap.default[theme];
-
-      return (
-        <SnackbarContent
-          ref={forwardedRef}
-          className={classNames(classes[variant], currentStyle)}
-          style={{
-            borderRadius: '0.3rem',
-          }}
-        >
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              padding: '0.5rem',
-            }}
-          >
-            {variant === 'error' ? (
-              <Error style={{ marginRight: '0.5rem' }} />
-            ) : variant === 'success' ? (
-              <CheckCircle style={{ marginRight: '0.5rem' }} />
-            ) : variant === 'warning' ? (
-              <Warning style={{ marginRight: '0.5rem' }} />
-            ) : variant === 'info' ? (
-              <Info style={{ marginRight: '0.5rem' }} />
-            ) : variant === 'loading' ? (
-              <CircularProgress size={24} style={{ marginRight: '0.5rem' }} />
-            ) : null}
-            <div className={classes.message}>
-              <BasicMarkdown content={message} />
-            </div>
-
-            <div
-              style={{
-                marginLeft: '5px',
-              }}
-              className={classes.action}
-            >
-              {action && action?.(key)}
-            </div>
-          </div>
-        </SnackbarContent>
-      );
-    });
-
     const canShowNav = !this.state.isFullScreenMode && uiConfig?.components?.navigator !== false;
 
     return (
@@ -741,35 +663,17 @@ class MesheryApp extends App {
               <NoSsr>
                 <ErrorBoundary customFallback={CustomErrorFallback}>
                   <LoadSessionGuard>
-                    <div className={classes.root}>
+                    <StyledRoot>
                       <CssBaseline />
-                      {canShowNav && (
-                        <nav
-                          className={isDrawerCollapsed ? classes.drawerCollapsed : classes.drawer}
-                          data-test="navigation"
-                          id="left-navigation-bar"
-                          style={{ height: '100%', overflow: 'visible' }}
-                        >
-                          <Hidden smUp implementation="js">
-                            <Navigator
-                              variant="temporary"
-                              open={this.state.mobileOpen}
-                              onClose={this.handleDrawerToggle}
-                              onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
-                              isDrawerCollapsed={isDrawerCollapsed}
-                              updateExtensionType={this.updateExtensionType}
-                            />
-                          </Hidden>
-                          <Hidden xsDown implementation="css">
-                            <Navigator
-                              onCollapseDrawer={(open = null) => this.handleCollapseDrawer(open)}
-                              isDrawerCollapsed={isDrawerCollapsed}
-                              updateExtensionType={this.updateExtensionType}
-                            />
-                          </Hidden>
-                        </nav>
-                      )}
-                      <div className={classes.appContent}>
+                      <NavigationBar
+                        isDrawerCollapsed={isDrawerCollapsed}
+                        mobileOpen={this.state.mobileOpen}
+                        handleDrawerToggle={this.handleDrawerToggle}
+                        handleCollapseDrawer={this.handleCollapseDrawer}
+                        updateExtensionType={this.updateExtensionType}
+                        canShowNav={canShowNav}
+                      />
+                      <StyledAppContent canShowNav={canShowNav}>
                         <SnackbarProvider
                           anchorOrigin={{
                             vertical: 'bottom',
@@ -809,34 +713,34 @@ class MesheryApp extends App {
                                 abilityUpdated={this.state.abilityUpdated}
                               />
                             )}
-                            <main
-                              className={classes.mainContent}
-                              style={{
-                                padding: this.props.extensionType === 'navigator' && '0px',
-                              }}
-                            >
-                              <MuiPickersUtilsProvider utils={MomentUtils}>
-                                <ErrorBoundary customFallback={CustomErrorFallback}>
-                                  <Component
-                                    pageContext={this.pageContext}
-                                    contexts={this.state.k8sContexts}
-                                    activeContexts={this.state.activeK8sContexts}
-                                    setActiveContexts={this.setActiveContexts}
-                                    searchContexts={this.searchContexts}
-                                    {...pageProps}
-                                  />
-                                </ErrorBoundary>
-                              </MuiPickersUtilsProvider>
-                            </main>
+                            <StyledContentWrapper>
+                              <StyledMainContent
+                                style={{
+                                  padding: this.props.extensionType === 'navigator' && '0px',
+                                }}
+                              >
+                                <LocalizationProvider dateAdapter={AdapterMoment}>
+                                  <ErrorBoundary customFallback={CustomErrorFallback}>
+                                    <Component
+                                      pageContext={this.pageContext}
+                                      contexts={this.state.k8sContexts}
+                                      activeContexts={this.state.activeK8sContexts}
+                                      setActiveContexts={this.setActiveContexts}
+                                      searchContexts={this.searchContexts}
+                                      {...pageProps}
+                                    />
+                                  </ErrorBoundary>
+                                </LocalizationProvider>
+                              </StyledMainContent>
+                              <Footer
+                                handleL5CommunityClick={this.handleL5CommunityClick}
+                                capabilitiesRegistry={this.props.capabilitiesRegistry}
+                              />
+                            </StyledContentWrapper>
                           </NotificationCenterProvider>
                         </SnackbarProvider>
-                        <Footer
-                          classes={classes}
-                          handleL5CommunityClick={this.handleL5CommunityClick}
-                          capabilitiesRegistry={this.props.capabilitiesRegistry}
-                        />
-                      </div>
-                    </div>
+                      </StyledAppContent>
+                    </StyledRoot>
                     <PlaygroundMeshDeploy
                       closeForm={() => this.setState({ isOpen: false })}
                       isOpen={this.state.isOpen}
@@ -851,8 +755,6 @@ class MesheryApp extends App {
     );
   }
 }
-
-MesheryApp.propTypes = { classes: PropTypes.object.isRequired };
 
 const mapStateToProps = (state) => ({
   isDrawerCollapsed: state.get('isDrawerCollapsed'),
@@ -871,14 +773,12 @@ const mapDispatchToProps = (dispatch) => ({
   setConnectionMetadata: bindActionCreators(setConnectionMetadata, dispatch),
 });
 
-const MesheryWithRedux = withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(MesheryApp),
-);
+const MesheryWithRedux = connect(mapStateToProps, mapDispatchToProps)(MesheryApp);
 
 const MesheryThemeProvider = ({ children }) => {
   const themePref = useThemePreference();
   const mode = themePref?.data?.mode || 'dark';
-  return <ThemeProvider theme={mode === 'dark' ? darkTheme : lightTheme}>{children}</ThemeProvider>;
+  return <SistentThemeProvider initialMode={mode}>{children}</SistentThemeProvider>;
 };
 
 const MesheryAppWrapper = (props) => {
@@ -890,22 +790,55 @@ const MesheryAppWrapper = (props) => {
             <link rel="shortcut icon" href="/static/img/meshery-logo/meshery-logo.svg" />
             <title>Meshery</title>
           </Head>
-          <MuiPickersUtilsProvider utils={MomentUtils}>
+          <LocalizationProvider dateAdapter={AdapterMoment}>
             <MesheryWithRedux {...props} />
-          </MuiPickersUtilsProvider>
+          </LocalizationProvider>
         </Provider>
       </Provider>
     </Provider>
   );
 };
 
-// export default withStyles(styles)(withRedux(makeStore, {
-//   serializeState : state => state.toJS(),
-//   deserializeState : state => fromJS(state)
-// })(MesheryAppWrapper));
-export default withStyles(styles)(
-  withRedux(makeStore, {
-    serializeState: (state) => state.toJS(),
-    deserializeState: (state) => fromJS(state),
-  })(MesheryAppWrapper),
-);
+export default withRedux(makeStore, {
+  serializeState: (state) => state.toJS(),
+  deserializeState: (state) => fromJS(state),
+})(MesheryAppWrapper);
+
+const NavigationBar = ({
+  isDrawerCollapsed,
+  mobileOpen,
+  handleDrawerToggle,
+  handleCollapseDrawer,
+  updateExtensionType,
+  canShowNav,
+}) => {
+  if (!canShowNav) {
+    return null;
+  }
+
+  return (
+    <StyledDrawer
+      isDrawerCollapsed={isDrawerCollapsed}
+      data-testid="navigation"
+      id="left-navigation-bar"
+    >
+      <Hidden smUp implementation="js">
+        <Navigator
+          variant="temporary"
+          open={mobileOpen}
+          onClose={handleDrawerToggle}
+          onCollapseDrawer={(open = null) => handleCollapseDrawer(open)}
+          isDrawerCollapsed={isDrawerCollapsed}
+          updateExtensionType={updateExtensionType}
+        />
+      </Hidden>
+      <Hidden xsDown implementation="css">
+        <Navigator
+          onCollapseDrawer={(open = null) => handleCollapseDrawer(open)}
+          isDrawerCollapsed={isDrawerCollapsed}
+          updateExtensionType={updateExtensionType}
+        />
+      </Hidden>
+    </StyledDrawer>
+  );
+};

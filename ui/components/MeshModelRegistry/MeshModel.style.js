@@ -1,13 +1,12 @@
-import { styled } from '@layer5/sistent';
-import { Button, alpha } from '@material-ui/core';
+import { styled, Button, alpha } from '@layer5/sistent';
 import { TreeItem, treeItemClasses } from '@mui/x-tree-view/TreeItem';
 
 export const DisableButton = styled(Button)(({ theme }) => ({
   '&.MuiButtonBase-root:disabled': {
     cursor: 'not-allowed',
     pointerEvents: 'auto',
-    backgroundColor: theme.palette.secondary.disableButtonBg,
-    color: theme.palette.secondary.disableButton,
+    backgroundColor: theme.palette.background.brand.disabled,
+    color: theme.palette.text.disabled,
   },
 }));
 
@@ -34,10 +33,10 @@ export const StyledTreeItemRoot = styled(TreeItem)(({ theme, root, lineColor }) 
   },
 
   [`& .${treeItemClasses.content}`]: {
-    fontWeight: theme.typography.fontWeightBold,
+    fontWeight: theme.typography.fontWeightRegular,
     borderRadius: '0px 4px 4px 0px',
     '&.Mui-expanded': {
-      fontWeight: theme.typography.fontWeightBold,
+      fontWeight: theme.typography.fontWeightRegular,
     },
     '&:hover': {
       backgroundColor: `transparent`,
@@ -47,7 +46,7 @@ export const StyledTreeItemRoot = styled(TreeItem)(({ theme, root, lineColor }) 
       borderLeft: '3px solid #00bfa0',
     },
     [`& .${treeItemClasses.label}`]: {
-      fontWeight: theme.typography.fontWeightBold,
+      fontWeight: theme.typography.fontWeightRegular,
     },
   },
   [`& .${treeItemClasses.group}`]: {
@@ -80,7 +79,7 @@ export const StyledKeyValueFormattedValue = styled('div')(({ theme }) => ({
 }));
 
 export const StyledTreeItemNameDiv = styled('div')(({ theme }) => ({
-  fontWeight: theme.typography.fontWeightBold,
+  fontWeight: theme.typography.fontWeightRegular,
 }));
 
 export const StyledTreeItemDiv = styled('div')(() => ({

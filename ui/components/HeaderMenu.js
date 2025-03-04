@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import MenuIcon from '@material-ui/icons/Menu';
+import React, { useState, useRef, useEffect } from 'react';
+import MenuIcon from '@mui/icons-material/Menu';
 import { useRouter } from 'next/router';
 import { Provider, connect } from 'react-redux';
 import { store } from '../store';
@@ -11,9 +11,8 @@ import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
-import { NavigationNavbar } from '@layer5/sistent';
-import { Popover, IconButton } from '@material-ui/core';
-import theme from '@/themes/app';
+import { NavigationNavbar, Popover } from '@layer5/sistent';
+import { IconButtonAvatar } from './Header.styles';
 
 function exportToJsonFile(jsonData, filename) {
   let dataStr = JSON.stringify(jsonData);
@@ -67,16 +66,18 @@ const HeaderMenu = (props) => {
       });
   };
 
-  if (!userLoaded && isGetUserSuccess) {
-    props.updateUser({ user: userData });
-    setUserLoaded(true);
-  } else if (isGetUserError) {
-    notify({
-      message: 'Error fetching user',
-      event_type: EVENT_TYPES.ERROR,
-      details: getUserError?.data,
-    });
-  }
+  useEffect(() => {
+    if (!userLoaded && isGetUserSuccess) {
+      props.updateUser({ user: userData });
+      setUserLoaded(true);
+    } else if (isGetUserError) {
+      notify({
+        message: 'Error fetching user',
+        event_type: EVENT_TYPES.ERROR,
+        details: getUserError?.data,
+      });
+    }
+  }, [userData, isGetUserSuccess, isGetUserError]);
 
   if (isTokenError) {
     notify({
@@ -86,10 +87,14 @@ const HeaderMenu = (props) => {
     });
   }
 
-  if (!capabilitiesLoadedRef.current && capabilitiesRegistry) {
-    capabilitiesLoadedRef.current = true;
-    setAccount(ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account));
-  }
+  useEffect(() => {
+    if (!capabilitiesLoadedRef.current && capabilitiesRegistry) {
+      capabilitiesLoadedRef.current = true;
+      setAccount(
+        ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account),
+      );
+    }
+  }, [capabilitiesRegistry]);
 
   const getAccountNavigationItems = () => {
     const accountItems = account.map((item) => ({
@@ -152,15 +157,10 @@ const HeaderMenu = (props) => {
   const id = open ? 'menu-popover' : undefined;
 
   return (
-    <div>
-      <IconButton
-        aria-describedby={id}
-        onClick={handleClick}
-        color={props.color}
-        className={props.iconButtonClassName}
-      >
+    <>
+      <IconButtonAvatar aria-describedby={id} onClick={handleClick}>
         <MenuIcon />
-      </IconButton>
+      </IconButtonAvatar>
 
       <Popover
         id={id}
@@ -182,14 +182,13 @@ const HeaderMenu = (props) => {
           ListItemTextProps={{
             primaryTypographyProps: {
               sx: {
-                fontFamily: theme.typography.fontFamily,
                 fontSize: '1rem',
               },
             },
           }}
         />
       </Popover>
-    </div>
+    </>
   );
 };
 

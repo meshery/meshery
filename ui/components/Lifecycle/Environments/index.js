@@ -1,25 +1,22 @@
 import { useEffect, useRef, useState } from 'react';
-import { Button, Grid, NoSsr, Typography, Box } from '@material-ui/core';
-import { connect } from 'react-redux';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { withStyles } from '@material-ui/core/styles';
-import { Pagination, PaginationItem } from '@material-ui/lab';
+import { Pagination, PaginationItem } from '@layer5/sistent';
 import { withRouter } from 'next/router';
 import { debounce } from 'lodash';
-import { Delete } from '@material-ui/icons';
-import classNames from 'classnames';
+import { Delete } from '@mui/icons-material';
+import { NoSsr } from '@layer5/sistent';
+import { CreateButtonWrapper, BulkActionWrapper } from './styles';
+import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 
 import AddIconCircleBorder from '../../../assets/icons/AddIconCircleBorder';
 import EnvironmentCard from './environment-card';
 import EnvironmentIcon from '../../../assets/icons/Environment';
 import { EVENT_TYPES } from '../../../lib/event-types';
-import { updateProgress } from '../../../lib/store';
+import { updateProgress, useLegacySelector } from '../../../lib/store';
 import { useNotification } from '../../../utils/hooks/useNotification';
-import useStyles from '../../../assets/styles/general/tool.styles';
-import SearchBar from '../../../utils/custom-search';
 import { RJSFModalWrapper } from '../../Modal';
-import PromptComponent, { PROMPT_VARIANTS } from '../../PromptComponent';
+import _PromptComponent from '../../PromptComponent';
 import { EmptyState } from '../General';
 import {
   Modal as SisitentModal,
@@ -29,6 +26,12 @@ import {
   PrimaryActionButtons,
   createAndEditEnvironmentSchema,
   createAndEditEnvironmentUiSchema,
+  ErrorBoundary,
+  Button,
+  Grid,
+  Typography,
+  SearchBar,
+  PROMPT_VARIANTS,
 } from '@layer5/sistent';
 import ConnectionIcon from '../../../assets/icons/Connection';
 import { TRANSFER_COMPONENT } from '../../../utils/Enum';
@@ -41,18 +44,19 @@ import {
   useUpdateEnvironmentMutation,
   useDeleteEnvironmentMutation,
 } from '../../../rtk-query/environments';
-import styles from './styles';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import DefaultError from '../../General/error-404/index';
-import { UsesSistent } from '@/components/SistentWrapper';
 
 const ACTION_TYPES = {
   CREATE: 'create',
   EDIT: 'edit',
 };
 
-const Environments = ({ organization, classes }) => {
+const Environments = () => {
+  const organization = useLegacySelector((state) =>
+    state.get('organization')?.toJS ? state.get('organization').toJS() : state.get('organization'),
+  );
   const [environmentModal, setEnvironmentModal] = useState({
     open: false,
     schema: {},
@@ -80,7 +84,6 @@ const Environments = ({ organization, classes }) => {
 
   const modalRef = useRef(null);
   const { notify } = useNotification();
-  const StyleClass = useStyles();
 
   const {
     data: environmentsData,
@@ -297,7 +300,7 @@ const Environments = ({ organization, classes }) => {
     let response = await modalRef.current.show({
       title: `Delete "${environment.name}" environment?`,
       subtitle: deleteEnvironmentModalContent(environment.name),
-      options: ['DELETE', 'CANCEL'],
+      primaryOption: 'DELETE',
       showInfoIcon: `Deleting an environment does not delete any resources (e.g. connections) currently contained with the environment.
       Resources that belong to others environments will continue to belong to those other environments.
       Learn more about the behavior of [lifecycle of environments and their resources](https://docs.meshery.io/concepts/logical/environments) in Meshery Docs.`,
@@ -344,7 +347,7 @@ const Environments = ({ organization, classes }) => {
     let response = await modalRef.current.show({
       title: `Delete Environment(s) ?`,
       subtitle: `Do you want to delete ${selectedEnvironments.length} environment(s) ?`,
-      options: ['DELETE', 'CANCEL'],
+      primaryOption: 'DELETE',
       variant: PROMPT_VARIANTS.DANGER,
     });
     if (response === 'DELETE') {
@@ -444,25 +447,25 @@ const Environments = ({ organization, classes }) => {
     <NoSsr>
       {CAN(keys.VIEW_ENVIRONMENTS.action, keys.VIEW_ENVIRONMENTS.subject) ? (
         <>
-          <div className={StyleClass.toolWrapper} style={{ marginBottom: '20px', display: 'flex' }}>
-            <div className={classes.createButtonWrapper}>
+          <ToolWrapper>
+            <CreateButtonWrapper>
               <Button
                 type="submit"
                 variant="contained"
                 color="primary"
                 size="large"
                 onClick={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.CREATE)}
-                style={{
+                sx={{
                   padding: '8px',
-                  borderRadius: 5,
+                  borderRadius: '5px',
                   marginRight: '2rem',
                 }}
                 disabled={!CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject)}
                 data-cy="btnResetDatabase"
               >
-                <AddIconCircleBorder style={{ width: '20px', height: '20px' }} />
+                <AddIconCircleBorder sx={{ width: '20px', height: '20px' }} />
                 <Typography
-                  style={{
+                  sx={{
                     paddingLeft: '4px',
                     marginRight: '4px',
                   }}
@@ -470,7 +473,7 @@ const Environments = ({ organization, classes }) => {
                   Create
                 </Typography>
               </Button>
-            </div>
+            </CreateButtonWrapper>
             <SearchBar
               onSearch={(value) => {
                 setSearch(value);
@@ -479,17 +482,17 @@ const Environments = ({ organization, classes }) => {
               expanded={isSearchExpanded}
               setExpanded={setIsSearchExpanded}
             />
-          </div>
+          </ToolWrapper>
           {selectedEnvironments.length > 0 && (
-            <Box className={classNames(classes.bulkActionWrapper, StyleClass.toolWrapper)}>
+            <BulkActionWrapper>
               <Typography>
                 {selectedEnvironments.length > 1
                   ? `${selectedEnvironments.length} environments selected`
                   : `${selectedEnvironments.length} environment selected`}
               </Typography>
-              <Button className={classes.iconButton}>
+              <Button>
                 <Delete
-                  style={{ color: 'red', margin: '0 2px' }}
+                  sx={{ color: 'red', margin: '0 2px' }}
                   onClick={handleBulkDeleteEnvironmentConfirm}
                   disabled={
                     selectedEnvironments.length > 0
@@ -498,7 +501,7 @@ const Environments = ({ organization, classes }) => {
                   }
                 />
               </Button>
-            </Box>
+            </BulkActionWrapper>
           )}
           {environments.length > 0 ? (
             <>
@@ -506,7 +509,7 @@ const Environments = ({ organization, classes }) => {
                 {environments.map((environment) => (
                   <Grid item xs={12} md={6} key={environment.id}>
                     <EnvironmentCard
-                      classes={classes}
+                      // classes={classes}
                       environmentDetails={environment}
                       selectedEnvironments={selectedEnvironments}
                       onEdit={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.EDIT, environment)}
@@ -519,8 +522,7 @@ const Environments = ({ organization, classes }) => {
               </Grid>
               <Grid
                 container
-                sx={{ padding: '2rem 0' }}
-                style={{ marginTop: '20px' }}
+                sx={{ padding: '2rem 0', marginTop: '20px' }}
                 flex
                 justifyContent="center"
                 spacing={2}
@@ -528,11 +530,6 @@ const Environments = ({ organization, classes }) => {
                 <Pagination
                   count={Math.ceil(environmentsData?.total_count / pageSize)}
                   page={page + 1}
-                  sx={{
-                    backgroundColor: 'white',
-                    borderRadius: '1rem',
-                    padding: '0.5rem',
-                  }}
                   onChange={debounce((_, page) => setPage(page - 1), 150)}
                   boundaryCount={3}
                   renderItem={(item) => (
@@ -553,6 +550,7 @@ const Environments = ({ organization, classes }) => {
                   fill="#808080"
                   secondaryFill="#979797"
                 />
+                // TODO: replace all fill and secondary fill hex values with sistent tokens
               }
               message="No environment available"
               pointerLabel="Click “Create” to establish your first environment."
@@ -561,82 +559,78 @@ const Environments = ({ organization, classes }) => {
           {(CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject) ||
             CAN(keys.EDIT_ENVIRONMENT.action, keys.EDIT_ENVIRONMENT.subject)) &&
             environmentModal.open && (
-              <UsesSistent>
-                <SisitentModal
-                  open={environmentModal.open}
-                  closeModal={handleEnvironmentModalClose}
-                  title={
-                    actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
+              <SisitentModal
+                open={environmentModal.open}
+                closeModal={handleEnvironmentModalClose}
+                title={
+                  actionType === ACTION_TYPES.CREATE ? 'Create Environment' : 'Edit Environment'
+                }
+              >
+                <RJSFModalWrapper
+                  schema={environmentModal.schema.schema}
+                  uiSchema={environmentModal.schema.uischema}
+                  handleSubmit={
+                    actionType === ACTION_TYPES.CREATE
+                      ? handleCreateEnvironment
+                      : handleEditEnvironment
                   }
-                >
-                  <RJSFModalWrapper
-                    schema={environmentModal.schema.schema}
-                    uiSchema={environmentModal.schema.uischema}
-                    handleSubmit={
-                      actionType === ACTION_TYPES.CREATE
-                        ? handleCreateEnvironment
-                        : handleEditEnvironment
-                    }
-                    submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
-                    initialData={initialData}
-                    handleClose={handleEnvironmentModalClose}
-                  />
-                </SisitentModal>
-              </UsesSistent>
+                  submitBtnText={actionType === ACTION_TYPES.CREATE ? 'Save' : 'Update'}
+                  initialData={initialData}
+                  handleClose={handleEnvironmentModalClose}
+                />
+              </SisitentModal>
             )}
-          <UsesSistent>
-            <SisitentModal
-              open={assignConnectionModal}
-              closeModal={handleonAssignConnectionModalClose}
-              title={`${connectionAssignEnv.name} Resources`}
-              headerIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
-              maxWidth="md"
-            >
-              <ModalBody>
-                <TransferList
-                  name="Connections"
-                  assignableData={connectionsData}
-                  assignedData={handleAssignConnectionData}
-                  originalAssignedData={environmentConnectionsData}
-                  emptyStateIconLeft={
-                    <ConnectionIcon width="120" primaryFill="#808080" secondaryFill="#979797" />
-                  }
-                  emtyStateMessageLeft="No connections available"
-                  emptyStateIconRight={
-                    <ConnectionIcon width="120" primaryFill="#808080" secondaryFill="#979797" />
-                  }
-                  emtyStateMessageRight="No connections assigned"
-                  transferComponentType={TRANSFER_COMPONENT.CHIP}
-                  assignablePage={handleAssignablePage}
-                  assignedPage={handleAssignedPage}
-                  originalLeftCount={connections?.total_count}
-                  originalRightCount={environmentConnections?.total_count}
-                  leftPermission={CAN(
-                    keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.action,
-                    keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.subject,
-                  )}
-                  rightPermission={CAN(
-                    keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
-                    keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
-                  )}
-                />
-              </ModalBody>
-              <ModalFooter variant="filled" helpText="Assign connections to environment">
-                <PrimaryActionButtons
-                  primaryText="Save"
-                  secondaryText="Cancel"
-                  primaryButtonProps={{
-                    onClick: handleAssignConnection,
-                    disabled: disableTranferButton,
-                  }}
-                  secondaryButtonProps={{
-                    onClick: handleonAssignConnectionModalClose,
-                  }}
-                />
-              </ModalFooter>
-            </SisitentModal>
-          </UsesSistent>
-          <PromptComponent ref={modalRef} />
+          <SisitentModal
+            open={assignConnectionModal}
+            closeModal={handleonAssignConnectionModalClose}
+            title={`${connectionAssignEnv.name} Resources`}
+            headerIcon={<EnvironmentIcon height="2rem" width="2rem" fill="white" />}
+            maxWidth="md"
+          >
+            <ModalBody>
+              <TransferList
+                name="Connections"
+                assignableData={connectionsData}
+                assignedData={handleAssignConnectionData}
+                originalAssignedData={environmentConnectionsData}
+                emptyStateIconLeft={
+                  <ConnectionIcon width="120" primaryFill="#808080" secondaryFill="#979797" />
+                }
+                emtyStateMessageLeft="No connections available"
+                emptyStateIconRight={
+                  <ConnectionIcon width="120" primaryFill="#808080" secondaryFill="#979797" />
+                }
+                emtyStateMessageRight="No connections assigned"
+                transferComponentType={TRANSFER_COMPONENT.CHIP}
+                assignablePage={handleAssignablePage}
+                assignedPage={handleAssignedPage}
+                originalLeftCount={connections?.total_count}
+                originalRightCount={environmentConnections?.total_count}
+                leftPermission={CAN(
+                  keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.action,
+                  keys.REMOVE_CONNECTIONS_FROM_ENVIRONMENT.subject,
+                )}
+                rightPermission={CAN(
+                  keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.action,
+                  keys.ASSIGN_CONNECTIONS_TO_ENVIRONMENT.subject,
+                )}
+              />
+            </ModalBody>
+            <ModalFooter variant="filled" helpText="Assign connections to environment">
+              <PrimaryActionButtons
+                primaryText="Save"
+                secondaryText="Cancel"
+                primaryButtonProps={{
+                  onClick: handleAssignConnection,
+                  disabled: disableTranferButton,
+                }}
+                secondaryButtonProps={{
+                  onClick: handleonAssignConnectionModalClose,
+                }}
+              />
+            </ModalFooter>
+          </SisitentModal>
+          <_PromptComponent ref={modalRef} />
         </>
       ) : (
         <DefaultError />
@@ -645,21 +639,14 @@ const Environments = ({ organization, classes }) => {
   );
 };
 
-const mapStateToProps = (state) => {
-  const organization = state.get('organization');
-  return {
-    organization,
-  };
-};
-
 const EnvironmentsPageWithErrorBoundary = (props) => {
   return (
     <NoSsr>
-      <Environments {...props} />
+      <ErrorBoundary>
+        <Environments {...props} />
+      </ErrorBoundary>
     </NoSsr>
   );
 };
 
-export default withStyles(styles)(
-  connect(mapStateToProps)(withRouter(EnvironmentsPageWithErrorBoundary)),
-);
+export default withRouter(EnvironmentsPageWithErrorBoundary);

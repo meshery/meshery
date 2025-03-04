@@ -10,6 +10,9 @@ integrations-category: Observability and Analysis
 integrations-subcategory: Monitoring
 registrant: GitHub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Load and performance testing",
   "Browser performance testing",

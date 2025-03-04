@@ -4,14 +4,11 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/layer5io/meshery/server/helpers"
-	"github.com/layer5io/meshery/server/models/pattern/core"
 	"github.com/layer5io/meshery/server/models/pattern/planner"
 	"github.com/layer5io/meshkit/logger"
-	models "github.com/layer5io/meshkit/models/meshmodel/core/v1beta1"
+	"github.com/layer5io/meshkit/orchestration"
 
 	meshmodel "github.com/layer5io/meshkit/models/meshmodel/registry"
-	"github.com/layer5io/meshkit/utils"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/connection"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
@@ -52,8 +49,10 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 		_ = plan.Execute(func(name string, component component.ComponentDefinition) bool {
 			ccp := CompConfigPair{}
 
-			err := core.AssignAdditionalLabels(&component)
+			err := orchestration.EnrichComponentWithMesheryMetadata(&component, data.Pattern.Id.String(), data.Pattern.Version)
+
 			if err != nil {
+				fmt.Println("Err while assigning labels", err)
 				errs = append(errs, err)
 				return false
 			}
@@ -62,26 +61,6 @@ func Provision(prov ServiceInfoProvider, act ServiceActionProvider, log logger.H
 			ccp.Hosts = generateHosts(
 				data.DeclartionToDefinitionMapping[component.Id],
 				act.GetRegistry(),
-			)
-
-			var annotations map[string]string
-
-			_annotations, ok := component.Configuration["annotations"]
-			if !ok {
-				annotations = map[string]string{} // Directly initialize `annotations` to an empty map
-			} else {
-				var err error
-				annotations, err = utils.Cast[map[string]string](_annotations)
-				if err != nil {
-					errs = append(errs, err)
-					return false
-				}
-			}
-
-			// Get annotations for the component and merge with existing, if any
-			component.Configuration["annotations"] = helpers.MergeStringMaps(
-				annotations,
-				getAdditionalAnnotations(data.Pattern),
 			)
 
 			ccp.Component = component
@@ -131,13 +110,4 @@ func mergeErrors(errs []error) error {
 	}
 
 	return fmt.Errorf("%s", strings.Join(errMsg, "\n"))
-}
-
-// move into meshkit and change annotations prefix name
-
-func getAdditionalAnnotations(pattern *pattern.PatternFile) map[string]string {
-	annotations := make(map[string]string, 2)
-	annotations[fmt.Sprintf("%s.name", models.MesheryAnnotationPrefix)] = pattern.Name
-	annotations[fmt.Sprintf("%s.id", models.MesheryAnnotationPrefix)] = pattern.Id.String()
-	return annotations
 }

@@ -1,14 +1,11 @@
-import Grid from '@material-ui/core/Grid';
 import React, { useMemo } from 'react';
-import { IconButton, Typography } from '@material-ui/core';
 import BBChart from '../../BBChart';
 import { donut } from 'billboard.js';
 import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';
-import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
-import { InfoOutlined } from '@material-ui/icons';
+import { InfoOutlined } from '@mui/icons-material';
 import {
   useGetCategoriesSummary,
   useGetComponentsQuery,
@@ -16,11 +13,13 @@ import {
   useGetRelationshipsQuery,
   useGetRegistrantsQuery,
 } from '@/rtk-query/meshModel';
+import { DashboardSection } from '../style';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
+import { Typography, useTheme, Grid } from '@layer5/sistent';
 
-function MeshModelContructs({ classes }) {
+function MeshModelContructs() {
   const params = {
     page: 0,
     pagesize: '1',
@@ -29,6 +28,7 @@ function MeshModelContructs({ classes }) {
   const componentCount = useGetComponentsQuery({ params }).data?.total_count || 0;
   const relationshipCount = useGetRelationshipsQuery({ params }).data?.total_count || 0;
   const registrantsConut = useGetRegistrantsQuery({ params }).data?.total_count || 0;
+  const theme = useTheme();
 
   // Data Cleanup
   const data = [
@@ -77,9 +77,9 @@ function MeshModelContructs({ classes }) {
           : 'auto',
       }}
     >
-      <div className={classes.dashboardSection}>
+      <DashboardSection>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography variant="h6" gutterBottom className={classes.link}>
+          <Typography variant="h6" gutterBottom>
             Registry
           </Typography>
 
@@ -87,32 +87,29 @@ function MeshModelContructs({ classes }) {
             <CustomTextTooltip
               placement="left"
               interactive={true}
-              variant="standard"
               title={`The Meshery Registry is a critical component acting as the central repository for all capabilities known to Meshery. [Learn More](https://docs.meshery.io/concepts/logical/registry)`}
             >
-              <IconButton disableRipple={true} disableFocusRipple={true}>
+              <div>
                 <InfoOutlined
-                  color={theme.palette.secondary.iconMain}
+                  color={theme.palette.icon.default}
                   style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
                 />
-              </IconButton>
+              </div>
             </CustomTextTooltip>
           </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <BBChart options={chartOptions} />
         </div>
-      </div>
+      </DashboardSection>
     </Link>
   );
 }
 
-function MeshModelCategories({ classes }) {
+function MeshModelCategories() {
   const router = useRouter();
   const categoryMap = useGetCategoriesSummary();
+  const theme = useTheme();
 
   const cleanedData = useMemo(
     () => Object.keys(categoryMap).map((key) => [key, categoryMap[key]]),
@@ -159,9 +156,9 @@ function MeshModelCategories({ classes }) {
 
   return (
     <Link href="/settings?settingsCategory=Registry&tab=Models">
-      <div className={classes.dashboardSection}>
+      <DashboardSection>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography variant="h6" className={classes.link} gutterBottom>
+          <Typography variant="h6" gutterBottom>
             Models by Category
           </Typography>
 
@@ -169,38 +166,33 @@ function MeshModelCategories({ classes }) {
             <CustomTextTooltip
               title={`Meshery Models represent the fundamental building blocks of your infrastructure. Models are categorized by their function. For example, a model for Prometheus belongs in the "Observability and Analysis" category. [Learn More](https://docs.meshery.io/concepts/logical/models)`}
               placement="left"
-              variant="standard"
-              interactive={true}
             >
-              <IconButton disableRipple={true} disableFocusRipple={true}>
+              <div>
                 <InfoOutlined
-                  color={theme.palette.secondary.iconMain}
+                  color={theme.palette.icon.default}
                   style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
                 />
-              </IconButton>
+              </div>
             </CustomTextTooltip>
           </div>
         </div>
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
           <BBChart options={chartOptions} />
         </div>
-      </div>
+      </DashboardSection>
     </Link>
   );
 }
 
-const MeshModelGraph = ({ classes }) => {
+const MeshModelGraph = () => {
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12} md={6}>
-        <MeshModelCategories classes={classes} />
+      <Grid item xs={12} md={6} style={{ marginBottom: '0.5rem' }}>
+        <MeshModelCategories />
       </Grid>
 
-      <Grid item xs={12} md={6}>
-        <MeshModelContructs classes={classes} />
+      <Grid item xs={12} md={6} style={{ marginBottom: '0.5rem' }}>
+        <MeshModelContructs />
       </Grid>
     </Grid>
   );

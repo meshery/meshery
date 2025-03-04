@@ -1,32 +1,18 @@
 //@ts-check
 import React, { useEffect, useState, useRef } from 'react';
-import {
-  NoSsr,
-  TableCell,
-  IconButton,
-  Paper,
-  Popper,
-  ClickAwayListener,
-  Fade,
-} from '@material-ui/core';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import MUIDataTable from 'mui-datatables';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 import Moment from 'react-moment';
-import { withStyles } from '@material-ui/core/styles';
-import { updateResultsSelection, clearResultsSelection, updateProgress } from '../../lib/store';
-import TableSortLabel from '@material-ui/core/TableSortLabel';
 import CustomToolbarSelect from '../CustomToolbarSelect';
 import MesheryChart from '../MesheryChart';
 import GrafanaCustomCharts from '../telemetry/grafana/GrafanaCustomCharts';
 import GenericModal from '../GenericModal';
-import BarChartIcon from '@material-ui/icons/BarChart';
-import InfoIcon from '@material-ui/icons/Info';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import InfoIcon from '@mui/icons-material/Info';
 import fetchPerformanceResults from '../graphql/queries/PerformanceResultQuery';
 import NodeDetails from '../NodeDetails';
-import ReplyIcon from '@material-ui/icons/Reply';
+import ReplyIcon from '@mui/icons-material/Reply';
 import FacebookIcon from './assets/facebookIcon';
 import LinkedinIcon from './assets/linkedinIcon';
 import TwitterIcon from './assets/twitterIcon';
@@ -35,24 +21,25 @@ import { TwitterShareButton, LinkedinShareButton, FacebookShareButton } from 're
 import subscribePerformanceProfiles from '../graphql/subscriptions/PerformanceResultSubscription';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
+import {
+  Tab,
+  Tabs,
+  IconButton,
+  Paper,
+  Popper,
+  ClickAwayListener,
+  useTheme,
+  NoSsr,
+  Fade,
+} from '@layer5/sistent';
+
+import { DefaultTableCell, SortableTableCell } from '../connections/common';
+import { clearResultsSelection, updateProgress, updateResultsSelection } from '../../lib/store';
 
 const COL_MAPPING = {
   QPS: 3,
   P99: 6,
 };
-
-const styles = (theme) => ({
-  socialIcon: {
-    margin: theme.spacing(0.4),
-  },
-  share: {
-    transform: 'scaleX(-1)',
-    color: theme.palette.secondary.icon2,
-  },
-  paper: {
-    padding: theme.spacing(1),
-  },
-});
 
 function generateResultsForDisplay(results) {
   if (Array.isArray(results)) {
@@ -89,7 +76,7 @@ function generateColumnsForDisplay(
   sortOrder,
   setSelectedProfileIdxForChart,
   setSelectedProfileIdxForNodeDetails,
-  classes,
+  theme,
   handleSocialExpandClick,
   handleClickAway,
   socialExpand,
@@ -104,16 +91,14 @@ function generateColumnsForDisplay(
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel
-                active={column.sortDirection != null}
-                direction={column.sortDirection || 'asc'}
-              >
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
       },
@@ -125,16 +110,14 @@ function generateColumnsForDisplay(
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel
-                active={column.sortDirection != null}
-                direction={column.sortDirection || 'asc'}
-              >
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
       },
@@ -146,16 +129,14 @@ function generateColumnsForDisplay(
         filter: false,
         sort: true,
         searchable: true,
-        customHeadRender: function CustomHead({ index, ...column }, sortColumn) {
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
           return (
-            <TableCell key={index} onClick={() => sortColumn(index)}>
-              <TableSortLabel
-                active={column.sortDirection != null}
-                direction={column.sortDirection || 'asc'}
-              >
-                <b>{column.label}</b>
-              </TableSortLabel>
-            </TableCell>
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
           );
         },
         customBodyRender: function CustomBody(value) {
@@ -170,12 +151,8 @@ function generateColumnsForDisplay(
         filter: false,
         sort: false,
         searchable: false,
-        customHeadRender: function CustomHead({ index, ...column }) {
-          return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
-            </TableCell>
-          );
+        customHeadRender: function CustomHead({ ...column }) {
+          return <DefaultTableCell columnData={column} />;
         },
       },
     },
@@ -186,12 +163,8 @@ function generateColumnsForDisplay(
         filter: false,
         sort: false,
         searchable: false,
-        customHeadRender: function CustomHead({ index, ...column }) {
-          return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
-            </TableCell>
-          );
+        customHeadRender: function CustomHead({ ...column }) {
+          return <DefaultTableCell columnData={column} />;
         },
       },
     },
@@ -203,12 +176,8 @@ function generateColumnsForDisplay(
         filter: false,
         sort: false,
         searchable: false,
-        customHeadRender: function CustomHead({ index, ...column }) {
-          return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
-            </TableCell>
-          );
+        customHeadRender: function CustomHead({ ...column }) {
+          return <DefaultTableCell columnData={column} />;
         },
       },
     },
@@ -220,12 +189,8 @@ function generateColumnsForDisplay(
         filter: false,
         sort: false,
         searchable: false,
-        customHeadRender: function CustomHead({ index, ...column }) {
-          return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
-            </TableCell>
-          );
+        customHeadRender: function CustomHead({ ...column }) {
+          return <DefaultTableCell columnData={column} />;
         },
       },
     },
@@ -235,12 +200,8 @@ function generateColumnsForDisplay(
         filter: false,
         sort: false,
         searchable: false,
-        customHeadRender: function CustomHead({ index, ...column }) {
-          return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
-            </TableCell>
-          );
+        customHeadRender: function CustomHead({ ...column }) {
+          return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(value, tableMeta) {
           return (
@@ -262,12 +223,8 @@ function generateColumnsForDisplay(
         filter: false,
         sort: false,
         searchable: false,
-        customHeadRender: function CustomHead({ index, ...column }) {
-          return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
-            </TableCell>
-          );
+        customHeadRender: function CustomHead({ ...column }) {
+          return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(value, tableMeta) {
           return (
@@ -288,14 +245,10 @@ function generateColumnsForDisplay(
         filter: false,
         sort: false,
         searchable: false,
-        customHeadRender: function CustomHead({ index, ...column }) {
-          return (
-            <TableCell key={index}>
-              <b>{column.label}</b>
-            </TableCell>
-          );
+        customHeadRender: function CustomHead({ ...column }) {
+          return <DefaultTableCell columnData={column} />;
         },
-        customBodyRender: function CustomBody(value, tableMeta) {
+        customBodyRender: function CustomBody(_, tableMeta) {
           return (
             <>
               <IconButton
@@ -303,7 +256,13 @@ function generateColumnsForDisplay(
                 aria-label="Share"
                 onClick={(e) => handleSocialExpandClick(e, tableMeta)}
               >
-                <ReplyIcon style={iconLarge} className={classes.share} />
+                <ReplyIcon
+                  style={{
+                    transform: 'scaleX(-1)',
+                    color: theme.palette.icon.default,
+                    ...iconLarge,
+                  }}
+                />
               </IconButton>
               <Popper
                 open={socialExpand[tableMeta.rowIndex]}
@@ -313,9 +272,9 @@ function generateColumnsForDisplay(
                 {({ TransitionProps }) => (
                   <ClickAwayListener onClickAway={() => handleClickAway(tableMeta.rowIndex)}>
                     <Fade {...TransitionProps} timeout={350}>
-                      <Paper className={classes.paper}>
+                      <Paper sx={{ padding: theme.spacing(1) }}>
                         <TwitterShareButton
-                          className={classes.socialIcon}
+                          style={{ margin: theme.spacing(0.4) }}
                           url={'https://meshery.io'}
                           title={socialMessage}
                           hashtags={['opensource']}
@@ -324,7 +283,7 @@ function generateColumnsForDisplay(
                           <TwitterIcon />
                         </TwitterShareButton>
                         <LinkedinShareButton
-                          className={classes.socialIcon}
+                          style={{ margin: theme.spacing(0.4) }}
                           url={'https://meshery.io'}
                           summary={socialMessage}
                         >
@@ -332,7 +291,7 @@ function generateColumnsForDisplay(
                           <LinkedinIcon />
                         </LinkedinShareButton>
                         <FacebookShareButton
-                          className={classes.socialIcon}
+                          style={{ margin: theme.spacing(0.4) }}
                           url={'https://meshery.io'}
                           quote={socialMessage}
                           hashtag={'#opensource'}
@@ -411,15 +370,7 @@ function ResultChart({ result, handleTabChange, tabValue }) {
         padding: '0.5rem',
       }}
     >
-      <Tabs
-        value={tabValue}
-        onChange={handleTabChange}
-        TabIndicatorProps={{
-          style: {
-            backgroundColor: '#00B39F',
-          },
-        }}
-      >
+      <Tabs value={tabValue} onChange={handleTabChange}>
         <Tab label="Performance Chart" />
         <Tab label="Node Details" />
       </Tabs>
@@ -528,7 +479,6 @@ function ResultNodeDetails({ result, handleTabChange, tabValue }) {
  *  results_selection?: any,
  *  user?: any
  *  updateResultsSelection?: any,
- *  classes?: any
  *  endpoint: string,
  *  CustomHeader?: JSX.Element
  *  elevation?: Number
@@ -542,7 +492,6 @@ function MesheryResults({
   user,
   CustomHeader = <div />,
   elevation = 4,
-  classes,
 }) {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
@@ -556,10 +505,9 @@ function MesheryResults({
   const [socialExpand, setSocialExpand] = useState([false]);
   const [anchorEl, setAnchorEl] = useState([]);
   const [socialMessage, setSocialMessage] = useState();
+  const theme = useTheme();
 
   const searchTimeout = useRef();
-
-  //hooks
   const { notify } = useNotification();
 
   useEffect(() => {
@@ -674,7 +622,7 @@ function MesheryResults({
       setSelectedRowNodeDetails(results[idx]);
       setTabValue(1);
     },
-    classes,
+    theme,
     handleSocialExpandClick,
     handleClickAway,
     socialExpand,
@@ -830,4 +778,4 @@ const mapStateToProps = (state) => {
 };
 
 // @ts-ignore
-export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(MesheryResults));
+export default connect(mapStateToProps, mapDispatchToProps)(MesheryResults);

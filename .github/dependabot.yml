@@ -52,8 +52,6 @@ updates:
   schedule:
     interval: monthly
   open-pull-requests-limit: 5
-  reviewers:
-  - nebula-aac
   labels:
   - kind/chore
   - pr/dependencies

@@ -26,6 +26,9 @@ components:
   colorIcon: assets/img/integrations/clickhouse/components/click-house-operator-configuration/icons/color/click-house-operator-configuration-color.svg
   whiteIcon: assets/img/integrations/clickhouse/components/click-house-operator-configuration/icons/white/click-house-operator-configuration-white.svg
   description: 
+components-count: 4
+relationships: 
+relationship-count: 0
 featureList: [
   "Fast data ingestion and querying",
   "Columnar storage for efficient analytics",

@@ -82,6 +82,9 @@ components:
   colorIcon: assets/img/integrations/antrea/components/packet-capture/icons/color/packet-capture-color.svg
   whiteIcon: assets/img/integrations/antrea/components/packet-capture/icons/white/packet-capture-white.svg
   description: 
+components-count: 18
+relationships: 
+relationship-count: 0
 featureList: [
   "Network policy enforcement",
   "Kubernetes network policy integration",

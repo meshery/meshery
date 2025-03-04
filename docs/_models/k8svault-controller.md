@@ -18,6 +18,9 @@ components:
   colorIcon: assets/img/integrations/k8svault-controller/components/vault-mirror/icons/color/vault-mirror-color.svg
   whiteIcon: assets/img/integrations/k8svault-controller/components/vault-mirror/icons/white/vault-mirror-white.svg
   description: 
+components-count: 2
+relationships: 
+relationship-count: 0
 featureList: [
   "Automated deployment and configuration of Vault on Kubernetes",
   "Integration with Kubernetes authentication and authorization mechanisms",

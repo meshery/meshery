@@ -63,4 +63,7 @@ mesheryctl exp connections delete [connection_id]
 
 ## See Also
 
+* [mesheryctl exp connections delete](/reference/mesheryctl/exp/connections/delete)
+* [mesheryctl exp connections list](/reference/mesheryctl/exp/connections/list)
+
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

@@ -54,6 +54,41 @@ components:
   colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-source/icons/color/pulsar-source-color.svg
   whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-source/icons/white/pulsar-source-white.svg
   description: 
+- name: pulsar-ns-isolation-policy
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-ns-isolation-policy/icons/color/pulsar-ns-isolation-policy-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-ns-isolation-policy/icons/white/pulsar-ns-isolation-policy-white.svg
+  description: 
+- name: pulsar-ns-isolation-policy
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-ns-isolation-policy/icons/color/pulsar-ns-isolation-policy-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/pulsar-ns-isolation-policy/icons/white/pulsar-ns-isolation-policy-white.svg
+  description: 
+- name: compute-flink-deployment
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/compute-flink-deployment/icons/color/compute-flink-deployment-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/compute-flink-deployment/icons/white/compute-flink-deployment-white.svg
+  description: 
+- name: compute-workspace
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/compute-workspace/icons/color/compute-workspace-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/compute-workspace/icons/white/compute-workspace-white.svg
+  description: 
+- name: stream-native-cloud-connection
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/stream-native-cloud-connection/icons/color/stream-native-cloud-connection-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/stream-native-cloud-connection/icons/white/stream-native-cloud-connection-white.svg
+  description: 
+- name: stream-native-cloud-connection
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/stream-native-cloud-connection/icons/color/stream-native-cloud-connection-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/stream-native-cloud-connection/icons/white/stream-native-cloud-connection-white.svg
+  description: 
+- name: secret
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/secret/icons/color/secret-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/secret/icons/white/secret-white.svg
+  description: 
+- name: secret
+  colorIcon: assets/img/integrations/pulsar-resources-operator/components/secret/icons/color/secret-color.svg
+  whiteIcon: assets/img/integrations/pulsar-resources-operator/components/secret/icons/white/secret-white.svg
+  description: 
+components-count: 19
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates Pulsar resource management",
   "Simplifies Pulsar configuration",

@@ -18,6 +18,7 @@ evaluate_relationships_deleted(
 
 	not does_relationship_exist_in_design(identified_relationships, existing_rel)
 	not existing_rel.subType == "annotation"
+	not existing_rel.subType == "alias"
 	not existing_rel.metadata.isAnnotation == true
 	relationship := json.patch(existing_rel, [{
 		"op": "replace",

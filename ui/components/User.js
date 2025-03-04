@@ -1,7 +1,6 @@
-import React, { useState, useRef } from 'react';
-import { Avatar } from '@layer5/sistent';
-import IconButton from '@material-ui/core/IconButton';
-import NoSsr from '@material-ui/core/NoSsr';
+import React, { useState, useRef, useEffect } from 'react';
+import { Avatar, Button } from '@layer5/sistent';
+import NoSsr from '@mui/material/NoSsr';
 import Link from 'next/link';
 import { Provider, connect } from 'react-redux';
 import { store } from '../store';
@@ -11,8 +10,7 @@ import { updateUser } from '../lib/store';
 import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
-import { Button } from '@material-ui/core';
-
+import { IconButtonAvatar } from './Header.styles';
 /**
  * Extension Point: Avatar behavior for User Modes
  * Insert custom logic here to handle Single User mode, Anonymous User mode, Multi User mode behavior.
@@ -44,23 +42,29 @@ const User = (props) => {
     }
   };
 
-  if (!userLoaded && isGetUserSuccess) {
-    props.updateUser({ user: userData });
-    setUserLoaded(true);
-  } else if (isGetUserError) {
-    notify({
-      message: 'Error fetching user',
-      event_type: EVENT_TYPES.ERROR,
-      details: getUserError?.data,
-    });
-  }
+  useEffect(() => {
+    if (!userLoaded && isGetUserSuccess) {
+      props.updateUser({ user: userData });
+      setUserLoaded(true);
+    } else if (isGetUserError) {
+      notify({
+        message: 'Error fetching user',
+        event_type: EVENT_TYPES.ERROR,
+        details: getUserError?.data,
+      });
+    }
+  }, [userData, isGetUserSuccess, isGetUserError]);
 
-  if (!capabilitiesLoadedRef.current && capabilitiesRegistry) {
-    capabilitiesLoadedRef.current = true;
-    setAccount(ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account));
-  }
+  useEffect(() => {
+    if (!capabilitiesLoadedRef.current && capabilitiesRegistry) {
+      capabilitiesLoadedRef.current = true;
+      setAccount(
+        ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account),
+      );
+    }
+  }, [capabilitiesRegistry]);
 
-  const { color, iconButtonClassName, avatarClassName } = props;
+  const { color } = props;
 
   const source = new URL('/api/user/token', window.location.origin);
   const sourceURL = btoa(source.toString());
@@ -81,19 +85,13 @@ const User = (props) => {
   return (
     <div>
       <NoSsr>
-        <div data-test="profile-button">
-          <IconButton
-            color={color}
-            className={iconButtonClassName}
-            aria-haspopup="true"
-            onClick={goToProfile}
-          >
+        <div data-testid="profile-button">
+          <IconButtonAvatar color={color} aria-haspopup="true" onClick={goToProfile}>
             <Avatar
-              className={avatarClassName}
               src={isGetUserSuccess ? userData?.avatar_url : null}
               imgProps={{ referrerPolicy: 'no-referrer' }}
             />
-          </IconButton>
+          </IconButtonAvatar>
         </div>
       </NoSsr>
     </div>

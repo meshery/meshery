@@ -18,6 +18,9 @@ components:
   colorIcon: assets/img/integrations/aperture-controller/components/policy/icons/color/policy-color.svg
   whiteIcon: assets/img/integrations/aperture-controller/components/policy/icons/white/policy-white.svg
   description: 
+components-count: 2
+relationships: 
+relationship-count: 0
 featureList: [
   "Monitor golden signals to rapidly detect service deterioration and load build-up.",
   "Adjusts the concurrency limit of the service.",

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box, Typography, useTheme, Checkbox } from '@material-ui/core';
+import { Box, Typography, useTheme, Checkbox } from '@layer5/sistent';
 import SearchBar from '@/utils/custom-search';
 import debounce from '@/utils/debounce';
 import { StyledTreeItemRoot } from './MeshModel.style';
@@ -22,7 +22,7 @@ const StyledTreeItem = React.forwardRef(function StyledTreeItem(props, ref) {
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       root={root}
-      lineColor={theme.palette.secondary.text}
+      lineColor={theme.palette.text.default}
       label={
         <Box
           sx={{

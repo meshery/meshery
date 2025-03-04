@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/accurate/components/sub-namespace/icons/color/sub-namespace-color.svg
   whiteIcon: assets/img/integrations/accurate/components/sub-namespace/icons/white/sub-namespace-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Resource propagation between namespaces.",
   "Inheriting labels and annotations creation/update from parent namespaces.",

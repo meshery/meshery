@@ -1,13 +1,16 @@
-import { Grid, Paper, Typography } from '@material-ui/core';
-import { Pagination } from '@material-ui/lab';
+import { Grid, Pagination } from '@layer5/sistent';
 import React, { useState } from 'react';
 import MesheryPatternCard from './MesheryPatternCard';
 import DesignConfigurator from '../configuratorComponents/MeshModel';
 import { FILE_OPS } from '../../utils/Enum';
 import { EVENT_TYPES } from '../../lib/event-types';
-import useStyles from './Grid.styles';
+import {
+  GridNoContainerStyles,
+  GridNoPapperStyles,
+  GridNoTextStyles,
+  GridPaginationStyles,
+} from './Grid.styles';
 import { RJSFModalWrapper } from '../Modal';
-
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { updateProgress } from '../../lib/store';
@@ -15,9 +18,9 @@ import ExportModal from '../ExportModal';
 import downloadContent from '@/utils/fileDownloader';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { Modal as SistentModal } from '@layer5/sistent';
-import { UsesSistent } from '../SistentWrapper';
+
 import Pattern from '../../public/static/img/drawer-icons/pattern_svg';
-const INITIAL_GRID_SIZE = { xl: 4, md: 6, xs: 12 };
+const INITIAL_GRID_SIZE = { xl: 6, md: 6, xs: 12 };
 
 function PatternCardGridItem({
   pattern,
@@ -144,7 +147,6 @@ function MesheryPatternGrid({
   hideVisibility = false,
   arePatternsReadOnly = false,
 }) {
-  const classes = useStyles();
   const { notify } = useNotification();
   const handlePublishModal = (pattern) => {
     if (canPublishPattern) {
@@ -238,64 +240,48 @@ function MesheryPatternGrid({
       )}
 
       {!selectedPattern.show && patterns.length === 0 && (
-        <Paper className={classes.noPaper}>
-          <div className={classes.noContainer}>
-            <Typography align="center" color="textSecondary" className={classes.noText}>
+        <GridNoPapperStyles>
+          <GridNoContainerStyles>
+            <GridNoTextStyles align="center" color="textSecondary">
               No Designs Found
-            </Typography>
-            <div>
-              {/* <Button
-                  aria-label="Add Application"
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  // @ts-ignore
-                  onClick={handleUploadImport}
-                  style={{ marginRight : "2rem" }}
-                >
-                  <PublishIcon className={classes.addIcon} />
-              Import Design
-                </Button> */}
-            </div>
-          </div>
-        </Paper>
+            </GridNoTextStyles>
+          </GridNoContainerStyles>
+        </GridNoPapperStyles>
       )}
       {patterns.length ? (
-        <div className={classes.pagination}>
+        <GridPaginationStyles>
           <Pagination
             count={pages}
             page={selectedPage + 1}
             onChange={(_, page) => setPage(page - 1)}
           />
-        </div>
+        </GridPaginationStyles>
       ) : null}
 
       {canPublishPattern && publishModal.open && (
-        <UsesSistent>
-          <SistentModal
-            open={true}
-            title={publishModal.pattern?.name}
-            closeModal={handlePublishModalClose}
-            aria-label="catalog publish"
-            maxWidth="sm"
-            headerIcon={
-              <Pattern
-                fill="#fff"
-                style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
-                className={undefined}
-              />
-            }
-          >
-            <RJSFModalWrapper
-              schema={publishSchema.rjsfSchema}
-              uiSchema={publishSchema.uiSchema}
-              submitBtnText="Submit for Approval"
-              handleSubmit={handlePublish}
-              helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
-              handleClose={handlePublishModalClose}
+        <SistentModal
+          open={true}
+          title={publishModal.pattern?.name}
+          closeModal={handlePublishModalClose}
+          aria-label="catalog publish"
+          maxWidth="sm"
+          headerIcon={
+            <Pattern
+              fill="#fff"
+              style={{ height: '24px', width: '24px', fonSize: '1.45rem' }}
+              className={undefined}
             />
-          </SistentModal>
-        </UsesSistent>
+          }
+        >
+          <RJSFModalWrapper
+            schema={publishSchema.rjsfSchema}
+            uiSchema={publishSchema.uiSchema}
+            submitBtnText="Submit for Approval"
+            handleSubmit={handlePublish}
+            helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
+            handleClose={handlePublishModalClose}
+          />
+        </SistentModal>
       )}
       <ExportModal
         downloadModal={downloadModal}

@@ -1,24 +1,25 @@
 import React, { useEffect, useState } from 'react';
-import { Box, IconButton, Typography } from '@material-ui/core';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { dataToColors } from '../../../utils/charts';
 import Link from 'next/link';
-// import { useNotification } from '../../../utils/hooks/useNotification';
-import CreateDesignBtn from '../../General/CreateDesignBtn';
-import theme from '../../../themes/app';
 import { iconSmall } from '../../../css/icons.styles';
 import { CustomTextTooltip } from '@/components/MesheryMeshInterface/PatternService/CustomTextTooltip';
-import { InfoOutlined } from '@material-ui/icons';
+import { InfoOutlined } from '@mui/icons-material';
 import { useGetPatternsQuery } from '@/rtk-query/design';
 import { useGetFiltersQuery } from '@/rtk-query/filter';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useRouter } from 'next/router';
+import { DashboardSection } from '../style';
+import ConnectCluster from './ConnectCluster';
 
-export default function MesheryConfigurationChart({ classes }) {
+import { Box, Typography, useTheme } from '@layer5/sistent';
+
+export default function MesheryConfigurationChart() {
   const router = useRouter();
   const [chartData, setChartData] = useState([]);
+  const theme = useTheme();
 
   const { data: patternsData, error: patternsError } = useGetPatternsQuery({
     page: 0,
@@ -82,27 +83,22 @@ export default function MesheryConfigurationChart({ classes }) {
         pointerEvents: !CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject) ? 'none' : 'auto',
       }}
     >
-      <div className={classes.dashboardSection}>
+      <DashboardSection>
         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Typography variant="h6" gutterBottom className={classes.link}>
+          <Typography variant="h6" gutterBottom>
             Configuration
           </Typography>
           <div onClick={(e) => e.stopPropagation()}>
             <CustomTextTooltip
               placement="left"
-              interactive={true}
-              variant="standard"
               title={`Meshery Designs are descriptive, declarative characterizations of how your Kubernetes infrastructure should be configured. [Learn more](https://docs.meshery.io/concepts/logical/designs)`}
             >
-              <IconButton disableRipple={true} disableFocusRipple={true}>
+              <div>
                 <InfoOutlined
-                  color={theme.palette.secondary.iconMain}
+                  color={theme.palette.icon.default}
                   style={{ ...iconSmall, marginLeft: '0.5rem', cursor: 'pointer' }}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                  }}
                 />
-              </IconButton>
+              </div>
             </CustomTextTooltip>
           </div>
         </div>
@@ -118,23 +114,10 @@ export default function MesheryConfigurationChart({ classes }) {
           {chartData.length > 0 ? (
             <BBChart options={chartOptions} />
           ) : (
-            <div
-              style={{
-                padding: '2rem',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column',
-              }}
-            >
-              <Typography style={{ fontSize: '1.5rem', marginBottom: '1rem' }} align="center">
-                No Meshery configuration found
-              </Typography>
-              <CreateDesignBtn />
-            </div>
+            <ConnectCluster message={'No connections found in your clusters'} />
           )}
         </Box>
-      </div>
+      </DashboardSection>
     </Link>
   );
 }

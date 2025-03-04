@@ -18,4 +18,4 @@ assignees: ''
 - 📚 [Instructions for contributing to documentation](https://github.com/meshery/meshery/blob/master/CONTRIBUTING.md#documentation-contribution-flow)
    - Meshery documentation [site](https://docs.meshery.io/) and [source](https://github.com/meshery/meshery/tree/master/docs)
 - 🎨 Wireframes and designs for Meshery UI in [Figma](https://www.figma.com/file/SMP3zxOjZztdOLtgN4dS2W/Meshery-UI)
-- 🙋🏾🙋🏼 Questions: [Discussion Forum](http://discuss.meshery.io) and [Community Slack](https://slack.meshery.io)
+- 🙋🏾🙋🏼 Questions: [Discussion Forum](https://meshery.io/community#community-forums) and [Community Slack](https://slack.meshery.io)

@@ -1,23 +1,20 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import IconButton from '@material-ui/core/IconButton';
 import { Provider, useDispatch, useSelector } from 'react-redux';
-import NoSsr from '@material-ui/core/NoSsr';
+import { NoSsr } from '@layer5/sistent';
 import {
-  Drawer,
   Divider,
   ClickAwayListener,
   Typography,
-  alpha,
   Chip,
   Button,
-  Badge,
   CircularProgress,
   Box,
   useTheme,
   Tooltip,
   Checkbox,
   Collapse,
-} from '@material-ui/core';
+  IconButton,
+} from '@layer5/sistent';
 import Filter from './filter';
 import BellIcon from '../../assets/icons/BellIcon.js';
 import { iconMedium } from '../../css/icons.styles';
@@ -28,10 +25,22 @@ import {
   STATUS,
   STATUS_STYLE,
 } from './constants';
-import classNames from 'classnames';
 import Notification from './notification';
 import { store } from '../../store';
-import { DarkBackdrop, useNavNotificationIconStyles, useStyles } from './notificationCenter.style';
+import {
+  Container,
+  DarkBackdrop,
+  NotificationButton,
+  NotificationContainer,
+  SeverityChips,
+  SeverityChip,
+  SideList,
+  StyledBadge,
+  StyledNotificationDrawer,
+  Title,
+  TitleBellIcon,
+  StyledSubtitle,
+} from './notificationCenter.style';
 import {
   closeNotificationCenter,
   loadEvents,
@@ -61,6 +70,7 @@ import { operationsCenterActor } from 'machines/operationsCenter';
 import { useSelectorRtk } from '@/store/hooks';
 import { ErrorBoundary } from '@layer5/sistent';
 import CustomErrorFallback from '../General/ErrorBoundary';
+import { alpha } from '@mui/system';
 
 export const NotificationCenterContext = React.createContext({
   drawerAnchorEl: null,
@@ -98,7 +108,7 @@ const getSeverityCount = (count_by_severity_level, severity) => {
 };
 
 const EmptyState = () => {
-  const theme = useTheme().palette.secondary;
+  const theme = useTheme();
   return (
     <Box
       sx={{
@@ -110,8 +120,8 @@ const EmptyState = () => {
         marginY: '5rem',
       }}
     >
-      <DoneIcon height="10rem" width="8rem" fill={theme.icon2} />
-      <Typography variant="h6" style={{ margin: 'auto', color: theme.icon2 }}>
+      <DoneIcon height="10rem" width="8rem" fill={theme.palette.icon.secondary} />
+      <Typography variant="h6" sx={{ margin: 'auto', color: theme.palette.text.primary }}>
         {' '}
         No notifications to show{' '}
       </Typography>
@@ -137,36 +147,30 @@ const NavbarNotificationIcon = () => {
     getSeverityCount(count_by_severity_level, SEVERITY.ERROR) > 0
       ? SEVERITY.ERROR
       : getSeverityCount(count_by_severity_level, SEVERITY.WARNING) > 0
-      ? SEVERITY.WARNING
-      : null;
+        ? SEVERITY.WARNING
+        : null;
   const currentSeverityStyle = currentTopSeverity ? SEVERITY_STYLE[currentTopSeverity] : null;
   const topSeverityCount = getSeverityCount(count_by_severity_level, currentTopSeverity);
-  const classes = useNavNotificationIconStyles({
-    badgeColor: currentSeverityStyle?.color,
-  });
   if (currentTopSeverity) {
     return (
-      <Badge id="notification-badge" badgeContent={topSeverityCount} className={classes.root}>
+      <StyledBadge
+        id="notification-badge"
+        badgeContent={topSeverityCount}
+        badgeColor={currentSeverityStyle?.color}
+      >
         <currentSeverityStyle.icon {...iconMedium} fill="#fff" />
-      </Badge>
+      </StyledBadge>
     );
   }
   return <BellIcon className={iconMedium} fill="#fff" />;
 };
 
-const NotificationCountChip = ({
-  classes,
-  notificationStyle,
-  count,
-  type,
-  handleClick,
-  severity,
-}) => {
+const NotificationCountChip = ({ notificationStyle, count, type, handleClick, severity }) => {
   const theme = useTheme();
   const selectedSeverity = useSelector(selectSeverity);
   const darkColor = notificationStyle?.darkColor || notificationStyle?.color;
   const chipStyles = {
-    fill: theme.palette.type === 'dark' ? darkColor : notificationStyle?.color,
+    fill: theme.palette.mode === 'dark' ? darkColor : notificationStyle?.color,
     height: '20px',
     width: '20px',
   };
@@ -183,10 +187,10 @@ const NotificationCountChip = ({
         }}
         onClick={handleClick}
       >
-        <div className={classes.severityChip}>
+        <SeverityChip>
           {<notificationStyle.icon {...chipStyles} />}
           <span>{count}</span>
-        </div>
+        </SeverityChip>
       </Button>
     </Tooltip>
   );
@@ -207,7 +211,7 @@ const Header = ({ handleFilter, handleClose }) => {
   } = useGetEventsSummaryQuery({
     status: STATUS.READ,
   });
-  const classes = useStyles();
+
   const onClickSeverity = (severity) => {
     handleFilter({
       severity: [severity],
@@ -222,19 +226,18 @@ const Header = ({ handleFilter, handleClose }) => {
   };
 
   return (
-    <div className={classNames(classes.container, classes.header)}>
-      <div className={classes.title}>
-        <div className={classes.titleBellIcon} onClick={handleClose}>
+    <NotificationContainer>
+      <Title>
+        <TitleBellIcon onClick={handleClose}>
           <BellIcon height="30" width="30" fill="#fff" />
-        </div>
+        </TitleBellIcon>
         <Typography variant="h6"> Notifications</Typography>
-      </div>
-      <div className={classes.severityChips}>
+      </Title>
+      <SeverityChips>
         {Object.values(SEVERITY).map((severity) => (
           <NotificationCountChip
             key={severity}
             severity={severity}
-            classes={classes}
             handleClick={() => onClickSeverity(severity)}
             notificationStyle={SEVERITY_STYLE[severity]}
             type={`Unread ${severity}(s)`}
@@ -242,15 +245,14 @@ const Header = ({ handleFilter, handleClose }) => {
           />
         ))}
         <NotificationCountChip
-          classes={classes}
           notificationStyle={STATUS_STYLE[STATUS.READ]}
           handleClick={() => onClickStatus(STATUS.READ)}
           type={STATUS.READ}
           severity={STATUS.READ}
           count={read_count}
         />
-      </div>
-    </div>
+      </SeverityChips>
+    </NotificationContainer>
   );
 };
 
@@ -328,7 +330,7 @@ const BulkActions = () => {
 
   return (
     <Box
-      style={{
+      sx={{
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
@@ -339,7 +341,7 @@ const BulkActions = () => {
         <Checkbox checked={areAllEventsChecked} color="primary" onChange={handleCheckboxChange} />
       </Box>
       <Collapse in={checkedEvents.length > 0}>
-        <Box style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           <BulkActionButton
             tooltip="Delete selected notifications"
             Icon={DeleteIcon}
@@ -427,13 +429,13 @@ const CurrentFilterView = ({ handleFilter }) => {
   const Chips = ({ type, value }) => {
     if (typeof value === 'string') {
       return (
-        <Chip label={value} style={{ paddingTop: '0rem' }} onDelete={() => onDelete(type, value)} />
+        <Chip label={value} sx={{ paddingTop: '0rem' }} onDelete={() => onDelete(type, value)} />
       );
     }
 
     if (_.isArray(value) && value.length > 0) {
       return (
-        <div style={{ display: 'flex', gap: '0.2rem' }}>
+        <div sx={{ display: 'flex', gap: '0.2rem' }}>
           {value.map((item) => (
             <Chip key={item} label={item} onDelete={() => onDelete(type, item)} />
           ))}
@@ -451,7 +453,7 @@ const CurrentFilterView = ({ handleFilter }) => {
           return (
             <div
               key={key}
-              style={{
+              sx={{
                 display: 'flex',
                 gap: '0.3rem',
                 alignItems: 'center',
@@ -459,10 +461,10 @@ const CurrentFilterView = ({ handleFilter }) => {
                 paddingTop: '.35rem',
               }}
             >
-              <Typography variant="subtitle2" style={{ textTransform: 'capitalize' }}>
+              <StyledSubtitle variant="subtitle2" sx={{ textTransform: 'capitalize' }}>
                 {' '}
                 {key}:
-              </Typography>
+              </StyledSubtitle>
               <Chips value={value} type={key} />
             </div>
           );
@@ -504,7 +506,6 @@ const NotificationCenterDrawer = () => {
     dispatch(closeNotificationCenter());
     setAnchorEl(null);
   };
-  const classes = useStyles();
   // const { showFullNotificationCenter } = props;
   const open = Boolean(anchorEl) || isNotificationCenterOpen;
   const handleFilter = async (filters) => {
@@ -533,23 +534,20 @@ const NotificationCenterDrawer = () => {
     <>
       <DarkBackdrop open={isNotificationCenterOpen} />
       <ClickAwayListener onClickAway={clickwayHandler}>
-        <Drawer
+        <StyledNotificationDrawer
           anchor="right"
           variant="persistent"
           open={open}
           ref={drawerRef}
+          isNotificationCenterOpen={isNotificationCenterOpen}
           BackdropComponent={<DarkBackdrop open={isNotificationCenterOpen} />}
-          classes={{
-            paper: classes.notificationDrawer,
-            paperAnchorRight: isNotificationCenterOpen ? classes.fullView : classes.peekView,
-          }}
         >
           <div>
             <div>
-              <div className={classes.sidelist}>
+              <SideList>
                 <Header handleFilter={handleFilter} handleClose={handleClose}></Header>
                 <Divider light />
-                <div className={classes.container}>
+                <Container>
                   <Filter handleFilter={handleFilter}></Filter>
                   <CurrentFilterView handleFilter={handleFilter} />
                   <BulkActions />
@@ -563,18 +561,17 @@ const NotificationCenterDrawer = () => {
                       hasMore={hasMore}
                     />
                   )}
-                </div>
-              </div>
+                </Container>
+              </SideList>
             </div>
           </div>
-        </Drawer>
+        </StyledNotificationDrawer>
       </ClickAwayListener>
     </>
   );
 };
 
 const NotificationDrawerButton_ = () => {
-  const classes = useStyles();
   const { setDrawerAnchor, toggleButtonRef } = useContext(NotificationCenterContext);
   const dispatch = useDispatch();
   const handleToggle = () => {
@@ -582,9 +579,8 @@ const NotificationDrawerButton_ = () => {
   };
   return (
     <div ref={toggleButtonRef}>
-      <IconButton
+      <NotificationButton
         id="notification-button"
-        className={classes.notificationButton}
         color="inherit"
         onClick={handleToggle}
         onMouseOver={(e) => {
@@ -597,7 +593,7 @@ const NotificationDrawerButton_ = () => {
         }}
       >
         <NavbarNotificationIcon />
-      </IconButton>
+      </NotificationButton>
     </div>
   );
 };

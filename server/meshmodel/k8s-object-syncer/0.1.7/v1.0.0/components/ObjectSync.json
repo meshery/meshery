@@ -1,189 +1,189 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "ObjectSync",
-   "schema": "{\n \"description\": \"Auto-generated derived type for ObjectSyncSpec via `CustomResource`\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Kubernetes object synchronization specification, defining how a single source object should be replicated and synced to multiple destination objects.\",\n   \"properties\": {\n    \"destinations\": {\n     \"description\": \"The destinations to sync the source object to.\",\n     \"items\": {\n      \"description\": \"Synchronization target configuration.\",\n      \"properties\": {\n       \"name\": {\n        \"description\": \"Optional new name for the destination object, defaults to the name of the source object.\",\n        \"nullable\": true,\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"The destination (target) namespace, if empty `\\\"\\\"` or `\\\"*\\\"` the source object is synced to all namespaces.\",\n        \"type\": \"string\"\n       },\n       \"strategy\": {\n        \"description\": \"The sync strategy to use for this destination, defaults to \\\"apply\\\" (server side apply).\",\n        \"enum\": [\n         \"apply\",\n         \"replace\"\n        ],\n        \"nullable\": true,\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"namespace\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"source\": {\n     \"description\": \"The \\\"original\\\" source object to be synced.\",\n     \"properties\": {\n      \"group\": {\n       \"description\": \"The Kubernetes API Group name (without the version part).\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"The Kubernetes API Kind name.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The Kubernetes object's name (`metadata.name`)\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The Kubernetes object's namespace (`metadata.namespace`) defaults to the namespace of the `ObjectSync` object.\",\n       \"nullable\": true,\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"description\": \"The Kubernetes API version, defaults to the preferred version of the API Group.\",\n       \"nullable\": true,\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"group\",\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"destinations\",\n    \"source\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Object Sync\",\n \"type\": \"object\"\n}",
-   "version": "sync.rustrial.org/v1alpha1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Object Sync",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Object Sync",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Uncategorized"
-   },
-   "displayName": "K8s Object Syncer",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "source_uri": "https://github.com/rustrial/k8s-object-syncer/releases/download/k8s-object-syncer-0.1.8/k8s-object-syncer-0.1.8.tgz",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "k8s-object-syncer",
+    "displayName": "K8s Object Syncer",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized"
+    },
+    "metadata": {
+      "source_uri": "https://github.com/rustrial/k8s-object-syncer/releases/download/k8s-object-syncer-0.1.8/k8s-object-syncer-0.1.8.tgz",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "0.1.7"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
     "svgColor": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "0.1.7"
-   },
-   "name": "k8s-object-syncer",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "ObjectSync",
+    "schema": "{\n \"description\": \"Auto-generated derived type for ObjectSyncSpec via `CustomResource`\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Kubernetes object synchronization specification, defining how a single source object should be replicated and synced to multiple destination objects.\",\n   \"properties\": {\n    \"destinations\": {\n     \"description\": \"The destinations to sync the source object to.\",\n     \"items\": {\n      \"description\": \"Synchronization target configuration.\",\n      \"properties\": {\n       \"name\": {\n        \"description\": \"Optional new name for the destination object, defaults to the name of the source object.\",\n        \"nullable\": true,\n        \"type\": \"string\"\n       },\n       \"namespace\": {\n        \"description\": \"The destination (target) namespace, if empty `\\\"\\\"` or `\\\"*\\\"` the source object is synced to all namespaces.\",\n        \"type\": \"string\"\n       },\n       \"strategy\": {\n        \"description\": \"The sync strategy to use for this destination, defaults to \\\"apply\\\" (server side apply).\",\n        \"enum\": [\n         \"apply\",\n         \"replace\"\n        ],\n        \"nullable\": true,\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"namespace\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"source\": {\n     \"description\": \"The \\\"original\\\" source object to be synced.\",\n     \"properties\": {\n      \"group\": {\n       \"description\": \"The Kubernetes API Group name (without the version part).\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"The Kubernetes API Kind name.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"The Kubernetes object's name (`metadata.name`)\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"The Kubernetes object's namespace (`metadata.namespace`) defaults to the namespace of the `ObjectSync` object.\",\n       \"nullable\": true,\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"description\": \"The Kubernetes API version, defaults to the preferred version of the API Group.\",\n       \"nullable\": true,\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"group\",\n      \"kind\",\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"destinations\",\n    \"source\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Object Sync\",\n \"type\": \"object\"\n}",
+    "version": "sync.rustrial.org/v1alpha1"
+  }
+}

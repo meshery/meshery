@@ -1,196 +1,196 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "NatsCluster",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"auth\": {\n     \"properties\": {\n      \"clientsAuthFile\": {\n       \"type\": \"string\"\n      },\n      \"clientsAuthSecret\": {\n       \"type\": \"string\"\n      },\n      \"clientsAuthTimeout\": {\n       \"type\": \"integer\"\n      },\n      \"enableServiceAccounts\": {\n       \"type\": \"boolean\"\n      },\n      \"tlsVerifyAndMap\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"extraRoutes\": {\n     \"items\": {\n      \"properties\": {\n       \"cluster\": {\n        \"type\": \"string\"\n       },\n       \"route\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"gatewayConfig\": {\n     \"properties\": {\n      \"gateways\": {\n       \"items\": {\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         },\n         \"url\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"hostPort\": {\n       \"type\": \"integer\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"rejectUnknown\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"lameDuckDurationSeconds\": {\n     \"type\": \"integer\"\n    },\n    \"leafnodeConfig\": {\n     \"properties\": {\n      \"port\": {\n       \"type\": \"integer\"\n      },\n      \"remotes\": {\n       \"items\": {\n        \"properties\": {\n         \"credentials\": {\n          \"type\": \"string\"\n         },\n         \"url\": {\n          \"type\": \"string\"\n         },\n         \"urls\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"natsConfig\": {\n     \"properties\": {\n      \"debug\": {\n       \"type\": \"boolean\"\n      },\n      \"disableLogtime\": {\n       \"type\": \"boolean\"\n      },\n      \"maxConnections\": {\n       \"type\": \"integer\"\n      },\n      \"maxControlLine\": {\n       \"type\": \"integer\"\n      },\n      \"maxPayload\": {\n       \"type\": \"integer\"\n      },\n      \"maxPending\": {\n       \"type\": \"integer\"\n      },\n      \"maxSubscriptions\": {\n       \"type\": \"integer\"\n      },\n      \"trace\": {\n       \"type\": \"boolean\"\n      },\n      \"write_deadline\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"noAdvertise\": {\n     \"type\": \"boolean\"\n    },\n    \"operatorConfig\": {\n     \"properties\": {\n      \"resolver\": {\n       \"type\": \"string\"\n      },\n      \"secret\": {\n       \"type\": \"string\"\n      },\n      \"systemAccount\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"paused\": {\n     \"type\": \"boolean\"\n    },\n    \"pod\": {\n     \"properties\": {\n      \"advertiseExternalIP\": {\n       \"type\": \"boolean\"\n      },\n      \"annotations\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"antiAffinity\": {\n       \"type\": \"boolean\"\n      },\n      \"bootconfigImage\": {\n       \"type\": \"string\"\n      },\n      \"bootconfigImageTag\": {\n       \"type\": \"string\"\n      },\n      \"enableClientsHostPort\": {\n       \"type\": \"boolean\"\n      },\n      \"enableConfigReload\": {\n       \"type\": \"boolean\"\n      },\n      \"enableMetrics\": {\n       \"type\": \"boolean\"\n      },\n      \"labels\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"metricsImage\": {\n       \"type\": \"string\"\n      },\n      \"metricsImagePullPolicy\": {\n       \"type\": \"string\"\n      },\n      \"metricsImageTag\": {\n       \"type\": \"string\"\n      },\n      \"natsEnv\": {\n       \"items\": {\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"nodeSelector\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"reloaderImage\": {\n       \"type\": \"string\"\n      },\n      \"reloaderImagePullPolicy\": {\n       \"type\": \"string\"\n      },\n      \"reloaderImageTag\": {\n       \"type\": \"string\"\n      },\n      \"reloaderResources\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"resources\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"tolerations\": {\n       \"items\": {\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"volumeMounts\": {\n       \"items\": {\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"serverImage\": {\n     \"type\": \"string\"\n    },\n    \"size\": {\n     \"type\": \"integer\"\n    },\n    \"template\": {\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"tls\": {\n     \"properties\": {\n      \"cipherSuites\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"clientsTLSTimeout\": {\n       \"type\": \"number\"\n      },\n      \"curvePreferences\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"enableHttps\": {\n       \"type\": \"boolean\"\n      },\n      \"gatewaySecret\": {\n       \"type\": \"string\"\n      },\n      \"gatewaySecretCAFileName\": {\n       \"type\": \"string\"\n      },\n      \"gatewaySecretCertFileName\": {\n       \"type\": \"string\"\n      },\n      \"gatewaySecretKeyFileName\": {\n       \"type\": \"string\"\n      },\n      \"gatewaysTLSTimeout\": {\n       \"type\": \"number\"\n      },\n      \"leafnodeSecret\": {\n       \"type\": \"string\"\n      },\n      \"leafnodeSecretCAFileName\": {\n       \"type\": \"string\"\n      },\n      \"leafnodeSecretCertFileName\": {\n       \"type\": \"string\"\n      },\n      \"leafnodeSecretKeyFileName\": {\n       \"type\": \"string\"\n      },\n      \"leafnodesTLSTimeout\": {\n       \"type\": \"number\"\n      },\n      \"routesSecret\": {\n       \"type\": \"string\"\n      },\n      \"routesSecretCAFileName\": {\n       \"type\": \"string\"\n      },\n      \"routesSecretCertFileName\": {\n       \"type\": \"string\"\n      },\n      \"routesSecretKeyFileName\": {\n       \"type\": \"string\"\n      },\n      \"routesTLSTimeout\": {\n       \"type\": \"number\"\n      },\n      \"serverSecret\": {\n       \"type\": \"string\"\n      },\n      \"serverSecretCAFileName\": {\n       \"type\": \"string\"\n      },\n      \"serverSecretCertFileName\": {\n       \"type\": \"string\"\n      },\n      \"serverSecretKeyFileName\": {\n       \"type\": \"string\"\n      },\n      \"verify\": {\n       \"type\": \"boolean\"\n      },\n      \"websocketSecret\": {\n       \"type\": \"string\"\n      },\n      \"websocketSecretCAFileName\": {\n       \"type\": \"string\"\n      },\n      \"websocketSecretCertFileName\": {\n       \"type\": \"string\"\n      },\n      \"websocketSecretKeyFileName\": {\n       \"type\": \"string\"\n      },\n      \"websocketTLSTimeout\": {\n       \"type\": \"number\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"useServerName\": {\n     \"type\": \"boolean\"\n    },\n    \"version\": {\n     \"type\": \"string\"\n    },\n    \"websocketConfig\": {\n     \"properties\": {\n      \"compression\": {\n       \"type\": \"boolean\"\n      },\n      \"handshakeTimeout\": {\n       \"type\": \"integer\"\n      },\n      \"port\": {\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Nats Cluster\",\n \"type\": \"object\"\n}",
-   "version": "nats.io/v1alpha2"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Nats Cluster",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Nats Cluster",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "App Definition and Development"
-   },
-   "displayName": "NATS Operator",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "nats-operator",
+    "displayName": "NATS Operator",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "App Definition and Development"
+    },
+    "subCategory": "Streaming \u0026 Messaging",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#34a575",
+      "secondaryColor": "#79EAB9\n",
+      "shape": "circle",
+      "source_uri": "https://github.com/nats-io/k8s/releases/download/nats-operator-0.8.3/nats-operator-0.8.3.tgz",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"2.42 -0.33 280.40 289.90\" height=\"20\" width=\"20\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003esvg {enable-background:new 0 0 288 288}\u003c/style\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.st3{fill:#375c93}.st4{fill:#8dc63f}\u003c/style\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#34a574\" d=\"M142.8 5.3h134.7v109.2H142.8z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#27aae1\" d=\"M8.1 5.3h134.7v109.2H8.1z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M142.8 114.6h134.7v109.2H142.8z\" class=\"st4\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M8.1 114.6h134.7v109.2H8.1z\" class=\"st3\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M123 223.2l65.9 61v-61z\" class=\"st4\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M142.8 223.2l.7 19.2-21.1-19.7z\" class=\"st3\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#fff\" d=\"M198.6 146.5V56.1h32.2V173H182L83.5 81v92.1H51.2v-117h50.5l96.9 90.4z\"\u003e\u003c/path\u003e\u003c/svg\u003e\n",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"2.43 -0.32 280.39 289.64\" height=\"20\" width=\"20\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003esvg {enable-background:new 0 0 288 288}\u003c/style\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003c/style\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#fff\" d=\"M142.8 5.3H8.1v218.4h115.4l19.9 18.6v-.3l45.4 42v-60.3h88.6V5.3H142.8zm88 167.8H182L83.5 81v92.1H51.2v-117h50.5l96.9 90.4V56.1h32.2v117z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "0.8.3"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#34a575",
     "secondaryColor": "#79EAB9\n",
     "shape": "circle",
-    "source_uri": "https://github.com/nats-io/k8s/releases/download/nats-operator-0.8.3/nats-operator-0.8.3.tgz",
-    "styleOverrides": "",
-    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"2.42 -0.33 280.40 289.90\" height=\"20\" width=\"20\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003esvg {enable-background:new 0 0 288 288}\u003c/style\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.st3{fill:#375c93}.st4{fill:#8dc63f}\u003c/style\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#34a574\" d=\"M142.8 5.3h134.7v109.2H142.8z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#27aae1\" d=\"M8.1 5.3h134.7v109.2H8.1z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M142.8 114.6h134.7v109.2H142.8z\" class=\"st4\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M8.1 114.6h134.7v109.2H8.1z\" class=\"st3\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M123 223.2l65.9 61v-61z\" class=\"st4\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M142.8 223.2l.7 19.2-21.1-19.7z\" class=\"st3\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#fff\" d=\"M198.6 146.5V56.1h32.2V173H182L83.5 81v92.1H51.2v-117h50.5l96.9 90.4z\"\u003e\u003c/path\u003e\u003c/svg\u003e\n",
-    "svgComplete": "",
-    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"2.43 -0.32 280.39 289.64\" height=\"20\" width=\"20\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003esvg {enable-background:new 0 0 288 288}\u003c/style\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003c/style\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#fff\" d=\"M142.8 5.3H8.1v218.4h115.4l19.9 18.6v-.3l45.4 42v-60.3h88.6V5.3H142.8zm88 167.8H182L83.5 81v92.1H51.2v-117h50.5l96.9 90.4V56.1h32.2v117z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
-   },
-   "model": {
-    "version": "0.8.3"
-   },
-   "name": "nats-operator",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "enabled",
-   "subCategory": "Streaming \u0026 Messaging",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
+    "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"2.42 -0.33 280.40 289.90\"\u003e\u003cstyle\u003esvg {enable-background:new 0 0 288 288}\u003c/style\u003e\u003cstyle\u003e.st3{fill:#375c93}.st4{fill:#8dc63f}\u003c/style\u003e\u003cpath fill=\"#34a574\" d=\"M142.8 5.3h134.7v109.2H142.8z\"/\u003e\u003cpath fill=\"#27aae1\" d=\"M8.1 5.3h134.7v109.2H8.1z\"/\u003e\u003cpath d=\"M142.8 114.6h134.7v109.2H142.8z\" class=\"st4\"/\u003e\u003cpath d=\"M8.1 114.6h134.7v109.2H8.1z\" class=\"st3\"/\u003e\u003cpath d=\"M123 223.2l65.9 61v-61z\" class=\"st4\"/\u003e\u003cpath d=\"M142.8 223.2l.7 19.2-21.1-19.7z\" class=\"st3\"/\u003e\u003cpath fill=\"#fff\" d=\"M198.6 146.5V56.1h32.2V173H182L83.5 81v92.1H51.2v-117h50.5l96.9 90.4z\"/\u003e\u003c/svg\u003e\n",
+    "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"2.43 -0.32 280.39 289.64\" width='280.39' height='289.64'\u003e\u003cstyle\u003esvg {enable-background:new 0 0 288 288}\u003c/style\u003e\u003cstyle/\u003e\u003cpath fill=\"#fff\" d=\"M142.8 5.3H8.1v218.4h115.4l19.9 18.6v-.3l45.4 42v-60.3h88.6V5.3H142.8zm88 167.8H182L83.5 81v92.1H51.2v-117h50.5l96.9 90.4V56.1h32.2v117z\"/\u003e\u003c/svg\u003e"
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#34a575",
-   "secondaryColor": "#79EAB9\n",
-   "shape": "circle",
-   "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"2.42 -0.33 280.40 289.90\"\u003e\u003cstyle\u003esvg {enable-background:new 0 0 288 288}\u003c/style\u003e\u003cstyle\u003e.st3{fill:#375c93}.st4{fill:#8dc63f}\u003c/style\u003e\u003cpath fill=\"#34a574\" d=\"M142.8 5.3h134.7v109.2H142.8z\"/\u003e\u003cpath fill=\"#27aae1\" d=\"M8.1 5.3h134.7v109.2H8.1z\"/\u003e\u003cpath d=\"M142.8 114.6h134.7v109.2H142.8z\" class=\"st4\"/\u003e\u003cpath d=\"M8.1 114.6h134.7v109.2H8.1z\" class=\"st3\"/\u003e\u003cpath d=\"M123 223.2l65.9 61v-61z\" class=\"st4\"/\u003e\u003cpath d=\"M142.8 223.2l.7 19.2-21.1-19.7z\" class=\"st3\"/\u003e\u003cpath fill=\"#fff\" d=\"M198.6 146.5V56.1h32.2V173H182L83.5 81v92.1H51.2v-117h50.5l96.9 90.4z\"/\u003e\u003c/svg\u003e\n",
-   "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"2.43 -0.32 280.39 289.64\" width='280.39' height='289.64'\u003e\u003cstyle\u003esvg {enable-background:new 0 0 288 288}\u003c/style\u003e\u003cstyle/\u003e\u003cpath fill=\"#fff\" d=\"M142.8 5.3H8.1v218.4h115.4l19.9 18.6v-.3l45.4 42v-60.3h88.6V5.3H142.8zm88 167.8H182L83.5 81v92.1H51.2v-117h50.5l96.9 90.4V56.1h32.2v117z\"/\u003e\u003c/svg\u003e"
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "NatsCluster",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"auth\": {\n     \"properties\": {\n      \"clientsAuthFile\": {\n       \"type\": \"string\"\n      },\n      \"clientsAuthSecret\": {\n       \"type\": \"string\"\n      },\n      \"clientsAuthTimeout\": {\n       \"type\": \"integer\"\n      },\n      \"enableServiceAccounts\": {\n       \"type\": \"boolean\"\n      },\n      \"tlsVerifyAndMap\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"extraRoutes\": {\n     \"items\": {\n      \"properties\": {\n       \"cluster\": {\n        \"type\": \"string\"\n       },\n       \"route\": {\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"gatewayConfig\": {\n     \"properties\": {\n      \"gateways\": {\n       \"items\": {\n        \"properties\": {\n         \"name\": {\n          \"type\": \"string\"\n         },\n         \"url\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"hostPort\": {\n       \"type\": \"integer\"\n      },\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"rejectUnknown\": {\n       \"type\": \"boolean\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"lameDuckDurationSeconds\": {\n     \"type\": \"integer\"\n    },\n    \"leafnodeConfig\": {\n     \"properties\": {\n      \"port\": {\n       \"type\": \"integer\"\n      },\n      \"remotes\": {\n       \"items\": {\n        \"properties\": {\n         \"credentials\": {\n          \"type\": \"string\"\n         },\n         \"url\": {\n          \"type\": \"string\"\n         },\n         \"urls\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"natsConfig\": {\n     \"properties\": {\n      \"debug\": {\n       \"type\": \"boolean\"\n      },\n      \"disableLogtime\": {\n       \"type\": \"boolean\"\n      },\n      \"maxConnections\": {\n       \"type\": \"integer\"\n      },\n      \"maxControlLine\": {\n       \"type\": \"integer\"\n      },\n      \"maxPayload\": {\n       \"type\": \"integer\"\n      },\n      \"maxPending\": {\n       \"type\": \"integer\"\n      },\n      \"maxSubscriptions\": {\n       \"type\": \"integer\"\n      },\n      \"trace\": {\n       \"type\": \"boolean\"\n      },\n      \"write_deadline\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"noAdvertise\": {\n     \"type\": \"boolean\"\n    },\n    \"operatorConfig\": {\n     \"properties\": {\n      \"resolver\": {\n       \"type\": \"string\"\n      },\n      \"secret\": {\n       \"type\": \"string\"\n      },\n      \"systemAccount\": {\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"paused\": {\n     \"type\": \"boolean\"\n    },\n    \"pod\": {\n     \"properties\": {\n      \"advertiseExternalIP\": {\n       \"type\": \"boolean\"\n      },\n      \"annotations\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"antiAffinity\": {\n       \"type\": \"boolean\"\n      },\n      \"bootconfigImage\": {\n       \"type\": \"string\"\n      },\n      \"bootconfigImageTag\": {\n       \"type\": \"string\"\n      },\n      \"enableClientsHostPort\": {\n       \"type\": \"boolean\"\n      },\n      \"enableConfigReload\": {\n       \"type\": \"boolean\"\n      },\n      \"enableMetrics\": {\n       \"type\": \"boolean\"\n      },\n      \"labels\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"metricsImage\": {\n       \"type\": \"string\"\n      },\n      \"metricsImagePullPolicy\": {\n       \"type\": \"string\"\n      },\n      \"metricsImageTag\": {\n       \"type\": \"string\"\n      },\n      \"natsEnv\": {\n       \"items\": {\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"nodeSelector\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"reloaderImage\": {\n       \"type\": \"string\"\n      },\n      \"reloaderImagePullPolicy\": {\n       \"type\": \"string\"\n      },\n      \"reloaderImageTag\": {\n       \"type\": \"string\"\n      },\n      \"reloaderResources\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"resources\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"tolerations\": {\n       \"items\": {\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"volumeMounts\": {\n       \"items\": {\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"serverImage\": {\n     \"type\": \"string\"\n    },\n    \"size\": {\n     \"type\": \"integer\"\n    },\n    \"template\": {\n     \"format\": \"textarea\",\n     \"type\": \"string\"\n    },\n    \"tls\": {\n     \"properties\": {\n      \"cipherSuites\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"clientsTLSTimeout\": {\n       \"type\": \"number\"\n      },\n      \"curvePreferences\": {\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"enableHttps\": {\n       \"type\": \"boolean\"\n      },\n      \"gatewaySecret\": {\n       \"type\": \"string\"\n      },\n      \"gatewaySecretCAFileName\": {\n       \"type\": \"string\"\n      },\n      \"gatewaySecretCertFileName\": {\n       \"type\": \"string\"\n      },\n      \"gatewaySecretKeyFileName\": {\n       \"type\": \"string\"\n      },\n      \"gatewaysTLSTimeout\": {\n       \"type\": \"number\"\n      },\n      \"leafnodeSecret\": {\n       \"type\": \"string\"\n      },\n      \"leafnodeSecretCAFileName\": {\n       \"type\": \"string\"\n      },\n      \"leafnodeSecretCertFileName\": {\n       \"type\": \"string\"\n      },\n      \"leafnodeSecretKeyFileName\": {\n       \"type\": \"string\"\n      },\n      \"leafnodesTLSTimeout\": {\n       \"type\": \"number\"\n      },\n      \"routesSecret\": {\n       \"type\": \"string\"\n      },\n      \"routesSecretCAFileName\": {\n       \"type\": \"string\"\n      },\n      \"routesSecretCertFileName\": {\n       \"type\": \"string\"\n      },\n      \"routesSecretKeyFileName\": {\n       \"type\": \"string\"\n      },\n      \"routesTLSTimeout\": {\n       \"type\": \"number\"\n      },\n      \"serverSecret\": {\n       \"type\": \"string\"\n      },\n      \"serverSecretCAFileName\": {\n       \"type\": \"string\"\n      },\n      \"serverSecretCertFileName\": {\n       \"type\": \"string\"\n      },\n      \"serverSecretKeyFileName\": {\n       \"type\": \"string\"\n      },\n      \"verify\": {\n       \"type\": \"boolean\"\n      },\n      \"websocketSecret\": {\n       \"type\": \"string\"\n      },\n      \"websocketSecretCAFileName\": {\n       \"type\": \"string\"\n      },\n      \"websocketSecretCertFileName\": {\n       \"type\": \"string\"\n      },\n      \"websocketSecretKeyFileName\": {\n       \"type\": \"string\"\n      },\n      \"websocketTLSTimeout\": {\n       \"type\": \"number\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"useServerName\": {\n     \"type\": \"boolean\"\n    },\n    \"version\": {\n     \"type\": \"string\"\n    },\n    \"websocketConfig\": {\n     \"properties\": {\n      \"compression\": {\n       \"type\": \"boolean\"\n      },\n      \"handshakeTimeout\": {\n       \"type\": \"integer\"\n      },\n      \"port\": {\n       \"type\": \"integer\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Nats Cluster\",\n \"type\": \"object\"\n}",
+    "version": "nats.io/v1alpha2"
+  }
+}

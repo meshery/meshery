@@ -10,7 +10,7 @@ command: pattern
 subcommand: onboard
 ---
 
-# mesheryctl pattern onboard
+# mesheryctl design onboard
 
 Onboard pattern
 
@@ -19,7 +19,7 @@ Onboard pattern
 Command will trigger deploy of pattern
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern onboard [flags]
+mesheryctl design onboard [flags]
 
 </div>
 </pre> 
@@ -29,14 +29,14 @@ mesheryctl pattern onboard [flags]
 Onboard pattern by providing file path
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern onboard -f [filepath] -s [source type]
+mesheryctl design onboard -f [filepath] -s [source type]
 
 </div>
 </pre> 
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl pattern onboard -f ./pattern.yml -s "Kubernetes Manifest"
+mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 
 </div>
 </pre> 
@@ -66,7 +66,7 @@ mesheryctl pattern onboard -f ./pattern.yml -s "Kubernetes Manifest"
 
 ## Screenshots
 
-Usage of mesheryctl pattern onboard
+Usage of mesheryctl design onboard
 ![pattern-onboard-usage](/assets/img/mesheryctl/pattern-onboard.png)
 
 ## See Also

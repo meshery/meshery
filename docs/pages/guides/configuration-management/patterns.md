@@ -42,7 +42,7 @@ You can import a pattern using `mesheryctl` or Meshery UI. Patterns can be impor
 #### To import a pattern, execute this command:
 
 ```
-$ mesheryctl pattern import -f <path to the pattern>
+$ mesheryctl design import -f <path to the pattern>
 Importing pattern…
 Pattern imported.
 ```
@@ -65,7 +65,7 @@ _To upload from url click the link icon_
 #### To deploy a pattern, execute this command:
 
 ```
-$ mesheryctl pattern apply -f <path to the pattern>
+$ mesheryctl design apply -f <path to the pattern>
 Deploying pattern…
 Pattern successfully applied.
 ```
@@ -77,11 +77,11 @@ As you step through each pattern, you might choose to modify the pattern to suit
 Take time to explore. Try deploying one cloud native’s sample application onto a different cloud native and compare differences in behavior and each cloud native’s ability to manage it. If using Meshery to do so, execute the following commands as an example to deploy the sample application, BookCatalog, onto Open cloud native:
 
 ```
-$ mesheryctl pattern apply -f book-catalog
+$ mesheryctl design apply -f book-catalog
 Deploying application “BookCatalog”...
 Deployed. Endpoint(s) available at: http://localhost:8000/catalog
 ```
 
 ## Related Reading
 
-- [`mesheryctl pattern`]({{ site.baseurl }}/reference/mesheryctl/pattern)
+- [`mesheryctl design`]({{ site.baseurl }}/reference/mesheryctl/pattern)

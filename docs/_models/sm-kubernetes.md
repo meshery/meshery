@@ -10,6 +10,9 @@ integrations-category: Security & Compliance
 integrations-subcategory: Key Management
 registrant: GitHub
 components: 
+components-count: 0
+relationships: 
+relationship-count: 0
 featureList: [
   "Allows teams to integrate Secrets Manager into Kubernetes workflows securely and efficiently.",
   "Using the operator, which is deployed using Helm package manager, secrets can be stored and retrieved from Secrets Manager.",

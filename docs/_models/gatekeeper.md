@@ -66,6 +66,9 @@ components:
   colorIcon: assets/img/integrations/gatekeeper/components/config-pod-status/icons/color/config-pod-status-color.svg
   whiteIcon: assets/img/integrations/gatekeeper/components/config-pod-status/icons/white/config-pod-status-white.svg
   description: 
+components-count: 14
+relationships: 
+relationship-count: 0
 featureList: [
   "Native Kubernetes CRDs for instantiating the policy library (aka constraints)",
   "An extensible, parameterized policy library",

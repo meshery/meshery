@@ -77,7 +77,7 @@ mesheryctl filter delete [filter-name | ID]
 			if err != nil {
 				return errors.Wrap(err, utils.FilterDeleteError(fmt.Sprintf("failed to delete filter %s", filter)))
 			}
-			utils.Log.Info("Filter ", filter, " deleted successfully")
+			utils.Log.Info("Filter ", filter, " deleted")
 			return nil
 		}
 

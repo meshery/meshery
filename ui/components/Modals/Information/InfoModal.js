@@ -1,32 +1,37 @@
 /* eslint-disable react/display-name */
 import React, { useEffect, useRef, useState } from 'react';
-import CloseIcon from '@material-ui/icons/Close';
+import CloseIcon from '@mui/icons-material/Close';
 import PatternIcon from '../../../assets/icons/Pattern';
-import { Typography, IconButton, Button, Grid, Avatar, Tooltip, Box } from '@material-ui/core';
-import useStyles, {
-  ActionContainer,
-  CreatAtContainer,
-  CopyLinkButton,
-  VisibilityTag,
-  ResourceName,
-} from './styles';
+import {
+  Typography,
+  IconButton,
+  Button,
+  Grid,
+  Avatar,
+  Tooltip,
+  Box,
+  CircularProgress,
+} from '@layer5/sistent';
+import { ActionContainer, CreatAtContainer, CopyLinkButton, ResourceName } from './styles';
 import { iconMedium, iconSmall } from '../../../css/icons.styles';
 import { getDesignVersion, getSharableCommonHostAndprotocolLink } from '../../../utils/utils';
 import moment from 'moment';
 import Application from '../../../public/static/img/drawer-icons/application_svg.js';
 import { useSnackbar } from 'notistack';
 import Filter from '../../../public/static/img/drawer-icons/filter_svg.js';
-import { PATTERN_ENDPOINT, FILTER_ENDPOINT } from '../../../constants/endpoints';
+import {
+  PATTERN_ENDPOINT,
+  FILTER_ENDPOINT,
+  MESHERY_CLOUD_PROD,
+} from '../../../constants/endpoints';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import axios from 'axios';
 import _ from 'lodash';
 import RJSFWrapper from '../../MesheryMeshInterface/PatternService/RJSF_wrapper';
-import CircularProgress from '@mui/material/CircularProgress';
 import { Provider } from 'react-redux';
 import { store } from '../../../store';
 import { useGetUserByIdQuery } from '../../../rtk-query/user.js';
-import { getUnit8ArrayForDesign } from '@/utils/utils';
 import ServiceMesheryIcon from '@/assets/icons/ServiceMesheryIcon';
 import {
   Modal,
@@ -34,17 +39,25 @@ import {
   ModalButtonPrimary,
   ModalButtonSecondary,
   ModalBody,
+  VisibilityChipMenu,
+  Link,
+  Skeleton,
 } from '@layer5/sistent';
 import TooltipButton from '@/utils/TooltipButton';
 import { keys } from '@/utils/permission_constants';
 import CAN from '@/utils/can';
 import { filterEmptyFields } from '@/utils/objects';
-import { VIEW_VISIBILITY, VisibilityMenu } from '@/components/VisibilityMenu';
-import { Lock, Public } from '@material-ui/icons';
+import { Lock, Public } from '@mui/icons-material';
+import yaml from 'js-yaml';
 
 const APPLICATION_PLURAL = 'applications';
 const FILTER_PLURAL = 'filters';
 const PATTERN_PLURAL = 'patterns';
+
+export const VIEW_VISIBILITY = {
+  PUBLIC: 'public',
+  PRIVATE: 'private',
+};
 
 const InfoModal_ = React.memo((props) => {
   const {
@@ -69,7 +82,6 @@ const InfoModal_ = React.memo((props) => {
   const [saveFormLoading, setSaveFormLoading] = useState(false);
   const [uiSchema, setUiSchema] = useState({});
   const { notify } = useNotification();
-  const classes = useStyles();
   const formatDate = (date) => {
     return moment(date).utc().format('MMMM Do YYYY');
   };
@@ -113,13 +125,11 @@ const InfoModal_ = React.memo((props) => {
     };
     if (dataName === PATTERN_PLURAL) {
       body = JSON.stringify({
-        pattern_data: {
-          catalog_data: modifiedData,
-          pattern_file: getUnit8ArrayForDesign(selectedResource.pattern_file),
-          id: selectedResource.id,
-          visibility: visibility,
-        },
-        save: true,
+        name: selectedResource.name,
+        catalog_data: modifiedData,
+        design_file: yaml.load(selectedResource.pattern_file),
+        id: selectedResource.id,
+        visibility: visibility,
       });
     } else if (dataName === FILTER_PLURAL) {
       setSaveFormLoading(true);
@@ -144,7 +154,7 @@ const InfoModal_ = React.memo((props) => {
       .then(() => {
         setSaveFormLoading(false);
         notify({
-          message: `${selectedResource.name} data saved successfully`,
+          message: `${selectedResource.name} data saved`,
           event_type: EVENT_TYPES.SUCCESS,
         });
         patternFetcher()();
@@ -275,7 +285,7 @@ const InfoModal_ = React.memo((props) => {
   const isPublished = selectedResource?.visibility === 'published';
   const [imageError, setImageError] = useState(false);
   const version = getDesignVersion(selectedResource);
-
+  const canChangeVisibility = !isPublished && isOwner;
   const handleError = () => {
     setImageError(true);
   };
@@ -329,16 +339,9 @@ const InfoModal_ = React.memo((props) => {
                   />
                 )}
               </Button>
-              <ResourceName className={classes.resourceName} variant="subtitle1">
-                {selectedResource?.name}
-              </ResourceName>
+              <ResourceName variant="subtitle1">{selectedResource?.name}</ResourceName>
               <Grid item xs={12} style={{ marginTop: '1rem' }}>
-                <Typography
-                  style={{ whiteSpace: 'nowrap' }}
-                  gutterBottom
-                  variant="subtitle1"
-                  className={classes.text}
-                >
+                <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom variant="subtitle1">
                   <CreatAtContainer isBold={true}>Created</CreatAtContainer>
                   <CreatAtContainer isBold={false}>
                     {formatDate(selectedResource?.created_at)}
@@ -346,12 +349,7 @@ const InfoModal_ = React.memo((props) => {
                 </Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography
-                  style={{ whiteSpace: 'nowrap' }}
-                  gutterBottom
-                  variant="subtitle1"
-                  className={classes.text}
-                >
+                <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom variant="subtitle1">
                   <CreatAtContainer isBold={true}>Updated</CreatAtContainer>
                   <CreatAtContainer idBold={false}>
                     {formatDate(selectedResource?.updated_at)}
@@ -360,12 +358,7 @@ const InfoModal_ = React.memo((props) => {
               </Grid>
               {version === '' ? null : (
                 <Grid item xs={12}>
-                  <Typography
-                    style={{ whiteSpace: 'nowrap' }}
-                    gutterBottom
-                    variant="subtitle1"
-                    className={classes.text}
-                  >
+                  <Typography style={{ whiteSpace: 'nowrap' }} gutterBottom variant="subtitle1">
                     <CreatAtContainer isBold={true}>Version</CreatAtContainer>
                     <CreatAtContainer isBold={false}>{version}</CreatAtContainer>
                   </Typography>
@@ -388,34 +381,36 @@ const InfoModal_ = React.memo((props) => {
                 <Grid
                   item
                   xs={dataName === APPLICATION_PLURAL ? 12 : 6}
-                  className={classes.visibilityGridItem}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}
                 >
                   <Typography
                     gutterBottom
                     variant="subtitle1"
-                    className={classes.text}
                     style={{ display: 'flex', marginRight: '2rem' }}
                   >
-                    {!isPublished && isOwner ? (
-                      <VisibilityMenu
-                        value={visibility}
-                        onChange={(value) => {
-                          setVisibility(value);
-                          setDataIsUpdated(value != selectedResource?.visibility);
-                        }}
-                        enabled={true}
-                        options={[
-                          [VIEW_VISIBILITY.PUBLIC, Public],
-                          [VIEW_VISIBILITY.PRIVATE, Lock],
-                        ]}
-                      />
-                    ) : (
-                      <VisibilityTag>{selectedResource?.visibility}</VisibilityTag>
-                    )}
+                    <VisibilityChipMenu
+                      value={visibility}
+                      onChange={(value) => {
+                        setVisibility(value);
+                        setDataIsUpdated(value != selectedResource?.visibility);
+                      }}
+                      enabled={canChangeVisibility}
+                      options={[
+                        [VIEW_VISIBILITY.PUBLIC, Public],
+                        [VIEW_VISIBILITY.PRIVATE, Lock],
+                      ]}
+                    />
                   </Typography>
                 </Grid>
                 {dataName === APPLICATION_PLURAL && formSchema ? null : (
-                  <Grid item className={classes.rjsfInfoModalForm}>
+                  <Grid
+                    item
+                    style={{
+                      marginLeft: '-1rem',
+                      marginTop: '-1rem',
+                      maxWidth: '39rem',
+                    }}
+                  >
                     <RJSFWrapper
                       formData={formStateRef.current}
                       jsonSchema={{
@@ -449,7 +444,6 @@ const InfoModal_ = React.memo((props) => {
               data-testid="publish-button"
               variant="outlined"
               onClick={handlePublishController}
-              className={classes.copyButton}
               disabled={
                 !isPublished
                   ? false
@@ -464,7 +458,6 @@ const InfoModal_ = React.memo((props) => {
             <ModalButtonPrimary
               variant="contained"
               color="primary"
-              className={classes.submitButton}
               onClick={handleSubmit}
               disabled={
                 (isCatalogDataEqual && !dataIsUpdated) ||
@@ -488,19 +481,18 @@ const InfoModal_ = React.memo((props) => {
 });
 
 const OwnerChip = ({ userProfile }) => {
-  const classes = useStyles();
   return (
     <Box style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-      <Avatar src={userProfile?.avatar_url} className={classes.chipIcon} />
-      <Typography>
-        {userProfile ? (
-          `${userProfile?.first_name} ${userProfile?.last_name}`
-        ) : (
-          <Box sx={{ display: 'flex' }}>
-            <CircularProgress color="inherit" size="1rem" />
-          </Box>
-        )}
-      </Typography>
+      {userProfile ? (
+        <>
+          <Link href={`${MESHERY_CLOUD_PROD}/user/${userProfile.id}`} rel="noopener noreferrer">
+            <Avatar src={userProfile.avatar_url} />
+          </Link>
+          <Typography>{`${userProfile.first_name} ${userProfile.last_name}`}</Typography>
+        </>
+      ) : (
+        <Skeleton variant="circular" width={40} height={40} />
+      )}
     </Box>
   );
 };

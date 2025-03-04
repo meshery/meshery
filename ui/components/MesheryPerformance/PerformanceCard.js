@@ -1,22 +1,21 @@
 //@ts-check
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 import {
+  CustomTooltip,
+  Typography,
   Avatar,
   Button,
+  useTheme,
   Grid,
   IconButton,
   Link,
   Table,
   TableCell,
   TableRow,
-  Typography,
-} from '@material-ui/core';
-import DeleteIcon from '@material-ui/icons/Delete';
-import EditIcon from '@material-ui/icons/Edit';
-import { useTheme } from '@material-ui/core/styles';
-import { makeStyles } from '@material-ui/core/styles';
-import { CustomTooltip } from '@layer5/sistent';
+} from '@layer5/sistent';
 import FlipCard from '../FlipCard';
 import PerformanceResults from './PerformanceResults';
 import { MESHERY_CLOUD_PROD } from '../../constants/endpoints';
@@ -25,47 +24,7 @@ import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { useGetUserByIdQuery } from '@/rtk-query/user';
 import useTestIDsGenerator from '@/components/hooks/useTestIDs';
-
-const useStyles = makeStyles((theme) => ({
-  cardButtons: {
-    display: 'flex',
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-  testsButton: {
-    marginRight: '0.5rem',
-  },
-  perfResultsContainer: {
-    marginTop: '0.5rem',
-  },
-  backGrid: {
-    marginBottom: '0.25rem',
-    minHeight: '6rem',
-  },
-  deleteEditButton: {
-    width: 'fit-content',
-    margin: '0 0 0 auto',
-  },
-  noOfResultsContainer: {
-    margin: '0 0 1rem',
-    '& div': {
-      display: 'flex',
-      alignItems: 'center',
-    },
-  },
-  bottomPart: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  lastRunText: {
-    marginRight: '0.5rem',
-    marginLeft: '0.5rem',
-  },
-  resultText: {
-    color: theme.palette.secondary.lightText,
-  },
-}));
+import { BottomPart, CardButton, ResultContainer } from './style';
 
 function PerformanceCard({
   profile,
@@ -76,7 +35,6 @@ function PerformanceCard({
   requestFullSize,
   requestSizeRestore,
 }) {
-  const classes = useStyles();
   const theme = useTheme();
   const [userAvatar, setUserAvatar] = useState(null);
   const {
@@ -208,36 +166,47 @@ function PerformanceCard({
             height="24px"
           />
         </div>
-        <div className={classes.noOfResultsContainer}>
+        <ResultContainer>
           <div>
             <Typography
               variant="h2"
               component="div"
               style={{
                 marginRight: '0.75rem',
-                color: `${theme.palette.type === 'dark' ? '#fff' : '#647881'}`,
+                color: `${theme.palette.mode === 'dark' ? '#fff' : '#647881'}`,
               }}
             >
               {(results || '0').toLocaleString('en')}
             </Typography>
-            <Typography variant="body1" className={classes.resultText} component="div">
+            <Typography
+              variant="body1"
+              sx={{
+                color: theme.palette.text.disabled,
+              }}
+              component="div"
+            >
               Results
             </Typography>
           </div>
-        </div>
+        </ResultContainer>
         <div style={{}}>
-          <div className={classes.bottomPart}>
+          <BottomPart>
             <Link href={`${MESHERY_CLOUD_PROD}/user/${profile.user_id}`} target="_blank">
               <Avatar alt="profile-avatar" src={userAvatar} />
             </Link>
-            <div className={classes.lastRunText}>
+            <div
+              style={{
+                marginRight: '0.5rem',
+                marginLeft: '0.5rem',
+              }}
+            >
               {lastRun && (
                 <Typography
                   variant="caption"
                   style={{
                     fontStyle: 'italic',
                     color: `${
-                      theme.palette.type === 'dark' ? 'rgba(255, 255, 255, 0.7)' : '#647881'
+                      theme.palette.mode === 'dark' ? 'rgba(255, 255, 255, 0.7)' : '#647881'
                     }`,
                   }}
                 >
@@ -245,10 +214,10 @@ function PerformanceCard({
                 </Typography>
               )}
             </div>
-          </div>
-          <div className={classes.cardButtons}>
+          </BottomPart>
+          <CardButton>
             <Button
-              variant="contained"
+              variant="outlined"
               onClick={(ev) =>
                 genericClickHandler(ev, () => {
                   setRenderTable((renderTable) => {
@@ -263,7 +232,7 @@ function PerformanceCard({
                 })
               }
               disabled={!CAN(keys.VIEW_RESULTS.action, keys.VIEW_RESULTS.subject)}
-              className={classes.testsButton}
+              sx={{ marginRight: '0.5rem' }}
             >
               {renderTable ? 'Hide' : 'View'} Results
             </Button>
@@ -272,7 +241,7 @@ function PerformanceCard({
               variant="contained"
               onClick={(ev) => genericClickHandler(ev, handleProfile)}
               disabled={!CAN(keys.RUN_TEST.action, keys.RUN_TEST.subject)}
-              className={classes.testsButton}
+              sx={{ marginRight: '0.5rem' }}
             >
               Edit Profile
             </Button>
@@ -284,10 +253,10 @@ function PerformanceCard({
             >
               Run Test
             </Button>
-          </div>
+          </CardButton>
         </div>
         {renderTable ? (
-          <div onClick={(ev) => ev.stopPropagation()} className={classes.perfResultsContainer}>
+          <div onClick={(ev) => ev.stopPropagation()} style={{ marginTop: '0.5rem' }}>
             <PerformanceResults
               // @ts-ignore
               CustomHeader={<Typography variant="h6">Test Results</Typography>}
@@ -303,7 +272,10 @@ function PerformanceCard({
       {/* BACK PART */}
       <>
         <Grid
-          className={classes.backGrid}
+          sx={{
+            marginBottom: '0.25rem',
+            minHeight: '6rem',
+          }}
           container
           spacing={1}
           alignContent="space-between"
@@ -315,7 +287,12 @@ function PerformanceCard({
             </Typography>
           </Grid>
           <Grid item xs={4}>
-            <div className={classes.deleteEditButton}>
+            <div
+              style={{
+                width: 'fit-content',
+                margin: '0 0 0 auto',
+              }}
+            >
               <CustomTooltip title="Edit">
                 <IconButton
                   onClick={(ev) => genericClickHandler(ev, handleEdit)}

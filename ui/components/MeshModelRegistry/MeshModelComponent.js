@@ -1,14 +1,4 @@
-import { withStyles } from '@material-ui/core';
 import React, { useState, useEffect, useCallback } from 'react';
-import {
-  Paper,
-  Button,
-  Radio,
-  FormControl,
-  FormLabel,
-  RadioGroup,
-  MenuItem,
-} from '@material-ui/core';
 import UploadIcon from '@mui/icons-material/Upload';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
 import { getUnit8ArrayDecodedFile } from '../../utils/utils';
@@ -22,8 +12,14 @@ import {
   PROMETHEUS,
 } from '../../constants/navigator';
 import DescriptionIcon from '@mui/icons-material/Description';
-// import { SORT } from '../../constants/endpoints';
-import useStyles from '../../assets/styles/general/tool.styles';
+import {
+  MeshModelToolbar,
+  MainContainer,
+  InnerContainer,
+  CardStyle,
+  TreeWrapper,
+  DetailsContainer,
+} from '@/assets/styles/general/tool.styles';
 import MesheryTreeView from './MesheryTreeView';
 import MeshModelDetails from './MeshModelDetails';
 import { toLower } from 'lodash';
@@ -38,7 +34,6 @@ import {
   useLazyGetRegistrantsQuery,
   useImportMeshModelMutation,
 } from '@/rtk-query/meshModel';
-import NoSsr from '@material-ui/core/NoSsr';
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 import _ from 'lodash';
 import {
@@ -60,48 +55,26 @@ import {
   Checkbox,
   ComponentIcon,
   Typography,
+  Button,
+  FormControl,
+  RadioGroup,
+  MenuItem,
+  Radio,
+  FormLabel,
+  NoSsr,
 } from '@layer5/sistent';
 import BrushIcon from '@mui/icons-material/Brush';
 import CategoryIcon from '@mui/icons-material/Category';
 import SourceIcon from '@/assets/icons/SourceIcon';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
-import { UsesSistent } from '../SistentWrapper';
+
 import { RJSFModalWrapper } from '../Modal';
 import { useRef } from 'react';
 import { updateProgress } from 'lib/store';
 import ModelIcon from '@/assets/icons/ModelIcon';
 import { iconMedium } from '../../css/icons.styles';
-import AddIcon from '@material-ui/icons/AddCircleOutline';
+import AddIcon from '@mui/icons-material/AddCircleOutline';
 import LanOutlinedIcon from '@mui/icons-material/LanOutlined';
-const meshmodelStyles = (theme) => ({
-  wrapperClss: {
-    flexGrow: 1,
-    maxWidth: '100%',
-    height: 'auto',
-  },
-  tab: {
-    minWidth: 40,
-    paddingLeft: 0,
-    paddingRight: 0,
-    '&.Mui-selected': {
-      color: theme.palette.secondary.focused,
-    },
-  },
-  tabs: {
-    '& .MuiTabs-indicator': {
-      backgroundColor: theme.palette.secondary.focused,
-    },
-  },
-  dashboardSection: {
-    padding: theme.spacing(2),
-    borderRadius: 4,
-    height: '100%',
-    overflowY: 'scroll',
-  },
-  duplicatesModelStyle: {
-    backgroundColor: theme.palette.secondary.focused,
-  },
-});
 
 const useMeshModelComponentRouter = () => {
   const router = useRouter();
@@ -166,7 +139,6 @@ const MeshModelComponent_ = ({
   });
   const [searchText, setSearchText] = useState(searchQuery);
   const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
-  const StyleClass = useStyles();
   const [view, setView] = useState(OVERVIEW);
   const [convert, setConvert] = useState(false);
   const [importSchema, setImportSchema] = useState({});
@@ -514,11 +486,13 @@ const MeshModelComponent_ = ({
           },
           true,
         );
-        const updatedRegistrant = {
-          ...registrant,
-          models: removeDuplicateVersions(modelRes.models) || [],
-        };
-        tempResourcesDetail.push(updatedRegistrant);
+        if (modelRes.models && modelRes.models.length > 0) {
+          const updatedRegistrant = {
+            ...registrant,
+            models: removeDuplicateVersions(modelRes.models) || [],
+          };
+          tempResourcesDetail.push(updatedRegistrant);
+        }
       }
       response = {
         data: {
@@ -529,7 +503,6 @@ const MeshModelComponent_ = ({
     setRowsPerPage(25);
     return response;
   };
-
   const handleTabClick = (selectedView) => {
     handleChangeSelectedTab(selectedView);
     if (view !== selectedView) {
@@ -630,18 +603,12 @@ const MeshModelComponent_ = ({
           handleCsvStepper={handleCsvStepper}
         />
       )}
-      <UsesSistent>
+      <>
         <SistentModal maxWidth="sm" {...urlModal}></SistentModal>
         <SistentModal maxWidth="sm" {...csvModal}></SistentModal>
-      </UsesSistent>
-      <div
-        className={`${StyleClass.mainContainer} ${animate ? StyleClass.mainContainerAnimate : ''}`}
-      >
-        <div
-          className={`${StyleClass.innerContainer} ${
-            animate ? StyleClass.innerContainerAnimate : ''
-          }`}
-        >
+      </>
+      <MainContainer isAnimated={animate}>
+        <InnerContainer isAnimated={animate}>
           <TabCard
             label="Models"
             count={modelsCount}
@@ -670,17 +637,12 @@ const MeshModelComponent_ = ({
             animate={animate}
             onClick={() => handleTabClick(REGISTRANTS)}
           />
-        </div>
+        </InnerContainer>
         {convert && (
-          <div
-            className={`${StyleClass.treeWrapper} ${convert ? StyleClass.treeWrapperAnimate : ''}`}
-          >
-            <Paper
-              className={StyleClass.detailsContainer}
+          <TreeWrapper isAnimated={convert}>
+            <DetailsContainer
+              isEmpty={!resourcesDetail.length}
               style={{
-                display: 'flex',
-                alignItems: resourcesDetail.length === 0 ? 'center' : '',
-                justifyContent: resourcesDetail.length === 0 ? 'center' : '',
                 padding: '0.6rem',
                 overflow: 'hidden',
               }}
@@ -709,15 +671,15 @@ const MeshModelComponent_ = ({
                   [RELATIONSHIPS]: relationshipsRes.isFetching,
                 }}
               />
-            </Paper>
+            </DetailsContainer>
             <MeshModelDetails
               view={view}
               setShowDetailsData={setShowDetailsData}
               showDetailsData={showDetailsData}
             />
-          </div>
+          </TreeWrapper>
         )}
-      </div>
+      </MainContainer>
     </div>
   );
 };
@@ -725,21 +687,17 @@ const ImportModal = React.memo((props) => {
   const { importFormSchema, handleClose, handleImportModel } = props;
 
   return (
-    <>
-      <UsesSistent>
-        <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Import Model">
-          <RJSFModalWrapper
-            schema={importFormSchema.rjsfSchema}
-            uiSchema={{
-              ...importFormSchema.uiSchema,
-            }}
-            handleSubmit={handleImportModel}
-            submitBtnText="Import"
-            handleClose={handleClose}
-          />
-        </SistentModal>
-      </UsesSistent>
-    </>
+    <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Import Model">
+      <RJSFModalWrapper
+        schema={importFormSchema.rjsfSchema}
+        uiSchema={{
+          ...importFormSchema.uiSchema,
+        }}
+        handleSubmit={handleImportModel}
+        submitBtnText="Import"
+        handleClose={handleClose}
+      />
+    </SistentModal>
   );
 });
 
@@ -749,50 +707,38 @@ const GenerateModal = React.memo((props) => {
   const { handleClose, uploadMethod, handleChange, handleUrlStepper, handleCsvStepper } = props;
 
   return (
-    <>
-      <UsesSistent>
-        <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Generate Model">
-          <FormControl style={{ padding: '10px' }}>
-            <FormLabel id="upload-method-choices" sx={{ marginBottom: '1rem' }}>
-              Upload Method
-            </FormLabel>
-            <RadioGroup
-              aria-labelledby="upload-method-choices"
-              name="uploadMethod"
-              value={uploadMethod}
-              onChange={handleChange}
-            >
-              <FormControlLabel
-                value="url"
-                control={<Radio color="primary" />}
-                label="URL Import"
-              />
-              <FormControlLabel
-                value="csv"
-                control={<Radio color="primary" />}
-                label="CSV Import"
-              />
-            </RadioGroup>
-          </FormControl>
-          <ModalFooter
-            variant="filled"
-            helpText="URL Import supports Artifacthub and Github. Csv Import supports bulk generation and import."
-          >
-            <PrimaryActionButtons
-              primaryText="Next"
-              secondaryText="Cancel"
-              primaryButtonProps={{
-                onClick: uploadMethod === 'url' ? handleUrlStepper : handleCsvStepper,
-                disabled: !uploadMethod,
-              }}
-              secondaryButtonProps={{
-                onClick: handleClose,
-              }}
-            />
-          </ModalFooter>
-        </SistentModal>
-      </UsesSistent>
-    </>
+    <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Generate Model">
+      <FormControl style={{ padding: '10px' }}>
+        <FormLabel id="upload-method-choices" sx={{ marginBottom: '1rem' }}>
+          Upload Method
+        </FormLabel>
+        <RadioGroup
+          aria-labelledby="upload-method-choices"
+          name="uploadMethod"
+          value={uploadMethod}
+          onChange={handleChange}
+        >
+          <FormControlLabel value="url" control={<Radio />} label="URL Import" />
+          <FormControlLabel value="csv" control={<Radio />} label="CSV Import" />
+        </RadioGroup>
+      </FormControl>
+      <ModalFooter
+        variant="filled"
+        helpText="URL Import supports Artifacthub and Github. Csv Import supports bulk generation and import."
+      >
+        <PrimaryActionButtons
+          primaryText="Next"
+          secondaryText="Cancel"
+          primaryButtonProps={{
+            onClick: uploadMethod === 'url' ? handleUrlStepper : handleCsvStepper,
+            disabled: !uploadMethod,
+          }}
+          secondaryButtonProps={{
+            onClick: handleClose,
+          }}
+        />
+      </ModalFooter>
+    </SistentModal>
   );
 });
 
@@ -1633,12 +1579,8 @@ CsvStepper.displayName = 'CsvStepper';
 UrlStepper.displayName = 'Create';
 
 const TabBar = ({ animate, handleUploadImport, handleGenerateModel }) => {
-  const StyleClass = useStyles();
-
   return (
-    <div
-      className={`${StyleClass.meshModelToolbar} ${animate ? StyleClass.toolWrapperAnimate : ''}`}
-    >
+    <MeshModelToolbar isAnimated={animate}>
       <div
         style={{
           display: 'flex',
@@ -1671,7 +1613,7 @@ const TabBar = ({ animate, handleUploadImport, handleGenerateModel }) => {
           disabled={false} //TODO: Need to make key for this component
         >
           <AddIcon style={iconMedium} />
-          Generate
+          &nbsp; Generate
         </Button>
       </div>
       <DisableButton
@@ -1685,20 +1627,13 @@ const TabBar = ({ animate, handleUploadImport, handleGenerateModel }) => {
       >
         Ignore
       </DisableButton>
-    </div>
+    </MeshModelToolbar>
   );
 };
 
 const TabCard = ({ label, count, active, onClick, animate }) => {
-  const StyleClass = useStyles();
   return (
-    <Paper
-      elevation={3}
-      className={`${StyleClass.cardStyle} ${animate ? StyleClass.cardStyleAnimate : ''} ${
-        active ? StyleClass.activeTab : ''
-      }`}
-      onClick={onClick}
-    >
+    <CardStyle isAnimated={animate} isSelected={active} elevation={3} onClick={onClick}>
       <span
         style={{
           fontWeight: `${animate ? 'normal' : 'bold'}`,
@@ -1709,7 +1644,7 @@ const TabCard = ({ label, count, active, onClick, animate }) => {
         {animate ? `(${count})` : `${count}`}
       </span>
       {label}
-    </Paper>
+    </CardStyle>
   );
 };
 
@@ -1722,4 +1657,4 @@ const MeshModelComponent = (props) => {
     </NoSsr>
   );
 };
-export default withStyles(meshmodelStyles)(MeshModelComponent);
+export default MeshModelComponent;

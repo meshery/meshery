@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Typography, Grid, Box, List, ListItem } from '@layer5/sistent';
-import { Launch as LaunchIcon } from '@material-ui/icons';
+import { Typography, Grid, Box, List, ListItem, RenderMarkdown } from '@layer5/sistent';
+import { Launch as LaunchIcon } from '@mui/icons-material';
 import {
   FormatStructuredData,
   SectionBody,
@@ -137,7 +137,11 @@ const ComponentWithIcon = ({ component }) => {
       container
       alignItems="center"
       spacing={1}
-      style={{ marginBottom: '8px', marginLeft: '1rem', marginTop: '8px' }}
+      style={{
+        marginBottom: '8px',
+        marginLeft: '1rem',
+        marginTop: '8px',
+      }}
     >
       <Grid item>
         <div
@@ -215,25 +219,43 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
   const formattedErrorCode = errorCode ? `${errorCode}-${code}` : code;
   const errorLink = `https://docs.meshery.io/reference/error-codes#${formattedErrorCode}`;
   const ErrorDetailsObjectFormatter = ({ heading, value }) => {
+    const isUnorderedList = heading === 'Details' && value.length <= 1;
     return (
       <Box>
         <Typography variant="body1">
           <strong>{heading}</strong>
         </Typography>
-        <List sx={{}}>
-          {value.map((error, idx) => (
-            <ListItem key={idx}>
-              <Box>
-                <Typography variant="body1">{error}</Typography>
-              </Box>
-            </ListItem>
-          ))}
+        <List
+          sx={{
+            listStyleType: isUnorderedList ? 'none' : 'decimal',
+            pl: 3,
+          }}
+        >
+          {value.map((error, idx) => {
+            const hashedError = error.trim().startsWith('-');
+            return (
+              <ListItem
+                key={idx}
+                sx={{
+                  display: hashedError ? 'block' : 'list-item',
+                  lineHeight: '1.2rem',
+                  padding: '0',
+                  pb: 1,
+                  '& ul': { paddingInlineStart: hashedError ? '20px' : '0px' },
+                  '& p': { lineHeight: '1.2rem' },
+                }}
+              >
+                <RenderMarkdown content={error} />
+              </ListItem>
+            );
+          })}
         </List>
       </Box>
     );
   };
   return (
     <Grid container>
+      {' '}
       <div>
         <TitleLink href={errorLink}> {formattedErrorCode} </TitleLink>
         {event?.description && <FormatStructuredData data={event.description} />}

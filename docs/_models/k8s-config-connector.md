@@ -1410,6 +1410,49 @@ components:
   colorIcon: assets/img/integrations/k8s-config-connector/components/workstation-cluster/icons/color/workstation-cluster-color.svg
   whiteIcon: assets/img/integrations/k8s-config-connector/components/workstation-cluster/icons/white/workstation-cluster-white.svg
   description: 
+- name: discovery-engine-data-store
+  colorIcon: assets/img/integrations/k8s-config-connector/components/discovery-engine-data-store/icons/color/discovery-engine-data-store-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/discovery-engine-data-store/icons/white/discovery-engine-data-store-white.svg
+  description: 
+- name: kms-autokey-config
+  colorIcon: assets/img/integrations/k8s-config-connector/components/kms-autokey-config/icons/color/kms-autokey-config-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/kms-autokey-config/icons/white/kms-autokey-config-white.svg
+  description: 
+- name: kms-key-handle
+  colorIcon: assets/img/integrations/k8s-config-connector/components/kms-key-handle/icons/color/kms-key-handle-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/kms-key-handle/icons/white/kms-key-handle-white.svg
+  description: 
+- name: secure-source-manager-repository
+  colorIcon: assets/img/integrations/k8s-config-connector/components/secure-source-manager-repository/icons/color/secure-source-manager-repository-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/secure-source-manager-repository/icons/white/secure-source-manager-repository-white.svg
+  description: 
+- name: discovery-engine-data-store-target-site
+  colorIcon: assets/img/integrations/k8s-config-connector/components/discovery-engine-data-store-target-site/icons/color/discovery-engine-data-store-target-site-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/discovery-engine-data-store-target-site/icons/white/discovery-engine-data-store-target-site-white.svg
+  description: 
+- name: discovery-engine-engine
+  colorIcon: assets/img/integrations/k8s-config-connector/components/discovery-engine-engine/icons/color/discovery-engine-engine-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/discovery-engine-engine/icons/white/discovery-engine-engine-white.svg
+  description: 
+- name: iap-settings
+  colorIcon: assets/img/integrations/k8s-config-connector/components/iap-settings/icons/color/iap-settings-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/iap-settings/icons/white/iap-settings-white.svg
+  description: 
+- name: memorystore-instance
+  colorIcon: assets/img/integrations/k8s-config-connector/components/memorystore-instance/icons/color/memorystore-instance-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/memorystore-instance/icons/white/memorystore-instance-white.svg
+  description: 
+- name: workstation
+  colorIcon: assets/img/integrations/k8s-config-connector/components/workstation/icons/color/workstation-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/workstation/icons/white/workstation-white.svg
+  description: 
+- name: workstation-config
+  colorIcon: assets/img/integrations/k8s-config-connector/components/workstation-config/icons/color/workstation-config-color.svg
+  whiteIcon: assets/img/integrations/k8s-config-connector/components/workstation-config/icons/white/workstation-config-white.svg
+  description: 
+components-count: 360
+relationships: 
+relationship-count: 0
 featureList: [
   "Provides a wide range of cloud services",
   "Integrates with Kubernetes",

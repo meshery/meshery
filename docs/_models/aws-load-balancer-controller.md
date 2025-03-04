@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/aws-load-balancer-controller/components/ingress-class-params/icons/color/ingress-class-params-color.svg
   whiteIcon: assets/img/integrations/aws-load-balancer-controller/components/ingress-class-params/icons/white/ingress-class-params-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Manage AWS Elastic Load Balancers for a Kubernetes cluster.",
   "Provide high performance traffic serving that can scale to millions of requests per second.",

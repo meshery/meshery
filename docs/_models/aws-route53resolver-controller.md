@@ -26,6 +26,9 @@ components:
   colorIcon: assets/img/integrations/aws-route53resolver-controller/components/resolver-rule/icons/color/resolver-rule-color.svg
   whiteIcon: assets/img/integrations/aws-route53resolver-controller/components/resolver-rule/icons/white/resolver-rule-white.svg
   description: 
+components-count: 4
+relationships: 
+relationship-count: 0
 featureList: [
   "Local VPC domain names for EC2 instances (for example, ec2-192-0-2-44.compute-1.amazonaws.com).
 ",

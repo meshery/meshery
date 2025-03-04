@@ -1,3 +1,4 @@
+import { urlEncodeParams } from '@/utils/utils';
 import { api } from './index';
 import { ctxUrl } from '@/utils/multi-ctx';
 
@@ -12,17 +13,31 @@ export const designsApi = api
   .injectEndpoints({
     endpoints: (builder) => ({
       getPatterns: builder.query({
-        query: (queryArg) => ({
-          url: `pattern`,
-          params: {
+        query: (queryArg) => {
+          const params = urlEncodeParams({
             page: queryArg.page,
             pagesize: queryArg.pagesize,
             search: queryArg.search,
             order: queryArg.order,
             visibility: queryArg.visibility,
-          },
-          method: 'GET',
-        }),
+            populate: queryArg.populate,
+          });
+          return `pattern?${params}`;
+        },
+        providesTags: () => [{ type: TAGS.DESIGNS }],
+      }),
+      getUserDesigns: builder.query({
+        query: (queryArg) => {
+          const params = urlEncodeParams({
+            page: queryArg.page,
+            pagesize: queryArg.pagesize,
+            order: queryArg.order,
+            user_id: queryArg.user_id,
+            expandUser: queryArg.expandUser,
+            metrics: queryArg.metrics,
+          });
+          return `extensions/api/content/patterns?${params}`;
+        },
         providesTags: () => [{ type: TAGS.DESIGNS }],
       }),
       deployPattern: builder.mutation({
@@ -92,7 +107,7 @@ export const designsApi = api
       }),
       importPattern: builder.mutation({
         query: (queryArg) => ({
-          url: `pattern/${queryArg.type}`,
+          url: `pattern/import`,
           method: 'POST',
           body: queryArg.importBody,
         }),
@@ -117,11 +132,15 @@ export const designsApi = api
           body: queryArg.uploadBody,
         }),
       }),
+      downloadPatternFile: builder.query({
+        query: (queryArg) => `pattern/${queryArg.id}`,
+      }),
     }),
   });
 
 export const {
   useGetPatternsQuery,
+  useGetUserDesignsQuery,
   useDeployPatternMutation,
   useUndeployPatternMutation,
   useClonePatternMutation,
@@ -132,4 +151,5 @@ export const {
   useUpdatePatternFileMutation,
   useUploadPatternFileMutation,
   useDeletePatternFileMutation,
+  useDownloadPatternFileQuery,
 } = designsApi;

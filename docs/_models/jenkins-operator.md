@@ -54,6 +54,9 @@ components:
   colorIcon: assets/img/integrations/jenkins-operator/components/jenkins-shared-library/icons/color/jenkins-shared-library-color.svg
   whiteIcon: assets/img/integrations/jenkins-operator/components/jenkins-shared-library/icons/white/jenkins-shared-library-white.svg
   description: 
+components-count: 11
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates Jenkins deployment and management",
   "Simplifies Jenkins configuration",

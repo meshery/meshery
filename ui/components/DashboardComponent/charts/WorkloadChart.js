@@ -1,5 +1,4 @@
 import React from 'react';
-import { Box, Typography, MenuItem, Select } from '@material-ui/core';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
 import { dataToColors, isValidColumnName } from '../../../utils/charts';
@@ -7,6 +6,7 @@ import ConnectClustersBtn from '../../General/ConnectClustersBtn';
 import Link from 'next/link';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
+import { Box, MenuItem, Select, Typography } from '@layer5/sistent';
 
 export default function WorkloadChart({
   classes,

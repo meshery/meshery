@@ -3,23 +3,23 @@ import { ENV } from './env';
 
 test.describe('Index Page UI Tests', () => {
   test.beforeEach(async ({ page }) => {
-    // Visit Index Page
+    // Visit Index Page (Dasboard)
     await page.goto(ENV.MESHERY_SERVER_URL);
   });
 
   test('Test if Left Navigation Panel is displayed', async ({ page }) => {
-    await expect(page.locator('[data-test=navigation]')).toBeVisible();
+    await expect(page.getByTestId('navigation')).toBeVisible();
   });
 
   test('Test if Settings button is displayed', async ({ page }) => {
-    await expect(page.locator('[data-test=settings-button]')).toBeVisible();
+    await expect(page.getByTestId('settings-button')).toBeVisible();
   });
 
   test('Test if Notification button is displayed', async ({ page }) => {
-    await expect(page.locator('[data-test=notification-button]')).toBeVisible();
+    await expect(page.getByTestId('notification-button')).toBeVisible();
   });
 
   test('Test if Profile button is displayed', async ({ page }) => {
-    await expect(page.locator('[data-test=profile-button]')).toBeVisible();
+    await expect(page.getByTestId('profile-button')).toBeVisible();
   });
 });

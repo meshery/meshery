@@ -1,23 +1,11 @@
-import React from 'react';
-import classNames from 'classnames';
-import { withStyles } from '@material-ui/core/styles';
-import Divider from '@material-ui/core/Divider';
-import Drawer from '@material-ui/core/Drawer';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import Grow from '@material-ui/core/Grow';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import NoSsr from '@material-ui/core/NoSsr';
-import RemoveIcon from '@material-ui/icons/Remove';
-import Zoom from '@material-ui/core/Zoom';
+import React, { useEffect, useState } from 'react';
+import RemoveIcon from '@mui/icons-material/Remove';
 import Link from 'next/link';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { withRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import HelpIcon from '@material-ui/icons/Help';
-import DashboardIcon from '@material-ui/icons/Dashboard';
+import HelpIcon from '@mui/icons-material/Help';
 import LifecycleIcon from '../public/static/img/drawer-icons/lifecycle_mgmt_svg';
 import PerformanceIcon from '../public/static/img/drawer-icons/performance_svg';
 import ExtensionIcon from '../public/static/img/drawer-icons/extensions_svg';
@@ -32,7 +20,7 @@ import SlackIcon from '../assets/icons/SlackIcon';
 import GithubIcon from '../assets/icons/GithubIcon';
 import ChatIcon from '../assets/icons/ChatIcon';
 import ServiceMeshIcon from '../assets/icons/ServiceMeshIcon';
-import OpenInNewIcon from '@material-ui/icons/OpenInNew';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import {
   faAngleLeft,
   faCaretDown,
@@ -46,17 +34,20 @@ import {
   setAdapter,
   updateCapabilities,
 } from '../lib/store';
-import { ButtonGroup, IconButton } from '@material-ui/core';
-import { CatalogIcon, CustomTooltip } from '@layer5/sistent';
-import { UsesSistent } from './SistentWrapper';
-import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
-import dataFetch from '../lib/data-fetch';
-import { Collapse } from '@material-ui/core';
 import {
-  cursorNotAllowed,
-  disabledStyle,
-  disabledStyleWithOutOpacity,
-} from '../css/disableComponent.styles';
+  CatalogIcon,
+  CustomTooltip,
+  ListItemIcon,
+  Grow,
+  ListItem,
+  List,
+  Collapse,
+  Box,
+  NoSsr,
+  Zoom,
+} from '@layer5/sistent';
+import ExtensionPointSchemaValidator from '../utils/ExtensionPointSchemaValidator';
+import { cursorNotAllowed, disabledStyle } from '../css/disableComponent.styles';
 import { CapabilitiesRegistry } from '../utils/disabledComponents';
 import {
   DESIGN,
@@ -77,261 +68,37 @@ import { iconSmall } from '../css/icons.styles';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
-
-const styles = (theme) => ({
-  root: {
-    '& svg': {
-      width: '1.21rem',
-      height: '1.21rem',
-    },
-  },
-  categoryHeader: {
-    paddingTop: 16,
-    paddingBottom: 16,
-  },
-  categoryHeaderPrimary: { color: theme.palette.common.white },
-  item: {
-    paddingTop: 4,
-    paddingBottom: 4,
-    color: 'rgba(255, 255, 255, 0.7)',
-    fill: '#fff',
-    '&:hover': {
-      '& $expandMoreIcon': {
-        opacity: 1,
-        transition: 'opacity 200ms ease-in',
-      },
-    },
-  },
-  itemCategory: {
-    backgroundColor: '#263238',
-    boxShadow: '0 -1px 0 #404854 inset',
-    paddingTop: '1.325rem',
-    paddingBottom: '1.325rem',
-  },
-  firebase: {
-    top: 0,
-    position: 'sticky',
-    zIndex: 5,
-  },
-  link: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    height: '30px',
-  },
-
-  itemActionable: { '&:hover': { backgroundColor: 'rgb(0, 187, 166, 0.5)' } },
-  itemActiveItem: {
-    color: '#4fc3f7',
-    fill: '#4fc3f7',
-  },
-  itemPrimary: {
-    color: 'inherit',
-    fontSize: theme.typography.fontSize,
-    '&$textDense': { fontSize: theme.typography.fontSize },
-  },
-  textDense: {},
-  divider: {
-    marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-  },
-  mainLogo: {
-    marginRight: theme.spacing(1),
-    marginTop: theme.spacing(1),
-    marginLeft: theme.spacing(-1),
-    width: 40,
-    height: 40,
-    borderRadius: 'unset',
-  },
-  mainLogoText: {
-    marginLeft: theme.spacing(0.5),
-    marginTop: theme.spacing(1),
-    width: 170,
-    borderRadius: 'unset',
-  },
-  mainLogoCollapsed: {
-    marginRight: theme.spacing(1),
-    marginTop: theme.spacing(1),
-    marginLeft: theme.spacing(-0.5),
-    width: 40,
-    height: 40,
-    borderRadius: 'unset',
-  },
-  mainLogoTextCollapsed: {
-    marginLeft: theme.spacing(1),
-    marginTop: theme.spacing(1),
-    width: 170,
-    borderRadius: 'unset',
-  },
-  settingsIcon: { marginLeft: theme.spacing(2) },
-  cursorPointer: { cursor: 'pointer' },
-  listIcon: {
-    minWidth: theme.spacing(3.5),
-    paddingTop: theme.spacing(0.5),
-    textAlign: 'center',
-    display: 'inline-table',
-    paddingRight: theme.spacing(0.5),
-    marginLeft: theme.spacing(0.8),
-  },
-  listIcon1: {
-    minWidth: theme.spacing(3.5),
-    paddingTop: theme.spacing(0.5),
-    textAlign: 'center',
-    display: 'inline-table',
-    paddingRight: theme.spacing(0.5),
-    opacity: 0.5,
-  },
-  listIconSlack: {
-    minWidth: theme.spacing(3.5),
-    paddingTop: theme.spacing(0.5),
-    textAlign: 'center',
-    display: 'inline-table',
-    marginLeft: theme.spacing(-0.1),
-    paddingRight: theme.spacing(0.5),
-    opacity: 0.5,
-  },
-  nested1: { paddingLeft: theme.spacing(3) },
-  nested2: { paddingLeft: theme.spacing(5) },
-  icon: { width: theme.spacing(2.5) },
-  istioIcon: { width: theme.spacing(1.8) },
-  isHidden: {
-    opacity: 0,
-    transition: 'opacity 200ms ease-in-out',
-  },
-  isDisplayed: {
-    opacity: 1,
-    transition: 'opacity 200ms ease-in-out',
-  },
-  sidebarCollapsed: {
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.leavingScreen,
-    }),
-    overflowX: 'hidden',
-    width: theme.spacing(8) + 4,
-  },
-  sidebarExpanded: {
-    width: '256px',
-    overflowX: 'hidden',
-    transition: theme.transitions.create('width', {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  },
-  fixedSidebarFooter: {
-    display: 'flex',
-    flexDirection: 'column',
-    marginTop: 'auto',
-    marginBottom: '0.5rem',
-  },
-  collapseButtonWrapper: {
-    boxShadow:
-      '0.5px 0px 0px 0px rgb(0 0 0 / 20%), 1.5px 0px 0px 0px rgb(0 0 0 / 14%), 2.5px 1px 3px 0px rgb(0 0 0 / 12%)',
-    borderRadius: '0 5px 5px 0',
-    position: 'fixed',
-    cursor: 'pointer',
-    display: 'flex',
-    justifyContent: 'center',
-    bottom: '12%',
-    left: '257px',
-    zIndex: '1400',
-    width: 'auto',
-    transition: 'left 195ms',
-    '&:hover': {
-      opacity: 1,
-      background: 'transparent',
-    },
-    '&:focus': {
-      opacity: 1,
-      background: 'transparent',
-    },
-  },
-  collapseButtonWrapperRotated: {
-    backgroundColor: '#515b60',
-    color: '#ffffff',
-    position: 'fixed',
-    borderRadius: '0 5px 5px 0',
-    cursor: 'pointer',
-    bottom: '12%',
-    left: '49px',
-    zIndex: '1400',
-    width: 'auto',
-    transition: 'left 225ms',
-    transform: 'rotate(180deg)',
-    display: 'flex',
-    justifyContent: 'center',
-
-    '&:hover': { opacity: 1 },
-    '&:focus': { opacity: 1 },
-  },
-  noPadding: {
-    paddingLeft: '16px',
-    paddingRight: '16px',
-  },
-  drawerIcons: {
-    height: '1.21rem',
-    width: '1.21rem',
-    fontSize: '1.21rem',
-  },
-  avatarGroup: { '& .MuiAvatarGroup-avatar': { border: 'none' } },
-  marginLeft: {
-    padding: '5px',
-    '& > li': {
-      padding: '0',
-    },
-  },
-  rightMargin: { marginRight: 8 },
-  btnGrpMarginRight: {
-    marginRight: 4,
-    alignItems: 'center',
-  },
-  helpIcon: {
-    color: '#fff',
-    opacity: '0.7',
-    transition: 'opacity 200ms linear',
-    '&:hover': {
-      opacity: 1,
-      background: 'transparent',
-    },
-    '&:focus': {
-      opacity: 1,
-      background: 'transparent',
-    },
-  },
-  extraPadding: {
-    // paddingTop : 4,
-    // paddingBottom : 4,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  restrictPointer: { pointerEvents: 'none' },
-  expandMoreIcon: {
-    opacity: 0,
-    cursor: 'pointer',
-    transform: 'translateX(3px)',
-    '&:hover': { color: '#4fc3f7' },
-  },
-  collapsed: { transform: 'rotate(180deg) translateX(-0.8px)' },
-  collapsedHelpButton: {
-    height: '1.45rem',
-    marginTop: '-4px',
-    transform: 'translateX(0px)',
-  },
-  rightTranslate: { transform: 'translateX(0.5px)' },
-  hideScrollbar: {
-    overflow: 'hidden auto',
-    'scrollbar-width': 'none',
-    '-ms-overflow-style': 'none',
-    '&::-webkit-scrollbar': {
-      display: 'none',
-    },
-  },
-  disabled: disabledStyle,
-  disableLogo: disabledStyleWithOutOpacity,
-  cursorNotAllowed: cursorNotAllowed,
-});
+import {
+  ChevronIcon,
+  ExpandMoreIcon,
+  HideScrollbar,
+  LinkContainer,
+  ListIconSide,
+  MainListIcon,
+  MainLogo,
+  MainLogoCollapsed,
+  MainLogoText,
+  MainLogoTextCollapsed,
+  NavigatorList,
+  NavigatorListItem,
+  NavigatorListItemII,
+  NavigatorListItemIII,
+  RootDiv,
+  SecondaryDivider,
+  SideBarListItem,
+  SideBarText,
+  StyledListItem,
+  NavigatorLink,
+  NavigatorHelpIcons,
+  HelpListItem,
+  HelpButton,
+  ChevronButtonWrapper,
+  FixedSidebarFooter,
+  SidebarDrawer,
+} from './General/style';
+import DashboardIcon from '@/assets/icons/DashboardIcon';
+import { useMediaQuery } from '@mui/material';
+import { getProviderCapabilities, getSystemVersion } from '@/rtk-query/user';
 
 const drawerIconsStyle = { height: '1.21rem', width: '1.21rem', fontSize: '1.45rem', ...iconSmall };
 const externalLinkIconStyle = { width: '1.11rem', fontSize: '1.11rem' };
@@ -417,14 +184,14 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
       {
         id: CATALOG,
         icon: (
-          <UsesSistent>
+          <>
             <CatalogIcon
-              primaryFill="#FFFFFF"
-              secondaryFill="#FFFFFFb3"
+              primaryFill={window.location.pathname === '/configuration/catalog' ? '#FFFFFF' : ''}
+              secondaryFill={window.location.pathname === '/configuration/catalog' ? '#FFFFFF' : ''}
               tertiaryFill="transparent"
               style={{ ...drawerIconsStyle }}
             />
-          </UsesSistent>
+          </>
         ),
         href: '/configuration/catalog',
         title: 'Catalog',
@@ -476,7 +243,9 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
     children: [
       {
         id: PROFILES,
-        icon: <FontAwesomeIcon icon={faDigitalTachograph} style={{ fontSize: 24 }} />,
+        icon: (
+          <FontAwesomeIcon icon={faDigitalTachograph} style={{ fontSize: 24, color: 'white' }} />
+        ),
         href: '/performance/profiles',
         title: 'Profiles',
         show: capabilityRegistryObj.isNavigatorComponentEnabled([PERFORMANCE, PROFILES]),
@@ -530,7 +299,7 @@ const externlinks = [
   },
   {
     id: 'forum',
-    href: 'http://discuss.meshery.io',
+    href: 'https://meshery.io/community#community-forums',
     title: 'Discussion Forum',
     icon: <ChatIcon style={drawerIconsStyle} />,
     external_icon: ExternalLinkIcon,
@@ -544,259 +313,60 @@ const externlinks = [
   },
 ];
 
-class Navigator_ extends React.Component {
-  constructor(props) {
-    super(props);
-    const { meshAdapters } = props;
-    this.state = {
-      path: '',
-      meshAdapters,
-      mts: new Date(),
+const NavigatorWrapper = (props) => {
+  const isMobile = useMediaQuery('(max-width:599px)');
 
-      // ExtensionPointSchemaValidator will return a navigator schema
-      // decoder which in turn will return an empty array when there is no content
-      // passed into it
-      navigator: ExtensionPointSchemaValidator('navigator')(),
-      showHelperButton: false,
-      openItems: [],
-      hoveredId: null,
-      /** @type {CapabilitiesRegistry} */
-      capabilitiesRegistryObj: null,
-      versionDetail: {
-        build: '',
-        latest: '',
-        outdated: false,
-        commitsha: '',
-        release_channel: 'NA',
-      },
-      navigatorComponents: [],
-    };
-  }
-
-  isServiceMeshActive() {
-    return this.state.meshAdapters.length > 0;
-  }
-
-  componentId = 'navigator';
-
-  componentDidMount() {
-    this.fetchCapabilities();
-    this.fetchVersionDetails();
-  }
-
-  fetchCapabilities() {
-    dataFetch(
-      '/api/provider/capabilities',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (result) {
-          const capabilitiesRegistryObj = new CapabilitiesRegistry(result);
-          const navigatorComponents = this.createNavigatorComponents(capabilitiesRegistryObj);
-
-          this.setState({
-            navigator: ExtensionPointSchemaValidator('navigator')(result?.extensions?.navigator),
-            capabilitiesRegistryObj,
-            navigatorComponents,
-          });
-          this.props.updateCapabilities({ capabilitiesRegistry: result });
-        }
-      },
-      (err) => console.error(err),
-    );
-  }
-
-  fetchVersionDetails() {
-    dataFetch(
-      '/api/system/version',
-      {
-        method: 'GET',
-        credentials: 'include',
-      },
-      (result) => {
-        if (typeof result !== 'undefined') {
-          this.setState({ versionDetail: result });
-        } else {
-          this.setState({
-            versionDetail: {
-              build: 'Unknown',
-              latest: 'Unknown',
-              outdated: false,
-              commitsha: 'Unknown',
-            },
-          });
-        }
-      },
-      (err) => console.error(err),
-    );
-  }
-
-  createNavigatorComponents(capabilityRegistryObj) {
-    return getNavigatorComponents(capabilityRegistryObj);
-  }
-
-  /**
-   * @param {import("../utils/ExtensionPointSchemaValidator").NavigatorSchema[]} children
-   * @param {number} depth
-   */
-  renderNavigatorExtensions(children, depth) {
-    const { classes, isDrawerCollapsed } = this.props;
-    const { path } = this.state;
-    if (children && children.length > 0) {
-      return (
-        <List disablePadding>
-          {children.map(({ id, icon, href, title, children, show: showc }) => {
-            if (typeof showc !== 'undefined' && !showc) {
-              return '';
-            }
-            return (
-              <React.Fragment key={id}>
-                <ListItem
-                  button
-                  key={id}
-                  className={classNames(
-                    depth === 1 ? '' : classes.nested1,
-                    classes.item,
-                    classes.itemActionable,
-                    path === href && classes.itemActiveItem,
-                    isDrawerCollapsed && classes.noPadding,
-                  )}
-                >
-                  {this.extensionPointContent(icon, href, title, isDrawerCollapsed)}
-                </ListItem>
-                {this.renderNavigatorExtensions(children, depth + 1)}
-              </React.Fragment>
-            );
-          })}
-        </List>
-      );
+  useEffect(() => {
+    if (isMobile && !props.isDrawerCollapsed) {
+      props.toggleDrawer({ isDrawerCollapsed: true });
     }
-  }
+  }, [isMobile]);
 
-  extensionPointContent(icon, href, name, drawerCollapsed) {
-    const { classes } = this.props;
+  return <Navigator_ {...props} />;
+};
 
-    let content = (
-      <div className={classNames(classes.link)} data-cy={name}>
-        <CustomTooltip
-          title={name}
-          placement="right"
-          disableFocusListener={!drawerCollapsed}
-          disableTouchListener={!drawerCollapsed}
-        >
-          <ListItemIcon className={classes.listIcon}>
-            <img
-              src={icon}
-              className={classes.icon}
-              onMouseOver={(e) => {
-                e.target.style.transform = 'translate(-20%, -25%)';
-                e.target.style.top = '0';
-                e.target.style.right = '0';
-              }}
-              onMouseOut={(e) => {
-                e.target.style.transform = 'translate(0, 0)';
-                e.target.style.top = 'auto';
-                e.target.style.right = 'auto';
-              }}
-            />
-          </ListItemIcon>
-        </CustomTooltip>
-        <ListItemText
-          className={drawerCollapsed ? classes.isHidden : classes.isDisplayed}
-          classes={{ primary: classes.itemPrimary }}
-        >
-          {name}
-        </ListItemText>
-      </div>
-    );
+const Navigator_ = (props) => {
+  const { meshAdapters: initialMeshAdapters } = props;
 
-    if (href) {
-      content = (
-        <Link href={href}>
-          <span
-            className={classNames(classes.link)}
-            onClick={() => this.props.updateExtensionType('navigator')}
-          >
-            {content}
-          </span>
-        </Link>
-      );
-    }
+  const [state, setState] = useState({
+    path: '',
+    meshAdapters: initialMeshAdapters,
+    mts: new Date(),
+    navigator: ExtensionPointSchemaValidator('navigator')(),
+    showHelperButton: false,
+    openItems: [],
+    hoveredId: null,
+    capabilitiesRegistryObj: null,
+    versionDetail: {
+      build: '',
+      latest: '',
+      outdated: false,
+      commitsha: '',
+      release_channel: 'NA',
+    },
+    navigatorComponents: [],
+  });
 
-    return content;
-  }
-  updatenavigatorComponentsMenus() {
-    const self = this;
-    const { navigatorComponents } = this.state;
-    navigatorComponents.forEach((cat, ind) => {
-      if (cat.id === LIFECYCLE) {
-        cat.children.forEach((catc, ind1) => {
-          if (catc.id == SERVICE_MESH) {
-            return;
-          }
-          const icon = self.pickIcon(catc.id, catc.href);
-          navigatorComponents[ind].children[ind1].icon = icon;
+  const updateState = (updates) => {
+    setState((prevState) => ({
+      ...prevState,
+      ...updates,
+    }));
+  };
 
-          const cr = self.fetchChildren(catc.id);
-          navigatorComponents[ind].children[ind1].children = cr;
-        });
-      }
+  useEffect(() => {
+    fetchCapabilities();
+    fetchVersionDetails();
+  }, []);
 
-      if (cat.id === 'Configuration') {
-        let show = false;
-        cat.children?.forEach((ch) => {
-          if (ch.id === 'Designs') {
-            const idx = self.props.capabilitiesRegistry?.capabilities?.findIndex(
-              (cap) => cap.feature === 'persist-meshery-patterns',
-            );
-            if (idx != -1) {
-              ch.show = true;
-              show = true;
-            }
-          }
-        });
-
-        cat.show = show;
-      }
-
-      //To Toggle Catalog Extension
-      if (cat.id === CONFIGURATION) {
-        cat.children?.forEach((ch) => {
-          if (ch.id === CATALOG) {
-            ch.show = this.props.catalogVisibility;
-          }
-        });
-      }
-    });
-  }
-  updateAdaptersLink() {
-    const { navigatorComponents } = this.state;
-    navigatorComponents.forEach((cat, ind) => {
-      if (cat.id === LIFECYCLE) {
-        cat.children.forEach((catc, ind1) => {
-          if (
-            typeof navigatorComponents[ind].children[ind1].children[0] !== 'undefined' &&
-            typeof navigatorComponents[ind].children[ind1].children[0].href !== 'undefined'
-          ) {
-            const val = true;
-            const newhref = `${navigatorComponents[ind].children[ind1].children[0].href}`;
-            navigatorComponents[ind].children[ind1].link = val;
-            navigatorComponents[ind].children[ind1].href = newhref;
-          }
-        });
-      }
-    });
-  }
-
-  static getDerivedStateFromProps(props, state) {
+  useEffect(() => {
     const { meshAdapters, meshAdaptersts } = props;
     const path = window.location.pathname;
-    const st = {};
     if (meshAdaptersts > state.mts) {
-      st.meshAdapters = meshAdapters;
-      st.mts = meshAdaptersts;
+      updateState({
+        meshAdapters,
+        mts: meshAdaptersts,
+      });
     }
 
     const fetchNestedPathAndTitle = (path, title, href, children, isBeta) => {
@@ -815,19 +385,144 @@ class Navigator_ extends React.Component {
     state.navigatorComponents.forEach(({ title, href, children, isBeta }) => {
       fetchNestedPathAndTitle(path, title, href, children, isBeta);
     });
-    st.path = path;
-    return st;
-  }
+    updateState({ path });
+  }, [props.meshAdapters, props.meshAdaptersts, window.location.pathname]);
 
-  /**
-   * @param {String} category
-   *
-   * Format and return the meshadapters
-   *
-   * @returns {Array<{id : Number, icon : JSX.Element, href : String, title : String, link : Boolean, show : Boolean}>} children
-   */
-  fetchChildren(category) {
-    const { meshAdapters } = this.state;
+  const fetchCapabilities = async () => {
+    const { data: result, isSuccess, isError, error } = await getProviderCapabilities();
+
+    if (isSuccess) {
+      const capabilitiesRegistryObj = new CapabilitiesRegistry(result);
+      const navigatorComponents = createNavigatorComponents(capabilitiesRegistryObj);
+      updateState({
+        navigator: ExtensionPointSchemaValidator('navigator')(result?.extensions?.navigator),
+        capabilitiesRegistryObj,
+        navigatorComponents,
+      });
+      props.updateCapabilities({ capabilitiesRegistry: result });
+    }
+    if (isError) {
+      console.error('Error fetching capabilities', error);
+    }
+  };
+
+  const fetchVersionDetails = async () => {
+    const { data: result, isSuccess, isError, error } = await getSystemVersion();
+    if (isSuccess) {
+      updateState({
+        versionDetail: result || {
+          build: 'Unknown',
+          latest: 'Unknown',
+          outdated: false,
+          commitsha: 'Unknown',
+        },
+      });
+    }
+    if (isError) {
+      console.error('Error fetching version details', error);
+    }
+  };
+
+  const createNavigatorComponents = (capabilityRegistryObj) => {
+    return getNavigatorComponents(capabilityRegistryObj);
+  };
+
+  const handleTitleClick = () => {
+    props.router.push('/');
+  };
+
+  const handleAdapterClick = (id, link) => {
+    props.setAdapter({ selectedAdapter: id });
+    if (id != -1 && !link) {
+      props.router.push('/management');
+    }
+  };
+
+  const toggleMiniDrawer = () => {
+    const { toggleDrawer, isDrawerCollapsed } = props;
+    toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed });
+  };
+
+  const toggleSpacing = () => {
+    updateState({ showHelperButton: !state.showHelperButton });
+  };
+
+  const toggleItemCollapse = (itemId) => {
+    const isItemOpen = state.openItems.includes(itemId);
+    const activeItems = [...state.openItems];
+    if (isItemOpen) {
+      updateState({ openItems: activeItems.filter((item) => item !== itemId) });
+    } else {
+      activeItems.push(itemId);
+      updateState({ openItems: [itemId] });
+    }
+  };
+
+  const updatenavigatorComponentsMenus = () => {
+    const { navigatorComponents } = state;
+    navigatorComponents.forEach((cat, ind) => {
+      if (cat.id === LIFECYCLE) {
+        cat.children.forEach((catc, ind1) => {
+          if (catc.id == SERVICE_MESH) {
+            return;
+          }
+          const icon = pickIcon(catc.id, catc.href);
+          navigatorComponents[ind].children[ind1].icon = icon;
+
+          const cr = fetchChildren(catc.id);
+          navigatorComponents[ind].children[ind1].children = cr;
+        });
+      }
+
+      if (cat.id === 'Configuration') {
+        let show = false;
+        cat.children?.forEach((ch) => {
+          if (ch.id === 'Designs') {
+            const idx = props.capabilitiesRegistry?.capabilities?.findIndex(
+              (cap) => cap.feature === 'persist-meshery-patterns',
+            );
+            if (idx != -1) {
+              ch.show = true;
+              show = true;
+            }
+          }
+        });
+
+        cat.show = show;
+      }
+
+      //To Toggle Catalog Extension
+      if (cat.id === CONFIGURATION) {
+        cat.children?.forEach((ch) => {
+          if (ch.id === CATALOG) {
+            ch.show = props.catalogVisibility;
+          }
+        });
+      }
+    });
+  };
+
+  const updateAdaptersLink = () => {
+    const { navigatorComponents } = state;
+    navigatorComponents.forEach((cat, ind) => {
+      if (cat.id === LIFECYCLE) {
+        cat.children.forEach((catc, ind1) => {
+          if (
+            typeof navigatorComponents[ind].children[ind1].children[0] !== 'undefined' &&
+            typeof navigatorComponents[ind].children[ind1].children[0].href !== 'undefined'
+          ) {
+            const val = true;
+            const newhref = `${navigatorComponents[ind].children[ind1].children[0].href}`;
+            navigatorComponents[ind].children[ind1].link = val;
+            navigatorComponents[ind].children[ind1].href = newhref;
+          }
+        });
+      }
+    });
+  };
+
+  const fetchChildren = (category) => {
+    const { meshAdapters } = state;
     const children = [];
     category = category.toLowerCase();
     meshAdapters.forEach((adapter) => {
@@ -845,253 +540,35 @@ class Navigator_ extends React.Component {
       });
     });
     return children;
-  }
+  };
 
-  /**
-   * @param {String} aName
-   *
-   * @returns {JSX.Element} image to display
-   */
-  pickIcon(aName, href) {
+  const pickIcon = (aName, href) => {
     aName = aName.toLowerCase();
-    const { classes } = this.props;
     let image = '/static/img/meshery-logo.png';
     let filter =
       window.location.pathname === href
-        ? 'invert(50%) sepia(78%) saturate(2392%) hue-rotate(160deg) brightness(93%) contrast(101%)'
+        ? 'invert(50%) sepia(30%) saturate(1000%) hue-rotate(120deg)'
         : '';
-    let logoIcon = <img src={image} className={classes.icon} />;
+    let logoIcon = <img src={image} style={{ width: '20px' }} />;
     if (aName) {
       image = '/static/img/' + aName + '-light.svg';
-      logoIcon = <img src={image} className={classes.icon} style={{ filter: filter }} />;
+      logoIcon = <img src={image} style={{ filter: filter, width: '20px' }} />;
     }
     return logoIcon;
-  }
-
-  /**
-   * Changes the route to "/"
-   */
-  handleTitleClick = () => {
-    this.props.router.push('/');
   };
 
-  /**
-   * @param {number} id
-   * @param {Boolean link
-   *
-   * Changes the route to "/management"
-   */
-  handleAdapterClick(id, link) {
-    const { setAdapter } = this.props;
-    setAdapter({ selectedAdapter: id });
-    if (id != -1 && !link) {
-      this.props.router.push('/management');
-    }
-  }
-
-  toggleMiniDrawer = () => {
-    const { toggleDrawer, isDrawerCollapsed } = this.props;
-    toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed });
-  };
-
-  toggleSpacing = () => {
-    const { showHelperButton } = this.state;
-    this.setState({ showHelperButton: !showHelperButton });
-  };
-
-  /**
-   * @param {number} id
-   *
-   * Removes id from openitems if present
-   * Adds id in openitems if not present already
-   */
-  toggleItemCollapse = (itemId) => {
-    const isItemOpen = this.state.openItems.includes(itemId);
-    const activeItems = [...this.state.openItems];
-    if (isItemOpen) {
-      this.setState({ openItems: activeItems.filter((item) => item !== itemId) });
-    } else {
-      activeItems.push(itemId);
-      this.setState({ openItems: [itemId] });
-    }
-  };
-
-  /**
-   * @param {String} idname
-   * @param {Array<{id : Number, icon : JSX.Element, href : String, title : String, link : Boolean, show : Boolean}>} children
-   * @param {Number} depth
-   *
-   * Renders children of the menu
-   *
-   * @returns {JSX.Element}
-   */
-  renderChildren(idname, children, depth) {
-    const { classes, isDrawerCollapsed } = this.props;
-    const { path } = this.state;
-
-    if (idname != LIFECYCLE && children && children.length > 0) {
-      return (
-        <List disablePadding>
-          {children.map(
-            ({
-              id: idc,
-              title: titlec,
-              icon: iconc,
-              href: hrefc,
-              show: showc,
-              link: linkc,
-              children: childrenc,
-              permission: permissionc,
-            }) => {
-              if (typeof showc !== 'undefined' && !showc) {
-                return '';
-              }
-              return (
-                <div key={idc}>
-                  <ListItem
-                    button
-                    key={idc}
-                    className={classNames(
-                      depth === 1 ? classes.nested1 : classes.nested2,
-                      classes.item,
-                      classes.itemActionable,
-                      path === hrefc && classes.itemActiveItem,
-                      isDrawerCollapsed && classes.noPadding,
-                    )}
-                    disabled={permissionc ? !CAN(permissionc.action, permissionc.subject) : false}
-                  >
-                    {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
-                  </ListItem>
-                  {this.renderChildren(idname, childrenc, depth + 1)}
-                </div>
-              );
-            },
-          )}
-        </List>
-      );
-    }
-    if (idname == LIFECYCLE) {
-      if (children && children.length > 0) {
-        return (
-          <List disablePadding>
-            {children.map(
-              ({
-                id: idc,
-                title: titlec,
-                icon: iconc,
-                href: hrefc,
-                show: showc,
-                link: linkc,
-                children: childrenc,
-                permission: permissionc,
-              }) => {
-                if (typeof showc !== 'undefined' && !showc) {
-                  return '';
-                }
-                return (
-                  <div key={idc} className={!showc ? classes.cursorNotAllowed : null}>
-                    <ListItem
-                      data-cy={idc}
-                      button
-                      key={idc}
-                      className={classNames(
-                        depth === 1 ? classes.nested1 : classes.nested2,
-                        classes.item,
-                        classes.itemActionable,
-                        path === hrefc && classes.itemActiveItem,
-                        isDrawerCollapsed && classes.noPadding,
-                        !showc && classes.disabled,
-                      )}
-                      onClick={() => this.handleAdapterClick(idc, linkc)}
-                      disabled={permissionc ? !CAN(permissionc.action, permissionc.subject) : false}
-                    >
-                      {this.linkContent(iconc, titlec, hrefc, linkc, isDrawerCollapsed)}
-                    </ListItem>
-                    {this.renderChildren(idname, childrenc, depth + 1)}
-                  </div>
-                );
-              },
-            )}
-          </List>
-        );
-      }
-      if (children && children.length === 1) {
-        this.updateAdaptersLink();
-      }
-    }
-    return '';
-  }
-
-  /**
-   * @param {JSX.Element} iconc
-   * @param {String} titlec
-   * @param {String} hrefc
-   * @param {Boolean} linkc
-   * @param {Boolean} drawerCollapsed
-   *
-   * @return {JSX.Element} content
-   */
-  linkContent(iconc, titlec, hrefc, linkc, drawerCollapsed) {
-    const { classes } = this.props;
-    let linkContent = (
-      <div className={classNames(classes.link)}>
-        <CustomTooltip
-          title={titlec}
-          placement="right"
-          disableFocusListener={!drawerCollapsed}
-          disableHoverListener={!drawerCollapsed}
-          disableTouchListener={!drawerCollapsed}
-        >
-          <ListItemIcon className={classes.listIcon}>{iconc} </ListItemIcon>
-        </CustomTooltip>
-        <ListItemText
-          className={drawerCollapsed ? classes.isHidden : classes.isDisplayed}
-          classes={{ primary: classes.itemPrimary }}
-        >
-          {titlec}
-        </ListItemText>
-      </div>
-    );
-    if (linkc) {
-      linkContent = <Link href={hrefc}>{linkContent}</Link>;
-    }
-    return linkContent;
-  }
-
-  /**
-   * getMesheryVersionText returs a well formatted version text
-   *
-   * If the meshery is running latest version then and is using "edge" channel
-   * then it will just show "edge-latest". However, if the meshery is on edge and
-   * is running an outdated version then it will return "edge-$version".
-   *
-   * If on stable channel, then it will always show "stable-$version"
-   */
-  getMesheryVersionText() {
-    const { build, outdated, release_channel } = this.state.versionDetail;
-
-    // If the version is outdated then no matter what the
-    // release channel is, specify the build which gets covered in the default case
+  const getMesheryVersionText = () => {
+    const { build, outdated, release_channel } = state.versionDetail;
 
     if (release_channel === 'edge' && outdated) return `${build}`;
-    //if it is not outdated which means running on latest, return edge-latest
-
     if (release_channel === 'edge' && !outdated) return `${release_channel}-latest`;
-
     if (release_channel === 'stable') return `${release_channel}-${build}`;
 
     return `${build}`;
-  }
+  };
 
-  /**
-   * versionUpdateMsg returns the appropriate message
-   * based on the meshery's current running version and latest available
-   * version.
-   *
-   * @returns {React.ReactNode} react component to display
-   */
-  versionUpdateMsg() {
-    const { outdated, latest } = this.state.versionDetail;
+  const versionUpdateMsg = () => {
+    const { outdated, latest } = state.versionDetail;
 
     if (outdated)
       return (
@@ -1114,16 +591,10 @@ class Navigator_ extends React.Component {
       );
 
     return <span style={{ marginLeft: '15px' }}>Running latest</span>;
-  }
+  };
 
-  /**
-   * openReleaseNotesInNew returns the appropriate link to the release note
-   * based on the meshery's current running channel and version.
-   *
-   * @returns {React.ReactNode} react component to display
-   */
-  openReleaseNotesInNew() {
-    const { release_channel, build } = this.state.versionDetail;
+  const openReleaseNotesInNew = () => {
+    const { release_channel, build } = state.versionDetail;
 
     if (release_channel === 'edge')
       return (
@@ -1147,51 +618,269 @@ class Navigator_ extends React.Component {
         <OpenInNewIcon style={{ width: '0.85rem', verticalAlign: 'middle' }} />
       </a>
     );
-  }
+  };
 
-  render() {
-    const { classes, isDrawerCollapsed } = this.props;
-    const { path, showHelperButton, navigatorComponents } = this.state;
-    this.updatenavigatorComponentsMenus();
+  const renderNavigatorExtensions = (children, depth) => {
+    const { isDrawerCollapsed } = props;
+    const { path } = state;
+    if (children && children.length > 0) {
+      return (
+        <NavigatorList disablePadding>
+          {children.map(({ id, icon, href, title, children, show: showc }) => {
+            if (typeof showc !== 'undefined' && !showc) {
+              return '';
+            }
+            const isActive = path === href;
+            return (
+              <React.Fragment key={id}>
+                <NavigatorListItem
+                  button
+                  depth={depth}
+                  key={id}
+                  isDrawerCollapsed={isDrawerCollapsed}
+                  isActive={isActive}
+                >
+                  {extensionPointContent(icon, href, title, isDrawerCollapsed)}
+                </NavigatorListItem>
+                {renderNavigatorExtensions(children, depth + 1)}
+              </React.Fragment>
+            );
+          })}
+        </NavigatorList>
+      );
+    }
+  };
 
-    const Title = (
-      <div
-        style={
-          !this.state.capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD])
-            ? cursorNotAllowed
-            : {}
-        }
-      >
-        <ListItem
-          component="a"
-          onClick={this.handleTitleClick}
-          className={classNames(
-            classes.firebase,
-            classes.item,
-            classes.itemCategory,
-            classes.cursorPointer,
-            !this.state.capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD]) &&
-              classes.disableLogo,
-          )}
-        >
-          <img
-            className={isDrawerCollapsed ? classes.mainLogoCollapsed : classes.mainLogo}
-            src="/static/img/meshery-logo.png"
-            onClick={this.handleTitleClick}
-          />
-          <img
-            className={isDrawerCollapsed ? classes.mainLogoTextCollapsed : classes.mainLogoText}
-            src="/static/img/meshery-logo-text.png"
-            onClick={this.handleTitleClick}
-          />
-
-          {/* <span className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}>Meshery</span> */}
-        </ListItem>
-      </div>
+  const extensionPointContent = (icon, href, name, drawerCollapsed) => {
+    let content = (
+      <>
+        <LinkContainer data-cy={name}>
+          <CustomTooltip
+            title={name}
+            placement="right"
+            disableFocusListener={!drawerCollapsed}
+            disableTouchListener={!drawerCollapsed}
+          >
+            <MainListIcon>
+              <img
+                src={icon}
+                style={{
+                  width: '20px',
+                  filter:
+                    window.location.pathname === href
+                      ? 'invert(50%) sepia(30%) saturate(1000%) hue-rotate(120deg)'
+                      : '',
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.transform = 'translate(-20%, -25%)';
+                  e.target.style.top = '0';
+                  e.target.style.right = '0';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.transform = 'translate(0, 0)';
+                  e.target.style.top = 'auto';
+                  e.target.style.right = 'auto';
+                }}
+              />
+            </MainListIcon>
+          </CustomTooltip>
+          <SideBarText drawerCollapsed={drawerCollapsed}>{name}</SideBarText>
+        </LinkContainer>
+      </>
     );
-    const Menu = (
-      <List disablePadding className={classes.hideScrollbar}>
-        {navigatorComponents.map(
+
+    if (href) {
+      content = (
+        <Link
+          href={href}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            height: '30px',
+          }}
+        >
+          <Box width="100%" onClick={() => props.updateExtensionType('navigator')}>
+            {content}
+          </Box>
+        </Link>
+      );
+    }
+
+    return content;
+  };
+
+  const renderChildren = (idname, children, depth) => {
+    const { isDrawerCollapsed } = props;
+    const { path } = state;
+    updatenavigatorComponentsMenus();
+    if (idname != LIFECYCLE && children && children.length > 0) {
+      return (
+        <>
+          <List disablePadding>
+            {children.map(
+              ({
+                id: idc,
+                title: titlec,
+                icon: iconc,
+                href: hrefc,
+                show: showc,
+                link: linkc,
+                children: childrenc,
+                permission: permissionc,
+              }) => {
+                if (typeof showc !== 'undefined' && !showc) {
+                  return '';
+                }
+                const isActive = path === hrefc;
+                return (
+                  <div key={idc}>
+                    <NavigatorListItemII
+                      button
+                      key={idc}
+                      depth={depth}
+                      isDrawerCollapsed={isDrawerCollapsed}
+                      isActive={isActive}
+                      onClick={() => {
+                        if (linkc && hrefc) {
+                          props.router.push(hrefc);
+                        }
+                      }}
+                      disabled={permissionc ? !CAN(permissionc.action, permissionc.subject) : false}
+                    >
+                      {linkContent(iconc, titlec, hrefc, false, isDrawerCollapsed)}
+                    </NavigatorListItemII>
+                    {renderChildren(idname, childrenc, depth + 1)}
+                  </div>
+                );
+              },
+            )}
+          </List>
+        </>
+      );
+    }
+
+    if (idname == LIFECYCLE) {
+      if (children && children.length > 0) {
+        return (
+          <>
+            <List disablePadding>
+              {children.map(
+                ({
+                  id: idc,
+                  title: titlec,
+                  icon: iconc,
+                  href: hrefc,
+                  show: showc,
+                  link: linkc,
+                  children: childrenc,
+                  permission: permissionc,
+                }) => {
+                  if (typeof showc !== 'undefined' && !showc) {
+                    return '';
+                  }
+                  const isActive = path === hrefc;
+                  return (
+                    <div key={idc} style={!showc ? cursorNotAllowed : null}>
+                      <NavigatorListItemIII
+                        component="a"
+                        data-cy={idc}
+                        button
+                        key={idc}
+                        depth={depth}
+                        isDrawerCollapsed={isDrawerCollapsed}
+                        isActive={isActive}
+                        isShow={!showc}
+                        onClick={() => {
+                          handleAdapterClick(idc, linkc);
+                          if (linkc && hrefc) {
+                            props.router.push(hrefc);
+                          }
+                        }}
+                        disabled={
+                          permissionc ? !CAN(permissionc.action, permissionc.subject) : false
+                        }
+                      >
+                        {linkContent(iconc, titlec, hrefc, false, isDrawerCollapsed)}{' '}
+                      </NavigatorListItemIII>
+                      {renderChildren(idname, childrenc, depth + 1)}
+                    </div>
+                  );
+                },
+              )}
+            </List>
+          </>
+        );
+      }
+      if (children && children.length === 1) {
+        updateAdaptersLink();
+      }
+    }
+    return '';
+  };
+
+  const linkContent = (iconc, titlec, hrefc, linkc, drawerCollapsed) => {
+    let linkContent = (
+      <>
+        <LinkContainer>
+          <CustomTooltip
+            title={titlec}
+            placement="right"
+            disableFocusListener={!drawerCollapsed}
+            disableHoverListener={!drawerCollapsed}
+            disableTouchListener={!drawerCollapsed}
+          >
+            <MainListIcon>{iconc}</MainListIcon>
+          </CustomTooltip>
+          <SideBarText drawerCollapsed={drawerCollapsed}>{titlec}</SideBarText>
+        </LinkContainer>
+      </>
+    );
+
+    if (linkc && hrefc) {
+      linkContent = <Link href={hrefc}>{linkContent}</Link>;
+    }
+    return linkContent;
+  };
+
+  const Title = (
+    <div
+      style={
+        !state.capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD])
+          ? cursorNotAllowed
+          : {}
+      }
+    >
+      <>
+        <StyledListItem
+          component="a"
+          onClick={handleTitleClick}
+          disableLogo={!state.capabilitiesRegistryObj?.isNavigatorComponentEnabled([DASHBOARD])}
+        >
+          {props.isDrawerCollapsed ? (
+            <>
+              <MainLogoCollapsed src="/static/img/meshery-logo.png" onClick={handleTitleClick} />
+              <MainLogoTextCollapsed
+                src="/static/img/meshery-logo-text.png"
+                onClick={handleTitleClick}
+              />
+            </>
+          ) : (
+            <>
+              <MainLogo src="/static/img/meshery-logo.png" onClick={handleTitleClick} />
+              <MainLogoText src="/static/img/meshery-logo-text.png" onClick={handleTitleClick} />
+            </>
+          )}
+        </StyledListItem>
+      </>
+    </div>
+  );
+
+  const Menu = (
+    <>
+      <HideScrollbar disablePadding>
+        {state.navigatorComponents.map(
           ({
             id: childId,
             title,
@@ -1204,45 +893,39 @@ class Navigator_ extends React.Component {
             submenu,
             permission,
           }) => {
-            // if (typeof show !== "undefined" && !show) {
-            //   return "";
-            // }
             return (
-              <div key={childId} style={!show ? cursorNotAllowed : {}} className={classes.root}>
-                <ListItem
+              <RootDiv key={childId}>
+                <SideBarListItem
                   button={!!link}
                   dense
                   key={childId}
-                  className={classNames(
-                    classes.item,
-                    link ? classes.itemActionable : '',
-                    path === href && classes.itemActiveItem,
-                    !show && classes.disabled,
-                  )}
-                  onClick={() => this.toggleItemCollapse(childId)}
+                  link={!!link}
+                  isActive={state.path === href}
+                  isShow={!show}
+                  onClick={() => toggleItemCollapse(childId)}
                   onMouseOver={() =>
-                    isDrawerCollapsed ? this.setState({ hoveredId: childId }) : null
+                    props.isDrawerCollapsed ? updateState({ hoveredId: childId }) : null
                   }
                   onMouseLeave={() =>
-                    !submenu || !this.state.openItems.includes(childId)
-                      ? this.setState({ hoveredId: false })
+                    !submenu || !state.openItems.includes(childId)
+                      ? updateState({ hoveredId: false })
                       : null
                   }
                   disabled={permission ? !CAN(permission.action, permission.subject) : false}
                 >
                   <Link href={link ? href : ''}>
-                    <div data-cy={childId} className={classNames(classes.link)}>
+                    <NavigatorLink data-cy={childId}>
                       <CustomTooltip
                         title={childId}
                         placement="right"
-                        disableFocusListener={!isDrawerCollapsed}
+                        disableFocusListener={!props.isDrawerCollapsed}
                         disableHoverListener={true}
-                        disableTouchListener={!isDrawerCollapsed}
+                        disableTouchListener={!props.isDrawerCollapsed}
                         TransitionComponent={Zoom}
                       >
-                        {isDrawerCollapsed &&
-                        (this.state.hoveredId === childId ||
-                          (this.state.openItems.includes(childId) && submenu)) ? (
+                        {props.isDrawerCollapsed &&
+                        (state.hoveredId === childId ||
+                          (state.openItems.includes(childId) && submenu)) ? (
                           <div>
                             <CustomTooltip
                               title={title}
@@ -1250,7 +933,7 @@ class Navigator_ extends React.Component {
                               TransitionComponent={Zoom}
                             >
                               <ListItemIcon
-                                onClick={() => this.toggleItemCollapse(childId)}
+                                onClick={() => toggleItemCollapse(childId)}
                                 style={{ marginLeft: '20%', marginBottom: '0.4rem' }}
                               >
                                 {hovericon}
@@ -1258,179 +941,183 @@ class Navigator_ extends React.Component {
                             </CustomTooltip>
                           </div>
                         ) : (
-                          <ListItemIcon className={classes.listIcon}>{icon}</ListItemIcon>
+                          <MainListIcon>{icon}</MainListIcon>
                         )}
                       </CustomTooltip>
-                      <ListItemText
-                        className={isDrawerCollapsed ? classes.isHidden : classes.isDisplayed}
-                        classes={{ primary: classes.itemPrimary }}
-                      >
-                        {title}
-                      </ListItemText>
-                    </div>
+                      <SideBarText drawerCollapsed={props.isDrawerCollapsed}>{title}</SideBarText>
+                    </NavigatorLink>
                   </Link>
-                  <FontAwesomeIcon
+                  <ExpandMoreIcon
                     icon={faCaretDown}
-                    onClick={() => this.toggleItemCollapse(childId)}
-                    className={classNames(classes.expandMoreIcon, {
-                      [classes.collapsed]: this.state.openItems.includes(childId),
-                    })}
-                    style={isDrawerCollapsed || !children ? { opacity: 0 } : {}}
+                    onClick={() => toggleItemCollapse(childId)}
+                    isCollapsed={state.openItems.includes(childId)} // Pass collapsed state
+                    isDrawerCollapsed={props.isDrawerCollapsed} // Pass drawer state
+                    hasChildren={!!children}
                   />
-                </ListItem>
+                </SideBarListItem>
                 <Collapse
-                  in={this.state.openItems.includes(childId)}
+                  in={state.openItems.includes(childId)}
                   style={{ backgroundColor: '#396679', opacity: '100%' }}
                 >
-                  {this.renderChildren(childId, children, 1)}
+                  {renderChildren(childId, children, 1)}
                 </Collapse>
-              </div>
+              </RootDiv>
             );
           },
         )}
-        {this.state.navigator && this.state.navigator.length ? (
+        {state.navigator && state.navigator.length ? (
           <React.Fragment>
-            <Divider className={classes.divider} />
-            {this.renderNavigatorExtensions(this.state.navigator, 1)}
+            <SecondaryDivider />
+            {renderNavigatorExtensions(state.navigator, 1)}
           </React.Fragment>
         ) : null}
-        <Divider className={classes.divider} />
-      </List>
-    );
-    const HelpIcons = (
-      <ButtonGroup
+        <SecondaryDivider />
+      </HideScrollbar>
+    </>
+  );
+
+  const HelpIcons = (
+    <>
+      <NavigatorHelpIcons
+        isCollapsed={props.isDrawerCollapsed}
         size="large"
-        className={!isDrawerCollapsed ? classes.marginLeft : classes.btnGrpMarginRight}
-        orientation={isDrawerCollapsed ? 'vertical' : 'horizontal'}
+        orientation={props.isDrawerCollapsed ? 'vertical' : 'horizontal'}
       >
         {externlinks.map(({ id, icon, title, href }, index) => {
           return (
-            <ListItem
+            <HelpListItem
               key={id}
-              className={classes.item}
-              style={isDrawerCollapsed && !showHelperButton ? { display: 'none' } : {}}
+              style={props.isDrawerCollapsed && !state.showHelperButton ? { display: 'none' } : {}}
             >
               <Grow
-                in={showHelperButton || !isDrawerCollapsed}
+                in={state.showHelperButton || !props.isDrawerCollapsed}
                 timeout={{ enter: 600 - index * 200, exit: 100 * index }}
               >
                 <a
                   href={href}
                   target="_blank"
                   rel="noreferrer"
-                  className={classNames(
-                    classes.link,
-                    isDrawerCollapsed ? classes.extraPadding : '',
-                  )}
+                  style={
+                    props.isDrawerCollapsed
+                      ? { display: 'flex', alignItems: 'center', justifyContent: 'center' }
+                      : {}
+                  }
                 >
-                  <CustomTextTooltip title={title} placement={isDrawerCollapsed ? 'right' : 'top'}>
-                    <ListItemIcon className={classNames(classes.listIcon, classes.helpIcon)}>
-                      {icon}
-                    </ListItemIcon>
+                  <CustomTextTooltip
+                    title={title}
+                    placement={props.isDrawerCollapsed ? 'right' : 'top'}
+                  >
+                    <ListIconSide>{icon}</ListIconSide>
                   </CustomTextTooltip>
                 </a>
               </Grow>
-            </ListItem>
+            </HelpListItem>
           );
         })}
-        <ListItem
-          className={classes.rightMargin}
-          style={!isDrawerCollapsed ? { display: 'none' } : { marginLeft: '4px' }}
-        >
-          <CustomTextTooltip title="Help" placement={isDrawerCollapsed ? 'right' : 'top'}>
-            <IconButton
-              className={isDrawerCollapsed ? classes.collapsedHelpButton : classes.rightTranslate}
-              onClick={this.toggleSpacing}
-            >
+        <ListItem style={{ display: props.isDrawerCollapsed ? 'inherit' : 'none' }}>
+          <CustomTextTooltip title="Help" placement={props.isDrawerCollapsed ? 'right' : 'top'}>
+            <HelpButton isCollapsed={props.isDrawerCollapsed} onClick={toggleSpacing}>
               <HelpIcon
-                className={classes.helpIcon}
-                style={{ fontSize: '1.45rem', ...iconSmall }}
+                style={{
+                  fontSize: '1.45rem',
+                  ...iconSmall,
+                  color: '#fff',
+                  opacity: '0.7',
+                  transition: 'opacity 200ms linear',
+                  '&:hover': {
+                    opacity: 1,
+                    background: 'transparent',
+                  },
+                  '&:focus': {
+                    opacity: 1,
+                    background: 'transparent',
+                  },
+                }}
               />
-            </IconButton>
+            </HelpButton>
           </CustomTextTooltip>
         </ListItem>
-      </ButtonGroup>
-    );
-    const Version = (
-      <ListItem
-        style={{
-          position: 'sticky',
-          paddingLeft: 0,
-          paddingRight: 0,
-          color: '#eeeeee',
-          fontSize: '0.75rem',
-        }}
-      >
-        {isDrawerCollapsed ? (
-          <div style={{ textAlign: 'center', width: '100%' }}>{this.state.versionDetail.build}</div>
-        ) : (
-          <Grow
-            in={!isDrawerCollapsed}
-            timeout={{ enter: 800, exit: 100 }}
-            style={{ textAlign: 'center', width: '100%' }}
-          >
-            <span>
-              {this.getMesheryVersionText()} {'  '}
-              <span style={{ cursor: 'pointer' }}>{this.openReleaseNotesInNew()}</span>
-              {this.versionUpdateMsg()}
-            </span>
-          </Grow>
-        )}
-      </ListItem>
-    );
+      </NavigatorHelpIcons>
+    </>
+  );
 
-    const Chevron = (
-      <div
-        className={classNames(
-          isDrawerCollapsed ? classes.collapseButtonWrapperRotated : classes.collapseButtonWrapper,
-        )}
-        style={
-          this.state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER])
-            ? {}
-            : cursorNotAllowed
-        }
-      >
-        <div
-          style={
-            this.state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER])
-              ? {}
-              : disabledStyle
-          }
-          onClick={this.toggleMiniDrawer}
+  const Version = (
+    <ListItem
+      style={{
+        position: 'sticky',
+        paddingLeft: 0,
+        paddingRight: 0,
+        color: '#eeeeee',
+        fontSize: '0.75rem',
+      }}
+    >
+      {props.isDrawerCollapsed ? (
+        <div style={{ textAlign: 'center', width: '100%' }}>{state.versionDetail.build}</div>
+      ) : (
+        <Grow
+          in={!props.isDrawerCollapsed}
+          timeout={{ enter: 800, exit: 100 }}
+          style={{ textAlign: 'center', width: '100%' }}
         >
-          <FontAwesomeIcon
+          <span>
+            {getMesheryVersionText()} {'  '}
+            <span style={{ cursor: 'pointer' }}>{openReleaseNotesInNew()}</span>
+            {versionUpdateMsg()}
+          </span>
+        </Grow>
+      )}
+    </ListItem>
+  );
+
+  const Chevron = (
+    <ChevronButtonWrapper
+      isCollapsed={props.isDrawerCollapsed}
+      style={
+        state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER])
+          ? {}
+          : cursorNotAllowed
+      }
+    >
+      <div
+        style={
+          state?.capabilitiesRegistryObj?.isNavigatorComponentEnabled?.([TOGGLER])
+            ? {}
+            : disabledStyle
+        }
+        onClick={toggleMiniDrawer}
+      >
+        <>
+          <ChevronIcon
             icon={faAngleLeft}
             fixedWidth
             size="2x"
-            style={{ margin: '0.75rem 0.2rem ', width: '0.8rem', verticalAlign: 'middle' }}
+            style={{
+              margin: '0.75rem 0.2rem ',
+              width: '0.8rem',
+              verticalAlign: 'middle',
+              color: props.isDrawerCollapsed ? '#fff' : 'inherit',
+            }}
             alt="Sidebar collapse toggle icon"
           />
-        </div>
+        </>
       </div>
-    );
+    </ChevronButtonWrapper>
+  );
 
-    return (
-      <NoSsr>
-        <Drawer
-          variant="permanent"
-          className={isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded}
-          classes={{
-            paper: isDrawerCollapsed ? classes.sidebarCollapsed : classes.sidebarExpanded,
-          }}
-          style={{ height: '100%' }}
-        >
-          {Title}
-          {Menu}
-          <div className={classes.fixedSidebarFooter}>
-            {Chevron}
-            {HelpIcons}
-            {Version}
-          </div>
-        </Drawer>
-      </NoSsr>
-    );
-  }
-}
+  return (
+    <NoSsr>
+      <SidebarDrawer isCollapsed={props.isDrawerCollapsed} variant="permanent">
+        {Title}
+        {Menu}
+        <FixedSidebarFooter>
+          {Chevron}
+          {HelpIcons}
+          {Version}
+        </FixedSidebarFooter>
+      </SidebarDrawer>
+    </NoSsr>
+  );
+};
 
 const mapDispatchToProps = (dispatch) => ({
   updatepagetitle: bindActionCreators(updatepagetitle, dispatch),
@@ -1440,30 +1127,21 @@ const mapDispatchToProps = (dispatch) => ({
   updateCapabilities: bindActionCreators(updateCapabilities, dispatch),
 });
 
-const mapStateToProps = (state) => {
-  const meshAdapters = state.get('meshAdapters').toJS();
-  const meshAdaptersts = state.get('meshAdaptersts');
-  const path = state.get('page').get('path');
-  const isDrawerCollapsed = state.get('isDrawerCollapsed');
-  const capabilitiesRegistry = state.get('capabilitiesRegistry');
-  const organization = state.get('organization');
-  const keys = state.get('keys');
-  const catalogVisibility = state.get('catalogVisibility');
-  return {
-    meshAdapters,
-    meshAdaptersts,
-    path,
-    isDrawerCollapsed,
-    capabilitiesRegistry,
-    organization,
-    keys,
-    catalogVisibility,
-  };
-};
+const mapStateToProps = (state) => ({
+  meshAdapters: state.get('meshAdapters').toJS(),
+  meshAdaptersts: state.get('meshAdaptersts'),
+  path: state.get('page').get('path'),
+  isDrawerCollapsed: state.get('isDrawerCollapsed'),
+  capabilitiesRegistry: state.get('capabilitiesRegistry'),
+  organization: state.get('organization'),
+  keys: state.get('keys'),
+  catalogVisibility: state.get('catalogVisibility'),
+});
 
-export const NavigatorWithRedux = withStyles(styles)(
-  connect(mapStateToProps, mapDispatchToProps)(withRouter(Navigator_)),
-);
+export const NavigatorWithRedux = connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(withRouter(NavigatorWrapper));
 
 export const Navigator = NavigatorWithRedux;
 

@@ -5,7 +5,6 @@ import { useModal } from '@layer5/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
 import { ListItem } from '@layer5/sistent';
 import { ListItemIcon } from '@layer5/sistent';
-import { UsesSistent } from './SistentWrapper';
 import { ModalBody } from '@layer5/sistent';
 import { Colors } from '@/themes/app';
 import { InfoTooltip } from '@layer5/sistent';
@@ -93,7 +92,7 @@ const ExportModal = (props) => {
     {
       title: 'OCI Image',
       icon: <OCIImageIcon width={'30'} height="30" />,
-      onClick: (e) => handleDesignDownload(e, downloadModal.content, null, 'export=OCI Image'),
+      onClick: (e) => handleDesignDownload(e, downloadModal.content, null, 'oci=true'),
       description:
         'Download the design as an OCI Image, that can be pushed to a container registry. This is a lossless export.',
     },
@@ -112,7 +111,7 @@ const ExportModal = (props) => {
     headerIcon: <PatternIcon fill={'#fff'} height={'2rem'} width="2rem" />,
   });
   return (
-    <UsesSistent>
+    <>
       <Modal
         {...exportModal}
         open={downloadModal.open}
@@ -134,7 +133,7 @@ const ExportModal = (props) => {
           ))}
         </ModalBody>
       </Modal>
-    </UsesSistent>
+    </>
   );
 };
 

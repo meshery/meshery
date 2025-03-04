@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/kubevirt/components/ssp/icons/color/ssp-color.svg
   whiteIcon: assets/img/integrations/kubevirt/components/ssp/icons/white/ssp-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Runs VMs alongside containers in Kubernetes",
   "Leverages Kubernetes for VM orchestration",

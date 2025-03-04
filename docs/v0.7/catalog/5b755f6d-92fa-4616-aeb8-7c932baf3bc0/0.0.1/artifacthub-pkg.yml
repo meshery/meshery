@@ -1,0 +1,28 @@
+version: 0.0.1
+name: prometheus-opencost-exporter
+displayName: prometheus-opencost-exporter
+createdAt: "2024-06-06T04:37:40Z"
+description: |
+    Prometheus exporter for OpenCost  Kubernetes cost monitoring data.
+    This design  bootstraps a Prometheus OpenCost Exporter   deployment on a Kuberentes  cluster using the  meshery playground .
+
+    OpenCost is a vendor-neutral open source project for measuring and allocating cloud infrastructure and container costs in real time. Built by Kubernetes experts and supported by Kubernetes practitioners, OpenCost shines a light into the black box of Kubernetes spend.
+logoURL: https://raw.githubusercontent.com/meshery/meshery.io/0b8585231c6e2b3251d38f749259360491c9ee6b/assets/images/brand/meshery-logo.svg
+license: Apache-2.0
+homeURL: https://docs.meshery.io/concepts/logical/designs
+links:
+    - name: download
+      url: ../../catalog/5b755f6d-92fa-4616-aeb8-7c932baf3bc0/0.0.1/design.yml
+    - name: Meshery Catalog
+      url: https://meshery.io/catalog
+readme: "Set the PROMETHEUS_SERVER_ENDPOINT environment variable to the address of your Prometheus server.\nAdd the scrapeConfig to it, using the preferred means for your Prometheus install (ie. -f https://raw.githubusercontent.com/opencost/opencost/develop/kubernetes/prometheus/extraScrapeConfigs.yaml).\nConsider using the OpenCost Helm Chart for additional Prometheus configuration options.\nfor more information refer this docs  https://www.opencost.io/docs/installation/prometheus\n \n ##h4 Caveats and Consideration \n"
+install: mesheryctl design import -f
+provider:
+    name: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
+screenshots:
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/5b755f6d-92fa-4616-aeb8-7c932baf3bc0-light.png
+    - title: MeshMap Snapshot
+      url: https://raw.githubusercontent.com/layer5labs/meshery-extensions-packages/master/action-assets/design-assets/5b755f6d-92fa-4616-aeb8-7c932baf3bc0-dark.png
+    - title: Meshery Project
+      url: https://raw.githubusercontent.com/meshery/meshery.io/master/assets/images/logos/meshery-gradient.png

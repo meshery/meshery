@@ -600,10 +600,10 @@ type mesheryPatternSourceContentResponseWrapper struct {
 }
 
 // Returns MeshSync Resources Kinds
-// swagger:response meshsyncResourcesKindsResponseWrapper
-type meshsyncResourcesKindsResponseWrapper struct {
+// swagger:response meshsyncResourcesSummaryResponseWrapper
+type meshsyncResourcesSummaryResponseWrapper struct {
 	// in: body
-	Body *models.MeshSyncResourcesKindsAPIResponse
+	Body *models.MeshSyncResourcesSummaryAPIResponse
 }
 
 // Payload for meshery pattern file deploy handler idPostDeployPattern idDeleteDeployPattern

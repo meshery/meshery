@@ -86,7 +86,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 			// search and fetch patterns with pattern-name
 			utils.Log.Debug("Fetching patterns")
 
-			req, err = utils.NewRequest("GET", patternURL+"?search="+patternName, nil)
+			req, err = utils.NewRequest("GET", patternURL+"?populate=pattern_file&search="+patternName, nil)
 			if err != nil {
 				utils.Log.Error(err)
 				return nil
@@ -128,7 +128,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 			if sourceType, err = getFullSourceType(sourceType); err != nil {
 				return ErrInValidSource(sourceType, validSourceTypes)
 			}
-			pattern, err := importPattern(sourceType, file, patternURL, !skipSave)
+			pattern, err := importPattern(sourceType, file, patternURL+"/import", !skipSave)
 			if err != nil {
 				utils.Log.Error(err)
 				return nil
@@ -168,7 +168,7 @@ mesheryctl design onboard -f ./pattern.yml -s "Kubernetes Manifest"
 		}
 
 		if res.StatusCode == 200 {
-			utils.Log.Info("design successfully onboarded")
+			utils.Log.Info("design onboarded")
 		}
 		utils.Log.Info(string(body))
 		return nil

@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/edp-argocd-operator/components/argo-application/icons/color/argo-application-color.svg
   whiteIcon: assets/img/integrations/edp-argocd-operator/components/argo-application/icons/white/argo-application-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Automates ArgoCD deployment and configuration",
   "Integrates with EDP components",

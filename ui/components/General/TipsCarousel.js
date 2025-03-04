@@ -1,8 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Box, Typography } from '@material-ui/core';
+import { Box, Typography, useTheme } from '@layer5/sistent';
 import TipsIcon from '../../assets/icons/Tipsicon'; // add this icon
-import { useTheme } from '@material-ui/core';
 
 const TipsCarousel = ({ tips }) => {
   const theme = useTheme();
@@ -52,7 +51,10 @@ const TipsCarousel = ({ tips }) => {
               cursor: 'pointer',
               fontSize: '3rem',
               marginRight: '0.25rem',
-              color: index === activeStep ? theme.palette.keppelGreen : theme.palette.white,
+              color:
+                index === activeStep
+                  ? theme.palette.background.brand?.default
+                  : theme.palette.background.constant.white,
             }}
           >
             &bull;

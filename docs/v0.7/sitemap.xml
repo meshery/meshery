@@ -1,0 +1,1479 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+     <loc>/</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/404.html</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/faq</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/accessing-meshery-ui</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/extensibility/adapters</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/concepts/architecture/adapters</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/kubernetes/aks</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/extensibility/api</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/concepts/architecture</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/news/</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/mesheryctl/authenticate-with-meshery-via-cli</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/linux-mac/bash</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/linux-mac/brew</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/concepts/architecture/broker</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/concepts/catalog</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing/build-and-release</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/compatibility-matrix/meshery-cilium-past-results</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/codespaces</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/community</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/compatibility-matrix</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/extensions/component-shape-guide</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/concepts/logical/components</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/configuration-management/working-with-designs</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/mesheryctl/configuring-autocompletion-for-mesheryctl</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/concepts/logical/connections</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/compatibility-matrix/meshery-consul-past-results</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing/contributing-adapters</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing/contributing-cli</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing/contributing-cypress</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing/contributing-docker-extension</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing/contributing-docs</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing/contributing-error</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing/contributing-gitflow</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing/contributing-cli-guide</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing/contributing-components</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing/contributing-relationships</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing/contributing-models-quick-start</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing/contributing-models</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing/contributing-policies</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing/contributing-server-events</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing/contributing-ui-notification-center</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing/contributing-ui-sistent</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing/contributing-ui-tests</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing/contributing-ui</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/configuration-management/creating-a-meshery-design</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/concepts/logical/credentials</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/concepts/architecture/database</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/tutorials/deploy-aws-ec2-instances-with-meshery</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/tutorials/deploy-apache-cassandra-with-statefulset</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/tutorials/deploy-php-redis</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/infrastructure-management/sample-apps</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/concepts/logical/designs</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/docker/docker-extension</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/docker</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/extensions/edges-shape-guide</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/kubernetes/eks</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/concepts/logical/environments</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/error-codes</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/events-management</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/tutorials/exploring-kubernetes-cronjobs</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/configuration-management/exporting-models</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/extensibility</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/extensibility/authorization</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/feed.xml</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/configuration-management/filter-management</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/configuration-management/generating-models</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/infrastructure-management/gitops-with-meshery</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/kubernetes/gke</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/graphql-apis</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/kubernetes/helm</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/extensions/importing-an-application</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/configuration-management/importing-designs</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/extensions/importing-a-design</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/configuration-management/importing-models</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/extensions/kubectl-meshsync-snapshot</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/extensions/kubectl-kanvas-snapshot</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/extensions/</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/tutorials</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/concepts/logical</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/performance-management</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/extensions/kanvas</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/concepts</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/infrastructure-management/</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/mesheryctl</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/troubleshooting</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/configuration-management/</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/extensions/kubectl-kanvas-snapshot</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/extensions/kanvas-snapshot</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/infrastructure-management/registering-a-connection</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/infrastructure-management/overview</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/troubleshooting/installation</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/extensibility/integrations</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/performance-management/interpreting-performance-test-results</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/compatibility-matrix/meshery-istio-past-results</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/kubernetes/kind</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/tutorials/kubernetes-configmaps-secrets</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/tutorials/kubernetes-pods</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/kubernetes</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/kubernetes/kubesphere</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/compatibility-matrix/meshery-kuma-past-results</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/releases/latest</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/infrastructure-management/lifecycle-management</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/compatibility-matrix/meshery-linkerd-past-results</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/linux-mac</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/extensibility/load-generators</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/assets/js/main.js</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/infrastructure-management/notification-management</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/performance-management/managing-performance</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/extensions/merging-design</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/performance-management/meshery-metrics</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/troubleshooting/meshery-operator-meshsync</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing/contributing-server</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing/meshery-windows</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/adapter/deploy</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/adapter/remove</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/adapter/validate</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/adapter</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/completion</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/components/list</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/components/search</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/components/view</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/components</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/design/apply</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/design/delete</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/design/import</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/design/list</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/design/offboard</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/design/onboard</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/design/view</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/design</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/environment/create</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/environment/delete</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/environment/list</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/environment/view</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/environment</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/exp/components/list</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/exp/components/search</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/exp/components/view</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/exp/components</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/exp/connections/delete</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/exp/connections/list</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/exp/connections</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/exp/environment/create</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/exp/environment/delete</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/exp/environment/list</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/exp/environment/view</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/exp/environment</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/exp/relationship/generate</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/exp/relationship/list</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/exp/relationship/search</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/exp/relationship/view</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/exp/relationship</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/exp/workspace/create</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/exp/workspace/list</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/exp/workspace</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/exp</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/filter/delete</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/filter/import</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/filter/list</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/filter/view</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/filter</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/mesh/deploy</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/mesh/remove</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/mesh/validate</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/mesh</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/model/export</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/model/import</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/model/list</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/model/search</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/model/view</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/model</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/pattern/apply</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/pattern/delete</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/pattern/export</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/pattern/import</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/pattern/list</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/pattern/offboard</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/pattern/onboard</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/pattern/view</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/pattern</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/perf/apply</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/perf/profile</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/perf/result</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/perf</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/registry/generate</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/registry/publish</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/registry/update</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/registry</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/channel/set</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/channel/switch</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/channel/view</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/channel</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/check</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/completion</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/config/aks</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/config/eks</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/config/gke</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/config/minikube</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/config</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/context/create</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/context/delete</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/context/list</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/context/switch</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/context/view</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/context</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/dashboard</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/login</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/logout</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/logs</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/provider/list</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/provider/reset</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/provider/set</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/provider/switch</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/provider/view</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/provider</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/reset</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/restart</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/start</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/status</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/stop</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/token/create</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/token/delete</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/token/list</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/token/set</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/token/view</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/token</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system/update</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/system</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/version</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/mesheryctl/main</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/mesheryctl</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/concepts/architecture/meshsync</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/meshery-operator-crds</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/kubernetes/minikube</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/operating/model-generation</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/concepts/logical/models</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/multiple-adapters</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/compatibility-matrix/meshery-nginx-sm-past-results</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/concepts/architecture/operator</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/compatibility-matrix/meshery-osm-past-results</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/getting-started/overview</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/configuration-management/pattern-management</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/concepts/logical/patterns</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/performance-management/performance-management</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/permissions</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/playground</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/concepts/logical/policies</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/overview</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/extensibility/providers</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/tutorials/publish-to-artifacthub</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/extensions/publishing-a-design</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/configuration-management/push-pull-model-image</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/quick-start</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/concepts/logical/registry</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/concepts/logical/relationships</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/releases</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/reference/rest-apis</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/mesheryctl/running-system-checks-using-mesheryctl</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/troubleshooting/meshery-server</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/assets/css/sass.css</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/windows/scoop</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/assets/js/search.js</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/search/</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/security-vulnerabilities</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/extensions/sharing-a-design</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/sitemap.xml</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/mesheryctl/system-commands</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/extensions/working-with-tags</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/tags/</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/project/contributing/test-status</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/compatibility-matrix/meshery-traefik-mesh-past-results</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/extensibility/ui</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/upgrades</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/installation/windows</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/tutorials/wordpress-mysql-persistentvolume</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/guides/mesheryctl/working-with-mesheryctl</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/concepts/logical/workspaces</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/assets/css/style.css</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/CONTRIBUTING-gitflow/</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/pages/extensibility/integrations/</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/pages/guides/smi-conformance/</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/pages/installation/compatibility-matrix/</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/pages/installation/platforms/</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/pages/project/mesheryctl/installation-bash/</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/pages/project/mesheryctl/installation-brew/</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/pages/project/mesheryctl/installation-scoop/</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+<url>
+     <loc>http://localhost:4000/pages/tasks/service-mesh-interface/</loc>
+     <lastmod>2025-01-01</lastmod>
+     <changefreq>weekly</changefreq>
+    </url>
+
+</urlset>

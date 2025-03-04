@@ -80,4 +80,8 @@ mesheryctl components search [component-name]
 
 ## See Also
 
+* [mesheryctl components list](/reference/mesheryctl/components/list)
+* [mesheryctl components search](/reference/mesheryctl/components/search)
+* [mesheryctl components view](/reference/mesheryctl/components/view)
+
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

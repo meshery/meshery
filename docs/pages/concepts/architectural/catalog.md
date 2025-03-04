@@ -1,8 +1,10 @@
 ---
 layout: default
 title: Catalog
-permalink: concepts/catalog
-redirect_from: catalog
+permalink: concepts/architecture/catalog
+redirect_from: 
+ - catalog
+ - concepts/catalog
 type: components
 abstract: Browsing and using cloud native patterns
 language: en
@@ -69,4 +71,4 @@ It also supports a collaborative environment, where DevOps engineers can share t
 {% include alert.html
     type="info"
     title="Help with Meshery Catalog"
-    content="If you have any questions or need assistance, reach out on the <a href='http://discuss.meshery.io/'>discussion forum</a>." %}
+    content="If you have any questions or need assistance, reach out on the <a href='https://meshery.io/community#discussion-forums'>discussion forum</a>." %}

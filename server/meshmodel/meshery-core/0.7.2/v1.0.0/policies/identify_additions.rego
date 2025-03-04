@@ -12,6 +12,7 @@ identify_additions(
 ) := unique_comps if {
 	lower(relationship.kind) == "hierarchical"
 	lower(relationship.type) == "parent"
+	lower(relationship.subType) == "inventory"
 
 	# evaluate for all subTypes.
 	comps_to_add := {result |

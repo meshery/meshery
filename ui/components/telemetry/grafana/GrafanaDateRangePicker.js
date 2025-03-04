@@ -1,7 +1,7 @@
 import React from 'react';
 import { Component } from 'react';
+import { NoSsr } from '@layer5/sistent';
 import {
-  NoSsr,
   Button,
   TextField,
   MenuItem,
@@ -14,60 +14,73 @@ import {
   FormControlLabel,
   Switch,
   IconButton,
-} from '@material-ui/core';
+  styled,
+} from '@layer5/sistent';
 import Moment from 'react-moment';
-import AccessTimeIcon from '@material-ui/icons/AccessTime';
-import { withStyles } from '@material-ui/core/styles';
+import AccessTimeIcon from '@mui/icons-material/AccessTime';
 import PropTypes from 'prop-types';
 import MesheryDateTimePicker from '../../MesheryDateTimePicker';
-import { Close } from '@material-ui/icons';
+import { Close } from '@mui/icons-material';
 
-const styles = (theme) => ({
-  rangeDialog: {
-    // width: window.innerWidth * 0.7,
+const StyledDialog = styled(Dialog)(({ theme }) => ({
+  '& .MuiDialogContent-root': {
+    padding: theme.spacing(2),
   },
-  rangeDialogRow: {
-    display: 'flex',
-    gap: '4rem',
-    '&>*': { flex: '1' },
+}));
+
+const DialogTitleBar = styled('div')(() => ({
+  display: 'flex',
+  justifyContent: 'space-between',
+  backgroundColor: 'rgb(57, 102, 121)',
+  color: 'white',
+}));
+
+const CloseIconButton = styled(IconButton)(() => ({
+  height: '2.3rem',
+  marginTop: '0.8rem',
+  marginRight: '10px',
+  color: 'white',
+}));
+
+const CloseIcon = styled(Close)({
+  transform: 'rotate(-90deg)',
+  '&:hover': {
+    transform: 'rotate(90deg)',
+    transition: 'all .3s ease-in',
   },
-  dateTimePicker: {
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(1),
-  },
-  innerGrid: {
-    borderTop: `1px solid ${theme.palette.divider}`,
-    paddingTop: theme.spacing(2),
-    marginTop: theme.spacing(2),
-  },
-  timeList: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'flex-start',
-    '& *': { textAlign: 'left' },
-  },
-  dialogTitleBar: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    backgroundColor: 'rgb(57, 102, 121)',
-    color: 'white',
-  },
-  close: {
-    transform: 'rotate(-90deg)',
-    '&:hover': {
-      transform: 'rotate(90deg)',
-      transition: 'all .3s ease-in',
-    },
-  },
-  closeButton: {
-    height: '2.3rem',
-    marginTop: '0.8rem',
-    marginRight: '10px',
-    color: 'white',
-  },
-  space: { margin: theme.spacing(1) },
-  rangeButton: { border: '1px solid rgba(0, 0, 0, 0.23)' },
 });
+
+const RangeButton = styled(Button)(() => ({
+  border: '1px solid rgba(0, 0, 0, 0.23)',
+}));
+
+const RangeDialogRow = styled('div')(() => ({
+  display: 'flex',
+  gap: '4rem',
+  '& > *': { flex: '1' },
+}));
+
+const DateTimePicker = styled(MesheryDateTimePicker)(({ theme }) => ({
+  marginTop: theme.spacing(2),
+  marginBottom: theme.spacing(1),
+}));
+
+const InnerGrid = styled(Grid)(({ theme }) => ({
+  borderTop: `1px solid ${theme.palette.divider}`,
+  paddingTop: theme.spacing(2),
+  marginTop: theme.spacing(2),
+}));
+
+const TimeList = styled(Grid)(() => ({
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'flex-start',
+  '& *': { textAlign: 'left' },
+}));
+
+const Space = styled('span')(({ theme }) => ({
+  margin: theme.spacing(1),
+}));
 
 const refreshIntervals = ['off', '5s', '10s', '30s', '1m', '5m', '15m', '30m', '1h', '2h', '1d'];
 
@@ -611,26 +624,17 @@ class GrafanaDateRangePicker extends Component {
 
   render() {
     const { open } = this.state;
-    const { startDate, endDate, liveTail, refresh, classes } = this.props;
+    const { startDate, endDate, liveTail, refresh } = this.props;
     return (
       <NoSsr>
         <React.Fragment>
-          <Button
-            variant="filled"
-            // buttonRef={node => {
-            //     this.anchorEl = node;
-            // }}
-            // aria-owns={open ? 'daterange-popper' : undefined}
-            // aria-haspopup="true"
-            onClick={this.handleClick}
-            classes={{ root: classes.rangeButton }}
-          >
-            <AccessTimeIcon style={{ marginRight: '0.25rem', fontSize: '1.15rem' }} />
+          <RangeButton variant="filled" onClick={this.handleClick}>
+            <AccessTimeIcon sx={{ marginRight: '0.25rem', fontSize: '1.15rem' }} />
             <Moment format="LLLL">{startDate}</Moment>
-            <span className={classes.space}>-</span>
+            <Space>-</Space>
             {liveTail ? 'now' : <Moment format="LLLL">{endDate}</Moment>}
-            <span className={classes.space}>,{refresh}</span>
-          </Button>
+            <Space>,{refresh}</Space>
+          </RangeButton>
           {/* <Popper open={open} anchorEl={this.anchorEl} transition placement='bottom-start'>
             {({ TransitionProps, placement }) => (
               <Grow
@@ -653,45 +657,39 @@ class GrafanaDateRangePicker extends Component {
                 }} */}
           {/* > */}
           {/* <Paper> */}
-          <Dialog
+
+          <StyledDialog
             open={open}
             onClose={this.handleClose}
             scroll="paper"
             aria-labelledby="daterange-dialog-title"
-            // fullWidth
             maxWidth="md"
           >
-            <div className={classes.dialogTitleBar}>
+            <DialogTitleBar>
               <DialogTitle id="daterange-dialog-title">Select a Date Range</DialogTitle>
-              <IconButton
-                aria-label="close"
-                className={classes.closeButton}
-                onClick={this.handleClose}
-              >
-                <Close className={classes.close} />
-              </IconButton>
-            </div>
+              <CloseIconButton aria-label="close" onClick={this.handleClose}>
+                <CloseIcon />
+              </CloseIconButton>
+            </DialogTitleBar>
             <DialogContent>
-              <DialogContentText className={classes.rangeDialog}>
+              <DialogContentText>
                 <Grid container>
                   <Grid item xs={12}>
                     Custom Range
-                    <div className={classes.rangeDialogRow}>
-                      <MesheryDateTimePicker
+                    <RangeDialogRow>
+                      <DateTimePicker
                         selectedDate={startDate}
                         onChange={this.handleChange('startDate')}
                         label="Start"
-                        className={classes.dateTimePicker}
                       />
-                      <MesheryDateTimePicker
+                      <DateTimePicker
                         disabled={liveTail}
                         selectedDate={endDate}
                         onChange={this.handleChange('endDate')}
                         label="End"
-                        className={classes.dateTimePicker}
                       />
-                    </div>
-                    <div className={classes.rangeDialogRow}>
+                    </RangeDialogRow>
+                    <RangeDialogRow>
                       <FormControlLabel
                         control={
                           <Switch
@@ -720,27 +718,27 @@ class GrafanaDateRangePicker extends Component {
                           </MenuItem>
                         ))}
                       </TextField>
-                    </div>
+                    </RangeDialogRow>
                   </Grid>
-                  <Grid item xs={12} className={classes.innerGrid}>
+                  <InnerGrid item xs={12}>
                     Quick Ranges
                     <Grid container spacing={0}>
                       {quickRanges.map((qr) => (
-                        <Grid item key={qr.uniqueID} xs={12} sm={3} className={classes.timeList}>
+                        <TimeList item key={qr.uniqueID} xs={12} sm={3}>
                           {qr.map((q) => (
                             <Button key={q.uniqueID} variant="text" onClick={this.setRange(q)}>
                               {q}
                             </Button>
                           ))}
-                        </Grid>
+                        </TimeList>
                       ))}
                     </Grid>
-                  </Grid>
+                  </InnerGrid>
                 </Grid>
               </DialogContentText>
             </DialogContent>
             <Divider light variant="fullWidth" />
-          </Dialog>
+          </StyledDialog>
           {/* </Paper> */}
           {/* </Popover> */}
           {/* </Grow> */}
@@ -762,4 +760,4 @@ GrafanaDateRangePicker.propTypes = {
   refresh: PropTypes.string.isRequired,
 };
 
-export default withStyles(styles)(GrafanaDateRangePicker);
+export default GrafanaDateRangePicker;

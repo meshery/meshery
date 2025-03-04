@@ -1,21 +1,7 @@
 /* eslint-disable */
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import SaveOutlinedIcon from '@material-ui/icons/SaveOutlined';
-import { Autocomplete } from '@material-ui/lab';
-import {
-  NoSsr,
-  Tooltip,
-  IconButton,
-  CircularProgress,
-  FormControl,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  Button,
-  TextField,
-  Grid,
-} from '@material-ui/core';
+import SaveOutlinedIcon from '@mui/icons-material/SaveOutlined';
 import dataFetch from '../lib/data-fetch';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -24,8 +10,28 @@ import { durationOptions } from '../lib/prePopulatedOptions';
 import { ctxUrl } from '../utils/multi-ctx';
 import { withNotify } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
+import {
+  FormControl,
+  CircularProgress,
+  RadioGroup,
+  FormControlLabel,
+  TextField,
+  Grid,
+  Button,
+  CustomTooltip,
+  useTheme,
+  styled,
+  Autocomplete,
+  NoSsr,
+  Radio,
+} from '@layer5/sistent';
 
 const loadGenerators = ['fortio', 'wrk2', 'nighthawk'];
+
+const FormControlWrapper = styled(FormControl)({
+  minWidth: 180,
+  margin: '10px',
+});
 
 const MesherySettingsPerformanceComponent = (props) => {
   const { classes, notify } = props;
@@ -139,11 +145,11 @@ const MesherySettingsPerformanceComponent = (props) => {
   };
 
   // const { blockRunTest, qps, t, c, gen, tValue, tError } = state;
-
+  const theme = useTheme();
   return (
     <NoSsr>
       <React.Fragment>
-        <div sx={{ padding: theme.spacing(10) }}>
+        <div style={{ padding: theme.spacing(10) }}>
           <label>
             <strong>Performance Load Test Defaults</strong>
           </label>
@@ -181,7 +187,8 @@ const MesherySettingsPerformanceComponent = (props) => {
               />
             </Grid>
             <Grid item xs={12} lg={4}>
-              <Tooltip
+              <CustomTooltip
+                placement="top"
                 title={"Please use 'h', 'm' or 's' suffix for hour, minute or second respectively."}
               >
                 <Autocomplete
@@ -192,7 +199,7 @@ const MesherySettingsPerformanceComponent = (props) => {
                   label="Duration*"
                   fullWidth
                   variant="outlined"
-                  className={classes.errorValue}
+                  // className={classes.errorValue}
                   classes={{ root: tError }}
                   value={tValue}
                   inputValue={t}
@@ -204,10 +211,10 @@ const MesherySettingsPerformanceComponent = (props) => {
                     <TextField {...params} label="Duration*" variant="outlined" />
                   )}
                 />
-              </Tooltip>
+              </CustomTooltip>
             </Grid>
             <Grid item xs={12} lg={4}>
-              <FormControl component="loadGenerator" className={classes.formControl}>
+              <FormControlWrapper component="loadGenerator">
                 <label>
                   <strong>Default Load Generator</strong>
                 </label>
@@ -239,17 +246,16 @@ const MesherySettingsPerformanceComponent = (props) => {
                     />
                   ))}
                 </RadioGroup>
-              </FormControl>
+              </FormControlWrapper>
             </Grid>
           </Grid>
-          <div sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
             <Button
               type="submit"
               variant="contained"
               color="primary"
               size="large"
               onClick={handleSubmit}
-              sx={{ marginTop: theme.spacing(3), marginLeft: theme.spacing(1) }}
               disabled={blockRunTest}
             >
               <SaveOutlinedIcon style={{ marginRight: '3px' }} />

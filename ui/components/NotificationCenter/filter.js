@@ -40,7 +40,14 @@ const useFilterSchema = () => {
 
 const Filter = ({ handleFilter }) => {
   const filterSchema = useFilterSchema();
-  return <TypingFilter handleFilter={handleFilter} filterSchema={filterSchema} autoFilter={true} />;
+  return (
+    <TypingFilter
+      handleFilter={handleFilter}
+      filterSchema={filterSchema}
+      autoFilter={true}
+      placeholder="Filter Notifications"
+    />
+  );
 };
 
 export default Filter;

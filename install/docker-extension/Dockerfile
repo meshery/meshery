@@ -1,4 +1,4 @@
-FROM golang:1.21-alpine AS builder
+FROM golang:1.23-alpine AS builder
 ENV CGO_ENABLED=0
 RUN apk update && apk add --no-cache gcc libc-dev make
 WORKDIR /backend
@@ -52,7 +52,7 @@ LABEL org.opencontainers.image.title="Meshery" \
   </ul>" \
   com.docker.desktop.extension.icon="https://raw.githubusercontent.com/meshery/meshery/master/install/docker-extension/docs/img/meshery-logo-light.svg" \
   com.docker.extension.publisher-url="https://meshery.io" \
-  com.docker.extension.additional-urls="[{\"title\":\"Documentation\",\"url\":\"https://docs.meshery.io\"},{\"title\":\"Project\",\"url\":\"https://layer5.io/meshery\"},{\"title\":\"Slack\",\"url\":\"https://slack.meshery.io\"},{\"title\":\"Discussion Forum\",\"url\":\"http://discuss.meshery.io\"}]"
+  com.docker.extension.additional-urls="[{\"title\":\"Documentation\",\"url\":\"https://docs.meshery.io\"},{\"title\":\"Project\",\"url\":\"https://layer5.io/meshery\"},{\"title\":\"Slack\",\"url\":\"https://slack.meshery.io\"},{\"title\":\"Discussion Forum\",\"url\":\"https://meshery.io/community#community-forums\"}]"
 COPY --from=builder /backend/bin/service /
 COPY docker-compose.yaml .
 COPY metadata.json .
@@ -66,4 +66,4 @@ RUN tar -xzf /mesheryctl/linux/mesheryctl_${GIT_STRIPPED_VERSION}_Linux_x86_64.t
 COPY meshery-logo-light.svg .
 COPY --from=client-builder /ui/build ui
 EXPOSE 7877/tcp
-CMD ./service
+CMD ["./service"]

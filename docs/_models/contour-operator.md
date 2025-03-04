@@ -58,6 +58,9 @@ components:
   colorIcon: assets/img/integrations/contour-operator/components/udp-route/icons/color/udp-route-color.svg
   whiteIcon: assets/img/integrations/contour-operator/components/udp-route/icons/white/udp-route-white.svg
   description: 
+components-count: 12
+relationships: 
+relationship-count: 0
 featureList: [
   "Supports dynamic configuration updates out of the box while maintaining a lightweight profile.",
   "Introduces a new ingress API (HTTPProxy) which is implemented via a Custom Resource Definition (CRD).",

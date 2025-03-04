@@ -186,6 +186,9 @@ components:
   colorIcon: assets/img/integrations/kommander/components/replica-scheduling-preference/icons/color/replica-scheduling-preference-color.svg
   whiteIcon: assets/img/integrations/kommander/components/replica-scheduling-preference/icons/white/replica-scheduling-preference-white.svg
   description: 
+components-count: 44
+relationships: 
+relationship-count: 0
 featureList: [
   "Simplifies management of multiple clusters",
   "Provides a unified control plane",

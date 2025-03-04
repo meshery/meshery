@@ -14,6 +14,9 @@ components:
   colorIcon: assets/img/integrations/cockroachdb-operator/components/crdb-cluster/icons/color/crdb-cluster-color.svg
   whiteIcon: assets/img/integrations/cockroachdb-operator/components/crdb-cluster/icons/white/crdb-cluster-white.svg
   description: 
+components-count: 1
+relationships: 
+relationship-count: 0
 featureList: [
   "Use Couchbase's multi-purpose NoSQL database to supply your applications' JSON data, and seamlessly grow your environment.",
   "DevOps can deploy and scale Couchbase clusters up and down, automatically, and use their preferred CNCF observability tools.",

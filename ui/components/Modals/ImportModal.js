@@ -1,14 +1,12 @@
 import React, { useRef } from 'react';
-import useStyles from '../MesheryPatterns/Cards.styles';
 import RJSFModal from '../Modal';
-import { Button } from '@material-ui/core';
+import { Button } from '@layer5/sistent';
 import { capitalize } from 'lodash';
 
 // might also expect RJSFWrapperComponent from extensions
 // NOTE: Use modal from sistent
 export default function ImportModal(props) {
   const { importType, handleSubmit, handleClose, rjsfSchema, uiSchema } = props;
-  const classes = useStyles();
   const data = useRef(null);
 
   return (
@@ -27,7 +25,6 @@ export default function ImportModal(props) {
         title="Publish"
         variant="contained"
         color="primary"
-        className={classes.testsButton}
         onClick={() => {
           handleClose();
           handleSubmit(data.current);

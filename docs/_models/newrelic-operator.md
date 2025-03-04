@@ -30,6 +30,9 @@ components:
   colorIcon: assets/img/integrations/newrelic-operator/components/monitor/icons/color/monitor-color.svg
   whiteIcon: assets/img/integrations/newrelic-operator/components/monitor/icons/white/monitor-white.svg
   description: 
+components-count: 5
+relationships: 
+relationship-count: 0
 featureList: [
   "Alert Policies and NRQL Alert Conditions",
   "Alert Conditions for APM, Browser and mobile",
