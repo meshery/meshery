@@ -30,7 +30,6 @@ import {
   useGetMeshSyncResourceKindsQuery,
   useGetMeshSyncResourcesQuery,
 } from '@/rtk-query/meshsync';
-
 import { ConnectionStateChip } from '../ConnectionChip';
 import { ContentContainer, ConnectionStyledSelect, InnerTableContainer } from '../styles';
 
@@ -102,6 +101,7 @@ export default function MeshSyncTable(props) {
     ['metadata.name', 'xs'],
     ['apiVersion', 'na'],
     ['kind', 'm'],
+    ['model', 'm'],
     ['cluster_id', 'na'],
     ['pattern_resources', 'na'],
     ['metadata.creationTimestamp', 'l'],
@@ -158,6 +158,24 @@ export default function MeshSyncTable(props) {
     {
       name: 'kind',
       label: 'Kind',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
+      },
+    },
+    {
+      name: 'model',
+      label: 'Model',
       options: {
         sort: true,
         sortThirdClickReset: true,
@@ -370,19 +388,6 @@ export default function MeshSyncTable(props) {
         text: 'connection(s) selected',
       },
     },
-    // customToolbarSelect: (selected) => (
-    //   <Button
-    //     variant="contained"
-    //     color="primary"
-    //     size="large"
-    //     // @ts-ignore
-    //     // onClick={() => handleDeleteConnections(selected)}
-    //     style={{ background: '#8F1F00', marginRight: '10px' }}
-    //   >
-    //     <DeleteForeverIcon style={iconMedium} />
-    //     Delete
-    //   </Button>
-    // ),
     enableNestedDataAccess: '.',
     onTableChange: (action, tableState) => {
       const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
@@ -435,25 +440,21 @@ export default function MeshSyncTable(props) {
         <TableCell colSpan={colSpan}>
           <InnerTableContainer>
             <Table>
-              <TableRow style={{ padding: 0 }}>
-                <TableCell style={{ padding: '20px 0' }}>
-                  <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
-                    <ContentContainer item xs={12} md={12}>
-                      <Grid container spacing={1}>
-                        <ContentContainer
-                          item
-                          xs={12}
-                          md={12}
-                          style={{
-                            display: 'flex',
-                            flexWrap: 'wrap',
-                            padding: '0 20px',
-                            gap: 30,
-                          }}
-                        >
-                          <MeshSyncDataFormatter metadata={metadata} />
-                        </ContentContainer>
-                      </Grid>
+              <TableRow>
+                <TableCell>
+                  <Grid container style={{ textTransform: 'lowercase' }}>
+                    <ContentContainer
+                      item
+                      xs={12}
+                      md={12}
+                      style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        padding: '0 20px',
+                        gap: 30,
+                      }}
+                    >
+                      <MeshSyncDataFormatter metadata={metadata} />
                     </ContentContainer>
                   </Grid>
                 </TableCell>
