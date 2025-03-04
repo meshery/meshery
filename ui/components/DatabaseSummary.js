@@ -33,7 +33,7 @@ const DatabaseSummary = (props) => {
   };
 
   const { data: databaseSummary, refetch } = useGetDatabaseSummaryQuery({
-    page: page + 1,
+    page: page,
     pagesize: rowsPerPage,
     search: searchText,
   });

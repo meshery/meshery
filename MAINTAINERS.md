@@ -6,7 +6,7 @@
 | Aadhitya Amarendiran    | alphaX86          | Citi        |
 | Jerod Culpepper         | cpepper96         | SAIC        |
 | Antonette Caldwell      | acald-creator     | Acquia      |
-| Matthieu Evrin          | lekaf974          | Independent |
+| Matthieu Evrin          | lekaf974          | Moneris     |
 
 ### UI Maintainers
 
@@ -15,7 +15,7 @@
 | Nikhil Ladha        | Nikhil-Ladha           | Red Hat     |
 | Antonette Caldwell  | acald-creator          | Acquia      |
 | Aabid Sofi          | aabidsofi19            | Layer5      |
-| Yash Sharma         | Yashsharma1911         | Independent |
+| Yash Sharma         | Yashsharma1911         | Digital Ocean |
 
 ### Adapter Maintainers
 

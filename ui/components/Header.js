@@ -34,6 +34,7 @@ import {
   Slide,
   Hidden,
   NoSsr,
+  useTheme,
 } from '@layer5/sistent';
 import { CustomTextTooltip } from './MesheryMeshInterface/PatternService/CustomTextTooltip';
 import { CanShow } from '@/utils/can';
@@ -425,7 +426,7 @@ const Header = ({
   }
 
   const loaderType = 'circular';
-
+  const theme = useTheme();
   return (
     <NoSsr>
       <>
@@ -434,7 +435,7 @@ const Header = ({
             <Grid container alignItems="center">
               <Hidden smUp>
                 <Grid item style={{ display: 'none' }}>
-                  <MenuIconButton color="inherit" aria-label="Open drawer" onClick={onDrawerToggle}>
+                  <MenuIconButton aria-label="Open drawer" onClick={onDrawerToggle}>
                     <HeaderIcons style={iconMedium} />
                   </MenuIconButton>
                 </Grid>
@@ -487,8 +488,8 @@ const Header = ({
 
                   <div data-testid="settings-button" aria-describedby={abilityUpdated}>
                     <CanShow Key={keys.VIEW_SETTINGS}>
-                      <IconButton onClick={() => Router.push('/settings')} color="inherit">
-                        <SettingsIcon style={iconMedium} />
+                      <IconButton onClick={() => Router.push('/settings')}>
+                        <SettingsIcon style={{ ...iconMedium, fill: theme.palette.common.white }} />
                       </IconButton>
                     </CanShow>
                   </div>
@@ -498,10 +499,10 @@ const Header = ({
                   </div>
 
                   <UserSpan>
-                    <User color="inherit" updateExtensionType={updateExtensionType} />
+                    <User updateExtensionType={updateExtensionType} />
                   </UserSpan>
                   <UserSpan>
-                    <HeaderMenu color="inherit" updateExtensionType={updateExtensionType} />
+                    <HeaderMenu updateExtensionType={updateExtensionType} />
                   </UserSpan>
                 </UserInfoContainer>
               </Box>

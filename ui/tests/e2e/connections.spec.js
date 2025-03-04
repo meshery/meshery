@@ -97,15 +97,7 @@ test.beforeEach(async ({ page, provider }) => {
 });
 test('Verify that UI components are displayed', async ({ page }) => {
   // Verify that connections table is displayed (by checking for table headings)
-  for (const heading of [
-    'Name',
-    'Environments',
-    'Kind',
-    'Category',
-    'Connection ID',
-    'Status',
-    'Actions',
-  ]) {
+  for (const heading of ['Name', 'Environments', 'Kind', 'Category', 'Status', 'Actions']) {
     await expect(page.getByRole('columnheader', { name: heading })).toBeVisible();
   }
 

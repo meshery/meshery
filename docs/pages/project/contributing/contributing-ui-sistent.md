@@ -61,28 +61,6 @@ function MyComponent() {
 export default MyComponent;
 ```
 
-- **Wrap the Sistent component with `UsesSistent` wrapper**.<br/>
-This `UsesSistent` wrapper ensures that the correct theme is applied to the Sistent component based on the current theme of the Meshery UI.
-Here how you can do it:
-
-```javascript
-import { UsesSistent } from '<path>/SistentWrapper';
-
-function MyComponent() {
-    return (
-    <div>
-    <UsesSistent>
-      <Button
-        variant="contained"
-        onClick={onClick}
-      >
-      {/* Text to display */}
-      </Button>
-    </UsesSistent>
-    </div>
-  );
-}
-
 export default MyComponent;
 ```
 ### How to use `Tokens/Colors` from Sistent theme
@@ -104,18 +82,15 @@ Roles specify the context for applying colors. Different roles can share the sam
 #### How to use these tokens/colors from sistent theme.
 
 - Import `useTheme` hook from `@layer5/sistent` to access the current theme
-- Use the `UsesSistent` wrapper to ensure the Sistent theme is applied to your components.
 - Utilize the `useTheme` hook to access theme properties and apply them to your components, such as setting the background style of the `Button`.
 
 ```javascript
-import { UsesSistent } from '<path>/SistentWrapper';
 import {Button, useTheme} from `@layer5/sistent`
 
 function MyComponent() {
  const theme = useTheme()
     return (
     <div>
-    <UsesSistent>
     {% raw %}
       <Button
         variant="contained"
@@ -127,8 +102,7 @@ function MyComponent() {
       >
       {/* Text to display */}
       </Button>
-       {% endraw %}
-    </UsesSistent>
+    {% endraw %}
     </div>
   );
 }
