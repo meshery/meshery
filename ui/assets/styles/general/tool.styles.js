@@ -50,6 +50,11 @@ export const InnerContainer = styled(Box, {
   display: 'flex',
   flexDirection: 'row',
   position: 'absolute',
+  flexWrap: 'wrap',
+  gap: '1rem',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '100%',
   ...(isAnimated
     ? {
         width: '100%',

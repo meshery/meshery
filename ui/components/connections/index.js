@@ -70,7 +70,7 @@ function ConnectionManagementPage(props) {
 function Connections(props) {
   const {
     updateProgress,
-    /*onOpenCreateConnectionModal,*/ operatorState,
+    operatorState,
     selectedK8sContexts,
     k8sconfig,
     connectionMetadataState,
