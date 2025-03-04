@@ -229,7 +229,7 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
     ['created_at', 'na'],
     ['status', 'xs'],
     ['Actions', 'xs'],
-    ['ConnectionID', 'xs'],
+    ['ConnectionID', 'na'],
   ];
 
   const addConnectionToEnvironment = async (
@@ -944,14 +944,14 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
     },
     customToolbarSelect: (selected) => (
       <Button
+        color="error"
         variant="contained"
-        color="primary"
         size="large"
         onClick={() => handleDeleteConnections(selected)}
-        style={{ background: theme.palette.secondary.danger, marginRight: '10px' }}
+        sx={{ backgroundColor: `${theme.palette.error.dark} !important`, marginRight: '10px' }}
         disabled={!CAN(keys.DELETE_A_CONNECTION.action, keys.DELETE_A_CONNECTION.subject)}
       >
-        <DeleteIcon style={iconMedium} />
+        <DeleteIcon style={iconMedium} color={theme.palette.common.white} />
         Delete
       </Button>
     ),
