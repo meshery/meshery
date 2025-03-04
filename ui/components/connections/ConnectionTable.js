@@ -951,7 +951,7 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
         sx={{ backgroundColor: `${theme.palette.error.dark} !important`, marginRight: '10px' }}
         disabled={!CAN(keys.DELETE_A_CONNECTION.action, keys.DELETE_A_CONNECTION.subject)}
       >
-        <DeleteIcon style={iconMedium} color={theme.palette.common.white} />
+        <DeleteIcon style={iconMedium} fill={theme.palette.common.white}  />
         Delete
       </Button>
     ),
