@@ -51,15 +51,15 @@ require (
 	github.com/prometheus/common v0.62.0
 	github.com/qri-io/jsonschema v0.2.1
 	github.com/sirupsen/logrus v1.9.3
-	github.com/spf13/cobra v1.8.1
+	github.com/spf13/cobra v1.9.1
 	github.com/spf13/pflag v1.0.6
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.10.0
 	github.com/vektah/gqlparser/v2 v2.5.21
 	github.com/vmihailenco/taskq/v3 v3.2.9
 	golang.org/x/oauth2 v0.25.0
-	golang.org/x/sync v0.10.0
-	golang.org/x/text v0.21.0
+	golang.org/x/sync v0.11.0
+	golang.org/x/text v0.22.0
 	gonum.org/v1/gonum v0.15.1
 	google.golang.org/api v0.218.0
 	google.golang.org/grpc v1.70.0
