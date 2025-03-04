@@ -102,7 +102,6 @@ test('Verify that UI components are displayed', async ({ page }) => {
     'Environments',
     'Kind',
     'Category',
-    'Connection ID',
     'Status',
     'Actions',
   ]) {
