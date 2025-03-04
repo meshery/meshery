@@ -284,7 +284,7 @@ function OrgMenu(props) {
 
 function DefaultHeader({ title, isBeta }) {
   return (
-    <StyledHeader  variant="h5" data-cy="headerPageTitle">
+    <StyledHeader variant="h5" data-cy="headerPageTitle">
       {title}
       {isBeta ? <StyledBetaHeader>BETA</StyledBetaHeader> : ''}
     </StyledHeader>
