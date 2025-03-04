@@ -58,6 +58,77 @@ relationships_to_evaluate_against := { rel |
 	# print("is_rel_enabled",rel_key,is_rel_enabled(rel))
 }
 
+# helper function to identify Service-to-Deployment deletion actions
+is_service_to_deployment_deletion(action) if {
+    action.op == "delete_relationship"
+    action.value.kind == "edge"
+    action.value.type == "non-binding"
+    action.value.subType == "network"
+    is_service_to_deployment(action.value)
+}
+
+# helper function to identify Service-to-Deployment relationships
+is_service_to_deployment(rel) if {
+    # Check if this relationship connects a Service to a Deployment
+    count(rel.selectors) > 0
+    some selector in rel.selectors
+    count(selector.allow.from) > 0
+    count(selector.allow.to) > 0
+    
+    # Check from side is Service
+    some from in selector.allow.from
+    from.kind == "Service"
+    
+    # Check to side is Deployment
+    some to in selector.allow.to
+    to.kind == "Deployment"
+}
+
+restore_service_to_deployment_relationships(relationships) := processed_rels if {
+    processed_rels := {
+        rel |
+        some rel_orig in relationships
+        rel := object.union(rel_orig, {"status": get_proper_status(rel_orig)})
+    }
+}
+
+get_proper_status(rel) := "pending" if {
+    is_service_to_deployment(rel)
+} else := rel.status
+
+# function to preserve Service-to-Deployment relationships in all phases
+preserve_service_to_deployment_relationships(design) := patched_design if {
+    # Find any Service-to-Deployment relationships that need to be preserved
+    service_to_deployment_rels := {rel |
+        some rel in design.relationships
+        is_service_to_deployment(rel)
+    }
+    
+    # Update their status to pending
+    preserved_rels := {rel |
+        some orig_rel in service_to_deployment_rels
+        rel := object.union(orig_rel, {"status": "pending"})
+    }
+    
+    # Remove Service-to-Deployment relationships from the original set
+    filtered_rels := {rel |
+        some rel in design.relationships
+        not is_service_to_deployment(rel)
+    }
+    
+    # Combine the preserved relationships with the filtered ones
+    combined_rels := filtered_rels | preserved_rels
+    
+    # Create the patched design
+    patched_design := json.patch(design, [{
+        "op": "replace",
+        "path": "/relationships",
+        "value": combined_rels
+    }])
+}
+
+
+
 # Main evaluation function that processes relationships and updates the design.
 evaluate := eval_results if {
 
@@ -77,6 +148,11 @@ evaluate := eval_results if {
 			"kind": "hierarchical",
 			"type": "parent",
 			"subtype": "alias",
+		},
+		{
+			"kind": "edge",
+			"type": "non-binding",
+			"subtype": "network",
 		},
 	]
 
@@ -208,7 +284,7 @@ evaluate := eval_results if {
 		{
 			"op": "replace",
 			"path": "/relationships",
-			"value": {rel | some rel in input.relationships},
+			"value": restore_service_to_deployment_relationships(input.relationships),
 		},
 		{
 			"op": "replace",
@@ -248,10 +324,15 @@ evaluate := eval_results if {
 
 	print("All relationships", count(design_file_to_apply_actions.relationships))
 
-	actions := union({actions |
+	actions := union({filtered_actions |
 		some identifier in relationship_policy_identifiers
-		actions := eval.action_phase(design_file_to_apply_actions, identifier)
-		# print("actions from",identifier,count(actions.relationships_to_add))
+		raw_actions := eval.action_phase(design_file_to_apply_actions, identifier)
+		
+		# Filter out Service-to-Deployment relationship deletions
+		filtered_actions := {action |
+			some action in raw_actions
+			not is_service_to_deployment_deletion(action)
+		}
 	})
 
 	# print("actions",actions)
@@ -312,36 +393,46 @@ delete_components(all_comps, comps_to_delete) := new_comps if {
 } else := all_comps
 
 delete_relationships(all_rels, rels_to_delete) := new_rels if {
-	count(rels_to_delete) > 0
-	ids_to_delete := {rel.id | some rel in rels_to_delete}
-	new_rels := {rel |
-		some rel in all_rels
-		not rel.id in ids_to_delete
-	}
+    count(rels_to_delete) > 0
+    
+    # Filter out any Service-to-Deployment relationships from the deletion list
+    filtered_rels_to_delete := {rel |
+        some rel in rels_to_delete
+        not is_service_to_deployment(rel)
+    }
+    
+    ids_to_delete := {rel.id | some rel in filtered_rels_to_delete}
+    new_rels := {rel |
+        some rel in all_rels
+        not rel.id in ids_to_delete
+    }
 } else := all_rels
 
 final_design_from_actions(old_design, actions_response) := new_design if {
-	# Add new components to the design
+    # Add new components to the design
+    with_new_components := array_to_set(old_design.components) | actions_response.components_to_add
+    final_components := delete_components(with_new_components, actions_response.components_to_delete)
 
-	with_new_components := array_to_set(old_design.components) | actions_response.components_to_add
-	final_components := delete_components(with_new_components, actions_response.components_to_delete)
-
-	# Add new relationships to the design
-	with_new_relationships := array_to_set(old_design.relationships) | actions_response.relationships_to_add
-	final_relationships := delete_relationships(with_new_relationships, actions_response.relationships_to_delete)
-
-	new_design := json.patch(old_design, [
-		{
-			"op": "replace",
-			"path": "/components",
-			"value": final_components,
-		},
-		{
-			"op": "replace",
-			"path": "/relationships",
-			"value": final_relationships,
-		},
-	])
+    # Add new relationships to the design
+    with_new_relationships := array_to_set(old_design.relationships) | actions_response.relationships_to_add
+    final_relationships := delete_relationships(with_new_relationships, actions_response.relationships_to_delete)
+    
+    # Create initial new design
+    initial_design := json.patch(old_design, [
+        {
+            "op": "replace",
+            "path": "/components",
+            "value": final_components,
+        },
+        {
+            "op": "replace",
+            "path": "/relationships",
+            "value": final_relationships,
+        },
+    ])
+    
+    # Apply final preservation to ensure Service-to-Deployment relationships remain
+    new_design := preserve_service_to_deployment_relationships(initial_design)
 } else := old_design
 
 # ----------------------------------------------#
