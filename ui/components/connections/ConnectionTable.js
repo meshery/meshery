@@ -945,17 +945,17 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
       direction: 'asc',
     },
     customToolbarSelect: (selected) => (
-      <>
-        <Button
-          variant="contained"
-          onClick={() => handleDeleteConnections(selected)}
-          disabled={!CAN(keys.DELETE_A_CONNECTION.action, keys.DELETE_A_CONNECTION.subject)}
-          startIcon={<DeleteIcon style={iconMedium} fill={theme.palette.common.white} />}
-          style={{ background: theme.palette.error.dark, marginRight: '1rem' }}
-        >
-          Delete
-        </Button>
-      </>
+      <Button
+        color="error"
+        variant="contained"
+        size="large"
+        onClick={() => handleDeleteConnections(selected)}
+        sx={{ backgroundColor: `${theme.palette.error.dark} !important`, marginRight: '10px' }}
+        disabled={!CAN(keys.DELETE_A_CONNECTION.action, keys.DELETE_A_CONNECTION.subject)}
+      >
+        <DeleteIcon style={iconMedium} fill={theme.palette.common.white}  />
+        Delete
+      </Button>
     ),
     enableNestedDataAccess: '.',
     onTableChange: (action, tableState) => {
