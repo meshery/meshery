@@ -59,9 +59,11 @@ var (
 	// Color for the whiteboard printer
 	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 
-	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, importModelCmd, exportModal, generateModelCmd}
+	availableSubcommands = []*cobra.Command{initModelCmd, listModelCmd, viewModelCmd, searchModelCmd, importModelCmd, exportModal, generateModelCmd}
 
 	countFlag bool
+
+	targetDirectory string
 )
 
 // represents the mesheryctl model view [model-name] subcommand.
@@ -76,6 +78,9 @@ var ModelCmd = &cobra.Command{
 	Example: `
 // To view total of available models
 mesheryctl model --count
+
+// To scaffold a folder structure for model creation
+mesheryctl model init
 
 // To view list of models
 mesheryctl model list
@@ -124,6 +129,14 @@ mesheryctl model search [model-name]
 }
 
 func init() {
+	initModelCmd.Flags().StringVarP(&targetDirectory, "path", "p", ".", "(optional) target directory (default: current dir)")
+	// somehow if we use "v" as a shorthand here, it conflicts with RootCmd "verbose" flag (which also has shorthand "v").
+	// panic appears
+	// panic: unable to redefine 'v' shorthand in "init" flagset: it's already used for "version" flag
+	// so use here "r" ibstead of "v" for now.
+	initModelCmd.Flags().StringVarP(&versionFlag, "version", "r", "1.0.0", "(optional) model version (default: 1.0.0)")
+	initModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "json", "(optional) format to display in [json|yaml]")
+
 	listModelCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
 	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 
