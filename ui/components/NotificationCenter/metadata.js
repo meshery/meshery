@@ -17,7 +17,7 @@ const DryRunResponse = ({ response }) => {
   return <FormatDryRunResponse dryRunErrors={formatDryRunResponse(response)} />;
 };
 
-const TitleLink = ({ href, children, ...props }) => {
+export const TitleLink = ({ href, children, ...props }) => {
   return (
     <a
       href={href}
@@ -214,10 +214,6 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
   const longDescription = metadata?.LongDescription || [];
   const probableCause = metadata?.ProbableCause || [];
   const suggestedRemediation = metadata?.SuggestedRemediation || [];
-  const errorCode = metadata?.error_code || '';
-  const code = metadata?.Code || '';
-  const formattedErrorCode = errorCode ? `${errorCode}-${code}` : code;
-  const errorLink = `https://docs.meshery.io/reference/error-codes#${formattedErrorCode}`;
   const ErrorDetailsObjectFormatter = ({ heading, value }) => {
     const isUnorderedList = heading === 'Details' && value.length <= 1;
     return (
@@ -257,7 +253,6 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
     <Grid container>
       {' '}
       <div>
-        <TitleLink href={errorLink}> {formattedErrorCode} </TitleLink>
         {event?.description && <FormatStructuredData data={event.description} />}
         <div style={{ marginTop: '1rem' }}>
           <FormatStructuredData
