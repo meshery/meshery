@@ -11,11 +11,12 @@
 ### UI Maintainers
 
 | Name                | GitHub                 | Affiliation |
-| ------------------- | ---------------------- | ----------- |
-| Nikhil Ladha        | Nikhil-Ladha           | Red Hat     |
-| Antonette Caldwell  | acald-creator          | Acquia      |
-| Aabid Sofi          | aabidsofi19            | Layer5      |
+| ------------------- | ---------------------- | --------------|
+| Nikhil Ladha        | Nikhil-Ladha           | Red Hat       |
+| Antonette Caldwell  | acald-creator          | Acquia        |
+| Aabid Sofi          | aabidsofi19            | Layer5        |
 | Yash Sharma         | Yashsharma1911         | Digital Ocean |
+| Sudhanshu Dasgupta  | sudhanshutech          | SafeDep       |
 
 ### Adapter Maintainers
 
