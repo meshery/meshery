@@ -953,7 +953,8 @@ const Navigator_ = (props) => {
                   <ExpandMore
                     onClick={() => toggleItemCollapse(childId)}
                     isCollapsed={state.openItems.includes(childId)}
-                    isDrawerCollapsed={props.isDrawerCollapsed} // Pass drawer state
+                    isDrawerCollapsed={props.isDrawerCollapsed}
+                    theme={theme}
                     hasChildren={!!children}
                   />
                 </SideBarListItem>
