@@ -35,21 +35,21 @@ var createEnvironmentCmd = &cobra.Command{
 	Long:  `Create a new environments by providing the name and description of the environment`,
 	Example: `
 // Create a new environment
-mesheryctl environment create --orgId [orgId] --name [name] --description [description]
+mesheryctl environment create --orgID [orgID] --name [name] --description [description]
 // Documentation for environment can be found at:
 https://docs.meshery.io/concepts/logical/environments
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
 		// Check if all three flags are set
-		orgIdFlag, _ := cmd.Flags().GetString("orgId")
+		orgIDFlag, _ := cmd.Flags().GetString("orgID")
 		nameFlag, _ := cmd.Flags().GetString("name")
 		descriptionFlag, _ := cmd.Flags().GetString("description")
 
-		if orgIdFlag == "" || nameFlag == "" || descriptionFlag == "" {
+		if orgIDFlag == "" || nameFlag == "" || descriptionFlag == "" {
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
-			return utils.ErrInvalidArgument(errors.New("Please provide a --orgId, --name, and --description flag"))
+			return utils.ErrInvalidArgument(errors.New("Please provide a --orgID, --name, and --description flag"))
 		}
 		return nil
 	},
