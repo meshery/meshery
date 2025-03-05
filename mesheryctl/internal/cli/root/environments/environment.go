@@ -50,7 +50,7 @@ mesheryctl environment list --orgID [orgID]
 // To view a particular environment
 mesheryctl environment view --orgID [orgID]
 // To create a environment
-mesheryctl environment create --orgId [orgId] --name [name] --description [description]
+mesheryctl environment create --orgID [orgID] --name [name] --description [description]
 // Documentation for environment can be found at:
 https://docs.meshery.io/concepts/logical/environments
 	`,
