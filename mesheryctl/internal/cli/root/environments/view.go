@@ -42,9 +42,9 @@ var viewEnvironmentCmd = &cobra.Command{
 mesheryctl environment view --orgID [orgID]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		orgIdFlag, _ := cmd.Flags().GetString("orgID")
+		orgIDFlag, _ := cmd.Flags().GetString("orgID")
 
-		if orgIdFlag == "" {
+		if orgIDFlag == "" {
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
