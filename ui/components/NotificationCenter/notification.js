@@ -370,7 +370,7 @@ export const Notification = ({ event_id }) => {
                 onClick={eventstopPropagation}
                 checked={Boolean(event.checked)}
                 onChange={handleSelectEvent}
-                sx={{ margin: '0rem', padding: '0rem' }}
+                sx={{ margin: '0rem', paddingLeft: '0.5rem' }}
               />
 
               <severityStyles.icon {...iconLarge} fill={severityStyles?.color} />
