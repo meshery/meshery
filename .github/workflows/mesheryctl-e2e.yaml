@@ -60,7 +60,8 @@ jobs:
         run: echo "date=date +'%Y-%m-%d-%H.%M.%S'" >> $GITHUB_OUTPUT
       - name: Run mesheryctl end2end tests
         run: |
-          bash run_tests.bash
+          echo 
+          MESHERY_PROVIDER_TOKEN=$MESHERY_PROVIDER_TOKEN bash run_tests.bash
         shell: bash
         working-directory: ./mesheryctl/test/e2e
         env:
