@@ -206,8 +206,6 @@ const MesherySettingsEnvButtons = () => {
           onClick={handleClick}
           style={{
             width: '100%',
-            borderRadius: 5,
-            padding: '8px',
           }}
           disabled={!CAN(keys.ADD_CLUSTER.action, keys.ADD_CLUSTER.subject)}
           data-cy="btnResetDatabase"

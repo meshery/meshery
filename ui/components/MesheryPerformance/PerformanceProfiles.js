@@ -487,8 +487,8 @@ function PerformanceProfile({ updateProgress, user, handleDelete }) {
                         keys.ADD_PERFORMANCE_PROFILE.subject,
                       )
                     }
+                    startIcon={<AddIcon style={iconMedium} />}
                   >
-                    <AddIcon style={{ paddingRight: '0.5', ...iconMedium }} />
                     <ButtonTextWrapper> Add Performance Profile </ButtonTextWrapper>
                   </Button>
                 </div>
