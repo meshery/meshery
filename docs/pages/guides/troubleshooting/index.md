@@ -13,7 +13,7 @@ Troubleshooting guides to using Meshery's various features and components.
 
 <ul>
     {% for item in sorted_guides %}
-    {% if item.type=="guides" and item.category=="troubleshooting" and item.list!="exclude"  -%}
+    {% if item.type=="guides" and item.category=="troubleshooting" and item.list!="exclude" -%}
       <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a></li>
       {% endif %}
     {% endfor %}
