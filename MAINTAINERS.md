@@ -11,11 +11,12 @@
 ### UI Maintainers
 
 | Name                | GitHub                 | Affiliation |
-| ------------------- | ---------------------- | ----------- |
-| Nikhil Ladha        | Nikhil-Ladha           | Red Hat     |
-| Antonette Caldwell  | acald-creator          | Acquia      |
-| Aabid Sofi          | aabidsofi19            | Layer5      |
+| ------------------- | ---------------------- | --------------|
+| Nikhil Ladha        | Nikhil-Ladha           | Red Hat       |
+| Antonette Caldwell  | acald-creator          | Acquia        |
+| Aabid Sofi          | aabidsofi19            | Layer5        |
 | Yash Sharma         | Yashsharma1911         | Digital Ocean |
+| Sudhanshu Dasgupta  | sudhanshutech          | SafeDep       |
 
 ### Adapter Maintainers
 
@@ -51,3 +52,10 @@
 | ----------------------  | -----------  | -------------- |
 | Nikhil Ladha            | Nikhil-Ladha | Red Hat        |
 | Aaditya Narayan Subedy  | asubedy      | Fast Retailing |
+
+### Meshery Extensions Maintainers
+
+| Name                    | GitHub         | Affiliation    |
+| ----------------------  | -------------- | -------------- |
+| Ijeoma Eti              | Aijeyomah      | Manufactured   |
+| Pranav Singh            | theBeginner86  | Intel          |
