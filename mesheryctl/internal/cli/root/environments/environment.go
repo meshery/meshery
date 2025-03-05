@@ -81,7 +81,7 @@ https://docs.meshery.io/concepts/logical/environments
 
 func init() {
 	listEnvironmentCmd.Flags().StringVarP(&orgID, "orgID", "o", "", "Organization ID")
-	viewEnvironmentCmd.Flags().StringVarP(&orgID, "orgID", "i", "", "Organization ID")
+	viewEnvironmentCmd.Flags().StringVarP(&orgID, "orgID", "", "", "Organization ID")
 	viewEnvironmentCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 	viewEnvironmentCmd.Flags().BoolVarP(&saveFlag, "save", "s", false, "(optional) save output as a JSON/YAML file")
 	createEnvironmentCmd.Flags().StringVarP(&orgID, "orgID", "o", "", "Organization ID")
