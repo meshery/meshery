@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import Cookies from 'universal-cookie';
 import { mesheryExtensionRoute } from '../pages/_app';
+import { Colors } from '@/themes/app';
 import { EXTENSION_NAMES, EXTENSIONS } from '@/utils/Enum';
 
 const StyledPaper = styled('div')(({ theme }) => ({
@@ -191,7 +192,16 @@ export function MesheryExtensionEarlyAccessCard({
         </Typography>
         <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Grid>
-            <Button variant="contained" onClick={(e) => handleButtonClick(e)}>
+            <Button
+              variant="contained"
+              sx={{
+                backgroundColor: Colors.keppelGreen,
+                borderRadius: 2,
+                height: 35,
+                fontSize: '0.8rem',
+              }}
+              onClick={(e) => handleButtonClick(e)}
+            >
               {buttonText}
             </Button>
           </Grid>

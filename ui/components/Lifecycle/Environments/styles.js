@@ -113,8 +113,10 @@ export const AllocationWorkspace = styled('div')({
 
 export const PopupButton = styled(Button)(({ theme }) => ({
   width: '100%',
+  borderRadius: '4px',
   boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)',
   marginBottom: '10px',
+  padding: '20px 10px',
   color: theme.palette.text?.default,
   backgroundColor: theme.palette.background.constant.table,
   margin: '0px 0px 10px',
