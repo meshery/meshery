@@ -46,7 +46,7 @@ var EnvironmentCmd = &cobra.Command{
 	Long:  "View list of environments and detailed information of a specific environments",
 	Example: `
 // To view a list environments
-mesheryctl environment list --orgId [orgId]
+mesheryctl environment list --orgID [orgID]
 // To view a particular environment
 mesheryctl environment view --orgID [orgID]
 // To create a environment
