@@ -99,7 +99,10 @@ import { getProviderCapabilities, getSystemVersion } from '@/rtk-query/user';
 const drawerIconsStyle = { height: '1.21rem', width: '1.21rem', fontSize: '1.45rem', ...iconSmall };
 const externalLinkIconStyle = { width: '1.11rem', fontSize: '1.11rem' };
 
-const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRegistryObj) => [
+const getNavigatorComponents = (
+  /** @type {CapabilitiesRegistry} */ capabilityRegistryObj,
+  theme,
+) => [
   {
     id: DASHBOARD,
     icon: <DashboardIcon style={drawerIconsStyle} />,
@@ -239,7 +242,7 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
     children: [
       {
         id: PROFILES,
-        icon: <TachographDigitalIcon fill="#fff" />,
+        icon: <TachographDigitalIcon fill={theme.palette.icon.default} />,
         href: '/performance/profiles',
         title: 'Profiles',
         show: capabilityRegistryObj.isNavigatorComponentEnabled([PERFORMANCE, PROFILES]),
@@ -265,45 +268,6 @@ const getNavigatorComponents = (/** @type {CapabilitiesRegistry} */ capabilityRe
       action: keys.VIEW_EXTENSIONS.action,
       subject: keys.VIEW_EXTENSIONS.subject,
     },
-  },
-];
-
-const ExternalLinkIcon = (
-  <IconExternalLink {...externalLinkIconStyle} transform="shrink-7" fill="#fff" />
-);
-
-const externlinks = [
-  {
-    id: 'doc',
-    href: 'https://docs.meshery.io',
-    title: 'Documentation',
-    icon: <DocumentIcon style={drawerIconsStyle} />,
-    external_icon: ExternalLinkIcon,
-  },
-  {
-    id: 'community',
-    href: 'https://slack.meshery.io',
-    title: 'Community',
-    icon: (
-      <SlackIcon
-        style={{ ...drawerIconsStyle, height: '1.5rem', width: '1.5rem', marginTop: '' }}
-      />
-    ),
-    external_icon: ExternalLinkIcon,
-  },
-  {
-    id: 'forum',
-    href: 'https://meshery.io/community#community-forums',
-    title: 'Discussion Forum',
-    icon: <ChatIcon style={drawerIconsStyle} />,
-    external_icon: ExternalLinkIcon,
-  },
-  {
-    id: 'issues',
-    href: 'https://github.com/meshery/meshery/issues/new/choose',
-    title: 'Issues',
-    icon: <GithubIcon style={drawerIconsStyle} />,
-    external_icon: ExternalLinkIcon,
   },
 ];
 
@@ -384,6 +348,49 @@ const Navigator_ = (props) => {
     updateState({ path });
   }, [props.meshAdapters, props.meshAdaptersts, window.location.pathname]);
 
+  const ExternalLinkIcon = (
+    <IconExternalLink
+      {...externalLinkIconStyle}
+      transform="shrink-7"
+      fill={theme.palette.icon.default}
+    />
+  );
+
+  const externlinks = [
+    {
+      id: 'doc',
+      href: 'https://docs.meshery.io',
+      title: 'Documentation',
+      icon: <DocumentIcon style={drawerIconsStyle} />,
+      external_icon: ExternalLinkIcon,
+    },
+    {
+      id: 'community',
+      href: 'https://slack.meshery.io',
+      title: 'Community',
+      icon: (
+        <SlackIcon
+          style={{ ...drawerIconsStyle, height: '1.5rem', width: '1.5rem', marginTop: '' }}
+        />
+      ),
+      external_icon: ExternalLinkIcon,
+    },
+    {
+      id: 'forum',
+      href: 'https://meshery.io/community#community-forums',
+      title: 'Discussion Forum',
+      icon: <ChatIcon style={drawerIconsStyle} />,
+      external_icon: ExternalLinkIcon,
+    },
+    {
+      id: 'issues',
+      href: 'https://github.com/meshery/meshery/issues/new/choose',
+      title: 'Issues',
+      icon: <GithubIcon style={drawerIconsStyle} />,
+      external_icon: ExternalLinkIcon,
+    },
+  ];
+
   const fetchCapabilities = async () => {
     const { data: result, isSuccess, isError, error } = await getProviderCapabilities();
 
@@ -420,7 +427,7 @@ const Navigator_ = (props) => {
   };
 
   const createNavigatorComponents = (capabilityRegistryObj) => {
-    return getNavigatorComponents(capabilityRegistryObj);
+    return getNavigatorComponents(capabilityRegistryObj, theme);
   };
 
   const handleTitleClick = () => {
