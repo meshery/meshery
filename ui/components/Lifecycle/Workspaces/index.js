@@ -571,6 +571,8 @@ const Workspaces = ({ organization }) => {
                 onClick={(e) => handleWorkspaceModalOpen(e, WORKSPACE_ACTION_TYPES.CREATE)}
                 sx={{
                   backgroundColor: '#607d8b',
+                  padding: '8px',
+                  borderRadius: '5px',
                   marginRight: '2rem',
                 }}
                 disabled={!CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)}

@@ -456,6 +456,8 @@ const Environments = () => {
                 size="large"
                 onClick={(e) => handleEnvironmentModalOpen(e, ACTION_TYPES.CREATE)}
                 sx={{
+                  padding: '8px',
+                  borderRadius: '5px',
                   marginRight: '2rem',
                 }}
                 disabled={!CAN(keys.CREATE_ENVIRONMENT.action, keys.CREATE_ENVIRONMENT.subject)}

@@ -39,10 +39,25 @@ export default function ActionButton({ defaultActionClick, options }) {
         ref={anchorRef}
         aria-label="Button group with a nested menu"
       >
-        <Button onClick={defaultActionClick} variant="outlined">
+        <Button
+          sx={{
+            padding: '6px 9px',
+            borderRadius: '8px',
+          }}
+          onClick={defaultActionClick}
+          variant="outlined"
+        >
           Action
         </Button>
-        <Button size="small" onClick={handleToggle} variant="outlined">
+        <Button
+          sx={{
+            padding: '6px 9px',
+            borderRadius: '8px',
+          }}
+          size="small"
+          onClick={handleToggle}
+          variant="outlined"
+        >
           <ArrowDropDownIcon />
         </Button>
       </ButtonGroup>

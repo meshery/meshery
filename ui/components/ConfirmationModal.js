@@ -79,6 +79,7 @@ const ActionButton = styled(Button, {
 })(({ theme, isUndeploy, isDisabled }) => ({
   margin: theme.spacing(0.5),
   padding: theme.spacing(1),
+  borderRadius: 5,
   minWidth: 100,
   ...(isUndeploy &&
     !isDisabled && {
