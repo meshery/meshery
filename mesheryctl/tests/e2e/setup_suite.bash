@@ -6,7 +6,7 @@ echo "Install mesheryctl"
 curl -L https://meshery.io/install -s | DEPLOY_MESHERY=false bash -
 
 # Generate auth file to comunicate with meshery server
-echo "{\"meshery-provider\": \"Meshery\", \"token\": \"${MESHERY_PROVIDER_TOKEN}\"}" > "~/.meshery/auth.json"
+echo "{\"meshery-provider\": \"Meshery\", \"token\": \"${MESHERY_PROVIDER_TOKEN}\"}" > "$HOME/.meshery/auth.json"
 
 # Expose binary path to the following tests
 export MESHERYCTL_BIN="mesheryctl"

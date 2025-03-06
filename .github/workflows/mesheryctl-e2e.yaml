@@ -14,6 +14,8 @@ on:
       patternfile_name:
         description: "name of the pattern file"
         required: false
+      bats_test: "run only bats suite test"
+        required: false
   # scheduled to run at the 43rd minute of every 12th hour
   schedule:
     - cron: '43 */24 * * *'
@@ -22,7 +24,7 @@ jobs:
   manual-bats:
     name: Manual BATS Test
     runs-on: ubuntu-22.04
-    if: ${{ github.event_name == 'workflow_dispatch' }}
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.bats_test == 'true' }} 
     strategy:
       fail-fast: false
       matrix:
@@ -70,7 +72,7 @@ jobs:
   manual-test:
     name: Manual e2e Test
     runs-on: ubuntu-24.04
-    if: ${{ github.event_name == 'workflow_dispatch' }}
+    if: ${{ github.event_name == 'workflow_dispatch'  && inputs.bats_test != 'true' }}
     strategy:
       fail-fast: false
       matrix:
