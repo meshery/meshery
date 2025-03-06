@@ -61,18 +61,6 @@ var (
 
 const BYTE_SIZE = 2000
 
-// helper function to get current kubernetes context
-func getCurrentK8sContext(client *meshkitkube.Client) (string, error) {
-	if client == nil {
-		return "", fmt.Errorf("kubernetes client is nil")
-	}
-	config, err := client.GetKubeConfig()
-	if err != nil {
-		return "", err
-	}
-	return config.CurrentContext, nil
-}
-
 // logsCmd represents the logs command
 var logsCmd = &cobra.Command{
 	Use:   "logs",
@@ -192,7 +180,7 @@ mesheryctl system logs meshery-istio
 			}
 
 			// Get and display current context
-			currentContext, err := getCurrentK8sContext(client)
+			currentContext, err := utils.GetCurrentK8sContext(client)
 			if err != nil {
 				log.Warn("Unable to determine current Kubernetes context: ", err)
 			} else {
