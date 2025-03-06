@@ -82,7 +82,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
     }
 
     if (source === 'github') {
-      return url.startsWith('git:://github.com/');
+      return url.startsWith('git://github.com/');
     } else if (source === 'artifacthub') {
       return (
         url.startsWith('https://artifacthub.io/packages/') ||
@@ -103,7 +103,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
       if (!isValid) {
         setUrlError(
           modelSource === 'github'
-            ? 'Invalid GitHub URL. Format: git:://github.com/org/repo/branch/path'
+            ? 'Invalid GitHub URL. Format: git://github.com/org/repo/branch/path'
             : 'Invalid ArtifactHub URL. Example: https://artifacthub.io/packages/helm/org/package',
         );
       } else {
@@ -409,7 +409,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                 disabled={!modelSource}
                 placeholder={
                   modelSource === 'github'
-                    ? 'git:://github.com/org/repo/branch/path'
+                    ? 'git://github.com/org/repo/branch/path'
                     : modelSource === 'artifacthub'
                       ? 'https://artifacthub.io/packages/helm/org/package'
                       : 'Select a source first'
@@ -425,7 +425,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
             <ul>
               <li>
                 <strong>GitHub:</strong> Provide a GitHub repository URL. For example,{' '}
-                <em>git:://github.com/cert-manager/cert-manager/master/deploy/crds</em>.
+                <em>git://github.com/cert-manager/cert-manager/master/deploy/crds</em>.
               </li>
               <br />
               <li>
