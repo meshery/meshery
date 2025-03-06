@@ -574,10 +574,7 @@ const MeshModelComponent_ = ({
         handleGenerateModel={handleGenerateModel}
       />
       {importModal.open && (
-        <ImportModal
-          handleClose={handleUploadImportClose}
-          handleImportModel={handleImportModel}
-        />
+        <ImportModal handleClose={handleUploadImportClose} handleImportModel={handleImportModel} />
       )}
       {generateModal.open && (
         <GenerateModal
@@ -672,15 +669,15 @@ const ImportModal = React.memo((props) => {
   const { handleClose, handleImportModel } = props;
 
   return (
-        <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Import Model">
-          <RJSFModalWrapper
-            schema={importModelSchema}
-            uiSchema={importModelUiSchema}
-            handleSubmit={handleImportModel}
-            submitBtnText="Import"
-            handleClose={handleClose}
-          />
-        </SistentModal>
+    <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Import Model">
+      <RJSFModalWrapper
+        schema={importModelSchema}
+        uiSchema={importModelUiSchema}
+        handleSubmit={handleImportModel}
+        submitBtnText="Import"
+        handleClose={handleClose}
+      />
+    </SistentModal>
   );
 });
 
@@ -690,46 +687,38 @@ const GenerateModal = React.memo((props) => {
   const { handleClose, uploadMethod, handleChange, handleUrlStepper, handleCsvStepper } = props;
 
   return (
-        <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Generate Model">
-          <FormControl style={{ padding: '10px' }}>
-            <FormLabel id="upload-method-choices" sx={{ marginBottom: '1rem' }}>
-              Upload Method
-            </FormLabel>
-            <RadioGroup
-              aria-labelledby="upload-method-choices"
-              name="uploadMethod"
-              value={uploadMethod}
-              onChange={handleChange}
-            >
-              <FormControlLabel
-                value="url"
-                control={<Radio />}
-                label="URL Import"
-              />
-              <FormControlLabel
-                value="csv"
-                control={<Radio />}
-                label="CSV Import"
-              />
-            </RadioGroup>
-          </FormControl>
-          <ModalFooter
-            variant="filled"
-            helpText="URL Import supports Artifacthub and Github. Csv Import supports bulk generation and import."
-          >
-            <PrimaryActionButtons
-              primaryText="Next"
-              secondaryText="Cancel"
-              primaryButtonProps={{
-                onClick: uploadMethod === 'url' ? handleUrlStepper : handleCsvStepper,
-                disabled: !uploadMethod,
-              }}
-              secondaryButtonProps={{
-                onClick: handleClose,
-              }}
-            />
-          </ModalFooter>
-        </SistentModal>
+    <SistentModal open={true} closeModal={handleClose} maxWidth="sm" title="Generate Model">
+      <FormControl style={{ padding: '10px' }}>
+        <FormLabel id="upload-method-choices" sx={{ marginBottom: '1rem' }}>
+          Upload Method
+        </FormLabel>
+        <RadioGroup
+          aria-labelledby="upload-method-choices"
+          name="uploadMethod"
+          value={uploadMethod}
+          onChange={handleChange}
+        >
+          <FormControlLabel value="url" control={<Radio />} label="URL Import" />
+          <FormControlLabel value="csv" control={<Radio />} label="CSV Import" />
+        </RadioGroup>
+      </FormControl>
+      <ModalFooter
+        variant="filled"
+        helpText="URL Import supports Artifacthub and Github. Csv Import supports bulk generation and import."
+      >
+        <PrimaryActionButtons
+          primaryText="Next"
+          secondaryText="Cancel"
+          primaryButtonProps={{
+            onClick: uploadMethod === 'url' ? handleUrlStepper : handleCsvStepper,
+            disabled: !uploadMethod,
+          }}
+          secondaryButtonProps={{
+            onClick: handleClose,
+          }}
+        />
+      </ModalFooter>
+    </SistentModal>
   );
 });
 
