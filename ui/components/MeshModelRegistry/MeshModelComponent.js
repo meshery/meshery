@@ -158,7 +158,7 @@ const MeshModelComponent_ = ({
     open: false,
   });
   const [showDetailsData, setShowDetailsData] = useState({
-    type: MODELS, // Type of selected data eg. (models, components)
+    type: '', // Type of selected data eg. (models, components)
     data: {},
   });
   const [checked, setChecked] = useState(false);
