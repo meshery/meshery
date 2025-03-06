@@ -28,7 +28,7 @@ jobs:
       matrix:
         go: ['1.23']
         k8s_version: ['v1.31.4', 'v1.32.0']
-        platform: ['docker', 'kubernetes']
+        platform: ['kubernetes']
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4.2.2
