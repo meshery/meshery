@@ -62,13 +62,13 @@ jobs:
         id: date
         run: echo "date=date +'%Y-%m-%d-%H.%M.%S'" >> $GITHUB_OUTPUT
       - name: Run mesheryctl end2end tests
-        run: |
-          echo 
-          MESHERY_PROVIDER_TOKEN=$MESHERY_PROVIDER_TOKEN bash run_tests.bash
+        run: | 
+          MESHERY_PROVIDER_TOKEN=$MESHERY_PROVIDER_TOKEN MESHERY_PLATFORM=$MESHERY_PLATFORM bash run_tests.bash
         shell: bash
         working-directory: ./mesheryctl/tests/e2e
         env:
           MESHERY_PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
+          MESHERY_PLATFORM: ${{ matrix.platform }}
 
   manual-test:
     name: Manual e2e Test

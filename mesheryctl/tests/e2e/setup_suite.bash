@@ -19,7 +19,7 @@ start_meshery() {
 }
 
 
-create_auth_file() {}
+create_auth_file() {
     echo "start: authentication configuration"
     if [ ! -d "$HOME/.meshery" ]
     then
@@ -48,3 +48,8 @@ main() {
 
     echo -e "### done: Test environment setup ###\n"
 }
+
+
+main
+
+exit 0
