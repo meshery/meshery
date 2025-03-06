@@ -1,189 +1,189 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "EnvBinding",
-   "schema": "{\n \"description\": \"EnvBinding is the Schema for the EnvBinding API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"A EnvBindingSpec defines the desired state of a EnvBinding.\",\n   \"properties\": {\n    \"appTemplate\": {\n     \"description\": \"AppTemplate indicates the application template.\",\n     \"type\": \"object\"\n    },\n    \"engine\": {\n     \"description\": \"ClusterManagementEngine represents a multi-cluster management solution\",\n     \"type\": \"string\"\n    },\n    \"envs\": {\n     \"items\": {\n      \"description\": \"EnvConfig is the configuration for different environments.\",\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"patch\": {\n        \"description\": \"EnvPatch specify the parameter configuration for different environments\",\n        \"properties\": {\n         \"components\": {\n          \"items\": {\n           \"description\": \"ApplicationComponent describe the component of application\",\n           \"properties\": {\n            \"dependsOn\": {\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\"\n            },\n            \"externalRevision\": {\n             \"description\": \"ExternalRevision specified the component revisionName\",\n             \"type\": \"string\"\n            },\n            \"inputs\": {\n             \"description\": \"StepInputs defines variable input of WorkflowStep\",\n             \"items\": {\n              \"properties\": {\n               \"from\": {\n                \"type\": \"string\"\n               },\n               \"parameterKey\": {\n                \"type\": \"string\"\n               }\n              },\n              \"required\": [\n               \"from\",\n               \"parameterKey\"\n              ],\n              \"type\": \"object\"\n             },\n             \"type\": \"array\"\n            },\n            \"name\": {\n             \"type\": \"string\"\n            },\n            \"outputs\": {\n             \"description\": \"StepOutputs defines output variable of WorkflowStep\",\n             \"items\": {\n              \"properties\": {\n               \"name\": {\n                \"type\": \"string\"\n               },\n               \"valueFrom\": {\n                \"type\": \"string\"\n               }\n              },\n              \"required\": [\n               \"name\",\n               \"valueFrom\"\n              ],\n              \"type\": \"object\"\n             },\n             \"type\": \"array\"\n            },\n            \"properties\": {\n             \"type\": \"object\"\n            },\n            \"scopes\": {\n             \"additionalProperties\": {\n              \"type\": \"string\"\n             },\n             \"description\": \"scopes in ApplicationComponent defines the component-level scopes the format is \\u003cscope-type:scope-instance-name\\u003e pairs, the key represents type of `ScopeDefinition` while the value represent the name of scope instance.\",\n             \"type\": \"object\"\n            },\n            \"traits\": {\n             \"description\": \"Traits define the trait of one component, the type must be array to keep the order.\",\n             \"items\": {\n              \"description\": \"ApplicationTrait defines the trait of application\",\n              \"properties\": {\n               \"properties\": {\n                \"type\": \"object\"\n               },\n               \"type\": {\n                \"type\": \"string\"\n               }\n              },\n              \"required\": [\n               \"type\"\n              ],\n              \"type\": \"object\"\n             },\n             \"type\": \"array\"\n            },\n            \"type\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"type\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"components\"\n        ],\n        \"type\": \"object\"\n       },\n       \"placement\": {\n        \"description\": \"EnvPlacement defines the placement rules for an app.\",\n        \"properties\": {\n         \"clusterSelector\": {\n          \"description\": \"ClusterSelector defines the rules to select a Cluster resource. Either name or labels is needed.\",\n          \"properties\": {\n           \"labels\": {\n            \"additionalProperties\": {\n             \"type\": \"string\"\n            },\n            \"description\": \"Labels defines the label selector to select the cluster.\",\n            \"type\": \"object\"\n           },\n           \"name\": {\n            \"description\": \"Name is the name of the cluster.\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"namespaceSelector\": {\n          \"description\": \"NamespaceSelector defines the rules to select a Namespace resource. Either name or labels is needed.\",\n          \"properties\": {\n           \"labels\": {\n            \"additionalProperties\": {\n             \"type\": \"string\"\n            },\n            \"description\": \"Labels defines the label selector to select the namespace.\",\n            \"type\": \"object\"\n           },\n           \"name\": {\n            \"description\": \"Name is the name of the namespace.\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"selector\": {\n        \"description\": \"EnvSelector defines which components should this env contains\",\n        \"properties\": {\n         \"components\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"name\",\n       \"patch\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"outputResourcesTo\": {\n     \"description\": \"OutputResourcesTo specifies the namespace and name of a ConfigMap which store the resources rendered after differentiated configuration\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the secret.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the secret.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"appTemplate\",\n    \"envs\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Env Binding\",\n \"type\": \"object\"\n}",
-   "version": "core.oam.dev/v1alpha1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Env Binding",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Env Binding",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "App Definition and Development"
-   },
-   "displayName": "Vela Core Legacy",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "source_uri": "https://kubevelacharts.oss-cn-hangzhou.aliyuncs.com/core/vela-core-legacy-1.9.0-beta.1.tgz",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "vela-core-legacy",
+    "displayName": "Vela Core Legacy",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "App Definition and Development"
+    },
+    "metadata": {
+      "source_uri": "https://kubevelacharts.oss-cn-hangzhou.aliyuncs.com/core/vela-core-legacy-1.9.0-beta.1.tgz",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "1.8.0-beta.1"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
     "svgColor": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "1.8.0-beta.1"
-   },
-   "name": "vela-core-legacy",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "EnvBinding",
+    "schema": "{\n \"description\": \"EnvBinding is the Schema for the EnvBinding API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"A EnvBindingSpec defines the desired state of a EnvBinding.\",\n   \"properties\": {\n    \"appTemplate\": {\n     \"description\": \"AppTemplate indicates the application template.\",\n     \"type\": \"object\"\n    },\n    \"engine\": {\n     \"description\": \"ClusterManagementEngine represents a multi-cluster management solution\",\n     \"type\": \"string\"\n    },\n    \"envs\": {\n     \"items\": {\n      \"description\": \"EnvConfig is the configuration for different environments.\",\n      \"properties\": {\n       \"name\": {\n        \"type\": \"string\"\n       },\n       \"patch\": {\n        \"description\": \"EnvPatch specify the parameter configuration for different environments\",\n        \"properties\": {\n         \"components\": {\n          \"items\": {\n           \"description\": \"ApplicationComponent describe the component of application\",\n           \"properties\": {\n            \"dependsOn\": {\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\"\n            },\n            \"externalRevision\": {\n             \"description\": \"ExternalRevision specified the component revisionName\",\n             \"type\": \"string\"\n            },\n            \"inputs\": {\n             \"description\": \"StepInputs defines variable input of WorkflowStep\",\n             \"items\": {\n              \"properties\": {\n               \"from\": {\n                \"type\": \"string\"\n               },\n               \"parameterKey\": {\n                \"type\": \"string\"\n               }\n              },\n              \"required\": [\n               \"from\",\n               \"parameterKey\"\n              ],\n              \"type\": \"object\"\n             },\n             \"type\": \"array\"\n            },\n            \"name\": {\n             \"type\": \"string\"\n            },\n            \"outputs\": {\n             \"description\": \"StepOutputs defines output variable of WorkflowStep\",\n             \"items\": {\n              \"properties\": {\n               \"name\": {\n                \"type\": \"string\"\n               },\n               \"valueFrom\": {\n                \"type\": \"string\"\n               }\n              },\n              \"required\": [\n               \"name\",\n               \"valueFrom\"\n              ],\n              \"type\": \"object\"\n             },\n             \"type\": \"array\"\n            },\n            \"properties\": {\n             \"type\": \"object\"\n            },\n            \"scopes\": {\n             \"additionalProperties\": {\n              \"type\": \"string\"\n             },\n             \"description\": \"scopes in ApplicationComponent defines the component-level scopes the format is \\u003cscope-type:scope-instance-name\\u003e pairs, the key represents type of `ScopeDefinition` while the value represent the name of scope instance.\",\n             \"type\": \"object\"\n            },\n            \"traits\": {\n             \"description\": \"Traits define the trait of one component, the type must be array to keep the order.\",\n             \"items\": {\n              \"description\": \"ApplicationTrait defines the trait of application\",\n              \"properties\": {\n               \"properties\": {\n                \"type\": \"object\"\n               },\n               \"type\": {\n                \"type\": \"string\"\n               }\n              },\n              \"required\": [\n               \"type\"\n              ],\n              \"type\": \"object\"\n             },\n             \"type\": \"array\"\n            },\n            \"type\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"type\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"components\"\n        ],\n        \"type\": \"object\"\n       },\n       \"placement\": {\n        \"description\": \"EnvPlacement defines the placement rules for an app.\",\n        \"properties\": {\n         \"clusterSelector\": {\n          \"description\": \"ClusterSelector defines the rules to select a Cluster resource. Either name or labels is needed.\",\n          \"properties\": {\n           \"labels\": {\n            \"additionalProperties\": {\n             \"type\": \"string\"\n            },\n            \"description\": \"Labels defines the label selector to select the cluster.\",\n            \"type\": \"object\"\n           },\n           \"name\": {\n            \"description\": \"Name is the name of the cluster.\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"namespaceSelector\": {\n          \"description\": \"NamespaceSelector defines the rules to select a Namespace resource. Either name or labels is needed.\",\n          \"properties\": {\n           \"labels\": {\n            \"additionalProperties\": {\n             \"type\": \"string\"\n            },\n            \"description\": \"Labels defines the label selector to select the namespace.\",\n            \"type\": \"object\"\n           },\n           \"name\": {\n            \"description\": \"Name is the name of the namespace.\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"selector\": {\n        \"description\": \"EnvSelector defines which components should this env contains\",\n        \"properties\": {\n         \"components\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"name\",\n       \"patch\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"outputResourcesTo\": {\n     \"description\": \"OutputResourcesTo specifies the namespace and name of a ConfigMap which store the resources rendered after differentiated configuration\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the secret.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the secret.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"appTemplate\",\n    \"envs\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Env Binding\",\n \"type\": \"object\"\n}",
+    "version": "core.oam.dev/v1alpha1"
+  }
+}

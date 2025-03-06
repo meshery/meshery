@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
 import { connect, Provider } from 'react-redux';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import { bindActionCreators } from 'redux';
 import { CustomTooltip, AppBar, Typography, styled, Tabs, Tab, Paper, Grid } from '@layer5/sistent';
 import DashboardMeshModelGraph from './DashboardComponent/charts/DashboardMeshModelGraph';
@@ -41,7 +41,6 @@ import DefaultError from './General/error-404';
 import { store } from '../store';
 import MesheryConfigurationChart from './DashboardComponent/charts/MesheryConfigurationCharts';
 import ConnectionStatsChart from './DashboardComponent/charts/ConnectionCharts';
-import { UsesSistent } from './SistentWrapper';
 import { SecondaryTab, SecondaryTabs } from './DashboardComponent/style';
 
 const StyledPaper = styled(Paper)(() => ({
@@ -231,7 +230,7 @@ const MesherySettings = (props) => {
   return (
     <>
       {CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject) ? (
-        <UsesSistent>
+        <>
           <div sx={{ flexGrow: 1, maxWidth: '100%', height: 'auto' }}>
             <StyledPaper square>
               <Tabs
@@ -412,7 +411,7 @@ const MesherySettings = (props) => {
             {backToPlay}
             <_PromptComponent ref={systemResetPromptRef} />
           </div>
-        </UsesSistent>
+        </>
       ) : (
         <DefaultError />
       )}

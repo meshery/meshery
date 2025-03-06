@@ -1,196 +1,196 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "Predictor",
-   "schema": "{\n \"description\": \"Predictor is the Schema for the predictors API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PredictorSpec defines the desired state of Predictor\",\n   \"properties\": {\n    \"gpu\": {\n     \"description\": \"May be absent, \\\"preferred\\\" or \\\"required\\\"\",\n     \"enum\": [\n      \"required\",\n      \"preferred\"\n     ],\n     \"type\": \"string\"\n    },\n    \"modelType\": {\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"path\": {\n     \"description\": \"(DEPRECATED) The path to the model files within the storage\",\n     \"type\": \"string\"\n    },\n    \"runtime\": {\n     \"description\": \"If omitted a compatible runtime is selected based on the model type (if available)\",\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"schemaPath\": {\n     \"description\": \"(DEPRECATED) The path to the schema file within the storage\",\n     \"type\": \"string\"\n    },\n    \"serviceAccountName\": {\n     \"description\": \"NOT YET SUPPORTED\",\n     \"type\": \"string\"\n    },\n    \"storage\": {\n     \"properties\": {\n      \"key\": {\n       \"description\": \"The Storage Key in the secret for this model.\",\n       \"type\": \"string\"\n      },\n      \"parameters\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Parameters to override the default storage credentials and config.\",\n       \"type\": \"object\"\n      },\n      \"path\": {\n       \"description\": \"The path to the model object in the storage. It cannot co-exist with the storageURI.\",\n       \"type\": \"string\"\n      },\n      \"persistentVolumeClaim\": {\n       \"description\": \"(DEPRECATED) PersistentVolmueClaim was never supported this way and will be removed\",\n       \"properties\": {\n        \"claimName\": {\n         \"description\": \"ClaimName is the name of a PersistentVolumeClaim in the same namespace as the pod using this volume. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims\",\n         \"type\": \"string\"\n        },\n        \"readOnly\": {\n         \"description\": \"Will force the ReadOnly setting in VolumeMounts. Default false.\",\n         \"type\": \"boolean\"\n        }\n       },\n       \"required\": [\n        \"claimName\"\n       ],\n       \"type\": \"object\"\n      },\n      \"s3\": {\n       \"description\": \"(DEPRECATED) S3 has configuration to connect to an S3 instance. It is now deprecated, use fields from Spec.Storage instead.\",\n       \"properties\": {\n        \"bucket\": {\n         \"type\": \"string\"\n        },\n        \"secretKey\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"secretKey\"\n       ],\n       \"type\": \"object\"\n      },\n      \"schemaPath\": {\n       \"description\": \"The path to the model schema file in the storage.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"modelType\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Predictor\",\n \"type\": \"object\"\n}",
-   "version": "serving.kserve.io/v1alpha1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Predictor",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Predictor",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Uncategorized"
-   },
-   "displayName": "Kserve",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "kserve",
+    "displayName": "Kserve",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized"
+    },
+    "subCategory": "Uncategorized",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://github.com/community-charts/helm-charts/releases/download/kserve-1.0.1/kserve-1.0.1.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "1.0.1"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "source_uri": "https://github.com/community-charts/helm-charts/releases/download/kserve-1.0.1/kserve-1.0.1.tgz",
-    "styleOverrides": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "1.0.1"
-   },
-   "name": "kserve",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Uncategorized",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "Predictor",
+    "schema": "{\n \"description\": \"Predictor is the Schema for the predictors API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PredictorSpec defines the desired state of Predictor\",\n   \"properties\": {\n    \"gpu\": {\n     \"description\": \"May be absent, \\\"preferred\\\" or \\\"required\\\"\",\n     \"enum\": [\n      \"required\",\n      \"preferred\"\n     ],\n     \"type\": \"string\"\n    },\n    \"modelType\": {\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"path\": {\n     \"description\": \"(DEPRECATED) The path to the model files within the storage\",\n     \"type\": \"string\"\n    },\n    \"runtime\": {\n     \"description\": \"If omitted a compatible runtime is selected based on the model type (if available)\",\n     \"properties\": {\n      \"name\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"schemaPath\": {\n     \"description\": \"(DEPRECATED) The path to the schema file within the storage\",\n     \"type\": \"string\"\n    },\n    \"serviceAccountName\": {\n     \"description\": \"NOT YET SUPPORTED\",\n     \"type\": \"string\"\n    },\n    \"storage\": {\n     \"properties\": {\n      \"key\": {\n       \"description\": \"The Storage Key in the secret for this model.\",\n       \"type\": \"string\"\n      },\n      \"parameters\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Parameters to override the default storage credentials and config.\",\n       \"type\": \"object\"\n      },\n      \"path\": {\n       \"description\": \"The path to the model object in the storage. It cannot co-exist with the storageURI.\",\n       \"type\": \"string\"\n      },\n      \"persistentVolumeClaim\": {\n       \"description\": \"(DEPRECATED) PersistentVolmueClaim was never supported this way and will be removed\",\n       \"properties\": {\n        \"claimName\": {\n         \"description\": \"ClaimName is the name of a PersistentVolumeClaim in the same namespace as the pod using this volume. More info: https://kubernetes.io/docs/concepts/storage/persistent-volumes#persistentvolumeclaims\",\n         \"type\": \"string\"\n        },\n        \"readOnly\": {\n         \"description\": \"Will force the ReadOnly setting in VolumeMounts. Default false.\",\n         \"type\": \"boolean\"\n        }\n       },\n       \"required\": [\n        \"claimName\"\n       ],\n       \"type\": \"object\"\n      },\n      \"s3\": {\n       \"description\": \"(DEPRECATED) S3 has configuration to connect to an S3 instance. It is now deprecated, use fields from Spec.Storage instead.\",\n       \"properties\": {\n        \"bucket\": {\n         \"type\": \"string\"\n        },\n        \"secretKey\": {\n         \"type\": \"string\"\n        }\n       },\n       \"required\": [\n        \"secretKey\"\n       ],\n       \"type\": \"object\"\n      },\n      \"schemaPath\": {\n       \"description\": \"The path to the model schema file in the storage.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"modelType\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Predictor\",\n \"type\": \"object\"\n}",
+    "version": "serving.kserve.io/v1alpha1"
+  }
+}

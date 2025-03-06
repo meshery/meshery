@@ -1,190 +1,190 @@
 {
+  "id": "00000000-0000-0000-0000-000000000000",
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Action Set",
+  "description": "",
+  "format": "JSON",
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "kanister-operator",
+    "displayName": "Kanister Operator",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "App Definition and Development"
+    },
+    "metadata": {
+      "isAnnotation": false,
+      "source_uri": "https://charts.kanister.io/kanister-operator-0.104.0.tgz",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 111.58 111.28\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#74c0eb;}.cls-2{fill:#008ccf;}\u003c/style\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M92.62,52.17A36.68,36.68,0,0,0,83.88,32l-.58-.65A36.6,36.6,0,1,0,82.09,81.8c.6-.6,1.16-1.21,1.71-1.84A36.68,36.68,0,0,0,92.51,60.6c0-.31.07-.61.1-.92s0-.4.06-.6q.14-1.55.14-3.14A36.88,36.88,0,0,0,92.62,52.17ZM56.09,27.23a7.34,7.34,0,1,1-7.36,7.32A7.24,7.24,0,0,1,56.09,27.23Zm-28,22.23a7.32,7.32,0,1,1,7.34,7.36A7.24,7.24,0,0,1,28.08,49.47ZM43.53,80.19a7.34,7.34,0,1,1,7.3-7.27A7.28,7.28,0,0,1,43.53,80.19ZM56.1,61.51a5.47,5.47,0,0,1-5.48-5.38A5.44,5.44,0,0,1,61.48,56,5.52,5.52,0,0,1,56.1,61.51ZM68.28,80.19a7.34,7.34,0,1,1,7.29-7.27A7.29,7.29,0,0,1,68.28,80.19Zm8.6-23.36a7.34,7.34,0,1,1,7.3-7.27A7.28,7.28,0,0,1,76.88,56.82Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M111.12,55.92A54.65,54.65,0,0,1,98.23,91.26l-8.61-8.61a42.79,42.79,0,0,0,.28-53.11l8.62-8.62A54.69,54.69,0,0,1,111.12,55.92Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M91.55,13.89,82.94,22.5a42.8,42.8,0,0,0-53.11-.28L21.2,13.6a54.9,54.9,0,0,1,70.34.29Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M13.41,55.92a42.6,42.6,0,0,0,9.1,26.38l-8.62,8.62a54.91,54.91,0,0,1,.29-70.35l8.61,8.61A42.57,42.57,0,0,0,13.41,55.92Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M91.21,98.24a54.92,54.92,0,0,1-70.36-.29l8.61-8.61a42.8,42.8,0,0,0,53.11.28Z\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 111.58 111.28\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#fff;}.cls-2{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M92.62,52.17A36.68,36.68,0,0,0,83.88,32l-.58-.65A36.6,36.6,0,1,0,82.09,81.8c.6-.6,1.16-1.21,1.71-1.84A36.68,36.68,0,0,0,92.51,60.6c0-.31.07-.61.1-.92s0-.4.06-.6q.14-1.55.14-3.14A36.88,36.88,0,0,0,92.62,52.17ZM56.09,27.23a7.34,7.34,0,1,1-7.36,7.32A7.24,7.24,0,0,1,56.09,27.23Zm-28,22.23a7.32,7.32,0,1,1,7.34,7.36A7.24,7.24,0,0,1,28.08,49.47ZM43.53,80.19a7.34,7.34,0,1,1,7.3-7.27A7.28,7.28,0,0,1,43.53,80.19ZM56.1,61.51a5.47,5.47,0,0,1-5.48-5.38A5.44,5.44,0,0,1,61.48,56,5.52,5.52,0,0,1,56.1,61.51ZM68.28,80.19a7.34,7.34,0,1,1,7.29-7.27A7.29,7.29,0,0,1,68.28,80.19Zm8.6-23.36a7.34,7.34,0,1,1,7.3-7.27A7.28,7.28,0,0,1,76.88,56.82Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M111.12,55.92A54.65,54.65,0,0,1,98.23,91.26l-8.61-8.61a42.79,42.79,0,0,0,.28-53.11l8.62-8.62A54.69,54.69,0,0,1,111.12,55.92Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M91.55,13.89,82.94,22.5a42.8,42.8,0,0,0-53.11-.28L21.2,13.6a54.9,54.9,0,0,1,70.34.29Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M13.41,55.92a42.6,42.6,0,0,0,9.1,26.38l-8.62,8.62a54.91,54.91,0,0,1,.29-70.35l8.61,8.61A42.57,42.57,0,0,0,13.41,55.92Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M91.21,98.24a54.92,54.92,0,0,1-70.36-.29l8.61-8.61a42.8,42.8,0,0,0,53.11.28Z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "0.90.0"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
+    "primaryColor": "#008ccf",
+    "secondaryColor": "#74c0eb",
+    "shape": "circle",
+    "svgColor": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 111.58 111.28\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#74c0eb;}.cls-2{fill:#008ccf;}\u003c/style\u003e\u003c/defs\u003e\u003cpath class=\"cls-1\" d=\"M92.62,52.17A36.68,36.68,0,0,0,83.88,32l-.58-.65A36.6,36.6,0,1,0,82.09,81.8c.6-.6,1.16-1.21,1.71-1.84A36.68,36.68,0,0,0,92.51,60.6c0-.31.07-.61.1-.92s0-.4.06-.6q.14-1.55.14-3.14A36.88,36.88,0,0,0,92.62,52.17ZM56.09,27.23a7.34,7.34,0,1,1-7.36,7.32A7.24,7.24,0,0,1,56.09,27.23Zm-28,22.23a7.32,7.32,0,1,1,7.34,7.36A7.24,7.24,0,0,1,28.08,49.47ZM43.53,80.19a7.34,7.34,0,1,1,7.3-7.27A7.28,7.28,0,0,1,43.53,80.19ZM56.1,61.51a5.47,5.47,0,0,1-5.48-5.38A5.44,5.44,0,0,1,61.48,56,5.52,5.52,0,0,1,56.1,61.51ZM68.28,80.19a7.34,7.34,0,1,1,7.29-7.27A7.29,7.29,0,0,1,68.28,80.19Zm8.6-23.36a7.34,7.34,0,1,1,7.3-7.27A7.28,7.28,0,0,1,76.88,56.82Z\"\u003e\u003c/path\u003e\u003cpath class=\"cls-2\" d=\"M111.12,55.92A54.65,54.65,0,0,1,98.23,91.26l-8.61-8.61a42.79,42.79,0,0,0,.28-53.11l8.62-8.62A54.69,54.69,0,0,1,111.12,55.92Z\"\u003e\u003c/path\u003e\u003cpath class=\"cls-2\" d=\"M91.55,13.89,82.94,22.5a42.8,42.8,0,0,0-53.11-.28L21.2,13.6a54.9,54.9,0,0,1,70.34.29Z\"\u003e\u003c/path\u003e\u003cpath class=\"cls-2\" d=\"M13.41,55.92a42.6,42.6,0,0,0,9.1,26.38l-8.62,8.62a54.91,54.91,0,0,1,.29-70.35l8.61,8.61A42.57,42.57,0,0,0,13.41,55.92Z\"\u003e\u003c/path\u003e\u003cpath class=\"cls-2\" d=\"M91.21,98.24a54.92,54.92,0,0,1-70.36-.29l8.61-8.61a42.8,42.8,0,0,0,53.11.28Z\"\u003e\u003c/path\u003e\u003c/svg\u003e",
+    "svgWhite": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 111.58 111.28\" width='111.58' height='111.28'\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}.cls-2{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cpath class=\"cls-1\" d=\"M92.62,52.17A36.68,36.68,0,0,0,83.88,32l-.58-.65A36.6,36.6,0,1,0,82.09,81.8c.6-.6,1.16-1.21,1.71-1.84A36.68,36.68,0,0,0,92.51,60.6c0-.31.07-.61.1-.92s0-.4.06-.6q.14-1.55.14-3.14A36.88,36.88,0,0,0,92.62,52.17ZM56.09,27.23a7.34,7.34,0,1,1-7.36,7.32A7.24,7.24,0,0,1,56.09,27.23Zm-28,22.23a7.32,7.32,0,1,1,7.34,7.36A7.24,7.24,0,0,1,28.08,49.47ZM43.53,80.19a7.34,7.34,0,1,1,7.3-7.27A7.28,7.28,0,0,1,43.53,80.19ZM56.1,61.51a5.47,5.47,0,0,1-5.48-5.38A5.44,5.44,0,0,1,61.48,56,5.52,5.52,0,0,1,56.1,61.51ZM68.28,80.19a7.34,7.34,0,1,1,7.29-7.27A7.29,7.29,0,0,1,68.28,80.19Zm8.6-23.36a7.34,7.34,0,1,1,7.3-7.27A7.28,7.28,0,0,1,76.88,56.82Z\"\u003e\u003c/path\u003e\u003cpath class=\"cls-2\" d=\"M111.12,55.92A54.65,54.65,0,0,1,98.23,91.26l-8.61-8.61a42.79,42.79,0,0,0,.28-53.11l8.62-8.62A54.69,54.69,0,0,1,111.12,55.92Z\"\u003e\u003c/path\u003e\u003cpath class=\"cls-2\" d=\"M91.55,13.89,82.94,22.5a42.8,42.8,0,0,0-53.11-.28L21.2,13.6a54.9,54.9,0,0,1,70.34.29Z\"\u003e\u003c/path\u003e\u003cpath class=\"cls-2\" d=\"M13.41,55.92a42.6,42.6,0,0,0,9.1,26.38l-8.62,8.62a54.91,54.91,0,0,1,.29-70.35l8.61,8.61A42.57,42.57,0,0,0,13.41,55.92Z\"\u003e\u003c/path\u003e\u003cpath class=\"cls-2\" d=\"M91.21,98.24a54.92,54.92,0,0,1-70.36-.29l8.61-8.61a42.8,42.8,0,0,0,53.11.28Z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+  },
   "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
   ],
-  "component": {
-   "kind": "ActionSet",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"actions\": {\n     \"items\": {\n      \"description\": \"ActionSpec is the specification for a single Action.\",\n      \"properties\": {\n       \"artifacts\": {\n        \"additionalProperties\": {\n         \"properties\": {\n          \"keyValue\": {\n           \"additionalProperties\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"object\"\n          },\n          \"kopiaSnapshot\": {\n           \"format\": \"textarea\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"description\": \"Artifacts will be passed as inputs into this phase.\",\n        \"type\": \"object\"\n       },\n       \"blueprint\": {\n        \"description\": \"Blueprint with instructions on how to execute this action.\",\n        \"type\": \"string\"\n       },\n       \"configMaps\": {\n        \"additionalProperties\": {\n         \"properties\": {\n          \"apiVersion\": {\n           \"description\": \"API version of the referent.\",\n           \"type\": \"string\"\n          },\n          \"group\": {\n           \"description\": \"API Group of the referent.\",\n           \"type\": \"string\"\n          },\n          \"kind\": {\n           \"description\": \"Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds\",\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"description\": \"Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"description\": \"Namespace of the referent. More info: http://kubernetes.io/docs/user-guide/namespaces\",\n           \"type\": \"string\"\n          },\n          \"resource\": {\n           \"description\": \"Resource name of the referent.\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"description\": \"ConfigMaps that we will get and pass into the blueprint.\",\n        \"type\": \"object\"\n       },\n       \"name\": {\n        \"description\": \"Name is the action we will perform. For example: backup or restore.\",\n        \"type\": \"string\"\n       },\n       \"object\": {\n        \"description\": \"Object refers to the thing we will perform this action on.\",\n        \"properties\": {\n         \"apiVersion\": {\n          \"description\": \"API version of the referent.\",\n          \"type\": \"string\"\n         },\n         \"group\": {\n          \"description\": \"API Group of the referent.\",\n          \"type\": \"string\"\n         },\n         \"kind\": {\n          \"description\": \"Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace of the referent. More info: http://kubernetes.io/docs/user-guide/namespaces\",\n          \"type\": \"string\"\n         },\n         \"resource\": {\n          \"description\": \"Resource name of the referent.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"options\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"Options will be used to specify additional values to be used in the Blueprint.\",\n        \"type\": \"object\"\n       },\n       \"podOverride\": {\n        \"description\": \"PodOverride is used to specify pod specs that will override the default pod specs\",\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"preferredVersion\": {\n        \"description\": \"PreferredVersion will be used to select the preferred version of Kanister functions to be executed for this action\",\n        \"type\": \"string\"\n       },\n       \"profile\": {\n        \"description\": \"Profile is use to specify the location where store artifacts and the credentials authorized to access them.\",\n        \"properties\": {\n         \"apiVersion\": {\n          \"description\": \"API version of the referent.\",\n          \"type\": \"string\"\n         },\n         \"group\": {\n          \"description\": \"API Group of the referent.\",\n          \"type\": \"string\"\n         },\n         \"kind\": {\n          \"description\": \"Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace of the referent. More info: http://kubernetes.io/docs/user-guide/namespaces\",\n          \"type\": \"string\"\n         },\n         \"resource\": {\n          \"description\": \"Resource name of the referent.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"repositoryServer\": {\n        \"description\": \"RepositoryServer is used to specify the CR reference of the kopia repository server\",\n        \"properties\": {\n         \"apiVersion\": {\n          \"description\": \"API version of the referent.\",\n          \"type\": \"string\"\n         },\n         \"group\": {\n          \"description\": \"API Group of the referent.\",\n          \"type\": \"string\"\n         },\n         \"kind\": {\n          \"description\": \"Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace of the referent. More info: http://kubernetes.io/docs/user-guide/namespaces\",\n          \"type\": \"string\"\n         },\n         \"resource\": {\n          \"description\": \"Resource name of the referent.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"apiVersion\",\n         \"group\",\n         \"kind\",\n         \"name\",\n         \"resource\"\n        ],\n        \"type\": \"object\"\n       },\n       \"secrets\": {\n        \"additionalProperties\": {\n         \"properties\": {\n          \"apiVersion\": {\n           \"description\": \"API version of the referent.\",\n           \"type\": \"string\"\n          },\n          \"group\": {\n           \"description\": \"API Group of the referent.\",\n           \"type\": \"string\"\n          },\n          \"kind\": {\n           \"description\": \"Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds\",\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"description\": \"Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"description\": \"Namespace of the referent. More info: http://kubernetes.io/docs/user-guide/namespaces\",\n           \"type\": \"string\"\n          },\n          \"resource\": {\n           \"description\": \"Resource name of the referent.\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"description\": \"Secrets that we will get and pass into the blueprint.\",\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Action Set\",\n \"type\": \"object\"\n}",
-   "version": "cr.kanister.io/v1alpha1"
+  "status": "enabled",
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
   "configuration": null,
-  "description": "",
-  "displayName": "Action Set",
-  "format": "JSON",
-  "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false
-  },
-  "model": {
-   "category": {
-    "name": "App Definition and Development"
-   },
-   "displayName": "Kanister Operator",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
-    "source_uri": "https://charts.kanister.io/kanister-operator-0.104.0.tgz",
-    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 111.58 111.28\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#74c0eb;}.cls-2{fill:#008ccf;}\u003c/style\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M92.62,52.17A36.68,36.68,0,0,0,83.88,32l-.58-.65A36.6,36.6,0,1,0,82.09,81.8c.6-.6,1.16-1.21,1.71-1.84A36.68,36.68,0,0,0,92.51,60.6c0-.31.07-.61.1-.92s0-.4.06-.6q.14-1.55.14-3.14A36.88,36.88,0,0,0,92.62,52.17ZM56.09,27.23a7.34,7.34,0,1,1-7.36,7.32A7.24,7.24,0,0,1,56.09,27.23Zm-28,22.23a7.32,7.32,0,1,1,7.34,7.36A7.24,7.24,0,0,1,28.08,49.47ZM43.53,80.19a7.34,7.34,0,1,1,7.3-7.27A7.28,7.28,0,0,1,43.53,80.19ZM56.1,61.51a5.47,5.47,0,0,1-5.48-5.38A5.44,5.44,0,0,1,61.48,56,5.52,5.52,0,0,1,56.1,61.51ZM68.28,80.19a7.34,7.34,0,1,1,7.29-7.27A7.29,7.29,0,0,1,68.28,80.19Zm8.6-23.36a7.34,7.34,0,1,1,7.3-7.27A7.28,7.28,0,0,1,76.88,56.82Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M111.12,55.92A54.65,54.65,0,0,1,98.23,91.26l-8.61-8.61a42.79,42.79,0,0,0,.28-53.11l8.62-8.62A54.69,54.69,0,0,1,111.12,55.92Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M91.55,13.89,82.94,22.5a42.8,42.8,0,0,0-53.11-.28L21.2,13.6a54.9,54.9,0,0,1,70.34.29Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M13.41,55.92a42.6,42.6,0,0,0,9.1,26.38l-8.62,8.62a54.91,54.91,0,0,1,.29-70.35l8.61,8.61A42.57,42.57,0,0,0,13.41,55.92Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M91.21,98.24a54.92,54.92,0,0,1-70.36-.29l8.61-8.61a42.8,42.8,0,0,0,53.11.28Z\"\u003e\u003c/path\u003e\u003c/svg\u003e",
-    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" id=\"Layer_1\" data-name=\"Layer 1\" viewBox=\"0 0 111.58 111.28\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:#fff;}.cls-2{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-1\" d=\"M92.62,52.17A36.68,36.68,0,0,0,83.88,32l-.58-.65A36.6,36.6,0,1,0,82.09,81.8c.6-.6,1.16-1.21,1.71-1.84A36.68,36.68,0,0,0,92.51,60.6c0-.31.07-.61.1-.92s0-.4.06-.6q.14-1.55.14-3.14A36.88,36.88,0,0,0,92.62,52.17ZM56.09,27.23a7.34,7.34,0,1,1-7.36,7.32A7.24,7.24,0,0,1,56.09,27.23Zm-28,22.23a7.32,7.32,0,1,1,7.34,7.36A7.24,7.24,0,0,1,28.08,49.47ZM43.53,80.19a7.34,7.34,0,1,1,7.3-7.27A7.28,7.28,0,0,1,43.53,80.19ZM56.1,61.51a5.47,5.47,0,0,1-5.48-5.38A5.44,5.44,0,0,1,61.48,56,5.52,5.52,0,0,1,56.1,61.51ZM68.28,80.19a7.34,7.34,0,1,1,7.29-7.27A7.29,7.29,0,0,1,68.28,80.19Zm8.6-23.36a7.34,7.34,0,1,1,7.3-7.27A7.28,7.28,0,0,1,76.88,56.82Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M111.12,55.92A54.65,54.65,0,0,1,98.23,91.26l-8.61-8.61a42.79,42.79,0,0,0,.28-53.11l8.62-8.62A54.69,54.69,0,0,1,111.12,55.92Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M91.55,13.89,82.94,22.5a42.8,42.8,0,0,0-53.11-.28L21.2,13.6a54.9,54.9,0,0,1,70.34.29Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M13.41,55.92a42.6,42.6,0,0,0,9.1,26.38l-8.62,8.62a54.91,54.91,0,0,1,.29-70.35l8.61,8.61A42.57,42.57,0,0,0,13.41,55.92Z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" class=\"cls-2\" d=\"M91.21,98.24a54.92,54.92,0,0,1-70.36-.29l8.61-8.61a42.8,42.8,0,0,0,53.11.28Z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
-   },
-   "model": {
-    "version": "0.90.0"
-   },
-   "name": "kanister-operator",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "enabled",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
-  },
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "status": "enabled",
-  "styles": {
-   "primaryColor": "#008ccf",
-   "secondaryColor": "#74c0eb",
-   "shape": "circle",
-   "svgColor": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 111.58 111.28\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#74c0eb;}.cls-2{fill:#008ccf;}\u003c/style\u003e\u003c/defs\u003e\u003cpath class=\"cls-1\" d=\"M92.62,52.17A36.68,36.68,0,0,0,83.88,32l-.58-.65A36.6,36.6,0,1,0,82.09,81.8c.6-.6,1.16-1.21,1.71-1.84A36.68,36.68,0,0,0,92.51,60.6c0-.31.07-.61.1-.92s0-.4.06-.6q.14-1.55.14-3.14A36.88,36.88,0,0,0,92.62,52.17ZM56.09,27.23a7.34,7.34,0,1,1-7.36,7.32A7.24,7.24,0,0,1,56.09,27.23Zm-28,22.23a7.32,7.32,0,1,1,7.34,7.36A7.24,7.24,0,0,1,28.08,49.47ZM43.53,80.19a7.34,7.34,0,1,1,7.3-7.27A7.28,7.28,0,0,1,43.53,80.19ZM56.1,61.51a5.47,5.47,0,0,1-5.48-5.38A5.44,5.44,0,0,1,61.48,56,5.52,5.52,0,0,1,56.1,61.51ZM68.28,80.19a7.34,7.34,0,1,1,7.29-7.27A7.29,7.29,0,0,1,68.28,80.19Zm8.6-23.36a7.34,7.34,0,1,1,7.3-7.27A7.28,7.28,0,0,1,76.88,56.82Z\"\u003e\u003c/path\u003e\u003cpath class=\"cls-2\" d=\"M111.12,55.92A54.65,54.65,0,0,1,98.23,91.26l-8.61-8.61a42.79,42.79,0,0,0,.28-53.11l8.62-8.62A54.69,54.69,0,0,1,111.12,55.92Z\"\u003e\u003c/path\u003e\u003cpath class=\"cls-2\" d=\"M91.55,13.89,82.94,22.5a42.8,42.8,0,0,0-53.11-.28L21.2,13.6a54.9,54.9,0,0,1,70.34.29Z\"\u003e\u003c/path\u003e\u003cpath class=\"cls-2\" d=\"M13.41,55.92a42.6,42.6,0,0,0,9.1,26.38l-8.62,8.62a54.91,54.91,0,0,1,.29-70.35l8.61,8.61A42.57,42.57,0,0,0,13.41,55.92Z\"\u003e\u003c/path\u003e\u003cpath class=\"cls-2\" d=\"M91.21,98.24a54.92,54.92,0,0,1-70.36-.29l8.61-8.61a42.8,42.8,0,0,0,53.11.28Z\"\u003e\u003c/path\u003e\u003c/svg\u003e",
-   "svgWhite": "\u003csvg id=\"Layer_1\" data-name=\"Layer 1\" xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 111.58 111.28\" width='111.58' height='111.28'\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}.cls-2{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cpath class=\"cls-1\" d=\"M92.62,52.17A36.68,36.68,0,0,0,83.88,32l-.58-.65A36.6,36.6,0,1,0,82.09,81.8c.6-.6,1.16-1.21,1.71-1.84A36.68,36.68,0,0,0,92.51,60.6c0-.31.07-.61.1-.92s0-.4.06-.6q.14-1.55.14-3.14A36.88,36.88,0,0,0,92.62,52.17ZM56.09,27.23a7.34,7.34,0,1,1-7.36,7.32A7.24,7.24,0,0,1,56.09,27.23Zm-28,22.23a7.32,7.32,0,1,1,7.34,7.36A7.24,7.24,0,0,1,28.08,49.47ZM43.53,80.19a7.34,7.34,0,1,1,7.3-7.27A7.28,7.28,0,0,1,43.53,80.19ZM56.1,61.51a5.47,5.47,0,0,1-5.48-5.38A5.44,5.44,0,0,1,61.48,56,5.52,5.52,0,0,1,56.1,61.51ZM68.28,80.19a7.34,7.34,0,1,1,7.29-7.27A7.29,7.29,0,0,1,68.28,80.19Zm8.6-23.36a7.34,7.34,0,1,1,7.3-7.27A7.28,7.28,0,0,1,76.88,56.82Z\"\u003e\u003c/path\u003e\u003cpath class=\"cls-2\" d=\"M111.12,55.92A54.65,54.65,0,0,1,98.23,91.26l-8.61-8.61a42.79,42.79,0,0,0,.28-53.11l8.62-8.62A54.69,54.69,0,0,1,111.12,55.92Z\"\u003e\u003c/path\u003e\u003cpath class=\"cls-2\" d=\"M91.55,13.89,82.94,22.5a42.8,42.8,0,0,0-53.11-.28L21.2,13.6a54.9,54.9,0,0,1,70.34.29Z\"\u003e\u003c/path\u003e\u003cpath class=\"cls-2\" d=\"M13.41,55.92a42.6,42.6,0,0,0,9.1,26.38l-8.62,8.62a54.91,54.91,0,0,1,.29-70.35l8.61,8.61A42.57,42.57,0,0,0,13.41,55.92Z\"\u003e\u003c/path\u003e\u003cpath class=\"cls-2\" d=\"M91.21,98.24a54.92,54.92,0,0,1-70.36-.29l8.61-8.61a42.8,42.8,0,0,0,53.11.28Z\"\u003e\u003c/path\u003e\u003c/svg\u003e"
-  },
-  "version": "v1.0.0"
- }
+  "component": {
+    "kind": "ActionSet",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"actions\": {\n     \"items\": {\n      \"description\": \"ActionSpec is the specification for a single Action.\",\n      \"properties\": {\n       \"artifacts\": {\n        \"additionalProperties\": {\n         \"properties\": {\n          \"keyValue\": {\n           \"additionalProperties\": {\n            \"type\": \"string\"\n           },\n           \"type\": \"object\"\n          },\n          \"kopiaSnapshot\": {\n           \"format\": \"textarea\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"description\": \"Artifacts will be passed as inputs into this phase.\",\n        \"type\": \"object\"\n       },\n       \"blueprint\": {\n        \"description\": \"Blueprint with instructions on how to execute this action.\",\n        \"type\": \"string\"\n       },\n       \"configMaps\": {\n        \"additionalProperties\": {\n         \"properties\": {\n          \"apiVersion\": {\n           \"description\": \"API version of the referent.\",\n           \"type\": \"string\"\n          },\n          \"group\": {\n           \"description\": \"API Group of the referent.\",\n           \"type\": \"string\"\n          },\n          \"kind\": {\n           \"description\": \"Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds\",\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"description\": \"Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"description\": \"Namespace of the referent. More info: http://kubernetes.io/docs/user-guide/namespaces\",\n           \"type\": \"string\"\n          },\n          \"resource\": {\n           \"description\": \"Resource name of the referent.\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"description\": \"ConfigMaps that we will get and pass into the blueprint.\",\n        \"type\": \"object\"\n       },\n       \"name\": {\n        \"description\": \"Name is the action we will perform. For example: backup or restore.\",\n        \"type\": \"string\"\n       },\n       \"object\": {\n        \"description\": \"Object refers to the thing we will perform this action on.\",\n        \"properties\": {\n         \"apiVersion\": {\n          \"description\": \"API version of the referent.\",\n          \"type\": \"string\"\n         },\n         \"group\": {\n          \"description\": \"API Group of the referent.\",\n          \"type\": \"string\"\n         },\n         \"kind\": {\n          \"description\": \"Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace of the referent. More info: http://kubernetes.io/docs/user-guide/namespaces\",\n          \"type\": \"string\"\n         },\n         \"resource\": {\n          \"description\": \"Resource name of the referent.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"options\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"description\": \"Options will be used to specify additional values to be used in the Blueprint.\",\n        \"type\": \"object\"\n       },\n       \"podOverride\": {\n        \"description\": \"PodOverride is used to specify pod specs that will override the default pod specs\",\n        \"format\": \"textarea\",\n        \"type\": \"string\"\n       },\n       \"preferredVersion\": {\n        \"description\": \"PreferredVersion will be used to select the preferred version of Kanister functions to be executed for this action\",\n        \"type\": \"string\"\n       },\n       \"profile\": {\n        \"description\": \"Profile is use to specify the location where store artifacts and the credentials authorized to access them.\",\n        \"properties\": {\n         \"apiVersion\": {\n          \"description\": \"API version of the referent.\",\n          \"type\": \"string\"\n         },\n         \"group\": {\n          \"description\": \"API Group of the referent.\",\n          \"type\": \"string\"\n         },\n         \"kind\": {\n          \"description\": \"Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace of the referent. More info: http://kubernetes.io/docs/user-guide/namespaces\",\n          \"type\": \"string\"\n         },\n         \"resource\": {\n          \"description\": \"Resource name of the referent.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"repositoryServer\": {\n        \"description\": \"RepositoryServer is used to specify the CR reference of the kopia repository server\",\n        \"properties\": {\n         \"apiVersion\": {\n          \"description\": \"API version of the referent.\",\n          \"type\": \"string\"\n         },\n         \"group\": {\n          \"description\": \"API Group of the referent.\",\n          \"type\": \"string\"\n         },\n         \"kind\": {\n          \"description\": \"Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds\",\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace of the referent. More info: http://kubernetes.io/docs/user-guide/namespaces\",\n          \"type\": \"string\"\n         },\n         \"resource\": {\n          \"description\": \"Resource name of the referent.\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"apiVersion\",\n         \"group\",\n         \"kind\",\n         \"name\",\n         \"resource\"\n        ],\n        \"type\": \"object\"\n       },\n       \"secrets\": {\n        \"additionalProperties\": {\n         \"properties\": {\n          \"apiVersion\": {\n           \"description\": \"API version of the referent.\",\n           \"type\": \"string\"\n          },\n          \"group\": {\n           \"description\": \"API Group of the referent.\",\n           \"type\": \"string\"\n          },\n          \"kind\": {\n           \"description\": \"Kind of the referent. More info: https://git.k8s.io/community/contributors/devel/api-conventions.md#types-kinds\",\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"description\": \"Name of the referent. More info: http://kubernetes.io/docs/user-guide/identifiers#names\",\n           \"type\": \"string\"\n          },\n          \"namespace\": {\n           \"description\": \"Namespace of the referent. More info: http://kubernetes.io/docs/user-guide/namespaces\",\n           \"type\": \"string\"\n          },\n          \"resource\": {\n           \"description\": \"Resource name of the referent.\",\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"description\": \"Secrets that we will get and pass into the blueprint.\",\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Action Set\",\n \"type\": \"object\"\n}",
+    "version": "cr.kanister.io/v1alpha1"
+  }
+}

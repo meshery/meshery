@@ -22,7 +22,7 @@ import {
   styled,
   PROMPT_VARIANTS,
 } from '@layer5/sistent';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon from '@mui/icons-material/Delete';
 import FullscreenIcon from '@mui/icons-material/Fullscreen';
@@ -37,12 +37,7 @@ import Moment from 'react-moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
-import {
-  encodeDesignFile,
-  getUnit8ArrayDecodedFile,
-  getUnit8ArrayForDesign,
-  parseDesignFile,
-} from '../utils/utils';
+import { encodeDesignFile, getUnit8ArrayDecodedFile, parseDesignFile } from '../utils/utils';
 import ViewSwitch from './ViewSwitch';
 import MesheryPatternGrid from './MesheryPatterns/MesheryPatternGridView';
 import UndeployIcon from '../public/static/img/UndeployIcon';
@@ -75,7 +70,6 @@ import { keys } from '@/utils/permission_constants';
 import ExportModal from './ExportModal';
 import { useModal, Modal as SistentModal, ModalBody } from '@layer5/sistent';
 import PatternIcon from '@/assets/icons/Pattern';
-import { UsesSistent } from './SistentWrapper';
 import DryRunIcon from '@/assets/icons/DryRunIcon';
 import { useActorRef } from '@xstate/react';
 import { designValidationMachine } from 'machines/validator/designValidator';
@@ -102,6 +96,7 @@ import PatternConfigureIcon from '@/assets/icons/PatternConfigure';
 import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import TooltipButton from '@/utils/TooltipButton';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
+import yaml from 'js-yaml';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -152,7 +147,7 @@ const YamlDialogTitleText = styled(Typography)(() => ({
 
 function TooltipIcon({ children, onClick, title, placement, disabled }) {
   return (
-    <UsesSistent>
+    <>
       <CustomTooltip title={title} placement={placement} interactive>
         <div>
           <IconButton disabled={disabled} onClick={onClick}>
@@ -160,7 +155,7 @@ function TooltipIcon({ children, onClick, title, placement, disabled }) {
           </IconButton>
         </div>
       </CustomTooltip>
-    </UsesSistent>
+    </>
   );
 }
 
@@ -171,6 +166,14 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
   const toggleFullScreen = () => {
     setFullScreen(!fullScreen);
   };
+
+  const FullScreenCodeMirrorWrapper = styled('div')(() => ({
+    height: '100%',
+    '& .CodeMirror': {
+      minHeight: '300px',
+      height: fullScreen ? '80vh' : '30vh',
+    },
+  }));
 
   return (
     <Dialog
@@ -204,20 +207,22 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
       </YamlDialogTitle>
       <Divider variant="fullWidth" light />
       <DialogContent>
-        <CodeMirror
-          value={pattern.pattern_file}
-          options={{
-            theme: 'material',
-            lineNumbers: true,
-            lineWrapping: true,
-            gutters: ['CodeMirror-lint-markers'],
-            // @ts-ignore
-            lint: true,
-            mode: 'text/x-yaml',
-            readOnly: isReadOnly,
-          }}
-          onChange={(_, data, val) => setYaml(val)}
-        />
+        <FullScreenCodeMirrorWrapper>
+          <CodeMirror
+            value={pattern.pattern_file}
+            options={{
+              theme: 'material',
+              lineNumbers: true,
+              lineWrapping: true,
+              gutters: ['CodeMirror-lint-markers'],
+              // @ts-ignore
+              lint: true,
+              mode: 'text/x-yaml',
+              readOnly: isReadOnly,
+            }}
+            onChange={(_, data, val) => setYaml(val)}
+          />
+        </FullScreenCodeMirrorWrapper>
       </DialogContent>
       <Divider variant="fullWidth" light />
       <DialogActions>
@@ -226,7 +231,6 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
             <CustomTooltip title="Update Pattern">
               <IconButton
                 aria-label="Update"
-                color="primary"
                 disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                 onClick={() =>
                   onSubmit({
@@ -244,7 +248,6 @@ function YAMLEditor({ pattern, onClose, onSubmit, isReadOnly = false }) {
             <CustomTooltip title="Delete Pattern">
               <IconButton
                 aria-label="Delete"
-                color="primary"
                 disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
                 onClick={() =>
                   onSubmit({
@@ -571,11 +574,11 @@ function MesheryPatterns({
     catalogVisibilityRef.current = catalogVisibility;
 
     /*
-                                     Below is a graphql query that fetches the catalog patterns that is published so
-                                     when catalogVisibility is true, we fetch the catalog patterns and set it to the patterns state
-                                     which show the catalog patterns only in the UI at the top of the list always whether we filter for public or private patterns.
-                                     Meshery's REST API already fetches catalog items with `published` visibility, hence this function is commented out.
-                                    */
+                                       Below is a graphql query that fetches the catalog patterns that is published so
+                                       when catalogVisibility is true, we fetch the catalog patterns and set it to the patterns state
+                                       which show the catalog patterns only in the UI at the top of the list always whether we filter for public or private patterns.
+                                       Meshery's REST API already fetches catalog items with `published` visibility, hence this function is commented out.
+                                      */
     // const fetchCatalogPatterns = fetchCatalogPattern({
     //   selector: {
     //     search: '',
@@ -883,14 +886,14 @@ function MesheryPatterns({
     }
 
     if (type === FILE_OPS.UPDATE) {
+      const design = yaml.load(data);
+
       updatePattern({
         updateBody: JSON.stringify({
-          pattern_data: {
-            id,
-            pattern_file: getUnit8ArrayForDesign(data),
-            catalog_data,
-          },
-          save: true,
+          id,
+          name: data.name,
+          design_file: design,
+          catalog_data,
         }),
       })
         .unwrap()
@@ -1163,15 +1166,15 @@ function MesheryPatterns({
 
               {/* Publish action can be done through Info modal so we might not need separate publish action */}
               {/* {canPublishPattern && visibility !== VISIBILITY.PUBLISHED && (
-                <TooltipIcon
-                  placement="bottom"
-                  title="Publish"
-                  disabled={!CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject)}
-                  onClick={(ev) => handlePublishModal(ev, rowData)}
-                >
-                  <PublicIcon fill="#F91313" data-cy="publish-button" />
-                </TooltipIcon>
-              )} */}
+                  <TooltipIcon
+                    placement="bottom"
+                    title="Publish"
+                    disabled={!CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject)}
+                    onClick={(ev) => handlePublishModal(ev, rowData)}
+                  >
+                    <PublicIcon fill="#F91313" data-cy="publish-button" />
+                  </TooltipIcon>
+                )} */}
 
               {visibility === VISIBILITY.PUBLISHED && (
                 <TooltipIcon
@@ -1361,9 +1364,9 @@ function MesheryPatterns({
 
   if (ispatternsLoading) {
     return (
-      <UsesSistent>
+      <>
         <LoadingScreen animatedIcon="AnimatedMeshPattern" message={`Loading ${pageTitle}...`} />
-      </UsesSistent>
+      </>
     );
   }
 
@@ -1443,7 +1446,7 @@ function MesheryPatterns({
   };
 
   return (
-    <UsesSistent>
+    <>
       <NoSsr>
         {CAN(keys.VIEW_DESIGNS.action, keys.VIEW_DESIGNS.subject) ? (
           <>
@@ -1501,18 +1504,18 @@ function MesheryPatterns({
                   {!selectedPattern.show && (
                     <div style={{ display: 'flex' }}>
                       {/* <StyledCatalogFilter>
-                    <CatalogFilter
-                      catalogVisibility={catalogVisibility}
-                      handleCatalogVisibility={handleCatalogVisibility}
-                      classes={classes}
-                    />
-                    </StyledCatalogFilter>*/}
+                      <CatalogFilter
+                        catalogVisibility={catalogVisibility}
+                        handleCatalogVisibility={handleCatalogVisibility}
+                        classes={classes}
+                      />
+                      </StyledCatalogFilter>*/}
                     </div>
                   )}
                 </CreateButton>
               )}
               <SearchWrapper style={{ display: 'flex' }}>
-                <UsesSistent>
+                <>
                   <SearchBar
                     onSearch={(value) => {
                       setSearch(value);
@@ -1543,7 +1546,7 @@ function MesheryPatterns({
                       customToolsProps={{ columnVisibility, setColumnVisibility }}
                     />
                   )}
-                </UsesSistent>
+                </>
 
                 {!selectedPattern.show && (
                   <ViewSwitchButton>
@@ -1646,7 +1649,7 @@ function MesheryPatterns({
           <DefaultError />
         )}
       </NoSsr>
-    </UsesSistent>
+    </>
   );
 }
 
@@ -1655,7 +1658,7 @@ const ImportModal = React.memo((props) => {
 
   return (
     <>
-      <UsesSistent>
+      <>
         <SistentModal
           open={true}
           closeModal={handleClose}
@@ -1673,7 +1676,7 @@ const ImportModal = React.memo((props) => {
             handleClose={handleClose}
           />
         </SistentModal>
-      </UsesSistent>
+      </>
     </>
   );
 });
@@ -1683,7 +1686,7 @@ const PublishModal = React.memo((props) => {
 
   return (
     <>
-      <UsesSistent>
+      <>
         <SistentModal
           open={true}
           closeModal={handleClose}
@@ -1703,7 +1706,7 @@ const PublishModal = React.memo((props) => {
             helpText="Upon submitting your catalog item, an approval flow will be initiated.[Learn more](https://docs.meshery.io/concepts/catalog)"
           />
         </SistentModal>
-      </UsesSistent>
+      </>
     </>
   );
 });

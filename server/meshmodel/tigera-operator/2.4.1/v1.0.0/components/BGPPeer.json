@@ -1,189 +1,189 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "BGPPeer",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BGPPeerSpec contains the specification for a BGPPeer resource.\",\n   \"properties\": {\n    \"asNumber\": {\n     \"description\": \"The AS Number of the peer.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"filters\": {\n     \"description\": \"The ordered set of BGPFilters applied on this BGP peer.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"keepOriginalNextHop\": {\n     \"description\": \"Option to keep the original nexthop field when routes are sent to a BGP Peer. Setting \\\"true\\\" configures the selected BGP Peers node to use the \\\"next hop keep;\\\" instead of \\\"next hop self;\\\"(default) in the specific branch of the Node on \\\"bird.cfg\\\".\",\n     \"type\": \"boolean\"\n    },\n    \"maxRestartTime\": {\n     \"description\": \"Time to allow for software restart.  When specified, this is configured as the graceful restart timeout.  When not specified, the BIRD default of 120s is used.\",\n     \"type\": \"string\"\n    },\n    \"node\": {\n     \"description\": \"The node name identifying the Calico node instance that is targeted by this peer. If this is not set, and no nodeSelector is specified, then this BGP peer selects all nodes in the cluster.\",\n     \"type\": \"string\"\n    },\n    \"nodeSelector\": {\n     \"description\": \"Selector for the nodes that should have this peering.  When this is set, the Node field must be empty.\",\n     \"type\": \"string\"\n    },\n    \"numAllowedLocalASNumbers\": {\n     \"description\": \"Maximum number of local AS numbers that are allowed in the AS path for received routes. This removes BGP loop prevention and should only be used if absolutely necesssary.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"password\": {\n     \"description\": \"Optional BGP password for the peerings generated by this BGPPeer resource.\",\n     \"properties\": {\n      \"secretKeyRef\": {\n       \"description\": \"Selects a key of a secret in the node pod's namespace.\",\n       \"properties\": {\n        \"key\": {\n         \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n         \"type\": \"string\"\n        },\n        \"optional\": {\n         \"description\": \"Specify whether the Secret or its key must be defined\",\n         \"type\": \"boolean\"\n        }\n       },\n       \"required\": [\n        \"key\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"peerIP\": {\n     \"description\": \"The IP address of the peer followed by an optional port number to peer with. If port number is given, format should be `[\\u003cIPv6\\u003e]:port` or `\\u003cIPv4\\u003e:\\u003cport\\u003e` for IPv4. If optional port number is not set, and this peer IP and ASNumber belongs to a calico/node with ListenPort set in BGPConfiguration, then we use that port to peer.\",\n     \"type\": \"string\"\n    },\n    \"peerSelector\": {\n     \"description\": \"Selector for the remote nodes to peer with.  When this is set, the PeerIP and ASNumber fields must be empty.  For each peering between the local node and selected remote nodes, we configure an IPv4 peering if both ends have NodeBGPSpec.IPv4Address specified, and an IPv6 peering if both ends have NodeBGPSpec.IPv6Address specified.  The remote AS number comes from the remote node's NodeBGPSpec.ASNumber, or the global default if that is not set.\",\n     \"type\": \"string\"\n    },\n    \"reachableBy\": {\n     \"description\": \"Add an exact, i.e. /32, static route toward peer IP in order to prevent route flapping. ReachableBy contains the address of the gateway which peer can be reached by.\",\n     \"type\": \"string\"\n    },\n    \"sourceAddress\": {\n     \"description\": \"Specifies whether and how to configure a source address for the peerings generated by this BGPPeer resource.  Default value \\\"UseNodeIP\\\" means to configure the node IP as the source address.  \\\"None\\\" means not to configure a source address.\",\n     \"type\": \"string\"\n    },\n    \"ttlSecurity\": {\n     \"description\": \"TTLSecurity enables the generalized TTL security mechanism (GTSM) which protects against spoofed packets by ignoring received packets with a smaller than expected TTL value. The provided value is the number of hops (edges) between the peers.\",\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"BGP Peer\",\n \"type\": \"object\"\n}",
-   "version": "crd.projectcalico.org/v1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "BGP Peer",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": false,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "BGP Peer",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Runtime"
-   },
-   "displayName": "Tigera Operator",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "source_uri": "https://github.com/stevehipwell/helm-charts/releases/download/tigera-operator-2.9.0/tigera-operator-2.9.0.tgz",
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "tigera-operator",
+    "displayName": "Tigera Operator",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Runtime"
+    },
+    "metadata": {
+      "source_uri": "https://github.com/stevehipwell/helm-charts/releases/download/tigera-operator-2.9.0/tigera-operator-2.9.0.tgz",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "2.4.1"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
+    "primaryColor": "#00B39F",
+    "secondaryColor": "#00D3A9",
+    "shape": "circle",
     "svgColor": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "2.4.1"
-   },
-   "name": "tigera-operator",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": false,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "BGPPeer",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"BGPPeerSpec contains the specification for a BGPPeer resource.\",\n   \"properties\": {\n    \"asNumber\": {\n     \"description\": \"The AS Number of the peer.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"filters\": {\n     \"description\": \"The ordered set of BGPFilters applied on this BGP peer.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"keepOriginalNextHop\": {\n     \"description\": \"Option to keep the original nexthop field when routes are sent to a BGP Peer. Setting \\\"true\\\" configures the selected BGP Peers node to use the \\\"next hop keep;\\\" instead of \\\"next hop self;\\\"(default) in the specific branch of the Node on \\\"bird.cfg\\\".\",\n     \"type\": \"boolean\"\n    },\n    \"maxRestartTime\": {\n     \"description\": \"Time to allow for software restart.  When specified, this is configured as the graceful restart timeout.  When not specified, the BIRD default of 120s is used.\",\n     \"type\": \"string\"\n    },\n    \"node\": {\n     \"description\": \"The node name identifying the Calico node instance that is targeted by this peer. If this is not set, and no nodeSelector is specified, then this BGP peer selects all nodes in the cluster.\",\n     \"type\": \"string\"\n    },\n    \"nodeSelector\": {\n     \"description\": \"Selector for the nodes that should have this peering.  When this is set, the Node field must be empty.\",\n     \"type\": \"string\"\n    },\n    \"numAllowedLocalASNumbers\": {\n     \"description\": \"Maximum number of local AS numbers that are allowed in the AS path for received routes. This removes BGP loop prevention and should only be used if absolutely necesssary.\",\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    },\n    \"password\": {\n     \"description\": \"Optional BGP password for the peerings generated by this BGPPeer resource.\",\n     \"properties\": {\n      \"secretKeyRef\": {\n       \"description\": \"Selects a key of a secret in the node pod's namespace.\",\n       \"properties\": {\n        \"key\": {\n         \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n         \"type\": \"string\"\n        },\n        \"name\": {\n         \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n         \"type\": \"string\"\n        },\n        \"optional\": {\n         \"description\": \"Specify whether the Secret or its key must be defined\",\n         \"type\": \"boolean\"\n        }\n       },\n       \"required\": [\n        \"key\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"peerIP\": {\n     \"description\": \"The IP address of the peer followed by an optional port number to peer with. If port number is given, format should be `[\\u003cIPv6\\u003e]:port` or `\\u003cIPv4\\u003e:\\u003cport\\u003e` for IPv4. If optional port number is not set, and this peer IP and ASNumber belongs to a calico/node with ListenPort set in BGPConfiguration, then we use that port to peer.\",\n     \"type\": \"string\"\n    },\n    \"peerSelector\": {\n     \"description\": \"Selector for the remote nodes to peer with.  When this is set, the PeerIP and ASNumber fields must be empty.  For each peering between the local node and selected remote nodes, we configure an IPv4 peering if both ends have NodeBGPSpec.IPv4Address specified, and an IPv6 peering if both ends have NodeBGPSpec.IPv6Address specified.  The remote AS number comes from the remote node's NodeBGPSpec.ASNumber, or the global default if that is not set.\",\n     \"type\": \"string\"\n    },\n    \"reachableBy\": {\n     \"description\": \"Add an exact, i.e. /32, static route toward peer IP in order to prevent route flapping. ReachableBy contains the address of the gateway which peer can be reached by.\",\n     \"type\": \"string\"\n    },\n    \"sourceAddress\": {\n     \"description\": \"Specifies whether and how to configure a source address for the peerings generated by this BGPPeer resource.  Default value \\\"UseNodeIP\\\" means to configure the node IP as the source address.  \\\"None\\\" means not to configure a source address.\",\n     \"type\": \"string\"\n    },\n    \"ttlSecurity\": {\n     \"description\": \"TTLSecurity enables the generalized TTL security mechanism (GTSM) which protects against spoofed packets by ignoring received packets with a smaller than expected TTL value. The provided value is the number of hops (edges) between the peers.\",\n     \"type\": \"integer\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"BGP Peer\",\n \"type\": \"object\"\n}",
+    "version": "crd.projectcalico.org/v1"
+  }
+}

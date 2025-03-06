@@ -1,6 +1,6 @@
 import { Component } from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import moment from 'moment';
@@ -11,9 +11,16 @@ import dataFetch from '../../../lib/data-fetch';
 import { updateProgress } from '../../../lib/store';
 import GrafanaCustomGaugeChart from './GrafanaCustomGaugeChart';
 import bb, { area, line } from 'billboard.js';
-import { IconButton, Card, CardContent, CardHeader, Tooltip, Box, styled } from '@layer5/sistent';
-import { LinearProgress } from '@mui/material';
-import { UsesSistent } from '../../SistentWrapper';
+import {
+  IconButton,
+  Card,
+  CardContent,
+  CardHeader,
+  Tooltip,
+  Box,
+  styled,
+  LinearProgress,
+} from '@layer5/sistent';
 
 const StyledCard = styled(Card)(() => ({
   height: '100%',
@@ -849,32 +856,27 @@ class GrafanaCustomChart extends Component {
     //   )
     // }
     return (
-      <UsesSistent>
-        <NoSsr>
-          {loadingBar}
-          <StyledCard>
-            {!inDialog && (
-              <CardHeader
-                disableTypography
-                avatar={
-                  error && (
-                    <Tooltip
-                      title="There was an error communicating with the server"
-                      placement="top"
-                    >
-                      <WarningIcon component={ErrorText} />
-                    </Tooltip>
-                  )
-                }
-                title={panel.title}
-                action={iconComponent}
-                sx={{ fontSize: (theme) => theme.spacing(2), width: '100%' }}
-              />
-            )}
-            <StyledCardContent>{mainChart}</StyledCardContent>
-          </StyledCard>
-        </NoSsr>
-      </UsesSistent>
+      <NoSsr>
+        {loadingBar}
+        <StyledCard>
+          {!inDialog && (
+            <CardHeader
+              disableTypography
+              avatar={
+                error && (
+                  <Tooltip title="There was an error communicating with the server" placement="top">
+                    <WarningIcon component={ErrorText} />
+                  </Tooltip>
+                )
+              }
+              title={panel.title}
+              action={iconComponent}
+              sx={{ fontSize: (theme) => theme.spacing(2), width: '100%' }}
+            />
+          )}
+          <StyledCardContent>{mainChart}</StyledCardContent>
+        </StyledCard>
+      </NoSsr>
     );
   }
 }

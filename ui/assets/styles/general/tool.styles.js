@@ -50,6 +50,11 @@ export const InnerContainer = styled(Box, {
   display: 'flex',
   flexDirection: 'row',
   position: 'absolute',
+  flexWrap: 'wrap',
+  gap: '1rem',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: '100%',
   ...(isAnimated
     ? {
         width: '100%',
@@ -138,7 +143,7 @@ export const DetailsContainer = styled(Box, {
     justifyContent: 'center',
   }),
   [theme.breakpoints.down('sm')]: {
-    width: '90%',
+    width: '100%',
     padding: isEmpty ? '0.5rem' : '1rem',
     height: 'fit-content',
     maxHeight: '30rem',
@@ -152,7 +157,7 @@ export const TreeContainer = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
   [theme.breakpoints.down('sm')]: {
-    width: '90%',
+    width: '100%',
   },
 }));
 

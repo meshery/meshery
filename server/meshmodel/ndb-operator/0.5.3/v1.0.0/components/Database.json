@@ -1,196 +1,196 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "Database",
-   "schema": "{\n \"description\": \"Database is the Schema for the databases API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DatabaseSpec defines the desired state of Database\",\n   \"properties\": {\n    \"clone\": {\n     \"properties\": {\n      \"additionalArguments\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Additional database engine specific arguments\",\n       \"type\": \"object\"\n      },\n      \"clusterId\": {\n       \"description\": \"Id of the cluster to clone the database on\",\n       \"type\": \"string\"\n      },\n      \"credentialSecret\": {\n       \"description\": \"Name of the secret holding the credentials for the database instance (password and ssh key)\",\n       \"type\": \"string\"\n      },\n      \"description\": {\n       \"description\": \"Description of the clone instance\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the clone instance\",\n       \"type\": \"string\"\n      },\n      \"profiles\": {\n       \"properties\": {\n        \"compute\": {\n         \"properties\": {\n          \"id\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"dbParam\": {\n         \"properties\": {\n          \"id\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"dbParamInstance\": {\n         \"properties\": {\n          \"id\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"network\": {\n         \"properties\": {\n          \"id\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"software\": {\n         \"properties\": {\n          \"id\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"snapshotId\": {\n       \"description\": \"Id of the snapshot to create a clone from\",\n       \"type\": \"string\"\n      },\n      \"sourceDatabaseId\": {\n       \"description\": \"Id of the source database on NDB to clone from\",\n       \"type\": \"string\"\n      },\n      \"timezone\": {\n       \"description\": \"default UTC\",\n       \"type\": \"string\"\n      },\n      \"type\": {\n       \"description\": \"Type of parent clone\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"clusterId\",\n      \"credentialSecret\",\n      \"name\",\n      \"snapshotId\",\n      \"sourceDatabaseId\",\n      \"type\"\n     ],\n     \"type\": \"object\"\n    },\n    \"databaseInstance\": {\n     \"description\": \"Database instance specific details\",\n     \"properties\": {\n      \"additionalArguments\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Additional database engine specific arguments\",\n       \"type\": \"object\"\n      },\n      \"clusterId\": {\n       \"description\": \"Id of the cluster to provision the database on\",\n       \"type\": \"string\"\n      },\n      \"credentialSecret\": {\n       \"description\": \"Name of the secret holding the credentials for the database instance (password and ssh key)\",\n       \"type\": \"string\"\n      },\n      \"databaseNames\": {\n       \"description\": \"Name(s) of the database(s) to be provisiond inside the database instance default [ \\\"database_one\\\", \\\"database_two\\\", \\\"database_three\\\" ]\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"description\": {\n       \"description\": \"Description of the database instance\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the database instance\",\n       \"type\": \"string\"\n      },\n      \"profiles\": {\n       \"properties\": {\n        \"compute\": {\n         \"properties\": {\n          \"id\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"dbParam\": {\n         \"properties\": {\n          \"id\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"dbParamInstance\": {\n         \"properties\": {\n          \"id\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"network\": {\n         \"properties\": {\n          \"id\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"software\": {\n         \"properties\": {\n          \"id\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"size\": {\n       \"description\": \"Size of the database instance, minimum 10 (GBs)\",\n       \"type\": \"integer\"\n      },\n      \"timeMachine\": {\n       \"description\": \"Information related to time machine that is to be associated with this database\",\n       \"properties\": {\n        \"dailySnapshotTime\": {\n         \"description\": \"Daily snapshot time in HH:MM:SS (24 hour format)\",\n         \"type\": \"string\"\n        },\n        \"description\": {\n         \"type\": \"string\"\n        },\n        \"logCatchUpFrequency\": {\n         \"description\": \"Log catch up frequency in minutes\",\n         \"type\": \"integer\"\n        },\n        \"monthlySnapshotDay\": {\n         \"description\": \"Day of the month for monthly snapshot\",\n         \"type\": \"integer\"\n        },\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"quarterlySnapshotMonth\": {\n         \"description\": \"Start month for the quarterly snapshot Jan =\\u003e Jan, Apr, Jul, Oct. Feb =\\u003e Feb, May, Aug, Nov. Mar =\\u003e Mar, Jun, Sep, Dec.\",\n         \"type\": \"string\"\n        },\n        \"sla\": {\n         \"description\": \"Name of the SLA to be used, default NONE\",\n         \"type\": \"string\"\n        },\n        \"snapshotsPerDay\": {\n         \"description\": \"Number of snapshots per day\",\n         \"type\": \"integer\"\n        },\n        \"weeklySnapshotDay\": {\n         \"description\": \"Day of the week for weekly snapshot\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"timezone\": {\n       \"description\": \"default UTC\",\n       \"type\": \"string\"\n      },\n      \"type\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"clusterId\",\n      \"credentialSecret\",\n      \"name\",\n      \"size\",\n      \"type\"\n     ],\n     \"type\": \"object\"\n    },\n    \"isClone\": {\n     \"type\": \"boolean\"\n    },\n    \"ndbRef\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"ndbRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Database\",\n \"type\": \"object\"\n}",
-   "version": "ndb.nutanix.com/v1alpha1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Database",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Database",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Uncategorized"
-   },
-   "displayName": "Ndb Operator",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "ndb-operator",
+    "displayName": "Ndb Operator",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized"
+    },
+    "subCategory": "Uncategorized",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://github.com/nutanix/helm/releases/download/ndb-operator-0.5.3/ndb-operator-0.5.3.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "0.5.3"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "source_uri": "https://github.com/nutanix/helm/releases/download/ndb-operator-0.5.3/ndb-operator-0.5.3.tgz",
-    "styleOverrides": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "0.5.3"
-   },
-   "name": "ndb-operator",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Uncategorized",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "Database",
+    "schema": "{\n \"description\": \"Database is the Schema for the databases API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"DatabaseSpec defines the desired state of Database\",\n   \"properties\": {\n    \"clone\": {\n     \"properties\": {\n      \"additionalArguments\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Additional database engine specific arguments\",\n       \"type\": \"object\"\n      },\n      \"clusterId\": {\n       \"description\": \"Id of the cluster to clone the database on\",\n       \"type\": \"string\"\n      },\n      \"credentialSecret\": {\n       \"description\": \"Name of the secret holding the credentials for the database instance (password and ssh key)\",\n       \"type\": \"string\"\n      },\n      \"description\": {\n       \"description\": \"Description of the clone instance\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the clone instance\",\n       \"type\": \"string\"\n      },\n      \"profiles\": {\n       \"properties\": {\n        \"compute\": {\n         \"properties\": {\n          \"id\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"dbParam\": {\n         \"properties\": {\n          \"id\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"dbParamInstance\": {\n         \"properties\": {\n          \"id\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"network\": {\n         \"properties\": {\n          \"id\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"software\": {\n         \"properties\": {\n          \"id\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"snapshotId\": {\n       \"description\": \"Id of the snapshot to create a clone from\",\n       \"type\": \"string\"\n      },\n      \"sourceDatabaseId\": {\n       \"description\": \"Id of the source database on NDB to clone from\",\n       \"type\": \"string\"\n      },\n      \"timezone\": {\n       \"description\": \"default UTC\",\n       \"type\": \"string\"\n      },\n      \"type\": {\n       \"description\": \"Type of parent clone\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"clusterId\",\n      \"credentialSecret\",\n      \"name\",\n      \"snapshotId\",\n      \"sourceDatabaseId\",\n      \"type\"\n     ],\n     \"type\": \"object\"\n    },\n    \"databaseInstance\": {\n     \"description\": \"Database instance specific details\",\n     \"properties\": {\n      \"additionalArguments\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"description\": \"Additional database engine specific arguments\",\n       \"type\": \"object\"\n      },\n      \"clusterId\": {\n       \"description\": \"Id of the cluster to provision the database on\",\n       \"type\": \"string\"\n      },\n      \"credentialSecret\": {\n       \"description\": \"Name of the secret holding the credentials for the database instance (password and ssh key)\",\n       \"type\": \"string\"\n      },\n      \"databaseNames\": {\n       \"description\": \"Name(s) of the database(s) to be provisiond inside the database instance default [ \\\"database_one\\\", \\\"database_two\\\", \\\"database_three\\\" ]\",\n       \"items\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"array\"\n      },\n      \"description\": {\n       \"description\": \"Description of the database instance\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the database instance\",\n       \"type\": \"string\"\n      },\n      \"profiles\": {\n       \"properties\": {\n        \"compute\": {\n         \"properties\": {\n          \"id\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"dbParam\": {\n         \"properties\": {\n          \"id\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"dbParamInstance\": {\n         \"properties\": {\n          \"id\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"network\": {\n         \"properties\": {\n          \"id\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"software\": {\n         \"properties\": {\n          \"id\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"size\": {\n       \"description\": \"Size of the database instance, minimum 10 (GBs)\",\n       \"type\": \"integer\"\n      },\n      \"timeMachine\": {\n       \"description\": \"Information related to time machine that is to be associated with this database\",\n       \"properties\": {\n        \"dailySnapshotTime\": {\n         \"description\": \"Daily snapshot time in HH:MM:SS (24 hour format)\",\n         \"type\": \"string\"\n        },\n        \"description\": {\n         \"type\": \"string\"\n        },\n        \"logCatchUpFrequency\": {\n         \"description\": \"Log catch up frequency in minutes\",\n         \"type\": \"integer\"\n        },\n        \"monthlySnapshotDay\": {\n         \"description\": \"Day of the month for monthly snapshot\",\n         \"type\": \"integer\"\n        },\n        \"name\": {\n         \"type\": \"string\"\n        },\n        \"quarterlySnapshotMonth\": {\n         \"description\": \"Start month for the quarterly snapshot Jan =\\u003e Jan, Apr, Jul, Oct. Feb =\\u003e Feb, May, Aug, Nov. Mar =\\u003e Mar, Jun, Sep, Dec.\",\n         \"type\": \"string\"\n        },\n        \"sla\": {\n         \"description\": \"Name of the SLA to be used, default NONE\",\n         \"type\": \"string\"\n        },\n        \"snapshotsPerDay\": {\n         \"description\": \"Number of snapshots per day\",\n         \"type\": \"integer\"\n        },\n        \"weeklySnapshotDay\": {\n         \"description\": \"Day of the week for weekly snapshot\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"timezone\": {\n       \"description\": \"default UTC\",\n       \"type\": \"string\"\n      },\n      \"type\": {\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"clusterId\",\n      \"credentialSecret\",\n      \"name\",\n      \"size\",\n      \"type\"\n     ],\n     \"type\": \"object\"\n    },\n    \"isClone\": {\n     \"type\": \"boolean\"\n    },\n    \"ndbRef\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"ndbRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Database\",\n \"type\": \"object\"\n}",
+    "version": "ndb.nutanix.com/v1alpha1"
+  }
+}

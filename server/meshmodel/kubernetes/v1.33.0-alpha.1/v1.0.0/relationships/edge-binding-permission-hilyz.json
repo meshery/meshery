@@ -1,0 +1,643 @@
+{
+  "id": "00000000-0000-0000-0000-000000000000",
+  "evaluationQuery": "",
+  "kind": "edge",
+  "metadata": {
+    "description": "A relationship that represents a set of permissions",
+    "styles": {
+      "primaryColor": "",
+      "svgColor": "",
+      "svgWhite": ""
+    },
+    "isAnnotation": false
+  },
+  "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "",
+    "version": "",
+    "name": "kubernetes",
+    "displayName": "",
+    "status": "",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "",
+      "sub_type": "",
+      "kind": "",
+      "status": "",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": ""
+    },
+    "model": {
+      "version": "v1.33.0-alpha.1"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "schemaVersion": "relationships.meshery.io/v1alpha3",
+  "selectors": [
+    {
+      "allow": {
+        "from": [
+          {
+            "id": null,
+            "kind": "ClusterRole",
+            "match": {
+              "from": [
+                {
+                  "id": null,
+                  "kind": "self",
+                  "mutatorRef": [
+                    [
+                      "component",
+                      "kind"
+                    ],
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "id": null,
+                  "kind": "ClusterRoleBinding",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "roleRef",
+                      "kind"
+                    ],
+                    [
+                      "configuration",
+                      "roleRef",
+                      "name"
+                    ]
+                  ]
+                }
+              ]
+            },
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "status": "",
+              "registrant": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": "",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "type": "",
+                "sub_type": "",
+                "kind": "github",
+                "status": "",
+                "user_id": "00000000-0000-0000-0000-000000000000",
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "deleted_at": "0001-01-01T00:00:00Z"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "category": {
+                "name": ""
+              },
+              "model": {
+                "version": ""
+              },
+              "components": null,
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
+            },
+            "patch": null
+          },
+          {
+            "id": null,
+            "kind": "Role",
+            "match": {
+              "from": [
+                {
+                  "id": null,
+                  "kind": "self",
+                  "mutatorRef": [
+                    [
+                      "component",
+                      "kind"
+                    ],
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "id": null,
+                  "kind": "RoleBinding",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "roleRef",
+                      "kind"
+                    ],
+                    [
+                      "configuration",
+                      "roleRef",
+                      "name"
+                    ]
+                  ]
+                }
+              ]
+            },
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "status": "",
+              "registrant": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": "",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "type": "",
+                "sub_type": "",
+                "kind": "github",
+                "status": "",
+                "user_id": "00000000-0000-0000-0000-000000000000",
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "deleted_at": "0001-01-01T00:00:00Z"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "category": {
+                "name": ""
+              },
+              "model": {
+                "version": ""
+              },
+              "components": null,
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
+            },
+            "patch": null
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "ServiceAccount",
+            "match": {
+              "from": [
+                {
+                  "id": null,
+                  "kind": "ClusterRoleBinding",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "subjects",
+                      "_",
+                      "name"
+                    ]
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "id": null,
+                  "kind": "self",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              ]
+            },
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "status": "",
+              "registrant": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": "",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "type": "",
+                "sub_type": "",
+                "kind": "github",
+                "status": "",
+                "user_id": "00000000-0000-0000-0000-000000000000",
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "deleted_at": "0001-01-01T00:00:00Z"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "category": {
+                "name": ""
+              },
+              "model": {
+                "version": ""
+              },
+              "components": null,
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
+            },
+            "patch": null
+          },
+          {
+            "id": null,
+            "kind": "ServiceAccount",
+            "match": {
+              "from": [
+                {
+                  "id": null,
+                  "kind": "RoleBinding",
+                  "mutatedRef": [
+                    [
+                      "configuration",
+                      "subjects",
+                      "_",
+                      "name"
+                    ]
+                  ]
+                }
+              ],
+              "to": [
+                {
+                  "id": null,
+                  "kind": "self",
+                  "mutatorRef": [
+                    [
+                      "displayName"
+                    ]
+                  ]
+                }
+              ]
+            },
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "status": "",
+              "registrant": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": "",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "type": "",
+                "sub_type": "",
+                "kind": "github",
+                "status": "",
+                "user_id": "00000000-0000-0000-0000-000000000000",
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "deleted_at": "0001-01-01T00:00:00Z"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "category": {
+                "name": ""
+              },
+              "model": {
+                "version": ""
+              },
+              "components": null,
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
+            },
+            "patch": null
+          }
+        ]
+      },
+      "deny": {
+        "from": [
+          {
+            "id": null,
+            "kind": "ClusterRole",
+            "match": {},
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "status": "",
+              "registrant": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": "",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "type": "",
+                "sub_type": "",
+                "kind": "github",
+                "status": "",
+                "user_id": "00000000-0000-0000-0000-000000000000",
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "deleted_at": "0001-01-01T00:00:00Z"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "category": {
+                "name": ""
+              },
+              "model": {
+                "version": ""
+              },
+              "components": null,
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
+            },
+            "patch": null
+          },
+          {
+            "id": null,
+            "kind": "Role",
+            "match": {},
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "status": "",
+              "registrant": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": "",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "type": "",
+                "sub_type": "",
+                "kind": "github",
+                "status": "",
+                "user_id": "00000000-0000-0000-0000-000000000000",
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "deleted_at": "0001-01-01T00:00:00Z"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "category": {
+                "name": ""
+              },
+              "model": {
+                "version": ""
+              },
+              "components": null,
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
+            },
+            "patch": null
+          },
+          {
+            "id": null,
+            "kind": "ClusterRoleBinding",
+            "match": {},
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "status": "",
+              "registrant": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": "",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "type": "",
+                "sub_type": "",
+                "kind": "github",
+                "status": "",
+                "user_id": "00000000-0000-0000-0000-000000000000",
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "deleted_at": "0001-01-01T00:00:00Z"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "category": {
+                "name": ""
+              },
+              "model": {
+                "version": ""
+              },
+              "components": null,
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
+            },
+            "patch": null
+          },
+          {
+            "id": null,
+            "kind": "RoleBinding",
+            "match": {},
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "status": "",
+              "registrant": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": "",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "type": "",
+                "sub_type": "",
+                "kind": "github",
+                "status": "",
+                "user_id": "00000000-0000-0000-0000-000000000000",
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "deleted_at": "0001-01-01T00:00:00Z"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "category": {
+                "name": ""
+              },
+              "model": {
+                "version": ""
+              },
+              "components": null,
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
+            },
+            "patch": null
+          }
+        ],
+        "to": [
+          {
+            "id": null,
+            "kind": "ClusterRole",
+            "match": {},
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "status": "",
+              "registrant": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": "",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "type": "",
+                "sub_type": "",
+                "kind": "github",
+                "status": "",
+                "user_id": "00000000-0000-0000-0000-000000000000",
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "deleted_at": "0001-01-01T00:00:00Z"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "category": {
+                "name": ""
+              },
+              "model": {
+                "version": ""
+              },
+              "components": null,
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
+            },
+            "patch": null
+          },
+          {
+            "id": null,
+            "kind": "Role",
+            "match": {},
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "status": "",
+              "registrant": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": "",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "type": "",
+                "sub_type": "",
+                "kind": "github",
+                "status": "",
+                "user_id": "00000000-0000-0000-0000-000000000000",
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "deleted_at": "0001-01-01T00:00:00Z"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "category": {
+                "name": ""
+              },
+              "model": {
+                "version": ""
+              },
+              "components": null,
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
+            },
+            "patch": null
+          },
+          {
+            "id": null,
+            "kind": "ClusterRoleBinding",
+            "match": {},
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "status": "",
+              "registrant": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": "",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "type": "",
+                "sub_type": "",
+                "kind": "github",
+                "status": "",
+                "user_id": "00000000-0000-0000-0000-000000000000",
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "deleted_at": "0001-01-01T00:00:00Z"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "category": {
+                "name": ""
+              },
+              "model": {
+                "version": ""
+              },
+              "components": null,
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
+            },
+            "patch": null
+          },
+          {
+            "id": null,
+            "kind": "RoleBinding",
+            "match": {},
+            "model": {
+              "id": "00000000-0000-0000-0000-000000000000",
+              "schemaVersion": "",
+              "version": "",
+              "name": "kubernetes",
+              "displayName": "",
+              "status": "",
+              "registrant": {
+                "id": "00000000-0000-0000-0000-000000000000",
+                "name": "",
+                "credential_id": "00000000-0000-0000-0000-000000000000",
+                "type": "",
+                "sub_type": "",
+                "kind": "github",
+                "status": "",
+                "user_id": "00000000-0000-0000-0000-000000000000",
+                "created_at": "0001-01-01T00:00:00Z",
+                "updated_at": "0001-01-01T00:00:00Z",
+                "deleted_at": "0001-01-01T00:00:00Z"
+              },
+              "connection_id": "00000000-0000-0000-0000-000000000000",
+              "category": {
+                "name": ""
+              },
+              "model": {
+                "version": ""
+              },
+              "components": null,
+              "relationships": null,
+              "components_count": 0,
+              "relationships_count": 0
+            },
+            "patch": null
+          }
+        ]
+      }
+    }
+  ],
+  "subType": "permission",
+  "status": "enabled",
+  "type": "binding",
+  "version": "v1.0.0"
+}

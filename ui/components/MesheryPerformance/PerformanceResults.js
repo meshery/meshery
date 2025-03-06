@@ -1,6 +1,5 @@
 //@ts-check
 import React, { useEffect, useState, useRef } from 'react';
-import { NoSsr, Fade } from '@mui/material';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import MUIDataTable from 'mui-datatables';
@@ -22,8 +21,18 @@ import { TwitterShareButton, LinkedinShareButton, FacebookShareButton } from 're
 import subscribePerformanceProfiles from '../graphql/subscriptions/PerformanceResultSubscription';
 import { useNotification } from '../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../lib/event-types';
-import { Tab, Tabs, IconButton, Paper, Popper, ClickAwayListener, useTheme } from '@layer5/sistent';
-import { UsesSistent } from '../SistentWrapper';
+import {
+  Tab,
+  Tabs,
+  IconButton,
+  Paper,
+  Popper,
+  ClickAwayListener,
+  useTheme,
+  NoSsr,
+  Fade,
+} from '@layer5/sistent';
+
 import { DefaultTableCell, SortableTableCell } from '../connections/common';
 import { clearResultsSelection, updateProgress, updateResultsSelection } from '../../lib/store';
 
@@ -361,12 +370,10 @@ function ResultChart({ result, handleTabChange, tabValue }) {
         padding: '0.5rem',
       }}
     >
-      <UsesSistent>
-        <Tabs value={tabValue} onChange={handleTabChange}>
-          <Tab label="Performance Chart" />
-          <Tab label="Node Details" />
-        </Tabs>
-      </UsesSistent>
+      <Tabs value={tabValue} onChange={handleTabChange}>
+        <Tab label="Performance Chart" />
+        <Tab label="Node Details" />
+      </Tabs>
 
       {tabValue == 0 ? (
         <div>
@@ -711,41 +718,39 @@ function MesheryResults({
 
   return (
     <NoSsr>
-      <UsesSistent>
-        <MUIDataTable
-          title={CustomHeader}
-          data={generateResultsForDisplay(results)}
-          columns={columns}
-          // @ts-ignore
-          options={options}
-        />
+      <MUIDataTable
+        title={CustomHeader}
+        data={generateResultsForDisplay(results)}
+        columns={columns}
+        // @ts-ignore
+        options={options}
+      />
 
-        <GenericModal
-          open={!!selectedRowChart}
-          // @ts-ignore
-          Content={
-            <ResultChart
-              result={selectedRowChart}
-              handleTabChange={handleTabChange}
-              tabValue={tabValue}
-            />
-          }
-          handleClose={() => setSelectedRowChart(undefined)}
-        />
+      <GenericModal
+        open={!!selectedRowChart}
+        // @ts-ignore
+        Content={
+          <ResultChart
+            result={selectedRowChart}
+            handleTabChange={handleTabChange}
+            tabValue={tabValue}
+          />
+        }
+        handleClose={() => setSelectedRowChart(undefined)}
+      />
 
-        <GenericModal
-          open={!!selectedRowNodeDetails}
-          // @ts-ignore
-          Content={
-            <ResultNodeDetails
-              result={selectedRowNodeDetails}
-              handleTabChange={handleTabChange}
-              tabValue={tabValue}
-            />
-          }
-          handleClose={() => setSelectedRowNodeDetails(undefined)}
-        />
-      </UsesSistent>
+      <GenericModal
+        open={!!selectedRowNodeDetails}
+        // @ts-ignore
+        Content={
+          <ResultNodeDetails
+            result={selectedRowNodeDetails}
+            handleTabChange={handleTabChange}
+            tabValue={tabValue}
+          />
+        }
+        handleClose={() => setSelectedRowNodeDetails(undefined)}
+      />
     </NoSsr>
   );
 }

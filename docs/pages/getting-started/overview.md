@@ -34,12 +34,12 @@ Meshery supports all Kubernetes-based infrastructure including most cloud servic
    - Registry and configuration of WebAssembly filters for Envoy
 1. Interoperability and Federation
    - Integration with thousands of cloud services and cloud native projects
-   - Manage multiple service meshes concurrently
+   - Manage multiple Infrastructure components concurrently
    - Connect to multiple clusters independently
 
 ### Meshery is for Developers, Operators, and Product Owners
 
-Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Meshery has useful capabilities in either circumstance. Targeted audience for Meshery project would be any technology operators that leverage service mesh in their ecosystem; this includes developers, devops engineers, decision makers, architects, and organizations that rely on microservices platform.
+Whether making a Day 0 adoption choice or maintaining a Day 2 deployment, Meshery has useful capabilities in either circumstance. Targeted audience for Meshery project would be any technology operators that leverage cloud native infrastructurein their ecosystem; this includes developers, devops engineers, decision makers, architects, and organizations that rely on microservices platform.
 
 ### Meshery is for cloud native patterns
 

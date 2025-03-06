@@ -15,17 +15,16 @@ import { useRef } from 'react';
 import AddIconCircleBorder from '../assets/icons/AddIconCircleBorder';
 import _PromptComponent from './PromptComponent';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { promisifiedDataFetch } from '../lib/data-fetch';
 import { updateProgress } from '../lib/store';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
 import { CONNECTION_STATES } from '../utils/Enum';
-import { TootltipWrappedConnectionChip, ConnectionStateChip } from './connections/ConnectionChip';
+import { TooltipWrappedConnectionChip, ConnectionStateChip } from './connections/ConnectionChip';
 import useKubernetesHook from './hooks/useKubernetesHook';
 import { keys } from '@/utils/permission_constants';
 import useTestIDsGenerator from './hooks/useTestIDs';
 import CAN from '@/utils/can';
-import { UsesSistent } from './SistentWrapper';
+import { useAddKubernetesConfigMutation } from '../rtk-query/connection';
 
 const styles = styled((theme) => ({
   ctxIcon: {
@@ -52,6 +51,8 @@ const MesherySettingsEnvButtons = () => {
   let contextsRef = useRef();
 
   const testIDs = useTestIDsGenerator('connection');
+
+  const [addK8sConfig] = useAddKubernetesConfigMutation();
 
   const handleConfigSnackbars = (ctxs) => {
     updateProgress({ showProgress: false });
@@ -84,10 +85,7 @@ const MesherySettingsEnvButtons = () => {
   };
 
   const uploadK8SConfig = async () => {
-    return await promisifiedDataFetch('/api/system/kubernetes', {
-      method: 'POST',
-      body: formData,
-    });
+    return await addK8sConfig({ body: formData }).unwrap();
   };
 
   const showUploadedContexts = async (inputFileName) => {
@@ -187,22 +185,21 @@ const MesherySettingsEnvButtons = () => {
         return;
       }
 
-      uploadK8SConfig()
-        .then((obj) => {
-          contextsRef.current = obj;
-          showUploadedContexts(inputFileName);
-          handleConfigSnackbars(obj);
-        })
-        .catch((err) => {
-          handleError('failed to upload kubernetes config')(err);
-        });
+      try {
+        const obj = await uploadK8SConfig();
+        contextsRef.current = obj;
+        await showUploadedContexts(inputFileName);
+        handleConfigSnackbars(obj);
+      } catch (err) {
+        handleError('failed to upload kubernetes config')(err);
+      }
       formData.delete('k8sfile');
     }
   };
 
   return (
     <div>
-      <UsesSistent>
+      <>
         <Button
           type="submit"
           variant="contained"
@@ -227,7 +224,7 @@ const MesherySettingsEnvButtons = () => {
             Add Cluster
           </Typography>
         </Button>
-      </UsesSistent>
+      </>
       <_PromptComponent ref={ref} />
     </div>
   );
@@ -306,7 +303,7 @@ const K8sConnectionItems = ({ status, contexts, ping }) => {
                 whiteSpace="no-wrap"
                 textOverflow="ellipsis"
               >
-                <TootltipWrappedConnectionChip
+                <TooltipWrappedConnectionChip
                   title={context.name}
                   handlePing={() => {
                     ping(context.name, context.server, context.connection_id);

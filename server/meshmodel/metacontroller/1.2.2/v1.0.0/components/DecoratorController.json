@@ -1,196 +1,196 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "DecoratorController",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"attachments\": {\n     \"items\": {\n      \"properties\": {\n       \"apiVersion\": {\n        \"type\": \"string\"\n       },\n       \"resource\": {\n        \"type\": \"string\"\n       },\n       \"updateStrategy\": {\n        \"properties\": {\n         \"method\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"apiVersion\",\n       \"resource\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"hooks\": {\n     \"properties\": {\n      \"customize\": {\n       \"properties\": {\n        \"webhook\": {\n         \"properties\": {\n          \"path\": {\n           \"type\": \"string\"\n          },\n          \"service\": {\n           \"properties\": {\n            \"name\": {\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"type\": \"string\"\n            },\n            \"port\": {\n             \"format\": \"int32\",\n             \"type\": \"integer\"\n            },\n            \"protocol\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"namespace\"\n           ],\n           \"type\": \"object\"\n          },\n          \"timeout\": {\n           \"type\": \"string\"\n          },\n          \"url\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"finalize\": {\n       \"properties\": {\n        \"webhook\": {\n         \"properties\": {\n          \"path\": {\n           \"type\": \"string\"\n          },\n          \"service\": {\n           \"properties\": {\n            \"name\": {\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"type\": \"string\"\n            },\n            \"port\": {\n             \"format\": \"int32\",\n             \"type\": \"integer\"\n            },\n            \"protocol\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"namespace\"\n           ],\n           \"type\": \"object\"\n          },\n          \"timeout\": {\n           \"type\": \"string\"\n          },\n          \"url\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"sync\": {\n       \"properties\": {\n        \"webhook\": {\n         \"properties\": {\n          \"path\": {\n           \"type\": \"string\"\n          },\n          \"service\": {\n           \"properties\": {\n            \"name\": {\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"type\": \"string\"\n            },\n            \"port\": {\n             \"format\": \"int32\",\n             \"type\": \"integer\"\n            },\n            \"protocol\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"namespace\"\n           ],\n           \"type\": \"object\"\n          },\n          \"timeout\": {\n           \"type\": \"string\"\n          },\n          \"url\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resources\": {\n     \"items\": {\n      \"properties\": {\n       \"annotationSelector\": {\n        \"properties\": {\n         \"matchAnnotations\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"object\"\n         },\n         \"matchExpressions\": {\n          \"items\": {\n           \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"key is the label key that the selector applies to.\",\n             \"type\": \"string\"\n            },\n            \"operator\": {\n             \"description\": \"operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.\",\n             \"type\": \"string\"\n            },\n            \"values\": {\n             \"description\": \"values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.\",\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\"\n            }\n           },\n           \"required\": [\n            \"key\",\n            \"operator\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"apiVersion\": {\n        \"type\": \"string\"\n       },\n       \"labelSelector\": {\n        \"description\": \"A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.\",\n        \"properties\": {\n         \"matchExpressions\": {\n          \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n          \"items\": {\n           \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"key is the label key that the selector applies to.\",\n             \"type\": \"string\"\n            },\n            \"operator\": {\n             \"description\": \"operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.\",\n             \"type\": \"string\"\n            },\n            \"values\": {\n             \"description\": \"values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.\",\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\"\n            }\n           },\n           \"required\": [\n            \"key\",\n            \"operator\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"matchLabels\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the operator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"resource\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"apiVersion\",\n       \"resource\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"resyncPeriodSeconds\": {\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"resources\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Decorator Controller\",\n \"type\": \"object\"\n}",
-   "version": "metacontroller.k8s.io/v1alpha1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Decorator Controller",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": false,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Decorator Controller",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Uncategorized"
-   },
-   "displayName": "Metacontroller",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "metacontroller",
+    "displayName": "Metacontroller",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized"
+    },
+    "subCategory": "Uncategorized",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://github.com/cowboysysop/charts/releases/download/metacontroller-1.2.2/metacontroller-1.2.2.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "1.2.2"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "source_uri": "https://github.com/cowboysysop/charts/releases/download/metacontroller-1.2.2/metacontroller-1.2.2.tgz",
-    "styleOverrides": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "1.2.2"
-   },
-   "name": "metacontroller",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Uncategorized",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": false,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "DecoratorController",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"attachments\": {\n     \"items\": {\n      \"properties\": {\n       \"apiVersion\": {\n        \"type\": \"string\"\n       },\n       \"resource\": {\n        \"type\": \"string\"\n       },\n       \"updateStrategy\": {\n        \"properties\": {\n         \"method\": {\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"required\": [\n       \"apiVersion\",\n       \"resource\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"hooks\": {\n     \"properties\": {\n      \"customize\": {\n       \"properties\": {\n        \"webhook\": {\n         \"properties\": {\n          \"path\": {\n           \"type\": \"string\"\n          },\n          \"service\": {\n           \"properties\": {\n            \"name\": {\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"type\": \"string\"\n            },\n            \"port\": {\n             \"format\": \"int32\",\n             \"type\": \"integer\"\n            },\n            \"protocol\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"namespace\"\n           ],\n           \"type\": \"object\"\n          },\n          \"timeout\": {\n           \"type\": \"string\"\n          },\n          \"url\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"finalize\": {\n       \"properties\": {\n        \"webhook\": {\n         \"properties\": {\n          \"path\": {\n           \"type\": \"string\"\n          },\n          \"service\": {\n           \"properties\": {\n            \"name\": {\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"type\": \"string\"\n            },\n            \"port\": {\n             \"format\": \"int32\",\n             \"type\": \"integer\"\n            },\n            \"protocol\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"namespace\"\n           ],\n           \"type\": \"object\"\n          },\n          \"timeout\": {\n           \"type\": \"string\"\n          },\n          \"url\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"sync\": {\n       \"properties\": {\n        \"webhook\": {\n         \"properties\": {\n          \"path\": {\n           \"type\": \"string\"\n          },\n          \"service\": {\n           \"properties\": {\n            \"name\": {\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"type\": \"string\"\n            },\n            \"port\": {\n             \"format\": \"int32\",\n             \"type\": \"integer\"\n            },\n            \"protocol\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"name\",\n            \"namespace\"\n           ],\n           \"type\": \"object\"\n          },\n          \"timeout\": {\n           \"type\": \"string\"\n          },\n          \"url\": {\n           \"type\": \"string\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resources\": {\n     \"items\": {\n      \"properties\": {\n       \"annotationSelector\": {\n        \"properties\": {\n         \"matchAnnotations\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"object\"\n         },\n         \"matchExpressions\": {\n          \"items\": {\n           \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"key is the label key that the selector applies to.\",\n             \"type\": \"string\"\n            },\n            \"operator\": {\n             \"description\": \"operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.\",\n             \"type\": \"string\"\n            },\n            \"values\": {\n             \"description\": \"values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.\",\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\"\n            }\n           },\n           \"required\": [\n            \"key\",\n            \"operator\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"apiVersion\": {\n        \"type\": \"string\"\n       },\n       \"labelSelector\": {\n        \"description\": \"A label selector is a label query over a set of resources. The result of matchLabels and matchExpressions are ANDed. An empty label selector matches all objects. A null label selector matches no objects.\",\n        \"properties\": {\n         \"matchExpressions\": {\n          \"description\": \"matchExpressions is a list of label selector requirements. The requirements are ANDed.\",\n          \"items\": {\n           \"description\": \"A label selector requirement is a selector that contains values, a key, and an operator that relates the key and values.\",\n           \"properties\": {\n            \"key\": {\n             \"description\": \"key is the label key that the selector applies to.\",\n             \"type\": \"string\"\n            },\n            \"operator\": {\n             \"description\": \"operator represents a key's relationship to a set of values. Valid operators are In, NotIn, Exists and DoesNotExist.\",\n             \"type\": \"string\"\n            },\n            \"values\": {\n             \"description\": \"values is an array of string values. If the operator is In or NotIn, the values array must be non-empty. If the operator is Exists or DoesNotExist, the values array must be empty. This array is replaced during a strategic merge patch.\",\n             \"items\": {\n              \"type\": \"string\"\n             },\n             \"type\": \"array\"\n            }\n           },\n           \"required\": [\n            \"key\",\n            \"operator\"\n           ],\n           \"type\": \"object\"\n          },\n          \"type\": \"array\"\n         },\n         \"matchLabels\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"description\": \"matchLabels is a map of {key,value} pairs. A single {key,value} in the matchLabels map is equivalent to an element of matchExpressions, whose key field is \\\"key\\\", the operator is \\\"In\\\", and the values array contains only \\\"value\\\". The requirements are ANDed.\",\n          \"type\": \"object\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"resource\": {\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"apiVersion\",\n       \"resource\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"resyncPeriodSeconds\": {\n     \"format\": \"int32\",\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"resources\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Decorator Controller\",\n \"type\": \"object\"\n}",
+    "version": "metacontroller.k8s.io/v1alpha1"
+  }
+}

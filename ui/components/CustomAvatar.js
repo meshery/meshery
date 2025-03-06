@@ -3,9 +3,8 @@ import { styled, Badge } from '@layer5/sistent';
 
 const StyledBadge = styled(Badge)(({ theme, color }) => ({
   '& .MuiBadge-badge': {
-    backgroundColor: color || '#44b700',
-    color: color || '#44b700',
-    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    backgroundColor: color || theme.palette.background.brand.default,
+    color: color || theme.palette.background.brand.default,
     '&::after': {
       position: 'absolute',
       top: 0,

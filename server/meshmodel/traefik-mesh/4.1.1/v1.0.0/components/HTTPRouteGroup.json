@@ -1,196 +1,196 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "HTTPRouteGroup",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"matches\": {\n     \"description\": \"Match conditions of this route group.\",\n     \"items\": {\n      \"properties\": {\n       \"headers\": {\n        \"description\": \"Header match conditions of this route.\",\n        \"items\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"description\": \"Header match condition of this route.\",\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"methods\": {\n        \"description\": \"The HTTP methods of this HTTP route.\",\n        \"items\": {\n         \"description\": \"The HTTP method of this HTTP route.\",\n         \"enum\": [\n          \"*\",\n          \"GET\",\n          \"HEAD\",\n          \"PUT\",\n          \"POST\",\n          \"DELETE\",\n          \"CONNECT\",\n          \"OPTIONS\",\n          \"TRACE\",\n          \"PATCH\"\n         ],\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"name\": {\n        \"description\": \"Name of the HTTP route.\",\n        \"type\": \"string\"\n       },\n       \"pathRegex\": {\n        \"description\": \"URI path regex of the HTTP route.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"matches\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"HTTP Route Group\",\n \"type\": \"object\"\n}",
-   "version": "specs.smi-spec.io/v1alpha4"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "HTTP Route Group",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "HTTP Route Group",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Orchestration \u0026 Management"
-   },
-   "displayName": "Traefik Mesh",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "traefik-mesh",
+    "displayName": "Traefik Mesh",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Orchestration \u0026 Management"
+    },
+    "subCategory": "Service Mesh",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#9D0FB0",
+      "secondaryColor": "#e281f0",
+      "shape": "circle",
+      "source_uri": "https://traefik.github.io/charts/mesh/traefik-mesh-4.1.1.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 32 32\" fill=\"none\"\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" clip-path=\"url(#a)\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"m11.54 6.143.046.025 3.928 2.226a.878.878 0 0 0 .865 0l3.896-2.202a1.315 1.315 0 0 1 1.792.482 1.336 1.336 0 0 1-.45 1.808l-.045.027-2.249 1.273a.442.442 0 0 0-.224.386.446.446 0 0 0 .224.386l6.072 3.442a.875.875 0 0 0 .865 0l3.756-2.129a1.315 1.315 0 0 1 1.796.478 1.335 1.335 0 0 1-.453 1.812l-.045.027-2.115 1.196a.442.442 0 0 0-.164.61c.04.067.096.123.164.162l2.125 1.204a1.329 1.329 0 0 1 .518 1.79 1.316 1.316 0 0 1-1.771.551l-.046-.025-3.766-2.135a.877.877 0 0 0-.865 0l-6.14 3.48a.441.441 0 0 0-.164.61.44.44 0 0 0 .164.161l2.537 1.438a1.336 1.336 0 0 1 .51 1.785 1.318 1.318 0 0 1-1.763.556l-.046-.025-4.177-2.369a.878.878 0 0 0-.865 0l-4.215 2.392a1.315 1.315 0 0 1-1.79-.48 1.335 1.335 0 0 1 .447-1.81l.045-.026 2.572-1.46a.44.44 0 0 0 .167-.604.432.432 0 0 0-.167-.168l-6.084-3.448a.878.878 0 0 0-.866 0l-3.582 2.027a1.316 1.316 0 0 1-1.794-.48 1.336 1.336 0 0 1 .453-1.81l.045-.027 1.937-1.096a.44.44 0 0 0 .225-.386.444.444 0 0 0-.225-.386L.684 14.314a1.336 1.336 0 0 1-.51-1.785 1.315 1.315 0 0 1 1.762-.556l.047.025 3.579 2.029a.876.876 0 0 0 .864 0l6.143-3.476a.442.442 0 0 0 .225-.386.444.444 0 0 0-.225-.386l-2.281-1.295a1.336 1.336 0 0 1-.51-1.785c.164-.305.44-.534.769-.638.329-.104.685-.074.993.083v-.001Zm3.973 5.793-6.144 3.476a.442.442 0 0 0-.165.61c.04.068.096.124.165.163l6.08 3.446a.876.876 0 0 0 .866 0l6.138-3.48a.442.442 0 0 0 .164-.609.443.443 0 0 0-.164-.162l-6.076-3.444a.877.877 0 0 0-.865 0Z\" fill=\"#fff\"\u003e\u003c/path\u003e\u003c/g\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cclipPath xmlns=\"http://www.w3.org/2000/svg\" id=\"a\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#fff\" d=\"M0 0h32v32H0z\"\u003e\u003c/path\u003e\u003c/clipPath\u003e\u003c/defs\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "4.1.1"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#9D0FB0",
     "secondaryColor": "#e281f0",
     "shape": "circle",
-    "source_uri": "https://traefik.github.io/charts/mesh/traefik-mesh-4.1.1.tgz",
-    "styleOverrides": "",
     "svgColor": "",
-    "svgComplete": "",
-    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 32 32\" fill=\"none\"\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" clip-path=\"url(#a)\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"m11.54 6.143.046.025 3.928 2.226a.878.878 0 0 0 .865 0l3.896-2.202a1.315 1.315 0 0 1 1.792.482 1.336 1.336 0 0 1-.45 1.808l-.045.027-2.249 1.273a.442.442 0 0 0-.224.386.446.446 0 0 0 .224.386l6.072 3.442a.875.875 0 0 0 .865 0l3.756-2.129a1.315 1.315 0 0 1 1.796.478 1.335 1.335 0 0 1-.453 1.812l-.045.027-2.115 1.196a.442.442 0 0 0-.164.61c.04.067.096.123.164.162l2.125 1.204a1.329 1.329 0 0 1 .518 1.79 1.316 1.316 0 0 1-1.771.551l-.046-.025-3.766-2.135a.877.877 0 0 0-.865 0l-6.14 3.48a.441.441 0 0 0-.164.61.44.44 0 0 0 .164.161l2.537 1.438a1.336 1.336 0 0 1 .51 1.785 1.318 1.318 0 0 1-1.763.556l-.046-.025-4.177-2.369a.878.878 0 0 0-.865 0l-4.215 2.392a1.315 1.315 0 0 1-1.79-.48 1.335 1.335 0 0 1 .447-1.81l.045-.026 2.572-1.46a.44.44 0 0 0 .167-.604.432.432 0 0 0-.167-.168l-6.084-3.448a.878.878 0 0 0-.866 0l-3.582 2.027a1.316 1.316 0 0 1-1.794-.48 1.336 1.336 0 0 1 .453-1.81l.045-.027 1.937-1.096a.44.44 0 0 0 .225-.386.444.444 0 0 0-.225-.386L.684 14.314a1.336 1.336 0 0 1-.51-1.785 1.315 1.315 0 0 1 1.762-.556l.047.025 3.579 2.029a.876.876 0 0 0 .864 0l6.143-3.476a.442.442 0 0 0 .225-.386.444.444 0 0 0-.225-.386l-2.281-1.295a1.336 1.336 0 0 1-.51-1.785c.164-.305.44-.534.769-.638.329-.104.685-.074.993.083v-.001Zm3.973 5.793-6.144 3.476a.442.442 0 0 0-.165.61c.04.068.096.124.165.163l6.08 3.446a.876.876 0 0 0 .866 0l6.138-3.48a.442.442 0 0 0 .164-.609.443.443 0 0 0-.164-.162l-6.076-3.444a.877.877 0 0 0-.865 0Z\" fill=\"#fff\"\u003e\u003c/path\u003e\u003c/g\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cclipPath xmlns=\"http://www.w3.org/2000/svg\" id=\"a\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#fff\" d=\"M0 0h32v32H0z\"\u003e\u003c/path\u003e\u003c/clipPath\u003e\u003c/defs\u003e\u003c/svg\u003e"
-   },
-   "model": {
-    "version": "4.1.1"
-   },
-   "name": "traefik-mesh",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Service Mesh",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
+    "svgWhite": "\u003csvg width=\"32\" height=\"32\" viewBox=\"0 0 32 32\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cg clip-path=\"url(#a)\"\u003e\u003cpath d=\"m11.54 6.143.046.025 3.928 2.226a.878.878 0 0 0 .865 0l3.896-2.202a1.315 1.315 0 0 1 1.792.482 1.336 1.336 0 0 1-.45 1.808l-.045.027-2.249 1.273a.442.442 0 0 0-.224.386.446.446 0 0 0 .224.386l6.072 3.442a.875.875 0 0 0 .865 0l3.756-2.129a1.315 1.315 0 0 1 1.796.478 1.335 1.335 0 0 1-.453 1.812l-.045.027-2.115 1.196a.442.442 0 0 0-.164.61c.04.067.096.123.164.162l2.125 1.204a1.329 1.329 0 0 1 .518 1.79 1.316 1.316 0 0 1-1.771.551l-.046-.025-3.766-2.135a.877.877 0 0 0-.865 0l-6.14 3.48a.441.441 0 0 0-.164.61.44.44 0 0 0 .164.161l2.537 1.438a1.336 1.336 0 0 1 .51 1.785 1.318 1.318 0 0 1-1.763.556l-.046-.025-4.177-2.369a.878.878 0 0 0-.865 0l-4.215 2.392a1.315 1.315 0 0 1-1.79-.48 1.335 1.335 0 0 1 .447-1.81l.045-.026 2.572-1.46a.44.44 0 0 0 .167-.604.432.432 0 0 0-.167-.168l-6.084-3.448a.878.878 0 0 0-.866 0l-3.582 2.027a1.316 1.316 0 0 1-1.794-.48 1.336 1.336 0 0 1 .453-1.81l.045-.027 1.937-1.096a.44.44 0 0 0 .225-.386.444.444 0 0 0-.225-.386L.684 14.314a1.336 1.336 0 0 1-.51-1.785 1.315 1.315 0 0 1 1.762-.556l.047.025 3.579 2.029a.876.876 0 0 0 .864 0l6.143-3.476a.442.442 0 0 0 .225-.386.444.444 0 0 0-.225-.386l-2.281-1.295a1.336 1.336 0 0 1-.51-1.785c.164-.305.44-.534.769-.638.329-.104.685-.074.993.083v-.001Zm3.973 5.793-6.144 3.476a.442.442 0 0 0-.165.61c.04.068.096.124.165.163l6.08 3.446a.876.876 0 0 0 .866 0l6.138-3.48a.442.442 0 0 0 .164-.609.443.443 0 0 0-.164-.162l-6.076-3.444a.877.877 0 0 0-.865 0Z\" fill=\"#fff\"/\u003e\u003c/g\u003e\u003cdefs\u003e\u003cclipPath id=\"a\"\u003e\u003cpath fill=\"#fff\" d=\"M0 0h32v32H0z\"/\u003e\u003c/clipPath\u003e\u003c/defs\u003e\u003c/svg\u003e"
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#9D0FB0",
-   "secondaryColor": "#e281f0",
-   "shape": "circle",
-   "svgColor": "",
-   "svgWhite": "\u003csvg width=\"32\" height=\"32\" viewBox=\"0 0 32 32\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cg clip-path=\"url(#a)\"\u003e\u003cpath d=\"m11.54 6.143.046.025 3.928 2.226a.878.878 0 0 0 .865 0l3.896-2.202a1.315 1.315 0 0 1 1.792.482 1.336 1.336 0 0 1-.45 1.808l-.045.027-2.249 1.273a.442.442 0 0 0-.224.386.446.446 0 0 0 .224.386l6.072 3.442a.875.875 0 0 0 .865 0l3.756-2.129a1.315 1.315 0 0 1 1.796.478 1.335 1.335 0 0 1-.453 1.812l-.045.027-2.115 1.196a.442.442 0 0 0-.164.61c.04.067.096.123.164.162l2.125 1.204a1.329 1.329 0 0 1 .518 1.79 1.316 1.316 0 0 1-1.771.551l-.046-.025-3.766-2.135a.877.877 0 0 0-.865 0l-6.14 3.48a.441.441 0 0 0-.164.61.44.44 0 0 0 .164.161l2.537 1.438a1.336 1.336 0 0 1 .51 1.785 1.318 1.318 0 0 1-1.763.556l-.046-.025-4.177-2.369a.878.878 0 0 0-.865 0l-4.215 2.392a1.315 1.315 0 0 1-1.79-.48 1.335 1.335 0 0 1 .447-1.81l.045-.026 2.572-1.46a.44.44 0 0 0 .167-.604.432.432 0 0 0-.167-.168l-6.084-3.448a.878.878 0 0 0-.866 0l-3.582 2.027a1.316 1.316 0 0 1-1.794-.48 1.336 1.336 0 0 1 .453-1.81l.045-.027 1.937-1.096a.44.44 0 0 0 .225-.386.444.444 0 0 0-.225-.386L.684 14.314a1.336 1.336 0 0 1-.51-1.785 1.315 1.315 0 0 1 1.762-.556l.047.025 3.579 2.029a.876.876 0 0 0 .864 0l6.143-3.476a.442.442 0 0 0 .225-.386.444.444 0 0 0-.225-.386l-2.281-1.295a1.336 1.336 0 0 1-.51-1.785c.164-.305.44-.534.769-.638.329-.104.685-.074.993.083v-.001Zm3.973 5.793-6.144 3.476a.442.442 0 0 0-.165.61c.04.068.096.124.165.163l6.08 3.446a.876.876 0 0 0 .866 0l6.138-3.48a.442.442 0 0 0 .164-.609.443.443 0 0 0-.164-.162l-6.076-3.444a.877.877 0 0 0-.865 0Z\" fill=\"#fff\"/\u003e\u003c/g\u003e\u003cdefs\u003e\u003cclipPath id=\"a\"\u003e\u003cpath fill=\"#fff\" d=\"M0 0h32v32H0z\"/\u003e\u003c/clipPath\u003e\u003c/defs\u003e\u003c/svg\u003e"
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "HTTPRouteGroup",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"matches\": {\n     \"description\": \"Match conditions of this route group.\",\n     \"items\": {\n      \"properties\": {\n       \"headers\": {\n        \"description\": \"Header match conditions of this route.\",\n        \"items\": {\n         \"additionalProperties\": {\n          \"type\": \"string\"\n         },\n         \"description\": \"Header match condition of this route.\",\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"methods\": {\n        \"description\": \"The HTTP methods of this HTTP route.\",\n        \"items\": {\n         \"description\": \"The HTTP method of this HTTP route.\",\n         \"enum\": [\n          \"*\",\n          \"GET\",\n          \"HEAD\",\n          \"PUT\",\n          \"POST\",\n          \"DELETE\",\n          \"CONNECT\",\n          \"OPTIONS\",\n          \"TRACE\",\n          \"PATCH\"\n         ],\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"name\": {\n        \"description\": \"Name of the HTTP route.\",\n        \"type\": \"string\"\n       },\n       \"pathRegex\": {\n        \"description\": \"URI path regex of the HTTP route.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"name\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"matches\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"HTTP Route Group\",\n \"type\": \"object\"\n}",
+    "version": "specs.smi-spec.io/v1alpha4"
+  }
+}

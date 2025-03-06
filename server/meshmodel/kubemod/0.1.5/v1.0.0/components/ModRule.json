@@ -1,196 +1,196 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "ModRule",
-   "schema": "{\n \"description\": \"ModRule is the Schema for the modrules API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ModRuleSpec defines the desired state of ModRule\",\n   \"properties\": {\n    \"match\": {\n     \"description\": \"Match is a list of match items which consist of select queries and expected match values or regular expressions. When all match items for an object are positive, the rule is in effect.\",\n     \"items\": {\n      \"description\": \"MatchItem represents a single match query.\",\n      \"properties\": {\n       \"matchFor\": {\n        \"description\": \"MatchFor instructs how to match the results against the match... requirements. Valid values are: - \\\"Any\\\" - the match is considered positive if any of the results of select have a match. - \\\"All\\\" - the match is considered positive only if all of the results of select have a match.\",\n        \"enum\": [\n         \"Any\",\n         \"All\"\n        ],\n        \"type\": \"string\"\n       },\n       \"matchRegex\": {\n        \"description\": \"MatchRegex specifies the regular expression to compare the result of Select by. The match is considered positive if at least one of the results of evaluating the select query yields a match when compared to value.\",\n        \"nullable\": true,\n        \"type\": \"string\"\n       },\n       \"matchValue\": {\n        \"description\": \"MatchValue specifies the exact value to match the result of Select by. The match is considered positive if at least one of the results of evaluating the select query yields a match when compared to matchValue.\",\n        \"nullable\": true,\n        \"type\": \"string\"\n       },\n       \"matchValues\": {\n        \"description\": \"MatchValues specifies a list of values to match the result of Select by. The match is considered positive if at least one of the results of evaluating the select query yields a match when compared to any of the values in the array.\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"negate\": {\n        \"description\": \"Negate indicates whether the match result should be to inverted. Defaults to false.\",\n        \"type\": \"boolean\"\n       },\n       \"select\": {\n        \"description\": \"Select is a JSONPath query expression: https://goessner.net/articles/JsonPath/ which yields zero or more values. If no match value or regex is specified, if the query yields a non-empty result, the match is considered positive.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"select\"\n      ],\n      \"type\": \"object\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    },\n    \"patch\": {\n     \"description\": \"Patch is a list of patch operations to perform on the matching resources at the time of creation. The value part of a patch operation can be a golang template which accepts the resource as its context. This field must be provided for ModRules of type \\\"patch\\\"\",\n     \"items\": {\n      \"description\": \"PatchOperation represents a single JSON Patch operation.\",\n      \"properties\": {\n       \"op\": {\n        \"description\": \"Operation is the type of JSON Path operation to perform against the target element.\",\n        \"enum\": [\n         \"add\",\n         \"replace\",\n         \"remove\"\n        ],\n        \"type\": \"string\"\n       },\n       \"path\": {\n        \"description\": \"Path is the JSON path to the target element.\",\n        \"type\": \"string\"\n       },\n       \"select\": {\n        \"description\": \"Optional JSONPath query expression: https://goessner.net/articles/JsonPath/ used to construct path. A patch operation is created for each result of the query. A placeholder is created for each wildcard and filter in the expression. These placeholders can be used when constructing \\\"path\\\". For example, if select is \\\"$.spec.containers[*].ports[?@.containerPort == 80]\\\" placeholder #0 will point to the index of \\\"containers\\\" and #1 will point to the index of \\\"ports\\\". This allows us to define paths such as \\\"/spec/template/spec/containers/#0/securityContext\\\"\",\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"description\": \"Value is the JSON representation of the modification. The value is a golang template which is evaluated against the context of the target resource. KubeMod performs some analysis of the result of the template evaluation in order to infer its JSON type: - If the value matches the format of a JavaScript number, it is considered to be a number. - If the value matches a boolean literal (true/false), it is considered to be a boolean literal. - If the value matches 'null', it is considered to be null. - If the value is surrounded by double-quotes, it is considered to be a string. - If the value is surrounded by brackets, it is considered to be a JSON array. - If the value is surrounded by curly braces, it is considered to be a JSON object. - If none of the above is true, the value is considered to be a string.\",\n        \"nullable\": true,\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"op\",\n       \"path\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"rejectMessage\": {\n     \"description\": \"RejectMessage is an optional message displayed when a resource is rejected by a Reject ModRule. The field is a Golang template evaluated in the context of the object being rejected.\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"description\": \"Type describes the type of a ModRule. Valid values are: - \\\"Patch\\\" - the rule performs modifications on all the matching resources as they are created. - \\\"Reject\\\" - the rule rejects the creation of all matching resources.\",\n     \"enum\": [\n      \"Patch\",\n      \"Reject\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"match\",\n    \"type\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mod Rule\",\n \"type\": \"object\"\n}",
-   "version": "api.kubemod.io/v1beta1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Mod Rule",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Mod Rule",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Uncategorized"
-   },
-   "displayName": "Kubemod",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "kubemod",
+    "displayName": "Kubemod",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized"
+    },
+    "subCategory": "Uncategorized",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://github.com/wiremind/wiremind-helm-charts/releases/download/kubemod-0.1.5/kubemod-0.1.5.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "0.1.5"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "source_uri": "https://github.com/wiremind/wiremind-helm-charts/releases/download/kubemod-0.1.5/kubemod-0.1.5.tgz",
-    "styleOverrides": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "0.1.5"
-   },
-   "name": "kubemod",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Uncategorized",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "ModRule",
+    "schema": "{\n \"description\": \"ModRule is the Schema for the modrules API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"ModRuleSpec defines the desired state of ModRule\",\n   \"properties\": {\n    \"match\": {\n     \"description\": \"Match is a list of match items which consist of select queries and expected match values or regular expressions. When all match items for an object are positive, the rule is in effect.\",\n     \"items\": {\n      \"description\": \"MatchItem represents a single match query.\",\n      \"properties\": {\n       \"matchFor\": {\n        \"description\": \"MatchFor instructs how to match the results against the match... requirements. Valid values are: - \\\"Any\\\" - the match is considered positive if any of the results of select have a match. - \\\"All\\\" - the match is considered positive only if all of the results of select have a match.\",\n        \"enum\": [\n         \"Any\",\n         \"All\"\n        ],\n        \"type\": \"string\"\n       },\n       \"matchRegex\": {\n        \"description\": \"MatchRegex specifies the regular expression to compare the result of Select by. The match is considered positive if at least one of the results of evaluating the select query yields a match when compared to value.\",\n        \"nullable\": true,\n        \"type\": \"string\"\n       },\n       \"matchValue\": {\n        \"description\": \"MatchValue specifies the exact value to match the result of Select by. The match is considered positive if at least one of the results of evaluating the select query yields a match when compared to matchValue.\",\n        \"nullable\": true,\n        \"type\": \"string\"\n       },\n       \"matchValues\": {\n        \"description\": \"MatchValues specifies a list of values to match the result of Select by. The match is considered positive if at least one of the results of evaluating the select query yields a match when compared to any of the values in the array.\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"negate\": {\n        \"description\": \"Negate indicates whether the match result should be to inverted. Defaults to false.\",\n        \"type\": \"boolean\"\n       },\n       \"select\": {\n        \"description\": \"Select is a JSONPath query expression: https://goessner.net/articles/JsonPath/ which yields zero or more values. If no match value or regex is specified, if the query yields a non-empty result, the match is considered positive.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"select\"\n      ],\n      \"type\": \"object\"\n     },\n     \"minItems\": 1,\n     \"type\": \"array\"\n    },\n    \"patch\": {\n     \"description\": \"Patch is a list of patch operations to perform on the matching resources at the time of creation. The value part of a patch operation can be a golang template which accepts the resource as its context. This field must be provided for ModRules of type \\\"patch\\\"\",\n     \"items\": {\n      \"description\": \"PatchOperation represents a single JSON Patch operation.\",\n      \"properties\": {\n       \"op\": {\n        \"description\": \"Operation is the type of JSON Path operation to perform against the target element.\",\n        \"enum\": [\n         \"add\",\n         \"replace\",\n         \"remove\"\n        ],\n        \"type\": \"string\"\n       },\n       \"path\": {\n        \"description\": \"Path is the JSON path to the target element.\",\n        \"type\": \"string\"\n       },\n       \"select\": {\n        \"description\": \"Optional JSONPath query expression: https://goessner.net/articles/JsonPath/ used to construct path. A patch operation is created for each result of the query. A placeholder is created for each wildcard and filter in the expression. These placeholders can be used when constructing \\\"path\\\". For example, if select is \\\"$.spec.containers[*].ports[?@.containerPort == 80]\\\" placeholder #0 will point to the index of \\\"containers\\\" and #1 will point to the index of \\\"ports\\\". This allows us to define paths such as \\\"/spec/template/spec/containers/#0/securityContext\\\"\",\n        \"type\": \"string\"\n       },\n       \"value\": {\n        \"description\": \"Value is the JSON representation of the modification. The value is a golang template which is evaluated against the context of the target resource. KubeMod performs some analysis of the result of the template evaluation in order to infer its JSON type: - If the value matches the format of a JavaScript number, it is considered to be a number. - If the value matches a boolean literal (true/false), it is considered to be a boolean literal. - If the value matches 'null', it is considered to be null. - If the value is surrounded by double-quotes, it is considered to be a string. - If the value is surrounded by brackets, it is considered to be a JSON array. - If the value is surrounded by curly braces, it is considered to be a JSON object. - If none of the above is true, the value is considered to be a string.\",\n        \"nullable\": true,\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"op\",\n       \"path\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"rejectMessage\": {\n     \"description\": \"RejectMessage is an optional message displayed when a resource is rejected by a Reject ModRule. The field is a Golang template evaluated in the context of the object being rejected.\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"description\": \"Type describes the type of a ModRule. Valid values are: - \\\"Patch\\\" - the rule performs modifications on all the matching resources as they are created. - \\\"Reject\\\" - the rule rejects the creation of all matching resources.\",\n     \"enum\": [\n      \"Patch\",\n      \"Reject\"\n     ],\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"match\",\n    \"type\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mod Rule\",\n \"type\": \"object\"\n}",
+    "version": "api.kubemod.io/v1beta1"
+  }
+}

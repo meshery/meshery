@@ -1,8 +1,7 @@
 import { alpha } from '@mui/system';
 import { TextField, Typography, styled } from '@layer5/sistent';
-export const Root = styled('div')(({ theme }) => ({
+export const Root = styled('div')(() => ({
   position: 'relative',
-  backgroundColor: theme.palette.background?.default,
 }));
 
 export const InputField = styled(TextField)(({ theme }) => ({
