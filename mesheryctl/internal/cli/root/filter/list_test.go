@@ -67,7 +67,7 @@ func TestListCmd(t *testing.T) {
 
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
 			FilterCmd.SetArgs(tt.Args)
-			Filtercmd.SetOut(buff)
+			FilterCmd.SetOut(buff)
 			err := FilterCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error

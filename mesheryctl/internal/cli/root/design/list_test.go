@@ -77,7 +77,7 @@ func TestDesignList(t *testing.T) {
 			os.Stdout = w
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
 			DesignCmd.SetArgs(tt.Args)
-			Designcmd.SetOut(rescueStdout)
+			DesignCmd.SetOut(rescueStdout)
 			err := DesignCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error

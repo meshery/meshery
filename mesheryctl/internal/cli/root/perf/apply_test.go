@@ -124,7 +124,7 @@
 // 			b := utils.SetupMeshkitLoggerTesting(t, false)
 
 // 			PerfCmd.SetArgs(tt.Args)
-// 			Perfcmd.SetOut(b)
+// 			PerfCmd.SetOut(b)
 // 			err := PerfCmd.Execute()
 // 			if err != nil {
 // 				if tt.ExpectError {

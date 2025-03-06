@@ -95,7 +95,7 @@ func TestApplyCmd(t *testing.T) {
 
 			// setting up log to grab logs
 			b := utils.SetupMeshkitLoggerTesting(t, false)
-			Designcmd.SetOut(b)
+			DesignCmd.SetOut(b)
 			DesignCmd.SetArgs(tt.Args)
 			err := DesignCmd.Execute()
 			if err != nil {
