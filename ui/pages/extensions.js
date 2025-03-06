@@ -4,7 +4,6 @@ import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 import { Button, CatalogIcon, Grid, Switch, Typography, useTheme } from '@layer5/sistent';
 import { useGetUserPrefQuery, useUpdateUserPrefMutation } from '@/rtk-query/user';
-import { UsesSistent } from '@/components/SistentWrapper';
 import { Adapters } from '../components/extensions';
 import DefaultError from '@/components/General/error-404';
 import { toggleCatalogContent } from '../lib/store';
@@ -25,34 +24,32 @@ const MeshMapSignUpcard = ({ hasAccessToMeshMap = false }) => {
   };
 
   return (
-    <UsesSistent>
-      <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
-        <CardContainer>
-          <Typography data-testid="kanvas-signup-heading" variant="h5" component="div">
-            Kanvas
-          </Typography>
+    <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
+      <CardContainer>
+        <Typography data-testid="kanvas-signup-heading" variant="h5" component="div">
+          Kanvas
+        </Typography>
 
-          <FrontSideDescription variant="body">
-            <ImageWrapper src="/static/img/kanvas-icon-color.svg" />
-            Collaboratively design and manage your Kubernetes clusters, service mesh deployments,
-            and cloud native apps. Kanvas is now publicly available.{' '}
-            {!hasAccessToMeshMap && 'Sign-up today to for access!'}
-          </FrontSideDescription>
-          {
-            <div style={{ textAlign: 'right' }}>
-              <Button
-                variant="contained"
-                data-testid="kanvas-signup-btn"
-                disabled={hasAccessToMeshMap}
-                onClick={(e) => handleSignUp(e)}
-              >
-                {hasAccessToMeshMap ? 'Enabled' : 'Sign Up'}
-              </Button>
-            </div>
-          }
-        </CardContainer>
-      </Grid>
-    </UsesSistent>
+        <FrontSideDescription variant="body">
+          <ImageWrapper src="/static/img/kanvas-icon-color.svg" />
+          Collaboratively design and manage your Kubernetes clusters, service mesh deployments, and
+          cloud native apps. Kanvas is now publicly available.{' '}
+          {!hasAccessToMeshMap && 'Sign-up today to for access!'}
+        </FrontSideDescription>
+        {
+          <div style={{ textAlign: 'right' }}>
+            <Button
+              variant="contained"
+              data-testid="kanvas-signup-btn"
+              disabled={hasAccessToMeshMap}
+              onClick={(e) => handleSignUp(e)}
+            >
+              {hasAccessToMeshMap ? 'Enabled' : 'Sign Up'}
+            </Button>
+          </div>
+        }
+      </CardContainer>
+    </Grid>
   );
 };
 
@@ -79,7 +76,7 @@ const MeshMapSnapShotCard = ({ githubActionEnabled = false }) => {
   };
 
   return (
-    <UsesSistent>
+    <>
       <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
         <CardContainer>
           <Typography data-testid="kanvas-snapshot-heading" variant="h5" component="div">
@@ -105,7 +102,7 @@ const MeshMapSnapShotCard = ({ githubActionEnabled = false }) => {
           </div>
         </CardContainer>
       </Grid>
-    </UsesSistent>
+    </>
   );
 };
 
@@ -134,7 +131,7 @@ const MesheryPerformanceAction = ({ githubActionEnabled = false }) => {
   };
 
   return (
-    <UsesSistent>
+    <>
       <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
         <CardContainer>
           <Typography data-testid="performance-analysis-heading" variant="h5" component="div">
@@ -159,7 +156,7 @@ const MesheryPerformanceAction = ({ githubActionEnabled = false }) => {
           </div>
         </CardContainer>
       </Grid>
-    </UsesSistent>
+    </>
   );
 };
 
@@ -185,7 +182,7 @@ const MesheryDockerExtension = () => {
   };
 
   return (
-    <UsesSistent>
+    <>
       <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
         <CardContainer>
           <Typography data-testid="docker-extension-heading" variant="h5" component="div">
@@ -212,7 +209,7 @@ const MesheryDockerExtension = () => {
           }
         </CardContainer>
       </Grid>
-    </UsesSistent>
+    </>
   );
 };
 
@@ -238,7 +235,7 @@ const MesheryDesignEmbedExtension = () => {
   };
 
   return (
-    <UsesSistent>
+    <>
       <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
         <CardContainer>
           <Typography variant="h5" component="div">
@@ -265,7 +262,7 @@ const MesheryDesignEmbedExtension = () => {
           }
         </CardContainer>
       </Grid>
-    </UsesSistent>
+    </>
   );
 };
 
@@ -333,7 +330,7 @@ const Extensions = ({ toggleCatalogContent, capabilitiesRegistry }) => {
   const theme = useTheme();
 
   return (
-    <UsesSistent>
+    <>
       <React.Fragment>
         <Head>
           <title>Extensions | Meshery</title>
@@ -420,7 +417,7 @@ const Extensions = ({ toggleCatalogContent, capabilitiesRegistry }) => {
           <DefaultError />
         )}
       </React.Fragment>
-    </UsesSistent>
+    </>
   );
 };
 

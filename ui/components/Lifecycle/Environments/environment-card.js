@@ -6,7 +6,7 @@ import { useGetEnvironmentConnectionsQuery } from '../../../rtk-query/environmen
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { Grid, useTheme } from '@layer5/sistent';
-import { UsesSistent } from '@/components/SistentWrapper';
+
 import {
   Name,
   IconButton,
@@ -33,22 +33,20 @@ export const formattoLongDate = (date) => {
 export const TransferButton = ({ title, count, onAssign, disabled }) => {
   const theme = useTheme();
   return (
-    <UsesSistent>
-      <PopupButton disabled={disabled} onClick={onAssign} s>
-        <Grid>
-          <TabCount>{count}</TabCount>
-          <TabTitle>{title}</TabTitle>
-          <SyncAltIcon
-            sx={{
-              position: 'absolute',
-              top: '10px',
-              right: '10px',
-              color: theme.palette.background?.neutral?.default,
-            }}
-          />
-        </Grid>
-      </PopupButton>
-    </UsesSistent>
+    <PopupButton disabled={disabled} onClick={onAssign} s>
+      <Grid>
+        <TabCount>{count}</TabCount>
+        <TabTitle>{title}</TabTitle>
+        <SyncAltIcon
+          sx={{
+            position: 'absolute',
+            top: '10px',
+            right: '10px',
+            color: theme.palette.background?.neutral?.default,
+          }}
+        />
+      </Grid>
+    </PopupButton>
   );
 };
 
@@ -87,7 +85,7 @@ const EnvironmentCard = ({
   const deleted = environmentDetails.deleted_at.Valid;
 
   return (
-    <UsesSistent>
+    <>
       <FlipCard
         disableFlip={
           selectedEnvironments?.filter((id) => id == environmentDetails.id).length === 1
@@ -238,7 +236,7 @@ const EnvironmentCard = ({
           </CardWrapper>
         }
       />
-    </UsesSistent>
+    </>
   );
 };
 

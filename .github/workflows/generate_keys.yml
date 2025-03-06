@@ -11,7 +11,8 @@ on:
 jobs:
   fetch-keys:
     name: Fetch Keys
-    runs-on: ubuntu-22.04
+    if: github.repository == 'meshery/meshery'
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out code
         uses: actions/checkout@v4

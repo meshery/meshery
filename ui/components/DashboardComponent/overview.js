@@ -1,5 +1,5 @@
 import React from 'react';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import { withRouter } from 'next/router';
 import { withNotify } from '../../utils/hooks/useNotification';
 import { connect, Provider } from 'react-redux';
@@ -78,18 +78,12 @@ const Overview = ({ selectedK8sContexts, k8scontext, isEditMode }) => {
   return (
     <NoSsr>
       <Provider store={store}>
-        <div
-          style={{
-            background: theme.palette.background.default,
-          }}
-        >
-          <HoneycombComponent
-            kinds={clusterSummary?.kinds}
-            isClusterLoading={isClusterLoading}
-            isClusterIdsEmpty={isClusterIdsEmpty}
-            isEditMode={isEditMode}
-          />
-        </div>
+        <HoneycombComponent
+          kinds={clusterSummary?.kinds}
+          isClusterLoading={isClusterLoading}
+          isClusterIdsEmpty={isClusterIdsEmpty}
+          isEditMode={isEditMode}
+        />
       </Provider>
     </NoSsr>
   );

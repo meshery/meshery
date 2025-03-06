@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from 'react';
 import { TreeView } from '@mui/x-tree-view/TreeView';
-import { IconButton, FormControlLabel, Switch } from '@layer5/sistent';
+import { IconButton, FormControlLabel, Switch, CircularProgress } from '@layer5/sistent';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
 import SearchBar from '../../utils/custom-search';
 import debounce from '../../utils/debounce';
@@ -16,7 +16,6 @@ import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import _ from 'lodash';
 import CollapseAllIcon from '@/assets/icons/CollapseAll';
 import ExpandAllIcon from '@/assets/icons/ExpandAll';
-import CircularProgress from '@mui/material/CircularProgress';
 import { Colors } from '../../themes/app';
 import { JustifyAndAlignCenter } from './MeshModel.style';
 import { styled } from '@layer5/sistent';
@@ -26,7 +25,7 @@ import {
 } from '@/rtk-query/meshModel';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
-import { UsesSistent } from '../SistentWrapper';
+
 import { StyledTreeItemDiv, StyledTreeItemNameDiv } from './MeshModel.style';
 
 const VersionedModelComponentTree = ({
@@ -731,11 +730,11 @@ const MesheryTreeView = ({
                 <FormControlLabel
                   control={
                     <Switch
-                      color="primary"
                       checked={checked}
                       onClick={handleChecked}
                       disabled={!hasRecords}
                       inputProps={{ 'aria-label': 'controlled' }}
+                      size="small"
                     />
                   }
                   label="Show Duplicates"
@@ -748,7 +747,7 @@ const MesheryTreeView = ({
                     view,
                   )}. Entries with identical name and version attributes are considered duplicates. [Learn More](https://docs.meshery.io/concepts/logical/models#models)`}
                 >
-                  <IconButton color="primary">
+                  <IconButton>
                     <InfoOutlinedIcon height={20} width={20} />
                   </IconButton>
                 </CustomTextTooltip>
@@ -807,71 +806,69 @@ const MesheryTreeView = ({
   );
 
   return (
-    <UsesSistent>
-      <MesheryTreeViewWrapper style={{ width: '100%', height: '100%' }}>
-        {view === MODELS &&
-          renderTree(
-            <MesheryTreeViewModel
-              data={data}
-              handleToggle={handleToggle}
-              handleSelect={handleSelect}
-              expanded={expanded}
-              selected={selected}
-              setShowDetailsData={setShowDetailsData}
-              showDetailsData={showDetailsData}
-              lastModelRef={lastItemRef[MODELS]}
-              isModelFetching={isFetching[MODELS]}
-            />,
-            MODELS,
-          )}
-        {view === REGISTRANTS &&
-          renderTree(
-            <MesheryTreeViewRegistrants
-              data={data}
-              handleToggle={handleToggle}
-              handleSelect={handleSelect}
-              expanded={expanded}
-              selected={selected}
-              setShowDetailsData={setShowDetailsData}
-              showDetailsData={showDetailsData}
-              lastRegistrantRef={lastItemRef[REGISTRANTS]}
-              isRegistrantFetching={isFetching[REGISTRANTS]}
-            />,
-            REGISTRANTS,
-          )}
-        {view === COMPONENTS &&
-          renderTree(
-            <ComponentTree
-              handleToggle={handleToggle}
-              handleSelect={handleSelect}
-              expanded={expanded}
-              selected={selected}
-              data={data}
-              setExpanded={setExpanded}
-              setSelected={setSelected}
-              setSearchText={setSearchText}
-              setShowDetailsData={setShowDetailsData}
-              lastComponentRef={lastItemRef[COMPONENTS]}
-              isComponentFetching={isFetching[COMPONENTS]}
-            />,
-            COMPONENTS,
-          )}
-        {view === RELATIONSHIPS &&
-          renderTree(
-            <RelationshipTree
-              handleToggle={handleToggle}
-              handleSelect={handleSelect}
-              expanded={expanded}
-              selected={selected}
-              data={data}
-              setShowDetailsData={setShowDetailsData}
-              lastRegistrantRef={lastItemRef[RELATIONSHIPS]}
-              isRelationshipFetching={isFetching[RELATIONSHIPS]}
-            />,
-            RELATIONSHIPS,
-          )}
-      </MesheryTreeViewWrapper>
-    </UsesSistent>
+    <MesheryTreeViewWrapper style={{ width: '100%', height: '100%' }}>
+      {view === MODELS &&
+        renderTree(
+          <MesheryTreeViewModel
+            data={data}
+            handleToggle={handleToggle}
+            handleSelect={handleSelect}
+            expanded={expanded}
+            selected={selected}
+            setShowDetailsData={setShowDetailsData}
+            showDetailsData={showDetailsData}
+            lastModelRef={lastItemRef[MODELS]}
+            isModelFetching={isFetching[MODELS]}
+          />,
+          MODELS,
+        )}
+      {view === REGISTRANTS &&
+        renderTree(
+          <MesheryTreeViewRegistrants
+            data={data}
+            handleToggle={handleToggle}
+            handleSelect={handleSelect}
+            expanded={expanded}
+            selected={selected}
+            setShowDetailsData={setShowDetailsData}
+            showDetailsData={showDetailsData}
+            lastRegistrantRef={lastItemRef[REGISTRANTS]}
+            isRegistrantFetching={isFetching[REGISTRANTS]}
+          />,
+          REGISTRANTS,
+        )}
+      {view === COMPONENTS &&
+        renderTree(
+          <ComponentTree
+            handleToggle={handleToggle}
+            handleSelect={handleSelect}
+            expanded={expanded}
+            selected={selected}
+            data={data}
+            setExpanded={setExpanded}
+            setSelected={setSelected}
+            setSearchText={setSearchText}
+            setShowDetailsData={setShowDetailsData}
+            lastComponentRef={lastItemRef[COMPONENTS]}
+            isComponentFetching={isFetching[COMPONENTS]}
+          />,
+          COMPONENTS,
+        )}
+      {view === RELATIONSHIPS &&
+        renderTree(
+          <RelationshipTree
+            handleToggle={handleToggle}
+            handleSelect={handleSelect}
+            expanded={expanded}
+            selected={selected}
+            data={data}
+            setShowDetailsData={setShowDetailsData}
+            lastRegistrantRef={lastItemRef[RELATIONSHIPS]}
+            isRelationshipFetching={isFetching[RELATIONSHIPS]}
+          />,
+          RELATIONSHIPS,
+        )}
+    </MesheryTreeViewWrapper>
   );
 };
 

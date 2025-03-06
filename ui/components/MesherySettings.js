@@ -2,13 +2,25 @@ import React, { useState, useEffect, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'next/router';
 import { connect, Provider } from 'react-redux';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import { bindActionCreators } from 'redux';
-import { CustomTooltip, AppBar, Typography, styled, Tabs, Tab, Paper, Grid } from '@layer5/sistent';
+import {
+  CustomTooltip,
+  AppBar,
+  Typography,
+  styled,
+  Tabs,
+  Tab,
+  Paper,
+  Grid,
+  LeftArrowIcon,
+  PollIcon,
+  DatabaseIcon,
+  FileIcon,
+  MendeleyIcon,
+  useTheme,
+} from '@layer5/sistent';
 import DashboardMeshModelGraph from './DashboardComponent/charts/DashboardMeshModelGraph';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft, faPoll, faDatabase, faFileInvoice } from '@fortawesome/free-solid-svg-icons';
-import { faMendeley } from '@fortawesome/free-brands-svg-icons';
 import Link from 'next/link';
 import GrafanaComponent from './telemetry/grafana/GrafanaComponent';
 import MeshAdapterConfigComponent from './MeshAdapterConfigComponent';
@@ -41,7 +53,6 @@ import DefaultError from './General/error-404';
 import { store } from '../store';
 import MesheryConfigurationChart from './DashboardComponent/charts/MesheryConfigurationCharts';
 import ConnectionStatsChart from './DashboardComponent/charts/ConnectionCharts';
-import { UsesSistent } from './SistentWrapper';
 import { SecondaryTab, SecondaryTabs } from './DashboardComponent/style';
 
 const StyledPaper = styled(Paper)(() => ({
@@ -125,6 +136,7 @@ const settingsRouter = (router) => {
 const MesherySettings = (props) => {
   const { k8sconfig, meshAdapters, grafana, prometheus, router, classes } = props;
   const { selectedSettingsCategory, selectedTab } = settingsRouter(router);
+  const theme = useTheme();
 
   const [state, setState] = useState({
     k8sconfig,
@@ -221,7 +233,7 @@ const MesherySettings = (props) => {
       <div className={classes.backToPlay}>
         <Link href="/management">
           <div className={classes.link}>
-            <FontAwesomeIcon icon={faArrowLeft} transform="grow-4" fixedWidth />
+            <LeftArrowIcon transform="grow-4" />
             You are ready to manage cloud native infrastructure
           </div>
         </Link>
@@ -231,7 +243,7 @@ const MesherySettings = (props) => {
   return (
     <>
       {CAN(keys.VIEW_SETTINGS.action, keys.VIEW_SETTINGS.subject) ? (
-        <UsesSistent>
+        <>
           <div sx={{ flexGrow: 1, maxWidth: '100%', height: 'auto' }}>
             <StyledPaper square>
               <Tabs
@@ -266,7 +278,7 @@ const MesherySettings = (props) => {
                   value={ADAPTERS}
                 >
                   <Tab
-                    icon={<FontAwesomeIcon icon={faMendeley} style={iconMedium} />}
+                    icon={<MendeleyIcon {...iconMedium} fill={theme.palette.icon.default} />}
                     label="Adapters"
                     data-cy="tabServiceMeshes"
                     value={ADAPTERS}
@@ -280,7 +292,7 @@ const MesherySettings = (props) => {
                 </CustomTooltip>
                 <CustomTooltip title="Configure Metrics backends" placement="top" value={METRICS}>
                   <Tab
-                    icon={<FontAwesomeIcon icon={faPoll} style={iconMedium} />}
+                    icon={<PollIcon {...iconMedium} fill={theme.palette.icon.default} />}
                     label="Metrics"
                     data-testid="settings-tab-metrics"
                     // tab="tabMetrics"
@@ -290,7 +302,7 @@ const MesherySettings = (props) => {
                 </CustomTooltip>
                 <CustomTooltip title="Registry" placement="top" value={REGISTRY}>
                   <Tab
-                    icon={<FontAwesomeIcon icon={faFileInvoice} style={iconMedium} />}
+                    icon={<FileIcon {...iconMedium} fill={theme.palette.icon.default} />}
                     label="Registry"
                     data-testid="settings-tab-registry"
                     // tab="registry"
@@ -301,7 +313,7 @@ const MesherySettings = (props) => {
 
                 <CustomTooltip title="Reset System" placement="top" value={RESET}>
                   <Tab
-                    icon={<FontAwesomeIcon icon={faDatabase} style={iconMedium} />}
+                    icon={<DatabaseIcon {...iconMedium} fill={theme.palette.icon.default} />}
                     label="Reset"
                     data-testid="settings-tab-reset"
                     // tab="systemReset"
@@ -412,7 +424,7 @@ const MesherySettings = (props) => {
             {backToPlay}
             <_PromptComponent ref={systemResetPromptRef} />
           </div>
-        </UsesSistent>
+        </>
       ) : (
         <DefaultError />
       )}

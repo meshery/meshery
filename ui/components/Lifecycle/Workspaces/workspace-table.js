@@ -19,8 +19,8 @@ import {
   WorkspaceTeamsTable,
   WorkspaceViewsTable,
   Grid,
+  TableCell,
 } from '@layer5/sistent';
-import { TableCell } from '@mui/material';
 import { useState } from 'react';
 import { useDeletePattern, usePublishPattern } from './hooks';
 import { useLegacySelector } from 'lib/store';
@@ -29,7 +29,6 @@ import React from 'react';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import Modal from '@/components/Modal';
-import { UsesSistent } from '@/components/SistentWrapper';
 import { useGetUsersForOrgQuery, useRemoveUserFromTeamMutation } from '@/rtk-query/user';
 import { useNotification, useNotificationHandlers } from '@/utils/hooks/useNotification';
 import downloadContent from '@/utils/fileDownloader';
@@ -128,7 +127,7 @@ const WorkSpaceDataTable = ({ rowData }) => {
               gap: '1rem',
             }}
           >
-            <UsesSistent>
+            <>
               {isDesignsVisible && (
                 <DesignTable
                   GenericRJSFModal={Modal}
@@ -227,7 +226,7 @@ const WorkSpaceDataTable = ({ rowData }) => {
                   useAssignEnvironmentToWorkspaceMutation={useAssignEnvironmentToWorkspaceMutation}
                 />
               )}
-            </UsesSistent>
+            </>
           </Grid>
         </TableCell>
       </ErrorBoundary>

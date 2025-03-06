@@ -1,9 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import { Chip, Box, styled } from '@layer5/sistent';
 import MUIDataTable from 'mui-datatables';
-import { UsesSistent } from '@/components/SistentWrapper';
 
 const Root = styled(Box)(({ theme }) => ({
   padding: theme.spacing(5),
@@ -62,19 +61,17 @@ const GrafanaDisplaySelection = ({ boardPanelConfigs, deleteSelectedBoardPanelCo
     },
   };
   return (
-    <UsesSistent>
-      <NoSsr>
-        <Root>
-          <MUIDataTable
-            key={`gds_${new Date().getTime()}`}
-            title="Meshery Results"
-            data={selectedValsForDisplay}
-            columns={columns}
-            options={options}
-          />
-        </Root>
-      </NoSsr>
-    </UsesSistent>
+    <NoSsr>
+      <Root>
+        <MUIDataTable
+          key={`gds_${new Date().getTime()}`}
+          title="Meshery Results"
+          data={selectedValsForDisplay}
+          columns={columns}
+          options={options}
+        />
+      </Root>
+    </NoSsr>
   );
 };
 
