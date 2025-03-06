@@ -5,6 +5,11 @@ echo "Setting up test environment\n"
 echo "Install mesheryctl"
 curl -L https://meshery.io/install -s | DEPLOY_MESHERY=false bash -
 
+if [ ! -d "$HOME/.meshery" ]
+then
+    mkdir "$HOME/.meshery"
+fi
+
 # Generate auth file to comunicate with meshery server
 echo "{\"meshery-provider\": \"Meshery\", \"token\": \"${MESHERY_PROVIDER_TOKEN}\"}" > "$HOME/.meshery/auth.json"
 
