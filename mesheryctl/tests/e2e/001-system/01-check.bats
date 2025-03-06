@@ -14,14 +14,14 @@ function setup() {
     [ -f "$MESHERY_CONFIG_FILE_PATH" ]
 }
 
-@test "mesehry  auth.json file as been created" {
-    [ -f "$MESHERY_AUTH_FILE" ]
-}
-
 @test "meshery config provider is Meshery" {
     run yq '.contexts.local.provider' "$MESHERY_CONFIG_FILE_PATH"
     [ "$status" -eq 0 ]
     [ "$output" = "Meshery" ]       
+}
+
+@test "mesehry  auth.json file as been created" {
+    [ -f "$MESHERY_AUTH_FILE" ]
 }
 
 @test "meshery auth provider is Meshery" {

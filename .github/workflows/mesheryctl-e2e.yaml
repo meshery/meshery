@@ -14,7 +14,8 @@ on:
       patternfile_name:
         description: "name of the pattern file"
         required: false
-      bats_test: "run only bats suite test"
+      bats_test: 
+        description: "run only bats suite test"
         required: false
   # scheduled to run at the 43rd minute of every 12th hour
   schedule:
