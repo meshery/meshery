@@ -10,6 +10,7 @@ import {
   REGISTRANTS,
   GRAFANA,
   PROMETHEUS,
+  REGISTRY,
 } from '../../constants/navigator';
 import DescriptionIcon from '@mui/icons-material/Description';
 import {
@@ -82,6 +83,15 @@ const useMeshModelComponentRouter = () => {
   const router = useRouter();
   const { query } = router;
 
+  if (query.settingsCategory === REGISTRY && !query.tab) {
+    router.push({
+      pathname: router.pathname,
+      query: {
+        ...query,
+        tab: MODELS,
+      },
+    });
+  }
   const searchQuery = query.searchText || null;
   const selectedTab = query.tab === GRAFANA || query.tab === PROMETHEUS ? OVERVIEW : query.tab;
   const selectedPageSize = query.pagesize || 25;
@@ -132,7 +142,7 @@ const MeshModelComponent_ = ({
   const router = useRouter();
   const { handleChangeSelectedTab } = settingsRouter(router);
   const [resourcesDetail, setResourcesDetail] = useState([]);
-  const { selectedTab, searchQuery, selectedPageSize } = useMeshModelComponentRouter();
+  const { searchQuery, selectedPageSize } = useMeshModelComponentRouter();
   const [page, setPage] = useState({
     Models: 0,
     Components: 0,
@@ -141,7 +151,7 @@ const MeshModelComponent_ = ({
   });
   const [searchText, setSearchText] = useState(searchQuery);
   const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
-  const [view, setView] = useState(OVERVIEW);
+  const [view, setView] = useState(MODELS);
   const [convert, setConvert] = useState(false);
   const [importModal, setImportModal] = useState({
     open: false,
@@ -153,7 +163,6 @@ const MeshModelComponent_ = ({
     type: '', // Type of selected data eg. (models, components)
     data: {},
   });
-  const [animate, setAnimate] = useState(false);
   const [checked, setChecked] = useState(false);
   const [importModelReq] = useImportMeshModelMutation();
   const [uploadMethod, setUploadMethod] = useState('');
@@ -526,10 +535,6 @@ const MeshModelComponent_ = ({
       type: '',
       data: {},
     });
-    if (!animate) {
-      setAnimate(true);
-      setConvert(true);
-    }
   };
 
   const modifyData = () => {
@@ -543,13 +548,6 @@ const MeshModelComponent_ = ({
       return resourcesDetail;
     }
   };
-  useEffect(() => {
-    if (selectedTab && selectedTab !== OVERVIEW) {
-      setAnimate(true);
-      setConvert(true);
-      setView(selectedTab);
-    }
-  }, [selectedTab]);
 
   useEffect(() => {
     if (searchText !== null && page[view] > 0) {
@@ -568,11 +566,7 @@ const MeshModelComponent_ = ({
 
   return (
     <div data-test="workloads">
-      <TabBar
-        animate={animate}
-        handleUploadImport={handleUploadImport}
-        handleGenerateModel={handleGenerateModel}
-      />
+      <TabBar handleUploadImport={handleUploadImport} handleGenerateModel={handleGenerateModel} />
       {importModal.open && (
         <ImportModal handleClose={handleUploadImportClose} handleImportModel={handleImportModel} />
       )}
@@ -589,78 +583,73 @@ const MeshModelComponent_ = ({
         <SistentModal maxWidth="sm" {...urlModal}></SistentModal>
         <SistentModal maxWidth="sm" {...csvModal}></SistentModal>
       </>
-      <MainContainer isAnimated={animate}>
-        <InnerContainer isAnimated={animate}>
+      <MainContainer>
+        <InnerContainer>
           <TabCard
             label="Models"
             count={modelsCount}
-            active={view === MODELS && animate}
-            animate={animate}
+            active={view === MODELS}
             onClick={() => handleTabClick(MODELS)}
           />
           <TabCard
             label="Components"
             count={componentsCount}
-            active={view === COMPONENTS && animate}
-            animate={animate}
+            active={view === COMPONENTS}
             onClick={() => handleTabClick(COMPONENTS)}
           />
           <TabCard
             label="Relationships"
             count={relationshipsCount}
-            active={view === RELATIONSHIPS && animate}
-            animate={animate}
+            active={view === RELATIONSHIPS}
             onClick={() => handleTabClick(RELATIONSHIPS)}
           />
           <TabCard
             label="Registrants"
             count={registrantCount}
-            active={view === REGISTRANTS && animate}
-            animate={animate}
+            active={view === REGISTRANTS}
             onClick={() => handleTabClick(REGISTRANTS)}
           />
         </InnerContainer>
-        {convert && (
-          <TreeWrapper isAnimated={convert}>
-            <DetailsContainer
-              isEmpty={!resourcesDetail.length}
-              style={{
-                padding: '0.6rem',
-                overflow: 'hidden',
-              }}
-            >
-              <MesheryTreeView
-                data={modifyData()}
-                view={view}
-                setSearchText={setSearchText}
-                setPage={setPage}
-                checked={checked}
-                setChecked={setChecked}
-                searchText={searchText}
-                setShowDetailsData={setShowDetailsData}
-                showDetailsData={showDetailsData}
-                setResourcesDetail={setResourcesDetail}
-                lastItemRef={{
-                  [MODELS]: lastModelRef,
-                  [REGISTRANTS]: lastRegistrantRef,
-                  [COMPONENTS]: lastComponentRef,
-                  [RELATIONSHIPS]: lastRelationshipRef,
-                }}
-                isFetching={{
-                  [MODELS]: modelsRes.isFetching,
-                  [REGISTRANTS]: registrantsRes.isFetching,
-                  [COMPONENTS]: componentsRes.isFetching,
-                  [RELATIONSHIPS]: relationshipsRes.isFetching,
-                }}
-              />
-            </DetailsContainer>
-            <MeshModelDetails
+
+        <TreeWrapper>
+          <DetailsContainer
+            isEmpty={!resourcesDetail.length}
+            style={{
+              padding: '0.6rem',
+              overflow: 'hidden',
+            }}
+          >
+            <MesheryTreeView
+              data={modifyData()}
               view={view}
+              setSearchText={setSearchText}
+              setPage={setPage}
+              checked={checked}
+              setChecked={setChecked}
+              searchText={searchText}
               setShowDetailsData={setShowDetailsData}
               showDetailsData={showDetailsData}
+              setResourcesDetail={setResourcesDetail}
+              lastItemRef={{
+                [MODELS]: lastModelRef,
+                [REGISTRANTS]: lastRegistrantRef,
+                [COMPONENTS]: lastComponentRef,
+                [RELATIONSHIPS]: lastRelationshipRef,
+              }}
+              isFetching={{
+                [MODELS]: modelsRes.isFetching,
+                [REGISTRANTS]: registrantsRes.isFetching,
+                [COMPONENTS]: componentsRes.isFetching,
+                [RELATIONSHIPS]: relationshipsRes.isFetching,
+              }}
             />
-          </TreeWrapper>
-        )}
+          </DetailsContainer>
+          <MeshModelDetails
+            view={view}
+            setShowDetailsData={setShowDetailsData}
+            showDetailsData={showDetailsData}
+          />
+        </TreeWrapper>
       </MainContainer>
     </div>
   );
@@ -1558,16 +1547,15 @@ CsvStepper.displayName = 'CsvStepper';
 
 UrlStepper.displayName = 'Create';
 
-const TabBar = ({ animate, handleUploadImport, handleGenerateModel }) => {
+const TabBar = ({ handleUploadImport, handleGenerateModel }) => {
   return (
-    <MeshModelToolbar isAnimated={animate}>
+    <MeshModelToolbar>
       <div
         style={{
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
           gap: '1rem', // Add some space between buttons
-          visibility: `${animate ? 'visible' : 'hidden'}`,
         }}
       >
         <Button
@@ -1576,7 +1564,7 @@ const TabBar = ({ animate, handleUploadImport, handleGenerateModel }) => {
           color="primary"
           size="large"
           onClick={handleUploadImport}
-          style={{ display: 'flex', visibility: `${animate ? 'visible' : 'hidden'}` }}
+          style={{ display: 'flex' }}
           disabled={false} //TODO: Need to make key for this component
         >
           <UploadIcon />
@@ -1589,39 +1577,30 @@ const TabBar = ({ animate, handleUploadImport, handleGenerateModel }) => {
           color="primary"
           size="large"
           onClick={handleGenerateModel}
-          style={{ display: 'flex', visibility: `${animate ? 'visible' : 'hidden'}` }}
+          style={{ display: 'flex' }}
           disabled={false} //TODO: Need to make key for this component
         >
           <AddIcon style={iconMedium} />
           &nbsp; Generate
         </Button>
       </div>
-      <DisableButton
-        disabled
-        variant="contained"
-        size="large"
-        style={{
-          visibility: `${animate ? 'visible' : 'hidden'}`,
-        }}
-        startIcon={<DoNotDisturbOnIcon />}
-      >
+      <DisableButton disabled variant="contained" size="large" startIcon={<DoNotDisturbOnIcon />}>
         Ignore
       </DisableButton>
     </MeshModelToolbar>
   );
 };
 
-const TabCard = ({ label, count, active, onClick, animate }) => {
+const TabCard = ({ label, count, active, onClick }) => {
   return (
-    <CardStyle isAnimated={animate} isSelected={active} elevation={3} onClick={onClick}>
+    <CardStyle isSelected={active} elevation={3} onClick={onClick}>
       <span
         style={{
-          fontWeight: `${animate ? 'normal' : 'bold'}`,
-          fontSize: `${animate ? '1rem' : '3rem'}`,
-          marginLeft: `${animate && '4px'}`,
+          fontSize: '1rem',
+          marginLeft: '4px',
         }}
       >
-        {animate ? `(${count})` : `${count}`}
+        {`(${count})`}
       </span>
       {label}
     </CardStyle>

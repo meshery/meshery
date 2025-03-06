@@ -68,7 +68,7 @@ const MyDesignsWidget = (props) => {
             secondaryFill={theme.palette.icon.default}
           />
         }
-        title="MY DESIGNS"
+        title="MY RECENT DESIGNS"
         actionButton={true}
         href={`${MESHERY_CLOUD_PROD}/catalog/content/my-designs`}
         btnTitle="See All Designs"
