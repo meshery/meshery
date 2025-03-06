@@ -34,7 +34,7 @@ jobs:
         uses: actions/checkout@v4.2.2
       - name: Set up Docker
         uses: docker/setup-buildx-action@v3.9.0
-      - name: Setup Bats and bats libs
+      - name: Setup BATS and BATS libs
         uses: bats-core/bats-action@3.0.0
       - uses: actions/setup-go@v5.3.0
         with:
@@ -63,7 +63,7 @@ jobs:
           echo 
           MESHERY_PROVIDER_TOKEN=$MESHERY_PROVIDER_TOKEN bash run_tests.bash
         shell: bash
-        working-directory: ./mesheryctl/test/e2e
+        working-directory: ./mesheryctl/tests/e2e
         env:
           MESHERY_PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
 
