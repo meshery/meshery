@@ -25,7 +25,7 @@ function setup() {
 }
 
 @test "meshery auth provider is Meshery" {
-    run yq '.contexts.local.provider' "$MESHERY_AUTH_FILE"
+    run jq '."meshery-provider"' "$MESHERY_AUTH_FILE"
     [ "$status" -eq 0 ]
     [ "$output" = "Meshery" ]       
 }
