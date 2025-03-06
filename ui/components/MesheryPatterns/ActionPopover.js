@@ -69,13 +69,13 @@ const ActionPopover = ({
     {
       label: 'Edit',
       icon: <EditIcon fill="currentColor" />,
-      onClick: (event) => handleOpenInConfigurator(rowData.id),
+      onClick: () => handleOpenInConfigurator(rowData.id),
       disabled: !userCanEdit(rowData),
     },
     {
       label: 'Clone',
       icon: <CloneIcon fill="currentColor" />,
-      onClick: (event) => handleClone(rowData.id, rowData.name),
+      onClick: () => handleClone(rowData.id, rowData.name),
       disabled:
         visibility !== VISIBILITY.PUBLISHED ||
         !CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject),
@@ -83,7 +83,7 @@ const ActionPopover = ({
     {
       label: 'Design',
       icon: <PatternConfigureIcon />,
-      onClick: (event) => handleOpenInConfigurator(patterns[tableMeta.rowIndex].id),
+      onClick: () => handleOpenInConfigurator(patterns[tableMeta.rowIndex].id),
       disabled:
         visibility == VISIBILITY.PUBLISHED ||
         !CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject),

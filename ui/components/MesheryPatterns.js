@@ -312,7 +312,6 @@ function MesheryPatterns({
   const router = useRouter();
   const [meshModels, setMeshModels] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState(initialFilters);
-  const [anchorEl, setAnchorEl] = useState(null);
   const [canPublishPattern, setCanPublishPattern] = useState(false);
   const [publishSchema, setPublishSchema] = useState({});
   const [infoModal, setInfoModal] = useState({
