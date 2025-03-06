@@ -49,7 +49,6 @@ export const InnerContainer = styled(Box)(({ theme }) => ({
   top: '0%',
   paddingX: '2rem',
   transform: 'translate(0%, 0%)',
-  justifyContent: 'center',
   left: '0%',
   borderTopLeftRadius: '0.5rem',
   borderTopRightRadius: '0.5rem',
@@ -78,9 +77,7 @@ export const CardStyle = styled(Box, {
   flexDirection: 'row-reverse',
   cursor: 'pointer',
   borderRadius: '8px 8px 0px 0px',
-  paddingTop: '0.2rem',
   marginTop: '0.7rem',
-
   [theme.breakpoints.down('md')]: {
     width: '8.5rem',
   },
