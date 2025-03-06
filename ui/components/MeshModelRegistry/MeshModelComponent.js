@@ -664,8 +664,9 @@ const ImportModal = React.memo((props) => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              documentation.
+              documentation
             </StyledDocsRedirectLink>
+            .
           </p>
         }
       />
