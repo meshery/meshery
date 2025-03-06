@@ -322,8 +322,7 @@ func FetchManifests(currCtx *config.Context) ([]Manifest, error) {
 	// Get version information
 	_, version, err := GetChannelAndVersion(currCtx)
 	if err != nil {
-		log.Error("Failed to get channel and version: ", err)
-		return []Manifest{}, errors.Wrap(err, "failed to get channel and version")
+		return []Manifest{}, ErrGetChannelVersion(err)
 	}
 	log.Infof("Retrieved version information: %s", version)
 
@@ -331,8 +330,7 @@ func FetchManifests(currCtx *config.Context) ([]Manifest, error) {
 
 	// Create manifests folder first
 	if err := CreateManifestsFolder(); err != nil {
-		log.Errorf("Failed to create manifests folder: %v", err)
-		return nil, errors.Wrap(err, "failed to create manifests folder")
+		return nil, ErrCreateManifestsFolder(err)
 	}
 	log.Debug("Successfully created manifests folder")
 
@@ -358,8 +356,7 @@ func FetchManifests(currCtx *config.Context) ([]Manifest, error) {
 		log.Debugf("Attempting to download manifest to: %s", localPath)
 
 		if err := meshkitutils.DownloadFile(localPath, content.DownloadURL); err != nil {
-			log.Errorf("Failed to download manifest file %s: %v", content.Name, err)
-			return errors.Wrapf(err, "failed to download manifest file %s", content.Name)
+			return ErrDownloadFile(err, content.Name)
 		}
 
 		// Store manifest information thread-safely
@@ -382,11 +379,11 @@ func FetchManifests(currCtx *config.Context) ([]Manifest, error) {
 
 	// Start the walking process
 	if err := gitWalker.Walk(); err != nil {
-		return nil, errors.Wrap(err, "Failed to walk through manifests")
+		return nil, ErrWalkManifests(err)
 	}
 
 	if len(downloadedManifests) == 0 {
-		return nil, errors.New("No manifest files found in the specified path")
+		return nil, ErrNoManifestFilesFound(gitHubFolder)
 	}
 
 	log.Infof("Total manifest files: %d", len(downloadedManifests))
