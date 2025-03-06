@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NoSsr } from '@layer5/sistent';
 import { Typography, Link, Box, styled } from '@layer5/sistent';
-import { UsesSistent } from './SistentWrapper';
 
 const StyledBox = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.background?.default,
@@ -52,7 +51,7 @@ const CustomErrorMessage = ({ message, showImage = true }) => {
   }, []);
 
   return (
-    <UsesSistent>
+    <>
       <NoSsr>
         <StyledBox>
           <Box>
@@ -87,7 +86,7 @@ const CustomErrorMessage = ({ message, showImage = true }) => {
           </StyledTypographyBody1>
         </StyledBox>
       </NoSsr>
-    </UsesSistent>
+    </>
   );
 };
 

@@ -1,6 +1,5 @@
 import { ClickAwayListener, styled } from '@layer5/sistent';
 import React, { useEffect, useState } from 'react';
-import { UsesSistent } from '../SistentWrapper';
 
 export const DesignerWrapper = styled('div')(({ theme }) => ({
   width: '100%',
@@ -55,21 +54,19 @@ function CustomBreadCrumb({ title, onBack, titleChangeHandler }) {
   };
 
   return (
-    <UsesSistent>
-      <DesignerWrapper>
-        {'> '}
-        <StyledSpan onClick={onBack}>Designs</StyledSpan>
-        {' > '}
+    <DesignerWrapper>
+      {'> '}
+      <StyledSpan onClick={onBack}>Designs</StyledSpan>
+      {' > '}
 
-        {editing ? (
-          <ClickAwayListener onClickAway={() => setEditing(false)}>
-            <StyledInput value={name} onChange={handleInputChange} autoFocus />
-          </ClickAwayListener>
-        ) : (
-          <StyledSpan onClick={() => setEditing(true)}>{title}</StyledSpan>
-        )}
-      </DesignerWrapper>
-    </UsesSistent>
+      {editing ? (
+        <ClickAwayListener onClickAway={() => setEditing(false)}>
+          <StyledInput value={name} onChange={handleInputChange} autoFocus />
+        </ClickAwayListener>
+      ) : (
+        <StyledSpan onClick={() => setEditing(true)}>{title}</StyledSpan>
+      )}
+    </DesignerWrapper>
   );
 }
 export default CustomBreadCrumb;

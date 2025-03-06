@@ -27,7 +27,7 @@ Performance Profile is a new and improved way to save performance test configura
 
 Meshery provides users with a choice about the kind of load generator they prefer to use for a given performance test. Users may set their configure based on their own preference of load generator different from that of the default load generator.
 
-Meshery supports the following load generators and is [extendible](extensibility) to support others:
+Meshery supports the following load generators and is [extendible](https://docs.meshery.io/extensibility) to support others:
 
 - [fortio](#fortio)
 - [wrk2](#wrk2)

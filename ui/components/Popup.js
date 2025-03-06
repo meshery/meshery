@@ -1,5 +1,4 @@
 import { Button, Grid, IconButton, Typography, styled, useTheme } from '@layer5/sistent';
-import { UsesSistent } from './SistentWrapper';
 import CloseIcon from '@mui/icons-material/Close';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -142,7 +141,7 @@ export function MesheryExtensionEarlyAccessCard({
   }, [capabilitiesRegistry]);
 
   return (
-    <UsesSistent>
+    <>
       <StyledPaper style={rootStyle}>
         <StyledHeaderWrapper>
           <Typography
@@ -208,7 +207,7 @@ export function MesheryExtensionEarlyAccessCard({
           </Grid>
         </div>
       </StyledPaper>
-    </UsesSistent>
+    </>
   );
 }
 

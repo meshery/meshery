@@ -7,7 +7,6 @@ import { bindActionCreators } from 'redux';
 import Head from 'next/head';
 import { getPath } from '../../lib/path';
 import { Box } from '@layer5/sistent';
-import { UsesSistent } from '@/components/SistentWrapper';
 
 function NewFilters(props) {
   useEffect(() => {
@@ -19,17 +18,15 @@ function NewFilters(props) {
       <Head>
         <title>Filters | Meshery</title>
       </Head>
-      <UsesSistent>
-        <Box
-          sx={{
-            maxWidth: '90%',
-            margin: 'auto',
-            overflow: 'hidden',
-          }}
-        >
-          <MesheryFilters />
-        </Box>
-      </UsesSistent>
+      <Box
+        sx={{
+          maxWidth: '90%',
+          margin: 'auto',
+          overflow: 'hidden',
+        }}
+      >
+        <MesheryFilters />
+      </Box>
     </NoSsr>
   );
 }
