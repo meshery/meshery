@@ -3,7 +3,7 @@ on:
   pull_request:
     paths-ignore:
       - 'docs/**'
-      - 'README.md'
+      - '*.md'
 jobs:
   eslint:
     name: runner / eslint
