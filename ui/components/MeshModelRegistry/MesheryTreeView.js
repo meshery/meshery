@@ -730,11 +730,11 @@ const MesheryTreeView = ({
                 <FormControlLabel
                   control={
                     <Switch
-                      color="primary"
                       checked={checked}
                       onClick={handleChecked}
                       disabled={!hasRecords}
                       inputProps={{ 'aria-label': 'controlled' }}
+                      size="small"
                     />
                   }
                   label="Show Duplicates"

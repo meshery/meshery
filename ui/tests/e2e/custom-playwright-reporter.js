@@ -6,19 +6,20 @@ import path from 'path';
 class MyReporter {
   introMessage = '';
   totalTests = '';
-  expectedTest = '';
-  testTable = `| Test | Browser | Test Case | Tags | Result |
-| :---: | :---: | :--- | :---: | :---: |`;
+  testData = [];
   passed = 0;
   failed = 0;
   skipped = 0;
   flaky = 0;
   countLog = 1;
-  countTable = 1;
+
+  constructor() {
+    this.countTestStatus = this.countTestStatus.bind(this);
+  }
 
   onBegin(_config, suite) {
     this.introMessage = `- Testing started at: ${moment().format('MMMM Do YYYY, h:mm:ss a')}`;
-    this.totalTests = `- Total tests cases: ${suite.allTests().length}`;
+    this.totalTests = `- Total test cases: ${suite.allTests().length}`;
   }
 
   // eslint-disable-next-line no-unused-vars
@@ -35,10 +36,11 @@ class MyReporter {
 
   onTestEnd(test, result) {
     const status = test.outcome();
-    const project = test.parent.project().name;
+    const project = test.parent?.project()?.name;
+    const spec = test.parent?.title;
 
     this.displayLogs(project, test.title, test.tags, status, result);
-    this.addTestTable(project, test.title, test.tags, status, result.retry, test.retries);
+    this.addTestData(project, spec, test.title, test.tags, status, result.retry, test.retries);
   }
 
   async onEnd(result) {
@@ -73,29 +75,6 @@ class MyReporter {
     this.countLog++;
   }
 
-  addTestTable(project, title, tags, status, retry, retries) {
-    this.countTestStatus(tags, status, retry, retries);
-
-    if (status === 'expected') return;
-
-    const lastRetriesRun = retry === retries;
-    const isFail = status === 'unexpected';
-    const isSkipped = status === 'skipped';
-
-    if ((isFail || isSkipped) && !lastRetriesRun) {
-      return;
-    }
-
-    const allTags = tags.map((item) => item.replace('@', '')).join(', ');
-
-    const message = `| ${
-      this.countTable
-    } | ${project} | ${title} | ${allTags} | ${this.getStatusEmoji(tags, status)} |`;
-
-    this.testTable += `\n${message}`;
-    this.countTable++;
-  }
-
   countTestStatus(tags, status, retry, retries) {
     const lastRetriesRun = retry === retries;
     const isFail = status === 'unexpected';
@@ -106,15 +85,19 @@ class MyReporter {
 
     if (status === 'expected') {
       this.passed++;
+      return;
     }
     if (isFlaky || (isUnstableTest && isFail)) {
       this.flaky++;
+      return;
     }
     if (isFail && lastRetriesRun && !isUnstableTest) {
       this.failed++;
+      return;
     }
     if (isSkipped && lastRetriesRun && !isUnstableTest) {
       this.skipped++;
+      return;
     }
   }
 
@@ -136,6 +119,30 @@ class MyReporter {
     return '➖';
   }
 
+  addTestData(project, spec, title, tags, status, retry, retries) {
+    this.countTestStatus(tags, status, retry, retries);
+
+    if (status === 'expected') return;
+
+    const lastRetriesRun = retry === retries;
+    const isFail = status === 'unexpected';
+    const isSkipped = status === 'skipped';
+
+    if ((isFail || isSkipped) && !lastRetriesRun) {
+      return;
+    }
+
+    const allTags = tags.map((item) => item.replace('@', '')).join(', ');
+
+    this.testData.push({
+      project,
+      spec,
+      title,
+      tags: allTags,
+      status: this.getStatusEmoji(tags, status),
+    });
+  }
+
   async buildMessage(result) {
     const duration = moment.duration(result.duration, 'milliseconds');
     const minutes = Math.floor(duration.asMinutes());
@@ -150,7 +157,7 @@ class MyReporter {
       flaky: this.flaky,
       skipped: this.skipped,
       totalTests: this.totalTests,
-      testTable: this.testTable,
+      testData: this.testData,
     });
   }
 }

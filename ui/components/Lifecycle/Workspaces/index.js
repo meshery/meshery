@@ -15,7 +15,7 @@ import {
   useViewAssignment,
   ViewIcon,
   WorkspaceIcon,
-  Modal as SisitentModal,
+  Modal as SistentModal,
   createAndEditWorkspaceSchema,
   createAndEditWorkspaceUiSchema,
   Button,
@@ -690,7 +690,7 @@ const Workspaces = ({ organization }) => {
             ? CAN(keys.CREATE_WORKSPACE.action, keys.CREATE_WORKSPACE.subject)
             : CAN(keys.EDIT_WORKSPACE.action, keys.EDIT_WORKSPACE.subject)) &&
             workspaceModal.open && (
-              <SisitentModal
+              <SistentModal
                 open={workspaceModal.open}
                 closeModal={handleWorkspaceModalClose}
                 title={
@@ -711,7 +711,7 @@ const Workspaces = ({ organization }) => {
                   initialData={initialData}
                   handleClose={handleWorkspaceModalClose}
                 />
-              </SisitentModal>
+              </SistentModal>
             )}
           <AssignmentModal
             open={environmentAssignment.assignModal}

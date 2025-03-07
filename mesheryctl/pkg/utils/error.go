@@ -52,6 +52,11 @@ var (
 	ErrMissingCommandsCode        = "mesheryctl-1137"
 	ErrKubernetesConnectivityCode = "mesheryctl-1138"
 	ErrKubernetesQueryCode        = "mesheryctl-1139"
+	ErrCreateManifestsFolderCode  = "replace_me"
+	ErrDownloadFileCode           = "replace_me"
+	ErrNoManifestFilesFoundCode   = "replace_me"
+	ErrWalkManifestsCode          = "replace_me"
+	ErrGetChannelVersionCode      = "replace_me"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
@@ -498,6 +503,9 @@ func ErrAttachAuthToken(err error) error {
 		[]string{"The user is not logged in to generate a token."},
 		[]string{"Log in with `mesheryctl system login` or supply a valid user token using the --token (or -t) flag."})
 }
+func ErrCreateManifestsFolder(err error) error {
+	return errors.New(ErrCreateManifestsFolderCode, errors.Alert, []string{"Error creating manifest folder"}, []string{err.Error()}, []string{"system error in creating manifest folder"}, []string{"Make sure manifest folder (.meshery/manifests) is created properly"})
+}
 
 func ErrFailReqStatus(statusCode int, obj string) error {
 	return errors.New(ErrFailReqStatusCode, errors.Alert,
@@ -508,6 +516,42 @@ func ErrFailReqStatus(statusCode int, obj string) error {
 }
 func ErrGenerateModel(err error, modelName string) error {
 	return errors.New(ErrGeneratesModelCode, errors.Alert, []string{fmt.Sprintf("error generating model: %s", modelName)}, []string{fmt.Sprintf("Error generating model: %s\n %s", modelName, err.Error())}, []string{"Registrant used for the model is not supported", "Verify the model's source URL.", "Failed to create a local directory in the filesystem for this model."}, []string{"Ensure that each kind of registrant used is a supported kind.", "Ensure correct model source URL is provided and properly formatted.", "Ensure sufficient permissions to allow creation of model directory."})
+}
+
+func ErrDownloadFile(err error, obj string) error {
+	return errors.New(ErrDownloadFileCode, errors.Alert, []string{"Error downloading file ", obj}, []string{err.Error()}, []string{"Failed to download docker-compose or manifest file due to system/config/network issues"}, []string{"Make sure docker-compose or manifest file is downloaded"})
+}
+
+func ErrWalkManifests(err error) error {
+	return errors.New(
+		ErrWalkManifestsCode,
+		errors.Alert,
+		[]string{"Error walking through manifests"},
+		[]string{err.Error()},
+		[]string{"Unable to traverse git repository or manifests due to filesystem or permission issues."},
+		[]string{"Ensure the repository and manifests directory are accessible and have proper permissions."},
+	)
+}
+
+func ErrNoManifestFilesFound(path string) error {
+	return errors.New(
+		ErrNoManifestFilesFoundCode,
+		errors.Alert,
+		[]string{"No manifest files found in the specified path"},
+		[]string{fmt.Sprintf("No manifest files present in path: %s", path)},
+		[]string{"The provided directory may be empty, incorrect, or manifests were not properly downloaded."},
+		[]string{"Verify the specified path contains valid manifest files."},
+	)
+}
+func ErrGetChannelVersion(err error) error {
+	return errors.New(
+		ErrGetChannelVersionCode,
+		errors.Alert,
+		[]string{"Unable to retrieve release channel and version information."},
+		[]string{err.Error()},
+		[]string{"Failed to determine version from context or GitHub releases, possibly due to network or configuration issues."},
+		[]string{"Check your network connection and context configuration; ensure GitHub is accessible."},
+	)
 }
 func ErrMarshalIndent(err error) error {
 	return errors.New(ErrMarshalIndentCode, errors.Alert,

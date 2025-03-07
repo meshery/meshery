@@ -72,7 +72,7 @@ func TestList(t *testing.T) {
 			os.Stdout = w
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
 			RelationshipCmd.SetArgs(tt.Args)
-			RelationshipCmd.SetOutput(rescueStdout)
+			RelationshipCmd.SetOut(rescueStdout)
 			err := RelationshipCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
