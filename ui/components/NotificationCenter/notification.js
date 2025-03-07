@@ -122,20 +122,16 @@ const BasicMenu = ({ event }) => {
   };
   const theme = useTheme();
   return (
-    <div
-      className="mui-fixed"
-      onClick={(e) => e.stopPropagation()}
-      style={{ display: 'flex', alignItems: 'center' }}
-    >
-      <MoreVertIcon
-        padding="0"
+    <div className="mui-fixed" onClick={(e) => e.stopPropagation()}>
+      <IconButton
         id="basic-button"
-        sx={{ cursor: 'pointer' }}
         aria-controls={open ? 'basic-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
-      />
+      >
+        <MoreVertIcon />
+      </IconButton>
       <Popover
         open={open}
         anchorEl={anchorEl}
@@ -312,8 +308,7 @@ export const Notification = ({ event_id }) => {
           container
           notificationcolor={notificationColor}
           onClick={handleExpandClick}
-          spacing={1}
-          px={1}
+          spacing={0}
           style={{ flexWrap: 'nowrap' }}
         >
           <GridItem item xs="auto">
