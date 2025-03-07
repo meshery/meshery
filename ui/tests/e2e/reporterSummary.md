@@ -4,7 +4,7 @@
 
 **📦 Test Result Summary**
 
-- ✅ <%- passed %> passed changed
+- ✅ <%- passed %> passed
 - ❌ <%- failed %> failed
 - ⚠️ <%- flaky %> flaked
 - ⏩ <%- skipped %> skipped
