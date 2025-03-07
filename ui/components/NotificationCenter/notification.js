@@ -4,7 +4,6 @@ import {
   Box,
   Collapse,
   Grid,
-  IconButton,
   Slide,
   Tooltip,
   Typography,
