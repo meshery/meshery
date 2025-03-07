@@ -24,7 +24,8 @@ export const ComponentsTrace = ({ components, title }) => {
       {components.map((component) => (
         <Box display={'flex'} alignItems={'center'} gap={2}>
           <ComponentIcon iconSrc={'/' + component.styles.svgColor} />
-          {component.component.kind} &lsquo;{component.displayName}&rsquo; from model &lsquo;{component.model.name}&rsquo;
+          {component.component.kind} &lsquo;{component.displayName}&rsquo; from model &lsquo;
+          {component.model.name}&rsquo;
         </Box>
       ))}
     </Box>
