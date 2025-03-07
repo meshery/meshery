@@ -63,7 +63,7 @@ export const eventstopPropagation = (e) => {
   e.stopPropagation();
 };
 
-export const MAX_NOTIFICATION_DESCRIPTION_LENGTH = 65;
+export const MAX_NOTIFICATION_DESCRIPTION_LENGTH = 62;
 
 export const canTruncateDescription = (description) => {
   return description.length > MAX_NOTIFICATION_DESCRIPTION_LENGTH;
@@ -373,7 +373,25 @@ export const Notification = ({ event_id }) => {
           </GridItem>
           <GridItem item xs="auto" style={{ justifyContent: 'end', gap: '0rem' }}>
             <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+              <Tooltip
+                title={moment(event.created_at).local().format('MMMM DD, YYYY, h:mm:ss A')}
+                placement="top"
+                arrow
+                componentsProps={{
+                  tooltip: {
+                    sx: {
+                      background: '#141414',
+                      maxWidth: '600px',
+                      fontSize: '0.75rem',
+                      borderRadius: '0.5rem',
+                      padding: '0.75rem',
+                      boxShadow: 'rgba(0, 0, 0, 0.6) 0px 4px 10px, rgba(0, 0, 0, 0.5) 0px 2px 4px',
+                    },
+                  },
+                }}
+              >
               <Typography variant="body1">{formatTimestamp(event.created_at)}</Typography>
+              </Tooltip>
             </Box>
             <BasicMenu event={event} />
           </GridItem>
