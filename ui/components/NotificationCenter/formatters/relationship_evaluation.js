@@ -1,6 +1,6 @@
 import { ComponentIcon } from '@/components/DesignLifeCycle/common';
-import { StyledAccordion } from '@/components/StyledAccordion';
-import { Typography, Box, styled } from '@layer5/sistent';
+// import { StyledAccordion } from '@/components/StyledAccordion';
+import { Box, styled } from '@layer5/sistent';
 
 const StyledTitle = styled(Box)(() => ({
   display: 'flex',
@@ -24,7 +24,7 @@ export const ComponentsTrace = ({ components, title }) => {
       {components.map((component) => (
         <Box display={'flex'} alignItems={'center'} gap={2}>
           <ComponentIcon iconSrc={'/' + component.styles.svgColor} />
-          {component.component.kind} '{component.displayName}' from model '{component.model.name}'
+          {component.component.kind} &lsquo;{component.displayName}&rsquo; from model &lsquo;{component.model.name}&rsquo;
         </Box>
       ))}
     </Box>
