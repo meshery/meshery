@@ -6,6 +6,7 @@ import {
   Grid,
   Slide,
   Tooltip,
+  IconButton,
   Typography,
   useTheme,
   Checkbox,
