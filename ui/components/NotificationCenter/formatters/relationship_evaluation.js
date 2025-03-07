@@ -1,26 +1,24 @@
 import { ComponentIcon } from '@/components/DesignLifeCycle/common';
 import { StyledAccordion } from '@/components/StyledAccordion';
-import { Typography,Box,styled } from '@layer5/sistent';
+import { Typography, Box, styled } from '@layer5/sistent';
 
-const StyledTitle = styled(Box)(()=>({
-  display:"flex",
-  alignItems:"center",
-  justifyContent:"space-between",
-  fontSize:"16px",
-  fontWeight:"bold",
-  paddingBottom: "0.5rem"
-}))
+const StyledTitle = styled(Box)(() => ({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'space-between',
+  fontSize: '16px',
+  fontWeight: 'bold',
+  paddingBottom: '0.5rem',
+}));
 
 export const ComponentsTrace = ({ components, title }) => {
-  if (components.length == 0){
-    return null
+  if (components.length == 0) {
+    return null;
   }
   return (
-
-     <Box>
-      
+    <Box>
       <StyledTitle>
-       <span> {title}</span> <span> ({components?.length || 0})</span>
+        <span> {title}</span> <span> ({components?.length || 0})</span>
       </StyledTitle>
 
       {components.map((component) => (
@@ -34,23 +32,23 @@ export const ComponentsTrace = ({ components, title }) => {
 };
 
 export const RelationshipsTrace = ({ relationships, title, action }) => {
-  if (relationships.length == 0){
-    return null
+  if (relationships.length == 0) {
+    return null;
   }
   return (
-
-     <Box>
+    <Box>
       <StyledTitle>
-       <span> {title}</span> <span> ({relationships?.length || 0})</span>
+        <span> {title}</span> <span> ({relationships?.length || 0})</span>
       </StyledTitle>
-     
-      {relationships.map((relationship) => relationship.selectors.map(selector => (
-        <Box display={'flex'} alignItems={'center'} gap={2}>
-          {action} {relationship.kind}-{relationship.subType}-{relationship.type} relationship from {" "}
-          {selector?.allow?.from?.[0].kind}  to  {selector?.allow?.to?.[0].kind}
-        </Box>
-        )
-      ))}
+
+      {relationships.map((relationship) =>
+        relationship.selectors.map((selector) => (
+          <Box display={'flex'} alignItems={'center'} gap={2}>
+            {action} {relationship.kind}-{relationship.subType}-{relationship.type} relationship
+            from {selector?.allow?.from?.[0].kind} to {selector?.allow?.to?.[0].kind}
+          </Box>
+        )),
+      )}
     </Box>
   );
 };
@@ -58,8 +56,7 @@ export const RelationshipsTrace = ({ relationships, title, action }) => {
 export const RelationshipEvaluationTraceFormatter = ({ value: trace }) => {
   console.log('trace ', trace);
   return (
-    <Box flexDirection={"column"} gap={2} display={"flex"}>
-
+    <Box flexDirection={'column'} gap={2} display={'flex'}>
       <ComponentsTrace title="New Component(s)" components={trace.componentsAdded} />
       <ComponentsTrace title="Deleted Component(s)" components={trace.componentsRemoved} />
       <ComponentsTrace title="Updated Component(s)" components={trace.componentsUpdated} />
@@ -78,8 +75,7 @@ export const RelationshipEvaluationTraceFormatter = ({ value: trace }) => {
         title="Relationship(s) Deleted"
         action="Deleted"
         relationships={trace.relationshipsRemoved}
-     />
-
+      />
     </Box>
   );
 };
