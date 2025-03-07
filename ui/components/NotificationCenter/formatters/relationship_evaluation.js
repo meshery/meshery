@@ -1,5 +1,5 @@
-import React from 'react';
-import { Box, Typography, styled, Chip, Badge, Tooltip } from '@layer5/sistent';
+import React, { memo, useState } from 'react';
+import { Box, Typography, styled, Chip, Badge, Tooltip, IconButton, Collapse } from '@layer5/sistent';
 import { ComponentIcon } from '@/components/DesignLifeCycle/common';
 // import { StyledAccordion } from '@/components/StyledAccordion';
 import { Box, styled } from '@layer5/sistent';
@@ -20,7 +20,13 @@ export const ComponentsTrace = ({ components, title }) => {
 };
 
 const TraceSection = ({ title, items, type, children, emptyMessage = 'No changes' }) => {
+
+  const [expanded , setExpanded] = useState(false)
+  const toggleExpanded = () => {
+    setExpanded(prev => !prev)
+  }
   if (!items || items.length === 0) return null;
+
 
   return (
     <Box>
@@ -109,7 +115,7 @@ export const RelationshipsTrace = ({ relationships, title, type }) => (
 );
 
 // Main Formatter Component
-export const RelationshipEvaluationTraceFormatter = ({ value: trace }) => {
+export const RelationshipEvaluationTraceFormatter = memo(({ value: trace }) => {
   const hasChanges =
     trace.componentsAdded.length > 0 ||
     trace.componentsRemoved.length > 0 ||
@@ -141,4 +147,4 @@ export const RelationshipEvaluationTraceFormatter = ({ value: trace }) => {
       />
     </Box>
   );
-};
+});
