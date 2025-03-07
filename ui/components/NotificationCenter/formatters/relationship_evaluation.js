@@ -87,7 +87,7 @@ const RelationshipItem = ({ relationship, action }) => (
             <strong>{selector?.allow?.to?.[0]?.kind || 'Unknown'}</strong>
           </Typography>
 
-         <Tooltip title={`Model: ${relationship.model.name}`}>
+         <Tooltip title={`Model: ${relationship.model.name} Version: ${relationship?.model?.version}`}>
            <ModelBadge size="small" label={relationship.model.name} variant="outlined" />
          </Tooltip>
         </Box>
