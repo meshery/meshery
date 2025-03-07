@@ -88,7 +88,7 @@ func TestViewCmd(t *testing.T) {
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
 			b := utils.SetupMeshkitLoggerTesting(t, false)
-			FilterCmd.SetOutput(b)
+			FilterCmd.SetOut(b)
 
 			FilterCmd.SetArgs(tt.Args)
 			err := FilterCmd.Execute()
