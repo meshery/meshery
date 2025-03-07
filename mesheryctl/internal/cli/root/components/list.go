@@ -47,11 +47,13 @@ mesheryctl components list --count
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		url := fmt.Sprintf("%s/api/meshmodels/components?%s", baseUrl, utils.GetPageQueryParameter(cmd, pageNumberFlag))
-		return listComponents(cmd, url, false)
+		countonly, _ := cmd.Flags().GetBool("count")
+		return listComponents(cmd, url, countonly)
 	},
 }
 
 func init() {
 	// Add the new components commands to the ComponentsCmd
 	listComponentCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of components with --page (default = 1)")
+	listComponentCmd.Flags().BoolP("count", "c", false, "(optional) Display count only")
 }
