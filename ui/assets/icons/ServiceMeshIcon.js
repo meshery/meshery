@@ -1,15 +1,19 @@
 import { useTheme } from '@layer5/sistent';
+import { Colors } from '@/themes/app';
+import { useRouter } from 'next/router';
 
 const ServiceMeshIcon = (props) => {
   const theme = useTheme();
-  const fill = props.fill ? props.fill : theme.palette.background.constant.white;
+  const router = useRouter();
+  const fill = props.ignoreRoute || props.fill ? props.fill || theme.palette.background.constant.white : router.pathname === '/management/adapter' ? Colors.keppelGreen
+    : theme.palette.background.constant.white;
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       viewBox="0 0 172.63 184.19"
       width={props.width ? props.width : '24px'}
       height={props.height ? props.height : '24px'}
-      fill={props.fill ? props.fill : theme.palette.background.constant.white}
+      fill={props.fill ? props.fill : router.pathname === '/management/adapter' ? Colors.keppelGreen : theme.palette.background.constant.white}
       onClick={props.onClick}
       className={props.className}
       color={props.color ? props.color : 'unset'}
@@ -25,7 +29,7 @@ const ServiceMeshIcon = (props) => {
         <g id="Layer_1-2" data-name="Layer 1">
           <path
             d="M146.32 184.19A26.29 26.29 0 0 1 120 157.94a26.3 26.3 0 0 1 26.28-26.28 26.28 26.28 0 0 1 26.27 26.28 26.27 26.27 0 0 1-26.23 26.25ZM74.55 118.37a26.3 26.3 0 0 1-26.28-26.28 26.29 26.29 0 0 1 26.28-26.27 26.27 26.27 0 0 1 26.27 26.27 26.28 26.28 0 0 1-26.27 26.28ZM146.32 118.37A26.3 26.3 0 0 1 120 92.09a26.29 26.29 0 0 1 26.28-26.27 26.27 26.27 0 0 1 26.27 26.27 26.28 26.28 0 0 1-26.23 26.28ZM146.35 52.54a26.27 26.27 0 0 1-26.27-26.27A26.27 26.27 0 0 1 146.35 0a26.28 26.28 0 0 1 26.28 26.27 26.28 26.28 0 0 1-26.28 26.27Z"
-            className="cls-1"
+            className='cls-1{fill:none}'
           />
           <g
             style={{
