@@ -102,12 +102,6 @@
 - title: 📚 Guides & Tutorials
   url: guides
   links:
-    # - title: Deploying Designs
-    #   url: guides/deploying-designs
-    # - title: Deploying Sample Applications
-    #   url: guides/sample-apps
-    # - title: Running SMI Conformance Tests
-    # url: guides/smi-conformance
     - title: ⚙️ Infrastructure Management ↆ
       url: guides/infrastructure-management/overview
       children:
@@ -178,7 +172,7 @@
         - title: Deploying PHP Guestbook application with Redis in Meshery
           url: guides/tutorials/deploy-php-redis
         - title: Deploy an AWS EC2 Instance with Meshery
-          url: guides/tutorials/deploy-an-aws-ec2-instance-with-meshery
+          url: guides/tutorials/deploy-aws-ec2-instances-with-meshery
 # - title: ⚙️ Tasks
 #   url: tasks
 #   links:
@@ -281,7 +275,8 @@
               url: project/contributing/contributing-components
             - title: Relationships
               url: project/contributing/contributing-relationships
-
+        - title: Schema
+          url: project/contributing/contributing-schemas
 - title: 📖 Reference
   url: reference
   links:

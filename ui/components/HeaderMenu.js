@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import MenuIcon from '@mui/icons-material/Menu';
 import { useRouter } from 'next/router';
 import { Provider, connect } from 'react-redux';
@@ -12,7 +12,6 @@ import { EVENT_TYPES } from 'lib/event-types';
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import { NavigationNavbar, Popover } from '@layer5/sistent';
-import { UsesSistent } from './SistentWrapper';
 import { IconButtonAvatar } from './Header.styles';
 
 function exportToJsonFile(jsonData, filename) {
@@ -67,16 +66,18 @@ const HeaderMenu = (props) => {
       });
   };
 
-  if (!userLoaded && isGetUserSuccess) {
-    props.updateUser({ user: userData });
-    setUserLoaded(true);
-  } else if (isGetUserError) {
-    notify({
-      message: 'Error fetching user',
-      event_type: EVENT_TYPES.ERROR,
-      details: getUserError?.data,
-    });
-  }
+  useEffect(() => {
+    if (!userLoaded && isGetUserSuccess) {
+      props.updateUser({ user: userData });
+      setUserLoaded(true);
+    } else if (isGetUserError) {
+      notify({
+        message: 'Error fetching user',
+        event_type: EVENT_TYPES.ERROR,
+        details: getUserError?.data,
+      });
+    }
+  }, [userData, isGetUserSuccess, isGetUserError]);
 
   if (isTokenError) {
     notify({
@@ -86,10 +87,14 @@ const HeaderMenu = (props) => {
     });
   }
 
-  if (!capabilitiesLoadedRef.current && capabilitiesRegistry) {
-    capabilitiesLoadedRef.current = true;
-    setAccount(ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account));
-  }
+  useEffect(() => {
+    if (!capabilitiesLoadedRef.current && capabilitiesRegistry) {
+      capabilitiesLoadedRef.current = true;
+      setAccount(
+        ExtensionPointSchemaValidator('account')(capabilitiesRegistry?.extensions?.account),
+      );
+    }
+  }, [capabilitiesRegistry]);
 
   const getAccountNavigationItems = () => {
     const accountItems = account.map((item) => ({
@@ -152,8 +157,8 @@ const HeaderMenu = (props) => {
   const id = open ? 'menu-popover' : undefined;
 
   return (
-    <UsesSistent>
-      <IconButtonAvatar aria-describedby={id} onClick={handleClick} color={props.color}>
+    <>
+      <IconButtonAvatar aria-describedby={id} onClick={handleClick}>
         <MenuIcon />
       </IconButtonAvatar>
 
@@ -183,7 +188,7 @@ const HeaderMenu = (props) => {
           }}
         />
       </Popover>
-    </UsesSistent>
+    </>
   );
 };
 

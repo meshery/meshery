@@ -53,6 +53,4 @@ When setting up a new Connection in Meshery:
 3. Multiple credentials can be associated with a single Connection
 4. Credential status is monitored and alerts are generated if they become invalid
 
-For detailed instructions on managing credentials, see the [Credential Management Guide](/guides/credential-management).
-
 

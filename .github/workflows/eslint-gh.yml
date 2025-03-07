@@ -1,9 +1,13 @@
 name: eslint-check
-on: [pull_request]
+on:
+  pull_request:
+    paths-ignore:
+      - 'docs/**'
+      - '*.md'
 jobs:
   eslint:
     name: runner / eslint
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
     - uses: actions/checkout@v4
     - name: Run ESLint Meshery-UI

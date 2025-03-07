@@ -14,7 +14,6 @@ import {
 import RJSFWrapper from './MesheryMeshInterface/PatternService/RJSF_wrapper';
 import { ArrowDropDown } from '@mui/icons-material';
 import { getSchema } from './MesheryMeshInterface/PatternService/helper';
-import { UsesSistent } from './SistentWrapper';
 import { useNotification } from '@/utils/hooks/useNotification';
 import { EVENT_TYPES } from 'lib/event-types';
 
@@ -132,7 +131,7 @@ function Modal(props) {
   }, [schema]);
 
   return (
-    <UsesSistent>
+    <>
       <SistentModal open={open} closeModal={handleClose} title={title} headerIcon={leftHeaderIcon}>
         <Typography variant="h5">
           {schema_array?.length < 1 && (
@@ -176,7 +175,7 @@ function Modal(props) {
           />
         </ModalFooter>
       </SistentModal>
-    </UsesSistent>
+    </>
   );
 }
 
@@ -191,6 +190,7 @@ function RJSFModalWrapper({
   title,
   submitBtnText,
   helpText,
+  widgets = {},
 }) {
   const formRef = useRef();
   const formStateRef = useRef();
@@ -248,6 +248,7 @@ function RJSFModalWrapper({
             liveValidate={false}
             formRef={formRef}
             hideTitle={true}
+            widgets={widgets}
           />
         )}
       </ModalBody>
