@@ -22,6 +22,7 @@ import (
 	"path/filepath"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
 	mutils "github.com/layer5io/meshkit/utils"
 	"github.com/layer5io/meshkit/utils/store"
 	comp "github.com/meshery/schemas/models/v1beta1/component"
@@ -119,7 +120,8 @@ func InvokeCompUpdate() error {
 	modelToCompUpdateTracker := store.NewGenericThreadSafeStore[[]compUpdateTracker]()
 
 	url := GoogleSpreadSheetURL + spreadsheeetID
-	componentCSVHelper, err := utils.NewComponentCSVHelper(url, "Components", sheetGID, componentCSVFilePath)
+
+	componentCSVHelper, err := meshkitRegistryUtils.NewComponentCSVHelper(url, "Components", sheetGID, componentCSVFilePath)
 	if err != nil {
 		return err
 	}
@@ -163,7 +165,7 @@ func InvokeCompUpdate() error {
 				totalCompsUpdatedPerModelPerVersion := 0
 
 				if content.IsDir() {
-					if utils.Contains(content.Name(), ExcludeDirs) != -1 {
+					if mutils.FindIndexInSlice(content.Name(), ExcludeDirs) != -1 {
 						continue
 					}
 
