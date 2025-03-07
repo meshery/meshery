@@ -3,19 +3,21 @@ import { template } from 'lodash';
 import moment from 'moment';
 import path from 'path';
 
+const testHeader = '| # | Browser | Test Case | Tags | Result |';
+const testColumnAlignment =  '| :---: | :---: | :--- | :---: | :---: |'; 
+
 class MyReporter {
   introMessage = '';
   totalTests = '';
-  testData = [];
+  expectedTest = '';
+  tableHeader = [testHeader, testColumnAlignment];
+  unsuccessfulTestData = [];
   passed = 0;
   failed = 0;
   skipped = 0;
   flaky = 0;
   countLog = 1;
-
-  constructor() {
-    this.countTestStatus = this.countTestStatus.bind(this);
-  }
+  countTable = 1;
 
   onBegin(_config, suite) {
     this.introMessage = `- Testing started at: ${moment().format('MMMM Do YYYY, h:mm:ss a')}`;
@@ -37,10 +39,9 @@ class MyReporter {
   onTestEnd(test, result) {
     const status = test.outcome();
     const project = test.parent?.project()?.name;
-    const spec = test.parent?.title;
 
     this.displayLogs(project, test.title, test.tags, status, result);
-    this.addTestData(project, spec, test.title, test.tags, status, result.retry, test.retries);
+    this.addTableData(project, test.title, test.tags, status, result.retry, test.retries);
   }
 
   async onEnd(result) {
@@ -73,6 +74,22 @@ class MyReporter {
     process.stdout.write(logs);
 
     this.countLog++;
+  }
+
+  addTableData(project, title, tags, status, retry, retries) {
+    this.countTestStatus(tags, status, retry, retries);
+
+    if (status === 'expected') return;
+
+    const lastRetriesRun = retry === retries;
+    const isFail = status === 'unexpected';
+    const isSkipped = status === 'skipped';
+
+    if ((isFail || isSkipped) && !lastRetriesRun) return;
+
+    const allTags = tags.map((item) => item.replace('@', '')).join(', ');
+    this.unsuccessfulTestData.push(`| ${this.countTable} | ${project} | ${title} | ${allTags} | ${this.getStatusEmoji(tags, status)} |`);
+    this.countTable++;
   }
 
   countTestStatus(tags, status, retry, retries) {
@@ -119,30 +136,6 @@ class MyReporter {
     return '➖';
   }
 
-  addTestData(project, spec, title, tags, status, retry, retries) {
-    this.countTestStatus(tags, status, retry, retries);
-
-    if (status === 'expected') return;
-
-    const lastRetriesRun = retry === retries;
-    const isFail = status === 'unexpected';
-    const isSkipped = status === 'skipped';
-
-    if ((isFail || isSkipped) && !lastRetriesRun) {
-      return;
-    }
-
-    const allTags = tags.map((item) => item.replace('@', '')).join(', ');
-
-    this.testData.push({
-      project,
-      spec,
-      title,
-      tags: allTags,
-      status: this.getStatusEmoji(tags, status),
-    });
-  }
-
   async buildMessage(result) {
     const duration = moment.duration(result.duration, 'milliseconds');
     const minutes = Math.floor(duration.asMinutes());
@@ -157,7 +150,7 @@ class MyReporter {
       flaky: this.flaky,
       skipped: this.skipped,
       totalTests: this.totalTests,
-      testData: this.testData,
+      testTable: this.unsuccessfulTestData.length ? [...this.tableHeader, ...this.unsuccessfulTestData].join('\n') : null,
     });
   }
 }
