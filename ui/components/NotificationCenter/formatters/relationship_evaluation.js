@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Box, Typography, styled, Chip, Badge, Tooltip, Collapse } from '@layer5/sistent';
+import { Box, Typography, styled, Chip, Tooltip, Collapse } from '@layer5/sistent';
 import { ComponentIcon } from '@/components/DesignLifeCycle/common';
 // import { StyledAccordion } from '@/components/StyledAccordion';
 import { Box, styled } from '@layer5/sistent';
@@ -158,7 +158,6 @@ export const RelationshipEvaluationEventFormatter = ({ event }) => {
     <Box mt={2}>
       <Typography variant="body1">{event.description}</Typography>
       <RelationshipEvaluationTraceFormatter trace={event?.metadata?.trace} />
-      <KeyValue Key={'Evaluated At'} Value={formatDateTime(event?.metadata?.evaluated_at)} />
     </Box>
   );
 };
