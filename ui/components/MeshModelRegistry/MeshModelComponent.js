@@ -152,7 +152,6 @@ const MeshModelComponent_ = ({
   const [searchText, setSearchText] = useState(searchQuery);
   const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
   const [view, setView] = useState(MODELS);
-  const [convert, setConvert] = useState(false);
   const [importModal, setImportModal] = useState({
     open: false,
   });
