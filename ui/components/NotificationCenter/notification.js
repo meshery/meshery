@@ -390,7 +390,7 @@ export const Notification = ({ event_id }) => {
                   },
                 }}
               >
-              <Typography variant="body1">{formatTimestamp(event.created_at)}</Typography>
+                <Typography variant="body1">{formatTimestamp(event.created_at)}</Typography>
               </Tooltip>
             </Box>
             <BasicMenu event={event} />
