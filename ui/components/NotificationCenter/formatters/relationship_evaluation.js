@@ -1,21 +1,74 @@
 import React, { memo, useState } from 'react';
 import { Box, Typography, styled, Chip, Tooltip, Collapse } from '@layer5/sistent';
 import { ComponentIcon } from '@/components/DesignLifeCycle/common';
-// import { StyledAccordion } from '@/components/StyledAccordion';
-import { Box, styled } from '@layer5/sistent';
+import { AddIcon, DeleteIcon, EditIcon, InfoIcon } from '@layer5/sistent'; // Assuming MUI icons are available
+import ExpandLessIcon from '@/assets/icons/ExpandLessIcon';
+import ExpandMoreIcon from '@/assets/icons/ExpandMoreIcon';
 
-const StyledTitle = styled(Box)(() => ({
+// Styled components
+const SectionContainer = styled(Box)(({ theme }) => ({
+  padding: '16px',
+  marginBottom: '16px',
+  borderRadius: '3px',
+  backgroundColor: theme.palette.background.blur.heavy,
+  boxShadow: '0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24)',
+}));
+
+const SectionHeader = styled(Box)(({ theme, expanded }) => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'space-between',
-  fontSize: '16px',
-  fontWeight: 'bold',
-  paddingBottom: '0.5rem',
+  padding: expanded ? '0 0 12px 0' : '0px',
+  borderBottom: expanded ? `1px solid ${theme.palette.divider}` : 'none',
+  marginBottom: expanded ? '12px' : '0px',
+  cursor: 'pointer',
 }));
 
-export const ComponentsTrace = ({ components, title }) => {
-  if (components.length == 0) {
-    return null;
+const SectionTitle = styled(Box)(() => ({
+  display: 'flex',
+  alignItems: 'center',
+  gap: '8px',
+  fontSize: '16px',
+  fontWeight: 600,
+}));
+
+const ItemRow = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  padding: '8px 0',
+  borderBottom: `1px solid ${theme.palette.divider}`,
+  '&:last-child': {
+    borderBottom: 'none',
+  },
+}));
+
+const ModelBadge = styled(Chip)(() => ({
+  fontSize: '12px',
+  height: '24px',
+}));
+
+const EmptyState = styled(Box)(({ theme }) => ({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  padding: '24px',
+  background: theme.palette.background.blur.light,
+  color: theme.palette.text.primary,
+  fontStyle: 'italic',
+}));
+
+// Helper Components
+const SectionIcon = ({ type }) => {
+  // const theme = useTheme()
+  switch (type) {
+    case 'added':
+      return <AddIcon fill="white" />;
+    case 'deleted':
+      return <DeleteIcon fill="white" />;
+    case 'updated':
+      return <EditIcon fill="white" />;
+    default:
+      return null;
   }
 };
 
@@ -27,39 +80,49 @@ const TraceSection = ({ title, items, type, children, emptyMessage = 'No changes
   if (!items || items.length === 0) return null;
 
   return (
-    <Box>
-      <StyledTitle>
-        <span> {title}</span> <span> ({components?.length || 0})</span>
-      </StyledTitle>
+    <SectionContainer>
+      <SectionHeader onClick={toggleExpanded} expanded={expanded}>
+        <SectionTitle>
+          <SectionIcon type={type} />
+          <Typography variant="subtitle1">{title}</Typography>
+        </SectionTitle>
 
-      {components.map((component) => (
         <Box display={'flex'} alignItems={'center'} gap={2}>
-          <ComponentIcon iconSrc={'/' + component.styles.svgColor} />
-          {component.component.kind} &lsquo;{component.displayName}&rsquo; from model &lsquo;{component.model.name}&rsquo;
+          <span> ( {items.length} )</span>
+
+          {expanded ? (
+            <ExpandLessIcon height={24} width={24} fill="white" onClick={toggleExpanded} />
+          ) : (
+            <ExpandMoreIcon onClick={toggleExpanded} height={24} width={24} fill="white" />
+          )}
         </Box>
-      ))}
-    </Box>
+      </SectionHeader>
+      <Collapse in={expanded}>
+        {items.length > 0 ? children : <EmptyState>{emptyMessage}</EmptyState>}
+      </Collapse>
+    </SectionContainer>
   );
 };
 
-export const RelationshipsTrace = ({ relationships, title, action }) => {
-  if (relationships.length == 0) {
-    return null;
-  }
-  return (
-    <Box>
-      <StyledTitle>
-        <span> {title}</span> <span> ({relationships?.length || 0})</span>
-      </StyledTitle>
-
-      {relationships.map((relationship) =>
-        relationship.selectors.map((selector) => (
-          <Box display={'flex'} alignItems={'center'} gap={2}>
-            {action} {relationship.kind}-{relationship.subType}-{relationship.type} relationship
-            from {selector?.allow?.from?.[0].kind} to {selector?.allow?.to?.[0].kind}
-          </Box>
-        )),
-      )}
+// Component Trace Item
+const ComponentItem = ({ component }) => (
+  <ItemRow>
+    <Box display="flex" alignItems="center" gap={2} flex={1}>
+      <ComponentIcon iconSrc={'/' + component.styles.svgColor} />
+      <Box
+        display={'flex'}
+        justifyItems={'space-between'}
+        justifyContent={'space-between'}
+        width={'100%'}
+        alignItems={'center'}
+      >
+        <Typography variant="body2" fontWeight={500}>
+          {component.component.kind} <strong> &quot;{component.displayName}&quot; </strong>
+        </Typography>
+        <Tooltip title={`Model: ${component.model.name}  Version: ${component?.model?.version}`}>
+          <ModelBadge size="small" label={component.model.name} variant="outlined" />
+        </Tooltip>
+      </Box>
     </Box>
   </ItemRow>
 );
@@ -129,26 +192,46 @@ export const RelationshipEvaluationTraceFormatter = memo(function RelationshipTr
     trace.relationshipsRemoved.length > 0;
 
   return (
-    <Box flexDirection={'column'} gap={2} display={'flex'}>
-      <ComponentsTrace title="New Component(s)" components={trace.componentsAdded} />
-      <ComponentsTrace title="Deleted Component(s)" components={trace.componentsRemoved} />
-      <ComponentsTrace title="Updated Component(s)" components={trace.componentsUpdated} />
-
-      <RelationshipsTrace
-        title="Relationship(s) Added"
-        action="Added"
-        relationships={trace.relationshipsAdded}
-      />
-      <RelationshipsTrace
-        title="Relationship(s) Updated"
-        action="Updated"
-        relationships={trace.relationshipsUpdated}
-      />
-      <RelationshipsTrace
-        title="Relationship(s) Deleted"
-        action="Deleted"
-        relationships={trace.relationshipsRemoved}
-      />
+    <Box mt={2}>
+      {!hasChanges ? (
+        <EmptyState>
+          <InfoIcon />
+          <Typography ml={1}>No changes detected in this evaluation</Typography>
+        </EmptyState>
+      ) : (
+        <Box flexDirection="column" display="flex">
+          <ComponentsTrace
+            title="Components Added"
+            components={trace.componentsAdded}
+            type="added"
+          />
+          <ComponentsTrace
+            title="Components Updated"
+            components={trace.componentsUpdated}
+            type="updated"
+          />
+          <ComponentsTrace
+            title="Components Removed"
+            components={trace.componentsRemoved}
+            type="deleted"
+          />
+          <RelationshipsTrace
+            title="Relationships Added"
+            type="added"
+            relationships={trace.relationshipsAdded}
+          />
+          <RelationshipsTrace
+            title="Relationships Updated"
+            type="updated"
+            relationships={trace.relationshipsUpdated}
+          />
+          <RelationshipsTrace
+            title="Relationships Removed"
+            type="deleted"
+            relationships={trace.relationshipsRemoved}
+          />
+        </Box>
+      )}
     </Box>
   );
 });
