@@ -190,6 +190,7 @@ function RJSFModalWrapper({
   title,
   submitBtnText,
   helpText,
+  widgets = {},
 }) {
   const formRef = useRef();
   const formStateRef = useRef();
@@ -247,6 +248,7 @@ function RJSFModalWrapper({
             liveValidate={false}
             formRef={formRef}
             hideTitle={true}
+            widgets={widgets}
           />
         )}
       </ModalBody>

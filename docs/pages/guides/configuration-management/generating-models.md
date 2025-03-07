@@ -1,103 +1,125 @@
 ---
 layout: default
 title: Generating Models
-abstract: Generating Model 
+abstract: A comprehensive guide on generating models in Meshery, covering both CLI and UI methods.
 permalink: guides/configuration-management/generating-models
 category: configuration
 type: guides
 language: en
 ---
 
-Generating Models annotation and existing custom resource definition (CRD) into Meshery. The platform supports generation from URL, csv you can generate models using either the Meshery CLI or the Meshery UI.
+Meshery lets you create models by processing Custom Resource Definitions (CRDs) or importing existing resources. Models can be generated from URLs or CSV files and are classified as either **Static Models** (pre-defined with each release) or **Dynamic Models** (created at runtime from external sources). This guide explains how to generate models using the Meshery CLI and UI, and clarifies the differences between the two primary commands:
+
+- **`mesheryctl model generate`** – Generates models locally.
+- **`mesheryctl registry generate`** – Generates models and registers them into the Meshery Registry.
 
 ## Generate Models Using Meshery CLI
 
-**Step 1: Install Meshery CLI**
+Meshery provides two distinct CLI commands for model generation:
 
-Before you can use the Meshery CLI to generate a [Model](/concepts/logical/models), you must first install it. You can install Meshery CLI by [following the instructions]({{site.baseurl}}/installation#install-mesheryctl).
+### `mesheryctl model generate`
+  - **What It Does:** Creates models from a file, directory, or URL.
+  - **Where It Stores Models:** Locally, typically in the `.meshery/models` directory.
+  - **When to Use:** When you want to generate models without immediate registration.
 
+### `mesheryctl registry generate`
+  - **What It Does:** Generates models and automatically registers them into the Meshery Registry.
+  - **Where It Stores Models:** Under `/server/models/<model-name>`, with logs saved in `~/.meshery/logs/registry`.
+  - **When to Use:** When you need the models to be immediately available for Meshery’s runtime use.
 
-**Step 2: Generate the Model**
+> **Note:** In the examples below, we demonstrate the usage of `mesheryctl model generate` for simplicity. 
 
-Model can generated in 2 different format ```URL, CSV```. A template file is required that contains some required properties: Registrant, Model name, Model DisplayName, Category. The template file is only required when you use URL for generation of model from a crd. This command enable users to import their new models from CRD and existing Meshery Model
+### Steps to Generate Models
 
-<pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">mesheryctl model generate -f [file/url] </div></div>
-</pre>
+### 1. Install Meshery CLI
 
-The supported registrant for generating from URL is `github` and `artifacthub`.The URL format must be in this order.
+Before using the CLI, ensure it is installed by following the [installation instructions](https://docs.meshery.io/installation).
 
+### 2. Generate the Model
 
-Registrant `Artifacthub`:
-- https://artifacthub.io/packages/search?ts_query_web={ model-name } 
-- https://istio-release.storage.googleapis.com/charts/base-1.19.0-alpha.1.tgz&sa=D&source=editors&ust=1726839249773905&usg=AOvVaw0j88gkt6FOS1LLSRCYq95X 
+Models can be generated in two formats: **URL** and **CSV**. When generating from a URL, a template JSON file is required. This file must include fields such as *Registrant, Model Name, DisplayName,* and *Category*. The template also defines whether a component should be treated as a regular component or simply as an annotation (for example, an SVG icon).
 
-Registrant `Github`:
-- git:://github.com/cert-manager/cert-manager/master/deploy/crds
-- https://github.com/UffizziCloud/uffizzi_controller/releases/download/uffizzi-controller-2.0.1/uffizzi-controller-2.0.1.tgz&sa=D&source=editors&ust=1726839320133140&usg=AOvVaw2AryFwXIPKFnWRjRRTApzp
+#### 2.1 Using URL as Input
 
+To generate a model from a CRD URL, run:
 
-**Example :**
+```sh
+mesheryctl model generate -f "git:://github.com/cert-manager/cert-manager/master/deploy/crds" -t template.json
+```
 
-<pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">mesheryctl model generate -f "git:://github.com/cert-manager/cert-manager/master/deploy/crds" -t template.json</div></div>
-</pre>
+If you want to skip automatic registration (i.e. only generate and store the model locally), add the `-r` flag:
 
+```sh
+mesheryctl model generate -f "git:://github.com/cert-manager/cert-manager/master/deploy/crds" -t template.json -r
+```
 
-**Note:** A `-r` flag is present to skip registaration. If the flag is used then no new model would be registered though they would be generated and stored inside `.meshery/models` directory.
-The `template.json` can be viewed [here](#).In template.json if the field `isAnnotaion` is true then we would only consider that component as an annotation (svg icon) rather than a normal component.
+When generating models from a URL, Meshery supports the following sources:
 
+- **ArtifactHub:** `mesheryctl model generate -f "https://artifacthub.io/packages/search?ts_query_web={model-name}"`
+  
+- **GitHub:** `mesheryctl model generate -f "git:://github.com/cert-manager/cert-manager/master/deploy/crds"`
 
+> **Note:** The order and format of the URL are important. The `-t` flag points to the template file that maps required fields. If the template’s `isAnnotation` field is set to `true`, the component is treated as an annotation rather than a standard component.
 
-**Example :**
+#### 2.2 Using CSV Files as Input
 
+When using CSV files, ensure your directory includes:
+- A **model CSV** file (with model definitions)
+- A **components CSV** file (with component details)
+- Optionally, a **relationships CSV** file
 
-<pre class="codeblock-pre">
-<div class="codeblock"><div class="clipboardjs">mesheryctl model generate -f "git:://github.com/cert-manager/cert-manager/master/deploy/crds" -t template.json -r</div></div>
-</pre>
-
-
+The CLI will parse these files and generate models accordingly.
 
 ## Generate Models Using Meshery UI
 
-**Step 1: Access the Meshery UI**
+### 1. Access the Meshery UI
 
-To generate a model into Meshery using the Meshery UI, you must first [install Meshery](/installation/quick-start)
+Ensure Meshery is installed by following the [Quick Start instructions]({{site.baseurl}}/installation/quick-start).
 
-**Step 2: Navigate to Registry under Settings Page**
+### 2. Navigate to the Registry Section
 
-Once you have accessed the Meshery UI, navigate to the Registry under Settings. This page can be accessed by clicking on the Settings on the top right on setting icon and then selecting "Registry" and then choose model.
+- Click the **Settings** icon (top right).
+- Select **Registry** to manage and generate models.
 
-<a href="{{ site.baseurl }}/assets/img/export/Registry.png"><img alt="Registry-Navigator" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/export/Registry.png" /></a>
+<a href="{{ site.baseurl }}/assets/img/export/Registry.png">
+  <img alt="Registry Navigator" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/export/Registry.png" />
+</a>
 
-### Step 3: Generate the Model
+### 3. Generate the Model
 
-On the **Registry** page, you can generate your model by clicking the **Generate** button. You have two options for input: URL or CSV. Below are the steps for both methods:
+On the **Registry** page, click the **Generate** button. You can choose one of two methods:
 
----
+#### 3.1 From CSV
 
-#### **From CSV**
-1. **Upload CSV Files**: You can generate your model by uploading a **components model CSV**. Uploading a **relationships CSV** is optional.
-   
-2. **Template CSV**: If you don’t have a CSV file ready, you can use our [Spreasheet template](https://docs.google.com/spreadsheets/d/19JEpqvHrG8UL-Bc-An9UIcubf1NVhlfnQSN1TD7JOZ4/) to create one. Simply  fill in your details, download the template as csv, and upload it to generate your model.
+- Upload CSV Files: Upload your components CSV file and, optionally, a relationships CSV file.  
 
----
-<a href="{{ site.baseurl }}/assets/img/generate/CsvTemplate.gif"><img alt="Import-Model" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/generate/CsvTemplate.gif" /></a>
+  [![CSV Template](/assets/img/generate/CsvTemplate.gif)](/assets/img/generate/CsvTemplate.gif)
 
+- Use the Spreadsheet Template: If you don’t have a CSV file, use our [Spreadsheet template](https://docs.google.com/spreadsheets/d/19JEpqvHrG8UL-Bc-An9UIcubf1NVhlfnQSN1TD7JOZ4/).  Fill in your details, download it as a CSV, and upload it.
 
-<a href="{{ site.baseurl }}/assets/img/generate/GenerateFromCsv.gif"><img alt="Import-Model" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/generate/GenerateFromCsv.gif" /></a>
+  [![Generate From CSV](/assets/img/generate/GenerateFromCsv.gif)](/assets/img/generate/GenerateFromCsv.gif)
 
+#### 3.2 From URL
 
-#### **From URL**
-1. **Paste URL**: Enter the URL of your model. 
+- **Paste the URL:**Enter the URL for your model.
+- **Fill in the Details:**Provide the required model details when prompted.
+- **Specify Options:**Indicate if the model should be treated as an annotation or if it should be registered immediately.
 
-2. **Fill in Values**: After entering the URL, you will be prompted to fill in the values corresponding to your model's details.
+## Understanding How Meshery Generates Models
 
-3. **Specify Options**: Lastly, specify if the model is an annotation or if you wish to register it.
+Meshery employs both manual and automated techniques to generate models for its Registry. Here’s how it works:
 
-Once you complete these steps, click **Next** to continue with the model generation process.
+1. **Parsing Input:**The CLI reads data from a file, directory, or URL. A template file is used in URL mode to map required fields.
+2. **Validating Data:**The process verifies that all necessary fields (Registrant, Model Name, DisplayName, Category) are present.
+3. **Generating and Registering:**
+   - **Local Generation (`model generate`):** Models are created and stored locally.
+   - **Registry Generation (`registry generate`):** Models are created and then registered in the Registry, making them available to Meshery.
+4. **Logging:**Detailed logs and error messages are recorded to help troubleshoot any issues during generation.
 
----
-<a href="{{ site.baseurl }}/assets/img/generate/GenerateFromURl.gif"><img alt="Import-Model" style="width:500px;height:auto;" src="{{ site.baseurl }}/assets/img/generate/GenerateFromURl.gif" /></a>
+#### What Happens If Models Are Not Registered?
 
+If you generate models with the `-r` flag (to skip registration) using `mesheryctl model generate`, the models are stored locally but Meshery will not recognize them. For Meshery to use the models, they must be registered in the Registry. You can later [import](https://docs.meshery.io/guides/configuration-management/importing-models) them with:
 
+```sh
+mesheryctl model import -f <path-to-model>
+```
