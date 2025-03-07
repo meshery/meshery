@@ -48,7 +48,6 @@ const GrafanaMetricsCompare = ({ chartCompare }) => {
     setSelectedSeries(initialSeries.length > 0 ? initialSeries[0] : '');
   }, [chartCompare]);
 
-
   const handleChange = (name) => (event) => {
     if (name === 'panel') {
       const selectedPanel = event.target.value;

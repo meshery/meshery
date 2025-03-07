@@ -72,6 +72,7 @@ export const StyledHeader = styled(Typography)(({ theme }) => ({
   paddingLeft: theme.spacing(2),
   fontSize: '1.25rem',
   [theme.breakpoints.up('sm')]: { fontSize: '1.65rem' },
+  color: theme.palette.common.white,
 }));
 export const StyledBetaHeader = styled('sup')(() => ({
   color: '#EEEEEE',
@@ -79,7 +80,7 @@ export const StyledBetaHeader = styled('sup')(() => ({
   fontSize: '0.8125rem',
 }));
 
-const StyledSwitcher = styled('div')(() => ({
+const StyledSwitcher = styled('div')(({ theme }) => ({
   display: 'flex',
   flexDirection: 'row',
   justifyContent: 'center',
@@ -87,6 +88,7 @@ const StyledSwitcher = styled('div')(() => ({
   fontSize: '1.5rem',
   userSelect: 'none',
   transition: 'width 2s ease-in',
+  color: theme.palette.common.white,
 }));
 
 function OrgMenu(props) {
@@ -282,7 +284,7 @@ function OrgMenu(props) {
 
 function DefaultHeader({ title, isBeta }) {
   return (
-    <StyledHeader color="inherit" variant="h5" data-cy="headerPageTitle">
+    <StyledHeader variant="h5" data-cy="headerPageTitle">
       {title}
       {isBeta ? <StyledBetaHeader>BETA</StyledBetaHeader> : ''}
     </StyledHeader>
