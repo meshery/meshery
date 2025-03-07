@@ -12,7 +12,8 @@ import { canTruncateDescription } from './notification';
 import { FormatDryRunResponse } from '../DesignLifeCycle/DryRun';
 import { formatDryRunResponse } from 'machines/validator/designValidator';
 import { DeploymentSummaryFormatter } from '../DesignLifeCycle/DeploymentSummary';
-import { RelationshipEvaluationTraceFormatter } from './formatters/relationship_evaluation.js';
+import { EVENT_TYPE, eventDetailFormatterKey } from './constants';
+import { RelationshipEvaluationEventFormatter } from './formatters/relationship_evaluation';
 
 const DryRunResponse = ({ response }) => {
   return <FormatDryRunResponse dryRunErrors={formatDryRunResponse(response)} />;
@@ -416,8 +417,8 @@ export const FormattedMetadata = ({ event }) => {
   const PropertyFormatters = {
     doc: (value) => <TitleLink href={value}>Doc</TitleLink>,
     //trace can be very large, so we need to convert it to a file
-    // trace: (value) => <DataToFileLink data={value} /> ,
-    trace: (value) => <RelationshipEvaluationTraceFormatter value={value} />,
+    trace: (value) => <DataToFileLink data={value} />,
+    // trace: (value) => <RelationshipEvaluationTraceFormatter value={value} />,
     ShortDescription: (value) => <SectionBody body={value} style={{ marginBlock: '0.5rem' }} />,
     error: (value) => <ErrorMetadataFormatter metadata={value} event={event} />,
     dryRunResponse: (value) => <DryRunResponse response={value} />,
@@ -435,12 +436,13 @@ export const FormattedMetadata = ({ event }) => {
   };
 
   const EventTypeFormatters = {
-    deploy: DeploymentSummaryFormatter,
-    undeploy: DeploymentSummaryFormatter,
+    [eventDetailFormatterKey(EVENT_TYPE.DEPLOY_DESIGN)]: DeploymentSummaryFormatter,
+    [eventDetailFormatterKey(EVENT_TYPE.UNDEPLOY_DESIGN)]: DeploymentSummaryFormatter,
+    [eventDetailFormatterKey(EVENT_TYPE.EVALUATE_DESIGN)]: RelationshipEvaluationEventFormatter,
   };
 
-  if (EventTypeFormatters[event.action]) {
-    const Formatter = EventTypeFormatters[event.action];
+  if (EventTypeFormatters[eventDetailFormatterKey(event)]) {
+    const Formatter = EventTypeFormatters[eventDetailFormatterKey(event)];
     return <Formatter event={event} />;
   }
 

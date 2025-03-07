@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Box, Typography, styled, Chip, Badge, Tooltip, IconButton, Collapse } from '@layer5/sistent';
+import { Box, Typography, styled, Chip, Badge, Tooltip, Collapse } from '@layer5/sistent';
 import { ComponentIcon } from '@/components/DesignLifeCycle/common';
 // import { StyledAccordion } from '@/components/StyledAccordion';
 import { Box, styled } from '@layer5/sistent';
@@ -20,13 +20,11 @@ export const ComponentsTrace = ({ components, title }) => {
 };
 
 const TraceSection = ({ title, items, type, children, emptyMessage = 'No changes' }) => {
-
-  const [expanded , setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(false);
   const toggleExpanded = () => {
-    setExpanded(prev => !prev)
-  }
+    setExpanded((prev) => !prev);
+  };
   if (!items || items.length === 0) return null;
-
 
   return (
     <Box>
@@ -67,17 +65,17 @@ export const RelationshipsTrace = ({ relationships, title, action }) => {
 );
 
 // Relationship Trace Item
-const RelationshipItem = ({ relationship, action }) => (
+const RelationshipItem = ({ relationship }) => (
   <>
     {relationship.selectors.map((selector, index) => (
       <ItemRow key={index}>
-        <Box flex={1}
-
-        display={'flex'}
-        justifyItems={'space-between'}
-        justifyContent={'space-between'}
-        width={'100%'}
-        alignItems={'center'}
+        <Box
+          flex={1}
+          display={'flex'}
+          justifyItems={'space-between'}
+          justifyContent={'space-between'}
+          width={'100%'}
+          alignItems={'center'}
         >
           <Typography variant="body2">
             <span style={{ fontWeight: 500 }}>
@@ -87,9 +85,11 @@ const RelationshipItem = ({ relationship, action }) => (
             <strong>{selector?.allow?.to?.[0]?.kind || 'Unknown'}</strong>
           </Typography>
 
-         <Tooltip title={`Model: ${relationship.model.name} Version: ${relationship?.model?.version}`}>
-           <ModelBadge size="small" label={relationship.model.name} variant="outlined" />
-         </Tooltip>
+          <Tooltip
+            title={`Model: ${relationship.model.name} Version: ${relationship?.model?.version}`}
+          >
+            <ModelBadge size="small" label={relationship.model.name} variant="outlined" />
+          </Tooltip>
         </Box>
       </ItemRow>
     ))}
@@ -115,7 +115,11 @@ export const RelationshipsTrace = ({ relationships, title, type }) => (
 );
 
 // Main Formatter Component
-export const RelationshipEvaluationTraceFormatter = memo(({ value: trace }) => {
+export const RelationshipEvaluationTraceFormatter = memo(function RelationshipTraceFormatter({
+  trace,
+}) {
+  if (!trace) return null;
+
   const hasChanges =
     trace.componentsAdded.length > 0 ||
     trace.componentsRemoved.length > 0 ||
@@ -148,3 +152,13 @@ export const RelationshipEvaluationTraceFormatter = memo(({ value: trace }) => {
     </Box>
   );
 });
+
+export const RelationshipEvaluationEventFormatter = ({ event }) => {
+  return (
+    <Box mt={2}>
+      <Typography variant="body1">{event.description}</Typography>
+      <RelationshipEvaluationTraceFormatter trace={event?.metadata?.trace} />
+      <KeyValue Key={'Evaluated At'} Value={formatDateTime(event?.metadata?.evaluated_at)} />
+    </Box>
+  );
+};
