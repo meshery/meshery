@@ -328,6 +328,7 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
                 {topBarActions.map(({ key, ...layoutAction }) => (
                   <LayoutActionButton {...layoutAction} key={key} />
                 ))}
+                <LayoutActionButton {...LayoutActions.START_EDIT} />
               </Stack>
 
               <ResponsiveReactGridLayout
@@ -361,7 +362,6 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
                   );
                 })}
               </ResponsiveReactGridLayout>
-              <LayoutActionButton {...LayoutActions.START_EDIT} />
             </Box>
             <AddWidgetsToLayoutPanel
               editMode={isEditMode}
