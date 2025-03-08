@@ -130,10 +130,6 @@ mesheryctl model search [model-name]
 
 func init() {
 	initModelCmd.Flags().StringVarP(&targetDirectory, "path", "p", ".", "(optional) target directory (default: current dir)")
-	// somehow if we use "v" as a shorthand here, it conflicts with RootCmd "verbose" flag (which also has shorthand "v").
-	// panic appears
-	// panic: unable to redefine 'v' shorthand in "init" flagset: it's already used for "version" flag
-	// so drop shorthand for version here (same as for exportModal command)
 	initModelCmd.Flags().StringVarP(&versionFlag, "version", "", "1.0.0", "(optional) model version (default: 1.0.0)")
 	initModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "json", "(optional) format to display in [json|yaml]")
 
