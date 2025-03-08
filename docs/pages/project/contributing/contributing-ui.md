@@ -66,7 +66,7 @@ We recommend using Node 20 LTS. Meshery UI's build script supports other Node ve
 
 When contributing to Meshery UI, it is advisable to:
 
-- Use [prettier](https://marketplace.visualstudio.com/items?itemName=SimonSiefke.prettier-vscode) and [eslint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint) plugin for Visual Studio Code.
+- Use prettier plugin for Visual Studio Code.
 - Disable plugins other than `prettier` and `eslint` for formatting and linting, if any.
 
 ### Install UI dependencies
