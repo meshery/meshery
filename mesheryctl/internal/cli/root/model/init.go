@@ -3,7 +3,6 @@ package model
 import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
-	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -26,9 +25,6 @@ mesheryctl model init --path path/to/some/particular_folder (default is current 
 mesheryctl model init --output-format yaml (default is json) 
     `,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if len(args) != 0 {
-			return errors.New(utils.SystemModelSubError("this command takes no arguments\n", "list"))
-		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
