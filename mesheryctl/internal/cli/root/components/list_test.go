@@ -32,6 +32,6 @@ func TestComponentsList(t *testing.T) {
 		},
 	}
 
-	utils.MesheryctlTestCommandList(t, update, ComponentsCmd, tests, currDir, "components")
+	utils.InvokdeMesheryctlTestListCommand(t, update, ComponentsCmd, tests, currDir, "components")
 
 }
