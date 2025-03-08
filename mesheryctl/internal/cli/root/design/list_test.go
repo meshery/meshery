@@ -41,11 +41,3 @@ func TestDesignListCmd(t *testing.T) {
 
 	utils.MesheryctlTestCommandList(t, update, DesignCmd, tests, currDir, "designs")
 }
-
-// func trimLastNLines(s string, n int) string {
-// 	lines := strings.Split(s, "\n")
-// 	if len(lines) <= n {
-// 		return ""
-// 	}
-// 	return strings.Join(lines[:len(lines)-n], "\n")
-// }
