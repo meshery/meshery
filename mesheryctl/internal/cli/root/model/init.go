@@ -16,7 +16,7 @@ var initModelCmd = &cobra.Command{
 mesheryctl model init
 
 // generates a folder structure and sets up model version
-mesheryctl model init --version 2.0.8 (default is 1.0.0) 
+mesheryctl model init --version 2.0.8 (default is 0.1.0) 
 
 // generates a folder structure under specified path
 mesheryctl model init --path path/to/some/particular_folder (default is current folder) 
