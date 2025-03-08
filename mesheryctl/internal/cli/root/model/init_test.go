@@ -25,7 +25,7 @@ func TestModelInit(t *testing.T) {
 		ExpectedResponse string
 	}{
 		{
-			Name:             "Test model init printing encouraging message",
+			Name:             "model init printing encouraging message",
 			Args:             []string{"init"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.encouraging.output.golden",
