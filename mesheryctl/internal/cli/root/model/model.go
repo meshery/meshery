@@ -133,8 +133,8 @@ func init() {
 	// somehow if we use "v" as a shorthand here, it conflicts with RootCmd "verbose" flag (which also has shorthand "v").
 	// panic appears
 	// panic: unable to redefine 'v' shorthand in "init" flagset: it's already used for "version" flag
-	// so use here "r" ibstead of "v" for now.
-	initModelCmd.Flags().StringVarP(&versionFlag, "version", "r", "1.0.0", "(optional) model version (default: 1.0.0)")
+	// so drop shorthand for version here (same as for exportModal command)
+	initModelCmd.Flags().StringVarP(&versionFlag, "version", "", "1.0.0", "(optional) model version (default: 1.0.0)")
 	initModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "json", "(optional) format to display in [json|yaml]")
 
 	listModelCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
