@@ -4,7 +4,7 @@ import moment from 'moment';
 import path from 'path';
 
 const testHeader = '| # | Browser | Test Case | Tags | Result |';
-const testColumnAlignment =  '| :---: | :---: | :--- | :---: | :---: |'; 
+const testColumnAlignment = '| :---: | :---: | :--- | :---: | :---: |';
 
 class MyReporter {
   introMessage = '';
@@ -88,7 +88,9 @@ class MyReporter {
     if ((isFail || isSkipped) && !lastRetriesRun) return;
 
     const allTags = tags.map((item) => item.replace('@', '')).join(', ');
-    this.unsuccessfulTestData.push(`| ${this.countTable} | ${project} | ${title} | ${allTags} | ${this.getStatusEmoji(tags, status)} |`);
+    this.unsuccessfulTestData.push(
+      `| ${this.countTable} | ${project} | ${title} | ${allTags} | ${this.getStatusEmoji(tags, status)} |`,
+    );
     this.countTable++;
   }
 
@@ -150,7 +152,9 @@ class MyReporter {
       flaky: this.flaky,
       skipped: this.skipped,
       totalTests: this.totalTests,
-      testTable: this.unsuccessfulTestData.length ? [...this.tableHeader, ...this.unsuccessfulTestData].join('\n') : null,
+      testTable: this.unsuccessfulTestData.length
+        ? [...this.tableHeader, ...this.unsuccessfulTestData].join('\n')
+        : null,
     });
   }
 }
