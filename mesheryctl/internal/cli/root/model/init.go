@@ -36,7 +36,8 @@ mesheryctl model init --output-format yaml (default is json)
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
-			return nil
+			// TODO use meshkit error format instead during implementation pahse
+			return err
 		}
 
 		utils.Log.Info("init command will be here soon")
