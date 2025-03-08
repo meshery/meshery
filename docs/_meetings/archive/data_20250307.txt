@@ -1,0 +1,17 @@
+Meeting minutes and action items for 2025-03-07
+[Chirag]  Dockerfile Fix #14135
+                    [Ian]  test: 
+                    [Vinay Cheripally] add e2e tests for mesheryctl model view command #14098
+                    [Anuj Kumar Sharma]  Adding performance tests again #14097
+                    [your name] your agenda item
+                    [Vishrut Ghotge]  Added test coverage for model export subcommand #14085
+                    [Dhiraj Kadam]  [mesheryctl] UX: Fix components command  #14095
+                    [Aabid Sofi] making enhancements to the extension
+                     [Gourav Kumar Shaw] Azure Service Operator support for Meshery
+                    [Amit Amrutiya] Add model generator wizard in meshery extensions
+                    [Karan Palan]  docs: create dashboard widget contribution guide #14111
+                     [Falgun Patel] Updates on Prometheus Component
+                    [Mahadevan, Karan] Layout for programs page #2085
+                     [Vivek Vishal] [community]
+                    Slack invite links refreshed
+                    Fixed overflow on meshery.io/programs/gsoc/2025
