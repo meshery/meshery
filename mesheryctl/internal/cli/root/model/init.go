@@ -21,7 +21,7 @@ mesheryctl model init --version 2.0.8 (default is 1.0.0)
 // generates a folder structure under specified path
 mesheryctl model init --path path/to/some/particular_folder (default is current folder) 
 
-// View number of available models in Meshery
+// generate a folder structure in json format
 mesheryctl model init --output-format yaml (default is json) 
     `,
 	RunE: func(cmd *cobra.Command, args []string) error {
