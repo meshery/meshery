@@ -4,7 +4,6 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
-	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -32,10 +31,11 @@ mesheryctl model init --output-format yaml (default is json)
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			log.Fatalln(err, "error processing config")
+			utils.Log.Error(err)
+			return nil
 		}
 
-		log.Info("init command will be here soon")
+		utils.Log.Info("init command will be here soon")
 
 		return nil
 	},
