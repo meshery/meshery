@@ -13,7 +13,6 @@ on:
       - "docs/**"
       - ".github/**"
       - "install/**"
-      - "!install/docker/Dockerfile"
 
 jobs:
   update-rest-api-docs:
