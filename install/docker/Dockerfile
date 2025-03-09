@@ -29,6 +29,9 @@ RUN npm ci --omit=dev --legacy-peer-deps
 FROM base-node AS meshery-ui-builder
 WORKDIR /app
 
+# Set NODE_ENV to development so that ESLint is installed
+ENV NODE_ENV=development
+
 # Copy package.json and package-lock.json to install dependencies
 COPY ui/package.json ui/package-lock.json ./
 RUN npm install --legacy-peer-deps
@@ -46,6 +49,10 @@ RUN npm run build && npm run export
 
 FROM base-node AS meshery-ui-provider-builder
 WORKDIR /app
+
+# Set NODE_ENV to development so that ESLint is installed
+ENV NODE_ENV=development
+
 COPY provider-ui/package.json provider-ui/package-lock.json ./
 RUN npm install --legacy-peer-deps
 
