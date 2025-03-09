@@ -89,3 +89,9 @@ mesheryctl model init --output-format yaml (default is json)
 		return nil
 	},
 }
+
+func init() {
+	initModelCmd.Flags().StringVarP(&targetDirectory, "path", "p", ".", "(optional) target directory (default: current dir)")
+	initModelCmd.Flags().StringVarP(&versionFlag, "version", "", "0.1.0", "(optional) model version (default: 0.1.0)")
+	initModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "json", "(optional) format to display in [json|yaml]")
+}

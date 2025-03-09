@@ -129,10 +129,6 @@ mesheryctl model search [model-name]
 }
 
 func init() {
-	initModelCmd.Flags().StringVarP(&targetDirectory, "path", "p", ".", "(optional) target directory (default: current dir)")
-	initModelCmd.Flags().StringVarP(&versionFlag, "version", "", "0.1.0", "(optional) model version (default: 0.1.0)")
-	initModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "json", "(optional) format to display in [json|yaml]")
-
 	listModelCmd.Flags().IntVarP(&pageNumberFlag, "page", "p", 1, "(optional) List next set of models with --page (default = 1)")
 	viewModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
 
