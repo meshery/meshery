@@ -160,13 +160,31 @@ const MesherySettingsPerformanceComponent = (props) => {
                 id="c"
                 name="c"
                 label="Concurrent requests"
-                type="number"
+                type="text"
                 fullWidth
-                value={c}
-                inputProps={{ min: '0', step: '1' }}
+                value={c === null ? '' : c}
+                inputProps={{ 
+                  inputMode: 'numeric',
+                  pattern: '[0-9]*'
+                }}
                 margin="normal"
                 variant="outlined"
-                onChange={handleChange('c')}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  if (value === '') {
+                    setC(null);
+                  } else {
+                    const parsedValue = parseInt(value, 10);
+                    if (!isNaN(parsedValue)) {
+                      setC(parsedValue);
+                    }
+                  }
+                }}
+                onBlur={(event) => {
+                  if (c === null) {
+                    setC(0);
+                  }
+                }}
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
@@ -176,13 +194,31 @@ const MesherySettingsPerformanceComponent = (props) => {
                 id="qps"
                 name="qps"
                 label="Queries per second"
-                type="number"
+                type="text"
                 fullWidth
-                value={qps}
-                inputProps={{ min: '0', step: '1' }}
+                value={qps === null ? '' : qps}
+                inputProps={{ 
+                  inputMode: 'numeric',
+                  pattern: '[0-9]*'
+                }}
                 margin="normal"
                 variant="outlined"
-                onChange={handleChange('qps')}
+                onChange={(event) => {
+                  const value = event.target.value;
+                  if (value === '') {
+                    setQps(null);
+                  } else {
+                    const parsedValue = parseInt(value, 10);
+                    if (!isNaN(parsedValue)) {
+                      setQps(parsedValue);
+                    }
+                  }
+                }}
+                onBlur={(event) => {
+                  if (qps === null) {
+                    setQps(0);
+                  }
+                }}
                 InputLabelProps={{ shrink: true }}
               />
             </Grid>
