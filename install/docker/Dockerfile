@@ -38,19 +38,20 @@ COPY ui .
 # Run ESLint
 RUN npm run lint
 
-# Build and Export
-RUN npm run build && npm run export
-
 # Disable NextJS Telemetry data collect
 ENV NEXT_TELEMETRY_DISABLED 1
+
+# Build and Export
 RUN npm run build && npm run export
 
 FROM base-node AS meshery-ui-provider-builder
 WORKDIR /app
-COPY --from=meshery-ui-provider-deps /app/node_modules ./node_modules
+COPY provider-ui/package.json provider-ui/package-lock.json ./
+RUN npm install --legacy-peer-deps
+
 # Disable NextJS Telemetry data collect
-ENV NEXT_TELEMETRY_DISABLED 1
 COPY provider-ui .
+ENV NEXT_TELEMETRY_DISABLED 1
 RUN npm run build && npm run export
 
 FROM ubuntu AS wrk2
