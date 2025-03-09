@@ -30,6 +30,15 @@ FROM base-node AS meshery-ui-builder
 WORKDIR /app
 COPY --from=meshery-ui-deps /app/node_modules ./node_modules
 COPY ui .
+
+# Install all dependencies
+RUN npm install
+
+# Run ESLint explicitly
+RUN npm run lint
+
+RUN npm run build && npm run export
+
 # Disable NextJS Telemetry data collect
 ENV NEXT_TELEMETRY_DISABLED 1
 RUN npm run build && npm run export
