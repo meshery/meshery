@@ -48,7 +48,7 @@ const GrafanaDisplaySelection = ({ boardPanelConfigs, deleteSelectedBoardPanelCo
     sort: false,
     search: false,
     filterType: 'textField',
-    responsive: 'stacked',
+    responsive: 'vertical',
     count: selectedValsForDisplay.length,
     print: false,
     download: false,
