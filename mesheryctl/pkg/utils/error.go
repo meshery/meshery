@@ -52,11 +52,11 @@ var (
 	ErrMissingCommandsCode        = "mesheryctl-1137"
 	ErrKubernetesConnectivityCode = "mesheryctl-1138"
 	ErrKubernetesQueryCode        = "mesheryctl-1139"
-	ErrCreateManifestsFolderCode  = "replace_me"
-	ErrDownloadFileCode           = "replace_me"
-	ErrNoManifestFilesFoundCode   = "replace_me"
-	ErrWalkManifestsCode          = "replace_me"
-	ErrGetChannelVersionCode      = "replace_me"
+	ErrCreateManifestsFolderCode  = "mesheryctl-1141"
+	ErrDownloadFileCode           = "mesheryctl-1142"
+	ErrNoManifestFilesFoundCode   = "mesheryctl-1143"
+	ErrWalkManifestsCode          = "mesheryctl-1144"
+	ErrGetChannelVersionCode      = "mesheryctl-1145"
 )
 
 // RootError returns a formatted error message with a link to 'root' command usage page at
