@@ -28,15 +28,17 @@ RUN npm ci --omit=dev --legacy-peer-deps
 # Build NextJS Application
 FROM base-node AS meshery-ui-builder
 WORKDIR /app
-COPY --from=meshery-ui-deps /app/node_modules ./node_modules
+
+# Copy package.json and package-lock.json to install dependencies
+COPY ui/package.json ui/package-lock.json ./
+RUN npm install --legacy-peer-deps
+
 COPY ui .
 
-# Install all dependencies
-RUN npm install
-
-# Run ESLint explicitly
+# Run ESLint
 RUN npm run lint
 
+# Build and Export
 RUN npm run build && npm run export
 
 # Disable NextJS Telemetry data collect
