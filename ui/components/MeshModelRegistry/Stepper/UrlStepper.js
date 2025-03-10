@@ -187,11 +187,11 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
             <ul>
               <li>
                 <strong>Model Name:</strong> Should be in lowercase with hyphens. For example,{' '}
-                <em>cert-manager</em>.
+                <em>cert-manager</em>. This is the unique name for the model within the scope of a registrant (<a href="https://docs.meshery.io/concepts/logical/registry">learn more about registrants</a>).
               </li>
               <br />
               <li>
-                <strong>Display Name:</strong> How you want your model to be named. For example,{' '}
+                <strong>Display Name:</strong> Model display name should be a friendly name for your model. For example,{' '}
                 <em>Cert Manager</em>.
               </li>
             </ul>
@@ -202,15 +202,13 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
         component: (
           <div>
             <Box display="flex" alignItems="center" mb={2}>
-              <Typography>
-                Please select the appropriate <strong>Category</strong> and
+              <Typography>{' '}
+                Please select the appropriate{' '}<strong>Category</strong> and 
                 <strong>Subcategory</strong> relevant to your model.
                 <br />
                 <em>
                   Note: If you can&apos;t find the appropriate category or subcategory, please
-                  select <strong>Uncategorized</strong>
-                </em>
-                .
+                  select{' '}<strong>Uncategorized</strong></em>.
               </Typography>
             </Box>
 
