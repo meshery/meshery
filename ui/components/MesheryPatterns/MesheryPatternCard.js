@@ -103,6 +103,17 @@ function MesheryPatternCard_({
     }
   };
 
+  const DisabledButtonStyles = {
+    backgroundColor: 'rgba(0, 0, 0, 0.12)',
+    color: 'rgba(0, 0, 0, 0.26)',
+    boxShadow: 'none',
+    cursor: 'not-allowed',
+    '&:hover': {
+      backgroundColor: 'rgba(0, 0, 0, 0.12)',
+      boxShadow: 'none',
+    },
+  };
+
   const formatted_pattern_file = formatPatternFile(pattern_file);
   return (
     <>
@@ -233,10 +244,18 @@ function MesheryPatternCard_({
                 style={{
                   padding: '6px 9px',
                   borderRadius: '8px',
+                  ...(CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject)
+                    ? {}
+                    : DisabledButtonStyles),
                 }}
+                disabled={!CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject)}
               >
                 <GetAppIcon
-                  fill={theme.palette.background.constant.white}
+                  fill={
+                    CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject)
+                      ? theme.palette.background.constant.white
+                      : 'rgba(0, 0, 0, 0.26)'
+                  }
                   data-cy="download-button"
                 />
                 <GridBtnText> Download </GridBtnText>
@@ -287,9 +306,19 @@ function MesheryPatternCard_({
                   style={{
                     padding: '6px 9px',
                     borderRadius: '8px',
+                    ...(CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)
+                      ? {}
+                      : DisabledButtonStyles),
                   }}
                 >
-                  <Edit style={{ fill: theme.palette.background.constant.white, ...iconMedium }} />
+                  <Edit
+                    style={{
+                      fill: CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)
+                        ? theme.palette.background.constant.white
+                        : 'rgba(0, 0, 0, 0.26)',
+                      ...iconMedium,
+                    }}
+                  />
                   <GridCloneBtnText> Edit </GridCloneBtnText>
                 </TooltipButton>
               )}
