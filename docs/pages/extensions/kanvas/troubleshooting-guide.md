@@ -1,11 +1,11 @@
 ---
 layout: default
-title: Kanvas Troubleshooting
-permalink: guides/troubleshooting/kanvas
+title: Kanvas Troubleshooting Guide
+permalink: extensions/kanvas/troubleshooting-guide
 language: en
 abstract: Troubleshooting Kanvas errors
-type: guides
-category: troubleshooting
+type: extensions
+category: kanvas
 list: include
 ---
 
@@ -35,4 +35,4 @@ If you continue contribute to the Meshery project, you will have the chance to b
 
 Pre-built packages of extensions, like Kanvas are readily available and compatible with each release tag of Meshery. If you checkout and build Meshery locally on a stable release tag or if you checkout and built Meshery locally just after a release (like today's release), you will find that the pre-built package of different extensions download and run.
 
-The further in time (further in code changes) away that your local Meshery build is away from a stable release tag, the lower your chances of a pre-built extension package working.
+The further in time (further in code changes) away that your local Meshery build is away from a stable release tag, the lower your chances of a pre-built extension package working. 
