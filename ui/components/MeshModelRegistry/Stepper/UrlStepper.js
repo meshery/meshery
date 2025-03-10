@@ -384,7 +384,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
           <div>
             <Box display="flex" alignItems="center" mb={2}>
               <Typography>
-                Please identify the location from which to source your model&aposs components.
+                Please identify the location from which to source your model&apos;s components.
               </Typography>
             </Box>
             <FormControl component="fieldset">
