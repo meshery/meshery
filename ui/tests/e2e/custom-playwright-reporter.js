@@ -22,14 +22,12 @@ class MyReporter {
     this.totalTests = `- Total test cases: ${suite.allTests().length}`;
   }
 
-  // eslint-disable-next-line no-unused-vars
-  onStdOut(chunk, _test, _result) {
+  onStdOut(chunk) {
     const text = chunk.toString('utf-8');
     process.stdout.write(text);
   }
 
-  // eslint-disable-next-line no-unused-vars
-  onStdErr(chunk, _test, _result) {
+  onStdErr(chunk) {
     const text = chunk.toString('utf-8');
     process.stderr.write(text);
   }
