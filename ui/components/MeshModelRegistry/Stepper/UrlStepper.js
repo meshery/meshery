@@ -39,7 +39,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
   const [secondaryColor, setSecondaryColor] = React.useState('#000000');
   const [logoLightThemePath, setLogoLightThemePath] = React.useState('');
   const [logoDarkThemePath, setLogoDarkThemePath] = React.useState('');
-  const [registerModel, setRegisterModel] = React.useState(true);
+  const [registerModel] = React.useState(true);
   const [isAnnotation, setIsAnnotation] = React.useState(true);
 
   const handleLogoLightThemeChange = async (event) => {
@@ -140,8 +140,8 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
           <div>
             <Box display="flex" alignItems="center" mb={2}>
               <Typography>
-                Please enter the appropriate<strong> Model name</strong> and{' '}
-                <strong> Model Display Name</strong> for your model.
+                Please enter the appropriate <strong>Model Name</strong> (a unique name with
+                hyphens, not whitespaces) and <strong>Model Display Name</strong> for your model.
               </Typography>
             </Box>
             <Grid container spacing={2}>
@@ -151,6 +151,9 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                     required
                     id="model-name"
                     label="Model Name"
+                    placeholder="my-model"
+                    helperText="Model name should be in lowercase with hyphens, not whitespaces."
+                    error={modelName.length > 0 && !/^[a-z0-9-]+$/.test(modelName)}
                     value={modelName}
                     onChange={(e) => setModelName(e.target.value)}
                     variant="outlined"
@@ -163,6 +166,11 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                     required
                     id="model-display-name"
                     label="Model Display Name"
+                    placeholder="a friendly name for my model"
+                    helperText="Model display name should be a friendly name for your model."
+                    error={
+                      modelDisplayName.length > 0 && !/^[a-zA-Z0-9\s]+$/.test(modelDisplayName)
+                    }
                     value={modelDisplayName}
                     onChange={(e) => setModelDisplayName(e.target.value)}
                     variant="outlined"
@@ -179,12 +187,17 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
             <ul>
               <li>
                 <strong>Model Name:</strong> Should be in lowercase with hyphens. For example,{' '}
-                <em>cert-manager</em>.
+                <em>cert-manager</em>. This is the unique name for the model within the scope of a
+                registrant (
+                <a href="https://docs.meshery.io/concepts/logical/registry">
+                  learn more about registrants
+                </a>
+                ).
               </li>
               <br />
               <li>
-                <strong>Display Name:</strong> How you want your model to be named. For example,{' '}
-                <em>Cert Manager</em>.
+                <strong>Display Name:</strong> Model display name should be a friendly name for your
+                model. For example, <em>Cert Manager</em>.
               </li>
             </ul>
           </>
@@ -195,11 +208,15 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
           <div>
             <Box display="flex" alignItems="center" mb={2}>
               <Typography>
+                {' '}
                 Please select the appropriate <strong>Category</strong> and
-                <strong> Subcategory</strong> for your model.
+                <strong>Subcategory</strong> relevant to your model.
                 <br />
-                <strong>Note:</strong> If you can&apos;t find the appropriate category or
-                subcategory, please select <em>Uncategorized</em>.
+                <em>
+                  Note: If you can&apos;t find the appropriate category or subcategory, please
+                  select <strong>Uncategorized</strong>
+                </em>
+                .
               </Typography>
             </Box>
 
@@ -263,10 +280,9 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
           <div>
             <Box display="flex" alignItems="center" mb="2rem">
               <Typography>
-                Configure logos, colors, and shape for your model.
+                Configure icons, colors, and a default shape for your model and its components.
                 <br />
-                <strong>Note:</strong> If none of these are provided, default Meshery values will be
-                used.
+                <em>Note: If none of these are provided, default Meshery values will be used.</em>
               </Typography>
             </Box>
 
@@ -374,7 +390,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
           <div>
             <Box display="flex" alignItems="center" mb={2}>
               <Typography>
-                Please select the appropriate <strong>Source</strong> based on your URL.
+                Please identify the location from which to source your model&apos;s components.
               </Typography>
             </Box>
             <FormControl component="fieldset">
@@ -386,7 +402,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                 onChange={(e) => setModelSource(e.target.value.toLowerCase())}
                 style={{ gap: '2rem' }}
               >
-                {['Github', 'Artifacthub'].map((source, idx) => (
+                {['Artifact Hub', 'GitHub'].map((source, idx) => (
                   <FormControlLabel
                     key={idx}
                     value={source.toLowerCase()}
@@ -424,22 +440,29 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
           <>
             <ul>
               <li>
-                <strong>GitHub:</strong> Provide a GitHub repository URL. For example,{' '}
-                <em>git://github.com/cert-manager/cert-manager/master/deploy/crds</em>.
+                <strong>Artifact Hub:</strong> Artifact Hub package URL. For example,{' '}
+                <em>https://artifacthub.io/packages/search?ts_query_web={'{model-name}'}</em>.
               </li>
               <br />
               <li>
-                <strong>ArtifactHub:</strong> ArtifactHub package URL. For example,{' '}
-                <em>https://artifacthub.io/packages/search?ts_query_web={'{model-name}'}</em>.
+                <strong>GitHub:</strong> Provide a GitHub repository URL. For example,{' '}
+                <em>git://github.com/cert-manager/cert-manager/master/deploy/crds</em>.
               </li>
             </ul>
+            <p>
+              Learn more about the process of{' '}
+              <a href="https://docs.meshery.io/guides/configuration-management/generating-models">
+                creating and importing models
+              </a>
+              .
+            </p>
           </>
         ),
       },
       {
         component: (
           <div>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <FormControl component="fieldset">
                 <FormControlLabel
                   style={{ marginLeft: '0' }}
@@ -456,12 +479,12 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                   }
                 />
               </FormControl>
-            </Grid>
+            </Grid> */}
             <Grid item xs={12} style={{ marginTop: '1rem' }}>
               <FormControl component="fieldset">
                 <FormControlLabel
                   style={{ marginLeft: '0' }}
-                  label="Is this model exclusively for visual annotation and not related to infrastructure management?"
+                  label="The components in this model are visual annotations only."
                   labelPlacement="start"
                   control={
                     <Checkbox
@@ -482,14 +505,16 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
           <>
             <p>Specify your preferences for model registration and usage:</p>
             <ul>
-              <li>
+              {/* <li>
                 <strong>Register Model Now</strong>: Choose this option to register the model
                 immediately after it&apos;s generated, allowing you to use it right away.
               </li>
-              <br />
+              <br /> */}
               <li>
                 <strong>Visual Annotation Only</strong>: Select this if the model is exclusively for
-                visual annotation purposes and not related to infrastructure management.
+                visual annotation purposes and its compoonents are not to be orchestrated
+                (meaningfully used during deploy/undeploy operations); e.g. custom shapes, lines,
+                arrow and so on that serve to enhance comprehension or visual design.
               </li>
             </ul>
           </>
