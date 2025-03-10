@@ -8,8 +8,6 @@ test.describe('Logout Page Tests', { tag: '@unstable' }, () => {
   test('Logout from current user session', async ({ page }) => {
     await page.getByTestId('header-menu').click();
     await page.getByRole('menuitem', { name: 'Logout' }).click();
-    await expect(page).toHaveURL(
-      `${ENV.MESHERY_SERVER_URL}/provider` || `https://cloud.layer5.io/login`,
-    );
+    await expect(page).toHaveURL(`${ENV.MESHERY_SERVER_URL}/provider`);
   });
 });
