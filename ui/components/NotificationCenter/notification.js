@@ -12,6 +12,7 @@ import {
   Checkbox,
   Popover,
   alpha,
+  CustomTooltip,
 } from '@layer5/sistent';
 import {
   OptionList,
@@ -320,7 +321,7 @@ export const Notification = ({ event_id }) => {
             justifyContent: 'space-between',
           }}
         >
-          <ActorAvatar item sm={1}>
+          <ActorAvatar item sm={1} style={{ marginBottom: '0.5rem' }}>
             <AvatarStack
               avatars={eventActors}
               direction={{
@@ -359,10 +360,19 @@ export const Notification = ({ event_id }) => {
               onClick={eventstopPropagation}
               checked={Boolean(event.checked)}
               onChange={handleSelectEvent}
-              sx={{ margin: '0rem', paddingLeft: '0.5rem' }}
+              sx={{
+                margin: '0rem',
+                padding: '0rem',
+                paddingLeft: '0.5rem',
+                paddingRight: '0.25rem',
+              }}
             />
 
-            <severityStyles.icon {...iconLarge} fill={severityStyles?.color} />
+            <severityStyles.icon
+              {...iconLarge}
+              fill={severityStyles?.color}
+              style={{ paddingRight: '0.25rem' }}
+            />
           </GridItem>
           <GridItem item xs={8} sm>
             <Message variant="body1">
@@ -373,25 +383,13 @@ export const Notification = ({ event_id }) => {
           </GridItem>
           <GridItem item xs="auto" style={{ justifyContent: 'end', gap: '0rem' }}>
             <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-              <Tooltip
+              <CustomTooltip
                 title={moment(event.created_at).local().format('MMMM DD, YYYY, h:mm:ss A')}
                 placement="top"
                 arrow
-                componentsProps={{
-                  tooltip: {
-                    sx: {
-                      background: '#141414',
-                      maxWidth: '600px',
-                      fontSize: '0.75rem',
-                      borderRadius: '0.5rem',
-                      padding: '0.75rem',
-                      boxShadow: 'rgba(0, 0, 0, 0.6) 0px 4px 10px, rgba(0, 0, 0, 0.5) 0px 2px 4px',
-                    },
-                  },
-                }}
               >
                 <Typography variant="body1">{formatTimestamp(event.created_at)}</Typography>
-              </Tooltip>
+              </CustomTooltip>
             </Box>
             <BasicMenu event={event} />
           </GridItem>

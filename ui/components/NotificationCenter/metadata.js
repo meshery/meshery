@@ -239,6 +239,7 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
                   pb: 1,
                   '& ul': { paddingInlineStart: hashedError ? '20px' : '0px' },
                   '& p': { lineHeight: '1.2rem' },
+                  '& li': { lineHeight: '1.2rem' },
                 }}
               >
                 <RenderMarkdown content={error} />
@@ -254,7 +255,7 @@ export const ErrorMetadataFormatter = ({ metadata, event }) => {
       {' '}
       <div>
         {event?.description && <FormatStructuredData data={event.description} />}
-        <div style={{ marginTop: '1rem' }}>
+        <div style={{ marginTop: '0.5rem' }}>
           <FormatStructuredData
             data={{
               Details: longDescription,
@@ -411,7 +412,7 @@ export const FormattedMetadata = ({ event }) => {
     doc: (value) => <TitleLink href={value}>Doc</TitleLink>,
     //trace can be very large, so we need to convert it to a file
     trace: (value) => <DataToFileLink data={value} />,
-    ShortDescription: (value) => <SectionBody body={value} style={{ marginBlock: '0.5rem' }} />,
+    ShortDescription: (value) => <SectionBody body={value} />,
     error: (value) => <ErrorMetadataFormatter metadata={value} event={event} />,
     dryRunResponse: (value) => <DryRunResponse response={value} />,
     DownloadLink: (value) => (
