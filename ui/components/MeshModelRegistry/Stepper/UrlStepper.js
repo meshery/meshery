@@ -39,7 +39,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
   const [secondaryColor, setSecondaryColor] = React.useState('#000000');
   const [logoLightThemePath, setLogoLightThemePath] = React.useState('');
   const [logoDarkThemePath, setLogoDarkThemePath] = React.useState('');
-  const [registerModel, setRegisterModel] = React.useState(true);
+  const [registerModel] = React.useState(true);
   const [isAnnotation, setIsAnnotation] = React.useState(true);
 
   const handleLogoLightThemeChange = async (event) => {
@@ -140,8 +140,8 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
           <div>
             <Box display="flex" alignItems="center" mb={2}>
               <Typography>
-                Please enter the appropriate <strong>Model Name</strong> (a unique name with hyphens, not whitespaces) and {' '}
-                <strong>Model Display Name</strong> for your model.
+                Please enter the appropriate <strong>Model Name</strong> (a unique name with
+                hyphens, not whitespaces) and <strong>Model Display Name</strong> for your model.
               </Typography>
             </Box>
             <Grid container spacing={2}>
@@ -168,7 +168,9 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                     label="Model Display Name"
                     placeholder="a friendly name for my model"
                     helperText="Model display name should be a friendly name for your model."
-                    error={modelDisplayName.length > 0 && !/^[a-zA-Z0-9\s]+$/.test(modelDisplayName)}
+                    error={
+                      modelDisplayName.length > 0 && !/^[a-zA-Z0-9\s]+$/.test(modelDisplayName)
+                    }
                     value={modelDisplayName}
                     onChange={(e) => setModelDisplayName(e.target.value)}
                     variant="outlined"
@@ -204,7 +206,11 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                 Please select the appropriate <strong>Category</strong> and
                 <strong>Subcategory</strong> relevant to your model.
                 <br />
-                <em>Note: If you can&apos;t find the appropriate category or subcategory, please select <strong>Uncategorized</strong></em>.
+                <em>
+                  Note: If you can&apos;t find the appropriate category or subcategory, please
+                  select <strong>Uncategorized</strong>
+                </em>
+                .
               </Typography>
             </Box>
 
@@ -377,7 +383,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
         component: (
           <div>
             <Box display="flex" alignItems="center" mb={2}>
-            <Typography>
+              <Typography>
                 Please identify the location from which to source your model&aposs components.
               </Typography>
             </Box>
@@ -427,7 +433,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
         helpText: (
           <>
             <ul>
-            <li>
+              <li>
                 <strong>ArtifactHub:</strong> ArtifactHub package URL. For example,{' '}
                 <em>https://artifacthub.io/packages/search?ts_query_web={'{model-name}'}</em>.
               </li>
@@ -437,7 +443,13 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                 <em>git://github.com/cert-manager/cert-manager/master/deploy/crds</em>.
               </li>
             </ul>
-            <p>Learn more about the process of <a href="https://docs.meshery.io/guides/configuration-management/generating-models">creating and importing models</a>.</p>
+            <p>
+              Learn more about the process of{' '}
+              <a href="https://docs.meshery.io/guides/configuration-management/generating-models">
+                creating and importing models
+              </a>
+              .
+            </p>
           </>
         ),
       },
@@ -493,7 +505,10 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
               </li>
               <br /> */}
               <li>
-                <strong>Visual Annotation Only</strong>: Select this if the model is exclusively for visual annotation purposes and its compoonents are not to be orchestrated (meaningfully used during deploy/undeploy operations); e.g. custom shapes, lines, arrow and so on that serve to enhance comprehension or visual design.
+                <strong>Visual Annotation Only</strong>: Select this if the model is exclusively for
+                visual annotation purposes and its compoonents are not to be orchestrated
+                (meaningfully used during deploy/undeploy operations); e.g. custom shapes, lines,
+                arrow and so on that serve to enhance comprehension or visual design.
               </li>
             </ul>
           </>
