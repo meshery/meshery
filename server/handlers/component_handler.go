@@ -230,6 +230,7 @@ func (h *Handler) GetMeshmodelModels(rw http.ResponseWriter, r *http.Request) {
 	}
 	if search != "" {
 		filter.DisplayName = search
+		filter.Name = search
 		filter.Greedy = true
 	}
 
