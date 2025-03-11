@@ -31,5 +31,5 @@ func TestList(t *testing.T) {
 		},
 	}
 
-	utils.InvokdeMesheryctlTestListCommand(t, update, RelationshipCmd, tests, currDir, "relationships")
+	utils.InvokeMesheryctlTestListCommand(t, update, RelationshipCmd, tests, currDir, "relationships")
 }

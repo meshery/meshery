@@ -39,5 +39,5 @@ func TestDesignListCmd(t *testing.T) {
 		},
 	}
 
-	utils.InvokdeMesheryctlTestListCommand(t, update, DesignCmd, tests, currDir, "designs")
+	utils.InvokeMesheryctlTestListCommand(t, update, DesignCmd, tests, currDir, "designs")
 }

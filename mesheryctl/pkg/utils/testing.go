@@ -334,7 +334,7 @@ type MesheryListCommamdTest struct {
 	ExpectError      bool
 }
 
-func InvokdeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryListCommamdTest, commandDir string, commadName string) {
+func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryListCommamdTest, commandDir string, commadName string) {
 	// setup current context
 	SetupContextEnv(t)
 
