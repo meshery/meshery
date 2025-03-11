@@ -202,19 +202,19 @@ const getNavigatorComponents = (
           subject: keys.VIEW_CATALOG.subject,
         },
       },
-      {
-        id: FILTER,
-        icon: <FilterIcon style={{ ...drawerIconsStyle }} />,
-        href: '/configuration/filters',
-        title: 'Filters',
-        show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, FILTER]),
-        link: true,
-        isBeta: true,
-        permission: {
-          action: keys.VIEW_FILTERS.action,
-          subject: keys.VIEW_FILTERS.subject,
-        },
-      },
+      // {
+      //   id: FILTER,
+      //   icon: <FilterIcon style={{ ...drawerIconsStyle }} />,
+      //   href: '/configuration/filters',
+      //   title: 'Filters',
+      //   show: capabilityRegistryObj.isNavigatorComponentEnabled([CONFIGURATION, FILTER]),
+      //   link: true,
+      //   isBeta: true,
+      //   permission: {
+      //     action: keys.VIEW_FILTERS.action,
+      //     subject: keys.VIEW_FILTERS.subject,
+      //   },
+      // },
       {
         id: DESIGN,
         icon: <PatternIcon style={{ ...drawerIconsStyle }} />,
