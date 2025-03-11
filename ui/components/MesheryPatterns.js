@@ -302,7 +302,7 @@ function MesheryPatterns({
 }) {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('');
+  const [sortOrder, setSortOrder] = useState('updated_at desc');
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const modalRef = useRef();
@@ -1287,8 +1287,8 @@ function MesheryPatterns({
     print: false,
     download: false,
     sortOrder: {
-      name: 'updated_at',
-      direction: 'desc',
+      name: sortOrder.split(' ')[0],
+      direction: sortOrder.split(' ')[1],
     },
     textLabels: {
       selectedRows: {
