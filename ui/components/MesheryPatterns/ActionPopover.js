@@ -29,17 +29,12 @@ const ActionPopover = ({ actions = [] }) => {
   return (
     <>
       <ButtonGroup
-        variant="outlined"
+        variant="text"
         style={{ boxShadow: 'none' }}
         ref={anchorRef}
         aria-label="Button group with a nested menu"
       >
-        <Button
-          sx={{ padding: '6px 9px', borderRadius: '8px' }}
-          size="small"
-          onClick={handleToggle}
-          variant="outlined"
-        >
+        <Button size="small" onClick={handleToggle} variant="text">
           <MoreVertIcon />
         </Button>
       </ButtonGroup>
