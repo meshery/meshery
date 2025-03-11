@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Tooltip, Grid, FormControl, MenuItem, Table, FormattedTime } from '@layer5/sistent';
-import { formatDate } from '../../DataFormatter';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import {
