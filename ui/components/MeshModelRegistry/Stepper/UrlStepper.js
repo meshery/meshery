@@ -85,17 +85,10 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
       return false;
     }
 
-    if (source === 'github') {
-      return url.startsWith('git://github.com/');
-    } else if (source === 'artifacthub') {
-      return (
-        url.startsWith('https://artifacthub.io/packages/') ||
-        url.startsWith('http://artifacthub.io/packages/') ||
-        url.startsWith('artifacthub.io/packages/')
-      );
-    }
-
-    return false;
+    const testUrl = modelProperties.metadata.properties.sourceUri.oneOf.find(
+      (source) => source.title.toLowerCase() === modelSource,
+    ).pattern;
+    return new RegExp(testUrl).test(url);
   };
 
   const handleUrlChange = (e) => {
@@ -105,9 +98,9 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
       const isValid = validateUrl(newUrl, modelSource);
       if (!isValid) {
         setUrlError(
-          modelSource === 'github'
-            ? 'Invalid GitHub URL. Format: git://github.com/org/repo/branch/path'
-            : 'Invalid ArtifactHub URL. Example: https://artifacthub.io/packages/helm/org/package',
+          modelProperties.metadata.properties.sourceUri.oneOf.find(
+            (source) => source.title.toLowerCase() === modelSource,
+          ).metadata.validationHint,
         );
       } else {
         setUrlError('');
@@ -409,12 +402,12 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                 onChange={(e) => setModelSource(e.target.value.toLowerCase())}
                 style={{ gap: '2rem' }}
               >
-                {['Artifact Hub', 'GitHub'].map((source, idx) => (
+                {modelProperties.metadata.properties.sourceUri.oneOf.map((source, idx) => (
                   <FormControlLabel
                     key={idx}
-                    value={source.toLowerCase()}
+                    value={source.title.toLowerCase()}
                     control={<Radio />}
-                    label={<>{source}</>}
+                    label={source.title}
                   />
                 ))}
               </RadioGroup>
@@ -433,7 +426,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                 placeholder={
                   modelSource === 'github'
                     ? 'git://github.com/org/repo/branch/path'
-                    : modelSource === 'artifacthub'
+                    : modelSource === 'artifact hub'
                       ? 'https://artifacthub.io/packages/helm/org/package'
                       : 'Select a source first'
                 }
