@@ -1,74 +1,74 @@
 {
-  "capabilities": null,
-  "component": {
-   "kind": "Package",
-   "schema": "{\n \"description\": \"Package is an extension for cuex engine\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PackageSpec the spec for Package\",\n   \"properties\": {\n    \"path\": {\n     \"type\": \"string\"\n    },\n    \"provider\": {\n     \"description\": \"Provider the external Provider in Package for cuex to run functions\",\n     \"properties\": {\n      \"endpoint\": {\n       \"type\": \"string\"\n      },\n      \"protocol\": {\n       \"description\": \"ProviderProtocol the protocol type for external Provider\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"endpoint\",\n      \"protocol\"\n     ],\n     \"type\": \"object\"\n    },\n    \"templates\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"path\",\n    \"templates\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Package\",\n \"type\": \"object\"\n}",
-   "version": "cue.oam.dev/v1alpha1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Package",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false,
-   "source_uri": "https://kubevela.github.io/charts/vela-core-1.10.0-alpha.1.tgz"
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Package",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "App Definition and Development"
-   },
-   "displayName": "Vela Core",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "vela-core",
+    "displayName": "Vela Core",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "App Definition and Development"
+    },
+    "subCategory": "Application Definition \u0026 Image Build",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://kubevela.github.io/charts/vela-core-1.10.0-alpha.1.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "1.10.0-alpha.1"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "source_uri": "https://kubevela.github.io/charts/vela-core-1.10.0-alpha.1.tgz",
-    "styleOverrides": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "1.10.0-alpha.1"
-   },
-   "name": "vela-core",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Application Definition \u0026 Image Build",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": null,
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false,
+    "source_uri": "https://kubevela.github.io/charts/vela-core-1.10.0-alpha.1.tgz"
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "Package",
+    "schema": "{\n \"description\": \"Package is an extension for cuex engine\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PackageSpec the spec for Package\",\n   \"properties\": {\n    \"path\": {\n     \"type\": \"string\"\n    },\n    \"provider\": {\n     \"description\": \"Provider the external Provider in Package for cuex to run functions\",\n     \"properties\": {\n      \"endpoint\": {\n       \"type\": \"string\"\n      },\n      \"protocol\": {\n       \"description\": \"ProviderProtocol the protocol type for external Provider\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"endpoint\",\n      \"protocol\"\n     ],\n     \"type\": \"object\"\n    },\n    \"templates\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"path\",\n    \"templates\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Package\",\n \"type\": \"object\"\n}",
+    "version": "cue.oam.dev/v1alpha1"
+  }
+}

@@ -1,9 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React from 'react';
-import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
-import Paper from '@material-ui/core/Paper';
-import { Button, IconButton, Typography, withStyles } from '@material-ui/core';
+import { Box, Grid, Paper, Button, IconButton, Typography, styled } from '@layer5/sistent';
 import AddIcon from '@mui/icons-material/Add';
 import SimpleAccordion from './Accordion';
 import { CustomTextTooltip } from '../CustomTextTooltip';
@@ -13,16 +10,13 @@ import ErrorOutlineIcon from '../../../../assets/icons/ErrorOutlineIcon';
 import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconSmall } from '../../../../css/icons.styles';
 import pluralize from 'pluralize';
-const styles = () => ({
-  typography: {
-    fontSize: '0.8rem',
-  },
-  root: {
-    '& .MuiPaper-root': {
-      backgroundColor: '#f4f4f4',
-    },
+
+const StyledRoot = styled(Paper)({
+  '& .MuiPaper-root': {
+    backgroundColor: '#f4f4f4',
   },
 });
+
 function getTitleForItem(props) {
   const title = getTitle(props);
 
@@ -55,7 +49,7 @@ const ArrayFieldTitle = ({ title, classes }) => {
     <Typography
       className={classes.typography}
       variant="body1"
-      style={{ fontWeight: 'bold', display: 'inline' }}
+      style={{ fontWeight: 'bold', display: 'inline', fontSize: '0.8rem' }}
     >
       {title.charAt(0).toUpperCase() + title.slice(1)}
     </Typography>
@@ -161,7 +155,7 @@ const DefaultFixedArrayFieldTemplate = (props) => {
 const DefaultNormalArrayFieldTemplate = (props) => {
   const { classes, theme } = props;
   return (
-    <Paper className={classes.root} elevation={0}>
+    <StyledRoot elevation={0}>
       <Box p={1}>
         <Grid
           item
@@ -247,8 +241,8 @@ const DefaultNormalArrayFieldTemplate = (props) => {
             })}
         </Grid>
       </Box>
-    </Paper>
+    </StyledRoot>
   );
 };
 
-export default withStyles(styles, { withTheme: true })(ArrayFieldTemplate);
+export default ArrayFieldTemplate;

@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
 import { Box, styled, useTheme } from '@layer5/sistent';
 import bb, { gauge } from 'billboard.js';
-import { UsesSistent } from '@/components/SistentWrapper';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 
 const ChartRoot = styled(Box)(() => ({
   width: '100%',
@@ -24,17 +23,6 @@ const ErrorMessage = styled(Box)(() => {
     fontWeight: 'bold',
   };
 });
-
-// const ChartTitle = styled(Box)(() => {
-//   const theme = useTheme();
-//   return {
-//     fontSize: '12px',
-//     color: theme.palette.text.secondary,
-//     fontWeight: 'bold',
-//     textAlign: 'center',
-//     width: '100%',
-//   };
-// });
 
 export default function GrafanaCustomGaugeChart(props) {
   let chartRef = null;
@@ -114,14 +102,12 @@ export default function GrafanaCustomGaugeChart(props) {
   const { error } = props;
 
   return (
-    <UsesSistent>
-      <NoSsr>
-        <Box>
-          {/* <ChartTitle>{props.panel?.title}</ChartTitle> */}
-          <ErrorMessage>{error && 'There was an error communicating with the server'}</ErrorMessage>
-          <ChartRoot ref={(ch) => (chartRef = ch)} />
-        </Box>
-      </NoSsr>
-    </UsesSistent>
+    <NoSsr>
+      <Box>
+        {/* <ChartTitle>{props.panel?.title}</ChartTitle> */}
+        <ErrorMessage>{error && 'There was an error communicating with the server'}</ErrorMessage>
+        <ChartRoot ref={(ch) => (chartRef = ch)} />
+      </Box>
+    </NoSsr>
   );
 }

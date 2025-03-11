@@ -1,26 +1,16 @@
 import React, { useEffect } from 'react';
-import MuiAccordion from '@material-ui/core/Accordion';
-import MuiAccordionSummary from '@material-ui/core/AccordionSummary';
-import MuiAccordionDetails from '@material-ui/core/AccordionDetails';
 import DeleteIcon from '../../../../assets/icons/DeleteIcon';
-import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
-import { IconButton, makeStyles } from '@material-ui/core';
+import {
+  IconButton,
+  Accordion as MuiAccordion,
+  AccordionSummary as MuiAccordionSummary,
+  AccordionDetails as MuiAccordionDetails,
+  Typography,
+  Box,
+  useTheme,
+} from '@layer5/sistent';
 import { iconSmall } from '../../../../css/icons.styles';
-
-const useStyles = makeStyles((theme) => ({
-  accordionRoot: {
-    width: '100%',
-    marginBottom: '0rem',
-  },
-  heading: {
-    fontSize: theme.typography.pxToRem(15),
-    fontWeight: theme.typography.fontWeightRegular,
-  },
-  typography: {
-    fontSize: '0.8rem',
-  },
-}));
 
 export default function SimpleAccordion(props) {
   useEffect(() => {
@@ -34,11 +24,10 @@ export default function SimpleAccordion(props) {
   }, []);
   // React Hook useEffect has an unnecessary dependency: 'accordionDetailsRef.current'. Either exclude it or remove the dependency array. Mutable values like 'accordionDetailsRef.current' aren't valid dependencies because mutating them doesn't re-render the component.
 
-  const classes = useStyles();
   const accordionDetailsRef = React.useRef(null);
-
+  const theme = useTheme();
   return (
-    <div className={classes.accordionRoot}>
+    <Box width={'100%'} marginBottom={'0rem'}>
       <MuiAccordion defaultExpanded elevation={0}>
         <MuiAccordionSummary
           expandIcon={<ExpandMoreIcon style={iconSmall} fill="gray" />}
@@ -46,7 +35,12 @@ export default function SimpleAccordion(props) {
           id="panel1a-header"
           style={{ backgroundColor: 'F7F7F7' }}
         >
-          <Typography className={classes.heading}>
+          <Typography
+            style={{
+              fontSize: theme.typography.pxToRem(15),
+              fontWeight: theme.typography.fontWeightRegular,
+            }}
+          >
             {props.heading?.charAt(0).toUpperCase() + props.heading?.slice(1)}{' '}
           </Typography>
 
@@ -63,6 +57,6 @@ export default function SimpleAccordion(props) {
         </MuiAccordionSummary>
         <MuiAccordionDetails ref={accordionDetailsRef}>{props.children}</MuiAccordionDetails>
       </MuiAccordion>
-    </div>
+    </Box>
   );
 }

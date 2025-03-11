@@ -1,7 +1,20 @@
 import { CONNECTION_STATES } from '../../utils/Enum';
 import { notificationColors } from '../../themes';
-import { Box, Button, Chip, Grid, MenuItem, Select, styled, Tab, Tabs } from '@layer5/sistent';
-import { StepConnector, StepLabel, Stepper, TableContainer } from '@mui/material';
+import {
+  Box,
+  Button,
+  Chip,
+  Grid,
+  MenuItem,
+  Select,
+  styled,
+  Tab,
+  Tabs,
+  StepConnector,
+  StepLabel,
+  Stepper,
+  TableContainer,
+} from '@layer5/sistent';
 
 export const CreateButton = styled(Grid)({
   display: 'flex',
@@ -12,10 +25,8 @@ export const CreateButton = styled(Grid)({
 
 export const InnerTableContainer = styled(TableContainer)(({ theme }) => ({
   background: theme.palette.background.card,
-  margin: '10px 10px 10px 13px',
   borderLeft: `9px solid ${theme.palette.background.default} !important`,
   borderRadius: '10px 0 0 10px',
-  width: 'calc(100% - 23px)',
   border: 'none',
   overflowX: 'hidden',
 }));
@@ -76,7 +87,7 @@ export const ConnectionIconText = styled('div')({
   justifyContent: 'center',
 });
 
-export const ChipWrapper = styled(Chip)({
+export const ChipWrapper = styled(Chip)(({ theme }) => ({
   width: '13rem',
   maxWidth: '13rem',
   minWidth: '9rem',
@@ -89,7 +100,9 @@ export const ChipWrapper = styled(Chip)({
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
   border: '1px solid rgba(255, 255, 255, 0.23)',
-});
+  textTransform: 'lowercase',
+  color: theme.palette.text.primary,
+}));
 
 const baseChipStyles = {
   minWidth: '142px !important',
@@ -211,6 +224,9 @@ export const OperationButton = styled(Grid)(({ theme }) => ({
   },
 }));
 
+export const FormatterWrapper = styled(Box)({
+  marginBlock: '0.4rem',
+});
 export const ContentContainer = styled(Grid)(({ theme }) => ({
   [theme?.breakpoints?.down(1050)]: {
     flexDirection: 'column',

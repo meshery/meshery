@@ -20,7 +20,7 @@ The CRD is used to configure [Broker]({{site.baseurl}}/concepts/architecture/bro
 The following section shows a summary of the structure of the Custom Resource and the required fields.
 
 ```yaml
-apiVersion: meshery.layer5.io/v1alpha1
+apiVersion: meshery.io/v1alpha1
 kind: Broker
 metadata:
   name:
@@ -61,7 +61,7 @@ The following section defines the usage for this Custom Resource.
 ### Example Use
 
 ```yaml
-apiVersion: meshery.layer5.io/v1alpha1
+apiVersion: meshery.io/v1alpha1
 kind: Broker
 metadata:
   name: meshery-broker
@@ -77,14 +77,14 @@ spec:
 ```
 ## MeshSync CRD
 
-The MeshSync CRD is used as a configuration tool the [MeshSync](https://docs.meshery.io/concepts/architecture/MeshSync). The CRD is used to control the replica count for MeshSync instances, [Broker](https://docs.meshery.io/concepts/architecture/broker) configuration and the resources that MeshSync watches and listens to in a cluster.
+The MeshSync CRD is used as a configuration tool the [MeshSync](https://docs.meshery.io/concepts/architecture/meshsync). The CRD is used to control the replica count for MeshSync instances, [Broker](https://docs.meshery.io/concepts/architecture/broker) configuration and the resources that MeshSync watches and listens to in a cluster.
 
 ### YAML Synopsis
 
 The following section shows a summary of the structure of the Custom Resource and the required fields.
 
 ```yaml
-apiVersion: meshery.layer5.io/v1alpha1
+apiVersion: meshery.io/v1alpha1
 kind: MeshSync
 metadata:
   name:
@@ -167,12 +167,12 @@ The following section outlines the fields and their descriptions
 
 The following section defines the usage for this Custom Resource
 
-The Custom Resource is used to configure the [Broker](https://docs.meshery.io/concepts/architecture/broker) and Events to be tracked by [MeshSync](https://docs.meshery.io/concepts/architecture/MeshSync)
+The Custom Resource is used to configure the [Broker](https://docs.meshery.io/concepts/architecture/broker) and Events to be tracked by [MeshSync](https://docs.meshery.io/concepts/architecture/meshsync)
 
 #### Example Use
 
 ```yaml
-apiVersion: meshery.layer5.io/v1alpha1
+apiVersion: meshery.io/v1alpha1
 kind: MeshSync
 metadata:
   name: meshery-MeshSync

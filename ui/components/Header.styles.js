@@ -1,16 +1,8 @@
 import { styled, AppBar, Toolbar, Paper, MenuIcon, IconButton, darkTeal } from '@layer5/sistent';
 
-export const HeaderAppBar = styled(AppBar, {
-  shouldForwardProp: (prop) => prop !== 'isDrawerCollapsed',
-})(({ theme, isDrawerCollapsed }) => ({
+export const HeaderAppBar = styled(AppBar)(({ theme }) => ({
   backgroundColor: theme.palette.background.tabs,
   shadowColor: '#808080',
-  ...(isDrawerCollapsed
-    ? {
-        [theme.breakpoints.between(635, 732)]: { padding: theme.spacing(0.75, 1.4) },
-        [theme.breakpoints.between(600, 635)]: { padding: theme.spacing(0.4, 1.4) },
-      }
-    : {}),
 }));
 
 export const StyledToolbar = styled(Toolbar, {
@@ -22,6 +14,9 @@ export const StyledToolbar = styled(Toolbar, {
   paddingRight: 34,
   backgroundColor: theme.palette.mode === 'dark' ? theme.palette.background.card : darkTeal.main,
   boxShadow: `3px 0px 4px ${theme.palette.background.brand.default}`,
+  [theme.breakpoints.down('sm')]: {
+    paddingRight: 8,
+  },
   ...(isDrawerCollapsed
     ? {
         [theme.breakpoints.down('xs')]: {
@@ -41,7 +36,7 @@ export const UserContainer = styled('div')(({ theme }) => ({
   paddingLeft: 1,
   display: 'flex',
   alignItems: 'center',
-  [theme.breakpoints.down('xs')]: {
+  [theme.breakpoints.down('sm')]: {
     width: '100%',
     justifyContent: 'flex-end',
     marginRight: '1rem',
@@ -98,7 +93,7 @@ export const CBadgeContainer = styled('div')({
 });
 
 export const CMenuContainer = styled(Paper)(({ theme }) => ({
-  backgroundColor: theme.palette.secondary.headerColor,
+  backgroundColor: theme.palette.background.card,
   marginTop: '-1.2rem',
   borderRadius: '3px',
   padding: '1rem',
@@ -107,6 +102,15 @@ export const CMenuContainer = styled(Paper)(({ theme }) => ({
   transitionProperty: 'height',
 }));
 
-export const IconButtonAvatar = styled(IconButton)({
+export const IconButtonAvatar = styled(IconButton)(({ theme }) => ({
   padding: 4,
-});
+  color: theme.palette.common.white,
+}));
+
+export const UserInfoContainer = styled('div')(({ theme }) => ({
+  display: 'flex',
+  alignItems: 'center',
+  [theme.breakpoints.down('399')]: {
+    gap: '0.3rem',
+  },
+}));

@@ -15,7 +15,7 @@ import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
 import { camelcaseToSnakecase } from '../../../utils/utils';
 import { useSelector } from 'react-redux';
-import { UsesSistent } from '@/components/SistentWrapper';
+
 import { useRouter } from 'next/router';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 
@@ -210,57 +210,61 @@ const ResourcesTable = (props) => {
 
   return (
     <>
-      {view !== ALL_VIEW ? (
-        <Slide
-          in={view !== ALL_VIEW}
-          timeout={400}
-          direction={'left'}
-          exit={true}
-          enter={true}
-          mountOnEnter
-          unmountOnExit
-        >
-          <div>
+      <Slide in={view === SINGLE_VIEW} timeout={400} direction="left" mountOnEnter unmountOnExit>
+        <div>
+          {view === SINGLE_VIEW && (
             <View
               type={`${tableConfig.name}`}
               setView={setView}
               resource={selectedResource}
               k8sConfig={k8sConfig}
             />
-          </div>
-        </Slide>
-      ) : (
-        <>
-          <ToolWrapper style={{ marginBottom: '5px', marginTop: '1rem' }}>
-            <div style={{ display: 'flex', justifyContent: 'end', width: '100%' }}>
-              <SearchBar
-                onSearch={(value) => {
-                  setSearch(value);
-                }}
-                expanded={isSearchExpanded}
-                setExpanded={setIsSearchExpanded}
-                placeholder={`Search ${tableConfig.name}...`}
-              />
+          )}
+        </div>
+      </Slide>
 
-              <CustomColumnVisibilityControl
-                id="ref"
+      <Slide in={view === ALL_VIEW} timeout={400} direction="right" mountOnEnter unmountOnExit>
+        <div>
+          {view === ALL_VIEW && (
+            <>
+              <ToolWrapper style={{ marginBottom: '5px', marginTop: '1rem' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'end',
+                    width: '100%',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                  }}
+                >
+                  <SearchBar
+                    onSearch={(value) => {
+                      setSearch(value);
+                    }}
+                    expanded={isSearchExpanded}
+                    setExpanded={setIsSearchExpanded}
+                    placeholder={`Search ${tableConfig.name}...`}
+                  />
+
+                  <CustomColumnVisibilityControl
+                    id="ref"
+                    columns={tableConfig.columns}
+                    customToolsProps={{ columnVisibility, setColumnVisibility }}
+                  />
+                </div>
+              </ToolWrapper>
+              <ResponsiveDataTable
+                data={meshSyncResources}
                 columns={tableConfig.columns}
-                customToolsProps={{ columnVisibility, setColumnVisibility }}
+                options={options}
+                tableCols={tableCols}
+                updateCols={updateCols}
+                columnVisibility={columnVisibility}
               />
-            </div>
-          </ToolWrapper>
-          <UsesSistent>
-            <ResponsiveDataTable
-              data={meshSyncResources}
-              columns={tableConfig.columns}
-              options={options}
-              tableCols={tableCols}
-              updateCols={updateCols}
-              columnVisibility={columnVisibility}
-            />
-          </UsesSistent>
-        </>
-      )}
+            </>
+          )}
+        </div>
+      </Slide>
     </>
   );
 };

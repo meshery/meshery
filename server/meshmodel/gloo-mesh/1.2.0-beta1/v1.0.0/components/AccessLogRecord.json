@@ -1,196 +1,196 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "AccessLogRecord",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Describes a record of access logs sourced from a set of workloads and optionally\\n   filtered based on request criteria.\",\n   \"properties\": {\n    \"filters\": {\n     \"description\": \"Configure criteria for determining which access logs will be recorded.\\nThe list is disjunctive, a request will be recorded if it matches any filter.\\nLeave empty to emit all access logs.\",\n     \"items\": {\n      \"oneOf\": [\n       {\n        \"not\": {\n         \"anyOf\": [\n          {\n           \"required\": [\n            \"statusCodeMatcher\"\n           ]\n          },\n          {\n           \"required\": [\n            \"headerMatcher\"\n           ]\n          }\n         ]\n        }\n       },\n       {\n        \"required\": [\n         \"statusCodeMatcher\"\n        ]\n       },\n       {\n        \"required\": [\n         \"headerMatcher\"\n        ]\n       }\n      ],\n      \"properties\": {\n       \"headerMatcher\": {\n        \"description\": \"Matches against a request or response header. Omit to match any headers.\",\n        \"properties\": {\n         \"invertMatch\": {\n          \"description\": \"If set to true, the result of the match will be inverted. Defaults to false.\\n\\n   Examples:\\n\\n       - name=foo, invert_match=true: matches if no header named `foo` is present\\n       - name=foo, value=bar, invert_match=true: matches if no header named `foo` with value `bar` is present\\n       - name=foo, value=``\\\\d{3}``, regex=true, invert_match=true: matches if no header named `foo` with a value consisting of three integers is present.\",\n          \"type\": \"boolean\"\n         },\n         \"name\": {\n          \"description\": \"Specify the name of the header in the request.\",\n          \"type\": \"string\"\n         },\n         \"regex\": {\n          \"description\": \"Specify whether the header value should be treated as regex.\",\n          \"type\": \"boolean\"\n         },\n         \"value\": {\n          \"description\": \"Specify the value of the header. If the value is absent a request that\\nhas the name header will match, regardless of the header’s value.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"statusCodeMatcher\": {\n        \"description\": \"Matches against a response status code. Omit to match any status code.\",\n        \"properties\": {\n         \"comparator\": {\n          \"description\": \"The comparison type used for matching.\",\n          \"enum\": [\n           \"EQ\",\n           \"GE\",\n           \"LE\"\n          ],\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"description\": \"The status code value to match against.\",\n          \"maximum\": 4294967295,\n          \"minimum\": 0,\n          \"type\": \"integer\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"includedFilterStateObjects\": {\n     \"description\": \"Specify filter state objects to include in access logs\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"includedRequestHeaders\": {\n     \"description\": \"Specify request headers to include in access logs.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"includedResponseHeaders\": {\n     \"description\": \"Specify response headers to include in access logs.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"includedResponseTrailers\": {\n     \"description\": \"Specify response trailers to include in access logs.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"workloadSelectors\": {\n     \"description\": \"Select the workloads to be configured to emit access logs.\\nLeave empty to apply to all workloads managed by Gloo Mesh.\",\n     \"items\": {\n      \"properties\": {\n       \"kubeWorkloadMatcher\": {\n        \"description\": \"Match Kubernetes workloads by their labels, namespaces, and/or clusters.\",\n        \"properties\": {\n         \"clusters\": {\n          \"description\": \"If specified, match Kubernetes workloads if they exist in one of the specified clusters.\\n           When used in a networking policy, omission matches any cluster.\\n           When used in a Gloo Mesh Role, a wildcard (`\\\"*\\\"`) must be specified to match any cluster.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"labels\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"description\": \"If specified, all labels must exist on Kubernetes workload.\\n       When used in a networking policy, omission matches any labels.\\n       When used in a Gloo Mesh Role, a wildcard (`\\\"*\\\"`) must be specified to match any label key and/or value.\",\n          \"type\": \"object\"\n         },\n         \"namespaces\": {\n          \"description\": \"If specified, match Kubernetes workloads if they exist in one of the specified namespaces.\\n           When used in a networking policy, omission matches any namespace.\\n           When used in a Gloo Mesh Role, a wildcard (`\\\"*\\\"`) must be specified to match any namespace.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Access Log Record\",\n \"type\": \"object\"\n}",
-   "version": "observability.enterprise.mesh.gloo.solo.io/v1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Access Log Record",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Access Log Record",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Cloud Native Network"
-   },
-   "displayName": "Gloo Mesh",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "gloo-mesh",
+    "displayName": "Gloo Mesh",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Cloud Native Network"
+    },
+    "subCategory": "Service Mesh",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://storage.googleapis.com/gloo-mesh/gloo-mesh/gloo-mesh-1.2.0-beta1.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "1.2.0-beta1"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "source_uri": "https://storage.googleapis.com/gloo-mesh/gloo-mesh/gloo-mesh-1.2.0-beta1.tgz",
-    "styleOverrides": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "1.2.0-beta1"
-   },
-   "name": "gloo-mesh",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Service Mesh",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "AccessLogRecord",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"description\": \"Describes a record of access logs sourced from a set of workloads and optionally\\n   filtered based on request criteria.\",\n   \"properties\": {\n    \"filters\": {\n     \"description\": \"Configure criteria for determining which access logs will be recorded.\\nThe list is disjunctive, a request will be recorded if it matches any filter.\\nLeave empty to emit all access logs.\",\n     \"items\": {\n      \"oneOf\": [\n       {\n        \"not\": {\n         \"anyOf\": [\n          {\n           \"required\": [\n            \"statusCodeMatcher\"\n           ]\n          },\n          {\n           \"required\": [\n            \"headerMatcher\"\n           ]\n          }\n         ]\n        }\n       },\n       {\n        \"required\": [\n         \"statusCodeMatcher\"\n        ]\n       },\n       {\n        \"required\": [\n         \"headerMatcher\"\n        ]\n       }\n      ],\n      \"properties\": {\n       \"headerMatcher\": {\n        \"description\": \"Matches against a request or response header. Omit to match any headers.\",\n        \"properties\": {\n         \"invertMatch\": {\n          \"description\": \"If set to true, the result of the match will be inverted. Defaults to false.\\n\\n   Examples:\\n\\n       - name=foo, invert_match=true: matches if no header named `foo` is present\\n       - name=foo, value=bar, invert_match=true: matches if no header named `foo` with value `bar` is present\\n       - name=foo, value=``\\\\d{3}``, regex=true, invert_match=true: matches if no header named `foo` with a value consisting of three integers is present.\",\n          \"type\": \"boolean\"\n         },\n         \"name\": {\n          \"description\": \"Specify the name of the header in the request.\",\n          \"type\": \"string\"\n         },\n         \"regex\": {\n          \"description\": \"Specify whether the header value should be treated as regex.\",\n          \"type\": \"boolean\"\n         },\n         \"value\": {\n          \"description\": \"Specify the value of the header. If the value is absent a request that\\nhas the name header will match, regardless of the header’s value.\",\n          \"type\": \"string\"\n         }\n        },\n        \"type\": \"object\"\n       },\n       \"statusCodeMatcher\": {\n        \"description\": \"Matches against a response status code. Omit to match any status code.\",\n        \"properties\": {\n         \"comparator\": {\n          \"description\": \"The comparison type used for matching.\",\n          \"enum\": [\n           \"EQ\",\n           \"GE\",\n           \"LE\"\n          ],\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"description\": \"The status code value to match against.\",\n          \"maximum\": 4294967295,\n          \"minimum\": 0,\n          \"type\": \"integer\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"includedFilterStateObjects\": {\n     \"description\": \"Specify filter state objects to include in access logs\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"includedRequestHeaders\": {\n     \"description\": \"Specify request headers to include in access logs.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"includedResponseHeaders\": {\n     \"description\": \"Specify response headers to include in access logs.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"includedResponseTrailers\": {\n     \"description\": \"Specify response trailers to include in access logs.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"workloadSelectors\": {\n     \"description\": \"Select the workloads to be configured to emit access logs.\\nLeave empty to apply to all workloads managed by Gloo Mesh.\",\n     \"items\": {\n      \"properties\": {\n       \"kubeWorkloadMatcher\": {\n        \"description\": \"Match Kubernetes workloads by their labels, namespaces, and/or clusters.\",\n        \"properties\": {\n         \"clusters\": {\n          \"description\": \"If specified, match Kubernetes workloads if they exist in one of the specified clusters.\\n           When used in a networking policy, omission matches any cluster.\\n           When used in a Gloo Mesh Role, a wildcard (`\\\"*\\\"`) must be specified to match any cluster.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"labels\": {\n          \"additionalProperties\": {\n           \"type\": \"string\"\n          },\n          \"description\": \"If specified, all labels must exist on Kubernetes workload.\\n       When used in a networking policy, omission matches any labels.\\n       When used in a Gloo Mesh Role, a wildcard (`\\\"*\\\"`) must be specified to match any label key and/or value.\",\n          \"type\": \"object\"\n         },\n         \"namespaces\": {\n          \"description\": \"If specified, match Kubernetes workloads if they exist in one of the specified namespaces.\\n           When used in a networking policy, omission matches any namespace.\\n           When used in a Gloo Mesh Role, a wildcard (`\\\"*\\\"`) must be specified to match any namespace.\",\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"type\": \"object\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Access Log Record\",\n \"type\": \"object\"\n}",
+    "version": "observability.enterprise.mesh.gloo.solo.io/v1"
+  }
+}

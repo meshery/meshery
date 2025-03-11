@@ -1,5 +1,4 @@
 import { Button, Grid, IconButton, Typography, styled, useTheme } from '@layer5/sistent';
-import { UsesSistent } from './SistentWrapper';
 import CloseIcon from '@mui/icons-material/Close';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
@@ -7,6 +6,7 @@ import { connect } from 'react-redux';
 import Cookies from 'universal-cookie';
 import { mesheryExtensionRoute } from '../pages/_app';
 import { Colors } from '@/themes/app';
+import { EXTENSION_NAMES, EXTENSIONS } from '@/utils/Enum';
 
 const StyledPaper = styled('div')(({ theme }) => ({
   position: 'fixed',
@@ -71,13 +71,9 @@ export function MesheryExtensionEarlyAccessCardPopup({ capabilitiesRegistry }) {
   const [isOpen, setIsOpen] = useState(false);
   const cookies = new Cookies('registered');
 
-  const closeCallback = () => {
-    cookies.set('registered', 'true', { path: '/' });
-  };
-
   useEffect(() => {
-    // cookies return string and not boolean thus truthy,falsy doesnt work as intended
-    const isAlreadyRegistered = cookies.get('registered') && cookies.get('registered') === 'true';
+    // Cookies returns boolean
+    const isAlreadyRegistered = cookies.get('registered') === true ? true : false;
 
     if (isAlreadyRegistered) {
       return;
@@ -95,7 +91,6 @@ export function MesheryExtensionEarlyAccessCardPopup({ capabilitiesRegistry }) {
       <MesheryExtensionEarlyAccessCard
         closeForm={() => {
           setIsOpen(false);
-          closeCallback();
         }}
         capabilitiesRegistry={capabilitiesRegistry}
       />
@@ -110,21 +105,30 @@ export function MesheryExtensionEarlyAccessCard({
   closeForm = () => {},
   capabilitiesRegistry,
 }) {
+  const extension = EXTENSIONS[EXTENSION_NAMES.KANVAS];
   const signUpText = 'Sign up';
-  const signupHeader = 'Get early access to Kanvas!';
+  const signupHeader = extension.signup_header || '';
   const [buttonText, setButtonText] = useState(signUpText);
   const [title, setTitle] = useState(signupHeader);
   const { push } = useRouter();
   const theme = useTheme();
+  const cookies = new Cookies('registered');
+
   const popupImageSrc =
     theme.palette.mode === 'dark' ? '/static/img/aws.svg' : '/static/img/aws-light.svg';
 
   const handleButtonClick = (e) => {
     if (buttonText === signUpText) {
-      window.open('https://layer5.io/cloud-native-management/kanvas', '_blank');
+      window.open(extension.signup_url, '_blank');
     } else {
       push(mesheryExtensionRoute);
     }
+    const oneDayFromNow = new Date();
+    oneDayFromNow.setDate(oneDayFromNow.getDate() + 1);
+
+    cookies.set('registered', 'true', { path: '/' });
+
+    closeForm();
     e.stopPropagation();
   };
 
@@ -132,7 +136,7 @@ export function MesheryExtensionEarlyAccessCard({
     const isMesheryExtensionUser = isMesheryExtensionRegisteredUser(capabilitiesRegistry);
     if (isMesheryExtensionUser) {
       setTitle('Collaborative management enabled');
-      setButtonText('Open Kanvas');
+      setButtonText(extension.signup_button);
     } else {
       setTitle(signupHeader);
       setButtonText(signUpText);
@@ -140,7 +144,7 @@ export function MesheryExtensionEarlyAccessCard({
   }, [capabilitiesRegistry]);
 
   return (
-    <UsesSistent>
+    <>
       <StyledPaper style={rootStyle}>
         <StyledHeaderWrapper>
           <Typography
@@ -206,7 +210,7 @@ export function MesheryExtensionEarlyAccessCard({
           </Grid>
         </div>
       </StyledPaper>
-    </UsesSistent>
+    </>
   );
 }
 

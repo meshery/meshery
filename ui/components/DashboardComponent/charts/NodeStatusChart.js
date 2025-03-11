@@ -1,8 +1,7 @@
 import React from 'react';
 import { donut } from 'billboard.js';
 import BBChart from '../../BBChart';
-import { Stack } from '@mui/material';
-import { CircularProgress, KEPPEL, Typography } from '@layer5/sistent';
+import { CircularProgress, KEPPEL, Typography, Stack } from '@layer5/sistent';
 import { getLegendTemplate } from './utils';
 import ConnectCluster from './ConnectCluster';
 import { LoadingContainer, ChartSectionWithColumn, LegendSection } from '../style';

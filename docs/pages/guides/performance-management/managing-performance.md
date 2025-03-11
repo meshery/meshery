@@ -27,7 +27,7 @@ Performance Profile is a new and improved way to save performance test configura
 
 Meshery provides users with a choice about the kind of load generator they prefer to use for a given performance test. Users may set their configure based on their own preference of load generator different from that of the default load generator.
 
-Meshery supports the following load generators and is [extendible](extensibility) to support others:
+Meshery supports the following load generators and is [extendible](https://docs.meshery.io/extensibility) to support others:
 
 - [fortio](#fortio)
 - [wrk2](#wrk2)
@@ -84,7 +84,7 @@ Connect Meshery to your existing Grafana instance. Meshery will auto-import the 
     <img src="{{ site.baseurl }}/assets/img/performance-management/meshery-and-grafana.png" style="width: 52%" />
 </a>
 
-### [Connecting to Grafana]({{ site.baseurl }}/guides/meshery-metrics#expose-grafana-service)
+### Connecting to Grafana
 
 If you have an API key configured to restrict access to your Grafana boards, you will need to enter the API key when establishing Meshery's connection to Grafana. You may also set up a [Grafana board](https://grafana.com/docs/grafana/latest/http_api/dashboard/#create-update-dashboard) and then set up an API key:
 
@@ -93,7 +93,7 @@ If you have an API key configured to restrict access to your Grafana boards, you
   - Import custom Grafana board via yaml
 - Configure graph panel preferences
 
-### [Prometheus and Meshery]({{ site.baseurl }}/guides/meshery-metrics#expose-prometheus-service)
+### Prometheus and Meshery
 
 Meshery allows users to connect to one or more Prometheus instances in order to gather telemetric data (in the form of metrics). These metrics may pertain to Kubernetes and applications or any other metric that Prometheus has collected.
 

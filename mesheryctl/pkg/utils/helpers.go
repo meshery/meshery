@@ -34,6 +34,8 @@ import (
 	"gopkg.in/yaml.v2"
 
 	log "github.com/sirupsen/logrus"
+
+	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
 const (
@@ -300,7 +302,7 @@ var Services = map[string]Service{
 		Ports:  []string{"10000:10000"},
 	},
 	"meshery-linkerd": {
-		Image:  "layer5/meshery-linkerd:stable-latest",
+		Image:  "meshery/meshery-linkerd:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10001:10001"},
 	},
@@ -315,7 +317,7 @@ var Services = map[string]Service{
 		Ports:  []string{"10004:10004"},
 	},
 	"meshery-app-mesh": {
-		Image:  "layer5/meshery-app-mesh:stable-latest",
+		Image:  "meshery/meshery-app-mesh:stable-latest",
 		Labels: []string{"com.centurylinklabs.watchtower.enable=true"},
 		Ports:  []string{"10005:10005"},
 	},
@@ -1311,4 +1313,15 @@ func IsValidUrl(path string) bool {
 		return false
 	}
 	return u.Scheme != "" && u.Host != ""
+}
+//get current k8s context
+func GetCurrentK8sContext(client *meshkitkube.Client) (string, error) {
+	if client == nil {
+		return "", fmt.Errorf("kubernetes client is nil")
+	}
+	config, err := client.GetKubeConfig()
+	if err != nil {
+		return "", err
+	}
+	return config.CurrentContext, nil
 }

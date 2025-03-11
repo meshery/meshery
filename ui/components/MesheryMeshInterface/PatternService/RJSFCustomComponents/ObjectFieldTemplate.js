@@ -1,9 +1,7 @@
 import React from 'react';
-import Grid from '@material-ui/core/Grid';
 import { canExpand } from '@rjsf/utils';
-import { CssBaseline, useTheme, withStyles } from '@material-ui/core';
 import AddIcon from '../../../../assets/icons/AddIcon';
-import { Box, IconButton, Typography } from '@material-ui/core';
+import { Grid, Box, IconButton, Typography, useTheme, CssBaseline } from '@layer5/sistent';
 import { CustomTextTooltip } from '../CustomTextTooltip';
 import HelpOutlineIcon from '../../../../assets/icons/HelpOutlineIcon';
 import ExpandMoreIcon from '../../../../assets/icons/ExpandMoreIcon';
@@ -13,19 +11,6 @@ import { ERROR_COLOR } from '../../../../constants/colors';
 import { iconMedium, iconSmall } from '../../../../css/icons.styles';
 import { calculateGrid } from '../helper';
 
-const styles = () => ({
-  objectFieldGrid: {
-    padding: '.5rem',
-    paddingTop: '0.7rem',
-    // backgroundColor: theme.palette.type === 'dark' ? '#363636' : '#ffffff',
-    width: '100%',
-    margin: '0px',
-  },
-  typography: {
-    fontFamily: 'inherit',
-    fontSize: 13,
-  },
-});
 /**
  * Get the raw errors from the error schema.
  * @param {Object} errorSchema error schema.
@@ -54,7 +39,7 @@ const ObjectFieldTemplate = ({
   schema,
   formData,
   onAddClick,
-  classes,
+
   errorSchema,
 }) => {
   const additional = schema?.__additional_property; // check if the object is additional
@@ -89,7 +74,7 @@ const ObjectFieldTemplate = ({
               >
                 <AddIcon
                   style={{
-                    backgroundColor: `${theme.palette.type === 'dark' ? '#00b39F' : '#647881'}`,
+                    backgroundColor: `${theme.palette.mode === 'dark' ? '#00b39F' : '#647881'}`,
                     width: '1rem',
                     height: '1rem',
                     color: '#ffffff',
@@ -115,8 +100,7 @@ const ObjectFieldTemplate = ({
           <Grid item mb={1} mt={1}>
             <Typography
               variant="body1"
-              className={classes.typography}
-              style={{ fontWeight: 'bold', display: 'inline' }}
+              style={{ fontWeight: 'bold', display: 'inline', fontFamily: 'inherit', fontSize: 13 }}
             >
               {title.charAt(0).toUpperCase() + title.slice(1)}{' '}
             </Typography>
@@ -131,7 +115,7 @@ const ObjectFieldTemplate = ({
                   <HelpOutlineIcon
                     width="1rem"
                     height="1rem"
-                    fill={theme.palette.type === 'dark' ? 'white' : 'black'}
+                    fill={theme.palette.mode === 'dark' ? 'white' : 'black'}
                     style={{ marginLeft: '4px', verticalAlign: 'middle', ...iconSmall }}
                   />
                 </IconButton>
@@ -164,12 +148,15 @@ const ObjectFieldTemplate = ({
     <Grid
       container={true}
       spacing={2}
-      className={classes.objectFieldGrid}
-      style={
-        Object.keys(properties).length === 0 || schema['$schema']
+      style={{
+        padding: '.5rem',
+        paddingTop: '0.7rem',
+        width: '100%',
+        margin: '0px',
+        ...(Object.keys(properties).length === 0 || schema['$schema']
           ? { border: 'none', ...(uiSchema['styles'] || {}) }
-          : uiSchema['styles']
-      }
+          : uiSchema['styles']),
+      }}
     >
       {properties.map((element, index) => {
         return element.hidden ? (
@@ -204,4 +191,4 @@ const ObjectFieldTemplate = ({
   );
 };
 
-export default withStyles(styles)(ObjectFieldTemplate);
+export default ObjectFieldTemplate;

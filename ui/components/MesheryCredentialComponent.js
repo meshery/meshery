@@ -1,6 +1,12 @@
-import { TableCell, TableSortLabel } from '@mui/material';
-import { Chip, IconButton, Tooltip } from '@layer5/sistent';
-import { styled } from '@mui/material/styles';
+import {
+  Chip,
+  IconButton,
+  Tooltip,
+  TableCell,
+  TableSortLabel,
+  styled,
+  ResponsiveDataTable,
+} from '@layer5/sistent';
 import React, { useEffect, useState } from 'react';
 import Modal from './Modal';
 import { CONNECTION_KINDS, CON_OPS } from '../utils/Enum';
@@ -13,17 +19,15 @@ import { bindActionCreators } from 'redux';
 import { updateProgress } from '../lib/store';
 import { useNotification } from '../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../lib/event-types';
-import ResponsiveDataTable from '../utils/data-table';
 import { updateVisibleColumns } from '../utils/responsive-column';
 import { useWindowDimensions } from '../utils/dimension';
 import { CustomColumnVisibilityControl } from '@layer5/sistent';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 
-const CredentialIcon = styled('img')(({ theme }) => ({
+const CredentialIcon = styled('img')({
   width: '24px',
   height: '24px',
-  filter: theme.palette.secondary.brightness,
-}));
+});
 
 const ActionContainer = styled('div')({
   display: 'flex',

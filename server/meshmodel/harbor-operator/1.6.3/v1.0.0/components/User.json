@@ -1,196 +1,196 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "User",
-   "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"comments\": {\n     \"type\": \"string\"\n    },\n    \"email\": {\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"parentInstance\": {\n     \"description\": \"ParentInstance is a LocalObjectReference to the\\nname of the harbor instance the user is created for\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"passwordStrength\": {\n     \"description\": \"The effective length of the generated user password\",\n     \"format\": \"int32\",\n     \"maximum\": 128,\n     \"minimum\": 8,\n     \"type\": \"integer\"\n    },\n    \"realname\": {\n     \"type\": \"string\"\n    },\n    \"sysAdmin\": {\n     \"type\": \"boolean\"\n    },\n    \"userSecretRef\": {\n     \"description\": \"LocalObjectReference contains enough information to let you locate the\\nreferenced object inside the same namespace.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    }\n   },\n   \"required\": [\n    \"email\",\n    \"name\",\n    \"parentInstance\",\n    \"realname\",\n    \"userSecretRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"User\",\n \"type\": \"object\"\n}",
-   "version": "registries.mittwald.de/v1alpha2"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "User",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "User",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Provisioning"
-   },
-   "displayName": "Harbor Operator",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "harbor-operator",
+    "displayName": "Harbor Operator",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Provisioning"
+    },
+    "subCategory": "Container Registry",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#4b9b33",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://helm.mittwald.de/charts/harbor-operator-1.6.3.tgz",
+      "styleOverrides": "",
+      "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"1.05 -1.95 359.41 361.66\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"linear-gradient\" x1=\"264.79\" x2=\"267.27\" y1=\"952.39\" y2=\"952.39\" gradientTransform=\"matrix(30.43 0 0 -30.43 -7955.22 29285.75)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#60b932\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".28\" stop-color=\"#60b932\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#367c34\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"linear-gradient-2\" x1=\"263.77\" x2=\"266.26\" y1=\"955.65\" y2=\"955.65\" gradientTransform=\"matrix(27.21 0 0 -27.21 -7073.85 26169.41)\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#linear-gradient\"\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"linear-gradient-3\" x1=\"263.28\" x2=\"265.76\" y1=\"953.74\" y2=\"953.74\" gradientTransform=\"matrix(25.75 0 0 -25.75 -6671.13 24812.23)\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#linear-gradient\"\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"linear-gradient-4\" x1=\"263.77\" x2=\"266.25\" y1=\"953.2\" y2=\"953.2\" gradientTransform=\"matrix(27.1 0 0 -27.1 -7040.9 26102.49)\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#linear-gradient\"\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"linear-gradient-5\" x1=\"262.73\" x2=\"265.21\" y1=\"954.34\" y2=\"954.34\" gradientTransform=\"matrix(24.4 0 0 -24.4 -6301.36 23521.97)\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#linear-gradient\"\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"linear-gradient-6\" x1=\"272.14\" x2=\"274.62\" y1=\"955.15\" y2=\"955.15\" gradientTransform=\"scale(66.09 -66.09) rotate(36.52 1588.153 68.148)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#4596d8\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".2\" stop-color=\"#4596d8\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#fff\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"linear-gradient-7\" x1=\"270.65\" x2=\"273.13\" y1=\"952.38\" y2=\"952.38\" gradientTransform=\"scale(77.8 -77.8) rotate(-11.54 -4587.209 1803.323)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#4194d7\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".2\" stop-color=\"#4194d7\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#fff\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"linear-gradient-8\" x1=\"270.97\" x2=\"273.45\" y1=\"953.75\" y2=\"953.75\" gradientTransform=\"scale(71.35 -71.35) rotate(10.23 5477.37 -1024.602)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#4194d7\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".33\" stop-color=\"#4496d8\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#fff\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003cclipPath xmlns=\"http://www.w3.org/2000/svg\" id=\"clip-path\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M174.4 302.52l-68.65-30.26-3.83 43.21 75.5 23.98-3.02-36.93z\" class=\"cls-1\"\u003e\u003c/path\u003e\u003c/clipPath\u003e\u003cclipPath xmlns=\"http://www.w3.org/2000/svg\" id=\"clip-path-2\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M119.19 135.38h38.55v32.89h-9.15v-14a10.13 10.13 0 1 0-20.26 0v14h-9.15zm-7.7 72l57.2 25.21-3.94-48.24h7.49v-16.08h-5.55v-32.89h5.55v-9.45l-30.86-30.19v-2.12a2.91 2.91 0 0 0-5.82 0v2.12l-30.86 30.19v9.45h5.56v32.89h-5.56v16.12h8.82z\" class=\"cls-1\"\u003e\u003c/path\u003e\u003c/clipPath\u003e\u003cclipPath xmlns=\"http://www.w3.org/2000/svg\" id=\"clip-path-3\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M108.14 245.28l63.88 28.16-.96-11.73-61.96-27.3-.96 10.87z\" class=\"cls-1\"\u003e\u003c/path\u003e\u003c/clipPath\u003e\u003cclipPath xmlns=\"http://www.w3.org/2000/svg\" id=\"clip-path-4\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M106.46 264.21l67.23 29.63-.96-11.72-65.31-28.78-.96 10.87z\" class=\"cls-1\"\u003e\u003c/path\u003e\u003c/clipPath\u003e\u003cclipPath xmlns=\"http://www.w3.org/2000/svg\" id=\"clip-path-5\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M110.77 215.48l-.96 10.87 60.54 26.68-.95-11.72-58.63-25.83z\" class=\"cls-1\"\u003e\u003c/path\u003e\u003c/clipPath\u003e\u003cclipPath xmlns=\"http://www.w3.org/2000/svg\" id=\"clip-path-6\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M313.13 67.59a175.31 175.31 0 0 0-29.75-28.13c-1.57-1.17-3.18-2.3-4.79-3.42L256 59.5l-82.34 85.63 113.41-58.68 29.07-15c-1.01-1.31-1.98-2.62-3.01-3.86z\" class=\"cls-1\"\u003e\u003c/path\u003e\u003c/clipPath\u003e\u003cclipPath xmlns=\"http://www.w3.org/2000/svg\" id=\"clip-path-7\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M353.59 177.61c0-2-.14-4-.22-5.93l-32.21-2.31-147.47-10.58L318.36 209l30.41 10.55c.09-.36.19-.71.28-1.08a173.65 173.65 0 0 0 4.57-39.47v-1.37z\" class=\"cls-1\"\u003e\u003c/path\u003e\u003c/clipPath\u003e\u003cclipPath xmlns=\"http://www.w3.org/2000/svg\" id=\"clip-path-8\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M348.84 138.61a172.55 172.55 0 0 0-13.84-37.7l-30.94 9.94L175.92 152l142-4.83 32.5-1.11c-.5-2.48-.99-4.98-1.58-7.45z\" class=\"cls-1\"\u003e\u003c/path\u003e\u003c/clipPath\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:none}.cls-13{fill:#696566}\u003c/style\u003e\u003c/defs\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g12\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path14\" fill=\"#fff\" d=\"M30.89 179a148.87 148.87 0 1 1 148.87 148.85A148.87 148.87 0 0 1 30.89 179\"\u003e\u003c/path\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g30\" clip-path=\"url(#clip-path)\"\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g32\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path46\" fill=\"url(#linear-gradient)\" d=\"M174.4 302.52l-68.65-30.25-3.82 43.2 75.5 24-3-36.93\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/g\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g48\" clip-path=\"url(#clip-path-2)\"\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g50\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path64\" fill=\"url(#linear-gradient-2)\" d=\"M119.19 135.38h38.55v32.89h-9.15v-14a10.13 10.13 0 1 0-20.26 0v14h-9.15zm-7.7 72l57.2 25.21-3.94-48.24h7.49v-16.08h-5.55v-32.89h5.55v-9.45l-30.86-30.19v-2.12a2.91 2.91 0 0 0-5.82 0v2.12l-30.86 30.19v9.45h5.56v32.89h-5.56v16.12h8.82l-2 23\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/g\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g66\" clip-path=\"url(#clip-path-3)\"\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g68\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path82\" fill=\"url(#linear-gradient-3)\" d=\"M108.13 245.28L172 273.44l-1-11.72-62-27.31-1 10.87\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/g\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g84\" clip-path=\"url(#clip-path-4)\"\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g86\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path100\" fill=\"url(#linear-gradient-4)\" d=\"M106.46 264.21l67.23 29.63-1-11.72-65.31-28.78-1 10.87\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/g\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g102\" clip-path=\"url(#clip-path-5)\"\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g104\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path118\" fill=\"url(#linear-gradient-5)\" d=\"M110.77 215.48l-1 10.88L170.35 253l-1-11.72-58.62-25.83\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/g\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path120\" d=\"M304.07 110.85l30.93-9.94c-.11-.22-.21-.45-.32-.66a174.41 174.41 0 0 0-18.55-28.83l-29.07 15a142.71 142.71 0 0 1 16.73 23.87c.1.17.18.35.27.53\" class=\"cls-13\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path122\" d=\"M321.15 169.37l32.21 2.31a172.86 172.86 0 0 0-3-25.59l-32.5 1.11a141 141 0 0 1 3.25 22.17\" class=\"cls-13\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path124\" d=\"M182 320.81c-78.2 0-141.83-63.62-141.83-141.82S103.82 37.16 182 37.16a140.93 140.93 0 0 1 76.3 22.34L280.85 36A172.86 172.86 0 0 0 182 5.11C86.15 5.11 8.15 83.11 8.15 179s78 173.85 173.85 173.85c81.9 0 150.69-57 169-133.32L320.62 209c-13.8 63.84-70.69 111.83-138.6 111.83\" class=\"cls-13\"\u003e\u003c/path\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g126\" clip-path=\"url(#clip-path-6)\"\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g128\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path142\" fill=\"url(#linear-gradient-6)\" d=\"M313.13 67.59a175.31 175.31 0 0 0-29.75-28.13c-1.57-1.17-3.18-2.3-4.79-3.42L256 59.5l-82.34 85.63 113.41-58.68 29.07-15c-1-1.27-2-2.58-3-3.82\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/g\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g144\" clip-path=\"url(#clip-path-7)\"\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g146\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path160\" fill=\"url(#linear-gradient-7)\" d=\"M353.59 177.61c0-2-.14-4-.22-5.93l-32.21-2.31-147.47-10.58L318.36 209l30.41 10.55c.09-.36.19-.71.28-1.08a173.65 173.65 0 0 0 4.57-39.47v-1.37\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/g\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g162\" clip-path=\"url(#clip-path-8)\"\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g164\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path178\" fill=\"url(#linear-gradient-8)\" d=\"M348.84 138.61a172.55 172.55 0 0 0-13.84-37.7l-30.94 9.94L175.92 152l142-4.83 32.5-1.11c-.48-2.51-1-5-1.56-7.48\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e",
+      "svgComplete": "",
+      "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"-0.99 -1.99 363.48 363.23\" height=\"20\" width=\"20\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003esvg {enable-background:new 0 0 360 360}\u003c/style\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.st1{fill:#fff}\u003c/style\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" d=\"M118.188 168.275h9.149v-14.05c0-5.57 4.558-10.129 10.129-10.129 5.57 0 10.127 4.558 10.127 10.13v14.049h9.149v-32.892h-38.554v32.892z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M171.227 135.383v-9.455l-30.85-30.187v-2.124a2.92 2.92 0 0 0-2.911-2.911 2.92 2.92 0 0 0-2.912 2.911v2.124l-30.851 30.187v9.455h5.555v32.892h-5.555v16.118h8.82l-2.038 23.03 57.2 25.207-3.944-48.237h7.486v-16.118h-5.554v-32.892h5.554zm-14.485 32.892h-9.15v-14.05c0-5.57-4.555-10.129-10.126-10.129s-10.129 4.558-10.129 10.13v14.049h-9.15v-32.892h38.555v32.892zm-49.607 77.005l63.888 28.156-.959-11.725-61.968-27.305zm-.712 8.056l-.963 10.873 67.23 29.628-.956-11.72zm3.35-37.859l-.963 10.877 60.544 26.677-.958-11.721z\" class=\"st1\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M351.334 171.608l-23.994-1.722-7.185-.516-147.465-10.583 144.67 50.191 2.098.728c-14.079 63.474-70.785 111.1-138.436 111.1-2.057 0-4.101-.054-6.137-.141l-1.484-18.147-68.654-30.253-2.194 24.795c-38.163-25.444-63.36-68.872-63.36-118.079 0-78.202 63.626-141.824 141.83-141.824 27.466 0 53.106 7.887 74.85 21.463l-.843.877-82.34 85.632 113.38-58.677c6.342 7.354 11.98 15.323 16.727 23.868.096.172.178.354.274.53l-128.148 41.18 141.98-4.834a140.97 140.97 0 0 1 3.252 22.173l7.185.516 23.994 1.722a170.382 170.382 0 0 0-3.138-25.478 169.426 169.426 0 0 0-15.746-44.72 171.283 171.283 0 0 0-19.082-29.084A172.142 172.142 0 0 0 277.11 38.89c-.455-.312-.91-.626-1.368-.933-27.163-18.242-59.827-28.898-94.934-28.898-94.14 0-170.727 76.587-170.727 170.726s76.587 170.727 170.727 170.727c80.563 0 148.264-56.095 166.116-131.276.058-.242.121-.481.178-.724a170.624 170.624 0 0 0 4.232-46.903z\" class=\"st1\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M180.808 5.058C84.463 5.058 6.08 83.439 6.08 179.784s78.382 174.727 174.727 174.727 174.726-78.382 174.726-174.727S277.152 5.058 180.808 5.058zm166.116 214.177c-17.852 75.181-85.553 131.276-166.116 131.276-94.14 0-170.727-76.588-170.727-170.727S86.668 9.058 180.808 9.058c35.107 0 67.77 10.656 94.934 28.898.458.307.913.62 1.368.933a172.142 172.142 0 0 1 36.258 33.437 171.283 171.283 0 0 1 19.082 29.083 169.426 169.426 0 0 1 15.746 44.721 170.382 170.382 0 0 1 3.138 25.478 170.624 170.624 0 0 1-4.233 46.903c-.056.243-.12.482-.177.724z\" class=\"st1\"\u003e\u003c/path\u003e\u003c/svg\u003e"
+    },
+    "model": {
+      "version": "1.6.3"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#4b9b33",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "source_uri": "https://helm.mittwald.de/charts/harbor-operator-1.6.3.tgz",
-    "styleOverrides": "",
-    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" viewBox=\"1.05 -1.95 359.41 361.66\" height=\"20\" width=\"20\"\u003e\u003cdefs xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"linear-gradient\" x1=\"264.79\" x2=\"267.27\" y1=\"952.39\" y2=\"952.39\" gradientTransform=\"matrix(30.43 0 0 -30.43 -7955.22 29285.75)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#60b932\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".28\" stop-color=\"#60b932\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#367c34\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"linear-gradient-2\" x1=\"263.77\" x2=\"266.26\" y1=\"955.65\" y2=\"955.65\" gradientTransform=\"matrix(27.21 0 0 -27.21 -7073.85 26169.41)\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#linear-gradient\"\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"linear-gradient-3\" x1=\"263.28\" x2=\"265.76\" y1=\"953.74\" y2=\"953.74\" gradientTransform=\"matrix(25.75 0 0 -25.75 -6671.13 24812.23)\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#linear-gradient\"\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"linear-gradient-4\" x1=\"263.77\" x2=\"266.25\" y1=\"953.2\" y2=\"953.2\" gradientTransform=\"matrix(27.1 0 0 -27.1 -7040.9 26102.49)\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#linear-gradient\"\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"linear-gradient-5\" x1=\"262.73\" x2=\"265.21\" y1=\"954.34\" y2=\"954.34\" gradientTransform=\"matrix(24.4 0 0 -24.4 -6301.36 23521.97)\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xlink:href=\"#linear-gradient\"\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"linear-gradient-6\" x1=\"272.14\" x2=\"274.62\" y1=\"955.15\" y2=\"955.15\" gradientTransform=\"scale(66.09 -66.09) rotate(36.52 1588.153 68.148)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#4596d8\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".2\" stop-color=\"#4596d8\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#fff\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"linear-gradient-7\" x1=\"270.65\" x2=\"273.13\" y1=\"952.38\" y2=\"952.38\" gradientTransform=\"scale(77.8 -77.8) rotate(-11.54 -4587.209 1803.323)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#4194d7\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".2\" stop-color=\"#4194d7\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#fff\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003clinearGradient xmlns=\"http://www.w3.org/2000/svg\" id=\"linear-gradient-8\" x1=\"270.97\" x2=\"273.45\" y1=\"953.75\" y2=\"953.75\" gradientTransform=\"scale(71.35 -71.35) rotate(10.23 5477.37 -1024.602)\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"0\" stop-color=\"#4194d7\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\".33\" stop-color=\"#4496d8\"\u003e\u003c/stop\u003e\u003cstop xmlns=\"http://www.w3.org/2000/svg\" offset=\"1\" stop-color=\"#fff\"\u003e\u003c/stop\u003e\u003c/linearGradient\u003e\u003cclipPath xmlns=\"http://www.w3.org/2000/svg\" id=\"clip-path\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M174.4 302.52l-68.65-30.26-3.83 43.21 75.5 23.98-3.02-36.93z\" class=\"cls-1\"\u003e\u003c/path\u003e\u003c/clipPath\u003e\u003cclipPath xmlns=\"http://www.w3.org/2000/svg\" id=\"clip-path-2\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M119.19 135.38h38.55v32.89h-9.15v-14a10.13 10.13 0 1 0-20.26 0v14h-9.15zm-7.7 72l57.2 25.21-3.94-48.24h7.49v-16.08h-5.55v-32.89h5.55v-9.45l-30.86-30.19v-2.12a2.91 2.91 0 0 0-5.82 0v2.12l-30.86 30.19v9.45h5.56v32.89h-5.56v16.12h8.82z\" class=\"cls-1\"\u003e\u003c/path\u003e\u003c/clipPath\u003e\u003cclipPath xmlns=\"http://www.w3.org/2000/svg\" id=\"clip-path-3\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M108.14 245.28l63.88 28.16-.96-11.73-61.96-27.3-.96 10.87z\" class=\"cls-1\"\u003e\u003c/path\u003e\u003c/clipPath\u003e\u003cclipPath xmlns=\"http://www.w3.org/2000/svg\" id=\"clip-path-4\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M106.46 264.21l67.23 29.63-.96-11.72-65.31-28.78-.96 10.87z\" class=\"cls-1\"\u003e\u003c/path\u003e\u003c/clipPath\u003e\u003cclipPath xmlns=\"http://www.w3.org/2000/svg\" id=\"clip-path-5\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M110.77 215.48l-.96 10.87 60.54 26.68-.95-11.72-58.63-25.83z\" class=\"cls-1\"\u003e\u003c/path\u003e\u003c/clipPath\u003e\u003cclipPath xmlns=\"http://www.w3.org/2000/svg\" id=\"clip-path-6\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M313.13 67.59a175.31 175.31 0 0 0-29.75-28.13c-1.57-1.17-3.18-2.3-4.79-3.42L256 59.5l-82.34 85.63 113.41-58.68 29.07-15c-1.01-1.31-1.98-2.62-3.01-3.86z\" class=\"cls-1\"\u003e\u003c/path\u003e\u003c/clipPath\u003e\u003cclipPath xmlns=\"http://www.w3.org/2000/svg\" id=\"clip-path-7\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M353.59 177.61c0-2-.14-4-.22-5.93l-32.21-2.31-147.47-10.58L318.36 209l30.41 10.55c.09-.36.19-.71.28-1.08a173.65 173.65 0 0 0 4.57-39.47v-1.37z\" class=\"cls-1\"\u003e\u003c/path\u003e\u003c/clipPath\u003e\u003cclipPath xmlns=\"http://www.w3.org/2000/svg\" id=\"clip-path-8\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M348.84 138.61a172.55 172.55 0 0 0-13.84-37.7l-30.94 9.94L175.92 152l142-4.83 32.5-1.11c-.5-2.48-.99-4.98-1.58-7.45z\" class=\"cls-1\"\u003e\u003c/path\u003e\u003c/clipPath\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.cls-1{fill:none}.cls-13{fill:#696566}\u003c/style\u003e\u003c/defs\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g12\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path14\" fill=\"#fff\" d=\"M30.89 179a148.87 148.87 0 1 1 148.87 148.85A148.87 148.87 0 0 1 30.89 179\"\u003e\u003c/path\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g30\" clip-path=\"url(#clip-path)\"\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g32\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path46\" fill=\"url(#linear-gradient)\" d=\"M174.4 302.52l-68.65-30.25-3.82 43.2 75.5 24-3-36.93\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/g\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g48\" clip-path=\"url(#clip-path-2)\"\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g50\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path64\" fill=\"url(#linear-gradient-2)\" d=\"M119.19 135.38h38.55v32.89h-9.15v-14a10.13 10.13 0 1 0-20.26 0v14h-9.15zm-7.7 72l57.2 25.21-3.94-48.24h7.49v-16.08h-5.55v-32.89h5.55v-9.45l-30.86-30.19v-2.12a2.91 2.91 0 0 0-5.82 0v2.12l-30.86 30.19v9.45h5.56v32.89h-5.56v16.12h8.82l-2 23\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/g\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g66\" clip-path=\"url(#clip-path-3)\"\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g68\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path82\" fill=\"url(#linear-gradient-3)\" d=\"M108.13 245.28L172 273.44l-1-11.72-62-27.31-1 10.87\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/g\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g84\" clip-path=\"url(#clip-path-4)\"\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g86\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path100\" fill=\"url(#linear-gradient-4)\" d=\"M106.46 264.21l67.23 29.63-1-11.72-65.31-28.78-1 10.87\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/g\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g102\" clip-path=\"url(#clip-path-5)\"\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g104\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path118\" fill=\"url(#linear-gradient-5)\" d=\"M110.77 215.48l-1 10.88L170.35 253l-1-11.72-58.62-25.83\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/g\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path120\" d=\"M304.07 110.85l30.93-9.94c-.11-.22-.21-.45-.32-.66a174.41 174.41 0 0 0-18.55-28.83l-29.07 15a142.71 142.71 0 0 1 16.73 23.87c.1.17.18.35.27.53\" class=\"cls-13\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path122\" d=\"M321.15 169.37l32.21 2.31a172.86 172.86 0 0 0-3-25.59l-32.5 1.11a141 141 0 0 1 3.25 22.17\" class=\"cls-13\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path124\" d=\"M182 320.81c-78.2 0-141.83-63.62-141.83-141.82S103.82 37.16 182 37.16a140.93 140.93 0 0 1 76.3 22.34L280.85 36A172.86 172.86 0 0 0 182 5.11C86.15 5.11 8.15 83.11 8.15 179s78 173.85 173.85 173.85c81.9 0 150.69-57 169-133.32L320.62 209c-13.8 63.84-70.69 111.83-138.6 111.83\" class=\"cls-13\"\u003e\u003c/path\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g126\" clip-path=\"url(#clip-path-6)\"\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g128\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path142\" fill=\"url(#linear-gradient-6)\" d=\"M313.13 67.59a175.31 175.31 0 0 0-29.75-28.13c-1.57-1.17-3.18-2.3-4.79-3.42L256 59.5l-82.34 85.63 113.41-58.68 29.07-15c-1-1.27-2-2.58-3-3.82\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/g\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g144\" clip-path=\"url(#clip-path-7)\"\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g146\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path160\" fill=\"url(#linear-gradient-7)\" d=\"M353.59 177.61c0-2-.14-4-.22-5.93l-32.21-2.31-147.47-10.58L318.36 209l30.41 10.55c.09-.36.19-.71.28-1.08a173.65 173.65 0 0 0 4.57-39.47v-1.37\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/g\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g162\" clip-path=\"url(#clip-path-8)\"\u003e\u003cg xmlns=\"http://www.w3.org/2000/svg\" id=\"g164\"\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" id=\"path178\" fill=\"url(#linear-gradient-8)\" d=\"M348.84 138.61a172.55 172.55 0 0 0-13.84-37.7l-30.94 9.94L175.92 152l142-4.83 32.5-1.11c-.48-2.51-1-5-1.56-7.48\"\u003e\u003c/path\u003e\u003c/g\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e",
-    "svgComplete": "",
-    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" role=\"img\" viewBox=\"-0.99 -1.99 363.48 363.23\" height=\"20\" width=\"20\"\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003esvg {enable-background:new 0 0 360 360}\u003c/style\u003e\u003cstyle xmlns=\"http://www.w3.org/2000/svg\"\u003e.st1{fill:#fff}\u003c/style\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" d=\"M118.188 168.275h9.149v-14.05c0-5.57 4.558-10.129 10.129-10.129 5.57 0 10.127 4.558 10.127 10.13v14.049h9.149v-32.892h-38.554v32.892z\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M171.227 135.383v-9.455l-30.85-30.187v-2.124a2.92 2.92 0 0 0-2.911-2.911 2.92 2.92 0 0 0-2.912 2.911v2.124l-30.851 30.187v9.455h5.555v32.892h-5.555v16.118h8.82l-2.038 23.03 57.2 25.207-3.944-48.237h7.486v-16.118h-5.554v-32.892h5.554zm-14.485 32.892h-9.15v-14.05c0-5.57-4.555-10.129-10.126-10.129s-10.129 4.558-10.129 10.13v14.049h-9.15v-32.892h38.555v32.892zm-49.607 77.005l63.888 28.156-.959-11.725-61.968-27.305zm-.712 8.056l-.963 10.873 67.23 29.628-.956-11.72zm3.35-37.859l-.963 10.877 60.544 26.677-.958-11.721z\" class=\"st1\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M351.334 171.608l-23.994-1.722-7.185-.516-147.465-10.583 144.67 50.191 2.098.728c-14.079 63.474-70.785 111.1-138.436 111.1-2.057 0-4.101-.054-6.137-.141l-1.484-18.147-68.654-30.253-2.194 24.795c-38.163-25.444-63.36-68.872-63.36-118.079 0-78.202 63.626-141.824 141.83-141.824 27.466 0 53.106 7.887 74.85 21.463l-.843.877-82.34 85.632 113.38-58.677c6.342 7.354 11.98 15.323 16.727 23.868.096.172.178.354.274.53l-128.148 41.18 141.98-4.834a140.97 140.97 0 0 1 3.252 22.173l7.185.516 23.994 1.722a170.382 170.382 0 0 0-3.138-25.478 169.426 169.426 0 0 0-15.746-44.72 171.283 171.283 0 0 0-19.082-29.084A172.142 172.142 0 0 0 277.11 38.89c-.455-.312-.91-.626-1.368-.933-27.163-18.242-59.827-28.898-94.934-28.898-94.14 0-170.727 76.587-170.727 170.726s76.587 170.727 170.727 170.727c80.563 0 148.264-56.095 166.116-131.276.058-.242.121-.481.178-.724a170.624 170.624 0 0 0 4.232-46.903z\" class=\"st1\"\u003e\u003c/path\u003e\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M180.808 5.058C84.463 5.058 6.08 83.439 6.08 179.784s78.382 174.727 174.727 174.727 174.726-78.382 174.726-174.727S277.152 5.058 180.808 5.058zm166.116 214.177c-17.852 75.181-85.553 131.276-166.116 131.276-94.14 0-170.727-76.588-170.727-170.727S86.668 9.058 180.808 9.058c35.107 0 67.77 10.656 94.934 28.898.458.307.913.62 1.368.933a172.142 172.142 0 0 1 36.258 33.437 171.283 171.283 0 0 1 19.082 29.083 169.426 169.426 0 0 1 15.746 44.721 170.382 170.382 0 0 1 3.138 25.478 170.624 170.624 0 0 1-4.233 46.903c-.056.243-.12.482-.177.724z\" class=\"st1\"\u003e\u003c/path\u003e\u003c/svg\u003e"
-   },
-   "model": {
-    "version": "1.6.3"
-   },
-   "name": "harbor-operator",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "enabled",
-   "subCategory": "Container Registry",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
+    "svgColor": "\u003csvg width=\"360\" height=\"362\" viewBox=\"0 0 360 362\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M29.8398 180.949C29.8359 151.504 38.5636 122.72 54.9192 98.2355C71.2749 73.7513 94.5238 54.6671 121.726 43.3965C148.928 32.1258 178.861 29.1748 207.741 34.9167C236.62 40.6586 263.148 54.8356 283.97 75.6546C304.792 96.4736 318.972 123 324.718 151.878C330.464 180.757 327.517 210.691 316.25 237.894C304.983 265.098 285.902 288.349 261.42 304.708C236.938 321.067 208.154 329.799 178.71 329.799C139.231 329.799 101.368 314.117 73.4499 286.203C45.532 258.288 29.8451 220.428 29.8398 180.949Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M173.349 304.469L104.699 274.219L100.879 317.419L176.379 341.419L173.379 304.489\" fill=\"url(#paint0_linear_26641_8667)\"/\u003e\n\u003cpath d=\"M118.14 137.33H156.69V170.22H147.54V156.22C147.54 153.534 146.473 150.957 144.573 149.057C142.674 147.157 140.097 146.09 137.41 146.09C134.724 146.09 132.147 147.157 130.247 149.057C128.348 150.957 127.28 153.534 127.28 156.22V170.22H118.13L118.14 137.33ZM110.44 209.33L167.64 234.54L163.7 186.3H171.19V170.22H165.64V137.33H171.19V127.88L140.33 97.6902V95.5702C140.33 94.7984 140.024 94.0582 139.478 93.5125C138.932 92.9667 138.192 92.6602 137.42 92.6602C136.649 92.6602 135.908 92.9667 135.363 93.5125C134.817 94.0582 134.51 94.7984 134.51 95.5702V97.6902L103.65 127.88V137.33H109.21V170.22H103.65V186.34H112.47L110.47 209.34\" fill=\"url(#paint1_linear_26641_8667)\"/\u003e\n\u003cpath d=\"M107.079 247.229L170.949 275.389L169.949 263.669L107.949 236.359L106.949 247.229\" fill=\"url(#paint2_linear_26641_8667)\"/\u003e\n\u003cpath d=\"M105.41 266.159L172.64 295.789L171.64 284.069L106.33 255.289L105.33 266.159\" fill=\"url(#paint3_linear_26641_8667)\"/\u003e\n\u003cpath d=\"M109.719 217.428L108.719 228.308L169.299 254.948L168.299 243.228L109.679 217.398\" fill=\"url(#paint4_linear_26641_8667)\"/\u003e\n\u003cpath d=\"M303.02 112.797L333.95 102.857C333.84 102.637 333.74 102.407 333.63 102.197C328.408 92.0013 322.195 82.3447 315.08 73.3672L286.01 88.3672C292.387 95.732 297.992 103.73 302.74 112.237C302.84 112.407 302.92 112.587 303.01 112.767\" fill=\"#696566\"/\u003e\n\u003cpath d=\"M320.101 171.319L352.311 173.629C351.949 165.036 350.946 156.483 349.311 148.039L316.811 149.149C318.48 156.441 319.567 163.855 320.061 171.319\" fill=\"#696566\"/\u003e\n\u003cpath d=\"M180.95 322.759C102.75 322.759 39.1196 259.139 39.1196 180.939C39.1196 102.739 102.77 39.1088 180.95 39.1088C208 39.0785 234.487 46.8338 257.25 61.4488L279.8 37.9488C250.781 17.7916 216.282 7.01095 180.95 7.05875C85.0996 7.05875 7.09961 85.0587 7.09961 180.949C7.09961 276.839 85.0996 354.799 180.95 354.799C262.85 354.799 331.64 297.799 349.95 221.479L319.57 210.949C305.77 274.789 248.88 322.779 180.97 322.779\" fill=\"#696566\"/\u003e\n\u003cpath d=\"M312.079 69.5383C303.295 59.0318 293.311 49.5908 282.329 41.4083C280.759 40.2383 279.149 39.1083 277.539 37.9883L254.949 61.4483L172.609 147.078L286.019 88.3983L315.089 73.3983C314.089 72.1283 313.089 70.8183 312.089 69.5783\" fill=\"url(#paint5_linear_26641_8667)\"/\u003e\n\u003cpath d=\"M352.539 179.558C352.539 177.558 352.399 175.558 352.319 173.628L320.109 171.318L172.639 160.738L317.309 210.948L347.719 221.498C347.809 221.138 347.909 220.788 347.999 220.418C351.027 207.48 352.561 194.236 352.569 180.948V179.578\" fill=\"url(#paint6_linear_26641_8667)\"/\u003e\n\u003cpath d=\"M347.789 140.559C344.659 127.497 340.014 114.845 333.949 102.859L303.009 112.799L174.869 153.949L316.869 149.119L349.369 148.009C348.889 145.499 348.369 143.009 347.809 140.529\" fill=\"url(#paint7_linear_26641_8667)\"/\u003e\n\u003cdefs\u003e\n\u003clinearGradient id=\"paint0_linear_26641_8667\" x1=\"101.289\" y1=\"306.471\" x2=\"176.755\" y2=\"306.471\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#60B932\"/\u003e\n\u003cstop offset=\"0.28\" stop-color=\"#60B932\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#367C34\"/\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"paint1_linear_26641_8667\" x1=\"102.282\" y1=\"168.124\" x2=\"170.035\" y2=\"168.124\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#60B932\"/\u003e\n\u003cstop offset=\"0.28\" stop-color=\"#60B932\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#367C34\"/\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"paint2_linear_26641_8667\" x1=\"107.279\" y1=\"255.374\" x2=\"171.139\" y2=\"255.374\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#60B932\"/\u003e\n\u003cstop offset=\"0.28\" stop-color=\"#60B932\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#367C34\"/\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"paint3_linear_26641_8667\" x1=\"106.217\" y1=\"272.719\" x2=\"173.425\" y2=\"272.719\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#60B932\"/\u003e\n\u003cstop offset=\"0.28\" stop-color=\"#60B932\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#367C34\"/\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"paint4_linear_26641_8667\" x1=\"108.201\" y1=\"238.022\" x2=\"168.713\" y2=\"238.022\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#60B932\"/\u003e\n\u003cstop offset=\"0.28\" stop-color=\"#60B932\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"#367C34\"/\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"paint5_linear_26641_8667\" x1=\"176.227\" y1=\"145.847\" x2=\"307.948\" y2=\"48.3077\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#4596D8\"/\u003e\n\u003cstop offset=\"0.2\" stop-color=\"#4596D8\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"white\"/\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"paint6_linear_26641_8667\" x1=\"171.423\" y1=\"176.442\" x2=\"360.467\" y2=\"215.041\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#4194D7\"/\u003e\n\u003cstop offset=\"0.2\" stop-color=\"#4194D7\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"white\"/\u003e\n\u003c/linearGradient\u003e\n\u003clinearGradient id=\"paint7_linear_26641_8667\" x1=\"168.908\" y1=\"170.136\" x2=\"343.043\" y2=\"138.71\" gradientUnits=\"userSpaceOnUse\"\u003e\n\u003cstop stop-color=\"#4194D7\"/\u003e\n\u003cstop offset=\"0.33\" stop-color=\"#4496D8\"/\u003e\n\u003cstop offset=\"1\" stop-color=\"white\"/\u003e\n\u003c/linearGradient\u003e\n\u003c/defs\u003e\n\u003c/svg\u003e\n",
+    "svgWhite": "\u003csvg width=\"364\" height=\"364\" viewBox=\"0 0 364 364\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M172.217 137.372V127.917L141.367 97.7303V95.6063C141.365 94.835 141.058 94.0959 140.512 93.5505C139.967 93.0051 139.228 92.6977 138.456 92.6953C137.685 92.6974 136.946 93.0048 136.4 93.5502C135.854 94.0956 135.547 94.8348 135.544 95.6063V97.7303L104.693 127.917V137.372H110.248V170.264H104.693V186.382H113.513L111.475 209.412L168.675 234.619L164.731 186.382H172.217V170.264H166.663V137.372H172.217ZM157.732 170.264H148.582V156.214C148.582 150.644 144.027 146.085 138.456 146.085C132.885 146.085 128.327 150.643 128.327 156.215V170.264H119.177V137.372H157.732V170.264ZM108.125 247.269L172.013 275.425L171.054 263.7L109.086 236.395L108.125 247.269ZM107.413 255.325L106.45 266.198L173.68 295.826L172.724 284.106L107.413 255.325ZM110.763 217.466L109.8 228.343L170.344 255.02L169.386 243.299L110.763 217.466Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M352.323 173.6L328.329 171.878L321.144 171.362L173.679 160.779L318.349 210.97L320.447 211.698C306.368 275.172 249.662 322.798 182.011 322.798C179.954 322.798 177.91 322.744 175.874 322.657L174.39 304.51L105.736 274.257L103.542 299.052C65.3793 273.608 40.1823 230.18 40.1823 180.973C40.1823 102.771 103.808 39.1488 182.012 39.1488C209.478 39.1488 235.118 47.0358 256.862 60.6118L256.019 61.4888L173.679 147.121L287.059 88.4438C293.401 95.7978 299.039 103.767 303.786 112.312C303.882 112.484 303.964 112.666 304.06 112.842L175.912 154.022L317.892 149.188C319.563 156.481 320.65 163.896 321.144 171.362L328.329 171.877L352.323 173.599C351.92 165.039 350.871 156.522 349.185 148.121C346.059 132.55 340.758 117.496 333.439 103.401C328.082 93.0837 321.688 83.3388 314.357 74.3168C303.939 61.4892 291.728 50.2286 278.099 40.8818C277.644 40.5698 277.189 40.2558 276.731 39.9488C249.568 21.7068 216.904 11.0508 181.797 11.0508C87.6573 11.0508 11.0703 87.6378 11.0703 181.777C11.0703 275.916 87.6573 352.504 181.797 352.504C262.36 352.504 330.061 296.409 347.913 221.228C347.971 220.986 348.034 220.747 348.091 220.504C351.663 205.14 353.087 189.355 352.323 173.6Z\" fill=\"white\"/\u003e\n\u003cpath d=\"M181.798 7.04688C85.4533 7.04688 7.07031 85.4279 7.07031 181.773C7.07031 278.118 85.4523 356.5 181.797 356.5C278.142 356.5 356.523 278.118 356.523 181.773C356.523 85.4279 278.142 7.04688 181.798 7.04688ZM347.914 221.224C330.062 296.405 262.361 352.5 181.798 352.5C87.6583 352.5 11.0713 275.912 11.0713 181.773C11.0713 87.6339 87.6583 11.0469 181.798 11.0469C216.905 11.0469 249.568 21.7029 276.732 39.9449C277.19 40.2519 277.645 40.5649 278.1 40.8779C291.729 50.2253 303.94 61.4866 314.358 74.3149C321.689 83.3366 328.083 93.0811 333.44 103.398C340.759 117.493 346.06 132.548 349.186 148.119C350.872 156.521 351.921 165.037 352.324 173.597C353.088 189.352 351.664 205.136 348.091 220.5C348.035 220.743 347.971 220.982 347.914 221.224Z\" fill=\"white\"/\u003e\n\u003c/svg\u003e\n"
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#4b9b33",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "\u003csvg width=\"360\" height=\"362\" viewBox=\"0 0 360 362\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M29.8398 180.949C29.8359 151.504 38.5636 122.72 54.9192 98.2355C71.2749 73.7513 94.5238 54.6671 121.726 43.3965C148.928 32.1258 178.861 29.1748 207.741 34.9167C236.62 40.6586 263.148 54.8356 283.97 75.6546C304.792 96.4736 318.972 123 324.718 151.878C330.464 180.757 327.517 210.691 316.25 237.894C304.983 265.098 285.902 288.349 261.42 304.708C236.938 321.067 208.154 329.799 178.71 329.799C139.231 329.799 101.368 314.117 73.4499 286.203C45.532 258.288 29.8451 220.428 29.8398 180.949Z\" fill=\"white\"/\u003e\u003cpath d=\"M173.349 304.469L104.699 274.219L100.879 317.419L176.379 341.419L173.379 304.489\" fill=\"url(#paint0_linear_26641_8667)\"/\u003e\u003cpath d=\"M118.14 137.33H156.69V170.22H147.54V156.22C147.54 153.534 146.473 150.957 144.573 149.057C142.674 147.157 140.097 146.09 137.41 146.09C134.724 146.09 132.147 147.157 130.247 149.057C128.348 150.957 127.28 153.534 127.28 156.22V170.22H118.13L118.14 137.33ZM110.44 209.33L167.64 234.54L163.7 186.3H171.19V170.22H165.64V137.33H171.19V127.88L140.33 97.6902V95.5702C140.33 94.7984 140.024 94.0582 139.478 93.5125C138.932 92.9667 138.192 92.6602 137.42 92.6602C136.649 92.6602 135.908 92.9667 135.363 93.5125C134.817 94.0582 134.51 94.7984 134.51 95.5702V97.6902L103.65 127.88V137.33H109.21V170.22H103.65V186.34H112.47L110.47 209.34\" fill=\"url(#paint1_linear_26641_8667)\"/\u003e\u003cpath d=\"M107.079 247.229L170.949 275.389L169.949 263.669L107.949 236.359L106.949 247.229\" fill=\"url(#paint2_linear_26641_8667)\"/\u003e\u003cpath d=\"M105.41 266.159L172.64 295.789L171.64 284.069L106.33 255.289L105.33 266.159\" fill=\"url(#paint3_linear_26641_8667)\"/\u003e\u003cpath d=\"M109.719 217.428L108.719 228.308L169.299 254.948L168.299 243.228L109.679 217.398\" fill=\"url(#paint4_linear_26641_8667)\"/\u003e\u003cpath d=\"M303.02 112.797L333.95 102.857C333.84 102.637 333.74 102.407 333.63 102.197C328.408 92.0013 322.195 82.3447 315.08 73.3672L286.01 88.3672C292.387 95.732 297.992 103.73 302.74 112.237C302.84 112.407 302.92 112.587 303.01 112.767\" fill=\"#696566\"/\u003e\u003cpath d=\"M320.101 171.319L352.311 173.629C351.949 165.036 350.946 156.483 349.311 148.039L316.811 149.149C318.48 156.441 319.567 163.855 320.061 171.319\" fill=\"#696566\"/\u003e\u003cpath d=\"M180.95 322.759C102.75 322.759 39.1196 259.139 39.1196 180.939C39.1196 102.739 102.77 39.1088 180.95 39.1088C208 39.0785 234.487 46.8338 257.25 61.4488L279.8 37.9488C250.781 17.7916 216.282 7.01095 180.95 7.05875C85.0996 7.05875 7.09961 85.0587 7.09961 180.949C7.09961 276.839 85.0996 354.799 180.95 354.799C262.85 354.799 331.64 297.799 349.95 221.479L319.57 210.949C305.77 274.789 248.88 322.779 180.97 322.779\" fill=\"#696566\"/\u003e\u003cpath d=\"M312.079 69.5383C303.295 59.0318 293.311 49.5908 282.329 41.4083C280.759 40.2383 279.149 39.1083 277.539 37.9883L254.949 61.4483L172.609 147.078L286.019 88.3983L315.089 73.3983C314.089 72.1283 313.089 70.8183 312.089 69.5783\" fill=\"url(#paint5_linear_26641_8667)\"/\u003e\u003cpath d=\"M352.539 179.558C352.539 177.558 352.399 175.558 352.319 173.628L320.109 171.318L172.639 160.738L317.309 210.948L347.719 221.498C347.809 221.138 347.909 220.788 347.999 220.418C351.027 207.48 352.561 194.236 352.569 180.948V179.578\" fill=\"url(#paint6_linear_26641_8667)\"/\u003e\u003cpath d=\"M347.789 140.559C344.659 127.497 340.014 114.845 333.949 102.859L303.009 112.799L174.869 153.949L316.869 149.119L349.369 148.009C348.889 145.499 348.369 143.009 347.809 140.529\" fill=\"url(#paint7_linear_26641_8667)\"/\u003e\u003cdefs\u003e\u003clinearGradient id=\"paint0_linear_26641_8667\" x1=\"101.289\" y1=\"306.471\" x2=\"176.755\" y2=\"306.471\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop stop-color=\"#60B932\"/\u003e\u003cstop offset=\"0.28\" stop-color=\"#60B932\"/\u003e\u003cstop offset=\"1\" stop-color=\"#367C34\"/\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"paint1_linear_26641_8667\" x1=\"102.282\" y1=\"168.124\" x2=\"170.035\" y2=\"168.124\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop stop-color=\"#60B932\"/\u003e\u003cstop offset=\"0.28\" stop-color=\"#60B932\"/\u003e\u003cstop offset=\"1\" stop-color=\"#367C34\"/\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"paint2_linear_26641_8667\" x1=\"107.279\" y1=\"255.374\" x2=\"171.139\" y2=\"255.374\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop stop-color=\"#60B932\"/\u003e\u003cstop offset=\"0.28\" stop-color=\"#60B932\"/\u003e\u003cstop offset=\"1\" stop-color=\"#367C34\"/\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"paint3_linear_26641_8667\" x1=\"106.217\" y1=\"272.719\" x2=\"173.425\" y2=\"272.719\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop stop-color=\"#60B932\"/\u003e\u003cstop offset=\"0.28\" stop-color=\"#60B932\"/\u003e\u003cstop offset=\"1\" stop-color=\"#367C34\"/\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"paint4_linear_26641_8667\" x1=\"108.201\" y1=\"238.022\" x2=\"168.713\" y2=\"238.022\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop stop-color=\"#60B932\"/\u003e\u003cstop offset=\"0.28\" stop-color=\"#60B932\"/\u003e\u003cstop offset=\"1\" stop-color=\"#367C34\"/\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"paint5_linear_26641_8667\" x1=\"176.227\" y1=\"145.847\" x2=\"307.948\" y2=\"48.3077\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop stop-color=\"#4596D8\"/\u003e\u003cstop offset=\"0.2\" stop-color=\"#4596D8\"/\u003e\u003cstop offset=\"1\" stop-color=\"white\"/\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"paint6_linear_26641_8667\" x1=\"171.423\" y1=\"176.442\" x2=\"360.467\" y2=\"215.041\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop stop-color=\"#4194D7\"/\u003e\u003cstop offset=\"0.2\" stop-color=\"#4194D7\"/\u003e\u003cstop offset=\"1\" stop-color=\"white\"/\u003e\u003c/linearGradient\u003e\u003clinearGradient id=\"paint7_linear_26641_8667\" x1=\"168.908\" y1=\"170.136\" x2=\"343.043\" y2=\"138.71\" gradientUnits=\"userSpaceOnUse\"\u003e\u003cstop stop-color=\"#4194D7\"/\u003e\u003cstop offset=\"0.33\" stop-color=\"#4496D8\"/\u003e\u003cstop offset=\"1\" stop-color=\"white\"/\u003e\u003c/linearGradient\u003e\u003c/defs\u003e\u003c/svg\u003e",
-   "svgWhite": "\u003csvg width=\"364\" height=\"364\" viewBox=\"0 0 364 364\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\u003cpath d=\"M172.217 137.372V127.917L141.367 97.7303V95.6063C141.365 94.835 141.058 94.0959 140.512 93.5505C139.967 93.0051 139.228 92.6977 138.456 92.6953C137.685 92.6974 136.946 93.0048 136.4 93.5502C135.854 94.0956 135.547 94.8348 135.544 95.6063V97.7303L104.693 127.917V137.372H110.248V170.264H104.693V186.382H113.513L111.475 209.412L168.675 234.619L164.731 186.382H172.217V170.264H166.663V137.372H172.217ZM157.732 170.264H148.582V156.214C148.582 150.644 144.027 146.085 138.456 146.085C132.885 146.085 128.327 150.643 128.327 156.215V170.264H119.177V137.372H157.732V170.264ZM108.125 247.269L172.013 275.425L171.054 263.7L109.086 236.395L108.125 247.269ZM107.413 255.325L106.45 266.198L173.68 295.826L172.724 284.106L107.413 255.325ZM110.763 217.466L109.8 228.343L170.344 255.02L169.386 243.299L110.763 217.466Z\" fill=\"white\"/\u003e\u003cpath d=\"M352.323 173.6L328.329 171.878L321.144 171.362L173.679 160.779L318.349 210.97L320.447 211.698C306.368 275.172 249.662 322.798 182.011 322.798C179.954 322.798 177.91 322.744 175.874 322.657L174.39 304.51L105.736 274.257L103.542 299.052C65.3793 273.608 40.1823 230.18 40.1823 180.973C40.1823 102.771 103.808 39.1488 182.012 39.1488C209.478 39.1488 235.118 47.0358 256.862 60.6118L256.019 61.4888L173.679 147.121L287.059 88.4438C293.401 95.7978 299.039 103.767 303.786 112.312C303.882 112.484 303.964 112.666 304.06 112.842L175.912 154.022L317.892 149.188C319.563 156.481 320.65 163.896 321.144 171.362L328.329 171.877L352.323 173.599C351.92 165.039 350.871 156.522 349.185 148.121C346.059 132.55 340.758 117.496 333.439 103.401C328.082 93.0837 321.688 83.3388 314.357 74.3168C303.939 61.4892 291.728 50.2286 278.099 40.8818C277.644 40.5698 277.189 40.2558 276.731 39.9488C249.568 21.7068 216.904 11.0508 181.797 11.0508C87.6573 11.0508 11.0703 87.6378 11.0703 181.777C11.0703 275.916 87.6573 352.504 181.797 352.504C262.36 352.504 330.061 296.409 347.913 221.228C347.971 220.986 348.034 220.747 348.091 220.504C351.663 205.14 353.087 189.355 352.323 173.6Z\" fill=\"white\"/\u003e\u003cpath d=\"M181.798 7.04688C85.4533 7.04688 7.07031 85.4279 7.07031 181.773C7.07031 278.118 85.4523 356.5 181.797 356.5C278.142 356.5 356.523 278.118 356.523 181.773C356.523 85.4279 278.142 7.04688 181.798 7.04688ZM347.914 221.224C330.062 296.405 262.361 352.5 181.798 352.5C87.6583 352.5 11.0713 275.912 11.0713 181.773C11.0713 87.6339 87.6583 11.0469 181.798 11.0469C216.905 11.0469 249.568 21.7029 276.732 39.9449C277.19 40.2519 277.645 40.5649 278.1 40.8779C291.729 50.2253 303.94 61.4866 314.358 74.3149C321.689 83.3366 328.083 93.0811 333.44 103.398C340.759 117.493 346.06 132.548 349.186 148.119C350.872 156.521 351.921 165.037 352.324 173.597C353.088 189.352 351.664 205.136 348.091 220.5C348.035 220.743 347.971 220.982 347.914 221.224Z\" fill=\"white\"/\u003e\u003c/svg\u003e"
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "User",
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"comments\": {\n     \"type\": \"string\"\n    },\n    \"email\": {\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"parentInstance\": {\n     \"description\": \"ParentInstance is a LocalObjectReference to the\\nname of the harbor instance the user is created for\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"passwordStrength\": {\n     \"description\": \"The effective length of the generated user password\",\n     \"format\": \"int32\",\n     \"maximum\": 128,\n     \"minimum\": 8,\n     \"type\": \"integer\"\n    },\n    \"realname\": {\n     \"type\": \"string\"\n    },\n    \"sysAdmin\": {\n     \"type\": \"boolean\"\n    },\n    \"userSecretRef\": {\n     \"description\": \"LocalObjectReference contains enough information to let you locate the\\nreferenced object inside the same namespace.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    }\n   },\n   \"required\": [\n    \"email\",\n    \"name\",\n    \"parentInstance\",\n    \"realname\",\n    \"userSecretRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"User\",\n \"type\": \"object\"\n}",
+    "version": "registries.mittwald.de/v1alpha2"
+  }
+}

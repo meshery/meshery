@@ -5,7 +5,7 @@
 replicaCount: 1
 
 image:
-  repository: layer5/meshery-app-mesh:stable-latest
+  repository: meshery/meshery-app-mesh:stable-latest
   pullPolicy: Always
 
 env: {}

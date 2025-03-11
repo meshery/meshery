@@ -1,196 +1,196 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "FederatedTypeConfig",
-   "schema": "{\n \"description\": \"FederatedTypeConfig programs KubeFed to know about a single API type - the \\\"target type\\\" - that a user wants to federate. For each target type, there is a corresponding FederatedType that has the following fields: \\n - The \\\"template\\\" field specifies the basic definition of a federated resource - The \\\"placement\\\" field specifies the placement information for the federated   resource - The \\\"overrides\\\" field specifies how the target resource should vary across   clusters.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"FederatedTypeConfigSpec defines the desired state of FederatedTypeConfig.\",\n   \"properties\": {\n    \"federatedType\": {\n     \"description\": \"Configuration for the federated type that defines (via template, placement and overrides fields) how the target type should appear in multiple cluster.\",\n     \"properties\": {\n      \"group\": {\n       \"description\": \"Group of the resource.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Camel-cased singular name of the resource (e.g. ConfigMap)\",\n       \"type\": \"string\"\n      },\n      \"pluralName\": {\n       \"description\": \"Lower-cased plural name of the resource (e.g. configmaps).  If not provided, it will be computed by lower-casing the kind and suffixing an 's'.\",\n       \"type\": \"string\"\n      },\n      \"scope\": {\n       \"description\": \"Scope of the resource.\",\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"description\": \"Version of the resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"pluralName\",\n      \"scope\",\n      \"version\"\n     ],\n     \"type\": \"object\"\n    },\n    \"propagation\": {\n     \"description\": \"Whether or not propagation to member clusters should be enabled.\",\n     \"type\": \"string\"\n    },\n    \"statusCollection\": {\n     \"description\": \"Whether or not Status object should be populated.\",\n     \"type\": \"string\"\n    },\n    \"statusType\": {\n     \"description\": \"Configuration for the status type that holds information about which type holds the status of the federated resource. If not provided, the group and version will default to those provided for the federated type api resource.\",\n     \"properties\": {\n      \"group\": {\n       \"description\": \"Group of the resource.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Camel-cased singular name of the resource (e.g. ConfigMap)\",\n       \"type\": \"string\"\n      },\n      \"pluralName\": {\n       \"description\": \"Lower-cased plural name of the resource (e.g. configmaps).  If not provided, it will be computed by lower-casing the kind and suffixing an 's'.\",\n       \"type\": \"string\"\n      },\n      \"scope\": {\n       \"description\": \"Scope of the resource.\",\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"description\": \"Version of the resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"pluralName\",\n      \"scope\",\n      \"version\"\n     ],\n     \"type\": \"object\"\n    },\n    \"targetType\": {\n     \"description\": \"The configuration of the target type. If not set, the pluralName and groupName fields will be set from the metadata.name of this resource. The kind field must be set.\",\n     \"properties\": {\n      \"group\": {\n       \"description\": \"Group of the resource.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Camel-cased singular name of the resource (e.g. ConfigMap)\",\n       \"type\": \"string\"\n      },\n      \"pluralName\": {\n       \"description\": \"Lower-cased plural name of the resource (e.g. configmaps).  If not provided, it will be computed by lower-casing the kind and suffixing an 's'.\",\n       \"type\": \"string\"\n      },\n      \"scope\": {\n       \"description\": \"Scope of the resource.\",\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"description\": \"Version of the resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"pluralName\",\n      \"scope\",\n      \"version\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"federatedType\",\n    \"propagation\",\n    \"targetType\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Federated Type Config\",\n \"type\": \"object\"\n}",
-   "version": "core.kubefed.io/v1beta1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Federated Type Config",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Federated Type Config",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Uncategorized"
-   },
-   "displayName": "Kubefed",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "kubefed",
+    "displayName": "Kubefed",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized"
+    },
+    "subCategory": "Uncategorized",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://github.com/kubernetes-sigs/kubefed/releases/download/v0.10.0/kubefed-0.10.0.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "0.10.0"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "source_uri": "https://github.com/kubernetes-sigs/kubefed/releases/download/v0.10.0/kubefed-0.10.0.tgz",
-    "styleOverrides": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "0.10.0"
-   },
-   "name": "kubefed",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Uncategorized",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "FederatedTypeConfig",
+    "schema": "{\n \"description\": \"FederatedTypeConfig programs KubeFed to know about a single API type - the \\\"target type\\\" - that a user wants to federate. For each target type, there is a corresponding FederatedType that has the following fields: \\n - The \\\"template\\\" field specifies the basic definition of a federated resource - The \\\"placement\\\" field specifies the placement information for the federated   resource - The \\\"overrides\\\" field specifies how the target resource should vary across   clusters.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"FederatedTypeConfigSpec defines the desired state of FederatedTypeConfig.\",\n   \"properties\": {\n    \"federatedType\": {\n     \"description\": \"Configuration for the federated type that defines (via template, placement and overrides fields) how the target type should appear in multiple cluster.\",\n     \"properties\": {\n      \"group\": {\n       \"description\": \"Group of the resource.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Camel-cased singular name of the resource (e.g. ConfigMap)\",\n       \"type\": \"string\"\n      },\n      \"pluralName\": {\n       \"description\": \"Lower-cased plural name of the resource (e.g. configmaps).  If not provided, it will be computed by lower-casing the kind and suffixing an 's'.\",\n       \"type\": \"string\"\n      },\n      \"scope\": {\n       \"description\": \"Scope of the resource.\",\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"description\": \"Version of the resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"pluralName\",\n      \"scope\",\n      \"version\"\n     ],\n     \"type\": \"object\"\n    },\n    \"propagation\": {\n     \"description\": \"Whether or not propagation to member clusters should be enabled.\",\n     \"type\": \"string\"\n    },\n    \"statusCollection\": {\n     \"description\": \"Whether or not Status object should be populated.\",\n     \"type\": \"string\"\n    },\n    \"statusType\": {\n     \"description\": \"Configuration for the status type that holds information about which type holds the status of the federated resource. If not provided, the group and version will default to those provided for the federated type api resource.\",\n     \"properties\": {\n      \"group\": {\n       \"description\": \"Group of the resource.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Camel-cased singular name of the resource (e.g. ConfigMap)\",\n       \"type\": \"string\"\n      },\n      \"pluralName\": {\n       \"description\": \"Lower-cased plural name of the resource (e.g. configmaps).  If not provided, it will be computed by lower-casing the kind and suffixing an 's'.\",\n       \"type\": \"string\"\n      },\n      \"scope\": {\n       \"description\": \"Scope of the resource.\",\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"description\": \"Version of the resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"pluralName\",\n      \"scope\",\n      \"version\"\n     ],\n     \"type\": \"object\"\n    },\n    \"targetType\": {\n     \"description\": \"The configuration of the target type. If not set, the pluralName and groupName fields will be set from the metadata.name of this resource. The kind field must be set.\",\n     \"properties\": {\n      \"group\": {\n       \"description\": \"Group of the resource.\",\n       \"type\": \"string\"\n      },\n      \"kind\": {\n       \"description\": \"Camel-cased singular name of the resource (e.g. ConfigMap)\",\n       \"type\": \"string\"\n      },\n      \"pluralName\": {\n       \"description\": \"Lower-cased plural name of the resource (e.g. configmaps).  If not provided, it will be computed by lower-casing the kind and suffixing an 's'.\",\n       \"type\": \"string\"\n      },\n      \"scope\": {\n       \"description\": \"Scope of the resource.\",\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"description\": \"Version of the resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"kind\",\n      \"pluralName\",\n      \"scope\",\n      \"version\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"federatedType\",\n    \"propagation\",\n    \"targetType\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Federated Type Config\",\n \"type\": \"object\"\n}",
+    "version": "core.kubefed.io/v1beta1"
+  }
+}

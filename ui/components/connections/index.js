@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import { ErrorBoundary, AppBar } from '@layer5/sistent';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -16,7 +16,6 @@ import { useGetSchemaQuery } from '@/rtk-query/schema';
 import { withRouter } from 'next/router';
 import CustomErrorFallback from '../General/ErrorBoundary';
 import ConnectionTable from './ConnectionTable';
-import { UsesSistent } from '../SistentWrapper';
 
 /**
  * Parent Component for Connection Component
@@ -71,7 +70,7 @@ function ConnectionManagementPage(props) {
 function Connections(props) {
   const {
     updateProgress,
-    /*onOpenCreateConnectionModal,*/ operatorState,
+    operatorState,
     selectedK8sContexts,
     k8sconfig,
     connectionMetadataState,
@@ -86,40 +85,38 @@ function Connections(props) {
     <NoSsr>
       {CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) ? (
         <>
-          <UsesSistent>
-            <AppBar position="static" color="default" style={{ marginBottom: '3rem' }}>
-              <ConnectionTabs
-                value={tab}
-                onChange={(e, newTab) => {
-                  e.stopPropagation();
-                  setTab(newTab);
-                }}
-                indicatorColor="primary"
-                textColor="primary"
-                variant="fullWidth"
-                sx={{
-                  height: '10%',
-                }}
-              >
-                <ConnectionTab
-                  label={
-                    <ConnectionIconText>
-                      <span style={{ marginRight: '0.3rem' }}>Connections</span>
-                      <ConnectionIcon width="20" height="20" />
-                    </ConnectionIconText>
-                  }
-                />
-                <ConnectionTab
-                  label={
-                    <ConnectionIconText>
-                      <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
-                      <MeshsyncIcon width="20" height="20" />
-                    </ConnectionIconText>
-                  }
-                />
-              </ConnectionTabs>
-            </AppBar>
-          </UsesSistent>
+          <AppBar position="static" color="default" style={{ marginBottom: '3rem' }}>
+            <ConnectionTabs
+              value={tab}
+              onChange={(e, newTab) => {
+                e.stopPropagation();
+                setTab(newTab);
+              }}
+              indicatorColor="primary"
+              textColor="primary"
+              variant="fullWidth"
+              sx={{
+                height: '10%',
+              }}
+            >
+              <ConnectionTab
+                label={
+                  <ConnectionIconText>
+                    <span style={{ marginRight: '0.3rem' }}>Connections</span>
+                    <ConnectionIcon width="20" height="20" />
+                  </ConnectionIconText>
+                }
+              />
+              <ConnectionTab
+                label={
+                  <ConnectionIconText>
+                    <span style={{ marginRight: '0.3rem' }}>MeshSync</span>
+                    <MeshsyncIcon width="20" height="20" />
+                  </ConnectionIconText>
+                }
+              />
+            </ConnectionTabs>
+          </AppBar>
 
           {tab === 0 && CAN(keys.VIEW_CONNECTIONS.action, keys.VIEW_CONNECTIONS.subject) && (
             <ConnectionTable

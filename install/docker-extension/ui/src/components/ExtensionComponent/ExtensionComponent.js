@@ -1,22 +1,22 @@
-import React, { useState, useEffect } from 'react'
-import { Typography, Button, Tooltip, Grid } from '@mui/material'
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import React, { useState, useEffect } from "react";
+import { Typography, Button, Tooltip, Grid } from "@mui/material";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 // import ConsulIcon from '../../img/SVGs/consulIcon'
 // import IstioIcon from '../../img/SVGs/IstioIcon'
 // import KumaIcon from '../../img/SVGs/kumaIcon'
 // import LinkerdIcon from '../../img/SVGs/linkerdIcon'
-import Tour from '../Walkthrough/Tour'
-import PublishIcon from '../../assets/design'
-import { Avatar } from '@mui/material'
+import Tour from "../Walkthrough/Tour";
+import PublishIcon from "../../assets/design";
+import { Avatar } from "@mui/material";
 // import NginxIcon from '../../img/SVGs/nginxIcon'
 // import AppmeshIcon from '../../img/SVGs/appmeshIcon'
 // import CiliumIcon from '../../img/SVGs/ciliumIcon'
 // import TraefikIcon from '../../img/SVGs/traefikIcon'
-import Meshery from '../../img/SVGs/meshery'
-import MesheryIcon from '../../img/meshery-logo/CustomMesheryLogo'
-import { DockerMuiThemeProvider } from '@docker/docker-mui-theme'
-import CssBaseline from '@mui/material/CssBaseline'
-import { LoadComp } from '../LoadingComponent/LoadComp'
+import Meshery from "../../img/SVGs/meshery";
+import MesheryIcon from "../../img/meshery-logo/CustomMesheryLogo";
+import { DockerMuiThemeProvider } from "@docker/docker-mui-theme";
+import CssBaseline from "@mui/material/CssBaseline";
+import { LoadComp } from "../LoadingComponent/LoadComp";
 import {
   LoadingDiv,
   AccountDiv,
@@ -30,18 +30,22 @@ import {
   StyledLink,
   MeshModels,
   PublishCard,
-} from './styledComponents'
-import { MesheryAnimation } from '../MesheryAnimation/MesheryAnimation'
-import { randomApplicationNameGenerator } from '../../utils'
-import CatalogChart from '../Catalog/Chart'
-import { CatalogCard, FeedbackButton, SistentThemeProviderWithoutBaseLine } from '@layer5/sistent';
-import { MESHMAP, mesheryCloudUrl } from '../utils/constants';
+} from "./styledComponents";
+import { MesheryAnimation } from "../MesheryAnimation/MesheryAnimation";
+import { randomApplicationNameGenerator } from "../../utils";
+import CatalogChart from "../Catalog/Chart";
+import {
+  CatalogCard,
+  FeedbackButton,
+  SistentThemeProviderWithoutBaseLine,
+} from "@layer5/sistent";
+import { MESHMAP, providerUrl } from "../utils/constants";
 
-const AuthenticatedMsg = 'Authenticated'
-const UnauthenticatedMsg = 'Unauthenticated'
-const proxyUrl = 'http://127.0.0.1:7877'
-const httpDelete = 'DELETE'
-const httpPost = 'POST'
+const AuthenticatedMsg = "Authenticated";
+const UnauthenticatedMsg = "Unauthenticated";
+const proxyUrl = "http://127.0.0.1:7877";
+const httpDelete = "DELETE";
+const httpPost = "POST";
 
 // const adapters = {
 //   APP_MESH: {
@@ -88,33 +92,33 @@ const httpPost = 'POST'
 
 const useThemeDetector = () => {
   const getCurrentTheme = () =>
-    window.matchMedia('(prefers-color-scheme: dark)').matches
-  const [isDarkTheme, setIsDarkTheme] = useState(getCurrentTheme())
+    window.matchMedia("(prefers-color-scheme: dark)").matches;
+  const [isDarkTheme, setIsDarkTheme] = useState(getCurrentTheme());
   const mqListener = (e) => {
-    setIsDarkTheme(e.matches)
-  }
+    setIsDarkTheme(e.matches);
+  };
 
   useEffect(() => {
-    const darkThemeMq = window.matchMedia('(prefers-color-scheme: dark)')
-    darkThemeMq.addListener(mqListener)
-    return () => darkThemeMq.removeListener(mqListener)
-  }, [])
-  return isDarkTheme
-}
+    const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+    darkThemeMq.addListener(mqListener);
+    return () => darkThemeMq.removeListener(mqListener);
+  }, []);
+  return isDarkTheme;
+};
 
 const ExtensionsComponent = () => {
   // const [switchesState, setSwitchesState] = useState(null)
-  const [isHovered, setIsHovered] = useState(false)
-  const isDarkTheme = useThemeDetector()
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [user, setUser] = useState('')
-  const [token, setToken] = useState()
-  const [changing, isChanging] = useState(false)
+  const [isHovered, setIsHovered] = useState(false);
+  const isDarkTheme = useThemeDetector();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [user, setUser] = useState("");
+  const [token, setToken] = useState();
+  const [changing, isChanging] = useState(false);
   // const [emptystate, isEmptystate] = useState(true)
   // const [meshAdapters, setMeshAdapters] = useState(null)
-  const [catalogDesigns, setCatalogDesigns] = useState(null)
-  const [filter, setFilter] = useState(null)
-  const [userDesigns, setUserDesigns] = useState(null)
+  const [catalogDesigns, setCatalogDesigns] = useState(null);
+  const [filter, setFilter] = useState(null);
+  const [userDesigns, setUserDesigns] = useState(null);
 
   // useEffect(() => {
   //   if (meshAdapters && meshAdapters.length !== 0) {
@@ -125,27 +129,27 @@ const ExtensionsComponent = () => {
   //     )
   //   }
   // }, [meshAdapters])
-  const [mesheryVersion, setMesheryVersion] = useState(null)
+  const [mesheryVersion, setMesheryVersion] = useState(null);
 
   const logout = () => {
-    fetch(proxyUrl + '/token', { method: httpDelete })
+    fetch(proxyUrl + "/token", { method: httpDelete })
       .then(console.log)
-      .catch(console.error)
-  }
+      .catch(console.error);
+  };
 
-  const onSubmit = async feedback => {
+  const onSubmit = async (feedback) => {
     const userFeedbackRequestBody = {
       scope: feedback?.label,
       message: feedback?.message,
       page_location: "",
-      metadata: {}
+      metadata: {},
     };
-    fetch(`${mesheryCloudUrl}` + '/api/identity/users/notify/feedback', {
+    fetch(`${providerUrl}` + "/api/identity/users/notify/feedback", {
       method: httpPost,
-      body: userFeedbackRequestBody
+      body: userFeedbackRequestBody,
     })
       .then(console.log)
-      .catch(console.error)
+      .catch(console.error);
 
     // if (resp.error) {
     //   window.ddClient.desktopUI.toast.error(
@@ -157,52 +161,52 @@ const ExtensionsComponent = () => {
   };
 
   useEffect(() => {
-    let ws = new WebSocket('ws://127.0.0.1:7877/ws')
+    let ws = new WebSocket("ws://127.0.0.1:7877/ws");
     ws.onmessage = (msg) => {
-      if (msg.data === AuthenticatedMsg) setIsLoggedIn(true)
+      if (msg.data === AuthenticatedMsg) setIsLoggedIn(true);
       if (msg.data === UnauthenticatedMsg) {
-        setIsLoggedIn(false)
+        setIsLoggedIn(false);
       }
-    }
-    return () => ws.close()
-  }, [])
+    };
+    return () => ws.close();
+  }, []);
 
   // Event Interceptor to redirect all external links
   useEffect(() => {
     const handleLinkClick = (event) => {
-      const target = event.target.closest('a');
+      const target = event.target.closest("a");
 
       // Ensure the target is an anchor tag with a valid href and external link
-      if (target && target.href && target.href.startsWith('http')) {
+      if (target && target.href && target.href.startsWith("http")) {
         event.preventDefault();
         window.ddClient.host.openExternal(target.href);
       }
     };
 
     // Attach the event listener to a specific container (if possible), or use document
-    const container = document.getElementById('root') || document;
-    container.addEventListener('click', handleLinkClick);
+    const container = document.getElementById("root") || document;
+    container.addEventListener("click", handleLinkClick);
 
     // Cleanup the event listener on unmount
     return () => {
-      container.removeEventListener('click', handleLinkClick);
+      container.removeEventListener("click", handleLinkClick);
     };
   }, []);
 
   useEffect(() => {
-    fetch(proxyUrl + '/token')
+    fetch(proxyUrl + "/token")
       .then((res) => res.text())
       .then((res) => {
-        setToken(res)
-        if (res !== 'null') {
-          setIsLoggedIn(true)
+        setToken(res);
+        if (res !== "null") {
+          setIsLoggedIn(true);
 
-          fetch(proxyUrl + '/api/user')
+          fetch(proxyUrl + "/api/user")
             .then((res) => res.text())
             .then((res) => {
-              setUser(JSON.parse(res))
+              setUser(JSON.parse(res));
             })
-            .catch(console.error)
+            .catch(console.error);
           // fetch(proxyUrl + '/api/system/sync')
           //   .then((res) => res.json())
           //   .then((data) => {
@@ -210,56 +214,56 @@ const ExtensionsComponent = () => {
           //     isEmptystate(false)
           //   })
           //   .catch(console.err)
-          fetch(proxyUrl + '/api/system/version')
+          fetch(proxyUrl + "/api/system/version")
             .then((result) => result.text())
             .then((result) => setMesheryVersion(JSON.parse(result)?.build))
-            .catch(console.error)
-          fetch(`${mesheryCloudUrl}/api/catalog/content/pattern`)
+            .catch(console.error);
+          fetch(`${providerUrl}/api/catalog/content/pattern`)
             .then((result) => result.text())
             .then((result) => {
-              setCatalogDesigns(JSON.parse(result))
+              setCatalogDesigns(JSON.parse(result));
             })
-            .catch(console.error)
-          fetch(`${mesheryCloudUrl}/api/catalog/content/filter`)
+            .catch(console.error);
+          fetch(`${providerUrl}/api/catalog/content/filter`)
             .then((result) => result.text())
             .then((result) => {
-              setFilter(JSON.parse(result))
+              setFilter(JSON.parse(result));
             })
-            .catch(console.error)
+            .catch(console.error);
         }
       })
-      .catch(console.error)
-  }, [isLoggedIn])
+      .catch(console.error);
+  }, [isLoggedIn]);
 
   useEffect(() => {
     if (user?.id) {
-      fetch(`${mesheryCloudUrl}/api/catalog/content/pattern?userid=${user?.id}`)
+      fetch(`${providerUrl}/api/catalog/content/pattern?userid=${user?.id}`)
         .then((result) => result.text())
         .then((result) => {
-          setUserDesigns(JSON.parse(result))
+          setUserDesigns(JSON.parse(result));
         })
-        .catch(console.error)
+        .catch(console.error);
     }
-  }, [user])
+  }, [user]);
 
   const onMouseOver = (e) => {
-    let target = e.target.closest('div')
-    target.style.transition = 'all .5s'
-    target.style.transform = 'scale(1)'
-  }
+    let target = e.target.closest("div");
+    target.style.transition = "all .5s";
+    target.style.transform = "scale(1)";
+  };
   const onMouseOut = (e) => {
-    setIsHovered(!isHovered)
-    let target = e.target.closest('div')
-    target.style.transition = 'all .8s'
-    target.style.transform = 'scale(1)'
-  }
+    setIsHovered(!isHovered);
+    let target = e.target.closest("div");
+    target.style.transition = "all .8s";
+    target.style.transform = "scale(1)";
+  };
   const onClick = (e) => {
-    let target = e.target.closest('div')
-    target.style.transition = 'all .2s'
-    target.style.transform = 'scale(0.8)'
-    isChanging(true)
-    setIsHovered(true)
-  }
+    let target = e.target.closest("div");
+    target.style.transition = "all .2s";
+    target.style.transform = "scale(0.8)";
+    isChanging(true);
+    setIsHovered(true);
+  };
   // const submitConfig = (mesh, deprovision = false, meshAdapters) => {
   //   const targetMesh = meshAdapters.find((msh) => msh.name === mesh)
   //   const deployQuery = targetMesh.ops.find((op) => !op.category).key
@@ -273,7 +277,7 @@ const ExtensionsComponent = () => {
 
   //   const params = Object.keys(data)
   //     .map(
-  //       (key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`,
+  //       (key) => `${encodeURIComponentkey)}=${encodeURIComponent(data[key])}`,
   //     )
   //     .join('&')
   //   fetch(proxyUrl + '/api/system/adapter/operation', {
@@ -301,68 +305,68 @@ const ExtensionsComponent = () => {
   // }
 
   const handleImport = () => {
-    const file = document.getElementById('upload-button').files[0]
+    const file = document.getElementById("upload-button").files[0];
     // Create a reader
-    const type = String(file.name)
-    const reader = new FileReader()
-    reader.addEventListener('load', (event) => {
-      let body = { save: true }
-      let name = randomApplicationNameGenerator()
+    const type = String(file.name);
+    const reader = new FileReader();
+    reader.addEventListener("load", (event) => {
+      let body = { save: true };
+      let name = randomApplicationNameGenerator();
       body = JSON.stringify({
         ...body,
         application_data: { name, application_file: event.target.result },
-      })
-      if (!(type.includes('.yaml') || type.includes('.yml'))) {
+      });
+      if (!(type.includes(".yaml") || type.includes(".yml"))) {
         window.ddClient.desktopUI.toast.error(
-          'Some error occured while uploading the compose file. ',
-        )
-        return
+          "Some error occured while uploading the compose file. ",
+        );
+        return;
       }
 
-      fetch(proxyUrl + '/api/application', {
-        method: 'POST',
+      fetch(proxyUrl + "/api/application", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+          "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8",
         },
         body,
       })
         .then((res) => {
           window.ddClient.desktopUI.toast.success(
-            'Compose file has been uploaded with name: ' + name,
-          )
+            "Compose file has been uploaded with name: " + name,
+          );
         })
         .catch(() =>
           window.ddClient.desktopUI.toast.error(
-            'Some error occured while uploading the compose file.',
+            "Some error occured while uploading the compose file.",
           ),
-        )
-    })
-    reader.readAsText(file)
-  }
+        );
+    });
+    reader.readAsText(file);
+  };
 
   const OpenDocs = () => {
     window.ddClient.host.openExternal(
       `https://docs.meshery.io/installation/docker/docker-extension`,
-    )
-  }
+    );
+  };
 
   return (
     <DockerMuiThemeProvider>
       <CssBaseline />
       {changing && (
-        <LoadingDiv sx={{ opacity: '1' }}>
+        <LoadingDiv sx={{ opacity: "1" }}>
           <LoadComp />
         </LoadingDiv>
       )}
-      <ComponentWrapper sx={{ opacity: changing ? '0.3' : '1' }}>
+      <ComponentWrapper sx={{ opacity: changing ? "0.3" : "1" }}>
         <SistentThemeProviderWithoutBaseLine>
           <StyledButton
-            size='small'
+            size="small"
             onClick={() => OpenDocs()}
             style={{
-              position: 'absolute',
-              top: '-8px',
-              right: '55px'
+              position: "absolute",
+              top: "-8px",
+              right: "55px",
             }}
           >
             Docs
@@ -371,14 +375,14 @@ const ExtensionsComponent = () => {
         {isLoggedIn && <Tour />}
         <div
           style={{
-            display: 'flex',
-            justifyContent: 'space-evenly',
+            display: "flex",
+            justifyContent: "space-evenly",
           }}
         >
           <div>
-            <MesheryIcon CustomColor={isDarkTheme ? 'white' : '#3C494F'} />
+            <MesheryIcon CustomColor={isDarkTheme ? "white" : "#3C494F"} />
 
-            <Typography sx={{ margin: 'auto', paddingTop: '1rem' }}>
+            <Typography sx={{ margin: "auto", paddingTop: "1rem" }}>
               Design and operate your cloud native deployments with the
               extensible management plane, Meshery.
             </Typography>
@@ -388,17 +392,17 @@ const ExtensionsComponent = () => {
         <SectionWrapper>
           <ExtensionWrapper
             className="third-step"
-            sx={{ backgroundColor: isDarkTheme ? '#393F49' : '#D7DADE' }}
+            sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }}
           >
             <AccountDiv>
-              <div style={{ marginBottom: '0.5rem' }}>
+              <div style={{ marginBottom: "0.5rem" }}>
                 <a
-                  style={{ textDecoration: 'none' }}
+                  style={{ textDecoration: "none" }}
                   href={
                     token &&
-                    'http://localhost:9081/api/user/token?token=' +
-                    token +
-                    '&provider=Meshery'
+                    "http://localhost:9081/api/user/token?token=" +
+                      token +
+                      "&provider=Meshery"
                   }
                 >
                   {isLoggedIn ? (
@@ -421,49 +425,54 @@ const ExtensionsComponent = () => {
                 {isLoggedIn ? (
                   <LinkButton>
                     <StyledLink
-                      style={{ textDecoration: 'none', color: "white" }}
+                      style={{ textDecoration: "none", color: "white" }}
                       href={
                         token &&
-                        'http://localhost:9081/api/user/token?token=' +
-                        token +
-                        '&provider=Meshery'
+                        "http://localhost:9081/api/user/token?token=" +
+                          token +
+                          "&provider=Meshery"
                       }
                     >
                       Launch Meshery
                     </StyledLink>
                   </LinkButton>
-                ) : ""}
+                ) : (
+                  ""
+                )}
               </div>
               {!isLoggedIn ? (
                 <StyledButton
-                  sx={{ marginTop: '0.3rem' }}
+                  sx={{ marginTop: "0.3rem" }}
                   variant="contained"
                   disabled={isLoggedIn}
                   color="primary"
                   component="span"
                   onClick={() => {
                     window.ddClient.host.openExternal(
-                      'https://cloud.layer5.io?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14',
-                    )
+                      providerUrl +
+                        "?source=aHR0cDovL2xvY2FsaG9zdDo3ODc3L3Rva2VuL3N0b3Jl&provider_version=v0.3.14",
+                    );
                   }}
                 >
                   Login
                 </StyledButton>
-              ) : (<></>)}
+              ) : (
+                <></>
+              )}
             </AccountDiv>
           </ExtensionWrapper>
           {isLoggedIn && (
             <ExtensionWrapper
               className="second-step"
-              sx={{ backgroundColor: isDarkTheme ? '#393F49' : '#D7DADE' }}
+              sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }}
             >
               <AccountDiv>
                 <Typography
-                  sx={{ marginBottom: '2rem', whiteSpace: ' nowrap' }}
+                  sx={{ marginBottom: "2rem", whiteSpace: " nowrap" }}
                 >
                   Import Compose App
                 </Typography>
-                <div style={{ paddingBottom: '2rem' }}>
+                <div style={{ paddingBottom: "2rem" }}>
                   <label htmlFor="upload-button">
                     <StyledButton
                       variant="contained"
@@ -488,37 +497,37 @@ const ExtensionsComponent = () => {
             </ExtensionWrapper>
           )}
           {!isLoggedIn ? (
-            <div sx={{ display: 'none' }}></div>
+            <div sx={{ display: "none" }}></div>
           ) : (
             <div>
               <ExtensionWrapper
                 className="third-step"
-                sx={{ backgroundColor: isDarkTheme ? '#393F49' : '#D7DADE' }}
+                sx={{ backgroundColor: isDarkTheme ? "#393F49" : "#D7DADE" }}
               >
                 <AccountDiv>
                   <div
                     style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      alignItems: 'center',
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
                     }}
                   >
                     {user?.user_id && (
                       <Typography
                         sx={{
-                          display: 'flex',
-                          flexDirection: 'column',
-                          alignItems: 'center',
-                          marginBottom: '1.5rem',
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          marginBottom: "1.5rem",
                         }}
                       >
                         {user?.user_id}
                         <Avatar
                           src={user?.avatar_url}
                           sx={{
-                            width: '5rem',
-                            height: '5rem',
-                            marginTop: '1.5rem',
+                            width: "5rem",
+                            height: "5rem",
+                            marginTop: "1.5rem",
                           }}
                         />
                       </Typography>
@@ -527,7 +536,7 @@ const ExtensionsComponent = () => {
                       variant="p"
                       component="p"
                       style={{
-                        transform: 'none',
+                        transform: "none",
                       }}
                     >
                       <Button
@@ -545,28 +554,52 @@ const ExtensionsComponent = () => {
             </div>
           )}
         </SectionWrapper>
-        {isLoggedIn &&
-          (<SectionWrapper>
-            <CatalogChart filter={filter} pattern={catalogDesigns} isTheme={isDarkTheme} />
-            <Grid sx={{ backgroundColor: isDarkTheme ? '#666A75' : '#D7DADE', borderRadius: "15px", height: "28rem", display: "flex", justifyContent: "center", marginTop: '20px' }}>
-
-              <div style={{ paddingTop: isLoggedIn ? '1.2rem' : null, margin: "10px 0", width: 'max-content' }}>
+        {isLoggedIn && (
+          <SectionWrapper>
+            <CatalogChart
+              filter={filter}
+              pattern={catalogDesigns}
+              isTheme={isDarkTheme}
+            />
+            <Grid
+              sx={{
+                backgroundColor: isDarkTheme ? "#666A75" : "#D7DADE",
+                borderRadius: "15px",
+                height: "28rem",
+                display: "flex",
+                justifyContent: "center",
+                marginTop: "20px",
+              }}
+            >
+              <div
+                style={{
+                  paddingTop: isLoggedIn ? "1.2rem" : null,
+                  margin: "10px 0",
+                  width: "max-content",
+                }}
+              >
                 <ExtensionWrapper
                   className="first-step"
                   sx={{
-                    height: ['22rem', '17rem', '14rem'],
+                    height: ["22rem", "17rem", "14rem"],
                   }}
                 >
                   {catalogDesigns?.patterns.length > 0 ? (
                     <div>
-                      <Typography variant="h5" sx={{ padding: '8rem 0 1rem 0', fontWeight: "bold" }}>
+                      <Typography
+                        variant="h5"
+                        sx={{ padding: "8rem 0 1rem 0", fontWeight: "bold" }}
+                      >
                         Designs
                       </Typography>
                       <MeshModels>
-                        {
-                          catalogDesigns?.patterns?.slice(0, 2).map((pattern, index) => {
+                        {catalogDesigns?.patterns
+                          ?.slice(0, 2)
+                          .map((pattern, index) => {
                             let patternType =
-                              pattern.catalog_data && pattern.catalog_data.type && pattern.catalog_data.type !== ""
+                              pattern.catalog_data &&
+                              pattern.catalog_data.type &&
+                              pattern.catalog_data.type !== ""
                                 ? pattern.catalog_data.type
                                 : "deployment";
                             return (
@@ -574,26 +607,25 @@ const ExtensionsComponent = () => {
                                 <CatalogCard
                                   onCardClick={() => {
                                     window.ddClient.host.openExternal(
-                                      `${mesheryCloudUrl}/catalog/content/catalog/${pattern?.id}`
-                                    )
+                                      `${providerUrl}/catalog/content/catalog/${pattern?.id}`,
+                                    );
                                   }}
                                   pattern={pattern}
                                   key={`design-${index}`}
                                   patternType={patternType}
                                   catalog={true}
-                                  cardHeight='18rem'
-                                  cardWidth='15rem'
+                                  cardHeight="18rem"
+                                  cardWidth="15rem"
                                 />
                               </SistentThemeProviderWithoutBaseLine>
-                            )
-                          })
-                        }
+                            );
+                          })}
                       </MeshModels>
                       <StyledButton
                         onClick={() => {
                           window.ddClient.host.openExternal(
-                            `${mesheryCloudUrl}/catalog`
-                          )
+                            `${providerUrl}/catalog`,
+                          );
                         }}
                       >
                         View all catalog
@@ -601,10 +633,20 @@ const ExtensionsComponent = () => {
                     </div>
                   ) : (
                     <div>
-                      <Typography variant="h5" sx={{ padding: '3rem 0 1rem 0', fontWeight: "bold" }}>
+                      <Typography
+                        variant="h5"
+                        sx={{ padding: "3rem 0 1rem 0", fontWeight: "bold" }}
+                      >
                         Designs
                       </Typography>
-                      <a href={user?.role_names?.includes(MESHMAP) ? "https://playground.meshery.io/extension/meshmap" : "https://play.meshery.io"} style={{ textDecoration: "none" }}>
+                      <a
+                        href={
+                          user?.role_names?.includes(MESHMAP)
+                            ? "https://playground.meshery.io/extension/meshmap"
+                            : "https://play.meshery.io"
+                        }
+                        style={{ textDecoration: "none" }}
+                      >
                         <PublishCard>
                           <PublishIcon width={"60"} height={"60"} />
                           <h5>Publish your own design</h5>
@@ -615,12 +657,12 @@ const ExtensionsComponent = () => {
                 </ExtensionWrapper>
               </div>
             </Grid>
-          </SectionWrapper>)
-        }
+          </SectionWrapper>
+        )}
 
         <SectionWrapper>
           {isLoggedIn && (
-            <div style={{ paddingTop: isLoggedIn ? '1.2rem' : null }}>
+            <div style={{ paddingTop: isLoggedIn ? "1.2rem" : null }}>
               <Tooltip title="Meshery Server version">
                 <VersionText variant="span" component="span" align="end">
                   {mesheryVersion}
@@ -630,17 +672,18 @@ const ExtensionsComponent = () => {
                 href={`https://docs.meshery.io/project/releases/${mesheryVersion}`}
                 target="_blank"
                 rel="noreferrer"
-                style={{ color: isDarkTheme ? 'white' : 'black' }}
+                style={{ color: isDarkTheme ? "white" : "black" }}
               >
-                <OpenInNewIcon style={{ width: '0.85rem', verticalAlign: 'middle' }} />
+                <OpenInNewIcon
+                  style={{ width: "0.85rem", verticalAlign: "middle" }}
+                />
               </a>
             </div>
           )}
         </SectionWrapper>
 
+        {/*
 
-        {/* 
-        
         // Feedback component is comment currently because the api required to use this authentication error
 
         <SistentThemeProviderWithoutBaseLine>
@@ -650,11 +693,11 @@ const ExtensionsComponent = () => {
             onSubmit={onSubmit}
           />
         </SistentThemeProviderWithoutBaseLine>
-        
+
         */}
       </ComponentWrapper>
     </DockerMuiThemeProvider>
-  )
-}
+  );
+};
 
-export default ExtensionsComponent
+export default ExtensionsComponent;

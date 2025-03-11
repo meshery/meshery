@@ -23,7 +23,7 @@ Meshery tracks the status of each connections throughout the connection's lifecy
 
 ### State: Discovered
 
-All resources discovered by [MeshSync's](meshsync.md) multi-tier discovery or provided as part of config, and if Meshery can integrate, a connection with state as `Discovered` will be created. Though, the connection/resources are not tested for its reachability/usability i.e. Meshery has not made an attempt to connect or manage the connection.
+All resources discovered by [MeshSync's](https://docs.meshery.io/concepts/architecture/meshsync) multi-tier discovery or provided as part of config, and if Meshery can integrate, a connection with state as `Discovered` will be created. Though, the connection/resources are not tested for its reachability/usability i.e. Meshery has not made an attempt to connect or manage the connection.
 
 When a connection has been discovered, it will be listed in the MeshSync browser / Connections table in Meshery UI. You can self transition a particular connection to [Register](#state-registered) / [Ignore](#state-ignored) state.
 

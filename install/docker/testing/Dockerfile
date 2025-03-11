@@ -10,7 +10,7 @@ RUN go mod download
 RUN cd server && cd cmd && GOPROXY=https://proxy.golang.org go build -ldflags="-w -s -X main.version=$GIT_VERSION" -tags draft -a -o /meshery .
 
 # This image will be reuse for both UI & UI Provider
-FROM node:18.13.0-alpine3.17 as base-node
+FROM node:20-alpine as base-node
 
 FROM base-node as ui-deps
 RUN apk add --no-cache libc6-compat

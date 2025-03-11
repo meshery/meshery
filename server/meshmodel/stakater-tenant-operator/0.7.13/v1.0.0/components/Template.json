@@ -1,196 +1,196 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "Template",
-   "schema": "{\n \"description\": \"Template is the Schema for the templates API\",\n \"properties\": {\n  \"parameters\": {\n   \"description\": \"Parameters can be used to replace certain parts of the template. A parameter is referenced by this format: ${NAME}, to parse the value as an expression write ${{NAME}} instead. Besides the parameters defined here, the following predefined parameters can be used: - ${NAMESPACE}: the namespace where the template instance was created - ${TENANT}: the tenant name of the tenant that owns the namespace (if any)\",\n   \"items\": {\n    \"properties\": {\n     \"name\": {\n      \"description\": \"Name is the name of the parameter\",\n      \"type\": \"string\"\n     },\n     \"required\": {\n      \"description\": \"If required is true, the template instance must define this parameter, otherwise the deployment will fail.\",\n      \"type\": \"boolean\"\n     },\n     \"validation\": {\n      \"description\": \"Validation takes a regular expression as value to verify the provided value does match expected values.\",\n      \"type\": \"string\"\n     },\n     \"value\": {\n      \"description\": \"Value is the default value of the parameter\",\n      \"type\": \"string\"\n     }\n    },\n    \"type\": \"object\"\n   },\n   \"type\": \"array\"\n  },\n  \"resources\": {\n   \"description\": \"TemplateResources defines a templates resources\",\n   \"properties\": {\n    \"helm\": {\n     \"description\": \"helm defines the configuration for a helm deployment\",\n     \"properties\": {\n      \"chart\": {\n       \"description\": \"Tells us where to find the helm chart to deploy\",\n       \"properties\": {\n        \"repository\": {\n         \"description\": \"Load helm chart from a repository\",\n         \"properties\": {\n          \"name\": {\n           \"description\": \"Name of the chart to deploy\",\n           \"type\": \"string\"\n          },\n          \"password\": {\n           \"description\": \"The password to use for the selected repository\",\n           \"properties\": {\n            \"key\": {\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"key\",\n            \"name\",\n            \"namespace\"\n           ],\n           \"type\": \"object\"\n          },\n          \"repoUrl\": {\n           \"description\": \"The repo url to use\",\n           \"type\": \"string\"\n          },\n          \"username\": {\n           \"description\": \"The username to use for the selected repository\",\n           \"properties\": {\n            \"key\": {\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"key\",\n            \"name\",\n            \"namespace\"\n           ],\n           \"type\": \"object\"\n          },\n          \"version\": {\n           \"description\": \"Version is the version of the chart to deploy\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"releaseName\": {\n       \"description\": \"The helm release name. If omitted the template name will be used\",\n       \"type\": \"string\"\n      },\n      \"setValues\": {\n       \"description\": \"Values in the form of name=value that will be passed to the helm command during helm template\",\n       \"items\": {\n        \"description\": \"HelmSetValue defines a name=value pair that will be passed to helm template\",\n        \"properties\": {\n         \"forceString\": {\n          \"description\": \"ForceString specifies if the parameter `--set` or `--set-string` should be used\",\n          \"type\": \"boolean\"\n         },\n         \"name\": {\n          \"description\": \"The path of the value to set\",\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"description\": \"The value to set\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"value\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"values\": {\n       \"description\": \"The additional helm values to use. Expected block string\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"manifests\": {\n     \"description\": \"manifest represents kubernetes resources that will be deployed into the target namespace\",\n     \"items\": {\n      \"description\": \"EmbeddedResource holds a kubernetes resource\",\n      \"format\": \"textarea\",\n      \"type\": \"string\",\n      \"x-kubernetes-embedded-resource\": true\n     },\n     \"type\": \"array\"\n    },\n    \"resourceMappings\": {\n     \"description\": \"ResourceMappings defines the secrets/configmaps which will be mapped into the target namespaces\",\n     \"properties\": {\n      \"configMaps\": {\n       \"description\": \"ConfigMaps consist of configMaps which will be mapped to matching namespaces\",\n       \"items\": {\n        \"properties\": {\n         \"name\": {\n          \"description\": \"Name is the name of the resource\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace is the namespace where the resource lives\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"namespace\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"secrets\": {\n       \"description\": \"Secrets consist of secrets which will be mapped to matching namespaces\",\n       \"items\": {\n        \"properties\": {\n         \"name\": {\n          \"description\": \"Name is the name of the resource\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace is the namespace where the resource lives\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"namespace\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"spec\": {\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Template\",\n \"type\": \"object\"\n}",
-   "version": "tenantoperator.stakater.com/v1alpha1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Template",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": false,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Template",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Uncategorized"
-   },
-   "displayName": "stakater-tenant-operator",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "stakater-tenant-operator",
+    "displayName": "stakater-tenant-operator",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized"
+    },
+    "subCategory": "Uncategorized",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://stakater.github.io/stakater-charts/stakater-tenant-operator-0.7.13.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "0.7.13"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "source_uri": "https://stakater.github.io/stakater-charts/stakater-tenant-operator-0.7.13.tgz",
-    "styleOverrides": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "0.7.13"
-   },
-   "name": "stakater-tenant-operator",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Uncategorized",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": false,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "Template",
+    "schema": "{\n \"description\": \"Template is the Schema for the templates API\",\n \"properties\": {\n  \"parameters\": {\n   \"description\": \"Parameters can be used to replace certain parts of the template. A parameter is referenced by this format: ${NAME}, to parse the value as an expression write ${{NAME}} instead. Besides the parameters defined here, the following predefined parameters can be used: - ${NAMESPACE}: the namespace where the template instance was created - ${TENANT}: the tenant name of the tenant that owns the namespace (if any)\",\n   \"items\": {\n    \"properties\": {\n     \"name\": {\n      \"description\": \"Name is the name of the parameter\",\n      \"type\": \"string\"\n     },\n     \"required\": {\n      \"description\": \"If required is true, the template instance must define this parameter, otherwise the deployment will fail.\",\n      \"type\": \"boolean\"\n     },\n     \"validation\": {\n      \"description\": \"Validation takes a regular expression as value to verify the provided value does match expected values.\",\n      \"type\": \"string\"\n     },\n     \"value\": {\n      \"description\": \"Value is the default value of the parameter\",\n      \"type\": \"string\"\n     }\n    },\n    \"type\": \"object\"\n   },\n   \"type\": \"array\"\n  },\n  \"resources\": {\n   \"description\": \"TemplateResources defines a templates resources\",\n   \"properties\": {\n    \"helm\": {\n     \"description\": \"helm defines the configuration for a helm deployment\",\n     \"properties\": {\n      \"chart\": {\n       \"description\": \"Tells us where to find the helm chart to deploy\",\n       \"properties\": {\n        \"repository\": {\n         \"description\": \"Load helm chart from a repository\",\n         \"properties\": {\n          \"name\": {\n           \"description\": \"Name of the chart to deploy\",\n           \"type\": \"string\"\n          },\n          \"password\": {\n           \"description\": \"The password to use for the selected repository\",\n           \"properties\": {\n            \"key\": {\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"key\",\n            \"name\",\n            \"namespace\"\n           ],\n           \"type\": \"object\"\n          },\n          \"repoUrl\": {\n           \"description\": \"The repo url to use\",\n           \"type\": \"string\"\n          },\n          \"username\": {\n           \"description\": \"The username to use for the selected repository\",\n           \"properties\": {\n            \"key\": {\n             \"type\": \"string\"\n            },\n            \"name\": {\n             \"type\": \"string\"\n            },\n            \"namespace\": {\n             \"type\": \"string\"\n            }\n           },\n           \"required\": [\n            \"key\",\n            \"name\",\n            \"namespace\"\n           ],\n           \"type\": \"object\"\n          },\n          \"version\": {\n           \"description\": \"Version is the version of the chart to deploy\",\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"releaseName\": {\n       \"description\": \"The helm release name. If omitted the template name will be used\",\n       \"type\": \"string\"\n      },\n      \"setValues\": {\n       \"description\": \"Values in the form of name=value that will be passed to the helm command during helm template\",\n       \"items\": {\n        \"description\": \"HelmSetValue defines a name=value pair that will be passed to helm template\",\n        \"properties\": {\n         \"forceString\": {\n          \"description\": \"ForceString specifies if the parameter `--set` or `--set-string` should be used\",\n          \"type\": \"boolean\"\n         },\n         \"name\": {\n          \"description\": \"The path of the value to set\",\n          \"type\": \"string\"\n         },\n         \"value\": {\n          \"description\": \"The value to set\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"value\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"values\": {\n       \"description\": \"The additional helm values to use. Expected block string\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"manifests\": {\n     \"description\": \"manifest represents kubernetes resources that will be deployed into the target namespace\",\n     \"items\": {\n      \"description\": \"EmbeddedResource holds a kubernetes resource\",\n      \"format\": \"textarea\",\n      \"type\": \"string\",\n      \"x-kubernetes-embedded-resource\": true\n     },\n     \"type\": \"array\"\n    },\n    \"resourceMappings\": {\n     \"description\": \"ResourceMappings defines the secrets/configmaps which will be mapped into the target namespaces\",\n     \"properties\": {\n      \"configMaps\": {\n       \"description\": \"ConfigMaps consist of configMaps which will be mapped to matching namespaces\",\n       \"items\": {\n        \"properties\": {\n         \"name\": {\n          \"description\": \"Name is the name of the resource\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace is the namespace where the resource lives\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"namespace\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"secrets\": {\n       \"description\": \"Secrets consist of secrets which will be mapped to matching namespaces\",\n       \"items\": {\n        \"properties\": {\n         \"name\": {\n          \"description\": \"Name is the name of the resource\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace is the namespace where the resource lives\",\n          \"type\": \"string\"\n         }\n        },\n        \"required\": [\n         \"name\",\n         \"namespace\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"spec\": {\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Template\",\n \"type\": \"object\"\n}",
+    "version": "tenantoperator.stakater.com/v1alpha1"
+  }
+}

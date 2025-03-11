@@ -1,196 +1,196 @@
 {
-  "capabilities": [
-   {
-    "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
-    "displayName": "Performance Test",
-    "entityState": [
-     "instance"
-    ],
-    "key": "",
-    "kind": "action",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "perf-test",
-    "type": "operator",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the workload specific setting of a component",
-    "displayName": "Workload Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "config",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure Labels And Annotations for  the component ",
-    "displayName": "Labels and Annotations Configuration",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "labels-and-annotations",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View relationships for the component",
-    "displayName": "Relationships",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "relationship",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "View Component Definition ",
-    "displayName": "Json Schema",
-    "entityState": [
-     "declaration",
-     "instance"
-    ],
-    "key": "",
-    "kind": "view",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "definition",
-    "type": "configuration",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Configure the visual styles for the component",
-    "displayName": "Styling",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Change the shape of the component",
-    "displayName": "Change Shape",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "mutate",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "shape",
-    "type": "style",
-    "version": "0.7.0"
-   },
-   {
-    "description": "Drag and Drop a component into a parent component in graph view",
-    "displayName": "Compound Drag And Drop",
-    "entityState": [
-     "declaration"
-    ],
-    "key": "",
-    "kind": "interaction",
-    "metadata": null,
-    "schemaVersion": "capability.meshery.io/v1alpha1",
-    "status": "enabled",
-    "subType": "compoundDnd",
-    "type": "graph",
-    "version": "0.7.0"
-   }
-  ],
-  "component": {
-   "kind": "TraefikService",
-   "schema": "{\n \"description\": \"TraefikService is the CRD implementation of a Traefik Service. TraefikService object allows to: - Apply weight to Services on load-balancing - Mirror traffic on services More info: https://doc.traefik.io/traefik/v2.10/routing/providers/kubernetes-crd/#kind-traefikservice\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TraefikServiceSpec defines the desired state of a TraefikService.\",\n   \"properties\": {\n    \"mirroring\": {\n     \"description\": \"Mirroring defines the Mirroring service configuration.\",\n     \"properties\": {\n      \"kind\": {\n       \"description\": \"Kind defines the kind of the Service.\",\n       \"enum\": [\n        \"Service\",\n        \"TraefikService\"\n       ],\n       \"type\": \"string\"\n      },\n      \"maxBodySize\": {\n       \"description\": \"MaxBodySize defines the maximum size allowed for the body of the request. If the body is larger, the request is not mirrored. Default value is -1, which means unlimited size.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"mirrors\": {\n       \"description\": \"Mirrors defines the list of mirrors where Traefik will duplicate the traffic.\",\n       \"items\": {\n        \"description\": \"MirrorService holds the mirror configuration.\",\n        \"properties\": {\n         \"kind\": {\n          \"description\": \"Kind defines the kind of the Service.\",\n          \"enum\": [\n           \"Service\",\n           \"TraefikService\"\n          ],\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name defines the name of the referenced Kubernetes Service or TraefikService. The differentiation between the two is specified in the Kind field.\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace defines the namespace of the referenced Kubernetes Service or TraefikService.\",\n          \"type\": \"string\"\n         },\n         \"nativeLB\": {\n          \"description\": \"NativeLB controls, when creating the load-balancer, whether the LB's children are directly the pods IPs or if the only child is the Kubernetes Service clusterIP. The Kubernetes Service itself does load-balance to the pods. By default, NativeLB is false.\",\n          \"type\": \"boolean\"\n         },\n         \"passHostHeader\": {\n          \"description\": \"PassHostHeader defines whether the client Host header is forwarded to the upstream Kubernetes Service. By default, passHostHeader is true.\",\n          \"type\": \"boolean\"\n         },\n         \"percent\": {\n          \"description\": \"Percent defines the part of the traffic to mirror. Supported values: 0 to 100.\",\n          \"type\": \"integer\"\n         },\n         \"port\": {\n          \"anyOf\": [\n           {\n            \"type\": \"integer\"\n           },\n           {\n            \"type\": \"string\"\n           }\n          ],\n          \"description\": \"Port defines the port of a Kubernetes Service. This can be a reference to a named port.\",\n          \"x-kubernetes-int-or-string\": true\n         },\n         \"responseForwarding\": {\n          \"description\": \"ResponseForwarding defines how Traefik forwards the response from the upstream Kubernetes Service to the client.\",\n          \"properties\": {\n           \"flushInterval\": {\n            \"description\": \"FlushInterval defines the interval, in milliseconds, in between flushes to the client while copying the response body. A negative value means to flush immediately after each write to the client. This configuration is ignored when ReverseProxy recognizes a response as a streaming response; for such responses, writes are flushed to the client immediately. Default: 100ms\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"scheme\": {\n          \"description\": \"Scheme defines the scheme to use for the request to the upstream Kubernetes Service. It defaults to https when Kubernetes Service port is 443, http otherwise.\",\n          \"type\": \"string\"\n         },\n         \"serversTransport\": {\n          \"description\": \"ServersTransport defines the name of ServersTransport resource to use. It allows to configure the transport between Traefik and your servers. Can only be used on a Kubernetes Service.\",\n          \"type\": \"string\"\n         },\n         \"sticky\": {\n          \"description\": \"Sticky defines the sticky sessions configuration. More info: https://doc.traefik.io/traefik/v2.10/routing/services/#sticky-sessions\",\n          \"properties\": {\n           \"cookie\": {\n            \"description\": \"Cookie defines the sticky cookie configuration.\",\n            \"properties\": {\n             \"httpOnly\": {\n              \"description\": \"HTTPOnly defines whether the cookie can be accessed by client-side APIs, such as JavaScript.\",\n              \"type\": \"boolean\"\n             },\n             \"name\": {\n              \"description\": \"Name defines the Cookie name.\",\n              \"type\": \"string\"\n             },\n             \"sameSite\": {\n              \"description\": \"SameSite defines the same site policy. More info: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite\",\n              \"type\": \"string\"\n             },\n             \"secure\": {\n              \"description\": \"Secure defines whether the cookie can only be transmitted over an encrypted connection (i.e. HTTPS).\",\n              \"type\": \"boolean\"\n             }\n            },\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"strategy\": {\n          \"description\": \"Strategy defines the load balancing strategy between the servers. RoundRobin is the only supported value at the moment.\",\n          \"type\": \"string\"\n         },\n         \"weight\": {\n          \"description\": \"Weight defines the weight and should only be specified when Name references a TraefikService object (and to be precise, one that embeds a Weighted Round Robin).\",\n          \"type\": \"integer\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"name\": {\n       \"description\": \"Name defines the name of the referenced Kubernetes Service or TraefikService. The differentiation between the two is specified in the Kind field.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace defines the namespace of the referenced Kubernetes Service or TraefikService.\",\n       \"type\": \"string\"\n      },\n      \"nativeLB\": {\n       \"description\": \"NativeLB controls, when creating the load-balancer, whether the LB's children are directly the pods IPs or if the only child is the Kubernetes Service clusterIP. The Kubernetes Service itself does load-balance to the pods. By default, NativeLB is false.\",\n       \"type\": \"boolean\"\n      },\n      \"passHostHeader\": {\n       \"description\": \"PassHostHeader defines whether the client Host header is forwarded to the upstream Kubernetes Service. By default, passHostHeader is true.\",\n       \"type\": \"boolean\"\n      },\n      \"port\": {\n       \"anyOf\": [\n        {\n         \"type\": \"integer\"\n        },\n        {\n         \"type\": \"string\"\n        }\n       ],\n       \"description\": \"Port defines the port of a Kubernetes Service. This can be a reference to a named port.\",\n       \"x-kubernetes-int-or-string\": true\n      },\n      \"responseForwarding\": {\n       \"description\": \"ResponseForwarding defines how Traefik forwards the response from the upstream Kubernetes Service to the client.\",\n       \"properties\": {\n        \"flushInterval\": {\n         \"description\": \"FlushInterval defines the interval, in milliseconds, in between flushes to the client while copying the response body. A negative value means to flush immediately after each write to the client. This configuration is ignored when ReverseProxy recognizes a response as a streaming response; for such responses, writes are flushed to the client immediately. Default: 100ms\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"scheme\": {\n       \"description\": \"Scheme defines the scheme to use for the request to the upstream Kubernetes Service. It defaults to https when Kubernetes Service port is 443, http otherwise.\",\n       \"type\": \"string\"\n      },\n      \"serversTransport\": {\n       \"description\": \"ServersTransport defines the name of ServersTransport resource to use. It allows to configure the transport between Traefik and your servers. Can only be used on a Kubernetes Service.\",\n       \"type\": \"string\"\n      },\n      \"sticky\": {\n       \"description\": \"Sticky defines the sticky sessions configuration. More info: https://doc.traefik.io/traefik/v2.10/routing/services/#sticky-sessions\",\n       \"properties\": {\n        \"cookie\": {\n         \"description\": \"Cookie defines the sticky cookie configuration.\",\n         \"properties\": {\n          \"httpOnly\": {\n           \"description\": \"HTTPOnly defines whether the cookie can be accessed by client-side APIs, such as JavaScript.\",\n           \"type\": \"boolean\"\n          },\n          \"name\": {\n           \"description\": \"Name defines the Cookie name.\",\n           \"type\": \"string\"\n          },\n          \"sameSite\": {\n           \"description\": \"SameSite defines the same site policy. More info: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite\",\n           \"type\": \"string\"\n          },\n          \"secure\": {\n           \"description\": \"Secure defines whether the cookie can only be transmitted over an encrypted connection (i.e. HTTPS).\",\n           \"type\": \"boolean\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"strategy\": {\n       \"description\": \"Strategy defines the load balancing strategy between the servers. RoundRobin is the only supported value at the moment.\",\n       \"type\": \"string\"\n      },\n      \"weight\": {\n       \"description\": \"Weight defines the weight and should only be specified when Name references a TraefikService object (and to be precise, one that embeds a Weighted Round Robin).\",\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"weighted\": {\n     \"description\": \"Weighted defines the Weighted Round Robin configuration.\",\n     \"properties\": {\n      \"services\": {\n       \"description\": \"Services defines the list of Kubernetes Service and/or TraefikService to load-balance, with weight.\",\n       \"items\": {\n        \"description\": \"Service defines an upstream HTTP service to proxy traffic to.\",\n        \"properties\": {\n         \"kind\": {\n          \"description\": \"Kind defines the kind of the Service.\",\n          \"enum\": [\n           \"Service\",\n           \"TraefikService\"\n          ],\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name defines the name of the referenced Kubernetes Service or TraefikService. The differentiation between the two is specified in the Kind field.\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace defines the namespace of the referenced Kubernetes Service or TraefikService.\",\n          \"type\": \"string\"\n         },\n         \"nativeLB\": {\n          \"description\": \"NativeLB controls, when creating the load-balancer, whether the LB's children are directly the pods IPs or if the only child is the Kubernetes Service clusterIP. The Kubernetes Service itself does load-balance to the pods. By default, NativeLB is false.\",\n          \"type\": \"boolean\"\n         },\n         \"passHostHeader\": {\n          \"description\": \"PassHostHeader defines whether the client Host header is forwarded to the upstream Kubernetes Service. By default, passHostHeader is true.\",\n          \"type\": \"boolean\"\n         },\n         \"port\": {\n          \"anyOf\": [\n           {\n            \"type\": \"integer\"\n           },\n           {\n            \"type\": \"string\"\n           }\n          ],\n          \"description\": \"Port defines the port of a Kubernetes Service. This can be a reference to a named port.\",\n          \"x-kubernetes-int-or-string\": true\n         },\n         \"responseForwarding\": {\n          \"description\": \"ResponseForwarding defines how Traefik forwards the response from the upstream Kubernetes Service to the client.\",\n          \"properties\": {\n           \"flushInterval\": {\n            \"description\": \"FlushInterval defines the interval, in milliseconds, in between flushes to the client while copying the response body. A negative value means to flush immediately after each write to the client. This configuration is ignored when ReverseProxy recognizes a response as a streaming response; for such responses, writes are flushed to the client immediately. Default: 100ms\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"scheme\": {\n          \"description\": \"Scheme defines the scheme to use for the request to the upstream Kubernetes Service. It defaults to https when Kubernetes Service port is 443, http otherwise.\",\n          \"type\": \"string\"\n         },\n         \"serversTransport\": {\n          \"description\": \"ServersTransport defines the name of ServersTransport resource to use. It allows to configure the transport between Traefik and your servers. Can only be used on a Kubernetes Service.\",\n          \"type\": \"string\"\n         },\n         \"sticky\": {\n          \"description\": \"Sticky defines the sticky sessions configuration. More info: https://doc.traefik.io/traefik/v2.10/routing/services/#sticky-sessions\",\n          \"properties\": {\n           \"cookie\": {\n            \"description\": \"Cookie defines the sticky cookie configuration.\",\n            \"properties\": {\n             \"httpOnly\": {\n              \"description\": \"HTTPOnly defines whether the cookie can be accessed by client-side APIs, such as JavaScript.\",\n              \"type\": \"boolean\"\n             },\n             \"name\": {\n              \"description\": \"Name defines the Cookie name.\",\n              \"type\": \"string\"\n             },\n             \"sameSite\": {\n              \"description\": \"SameSite defines the same site policy. More info: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite\",\n              \"type\": \"string\"\n             },\n             \"secure\": {\n              \"description\": \"Secure defines whether the cookie can only be transmitted over an encrypted connection (i.e. HTTPS).\",\n              \"type\": \"boolean\"\n             }\n            },\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"strategy\": {\n          \"description\": \"Strategy defines the load balancing strategy between the servers. RoundRobin is the only supported value at the moment.\",\n          \"type\": \"string\"\n         },\n         \"weight\": {\n          \"description\": \"Weight defines the weight and should only be specified when Name references a TraefikService object (and to be precise, one that embeds a Weighted Round Robin).\",\n          \"type\": \"integer\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"sticky\": {\n       \"description\": \"Sticky defines whether sticky sessions are enabled. More info: https://doc.traefik.io/traefik/v2.10/routing/providers/kubernetes-crd/#stickiness-and-load-balancing\",\n       \"properties\": {\n        \"cookie\": {\n         \"description\": \"Cookie defines the sticky cookie configuration.\",\n         \"properties\": {\n          \"httpOnly\": {\n           \"description\": \"HTTPOnly defines whether the cookie can be accessed by client-side APIs, such as JavaScript.\",\n           \"type\": \"boolean\"\n          },\n          \"name\": {\n           \"description\": \"Name defines the Cookie name.\",\n           \"type\": \"string\"\n          },\n          \"sameSite\": {\n           \"description\": \"SameSite defines the same site policy. More info: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite\",\n           \"type\": \"string\"\n          },\n          \"secure\": {\n           \"description\": \"Secure defines whether the cookie can only be transmitted over an encrypted connection (i.e. HTTPS).\",\n           \"type\": \"boolean\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Traefik Service\",\n \"type\": \"object\"\n}",
-   "version": "traefik.io/v1alpha1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Traefik Service",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-   "genealogy": "",
-   "isAnnotation": false,
-   "isNamespaced": true,
-   "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Traefik Service",
+  "description": "",
+  "format": "JSON",
   "model": {
-   "category": {
-    "name": "Uncategorized"
-   },
-   "displayName": "Traefik Cloudflared Source Ip",
-   "id": "00000000-0000-0000-0000-000000000000",
-   "metadata": {
-    "isAnnotation": false,
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "traefik-cloudflared-source-ip",
+    "displayName": "Traefik Cloudflared Source Ip",
+    "status": "ignored",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
+    "category": {
+      "name": "Uncategorized"
+    },
+    "subCategory": "Uncategorized",
+    "metadata": {
+      "isAnnotation": false,
+      "primaryColor": "#00B39F",
+      "secondaryColor": "#00D3A9",
+      "shape": "circle",
+      "source_uri": "https://github.com/kubitodev/helm/releases/download/traefik-cloudflared-source-ip-1.0.10/traefik-cloudflared-source-ip-1.0.10.tgz",
+      "styleOverrides": "",
+      "svgColor": "",
+      "svgComplete": "",
+      "svgWhite": ""
+    },
+    "model": {
+      "version": "1.0.10"
+    },
+    "components": null,
+    "relationships": null,
+    "components_count": 0,
+    "relationships_count": 0
+  },
+  "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
-    "source_uri": "https://github.com/kubitodev/helm/releases/download/traefik-cloudflared-source-ip-1.0.10/traefik-cloudflared-source-ip-1.0.10.tgz",
-    "styleOverrides": "",
     "svgColor": "",
-    "svgComplete": "",
     "svgWhite": ""
-   },
-   "model": {
-    "version": "1.0.10"
-   },
-   "name": "traefik-cloudflared-source-ip",
-   "registrant": {
-    "created_at": "0001-01-01T00:00:00Z",
-    "credential_id": "00000000-0000-0000-0000-000000000000",
-    "deleted_at": "0001-01-01T00:00:00Z",
-    "id": "00000000-0000-0000-0000-000000000000",
-    "kind": "artifacthub",
-    "name": "Artifact Hub",
-    "status": "discovered",
-    "sub_type": "",
-    "type": "registry",
-    "updated_at": "0001-01-01T00:00:00Z",
-    "user_id": "00000000-0000-0000-0000-000000000000"
-   },
-   "connection_id": "00000000-0000-0000-0000-000000000000",
-   "schemaVersion": "models.meshery.io/v1beta1",
-   "status": "ignored",
-   "subCategory": "Uncategorized",
-   "version": "v1.0.0",
-   "components": null,
-   "relationships": null,
-   "components_count": 0,
-   "relationships_count": 0
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
+  "capabilities": [
+    {
+      "description": "Initiate a performance test. Meshery will execute the load generation, collect metrics, and present the results.",
+      "displayName": "Performance Test",
+      "entityState": [
+        "instance"
+      ],
+      "key": "",
+      "kind": "action",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "perf-test",
+      "type": "operator",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the workload specific setting of a component",
+      "displayName": "Workload Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "config",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure Labels And Annotations for  the component ",
+      "displayName": "Labels and Annotations Configuration",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "labels-and-annotations",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View relationships for the component",
+      "displayName": "Relationships",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "relationship",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "View Component Definition ",
+      "displayName": "Json Schema",
+      "entityState": [
+        "declaration",
+        "instance"
+      ],
+      "key": "",
+      "kind": "view",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "definition",
+      "type": "configuration",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "metadata": null,
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    }
+  ],
   "status": "enabled",
-  "styles": {
-   "primaryColor": "#00B39F",
-   "secondaryColor": "#00D3A9",
-   "shape": "circle",
-   "svgColor": "",
-   "svgWhite": ""
+  "metadata": {
+    "genealogy": "",
+    "isAnnotation": false,
+    "isNamespaced": true,
+    "published": false
   },
-  "version": "v1.0.0"
- }
+  "configuration": null,
+  "component": {
+    "kind": "TraefikService",
+    "schema": "{\n \"description\": \"TraefikService is the CRD implementation of a Traefik Service. TraefikService object allows to: - Apply weight to Services on load-balancing - Mirror traffic on services More info: https://doc.traefik.io/traefik/v2.10/routing/providers/kubernetes-crd/#kind-traefikservice\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TraefikServiceSpec defines the desired state of a TraefikService.\",\n   \"properties\": {\n    \"mirroring\": {\n     \"description\": \"Mirroring defines the Mirroring service configuration.\",\n     \"properties\": {\n      \"kind\": {\n       \"description\": \"Kind defines the kind of the Service.\",\n       \"enum\": [\n        \"Service\",\n        \"TraefikService\"\n       ],\n       \"type\": \"string\"\n      },\n      \"maxBodySize\": {\n       \"description\": \"MaxBodySize defines the maximum size allowed for the body of the request. If the body is larger, the request is not mirrored. Default value is -1, which means unlimited size.\",\n       \"format\": \"int64\",\n       \"type\": \"integer\"\n      },\n      \"mirrors\": {\n       \"description\": \"Mirrors defines the list of mirrors where Traefik will duplicate the traffic.\",\n       \"items\": {\n        \"description\": \"MirrorService holds the mirror configuration.\",\n        \"properties\": {\n         \"kind\": {\n          \"description\": \"Kind defines the kind of the Service.\",\n          \"enum\": [\n           \"Service\",\n           \"TraefikService\"\n          ],\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name defines the name of the referenced Kubernetes Service or TraefikService. The differentiation between the two is specified in the Kind field.\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace defines the namespace of the referenced Kubernetes Service or TraefikService.\",\n          \"type\": \"string\"\n         },\n         \"nativeLB\": {\n          \"description\": \"NativeLB controls, when creating the load-balancer, whether the LB's children are directly the pods IPs or if the only child is the Kubernetes Service clusterIP. The Kubernetes Service itself does load-balance to the pods. By default, NativeLB is false.\",\n          \"type\": \"boolean\"\n         },\n         \"passHostHeader\": {\n          \"description\": \"PassHostHeader defines whether the client Host header is forwarded to the upstream Kubernetes Service. By default, passHostHeader is true.\",\n          \"type\": \"boolean\"\n         },\n         \"percent\": {\n          \"description\": \"Percent defines the part of the traffic to mirror. Supported values: 0 to 100.\",\n          \"type\": \"integer\"\n         },\n         \"port\": {\n          \"anyOf\": [\n           {\n            \"type\": \"integer\"\n           },\n           {\n            \"type\": \"string\"\n           }\n          ],\n          \"description\": \"Port defines the port of a Kubernetes Service. This can be a reference to a named port.\",\n          \"x-kubernetes-int-or-string\": true\n         },\n         \"responseForwarding\": {\n          \"description\": \"ResponseForwarding defines how Traefik forwards the response from the upstream Kubernetes Service to the client.\",\n          \"properties\": {\n           \"flushInterval\": {\n            \"description\": \"FlushInterval defines the interval, in milliseconds, in between flushes to the client while copying the response body. A negative value means to flush immediately after each write to the client. This configuration is ignored when ReverseProxy recognizes a response as a streaming response; for such responses, writes are flushed to the client immediately. Default: 100ms\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"scheme\": {\n          \"description\": \"Scheme defines the scheme to use for the request to the upstream Kubernetes Service. It defaults to https when Kubernetes Service port is 443, http otherwise.\",\n          \"type\": \"string\"\n         },\n         \"serversTransport\": {\n          \"description\": \"ServersTransport defines the name of ServersTransport resource to use. It allows to configure the transport between Traefik and your servers. Can only be used on a Kubernetes Service.\",\n          \"type\": \"string\"\n         },\n         \"sticky\": {\n          \"description\": \"Sticky defines the sticky sessions configuration. More info: https://doc.traefik.io/traefik/v2.10/routing/services/#sticky-sessions\",\n          \"properties\": {\n           \"cookie\": {\n            \"description\": \"Cookie defines the sticky cookie configuration.\",\n            \"properties\": {\n             \"httpOnly\": {\n              \"description\": \"HTTPOnly defines whether the cookie can be accessed by client-side APIs, such as JavaScript.\",\n              \"type\": \"boolean\"\n             },\n             \"name\": {\n              \"description\": \"Name defines the Cookie name.\",\n              \"type\": \"string\"\n             },\n             \"sameSite\": {\n              \"description\": \"SameSite defines the same site policy. More info: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite\",\n              \"type\": \"string\"\n             },\n             \"secure\": {\n              \"description\": \"Secure defines whether the cookie can only be transmitted over an encrypted connection (i.e. HTTPS).\",\n              \"type\": \"boolean\"\n             }\n            },\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"strategy\": {\n          \"description\": \"Strategy defines the load balancing strategy between the servers. RoundRobin is the only supported value at the moment.\",\n          \"type\": \"string\"\n         },\n         \"weight\": {\n          \"description\": \"Weight defines the weight and should only be specified when Name references a TraefikService object (and to be precise, one that embeds a Weighted Round Robin).\",\n          \"type\": \"integer\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"name\": {\n       \"description\": \"Name defines the name of the referenced Kubernetes Service or TraefikService. The differentiation between the two is specified in the Kind field.\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace defines the namespace of the referenced Kubernetes Service or TraefikService.\",\n       \"type\": \"string\"\n      },\n      \"nativeLB\": {\n       \"description\": \"NativeLB controls, when creating the load-balancer, whether the LB's children are directly the pods IPs or if the only child is the Kubernetes Service clusterIP. The Kubernetes Service itself does load-balance to the pods. By default, NativeLB is false.\",\n       \"type\": \"boolean\"\n      },\n      \"passHostHeader\": {\n       \"description\": \"PassHostHeader defines whether the client Host header is forwarded to the upstream Kubernetes Service. By default, passHostHeader is true.\",\n       \"type\": \"boolean\"\n      },\n      \"port\": {\n       \"anyOf\": [\n        {\n         \"type\": \"integer\"\n        },\n        {\n         \"type\": \"string\"\n        }\n       ],\n       \"description\": \"Port defines the port of a Kubernetes Service. This can be a reference to a named port.\",\n       \"x-kubernetes-int-or-string\": true\n      },\n      \"responseForwarding\": {\n       \"description\": \"ResponseForwarding defines how Traefik forwards the response from the upstream Kubernetes Service to the client.\",\n       \"properties\": {\n        \"flushInterval\": {\n         \"description\": \"FlushInterval defines the interval, in milliseconds, in between flushes to the client while copying the response body. A negative value means to flush immediately after each write to the client. This configuration is ignored when ReverseProxy recognizes a response as a streaming response; for such responses, writes are flushed to the client immediately. Default: 100ms\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"scheme\": {\n       \"description\": \"Scheme defines the scheme to use for the request to the upstream Kubernetes Service. It defaults to https when Kubernetes Service port is 443, http otherwise.\",\n       \"type\": \"string\"\n      },\n      \"serversTransport\": {\n       \"description\": \"ServersTransport defines the name of ServersTransport resource to use. It allows to configure the transport between Traefik and your servers. Can only be used on a Kubernetes Service.\",\n       \"type\": \"string\"\n      },\n      \"sticky\": {\n       \"description\": \"Sticky defines the sticky sessions configuration. More info: https://doc.traefik.io/traefik/v2.10/routing/services/#sticky-sessions\",\n       \"properties\": {\n        \"cookie\": {\n         \"description\": \"Cookie defines the sticky cookie configuration.\",\n         \"properties\": {\n          \"httpOnly\": {\n           \"description\": \"HTTPOnly defines whether the cookie can be accessed by client-side APIs, such as JavaScript.\",\n           \"type\": \"boolean\"\n          },\n          \"name\": {\n           \"description\": \"Name defines the Cookie name.\",\n           \"type\": \"string\"\n          },\n          \"sameSite\": {\n           \"description\": \"SameSite defines the same site policy. More info: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite\",\n           \"type\": \"string\"\n          },\n          \"secure\": {\n           \"description\": \"Secure defines whether the cookie can only be transmitted over an encrypted connection (i.e. HTTPS).\",\n           \"type\": \"boolean\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"strategy\": {\n       \"description\": \"Strategy defines the load balancing strategy between the servers. RoundRobin is the only supported value at the moment.\",\n       \"type\": \"string\"\n      },\n      \"weight\": {\n       \"description\": \"Weight defines the weight and should only be specified when Name references a TraefikService object (and to be precise, one that embeds a Weighted Round Robin).\",\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"weighted\": {\n     \"description\": \"Weighted defines the Weighted Round Robin configuration.\",\n     \"properties\": {\n      \"services\": {\n       \"description\": \"Services defines the list of Kubernetes Service and/or TraefikService to load-balance, with weight.\",\n       \"items\": {\n        \"description\": \"Service defines an upstream HTTP service to proxy traffic to.\",\n        \"properties\": {\n         \"kind\": {\n          \"description\": \"Kind defines the kind of the Service.\",\n          \"enum\": [\n           \"Service\",\n           \"TraefikService\"\n          ],\n          \"type\": \"string\"\n         },\n         \"name\": {\n          \"description\": \"Name defines the name of the referenced Kubernetes Service or TraefikService. The differentiation between the two is specified in the Kind field.\",\n          \"type\": \"string\"\n         },\n         \"namespace\": {\n          \"description\": \"Namespace defines the namespace of the referenced Kubernetes Service or TraefikService.\",\n          \"type\": \"string\"\n         },\n         \"nativeLB\": {\n          \"description\": \"NativeLB controls, when creating the load-balancer, whether the LB's children are directly the pods IPs or if the only child is the Kubernetes Service clusterIP. The Kubernetes Service itself does load-balance to the pods. By default, NativeLB is false.\",\n          \"type\": \"boolean\"\n         },\n         \"passHostHeader\": {\n          \"description\": \"PassHostHeader defines whether the client Host header is forwarded to the upstream Kubernetes Service. By default, passHostHeader is true.\",\n          \"type\": \"boolean\"\n         },\n         \"port\": {\n          \"anyOf\": [\n           {\n            \"type\": \"integer\"\n           },\n           {\n            \"type\": \"string\"\n           }\n          ],\n          \"description\": \"Port defines the port of a Kubernetes Service. This can be a reference to a named port.\",\n          \"x-kubernetes-int-or-string\": true\n         },\n         \"responseForwarding\": {\n          \"description\": \"ResponseForwarding defines how Traefik forwards the response from the upstream Kubernetes Service to the client.\",\n          \"properties\": {\n           \"flushInterval\": {\n            \"description\": \"FlushInterval defines the interval, in milliseconds, in between flushes to the client while copying the response body. A negative value means to flush immediately after each write to the client. This configuration is ignored when ReverseProxy recognizes a response as a streaming response; for such responses, writes are flushed to the client immediately. Default: 100ms\",\n            \"type\": \"string\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"scheme\": {\n          \"description\": \"Scheme defines the scheme to use for the request to the upstream Kubernetes Service. It defaults to https when Kubernetes Service port is 443, http otherwise.\",\n          \"type\": \"string\"\n         },\n         \"serversTransport\": {\n          \"description\": \"ServersTransport defines the name of ServersTransport resource to use. It allows to configure the transport between Traefik and your servers. Can only be used on a Kubernetes Service.\",\n          \"type\": \"string\"\n         },\n         \"sticky\": {\n          \"description\": \"Sticky defines the sticky sessions configuration. More info: https://doc.traefik.io/traefik/v2.10/routing/services/#sticky-sessions\",\n          \"properties\": {\n           \"cookie\": {\n            \"description\": \"Cookie defines the sticky cookie configuration.\",\n            \"properties\": {\n             \"httpOnly\": {\n              \"description\": \"HTTPOnly defines whether the cookie can be accessed by client-side APIs, such as JavaScript.\",\n              \"type\": \"boolean\"\n             },\n             \"name\": {\n              \"description\": \"Name defines the Cookie name.\",\n              \"type\": \"string\"\n             },\n             \"sameSite\": {\n              \"description\": \"SameSite defines the same site policy. More info: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite\",\n              \"type\": \"string\"\n             },\n             \"secure\": {\n              \"description\": \"Secure defines whether the cookie can only be transmitted over an encrypted connection (i.e. HTTPS).\",\n              \"type\": \"boolean\"\n             }\n            },\n            \"type\": \"object\"\n           }\n          },\n          \"type\": \"object\"\n         },\n         \"strategy\": {\n          \"description\": \"Strategy defines the load balancing strategy between the servers. RoundRobin is the only supported value at the moment.\",\n          \"type\": \"string\"\n         },\n         \"weight\": {\n          \"description\": \"Weight defines the weight and should only be specified when Name references a TraefikService object (and to be precise, one that embeds a Weighted Round Robin).\",\n          \"type\": \"integer\"\n         }\n        },\n        \"required\": [\n         \"name\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"sticky\": {\n       \"description\": \"Sticky defines whether sticky sessions are enabled. More info: https://doc.traefik.io/traefik/v2.10/routing/providers/kubernetes-crd/#stickiness-and-load-balancing\",\n       \"properties\": {\n        \"cookie\": {\n         \"description\": \"Cookie defines the sticky cookie configuration.\",\n         \"properties\": {\n          \"httpOnly\": {\n           \"description\": \"HTTPOnly defines whether the cookie can be accessed by client-side APIs, such as JavaScript.\",\n           \"type\": \"boolean\"\n          },\n          \"name\": {\n           \"description\": \"Name defines the Cookie name.\",\n           \"type\": \"string\"\n          },\n          \"sameSite\": {\n           \"description\": \"SameSite defines the same site policy. More info: https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Set-Cookie/SameSite\",\n           \"type\": \"string\"\n          },\n          \"secure\": {\n           \"description\": \"Secure defines whether the cookie can only be transmitted over an encrypted connection (i.e. HTTPS).\",\n           \"type\": \"boolean\"\n          }\n         },\n         \"type\": \"object\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"metadata\",\n  \"spec\"\n ],\n \"title\": \"Traefik Service\",\n \"type\": \"object\"\n}",
+    "version": "traefik.io/v1alpha1"
+  }
+}

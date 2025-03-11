@@ -14,10 +14,12 @@ import {
   CardContent,
   CardHeader,
   CustomTooltip,
+  NoSsr,
+  TachometerIcon,
+  useTheme,
 } from '@layer5/sistent';
 import CopyIcon from '../../assets/icons/CopyIcon';
 import _ from 'lodash';
-import NoSsr from '@mui/material/NoSsr';
 import {
   StatsWrapper,
   ProviderCard,
@@ -41,8 +43,6 @@ import SettingsCellIcon from '@mui/icons-material/SettingsCell';
 import ExtensionSandbox from '../ExtensionSandbox';
 import RemoteComponent from '../RemoteComponent';
 import ExtensionPointSchemaValidator from '../../utils/ExtensionPointSchemaValidator';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faTachometerAlt } from '@fortawesome/free-solid-svg-icons';
 import MesherySettingsPerformanceComponent from '../MesherySettingsPerformanceComponent';
 import { iconMedium } from '../../css/icons.styles';
 import { EVENT_TYPES } from '../../lib/event-types';
@@ -55,26 +55,23 @@ import {
   useUpdateUserPrefWithContextMutation,
 } from '@/rtk-query/user';
 import { ThemeTogglerCore } from '@/themes/hooks';
-import { UsesSistent } from '../SistentWrapper';
 
 import { SecondaryTab, SecondaryTabs } from '../DashboardComponent/style';
 
 const ThemeToggler = ({ handleUpdateUserPref }) => {
   const Component = ({ mode, toggleTheme }) => {
     return (
-      <UsesSistent>
-        <div>
-          <Switch
-            color="primary"
-            checked={mode === 'dark'}
-            onChange={() => {
-              toggleTheme();
-              handleUpdateUserPref(mode === 'dark' ? 'light' : 'dark');
-            }}
-          />
-          Dark Mode
-        </div>
-      </UsesSistent>
+      <div>
+        <Switch
+          color="primary"
+          checked={mode === 'dark'}
+          onChange={() => {
+            toggleTheme();
+            handleUpdateUserPref(mode === 'dark' ? 'light' : 'dark');
+          }}
+        />
+        Dark Mode
+      </div>
     );
   };
 
@@ -93,6 +90,7 @@ const UserPreference = (props) => {
   const { width } = useWindowDimensions();
   const [value, setValue] = useState(0);
   const [providerInfo, setProviderInfo] = useState({});
+  const theme = useTheme();
 
   const {
     data: userData,
@@ -242,7 +240,7 @@ const UserPreference = (props) => {
 
     return (
       <NoSsr>
-        <UsesSistent>
+        <>
           <RootContainer>
             <Typography variant="h5">Provider Information</Typography>
             <Grid container spacing={2}>
@@ -486,7 +484,7 @@ const UserPreference = (props) => {
                 </div>
               ))}
           </RootContainer>
-        </UsesSistent>
+        </>
       </NoSsr>
     );
   };
@@ -496,7 +494,7 @@ const UserPreference = (props) => {
     updateUserPrefWithContext(updates);
   };
   return (
-    <UsesSistent>
+    <>
       <NoSsr>
         <StyledPaper>
           <Tabs
@@ -517,7 +515,7 @@ const UserPreference = (props) => {
             </CustomTooltip>
             <CustomTooltip title="Choose Performance Test Defaults" placement="top">
               <Tab
-                icon={<FontAwesomeIcon icon={faTachometerAlt} style={iconMedium} />}
+                icon={<TachometerIcon {...iconMedium} fill={theme.palette.icon.default} />}
                 label={<TabLabel>Performance</TabLabel>}
               />
             </CustomTooltip>
@@ -636,7 +634,7 @@ const UserPreference = (props) => {
           )}
         </StatsWrapper>
       </NoSsr>
-    </UsesSistent>
+    </>
   );
 };
 
