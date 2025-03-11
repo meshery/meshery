@@ -99,7 +99,6 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
     setModelUrl(newUrl);
     if (modelSource) {
       const isValid = validateUrl(newUrl, modelSource);
-      console.log('amit isValid', isValid);
       if (!isValid) {
         setUrlError(
           modelSource === 'github'
