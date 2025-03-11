@@ -179,6 +179,14 @@ mesheryctl system logs meshery-istio
 				return err
 			}
 
+			// Get and display current context
+			currentContext, err := utils.GetCurrentK8sContext(client)
+			if err != nil {
+				log.Warn("Unable to determine current Kubernetes context: ", err)
+			} else {
+				log.Info("Using Kubernetes context: ", currentContext)
+			}
+
 			// List the pods in the MesheryNamespace
 			podList, err := utils.GetPodList(client, utils.MesheryNamespace)
 			availablePods := podList.Items
