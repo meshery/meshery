@@ -17,12 +17,10 @@ import {
   Link,
   Chip,
 } from '@layer5/sistent';
-// import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import ModelIcon from '@/assets/icons/ModelIcon';
 import LanOutlinedIcon from '@mui/icons-material/LanOutlined';
 import { TooltipIconButton } from '@/utils/TooltipButton';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
-import { CSV_TEMPLATE_BASE_URL } from './data';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 
 const StyledHeadingBox = styled(Box)({
@@ -52,6 +50,9 @@ const StyledUploadSuccess = styled(Box)(({ theme }) => ({
 const StyledFileChip = styled(Chip)(({ theme }) => ({
   borderRadius: theme.shape.borderRadius,
 }));
+
+const CSV_TEMPLATE_BASE_URL =
+  'https://raw.githubusercontent.com/meshery/meshery/a514f8689260791077bde8171646933cff15dd08/mesheryctl/templates/template-csvs/';
 
 const CsvStepper = React.memo(({ handleClose, handleGenerateModal }) => {
   const [modelCsvFile, setModelCsvFile] = React.useState(null);

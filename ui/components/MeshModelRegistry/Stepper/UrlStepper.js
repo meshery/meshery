@@ -24,7 +24,7 @@ import BrushIcon from '@mui/icons-material/Brush';
 import CategoryIcon from '@mui/icons-material/Category';
 import SourceIcon from '@/assets/icons/SourceIcon';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
-import { modelCategories, modelShapes, modelSubCategories } from './data';
+import { ModelDefinitionV1Beta1Schema, CoreDefinitionSchema } from '@layer5/schemas';
 
 const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
   const [modelSource, setModelSource] = React.useState('');
@@ -41,6 +41,10 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
   const [logoDarkThemePath, setLogoDarkThemePath] = React.useState('');
   const [registerModel] = React.useState(true);
   const [isAnnotation, setIsAnnotation] = React.useState(true);
+  const modelProperties = ModelDefinitionV1Beta1Schema.properties;
+  const categories = CoreDefinitionSchema.definitions.category.enum;
+  const subCategories = CoreDefinitionSchema.definitions.subCategory.enum;
+  const shapes = CoreDefinitionSchema.definitions.shape.enum;
 
   const handleLogoLightThemeChange = async (event) => {
     const file = event.target.files[0];
@@ -151,8 +155,11 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                     id="model-name"
                     label="Model Name"
                     placeholder="my-model"
-                    helperText="Model name should be in lowercase with hyphens, not whitespaces."
-                    error={modelName.length > 0 && !/^[a-z0-9-]+$/.test(modelName)}
+                    helperText={modelProperties.name.description}
+                    error={
+                      modelName.length > 0 &&
+                      !new RegExp(modelProperties.name.pattern).test(modelName)
+                    }
                     value={modelName}
                     onChange={(e) => setModelName(e.target.value)}
                     variant="outlined"
@@ -164,11 +171,12 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                   <TextField
                     required
                     id="model-display-name"
-                    label="Model Display Name"
-                    placeholder="a friendly name for my model"
-                    helperText="Model display name should be a friendly name for your model."
+                    label={'Model Display Name'}
+                    placeholder={modelProperties.displayName.description}
+                    helperText={modelProperties.displayName.helperText}
                     error={
-                      modelDisplayName.length > 0 && !/^[a-zA-Z0-9\s]+$/.test(modelDisplayName)
+                      modelDisplayName.length > 0 &&
+                      !new RegExp(modelProperties.displayName.pattern).test(modelDisplayName)
                     }
                     value={modelDisplayName}
                     onChange={(e) => setModelDisplayName(e.target.value)}
@@ -189,7 +197,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                 <em>cert-manager</em>. This is the unique name for the model within the scope of a
                 registrant (
                 <a href="https://docs.meshery.io/concepts/logical/registry">
-                  learn more about registrants
+                  learn more about registry
                 </a>
                 ).
               </li>
@@ -208,7 +216,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
             <Box display="flex" alignItems="center" mb={2}>
               <Typography>
                 {' '}
-                Please select the appropriate <strong>Category</strong> and
+                Please select the appropriate <strong>Category</strong> and{' '}
                 <strong>Subcategory</strong> relevant to your model.
                 <br />
                 <em>
@@ -230,7 +238,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                     label="Category"
                     onChange={(e) => setModelCategory(e.target.value)}
                   >
-                    {modelCategories.map((category, idx) => (
+                    {categories.map((category, idx) => (
                       <MenuItem key={idx} value={category}>
                         {category}
                       </MenuItem>
@@ -248,7 +256,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                     label="Subcategory"
                     onChange={(e) => setModelSubcategory(e.target.value)}
                   >
-                    {modelSubCategories.map((subCategory, idx) => (
+                    {subCategories.map((subCategory, idx) => (
                       <MenuItem key={idx} value={subCategory}>
                         {subCategory}
                       </MenuItem>
@@ -349,7 +357,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                     label="Shape"
                     onChange={(e) => setModelShape(e.target.value)}
                   >
-                    {modelShapes.map((shape, idx) => (
+                    {shapes.map((shape, idx) => (
                       <MenuItem key={idx} value={shape}>
                         {shape}
                       </MenuItem>
