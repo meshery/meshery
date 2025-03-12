@@ -1,3 +1,14 @@
+---
+layout: page
+title: Contributing to Meshery Schema
+permalink: project/contributing/contributing-schema
+abstract: How to contribute to Meshery's schema driven architecture.
+language: en
+type: project
+category: contributing
+list: include
+---
+
 # <a name="contributing">Contributing to Meshery Schemas</a>
 
 ## Overview
