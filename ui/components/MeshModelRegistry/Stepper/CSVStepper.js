@@ -22,6 +22,11 @@ import LanOutlinedIcon from '@mui/icons-material/LanOutlined';
 import { TooltipIconButton } from '@/utils/TooltipButton';
 import InsertDriveFileIcon from '@mui/icons-material/InsertDriveFile';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
+import {
+  ModelDefinitionV1Beta1Schema,
+  ComponentDefinitionV1Beta1Schema,
+  RelationshipDefinitionV1Alpha3Schema,
+} from '@layer5/schemas';
 
 const StyledHeadingBox = styled(Box)({
   display: 'flex',
@@ -183,8 +188,7 @@ const CsvStepper = React.memo(({ handleClose, handleGenerateModal }) => {
             >
               documentation
             </StyledDocsRedirectLink>
-            . Models are versioned packages containing components, relationships and policies for
-            defining infrastructure in Meshery.
+            . {ModelDefinitionV1Beta1Schema.description}
           </>
         ),
       },
@@ -241,8 +245,7 @@ const CsvStepper = React.memo(({ handleClose, handleGenerateModal }) => {
             >
               documentation
             </StyledDocsRedirectLink>
-            . Components are fundamental building blocks that represent distinct capabilities and
-            features of your infrastructure in Meshery.
+            . {ComponentDefinitionV1Beta1Schema.description}
           </>
         ),
       },
@@ -300,8 +303,7 @@ const CsvStepper = React.memo(({ handleClose, handleGenerateModal }) => {
             >
               documentation
             </StyledDocsRedirectLink>
-            . Relationships define how components interact and connect with each other within your
-            infrastructure model in Meshery.
+            . {RelationshipDefinitionV1Alpha3Schema.description}
           </>
         ),
       },
