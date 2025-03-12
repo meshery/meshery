@@ -34,7 +34,7 @@ import AddIcon from '@mui/icons-material/AddCircleOutline';
 import React, { useEffect, useRef, useState } from 'react';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import Moment from 'react-moment';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { toggleCatalogContent, updateProgress } from '../lib/store';
 import { encodeDesignFile, getUnit8ArrayDecodedFile, parseDesignFile } from '../utils/utils';
@@ -312,9 +312,6 @@ function MesheryPatterns({
 
   const [deployPatternMutation] = useDeployPatternMutation();
   const [undeployPatternMutation] = useUndeployPatternMutation();
-
-  const selectedOrgID = useSelector((state) => state.get('organization').selectedOrganization);
-
   const {
     data: patternsData,
     isLoading: ispatternsLoading,
@@ -326,15 +323,7 @@ function MesheryPatterns({
     order: sortOrder,
     visibility: visibilityFilter ? JSON.stringify([visibilityFilter]) : '',
     populate: 'pattern_file',
-    orgID: selectedOrgID,
   });
-
-  useEffect(() => {
-    // Refetch patterns when the organization changes
-    if (getPatterns) {
-      getPatterns();
-    }
-  }, [selectedOrgID, getPatterns]);
   const [clonePattern] = useClonePatternMutation();
   const [publishCatalog] = usePublishPatternMutation();
   const [unpublishCatalog] = useUnpublishPatternMutation();
