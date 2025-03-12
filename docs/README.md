@@ -68,10 +68,10 @@ Alternatively, if you are running Windows 10, you may install the Windows Subsys
 <details>
 <summary>High-Level Outline & Information Architecture for Meshery Documentation</summary>
 
-**Goal:** Offer comprehensive, organized, and accessible documentation for diverse audiences, from new users to expert contributors.
+**Goal:** Offer comprehensive, organized, and accessible documentation for diverse audiences, from new users to expert users.
 **Target Audience:**
 - **Personas:** Beginners, developers, admins, operators, security specialists, contributors, users of all experience levels.
-- **Needs:** Varied - learning fundamentals, managing tasks, understanding advanced concepts, contributing code.
+- **Needs:** Varied - Users learning fundamentals, managing tasks, understanding advanced concepts; System integrators (those extending the project) and project contributors
 
 
 ## High-Level Outline
@@ -80,7 +80,8 @@ Alternatively, if you are running Windows 10, you may install the Windows Subsys
 
 - **Getting Started:** Overview of Meshery, installation options, prerequisites, and setup instructions.
 - **Installation Guides:** Step-by-step instructions for installing Meshery on different platforms (local, cloud, minikube).
-- **Configuration Guides:** Configuring Meshery for different environments (local, cloud, minikube).
+  - **Configuration Guides:** Configuring Meshery for different environments (local, cloud, minikube).
+- **Tasks & Operations** (User Guide)
 - **Concepts:** Meshery basics (clusters, pods, deployments, services), terminology glossary.
 - **Use Cases:** Demonstrations of common scenarios (web app deployment, data processing pipeline).
 
