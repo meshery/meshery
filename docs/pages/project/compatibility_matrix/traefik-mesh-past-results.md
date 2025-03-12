@@ -7,5 +7,5 @@ language: en
 display-title: "false"
 list: exclude
 service-mesh: "meshery-traefik-mesh"
-subheading: Meshery-Traefik-Mesh
+subheading: meshery-traefik-mesh
 ---
