@@ -8,5 +8,5 @@ display-title: "false"
 list: exclude
 type: "project"
 service-mesh: "meshery-cilium"
-subheading: "Meshery-Cilium"
+subheading: "Meshery-cilium"
 ---
