@@ -29,7 +29,9 @@ Meshery facilitates the import of infrastructure in multiple formats, including 
 - Helm Charts
 - Docker Compose
 
-See [Importing Applications](https://docs.meshery.io/extensions/import-export-designs) for more information.
+
+See [Importing Designs]({{site.baseurl}}/extensions/import-export-designs) for more information.
+
 
 <details>
 <summary>
