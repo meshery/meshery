@@ -187,9 +187,10 @@ GEM
     google-protobuf (4.29.1-x86_64-linux)
       bigdecimal
       rake (>= 13)
-    graphql (2.4.8)
+    graphql (2.4.13)
       base64
       fiber-storage
+      logger
     graphql-docs (5.1.0)
       commonmarker (~> 0.23, >= 0.23.6)
       escape_utils (~> 1.2)
