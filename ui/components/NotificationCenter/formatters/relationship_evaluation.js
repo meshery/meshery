@@ -88,9 +88,6 @@ const TraceSection = ({ title, items, type, children, emptyMessage = 'No changes
         </SectionTitle>
 
         <Box display={'flex'} alignItems={'center'} gap={2}>
-          <ComponentIcon iconSrc={'/' + component.styles.svgColor} />
-          {component.component.kind} &lsquo;{component.displayName}&rsquo; from model &lsquo;
-          {component.model.name}&rsquo;
           <span> ( {items.length} )</span>
 
           {expanded ? (
