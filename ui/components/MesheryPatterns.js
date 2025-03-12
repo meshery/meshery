@@ -21,6 +21,8 @@ import {
   Typography,
   styled,
   PROMPT_VARIANTS,
+  ToggleButtonGroup,
+  ToggleButton,
 } from '@layer5/sistent';
 import { NoSsr } from '@layer5/sistent';
 import CloseIcon from '@mui/icons-material/Close';
@@ -143,6 +145,12 @@ const YamlDialogTitle = styled(DialogTitle)(() => ({
 
 const YamlDialogTitleText = styled(Typography)(() => ({
   flexGrow: 1,
+}));
+
+const DesignFilterWrapper = styled(Box)(() => ({
+  marginBottom: '2rem',
+  display: 'flex',
+  justifySelf: 'flex-end',
 }));
 
 function TooltipIcon({ children, onClick, title, placement, disabled }) {
@@ -297,6 +305,7 @@ function MesheryPatterns({
   const router = useRouter();
   const [meshModels, setMeshModels] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState(initialFilters);
+  const [designFilter, setDesignFilter] = useState('left');
 
   const [canPublishPattern, setCanPublishPattern] = useState(false);
   const [publishSchema, setPublishSchema] = useState({});
@@ -335,18 +344,27 @@ function MesheryPatterns({
 
   useEffect(() => {
     if (patternsData) {
-      const filteredPatterns = patternsData.patterns.filter((content) => {
-        if (visibilityFilter === null || content.visibility === visibilityFilter) {
-          return true;
-        }
-        return false;
-      });
-      setCount(patternsData.total_count || 0);
+      let filteredPatterns = patternsData.patterns || [];
+
+      filteredPatterns = filteredPatterns.filter(
+        (content) => visibilityFilter === null || content.visibility === visibilityFilter,
+      );
+
+      if (designFilter === 'right') {
+        filteredPatterns = filteredPatterns.filter(
+          (content) => String(user?.id) === String(content?.user_id),
+        );
+      }
+
+      designFilter === 'right'
+        ? setCount(filteredPatterns.length || 0)
+        : setCount(patternsData.total_count || 0);
+
       handleSetPatterns(filteredPatterns);
       setVisibilityFilter(visibilityFilter);
-      setPatterns(patternsData.patterns || []);
+      setPatterns(filteredPatterns);
     }
-  }, [patternsData]);
+  }, [patternsData, designFilter]);
 
   const [importModal, setImportModal] = useState({
     open: false,
@@ -1445,6 +1463,12 @@ function MesheryPatterns({
     setVisibilityFilter(visibilityFilter);
   };
 
+  const handleDesignFilterChange = (_event, newFilter) => {
+    if (newFilter !== null) {
+      setDesignFilter(newFilter);
+    }
+  };
+
   return (
     <>
       <NoSsr>
@@ -1555,6 +1579,20 @@ function MesheryPatterns({
                 )}
               </SearchWrapper>
             </ToolWrapper>
+            {!selectedPattern.show && (
+              <DesignFilterWrapper>
+                <ToggleButtonGroup
+                  value={designFilter}
+                  size="small"
+                  exclusive
+                  onChange={handleDesignFilterChange}
+                >
+                  <ToggleButton value="left">All Designs</ToggleButton>
+                  <ToggleButton value="right">My Designs</ToggleButton>
+                </ToggleButtonGroup>
+              </DesignFilterWrapper>
+            )}
+
             {!selectedPattern.show && viewType === 'table' && (
               <>
                 {/* <StyledRow> */}
