@@ -97,7 +97,7 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
   const { width } = useWindowDimensions();
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState();
-  const [sortOrder, setSortOrder] = useState('');
+  const [sortOrder, setSortOrder] = useState('name asc');
   const [rowData, setRowData] = useState(null);
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -941,8 +941,8 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
       },
     },
     sortOrder: {
-      name: 'name',
-      direction: 'asc',
+      name: sortOrder.split(' ')[0],
+      direction: sortOrder.split(' ')[1],
     },
     customToolbarSelect: (selected) => (
       <Button

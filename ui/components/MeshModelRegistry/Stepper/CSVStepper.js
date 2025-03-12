@@ -7,8 +7,6 @@ import {
   Box,
   ModalButtonSecondary,
   ModalButtonPrimary,
-  FormControlLabel,
-  Checkbox,
   ComponentIcon,
   Typography,
   FormControl,
@@ -19,7 +17,7 @@ import {
   Link,
   Chip,
 } from '@layer5/sistent';
-import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
+// import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import ModelIcon from '@/assets/icons/ModelIcon';
 import LanOutlinedIcon from '@mui/icons-material/LanOutlined';
 import { TooltipIconButton } from '@/utils/TooltipButton';
@@ -59,7 +57,7 @@ const CsvStepper = React.memo(({ handleClose, handleGenerateModal }) => {
   const [modelCsvFile, setModelCsvFile] = React.useState(null);
   const [componentCsvFile, setComponentCsvFile] = React.useState(null);
   const [relationshipCsvFile, setRelationshipCsvFile] = React.useState(null);
-  const [registerModel, setRegisterModel] = React.useState(true);
+  const [registerModel] = React.useState(true);
   const fileToBase64 = (file) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -306,30 +304,30 @@ const CsvStepper = React.memo(({ handleClose, handleGenerateModal }) => {
           </>
         ),
       },
-      {
-        component: (
-          <div>
-            <FormControl component="fieldset" marginTop={'1rem'}>
-              <FormControlLabel
-                labelPlacement="start"
-                style={{ marginLeft: '0' }}
-                control={
-                  <Checkbox
-                    checked={registerModel}
-                    onChange={(e) => setRegisterModel(e.target.checked)}
-                    name="registerModel"
-                    color="primary"
-                  />
-                }
-                label="Would you like to register the model now so you can use it immediately after it's generated?"
-              />
-            </FormControl>
-          </div>
-        ),
-        icon: AppRegistrationIcon,
-        label: 'Register Model',
-        helpText: 'Choose whether to register the model.',
-      },
+      // {
+      //   component: (
+      //     <div>
+      //       <FormControl component="fieldset" marginTop={'1rem'}>
+      //         <FormControlLabel
+      //           labelPlacement="start"
+      //           style={{ marginLeft: '0' }}
+      //           control={
+      //             <Checkbox
+      //               checked={registerModel}
+      //               onChange={(e) => setRegisterModel(e.target.checked)}
+      //               name="registerModel"
+      //               color="primary"
+      //             />
+      //           }
+      //           label="Would you like to register the model now so you can use it immediately after it's generated?"
+      //         />
+      //       </FormControl>
+      //     </div>
+      //   ),
+      //   icon: AppRegistrationIcon,
+      //   label: 'Register Model',
+      //   helpText: 'Choose whether to register the model.',
+      // },
     ],
   });
 
@@ -345,11 +343,6 @@ const CsvStepper = React.memo(({ handleClose, handleGenerateModal }) => {
       nextAction: () => csvStepper.handleNext(),
     },
     2: {
-      canGoNext: () => true,
-      nextButtonText: 'Next',
-      nextAction: () => csvStepper.handleNext(),
-    },
-    3: {
       canGoNext: () => true,
       nextButtonText: 'Finish',
       nextAction: handleFinish,
