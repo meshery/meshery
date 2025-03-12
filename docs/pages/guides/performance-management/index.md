@@ -2,7 +2,6 @@
 layout: default
 title: Performance Management Guides
 permalink: guides/performance-management
-type: guides
 category: performance
 language: en
 list: exclude

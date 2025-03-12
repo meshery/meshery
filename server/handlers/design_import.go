@@ -130,6 +130,7 @@ func ConvertFileToDesign(fileToImport FileToImport, registry *registry.RegistryM
 	}
 
 	now := time.Now()
+	// NOTE: the FileName must also have extension
 	sanitizedFile, err := files.SanitizeFile(fileToImport.Data, fileToImport.FileName, tempDir, validImportExtensions)
 	utils.TrackTime(logger, now, "SanitizeFile")
 

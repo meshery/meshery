@@ -2,12 +2,12 @@ module github.com/layer5io/meshery
 
 go 1.23.4
 
-// replace github.com/layer5io/meshkit v0.8.15 => ../meshkit
+// replace github.com/layer5io/meshkit v0.8.19 => ../meshkit
 
 replace github.com/vektah/gqlparser/v2 => github.com/vektah/gqlparser/v2 v2.5.11
 
 require (
-	cuelang.org/go v0.11.2
+	cuelang.org/go v0.12.0
 	fortio.org/fortio v1.66.2
 	github.com/99designs/gqlgen v0.17.45
 	github.com/Masterminds/semver/v3 v3.3.1
@@ -36,7 +36,7 @@ require (
 	github.com/jinzhu/copier v0.4.0
 	github.com/layer5io/gowrk2 v0.6.1
 	github.com/layer5io/meshery-operator v0.8.3
-	github.com/layer5io/meshkit v0.8.17
+	github.com/layer5io/meshkit v0.8.19
 	github.com/layer5io/meshsync v0.8.5
 	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.6.1
