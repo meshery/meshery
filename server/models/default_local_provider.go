@@ -55,10 +55,10 @@ type DefaultLocalProvider struct {
 	ConnectionPersister             *ConnectionPersister
 	EnvironmentPersister            *EnvironmentPersister
 	WorkspacePersister              *WorkspacePersister
-
-	GenericPersister *database.Handler
-	KubeClient       *mesherykube.Client
-	Log              logger.Handler
+	CredentialPersister             *CredentialPersister
+	GenericPersister                *database.Handler
+	KubeClient                      *mesherykube.Client
+	Log                             logger.Handler
 }
 
 // Initialize will initialize the local provider
@@ -1324,11 +1324,7 @@ func (l *DefaultLocalProvider) Cleanup() error {
 }
 
 func (l *DefaultLocalProvider) SaveUserCredential(token string, credential *Credential) (*Credential, error) {
-	result := l.GetGenericPersister().Table("credentials").Create(&credential)
-	if result.Error != nil {
-		return nil, fmt.Errorf("error saving user credentials: %v", result.Error)
-	}
-	return nil, nil
+	return l.CredentialPersister.SaveCredential(credential)
 }
 
 func (l *DefaultLocalProvider) GetCredentialByID(token string, credentialID uuid.UUID) (*Credential, int, error) {
@@ -1336,65 +1332,15 @@ func (l *DefaultLocalProvider) GetCredentialByID(token string, credentialID uuid
 }
 
 func (l *DefaultLocalProvider) GetUserCredentials(_ *http.Request, userID string, page, pageSize int, search, order string) (*CredentialsPage, error) {
-	result := l.GetGenericPersister().Select("*").Where("user_id=? and deleted_at is NULL", userID)
-	if result.Error != nil {
-		return nil, result.Error
-	}
-	if search != "" {
-		like := "%" + strings.ToLower(search) + "%"
-		result = result.Where("(lower(name) like ?)", like)
-	}
-
-	result = result.Order(order)
-
-	var count int64
-	if err := result.Count(&count).Error; err != nil {
-		return nil, fmt.Errorf("error retrieving count of credentials for user id: %s - %v", userID, err)
-	}
-
-	var credentialsList []*Credential
-	if count > 0 {
-		if err := result.Offset(page * pageSize).Limit(pageSize).Find(&credentialsList).Error; err != nil {
-			if err != gorm.ErrRecordNotFound {
-				return nil, fmt.Errorf("error retrieving credentials for user id: %s - %v", userID, err)
-			}
-		}
-	}
-
-	credentialsPage := &CredentialsPage{
-		Credentials: credentialsList,
-		Page:        page,
-		PageSize:    pageSize,
-		TotalCount:  int(count),
-	}
-
-	if result.Error != nil {
-		return nil, fmt.Errorf("error getting user credentials: %v", result.Error)
-	}
-	return credentialsPage, nil
+	return l.CredentialPersister.GetCredential(userID, page, pageSize, search, order)
 }
 
 func (l *DefaultLocalProvider) UpdateUserCredential(_ *http.Request, credential *Credential) (*Credential, error) {
-	updatedCredential := &Credential{}
-	if err := l.GetGenericPersister().Model(*updatedCredential).Where("user_id = ? AND id = ? AND deleted_at is NULL", credential.UserID, credential.ID).Updates(credential); err != nil {
-		return nil, fmt.Errorf("error updating user credential: %v", err)
-	}
-
-	if err := l.GetGenericPersister().Where("user_id = ? AND id = ?", credential.UserID, credential.ID).First(updatedCredential).Error; err != nil {
-		return nil, fmt.Errorf("error getting updated user credential: %v", err)
-	}
-	return updatedCredential, nil
+	return l.CredentialPersister.UpdateCredential(credential)
 }
 
 func (l *DefaultLocalProvider) DeleteUserCredential(_ *http.Request, credentialID uuid.UUID) (*Credential, error) {
-	delCredential := &Credential{}
-	if err := l.GetGenericPersister().Model(&Credential{}).Where("id = ?", credentialID).Update("deleted_at", time.Now()).Error; err != nil {
-		return nil, err
-	}
-	if err := l.GetGenericPersister().Where("id = ?", credentialID).First(delCredential).Error; err != nil {
-		return nil, err
-	}
-	return delCredential, nil
+	return l.CredentialPersister.DeleteCredential(credentialID)
 }
 
 // GetOrganizations returns the list of organizations
