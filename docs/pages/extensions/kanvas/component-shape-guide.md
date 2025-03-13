@@ -36,17 +36,17 @@ Here's how the Deployment component appears in different contexts:
 
 <br/>
 
-<div style="display: flex; flex-direction: column; align-items: center;">
-<img src="../../../assets/img/deployment-shape.png" style="width: 50%; height: auto; @media (max-width: 767px) { width: 40%; }" alt="Deployment Component Shape"/>
-Deployment component with its distinctive rounded-rectangle shape and badge
-</div>
+<a href="../../../assets/img/deployment-shape.png">
+    <img src="../../../assets/img/deployment-shape.png" style="width:50%; height:auto;" alt="Deployment Component Shape">
+</a>
+<p>Deployment component with its distinctive rounded-rectangle shape and badge</p>
 
 <br/>
 
-![Deployment in Icon Set](../../../assets/img/deployment-icon.png)
+[![Deployment in Icon Set](../../../assets/img/deployment-icon.png)](../../../assets/img/deployment-icon.png)
 Deployment icon in the component selection panel
 
 <br/>
 
-![Deployment in Dashboard](../../../assets/img/deployment-dashboard.png)
+[![Deployment in Dashboard](../../../assets/img/deployment-dashboard.png)](../../../assets/img/deployment-dashboard.png)
 Deployment component as seen in the cluster resource overview
