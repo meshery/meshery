@@ -62,6 +62,34 @@ layout: default
     </ul>
 </section>
 
+{% assign tutorials = site.pages | where: "category", "tutorials"%}
+{% assign related_tutorials = "" %}
+
+{% for tutorial in tutorials %}
+    {% if tutorial.model %}
+        {% assign page_title_lower = page.title | downcase %}
+        {% assign tutorial_model_lower = tutorial.model | downcase %}
+        {% if page_title_lower contains tutorial_model_lower %}
+            {% assign related_tutorials = related_tutorials | append: tutorial.title %}
+        {% endif %}
+    {% endif %}
+{% endfor %}
+
+{% if related_tutorials != "" %}
+<h2>Related Tutorials</h2>
+<ul>
+    {% for tutorial in tutorials %}
+        {% if tutorial.model %}
+            {% assign page_title_lower = page.title | downcase %}
+            {% assign tutorial_model_lower = tutorial.model | downcase %}
+            {% if page_title_lower contains tutorial_model_lower %}
+                <li><a href="{{ tutorial.url | relative_url }}">{{ tutorial.title }}</a></li>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+</ul>
+{% endif %}
+
 {% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
 {% assign related_models_by_category = site.models | where_exp: "model", "model.integrations-category ==
 page.integrations-category" %}
@@ -70,23 +98,6 @@ type=page.type category=page.category
 url=page.url language="en" %}
 {% endif %}
 
-<h2>Related Tutorials</h2>
-{% assign tutorials = site.pages | where_exp: "page", "page.path contains 'guides/tutorials'" %}
-{% if tutorials.size > 0 %}
-<ul>
-    {% for tutorial in tutorials %}
-    {% if tutorial.model %}
-    {% assign page_title_lower = page.title | downcase %}
-    {% assign tutorial_model_lower = tutorial.model | downcase %}
-    {% if page_title_lower contains tutorial_model_lower %}
-    <li><a href="{{ tutorial.url | relative_url }}">{{ tutorial.title }}</a></li>
-    {% endif %}
-    {% endif %}
-    {% endfor %}
-</ul>
-{% else %}
-<p>No related tutorials found.</p>
-{% endif %}
 
 <script>
     function handleImageError(image) {
