@@ -235,7 +235,7 @@ func selectDistinctKeyValues(db *gorm.DB, kind string) *gorm.DB {
 //
 // ```?spec={spec}``` spec is a boolean value. If true then spec is returned
 //
-// ```?model={model}``` filter by model name
+// ```?model={[model]}``` model is an array of string values to filter the resources
 //
 // ```?status={status}``` status is a boolean value. If true then status is returned
 //
