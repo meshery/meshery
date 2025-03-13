@@ -1,6 +1,6 @@
 # Contributing to mesheryctl's End-to-End tests
 
-To automate ne-to-end testing mesehryctl uses [bats](https://github.com/bats-core/bats-core) framework to automate cli testing. End-to-end run to ensure that the changes do not break te existing functionnality.
+End-to-end testing of `mesheryctl` uses the [Bash Automated Testing System](https://github.com/bats-core/bats-core) (BATS) framework to define and execute CLI tests. Each test case is designed to mimic the experience that a Meshery CLI user might have while interacting with `mesheryctl` in their terminal of choice. In this sense, `mesheryctl` tests run end-to-end with each pull request submitted containing changes to either the `/mesheryctl` or the `/server` directories in the `meshery/meshery` repository, ensuring that changes included in those pull requests do not break the existing CLI functionality.
 
 
 ## Prerequisites:
@@ -37,42 +37,15 @@ If you need to authenticate, you will see the following message
 There are a few ways to set up the Meshery server, but for end-to-end testing, we aim to get as close to a production environment as possible. We know developers might need to make some tweaks for Server. Rebuilding the whole project can take time, and we don’t support hot reload because it’s more for development than for end-to-end testing.
 
 
-> Some test cases required you to have kubernetes cluster and build meshery adapter as well, be aware of that. Which is out of scope for this documentation<ul><li><a href="https://docs.meshery.io/installation/kubernetes/minikube">Kubernetes Cluster</a>: Installation of kubernetes cluster with Minikube.</li>
-> <li><a href="https://docs.meshery.io/installation/multiple-adapters">Meshery Adapters</a>: Using Multiple Adapters</li></ul>
-
-### Native OS Build (Recommended)
-
-This approach is very quick to build, but also dependent on your operating system, so you need to have all dependencies necessary to be able compile and running the server.
-
-- Compile the Golang into binary file for Meshery Server
-
 ```bash
-make build-server
+make server
 ```
 
-- Run the Meshery Server on localhost port 9081
+> Be aware that some test cases require the availability of a Kubernetes cluster and one or more  Meshery Adapters. In those cases, please refer to the [installation guides]{{site.baseurl}}/installation) (like that of [installing Meshery on Minikube]({{site.baseurl}}/installation/kubernetes/minikube)). 
 
-```bash
-make server-binary
-```
-
-### Docker Based Build
-
-Alternatively, a Docker-based setup can be utilized, simplifying the process, and ensuring consistency across different environments. It is closer to the production environment than the native solution but slower in terms of build time.
-
-- Build the docker container locally:
-
-```bash
-make docker-testing-env-build
-```
-
-- Run the docker container on port 9081
-
-```bash
-make docker-testing-env
-```
 
 ## Setup Bats Core
 
 For Bats Core, always try to use a native OS whenever possible. The Docker-based approach is intended only for unsupported OSes and is generally not recommended because it runs on top of Ubuntu images, which can be redundant if you already using Ubuntu or Windows.
+
 
