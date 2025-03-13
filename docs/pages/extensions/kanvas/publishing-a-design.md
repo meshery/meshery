@@ -101,16 +101,13 @@ A design transitions through multiple states from creation to publication. The d
 
 ### 3. Permission Controls
 
-| **Operation**       | **Creator**        | **Organization Admin** | **Provider Admin** | **Regular User** | **Guest**               |
-|---------------------|--------------------|------------------------|--------------------|------------------|-------------------------|
-| Edit Pending Design | ✔                  | ✔                      | ✔                 | ✔                | ✔                       |
-| Unpublish           | ✘   | ✔                      | ✔                 | ✘                | ✘            |
-
+| **Operation**       | **Creator** | **Admin** | **Regular User** | **Guest** |
+| ------------------- | ----------- | ---------------------- | ---------------- | --------- |
+| Edit Pending Design | ✔           | ✔                      | ✔                | ✔         |
+| Unpublish           | ✘           | ✔                      | ✘                | ✘         |
 **Key Notes:**
-- Provider Admins have root-level visibility and can see private designs from all organizations.
-- Catalog approval queues are org-specific—only members of an organization can see its pending approvals, unless the user is a Provider Admin.
+- Catalog approval queues are org-specific—only members of an organization can see its pending approvals, unless the user is a Admin.
 - The "Unpublish" button is visible to all users except Guests. However, only Admins can successfully execute the action. For all other users, clicking the button will result in an error message indicating insufficient permissions.
-- Admins and Provider Admins bypass all state restrictions.
 
 ## Frequently Asked Questions (FAQ) 
 
@@ -127,7 +124,7 @@ No, the category field **cannot be changed** after the design is published. If a
 No, once a design is denied, it **cannot be resubmitted**. However, you can clone the design, make adjustments, and submit it as a new entry for review.
 
 #### 5. Can I unpublish a design after it has been published?  
-Only Admins and Provider Admins have the ability to unpublish a design, Regular users, creators, and guests cannot unpublish a design. If you need to remove a published design, contact an Admin or Provider Admin to request unpublishing.  
+Only Admins can unpublish designs. Regular users, creators, and guests cannot perform this action. Contact your Admin to request unpublishing.
 
 #### 6. What is the difference between Public, Private, and Published?  
 
