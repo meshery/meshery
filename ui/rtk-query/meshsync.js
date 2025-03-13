@@ -20,6 +20,7 @@ const meshSyncApi = api
             search: queryArg.search,
             order: queryArg.order,
             ...(queryArg.kind ? { kind: queryArg.kind } : {}), // empty object to avoid undefined as no kind signifies all resources
+            ...(queryArg.model ? { model: queryArg.model } : {}),
             clusterIds: queryArg.clusterIds,
             label: queryArg.label,
             status: queryArg.status,
