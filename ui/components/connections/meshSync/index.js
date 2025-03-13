@@ -49,8 +49,13 @@ export default function MeshSyncTable(props) {
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [modelFilter, setModeFilter] = useState();
   const [kindFilter, setKindFilter] = useState();
+  const [namespaceFilter, setNamespaceFilter] = useState();
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
-  const [selectedFilters, setSelectedFilters] = useState({ kind: 'All', model: 'All' });
+  const [selectedFilters, setSelectedFilters] = useState({
+    kind: 'All',
+    model: 'All',
+    namespace: 'All',
+  });
   const [registerConnection, setRegisterConnection] = useState({
     metadata: {},
     kind: '',
@@ -74,6 +79,7 @@ export default function MeshSyncTable(props) {
     order: sortOrder,
     kind: kindFilter,
     model: modelFilter,
+    namespace: namespaceFilter,
     clusterIds: JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig)),
   });
   if (isError) {
@@ -96,6 +102,7 @@ export default function MeshSyncTable(props) {
   const availableModels = [
     ...new Set((clusterSummary?.kinds || []).map((kind) => kind.Model).filter(Boolean)),
   ];
+  const availableNamespaces = clusterSummary?.namespaces || [];
   const meshSyncResources = meshSyncData?.resources || [];
 
   let colViews = [
@@ -538,14 +545,25 @@ export default function MeshSyncTable(props) {
         })),
       ],
     },
+    namespace: {
+      name: 'Namespace',
+      options: [
+        ...availableNamespaces.map((ns) => ({
+          value: ns,
+          label: ns,
+        })),
+      ],
+    },
   };
 
   const handleApplyFilter = () => {
     const kindFilter = selectedFilters.kind === 'All' ? null : selectedFilters.kind;
     const modelFilter = selectedFilters.model === 'All' ? null : selectedFilters.model;
+    const namespaceFilter = selectedFilters.namespace === 'All' ? null : selectedFilters.namespace;
 
     setKindFilter(kindFilter);
     setModeFilter(modelFilter);
+    setNamespaceFilter(namespaceFilter);
   };
 
   const [tableCols, updateCols] = useState(columns);
