@@ -89,6 +89,21 @@ const K8sContextConnectionChip_ = ({
     ctx.connection_id,
   );
 
+  const getDefaultIcon = (kind) => {
+    switch (kind) {
+      case CONNECTION_KINDS.GITHUB:
+        return '/static/img/github.svg';
+      case CONNECTION_KINDS.PROMETHEUS:
+        return '/static/img/prometheus.svg';
+      case CONNECTION_KINDS.GRAFANA:
+        return '/static/img/grafana.svg';
+      case CONNECTION_KINDS.KUBERNETES:
+        return '/static/img/kubernetes.svg';
+      default:
+        return '/static/img/kubernetes.svg'; // Fallback icon
+    }
+  };
+
   return (
     <Box id={ctx.id} sx={{ margin: '0.25rem 0' }}>
       <CustomTextTooltip
@@ -116,9 +131,9 @@ const K8sContextConnectionChip_ = ({
             onDelete={onDelete ? () => onDelete(ctx.name, ctx.connection_id) : null}
             handlePing={() => ping(ctx.name, ctx.server, ctx.connection_id)}
             iconSrc={
-              connectionMetadataState && connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
-                ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
-                : '/static/img/kubernetes.svg'
+              connectionMetadataState && connectionMetadataState[ctx.kind]?.icon
+                ? `/${connectionMetadataState[ctx.kind]?.icon}`
+                : getDefaultIcon(ctx.kind)
             }
             status={operatorState}
           />
