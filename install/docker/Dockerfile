@@ -28,18 +28,37 @@ RUN npm ci --omit=dev --legacy-peer-deps
 # Build NextJS Application
 FROM base-node AS meshery-ui-builder
 WORKDIR /app
-COPY --from=meshery-ui-deps /app/node_modules ./node_modules
+
+# Set NODE_ENV to development so that ESLint is installed
+ENV NODE_ENV=development
+
+# Copy package.json and package-lock.json to install dependencies
+COPY ui/package.json ui/package-lock.json ./
+RUN npm install --legacy-peer-deps
+
 COPY ui .
+
+# Run ESLint
+RUN npm run lint
+
 # Disable NextJS Telemetry data collect
 ENV NEXT_TELEMETRY_DISABLED 1
+
+# Build and Export
 RUN npm run build && npm run export
 
 FROM base-node AS meshery-ui-provider-builder
 WORKDIR /app
-COPY --from=meshery-ui-provider-deps /app/node_modules ./node_modules
+
+# Set NODE_ENV to development so that ESLint is installed
+ENV NODE_ENV=development
+
+COPY provider-ui/package.json provider-ui/package-lock.json ./
+RUN npm install --legacy-peer-deps
+
 # Disable NextJS Telemetry data collect
-ENV NEXT_TELEMETRY_DISABLED 1
 COPY provider-ui .
+ENV NEXT_TELEMETRY_DISABLED 1
 RUN npm run build && npm run export
 
 FROM ubuntu AS wrk2
