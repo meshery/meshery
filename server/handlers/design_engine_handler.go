@@ -190,13 +190,11 @@ func (h *Handler) PatternFileHandler(
 
 	serverURL, _ := r.Context().Value(models.MesheryServerURL).(string)
 
-	if action == "deploy" {
-		viewLink := fmt.Sprintf("%s/extension/meshmap?mode=operator&type=view&design_id=%s", serverURL, patternID)
-		description = fmt.Sprintf("%s.", description)
-		metadata["view_link"] = viewLink
-		metadata["design_name"] = patternFile.Name
-		metadata["design_id"] = patternID
-	}
+	viewLink := fmt.Sprintf("%s/extension/meshmap?mode=operator&type=view&design_id=%s", serverURL, patternID)
+	description = fmt.Sprintf("%s.", description)
+	metadata["view_link"] = viewLink
+	metadata["design_name"] = patternFile.Name
+	metadata["design_id"] = patternID
 
 	var event *events.Event
 	if action == "deploy" || action == "dry-run" {
