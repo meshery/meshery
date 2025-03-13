@@ -159,3 +159,8 @@ For consistency, we will keep the prefix *00-* for the command under test in the
 ```bash
 make cli-tests _not yet implemented_
 ```
+
+{% include alert.html
+    type="danger"
+    title="DOCUMENT INCOMPLETE"
+    content="This document is incomplete. Help wanted! 😃" %}
