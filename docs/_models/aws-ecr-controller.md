@@ -42,5 +42,4 @@ language: en
 list: include
 type: extensibility
 category: integrations
-model: aws
 ---

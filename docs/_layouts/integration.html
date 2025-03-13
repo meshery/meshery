@@ -71,17 +71,22 @@ url=page.url language="en" %}
 {% endif %}
 
 <h2>Related Tutorials</h2>
-{% assign tutorials = site.pages | where_exp: "page", "page.path contains '/guides/tutorials'" %}
+{% assign tutorials = site.pages | where_exp: "page", "page.path contains 'guides/tutorials'" %}
+{% if tutorials.size > 0 %}
 <ul>
     {% for tutorial in tutorials %}
-    {% if page.model %}
-    {% if tutorial.model == page.model %}
-    <li><a href="{{ site.baseurl }}{{ tutorial.url }}">{{ tutorial.title }}</a></li>
+    {% if tutorial.model %}
+    {% assign page_title_lower = page.title | downcase %}
+    {% assign tutorial_model_lower = tutorial.model | downcase %}
+    {% if page_title_lower contains tutorial_model_lower %}
+    <li><a href="{{ tutorial.url | relative_url }}">{{ tutorial.title }}</a></li>
     {% endif %}
     {% endif %}
     {% endfor %}
 </ul>
-
+{% else %}
+<p>No related tutorials found.</p>
+{% endif %}
 
 <script>
     function handleImageError(image) {
