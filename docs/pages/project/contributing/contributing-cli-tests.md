@@ -1,12 +1,13 @@
 ---
 layout: page
-title: Contributing to Meshery CLI
+title: Contributing to Meshery CLI End-to-End Tests
 permalink: project/contributing/contributing-cli-tests
-abstract: How to contribute to Meshery Command Line Interface.
+abstract: How to contribute to Meshery Command Line Interface end-to-end testing with BATS.
 language: en
 type: project
 category: contributing
 list: include
+display-title: false
 ---
 
 # Contributing to Meshery CLI End-to-End Tests
