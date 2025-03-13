@@ -45,7 +45,7 @@ export default function MeshSyncTable(props) {
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('kind asc');
+  const [sortOrder, setSortOrder] = useState('creation_timestamp desc');
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [modelFilter, setModeFilter] = useState();
   const [kindFilter, setKindFilter] = useState();
@@ -103,6 +103,7 @@ export default function MeshSyncTable(props) {
     ['apiVersion', 'na'],
     ['kind', 'm'],
     ['model', 'm'],
+    ['metadata.namespace', 'xs'],
     ['cluster_id', 'na'],
     ['pattern_resources', 'na'],
     ['metadata.creationTimestamp', 'l'],
@@ -196,6 +197,25 @@ export default function MeshSyncTable(props) {
             <SortableTableCell
               index={index}
               columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
+      },
+    },
+    {
+      name: 'metadata.namespace',
+      sortName: 'namespace',
+      label: 'Namespace',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={{ ...column, name: 'namespace' }}
               columnMeta={columnMeta}
               onSort={() => sortColumn(index)}
             />
@@ -415,11 +435,7 @@ export default function MeshSyncTable(props) {
       const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
       let order = '';
       const activeColumn = columns[tableState.activeColumn];
-      let columnName = activeColumn?.sortName || camelcaseToSnakecase(activeColumn?.name);
 
-      if (tableState.activeColumn) {
-        order = `${columnName} desc`;
-      }
       switch (action) {
         case 'changePage':
           setPage(tableState.page.toString());
@@ -429,14 +445,12 @@ export default function MeshSyncTable(props) {
           break;
         case 'sort':
           if (sortInfo.length == 2) {
-            if (sortInfo[1] === 'ascending') {
-              order = `${columnName} asc`;
-            } else {
-              order = `${columnName} desc`;
+            const columnName = activeColumn?.sortName || camelcaseToSnakecase(activeColumn?.name);
+            const direction = sortInfo[1] === 'ascending' ? 'asc' : 'desc';
+            order = `${columnName} ${direction}`;
+            if (order !== sortOrder) {
+              setSortOrder(order);
             }
-          }
-          if (order !== sortOrder) {
-            setSortOrder(order);
           }
           break;
       }
