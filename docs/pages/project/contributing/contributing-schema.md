@@ -84,7 +84,7 @@ Whenever you:
 
 ### Code Generation and Configuration
 The code generation process uses two key configuration files:
-1. **scripts/config.yml**: Controls oapi-codegen behavior
+1. **scripts/oapi-codegen-config.yml**: Controls oapi-codegen behavior
 ```yml
 package: organization  # Set your desired package name
 
@@ -115,14 +115,14 @@ components:
 1.  Update schema references in **models.yml**:
     -   Uncomment/add needed schema references
     -   Each reference generates corresponding Go structs
-2.  Modify **config.yml**:
+2.  Modify **oapi-codegen-config.yml**:
     -   Set appropriate package name
     -   Update output file path
     -   Add required import mappings
     -   Configure include-tags if needed
 3. Generate code:
 ```bash
-oapi-codegen -config scripts/config.yml schemas/constructs/openapi/models.yml
+oapi-codegen -config scripts/oapi-codegen-config.yml schemas/constructs/openapi/models.yml
 ```
 
 **Key Points:**
@@ -173,7 +173,7 @@ components:
     component_definition:
       $ref: ../v1beta1/component.json
 ```
-3. Configure **config.yml**:
+3. Configure **oapi-codegen-config.yml**:
 ```yml
 package: component
 
@@ -192,7 +192,7 @@ output-options:
 ```
 4. Generate code
 ```yml
-oapi-codegen -config scripts/config.yml schemas/constructs/openapi/models.yml
+oapi-codegen -config scripts/oapi-codegen-config.yml schemas/constructs/openapi/models.yml
 ```
 
 ## Contributing to Documentation
