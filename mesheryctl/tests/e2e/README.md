@@ -137,20 +137,19 @@ Here an example with `mesheryctl model` command
 
 ### Run End-to-End (locally)
 
-move in mesheryctl folder and run 
-
+Move in mesheryctl folder and run 
 
 <!-- 
-TODO: Add make e2e supportwith following changes
-1. move to tests/e2e/helpers
-2. Assert the following lbats libraries are available if not git clone
-  - https://github.com/bats-core/bats-file.git
-  - https://github.com/bats-core/bats-detik.git
-  - https://github.com/bats-core/bats-support.git
-3. back to tests/e2e
-5. run bats *-*/*.bats
+    TODO: Add make e2e supportwith following changes
+    1. move to tests/e2e/helpers
+    2. Assert the following lbats libraries are available if not git clone
+    - https://github.com/bats-core/bats-file.git
+    - https://github.com/bats-core/bats-detik.git
+    - https://github.com/bats-core/bats-support.git
+    3. back to tests/e2e
+    5. run bats *-*/*.bats
 -->
 ```bash
-make e2e
+make e2e (Not yet implemented)
 ```
 
