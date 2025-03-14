@@ -12,7 +12,7 @@
     [ "$status" -eq 0 ]
 }
 
-@test "mesheryctl version return Client and Server version 2" {
+@test "mesheryctl version return Client and Server" {
     run $MESHERYCTL_BIN version
 
     [[ "$status" -eq 0 ]] 
