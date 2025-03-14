@@ -9,7 +9,7 @@ type: guides
 category: tutorials
 language: en
 list: include
-abstract: "Explore Kubernetes Pods using Meshery in an interactive live cluster environment, through a series of hands-on excercises."
+abstract: "Explore Kubernetes Pods using Meshery in an interactive live cluster environment, through a series of hands-on exercises."
 ---
 
 ### Introduction

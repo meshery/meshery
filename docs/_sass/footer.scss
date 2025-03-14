@@ -1,3 +1,7 @@
+html {
+  scroll-padding-bottom: var(--footer-height);
+  scroll-behavior: smooth;
+}
 .footer {
   background: linear-gradient(to bottom,
   #151515 5%,
@@ -10,6 +14,14 @@
   flex-direction: column;
   padding: min(2vh, 2vw);
   gap: min(2vh, 5vw);
+
+  @media (max-width: 600px) {
+    height: calc(var(--footer-height) - 4.0rem);
+  }
+
+  @media (max: 1200px){
+    height: var(--footer-height);
+  }
 
   & * {
     color: white;
@@ -86,6 +98,9 @@
         }
         & .twitter:hover {
           fill: #000;
+        }
+        & svg.youtube:hover {
+          fill: #FF0000;
         }
       }
     }

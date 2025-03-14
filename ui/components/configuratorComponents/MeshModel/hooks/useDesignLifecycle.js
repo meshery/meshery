@@ -3,7 +3,6 @@ import jsYaml from 'js-yaml';
 import { promisifiedDataFetch } from '../../../../lib/data-fetch';
 import { useNotification } from '../../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../../lib/event-types';
-import { getUnit8ArrayForDesign } from '@/utils/utils';
 
 export default function useDesignLifecycle() {
   const [designId, setDesignId] = useState();
@@ -93,11 +92,9 @@ export default function useDesignLifecycle() {
   function designSave() {
     promisifiedDataFetch('/api/pattern', {
       body: JSON.stringify({
-        pattern_data: {
-          name: designJson.name,
-          pattern_file: getUnit8ArrayForDesign(designYaml),
-        },
-        save: true,
+        id: designJson.id,
+        name: designJson.name,
+        design_file: designJson,
       }),
       method: 'POST',
     })
@@ -121,11 +118,9 @@ export default function useDesignLifecycle() {
     try {
       await promisifiedDataFetch('/api/pattern', {
         body: JSON.stringify({
-          pattern_data: {
-            name: designJson.name,
-            pattern_file: getUnit8ArrayForDesign(designYaml),
-            id: designId,
-          },
+          name: designJson.name,
+          design_file: designJson,
+          id: designId,
         }),
         method: 'POST',
       });

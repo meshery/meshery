@@ -114,7 +114,7 @@ Future Enhancements for Troubleshooting:
 ## See Also
 
 - [Troubleshooting Meshery Installations](/guides/troubleshooting/installation)
-- [Troubleshooting Errors while running Meshery](guides/troubleshooting/meshery-server)
+- [Troubleshooting Errors while running Meshery](/guides/troubleshooting/meshery-server)
 
 {% include related-discussions.html tag="meshery" %}
 

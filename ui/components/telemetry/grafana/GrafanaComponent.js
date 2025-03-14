@@ -18,7 +18,6 @@ import { EVENT_TYPES } from '../../../lib/event-types';
 import { CONNECTION_KINDS } from '@/utils/Enum';
 import { withTelemetryHook } from '@/components/hooks/useTelemetryHook';
 import { getCredentialByID } from '@/api/credentials';
-import { UsesSistent } from '@/components/SistentWrapper';
 
 const StyledChartTitle = styled(Typography)(({ theme }) => ({
   marginLeft: theme.spacing(3),
@@ -389,40 +388,36 @@ class GrafanaComponent extends Component {
       }
 
       return (
-        <UsesSistent>
-          <NoSsr>
-            <React.Fragment>
-              <GrafanaSelectionComponent
-                grafanaURL={grafanaURL}
-                grafanaBoards={grafanaBoards}
-                grafanaBoardSearch={grafanaBoardSearch}
-                handleGrafanaBoardSearchChange={this.handleChange}
-                handleGrafanaChipDelete={this.handleGrafanaChipDelete}
-                handleGrafanaClick={this.handleGrafanaClick}
-                addSelectedBoardPanelConfig={this.addSelectedBoardPanelConfig}
-                handleError={this.handleError('There was an error communicating with Grafana')}
-              />
-              {displaySelec}
-            </React.Fragment>
-          </NoSsr>
-        </UsesSistent>
+        <NoSsr>
+          <React.Fragment>
+            <GrafanaSelectionComponent
+              grafanaURL={grafanaURL}
+              grafanaBoards={grafanaBoards}
+              grafanaBoardSearch={grafanaBoardSearch}
+              handleGrafanaBoardSearchChange={this.handleChange}
+              handleGrafanaChipDelete={this.handleGrafanaChipDelete}
+              handleGrafanaClick={this.handleGrafanaClick}
+              addSelectedBoardPanelConfig={this.addSelectedBoardPanelConfig}
+              handleError={this.handleError('There was an error communicating with Grafana')}
+            />
+            {displaySelec}
+          </React.Fragment>
+        </NoSsr>
       );
     }
     return (
-      <UsesSistent>
-        <NoSsr>
-          <GrafanaConfigComponent
-            grafanaURL={grafanaURL && { label: grafanaURL, value: grafanaURL }}
-            grafanaAPIKey={grafanaAPIKey}
-            urlError={urlError}
-            handleChange={(name) => {
-              return (value) => this.handleChange(name)({ target: { value } });
-            }}
-            handleChangeApiKey={this.handleChangeApiKey}
-            handleGrafanaConfigure={this.handleGrafanaConfigure}
-          />
-        </NoSsr>
-      </UsesSistent>
+      <NoSsr>
+        <GrafanaConfigComponent
+          grafanaURL={grafanaURL && { label: grafanaURL, value: grafanaURL }}
+          grafanaAPIKey={grafanaAPIKey}
+          urlError={urlError}
+          handleChange={(name) => {
+            return (value) => this.handleChange(name)({ target: { value } });
+          }}
+          handleChangeApiKey={this.handleChangeApiKey}
+          handleGrafanaConfigure={this.handleGrafanaConfigure}
+        />
+      </NoSsr>
     );
   }
 }

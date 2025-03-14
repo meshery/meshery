@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Tooltip, Grid, FormControl, MenuItem, CustomTooltip, Table } from '@layer5/sistent';
-import { formatDate } from '../../DataFormatter';
+import { Tooltip, Grid, FormControl, MenuItem, Table, FormattedTime } from '@layer5/sistent';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import {
@@ -30,7 +29,6 @@ import {
   useGetMeshSyncResourceKindsQuery,
   useGetMeshSyncResourcesQuery,
 } from '@/rtk-query/meshsync';
-import { UsesSistent } from '@/components/SistentWrapper';
 import { ConnectionStateChip } from '../ConnectionChip';
 import { ContentContainer, ConnectionStyledSelect, InnerTableContainer } from '../styles';
 
@@ -102,6 +100,7 @@ export default function MeshSyncTable(props) {
     ['metadata.name', 'xs'],
     ['apiVersion', 'na'],
     ['kind', 'm'],
+    ['model', 'm'],
     ['cluster_id', 'na'],
     ['pattern_resources', 'na'],
     ['metadata.creationTimestamp', 'l'],
@@ -158,6 +157,24 @@ export default function MeshSyncTable(props) {
     {
       name: 'kind',
       label: 'Kind',
+      options: {
+        sort: true,
+        sortThirdClickReset: true,
+        customHeadRender: function CustomHead({ index, ...column }, sortColumn, columnMeta) {
+          return (
+            <SortableTableCell
+              index={index}
+              columnData={column}
+              columnMeta={columnMeta}
+              onSort={() => sortColumn(index)}
+            />
+          );
+        },
+      },
+    },
+    {
+      name: 'model',
+      label: 'Model',
       options: {
         sort: true,
         sortThirdClickReset: true,
@@ -237,14 +254,7 @@ export default function MeshSyncTable(props) {
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(value) {
-          const renderValue = formatDate(value);
-          return (
-            <UsesSistent>
-              <CustomTooltip title={renderValue} placement="top" arrow interactive>
-                {renderValue}
-              </CustomTooltip>
-            </UsesSistent>
-          );
+          return <FormattedTime date={value} />;
         },
       },
     },
@@ -273,61 +283,59 @@ export default function MeshSyncTable(props) {
               ? false
               : true;
           return (
-            <UsesSistent>
-              <FormControl>
-                <ConnectionStyledSelect
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  defaultValue={MESHSYNC_STATES.DISCOVERED}
-                  disabled={disabled}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    const clickedValue = e.target.value;
-                    if (clickedValue !== MESHSYNC_STATES.DISCOVERED && clickedValue !== value) {
-                      setRegistrationModal((open) => !open);
+            <FormControl>
+              <ConnectionStyledSelect
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                defaultValue={MESHSYNC_STATES.DISCOVERED}
+                disabled={disabled}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  const clickedValue = e.target.value;
+                  if (clickedValue !== MESHSYNC_STATES.DISCOVERED && clickedValue !== value) {
+                    setRegistrationModal((open) => !open);
+                  }
+                }}
+                onChange={() => {
+                  callbackRef?.current?.(tableMeta);
+                  setRegisterConnection({
+                    capabilities: componentMetadata?.capabilities,
+                    metadata: JsonParse(componentMetadata.metadata),
+                    resourceID: tableMeta.rowData[tableMeta.rowData.length - 1],
+                  });
+                }}
+                disableUnderline
+                MenuProps={{
+                  anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                  },
+                  transformOrigin: {
+                    vertical: 'top',
+                    horizontal: 'left',
+                  },
+                  getContentAnchorEl: null,
+                  MenuListProps: { disablePadding: true },
+                  PaperProps: { square: true },
+                }}
+              >
+                {Object.keys(meshSyncStates).map((s) => (
+                  <MenuItem
+                    disabled={
+                      meshSyncStates[s] === value ||
+                      meshSyncStates[s] === CONNECTION_STATES.REGISTERED
+                        ? true
+                        : false
                     }
-                  }}
-                  onChange={() => {
-                    callbackRef?.current?.(tableMeta);
-                    setRegisterConnection({
-                      capabilities: componentMetadata?.capabilities,
-                      metadata: JsonParse(componentMetadata.metadata),
-                      resourceID: tableMeta.rowData[tableMeta.rowData.length - 1],
-                    });
-                  }}
-                  disableUnderline
-                  MenuProps={{
-                    anchorOrigin: {
-                      vertical: 'bottom',
-                      horizontal: 'left',
-                    },
-                    transformOrigin: {
-                      vertical: 'top',
-                      horizontal: 'left',
-                    },
-                    getContentAnchorEl: null,
-                    MenuListProps: { disablePadding: true },
-                    PaperProps: { square: true },
-                  }}
-                >
-                  {Object.keys(meshSyncStates).map((s) => (
-                    <MenuItem
-                      disabled={
-                        meshSyncStates[s] === value ||
-                        meshSyncStates[s] === CONNECTION_STATES.REGISTERED
-                          ? true
-                          : false
-                      }
-                      value={meshSyncStates[s]}
-                      key={meshSyncStates[s]}
-                      style={{ padding: '0' }}
-                    >
-                      <ConnectionStateChip status={meshSyncStates[s]} />
-                    </MenuItem>
-                  ))}
-                </ConnectionStyledSelect>
-              </FormControl>
-            </UsesSistent>
+                    value={meshSyncStates[s]}
+                    key={meshSyncStates[s]}
+                    style={{ padding: '0' }}
+                  >
+                    <ConnectionStateChip status={meshSyncStates[s]} />
+                  </MenuItem>
+                ))}
+              </ConnectionStyledSelect>
+            </FormControl>
           );
         },
       },
@@ -374,19 +382,6 @@ export default function MeshSyncTable(props) {
         text: 'connection(s) selected',
       },
     },
-    // customToolbarSelect: (selected) => (
-    //   <Button
-    //     variant="contained"
-    //     color="primary"
-    //     size="large"
-    //     // @ts-ignore
-    //     // onClick={() => handleDeleteConnections(selected)}
-    //     style={{ background: '#8F1F00', marginRight: '10px' }}
-    //   >
-    //     <DeleteForeverIcon style={iconMedium} />
-    //     Delete
-    //   </Button>
-    // ),
     enableNestedDataAccess: '.',
     onTableChange: (action, tableState) => {
       const sortInfo = tableState.announceText ? tableState.announceText.split(' : ') : [];
@@ -436,37 +431,31 @@ export default function MeshSyncTable(props) {
       const metadata = rowData[columnIndex];
 
       return (
-        <UsesSistent>
-          <TableCell colSpan={colSpan}>
-            <InnerTableContainer>
-              <Table>
-                <TableRow style={{ padding: 0 }}>
-                  <TableCell style={{ padding: '20px 0' }}>
-                    <Grid container spacing={1} style={{ textTransform: 'lowercase' }}>
-                      <ContentContainer item xs={12} md={12}>
-                        <Grid container spacing={1}>
-                          <ContentContainer
-                            item
-                            xs={12}
-                            md={12}
-                            style={{
-                              display: 'flex',
-                              flexWrap: 'wrap',
-                              padding: '0 20px',
-                              gap: 30,
-                            }}
-                          >
-                            <MeshSyncDataFormatter metadata={metadata} />
-                          </ContentContainer>
-                        </Grid>
-                      </ContentContainer>
-                    </Grid>
-                  </TableCell>
-                </TableRow>
-              </Table>
-            </InnerTableContainer>
-          </TableCell>
-        </UsesSistent>
+        <TableCell colSpan={colSpan}>
+          <InnerTableContainer>
+            <Table>
+              <TableRow>
+                <TableCell>
+                  <Grid container style={{ textTransform: 'lowercase' }}>
+                    <ContentContainer
+                      item
+                      xs={12}
+                      md={12}
+                      style={{
+                        display: 'flex',
+                        flexWrap: 'wrap',
+                        padding: '0 20px',
+                        gap: 30,
+                      }}
+                    >
+                      <MeshSyncDataFormatter metadata={metadata} />
+                    </ContentContainer>
+                  </Grid>
+                </TableCell>
+              </TableRow>
+            </Table>
+          </InnerTableContainer>
+        </TableCell>
       );
     },
   };
@@ -524,7 +513,7 @@ export default function MeshSyncTable(props) {
   }, []);
 
   return (
-    <UsesSistent>
+    <>
       <ToolWrapper style={{ marginBottom: '5px', marginTop: '-30px' }}>
         <div
           style={{
@@ -571,6 +560,6 @@ export default function MeshSyncTable(props) {
         openRegistrationModal={openRegistrationModal}
         connectionData={registerConnection}
       />
-    </UsesSistent>
+    </>
   );
 }

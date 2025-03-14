@@ -31,7 +31,7 @@ To install the Meshery Snapshot Helm Plugin, use the following steps:
 
 ### Prerequisites
 
-- `helm` must be [installed]( helm plugin install https://github.com/meshery/helm-kanvas-snapshot) on your system.
+- `helm` must be installed on your system.
 - (Optional) A free [Layer5 Cloud](https://cloud.layer5.io) user account.
 
 **Plugin Installation**
@@ -86,7 +86,7 @@ To generate a snapshot for a Helm chart located at `https://meshery.io/charts/v0
 
 ## About Meshery Extensions
 
-[Meshery Extensions](https://meshery.io/extension) are plugins or add-ons that enhance the functionality of the Meshery platform beyond its core capabilities. Meshery supports different types of extensions ([docs](https://docs.meshery.io/extensions/)):
+[Meshery Extensions](https://meshery.io/extensions) are plugins or add-ons that enhance the functionality of the Meshery platform beyond its core capabilities. Meshery supports different types of extensions ([docs](https://docs.meshery.io/extensions/)):
 
 - [Adapters](https://docs.meshery.io/concepts/architecture/adapters): Adapters allow Meshery to interface with the different cloud native infrastructure.
 - [Load Generators](https://docs.meshery.io/extensibility/load-generators): for performance characterization and benchmarking

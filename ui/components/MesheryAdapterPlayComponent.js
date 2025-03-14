@@ -1001,11 +1001,7 @@ class MesheryAdapterPlayComponent extends React.Component {
         </DialogContent>
         <Divider variant="fullWidth" light />
         <DialogActions>
-          <IconButton
-            aria-label="Apply"
-            color="primary"
-            onClick={this.handleSubmit(cat, 'custom', isDelete)}
-          >
+          <IconButton aria-label="Apply" onClick={this.handleSubmit(cat, 'custom', isDelete)}>
             {/* <FontAwesomeIcon icon={faArrowRight} transform="shrink-4" fixedWidth /> */}
             {!isDelete && <PlayIcon style={iconMedium} />}
             {isDelete && <DeleteIcon style={iconMedium} />}

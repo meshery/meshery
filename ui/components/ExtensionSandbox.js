@@ -316,7 +316,6 @@ const ExtensionSandbox = React.memo(
   }) {
     const [extension, setExtension] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
-
     useEffect(() => {
       if (type === 'navigator' && !isDrawerCollapsed) {
         toggleDrawer({ isDrawerCollapsed: !isDrawerCollapsed });
@@ -326,13 +325,14 @@ const ExtensionSandbox = React.memo(
         try {
           const extensionData = capabilitiesRegistry.extensions[type];
           const processedData = ExtensionPointSchemaValidator(type)(extensionData);
-
           setExtension(processedData);
           setIsLoading(false);
         } catch (error) {
           setExtension([]);
           setIsLoading(false);
         }
+      } else {
+        setIsLoading(true);
       }
       // necessary to cleanup states on each unmount to prevent memory leaks and unwanted clashes between extension points
       return () => {
@@ -379,7 +379,9 @@ const ExtensionSandbox = React.memo(
 
     return <>{renderContent()}</>;
   },
-  (prevProps, nextProps) => prevProps.type === nextProps.type,
+  (prevProps, nextProps) =>
+    prevProps.type === nextProps.type &&
+    prevProps.capabilitiesRegistry === nextProps.capabilitiesRegistry,
 );
 
 const mapDispatchToProps = (dispatch) => ({

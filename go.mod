@@ -2,12 +2,12 @@ module github.com/layer5io/meshery
 
 go 1.23.4
 
-// replace github.com/layer5io/meshkit v0.8.15 => ../meshkit
+// replace github.com/layer5io/meshkit v0.8.19 => ../meshkit
 
 replace github.com/vektah/gqlparser/v2 => github.com/vektah/gqlparser/v2 v2.5.11
 
 require (
-	cuelang.org/go v0.11.2
+	cuelang.org/go v0.12.0
 	fortio.org/fortio v1.66.2
 	github.com/99designs/gqlgen v0.17.45
 	github.com/Masterminds/semver/v3 v3.3.1
@@ -35,8 +35,8 @@ require (
 	github.com/jarcoal/httpmock v1.3.1
 	github.com/jinzhu/copier v0.4.0
 	github.com/layer5io/gowrk2 v0.6.1
-	github.com/layer5io/meshery-operator v0.8.1
-	github.com/layer5io/meshkit v0.8.17
+	github.com/layer5io/meshery-operator v0.8.3
+	github.com/layer5io/meshkit v0.8.19
 	github.com/layer5io/meshsync v0.8.5
 	github.com/layer5io/nighthawk-go v1.0.3
 	github.com/layer5io/service-mesh-performance v0.6.1
@@ -51,15 +51,15 @@ require (
 	github.com/prometheus/common v0.62.0
 	github.com/qri-io/jsonschema v0.2.1
 	github.com/sirupsen/logrus v1.9.3
-	github.com/spf13/cobra v1.8.1
+	github.com/spf13/cobra v1.9.1
 	github.com/spf13/pflag v1.0.6
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.10.0
 	github.com/vektah/gqlparser/v2 v2.5.21
 	github.com/vmihailenco/taskq/v3 v3.2.9
 	golang.org/x/oauth2 v0.25.0
-	golang.org/x/sync v0.10.0
-	golang.org/x/text v0.21.0
+	golang.org/x/sync v0.11.0
+	golang.org/x/text v0.22.0
 	gonum.org/v1/gonum v0.15.1
 	google.golang.org/api v0.218.0
 	google.golang.org/grpc v1.70.0
@@ -308,13 +308,13 @@ require (
 	go.opentelemetry.io/otel/trace v1.34.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.4.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/crypto v0.32.0 // indirect
+	golang.org/x/crypto v0.35.0 // indirect
 	golang.org/x/crypto/x509roots/fallback v0.0.0-20240904212608-c9da6b9a4008 // indirect
 	golang.org/x/exp v0.0.0-20250106191152-7588d65b2ba8 // indirect
 	golang.org/x/mod v0.22.0 // indirect
-	golang.org/x/net v0.34.0 // indirect
-	golang.org/x/sys v0.29.0 // indirect
-	golang.org/x/term v0.28.0 // indirect
+	golang.org/x/net v0.36.0 // indirect
+	golang.org/x/sys v0.30.0 // indirect
+	golang.org/x/term v0.29.0 // indirect
 	golang.org/x/time v0.9.0 // indirect
 	golang.org/x/tools v0.29.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20241209162323-e6fa225c2576 // indirect
