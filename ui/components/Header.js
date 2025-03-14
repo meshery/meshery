@@ -501,7 +501,7 @@ const Header = ({
                   <UserSpan>
                     <User updateExtensionType={updateExtensionType} />
                   </UserSpan>
-                  <UserSpan>
+                  <UserSpan data-testid="header-menu">
                     <HeaderMenu updateExtensionType={updateExtensionType} />
                   </UserSpan>
                 </UserInfoContainer>
