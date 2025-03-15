@@ -2,7 +2,7 @@
 
 # tests config file and authenticatin file set properly
 
-@test "mesehry config.yaml file as been created" {
+@test "meshery config.yaml file as been created" {
     [ -f "$MESHERY_CONFIG_FILE_PATH" ]
 }
 
