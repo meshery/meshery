@@ -19,5 +19,5 @@
 @test "meshery auth.json file meshery provider is Meshery" {
     run jq '."meshery-provider"' "$MESHERY_AUTH_FILE"
     [ "$status" -eq 0 ]
-    [ "$output" = "Meshery" ]       
+    [ "$output" = "\"Meshery\"" ]       
 }

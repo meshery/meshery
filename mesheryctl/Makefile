@@ -80,9 +80,9 @@ e2e-libs:
 .PHONY: e2e
 e2e: make e2e-libs
 	@ cd tests/e2e; \
-	SUPPORT_DESTDIR="./helpers/bats-support" \
-	ASSERT_DESTDIR="./helpers/bats-assert" \
-	DETIK_DESTDIR="./helpers/bats-detik" \
+	SUPPORT_DESTDIR="./helpers/bats-support/load.bash" \
+	ASSERT_DESTDIR="./helpers/bats-assert/load.bash" \
+	DETIK_DESTDIR="./helpers/bats-detik//lib/detik.bash" \
 	MESHERY_CONFIG_FILE_PATH="${HOME}/.meshery/config.yaml" \
 	MESHERY_AUTH_FILE="${HOME}/.meshery/auth.json" \
 	MESHERYCTL_BIN="../../mesheryctl" bats *-*/*.bats
