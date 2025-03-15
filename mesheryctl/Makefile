@@ -3,7 +3,6 @@ GIT_VERSION=$(shell git describe --tags `git rev-list --tags --max-count=1`)
 GIT_COMMITSHA=$(shell git rev-list -1 HEAD)
 RELEASE_CHANNEL="edge"
 LDFLAGS="-w -s -X github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants.version=${GIT_VERSION} -X github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants.commitsha=${GIT_COMMITSHA} -X github.com/layer5io/meshery/mesheryctl/internal/cli/root/constants.releasechannel=${RELEASE_CHANNEL}"
-CURRET_DIR=$(pwd)
 
 make:
 	gofmt -l -s -w .
