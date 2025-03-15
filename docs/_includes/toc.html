@@ -62,6 +62,9 @@ $(document).ready(function() {
           scrollTop: target.offset().top - 115
           }, 1000);
         }
+      // Added .active class to the clicked link
+      $('.md-nav__item').removeClass('active');
+      $(this).closest('.md-nav__item').addClass('active');
       });
     });
 </script>
