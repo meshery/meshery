@@ -5,7 +5,7 @@
     [ "$status" -eq 0 ]
 }
 
-#@test "mesheryctl system check is succeeded" {
+# @test "mesheryctl system check is succeeded" {
 #    run $MESHERYCTL_BIN system check
 #    [ "$status" -eq 0 ]
-#}
+# }
