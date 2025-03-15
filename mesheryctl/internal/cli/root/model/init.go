@@ -1,18 +1,14 @@
 package model
 
 import (
-	"encoding/json"
-	"os"
-
-	"github.com/gofrs/uuid"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 
-	"github.com/meshery/schemas/models/v1beta1/category"
-	"github.com/meshery/schemas/models/v1beta1/connection"
-	"github.com/meshery/schemas/models/v1beta1/model"
+	// TODO must use schemas repo instead of local temp package
+	// "github.com/meshery/schemas"
+	schemas "github.com/layer5io/meshery/mesheryctl/internal/cli/root/model/temp_schemas"
 )
 
 var initModelCmd = &cobra.Command{
@@ -36,55 +32,28 @@ mesheryctl model init --output-format yaml (default is json)
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			utils.Log.Error(err)
-			// TODO use meshkit error format instead during implementation pahse
+			// TODO use meshkit error format instead during implementation phase
 			return err
 		}
 
 		utils.Log.Info("init command will be here soon")
 
-		// ---
-		// Code below is work in progress.
-		//
+		for _, templatePath := range []string{
+			templatePathModelJSON,
+			templatePathDesignJSON,
+			templatePathComponentJSON,
+			templatePathConnectionJSON,
+			templatePathRelathionshipJSON,
+		} {
+			modelJSONContent, err := readTemplate(templatePath)
+			if err != nil {
+				utils.Log.Error(err)
+				// TODO use meshkit error format instead during implementation phase
+				return err
+			}
 
-		model := model.ModelDefinition{
-			Id:          uuid.Nil,
-			Name:        "model name", // TODO
-			DisplayName: "Human-readable name for the model.",
-			Model:       model.Model{Version: versionFlag},
-			Description: "Description of the model.",
-			Status:      model.ModelDefinitionStatus("duplicate|maintenance|enabled|ignored"),
-			CategoryId:  uuid.Nil,
-			Category: category.CategoryDefinition{
-				Id:       uuid.Nil,
-				Name:     "Category of the model.",
-				Metadata: map[string]any{"key": "value"},
-			},
-			SchemaVersion: "http://json-schema.org/draft-07/schema#",
-			SubCategory:   "Sub-category of the model.", //
-			Metadata:      nil,                          // TODO
-			Registrant:    connection.Connection{},      // TODO
-			Version:       versionFlag,
+			utils.Log.Debug(string(modelJSONContent))
 		}
-		jsonData, err := json.MarshalIndent(model, "", "  ")
-		if err != nil {
-			// TODO meshkit error format
-			utils.Log.Error(err)
-			return nil
-		}
-
-		// Write the JSON to a file
-		filename := "model.json"
-		if err := os.WriteFile(filename, jsonData, 0644); err != nil {
-			// TODO meshkit error format
-			utils.Log.Error(err)
-			return nil
-		}
-
-		utils.Log.Debug("Done!")
-
-		//
-		// End of work in progress block.
-		// ---
 
 		return nil
 	},
@@ -94,4 +63,14 @@ func init() {
 	initModelCmd.Flags().StringVarP(&targetDirectory, "path", "p", ".", "(optional) target directory (default: current dir)")
 	initModelCmd.Flags().StringVarP(&versionFlag, "version", "", "0.1.0", "(optional) model version (default: 0.1.0)")
 	initModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "json", "(optional) format to display in [json|yaml]")
+}
+
+const templatePathModelJSON = "json_models/constructs/v1beta1/model.json"
+const templatePathDesignJSON = "json_models/constructs/v1beta1/design.json"
+const templatePathComponentJSON = "json_models/constructs/v1beta1/component.json"
+const templatePathConnectionJSON = "json_models/constructs/v1beta1/connection.json"
+const templatePathRelathionshipJSON = "json_models/constructs/v1alpha3/relationship.json"
+
+func readTemplate(templatePath string) ([]byte, error) {
+	return schemas.Schemas.ReadFile(templatePath)
 }

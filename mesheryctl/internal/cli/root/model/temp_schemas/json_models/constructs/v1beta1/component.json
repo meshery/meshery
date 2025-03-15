@@ -1,0 +1,17 @@
+{
+  "description": "",
+  "format": "JSON",
+  "capabilities": {},
+  "status": "enabled",
+  "metadata": {
+    "genealogy": "",
+    "configurationUISchema": ""
+  },
+  "instanceDetails": {},
+  "configuration": {},
+  "component": {
+    "version": "",
+    "kind": "",
+    "schema": ""
+  }
+}
