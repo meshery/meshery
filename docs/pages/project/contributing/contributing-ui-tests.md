@@ -1,8 +1,8 @@
 ---
 layout: page
-title: Contributing to Meshery's End-to-End Tests
+title: Contributing to Meshery UI End-to-End Tests
 permalink: project/contributing/contributing-ui-tests
-abstract: How to contribute to End-to-End Tests using Playwright.
+abstract: How to contribute to end-to-end testing in Meshery UI using Playwright.
 language: en
 type: project
 category: contributing

@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@layer5/sistent';
 import { MenuItem, TextField, Box, styled } from '@layer5/sistent';
@@ -13,112 +13,95 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   marginBottom: theme.spacing(1),
 }));
 
-class GrafanaMetricsCompare extends Component {
-  constructor(props) {
-    super(props);
-    const { chartCompare } = props;
-    const panels = this.computePanels(chartCompare);
-    this.state = {
-      chartCompare,
-      panels,
-      panel: '',
-      selectedSeries: '',
-      series: [],
-    };
-  }
+const GrafanaMetricsCompare = ({ chartCompare }) => {
+  const [panels, setPanels] = useState({});
+  const [panel, setPanel] = useState('');
+  const [selectedSeries, setSelectedSeries] = useState('');
+  const [series, setSeries] = useState([]);
 
-  computePanels(chartCompare) {
-    const panels = {};
-    if (chartCompare && chartCompare !== null && chartCompare.length > 0) {
-      chartCompare.forEach((cc) => {
-        if (
-          cc.boardConfig &&
-          cc.boardConfig !== null &&
-          cc.boardConfig.panels &&
-          cc.boardConfig.panels !== null
-        ) {
-          cc.boardConfig.panels.forEach((panel) => {
-            // if(panels.indexOf(panel.title) === -1){
-            //   panels.push(panel);
-            // }
-            panels[panel.title] = panel;
-          });
-        }
-      });
-    }
-    return panels;
-  }
-
-  componentDidMount() {
-    const { panels } = this.state;
-    const panel = Object.keys(panels).length > 0 ? Object.keys(panels)[0] : '';
-    let series = [];
-    if (panels[panel] && panels[panel].targets) {
-      series = panels[panel].targets.map((target) => target.expr);
-    }
-    this.setState({ panel, series, selectedSeries: series.length > 0 ? series[0] : '' });
-  }
-
-  handleChange = (name) => (event) => {
-    const { panels } = this.state;
-    if (name === 'panel') {
-      let series = [];
-      const panel = event.target.value;
-      if (panels[panel] && panels[panel].targets) {
-        series = panels[panel].targets.map((target) => target.expr);
+  useEffect(() => {
+    const computePanels = (chartCompare) => {
+      const panels = {};
+      if (chartCompare && chartCompare.length > 0) {
+        chartCompare.forEach((cc) => {
+          if (cc.boardConfig && cc.boardConfig.panels) {
+            cc.boardConfig.panels.forEach((panel) => {
+              panels[panel.title] = panel;
+            });
+          }
+        });
       }
-      this.setState({ panel, series, selectedSeries: series.length > 0 ? series[0] : '' });
+      return panels;
+    };
+
+    const computedPanels = computePanels(chartCompare);
+    setPanels(computedPanels);
+
+    const initialPanel =
+      Object.keys(computedPanels).length > 0 ? Object.keys(computedPanels)[0] : '';
+    let initialSeries = [];
+    if (computedPanels[initialPanel] && computedPanels[initialPanel].targets) {
+      initialSeries = computedPanels[initialPanel].targets.map((target) => target.expr);
+    }
+    setPanel(initialPanel);
+    setSeries(initialSeries);
+    setSelectedSeries(initialSeries.length > 0 ? initialSeries[0] : '');
+  }, [chartCompare]);
+
+  const handleChange = (name) => (event) => {
+    if (name === 'panel') {
+      const selectedPanel = event.target.value;
+      let newSeries = [];
+      if (panels[selectedPanel] && panels[selectedPanel].targets) {
+        newSeries = panels[selectedPanel].targets.map((target) => target.expr);
+      }
+      setPanel(selectedPanel);
+      setSeries(newSeries);
+      setSelectedSeries(newSeries.length > 0 ? newSeries[0] : '');
     } else if (name === 'series') {
-      this.setState({ selectedSeries: event.target.value });
+      setSelectedSeries(event.target.value);
     }
   };
 
-  render() {
-    const { panels, panel, selectedSeries, series } = this.state;
-
-    return (
-      <NoSsr>
-        <Root>
-          <StyledTextField
-            select
-            fullWidth
-            label="Panel"
-            value={panel}
-            onChange={this.handleChange('panel')}
-            margin="dense"
-            variant="outlined"
-          >
-            {panels &&
-              Object.keys(panels).map((p) => (
-                <MenuItem key={p} value={p}>
-                  {p}
-                </MenuItem>
-              ))}
-          </StyledTextField>
-          <StyledTextField
-            select
-            fullWidth
-            label="Series"
-            value={selectedSeries}
-            onChange={this.handleChange('series')}
-            margin="dense"
-            variant="outlined"
-          >
-            {series &&
-              series.map((s) => (
-                <MenuItem key={s} value={s}>
-                  {s}
-                </MenuItem>
-              ))}
-          </StyledTextField>
-        </Root>
-      </NoSsr>
-    );
-  }
-}
+  return (
+    <NoSsr>
+      <Root>
+        <StyledTextField
+          select
+          fullWidth
+          label="Panel"
+          value={panel}
+          onChange={handleChange('panel')}
+          margin="dense"
+          variant="outlined"
+        >
+          {Object.keys(panels).map((p) => (
+            <MenuItem key={p} value={p}>
+              {p}
+            </MenuItem>
+          ))}
+        </StyledTextField>
+        <StyledTextField
+          select
+          fullWidth
+          label="Series"
+          value={selectedSeries}
+          onChange={handleChange('series')}
+          margin="dense"
+          variant="outlined"
+        >
+          {series.map((s) => (
+            <MenuItem key={s} value={s}>
+              {s}
+            </MenuItem>
+          ))}
+        </StyledTextField>
+      </Root>
+    </NoSsr>
+  );
+};
 
 GrafanaMetricsCompare.propTypes = {
-  classes: PropTypes.object.isRequired,
   chartCompare: PropTypes.array.isRequired,
 };
 

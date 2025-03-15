@@ -295,7 +295,7 @@ func (l *RemoteProvider) executePrefSync(tokenString string, sess *Preference) {
 		return
 	}
 	if resp.StatusCode != http.StatusCreated {
-		err = ErrPost(fmt.Errorf("status code: %d", resp.StatusCode), "user preference data", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("status code: %d. ", resp.StatusCode), "user preference data", resp.StatusCode)
 		l.Log.Error(err)
 	}
 }
@@ -1686,10 +1686,10 @@ func (l *RemoteProvider) SaveMesheryPattern(tokenString string, pattern *Meshery
 
 	switch resp.StatusCode {
 	case http.StatusRequestEntityTooLarge:
-		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Design file is too large to upload. Reduce the file size and try again", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Design file is too large to upload. Reduce the file size and try again. See https://docs.layer5.io/kanvas/advanced/performance/ for performance limitations and performance tuning tips.", pattern.Name, l.ProviderName), "", resp.StatusCode)
 		return bdr, err
 	case http.StatusUnauthorized:
-		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Unauthorized access. Check your credentials.", pattern.Name, l.ProviderName), "", resp.StatusCode)
+		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Unauthorized access. Check your permissions.", pattern.Name, l.ProviderName), "", resp.StatusCode)
 		return bdr, err
 	case http.StatusBadRequest:
 		err = ErrPost(fmt.Errorf("failed to send design %s to remote provider %s: Bad request. The design might be corrupt.", pattern.Name, l.ProviderName), "", resp.StatusCode)
@@ -3827,10 +3827,10 @@ func (l *RemoteProvider) ExtensionProxy(req *http.Request) (*ExtensionProxyRespo
 	// check for all success status codes
 	statusOK := response.StatusCode >= 200 && response.StatusCode < 300
 	if statusOK {
-		l.Log.Info("response retrieved from remote provider")
+		l.Log.Info("response retrieved from remote provider.")
 		return response, nil
 	}
-	return nil, ErrFetch(fmt.Errorf("failed to request to remote provider"), fmt.Sprint(bdr), resp.StatusCode)
+	return nil, ErrFetch(fmt.Errorf("failed to communicate with remote provider. "), fmt.Sprint(bdr), resp.StatusCode)
 }
 
 func (l *RemoteProvider) SaveConnection(conn *connections.ConnectionPayload, token string, skipTokenCheck bool) (*connections.Connection, error) {

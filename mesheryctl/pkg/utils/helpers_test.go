@@ -1,16 +1,19 @@
 package utils
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"path/filepath"
 	"reflect"
+	"strings"
 	"testing"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/sirupsen/logrus/hooks/test"
+	"k8s.io/client-go/tools/clientcmd/api"
 )
 
 type mockCloser struct {
@@ -536,5 +539,91 @@ func TestSetOverrideValues(t *testing.T) {
 		if !eq {
 			t.Errorf("SetOverrideValues %s got = %v want = %v", tt.name, got, tt.want)
 		}
+	}
+}
+
+// MockClient implements the client interface for testing
+type MockClient struct {
+	GetKubeConfigFunc func() (*api.Config, error)
+}
+
+// GetKubeConfig implements the method from meshkitkube.Client interface
+func (m *MockClient) GetKubeConfig() (*api.Config, error) {
+	if m.GetKubeConfigFunc != nil {
+		return m.GetKubeConfigFunc()
+	}
+	return nil, fmt.Errorf("GetKubeConfig not implemented")
+}
+
+func getCurrentK8sContextForTest(client *MockClient) (string, error) {
+	if client == nil {
+		return "", fmt.Errorf("kubernetes client is nil")
+	}
+	config, err := client.GetKubeConfig()
+	if err != nil {
+		return "", err
+	}
+	return config.CurrentContext, nil
+}
+
+func TestGetCurrentK8sContext(t *testing.T) {
+	tests := []struct {
+		name          string
+		client        *MockClient
+		wantContext   string
+		wantErrString string
+	}{
+		{
+			name:          "nil client",
+			client:        nil,
+			wantContext:   "",
+			wantErrString: "kubernetes client is nil",
+		},
+		{
+			name: "client returns error",
+			client: &MockClient{
+				GetKubeConfigFunc: func() (*api.Config, error) {
+					return nil, fmt.Errorf("test error")
+				},
+			},
+			wantContext:   "",
+			wantErrString: "test error",
+		},
+		{
+			name: "successful context retrieval",
+			client: &MockClient{
+				GetKubeConfigFunc: func() (*api.Config, error) {
+					return &api.Config{
+						CurrentContext: "minikube",
+					}, nil
+				},
+			},
+			wantContext:   "minikube",
+			wantErrString: "",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			context, err := getCurrentK8sContextForTest(tt.client)
+
+			// Check context
+			if context != tt.wantContext {
+				t.Errorf("getCurrentK8sContextForTest() context = %v, want %v", context, tt.wantContext)
+			}
+
+			// Check error
+			if tt.wantErrString == "" {
+				if err != nil {
+					t.Errorf("getCurrentK8sContextForTest() error = %v, want nil", err)
+				}
+			} else {
+				if err == nil {
+					t.Errorf("getCurrentK8sContextForTest() error = nil, want error containing %v", tt.wantErrString)
+				} else if !strings.Contains(err.Error(), tt.wantErrString) {
+					t.Errorf("getCurrentK8sContextForTest() error = %v, want error containing %v", err.Error(), tt.wantErrString)
+				}
+			}
+		})
 	}
 }

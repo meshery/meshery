@@ -2,7 +2,7 @@
   "id": "b2b05f54-fd48-44f5-bf2d-308761874d59",
   "name": "[Tutorial] Exploring Kubernetes Pods With Meshery",
   "schemaVersion": "designs.meshery.io/v1beta1",
-  "version": "0.0.171",
+  "version": "0.0.172",
   "metadata": {
     "resolvedAliases": {
       "a28d1ac0-da41-4e3f-96b9-5eb73e0c667d": {

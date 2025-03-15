@@ -58,3 +58,20 @@ export const SEVERITY_STYLE = {
     darkColor: NOTIFICATIONCOLORS.SUCCESS,
   },
 };
+
+export const eventDetailFormatterKey = ({ action, category }) => `${action}-${category}`;
+
+export const EVENT_TYPE = {
+  DEPLOY_DESIGN: {
+    category: 'pattern',
+    action: 'deploy',
+  },
+  UNDEPLOY_DESIGN: {
+    category: 'pattern',
+    action: 'undeploy',
+  },
+  EVALUATE_DESIGN: {
+    category: 'relationship',
+    action: 'evaluation',
+  },
+};

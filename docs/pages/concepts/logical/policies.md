@@ -37,4 +37,8 @@ In the event of a conflict or tie, Meshery relies on Open Policy Agent's [reconc
 
 {% include alert.html type="warning" title="Conflict Resolution" content="It may happen that certain eval decisions contain results such that two different components create a conflicting relationship with same component. While this is semantically correct, the visual representation of the relationship in such cases may be undesirable, and you may see relationships and components being redrawn depending upon how the client / Meshery UI visualizes the relationships." %}
 
+For an in-depth review, watch this meeting recording.
+
+<iframe width="560" height="315" src="https://www.youtube.com/embed/XrLpBVsm6nk?si=j-igwtd_gQ0N61vV&amp;start=453" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
 {% include alert.html type="dark" title="Future Feature" content="Policy evaluation in WASM runtime is on roadmap for Meshery v0.8.3." %}

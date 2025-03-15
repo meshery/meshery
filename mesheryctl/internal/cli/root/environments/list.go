@@ -36,7 +36,7 @@ var listEnvironmentCmd = &cobra.Command{
 	Long:  `List name of all registered environments`,
 	Example: `
 // List all registered environment
-mesheryctl environment list --orgID [orgId]
+mesheryctl environment list --orgID [orgID]
 
 // Documentation for environment can be found at:
 https://docs.meshery.io/concepts/logical/environments
@@ -45,13 +45,13 @@ https://docs.meshery.io/concepts/logical/environments
 
 	Args: func(cmd *cobra.Command, args []string) error {
 		// Check if all flag is set
-		orgIdFlag, _ := cmd.Flags().GetString("orgId")
+		orgIDFlag, _ := cmd.Flags().GetString("orgID")
 
-		if orgIdFlag == "" {
+		if orgIDFlag == "" {
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
-			return utils.ErrInvalidArgument(errors.New("Please provide a --orgId flag"))
+			return utils.ErrInvalidArgument(errors.New("Please provide a --orgID flag"))
 		}
 		return nil
 	},
