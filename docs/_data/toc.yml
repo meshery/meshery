@@ -254,6 +254,9 @@
               url: project/contributing/contributing-cli-tests  
         - title: Docs
           url: project/contributing/contributing-docs
+          grandchildren:
+            - title: "Docs Structure"
+              url: project/contributing/contributing-docs-structure
         - title: Server ↆ
           url: project/contributing/contributing-server
           grandchildren:
