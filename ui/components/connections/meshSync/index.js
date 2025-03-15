@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Tooltip, Grid, FormControl, MenuItem, CustomTooltip, Table } from '@layer5/sistent';
-import { formatDate } from '../../DataFormatter';
+import { Tooltip, Grid, FormControl, MenuItem, Table, FormattedTime } from '@layer5/sistent';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
 import {
@@ -255,12 +254,7 @@ export default function MeshSyncTable(props) {
           return <DefaultTableCell columnData={column} />;
         },
         customBodyRender: function CustomBody(value) {
-          const renderValue = formatDate(value);
-          return (
-            <CustomTooltip title={renderValue} placement="top" arrow interactive>
-              {renderValue}
-            </CustomTooltip>
-          );
+          return <FormattedTime date={value} />;
         },
       },
     },
