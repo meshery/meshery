@@ -14,7 +14,6 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
 // MapToStruct converts a map[string]interface{} to a specified struct type.
@@ -156,6 +155,13 @@ func filterByKinds(query *gorm.DB, kinds []string) *gorm.DB {
 	return query
 }
 
+func filterByModels(query *gorm.DB, models []string) *gorm.DB {
+	if len(models) > 0 {
+		return query.Where("kubernetes_resources.model IN (?)", models)
+	}
+	return query
+}
+
 func filterByClusters(query *gorm.DB, clusterIDs []string) *gorm.DB {
 	if len(clusterIDs) > 0 {
 		return query.Where("kubernetes_resources.cluster_id IN (?)", clusterIDs)
@@ -229,6 +235,8 @@ func selectDistinctKeyValues(db *gorm.DB, kind string) *gorm.DB {
 //
 // ```?spec={spec}``` spec is a boolean value. If true then spec is returned
 //
+// ```?model={[model]}``` model is an array of string values to filter the resources
+//
 // ```?status={status}``` status is a boolean value. If true then status is returned
 //
 // ```?clusterId={[clusterId]}``` clusterId is array of string values. Required.
@@ -240,7 +248,7 @@ func selectDistinctKeyValues(db *gorm.DB, kind string) *gorm.DB {
 func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
 	rw.Header().Set("Content-Type", "application/json")
 	enc := json.NewEncoder(rw)
-	page, offset, limit, search, order, sort, _ := getPaginationParams(r)
+	page, offset, limit, search, order, _, _ := getPaginationParams(r)
 	var resources []model.KubernetesResource
 	var totalCount int64
 
@@ -256,6 +264,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	labels := r.URL.Query()["label"]         // label is an array of strings
 	// kind is an array of strings
 	kind := r.URL.Query()["kind"]
+	modelNames := r.URL.Query()["model"]
 
 	filter := struct {
 		ClusterIds []string `json:"clusterIds"`
@@ -281,6 +290,7 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 	query = filterByNamespaces(query, namespaces)
 	query = searchResources(query, search)
 	query = filterByKinds(query, kind)
+	query = filterByModels(query, modelNames)
 	query = filterByPatternIds(query, patternIds)
 	query = filterByKey(query, model.KindLabel, labels)
 
@@ -313,17 +323,8 @@ func (h *Handler) GetMeshSyncResources(rw http.ResponseWriter, r *http.Request, 
 		query = query.Offset(offset)
 	}
 
-	order = models.SanitizeOrderInput(order, []string{"created_at", "updated_at", "name"})
-	if order != "" {
-		if sort == "desc" {
-			query = query.Order(clause.OrderByColumn{Column: clause.Column{Name: order}, Desc: true})
-		} else {
-			query = query.Order(order)
-		}
-	}
-
-	// prrint the query
-	h.log.Info("Resources query", query.Statement.SQL.String())
+	order = models.SanitizeOrderInput(order, []string{"creation_timestamp", "name", "kind", "model", "api_version", "namespace"})
+	query.Order(order)
 
 	err := query.Find(&resources).Error
 	if err != nil {
