@@ -9,7 +9,7 @@ import (
 const (
 	ErrExportModelCode                  = "mesheryctl-1127"
 	ErrTemplateFileNotPresentCode       = "mesheryctl-1131"
-	ErrModelUnsupportedOutputFormatCode = "replace-me"
+	ErrModelUnsupportedOutputFormatCode = "mesheryctl-1146"
 )
 
 func ErrExportModel(err error, name string) error {
