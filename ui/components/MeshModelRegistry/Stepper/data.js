@@ -70,7 +70,6 @@ export const modelShapes = [
   'round-rectangle',
   'bottom-round-rectangle',
   'cut-rectangle',
-  'shape',
   'circle',
   'diamond',
   'round-rectang',

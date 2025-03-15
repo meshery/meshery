@@ -250,8 +250,13 @@
           grandchildren:
             - title: "Design Principles"
               url: project/contributing/contributing-cli-guide
+            - title: "End-to-End Testing"
+              url: project/contributing/contributing-cli-tests  
         - title: Docs
           url: project/contributing/contributing-docs
+          grandchildren:
+            - title: "Docs Structure"
+              url: project/contributing/contributing-docs-structure
         - title: Server ↆ
           url: project/contributing/contributing-server
           grandchildren:
