@@ -12,7 +12,6 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/component"
 
 	meshkube "github.com/layer5io/meshkit/utils/kubernetes"
-
 	"gopkg.in/yaml.v2"
 	"k8s.io/client-go/rest"
 )
@@ -92,10 +91,9 @@ func kindToResource(kind string) string {
 }
 
 func formatDryRunResponse(resp []byte, err error) (status map[string]interface{}, success bool, meshkiterr error) {
-
 	e := json.Unmarshal(resp, &status)
 	if e != nil {
-		meshkiterr = models.ErrMarshal(err, fmt.Sprintf("cannot serialize Status object from the server: %s", e.Error()))
+		meshkiterr = models.ErrMarshal(e, fmt.Sprintf("Cannot serialize Status object from the server: %s", e.Error()))
 		return
 	}
 
