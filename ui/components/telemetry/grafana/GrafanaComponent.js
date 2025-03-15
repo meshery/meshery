@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import PropTypes from 'prop-types';
 import { NoSsr } from '@layer5/sistent';
 import { Typography, Box, styled, useTheme } from '@layer5/sistent';
@@ -25,7 +25,7 @@ import {
   useLazyGetGrafanaBoardsQuery,
   useUpdateGrafanaBoardsMutation,
 } from '@/rtk-query/telemetry';
-import useDebouncedCallback from '@/utils/hooks/useDebounce';
+import _ from 'lodash';
 
 const StyledChartTitle = styled(Typography)(({ theme }) => ({
   marginLeft: theme.spacing(3),
@@ -95,40 +95,43 @@ const GrafanaComponent = (props) => {
   };
 
   // Debounced function to fetch boards
-  const debouncedFetchBoards = useDebouncedCallback(async () => {
-    const {
-      grafanaURL,
-      grafanaAPIKey,
-      grafanaBoardSearch,
-      selectedBoardsConfigs,
-      connectionID,
-      connectionName,
-    } = state;
-    if (!grafanaURL) return;
-    props.updateProgress({ showProgress: true });
+  const debouncedFetchBoards = useCallback(
+    _.debounce(async () => {
+      const {
+        grafanaURL,
+        grafanaAPIKey,
+        grafanaBoardSearch,
+        selectedBoardsConfigs,
+        connectionID,
+        connectionName,
+      } = state;
+      if (!grafanaURL) return;
+      props.updateProgress({ showProgress: true });
 
-    try {
-      const result = await triggerGetGrafanaBoards({ connectionID, grafanaBoardSearch }).unwrap();
-      props.updateProgress({ showProgress: false });
-      if (result !== undefined) {
-        setState((prev) => ({ ...prev, grafanaBoards: result }));
-        props.updateGrafanaConfig({
-          grafana: {
-            grafanaURL,
-            grafanaAPIKey,
-            grafanaBoardSearch,
-            grafanaBoards: result,
-            selectedBoardsConfigs,
-            connectionName,
-            connectionID,
-          },
-        });
+      try {
+        const result = await triggerGetGrafanaBoards({ connectionID, grafanaBoardSearch }).unwrap();
+        props.updateProgress({ showProgress: false });
+        if (result !== undefined) {
+          setState((prev) => ({ ...prev, grafanaBoards: result }));
+          props.updateGrafanaConfig({
+            grafana: {
+              grafanaURL,
+              grafanaAPIKey,
+              grafanaBoardSearch,
+              grafanaBoards: result,
+              selectedBoardsConfigs,
+              connectionName,
+              connectionID,
+            },
+          });
+        }
+      } catch (error) {
+        props.updateProgress({ showProgress: false });
+        console.error('Error fetching Grafana boards:', error);
       }
-    } catch (error) {
-      props.updateProgress({ showProgress: false });
-      console.error('Error fetching Grafana boards:', error);
-    }
-  }, 300);
+    }, 300),
+    [],
+  );
 
   // Submits the Grafana configuration and then fetches the boards
   const submitGrafanaConfigure = async () => {

@@ -50,8 +50,8 @@ const telemetryApi = api.injectEndpoints({
 });
 
 export const {
-    useLazyGetGrafanaBoardsQuery,
   useGetGrafanaBoardsQuery,
+  useLazyGetGrafanaBoardsQuery,
   useGetGrafanaConfigQuery,
   useUpdateGrafanaBoardsMutation,
   useConfigureGrafanaMutation,
