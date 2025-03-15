@@ -6,7 +6,7 @@ import { SEVERITY_STYLE } from '../NotificationCenter/constants';
 import { ComponentIcon } from './common';
 import { Button } from '@layer5/sistent';
 import { ExternalLinkIcon, componentIcon } from '@layer5/sistent';
-import { ErrorMetadataFormatter } from '../NotificationCenter/formatters/error'; 
+import { ErrorMetadataFormatter } from '../NotificationCenter/formatters/error';
 
 import { openViewScopedToDesignInOperator, useIsOperatorEnabled } from '@/utils/utils';
 import { useRouter } from 'next/router';
@@ -67,7 +67,6 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
   );
 
   const is_operator_enabled = useIsOperatorEnabled();
-
 
   return (
     <Box>
