@@ -161,18 +161,17 @@ make cli-tests _not yet implemented_
 ```
 -->
 
-Make sure you are in `meshery/mesheryctl/tests/e2e` directory
+Make sure you are in `meshery/mesheryctl` directory
 
 **Run all tests** 
 
-It runs the setup script, executes tests, and finishes with a teardown script.
-
 ```bash
-bats run_tests.bash
+make e2e
 ```
 
-
 **Run a specific test file**
+
+Switch to the directory containing the test file and execute:
 
 ```bash
 bats <file_name>.bats
