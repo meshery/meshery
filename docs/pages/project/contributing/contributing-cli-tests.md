@@ -10,8 +10,6 @@ list: include
 display-title: false
 ---
 
-# Contributing to Meshery CLI End-to-End Tests
-
 Meshery CLI is the command line interface for Meshery. Meshery CLI, otherwise known as `mesheryctl`, is a client of Meshery Server's [REST API]({{site.baseurl}}/extensibility/api). It provides a way to interact with Meshery and perform various operations such as installing, configuring, and managing cloud native infrastructure.
 
 This document is intended to help you contribute to the end-to-end tests for `mesheryctl`, the Meshery CLI. It is designed to be a guide for developers who are new to the project and want to contribute to the testing of `mesheryctl`.
@@ -38,6 +36,8 @@ Before diving into `mesheryctl`'s testing environment, certain prerequisites mus
 - A working installation of the BATS testing framework.
   - `bash` as shell terminal.
 - [Optional] A working installation of a Kubernetes cluster (Minikube, Kind, etc.) for testing Kubernetes-related functionality.
+- `jq` and `yq`, tools for processing JSON and YAML inputs, respectively.
+
 
 ### Authentication
 
@@ -155,10 +155,32 @@ For consistency, we will keep the prefix *00-* for the command under test in the
     - https://github.com/bats-core/bats-support.git
     3. back to tests/e2e
     5. run bats *-*/*.bats
--->
+
 ```bash
 make cli-tests _not yet implemented_
 ```
+-->
+
+Make sure you are in `meshery/mesheryctl/tests/e2e` directory
+
+**Run all tests** 
+
+It runs the setup script, executes tests, and finishes with a teardown script.
+
+```bash
+bats run_tests.bash
+```
+
+
+**Run a specific test file**
+
+```bash
+bats <file_name>.bats
+```
+
+### Find Tests here
+Refer to [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?usp=sharing) for test scenarios.
+
 
 {% include alert.html
     type="danger"
