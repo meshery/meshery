@@ -219,7 +219,7 @@ const MeshModelComponent_ = ({
     const { uploadType, url, file } = data;
     let requestBody = null;
 
-    const fileElement = document.getElementById('Import Model_file');
+    const fileElement = document.getElementById('root_file');
 
     switch (uploadType) {
       case 'File Import': {
