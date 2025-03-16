@@ -66,7 +66,7 @@ var (
 	targetDirectory string
 )
 
-// represents the mesheryctl model view [ model-name ] subcommand.
+// represents the mesheryctl model view [model-name] subcommand.
 
 // represents the mesheryctl model search [query-text] subcommand.
 
@@ -86,10 +86,10 @@ mesheryctl model init [ model-name ]
 mesheryctl model list
 
 // To view a specific model
-mesheryctl model view [ model-name ]
+mesheryctl model view [model-name]
 
 // To search for a specific model
-mesheryctl model search [ model-name ]
+mesheryctl model search [model-name]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 && !countFlag {
