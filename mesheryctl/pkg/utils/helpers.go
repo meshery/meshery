@@ -34,6 +34,8 @@ import (
 	"gopkg.in/yaml.v2"
 
 	log "github.com/sirupsen/logrus"
+
+	meshkitkube "github.com/layer5io/meshkit/utils/kubernetes"
 )
 
 const (
@@ -1311,4 +1313,16 @@ func IsValidUrl(path string) bool {
 		return false
 	}
 	return u.Scheme != "" && u.Host != ""
+}
+
+// get current k8s context
+func GetCurrentK8sContext(client *meshkitkube.Client) (string, error) {
+	if client == nil {
+		return "", fmt.Errorf("kubernetes client is nil")
+	}
+	config, err := client.GetKubeConfig()
+	if err != nil {
+		return "", err
+	}
+	return config.CurrentContext, nil
 }

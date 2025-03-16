@@ -66,7 +66,7 @@ func TestDesignView(t *testing.T) {
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
 			b := utils.SetupMeshkitLoggerTesting(t, false)
-			DesignCmd.SetOutput(b)
+			DesignCmd.SetOut(b)
 			DesignCmd.SetArgs(tt.Args)
 			err := DesignCmd.Execute()
 			if err != nil {

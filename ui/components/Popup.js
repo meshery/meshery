@@ -71,13 +71,9 @@ export function MesheryExtensionEarlyAccessCardPopup({ capabilitiesRegistry }) {
   const [isOpen, setIsOpen] = useState(false);
   const cookies = new Cookies('registered');
 
-  const closeCallback = () => {
-    cookies.set('registered', 'true', { path: '/' });
-  };
-
   useEffect(() => {
-    // cookies return string and not boolean thus truthy,falsy doesnt work as intended
-    const isAlreadyRegistered = cookies.get('registered') && cookies.get('registered') === 'true';
+    // Cookies returns boolean
+    const isAlreadyRegistered = cookies.get('registered') === true ? true : false;
 
     if (isAlreadyRegistered) {
       return;
@@ -95,7 +91,6 @@ export function MesheryExtensionEarlyAccessCardPopup({ capabilitiesRegistry }) {
       <MesheryExtensionEarlyAccessCard
         closeForm={() => {
           setIsOpen(false);
-          closeCallback();
         }}
         capabilitiesRegistry={capabilitiesRegistry}
       />
@@ -117,6 +112,8 @@ export function MesheryExtensionEarlyAccessCard({
   const [title, setTitle] = useState(signupHeader);
   const { push } = useRouter();
   const theme = useTheme();
+  const cookies = new Cookies('registered');
+
   const popupImageSrc =
     theme.palette.mode === 'dark' ? '/static/img/aws.svg' : '/static/img/aws-light.svg';
 
@@ -126,6 +123,12 @@ export function MesheryExtensionEarlyAccessCard({
     } else {
       push(mesheryExtensionRoute);
     }
+    const oneDayFromNow = new Date();
+    oneDayFromNow.setDate(oneDayFromNow.getDate() + 1);
+
+    cookies.set('registered', 'true', { path: '/' });
+
+    closeForm();
     e.stopPropagation();
   };
 
