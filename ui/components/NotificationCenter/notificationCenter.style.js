@@ -174,7 +174,7 @@ export const Expanded = styled(Grid)(({ theme }) => ({
     padding: '0.5rem',
   },
 }));
-export const StyledAvatarStack = styled(Box)(({ theme }) => ({
+export const StyledAvatarStack = styled(Box)(() => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',

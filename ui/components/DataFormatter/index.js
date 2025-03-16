@@ -179,10 +179,6 @@ export const TextWithLinks = ({ text, ...typographyProps }) => {
 };
 
 export const KeyValue = ({ Key, Value }) => {
-  const formatDate = (value) => {
-    const date = new Date(value);
-    return !isNaN(date) ? date.toLocaleString() : value;
-  };
   const theme = useTheme();
   return (
     <div
@@ -199,7 +195,6 @@ export const KeyValue = ({ Key, Value }) => {
         style={{
           textTransform: 'capitalize',
           overflow: 'hidden',
-          whiteSpace: 'nowrap',
           color: theme.palette.text.default,
         }}
       />
@@ -208,7 +203,7 @@ export const KeyValue = ({ Key, Value }) => {
         Value
       ) : (
         <SectionBody
-          body={formatDate(Value)}
+          body={Value}
           style={{
             color: theme.palette.text.tertiary,
             textOverflow: 'ellipsis',
@@ -293,6 +288,11 @@ const DynamicFormatter = ({ data, uiSchema, isLevel = true }) => {
   const { propertyFormatters } = useContext(FormatterContext);
   const level = useContext(LevelContext);
 
+  const formatDate = (value) => {
+    const date = new Date(value);
+    return !isNaN(date) ? date.toLocaleString() : value;
+  };
+
   if (_.isString(data)) {
     return <SectionBody body={data}></SectionBody>;
   }
@@ -329,7 +329,7 @@ const DynamicFormatter = ({ data, uiSchema, isLevel = true }) => {
               marginRight: '1rem',
             }}
           >
-            <KeyValue key={title} Key={title} Value={data} />
+            <KeyValue key={title} Key={title} Value={formatDate(data)} />
           </Grid>
         );
       }
