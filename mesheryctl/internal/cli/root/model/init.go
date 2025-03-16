@@ -23,10 +23,10 @@ mesheryctl model init [ model-name ]
 mesheryctl model init [ model-name ] --version [ version ] (default is 0.1.0)
 
 // generates a folder structure under specified path
-mesheryctl model init [ model-name ] --path [ path ] (default is current folder)
+mesheryctl model init [ model-name ] --path [ path-to-location ] (default is current folder)
 
 // generate a folder structure in json format
-mesheryctl model init [ model-name ] --output-format [output-format] (json|yaml|csv, default is json)
+mesheryctl model init [ model-name ] --output-format [ json|yaml|csv ] (default is json)
     `,
 	Args: cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
