@@ -52,8 +52,8 @@ import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { FacebookShareButton, LinkedinShareButton, TwitterShareButton } from 'react-share';
 import ReadIcon from '../../assets/icons/ReadIcon';
 import UnreadIcon from '../../assets/icons/UnreadIcon';
-import { FormattedMetadata, TitleLink } from './metadata';
-
+import { FormattedMetadata } from './metadata';
+import { TitleLink } from './formatters/common';
 import { truncate } from 'lodash';
 
 export const eventPreventDefault = (e) => {
@@ -300,7 +300,7 @@ export const Notification = ({ event_id }) => {
     <Expanded
       container
       style={{
-        backgroundColor: alpha(eventStyle?.color||SEVERITY_STYLE['informational'].color, 0.1),
+        backgroundColor: alpha(eventStyle?.color || SEVERITY_STYLE['informational'].color, 0.1),
         color: theme.palette.text.default,
         borderTop: `1px solid ${notificationColor}`,
       }}
