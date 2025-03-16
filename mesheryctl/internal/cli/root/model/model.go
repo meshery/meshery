@@ -35,35 +35,39 @@ import (
 var (
 	// Maximum number of rows to be displayed in a page
 	maxRowsPerPage = 25
-
 	// Color for the whiteboard printer
 	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
-
+	// Available model subcommads
 	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, importModelCmd, exportModelCmd, generateModelCmd}
 )
-
-// represents the mesheryctl model view [model-name] subcommand.
-
-// represents the mesheryctl model search [query-text] subcommand.
 
 // ModelCmd represents the mesheryctl model command
 var ModelCmd = &cobra.Command{
 	Use:   "model",
-	Short: "View list of models and detail of models",
-	Long:  "View list of models and detailed information of a specific model",
+	Short: "Manage models",
+	Long:  "Expport, generate, import, list, search and view model(s) and detailed informations",
 	Example: `
-// To view total of available models
+// Display number of available models in Meshery
 mesheryctl model --count
 
-// To view list of models
+// Export registred models
+mesheeryctl model export [model-name]
+
+// Generate model(s)
+mesheeryctl model export [model-name]
+
+// Import model(s)
+mesheryctl model import -f [Uri]
+
+// List available model(s)
 mesheryctl model list
 
-// To view a specific model
-mesheryctl model view [model-name]
-
-// To search for a specific model
+// Search for a specific model
 mesheryctl model search [model-name]
-	`,
+
+// View a specific model
+mesheryctl model view [model-name]
+`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		count, _ := cmd.Flags().GetBool("count")
 		if len(args) == 0 && !count {

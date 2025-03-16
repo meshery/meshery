@@ -14,16 +14,16 @@ import (
 
 var listModelCmd = &cobra.Command{
 	Use:   "list",
-	Short: "list registered models",
-	Long:  "list name of all registered models",
+	Short: "List registered models",
+	Long:  "List all registered models by pagingation (25 models per page)",
 	Example: `
-// View list of models
+// List of models
 mesheryctl model list
 
-// View list of models with specified page number (25 models per page)
-mesheryctl model list --page 2
+// List of models for a specified page
+mesheryctl model list --page [ page-number ]
 
-// View number of available models in Meshery
+// Display number of available models in Meshery
 mesheryctl model list --count
     `,
 	RunE: func(cmd *cobra.Command, args []string) error {

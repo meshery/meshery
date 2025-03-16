@@ -19,10 +19,10 @@ import (
 
 var viewModelCmd = &cobra.Command{
 	Use:   "view",
-	Short: "view model",
-	Long:  "view a model queried by its name",
+	Short: "View model",
+	Long:  "View a model queried by its name",
 	Example: `
-// View current provider
+// View a specific model from current provider
 mesheryctl model view [model-name]
 `,
 	PreRunE: func(cmd *cobra.Command, args []string) error {

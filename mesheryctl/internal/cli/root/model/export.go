@@ -24,22 +24,26 @@ type outputDetail struct {
 // mesheryctl model export <designname>
 var exportModelCmd = &cobra.Command{
 	Use:   "export",
-	Short: "export registered models",
-	Long:  "export the registered model to the specified output type",
+	Short: "Export registered models",
+	Long:  "Export the registered model to the specified output type",
 	Example: `
 // Export a model by name 
-mesheryctl model export [model-name] -o [oci|tar]  (default is oci)
+mesheryctl model export [ model-name ] -o [ oci|tar ]  (default is oci)
 
-mesheryctl model export [model-name] -t json (default is yaml)
+// Export a model by name in JSON type
+mesheryctl model export [ model-name ] -t [ yaml|json ] (default is YAML)
 
-mesheryctl model export [model-name] -l /home/meshery/
+// Export a model by name in YAML type in a specific location
+mesheryctl model export [ model-name ] -l [ ppath-to-location ]
 
-mesheryctl model export [model-name] --discard-components --discard-relationships
+// Export a model by name in YAML type discarding components and relationships
+mesheryctl model export [ model-name ] --discard-components --discard-relationships
 
-mesheryctl model export [model-name] --version v0.7.3
+// Export a model version by name in YAML type
+mesheryctl model export [ model-name ] --version [ version (ex: v0.7.3) ]
 `,
 	Args: func(_ *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl model export [model-name]\nRun 'mesheryctl model export --help' to see detailed help message"
+		const errMsg = "Usage: mesheryctl model export [ model-name ]\nRun 'mesheryctl model export --help' to see detailed help message"
 		if len(args) == 0 {
 			return utils.ErrInvalidArgument(errors.New("Please provide a model name. " + errMsg))
 		}

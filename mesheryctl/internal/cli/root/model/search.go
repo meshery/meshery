@@ -13,10 +13,10 @@ import (
 
 var searchModelCmd = &cobra.Command{
 	Use:   "search",
-	Short: "search models",
-	Long:  "search a models by search string",
+	Short: "Search model(s)",
+	Long:  "Search model(s) by search string",
 	Example: `
-// View current provider
+// Search model from current provider
 mesheryctl model search [query-text]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
@@ -54,8 +54,6 @@ mesheryctl model search [query-text]
 		}
 
 		if len(rows) == 0 {
-			// if no model is found
-			// fmt.Println("No model(s) found")
 			whiteBoardPrinter.Println("No model(s) found")
 			return nil
 		} else {

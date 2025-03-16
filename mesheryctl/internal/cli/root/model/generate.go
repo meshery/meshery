@@ -12,17 +12,17 @@ import (
 
 var generateModelCmd = &cobra.Command{
 	Use:   "generate",
-	Short: "Generate models from mesheryctl command",
+	Short: "Generate models from a file",
 	Long:  "Generate models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name.",
-	Example: `
-	mesheryctl model generate -f [ URI ]
-	mesheryctl model generate -f [ URI ] -t [ path to template file ] ( only required in case of URL )
-	mesheryctl model generate -f [ URI ] -t [ path to template file ] -r ( to skip registration by default registration is true)
- 
-	
-	mesheryctl model generate --f /path/to/csv-drectory
-        mesheryctl model generate --f http://example.com/model -t /path/to/template.json 
-	mesheryctl model generate --f http://example.com/model -t /path/to/template.json -r
+	Example: ` 
+// Generate a model from a CSV file(s)
+mesheryctl model generate --f [ path-to-csv-drectory ]
+
+// Generate a model from a Uri baesd on a JSON template
+mesheryctl model generate --f [ URL ] -t [ path-to-template.json ]
+
+// Generate a model from a Uri baesd on a JSON template skipping registration
+mesheryctl model generate --f [ URL ] -t [ path-to-template.json ] -r
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl model generate [ file | filePath | URL ]\nRun 'mesheryctl model generate --help' to see detailed help message"
