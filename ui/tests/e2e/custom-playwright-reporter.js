@@ -18,7 +18,7 @@ class MyReporter {
 
   onBegin(_config, suite) {
     this.introMessage = `- Testing started at: ${moment().format('MMMM Do YYYY, h:mm:ss a')}`;
-    this.totalTests = `- Total tests cases: ${suite.allTests().length}`;
+    this.totalTests = `- Total test cases: ${suite.allTests().length}`;
   }
   // eslint-disable-next-line no-unused-vars
   onStdOut(chunk, _test, _result) {
