@@ -29,7 +29,7 @@ mesheryctl environment list [flags]
 List all registered environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment list --orgID [orgId]
+mesheryctl environment list --orgID [orgID]
 
 </div>
 </pre> 
@@ -47,7 +47,7 @@ https://docs.meshery.io/concepts/logical/environments
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help           help for list
-  -o, --orgId string   Organization ID
+      --orgID string   Organization ID
 
 </div>
 </pre>
