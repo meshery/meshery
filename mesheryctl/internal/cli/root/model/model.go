@@ -66,7 +66,7 @@ var (
 	targetDirectory string
 )
 
-// represents the mesheryctl model view [model-name] subcommand.
+// represents the mesheryctl model view [ model-name ] subcommand.
 
 // represents the mesheryctl model search [query-text] subcommand.
 
@@ -80,16 +80,16 @@ var ModelCmd = &cobra.Command{
 mesheryctl model --count
 
 // To scaffold a folder structure for model creation
-mesheryctl model init [model-name]
+mesheryctl model init [ model-name ]
 
 // To view list of models
 mesheryctl model list
 
 // To view a specific model
-mesheryctl model view [model-name]
+mesheryctl model view [ model-name ]
 
 // To search for a specific model
-mesheryctl model search [model-name]
+mesheryctl model search [ model-name ]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 && !countFlag {
