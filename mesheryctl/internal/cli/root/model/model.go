@@ -45,7 +45,7 @@ var (
 var ModelCmd = &cobra.Command{
 	Use:   "model",
 	Short: "Manage models",
-	Long:  "Expport, generate, import, list, search and view model(s) and detailed informations",
+	Long:  "Export, generate, import, list, search and view model(s) and detailed informations",
 	Example: `
 // Display number of available models in Meshery
 mesheryctl model --count

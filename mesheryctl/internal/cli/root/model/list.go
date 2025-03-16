@@ -21,7 +21,7 @@ var listModelCmd = &cobra.Command{
 mesheryctl model list
 
 // List of models for a specified page
-mesheryctl model list --page [ page-number ]
+mesheryctl model list --page [page-number]
 
 // Display number of available models in Meshery
 mesheryctl model list --count
