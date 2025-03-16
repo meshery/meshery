@@ -3,15 +3,12 @@ import { template } from 'lodash';
 import moment from 'moment';
 import path from 'path';
 
-const testHeader = '| # | Browser | Test Case | Tags | Result |';
-const testColumnAlignment = '| :---: | :---: | :--- | :---: | :---: |';
-
 class MyReporter {
   introMessage = '';
   totalTests = '';
   expectedTest = '';
-  tableHeader = [testHeader, testColumnAlignment];
-  unsuccessfulTestData = [];
+  testTable = `| Test | Browser | Test Case | Tags | Result |
+| :---: | :---: | :--- | :---: | :---: |`;
   passed = 0;
   failed = 0;
   skipped = 0;
@@ -21,15 +18,15 @@ class MyReporter {
 
   onBegin(_config, suite) {
     this.introMessage = `- Testing started at: ${moment().format('MMMM Do YYYY, h:mm:ss a')}`;
-    this.totalTests = `- Total test cases: ${suite.allTests().length}`;
+    this.totalTests = `- Total tests cases: ${suite.allTests().length}`;
   }
-
-  onStdOut(chunk) {
+  // eslint-disable-next-line no-unused-vars
+  onStdOut(chunk, _test, _result) {
     const text = chunk.toString('utf-8');
     process.stdout.write(text);
   }
-
-  onStdErr(chunk) {
+  // eslint-disable-next-line no-unused-vars
+  onStdErr(chunk, _test, _result) {
     const text = chunk.toString('utf-8');
     process.stderr.write(text);
   }
@@ -39,7 +36,7 @@ class MyReporter {
     const project = test.parent?.project()?.name;
 
     this.displayLogs(project, test.title, test.tags, status, result);
-    this.addTableData(project, test.title, test.tags, status, result.retry, test.retries);
+    this.addTestTable(project, test.title, test.tags, status, result.retry, test.retries);
   }
 
   async onEnd(result) {
@@ -74,7 +71,7 @@ class MyReporter {
     this.countLog++;
   }
 
-  addTableData(project, title, tags, status, retry, retries) {
+  addTestTable(project, title, tags, status, retry, retries) {
     this.countTestStatus(tags, status, retry, retries);
 
     if (status === 'expected') return;
@@ -83,12 +80,17 @@ class MyReporter {
     const isFail = status === 'unexpected';
     const isSkipped = status === 'skipped';
 
-    if ((isFail || isSkipped) && !lastRetriesRun) return;
+    if ((isFail || isSkipped) && !lastRetriesRun) {
+      return;
+    }
 
     const allTags = tags.map((item) => item.replace('@', '')).join(', ');
-    this.unsuccessfulTestData.push(
-      `| ${this.countTable} | ${project} | ${title} | ${allTags} | ${this.getStatusEmoji(tags, status)} |`,
-    );
+
+    const message = `| ${
+      this.countTable
+    } | ${project} | ${title} | ${allTags} | ${this.getStatusEmoji(tags, status)} |`;
+
+    this.testTable += `\n${message}`;
     this.countTable++;
   }
 
@@ -102,19 +104,15 @@ class MyReporter {
 
     if (status === 'expected') {
       this.passed++;
-      return;
     }
     if (isFlaky || (isUnstableTest && isFail)) {
       this.flaky++;
-      return;
     }
     if (isFail && lastRetriesRun && !isUnstableTest) {
       this.failed++;
-      return;
     }
     if (isSkipped && lastRetriesRun && !isUnstableTest) {
       this.skipped++;
-      return;
     }
   }
 
@@ -150,9 +148,7 @@ class MyReporter {
       flaky: this.flaky,
       skipped: this.skipped,
       totalTests: this.totalTests,
-      testTable: this.unsuccessfulTestData.length
-        ? [...this.tableHeader, ...this.unsuccessfulTestData].join('\n')
-        : null,
+      testTable: this.testTable,
     });
   }
 }

@@ -15,9 +15,14 @@
 
 <% if (testTable) { %>
 
+<details>
+    <summary>[Show/Hide] Test Result Details</summary>
+    <div markdown="1">
+
 <%- testTable %>
 
+</div>
+</details>
 <% } %>
 
 <!-- To see the full report, please visit our CI/CD pipeline with reporter. -->
-
