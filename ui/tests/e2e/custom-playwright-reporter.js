@@ -104,15 +104,19 @@ class MyReporter {
 
     if (status === 'expected') {
       this.passed++;
+      return;
     }
     if (isFlaky || (isUnstableTest && isFail)) {
       this.flaky++;
+      return;
     }
     if (isFail && lastRetriesRun && !isUnstableTest) {
       this.failed++;
+      return;
     }
     if (isSkipped && lastRetriesRun && !isUnstableTest) {
       this.skipped++;
+      return;
     }
   }
 
