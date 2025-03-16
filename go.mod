@@ -2,9 +2,11 @@ module github.com/layer5io/meshery
 
 go 1.23.4
 
-// replace github.com/layer5io/meshkit v0.8.19 => ../meshkit
+// replace github.com/meshery/schemas v0.7.45 => ../schemas
 
 replace github.com/vektah/gqlparser/v2 => github.com/vektah/gqlparser/v2 v2.5.11
+
+// replace github.com/layer5io/meshkit v0.8.19 => ../meshkit
 
 require (
 	cuelang.org/go v0.12.0
@@ -42,7 +44,7 @@ require (
 	github.com/layer5io/service-mesh-performance v0.6.1
 	github.com/lib/pq v1.10.9
 	github.com/manifoldco/promptui v0.9.0
-	github.com/meshery/schemas v0.7.45
+	github.com/meshery/schemas v0.8.1
 	github.com/nsf/termbox-go v1.1.1
 	github.com/olekukonko/tablewriter v0.0.5
 	github.com/pkg/browser v0.0.0-20240102092130-5ac0b6a4141c
@@ -108,6 +110,7 @@ require (
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/ProtonMail/go-crypto v1.1.5 // indirect
 	github.com/agnivade/levenshtein v1.2.0 // indirect
+	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
 	github.com/aws/aws-sdk-go-v2 v1.34.0 // indirect
 	github.com/aws/aws-sdk-go-v2/config v1.29.2 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.17.55 // indirect
