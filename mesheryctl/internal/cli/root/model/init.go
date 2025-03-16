@@ -23,7 +23,7 @@ mesheryctl model init
 mesheryctl model init --version [ version ] (default is 0.1.0) 
 
 // generates a folder structure under specified path
-mesheryctl model init --path path/to/some/particular_folder (default is current folder) 
+mesheryctl model init --path [ path ] (default is current folder) 
 
 // generate a folder structure in json format
 mesheryctl model init --output-format yaml (default is json) 
