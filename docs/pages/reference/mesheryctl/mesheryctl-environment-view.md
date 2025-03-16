@@ -29,7 +29,7 @@ mesheryctl environment view [flags]
 View details of a specific environment
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl environment view --orgID [orgId]
+mesheryctl environment view --orgID [orgID]
 
 </div>
 </pre> 
@@ -39,6 +39,7 @@ mesheryctl environment view --orgID [orgId]
 <pre class='codeblock-pre'>
 <div class='codeblock'>
   -h, --help                   help for view
+      --orgID string           Organization ID
   -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
   -s, --save                   (optional) save output as a JSON/YAML file
 
