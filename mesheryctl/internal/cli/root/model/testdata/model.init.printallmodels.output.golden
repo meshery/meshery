@@ -1,4 +1,5 @@
 init command will be here soon
+model name = aws-ec2-controller
 {
   "version": "",
   "displayName": "",
