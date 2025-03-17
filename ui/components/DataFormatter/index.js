@@ -288,11 +288,6 @@ const DynamicFormatter = ({ data, uiSchema, isLevel = true }) => {
   const { propertyFormatters } = useContext(FormatterContext);
   const level = useContext(LevelContext);
 
-  const formatDate = (value) => {
-    const date = new Date(value);
-    return !isNaN(date) ? date.toLocaleString() : value;
-  };
-
   if (_.isString(data)) {
     return <SectionBody body={data}></SectionBody>;
   }
@@ -329,7 +324,7 @@ const DynamicFormatter = ({ data, uiSchema, isLevel = true }) => {
               marginRight: '1rem',
             }}
           >
-            <KeyValue key={title} Key={title} Value={formatDate(data)} />
+            <KeyValue key={title} Key={title} Value={data} />
           </Grid>
         );
       }
