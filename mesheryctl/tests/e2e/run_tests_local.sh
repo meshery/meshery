@@ -3,9 +3,30 @@
 # Setup up mesheryctl
 MESHERYCTL_FILE="mesheryctl"
 
+# Default flag value
+BUILD_FLAG=false
+
+# Loop through arguments
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --build)
+      BUILD_FLAG=true
+      shift
+      ;;
+    *)
+      echo "Unknown option: $1"
+      exit 1
+      ;;
+  esac
+done
+
 check_bin_file() {
    if [ -f "../../$MESHERYCTL_FILE" ]; then
       echo "$MESHERYCTL_FILE Binary file found..."
+      if $BUILD_FLAG; then
+         echo -e "\nBuild flag parsed, rebuilding $MESHERYCTL_FILE binary"
+         build_bin
+      fi
    else
       echo -e "$MESHERYCTL_FILE Binary file not found.. Attempting to build binary...\n"
       build_bin
@@ -14,7 +35,6 @@ check_bin_file() {
 
 build_bin() {
    cd ../../
-   pwd; ls
 
    if ! make; then
       echo "X Build failed. Check for errors or dependencies."
@@ -23,33 +43,17 @@ build_bin() {
 
    if [ -f "$MESHERYCTL_FILE" ]; then
       echo "√ $MESHERYCTL_FILE Build successful..."
+      cd tests/e2e
    else
       echo "X Build failed. Binary file not found."
       return 1
    fi
 }
 
-create_auth_file() {
-   MESHERY_PROVIDER_TOKEN=$1
-   echo "start: authentication configuration"
-   if [ ! -d "$HOME/.meshery" ]
-   then
-      mkdir "$HOME/.meshery"
-   fi
-
-   # Generate auth file to comunicate with meshery server
-   # if [ ! -f "$HOME/.meshery/auth.json" ]
-   # then 
-   # fi
-   echo "{\"meshery-provider\": \"Meshery\", \"token\": \"${MESHERY_PROVIDER_TOKEN}\"}" > "$HOME/.meshery/auth.json"
-   echo "done: authentication configuration"
-}
-
 main() {
    echo -e "### start: Test environment setup ###\n"
 
    check_bin_file
-   create_auth_file $1
 
    export MESHERYCTL_BIN="../../mesheryctl"
 
@@ -65,7 +69,7 @@ main() {
    echo -e "### done: Test environment setup ###\n"
 }
 
-main $1
+main
 
 # Run tests
 # Uncomment the following line to enable junit format output
