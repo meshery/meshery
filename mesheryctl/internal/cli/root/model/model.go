@@ -62,8 +62,6 @@ var (
 	availableSubcommands = []*cobra.Command{initModelCmd, listModelCmd, viewModelCmd, searchModelCmd, importModelCmd, exportModal, generateModelCmd}
 
 	countFlag bool
-
-	targetDirectory string
 )
 
 // represents the mesheryctl model view [model-name] subcommand.
