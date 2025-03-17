@@ -1305,7 +1305,8 @@ func IsValidUrl(path string) bool {
 	}
 	return u.Scheme != "" && u.Host != ""
 }
-//get current k8s context
+
+// get current k8s context
 func GetCurrentK8sContext(client *meshkitkube.Client) (string, error) {
 	if client == nil {
 		return "", fmt.Errorf("kubernetes client is nil")

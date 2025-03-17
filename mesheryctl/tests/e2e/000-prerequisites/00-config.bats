@@ -2,12 +2,7 @@
 
 # tests config file and authenticatin file set properly
 
-function setup() {
-    MESHERY_CONFIG_FILE_PATH="$HOME/.meshery/config.yaml"
-    MESHERY_AUTH_FILE="$HOME/.meshery/auth.json"
-}
-
-@test "mesehry config.yaml file as been created" {
+@test "meshery config.yaml file as been created" {
     [ -f "$MESHERY_CONFIG_FILE_PATH" ]
 }
 
@@ -24,5 +19,5 @@ function setup() {
 @test "meshery auth.json file meshery provider is Meshery" {
     run jq '."meshery-provider"' "$MESHERY_AUTH_FILE"
     [ "$status" -eq 0 ]
-    [ "$output" = "Meshery" ]       
+    [ "$output" = "\"Meshery\"" ]       
 }

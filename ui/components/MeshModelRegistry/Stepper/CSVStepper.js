@@ -344,11 +344,6 @@ const CsvStepper = React.memo(({ handleClose, handleGenerateModal }) => {
     },
     2: {
       canGoNext: () => true,
-      nextButtonText: 'Next',
-      nextAction: () => csvStepper.handleNext(),
-    },
-    3: {
-      canGoNext: () => true,
       nextButtonText: 'Finish',
       nextAction: handleFinish,
     },

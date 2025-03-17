@@ -1463,7 +1463,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			defer resp.Body.Close()
 
 			if resp.StatusCode != http.StatusOK {
-				return nil, fmt.Errorf("failed to download file, status code: %d", resp.StatusCode)
+				return nil, fmt.Errorf("failed to download file. Status code: %d", resp.StatusCode)
 			}
 
 			fileData, err := io.ReadAll(resp.Body)
