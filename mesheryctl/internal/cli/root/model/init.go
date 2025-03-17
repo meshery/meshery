@@ -1,6 +1,9 @@
 package model
 
 import (
+	"os"
+	"strings"
+
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/spf13/cobra"
@@ -64,6 +67,14 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 			}
 
 			//utils.Log.Debug(string(modelJSONContent))
+		}
+
+		folderPath := strings.Join([]string{path, modelName, version}, string(os.PathSeparator))
+		err = os.MkdirAll(folderPath, 0755)
+		if err != nil {
+			// TODO use meshkit error format
+			utils.Log.Error(err)
+			return err
 		}
 
 		return nil
