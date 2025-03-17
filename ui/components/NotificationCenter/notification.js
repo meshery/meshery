@@ -37,7 +37,6 @@ import LinkedInIcon from '../../assets/icons/LinkedInIcon';
 import TwitterIcon from '../../assets/icons/TwitterIcon';
 import ShareIcon from '../../assets/icons/ShareIcon';
 import DeleteIcon from '../../assets/icons/DeleteIcon';
-import moment from 'moment';
 import {
   useUpdateStatusMutation,
   useDeleteEventMutation,
@@ -92,17 +91,6 @@ const AvatarStack = ({ avatars, direction }) => {
       ))}
     </StyledAvatarStack>
   );
-};
-
-const formatTimestamp = (utcTimestamp) => {
-  const currentUtcTimestamp = moment.utc().valueOf();
-
-  const timediff = currentUtcTimestamp - moment(utcTimestamp).valueOf();
-
-  if (timediff >= 24 * 60 * 60 * 1000) {
-    return moment(utcTimestamp).local().format('MMM DD, YYYY');
-  }
-  return moment(utcTimestamp).fromNow();
 };
 
 const BasicMenu = ({ event }) => {
@@ -384,7 +372,7 @@ export const Notification = ({ event_id }) => {
           </GridItem>
           <GridItem item xs="auto" style={{ justifyContent: 'end', gap: '0rem' }}>
             <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-            <FormattedTime date={event.created_at}/>
+              <FormattedTime date={event.created_at} />
             </Box>
             <BasicMenu event={event} />
           </GridItem>
