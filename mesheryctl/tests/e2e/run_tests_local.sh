@@ -7,7 +7,7 @@ check_bin_file() {
    if [ -f "../../$MESHERYCTL_FILE" ]; then
       echo "$MESHERYCTL_FILE Binary file found..."
    else
-      echo -e "$MESHERYCTL_FILE Binary file not found.. Attempting to build binary......\n"
+      echo -e "$MESHERYCTL_FILE Binary file not found.. Attempting to build binary...\n"
       build_bin
    fi
 }
