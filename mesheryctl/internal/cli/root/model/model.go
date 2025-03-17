@@ -79,7 +79,7 @@ var ModelCmd = &cobra.Command{
 // To view total of available models
 mesheryctl model --count
 
-// To scaffold a folder structure for model creation
+// Scaffold a folder structure for model creation
 mesheryctl model init [ model-name ]
 
 // To view list of models
