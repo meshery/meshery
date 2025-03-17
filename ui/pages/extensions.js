@@ -31,7 +31,7 @@ const MeshMapSignUpcard = ({ hasAccessToMeshMap = false }) => {
         </Typography>
 
         <FrontSideDescription variant="body">
-          <ImageWrapper src="/static/img/kanvas-icon-color.svg" />
+          <ImageWrapper src="/static/img/extensions/kanvas-icon-color.svg" />
           Collaboratively design and manage your Kubernetes clusters, service mesh deployments, and
           cloud native apps. Kanvas is now publicly available.{' '}
           {!hasAccessToMeshMap && 'Sign-up today to for access!'}
@@ -64,7 +64,7 @@ const MeshMapSnapShotLogo = () => {
         maxHeight: '150px',
       }}
       data-testid="kanvas-snapshot-image"
-      src="/static/img/meshmap-snapshot-logo.svg"
+      src="/static/img/extensions/meshmap-snapshot-logo.svg"
     />
   );
 };
@@ -116,7 +116,7 @@ const MesheryPerformanceActionLogo = () => {
         maxWidth: '120px',
         maxHeight: '75px',
       }}
-      src="/static/img/smp-dark.svg"
+      src="/static/img/extensions/smp-dark.svg"
     />
   );
 };
@@ -170,7 +170,7 @@ const MesheryDockerExtensionLogo = () => {
         maxWidth: '120px',
         maxHeight: '75px',
       }}
-      src="/static/img/docker.svg"
+      src="/static/img/extensions/docker.svg"
     />
   );
 };
@@ -223,7 +223,7 @@ const MesheryDesignEmbedLogo = () => {
         maxWidth: '120px',
         maxHeight: '75px',
       }}
-      src="/static/img/meshmap.svg"
+      src="/static/img/extensions/meshmap.svg"
     />
   );
 };
@@ -276,7 +276,7 @@ const Layer5CloudLogo = () => {
         maxWidth: '120px',
         maxHeight: '75px',
       }}
-      src="/static/img/layer5-cloud-icon.svg"
+      src="/static/img/extensions/layer5-cloud-icon.svg"
       data-testid="layer5-cloud-image"
     />
   );
@@ -329,7 +329,7 @@ const HelmPluginLogo = () => {
         maxWidth: '120px',
         maxHeight: '75px',
       }}
-      src="/static/img/helm-icon.svg"
+      src="/static/img/extensions/helm-icon.svg"
       data-testid="helm-plugin-image"
     />
   );
@@ -382,7 +382,7 @@ const KubectlPluginLogo = () => {
         maxWidth: '120px',
         maxHeight: '75px',
       }}
-      src="/static/img/kubectl-icon.svg"
+      src="/static/img/extensions/kubectl-icon.svg"
       data-testid="kubectl-plugin-image"
     />
   );
@@ -435,7 +435,7 @@ const KubectlMeshSyncLogo = () => {
         maxWidth: '120px',
         maxHeight: '75px',
       }}
-      src="/static/img/kubectl-meshsync-icon.svg"
+      src="/static/img/extensions/kubectl-meshsync-icon.svg"
       data-testid="kubectl-meshsync-image"
     />
   );
