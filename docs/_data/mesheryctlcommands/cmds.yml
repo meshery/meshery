@@ -701,18 +701,7 @@ design:
       name: export
       description: Export a design from Meshery
       usage: mesheryctl design export [design-name | ID]
-      example: |
-        # Export a design with a specific ID
-        mesheryctl design export [design-name | ID]
-
-        # Export a design with a specific ID and type
-        mesheryctl design export -[design-name | ID] --type [design-type]
-
-        # Export a design and save it to a specific directory
-        mesheryctl design export -[design-name | ID] --output ./designs
-
-        # Export a design with a specific type and save it to a directory
-        mesheryctl design export [design-name | ID] --type [design-type] --output ./exports
+      example: mesheryctl design export [design-name | ID] --type [design-type] --output ./exports
       flags:
         type:
           name: --type
