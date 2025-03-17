@@ -55,6 +55,7 @@ import UnreadIcon from '../../assets/icons/UnreadIcon';
 import { FormattedMetadata } from './metadata';
 import { TitleLink } from './formatters/common';
 import { truncate } from 'lodash';
+import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 
 export const eventPreventDefault = (e) => {
   e.preventDefault();
@@ -265,7 +266,7 @@ export const Notification = ({ event_id }) => {
   const errorCodes = getErrorCodesFromEvent(event) || [];
   const formattedErrorCodes = errorCodes.length > 0 ? errorCodes : '';
   const errorLink =
-    errorCodes.length > 0 ? `https://docs.meshery.io/reference/error-codes#${errorCodes[0]}` : '#';
+    errorCodes.length > 0 ? `${MESHERY_DOCS_URL}/reference/error-codes#${errorCodes[0]}` : '#';
   const { data: user } = useGetUserByIdQuery(event.user_id || '');
 
   const userName = `${user?.first_name || ''} ${user?.last_name || ''}`;
