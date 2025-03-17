@@ -12,7 +12,7 @@ import {
   Checkbox,
   Popover,
   alpha,
-  CustomTooltip,
+  FormattedTime,
 } from '@layer5/sistent';
 import {
   OptionList,
@@ -383,13 +383,7 @@ export const Notification = ({ event_id }) => {
           </GridItem>
           <GridItem item xs="auto" style={{ justifyContent: 'end', gap: '0rem' }}>
             <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-              <CustomTooltip
-                title={moment(event.created_at).local().format('MMMM DD, YYYY, h:mm:ss A')}
-                placement="top"
-                arrow
-              >
-                <Typography variant="body1">{formatTimestamp(event.created_at)}</Typography>
-              </CustomTooltip>
+            <FormattedTime date={event.created_at}/>
             </Box>
             <BasicMenu event={event} />
           </GridItem>
