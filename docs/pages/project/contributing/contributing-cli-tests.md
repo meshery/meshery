@@ -174,7 +174,7 @@ make e2e
 Switch to the directory containing the test file and execute:
 
 ```bash
-bats <file_name>.bats
+MESHERYCTL_BIN=<path to mesheryctl binary> bats <file_name>.bats
 ```
 
 ### Find Tests here
