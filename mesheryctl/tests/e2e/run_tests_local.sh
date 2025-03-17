@@ -52,6 +52,10 @@ main() {
    create_auth_file $1
 
    export MESHERYCTL_BIN="../../mesheryctl"
+
+   export MESHERY_CONFIG_FILE_PATH="$HOME/.meshery/config.yaml"
+
+   export MESHERY_AUTH_FILE="$HOME/.meshery/auth.json"
    
    echo -e "\nCreate temp directory for test data"
    TEMP_DATA_DIR=`mktemp -d`
@@ -69,5 +73,8 @@ main $1
 bats $FORMATTER *-*/*.bats
 
 test_result=$?
+
+# Run suite teardown (always)
+./teardown_suite.bash
 
 exit $test_result
