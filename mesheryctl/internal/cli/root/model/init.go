@@ -38,9 +38,15 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 		}
 
 		modelName := args[0]
+		path, _ := cmd.Flags().GetString("path")
+		version, _ := cmd.Flags().GetString("version")
+		outputFormat, _ := cmd.Flags().GetString("output-format")
 
 		utils.Log.Info("init command will be here soon")
 		utils.Log.Infof("model name = %s", modelName)
+		utils.Log.Infof("path = %s", path)
+		utils.Log.Infof("version = %s", version)
+		utils.Log.Infof("output format = %s", outputFormat)
 
 		for _, templatePath := range []string{
 			templatePathModelJSON,
@@ -49,14 +55,15 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 			templatePathConnectionJSON,
 			templatePathRelathionshipJSON,
 		} {
-			modelJSONContent, err := readTemplate(templatePath)
+			// modelJSONContent, err := readTemplate(templatePath)
+			_, err := readTemplate(templatePath)
 			if err != nil {
 				utils.Log.Error(err)
 				// TODO use meshkit error format instead during implementation phase
 				return err
 			}
 
-			utils.Log.Debug(string(modelJSONContent))
+			//utils.Log.Debug(string(modelJSONContent))
 		}
 
 		return nil
@@ -64,9 +71,9 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 }
 
 func init() {
-	initModelCmd.Flags().StringVarP(&targetDirectory, "path", "p", ".", "(optional) target directory (default: current dir)")
-	initModelCmd.Flags().StringVarP(&versionFlag, "version", "", "0.1.0", "(optional) model version (default: 0.1.0)")
-	initModelCmd.Flags().StringVarP(&outFormatFlag, "output-format", "o", "json", "(optional) format to display in [json|yaml]")
+	initModelCmd.Flags().StringP("path", "p", ".", "(optional) target directory (default: current dir)")
+	initModelCmd.Flags().StringP("version", "", "0.1.0", "(optional) model version (default: 0.1.0)")
+	initModelCmd.Flags().StringP("output-format", "o", "json", "(optional) format to display in [json|yaml]")
 }
 
 const templatePathModelJSON = "json_models/constructs/v1beta1/model.json"

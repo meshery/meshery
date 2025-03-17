@@ -25,11 +25,11 @@ func TestModelInit(t *testing.T) {
 		ExpectedResponse string
 	}{
 		{
-			Name:        "model init print all models (work in progress)",
-			Args:        []string{"init", "aws-ec2-controller"},
-			ExpectError: false,
-			// ExpectedResponse: "model.init.encouraging.output.golden",
-			ExpectedResponse: "model.init.printallmodels.output.golden",
+			Name:             "model init print all models (work in progress)",
+			Args:             []string{"init", "aws-ec2-controller"},
+			ExpectError:      false,
+			ExpectedResponse: "model.init.encouraging.output.golden",
+			// ExpectedResponse: "model.init.printallmodels.output.golden",
 		},
 	}
 	for _, tc := range tests {
