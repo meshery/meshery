@@ -53,10 +53,10 @@ If you are using Layer5 Cloud as your remote provider, you can [generate and dow
 mesheryctl system check
 ```
 
-If you need to authenticate, you will see the following message
+If you see this error message - `Error: !! Authentication token not found. Please supply a valid user token. Login with mesheryctl system login`, you will need to authenticate using the command:
 
 ```bash
-Error: !! Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`
+mesheryctl system login
 ```
 
 ### Starting Meshery Server
