@@ -6,25 +6,21 @@ MESHERYCTL_FILE="mesheryctl"
 # Default flag value
 BUILD_FLAG=false
 
-# Loop through arguments
-while [[ $# -gt 0 ]]; do
-  case "$1" in
-    --build)
-      BUILD_FLAG=true
-      shift
-      ;;
-    *)
-      echo "Unknown option: $1"
-      exit 1
-      ;;
-  esac
+# Get parsed build flag
+while getopts "b" opt; do
+   case "$opt" in
+      b) BUILD_FLAG=true ;;
+      \?) 
+      echo -e "\nUsage: $0 [-b: to rebuild binary] " 
+      exit 1 ;;
+   esac
 done
 
 check_bin_file() {
    if [ -f "../../$MESHERYCTL_FILE" ]; then
       echo "$MESHERYCTL_FILE Binary file found..."
       if $BUILD_FLAG; then
-         echo -e "\nBuild flag parsed, rebuilding $MESHERYCTL_FILE binary"
+         echo -e "\nBuild flag parsed, rebuilding $MESHERYCTL_FILE binary..."
          build_bin
       fi
    else
@@ -79,6 +75,5 @@ bats $FORMATTER *-*/*.bats
 test_result=$?
 
 # Run suite teardown (always)
-./teardown_suite.bash
 
 exit $test_result
