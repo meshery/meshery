@@ -41,8 +41,8 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
   const [modelShape, setModelShape] = React.useState('');
   const [modelUrl, setModelUrl] = React.useState('');
   const [urlError, setUrlError] = React.useState('');
-  const [primaryColor, setPrimaryColor] = React.useState('');
-  const [secondaryColor, setSecondaryColor] = React.useState('');
+  const [primaryColor, setPrimaryColor] = React.useState('#000000');
+  const [secondaryColor, setSecondaryColor] = React.useState('#000000');
   const [logoLightThemePath, setLogoLightThemePath] = React.useState('');
   const [logoDarkThemePath, setLogoDarkThemePath] = React.useState('');
   const [allComponents, setAllComponents] = React.useState([]);
