@@ -60,7 +60,16 @@ func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool, defVersi
 			status = entity.Ignored
 		}
 	}
+
 	componentDefinition := &component.ComponentDefinition{
+		Styles: &component.Styles{
+			PrimaryColor:   c.PrimaryColor,
+			SecondaryColor: &c.SecondaryColor,
+			SvgColor:       c.SVGColor,
+			SvgWhite:       c.SVGWhite,
+			SvgComplete:    c.SVGComplete,
+			Shape:          (*component.ComponentDefinitionStylesShape)(&c.Shape),
+		},
 		SchemaVersion: schmeaVersion.ComponentSchemaVersion,
 		DisplayName:   c.Component,
 		Format:        "JSON",
@@ -78,7 +87,9 @@ func (c *ComponentCSV) CreateComponentDefinition(isModelPublished bool, defVersi
 	if c.Description != "" {
 		componentDefinition.Description = c.Description
 	}
+
 	err := c.UpdateCompDefinition(componentDefinition)
+
 	return *componentDefinition, err
 }
 
