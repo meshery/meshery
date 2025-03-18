@@ -1364,15 +1364,14 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			return
 		}
 
-	//Case when it is URL and them the model is generated from the URL
+		//Case when it is URL and them the model is generated from the URL
 	case "url":
-
 		model := &mesheryctlUtils.ModelCSV{
-			Model:            importRequest.ImportBody.Model.Model,
-			ModelDisplayName: importRequest.ImportBody.Model.ModelDisplayName,
-			PrimaryColor:     importRequest.ImportBody.Model.PrimaryColor,
-			SecondaryColor:   importRequest.ImportBody.Model.SecondaryColor,
-			Category:         importRequest.ImportBody.Model.Category,
+			Model:             importRequest.ImportBody.Model.Model,
+			ModelDisplayName:  importRequest.ImportBody.Model.ModelDisplayName,
+			PrimaryColor:      importRequest.ImportBody.Model.PrimaryColor,
+			SecondaryColor:    importRequest.ImportBody.Model.SecondaryColor,
+			Category:          importRequest.ImportBody.Model.Category,
 			Registrant:        importRequest.ImportBody.Model.Registrant,
 			Shape:             importRequest.ImportBody.Model.Shape,
 			SubCategory:       importRequest.ImportBody.Model.SubCategory,
@@ -1382,40 +1381,106 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			IsAnnotation:      strconv.FormatBool(importRequest.ImportBody.Model.IsAnnotation),
 			PublishToRegistry: strconv.FormatBool(importRequest.ImportBody.Model.PublishToRegistry),
 		}
+
 		setDefaultValues(model)
-		//Model generation strats from here
 		model.Model = strings.ToLower(model.Model)
 
-		pkg, version, err := mesheryctlUtils.GenerateModels(model.Registrant, importRequest.ImportBody.Url, model.Model)
-		if err != nil {
-			h.handleError(rw, err, "Error generating model")
-			h.sendErrorEvent(userID, provider, "Error generating model", err)
-			return
-		}
-		modelDirPath, compDirPath, err := utils.CreateVersionedDirectoryForModelAndComp(version, model.Model)
-		if err != nil {
-			h.handleError(rw, err, "Error decoding JSON into ModelCSV")
-			h.sendErrorEvent(userID, provider, "Error decoding JSON into ModelCSV", err)
-			return
-		}
-		filePath := filepath.Join(modelDirPath, model.Model+".json")
-		modelDef := model.CreateModelDefinition(version, utils.DefVersion)
-		err = modelDef.WriteModelDefinition(filePath, "json")
-		if err != nil {
-			h.handleError(rw, err, "Error decoding JSON into ModelCSV")
-			h.sendErrorEvent(userID, provider, "Error decoding JSON into ModelCSV", err)
-			return
+		lengthofComps := 0
+		var modelDirPath, compDirPath string
+		var err error
+
+		// Handle URL-based generation if URL is provided
+		if importRequest.ImportBody.Url != "" {
+			pkg, version, err := mesheryctlUtils.GenerateModels(model.Registrant, importRequest.ImportBody.Url, model.Model)
+			if err != nil {
+				h.handleError(rw, err, "Error generating model")
+				h.sendErrorEvent(userID, provider, "Error generating model", err)
+				return
+			}
+
+			modelDirPath, compDirPath, err = utils.CreateVersionedDirectoryForModelAndComp(version, model.Model)
+			if err != nil {
+				h.handleError(rw, err, "Error creating versioned directory")
+				h.sendErrorEvent(userID, provider, "Error creating versioned directory", err)
+				return
+			}
+
+			filePath := filepath.Join(modelDirPath, model.Model+".json")
+			modelDef := model.CreateModelDefinition(version, utils.DefVersion)
+			err = modelDef.WriteModelDefinition(filePath, "json")
+			if err != nil {
+				h.handleError(rw, err, "Error writing model definition")
+				h.sendErrorEvent(userID, provider, "Error writing model definition", err)
+				return
+			}
+
+			// Generate components from package
+			lengthofComps, _, err = mesheryctlUtils.GenerateComponentsFromPkg(pkg, compDirPath, utils.DefVersion, modelDef)
+			if err != nil {
+				h.handleError(rw, err, "Error generating components from package")
+				h.sendErrorEvent(userID, provider, "Error generating components from package", err)
+				return
+			}
 		}
 
-		//Component generation starts here
-		lengthofComps, _, err := mesheryctlUtils.GenerateComponentsFromPkg(pkg, compDirPath, utils.DefVersion, modelDef)
-		if err != nil {
-			h.handleError(rw, err, "Error generating components")
-			h.sendErrorEvent(userID, provider, "Error generating components", err)
-			return
+		// Handle manually provided components if any
+		if len(importRequest.ImportBody.Components) > 0 {
+			// Create directories if they don't exist yet (in case URL was not provided)
+			if modelDirPath == "" || compDirPath == "" {
+				modelDirPath, compDirPath, err = utils.CreateVersionedDirectoryForModelAndComp(utils.DefVersion, model.Model)
+				if err != nil {
+					h.handleError(rw, err, "Error creating versioned directory for components")
+					h.sendErrorEvent(userID, provider, "Error creating versioned directory for components", err)
+					return
+				}
+
+				// Write model definition if it wasn't written before
+				filePath := filepath.Join(modelDirPath, model.Model+".json")
+				modelDef := model.CreateModelDefinition(utils.DefVersion, utils.DefVersion)
+				err = modelDef.WriteModelDefinition(filePath, "json")
+				if err != nil {
+					h.handleError(rw, err, "Error writing model definition")
+					h.sendErrorEvent(userID, provider, "Error writing model definition", err)
+					return
+				}
+			}
+
+			// Process each component
+			for _, comp := range importRequest.ImportBody.Components {
+				component := &mesheryctlUtils.ComponentCSV{
+					Model:          importRequest.ImportBody.Model.Model,
+					Component:      comp.Component,
+					Category:       comp.Category,
+					SubCategory:    comp.SubCategory,
+					Shape:          comp.Shape,
+					SVGColor:       comp.SvgColor,
+					SVGWhite:       comp.SvgWhite,
+					SVGComplete:    comp.SvgComplete,
+					IsAnnotation:   strconv.FormatBool(comp.IsAnnotation),
+					PrimaryColor:   comp.PrimaryColor,
+					SecondaryColor: comp.SecondaryColor,
+					Registrant:     importRequest.ImportBody.Model.Registrant,
+				}
+
+				setDefaultValuesForComponent(component)
+				compDef, err := component.CreateComponentDefinition(true, utils.DefVersion)
+				if err != nil {
+					h.handleError(rw, err, fmt.Sprintf("Error creating component definition for %s", comp.Component))
+					h.sendErrorEvent(userID, provider, fmt.Sprintf("Error creating component definition for %s", comp.Component), err)
+					return
+				}
+
+				_, err = compDef.WriteComponentDefinition(compDirPath, "json")
+				if err != nil {
+					h.handleError(rw, err, fmt.Sprintf("Error writing component definition for %s", comp.Component))
+					h.sendErrorEvent(userID, provider, fmt.Sprintf("Error writing component definition for %s", comp.Component), err)
+					return
+				}
+
+				lengthofComps++
+			}
 		}
 
-		//Event when the URL is used to show that we g
 		h.sendEventForImport(userID, provider, lengthofComps, model.Model, false)
 		if importRequest.Register {
 			dir = registration.NewDir(modelDirPath)
@@ -1423,7 +1488,6 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 		} else {
 			return
 		}
-
 	case "file":
 		base64Data, err := json.Marshal(importRequest.ImportBody.ModelFile)
 		if err != nil {

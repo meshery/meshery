@@ -19,12 +19,17 @@ import {
   RadioGroup,
   MenuItem,
   Radio,
+  Divider,
+  ClickAwayListener,
 } from '@layer5/sistent';
 import BrushIcon from '@mui/icons-material/Brush';
 import CategoryIcon from '@mui/icons-material/Category';
 import SourceIcon from '@/assets/icons/SourceIcon';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import { modelCategories, modelShapes, modelSubCategories } from './data';
+import ComponentStep from './ComponentStep';
+import { useEffect } from 'react';
+import { StyledSketchContainer, StyledSketchPicker, StyledSketchWrapper } from './styles';
 
 const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
   const [modelSource, setModelSource] = React.useState('');
@@ -39,7 +44,26 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
   const [secondaryColor, setSecondaryColor] = React.useState('#000000');
   const [logoLightThemePath, setLogoLightThemePath] = React.useState('');
   const [logoDarkThemePath, setLogoDarkThemePath] = React.useState('');
-  const [registerModel] = React.useState(true);
+  const [allComponents, setAllComponents] = React.useState([]);
+
+  const componentProperties = React.useMemo(
+    () => ({
+      shape: modelShape,
+      primaryColor: primaryColor,
+      secondaryColor: secondaryColor,
+    }),
+    [modelShape, primaryColor, secondaryColor],
+  );
+
+  useEffect(() => {
+    setAllComponents((prev) =>
+      prev.map((comp) => ({
+        ...comp,
+        ...componentProperties,
+      })),
+    );
+  }, [componentProperties]);
+
   const [isAnnotation, setIsAnnotation] = React.useState(true);
 
   const handleLogoLightThemeChange = async (event) => {
@@ -110,17 +134,34 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
       }
     }
   };
+  const [openColorPicker, setOpenColorPicker] = React.useState({});
+
+  const handleColorPickerToggle = (componentId, type) => {
+    setOpenColorPicker((prev) => {
+      // Close all other pickers first
+      const newState = {};
+      // Only set the new picker state
+      newState[componentId] = {
+        [type]: !prev[componentId]?.[type],
+      };
+      return newState;
+    });
+  };
+
+  const handleClickAway = () => {
+    setOpenColorPicker({});
+  };
 
   const handleFinish = () => {
     handleClose();
     handleGenerateModal({
       uploadType: 'URL Import',
-      register: registerModel,
+      register: true,
       url: modelUrl,
       model: {
         model: modelName,
         modelDisplayName: modelDisplayName,
-        registrant: modelSource,
+        registrant: modelSource === '' ? 'github' : modelSource,
         category: modelCategory,
         subCategory: modelSubcategory,
         shape: modelShape,
@@ -131,6 +172,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
         isAnnotation: isAnnotation,
         publishToRegistry: true,
       },
+      components: allComponents,
     });
   };
   const urlStepper = useStepper({
@@ -278,7 +320,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
       {
         component: (
           <div>
-            <Box display="flex" alignItems="center" mb="2rem">
+            <Box display="flex" alignItems="center" mb="1.5rem">
               <Typography>
                 Configure icons, colors, and a default shape for your model and its components.
                 <br />
@@ -295,7 +337,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                     type="file"
                     accept=".svg"
                     onChange={handleLogoDarkThemeChange}
-                    style={{ marginTop: '1rem' }}
+                    style={{ marginTop: '0.5rem' }}
                     label=" "
                   />
                 </FormControl>
@@ -309,34 +351,52 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                     type="file"
                     accept=".svg"
                     onChange={handleLogoLightThemeChange}
-                    style={{ marginTop: '1rem' }}
+                    style={{ marginTop: '0.5rem' }}
                   />
                 </FormControl>
               </Grid>
 
-              <Grid item xs={6} style={{ marginTop: '2rem' }}>
+              <Grid item xs={6} style={{ marginTop: '1rem' }}>
                 <FormControl fullWidth>
                   <Typography>Primary Color</Typography>
-                  <input
-                    id="primary-color"
-                    type="color"
-                    value={primaryColor}
-                    onChange={(e) => setPrimaryColor(e.target.value)}
-                    style={{ width: '100%', marginTop: '1rem' }}
-                  />
+                  <Box sx={{ position: 'relative' }}>
+                    <StyledSketchContainer
+                      onClick={() => handleColorPickerToggle('primary')}
+                      primaryColor={primaryColor}
+                    />
+                    {openColorPicker.primary && (
+                      <ClickAwayListener onClickAway={handleClickAway}>
+                        <StyledSketchWrapper>
+                          <StyledSketchPicker
+                            color={primaryColor}
+                            onChange={(color) => setPrimaryColor(color.hex)}
+                          />
+                        </StyledSketchWrapper>
+                      </ClickAwayListener>
+                    )}
+                  </Box>
                 </FormControl>
               </Grid>
 
-              <Grid item xs={6} style={{ marginTop: '2rem' }}>
+              <Grid item xs={6} style={{ marginTop: '1rem' }}>
                 <FormControl fullWidth>
                   <Typography>Secondary Color</Typography>
-                  <input
-                    id="secondary-color"
-                    type="color"
-                    value={secondaryColor}
-                    onChange={(e) => setSecondaryColor(e.target.value)}
-                    style={{ width: '100%', marginTop: '1rem' }}
-                  />
+                  <Box sx={{ position: 'relative' }}>
+                    <StyledSketchContainer
+                      onClick={() => handleColorPickerToggle('secondary')}
+                      primaryColor={secondaryColor}
+                    />
+                    {openColorPicker.secondary && (
+                      <ClickAwayListener onClickAway={handleClickAway}>
+                        <StyledSketchWrapper>
+                          <StyledSketchPicker
+                            color={secondaryColor}
+                            onChange={(color) => setSecondaryColor(color.hex)}
+                          />
+                        </StyledSketchWrapper>
+                      </ClickAwayListener>
+                    )}
+                  </Box>
                 </FormControl>
               </Grid>
 
@@ -393,6 +453,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                 Please identify the location from which to source your model&apos;s components.
               </Typography>
             </Box>
+
             <FormControl component="fieldset">
               <RadioGroup
                 row
@@ -432,6 +493,19 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                 }
               />
             </FormControl>
+            <Divider style={{ margin: '1rem 0' }}>OR</Divider>
+            <Box display="flex" alignItems="center" mb={2}>
+              <Typography>Create component&apos;s for model from local source.</Typography>
+            </Box>
+            <ComponentStep
+              components={allComponents}
+              setComponents={setAllComponents}
+              modelCategory={modelCategory}
+              modelSubCategory={modelSubcategory}
+              modelPrimaryColor={primaryColor}
+              modelSecondryColor={secondaryColor}
+              modelShape={modelShape}
+            />
           </div>
         ),
         icon: SourceIcon,
@@ -462,24 +536,6 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
       {
         component: (
           <div>
-            {/* <Grid item xs={12}>
-              <FormControl component="fieldset">
-                <FormControlLabel
-                  style={{ marginLeft: '0' }}
-                  label="Would you like to register the model now so you can use it immediately after it's generated?"
-                  labelPlacement="start"
-                  control={
-                    <Checkbox
-                      checked={registerModel}
-                      onChange={(e) => setRegisterModel(e.target.checked)}
-                      name="registerModel"
-                      color="primary"
-                      st
-                    />
-                  }
-                />
-              </FormControl>
-            </Grid> */}
             <Grid item xs={12} style={{ marginTop: '1rem' }}>
               <FormControl component="fieldset">
                 <FormControlLabel
@@ -522,7 +578,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
       },
     ],
   });
-  //
+
   const transitionConfig = {
     0: {
       canGoNext: () => modelDisplayName && modelName,
@@ -540,7 +596,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
       nextAction: () => urlStepper.handleNext(),
     },
     3: {
-      canGoNext: () => modelSource && modelUrl && !urlError,
+      canGoNext: () => (modelSource && modelUrl) || allComponents.length > 0,
       nextButtonText: 'Next',
       nextAction: () => urlStepper.handleNext(),
     },
