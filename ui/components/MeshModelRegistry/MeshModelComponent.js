@@ -142,17 +142,7 @@ const MeshModelComponent_ = ({
   const [importModelReq] = useImportMeshModelMutation();
 
   const handleGenerateModal = async (data) => {
-    const {
-      uploadType,
-      url,
-      model,
-      component_csv,
-      model_csv,
-      relationship_csv,
-      register,
-      components,
-    } = data;
-
+    const { uploadType, url, model, component_csv, model_csv, relationship_csv, register } = data;
     let requestBody = null;
     switch (uploadType) {
       case 'CSV Import': {
@@ -168,18 +158,17 @@ const MeshModelComponent_ = ({
         break;
       }
       case 'URL Import': {
-        if (url || components.length > 0) {
+        if (url) {
           requestBody = {
             importBody: {
               url: url,
               model: model,
-              components: components,
             },
             uploadType: 'url',
             register: register,
           };
         } else {
-          console.error('Error: URL or components are empty');
+          console.error('Error: URL is empty');
           return;
         }
         break;
