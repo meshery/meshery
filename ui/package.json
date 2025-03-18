@@ -114,6 +114,7 @@
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
     "eslint-plugin-react": "^7.37.2",
+    "eslint-plugin-unused-imports": "^4.1.4",
     "http-proxy": "^1.18.1",
     "husky": "^9.1.7",
     "lint-staged": "^15.2.10",
