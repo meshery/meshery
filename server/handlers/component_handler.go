@@ -1373,7 +1373,6 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			PrimaryColor:     importRequest.ImportBody.Model.PrimaryColor,
 			SecondaryColor:   importRequest.ImportBody.Model.SecondaryColor,
 			Category:         importRequest.ImportBody.Model.Category,
-
 			Registrant:        importRequest.ImportBody.Model.Registrant,
 			Shape:             importRequest.ImportBody.Model.Shape,
 			SubCategory:       importRequest.ImportBody.Model.SubCategory,

@@ -129,6 +129,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
         svgColor: logoLightThemePath,
         svgWhite: logoDarkThemePath,
         isAnnotation: isAnnotation,
+        publishToRegistry: true,
       },
     });
   };
