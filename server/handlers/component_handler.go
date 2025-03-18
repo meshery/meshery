@@ -1373,7 +1373,6 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			PrimaryColor:     importRequest.ImportBody.Model.PrimaryColor,
 			SecondaryColor:   importRequest.ImportBody.Model.SecondaryColor,
 			Category:         importRequest.ImportBody.Model.Category,
-
 			Registrant:        importRequest.ImportBody.Model.Registrant,
 			Shape:             importRequest.ImportBody.Model.Shape,
 			SubCategory:       importRequest.ImportBody.Model.SubCategory,
@@ -1463,7 +1462,7 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 			defer resp.Body.Close()
 
 			if resp.StatusCode != http.StatusOK {
-				return nil, fmt.Errorf("failed to download file, status code: %d", resp.StatusCode)
+				return nil, fmt.Errorf("failed to download file. Status code: %d", resp.StatusCode)
 			}
 
 			fileData, err := io.ReadAll(resp.Body)

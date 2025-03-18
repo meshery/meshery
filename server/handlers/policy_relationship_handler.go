@@ -14,6 +14,7 @@ import (
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshery/server/models/pattern/utils"
 	"github.com/meshery/schemas/models/v1alpha1/capability"
+	"github.com/meshery/schemas/models/v1alpha1/core"
 	"github.com/meshery/schemas/models/v1alpha3/relationship"
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
@@ -34,9 +35,9 @@ const (
 const RELATIONSHIP_SUBTYPE_ALIAS = "alias"
 
 // Aliasses Are not resolved
-func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipDefinition) (pattern.NonResolvedAlias, bool) {
+func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipDefinition) (core.NonResolvedAlias, bool) {
 
-	alias := pattern.NonResolvedAlias{}
+	alias := core.NonResolvedAlias{}
 
 	if relationshipDeclaration.SubType != RELATIONSHIP_SUBTYPE_ALIAS {
 		return alias, false
@@ -76,7 +77,7 @@ func parseRelationshipToAlias(relationshipDeclaration relationship.RelationshipD
 
 }
 
-func ParseComponentToAlias(component component.ComponentDefinition, relationships []*relationship.RelationshipDefinition) (pattern.NonResolvedAlias, bool) {
+func ParseComponentToAlias(component component.ComponentDefinition, relationships []*relationship.RelationshipDefinition) (core.NonResolvedAlias, bool) {
 
 	for _, relationship := range relationships {
 		alias, ok := parseRelationshipToAlias(*relationship)
@@ -89,7 +90,7 @@ func ParseComponentToAlias(component component.ComponentDefinition, relationship
 		}
 	}
 
-	return pattern.NonResolvedAlias{}, false
+	return core.NonResolvedAlias{}, false
 }
 
 // getComponentById retrieves a component from the design by its ID
@@ -102,25 +103,18 @@ func getComponentById(design pattern.PatternFile, id uuid.UUID) *component.Compo
 	return nil
 }
 
-func ResolveAlias(nonResolvedAlias pattern.NonResolvedAlias, currentNonResolved pattern.NonResolvedAlias, path []string, design pattern.PatternFile) pattern.ResolvedAlias {
+func ResolveAlias(nonResolvedAlias core.NonResolvedAlias, currentNonResolved core.NonResolvedAlias, path []string, design pattern.PatternFile) core.ResolvedAlias {
 	parentComponent := getComponentById(design, currentNonResolved.ImmediateParentId)
 	if parentComponent == nil {
-		return pattern.ResolvedAlias{
-			NonResolvedAlias:     nonResolvedAlias,
-			ResolvedParentId:     currentNonResolved.ImmediateParentId,
-			ResolvedRefFieldPath: path,
-		}
+		return core.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
 	}
 
 	parentAlias, ok := ParseComponentToAlias(*parentComponent, design.Relationships)
 
 	if !ok {
 
-		return pattern.ResolvedAlias{
-			NonResolvedAlias:     nonResolvedAlias,
-			ResolvedParentId:     currentNonResolved.ImmediateParentId,
-			ResolvedRefFieldPath: path,
-		}
+		return core.ResolvedAliasFromNonResolved(nonResolvedAlias, currentNonResolved.ImmediateParentId, path)
+
 	}
 
 	// slicing from 1 to remove "configuration" prefix when building the resolved ref
@@ -129,9 +123,9 @@ func ResolveAlias(nonResolvedAlias pattern.NonResolvedAlias, currentNonResolved 
 	return ResolveAlias(nonResolvedAlias, parentAlias, append(parentAlias.ImmediateRefFieldPath, path[1:]...), design)
 }
 
-func ResolveAliasesInDesign(design pattern.PatternFile) map[string]pattern.ResolvedAlias {
+func ResolveAliasesInDesign(design pattern.PatternFile) map[string]core.ResolvedAlias {
 
-	resolvedAliases := make(map[string]pattern.ResolvedAlias)
+	resolvedAliases := make(map[string]core.ResolvedAlias)
 
 	for _, relationship := range design.Relationships {
 		nonResolvedalias, ok := parseRelationshipToAlias(*relationship)
@@ -173,9 +167,9 @@ func (h *Handler) EvaluateDesign(
 
 	evaluatedAliases := ResolveAliasesInDesign(evaluationResponse.Design)
 	if evaluationResponse.Design.Metadata == nil {
-		evaluationResponse.Design.Metadata = &pattern.PatternFileMetadata{}
+		evaluationResponse.Design.Metadata = &pattern.PatternFile_Metadata{}
 	}
-	evaluationResponse.Design.Metadata.ResolvedAliases = evaluatedAliases
+	evaluationResponse.Design.Metadata.ResolvedAliases = &evaluatedAliases
 
 	mutils.TrackTime(h.log, now, "PostProcessEvaluationResponse")
 	return evaluationResponse, nil

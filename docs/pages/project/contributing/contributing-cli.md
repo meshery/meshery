@@ -9,7 +9,7 @@ category: contributing
 list: include
 ---
 
-`mesheryctl` is written in Golang or the Go Programming Language. For development use Go version 1.21+.
+`mesheryctl` is written in Golang or the Go Programming Language. For development use Go version 1.23+.
 
 {% include alert.html
     type="info"
@@ -78,7 +78,7 @@ The following principles should be taken in mind while designing `mesheryctl` co
 
 - _Provide possibility to specify output format as json (-o json) for easy inspection of command response._
 
-Part of delivering a great user experience is providing intuitive interfaces. In the case of `mesheryctl` takes inspiration from and delivers similar user experiences as popular CLIs do in this ecosystem, like `kubectl` and `docker`. Here is relevant `kubectl` information to reference - [Kubectl SIG CLI Community Meeting Minutes](https://docs.google.com/document/u/2/d/1r0YElcXt6G5mOWxwZiXgGu_X6he3F--wKwg-9UBc29I/edit#), [contributing to kubectl](https://github.com/kubernetes/community/blob/master/sig-cli/CONTRIBUTING.md), [code](https://github.com/kubernetes/kubernetes/tree/master/pkg/kubectl/cmd/config).
+Part of delivering a great user experience is providing intuitive interfaces. In the case of `mesheryctl` takes inspiration from and delivers similar user experiences as popular CLIs do in this ecosystem, like `kubectl` and `docker`. Here is relevant `kubectl` information to reference - [Kubectl SIG CLI Community Meeting Minutes](https://docs.google.com/document/u/2/d/1r0YElcXt6G5mOWxwZiXgGu_X6he3F--wKwg-9UBc29I/edit#), [contributing to kubectl](https://github.com/kubernetes/community/blob/master/sig-cli/CONTRIBUTING.md).
 
 Command structure and command behavior should be designed in such a way that they are intuitive. Users should ideally be able to understand what a command is used for without having to extensively go through the documentation. For example, `mesheryctl design apply -f <design name>` requires no further clarification as it is evident that the command will apply the design specified.
 
@@ -281,9 +281,4 @@ To update golden files with the test output use the `--update` flag:
 
 {% capture code_content %}var update = flag.Bool("update", false, "update golden files"){% endcapture %}
 {% include code.html code=code_content %}
-
-To grab console logs - `fmt.Println()` (check [mesheryctl/internal/cli/root/perf/view_test.go](https://github.com/meshery/meshery/blob/master/mesheryctl/internal/cli/root/perf/view_test.go) )
-
-To grab Logrus logs - `logrus.Info()` (check [mesheryctl/internal/cli/root/perf/apply_test.go](https://github.com/meshery/meshery/blob/master/mesheryctl/internal/cli/root/perf/apply_test.go) )
-
 

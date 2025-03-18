@@ -97,7 +97,7 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
   const { width } = useWindowDimensions();
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState();
-  const [sortOrder, setSortOrder] = useState('');
+  const [sortOrder, setSortOrder] = useState('name asc');
   const [rowData, setRowData] = useState(null);
   const [rowsExpanded, setRowsExpanded] = useState([]);
   const [isSearchExpanded, setIsSearchExpanded] = useState(false);
@@ -941,21 +941,21 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
       },
     },
     sortOrder: {
-      name: 'name',
-      direction: 'asc',
+      name: sortOrder.split(' ')[0],
+      direction: sortOrder.split(' ')[1],
     },
     customToolbarSelect: (selected) => (
-      <>
-        <Button
-          variant="contained"
-          onClick={() => handleDeleteConnections(selected)}
-          disabled={!CAN(keys.DELETE_A_CONNECTION.action, keys.DELETE_A_CONNECTION.subject)}
-          startIcon={<DeleteIcon style={iconMedium} fill={theme.palette.common.white} />}
-          style={{ background: theme.palette.error.dark, marginRight: '1rem' }}
-        >
-          Delete
-        </Button>
-      </>
+      <Button
+        color="error"
+        variant="contained"
+        size="large"
+        onClick={() => handleDeleteConnections(selected)}
+        sx={{ backgroundColor: `${theme.palette.error.dark} !important`, marginRight: '10px' }}
+        disabled={!CAN(keys.DELETE_A_CONNECTION.action, keys.DELETE_A_CONNECTION.subject)}
+      >
+        <DeleteIcon style={iconMedium} fill={theme.palette.common.white} />
+        Delete
+      </Button>
     ),
     enableNestedDataAccess: '.',
     onTableChange: (action, tableState) => {
