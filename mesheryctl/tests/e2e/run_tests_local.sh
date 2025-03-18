@@ -51,7 +51,7 @@ main() {
 
    check_bin_file
 
-   export MESHERYCTL_BIN="../../mesheryctl"
+   export MESHERYCTL_BIN="../../$MESHERYCTL_FILE"
 
    export MESHERY_CONFIG_FILE_PATH="$HOME/.meshery/config.yaml"
 
@@ -63,17 +63,17 @@ main() {
    export TEMP_TEST_DATA_DIR=$TEMP_DATA_DIR
 
    echo -e "### done: Test environment setup ###\n"
+
+   # Run tests
+   # Uncomment the following line to enable junit format output
+   # FORMATTER="--formatter tap"
+   bats $FORMATTER *-*/*.bats
+
+   test_result=$?
+
+   # Run suite teardown (always)
+
+   exit $test_result
 }
 
 main
-
-# Run tests
-# Uncomment the following line to enable junit format output
-# FORMATTER="--formatter tap"
-bats $FORMATTER *-*/*.bats
-
-test_result=$?
-
-# Run suite teardown (always)
-
-exit $test_result
