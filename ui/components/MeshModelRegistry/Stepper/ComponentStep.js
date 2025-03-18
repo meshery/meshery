@@ -11,13 +11,11 @@ import {
   MenuItem,
   Button,
   Box,
-  IconButton,
   Accordion,
   AccordionSummary,
   AccordionDetails,
   useTheme,
 } from '@layer5/sistent';
-import Sketch from '@uiw/react-color-sketch';
 import { ExpandMore, Add as AddIcon } from '@mui/icons-material';
 import { TooltipIconButton } from '@/utils/TooltipButton';
 import ClickAwayListener from '@mui/material/ClickAwayListener';

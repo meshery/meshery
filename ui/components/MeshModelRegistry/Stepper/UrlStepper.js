@@ -21,7 +21,6 @@ import {
   Radio,
   Divider,
   ClickAwayListener,
-  useTheme,
 } from '@layer5/sistent';
 import BrushIcon from '@mui/icons-material/Brush';
 import CategoryIcon from '@mui/icons-material/Category';
@@ -153,7 +152,6 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
     setOpenColorPicker({});
   };
 
-  const theme = useTheme();
   const handleFinish = () => {
     handleClose();
     handleGenerateModal({
@@ -497,7 +495,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
             </FormControl>
             <Divider style={{ margin: '1rem 0' }}>OR</Divider>
             <Box display="flex" alignItems="center" mb={2}>
-              <Typography>Create component's for model from local source.</Typography>
+              <Typography>Create component&apos;s for model from local source.</Typography>
             </Box>
             <ComponentStep
               components={allComponents}
