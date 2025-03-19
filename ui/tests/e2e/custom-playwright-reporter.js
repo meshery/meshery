@@ -22,14 +22,12 @@ class MyReporter {
     this.totalTests = `- Total test cases: ${suite.allTests().length}`;
   }
 
-  // eslint-disable-next-line no-unused-vars
-  onStdOut(chunk, _test, _result) {
+  onStdOut(chunk) {
     const text = chunk.toString('utf-8');
     process.stdout.write(text);
   }
 
-  // eslint-disable-next-line no-unused-vars
-  onStdErr(chunk, _test, _result) {
+  onStdErr(chunk) {
     const text = chunk.toString('utf-8');
     process.stderr.write(text);
   }
@@ -37,7 +35,7 @@ class MyReporter {
   onTestEnd(test, result) {
     const status = test.outcome();
     const project = test.parent?.project()?.name;
-    const spec = test.parent?.title; 
+    const spec = test.parent?.title;
 
     this.displayLogs(project, test.title, test.tags, status, result);
     this.addTestData(project, spec, test.title, test.tags, status, result.retry, test.retries);
@@ -119,7 +117,6 @@ class MyReporter {
     return '➖';
   }
 
-
   addTestData(project, spec, title, tags, status, retry, retries) {
     this.countTestStatus(tags, status, retry, retries);
 
@@ -137,14 +134,13 @@ class MyReporter {
 
     this.testData.push({
       project,
-      spec, 
+      spec,
       title,
       tags: allTags,
       status: this.getStatusEmoji(tags, status),
     });
   }
 
-  
   async buildMessage(result) {
     const duration = moment.duration(result.duration, 'milliseconds');
     const minutes = Math.floor(duration.asMinutes());
