@@ -39,7 +39,13 @@ const ACTION_TYPES = {
   },
 };
 export default function MeshSyncTable(props) {
-  const { updateProgress, selectedK8sContexts, k8sconfig } = props;
+  const {
+    updateProgress,
+    selectedK8sContexts,
+    k8sconfig,
+    selectedResourceId,
+    updateUrlWithResourceId,
+  } = props;
   const callbackRef = useRef();
   const [openRegistrationModal, setRegistrationModal] = useState(false);
   const [page, setPage] = useState(0);
@@ -470,8 +476,26 @@ export default function MeshSyncTable(props) {
       return true;
     },
     onRowExpansionChange: (_, allRowsExpanded) => {
-      setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
-      // setShowMore(false);
+      if (isUrlExpansion.current) return;
+      
+      isHandlingExpansion.current = true;
+      const expandedRows = allRowsExpanded.slice(-1);
+      setRowsExpanded(expandedRows.map((item) => item.index));
+
+      if (expandedRows.length > 0 && meshSyncResources) {
+        const index = expandedRows[0].index;
+        const resource = meshSyncResources[index];
+        
+        if (resource && updateUrlWithResourceId && 
+            (!isInitialLoad.current || resource.id !== selectedResourceId)) {
+          updateUrlWithResourceId(resource.id);
+        }
+      } else if (updateUrlWithResourceId && !isInitialLoad.current) {
+        updateUrlWithResourceId('');
+      }
+      setTimeout(() => {
+        isHandlingExpansion.current = false;
+      }, 100);
     },
     renderExpandableRow: (rowData) => {
       const colSpan = rowData.length;
@@ -525,6 +549,34 @@ export default function MeshSyncTable(props) {
       handleError(ACTION_TYPES.FETCH_MESHSYNC_RESOURCES)(meshSyncError);
     }
   }, [meshSyncError]);
+
+  const isHandlingExpansion = useRef(false);
+  const isInitialLoad = useRef(true);
+  const isUrlExpansion = useRef(false);
+  const lastProcessedId = useRef(null);
+  
+  // Find and expand the selected resource when it becomes available
+  useEffect(() => {
+    if (!selectedResourceId || isHandlingExpansion.current) return;
+    if (lastProcessedId.current === selectedResourceId) return;
+    
+    // Only proceed if we have resources data
+    if (meshSyncResources && meshSyncResources.length > 0) {
+      isUrlExpansion.current = true;
+      lastProcessedId.current = selectedResourceId;
+      
+      const index = meshSyncResources.findIndex((resource) => resource.id === selectedResourceId);
+      if (index !== -1) {
+        setRowsExpanded([index]);
+      } else {
+        updateUrlWithResourceId('');
+      }
+      setTimeout(() => {
+        isUrlExpansion.current = false;
+      }, 100);
+      isInitialLoad.current = false;
+    }
+  }, [selectedResourceId, meshSyncResources]);
 
   const filters = {
     kind: {
