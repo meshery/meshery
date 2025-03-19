@@ -120,7 +120,7 @@ function Connections(props) {
   useEffect(() => {
     if (!isMounted.current) return;
     if (isExternalUrlChange.current) return;
-    
+    // Check for the tab
     const newTab = tab === 0 ? 'connections' : 'meshsync';
     const currentTab = query.tab;
 
