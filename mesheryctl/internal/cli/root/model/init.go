@@ -141,7 +141,9 @@ func initModelGetValidOutputFormat() []string {
 }
 
 const initModelTemplatePathModelJSON = "json_models/constructs/v1beta1/model.json"
-const initModelTemplatePathDesignJSON = "json_models/constructs/v1beta1/design.json"
+
+// TODO do we need design json ?
+// const initModelTemplatePathDesignJSON = "json_models/constructs/v1beta1/design.json"
 const initModelTemplatePathComponentJSON = "json_models/constructs/v1beta1/component.json"
 const initModelTemplatePathConnectionJSON = "json_models/constructs/v1beta1/connection.json"
 const initModelTemplatePathRelathionshipJSON = "json_models/constructs/v1alpha3/relationship.json"
@@ -175,7 +177,7 @@ var initModelData = []struct {
 		folderPath: "connections",
 		// map file name to template key
 		files: map[string]string{
-			"connection": initModelTemplatePathModelJSON,
+			"connection": initModelTemplatePathConnectionJSON,
 		},
 	},
 	{
