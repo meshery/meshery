@@ -37,7 +37,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 	Args: cobra.ExactArgs(1),
 	PreRunE: func(cmd *cobra.Command, args []string) error {
 		format, _ := cmd.Flags().GetString("output-format")
-		getValidOutputFormatSlices := getValidOutputFormat()
+		getValidOutputFormatSlices := initModelGetValidOutputFormat()
 		if !slices.Contains(getValidOutputFormatSlices, format) {
 			validFormatsString := strings.Join(getValidOutputFormat(), ", ")
 			return ErrModelUnsupportedOutputFormat(
@@ -69,24 +69,6 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 		utils.Log.Infof("version = %s", version)
 		utils.Log.Infof("output format = %s", outputFormat)
 
-		for _, templatePath := range []string{
-			initModelTemplatePathModelJSON,
-			initModelTemplatePathDesignJSON,
-			initModelTemplatePathComponentJSON,
-			initModelTemplatePathConnectionJSON,
-			initModelTemplatePathRelathionshipJSON,
-		} {
-			// modelJSONContent, err := readTemplate(templatePath)
-			_, err := initModelReadTemplate(templatePath)
-			if err != nil {
-				utils.Log.Error(err)
-				// TODO use meshkit error format instead during implementation phase
-				return err
-			}
-
-			//utils.Log.Debug(string(modelJSONContent))
-		}
-
 		const DirPerm = 0755
 		mainFolderPath := strings.Join([]string{path, modelName, version}, string(os.PathSeparator))
 		err = os.MkdirAll(mainFolderPath, DirPerm)
@@ -97,8 +79,9 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 		}
 
 		for _, item := range initModelData {
+			itemFolderPath := mainFolderPath
 			if item.folderPath != "" {
-				itemFolderPath := strings.Join([]string{mainFolderPath, item.folderPath}, string(os.PathSeparator))
+				itemFolderPath = strings.Join([]string{mainFolderPath, item.folderPath}, string(os.PathSeparator))
 				err = os.MkdirAll(itemFolderPath, DirPerm)
 				if err != nil {
 					// TODO use meshkit error format
@@ -115,7 +98,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 				}
 				filePath := strings.Join(
 					[]string{
-						mainFolderPath,
+						itemFolderPath,
 						strings.Join(
 							[]string{name, outputFormat},
 							".",
@@ -137,9 +120,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 					// TODO use meshkit error format instead during implementation phase
 					return err
 				}
-
 			}
-
 		}
 
 		// TODO maybe clean partial data (if error occurs in the middle of execution)
@@ -175,6 +156,32 @@ var initModelData = []struct {
 		files: map[string]string{
 			"model": initModelTemplatePathModelJSON,
 		},
+	},
+	{
+		folderPath: "components",
+		// map file name to template key
+		files: map[string]string{
+			"component": initModelTemplatePathComponentJSON,
+		},
+	},
+	{
+		folderPath: "relationships",
+		// map file name to template key
+		files: map[string]string{
+			"relationship": initModelTemplatePathRelathionshipJSON,
+		},
+	},
+	{
+		folderPath: "connections",
+		// map file name to template key
+		files: map[string]string{
+			"connection": initModelTemplatePathModelJSON,
+		},
+	},
+	{
+		folderPath: "credentials",
+		// map file name to template key
+		files: nil,
 	},
 }
 
