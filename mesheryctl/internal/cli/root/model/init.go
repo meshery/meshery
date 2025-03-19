@@ -42,7 +42,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 			validFormatsString := strings.Join(getValidOutputFormat(), ", ")
 			return ErrModelUnsupportedOutputFormat(
 				fmt.Sprintf(
-					"[ %s ] are the only format supported\n\nUsage: mesheryctl model view --output-format [yaml|json]\nRun 'mesheryctl model view --help' to see detailed help message",
+					"[ %s ] are the only format supported",
 					validFormatsString,
 				),
 			)
