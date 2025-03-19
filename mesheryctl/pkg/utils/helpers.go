@@ -1222,15 +1222,6 @@ func CheckFileExists(name string) (bool, error) {
 	return false, errors.Wrap(err, fmt.Sprintf("Failed to read/fetch the file %s", name))
 }
 
-func Contains(key string, col []string) int {
-	for i, n := range col {
-		if n == key {
-			return i
-		}
-	}
-	return -1
-}
-
 // HandlePagination handles interactive pagination and prints the content in the terminal.
 // It takes the page size, data to paginate, header for the data table, and an optional footer.
 // If no footer is provided, it will be omitted.
@@ -1314,7 +1305,8 @@ func IsValidUrl(path string) bool {
 	}
 	return u.Scheme != "" && u.Host != ""
 }
-//get current k8s context
+
+// get current k8s context
 func GetCurrentK8sContext(client *meshkitkube.Client) (string, error) {
 	if client == nil {
 		return "", fmt.Errorf("kubernetes client is nil")

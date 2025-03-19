@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
     "metadata": {
@@ -58,7 +59,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -73,7 +73,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -88,7 +87,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -103,7 +101,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "body-text",
