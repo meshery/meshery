@@ -43,6 +43,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 		modelName := args[0]
 		path, _ := cmd.Flags().GetString("path")
 		version, _ := cmd.Flags().GetString("version")
+		// TODO take into account outputFormat
 		outputFormat, _ := cmd.Flags().GetString("output-format")
 
 		utils.Log.Info("init command will be here soon")
@@ -52,14 +53,14 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 		utils.Log.Infof("output format = %s", outputFormat)
 
 		for _, templatePath := range []string{
-			templatePathModelJSON,
-			templatePathDesignJSON,
-			templatePathComponentJSON,
-			templatePathConnectionJSON,
-			templatePathRelathionshipJSON,
+			initModelTemplatePathModelJSON,
+			initModelTemplatePathDesignJSON,
+			initModelTemplatePathComponentJSON,
+			initModelTemplatePathConnectionJSON,
+			initModelTemplatePathRelathionshipJSON,
 		} {
 			// modelJSONContent, err := readTemplate(templatePath)
-			_, err := readTemplate(templatePath)
+			_, err := initModelReadTemplate(templatePath)
 			if err != nil {
 				utils.Log.Error(err)
 				// TODO use meshkit error format instead during implementation phase
@@ -77,6 +78,39 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 			return err
 		}
 
+		modelJSONContent, err := initModelReadTemplate(initModelTemplatePathModelJSON)
+		if err != nil {
+			utils.Log.Error(err)
+			// TODO use meshkit error format instead during implementation phase
+			return err
+		}
+
+		modelFilePath := strings.Join(
+			[]string{
+				folderPath,
+				strings.Join(
+					[]string{"model", outputFormat},
+					".",
+				),
+			},
+			string(os.PathSeparator),
+		)
+		modelFile, err := os.Create(modelFilePath)
+		if err != nil {
+			utils.Log.Error(err)
+			// TODO use meshkit error format instead during implementation phase
+			return err
+		}
+		defer modelFile.Close() // Ensure the file is closed when the function exits
+
+		_, err = modelFile.Write(modelJSONContent)
+		if err != nil {
+			utils.Log.Error(err)
+			// TODO use meshkit error format instead during implementation phase
+			return err
+		}
+
+		// TODO maybe clean partial data (if error occurs in the middle of execution)
 		return nil
 	},
 }
@@ -87,12 +121,17 @@ func init() {
 	initModelCmd.Flags().StringP("output-format", "o", "json", "(optional) format to display in [json|yaml]")
 }
 
-const templatePathModelJSON = "json_models/constructs/v1beta1/model.json"
-const templatePathDesignJSON = "json_models/constructs/v1beta1/design.json"
-const templatePathComponentJSON = "json_models/constructs/v1beta1/component.json"
-const templatePathConnectionJSON = "json_models/constructs/v1beta1/connection.json"
-const templatePathRelathionshipJSON = "json_models/constructs/v1alpha3/relationship.json"
+const initModelTemplatePathModelJSON = "json_models/constructs/v1beta1/model.json"
+const initModelTemplatePathDesignJSON = "json_models/constructs/v1beta1/design.json"
+const initModelTemplatePathComponentJSON = "json_models/constructs/v1beta1/component.json"
+const initModelTemplatePathConnectionJSON = "json_models/constructs/v1beta1/connection.json"
+const initModelTemplatePathRelathionshipJSON = "json_models/constructs/v1alpha3/relationship.json"
 
-func readTemplate(templatePath string) ([]byte, error) {
+func initModelReadTemplate(templatePath string) ([]byte, error) {
 	return schemas.Schemas.ReadFile(templatePath)
+}
+
+func initModelGetValidOutputFormat() []string {
+	return []string{"json"}
+	// return []string{"yaml", "json", "csv"}
 }
