@@ -4,6 +4,7 @@ import (
 	"path/filepath"
 	"runtime"
 	"testing"
+
 	"github.com/jarcoal/httpmock"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/stretchr/testify/assert"
@@ -34,18 +35,18 @@ func TestCreateEnvironmentCmd(t *testing.T) {
 		URL              string
 		Fixture          string
 		ExpectedResponse string
-		ExpectedError      bool
+		ExpectedError    bool
 	}{
 		{
 			Name:             "Missing Name Flag",
-			Args:             []string{"create", "--orgId", "1234", "--description", "This is a test environment"},
-			URL:              testContext.BaseURL+"/api/environments",
+			Args:             []string{"create", "--orgID", "1234", "--description", "This is a test environment"},
+			URL:              testContext.BaseURL + "/api/environments",
 			ExpectedResponse: "create.environment.missing.flag.golden",
 			ExpectedError:    true,
 		},
 		{
 			Name:             "Invalid OrgId as Non-UUID",
-			Args:             []string{"create", "--orgId", "invalid-org-id", "--name", "TestEnv", "--description", "This is a test environment"},
+			Args:             []string{"create", "--orgID", "invalid-org-id", "--name", "TestEnv", "--description", "This is a test environment"},
 			URL:              testContext.BaseURL + "/api/environments",
 			Fixture:          "create.environment.local.provider.invalid-orgid.response.golden",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
@@ -54,19 +55,19 @@ func TestCreateEnvironmentCmd(t *testing.T) {
 		},
 		{
 			Name:             "Create Environment Successfully",
-			Args:             []string{"create", "--orgId", "422595a1-bbe3-4355-ac80-5efa0b35c9da", "--name", "TestEnv", "--description", "This is a test environment"},
+			Args:             []string{"create", "--orgID", "422595a1-bbe3-4355-ac80-5efa0b35c9da", "--name", "TestEnv", "--description", "This is a test environment"},
 			URL:              testContext.BaseURL + "/api/environments",
 			Fixture:          "create.environment.response.golden",
 			Token:            filepath.Join(fixturesDir, "token.golden"),
 			ExpectedResponse: "create.environment.output.golden",
 			ExpectedError:    false,
 		},
-		}
+	}
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			if(tt.Fixture!=""){
-				apiResponse:=  utils.NewGoldenFile(t,tt.Fixture,fixturesDir).Load()
+			if tt.Fixture != "" {
+				apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
 				utils.TokenFlag = tt.Token
 
 				// mock response
@@ -77,13 +78,12 @@ func TestCreateEnvironmentCmd(t *testing.T) {
 			// Expected response
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
 
-
 			cmd := EnvironmentCmd
 			cmd.SetArgs(tt.Args)
 
 			b := utils.SetupMeshkitLoggerTesting(t, false)
 			cmd.SetOut(b)
-			err:=cmd.Execute()
+			err := cmd.Execute()
 
 			if err != nil {
 				if tt.ExpectedError {
@@ -99,7 +99,7 @@ func TestCreateEnvironmentCmd(t *testing.T) {
 			expectedResponse := golden.Load()
 			assert.Equal(t, expectedResponse, actualResponse)
 
-		})	
+		})
 	}
 	t.Log("Create test passed")
 }
