@@ -706,7 +706,7 @@ func ErrUpdateComponent(err error, modelName, compName string) error {
 	return errors.New(ErrUpdateComponentsCode, errors.Alert, []string{fmt.Sprintf("error updating component %s of model %s ", compName, modelName)}, []string{err.Error()}, []string{"Component does not exist", "Component definition is corrupted"}, []string{"Ensure existence of component, check for typo in component name", "Regenerate corrupted component"})
 }
 func ErrCSVFileNotFound(path string) error {
-	return errors.New(ErrCSVFileNotFoundCode, errors.Alert, []string{"error reading csv file", path}, []string{fmt.Sprintf("inside the directory %s either the model csv or component csv is missing or they are not of write format", path)}, []string{"Either or both model csv or component csv are absent, the csv is not of correct template"}, []string{fmt.Sprintf("verify both the csv are present in the directory:%s", path), "verify the csv template"})
+	return errors.New(ErrCSVFileNotFoundCode, errors.Alert, []string{"error reading CSV file", path}, []string{fmt.Sprintf("inside the directory %s either the model CSV or component CSV is missing or they are not of right format", path)}, []string{"Either or both model CSV or component CSV are absent, the CSV is not of correct template"}, []string{fmt.Sprintf("Verify both the CSVs are present in the directory: %s", path), "Verify the CSV template", "For more details, refer documentation: https://docs.meshery.io/project/contributing/contributing-models-quick-start"})
 }
 func ErrReadCSVRow(err error, obj string) error {
 	return errors.New(ErrReadCSVRowCode, errors.Alert, []string{"error reading csv ", obj}, []string{err.Error()}, []string{fmt.Sprintf("the %s of the csv is broken", obj)}, []string{fmt.Sprintf("verify the csv %s", obj)})

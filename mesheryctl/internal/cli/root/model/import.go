@@ -15,6 +15,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
 	"github.com/layer5io/meshkit/encoding"
+	"github.com/layer5io/meshkit/errors"
 	meshkitutils "github.com/layer5io/meshkit/utils"
 	schemav1beta1 "github.com/meshery/schemas/models/v1beta1"
 	"github.com/spf13/cobra"
@@ -31,7 +32,7 @@ var (
 var importModelCmd = &cobra.Command{
 	Use:   "import",
 	Short: "Import models from mesheryctl command",
-	Long:  "Import models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name.",
+	Long:  "Import models by specifying the directory, file, URL or CSVs. You can also provide a template JSON file and registrant name.",
 	Example: `
 	mesehryctl model import -f [ URI ]
  
@@ -39,6 +40,7 @@ var importModelCmd = &cobra.Command{
 	mesehryctl model import -f OCI 
 	mesehryctl model import -f model.tar.gz 
 	mesehryctl model import -f /path/to/models
+	mesheryctl model import -f /path/to/csv-directory
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl model import [ file | filePath | URL ]\nRun 'mesheryctl model import --help' to see detailed help message"
@@ -64,6 +66,55 @@ var importModelCmd = &cobra.Command{
 			}
 			return nil
 		}
+
+		hasCSVs, err := hasCSVs(path)
+		if err != nil {
+			utils.Log.Error(err)
+		}
+
+		if hasCSVs {
+			modelcsvpath, componentcsvpath, relationshipcsvpath, err := utils.GetCsv(path)
+			if err != nil {
+				utils.Log.Infof("%s: %s", utils.BoldString("ERROR"), "Error importing model using CSV files")
+				if meshkitErr, ok := err.(*errors.Error); ok {
+					if len(meshkitErr.ProbableCause) != 0 {
+						utils.Log.Infof("\n  %s:\n  %s", utils.BoldString("PROBABLE CAUSE"), strings.Join(meshkitErr.ProbableCause, ". "))
+					}
+					if len(meshkitErr.SuggestedRemediation) != 0 {
+						utils.Log.Infof("\n  %s:\n  %s", utils.BoldString("SUGGESTED REMEDIATION"), strings.Join(meshkitErr.SuggestedRemediation, ". "))
+					}
+				} else {
+					utils.Log.Error(err)
+				}
+
+				return nil
+			} else {
+				modelData, err := os.ReadFile(modelcsvpath)
+				if err != nil {
+					return utils.ErrFileRead(err)
+				}
+				componentData, err := os.ReadFile(componentcsvpath)
+				if err != nil {
+					return utils.ErrFileRead(err)
+				}
+				relationshipData, err := os.ReadFile(relationshipcsvpath)
+				if err != nil {
+					return utils.ErrFileRead(err)
+				}
+				err = registerModel(modelData, componentData, relationshipData, "model.csv", "csv", "", !register)
+				if err != nil {
+					utils.Log.Error(err)
+					return nil
+				}
+				locationForModel := utils.MesheryFolder + "/models"
+				utils.Log.Info("Model can be accessed from ", locationForModel)
+				locationForLogs := utils.MesheryFolder + "/logs/registry"
+				utils.Log.Info("Logs for the csv generation can be accessed ", locationForLogs)
+				return nil
+			}
+		}
+
+		// if directory doesn't have CSVs, then process it as a meshery model
 		info, err := os.Stat(path)
 		if err != nil {
 			return models.ErrFolderStat(err, path)
@@ -96,6 +147,20 @@ var importModelCmd = &cobra.Command{
 		}
 		return nil
 	},
+}
+
+func hasCSVs(path string) (bool, error) {
+	files, err := os.ReadDir(path)
+	if err != nil {
+		return false, err
+	}
+
+	for _, f := range files {
+		if !f.IsDir() && filepath.Ext(f.Name()) == ".csv" {
+			return true, nil
+		}
+	}
+	return false, nil
 }
 
 func registerModel(data []byte, componentData []byte, relationshipData []byte, filename string, dataType string, sourceURI string, register bool) error {
