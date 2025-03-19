@@ -31,6 +31,7 @@ func TestModelInit(t *testing.T) {
 			ExpectedResponse: "model.init.encouraging.output.golden",
 			// ExpectedResponse: "model.init.printallmodels.output.golden",
 		},
+		// TODO test the created folder structure
 	}
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {
