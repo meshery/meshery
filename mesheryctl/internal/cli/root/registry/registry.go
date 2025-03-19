@@ -20,6 +20,7 @@ import (
 	"errors"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	meshkitRegistryUtils "github.com/layer5io/meshkit/registry"
 	"github.com/spf13/cobra"
 )
 
@@ -54,6 +55,13 @@ var RegistryCmd = &cobra.Command{
 }
 
 func init() {
+	cobra.OnInitialize(setupRegistryLogger)
 	RegistryCmd.AddCommand(availableSubcommands...)
+}
 
+func setupRegistryLogger() {
+	err := meshkitRegistryUtils.SetLogger(true)
+	if err != nil {
+		utils.Log.Info("Error setting logger: ", err)
+	}
 }
