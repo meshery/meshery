@@ -10,8 +10,6 @@ list: include
 display-title: false
 ---
 
-# Contributing to Meshery CLI End-to-End Tests
-
 Meshery CLI is the command line interface for Meshery. Meshery CLI, otherwise known as `mesheryctl`, is a client of Meshery Server's [REST API]({{site.baseurl}}/extensibility/api). It provides a way to interact with Meshery and perform various operations such as installing, configuring, and managing cloud native infrastructure.
 
 This document is intended to help you contribute to the end-to-end tests for `mesheryctl`, the Meshery CLI. It is designed to be a guide for developers who are new to the project and want to contribute to the testing of `mesheryctl`.
@@ -38,6 +36,8 @@ Before diving into `mesheryctl`'s testing environment, certain prerequisites mus
 - A working installation of the BATS testing framework.
   - `bash` as shell terminal.
 - [Optional] A working installation of a Kubernetes cluster (Minikube, Kind, etc.) for testing Kubernetes-related functionality.
+- `jq` and `yq`, tools for processing JSON and YAML inputs, respectively.
+
 
 ### Authentication
 
@@ -53,10 +53,10 @@ If you are using Layer5 Cloud as your remote provider, you can [generate and dow
 mesheryctl system check
 ```
 
-If you need to authenticate, you will see the following message
+If you see this error message - `Error: !! Authentication token not found. Please supply a valid user token. Login with mesheryctl system login`, you will need to authenticate using the command:
 
 ```bash
-Error: !! Authentication token not found. Please supply a valid user token. Login with `mesheryctl system login`
+mesheryctl system login
 ```
 
 ### Starting Meshery Server
@@ -155,10 +155,31 @@ For consistency, we will keep the prefix *00-* for the command under test in the
     - https://github.com/bats-core/bats-support.git
     3. back to tests/e2e
     5. run bats *-*/*.bats
--->
+
 ```bash
 make cli-tests _not yet implemented_
 ```
+-->
+
+Make sure you are in `meshery/mesheryctl` directory
+
+**Run all tests** 
+
+```bash
+make e2e
+```
+
+**Run a specific test file**
+
+Switch to the directory containing the test file and execute:
+
+```bash
+MESHERYCTL_BIN=<path to mesheryctl binary> bats <file_name>.bats
+```
+
+### Find Tests here
+Refer to [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?usp=sharing) for test scenarios.
+
 
 {% include alert.html
     type="danger"
