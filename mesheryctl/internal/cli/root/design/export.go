@@ -54,17 +54,17 @@ The command also supports specifying an output directory where the exported desi
 By default, the exported design will be saved in the current directory. The different types of design
 type allowed are oci, original, and current. The default design type is current.`,
 	Example: `
-	# Export a design with a specific ID
-	mesheryctl design export [pattern-name | ID]
-	
-	# Export a design with a specific ID and type
-	mesheryctl design export [pattern-name | ID] --type [design-type]
-	
-	# Export a design and save it to a specific directory
-	mesheryctl design export [pattern-name | ID] --output ./designs
-	
-	# Export a design with a specific type and save it to a directory
-	mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exports
+// Export a design with a specific ID
+mesheryctl design export [pattern-name | ID]
+
+// Export a design with a specific ID and type
+mesheryctl design export [pattern-name | ID] --type [design-type]
+
+// Export a design and save it to a specific directory
+mesheryctl design export [pattern-name | ID] --output ./designs
+
+// Export a design with a specific type and save it to a directory
+mesheryctl design export [pattern-name | ID] --type [design-type] --output ./exports
 	`,
 	Args: cobra.MinimumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
