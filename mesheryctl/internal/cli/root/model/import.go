@@ -22,27 +22,30 @@ import (
 	"github.com/spf13/viper"
 )
 
-var (
-	location     string
-	templateFile string
-	register     bool
-)
-
 var importModelCmd = &cobra.Command{
 	Use:   "import",
-	Short: "Import models from mesheryctl command",
+	Short: "Import models",
 	Long:  "Import models by specifying the directory, file, or URL. You can also provide a template JSON file and registrant name.",
 	Example: `
-	mesehryctl model import -f [ URI ]
+// Import model
+mesehryctl model import -f [URI]
  
-	mesehryctl model import -f URL 
-	mesehryctl model import -f OCI 
-	mesehryctl model import -f model.tar.gz 
-	mesehryctl model import -f /path/to/models
+// Import model from a URL
+mesehryctl model import -f [URL]
+
+// Import model from a OCI
+mesehryctl model import -f [OCI]
+
+// Import model from a tar.gz file
+mesehryctl model import -f [path-to-model.tar.gz]
+
+// Import model(s) from a path
+mesehryctl model import -f [path-to-models]
 	`,
-	Args: func(_ *cobra.Command, args []string) error {
+	Args: func(cmd *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl model import [ file | filePath | URL ]\nRun 'mesheryctl model import --help' to see detailed help message"
-		if location == "" && len(args) == 0 {
+		file, _ := cmd.Flags().GetString("file")
+		if file == "" && len(args) == 0 {
 			return fmt.Errorf("[ file | filepath | URL ] isn't specified\n\n%v", errMsg)
 		} else if len(args) > 1 {
 			return fmt.Errorf("too many arguments\n\n%v", errMsg)
@@ -51,8 +54,9 @@ var importModelCmd = &cobra.Command{
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
 		var path string
-		if location != "" {
-			path = location
+		file, _ := cmd.Flags().GetString("file")
+		if file != "" {
+			path = file
 		} else {
 			path = args[0]
 		}
@@ -449,6 +453,6 @@ func init() {
 		return pflag.NormalizedName(strings.ToLower(name))
 	})
 
-	importModelCmd.Flags().StringVarP(&location, "file", "f", "", "Specify path to the file or directory")
+	importModelCmd.Flags().StringP("file", "f", "", "Specify path to the file or directory")
 
 }
