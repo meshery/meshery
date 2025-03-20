@@ -45,16 +45,17 @@
     "model": {
       "version": "0.10.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -175,15 +176,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "core.kubefed.io/v1alpha1",
     "kind": "ClusterPropagatedVersion",
-    "schema": "{\n \"description\": \"ClusterPropagatedVersion holds version information about the state propagated from KubeFed APIs (configured by FederatedTypeConfig resources) to member clusters. The name of a ClusterPropagatedVersion encodes the kind and name of the resource it stores information for (i.e. \\u003clower-case kind\\u003e-\\u003cresource name\\u003e). If a target resource has a populated metadata.Generation field, the generation will be stored with a prefix of `gen:` as the version for the cluster.  If metadata.Generation is not available, metadata.ResourceVersion will be stored with a prefix of `rv:` as the version for the cluster.\",\n \"properties\": {},\n \"title\": \"Cluster Propagated Version\",\n \"type\": \"object\"\n}",
-    "version": "core.kubefed.io/v1alpha1"
+    "schema": "{\n \"description\": \"ClusterPropagatedVersion holds version information about the state propagated from KubeFed APIs (configured by FederatedTypeConfig resources) to member clusters. The name of a ClusterPropagatedVersion encodes the kind and name of the resource it stores information for (i.e. \\u003clower-case kind\\u003e-\\u003cresource name\\u003e). If a target resource has a populated metadata.Generation field, the generation will be stored with a prefix of `gen:` as the version for the cluster.  If metadata.Generation is not available, metadata.ResourceVersion will be stored with a prefix of `rv:` as the version for the cluster.\",\n \"properties\": {},\n \"title\": \"Cluster Propagated Version\",\n \"type\": \"object\"\n}"
   }
 }

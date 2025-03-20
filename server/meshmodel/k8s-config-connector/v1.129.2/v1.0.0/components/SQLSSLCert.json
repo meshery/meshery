@@ -44,15 +44,16 @@
     "model": {
       "version": "v1.129.2"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#4285F4",
     "shape": "rectangle",
     "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#aecbfa;}.cls-1,.cls-2,.cls-3{fill-rule:evenodd;}.cls-2{fill:#669df6;}.cls-3{fill:#4285f4;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg \u003e\u003cpolygon class=\"cls-1\" points=\"4.67 10.44 4.67 13.45 12 17.35 12 14.34 4.67 10.44\"/\u003e\u003cpolygon class=\"cls-1\" points=\"4.67 15.09 4.67 18.1 12 22 12 18.99 4.67 15.09\"/\u003e\u003cpolygon class=\"cls-2\" points=\"12 17.35 19.33 13.45 19.33 10.44 12 14.34 12 17.35\"/\u003e\u003cpolygon class=\"cls-2\" points=\"12 22 19.33 18.1 19.33 15.09 12 18.99 12 22\"/\u003e\u003cpolygon class=\"cls-3\" points=\"19.33 8.91 19.33 5.9 12 2 12 5.01 19.33 8.91\"/\u003e\u003cpolygon class=\"cls-2\" points=\"12 2 4.67 5.9 4.67 8.91 12 5.01 12 2\"/\u003e\u003cpolygon class=\"cls-1\" points=\"4.67 5.87 4.67 8.89 12 12.79 12 9.77 4.67 5.87\"/\u003e\u003cpolygon class=\"cls-2\" points=\"12 12.79 19.33 8.89 19.33 5.87 12 9.77 12 12.79\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}.cls-1,.cls-2,.cls-3{fill-rule:evenodd;}.cls-2{fill:#fff;}.cls-3{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg \u003e\u003cpolygon class=\"cls-1\" points=\"4.67 10.44 4.67 13.45 12 17.35 12 14.34 4.67 10.44\"/\u003e\u003cpolygon class=\"cls-1\" points=\"4.67 15.09 4.67 18.1 12 22 12 18.99 4.67 15.09\"/\u003e\u003cpolygon class=\"cls-2\" points=\"12 17.35 19.33 13.45 19.33 10.44 12 14.34 12 17.35\"/\u003e\u003cpolygon class=\"cls-2\" points=\"12 22 19.33 18.1 19.33 15.09 12 18.99 12 22\"/\u003e\u003cpolygon class=\"cls-3\" points=\"19.33 8.91 19.33 5.9 12 2 12 5.01 19.33 8.91\"/\u003e\u003cpolygon class=\"cls-2\" points=\"12 2 4.67 5.9 4.67 8.91 12 5.01 12 2\"/\u003e\u003cpolygon class=\"cls-1\" points=\"4.67 5.87 4.67 8.89 12 12.79 12 9.77 4.67 5.87\"/\u003e\u003cpolygon class=\"cls-2\" points=\"12 12.79 19.33 8.89 19.33 5.87 12 9.77 12 12.79\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e"
   },
   "capabilities": [
@@ -173,7 +174,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -181,8 +184,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "sql.cnrm.cloud.google.com/v1beta1",
     "kind": "SQLSSLCert",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"commonName\": {\n     \"description\": \"Immutable. The common name to be used in the certificate to identify the client. Constrained to [a-zA-Z.-_ ]+. Changing this forces a new resource to be created.\",\n     \"type\": \"string\"\n    },\n    \"instanceRef\": {\n     \"description\": \"The Cloud SQL instance.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `SQLInstance` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated sha1Fingerprint of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"commonName\",\n    \"instanceRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"SQLSSL Cert\",\n \"type\": \"object\"\n}",
-    "version": "sql.cnrm.cloud.google.com/v1beta1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"commonName\": {\n     \"description\": \"Immutable. The common name to be used in the certificate to identify the client. Constrained to [a-zA-Z.-_ ]+. Changing this forces a new resource to be created.\",\n     \"type\": \"string\"\n    },\n    \"instanceRef\": {\n     \"description\": \"The Cloud SQL instance.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `SQLInstance` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The service-generated sha1Fingerprint of the resource. Used for acquisition only. Leave unset to create a new resource.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"commonName\",\n    \"instanceRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"SQLSSL Cert\",\n \"type\": \"object\"\n}"
   }
 }

@@ -30,6 +30,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Observability and Analysis"
     },
+    "subCategory": "",
     "metadata": {
       "isAnnotation": false,
       "source_uri": "https://epam.github.io/edp-helm-charts/stable/packages/perf-operator-2.13.0.tgz",
@@ -39,16 +40,17 @@
     "model": {
       "version": "2.12.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -169,15 +171,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "v2.edp.epam.com/v1",
     "kind": "PerfServer",
-    "schema": "{\n \"description\": \"PerfServer is the Schema for the PerfServers API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PerfServerSpec defines the desired state of PerfServer.\",\n   \"properties\": {\n    \"apiUrl\": {\n     \"type\": \"string\"\n    },\n    \"credentialName\": {\n     \"type\": \"string\"\n    },\n    \"projectName\": {\n     \"type\": \"string\"\n    },\n    \"rootUrl\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"apiUrl\",\n    \"credentialName\",\n    \"projectName\",\n    \"rootUrl\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Perf Server\",\n \"type\": \"object\"\n}",
-    "version": "v2.edp.epam.com/v1"
+    "schema": "{\n \"description\": \"PerfServer is the Schema for the PerfServers API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"PerfServerSpec defines the desired state of PerfServer.\",\n   \"properties\": {\n    \"apiUrl\": {\n     \"type\": \"string\"\n    },\n    \"credentialName\": {\n     \"type\": \"string\"\n    },\n    \"projectName\": {\n     \"type\": \"string\"\n    },\n    \"rootUrl\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"apiUrl\",\n    \"credentialName\",\n    \"projectName\",\n    \"rootUrl\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Perf Server\",\n \"type\": \"object\"\n}"
   }
 }
