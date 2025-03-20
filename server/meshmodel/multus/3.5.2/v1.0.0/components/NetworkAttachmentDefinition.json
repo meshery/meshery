@@ -45,16 +45,17 @@
     "model": {
       "version": "3.5.2"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -175,15 +176,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "k8s.cni.cncf.io/v1",
     "kind": "NetworkAttachmentDefinition",
-    "schema": "{\n \"description\": \"NetworkAttachmentDefinition is a CRD schema specified by the Network Plumbing Working Group to express the intent for attaching pods to one or more logical or physical networks. More information available at: https://github.com/k8snetworkplumbingwg/multi-net-spec\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NetworkAttachmentDefinition spec defines the desired state of a network attachment\",\n   \"properties\": {\n    \"config\": {\n     \"description\": \"NetworkAttachmentDefinition config is a JSON-formatted CNI configuration\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Network Attachment Definition\",\n \"type\": \"object\"\n}",
-    "version": "k8s.cni.cncf.io/v1"
+    "schema": "{\n \"description\": \"NetworkAttachmentDefinition is a CRD schema specified by the Network Plumbing Working Group to express the intent for attaching pods to one or more logical or physical networks. More information available at: https://github.com/k8snetworkplumbingwg/multi-net-spec\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NetworkAttachmentDefinition spec defines the desired state of a network attachment\",\n   \"properties\": {\n    \"config\": {\n     \"description\": \"NetworkAttachmentDefinition config is a JSON-formatted CNI configuration\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Network Attachment Definition\",\n \"type\": \"object\"\n}"
   }
 }

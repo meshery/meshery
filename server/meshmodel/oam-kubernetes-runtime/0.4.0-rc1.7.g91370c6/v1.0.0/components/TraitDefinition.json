@@ -45,16 +45,17 @@
     "model": {
       "version": "0.4.0-rc1.7.g91370c6"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -175,15 +176,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "core.oam.dev/v1alpha2",
     "kind": "TraitDefinition",
-    "schema": "{\n \"description\": \"A TraitDefinition registers a kind of Kubernetes custom resource as a valid OAM trait kind by referencing its CustomResourceDefinition. The CRD is used to validate the schema of the trait when it is embedded in an OAM ApplicationConfiguration.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"A TraitDefinitionSpec defines the desired state of a TraitDefinition.\",\n   \"properties\": {\n    \"appliesToWorkloads\": {\n     \"description\": \"AppliesToWorkloads specifies the list of workload kinds this trait applies to. Workload kinds are specified in kind.group/version format, e.g. server.core.oam.dev/v1alpha2. Traits that omit this field apply to all workload kinds.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"definitionRef\": {\n     \"description\": \"Reference to the CustomResourceDefinition that defines this trait kind.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referenced CustomResourceDefinition.\",\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"description\": \"Version indicate which version should be used if CRD has multiple versions by default it will use the first one if not specified\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"extension\": {\n     \"description\": \"Extension is used for extension needs by OAM platform builders\",\n     \"type\": \"object\"\n    },\n    \"revisionEnabled\": {\n     \"description\": \"Revision indicates whether a trait is aware of component revision\",\n     \"type\": \"boolean\"\n    },\n    \"workloadRefPath\": {\n     \"description\": \"WorkloadRefPath indicates where/if a trait accepts a workloadRef object\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"definitionRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Trait Definition\",\n \"type\": \"object\"\n}",
-    "version": "core.oam.dev/v1alpha2"
+    "schema": "{\n \"description\": \"A TraitDefinition registers a kind of Kubernetes custom resource as a valid OAM trait kind by referencing its CustomResourceDefinition. The CRD is used to validate the schema of the trait when it is embedded in an OAM ApplicationConfiguration.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"A TraitDefinitionSpec defines the desired state of a TraitDefinition.\",\n   \"properties\": {\n    \"appliesToWorkloads\": {\n     \"description\": \"AppliesToWorkloads specifies the list of workload kinds this trait applies to. Workload kinds are specified in kind.group/version format, e.g. server.core.oam.dev/v1alpha2. Traits that omit this field apply to all workload kinds.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"definitionRef\": {\n     \"description\": \"Reference to the CustomResourceDefinition that defines this trait kind.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referenced CustomResourceDefinition.\",\n       \"type\": \"string\"\n      },\n      \"version\": {\n       \"description\": \"Version indicate which version should be used if CRD has multiple versions by default it will use the first one if not specified\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"extension\": {\n     \"description\": \"Extension is used for extension needs by OAM platform builders\",\n     \"type\": \"object\"\n    },\n    \"revisionEnabled\": {\n     \"description\": \"Revision indicates whether a trait is aware of component revision\",\n     \"type\": \"boolean\"\n    },\n    \"workloadRefPath\": {\n     \"description\": \"WorkloadRefPath indicates where/if a trait accepts a workloadRef object\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"definitionRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Trait Definition\",\n \"type\": \"object\"\n}"
   }
 }

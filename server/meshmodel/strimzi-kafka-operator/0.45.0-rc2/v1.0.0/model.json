@@ -38,8 +38,8 @@
   "model": {
     "version": "0.45.0-rc2"
   },
-  "components": null,
-  "relationships": null,
   "components_count": 0,
-  "relationships_count": 0
+  "relationships_count": 0,
+  "components": null,
+  "relationships": null
 }
