@@ -1,6 +1,7 @@
 package model
 
 import (
+	"os"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -23,15 +24,30 @@ func TestModelInit(t *testing.T) {
 		Args             []string
 		ExpectError      bool
 		ExpectedResponse string
+		ExpectedDirs     []string
+		ExpectedFiles    []string
 	}{
 		{
-			Name:             "model init print all models (work in progress)",
+			Name:             "model init with default params",
 			Args:             []string{"init", "aws-ec2-controller"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.encouraging.output.golden",
-			// ExpectedResponse: "model.init.printallmodels.output.golden",
+			ExpectedDirs: []string{
+				"aws-ec2-controller",
+				"aws-ec2-controller/0.1.0",
+				"aws-ec2-controller/0.1.0/components",
+				"aws-ec2-controller/0.1.0/connections",
+				"aws-ec2-controller/0.1.0/credentials",
+				"aws-ec2-controller/0.1.0/relationships",
+			},
+			ExpectedFiles: []string{
+				"aws-ec2-controller/0.1.0/model.json",
+				"aws-ec2-controller/0.1.0/components/component.json",
+				"aws-ec2-controller/0.1.0/connections/connection.json",
+				"aws-ec2-controller/0.1.0/relationships/relationship.json",
+			},
 		},
-		// TODO test the created folder structure
+		// TODO test not covered branches
 	}
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {
@@ -58,6 +74,27 @@ func TestModelInit(t *testing.T) {
 
 			expectedResponse := golden.Load()
 			assert.Equal(t, expectedResponse, actualResponse)
+
+			if len(tc.ExpectedDirs) > 0 {
+				for _, dir := range tc.ExpectedDirs {
+					info, err := os.Stat(dir)
+					assert.NoError(t, err)
+					if err == nil {
+						assert.True(t, info.IsDir())
+					}
+
+				}
+			}
+
+			if len(tc.ExpectedFiles) > 0 {
+				for _, file := range tc.ExpectedFiles {
+					info, err := os.Stat(file)
+					assert.NoError(t, err)
+					if err == nil {
+						assert.False(t, info.IsDir())
+					}
+				}
+			}
 		})
 		t.Log("model init test finished")
 	}
