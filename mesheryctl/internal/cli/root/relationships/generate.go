@@ -36,10 +36,10 @@ type CustomValueRange struct {
 
 var generateCmd = &cobra.Command{
 	Use:   "generate",
-	Short: "generate relationships docs",
-	Long:  "generate relationships docs from the google spreadsheets",
+	Short: "Generate relationships documents",
+	Long:  "Generate relationships documents from the google spreadsheets",
 	Example: `
-// Generate relationships docs
+// Generate relationships documentss
 mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
