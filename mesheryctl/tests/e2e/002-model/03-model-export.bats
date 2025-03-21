@@ -2,16 +2,6 @@
 
 load helpers/test_helpers.bats
 
-# -----------------------------------------------------------------------------
-# This file tests the `mesheryctl model export` command for:
-#   1) Missing model name (usage instructions)
-#   2) Default export options (oci output, yaml format)
-#   3) Overriding file type with "-o tar"
-#   4) Overriding output format with "-t json"
-#   5) Including a version with "--version"
-#   6) Handling discard flags for components and relationships
-# -----------------------------------------------------------------------------
-
 setup() {
   MESHERYCTL_DIR=$(dirname "$MESHERYCTL_BIN")
   export TESTDATA_DIR="$MESHERYCTL_DIR/tests/e2e/002-model/testdata/model-export"
