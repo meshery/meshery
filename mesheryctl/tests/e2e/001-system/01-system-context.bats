@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 
-@test "mesheryctl system context view --all is ucceeded" {
+@test "mesheryctl system context view --all is succeeded" {
    run $MESHERYCTL_BIN system context view --all
    [ "$status" -eq 0 ]
    [[ "$output" =~ "endpoint" ]]
