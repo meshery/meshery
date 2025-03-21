@@ -66,7 +66,6 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 		if err != nil {
 			return err
 		}
-
 		rows := [][]string{}
 
 		for _, relationship := range relationshipResponse.Relationships {
@@ -100,16 +99,31 @@ func init() {
 }
 
 func buildSearchUrl(baseUrl string) string {
-	searchUrl := ""
-	escapedType := url.QueryEscape(searchType)
-	escapeKind := url.QueryEscape(searchKind)
-	escapeSubType := url.QueryEscape(searchSubType)
-	if searchModelName == "" {
-		searchUrl = fmt.Sprintf("%s/api/meshmodels/relationships?type=%s&kind=%s&subType=%s&pagesize=all", baseUrl, escapedType, escapeKind, escapeSubType)
+	var searchUrl strings.Builder
 
+	if searchModelName == "" {
+		searchUrl.WriteString(fmt.Sprintf("%s/api/meshmodels/relationships?", baseUrl))
 	} else {
 		escapeModelName := url.QueryEscape(searchModelName)
-		searchUrl = fmt.Sprintf("%s/api/meshmodels/models/%s/relationships?type=%s&kind=%s&subType=%s&pagesize=all", baseUrl, escapeModelName, escapedType, escapeKind, escapeSubType)
+		searchUrl.WriteString(fmt.Sprintf("%s/api/meshmodels/models/%s/relationships?", baseUrl, escapeModelName))
 	}
-	return searchUrl
+
+	if searchType != "" {
+		escapedType := url.QueryEscape(searchType)
+		searchUrl.WriteString(fmt.Sprintf("type=%s&", escapedType))
+	}
+
+	if searchKind != "" {
+		escapeKind := url.QueryEscape(searchKind)
+		searchUrl.WriteString(fmt.Sprintf("kind=%s&", escapeKind))
+	}
+
+	if searchSubType != "" {
+		escapeSubType := url.QueryEscape(searchSubType)
+		searchUrl.WriteString(fmt.Sprintf("subType=%s&", escapeSubType))
+	}
+
+	searchUrl.WriteString("pagesize=all")
+
+	return searchUrl.String()
 }

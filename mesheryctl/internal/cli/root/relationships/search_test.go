@@ -99,11 +99,19 @@ func TestSearch_WithFlags(t *testing.T) {
 	// test scenarios for fetching data
 	tests := []utils.MesheryListCommamdTest{
 		{
-			Name:             "Search registered relationships",
+			Name:             "Search registered relationships matching result(s) found",
 			Args:             []string{"search", "--model", "kubernetes"},
-			URL:              "/api/meshmodels/models/kubernetes",
-			Fixture:          "search.relationship.api.response.golden",
-			ExpectedResponse: "search.relationship.output.golden",
+			URL:              "/api/meshmodels/models/kubernetes/relationships",
+			Fixture:          "search.relationship.api.response.matching.result.golden",
+			ExpectedResponse: "search.relationship.output.matching.result.golden",
+			ExpectError:      false,
+		},
+		{
+			Name:             "Search registered relationships no matching result(s) found",
+			Args:             []string{"search", "--model", "kubernetes"},
+			URL:              "/api/meshmodels/models/kubernetes/relationships",
+			Fixture:          "search.relationship.api.response.no.matching.result.golden",
+			ExpectedResponse: "search.relationship.output.no.matching.result.golden",
 			ExpectError:      false,
 		},
 	}
