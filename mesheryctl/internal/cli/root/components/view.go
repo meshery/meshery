@@ -33,14 +33,14 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// represents the mesheryctl components view [component-name] subcommand.
+// represents the mesheryctl component view [component-name] subcommand.
 var viewComponentCmd = &cobra.Command{
 	Use:   "view",
 	Short: "view registered components",
 	Long:  "view a component registered in Meshery Server",
 	Example: `
 // View details of a specific component
-mesheryctl components view [component-name]
+mesheryctl component view [component-name]
 	`,
 	Args: func(_ *cobra.Command, args []string) error {
 		const errMsg = "Usage: mesheryctl exp component view [component-name]\nRun 'mesheryctl exp component view --help' to see detailed help message"
