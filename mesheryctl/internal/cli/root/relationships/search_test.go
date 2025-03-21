@@ -10,7 +10,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
-func TestSearch_NoFlags(t *testing.T) {
+func TestSearch_WithoutFlags(t *testing.T) {
 	// setup current context
 	utils.SetupContextEnv(t)
 
