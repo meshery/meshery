@@ -32,7 +32,6 @@ import (
 
 var (
 	availableSubcommands = []*cobra.Command{viewCmd, generateCmd, listCmd, searchCmd}
-	maxRowsPerPage       = 25
 )
 
 type MeshmodelRelationshipsAPIResponse struct {

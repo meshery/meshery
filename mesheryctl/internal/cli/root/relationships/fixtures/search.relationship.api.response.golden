@@ -1,8 +1,0 @@
-Total number of relationships:4
-Page: 1
-Press Enter or ↓ to continue. Press Esc or Ctrl+C to exit.
-  KIND  APIVERSION                         MODEL-NAME  SUBTYPE  REGOQUERY  
-  edge  relationships.meshery.io/v1alpha3  Ambassador  binding             
-  edge  relationships.meshery.io/v1alpha3  Ambassador  binding             
-  edge  relationships.meshery.io/v1alpha3  Ambassador  binding             
-  edge  relationships.meshery.io/v1alpha3  Ambassador  binding     
