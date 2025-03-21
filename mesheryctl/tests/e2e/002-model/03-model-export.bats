@@ -1,6 +1,6 @@
 #!/usr/bin/env bats
 
-load ../helpers/test_helpers.bats
+load helpers/test_helpers.bats
 
 # -----------------------------------------------------------------------------
 # This file tests the `mesheryctl model export` command for:
