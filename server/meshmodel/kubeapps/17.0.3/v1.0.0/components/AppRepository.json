@@ -45,16 +45,17 @@
     "model": {
       "version": "17.0.3"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -175,7 +176,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -183,8 +186,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "kubeapps.com/v1alpha1",
     "kind": "AppRepository",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"auth\": {\n     \"properties\": {\n      \"customCA\": {\n       \"properties\": {\n        \"secretKeyRef\": {\n         \"properties\": {\n          \"key\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\",\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"secretKeyRef\"\n       ],\n       \"type\": \"object\"\n      },\n      \"header\": {\n       \"properties\": {\n        \"secretKeyRef\": {\n         \"properties\": {\n          \"key\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\",\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"secretKeyRef\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"type\": \"string\"\n    },\n    \"dockerRegistrySecrets\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"filterRule\": {\n     \"properties\": {\n      \"jq\": {\n       \"type\": \"string\"\n      },\n      \"variables\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"interval\": {\n     \"type\": \"string\"\n    },\n    \"ociRepositories\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"passCredentials\": {\n     \"type\": \"boolean\"\n    },\n    \"resyncRequests\": {\n     \"type\": \"integer\"\n    },\n    \"syncJobPodTemplate\": {\n     \"properties\": {\n      \"metadata\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"spec\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tlsInsecureSkipVerify\": {\n     \"type\": \"boolean\"\n    },\n    \"type\": {\n     \"enum\": [\n      \"helm\",\n      \"oci\"\n     ],\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"type\",\n    \"url\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"App Repository\",\n \"type\": \"object\"\n}",
-    "version": "kubeapps.com/v1alpha1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"auth\": {\n     \"properties\": {\n      \"customCA\": {\n       \"properties\": {\n        \"secretKeyRef\": {\n         \"properties\": {\n          \"key\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\",\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"secretKeyRef\"\n       ],\n       \"type\": \"object\"\n      },\n      \"header\": {\n       \"properties\": {\n        \"secretKeyRef\": {\n         \"properties\": {\n          \"key\": {\n           \"type\": \"string\"\n          },\n          \"name\": {\n           \"type\": \"string\"\n          }\n         },\n         \"required\": [\n          \"key\",\n          \"name\"\n         ],\n         \"type\": \"object\"\n        }\n       },\n       \"required\": [\n        \"secretKeyRef\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"type\": \"string\"\n    },\n    \"dockerRegistrySecrets\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"filterRule\": {\n     \"properties\": {\n      \"jq\": {\n       \"type\": \"string\"\n      },\n      \"variables\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"interval\": {\n     \"type\": \"string\"\n    },\n    \"ociRepositories\": {\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"passCredentials\": {\n     \"type\": \"boolean\"\n    },\n    \"resyncRequests\": {\n     \"type\": \"integer\"\n    },\n    \"syncJobPodTemplate\": {\n     \"properties\": {\n      \"metadata\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      },\n      \"spec\": {\n       \"format\": \"textarea\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"tlsInsecureSkipVerify\": {\n     \"type\": \"boolean\"\n    },\n    \"type\": {\n     \"enum\": [\n      \"helm\",\n      \"oci\"\n     ],\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"type\",\n    \"url\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"App Repository\",\n \"type\": \"object\"\n}"
   }
 }

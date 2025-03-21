@@ -41,16 +41,17 @@
     "model": {
       "version": "1.0.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -171,15 +172,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "frp.zufardhiyaulhaq.com/v1alpha1",
     "kind": "Upstream",
-    "schema": "{\n \"description\": \"Upstream is the Schema for the upstreams API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"UpstreamSpec defines the desired state of Upstream\",\n   \"properties\": {\n    \"client\": {\n     \"type\": \"string\"\n    },\n    \"tcp\": {\n     \"properties\": {\n      \"host\": {\n       \"type\": \"string\"\n      },\n      \"port\": {\n       \"type\": \"integer\"\n      },\n      \"proxyProtocol\": {\n       \"enum\": [\n        \"v1\",\n        \"v2\"\n       ],\n       \"type\": \"string\"\n      },\n      \"server\": {\n       \"properties\": {\n        \"port\": {\n         \"type\": \"integer\"\n        }\n       },\n       \"required\": [\n        \"port\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"host\",\n      \"port\",\n      \"server\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"client\",\n    \"tcp\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Upstream\",\n \"type\": \"object\"\n}",
-    "version": "frp.zufardhiyaulhaq.com/v1alpha1"
+    "schema": "{\n \"description\": \"Upstream is the Schema for the upstreams API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"UpstreamSpec defines the desired state of Upstream\",\n   \"properties\": {\n    \"client\": {\n     \"type\": \"string\"\n    },\n    \"tcp\": {\n     \"properties\": {\n      \"host\": {\n       \"type\": \"string\"\n      },\n      \"port\": {\n       \"type\": \"integer\"\n      },\n      \"proxyProtocol\": {\n       \"enum\": [\n        \"v1\",\n        \"v2\"\n       ],\n       \"type\": \"string\"\n      },\n      \"server\": {\n       \"properties\": {\n        \"port\": {\n         \"type\": \"integer\"\n        }\n       },\n       \"required\": [\n        \"port\"\n       ],\n       \"type\": \"object\"\n      }\n     },\n     \"required\": [\n      \"host\",\n      \"port\",\n      \"server\"\n     ],\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"client\",\n    \"tcp\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Upstream\",\n \"type\": \"object\"\n}"
   }
 }

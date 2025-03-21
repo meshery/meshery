@@ -47,15 +47,16 @@
     "model": {
       "version": "3.8.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -176,15 +177,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "v2.edp.epam.com/v1",
     "kind": "QuickLink",
-    "schema": "{\n \"description\": \"QuickLink is the Schema for the quicklinks API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"QuickLinkSpec defines the desired state of QuickLink.\",\n   \"properties\": {\n    \"icon\": {\n     \"description\": \"Icon is a base64 encoded SVG icon of the component.\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"default\": \"default\",\n     \"description\": \"Type is a quicklink type. It can be default or system. Default value is default.\",\n     \"enum\": [\n      \"default\",\n      \"system\"\n     ],\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"default\": \"\",\n     \"description\": \"Url specifies a link to the component.\",\n     \"type\": \"string\"\n    },\n    \"visible\": {\n     \"default\": true,\n     \"description\": \"Visible specifies whether a component is visible. The default value is true.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"icon\",\n    \"type\",\n    \"url\",\n    \"visible\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Quick Link\",\n \"type\": \"object\"\n}",
-    "version": "v2.edp.epam.com/v1"
+    "schema": "{\n \"description\": \"QuickLink is the Schema for the quicklinks API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"QuickLinkSpec defines the desired state of QuickLink.\",\n   \"properties\": {\n    \"icon\": {\n     \"description\": \"Icon is a base64 encoded SVG icon of the component.\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"default\": \"default\",\n     \"description\": \"Type is a quicklink type. It can be default or system. Default value is default.\",\n     \"enum\": [\n      \"default\",\n      \"system\"\n     ],\n     \"type\": \"string\"\n    },\n    \"url\": {\n     \"default\": \"\",\n     \"description\": \"Url specifies a link to the component.\",\n     \"type\": \"string\"\n    },\n    \"visible\": {\n     \"default\": true,\n     \"description\": \"Visible specifies whether a component is visible. The default value is true.\",\n     \"type\": \"boolean\"\n    }\n   },\n   \"required\": [\n    \"icon\",\n    \"type\",\n    \"url\",\n    \"visible\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Quick Link\",\n \"type\": \"object\"\n}"
   }
 }

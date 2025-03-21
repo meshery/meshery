@@ -45,16 +45,17 @@
     "model": {
       "version": "1.4.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00105f",
     "secondaryColor": "#2bbafe",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -175,7 +176,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -183,8 +186,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "networking.kubeslice.io/v1beta1",
     "kind": "Slice",
-    "schema": "{\n \"description\": \"Slice is the Schema for the slices API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SliceSpec defines the desired state of Slice\",\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Slice\",\n \"type\": \"object\"\n}",
-    "version": "networking.kubeslice.io/v1beta1"
+    "schema": "{\n \"description\": \"Slice is the Schema for the slices API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SliceSpec defines the desired state of Slice\",\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Slice\",\n \"type\": \"object\"\n}"
   }
 }

@@ -45,16 +45,17 @@
     "model": {
       "version": "8.5.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -175,7 +176,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -183,8 +186,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "velero.io/v1",
     "kind": "VolumeSnapshotLocation",
-    "schema": "{\n \"description\": \"VolumeSnapshotLocation is a location where Velero stores volume snapshots.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VolumeSnapshotLocationSpec defines the specification for a Velero VolumeSnapshotLocation.\",\n   \"properties\": {\n    \"config\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Config is for provider-specific configuration fields.\",\n     \"type\": \"object\"\n    },\n    \"credential\": {\n     \"description\": \"Credential contains the credential information intended to be used with this location\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      },\n      \"optional\": {\n       \"description\": \"Specify whether the Secret or its key must be defined\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"key\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"provider\": {\n     \"description\": \"Provider is the provider of the volume storage.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"provider\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Volume Snapshot Location\",\n \"type\": \"object\"\n}",
-    "version": "velero.io/v1"
+    "schema": "{\n \"description\": \"VolumeSnapshotLocation is a location where Velero stores volume snapshots.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"VolumeSnapshotLocationSpec defines the specification for a Velero VolumeSnapshotLocation.\",\n   \"properties\": {\n    \"config\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"Config is for provider-specific configuration fields.\",\n     \"type\": \"object\"\n    },\n    \"credential\": {\n     \"description\": \"Credential contains the credential information intended to be used with this location\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent.\\nMore info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\\nTODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      },\n      \"optional\": {\n       \"description\": \"Specify whether the Secret or its key must be defined\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"key\"\n     ],\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"provider\": {\n     \"description\": \"Provider is the provider of the volume storage.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"provider\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Volume Snapshot Location\",\n \"type\": \"object\"\n}"
   }
 }
