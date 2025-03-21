@@ -1,5 +1,7 @@
 #!/usr/bin/env bats
 
+load ../helpers/test_helpers.bats
+
 # -----------------------------------------------------------------------------
 # This file tests the `mesheryctl model export` command for:
 #   1) Missing model name (usage instructions)
@@ -13,17 +15,6 @@
 setup() {
   MESHERYCTL_DIR=$(dirname "$MESHERYCTL_BIN")
   export TESTDATA_DIR="$MESHERYCTL_DIR/tests/e2e/002-model/testdata/model-export"
-}
-
-check_output() {
-  local expected="$1"
-  run grep -Fq "$expected" <<< "$actual_output"
-  if [ "$status" -ne 0 ]; then
-    echo "FAILED: Expected message not found: '$expected'" >&2
-    echo "Actual output:" >&2
-    echo "$actual_output" >&2
-  fi
-  [ "$status" -eq 0 ]
 }
 
 @test "mesheryctl model export displays usage instructions when no model name provided" {
@@ -75,7 +66,7 @@ check_output() {
   run $MESHERYCTL_BIN model export $TESTDATA_DIR --discard-components --discard-relationships
   [ "$status" -eq 0 ]
   actual_output=$(echo "$output")
-  
+
   check_output "components=false"
   check_output "relationships=false"
 }
