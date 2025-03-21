@@ -2,16 +2,17 @@
   "id": "00000000-0000-0000-0000-000000000000",
   "schemaVersion": "models.meshery.io/v1beta1",
   "version": "v1.0.0",
-  "name": "kubernetes-chaos",
-  "displayName": "Kubernetes Chaos",
+  "name": "jaegertracing",
+  "displayName": "Jaeger",
+  "description": "Metrics Server is a scalable, efficient source of container resource metrics for Kubernetes built-in autoscaling pipelines.",
   "status": "ignored",
   "registrant": {
     "id": "00000000-0000-0000-0000-000000000000",
-    "name": "Artifact Hub",
+    "name": "Github",
     "credential_id": "00000000-0000-0000-0000-000000000000",
     "type": "registry",
     "sub_type": "",
-    "kind": "artifacthub",
+    "kind": "github",
     "status": "discovered",
     "user_id": "00000000-0000-0000-0000-000000000000",
     "created_at": "0001-01-01T00:00:00Z",
@@ -21,14 +22,14 @@
   "connection_id": "00000000-0000-0000-0000-000000000000",
   "category": {
     "id": "00000000-0000-0000-0000-000000000000",
-    "name": "Orchestration \u0026 Management"
+    "name": "Observability and Analysis"
   },
-  "subCategory": "Uncategorized",
+  "subCategory": "Tracing",
   "metadata": {
     "capabilities": null,
     "isAnnotation": false,
-    "primaryColor": "#00B39F",
-    "secondaryColor": "#00D3A9",
+    "primaryColor": "#67cfe3",
+    "secondaryColor": "#ACFFFF",
     "shape": "circle",
     "styleOverrides": "",
     "svgColor": "",
@@ -36,7 +37,7 @@
     "svgWhite": ""
   },
   "model": {
-    "version": "3.17.0"
+    "version": "jaeger-3.4.1"
   },
   "components_count": 0,
   "relationships_count": 0,

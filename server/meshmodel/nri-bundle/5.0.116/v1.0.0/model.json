@@ -2,8 +2,8 @@
   "id": "00000000-0000-0000-0000-000000000000",
   "schemaVersion": "models.meshery.io/v1beta1",
   "version": "v1.0.0",
-  "name": "kubernetes-chaos",
-  "displayName": "Kubernetes Chaos",
+  "name": "nri-bundle",
+  "displayName": "NRI Bundle",
   "status": "ignored",
   "registrant": {
     "id": "00000000-0000-0000-0000-000000000000",
@@ -21,7 +21,7 @@
   "connection_id": "00000000-0000-0000-0000-000000000000",
   "category": {
     "id": "00000000-0000-0000-0000-000000000000",
-    "name": "Orchestration \u0026 Management"
+    "name": "Uncategorized"
   },
   "subCategory": "Uncategorized",
   "metadata": {
@@ -36,7 +36,7 @@
     "svgWhite": ""
   },
   "model": {
-    "version": "3.17.0"
+    "version": "5.0.116"
   },
   "components_count": 0,
   "relationships_count": 0,
