@@ -45,16 +45,17 @@
     "model": {
       "version": "v1.33.0-beta.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#326CE5",
     "secondaryColor": "#7aa1f0",
     "shape": "bottom-round-rectangle",
     "svgColor": "\u003csvg width=\"32\" height=\"28\" viewBox=\"0 0 32 28\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M9.5 2H31.5158\" stroke=\"#326CE5\" stroke-width=\"3\" stroke-miterlimit=\"10\" stroke-linejoin=\"round\"/\u003e\n\u003cpath d=\"M0 2H5.51184\" stroke=\"#326CE5\" stroke-width=\"3\" stroke-miterlimit=\"10\" stroke-linejoin=\"round\"/\u003e\n\u003cpath d=\"M17.502 10H31.5177\" stroke=\"#326CE5\" stroke-width=\"3\" stroke-miterlimit=\"10\" stroke-linejoin=\"round\"/\u003e\n\u003cpath d=\"M8 10H13.5118\" stroke=\"#326CE5\" stroke-width=\"3\" stroke-miterlimit=\"10\" stroke-linejoin=\"round\"/\u003e\n\u003cpath d=\"M17.502 18H31.5177\" stroke=\"#326CE5\" stroke-width=\"3\" stroke-miterlimit=\"10\" stroke-linejoin=\"round\"/\u003e\n\u003cpath d=\"M8 18H13.5118\" stroke=\"#326CE5\" stroke-width=\"3\" stroke-miterlimit=\"10\" stroke-linejoin=\"round\"/\u003e\n\u003cpath d=\"M9.5 26H31.5158\" stroke=\"#326CE5\" stroke-width=\"3\" stroke-miterlimit=\"10\" stroke-linejoin=\"round\"/\u003e\n\u003cpath d=\"M0 26H5.51184\" stroke=\"#326CE5\" stroke-width=\"3\" stroke-miterlimit=\"10\" stroke-linejoin=\"round\"/\u003e\n\u003c/svg\u003e\n",
+    "svgComplete": "",
     "svgWhite": "\u003csvg width=\"32\" height=\"28\" viewBox=\"0 0 32 28\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M9.5 2H31.5158\" stroke=\"white\" stroke-width=\"3\" stroke-miterlimit=\"10\" stroke-linejoin=\"round\"/\u003e\n\u003cpath d=\"M0 2H5.51184\" stroke=\"white\" stroke-width=\"3\" stroke-miterlimit=\"10\" stroke-linejoin=\"round\"/\u003e\n\u003cpath d=\"M17.5 10H31.5157\" stroke=\"white\" stroke-width=\"3\" stroke-miterlimit=\"10\" stroke-linejoin=\"round\"/\u003e\n\u003cpath d=\"M8 10H13.5118\" stroke=\"white\" stroke-width=\"3\" stroke-miterlimit=\"10\" stroke-linejoin=\"round\"/\u003e\n\u003cpath d=\"M17.5 18H31.5157\" stroke=\"white\" stroke-width=\"3\" stroke-miterlimit=\"10\" stroke-linejoin=\"round\"/\u003e\n\u003cpath d=\"M8 18H13.5118\" stroke=\"white\" stroke-width=\"3\" stroke-miterlimit=\"10\" stroke-linejoin=\"round\"/\u003e\n\u003cpath d=\"M9.5 26H31.5158\" stroke=\"white\" stroke-width=\"3\" stroke-miterlimit=\"10\" stroke-linejoin=\"round\"/\u003e\n\u003cpath d=\"M0 26H5.51184\" stroke=\"white\" stroke-width=\"3\" stroke-miterlimit=\"10\" stroke-linejoin=\"round\"/\u003e\n\u003c/svg\u003e\n"
   },
   "capabilities": [
@@ -175,7 +176,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -183,8 +186,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "v1",
     "kind": "ConfigMap",
-    "schema": "{\"description\":\"ConfigMap holds configuration data for pods to consume.\",\"properties\":{\"binaryData\":{\"additionalProperties\":{\"format\":\"byte\",\"type\":\"string\"},\"description\":\"BinaryData contains the binary data. Each key must consist of alphanumeric characters, '-', '_' or '.'. BinaryData can contain byte sequences that are not in the UTF-8 range. The keys stored in BinaryData must not overlap with the ones in the Data field, this is enforced during validation process. Using this field will require 1.10+ apiserver and kubelet.\",\"type\":\"object\"},\"data\":{\"additionalProperties\":{\"default\":\"\",\"type\":\"string\"},\"description\":\"Data contains the configuration data. Each key must consist of alphanumeric characters, '-', '_' or '.'. Values with non-UTF-8 byte sequences must use the BinaryData field. The keys stored in Data must not overlap with the keys in the BinaryData field, this is enforced during validation process.\",\"type\":\"object\"},\"immutable\":{\"description\":\"Immutable, if set to true, ensures that data stored in the ConfigMap cannot be updated (only object metadata can be modified). If not set to true, the field can be modified at any time. Defaulted to nil.\",\"type\":\"boolean\"}},\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"\",\"kind\":\"ConfigMap\",\"version\":\"v1\"}]}",
-    "version": "v1"
+    "schema": "{\"description\":\"ConfigMap holds configuration data for pods to consume.\",\"properties\":{\"binaryData\":{\"additionalProperties\":{\"format\":\"byte\",\"type\":\"string\"},\"description\":\"BinaryData contains the binary data. Each key must consist of alphanumeric characters, '-', '_' or '.'. BinaryData can contain byte sequences that are not in the UTF-8 range. The keys stored in BinaryData must not overlap with the ones in the Data field, this is enforced during validation process. Using this field will require 1.10+ apiserver and kubelet.\",\"type\":\"object\"},\"data\":{\"additionalProperties\":{\"default\":\"\",\"type\":\"string\"},\"description\":\"Data contains the configuration data. Each key must consist of alphanumeric characters, '-', '_' or '.'. Values with non-UTF-8 byte sequences must use the BinaryData field. The keys stored in Data must not overlap with the keys in the BinaryData field, this is enforced during validation process.\",\"type\":\"object\"},\"immutable\":{\"description\":\"Immutable, if set to true, ensures that data stored in the ConfigMap cannot be updated (only object metadata can be modified). If not set to true, the field can be modified at any time. Defaulted to nil.\",\"type\":\"boolean\"}},\"type\":\"object\",\"x-kubernetes-group-version-kind\":[{\"group\":\"\",\"kind\":\"ConfigMap\",\"version\":\"v1\"}]}"
   }
 }

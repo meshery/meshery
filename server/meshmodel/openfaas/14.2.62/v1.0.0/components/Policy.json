@@ -47,16 +47,17 @@
     "model": {
       "version": "14.2.62"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -177,15 +178,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "iam.openfaas.com/v1",
     "kind": "Policy",
-    "schema": "{\n \"description\": \"Policy is used to define a policy for a function\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"statement\": {\n     \"items\": {\n      \"properties\": {\n       \"action\": {\n        \"description\": \"Action is a set of actions that the policy applies to i.e. Function:Read\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"condition\": {\n        \"additionalProperties\": {\n         \"additionalProperties\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"type\": \"object\"\n        },\n        \"description\": \"Condition is a set of conditions that the policy applies to\\n{\\n\\t\\\"StringLike\\\": {\\n\\t\\t\\\"jwt:https://my-identity-provider.com#sub-id\\\": [\\n\\t\\t\\t\\\"1234567890\\\",\\n\\t\\t\\t\\\"0987654321\\\"\\n\\t\\t],\\n\\t}\\n}\",\n        \"type\": \"object\"\n       },\n       \"effect\": {\n        \"description\": \"Effect is the effect of the policy - only Allow is supported\",\n        \"type\": \"string\"\n       },\n       \"resource\": {\n        \"description\": \"Resource is a set of resources that the policy applies to - only namespaces are supported at\\npresent\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"sid\": {\n        \"description\": \"SID is the unique identifier for the policy\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"action\",\n       \"effect\",\n       \"resource\",\n       \"sid\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"statement\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Policy\",\n \"type\": \"object\"\n}",
-    "version": "iam.openfaas.com/v1"
+    "schema": "{\n \"description\": \"Policy is used to define a policy for a function\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"statement\": {\n     \"items\": {\n      \"properties\": {\n       \"action\": {\n        \"description\": \"Action is a set of actions that the policy applies to i.e. Function:Read\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"condition\": {\n        \"additionalProperties\": {\n         \"additionalProperties\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         },\n         \"type\": \"object\"\n        },\n        \"description\": \"Condition is a set of conditions that the policy applies to\\n{\\n\\t\\\"StringLike\\\": {\\n\\t\\t\\\"jwt:https://my-identity-provider.com#sub-id\\\": [\\n\\t\\t\\t\\\"1234567890\\\",\\n\\t\\t\\t\\\"0987654321\\\"\\n\\t\\t],\\n\\t}\\n}\",\n        \"type\": \"object\"\n       },\n       \"effect\": {\n        \"description\": \"Effect is the effect of the policy - only Allow is supported\",\n        \"type\": \"string\"\n       },\n       \"resource\": {\n        \"description\": \"Resource is a set of resources that the policy applies to - only namespaces are supported at\\npresent\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"sid\": {\n        \"description\": \"SID is the unique identifier for the policy\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"action\",\n       \"effect\",\n       \"resource\",\n       \"sid\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"statement\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Policy\",\n \"type\": \"object\"\n}"
   }
 }

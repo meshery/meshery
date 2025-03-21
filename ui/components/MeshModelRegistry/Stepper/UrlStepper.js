@@ -40,7 +40,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
   const [logoLightThemePath, setLogoLightThemePath] = React.useState('');
   const [logoDarkThemePath, setLogoDarkThemePath] = React.useState('');
   const [registerModel] = React.useState(true);
-  const [isAnnotation, setIsAnnotation] = React.useState(true);
+  const [isAnnotation, setIsAnnotation] = React.useState(false);
 
   const handleLogoLightThemeChange = async (event) => {
     const file = event.target.files[0];

@@ -45,14 +45,15 @@
     "model": {
       "version": "4.2.3"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -173,15 +174,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "configuration.konghq.com/v1",
     "kind": "KongConsumer",
-    "schema": "{\n \"description\": \"KongConsumer is the Schema for the kongconsumers API\",\n \"properties\": {\n  \"credentials\": {\n   \"description\": \"Credentials are references to secrets containing a credential to be provisioned in Kong.\",\n   \"items\": {\n    \"type\": \"string\"\n   },\n   \"type\": \"array\"\n  },\n  \"custom_id\": {\n   \"description\": \"CustomID existing unique ID for the consumer - useful for mapping Kong with users in your existing database\",\n   \"type\": \"string\"\n  },\n  \"username\": {\n   \"description\": \"Username unique username of the consumer.\",\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Kong Consumer\",\n \"type\": \"object\"\n}",
-    "version": "configuration.konghq.com/v1"
+    "schema": "{\n \"description\": \"KongConsumer is the Schema for the kongconsumers API\",\n \"properties\": {\n  \"credentials\": {\n   \"description\": \"Credentials are references to secrets containing a credential to be provisioned in Kong.\",\n   \"items\": {\n    \"type\": \"string\"\n   },\n   \"type\": \"array\"\n  },\n  \"custom_id\": {\n   \"description\": \"CustomID existing unique ID for the consumer - useful for mapping Kong with users in your existing database\",\n   \"type\": \"string\"\n  },\n  \"username\": {\n   \"description\": \"Username unique username of the consumer.\",\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Kong Consumer\",\n \"type\": \"object\"\n}"
   }
 }
