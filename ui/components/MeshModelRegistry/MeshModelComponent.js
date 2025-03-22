@@ -48,6 +48,8 @@ import {
   importModelUiSchema,
   importModelSchema,
   Typography,
+  ModalFooter,
+  Box
 } from '@layer5/sistent';
 import { RJSFModalWrapper } from '../Modal';
 import { useRef } from 'react';
@@ -57,6 +59,12 @@ import AddIcon from '@mui/icons-material/AddCircleOutline';
 import CsvStepper, { StyledDocsRedirectLink } from './Stepper/CSVStepper';
 import UrlStepper from './Stepper/UrlStepper';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
+import { useContext } from 'react';
+import { capitalize } from 'lodash';
+import { Loading } from '@/components/DesignLifeCycle/common';
+import { NotificationCenterContext } from '../NotificationCenter';
+import { OPERATION_CENTER_EVENTS } from 'machines/operationsCenter';
+import { ModelImportedSection, ModelImportMessages } from '../NotificationCenter/formatters/model_registration';
 
 const useMeshModelComponentRouter = () => {
   const router = useRouter();
@@ -179,8 +187,9 @@ const MeshModelComponent_ = ({
       }
     }
     updateProgress({ showProgress: true });
-    await importModelReq({ importBody: requestBody });
+    const response = await importModelReq({ importBody: requestBody });
     updateProgress({ showProgress: false });
+    return response;
   };
 
   const urlModal = useModal({});
@@ -603,7 +612,12 @@ const MeshModelComponent_ = ({
 
 const ImportModal = React.memo((props) => {
   const [importModalDescription, setImportModalDescription] = useState('');
-
+  const [activeStep, setActiveStep] = useState(0);
+  const handleNext = () => {
+    if (activeStep === 0) {
+      setActiveStep(1);
+    }
+  };
   const CustomRadioWidget = (props) => {
     const { options, value, onChange, label, schema } = props;
     const { enumOptions } = options;
@@ -648,11 +662,13 @@ const ImportModal = React.memo((props) => {
 
   return (
     <Modal open={true} closeModal={handleClose} maxWidth="sm" title="Import Model">
+      {activeStep === 0 ? (
       <RJSFModalWrapper
         schema={importModelSchema}
         uiSchema={importModelUiSchema}
         handleSubmit={handleImportModel}
-        submitBtnText="Import"
+        handleNext={handleNext}
+        submitBtnText="Next"
         handleClose={handleClose}
         widgets={widgets}
         helpText={
@@ -670,11 +686,65 @@ const ImportModal = React.memo((props) => {
           </p>
         }
       />
+      ):(
+      <FinishDeploymentStep deployment_type="register" handleClose={handleClose}/>
+    )}
     </Modal>
   );
 });
 
 ImportModal.displayName = 'ImportModal';
+
+const FinishDeploymentStep = ({ deployment_type ,handleClose}) => {
+  const { operationsCenterActorRef } = useContext(NotificationCenterContext);
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [deployEvent, setDeployEvent] = useState();
+
+  useEffect(() => {
+    try {
+      setIsDeploying(true);
+    } catch (error) {
+      setIsDeploying(false);
+    }
+  }, []);
+  useEffect(() => {
+    const subscription = operationsCenterActorRef.on(
+      OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
+      (event) => {
+        const serverEvent = event.data.event;
+        console.log(serverEvent);
+        if (serverEvent.action === deployment_type) {
+          setIsDeploying(false);
+          setDeployEvent(serverEvent);
+        }
+      },
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const progressMessage = `${capitalize(deployment_type)}ing model`;
+
+  if (isDeploying) {
+    return <Loading message={progressMessage} />;
+  }
+
+  if (!deployEvent) {
+    return null;
+  }
+  
+  return (
+    <Box>
+    <ModelImportMessages message={deployEvent.metadata?.ModelImportMessage}/>;
+    <ModelImportedSection modelDetails={deployEvent.metadata?.ModelDetails} />;
+    <ModalFooter variant="filled" helpText={"Click Finish to complete the model import process. The imported model will be available in your Mesh Model Registry."}>
+        <Button  variant="contained"
+          color="primary"
+          onClick={handleClose}>Finish</Button>
+      </ModalFooter>
+  </Box>
+  )
+};
 
 const TabBar = ({ handleUploadImport, handleUrlStepper }) => {
   return (

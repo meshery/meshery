@@ -1,12 +1,12 @@
 import { NOTIFICATIONCOLORS } from '@/themes/index';
 import { Box, Stack, Typography, styled, useTheme } from '@layer5/sistent';
 
-import { FormatStructuredData, TextWithLinks } from '../DataFormatter';
-import { SEVERITY_STYLE } from '../NotificationCenter/constants';
-import { ComponentIcon } from './common';
+import { FormatStructuredData, TextWithLinks } from '../../DataFormatter';
+import { SEVERITY_STYLE } from '../../NotificationCenter/constants';
+import { ComponentIcon } from '../../common';
 import { Button } from '@layer5/sistent';
 import { ExternalLinkIcon, componentIcon } from '@layer5/sistent';
-import { ErrorMetadataFormatter } from '../NotificationCenter/formatters/error';
+import { ErrorMetadataFormatter } from '../../NotificationCenter/formatters/error';
 
 import { openViewScopedToDesignInOperator, useIsOperatorEnabled } from '@/utils/utils';
 import { useRouter } from 'next/router';
@@ -16,7 +16,7 @@ const StyledDetailBox = styled(Box)(() => ({
   display: 'flex',
 }));
 
-// deployment_type is deploy/undeploy
+// deployment_type is deploy/undeploy/register
 const DeploymentComponentFormatter = ({ componentDetail, deploymentType }) => {
   return (
     <StyledDetailBox
@@ -53,8 +53,9 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
   const theme = useTheme();
   const eventStyle = SEVERITY_STYLE[event?.severity] || {};
   const errors = event.metadata?.error;
-  const errorAction = event?.action;
   const router = useRouter();
+
+  // Handle both component summary and direct error case
   const componentsDetails = Object.values(event.metadata?.summary || {}).flatMap(
     (perComponentDetail) => {
       perComponentDetail = perComponentDetail?.flatMap ? perComponentDetail : [];
@@ -85,7 +86,7 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
             fontWeight: 'bold',
           }}
         />
-        {is_operator_enabled && errorAction != 'register' && (
+        {is_operator_enabled && event?.metadata?.design_id && (
           <Button
             variant="contained"
             color="primary"
@@ -102,19 +103,30 @@ const DeploymentSummaryFormatter_ = ({ event }) => {
           </Button>
         )}
       </StyledDetailBox>
+
+      {/* Handle error metadata when it exists */}
       {errors && (
-        <StyledDetailBox severityColor={eventStyle.color} bgOpacity={0}>
+        <StyledDetailBox
+          severityColor={eventStyle.color}
+          bgOpacity={0.1}
+          display="flex"
+          gap={2}
+          flexDirection="column"
+          padding={2}
+        >
           <ErrorMetadataFormatter metadata={errors} event={event} />
         </StyledDetailBox>
       )}
 
-      {componentsDetails.map((componentDetail) => (
-        <DeploymentComponentFormatter
-          componentDetail={componentDetail}
-          deploymentType={event.action}
-          key={componentDetail.CompName + componentDetail.Location}
-        />
-      ))}
+      {/* Only show component details if they exist */}
+      {componentsDetails.length > 0 &&
+        componentsDetails.map((componentDetail) => (
+          <DeploymentComponentFormatter
+            componentDetail={componentDetail}
+            deploymentType={event.action}
+            key={componentDetail.CompName + componentDetail.Location}
+          />
+        ))}
     </Box>
   );
 };
