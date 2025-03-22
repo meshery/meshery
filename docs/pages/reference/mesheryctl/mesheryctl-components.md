@@ -1,16 +1,16 @@
 ---
 layout: default
-title: mesheryctl-component
-permalink: reference/mesheryctl/component
-redirect_from: reference/mesheryctl/component/
+title: mesheryctl-components
+permalink: reference/mesheryctl/components
+redirect_from: reference/mesheryctl/components/
 type: reference
 display-title: "false"
 language: en
-command: component
+command: components
 subcommand: nil
 ---
 
-# mesheryctl component
+# mesheryctl components
 
 View list of components and detail of components
 
@@ -19,7 +19,7 @@ View list of components and detail of components
 View list of components and detailed information of a specific component
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component [flags]
+mesheryctl components [flags]
 
 </div>
 </pre> 
@@ -37,7 +37,7 @@ mesheryctl model --count
 To view list of components
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component list
+mesheryctl components list
 
 </div>
 </pre> 
@@ -45,7 +45,7 @@ mesheryctl component list
 To view a specific component
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component view [component-name]
+mesheryctl components view [component-name]
 
 </div>
 </pre> 
@@ -53,7 +53,7 @@ mesheryctl component view [component-name]
 To search for a specific component
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component search [component-name]
+mesheryctl components search [component-name]
 
 </div>
 </pre> 
@@ -80,8 +80,8 @@ mesheryctl component search [component-name]
 
 ## See Also
 
-* [mesheryctl component list](/reference/mesheryctl/component/list)
-* [mesheryctl component search](/reference/mesheryctl/component/search)
-* [mesheryctl component view](/reference/mesheryctl/component/view)
+* [mesheryctl components list](/reference/mesheryctl/components/list)
+* [mesheryctl components search](/reference/mesheryctl/components/search)
+* [mesheryctl components view](/reference/mesheryctl/components/view)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
