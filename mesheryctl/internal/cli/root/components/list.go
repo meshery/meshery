@@ -23,20 +23,20 @@ import (
 	"github.com/spf13/viper"
 )
 
-// represents the mesheryctl components list command
+// represents the mesheryctl component list command
 var listComponentCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered components",
 	Long:  "List all components registered in Meshery Server",
 	Example: `
 // View list of components
-mesheryctl components list
+mesheryctl component list
 
 // View list of components with specified page number (25 components per page)
-mesheryctl components list --page 2
+mesheryctl component list --page 2
 
 // To view the number of components present in Meshery
-mesheryctl components list --count
+mesheryctl component list --count
 	`,
 	RunE: func(cmd *cobra.Command, args []string) error {
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())

@@ -11,7 +11,7 @@ import (
 
 var update = flag.Bool("update", false, "update golden files")
 
-func TestComponentsList(t *testing.T) {
+func TestComponentList(t *testing.T) {
 
 	// get current directory
 	_, filename, _, ok := runtime.Caller(0)
@@ -32,6 +32,6 @@ func TestComponentsList(t *testing.T) {
 		},
 	}
 
-	utils.InvokeMesheryctlTestListCommand(t, update, ComponentsCmd, tests, currDir, "components")
+	utils.InvokeMesheryctlTestListCommand(t, update, ComponentCmd, tests, currDir, "component")
 
 }
