@@ -1,3 +1,5 @@
+#!/usr/bin/env bats
+
 check_output(){
   local expected_message="$1"
 
