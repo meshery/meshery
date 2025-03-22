@@ -66,9 +66,10 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 		utils.Log.Infof("Creating new Meshery model: %s", modelName)
 
 		const DirPerm = 0755
-		mainFolderPath := strings.Join([]string{path, modelName, version}, string(os.PathSeparator))
+		modelFolder := strings.Join([]string{path, modelName}, string(os.PathSeparator))
+		modelVersionFolder := strings.Join([]string{modelFolder, version}, string(os.PathSeparator))
 		utils.Log.Infof("Creating directory structure...")
-		err = os.MkdirAll(mainFolderPath, DirPerm)
+		err = os.MkdirAll(modelVersionFolder, DirPerm)
 		if err != nil {
 			// TODO use meshkit error format
 			utils.Log.Error(err)
@@ -77,9 +78,9 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 
 		for _, item := range initModelData {
 			item.beforeHook()
-			itemFolderPath := mainFolderPath
+			itemFolderPath := modelVersionFolder
 			if item.folderPath != "" {
-				itemFolderPath = strings.Join([]string{mainFolderPath, item.folderPath}, string(os.PathSeparator))
+				itemFolderPath = strings.Join([]string{modelVersionFolder, item.folderPath}, string(os.PathSeparator))
 				err = os.MkdirAll(itemFolderPath, DirPerm)
 				if err != nil {
 					// TODO use meshkit error format
@@ -120,7 +121,20 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 				}
 			}
 		}
-		utils.Log.Infof("Created %s model at %s", modelName, mainFolderPath)
+		utils.Log.Infof("Created %s model at %s", modelName, modelFolder)
+		utils.Log.Info("")
+		utils.Log.Info(
+			initModelReplacePlaceholders(
+				initModelNextStepsText,
+				map[string]string{
+					"{modelName}":          modelName,
+					"{modelVersion}":       version,
+					"{modelFolder}":        modelFolder,
+					"{outputFormat}":       outputFormat,
+					"{modelVersionFolder}": modelVersionFolder,
+				},
+			),
+		)
 
 		// TODO maybe clean partial data (if error occurs in the middle of execution)
 		return nil
@@ -129,7 +143,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 
 func init() {
 	initModelCmd.Flags().StringP("path", "p", ".", "(optional) target directory (default: current dir)")
-	initModelCmd.Flags().StringP("version", "", "0.1.0", "(optional) model version (default: 0.1.0)")
+	initModelCmd.Flags().StringP("version", "", "v0.1.0", "(optional) model version (default: v0.1.0)")
 	initModelCmd.Flags().StringP("output-format", "o", "json", "(optional) format to display in [json|yaml]")
 }
 
@@ -146,6 +160,26 @@ const initModelTemplatePathModelJSON = "json_models/constructs/v1beta1/model.jso
 const initModelTemplatePathComponentJSON = "json_models/constructs/v1beta1/component.json"
 const initModelTemplatePathConnectionJSON = "json_models/constructs/v1beta1/connection.json"
 const initModelTemplatePathRelathionshipJSON = "json_models/constructs/v1alpha3/relationship.json"
+
+// TODO
+// if csv output is not directory based
+// should it have different text for csv output format?
+const initModelNextStepsText = `Next steps:
+1. cd {modelFolder}
+2. Edit model.{outputFormat} to customize your model configuration
+3. Add your components in the components/ directory
+4. Define relationships in relationships/ directory
+5. Add your connections in the connections/ directory
+6. Define credentials in credentials/ directory
+7. Use 'mesheryctl model build' to package your model
+
+To import this model into Meshery:
+$ mesheryctl model import {modelFolder}
+
+To export this model as OCI image:
+$ mesheryctl model build {modelVersionFolder} -t myregistry/{modelName}:{modelVersion}
+
+Detailed guide: https://docs.meshery.io/guides/creating-new-model-with-mesheryctl`
 
 // TODO
 // initModelData fits well for json and yaml format
@@ -233,4 +267,11 @@ func getTemplateInOutputFormat(templatePath string, outputFormat string) ([]byte
 	// should impossible to get here
 	// TODO use meshkit error format instead during implementation phase
 	return nil, errors.New("invalid format")
+}
+
+func initModelReplacePlaceholders(input string, replacements map[string]string) string {
+	for key, value := range replacements {
+		input = strings.ReplaceAll(input, key, value)
+	}
+	return input
 }
