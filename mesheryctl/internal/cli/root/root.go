@@ -115,7 +115,7 @@ func init() {
 		experimental.ExpCmd,
 		filter.FilterCmd,
 		registry.RegistryCmd,
-		components.ComponentsCmd,
+		components.ComponentCmd,
 		model.ModelCmd,
 		environments.EnvironmentCmd,
 	}
