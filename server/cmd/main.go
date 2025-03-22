@@ -239,6 +239,7 @@ func main() {
 		WorkspacePersister:              &models.WorkspacePersister{DB: dbHandler},
 		KeyPersister:                    &models.KeyPersister{DB: dbHandler},
 		EventsPersister:                 &models.EventsPersister{DB: dbHandler},
+		CredentialPersister:             &models.CredentialPersister{DB: dbHandler},
 		GenericPersister:                dbHandler,
 		Log:                             log,
 	}
