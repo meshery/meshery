@@ -42,9 +42,9 @@ var (
 	countFlag      bool
 )
 
-// ComponentsCmd represents the mesheryctl components command
+// ComponentsCmd represents the mesheryctl component command
 var ComponentsCmd = &cobra.Command{
-	Use:   "components",
+	Use:   "component",
 	Short: "View list of components and detail of components",
 	Long:  "View list of components and detailed information of a specific component",
 	Example: `
@@ -52,13 +52,13 @@ var ComponentsCmd = &cobra.Command{
 mesheryctl model --count
 
 // To view list of components
-mesheryctl components list
+mesheryctl component list
 
 // To view a specific component
-mesheryctl components view [component-name]
+mesheryctl component view [component-name]
 
 // To search for a specific component
-mesheryctl components search [component-name]
+mesheryctl component search [component-name]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 && !countFlag {
@@ -82,7 +82,7 @@ mesheryctl components search [component-name]
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl components --help' to display usage guide.\n", args[0]), "model"))
+			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl component --help' to display usage guide.\n", args[0]), "model"))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
