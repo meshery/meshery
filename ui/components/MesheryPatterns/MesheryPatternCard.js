@@ -21,6 +21,7 @@ import {
   GridBtnText,
   GridCloneBtnText,
   StyledCodeMirrorWrapper,
+  getButtonStyles,
 } from './Cards.styles';
 import YAMLDialog from '../YamlDialog';
 import PublicIcon from '@mui/icons-material/Public';
@@ -271,6 +272,7 @@ function MesheryPatternCard_({
                     borderRadius: '8px',
                   }}
                   disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)}
+                  sx={getButtonStyles(!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject))}
                 >
                   <CloneIcon fill={theme.palette.background.constant.white} style={iconMedium} />
                   <GridCloneBtnText> Clone </GridCloneBtnText>
@@ -288,6 +290,7 @@ function MesheryPatternCard_({
                     padding: '6px 9px',
                     borderRadius: '8px',
                   }}
+                  sx={getButtonStyles(!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject))}
                 >
                   <Edit style={{ fill: theme.palette.background.constant.white, ...iconMedium }} />
                   <GridCloneBtnText> Edit </GridCloneBtnText>
@@ -303,6 +306,9 @@ function MesheryPatternCard_({
                   borderRadius: '8px',
                 }}
                 disabled={!CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject)}
+                sx={getButtonStyles(
+                  !CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject),
+                )}
               >
                 <InfoOutlinedIcon
                   style={{ fill: theme.palette.background.constant.white, ...iconMedium }}
@@ -393,6 +399,7 @@ function MesheryPatternCard_({
                     <IconButton
                       disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
                       onClick={(ev) => genericClickHandler(ev, updateHandler)}
+                      sx={getButtonStyles(!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject))}
                     >
                       <Save fill={theme.palette.background.constant.white} />
                     </IconButton>
@@ -403,6 +410,9 @@ function MesheryPatternCard_({
                     <IconButton
                       disabled={!CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject)}
                       onClick={(ev) => genericClickHandler(ev, deleteHandler)}
+                      sx={getButtonStyles(
+                        !CAN(keys.DELETE_A_DESIGN.action, keys.DELETE_A_DESIGN.subject),
+                      )}
                     >
                       <DeleteIcon fill={theme.palette.background.constant.white} />
                     </IconButton>
