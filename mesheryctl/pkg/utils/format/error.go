@@ -3,7 +3,7 @@ package format
 import "github.com/layer5io/meshkit/errors"
 
 var (
-	ErrOutputToJsonCode = "replace-me"
+	ErrOutputToJsonCode = "mesheryctl-1147"
 )
 
 func ErrOutputToJson() error {
