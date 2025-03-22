@@ -36,9 +36,9 @@ mesheryctl model search [query-text]
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		queryText := args[0]
 
-		url := fmt.Sprintf("%s/api/meshmodels/models?search=%s&pagesize=all", baseUrl, url.QueryEscape(queryText))
+		searchUrl := fmt.Sprintf("%s/api/meshmodels/models?search=%s&pagesize=all", baseUrl, url.QueryEscape(queryText))
 
-		modelsResponse, err := fetchModels(url)
+		modelsResponse, err := fetchModels(searchUrl)
 
 		if err != nil {
 			return err

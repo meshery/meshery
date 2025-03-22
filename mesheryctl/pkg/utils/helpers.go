@@ -1241,13 +1241,17 @@ func HandlePagination(pageSize int, component string, data [][]string, header []
 		whiteBoardPrinter.Print("Page: ", startIndex/pageSize+1)
 		fmt.Println()
 
-		whiteBoardPrinter.Println("Press Enter or ↓ to continue. Press Esc or Ctrl+C to exit.")
-
 		if len(footer) > 0 {
 			PrintToTableWithFooter(header, data[startIndex:endIndex], footer[0])
 		} else {
 			PrintToTable(header, data[startIndex:endIndex])
 		}
+
+		// No user interaction required if all available data is displayed once
+		if len(data) <= pageSize {
+			break
+		}
+
 		keysEvents, err := keyboard.GetKeys(10)
 		if err != nil {
 			return err
