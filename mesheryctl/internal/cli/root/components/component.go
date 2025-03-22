@@ -42,14 +42,14 @@ var (
 	countFlag      bool
 )
 
-// ComponentsCmd represents the mesheryctl component command
-var ComponentsCmd = &cobra.Command{
+// ComponentCmd represents the mesheryctl component command
+var ComponentCmd = &cobra.Command{
 	Use:   "component",
 	Short: "View list of components and detail of components",
 	Long:  "View list of components and detailed information of a specific component",
 	Example: `
 // To view total of available components
-mesheryctl model --count
+mesheryctl component --count
 
 // To view list of components
 mesheryctl component list
@@ -152,8 +152,8 @@ func prettifyJson(component interface{}) error {
 }
 
 func init() {
-	ComponentsCmd.AddCommand(availableSubcommands...)
-	ComponentsCmd.Flags().BoolVarP(&countFlag, "count", "", false, "(optional) Get the number of components in total")
+	ComponentCmd.AddCommand(availableSubcommands...)
+	ComponentCmd.Flags().BoolVarP(&countFlag, "count", "", false, "(optional) Get the number of components in total")
 }
 
 func listComponents(cmd *cobra.Command, url string, displayCountOnly bool) error {
