@@ -187,6 +187,7 @@ function RJSFModalWrapper({
   uiSchema = {},
   initialData = {},
   handleSubmit,
+  handleNext,
   title,
   submitBtnText,
   helpText,
@@ -228,7 +229,9 @@ function RJSFModalWrapper({
   const handleFormSubmit = () => {
     if (formRef.current && formRef.current.validateForm()) {
       handleSubmit(formRef.current.state.formData);
-      handleClose();
+      if (handleNext) {
+        handleNext();
+      }
     }
   };
 

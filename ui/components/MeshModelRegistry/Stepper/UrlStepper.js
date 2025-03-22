@@ -19,13 +19,22 @@ import {
   RadioGroup,
   MenuItem,
   Radio,
+  styled,
 } from '@layer5/sistent';
 import BrushIcon from '@mui/icons-material/Brush';
 import CategoryIcon from '@mui/icons-material/Category';
 import SourceIcon from '@/assets/icons/SourceIcon';
+import FinishFlagIcon from '@/assets/icons/FinishFlagIcon';
+import { useContext, useState } from 'react';
+import { capitalize } from 'lodash';
+import { Loading } from '@/components/DesignLifeCycle/common';
+import { NotificationCenterContext } from '../../NotificationCenter';
+import { useEffect } from 'react';
+import { OPERATION_CENTER_EVENTS } from 'machines/operationsCenter';
+import { DeploymentSummaryFormatter } from '../../DesignLifeCycle/DeploymentSummary';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import { modelCategories, modelShapes, modelSubCategories } from './data';
-
+import { DeploymentSelectorIcon } from '@/assets/icons/DeploymentSelectorIcon';
 const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
   const [modelSource, setModelSource] = React.useState('');
   const [modelName, setModelName] = React.useState('');
@@ -111,28 +120,152 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
     }
   };
 
-  const handleFinish = () => {
-    handleClose();
-    handleGenerateModal({
-      uploadType: 'URL Import',
-      register: registerModel,
-      url: modelUrl,
-      model: {
-        model: modelName,
-        modelDisplayName: modelDisplayName,
-        registrant: modelSource,
-        category: modelCategory,
-        subCategory: modelSubcategory,
-        shape: modelShape,
-        primaryColor: primaryColor,
-        secondaryColor: secondaryColor,
-        svgColor: logoLightThemePath,
-        svgWhite: logoDarkThemePath,
-        isAnnotation: isAnnotation,
-        publishToRegistry: true,
-      },
-    });
+  const FinishDeploymentStep = ({ perform_deployment, deployment_type }) => {
+    const { operationsCenterActorRef } = useContext(NotificationCenterContext);
+    const [isDeploying, setIsDeploying] = useState(false);
+    const [deployEvent, setDeployEvent] = useState();
+    const [deployError, setDeployError] = useState(null);
+    // const router = useRouter();
+
+    useEffect(() => {
+      try {
+        setIsDeploying(true);
+        perform_deployment();
+      } catch (error) {
+        setDeployError(error);
+        setIsDeploying(false);
+      }
+    }, []);
+
+    useEffect(() => {
+      const subscription = operationsCenterActorRef.on(
+        OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
+        (event) => {
+          const serverEvent = event.data.event;
+          if (serverEvent.action === deployment_type) {
+            setIsDeploying(false);
+            setDeployEvent(serverEvent);
+          }
+        },
+      );
+
+      return () => subscription.unsubscribe();
+    }, []);
+
+    const progressMessage = `${capitalize(deployment_type)}ing model`;
+
+    if (isDeploying) {
+      return <Loading message={progressMessage} />;
+    }
+    console.log(deployError);
+    if (deployError) {
+      return (
+        <Typography variant="h5" color="error">
+          Error deploying design: {JSON.stringify(deployError)}
+        </Typography>
+      );
+    }
+
+    if (!deployEvent) {
+      return null;
+    }
+
+    return <DeploymentSummaryFormatter event={deployEvent} />;
   };
+
+  const handleFinish = async () => {
+    try {
+      const modelData = {
+        uploadType: 'URL Import',
+        register: registerModel,
+        url: modelUrl,
+        model: {
+          model: modelName,
+          modelDisplayName: modelDisplayName,
+          registrant: modelSource,
+          category: modelCategory,
+          subCategory: modelSubcategory,
+          shape: modelShape,
+          primaryColor: primaryColor,
+          secondaryColor: secondaryColor,
+          svgColor: logoLightThemePath,
+          svgWhite: logoDarkThemePath,
+          isAnnotation: isAnnotation,
+          publishToRegistry: true,
+        },
+      };
+      await handleGenerateModal(modelData);
+    } catch (error) {
+      return error;
+    }
+  };
+  // Styled components for consistent styling
+  const StyledSummaryBox = styled(Box)(({ theme }) => ({
+    backgroundColor: theme.palette.background.default || '#f8f9fa',
+    padding: '1.5rem',
+    borderRadius: '8px',
+    marginBottom: '1rem',
+  }));
+
+  const StyledSummaryItem = styled(Box)(({ theme }) => ({
+    borderRadius: '0.5rem',
+    padding: '1rem',
+    backgroundColor: theme.palette.background.paper || '#ffffff',
+    flexGrow: 1,
+  }));
+
+  const SectionHeading = styled(Typography)(() => ({
+    fontWeight: 'bold',
+    marginTop: '1.5rem',
+    marginBottom: '1rem',
+  }));
+
+  // Summary field component with consistent styling
+  const SummaryField = ({ label, value, color }) => (
+    <StyledSummaryItem>
+      <Typography variant="textB2SemiBold" color="textSecondary">
+        {label}
+      </Typography>
+      <Typography mt={1} style={color ? { color: color } : {}}>
+        {value}
+      </Typography>
+    </StyledSummaryItem>
+  );
+
+  // Color display component
+  const ColorDisplay = ({ color }) => (
+    <Box
+      sx={{
+        width: '1.5rem',
+        height: '1.5rem',
+        borderRadius: '4px',
+        backgroundColor: color,
+        marginRight: '0.5rem',
+        display: 'inline-block',
+        verticalAlign: 'middle',
+      }}
+    />
+  );
+  // SVG Logo display component that renders SVG content
+  const SvgLogoDisplay = ({ svgContent }) => {
+    if (!svgContent) {
+      return (
+        <Typography color="textSecondary" variant="body2">
+          No logo uploaded
+        </Typography>
+      );
+    }
+
+    // Create a data URL from the SVG content
+    const svgDataUrl = `data:image/svg+xml;base64,${btoa(unescape(encodeURIComponent(svgContent)))}`;
+
+    return (
+      <Box mt={1}>
+        <img src={svgDataUrl} alt="Logo" height="40" style={{ maxWidth: '100%' }} />
+      </Box>
+    );
+  };
+
   const urlStepper = useStepper({
     steps: [
       {
@@ -520,6 +653,140 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
           </>
         ),
       },
+      {
+        component: (
+          <Box>
+            <Box display="flex" alignItems="center" mb={2}>
+              <Typography variant="h6" sx={{ fontWeight: 500 }}>
+                Model Generation Summary
+              </Typography>
+            </Box>
+
+            <StyledSummaryBox>
+              <SectionHeading variant="subtitle1">Basic Information</SectionHeading>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <SummaryField label="Model Name" value={modelName} />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <SummaryField label="Display Name" value={modelDisplayName} />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <SummaryField label="Category" value={modelCategory} />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <SummaryField label="Subcategory" value={modelSubcategory} />
+                </Grid>
+              </Grid>
+
+              <SectionHeading variant="subtitle1">Styling</SectionHeading>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <StyledSummaryItem>
+                    <Typography variant="textB2SemiBold" color="textSecondary">
+                      Primary Color
+                    </Typography>
+                    <Box mt={1} display="flex" alignItems="center">
+                      <ColorDisplay color={primaryColor} />
+                      <Typography>{primaryColor}</Typography>
+                    </Box>
+                  </StyledSummaryItem>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <StyledSummaryItem>
+                    <Typography variant="textB2SemiBold" color="textSecondary">
+                      Secondary Color
+                    </Typography>
+                    <Box mt={1} display="flex" alignItems="center">
+                      <ColorDisplay color={secondaryColor} />
+                      <Typography>{secondaryColor}</Typography>
+                    </Box>
+                  </StyledSummaryItem>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <SummaryField label="Shape" value={modelShape} />
+                </Grid>
+              </Grid>
+
+              <SectionHeading variant="subtitle1">Logos</SectionHeading>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <StyledSummaryItem>
+                    <Typography variant="textB2SemiBold" color="textSecondary">
+                      Light Theme Logo
+                    </Typography>
+                    <SvgLogoDisplay svgContent={logoLightThemePath} />
+                  </StyledSummaryItem>
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <StyledSummaryItem>
+                    <Typography variant="textB2SemiBold" color="textSecondary">
+                      Dark Theme Logo
+                    </Typography>
+                    <SvgLogoDisplay svgContent={logoDarkThemePath} />
+                  </StyledSummaryItem>
+                </Grid>
+              </Grid>
+
+              <SectionHeading variant="subtitle1">Source</SectionHeading>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <SummaryField label="Source Type" value={capitalize(modelSource || '')} />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <SummaryField label="URL" value={modelUrl} />
+                </Grid>
+              </Grid>
+
+              <SectionHeading variant="subtitle1">Additional Configuration</SectionHeading>
+              <Grid container spacing={2}>
+                <Grid item xs={12}>
+                  <SummaryField
+                    label="Visual Annotation Only"
+                    value={isAnnotation ? 'Yes' : 'No'}
+                  />
+                </Grid>
+              </Grid>
+            </StyledSummaryBox>
+
+            <Box sx={{ marginTop: '1rem' }}>
+              <Typography variant="body2" color="textSecondary">
+                Please review all details before proceeding with model generation. Once you click
+                Generate, the model will be created with the configuration shown above.
+              </Typography>
+            </Box>
+          </Box>
+        ),
+        icon: DeploymentSelectorIcon,
+        label: 'Finalize Generation',
+        helpText: (
+          <>
+            <p>
+              Review all the details before generating your model. This summary shows all the
+              configuration options youve selected throughout the wizard.
+            </p>
+
+            <p>
+              If you need to make any changes, use the Back button to navigate to the step and
+              modify your selections.
+            </p>
+            <p>
+              Learn more about{' '}
+              <a href="https://docs.meshery.io/guides/configuration-management/generating-models">
+                Model Generation
+              </a>
+              .
+            </p>
+          </>
+        ),
+      },
+      {
+        component: (
+          <FinishDeploymentStep perform_deployment={handleFinish} deployment_type="register" />
+        ),
+        label: 'Finsh',
+        icon: FinishFlagIcon,
+      },
     ],
   });
   //
@@ -546,8 +813,20 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
     },
     4: {
       canGoNext: () => true,
+      nextButtonText: 'Next',
+      nextAction: () => {
+        urlStepper.handleNext();
+      },
+    },
+    5: {
+      canGoNext: () => true,
+      nextButtonText: 'Generate',
+      nextAction: () => urlStepper.handleNext(),
+    },
+    6: {
+      canGoNext: () => true,
       nextButtonText: 'Finish',
-      nextAction: handleFinish,
+      nextAction: handleClose,
     },
   };
 
