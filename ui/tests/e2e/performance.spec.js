@@ -28,6 +28,7 @@ test.describe('Performance Section Tests', () => {
 
   test(
     'Verify Configure Metrics Navigation and Settings',
+    // adding for testing
     { tag: '@unstable' },
     async ({ page }) => {
       await expect(page.getByTestId('configure-metrics-button')).toBeVisible();
