@@ -26,27 +26,30 @@ test.describe('Performance Section Tests', () => {
     await performanceNav.click();
   });
 
-  test('Verify Configure Metrics Navigation and Settings', async ({ page }) => {
-    // { tag: '@unstable' },
-    await expect(page.getByTestId('configure-metrics-button')).toBeVisible();
-    await page.getByTestId('configure-metrics-button').click();
+  test(
+    'Verify Configure Metrics Navigation and Settings',
+    { tag: '@unstable' },
+    async ({ page }) => {
+      await expect(page.getByTestId('configure-metrics-button')).toBeVisible();
+      await page.getByTestId('configure-metrics-button').click();
 
-    await expect(page).toHaveURL(/.*#metrics/);
+      await expect(page).toHaveURL(/.*#metrics/);
 
-    for (const tabId of SETTINGS_TABS) {
-      await expect(page.getByTestId(tabId)).toBeVisible();
-    }
+      for (const tabId of SETTINGS_TABS) {
+        await expect(page.getByTestId(tabId)).toBeVisible();
+      }
 
-    for (const MeshId of MESH_ADAPTER) {
-      await expect(page.getByTestId(MeshId)).toBeVisible();
-    }
+      for (const MeshId of MESH_ADAPTER) {
+        await expect(page.getByTestId(MeshId)).toBeVisible();
+      }
 
-    for (const buttonId of ACTION_BUTTONS) {
-      await expect(page.getByTestId(buttonId)).toBeVisible();
-    }
+      for (const buttonId of ACTION_BUTTONS) {
+        await expect(page.getByTestId(buttonId)).toBeVisible();
+      }
 
-    for (const garfanaId of GARFANA_ELEMENTS) {
-      await expect(page.getByTestId(garfanaId)).toBeVisible();
-    }
-  });
+      for (const garfanaId of GARFANA_ELEMENTS) {
+        await expect(page.getByTestId(garfanaId)).toBeVisible();
+      }
+    },
+  );
 });
