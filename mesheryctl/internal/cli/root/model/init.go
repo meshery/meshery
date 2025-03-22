@@ -63,14 +63,11 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 		// TODO take into account outputFormat
 		outputFormat, _ := cmd.Flags().GetString("output-format")
 
-		utils.Log.Info("init command will be here soon")
-		utils.Log.Infof("model name = %s", modelName)
-		utils.Log.Infof("path = %s", path)
-		utils.Log.Infof("version = %s", version)
-		utils.Log.Infof("output format = %s", outputFormat)
+		utils.Log.Infof("Creating new Meshery model: %s", modelName)
 
 		const DirPerm = 0755
 		mainFolderPath := strings.Join([]string{path, modelName, version}, string(os.PathSeparator))
+		utils.Log.Infof("Creating directory structure...")
 		err = os.MkdirAll(mainFolderPath, DirPerm)
 		if err != nil {
 			// TODO use meshkit error format
@@ -79,6 +76,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 		}
 
 		for _, item := range initModelData {
+			item.beforeHook()
 			itemFolderPath := mainFolderPath
 			if item.folderPath != "" {
 				itemFolderPath = strings.Join([]string{mainFolderPath, item.folderPath}, string(os.PathSeparator))
@@ -122,6 +120,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 				}
 			}
 		}
+		utils.Log.Infof("Created %s model at %s", modelName, mainFolderPath)
 
 		// TODO maybe clean partial data (if error occurs in the middle of execution)
 		return nil
@@ -148,15 +147,22 @@ const initModelTemplatePathComponentJSON = "json_models/constructs/v1beta1/compo
 const initModelTemplatePathConnectionJSON = "json_models/constructs/v1beta1/connection.json"
 const initModelTemplatePathRelathionshipJSON = "json_models/constructs/v1alpha3/relationship.json"
 
+// TODO
+// initModelData fits well for json and yaml format
+// if csv output is different (non folder based), will initModelData fits it?
 var initModelData = []struct {
 	folderPath string
 	files      map[string]string
+	beforeHook func()
 }{
 	{
 		folderPath: "",
 		// map file name to template key
 		files: map[string]string{
 			"model": initModelTemplatePathModelJSON,
+		},
+		beforeHook: func() {
+			utils.Log.Info("Generating model definition...")
 		},
 	},
 	{
@@ -165,12 +171,18 @@ var initModelData = []struct {
 		files: map[string]string{
 			"component": initModelTemplatePathComponentJSON,
 		},
+		beforeHook: func() {
+			utils.Log.Info("Adding sample components...")
+		},
 	},
 	{
 		folderPath: "relationships",
 		// map file name to template key
 		files: map[string]string{
 			"relationship": initModelTemplatePathRelathionshipJSON,
+		},
+		beforeHook: func() {
+			utils.Log.Info("Creating sample relationships...")
 		},
 	},
 	{
@@ -179,11 +191,17 @@ var initModelData = []struct {
 		files: map[string]string{
 			"connection": initModelTemplatePathConnectionJSON,
 		},
+		beforeHook: func() {
+			utils.Log.Info("Adding sample connections...")
+		},
 	},
 	{
 		folderPath: "credentials",
 		// map file name to template key
 		files: nil,
+		beforeHook: func() {
+			utils.Log.Info("Creating sample credentials...")
+		},
 	},
 }
 

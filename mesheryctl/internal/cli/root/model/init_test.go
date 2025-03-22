@@ -31,7 +31,7 @@ func TestModelInit(t *testing.T) {
 			Name:             "model init with default params",
 			Args:             []string{"init", "aws-ec2-controller"},
 			ExpectError:      false,
-			ExpectedResponse: "model.init.encouraging.output.golden",
+			ExpectedResponse: "model.init.aws-ec2-controller.output.golden",
 			ExpectedDirs: []string{
 				"aws-ec2-controller",
 				"aws-ec2-controller/0.1.0",
