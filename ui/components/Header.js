@@ -116,9 +116,9 @@ const K8sContextConnectionChip_ = ({
             onDelete={onDelete ? () => onDelete(ctx.name, ctx.connection_id) : null}
             handlePing={() => ping(ctx.name, ctx.server, ctx.connection_id)}
             iconSrc={
-              connectionMetadataState && connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon
-                ? `/${connectionMetadataState[CONNECTION_KINDS.KUBERNETES]?.icon}`
-                : '/static/img/kubernetes.svg'
+              connectionMetadataState && connectionMetadataState[ctx.kind]?.icon
+                ? `/${connectionMetadataState[ctx.kind]?.icon}`
+                : null
             }
             status={operatorState}
           />
@@ -398,7 +398,7 @@ const Header = ({
   updateCapabilities,
   updateExtensionType,
 }) => {
-  const { notify } = useNotification;
+  const { notify } = useNotification();
 
   const {
     data: providerCapabilities,
