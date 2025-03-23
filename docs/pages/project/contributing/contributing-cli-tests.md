@@ -10,6 +10,12 @@ list: include
 display-title: false
 ---
 
+{% include alert.html
+    type="danger"
+    title="DOCUMENT INCOMPLETE"
+    content="This document is incomplete and is still under improvement. Help wanted! 😃" %}
+
+
 Meshery CLI is the command line interface for Meshery. Meshery CLI, otherwise known as `mesheryctl`, is a client of Meshery Server's [REST API]({{site.baseurl}}/extensibility/api). It provides a way to interact with Meshery and perform various operations such as installing, configuring, and managing cloud native infrastructure.
 
 This document is intended to help you contribute to the end-to-end tests for `mesheryctl`, the Meshery CLI. It is designed to be a guide for developers who are new to the project and want to contribute to the testing of `mesheryctl`.
@@ -152,7 +158,40 @@ For consistency, we will keep the prefix *00-* for the command under test in the
 └── 01-model-list.bats
 ```
 
-### Run End-to-End (locally)
+### Test implementation
+
+`mesheryctl` provides several commands and subcommands, to be able to add test we need to understand if there are interaction and or prerequisite to implement a test using the mre effective way.
+
+When creating a test we need to have in mind the following rules:
+
+#### Test name
+
+It must follow this naming convention **mesheryctl command name and subcommand name under test the context of execution and the expected result**
+
+**Example:**
+
+```bash
+@test "mesheryctl model view without model name should display an error" {
+  ... test implementation ...
+}
+```
+
+### Test data
+
+If you are testing a command that required a specific id, name or any value that must exist to be able to run the test, the data should have been created by you or another test before. We will not rely on data we don't control because it can result in unexpected result.
+
+**Example:**
+
+In the following example, we must have create a model with the name `model-test` before running creating or running the following test
+
+```bash
+@test "mesheryctl model view providing a modenl name should display model information" {
+  run MESHERYCTL_BIN model view model-test
+  ... ...
+}
+```
+
+## Run End-to-End (locally)
 
 <!-- 
     TODO: Add make e2e support with following changes
@@ -176,7 +215,7 @@ Make sure you are in `meshery/mesheryctl` directory
 ```bash
 make e2e
 ```
-
+<!-- TODO: https://github.com/meshery/meshery/issues/14105
 **Run a specific test file**
 
 Switch to the directory containing the test file and execute:
@@ -184,6 +223,7 @@ Switch to the directory containing the test file and execute:
 ```bash
 MESHERYCTL_BIN=<path to mesheryctl binary> bats <file_name>.bats
 ```
+-->
 
 **More on running tests locally**
 
@@ -216,9 +256,3 @@ This involves parsing a flag for the binry to be built whether it exists or not.
 
 ### Find Tests here
 Refer to [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?usp=sharing) for test scenarios.
-
-
-{% include alert.html
-    type="danger"
-    title="DOCUMENT INCOMPLETE"
-    content="This document is incomplete. Help wanted! 😃" %}
