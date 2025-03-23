@@ -22,9 +22,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/components"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils/format"
 	"github.com/layer5io/meshery/server/models/environments"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -137,7 +137,7 @@ mesheryctl environment view --orgID [orgID]
 				utils.Log.Info("Output saved as JSON file in ~/.meshery/component_" + componentString + ".json")
 				return nil
 			}
-			return components.OutputJson(selectedEnvironment)
+			return format.OutputJson(selectedEnvironment)
 		} else {
 			return utils.ErrInvalidArgument(errors.New("output-format choice is invalid or not provided, use [json|yaml]"))
 		}
