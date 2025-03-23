@@ -81,10 +81,10 @@ mesheryctl relationship list --count
 		}
 
 		dataToDisplay := display.DisplayedData{
-			DataType:         "relationships",
-			Header:                    []string{"kind", "API Version", "Model name", "Sub Type", "Evaluation Policy"},
-			Rows:                         rows,
-			Count:                       relationships.Count,
+			DataType:         "relationship",
+			Header:           []string{"kind", "API Version", "Model name", "Sub Type", "Evaluation Policy"},
+			Rows:             rows,
+			Count:            relationships.Count,
 			DisplayCountOnly: count,
 			IsPage:           cmd.Flags().Changed("page"),
 		}
