@@ -1,8 +1,8 @@
 #!/usr/bin/env bats
 
-load helpers/test_helpers.bats
-
 setup() {
+  load "$SUPPORT_DESTDIR"
+  load "$ASSERT_DESTDIR"
   MESHERYCTL_DIR=$(dirname "$MESHERYCTL_BIN")
   export TESTDATA_DIR="$MESHERYCTL_DIR/tests/e2e/002-model/testdata/model-export"
 }
@@ -12,8 +12,8 @@ setup() {
   [ "$status" -ne 0 ]
   actual_output=$(echo "$output")
 
-  check_output "Please provide a model name."
-  check_output "Usage: mesheryctl model export [model-name]"
+  assert_output "Please provide a model name."
+  assert_output "Usage: mesheryctl model export [model-name]"
 }
 
 @test "mesheryctl model export succeeds with default options" {
@@ -21,11 +21,11 @@ setup() {
   [ "$status" -eq 0 ]
   actual_output=$(echo "$output")
 
-  check_output "api/meshmodels/export?name=$TESTDATA_DIR"
-  check_output "output_format=yaml"
-  check_output "file_type=oci"
-  check_output "components=true"
-  check_output "relationships=true"
+  assert_output "api/meshmodels/export?name=$TESTDATA_DIR"
+  assert_output "output_format=yaml"
+  assert_output "file_type=oci"
+  assert_output "components=true"
+  assert_output "relationships=true"
 }
 
 @test "mesheryctl model export succeeds with tar output type" {
@@ -33,7 +33,7 @@ setup() {
   [ "$status" -eq 0 ]
   actual_output=$(echo "$output")
 
-  check_output "file_type=tar"
+  assert_output "file_type=tar"
 }
 
 @test "mesheryctl model export succeeds with json output format" {
@@ -41,7 +41,7 @@ setup() {
   [ "$status" -eq 0 ]
   actual_output=$(echo "$output")
 
-  check_output "output_format=json"
+  assert_output "output_format=json"
 }
 
 @test "mesheryctl model export includes version when specified" {
@@ -49,7 +49,7 @@ setup() {
   [ "$status" -eq 0 ]
   actual_output=$(echo "$output")
 
-  check_output "&version=v0.7.3"
+  assert_output "&version=v0.7.3"
 }
 
 @test "mesheryctl model export handles discard flags correctly" {
@@ -57,6 +57,6 @@ setup() {
   [ "$status" -eq 0 ]
   actual_output=$(echo "$output")
 
-  check_output "components=false"
-  check_output "relationships=false"
+  assert_output "components=false"
+  assert_output "relationships=false"
 }
