@@ -1,12 +1,4 @@
-[?25l[2K[2mUse the arrow keys to navigate:[0m [2m↓[0m [2m↑[0m [2m→[0m [2m←[0m 
-[2K[34m?[0m Select a model: 
-[2K  [1m▸[0m [4mAMD GPU, version: v1.0.0[0m
-[2K    AMD GPU, version: v1.0.0
-[2K    AMD GPU, version: v1.0.0
-[2K    AMD GPU, version: v1.0.0
-[2K↓   AMD GPU, version: v1.0.0
-[1A[1A[1A[1A[1A[1A[1A[2K[2mUse the arrow keys to navigate:[0m [2m↓[0m [2m↑[0m [2m→[0m [2m←[0m [1B[2K[34m?[0m Select a model: [1B[2K  [1m▸[0m [4mAMD GPU, version: v1.0.0[0m[1B[2K    AMD GPU, version: v1.0.0[1B[2K    AMD GPU, version: v1.0.0[1B[2K    AMD GPU, version: v1.0.0[1B[2K↓   AMD GPU, version: v1.0.0[1B[1A[2K[1A[2K[1A[2K[1A[2K[1A[2K[1A[2K[1A[2K[2K[32m[32m✔[0m [2mAMD GPU, version: v1.0.0[0m
-[?25hid: 9c1542c5-599c-9d66-5e62-f04e80ff495d
+id: a69a64c4-227e-c270-e6fa-09a8c0051c39
 schemaVersion: models.meshery.io/v1beta1
 version: v1.0.0
 name: amd-gpu
@@ -21,8 +13,8 @@ registrant:
   kind: artifacthub
   status: registered
   user_id: 00000000-0000-0000-0000-000000000000
-  created_at: 2025-03-19T05:25:50.627056752Z
-  updated_at: 2025-03-19T05:25:50.627056752Z
+  created_at: 2025-03-23T13:34:12.136334041Z
+  updated_at: 2025-03-23T13:34:12.136334041Z
   deleted_at: 0001-01-01T00:00:00Z
 connection_id: 82e5bc76-4468-9d29-2e5f-94ccdbabd618
 category:
@@ -42,7 +34,7 @@ metadata:
     styleOverrides: ""
 model:
   version: 0.19.0
-components_count: 18
+components_count: 3
 relationships_count: 0
 components: null
 relationships: null
