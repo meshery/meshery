@@ -43,10 +43,8 @@ mesheryctl environment list --orgID [orgID]
 		orgIDFlag, _ := cmd.Flags().GetString("orgID")
 
 		if orgIDFlag == "" {
-			if err := cmd.Usage(); err != nil {
-				return err
-			}
-			return utils.ErrInvalidArgument(errors.New("Please provide a --orgID flag"))
+			const errMsg = "[ orgID ] isn't specified\n\nUsage: mesheryctl environment list --orgID [orgID]\nRun 'mesheryctl environment list --help' to see detailed help message"
+			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
 		return nil
 	},

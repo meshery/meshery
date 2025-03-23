@@ -9,7 +9,7 @@ import (
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
 
-func TestCreateEnvironment(t *testing.T) {
+func TestDeleteEnvironment(t *testing.T) {
 	// Setup current context
 	utils.SetupContextEnv(t)
 
@@ -40,21 +40,21 @@ func TestCreateEnvironment(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
-			Name:             "Create environment without arguments",
-			Args:             []string{"create"},
+			Name:             "Delete environment without arguments",
+			Args:             []string{"delete"},
 			URL:              testContext.BaseURL + "/api/environments",
-			Method:           "POST",
+			Method:           "DELETE",
 			Fixture:          "",
-			ExpectedResponse: "create.environment.without.name.golden",
+			ExpectedResponse: "delete.environment.without.name.golden",
 			ExpectError:      true,
 		},
 		{
-			Name:             "Create environment successfully",
-			Args:             []string{"create", "--name", "test-environment", "--description", "integration test", "--orgID", "3f8319e0-33a9-4736-b248-12nm3kiuh3yu"},
-			URL:              testContext.BaseURL + "/api/environments",
-			Method:           "POST",
-			Fixture:          "create.environment.response.golden",
-			ExpectedResponse: "create.environment.success.golden",
+			Name:             "Delete environment successfully",
+			Args:             []string{"delete", "d56fb25b-f92c-4cd6-821b-2cfd6bb87259"},
+			URL:              testContext.BaseURL + "/api/environments/d56fb25b-f92c-4cd6-821b-2cfd6bb87259",
+			Method:           "DELETE",
+			Fixture:          "delete.environment.response.golden",
+			ExpectedResponse: "delete.environment.success.golden",
 			ExpectError:      false,
 		},
 	}

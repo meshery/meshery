@@ -38,10 +38,8 @@ mesheryctl environment delete [environmentId]
 
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			if err := cmd.Usage(); err != nil {
-				return err
-			}
-			return utils.ErrInvalidArgument(errors.New("Please provide a valid environment id as an argument with the command"))
+			const errMsg = "[ Environment ID ] isn't specified\n\nUsage: mesheryctl environment delete [environmentId]\nRun 'mesheryctl environment delete --help' to see detailed help message"
+			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
 		return nil
 	},
@@ -69,7 +67,7 @@ mesheryctl environment delete [environmentId]
 
 		// Check if the response status code is 200
 		if resp.StatusCode == http.StatusOK {
-			utils.Log.Info("Connection deleted")
+			utils.Log.Info(fmt.Sprintf("Environment with ID %s has been deleted", args[0]))
 			return nil
 		}
 

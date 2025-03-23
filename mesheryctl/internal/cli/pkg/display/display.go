@@ -21,7 +21,6 @@ type DisplayedData struct {
 
 func List(data DisplayedData) error {
 	if len(data.Rows) == 0 {
-		// if no component is found
 		fmt.Printf("No %s(s) found", data.DataType)
 		return nil
 	}

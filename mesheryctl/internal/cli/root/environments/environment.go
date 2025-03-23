@@ -15,6 +15,7 @@
 package environments
 
 import (
+	"flag"
 	"fmt"
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
@@ -27,13 +28,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-var (
-	// name          string
-	// description   string
-	// orgID         string
-	// outFormatFlag string
-	// saveFlag      bool
+var update = flag.Bool("update", false, "update golden files")
 
+var (
 	availableSubcommands = []*cobra.Command{listEnvironmentCmd, createEnvironmentCmd, deleteEnvironmentCmd, viewEnvironmentCmd}
 )
 
