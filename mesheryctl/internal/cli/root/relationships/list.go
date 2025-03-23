@@ -79,9 +79,9 @@ mesheryctl relationship list --count
 		}
 
 		data := relationshipsData{
-			Headers: []string{"kind", "API Version", "Model name", "Sub Type", "Evaluation Policy"},
-			Rows: rows,
-			Count: relationships.Count,
+			Headers:          []string{"kind", "API Version", "Model name", "Sub Type", "Evaluation Policy"},
+			Rows:             rows,
+			Count:            relationships.Count,
 			DisplayCountOnly: count,
 		}
 
