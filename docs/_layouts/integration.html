@@ -21,9 +21,8 @@ layout: default
         {% if component.name %}
         <div class="maincontainer">
             <div class="componentimg">
-                <img id="logo-dark-light" src="/{{ component.colorIcon }}" alt="{{ component.name }}"
-                    onerror="handleImageError(this)" data-logo-for-dark="/{{ component.whiteIcon }}"
-                    data-logo-for-light="/{{ component.colorIcon }}" />
+                <img id="logo-dark-light" src="/{{ component.colorIcon }}" alt="{{ component.name }}" onerror="handleImageError(this)" data-logo-for-dark="/{{ component.whiteIcon }}"
+                data-logo-for-light="/{{ component.colorIcon }}" />
             </div>
             <p class="Compitems">{{ component.name }}</p>
         </div>
@@ -37,11 +36,11 @@ layout: default
 
 {% assign modelcustomdata = site.modelscustominfo %}
 {% for modelinfo in modelcustomdata %}
-{% if modelinfo.title == pageTitle %}
-<div>
-    {{ modelinfo }}
-</div>
-{% endif %}
+  {% if modelinfo.title == pageTitle %}
+    <div>
+        {{ modelinfo }}
+    </div>
+  {% endif %}
 {% endfor %}
 
 {% include_cached integration/models-components.html %}
@@ -51,15 +50,14 @@ layout: default
     <h3 id="related-designs-header">Designs containing {{page.title}}</h3>
     {% assign tech = page.docURL | split: '/' | last %}
     <ul>
-        {% for design in site.catalog %}
-        {% if design.compatibility contains tech %}
-        <li class="design-link">
-            <a href="https://cloud.layer5.io/catalog/content/catalog/{{ design.patternId }}"
-                target="_blank">{{design.name}}</a>
-        </li>
-        {% endif %}
-        {% endfor %}
-    </ul>
+    {% for design in site.catalog %}
+    {% if design.compatibility contains tech %}
+    <li class="design-link">
+      <a href="https://cloud.layer5.io/catalog/content/catalog/{{ design.patternId }}" target="_blank" >{{design.name}}</a> 
+    </li>
+    {% endif %}
+    {% endfor %}
+</ul>
 </section>
 
 <section>
@@ -79,10 +77,8 @@ layout: default
 </section>
 
 {% if page.suggested-reading != false and page.title and page.type and page.category and page.url %}
-{% assign related_models_by_category = site.models | where_exp: "model", "model.integrations-category ==
-page.integrations-category" %}
-{% include_cached suggested-reading.html reading=related_models_by_category h2_text="Related Models" title=page.title
-type=page.type category=page.category
+{% assign related_models_by_category = site.models | where_exp: "model", "model.integrations-category == page.integrations-category" %}
+{% include_cached suggested-reading.html reading=related_models_by_category h2_text="Related Models" title=page.title type=page.type category=page.category
 url=page.url language="en" %}
 {% endif %}
 
@@ -98,7 +94,6 @@ url=page.url language="en" %}
     }
 
     const relatedTutorials = document.querySelectorAll(".tutorial-link");
-    console.log(relatedTutorials);
     if (relatedTutorials.length === 0) {
         document.getElementById("related-tutorials-header").style.display = "none";
     }
