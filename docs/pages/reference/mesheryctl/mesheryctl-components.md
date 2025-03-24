@@ -1,16 +1,16 @@
 ---
 layout: default
-title: mesheryctl-components
-permalink: reference/mesheryctl/components
-redirect_from: reference/mesheryctl/components/
+title: mesheryctl-component
+permalink: reference/mesheryctl/component
+redirect_from: reference/mesheryctl/component/
 type: reference
 display-title: "false"
 language: en
-command: components
+command: component
 subcommand: nil
 ---
 
-# mesheryctl components
+# mesheryctl component
 
 Manage components
 
@@ -19,7 +19,7 @@ Manage components
 List, search and view component(s) and detailed informations
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl components [flags]
+mesheryctl component [flags]
 
 </div>
 </pre> 
@@ -37,7 +37,7 @@ mesheryctl components --count
 List available component(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl components list
+mesheryctl component list
 
 </div>
 </pre> 
@@ -45,7 +45,7 @@ mesheryctl components list
 Search for component(s)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl components search [component-name]
+mesheryctl component search [component-name]
 
 </div>
 </pre> 
@@ -53,7 +53,7 @@ mesheryctl components search [component-name]
 View a specific component
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl components view [component-name]
+mesheryctl component view [component-name]
 
 </div>
 </pre> 
@@ -80,8 +80,8 @@ mesheryctl components view [component-name]
 
 ## See Also
 
-* [mesheryctl components list](/reference/mesheryctl/components/list)
-* [mesheryctl components search](/reference/mesheryctl/components/search)
-* [mesheryctl components view](/reference/mesheryctl/components/view)
+* [mesheryctl component list](/reference/mesheryctl/component/list)
+* [mesheryctl component search](/reference/mesheryctl/component/search)
+* [mesheryctl component view](/reference/mesheryctl/component/view)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.

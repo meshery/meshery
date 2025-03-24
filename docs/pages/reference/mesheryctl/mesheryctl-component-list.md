@@ -1,16 +1,16 @@
 ---
 layout: default
-title: mesheryctl-components-list
-permalink: reference/mesheryctl/components/list
-redirect_from: reference/mesheryctl/components/list/
+title: mesheryctl-component-list
+permalink: reference/mesheryctl/component/list
+redirect_from: reference/mesheryctl/component/list/
 type: reference
 display-title: "false"
 language: en
-command: components
+command: component
 subcommand: list
 ---
 
-# mesheryctl components list
+# mesheryctl component list
 
 List registered components
 
@@ -19,7 +19,7 @@ List registered components
 List all components registered in Meshery Server
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl components list [flags]
+mesheryctl component list [flags]
 
 </div>
 </pre> 
@@ -29,7 +29,7 @@ mesheryctl components list [flags]
 View list of components
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl components list
+mesheryctl component list
 
 </div>
 </pre> 
@@ -37,7 +37,7 @@ mesheryctl components list
 View list of components with specified page number (25 components per page)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl components list --page 2
+mesheryctl component list --page 2
 
 </div>
 </pre> 
@@ -45,7 +45,7 @@ mesheryctl components list --page 2
 To view the number of components present in Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl components list --count
+mesheryctl component list --count
 
 </div>
 </pre> 

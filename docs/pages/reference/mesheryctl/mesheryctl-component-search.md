@@ -1,35 +1,35 @@
 ---
 layout: default
-title: mesheryctl-components-view
-permalink: reference/mesheryctl/components/view
-redirect_from: reference/mesheryctl/components/view/
+title: mesheryctl-component-search
+permalink: reference/mesheryctl/component/search
+redirect_from: reference/mesheryctl/component/search/
 type: reference
 display-title: "false"
 language: en
-command: components
-subcommand: view
+command: component
+subcommand: search
 ---
 
-# mesheryctl components view
+# mesheryctl component search
 
-View registered components
+search registered components
 
 ## Synopsis
 
-View a component registered in Meshery Server
+search components registered in Meshery Server based on kind
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl components view [flags]
+mesheryctl component search [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-View details of a specific component
+Search for components using a query
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl components view [component-name]
+mesheryctl component search [query-text]
 
 </div>
 </pre> 
@@ -38,9 +38,7 @@ mesheryctl components view [component-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-  -h, --help                   help for view
-  -o, --output-format string   (optional) format to display in [json|yaml] (default "yaml")
-  -s, --save                   (optional) save output as a JSON/YAML file
+  -h, --help   help for search
 
 </div>
 </pre>
