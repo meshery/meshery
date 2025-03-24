@@ -7,7 +7,7 @@ redirect_from: extensibility/extensions
 language: en
 display-title: true
 list: include
-type: Extensibility
+type: extensions
 abstract: Extensions in Meshery are additional plugins or add-ons that provide extra functionalities beyond the core features of the platform. 
 ---
 

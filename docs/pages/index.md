@@ -110,13 +110,13 @@ list: exclude
 <!-- GUIDES -->
   <div class="section">
     <a href="{{ site.baseurl }}/guides">
-        <div class="btn-primary">Guides</div>
+        <div class="btn-primary">Guides & Tutorials</div>
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/guides" class="text-black section-title">Guides</a></h6> -->
     <details>
       <summary>
         <p style="display:inline">
-          <a href="{{ site.baseurl }}/guides/mesheryctl/" class="text-black">Using the CLI</a>
+          <a href="{{ site.baseurl }}/guides/mesheryctl/" class="text-black">Using Meshery CLI Guides</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -135,7 +135,7 @@ list: exclude
     <details>
       <summary>
         <p style="display:inline">
-          <a href="{{ site.baseurl }}/guides/tutorials/" class="text-black">🧑‍🔬 Hands-on Labs using Meshery Playground</a>
+          <a href="{{ site.baseurl }}/guides/tutorials/" class="text-black">🧑‍🔬 Toturials</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -211,7 +211,7 @@ list: exclude
     <details>
       <summary>
         <p style="display:inline">
-          <a href="{{ site.baseurl }}/guides/infrastructure-management" class="text-black">Troubleshooting</a>
+          <a href="{{ site.baseurl }}/guides/infrastructure-management" class="text-black">Troubleshooting Guides</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -231,14 +231,14 @@ list: exclude
 
   <!-- Extensions -->
   <div class="section">
-    <a href="{{ site.baseurl }}/extensibility">
+    <a href="{{ site.baseurl }}/extensions">
         <div class="btn-primary">Integrations & Extensions</div>
     </a>
     <!-- <h6><a href="{{ site.baseurl }}/extensions" class="text-black section-title">Extensions</a></h6> -->
         <details>
       <summary>
         <p style="display:inline">
-          <a href="{{ site.baseurl }}/extensibility/extensions" class="text-black">Extensions</a>
+          <a href="{{ site.baseurl }}/extensions" class="text-black">Extensions</a>
         </p>
       </summary>
       <ul class="section-title">
@@ -280,25 +280,34 @@ list: exclude
 </div>
 <div class="flex flex-col--2 container">
 
-  <!-- PROJECT 
-  <div class="section">
-    <a href="{{ site.baseurl }}/project/overview">
-        <div class="btn-primary">Project</div>
-    </a>
-    <!-- <h6><a href="{{ site.baseurl }}/tasks" class="text-black section-title">Cloud Native Management</a></h6> 
-    {% assign project = site.pages | sort: "name" | alphabetical %}
-    <ul>
-      {% for item in project %}
-      {% if item.type=="project" and item.category!="contributing" and item.list=="include" and  item.list!="exclude" and item.language =="en" -%}
-        <li><a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-        </li>
+<!-- Extensibility -->
+<div class="section">
+  <a href="{{ site.baseurl }}/extensibility/index">
+    <div class="btn-primary">Extensibility</div>
+  </a>
+  <details>
+    <summary>
+      <p style="display:inline">
+        <a href="{{ site.baseurl }}/extensibility/index" class="text-black">Extensibility</a>
+      </p>
+    </summary>
+    <ul class="section-title">
+      {% assign extensibility_pages = site.pages | where: "type", "Extensibility" %}
+      {% for item in extensibility_pages %}
+        {% if item.list != "exclude" and item.language == "en" %}
+          <li>
+            <a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
+            {% if item.abstract != " " %}
+              - {{ item.abstract }}
+            {% endif %}
+          </li>
         {% endif %}
       {% endfor %}
     </ul>
+  </details>
+</div>
 
-  </div> -->
-   <!-- CONTRIBUTING -->
-
+<!-- Contributing & Community -->
   <div class="section">
     <a href="{{ site.baseurl }}/project">
         <div class="btn-primary">Contributing & Community</div>

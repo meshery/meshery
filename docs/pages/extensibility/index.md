@@ -1,12 +1,14 @@
 ---
 layout: default
 title: Extensibility
-permalink: extensibility
+permalink: extensibility/
 type: Extensibility
 abstract: 'Meshery has an extensible architecture with several different types of extension points.'
 # redirect_from:
 #   - reference/extensibility
 #   - extensibility/
+redirect_from:
+  - /extensibility
 language: en
 list: exclude
 ---
