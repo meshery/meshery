@@ -1,6 +1,7 @@
 package environments
 
 import (
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -27,6 +28,8 @@ func TestDeleteEnvironment(t *testing.T) {
 	currDir := filepath.Dir(filename)
 	fixturesDir := filepath.Join(currDir, "fixtures")
 
+	environmentId := "d56fb25b-f92c-4cd6-821b-2cfd6bb87259"
+
 	// Test scenarios for environment creation
 	tests := []struct {
 		Name             string
@@ -50,8 +53,8 @@ func TestDeleteEnvironment(t *testing.T) {
 		},
 		{
 			Name:             "Delete environment successfully",
-			Args:             []string{"delete", "d56fb25b-f92c-4cd6-821b-2cfd6bb87259"},
-			URL:              testContext.BaseURL + "/api/environments/d56fb25b-f92c-4cd6-821b-2cfd6bb87259",
+			Args:             []string{"delete", environmentId},
+			URL:              fmt.Sprintf("%s/api/environments/%s", testContext.BaseURL, environmentId),
 			Method:           "DELETE",
 			Fixture:          "delete.environment.response.golden",
 			ExpectedResponse: "delete.environment.success.golden",
