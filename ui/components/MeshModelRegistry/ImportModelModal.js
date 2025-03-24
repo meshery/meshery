@@ -17,7 +17,6 @@ import { updateProgress } from 'lib/store';
 import { useImportMeshModelMutation } from '@/rtk-query/meshModel';
 
 const ImportModelModal = React.memo(({ isImportModalOpen, setIsImportModalOpen }) => {
-  console.log('amit this called');
   const [importModalDescription, setImportModalDescription] = useState('');
   const [isCsvModalOpen, setIsCsvModalOpen] = useState(false);
   const [importModelReq] = useImportMeshModelMutation();
