@@ -41,8 +41,8 @@ var (
 	countFlag      bool
 )
 
-// ComponentsCmd represents the mesheryctl component command
-var ComponentsCmd = &cobra.Command{
+// ComponentCmd represents the mesheryctl component command
+var ComponentCmd = &cobra.Command{
 	Use:   "component",
 	Short: "Manage components",
 	Long:  "List, search and view component(s) and detailed informations",
@@ -123,8 +123,8 @@ func selectComponentPrompt(components []component.ComponentDefinition) component
 }
 
 func init() {
-	ComponentsCmd.AddCommand(availableSubcommands...)
-	ComponentsCmd.Flags().BoolVarP(&countFlag, "count", "", false, "(optional) Get the number of components in total")
+	ComponentCmd.AddCommand(availableSubcommands...)
+	ComponentCmd.Flags().BoolVarP(&countFlag, "count", "", false, "(optional) Get the number of components in total")
 }
 
 func listComponents(cmd *cobra.Command, url string, displayCountOnly bool) error {
