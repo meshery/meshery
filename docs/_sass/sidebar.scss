@@ -4,6 +4,7 @@
   height: calc(100vh - var(--navbar-height));
   transition: all 0.5s ease-in-out;
   top: calc(var(--navbar-height));
+  margin-top: 9vh;
   & .sidebar-container-wrapper {
     height: 100%;
     padding: 0.5rem;
@@ -20,9 +21,14 @@
     }
   }
   @media (max-width: 75em) {
+    margin-top: 0vh;
     transform: translateX(calc(-100% + 2rem));
     position: fixed;
     display: flex;
+  }
+
+  @media (max-width: 37.5em) {
+    margin-top: 0vh;
   }
   &--active {
     transform: translateX(0%);
@@ -109,7 +115,6 @@
         width: 100%;
         margin: 2rem 0 1rem;
         position: relative;
-        position: sticky;
         top: 0;
         z-index: 10;
       }
