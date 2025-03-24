@@ -690,7 +690,7 @@ const ImportModal = React.memo((props) => {
           }
         />
       ) : (
-        <FinishDeploymentStep deployment_type="register" handleClose={handleClose} />
+        <FinishDeploymentStep deploymentType="register" handleClose={handleClose} />
       )}
     </Modal>
   );
@@ -698,7 +698,7 @@ const ImportModal = React.memo((props) => {
 
 ImportModal.displayName = 'ImportModal';
 
-const FinishDeploymentStep = ({ deployment_type, handleClose }) => {
+const FinishDeploymentStep = ({ deploymentType, handleClose }) => {
   const { operationsCenterActorRef } = useContext(NotificationCenterContext);
   const [isDeploying, setIsDeploying] = useState(false);
   const [deployEvent, setDeployEvent] = useState();
@@ -715,8 +715,7 @@ const FinishDeploymentStep = ({ deployment_type, handleClose }) => {
       OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
       (event) => {
         const serverEvent = event.data.event;
-        console.log(serverEvent);
-        if (serverEvent.action === deployment_type) {
+        if (serverEvent.action === deploymentType) {
           setIsDeploying(false);
           setDeployEvent(serverEvent);
         }
@@ -726,7 +725,7 @@ const FinishDeploymentStep = ({ deployment_type, handleClose }) => {
     return () => subscription.unsubscribe();
   }, []);
 
-  const progressMessage = `${capitalize(deployment_type)}ing model`;
+  const progressMessage = `${capitalize(deploymentType)}ing model`;
 
   if (isDeploying) {
     return <Loading message={progressMessage} />;
@@ -737,20 +736,22 @@ const FinishDeploymentStep = ({ deployment_type, handleClose }) => {
   }
 
   return (
-    <Box>
-      <ModelImportMessages message={deployEvent.metadata?.ModelImportMessage} />;
-      <ModelImportedSection modelDetails={deployEvent.metadata?.ModelDetails} />;
+    <>
+      <Box sx={{ padding:'0.4rem'}}>
+        <ModelImportMessages message={deployEvent.metadata?.ModelImportMessage} />
+        <ModelImportedSection modelDetails={deployEvent.metadata?.ModelDetails} />
+      </Box>
       <ModalFooter
         variant="filled"
         helpText={
-          'Click Finish to complete the model import process. The imported model will be available in your Mesh Model Registry.'
+          'Click Finish to complete the model import process. The imported model will be available in your Model Registry.'
         }
       >
         <Button variant="contained" color="primary" onClick={handleClose}>
           Finish
         </Button>
       </ModalFooter>
-    </Box>
+    </>
   );
 };
 

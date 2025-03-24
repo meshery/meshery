@@ -19,8 +19,8 @@ import {
   RadioGroup,
   MenuItem,
   Radio,
-  styled,
 } from '@layer5/sistent';
+import { StyledSummaryBox, StyledSummaryItem, SectionHeading, StyledColorBox } from './style';
 import BrushIcon from '@mui/icons-material/Brush';
 import CategoryIcon from '@mui/icons-material/Category';
 import SourceIcon from '@/assets/icons/SourceIcon';
@@ -120,7 +120,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
     }
   };
 
-  const FinishDeploymentStep = ({ perform_deployment, deployment_type }) => {
+  const FinishDeploymentStep = ({ performDeployment, deploymentType }) => {
     const { operationsCenterActorRef } = useContext(NotificationCenterContext);
     const [isDeploying, setIsDeploying] = useState(false);
     const [deployEvent, setDeployEvent] = useState();
@@ -130,7 +130,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
     useEffect(() => {
       try {
         setIsDeploying(true);
-        perform_deployment();
+        performDeployment();
       } catch (error) {
         setDeployError(error);
         setIsDeploying(false);
@@ -142,7 +142,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
         OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
         (event) => {
           const serverEvent = event.data.event;
-          if (serverEvent.action === deployment_type) {
+          if (serverEvent.action === deploymentType) {
             setIsDeploying(false);
             setDeployEvent(serverEvent);
           }
@@ -152,12 +152,11 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
       return () => subscription.unsubscribe();
     }, []);
 
-    const progressMessage = `${capitalize(deployment_type)}ing model`;
+    const progressMessage = `${capitalize(deploymentType)}ing model`;
 
     if (isDeploying) {
       return <Loading message={progressMessage} />;
     }
-    console.log(deployError);
     if (deployError) {
       return (
         <Typography variant="h5" color="error">
@@ -199,26 +198,6 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
       return error;
     }
   };
-  // Styled components for consistent styling
-  const StyledSummaryBox = styled(Box)(({ theme }) => ({
-    backgroundColor: theme.palette.background.default || '#f8f9fa',
-    padding: '1.5rem',
-    borderRadius: '8px',
-    marginBottom: '1rem',
-  }));
-
-  const StyledSummaryItem = styled(Box)(({ theme }) => ({
-    borderRadius: '0.5rem',
-    padding: '1rem',
-    backgroundColor: theme.palette.background.paper || '#ffffff',
-    flexGrow: 1,
-  }));
-
-  const SectionHeading = styled(Typography)(() => ({
-    fontWeight: 'bold',
-    marginTop: '1.5rem',
-    marginBottom: '1rem',
-  }));
 
   // Summary field component with consistent styling
   const SummaryField = ({ label, value, color }) => (
@@ -232,20 +211,6 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
     </StyledSummaryItem>
   );
 
-  // Color display component
-  const ColorDisplay = ({ color }) => (
-    <Box
-      sx={{
-        width: '1.5rem',
-        height: '1.5rem',
-        borderRadius: '4px',
-        backgroundColor: color,
-        marginRight: '0.5rem',
-        display: 'inline-block',
-        verticalAlign: 'middle',
-      }}
-    />
-  );
   // SVG Logo display component that renders SVG content
   const SvgLogoDisplay = ({ svgContent }) => {
     if (!svgContent) {
@@ -656,7 +621,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
       {
         component: (
           <Box>
-            <Box display="flex" alignItems="center" mb={2}>
+            <Box display="flex" alignItems="center" mb={1}>
               <Typography variant="h6" sx={{ fontWeight: 500 }}>
                 Model Generation Summary
               </Typography>
@@ -687,7 +652,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                       Primary Color
                     </Typography>
                     <Box mt={1} display="flex" alignItems="center">
-                      <ColorDisplay color={primaryColor} />
+                      <StyledColorBox color={primaryColor} />
                       <Typography>{primaryColor}</Typography>
                     </Box>
                   </StyledSummaryItem>
@@ -698,7 +663,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                       Secondary Color
                     </Typography>
                     <Box mt={1} display="flex" alignItems="center">
-                      <ColorDisplay color={secondaryColor} />
+                      <StyledColorBox color={secondaryColor} />
                       <Typography>{secondaryColor}</Typography>
                     </Box>
                   </StyledSummaryItem>
@@ -782,7 +747,7 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
       },
       {
         component: (
-          <FinishDeploymentStep perform_deployment={handleFinish} deployment_type="register" />
+          <FinishDeploymentStep performDeployment={handleFinish} deploymentType="register" />
         ),
         label: 'Finsh',
         icon: FinishFlagIcon,
