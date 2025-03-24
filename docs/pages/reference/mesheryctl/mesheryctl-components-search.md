@@ -1,16 +1,16 @@
 ---
 layout: default
-title: mesheryctl-component-search
-permalink: reference/mesheryctl/component/search
-redirect_from: reference/mesheryctl/component/search/
+title: mesheryctl-components-search
+permalink: reference/mesheryctl/components/search
+redirect_from: reference/mesheryctl/components/search/
 type: reference
 display-title: "false"
 language: en
-command: component
+command: components
 subcommand: search
 ---
 
-# mesheryctl component search
+# mesheryctl components search
 
 search registered components
 
@@ -19,7 +19,7 @@ search registered components
 search components registered in Meshery Server based on kind
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component search [flags]
+mesheryctl components search [flags]
 
 </div>
 </pre> 
@@ -29,7 +29,7 @@ mesheryctl component search [flags]
 Search for components using a query
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component search [query-text]
+mesheryctl components search [query-text]
 
 </div>
 </pre> 

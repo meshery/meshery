@@ -1,16 +1,16 @@
 ---
 layout: default
-title: mesheryctl-component-view
-permalink: reference/mesheryctl/component/view
-redirect_from: reference/mesheryctl/component/view/
+title: mesheryctl-components-view
+permalink: reference/mesheryctl/components/view
+redirect_from: reference/mesheryctl/components/view/
 type: reference
 display-title: "false"
 language: en
-command: component
+command: components
 subcommand: view
 ---
 
-# mesheryctl component view
+# mesheryctl components view
 
 View registered components
 
@@ -19,7 +19,7 @@ View registered components
 View a component registered in Meshery Server
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component view [flags]
+mesheryctl components view [flags]
 
 </div>
 </pre> 
@@ -29,7 +29,7 @@ mesheryctl component view [flags]
 View details of a specific component
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component view [component-name]
+mesheryctl components view [component-name]
 
 </div>
 </pre> 
