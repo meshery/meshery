@@ -782,7 +782,7 @@ Installation, troubleshooting and debugging of Meshery and its adapters
 </thead>
 </table>
 
-## Meshery Component
+## Meshery Components
 <table>
 <thead>
   <tr>
