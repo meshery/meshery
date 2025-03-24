@@ -1,6 +1,7 @@
 package environments
 
 import (
+	"fmt"
 	"path/filepath"
 	"runtime"
 	"testing"
@@ -28,16 +29,16 @@ func TestListEnvironment(t *testing.T) {
 		},
 		{
 			Name:             "List environments non available",
-			Args:             []string{"list", "--orgID", "3f8319e0-33a9-4736-b248-12nm3kiuh3yu"},
-			URL:              "/api/environments?orgID=3f8319e0-33a9-4736-b248-12nm3kiuh3yu",
+			Args:             []string{"list", "--orgID", testConstants["orgID"]},
+			URL:              fmt.Sprintf("/api/environments?orgID=%s", testConstants["orgID"]),
 			Fixture:          "list.environment.empty.response.golden",
 			ExpectedResponse: "list.environment.empty.golden",
 			ExpectError:      true,
 		},
 		{
 			Name:             "List environments available",
-			Args:             []string{"list", "--orgID", "3f8319e0-33a9-4736-b248-12nm3kiuh3yu"},
-			URL:              "/api/environments?orgID=3f8319e0-33a9-4736-b248-12nm3kiuh3yu",
+			Args:             []string{"list", "--orgID", testConstants["orgID"]},
+			URL:              fmt.Sprintf("/api/environments?orgID=%s", testConstants["orgID"]),
 			Fixture:          "list.environment.response.golden",
 			ExpectedResponse: "list.environment.success.golden",
 			ExpectError:      true,

@@ -50,7 +50,7 @@ func TestCreateEnvironment(t *testing.T) {
 		},
 		{
 			Name:             "Create environment successfully",
-			Args:             []string{"create", "--name", "test-environment", "--description", "integration test", "--orgID", "3f8319e0-33a9-4736-b248-12nm3kiuh3yu"},
+			Args:             []string{"create", "--name", testConstants["environmentName"], "--description", "integration test", "--orgID", testConstants["orgID"]},
 			URL:              testContext.BaseURL + "/api/environments",
 			Method:           "POST",
 			Fixture:          "create.environment.response.golden",
