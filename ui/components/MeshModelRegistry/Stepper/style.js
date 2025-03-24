@@ -1,6 +1,6 @@
 import { styled, Box, Typography } from '@layer5/sistent';
 export const StyledSummaryBox = styled(Box)(({ theme }) => ({
-  backgroundColor: theme.palette.background.blur?.heavy|| '#f8f9fa',
+  backgroundColor: theme.palette.background.blur?.heavy || '#f8f9fa',
   padding: '1rem',
   borderRadius: '8px',
   marginBottom: '1rem',

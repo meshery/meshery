@@ -737,7 +737,7 @@ const FinishDeploymentStep = ({ deploymentType, handleClose }) => {
 
   return (
     <>
-      <Box sx={{ padding:'0.4rem'}}>
+      <Box sx={{ padding: '0.4rem' }}>
         <ModelImportMessages message={deployEvent.metadata?.ModelImportMessage} />
         <ModelImportedSection modelDetails={deployEvent.metadata?.ModelDetails} />
       </Box>
