@@ -158,15 +158,19 @@ For consistency, we will keep the prefix *00-* for the command under test in the
 └── 01-model-list.bats
 ```
 
-### Test implementation
+### Test Implementation
 
-`mesheryctl` provides several commands and subcommands, to be able to add test we need to understand if there are interaction and or prerequisite to implement a test using the mre effective way.
+`mesheryctl` provides various commands and subcommands. To add tests effectively, it's important to understand any interactions or prerequisites required for implementing a test in the most efficient way.
 
 When creating a test we need to have in mind the following rules:
 
-#### Test name
+#### Test Naming Convention
 
-It must follow this naming convention **mesheryctl command name and subcommand name under test the context of execution and the expected result**
+It must follow this naming convention
+
+```
+<mesheryctl command> [subcommand] <execution context> <expected result>
+```
 
 **Example:**
 
@@ -176,9 +180,9 @@ It must follow this naming convention **mesheryctl command name and subcommand n
 }
 ```
 
-### Test data
+### Test Data
 
-If you are testing a command that required a specific id, name or any value that must exist to be able to run the test, the data should have been created by you or another test before. We will not rely on data we don't control because it can result in unexpected result.
+If a command requries a specific id, name or any predefined value ensure that the data is created by your test or another test beforehand. Do not rely on external or uncontrolled data as it will lead to unexpected results.
 
 **Example:**
 
