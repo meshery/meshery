@@ -182,10 +182,10 @@ If you are testing a command that required a specific id, name or any value that
 
 **Example:**
 
-In the following example, we must have create a model with the name `model-test` before running creating or running the following test
+In the following example, we must have create a model with the name `model-test` before creating or running the following test
 
 ```bash
-@test "mesheryctl model view providing a modenl name should display model information" {
+@test "mesheryctl model view providing a model name should display model information" {
   run MESHERYCTL_BIN model view model-test
   ... ...
 }
