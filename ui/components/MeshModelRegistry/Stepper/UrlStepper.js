@@ -114,7 +114,6 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
   const handleFinish = () => {
     handleClose();
     handleGenerateModal({
-      uploadType: 'URL Import',
       register: registerModel,
       url: modelUrl,
       model: {
