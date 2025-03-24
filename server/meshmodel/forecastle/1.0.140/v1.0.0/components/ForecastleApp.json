@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
     "subCategory": "Uncategorized",
@@ -46,16 +47,17 @@
     "model": {
       "version": "1.0.140"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -67,7 +69,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -82,7 +83,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -97,7 +97,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -113,7 +112,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -129,7 +127,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -144,7 +141,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -159,7 +155,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -174,7 +169,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -184,15 +178,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "forecastle.stakater.com/v1alpha1",
     "kind": "ForecastleApp",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"group\": {\n     \"type\": \"string\"\n    },\n    \"icon\": {\n     \"type\": \"string\"\n    },\n    \"instance\": {\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"networkRestricted\": {\n     \"type\": \"boolean\"\n    },\n    \"properties\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"url\": {\n     \"type\": \"string\"\n    },\n    \"urlFrom\": {\n     \"properties\": {\n      \"ingressRef\": {\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"ingressRouteRef\": {\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"routeRef\": {\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"group\",\n    \"icon\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Forecastle App\",\n \"type\": \"object\"\n}",
-    "version": "forecastle.stakater.com/v1alpha1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"group\": {\n     \"type\": \"string\"\n    },\n    \"icon\": {\n     \"type\": \"string\"\n    },\n    \"instance\": {\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"type\": \"string\"\n    },\n    \"networkRestricted\": {\n     \"type\": \"boolean\"\n    },\n    \"properties\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"url\": {\n     \"type\": \"string\"\n    },\n    \"urlFrom\": {\n     \"properties\": {\n      \"ingressRef\": {\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"ingressRouteRef\": {\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"routeRef\": {\n       \"properties\": {\n        \"name\": {\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"group\",\n    \"icon\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Forecastle App\",\n \"type\": \"object\"\n}"
   }
 }

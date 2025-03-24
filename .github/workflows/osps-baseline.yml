@@ -1,0 +1,25 @@
+name: OSPS Baseline Scan
+
+on: [workflow_dispatch]
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Pull the pvtr-github-repo image
+        run: docker pull eddieknight/pvtr-github-repo:latest
+
+      - name: Add GitHub Secret to config file so it is protected in outputs
+        run: |
+          sed -i 's/{{ GH_ACCESS_TOKEN }}/${{ secrets.GH_ACCESS_TOKEN }}/g' ${{ github.workspace }}/.github/pvtr-config.yml
+
+      - name: Scan all repos specified in .github/pvtr-config.yml
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/.github/pvtr-config.yml:/.privateer/config.yml \
+            -v ${{ github.workspace }}/docker_output:/evaluation_results \
+            eddieknight/pvtr-github-repo:latest
