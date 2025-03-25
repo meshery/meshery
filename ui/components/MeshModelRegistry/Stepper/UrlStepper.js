@@ -24,7 +24,11 @@ import BrushIcon from '@mui/icons-material/Brush';
 import CategoryIcon from '@mui/icons-material/Category';
 import SourceIcon from '@/assets/icons/SourceIcon';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
-import { ModelDefinitionV1Beta1Schema } from '@layer5/schemas';
+import {
+  CategoryDefinitionV1Beta1Schema,
+  ModelDefinitionV1Beta1Schema,
+  SubCategoryDefinitionV1Beta1Schema,
+} from '@layer5/schemas';
 
 const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
   const [modelSource, setModelSource] = React.useState('');
@@ -40,10 +44,9 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
   const [logoLightThemePath, setLogoLightThemePath] = React.useState('');
   const [logoDarkThemePath, setLogoDarkThemePath] = React.useState('');
   const [registerModel] = React.useState(true);
-  const [isAnnotation, setIsAnnotation] = React.useState(true);
   const modelProperties = ModelDefinitionV1Beta1Schema.properties;
-  const categories = ModelDefinitionV1Beta1Schema.properties.category.properties.name.enum;
-  const subCategories = ModelDefinitionV1Beta1Schema.properties.subCategory.enum;
+  const categories = CategoryDefinitionV1Beta1Schema.properties.name.enum;
+  const subCategories = SubCategoryDefinitionV1Beta1Schema.enum;
   const shapes = ModelDefinitionV1Beta1Schema.properties.metadata.properties.shape.enum;
   const [isAnnotation, setIsAnnotation] = React.useState(false);
 
