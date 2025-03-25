@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Google Cloud Platform",
@@ -46,15 +47,16 @@
     "model": {
       "version": "v1.118.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#4285F4",
     "shape": "rectangle",
     "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#669df6;}.cls-1,.cls-2{fill-rule:evenodd;}.cls-2{fill:#4285f4;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg \u003e\u003cg \u003e\u003cpath id=\"Fill-1\" class=\"cls-1\" d=\"M5.2,12l1.32-1.32L4.73,8.89a2.94,2.94,0,0,1,2.08-5,2.92,2.92,0,0,1,2.07.86l1.8,1.79L12,5.2,10.21,3.41a4.81,4.81,0,1,0-6.8,6.8Z\"/\u003e\u003cpath id=\"Fill-3\" class=\"cls-1\" d=\"M18.8,12l-1.32,1.32,1.79,1.8a2.94,2.94,0,0,1-4.16,4.15l-1.79-1.79L12,18.8l1.79,1.79a4.81,4.81,0,1,0,6.8-6.8Z\"/\u003e\u003cg \u003e\u003cpath id=\"Fill-5\" class=\"cls-2\" d=\"M8.89,19.27a2.94,2.94,0,0,1-4.16-4.16l1.79-1.79,4.16,4.16ZM15.12,4.73a2.93,2.93,0,0,1,5,2.08,3,3,0,0,1-.86,2.08l-1.79,1.79L13.32,6.52ZM12,15.19A3.2,3.2,0,0,1,8.81,12h0A3.21,3.21,0,0,1,12,8.81h0A3.21,3.21,0,0,1,15.19,12h0A3.2,3.2,0,0,1,12,15.19ZM18.8,12l1.79-1.79a4.81,4.81,0,1,0-6.8-6.8L12,5.2,5.2,12,3.41,13.79a4.81,4.81,0,1,0,6.8,6.8L12,18.8Z\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}.cls-1,.cls-2{fill-rule:evenodd;}.cls-2{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg \u003e\u003cg \u003e\u003cpath id=\"Fill-1\" class=\"cls-1\" d=\"M5.2,12l1.32-1.32L4.73,8.89a2.94,2.94,0,0,1,2.08-5,2.92,2.92,0,0,1,2.07.86l1.8,1.79L12,5.2,10.21,3.41a4.81,4.81,0,1,0-6.8,6.8Z\"/\u003e\u003cpath id=\"Fill-3\" class=\"cls-1\" d=\"M18.8,12l-1.32,1.32,1.79,1.8a2.94,2.94,0,0,1-4.16,4.15l-1.79-1.79L12,18.8l1.79,1.79a4.81,4.81,0,1,0,6.8-6.8Z\"/\u003e\u003cg \u003e\u003cpath id=\"Fill-5\" class=\"cls-2\" d=\"M8.89,19.27a2.94,2.94,0,0,1-4.16-4.16l1.79-1.79,4.16,4.16ZM15.12,4.73a2.93,2.93,0,0,1,5,2.08,3,3,0,0,1-.86,2.08l-1.79,1.79L13.32,6.52ZM12,15.19A3.2,3.2,0,0,1,8.81,12h0A3.21,3.21,0,0,1,12,8.81h0A3.21,3.21,0,0,1,15.19,12h0A3.2,3.2,0,0,1,12,15.19ZM18.8,12l1.79-1.79a4.81,4.81,0,1,0-6.8-6.8L12,5.2,5.2,12,3.41,13.79a4.81,4.81,0,1,0,6.8,6.8L12,18.8Z\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e\n"
   },
   "capabilities": [
@@ -66,7 +68,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -81,7 +82,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -96,7 +96,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -112,7 +111,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -128,7 +126,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -143,7 +140,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -158,7 +154,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -173,7 +168,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -183,15 +177,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "apigee.cnrm.cloud.google.com/v1alpha1",
     "kind": "ApigeeInstance",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"consumerAcceptList\": {\n     \"description\": \"Immutable. Optional. Customer accept list represents the list of projects (id/number) on customer\\nside that can privately connect to the service attachment. It is an optional field\\nwhich the customers can provide during the instance creation. By default, the customer\\nproject associated with the Apigee organization will be included to the list.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"description\": {\n     \"description\": \"Immutable. Description of the instance.\",\n     \"type\": \"string\"\n    },\n    \"diskEncryptionKeyName\": {\n     \"description\": \"Immutable. Customer Managed Encryption Key (CMEK) used for disk and volume encryption. Required for Apigee paid subscriptions only.\\nUse the following format: 'projects/([^/]+)/locations/([^/]+)/keyRings/([^/]+)/cryptoKeys/([^/]+)'.\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"description\": \"Immutable. Display name of the instance.\",\n     \"type\": \"string\"\n    },\n    \"ipRange\": {\n     \"description\": \"Immutable. IP range represents the customer-provided CIDR block of length 22 that will be used for\\nthe Apigee instance creation. This optional range, if provided, should be freely\\navailable as part of larger named range the customer has allocated to the Service\\nNetworking peering. If this is not provided, Apigee will automatically request for any\\navailable /22 CIDR block from Service Networking. The customer should use this CIDR block\\nfor configuring their firewall needs to allow traffic from Apigee.\\nInput format: \\\"a.b.c.d/22\\\".\",\n     \"type\": \"string\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. Required. Compute Engine location where the instance resides.\",\n     \"type\": \"string\"\n    },\n    \"orgId\": {\n     \"description\": \"Immutable. The Apigee Organization associated with the Apigee instance,\\nin the format 'organizations/{{org_name}}'.\",\n     \"type\": \"string\"\n    },\n    \"peeringCidrRange\": {\n     \"description\": \"Immutable. The size of the CIDR block range that will be reserved by the instance. For valid values,\\nsee [CidrRange](https://cloud.google.com/apigee/docs/reference/apis/apigee/rest/v1/organizations.instances#CidrRange) on the documentation.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"location\",\n    \"orgId\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Apigee Instance\",\n \"type\": \"object\"\n}",
-    "version": "apigee.cnrm.cloud.google.com/v1alpha1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"consumerAcceptList\": {\n     \"description\": \"Immutable. Optional. Customer accept list represents the list of projects (id/number) on customer\\nside that can privately connect to the service attachment. It is an optional field\\nwhich the customers can provide during the instance creation. By default, the customer\\nproject associated with the Apigee organization will be included to the list.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"description\": {\n     \"description\": \"Immutable. Description of the instance.\",\n     \"type\": \"string\"\n    },\n    \"diskEncryptionKeyName\": {\n     \"description\": \"Immutable. Customer Managed Encryption Key (CMEK) used for disk and volume encryption. Required for Apigee paid subscriptions only.\\nUse the following format: 'projects/([^/]+)/locations/([^/]+)/keyRings/([^/]+)/cryptoKeys/([^/]+)'.\",\n     \"type\": \"string\"\n    },\n    \"displayName\": {\n     \"description\": \"Immutable. Display name of the instance.\",\n     \"type\": \"string\"\n    },\n    \"ipRange\": {\n     \"description\": \"Immutable. IP range represents the customer-provided CIDR block of length 22 that will be used for\\nthe Apigee instance creation. This optional range, if provided, should be freely\\navailable as part of larger named range the customer has allocated to the Service\\nNetworking peering. If this is not provided, Apigee will automatically request for any\\navailable /22 CIDR block from Service Networking. The customer should use this CIDR block\\nfor configuring their firewall needs to allow traffic from Apigee.\\nInput format: \\\"a.b.c.d/22\\\".\",\n     \"type\": \"string\"\n    },\n    \"location\": {\n     \"description\": \"Immutable. Required. Compute Engine location where the instance resides.\",\n     \"type\": \"string\"\n    },\n    \"orgId\": {\n     \"description\": \"Immutable. The Apigee Organization associated with the Apigee instance,\\nin the format 'organizations/{{org_name}}'.\",\n     \"type\": \"string\"\n    },\n    \"peeringCidrRange\": {\n     \"description\": \"Immutable. The size of the CIDR block range that will be reserved by the instance. For valid values,\\nsee [CidrRange](https://cloud.google.com/apigee/docs/reference/apis/apigee/rest/v1/organizations.instances#CidrRange) on the documentation.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"location\",\n    \"orgId\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Apigee Instance\",\n \"type\": \"object\"\n}"
   }
 }

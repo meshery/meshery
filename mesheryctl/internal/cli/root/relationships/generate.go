@@ -12,8 +12,8 @@ import (
 )
 
 var (
-	sheetID                string
-	googleSheetCredentials string
+	spreadsheeetID   string
+	spreadsheeetCred string
 )
 
 type CustomValueRange struct {
@@ -36,36 +36,29 @@ type CustomValueRange struct {
 
 var generateCmd = &cobra.Command{
 	Use:   "generate",
-	Short: "generate relationships docs",
-	Long:  "generate relationships docs from the google spreadsheets",
+	Short: "Generate relationships documents",
+	Long:  "Generate relationships documents from the google spreadsheets",
 	Example: `
-// Generate relationships docs
-mesheryctl exp relationship generate [google-sheets-credential] --sheetId [sheet-id]
+// Generate relationships documentss
+mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
-		const errMsg = "Usage: mesheryctl exp relationship generate [google-sheets-credential] --sheetId [sheet-id]\nRun 'mesheryctl exp relationship generate --help' to see detailed help message"
-
-		if len(args) == 0 {
-			return errors.New(utils.RelationshipsError("Google Sheet Credentials is required\n"+errMsg, "generate"))
-		}
+		const errMsg = "[ Spreadsheet ID | Spreadsheet Credentials ] aren't specified\n\nUsage: mesheryctl exp relationship generate --spreadsheet-id [Spreadsheet ID] --spreadsheet-cred $CRED\nRun 'mesheryctl exp relationship generate --help' to see detailed help message"
 
 		// Check if flag is set
-		sheetIdFlag, _ := cmd.Flags().GetString("sheetId")
-
-		if sheetIdFlag == "" {
-			return errors.New(utils.RelationshipsError("Sheet ID is required\n"+errMsg, "generate"))
+		if spreadsheeetID == "" || spreadsheeetCred == "" {
+			return errors.New(utils.RelationshipsError(errMsg, "generate"))
 		}
 
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
-		googleSheetCredentials = args[0]
-		srv, err := meshkit.NewSheetSRV(googleSheetCredentials)
+		srv, err := meshkit.NewSheetSRV(spreadsheeetCred)
 		if err != nil {
 			utils.Log.Error(err)
 			return nil
 		}
-		resp, err := srv.Spreadsheets.Values.Get(sheetID, "Relationships").Do()
+		resp, err := srv.Spreadsheets.Values.Get(spreadsheeetID, "Relationships").Do()
 		if err != nil || resp.HTTPStatusCode != 200 {
 			utils.Log.Error(err)
 			return nil
@@ -86,7 +79,8 @@ mesheryctl exp relationship generate [google-sheets-credential] --sheetId [sheet
 }
 
 func init() {
-	generateCmd.PersistentFlags().StringVarP(&sheetID, "sheetId", "s", "", "Google Sheet ID")
+	generateCmd.PersistentFlags().StringVar(&spreadsheeetID, "spreadsheet-id", "", "spreadsheet ID for the integration spreadsheet")
+	generateCmd.PersistentFlags().StringVar(&spreadsheeetCred, "spreadsheet-cred", "", "base64 encoded credential to download the spreadsheet")
 }
 
 func createJsonFile(resp *sheets.ValueRange, jsonFilePath string) error {
