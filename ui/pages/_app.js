@@ -642,7 +642,6 @@ class MesheryApp extends App {
   }
 
   themeSetter = () => {
-    console.log('using theme setter is no longer supported');
     // this.setState({ theme: thememode });
   };
 

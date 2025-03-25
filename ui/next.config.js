@@ -25,17 +25,6 @@ const nextConfig = removeImports({
       '/user/preferences': { page: '/user/preferences' },
     };
   },
-  //  exportPathMap: function (pathMap) {
-  //    console.log(pathMap)
-  //    if (process.env.PLAYGROUND === "true") {
-  //      return {
-  //        '/': { page: '/' },
-  //        '/extension/*': { page: "/extension/[component]" }
-  //      }
-  //    } else {
-  //      return pathMap
-  //    }
-  //  },
   webpack: (config) => {
     config.resolve.alias = {
       ...config.resolve.alias,

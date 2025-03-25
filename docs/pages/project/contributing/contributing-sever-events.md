@@ -161,8 +161,6 @@ async function sendClientEvent(clientId, eventPayload) {
     if (!response.ok) {
       throw new Error(`Server returned non-200 status: ${response.status}`);
     }
-
-    console.log("Event sent successfully");
   } catch (error) {
     console.error("Failed to send event:", error);
   }

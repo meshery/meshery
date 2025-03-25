@@ -106,7 +106,6 @@ $(document).ready(function() {
   }).then(function(e) {
     return e.json()
   }).then(function(r) {
-     console.log(r.items[0])
      stars = r.items[0]['stargazers_count']
      forks = r.items[0]['forks_count']
      $('#stars').text(stars + " Stars")

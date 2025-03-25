@@ -133,7 +133,6 @@ const ExtensionsComponent = () => {
 
   const logout = () => {
     fetch(proxyUrl + "/token", { method: httpDelete })
-      .then(console.log)
       .catch(console.error);
   };
 
@@ -148,7 +147,6 @@ const ExtensionsComponent = () => {
       method: httpPost,
       body: userFeedbackRequestBody,
     })
-      .then(console.log)
       .catch(console.error);
 
     // if (resp.error) {

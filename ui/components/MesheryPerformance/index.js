@@ -211,7 +211,6 @@ const MesheryPerformanceComponent_ = (props) => {
     staticPrometheusBoardConfig,
   );
 
-  console.log('resultState', testResult);
   const { notify } = useNotification();
 
   const { data: userData, isSuccess: isUserDataFetched } = useGetUserPrefWithContextQuery(
@@ -483,7 +482,6 @@ const MesheryPerformanceComponent_ = (props) => {
 
   function handleSuccess() {
     return (result) => {
-      console.log('sucess result', result);
       if (typeof result !== 'undefined' && typeof result.runner_results !== 'undefined') {
         const notify = props.notify;
         notify({
@@ -504,7 +502,6 @@ const MesheryPerformanceComponent_ = (props) => {
           },
         });
         setTestUUID(generateUUID());
-        console.log('set result', result);
         setTestResultsOpen(true);
         setTestResult(result);
       }
@@ -532,7 +529,6 @@ const MesheryPerformanceComponent_ = (props) => {
     let track = 0;
     return (e) => {
       const data = JSON.parse(e.data);
-      console.log('event', data);
       switch (data.status) {
         case 'info':
           notify({ message: data.message, event_type: EVENT_TYPES.INFO });

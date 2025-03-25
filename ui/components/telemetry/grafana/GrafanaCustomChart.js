@@ -668,9 +668,6 @@ class GrafanaCustomChart extends Component {
     }
     if (self.chartRef && self.chartRef !== null) {
       const chartConfig = {
-        // oninit: function(args){
-        //   console.log(JSON.stringify(args));
-        // },
         bindto: self.chartRef,
         size: this.state.sparkline
           ? {

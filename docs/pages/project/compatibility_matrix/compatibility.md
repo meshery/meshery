@@ -319,7 +319,6 @@ As a key aspect of Meshery, its integrations with other systems are routinely te
 <script type="text/javascript" >
 
     $(function($) {
-            console.log("sorting table");
             $("#test-table").tablesorter({
                 cssChildRow: "hidden-details",
             });

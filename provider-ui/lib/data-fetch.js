@@ -4,10 +4,7 @@ export const PROVIDER_URL = "https://cloud.layer5.io";
 
 // This can be migrated as a custom hook in React
 const dataFetch = (url, options = {}, successFn, errorFn) => {
-  // const controller = new AbortController();
-  // const signal = controller.signal;
-  // options.signal = signal;
-  // setTimeout(() => controller.abort(), 10000); // nice to have but will mess with the load test
+  
   if (errorFn === undefined) {
     errorFn = (err) => {
       console.error(`Error fetching ${url} --DataFetch`, err);
@@ -24,7 +21,7 @@ const dataFetch = (url, options = {}, successFn, errorFn) => {
       }
       let result;
       if (res.ok) {
-        // console.log(`res type: ${res.type}`);
+        
         try {
           result = res.json();
         } catch (e) {

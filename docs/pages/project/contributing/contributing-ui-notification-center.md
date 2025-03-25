@@ -82,7 +82,7 @@ function MyComponent() {
   const handleFilterChange = (filteredData) => {
     // Implement your logic to react to the filtered data.
     // This function will be called when the user applies a filter. ( on presing enter in input)
-    console.log("Filtered data:", filteredData);
+   
   };
 
   return (

@@ -79,7 +79,6 @@ function Dashboard({ updateProgress, grafana, router }) {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up('xs'));
   if (matches) {
-    console.log('HIT');
   }
 
   /**

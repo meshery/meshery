@@ -25,7 +25,6 @@ const events = {
 };
 
 const subscriptionActor = fromCallback(({ sendBack }) => {
-  console.log('Subscribing to events');
   const subscription = subscribeEvents(
     (result) => {
       try {

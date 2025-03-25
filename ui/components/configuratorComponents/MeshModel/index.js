@@ -238,7 +238,6 @@ export default function DesignConfigurator() {
               updateDesignData({ yamlData: update });
             }}
             saveCodeEditorChanges={(args) => {
-              console.log('onSave', args);
             }}
             fullWidth={!(selectedCategory && selectedModel)}
           />
@@ -262,7 +261,7 @@ export default function DesignConfigurator() {
                         src={`${getWebAdress()}/${svgWhite}`}
                         style={{ background: primaryColor, padding: 6, height: 20, width: 20 }}
                         onClick={() => {
-                          console.log('TODO: write function to highlight things on editor');
+
                         }}
                       />
                     );
