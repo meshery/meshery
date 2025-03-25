@@ -467,7 +467,7 @@ const InfoModal_ = React.memo((props) => {
             >
               {saveFormLoading ? (
                 <Box sx={{ display: 'flex' }}>
-                  <CircularProgress  size="1.4rem" />
+                  <CircularProgress size="1.4rem" />
                 </Box>
               ) : (
                 'Save'

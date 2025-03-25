@@ -41,7 +41,7 @@ const VersionedModelRelationshipTree = ({
   return (
     <>
       {isLoading ? (
-        <CircularProgress  />
+        <CircularProgress />
       ) : (
         <StyledTreeItem
           nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${
