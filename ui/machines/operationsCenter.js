@@ -54,7 +54,6 @@ const subscriptionActor = fromCallback(({ sendBack }) => {
   );
 
   () => {
-    console.log('Unsubscribing from events');
     subscription.dispose();
   };
 });

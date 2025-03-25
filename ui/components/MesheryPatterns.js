@@ -1224,7 +1224,6 @@ function MesheryPatterns({
   });
 
   async function showModal(count, patterns) {
-    
     let response = await modalRef.current.show({
       title: `Delete ${count ? count : ''} Design${count > 1 ? 's' : ''}?`,
 

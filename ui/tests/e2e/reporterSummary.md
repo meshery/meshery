@@ -12,9 +12,9 @@
 ⌛ _Duration: <%- minutes %> minutes and <%- seconds %> seconds_
 
 <% if (failed > 0) { %>
-  **Overall Result**: 👎 Some tests failed.
+**Overall Result**: 👎 Some tests failed.
 <% } else { %>
-  **Overall Result**: 👍 All tests passed.
+**Overall Result**: 👍 All tests passed.
 <% } %>
 
 <% if (testData && testData.length > 0) { %>

@@ -237,8 +237,7 @@ export default function DesignConfigurator() {
             onChange={(_val, _view, update) => {
               updateDesignData({ yamlData: update });
             }}
-            saveCodeEditorChanges={(args) => {
-            }}
+            saveCodeEditorChanges={(args) => {}}
             fullWidth={!(selectedCategory && selectedModel)}
           />
           {designJson?.services && Object.keys(designJson.services).length > 0 && (
@@ -260,9 +259,7 @@ export default function DesignConfigurator() {
                         key={idx}
                         src={`${getWebAdress()}/${svgWhite}`}
                         style={{ background: primaryColor, padding: 6, height: 20, width: 20 }}
-                        onClick={() => {
-
-                        }}
+                        onClick={() => {}}
                       />
                     );
                   }

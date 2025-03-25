@@ -261,7 +261,8 @@ export const designValidationMachine = createMachine({
         },
         onError: {
           target: 'idle',
-          actions: ({ event }) => console.log('error while relaying validateComponentSchema', event),
+          actions: ({ event }) =>
+            console.log('error while relaying validateComponentSchema', event),
         },
       },
     },
