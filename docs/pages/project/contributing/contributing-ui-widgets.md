@@ -82,6 +82,12 @@ Example:
 import LatestBlogsThumbnail from './Thumbnails/LatestBlogs.png';
 ```
 
+This is how the thumbnail would appear to a user adding the widget to the Dashboard:
+
+<a href="{{ site.baseurl }}/assets/img/widget/latest-blogs-thumbnail.png">
+<img style= "width: 600px;" src="{{ site.baseurl }}/assets/img/widget/latest-blogs-thumbnail.png" />
+</a>
+
 ---
 
 ## 4. Registering the Widget
@@ -131,6 +137,12 @@ Note: Layouts for **Remote Providers** are dynamically generated based on user c
 
 Meshery stores user layout preferences either in local storage or via the provider's backend, depending on login state.
 
+This is how your widget would appear in the dashboard:
+
+<a href="{{ site.baseurl }}/assets/img/widget/dashboard-widgets.png">
+<img style= "width: 600px;" src="{{ site.baseurl }}/assets/img/widget/dashboard-widgets.png" />
+</a>
+
 ---
 
 ## 6. Best Practices
@@ -156,6 +168,7 @@ Meshery stores user layout preferences either in local storage or via the provid
 Note: `MyDesignsWidget` demonstrates integration with RTK Query hooks like `useGetLoggedInUserQuery()` and `useGetUserDesignsQuery()`.
 
 Have a look at existing Widgets [here](https://github.com/meshery/meshery/tree/master/ui/components/DashboardComponent/widgets).
+
 ---
 
 ## 8. Publishing
