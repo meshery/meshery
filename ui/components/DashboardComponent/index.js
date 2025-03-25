@@ -318,18 +318,29 @@ const DashboardComponent = ({ k8sconfig, selectedK8sContexts, updateProgress }) 
         <TabPanel value={resourceCategory} index={'Overview'}>
           <Box display="flex" flexDirection={'column'} gap="1rem">
             <Box padding={0} width={'100%'}>
-              <Stack
-                direction="row"
-                useFlexGap
-                gap="0rem 2rem"
-                justifyContent="end"
-                flexWrap={'wrap-reverse'}
+              <Box
+                position="fixed"
+                bottom="1rem"
+                right="1rem"
+                zIndex={1000}
+                bgcolor="background.paper"
+                boxShadow={3}
+                borderRadius="8px"
+                p="0.5rem"
               >
-                {topBarActions.map(({ key, ...layoutAction }) => (
-                  <LayoutActionButton {...layoutAction} key={key} />
-                ))}
-                <LayoutActionButton {...LayoutActions.START_EDIT} />
-              </Stack>
+                <Stack
+                  direction="row"
+                  useFlexGap
+                  gap="0rem 2rem"
+                  justifyContent="end"
+                  flexWrap="wrap-reverse"
+                >
+                  {topBarActions.map(({ key, ...layoutAction }) => (
+                    <LayoutActionButton {...layoutAction} key={key} />
+                  ))}
+                  <LayoutActionButton {...LayoutActions.START_EDIT} />
+                </Stack>
+              </Box>
 
               <ResponsiveReactGridLayout
                 layouts={dashboardLayout}
