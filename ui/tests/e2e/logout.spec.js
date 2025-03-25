@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { ENV } from './env';
 
-test.describe('Logout Page Tests', { tag: '@unstable' }, () => {
+test.describe('Logout Page Tests', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(`${ENV.MESHERY_SERVER_URL}`);
   });
