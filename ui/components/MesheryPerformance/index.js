@@ -7,7 +7,6 @@ import {
   IconButton,
   CircularProgress,
   FormControlLabel,
-  Divider,
   Link,
   Grid,
   CustomTooltip,
@@ -229,12 +228,12 @@ const MesheryPerformanceComponent_ = (props) => {
 
   useEffect(() => {
     const fetchMeshModels = async () => {
-      const { models } = await getMeshModels()
-      const modelNames = models.map(model => model.displayName)
-      setMeshModels(modelNames)
-    }
-    fetchMeshModels()
-  }, [])
+      const { models } = await getMeshModels();
+      const modelNames = models.map((model) => model.displayName);
+      setMeshModels(modelNames);
+    };
+    fetchMeshModels();
+  }, []);
 
   const handleChange = (name) => (event) => {
     const { value } = event.target;
