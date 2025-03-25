@@ -2,8 +2,8 @@
 
 setup() {
     E2ETEST_DIR=$(dirname "$BATS_TEST_DIRNAME")
-    load "$E2ETEST_DIR$SUPPORT_DESTDIR"
-    load "$E2ETEST_DIR$ASSERT_DESTDIR"
+    load "$E2ETEST_DIR/$SUPPORT_DESTDIR"
+    load "$E2ETEST_DIR/$ASSERT_DESTDIR"
 
     MESHERYCTL_DIR=$(dirname "$MESHERYCTL_BIN")
     export TESTDATA_DIR="$MESHERYCTL_DIR/tests/e2e/002-model/testdata/model-import" 
