@@ -45,16 +45,17 @@
     "model": {
       "version": "0.1.10"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -175,7 +176,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -183,8 +186,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "iam.openfaas.com/v1",
     "kind": "JwtIssuer",
-    "schema": "{\n \"description\": \"JwtIssuer is used to define a JWT issuer for a function\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"JwtIssuerSpec is the spec for a JwtIssuer resource\",\n   \"properties\": {\n    \"aud\": {\n     \"description\": \"Audience is the intended audience of the JWT, at times, like with Auth0 this is the client ID of the app, and not our validating server\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"iss\": {\n     \"description\": \"Issuer is the issuer of the JWT\",\n     \"type\": \"string\"\n    },\n    \"issInternal\": {\n     \"description\": \"IssuerInternal provides an alternative URL to use to download the public key for this issuer. It's useful for the system issuer.\",\n     \"type\": \"string\"\n    },\n    \"tokenExpiry\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"aud\",\n    \"iss\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Jwt Issuer\",\n \"type\": \"object\"\n}",
-    "version": "iam.openfaas.com/v1"
+    "schema": "{\n \"description\": \"JwtIssuer is used to define a JWT issuer for a function\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"JwtIssuerSpec is the spec for a JwtIssuer resource\",\n   \"properties\": {\n    \"aud\": {\n     \"description\": \"Audience is the intended audience of the JWT, at times, like with Auth0 this is the client ID of the app, and not our validating server\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"iss\": {\n     \"description\": \"Issuer is the issuer of the JWT\",\n     \"type\": \"string\"\n    },\n    \"issInternal\": {\n     \"description\": \"IssuerInternal provides an alternative URL to use to download the public key for this issuer. It's useful for the system issuer.\",\n     \"type\": \"string\"\n    },\n    \"tokenExpiry\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"aud\",\n    \"iss\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Jwt Issuer\",\n \"type\": \"object\"\n}"
   }
 }

@@ -39,8 +39,8 @@
   "model": {
     "version": "edge-25.3.2"
   },
-  "components": null,
-  "relationships": null,
   "components_count": 0,
-  "relationships_count": 0
+  "relationships_count": 0,
+  "components": null,
+  "relationships": null
 }
