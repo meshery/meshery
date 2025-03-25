@@ -34,13 +34,23 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
   const [modelSource, setModelSource] = React.useState('');
   const [modelName, setModelName] = React.useState('');
   const [modelDisplayName, setModelDisplayName] = React.useState('');
-  const [modelCategory, setModelCategory] = React.useState('');
-  const [modelSubcategory, setModelSubcategory] = React.useState('');
-  const [modelShape, setModelShape] = React.useState('');
+  const [modelCategory, setModelCategory] = React.useState(
+    CategoryDefinitionV1Beta1Schema.properties.name.default,
+  );
+  const [modelSubcategory, setModelSubcategory] = React.useState(
+    SubCategoryDefinitionV1Beta1Schema.default,
+  );
+  const [modelShape, setModelShape] = React.useState(
+    ModelDefinitionV1Beta1Schema.properties.metadata.properties.shape.default,
+  );
   const [modelUrl, setModelUrl] = React.useState('');
   const [urlError, setUrlError] = React.useState('');
-  const [primaryColor, setPrimaryColor] = React.useState('#000000');
-  const [secondaryColor, setSecondaryColor] = React.useState('#000000');
+  const [primaryColor, setPrimaryColor] = React.useState(
+    ModelDefinitionV1Beta1Schema.properties.metadata.properties.primaryColor.default,
+  );
+  const [secondaryColor, setSecondaryColor] = React.useState(
+    ModelDefinitionV1Beta1Schema.properties.metadata.properties.secondaryColor.default,
+  );
   const [logoLightThemePath, setLogoLightThemePath] = React.useState('');
   const [logoDarkThemePath, setLogoDarkThemePath] = React.useState('');
   const [registerModel] = React.useState(true);
