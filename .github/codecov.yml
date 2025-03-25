@@ -2,11 +2,11 @@ codecov:
   require_ci_to_pass: yes
 
 github_checks:
-    annotations: true #Annotations for Pull Request
+  annotations: true #Annotations for Pull Request
 coverage:
   precision: 2
   round: down
-  range: "0...30"
+  range: '0...30'
   status:
     patch: true #GitHub Checks and annotations for the patch status are enabled by default for all GitHub users.
     project:
@@ -33,13 +33,13 @@ flags:
   #   carryforward: true
   backend:
     paths:
-    # Accepts only glob patterns, not regex
-      - "*/cmd/**"
-      - "*/handlers/**"
-      - "*/helpers/**"
-      - "*/internal/**"
-      - "*/mesheryctl/**" 
-      - "*/meshes/**"
-      - "*/models/**"
-      - "*/router/**"
+      # Accepts only glob patterns, not regex
+      - '*/cmd/**'
+      - '*/handlers/**'
+      - '*/helpers/**'
+      - '*/internal/**'
+      - '*/mesheryctl/**'
+      - '*/meshes/**'
+      - '*/models/**'
+      - '*/router/**'
     carryforward: true

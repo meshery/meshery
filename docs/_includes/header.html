@@ -1,12 +1,8 @@
 <header>
   <nav class="js-navbar-scroll navbar">
     <a class="navbar-brand" href="{{ site.baseurl }}/{{linkUrlSelected}}">
-      <div class="navbar-logo">
-        {% include svg/meshery-docs.html %}
-      </div>
-      <div class="mobile">
-        {% include svg/meshery-logo.html %}
-      </div>
+      <div class="navbar-logo">{% include svg/meshery-docs.html %}</div>
+      <div class="mobile">{% include svg/meshery-logo.html %}</div>
     </a>
 
     <div id="main_navbar">
@@ -26,7 +22,7 @@
           >
         </li>
         {% endfor %}
-        
+
         <a href="https://play.meshery.io">
           <div class="nav-btn">Playground</div>
         </a>
@@ -38,11 +34,12 @@
           id="versioningSelection"
         >
           <!-- <option value="">Versions</option> -->
-          {% assign versions = site.data.versions %} {% for link in versions%} {%- capture linkUrl -%}/{{link.url}}/{%-
-          endcapture -%}
+          {% assign versions = site.data.versions %} {% for link in versions%}
+          {%- capture linkUrl -%}/{{link.url}}/{%- endcapture -%}
           <!-- we get the version selected, and put it to the right option  -->
-          {%- if page.url==linkUrl or page.url contains linkUrl -%} {%- assign optionSelected = "selected" -%} {%-
-          assign linkUrlSelected = linkUrl -%} {%- else -%} {%- assign optionSelected = "" -%} {%- endif -%}
+          {%- if page.url==linkUrl or page.url contains linkUrl -%} {%- assign
+          optionSelected = "selected" -%} {%- assign linkUrlSelected = linkUrl
+          -%} {%- else -%} {%- assign optionSelected = "" -%} {%- endif -%}
           <option
             {{optionSelected}}
             value="{% if link.url %}{{ site.baseurl }}/{{ link.url }}{% endif %}"
@@ -73,10 +70,17 @@
           <line x1="3" y1="18" x2="21" y2="18"></line>
         </svg>
       </button>
-      <button class="nav-mode-icon" id="mode-toggle-btn" style="text-align: center">
-        <img class="nav-text" id="logo-dark-light" src="{{ site.baseurl }}/assets/img/nav-icons/mode-toggle-icon-moon.png" 
-        data-logo-for-dark="{{ site.baseurl }}/assets/img/nav-icons/mode-toggle-icon-moon.png"
-        data-logo-for-light="{{ site.baseurl }}/assets/img/nav-icons/mode-toggle-icon-sun.png"
+      <button
+        class="nav-mode-icon"
+        id="mode-toggle-btn"
+        style="text-align: center"
+      >
+        <img
+          class="nav-text"
+          id="logo-dark-light"
+          src="{{ site.baseurl }}/assets/img/nav-icons/mode-toggle-icon-moon.png"
+          data-logo-for-dark="{{ site.baseurl }}/assets/img/nav-icons/mode-toggle-icon-moon.png"
+          data-logo-for-light="{{ site.baseurl }}/assets/img/nav-icons/mode-toggle-icon-sun.png"
         />
       </button>
     </div>
@@ -114,4 +118,3 @@ $(document).ready(function() {
 });
 </script>
 meshery-custom-end -->
-

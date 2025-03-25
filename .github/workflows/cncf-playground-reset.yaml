@@ -2,7 +2,7 @@ name: Playground CNCF - Reset Non-essential Namespaces and Reboot
 on:
   workflow_dispatch:
   schedule:
-    - cron:  '0 0 * * *'  # Run the job every day at midnight UTC
+    - cron: '0 0 * * *' # Run the job every day at midnight UTC
 
 jobs:
   reset:
@@ -10,9 +10,9 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
     steps:
-    - name: Cluster cleanup by running the cleanup script inside VM
-      uses: appleboy/ssh-action@master
-      with:
+      - name: Cluster cleanup by running the cleanup script inside VM
+        uses: appleboy/ssh-action@master
+        with:
           host: ${{ secrets.METAL_SERVER1 }}
           username: root
           key: ${{ secrets.METAL_SSH_KEY }}
@@ -21,9 +21,9 @@ jobs:
 
 # reboot:
 #   name: Reboot Metal servers
-#   needs: reset 
+#   needs: reset
 #   if: github.repository == 'meshery/meshery'
-#   runs-on: ubuntu-24.04 
+#   runs-on: ubuntu-24.04
 #   steps:
 #       - name: Download and install Equinix Metal CLI
 #         run: |
@@ -34,4 +34,4 @@ jobs:
 #         env:
 #           METAL_AUTH_TOKEN: ${{ secrets.METAL_AUTH_TOKEN }}
 #         run: |
-#           METAL_AUTH_TOKEN=$METAL_AUTH_TOKEN metal device reboot -i ${{ secrets.METAL_SERVER2 }} 
+#           METAL_AUTH_TOKEN=$METAL_AUTH_TOKEN metal device reboot -i ${{ secrets.METAL_SERVER2 }}

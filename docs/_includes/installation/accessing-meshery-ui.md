@@ -1,5 +1,7 @@
 {% if page.display-title != "false" %}
+
 ## Accessing Meshery UI
+
 {% endif %}
 
 #### Accessing Meshery UI
@@ -23,7 +25,7 @@ Depending upon how you have networking configured in Kubernetes, alternatively, 
 
 #### Verify Kubernetes Connection
 
-After installing Meshery, regardless of the installation type, it is important to verify that your kubeconfig file has been uploaded correctly via the UI. 
+After installing Meshery, regardless of the installation type, it is important to verify that your kubeconfig file has been uploaded correctly via the UI.
 
 1. In the Meshery UI, navigate to **Lifecycle** from the menu on the left.
 2. Click on Connections.

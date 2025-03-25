@@ -6,11 +6,11 @@ userId: 7cc3290b-9c57-4f93-8fb0-dbc5664c95a1
 userName: Awani Alero
 userAvatarURL: https://lh3.googleusercontent.com/a/ACg8ocIsyS9IR90Bo2I56iqRPlYulzglXOKhqczvYvf31sttxczvwuTX=s96-c
 type: deployment
-compatibility: 
-    - amd-gpu
-    - apisix
-    - aws-apigatewayv2-controller
-    - aws-cloudfront-controller
+compatibility:
+  - amd-gpu
+  - apisix
+  - aws-apigatewayv2-controller
+  - aws-cloudfront-controller
 patternId: bffca2b7-b3c3-4a9d-86f4-bdae70848cfa
 image: /assets/images/logos/service-mesh-pattern.svg
 patternInfo: |

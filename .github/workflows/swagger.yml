@@ -14,7 +14,7 @@ jobs:
       - uses: actions/checkout@master
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
-          ref: "master"
+          ref: 'master'
       - name: Setup go-swagger
         uses: minchao/setup-go-swagger@v1
         with:
@@ -35,4 +35,4 @@ jobs:
           commit_user_email: ci@layer5.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: '--signoff'
-          commit_message: "[Docs] Updated swagger docs for REST API"
+          commit_message: '[Docs] Updated swagger docs for REST API'

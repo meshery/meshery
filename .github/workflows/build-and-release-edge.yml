@@ -2,17 +2,17 @@ name: Meshery Build and Releaser (edge)
 on:
   workflow_dispatch:
     inputs:
-     branch:
-        description: "Branch to deploy in the staging environment. If not provided, master branch of the repository will be used."
-        default: "master"
+      branch:
+        description: 'Branch to deploy in the staging environment. If not provided, master branch of the repository will be used.'
+        default: 'master'
         type: string
   push:
     branches:
-      - "master"
+      - 'master'
     paths-ignore:
-      - "docs/**"
-      - ".github/**"
-      - "install/**"
+      - 'docs/**'
+      - '.github/**'
+      - 'install/**'
 
 jobs:
   update-rest-api-docs:
@@ -52,8 +52,8 @@ jobs:
           commit_user_name: l5io
           commit_user_email: ci@layer5.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          commit_options: "--signoff"
-          commit_message: "[Docs] Updated Swagger Docs for REST API"
+          commit_options: '--signoff'
+          commit_message: '[Docs] Updated Swagger Docs for REST API'
 
   update-graphql-docs:
     name: Update GraphQL API Documentation
@@ -94,14 +94,14 @@ jobs:
           commit_user_name: l5io
           commit_user_email: ci@layer5.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          commit_options: "--signoff"
-          commit_message: "[Docs] Updated GraphQL API Documentation"
+          commit_options: '--signoff'
+          commit_message: '[Docs] Updated GraphQL API Documentation'
 
   docker-build-push:
     name: Docker build and push
     if: github.repository == 'meshery/meshery' && github.event_name != 'pull_request' && success()
     env:
-      RELEASE_CHANNEL: "edge"
+      RELEASE_CHANNEL: 'edge'
     runs-on: ubuntu-24.04
     steps:
       - name: Fetch latest tag
@@ -111,7 +111,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
-          ref: ${{ inputs.branch }} 
+          ref: ${{ inputs.branch }}
       - name: Docker login
         uses: azure/docker-login@v1
         with:

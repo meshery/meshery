@@ -1,7 +1,8 @@
 ## Oyefule Olwatayo
 
 # Contact and socials
-- ***Email***: [oyefuleoluwatayo@gmail.com]("mailto:oyefuleoluwatayo@gmail.com")
-- ***LinkedIn***: [Oyefule Oluwatayo]("https://linkedin.com/in/oyefule-oluwatayo")
-- ***Twitter(X)***: [gentcod]("https://x.com/gentcod")
-- ***Portfolio***: https://oyefueololuwatayo.netlify.app
+
+- **_Email_**: [oyefuleoluwatayo@gmail.com]("mailto:oyefuleoluwatayo@gmail.com")
+- **_LinkedIn_**: [Oyefule Oluwatayo]("https://linkedin.com/in/oyefule-oluwatayo")
+- **_Twitter(X)_**: [gentcod]("https://x.com/gentcod")
+- **_Portfolio_**: https://oyefueololuwatayo.netlify.app

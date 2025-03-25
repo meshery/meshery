@@ -2,11 +2,11 @@
 # See: https://docs.meshery.io/guides/performance-management#running-performance-benchmarks-through-mesheryctl
 test:
   smp_version: v0.0.1
-  
+
   # The name of the test
   name: Performance Profile for Meshery's Nightly Integration Testing
   labels: {}
-  
+
   # Test configuration to be defined here
   clients:
     - internal: false

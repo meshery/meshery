@@ -1,4 +1,3 @@
-
 To install or upgrade `mesheryctl` using `bash`, execute anyone of the following commands.
 
 #### Option 1: Only install `mesheryctl` binary

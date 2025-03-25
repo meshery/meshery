@@ -1,5 +1,5 @@
-*Name:* Prince Onukwili
+_Name:_ Prince Onukwili
 
-*LinkedIn:*: https://www.linkedin.com/in/prince-onukwili-a82143233/
+_LinkedIn:_: https://www.linkedin.com/in/prince-onukwili-a82143233/
 
-*Website:* https://prince-onuk.vercel.app/achievements 
+_Website:_ https://prince-onuk.vercel.app/achievements

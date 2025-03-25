@@ -1,7 +1,7 @@
 name: Build and Preview Site
 on:
   pull_request:
-    branches: [ master ]
+    branches: [master]
     types: [opened, synchronize, reopened]
     paths:
       - '!**'
@@ -23,7 +23,7 @@ jobs:
         run: |
           cd mesheryctl
           make docs
-      - name: Install and Build 🔧 
+      - name: Install and Build 🔧
         run: |
           cd docs
           make build

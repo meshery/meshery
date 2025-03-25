@@ -2,22 +2,22 @@ name: Golang Unit and Integration Tests
 on:
   push:
     branches:
-      - "master"
+      - 'master'
     paths:
-      - "**.go"
-      - "**.golden"
+      - '**.go'
+      - '**.golden'
   pull_request:
     branches:
-      - "master"
+      - 'master'
     paths:
-      - "**.go"
-      - "**.golden"
+      - '**.go'
+      - '**.golden'
   workflow_dispatch:
     inputs:
       logLevel:
-        description: "Log level"
+        description: 'Log level'
         required: true
-        default: "warning"
+        default: 'warning'
 
 jobs:
   golangci:
@@ -51,7 +51,7 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.23"
+          go-version: '1.23'
       - name: Run coverage
         run: go test --short ./... -race -coverprofile=coverage.txt -covermode=atomic
       - name: Upload coverage to Codecov
@@ -73,17 +73,17 @@ jobs:
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
-          go-version: "1.23"
+          go-version: '1.23'
       - name: Install Docker Compose
         run: |
           sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
           sudo chmod +x /usr/local/bin/docker-compose
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3 
+        uses: docker/setup-buildx-action@v3
       - name: Create k8s Kind Cluster
         uses: helm/kind-action@v1.10.0
         with:
-          cluster_name: "kind-cluster"
+          cluster_name: 'kind-cluster'
       - name: Run coverage
         run: |
           cd mesheryctl;
@@ -95,7 +95,7 @@ jobs:
           ./mesheryctl system check --preflight;  
           ./mesheryctl system stop -y;
           echo "Running Mesheryctl with Docker completed."
-        
+
           ./mesheryctl system start -p kubernetes;
           ./mesheryctl system update -y;
           ./mesheryctl system status -y;
@@ -103,10 +103,10 @@ jobs:
           ./mesheryctl system check --preflight;
           ./mesheryctl system stop -y;
           echo "Running Mesheryctl with Kubernetes completed."
-          
+
       - name: Upload coverage to Codecov
         if: github.repository == 'meshery/meshery'
         uses: codecov/codecov-action@v4
         with:
           files: ./coverage.txt
-          flags: gointegrationtests     
+          flags: gointegrationtests

@@ -1,6 +1,6 @@
 <style>
   .posts {
-    list-style-image: url("/assets/img/meshery/meshery-logo-light.svg");
+    list-style-image: url('/assets/img/meshery/meshery-logo-light.svg');
     line-height: 1rem;
   }
   .post {
@@ -29,12 +29,13 @@
   <!-- -->
   <li class="post">
     <span class="post-date"> {{ post.created_at | date: "%b %d" }} | </span>
-    <a href="https://discuss.layer5.io/t/{{ post.slug }}/{{ post.id }}"> {{ post.title }}</a>
+    <a href="https://discuss.layer5.io/t/{{ post.slug }}/{{ post.id }}">
+      {{ post.title }}</a
+    >
     <span class="poost-author">
-      {%for user in users%} {% if(post.posters[0].user_id == user.id)%} {%assign author = user.name%} {%break%}
-      {%endif%} {%endfor%} by {{author}}
+      {%for user in users%} {% if(post.posters[0].user_id == user.id)%} {%assign
+      author = user.name%} {%break%} {%endif%} {%endfor%} by {{author}}
     </span>
   </li>
   {% endfor %}
 </ul>
-

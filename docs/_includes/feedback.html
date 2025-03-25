@@ -18,10 +18,12 @@
 <button class="feedback--answer feedback--answer-yes">Yes</button>
 <button class="feedback--answer feedback--answer-no">No</button>
 <p class="feedback--response feedback--response-yes">
-  Glad to hear it! Please <a href="{{ site.repo }}/issues/new">tell us how we can improve</a>.
+  Glad to hear it! Please
+  <a href="{{ site.repo }}/issues/new">tell us how we can improve</a>.
 </p>
 <p class="feedback--response feedback--response-no">
-  Sorry to hear that. Please <a href="{{ site.repo  }}/issues/new">tell us how we can improve</a>.
+  Sorry to hear that. Please
+  <a href="{{ site.repo  }}/issues/new">tell us how we can improve</a>.
 </p>
 <script>
   const yesButton = document.querySelector('.feedback--answer-yes');
@@ -40,9 +42,16 @@
       category: 'Helpful',
       action: 'click',
       label: window.location.pathname,
-      value: value
+      value: value,
     };
-    ga(args.command, args.hitType, args.category, args.action, args.label, args.value);
+    ga(
+      args.command,
+      args.hitType,
+      args.category,
+      args.action,
+      args.label,
+      args.value,
+    );
   };
   yesButton.addEventListener('click', () => {
     yesResponse.classList.add('feedback--response__visible');
@@ -54,5 +63,5 @@
     disableButtons();
     sendFeedback(0);
   });
-</script>{% endif %}<br/>
-
+</script>
+{% endif %}<br />

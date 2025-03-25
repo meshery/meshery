@@ -10,9 +10,9 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
     steps:
-    - name: trigger plugins for edge
-      uses: layer5io/trigger-remote-provider-action@master
-      with:
-        name: "Build and Rollout Kanvas"
-        repo: layer5labs/meshery-extensions-packages
-        token: ${{ secrets.GH_ACCESS_TOKEN }}
+      - name: trigger plugins for edge
+        uses: layer5io/trigger-remote-provider-action@master
+        with:
+          name: 'Build and Rollout Kanvas'
+          repo: layer5labs/meshery-extensions-packages
+          token: ${{ secrets.GH_ACCESS_TOKEN }}

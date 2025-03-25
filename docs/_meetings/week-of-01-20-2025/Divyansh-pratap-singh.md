@@ -15,5 +15,3 @@ X (Twitter): [@coder_divyansh](https://x.com/coder_divyansh)
 <br/>
 
 Areas of Interest: Full Stack Development , DevOPS, AI-Ml
-
-

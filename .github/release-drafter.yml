@@ -15,7 +15,7 @@ categories:
     labels:
       - 'component/patterns'
       - 'component/applications'
-      - 'component/filters'      
+      - 'component/filters'
   - title: '🐛 Bug Fixes'
     labels:
       - 'kind/fix'
@@ -29,7 +29,7 @@ categories:
   - title: 📖 Documentation
     label: area/docs
   - title: 🔒 Security
-    label: security  
+    label: security
 change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
 template: |
   ## What's New
@@ -44,7 +44,7 @@ autolabeler:
   - label: 'area/docs'
     branch:
       - '/docs/'
-  - label: 'area/ci'    
+  - label: 'area/ci'
     branch:
       - '/.github/'
   - label: 'component/ui'

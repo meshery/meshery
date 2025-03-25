@@ -2,8 +2,8 @@
 
 **Today’s Facilitators**: Vivek Vishal, Hargun Kaur, Ashparsh Pandey,
 
+**Attendees**:
 
-**Attendees**: 
 - Vivek Vishal
 - Saurabh Singh
 - Ashparsh Pandey
@@ -11,53 +11,49 @@
 - Sparsh Agarwal
 - Aditya Mohan
 - Phuong Dao
-- 
--
-- 
 -
 -
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
 
 Notes:
-
-
-

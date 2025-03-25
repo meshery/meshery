@@ -5,4 +5,3 @@ issues:
   exclude-files:
     - server/handlers/doc.go
     - server/models/meshmodel/core/register.go
- 

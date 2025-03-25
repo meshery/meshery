@@ -2,9 +2,9 @@ name: Run Regal Lint Check
 on:
   pull_request:
     branches:
-      - "*"
+      - '*'
     paths:
-      - "**.rego"
+      - '**.rego'
 jobs:
   lint-rego:
     runs-on: ubuntu-24.04
@@ -18,4 +18,4 @@ jobs:
           version: 0.25.0
 
       - name: Lint
-        run: regal lint --config-file ./policies/wasm/policies/.regal/config.yaml --format github ./server/meshmodel  
+        run: regal lint --config-file ./policies/wasm/policies/.regal/config.yaml --format github ./server/meshmodel

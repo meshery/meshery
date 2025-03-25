@@ -201,7 +201,7 @@ system:
 
     login:
       name: login
-      description: "Authenticate with the Meshery Provider of your choice: the Local Provider or a Remote Provider."
+      description: 'Authenticate with the Meshery Provider of your choice: the Local Provider or a Remote Provider.'
       usage: mesheryctl system login
       flags:
         provider:
@@ -366,8 +366,8 @@ system-provider:
     set:
       name: set
       description: Set provider to desired value
-      usage:  mesheryctl system provider set [provider] [flags]
-      example:  mesheryctl system provider set Meshery
+      usage: mesheryctl system provider set [provider] [flags]
+      example: mesheryctl system provider set Meshery
       flags:
         force:
           name: --force
@@ -439,7 +439,7 @@ perf:
         concurrent-requests:
           name: --concurrent-requests
           arg: apply
-          description: "Number of Parallel Requests (default: 1)."
+          description: 'Number of Parallel Requests (default: 1).'
           usage: mesheryctl perf apply [profile-name] --url [URL] --concurrent-requests [number of requests]
           example: mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --concurrent-requests 3
         duration:
@@ -452,13 +452,13 @@ perf:
         file:
           name: --file
           arg: apply
-          description: "Path to cloud native performance test configuration file (default: empty string)."
+          description: 'Path to cloud native performance test configuration file (default: empty string).'
           usage: mesheryctl perf apply [profile-name] --url [URL] --file [path to file]
           example: mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --file perf-config.yaml
         load-generator:
           name: --load-generator
           arg: apply
-          description: "Choice of load generator - fortio (OR) wrk2 (default: fortio)."
+          description: 'Choice of load generator - fortio (OR) wrk2 (default: fortio).'
           usage: mesheryctl perf apply [profile-name] --url [URL] --load-generator [fortio/wrk2]
           example: mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --load-generator wrk2
 
@@ -471,13 +471,13 @@ perf:
         name:
           name: --name
           arg: apply
-          description: "A memorable name for the test (default: random string)."
+          description: 'A memorable name for the test (default: random string).'
           usage: mesheryctl perf apply [profile-name] --url [URL] --name "name"
           example: mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --name "local-test"
         qps:
           name: --qps
           arg: apply
-          description: "Queries per second (default: 0) (0 - means to use the CPU unbounded to generate as many requests as possible)."
+          description: 'Queries per second (default: 0) (0 - means to use the CPU unbounded to generate as many requests as possible).'
           usage: mesheryctl perf apply [profile-name] --url [URL] --qps [queries]
           example: mesheryctl perf apply local-perf --url https://192.168.1.15/productpage --qps 30
         url:
@@ -515,12 +515,12 @@ perf:
       flags:
         page:
           name: --page, -p
-          description: "(optional) List next set of performance profiles with --page (default = 1) (default 1)."
+          description: '(optional) List next set of performance profiles with --page (default = 1) (default 1).'
           usage: mesheryctl perf profile --page [page number]
           example: mesheryctl perf profile --page 2
         view:
           name: --view
-          description: "(optional) View more information of the performance profile."
+          description: '(optional) View more information of the performance profile.'
           usage: mesheryctl perf profile --view
           example: mesheryctl perf profile --view
 
@@ -539,12 +539,12 @@ perf:
       flags:
         page:
           name: --page, -p
-          description: "(optional) List next set of performance results with --page (default = 1) (default 1)."
+          description: '(optional) List next set of performance results with --page (default = 1) (default 1).'
           usage: mesheryctl perf result --page [page number]
           example: mesheryctl perf result --page 2
         view:
           name: --view
-          description: "(optional) View more information of the performance test results."
+          description: '(optional) View more information of the performance test results.'
           usage: mesheryctl perf result --view
           example: mesheryctl perf result --view
 
@@ -899,7 +899,7 @@ model:
           description: Specify the path to the template JSON file (only required for URLs).
         register:
           name: --register, -r
-          description: Skip model registration (default is true).    
+          description: Skip model registration (default is true).
     view:
       name: view
       description: View details of a specific model
@@ -913,17 +913,17 @@ model:
       description: Import models using a file or filepath directly to the meshery registry
       usage: mesheryctl model import [ file | filepath ]
       examples:
-         - mesheryctl import model /path/to/[file.yaml|file.json]
-         - mesheryctl import model /path/to/models
+        - mesheryctl import model /path/to/[file.yaml|file.json]
+        - mesheryctl import model /path/to/models
     export:
       name: export
       description: Export a model by name to the given output type (default is oci).
       usage: mesheryctl model export [model-name]
       examples:
-         - mesheryctl model export [model-name] -l /home/meshery
-         - mesheryctl model export [model-name] --discard-components
-         - mesheryctl model export [model-name] -o yaml
-         - mesheryctl model export [model-name] --version v0.7.3
+        - mesheryctl model export [model-name] -l /home/meshery
+        - mesheryctl model export [model-name] --discard-components
+        - mesheryctl model export [model-name] -o yaml
+        - mesheryctl model export [model-name] --version v0.7.3
 
 components:
   name: components
@@ -1037,13 +1037,13 @@ exp:
         flags:
           page:
             name: -p, --page
-            description: "(optional) List next set of exp connections list with --page (default = 1) (default 1)."
+            description: '(optional) List next set of exp connections list with --page (default = 1) (default 1).'
             usage: mesheryctl exp connections list --page [page number]
             example: mesheryctl exp connections list --page 2
           count:
             name: --count
             description: (optional) Get the number of exp connections in total
-  
+
   relationship:
     name: relationship
     description: View list of relationships and details of relationship
@@ -1065,7 +1065,7 @@ exp:
         flags:
           page:
             name: -p, --page
-            description: "(optional) List next set of exp relationship list with --page (default = 1) (default 1)."
+            description: '(optional) List next set of exp relationship list with --page (default = 1) (default 1).'
             usage: mesheryctl exp relationship list --page [page number]
             example: mesheryctl exp relationship list --page 2
       view:
@@ -1092,7 +1092,7 @@ exp:
             description: subtype of relationships
           type:
             name: -t, --type
-            description: type of relationships 
+            description: type of relationships
   workspace:
     name: workspace
     description: View list of workspaces and detail of workspaces
@@ -1121,18 +1121,16 @@ exp:
         flags:
           org:
             name: -o, -orgId
-            description: organization id 
+            description: organization id
   org:
     name: org
     description: show existing organizations with their name,id, date of creation
-    usage: mesheryctl exp org 
+    usage: mesheryctl exp org
     flags:
-      description: 
+      description:
         pageNo:
           name: -p --pagenumber
           description: page number to fetch
         pagesize:
           name: -s --size
           description: page size
-      
-

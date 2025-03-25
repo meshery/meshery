@@ -366,8 +366,8 @@ To resolve theme conflicts and ensure proper functionality, a custom wrapper cal
 ### Example 1: Wrapping a custom component
 
 ```jsx
-import { UseSistent } from "./UseSistent";
-import { Button, TextField } from "sistent";
+import { UseSistent } from './UseSistent';
+import { Button, TextField } from 'sistent';
 
 const MyCustomForm = () => (
   <UseSistent>
@@ -382,8 +382,8 @@ const MyCustomForm = () => (
 ### Example 2: Wrapping an individual Sistent component
 
 ```jsx
-import { UseSistent } from "./UseSistent";
-import { DataGrid } from "sistent";
+import { UseSistent } from './UseSistent';
+import { DataGrid } from 'sistent';
 
 const MyDataGridComponent = ({ data }) => (
   <UseSistent>
@@ -395,9 +395,9 @@ const MyDataGridComponent = ({ data }) => (
 ### Example 3: Incorrect usage (avoid this)
 
 ```jsx
-import { UseSistent } from "./UseSistent";
-import { Button } from "sistent";
-import { TextField } from "@mui/material"; // MUI v5
+import { UseSistent } from './UseSistent';
+import { Button } from 'sistent';
+import { TextField } from '@mui/material'; // MUI v5
 
 // Don't do this!
 const IncorrectUsage = () => (

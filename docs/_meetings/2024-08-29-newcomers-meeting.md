@@ -2,8 +2,8 @@
 
 **Today’s Facilitators**: Vivek Vishal, Ashparsh Pandey, Sudhanshu Dasgupta
 
+**Attendees**:
 
-**Attendees**: 
 - Vivek Vishal
 - Sudhanshu Dasgupta
 - Ashparsh Pandey
@@ -12,48 +12,47 @@
 - Nandika Agrawal
 - Victor Akoh
 - Prince Gupta
-- Godwill Charles 
+- Godwill Charles
 - Mojtaba Maleki
 - Aryan kashyap
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
 
 Notes:

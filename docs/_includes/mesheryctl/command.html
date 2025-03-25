@@ -1,21 +1,18 @@
-{% for cmd in site.data.mesheryctlcommands.cmds %}
+{% for cmd in site.data.mesheryctlcommands.cmds %} Category: {{cmd.name}} Name:
+{{cmd.description}}
 
-Category: {{cmd.name}}
-Name: {{cmd.description}}
+<p>{{ cmd }}</p>
+: {{ site.data.mesheryctlcommands.cmds }}
 
-<p>{{ cmd }}</p>: {{ site.data.mesheryctlcommands.cmds }}
-
-
-
-<div class="cmd-caption">{{ cmd.description }}
-<pre class="codeblock-pre">
+<div class="cmd-caption">
+  {{ cmd.description }}
+  <pre class="codeblock-pre">
   <div class="codeblock">
   {{ cmd.usage }}
   </div>
 </pre>
 </div>
 {% endfor %}
-
 
 <!-- Options/Flags available in this command -->
 ## Options & Flags
@@ -27,10 +24,7 @@ Name: {{cmd.description}}
   {% endfor %}
   </div>
 </pre>
-<br/>
-
-
-
+<br />
 
 ## Options inherited from parent commands
 <pre class="codeblock-pre">

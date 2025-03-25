@@ -3,18 +3,18 @@ on:
   pull_request_target:
     types: [opened, synchronize, reopened]
     branches:
-      - "master"
+      - 'master'
     paths-ignore:
-      - "docs/**"
-      - "mesheryctl/**"
-      - "*.md"
-      - "*.github/**"
+      - 'docs/**'
+      - 'mesheryctl/**'
+      - '*.md'
+      - '*.github/**'
   workflow_dispatch:
     inputs:
       logLevel:
-        description: "Log level"
+        description: 'Log level'
         required: true
-        default: "warning"
+        default: 'warning'
 
 permissions: read-all
 
@@ -30,9 +30,9 @@ jobs:
           fetch-depth: 1
       - uses: actions/setup-node@v4
         with:
-          node-version: "20.x"
-          cache: "npm"
-          cache-dependency-path: "**/package-lock.json"
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
       - name: Build meshery-ui and provider-ui
         run: |
           make ui-build
@@ -73,11 +73,11 @@ jobs:
       - name: Create k8s Kind Cluster
         uses: helm/kind-action@v1.10.0
         with:
-          cluster_name: "kind-cluster"
+          cluster_name: 'kind-cluster'
       - name: Setup Go
         uses: actions/setup-go@master
         with:
-          go-version: "1.23"
+          go-version: '1.23'
       - name: Run meshery-istio
         run: |
           mkdir -p /home/runner/.meshery/bin
@@ -93,9 +93,9 @@ jobs:
       - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: "20.x"
-          cache: "npm"
-          cache-dependency-path: "**/package-lock.json"
+          node-version: '20.x'
+          cache: 'npm'
+          cache-dependency-path: '**/package-lock.json'
       - name: Download meshery-ui artifacts
         uses: actions/download-artifact@v4
         with:
@@ -116,8 +116,8 @@ jobs:
         run: make test-setup-ui
       - name: Run Playwright End-to-End Tests
         env:
-          MESHERY_SERVER_URL: "http://localhost:9081"
-          REMOTE_PROVIDER_URL: "https://cloud.layer5.io"
+          MESHERY_SERVER_URL: 'http://localhost:9081'
+          REMOTE_PROVIDER_URL: 'https://cloud.layer5.io'
           REMOTE_PROVIDER_USER_EMAIL: ${{ secrets.REMOTE_PROVIDER_USER_EMAIL }}
           REMOTE_PROVIDER_USER_PASSWORD: ${{ secrets.REMOTE_PROVIDER_USER_PASS }}
           PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
@@ -162,7 +162,7 @@ jobs:
       - name: Docker edge build & tag
         if: startsWith(github.ref, 'refs/tags/') != true && success()
         env:
-          RELEASE_CHANNEL: "edge"
+          RELEASE_CHANNEL: 'edge'
         run: |
           DOCKER_BUILDKIT=1 docker build -f install/docker/Dockerfile --no-cache -t meshery:edge-latest --build-arg TOKEN=test --build-arg GIT_COMMITSHA=${GITHUB_SHA::8} --build-arg RELEASE_CHANNEL=${RELEASE_CHANNEL} .
           docker tag meshery:edge-latest meshery:edge-${GITHUB_SHA::8}

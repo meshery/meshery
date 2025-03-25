@@ -2,18 +2,18 @@ name: Meshery Snapshot Service
 on: # rebuild any PRs and main branch changes
   pull_request_target:
     types: [opened, synchronize, reopened]
-  
+
   workflow_call:
     inputs:
-      fileName: 
+      fileName:
         description: Relative file path from the root directory
         required: true
         type: string
     outputs:
       resource_url:
-        description: "The URL of the generated resource."
+        description: 'The URL of the generated resource.'
         value: ${{ jobs.MeshMapScreenshot.outputs.resource_url }}
-permissions: 
+permissions:
   actions: read
   contents: write
   security-events: write

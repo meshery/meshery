@@ -1,2 +1,2 @@
 Name: Shoaib Samim
-GitHub: @samimshoaib01 
+GitHub: @samimshoaib01

@@ -1,7 +1,7 @@
 ## Install Meshery in Rancher Kubernetes cluster
 
 Once Docker is installed, the next step will be to install a Kubernetes cluster.
-Under "Settings" in the Docker Desktop application, enable *Kubernetes*.
+Under "Settings" in the Docker Desktop application, enable _Kubernetes_.
 In this how-to, [K3d](https://github.com/rancher/k3d) will be used as it relies only on Docker.
 
   <pre class="codeblock-pre">

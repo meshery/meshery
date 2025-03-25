@@ -13,7 +13,7 @@ on:
       - 'master'
     paths:
       - 'install/kubernetes/**'
-  workflow_call:      
+  workflow_call:
   workflow_dispatch:
     inputs:
       logLevel:
@@ -21,23 +21,23 @@ on:
         required: true
         default: 'warning'
       release-ver:
-          description: 'Release Version'     
-          required: false
-          default: 'v'
+        description: 'Release Version'
+        required: false
+        default: 'v'
 jobs:
   validate:
     runs-on: ubuntu-24.04
     if: ${{github.event_name == 'pull_request'}}
     steps:
-    - uses: actions/checkout@master
-    - uses: azure/setup-helm@v3.5
-      with:
-        version: 'v3.6.0' # default is latest stable
-      id: install
-    - name: validate meshery
-      run: helm lint install/kubernetes/helm/meshery --with-subcharts
-    - name: validate meshery-operator
-      run: helm lint install/kubernetes/helm/meshery-operator --with-subcharts
+      - uses: actions/checkout@master
+      - uses: azure/setup-helm@v3.5
+        with:
+          version: 'v3.6.0' # default is latest stable
+        id: install
+      - name: validate meshery
+        run: helm lint install/kubernetes/helm/meshery --with-subcharts
+      - name: validate meshery-operator
+        run: helm lint install/kubernetes/helm/meshery-operator --with-subcharts
   release-chart:
     runs-on: ubuntu-24.04
     if: ${{ github.event_name != 'pull_request' }} && ${{ github.ref == 'refs/heads/master' }}
@@ -46,7 +46,7 @@ jobs:
       - name: set env
         id: vars
         # https://github.community/t/how-to-get-just-the-tag-name/16241/7
-        run: echo "tag=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT        
+        run: echo "tag=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
       #- name: Publish Helm chart for edge latest
       #  if: startsWith(github.ref, 'refs/tags/') != true && success()
       #  uses: stefanprodan/helm-gh-pages@master
@@ -87,9 +87,9 @@ jobs:
           commit_email: l5io@layer5.io
           chart_version: ${{ steps.vars.outputs.tag }}
           app_version: ${{ steps.vars.outputs.tag }}
-  
+
       - name: Manually publish Helm chart with release version
-        if:  github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'workflow_dispatch'
         uses: stefanprodan/helm-gh-pages@master
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}

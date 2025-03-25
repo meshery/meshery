@@ -9,10 +9,10 @@ header:
 project:
   name: meshery
   administrators:
-    - name: Sangram Rath 
+    - name: Sangram Rath
       affiliation: Meshery
       email: sangram.rath@gmail.com
-      social: 
+      social:
       primary: true
   repositories:
     - name: meshery

@@ -1,4 +1,4 @@
-Hey There! I'm Sudhiksha V, contributing to Layer5/Meshery for the first time! 
+Hey There! I'm Sudhiksha V, contributing to Layer5/Meshery for the first time!
 
 🎯 Ex Google DSC Lead '23 | Ex SWE Intern - Salesforce TrailHead.
 
@@ -9,4 +9,3 @@ Hey There! I'm Sudhiksha V, contributing to Layer5/Meshery for the first time!
 🫱🏼‍🫲🏼 Open to discussions & collabs. 📬Reach out: ksha33yesvee@gmail.com
 
 🤓 40% curiosity, 30% logic, 25% humor 5% duct tape xD.
-

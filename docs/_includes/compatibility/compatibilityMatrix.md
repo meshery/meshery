@@ -308,4 +308,3 @@
 
 showCompatability()
 </script>
-

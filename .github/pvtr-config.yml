@@ -1,5 +1,5 @@
 vars:
-  token: {{ GH_ACCESS_TOKEN }} # GH classic token with all repo: read permissions
+  token: { { GH_ACCESS_TOKEN } } # GH classic token with all repo: read permissions
   owner: meshery
 
 policy:

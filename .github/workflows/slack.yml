@@ -1,5 +1,5 @@
 name: Slack Notify
-on: 
+on:
   watch:
     types: [started]
 jobs:
@@ -8,17 +8,17 @@ jobs:
     name: Notify Slack on star
     runs-on: ubuntu-24.04
     steps:
-    - name: Get current star count
-      run: |
-        echo "STARS=$(curl --silent 'https://api.github.com/repos/${{github.repository}}' -H 'Accept: application/vnd.github.preview' | jq '.stargazers_count')" >> $GITHUB_ENV
-    - name: Notify slack
-      env:
-        SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
-      uses: pullreminders/slack-action@master
-      with:
-        args: '{\"channel\":\"CSK7N9TGX\",\"text\":\"${{ github.actor }} just starred ${{github.repository}}! (https://github.com/${{github.repository}}/stargazers) Total ⭐️: ${{env.STARS}}\"}'
+      - name: Get current star count
+        run: |
+          echo "STARS=$(curl --silent 'https://api.github.com/repos/${{github.repository}}' -H 'Accept: application/vnd.github.preview' | jq '.stargazers_count')" >> $GITHUB_ENV
+      - name: Notify slack
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+        uses: pullreminders/slack-action@master
+        with:
+          args: '{\"channel\":\"CSK7N9TGX\",\"text\":\"${{ github.actor }} just starred ${{github.repository}}! (https://github.com/${{github.repository}}/stargazers) Total ⭐️: ${{env.STARS}}\"}'
   good-first-issue-notify:
-    if:  github.event_name == 'issues' && github.event.label.name == 'good first issue' || github.event.label.name == 'first-timers-only' 
+    if: github.event_name == 'issues' && github.event.label.name == 'good first issue' || github.event.label.name == 'first-timers-only'
     name: Notify Slack for new good-first-issue
     runs-on: ubuntu-24.04
     steps:

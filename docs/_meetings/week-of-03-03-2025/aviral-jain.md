@@ -1,18 +1,22 @@
 #### my website : https://0x-74.netlify.app
-#### x          : https://x.com/_0x74_
-#### linkedin   : https://www.linkedin.com/in/aviral-jain-ba35bb258/
+
+#### x : https://x.com/_0x74_
+
+#### linkedin : https://www.linkedin.com/in/aviral-jain-ba35bb258/
 
 here is my cv:
+
 # Skills Summary
 
 **Aviral Jain**  
-*Full Stack Developer with Advanced Back-end and Front-end Skills*
+_Full Stack Developer with Advanced Back-end and Front-end Skills_
 
 [Phone] [Envelope] [LINKEDIN] [Github]
 
 ---
 
 ## Expertise
+
 - LLM-Fine Tuning
 - API & Mobile App Development
 - Web Development
@@ -20,6 +24,7 @@ here is my cv:
 - DevOps
 
 ## Frameworks
+
 - Flutter
 - Next.js
 - React Native
@@ -30,6 +35,7 @@ here is my cv:
 - Fiber
 
 ## Languages
+
 - Python
 - Dart
 - C#
@@ -39,6 +45,7 @@ here is my cv:
 - Golang
 
 ## Tools
+
 - Git
 - Docker
 - GCP
@@ -47,6 +54,7 @@ here is my cv:
 - Nginx
 
 ## Libraries
+
 - OpenCV
 - Transformers
 - Numpy
@@ -60,6 +68,7 @@ here is my cv:
 - Tensorflow
 
 ## Soft Skills
+
 - Problem Solving
 - Client Relations
 - Leadership
@@ -70,7 +79,7 @@ here is my cv:
 # Education
 
 - **Bennett University - The Times Group**  
-  *Bachelor of Technology in Computer Science and Engineering*  
+  _Bachelor of Technology in Computer Science and Engineering_  
   GPA: 8.46 (2024)  
   Specialization: Artificial Intelligence
 
@@ -79,71 +88,81 @@ here is my cv:
 # Experience
 
 **Greater Noida, India**  
-*Sep 2022 - June 2026*
+_Sep 2022 - June 2026_
 
 ### Hyathi Technologies Pvt Ltd
-*Artificial Intelligence Engineer Intern*  
+
+_Artificial Intelligence Engineer Intern_  
 **Noida, India · Remote**  
-*Jan 2025 – Present*  
+_Jan 2025 – Present_
+
 - Developed an AI-driven facial generation system using Stable Diffusion for audio features.  
-**Technologies:** Librosa, HuggingFace, Python, Gradio, Mediapipe
+  **Technologies:** Librosa, HuggingFace, Python, Gradio, Mediapipe
 
 ### THIRDEYE
-*DevOps Engineer*  
+
+_DevOps Engineer_  
 **Noida, India · Hybrid**  
-*Nov 2023 – Jan 2024*  
-- Reverse-proxied the front-end and wrote a microservice for OAuth.  
+_Nov 2023 – Jan 2024_
+
+- Reverse-proxied the front-end and wrote a microservice for OAuth.
 - Implemented several front-end changes.  
-**Technologies:** Next.js, DRF, Golang, Nginx, GCP, Python
+  **Technologies:** Next.js, DRF, Golang, Nginx, GCP, Python
 
 ### SCAMGUARD
-*Fullstack Flutter Developer Intern*  
+
+_Fullstack Flutter Developer Intern_  
 **Remote**  
-*May 2023 – Aug 2023*  
+_May 2023 – Aug 2023_
+
 - Developed a Flutter app integrating AI to detect spam calls, texts, and emails.  
-**Technologies:** Flutter, TensorFlow, Virtualization
+  **Technologies:** Flutter, TensorFlow, Virtualization
 
 ### Indian Blockchain Fraternity
-*Front-end Developer*  
+
+_Front-end Developer_
+
 - Assisted in creating sites for events and the club page using Next.js and Tailwind CSS.  
-**Technologies:** Next.js, TypeScript, HTML, CSS
+  **Technologies:** Next.js, TypeScript, HTML, CSS
 
 ### Artificial Intelligence Society
-*Vice-President*  
-**Remote / Hybrid**  
-- *Jan 2022 – Mar 2023 (Remote)*  
-- *Aug 2023 – Current (Hybrid)*  
-- Planned and promoted events via social media.  
-- Helped create the website and provided AI guidance for new learners.  
+
+_Vice-President_  
+**Remote / Hybrid**
+
+- _Jan 2022 – Mar 2023 (Remote)_
+- _Aug 2023 – Current (Hybrid)_
+- Planned and promoted events via social media.
+- Helped create the website and provided AI guidance for new learners.
 - Organized over 5 workshops with 300+ participants.  
-**Tools:** Next.js, Tailwind CSS
+  **Tools:** Next.js, Tailwind CSS
 
 ---
 
 # Projects
 
 - **Nom-Nom: Cut Calories, Not Taste**  
-  *Full-stack meal planning app with OCR and a nutrition expert chatbot.*  
+  _Full-stack meal planning app with OCR and a nutrition expert chatbot._  
   **Technologies:** React Native, OCR, Azure, Node.js  
-  *(March 2024)*
+  _(March 2024)_
 
 - **Automated-checkout**  
-  *Developed an AI-powered automated checkout system for a college shop, enabling instant cost and nutritional analysis from a single image.*  
+  _Developed an AI-powered automated checkout system for a college shop, enabling instant cost and nutritional analysis from a single image._  
   **Technologies:** OpenCV, CVAT, ONNX, Next.js
 
 - **Nischal - Spam Protection**  
-  *End-to-end spam detection app for calls, SMS, and emails, ranked Top 5 in the Kavach ’23 competition.*  
+  _End-to-end spam detection app for calls, SMS, and emails, ranked Top 5 in the Kavach ’23 competition._  
   **Technologies:** Python, KerasNLP, Flutter, AWS, FastAPI, Docker  
-  *(August 2023)*
+  _(August 2023)_
 
 - **Statistical Process Control Chatbot**  
-  *Fine-tuned an open-source LLM on a custom dataset for company workers in statistical process control and developed a mobile app for job-specific inquiries.*
+  _Fine-tuned an open-source LLM on a custom dataset for company workers in statistical process control and developed a mobile app for job-specific inquiries._
 
 - **One Shot ISL**  
-  *Developed a model that learns efficient embeddings using triplet loss on sequence data of sign language gestures. Enabled one-shot learning for new gestures using a self-made C# scraper.*
+  _Developed a model that learns efficient embeddings using triplet loss on sequence data of sign language gestures. Enabled one-shot learning for new gestures using a self-made C# scraper._
 
 - **Auto-Benchmark**  
-  *Implemented major CNN architectures like InceptionNet and ResNet from scratch with diagrams. Designed to automatically benchmark models on new datasets and provide comprehensive comparisons.*
+  _Implemented major CNN architectures like InceptionNet and ResNet from scratch with diagrams. Designed to automatically benchmark models on new datasets and provide comprehensive comparisons._
 
 ---
 
@@ -153,7 +172,5 @@ here is my cv:
   Selected as one of the Top 5 teams from around 4000 teams across India to develop an AI-powered Spam Detection Application.
 
 - **Winner, Industry Hackathon:**  
-  *Nom-Nom, Cut Calories, Not Taste.*  
+  _Nom-Nom, Cut Calories, Not Taste._  
   Developed an app to plan meals with a focus on health, addressing a real company challenge.
-
-

@@ -4,13 +4,13 @@ Performance Management
 Purpose
 Collection, summarization and persistence of node metrics for inclusion in performance analysis. Metrics are persisted for anonymous analysis and sharing with the Cloud Native community at-large. Publicly-shared and project-agnostic analysis serves to increase confidence in infrastructure configuration.
 Guiding Principles
-Meshery may require local storage for temporary use w/o guarantee of data resiliency. 
+Meshery may require local storage for temporary use w/o guarantee of data resiliency.
 Meshery can require and install certain temporary infrastructure on the cluster (e.g. InfluxDB).
 Goals
 Users will want to compare infrastructure configuration overhead against application resource consumption.
-Users 
+Users
 Design
-Node metrics should not overlap, but complement request metrics gleaned from Meshery’s load generators, if possible. Tail latencies are readily available from the load-generator Fortio. 
+Node metrics should not overlap, but complement request metrics gleaned from Meshery’s load generators, if possible. Tail latencies are readily available from the load-generator Fortio.
 Trends, not static interval sampling may prove both easier to store (less data) and potentially more insightful benchmarks.
 Reports / Node Metrics
 While many metrics may be viewed in Meshery in real-time, only a certain set will be considered for long-term persistence. The following list of per node metrics to collect and store by both control plane and by namespace (application).
@@ -41,7 +41,7 @@ CPU utilization - total
 CPU usage
 Memory utilization - total
 Memory usage
-Used 
+Used
 Buffers
 Cached
 Free
@@ -62,7 +62,7 @@ Prometheus node exporter deployed (i.e. as a daemonset),
 Reachable URL to Prometheus endpoint for querying.
 Metrics Retrieval
 Use https://github.com/prometheus/client_golang and one for creating clients that talk to the Prometheus HTTP API.
- Execution plan for persisting server-side metrics
+Execution plan for persisting server-side metrics
 In the UI, performance page, a UUID is generated when the page loads.
 The UUID will be submitted to the server when the load test is initiated.
 when the static charts are created, the UUID will be associated with them. When the static charts make calls, they will include the UUID to indicate the calls are indeed from a static chart.
@@ -84,14 +84,13 @@ Q: What if the payload generated with all the needed metrics is too large to shi
 A: Either restrict the maximum time length that a test can be run or show the user a message stating that any results beyond the hour limit will not be persisted.
 We might have to send it in chunks of 1 or 2MB to play it safe. Of course, the server should have the capability to put them together as well.
 
-
 Metrics Summarization (for later)
-What level of granularity should be supported? 
+What level of granularity should be supported?
 
 A factor of duration (time) and number of samples per minute (count)?
 
-(duration  / # of samples per min) = granularity
-	(3600 secs / 20 ) = 3 samples per min
+(duration / # of samples per min) = granularity
+(3600 secs / 20 ) = 3 samples per min
 
 A factor of duration (time) and sample interval (time)?
 
@@ -129,5 +128,3 @@ Tasks
 Explore the value of reporting trends vs. sampling.
 Research generally accepted promql for summarizations.
 Identify specific cpu and mem metrics to use.
-
-

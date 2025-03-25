@@ -22,16 +22,16 @@ services:
               version: v11
           spec:
             containers:
-            - command:
-              - emojivoto-vote-bot
-              env:
-              - name: WEB_HOST
-                value: web-svc.emojivoto:80
-              image: docker.l5d.io/buoyantio/emojivoto-web:v11
-              name: vote-bot
-              resources:
-                requests:
-                  cpu: 10m
+              - command:
+                  - emojivoto-vote-bot
+                env:
+                  - name: WEB_HOST
+                    value: web-svc.emojivoto:80
+                image: docker.l5d.io/buoyantio/emojivoto-web:v11
+                name: vote-bot
+                resources:
+                  requests:
+                    cpu: 10m
   026fada0-f527-4376-acff-cdbc44bbf004:
     name: voting
     type: Deployment.K8s
@@ -54,21 +54,21 @@ services:
               version: v11
           spec:
             containers:
-            - env:
-              - name: GRPC_PORT
-                value: "8080"
-              - name: PROM_PORT
-                value: "8801"
-              image: docker.l5d.io/buoyantio/emojivoto-voting-svc:v11
-              name: voting-svc
-              ports:
-              - containerPort: 8080
-                name: grpc
-              - containerPort: 8801
-                name: prom
-              resources:
-                requests:
-                  cpu: 100m
+              - env:
+                  - name: GRPC_PORT
+                    value: '8080'
+                  - name: PROM_PORT
+                    value: '8801'
+                image: docker.l5d.io/buoyantio/emojivoto-voting-svc:v11
+                name: voting-svc
+                ports:
+                  - containerPort: 8080
+                    name: grpc
+                  - containerPort: 8801
+                    name: prom
+                resources:
+                  requests:
+                    cpu: 100m
             serviceAccountName: voting
   59f13c0d-2bb7-4f16-94b0-336e85b030e0:
     name: web
@@ -85,12 +85,12 @@ services:
     settings:
       spec:
         ports:
-        - name: grpc
-          port: 8080
-          targetPort: 8080
-        - name: prom
-          port: 8801
-          targetPort: 8801
+          - name: grpc
+            port: 8080
+            targetPort: 8080
+          - name: prom
+            port: 8801
+            targetPort: 8801
         selector:
           app: emoji-svc
   8714c9c0-fafb-4937-a61e-a5d5686523f9:
@@ -100,9 +100,9 @@ services:
     settings:
       spec:
         ports:
-        - name: http
-          port: 80
-          targetPort: 8080
+          - name: http
+            port: 80
+            targetPort: 8080
         selector:
           app: web-svc
         type: ClusterIP
@@ -128,23 +128,23 @@ services:
               version: v11
           spec:
             containers:
-            - env:
-              - name: WEB_PORT
-                value: "8080"
-              - name: EMOJISVC_HOST
-                value: emoji-svc.emojivoto:8080
-              - name: VOTINGSVC_HOST
-                value: voting-svc.emojivoto:8080
-              - name: INDEX_BUNDLE
-                value: dist/index_bundle.js
-              image: docker.l5d.io/buoyantio/emojivoto-web:v11
-              name: web-svc
-              ports:
-              - containerPort: 8080
-                name: http
-              resources:
-                requests:
-                  cpu: 100m
+              - env:
+                  - name: WEB_PORT
+                    value: '8080'
+                  - name: EMOJISVC_HOST
+                    value: emoji-svc.emojivoto:8080
+                  - name: VOTINGSVC_HOST
+                    value: voting-svc.emojivoto:8080
+                  - name: INDEX_BUNDLE
+                    value: dist/index_bundle.js
+                image: docker.l5d.io/buoyantio/emojivoto-web:v11
+                name: web-svc
+                ports:
+                  - containerPort: 8080
+                    name: http
+                resources:
+                  requests:
+                    cpu: 100m
             serviceAccountName: web
   cc3d29ab-58da-4bfb-bc7c-b62630f9e7ec:
     name: emoji
@@ -168,21 +168,21 @@ services:
               version: v11
           spec:
             containers:
-            - env:
-              - name: GRPC_PORT
-                value: "8080"
-              - name: PROM_PORT
-                value: "8801"
-              image: docker.l5d.io/buoyantio/emojivoto-emoji-svc:v11
-              name: emoji-svc
-              ports:
-              - containerPort: 8080
-                name: grpc
-              - containerPort: 8801
-                name: prom
-              resources:
-                requests:
-                  cpu: 100m
+              - env:
+                  - name: GRPC_PORT
+                    value: '8080'
+                  - name: PROM_PORT
+                    value: '8801'
+                image: docker.l5d.io/buoyantio/emojivoto-emoji-svc:v11
+                name: emoji-svc
+                ports:
+                  - containerPort: 8080
+                    name: grpc
+                  - containerPort: 8801
+                    name: prom
+                resources:
+                  requests:
+                    cpu: 100m
             serviceAccountName: emoji
   ee7c9614-32c6-4a87-b05e-4d0900cfea6d:
     name: voting-svc
@@ -191,12 +191,12 @@ services:
     settings:
       spec:
         ports:
-        - name: grpc
-          port: 8080
-          targetPort: 8080
-        - name: prom
-          port: 8801
-          targetPort: 8801
+          - name: grpc
+            port: 8080
+            targetPort: 8080
+          - name: prom
+            port: 8801
+            targetPort: 8801
         selector:
           app: voting-svc
   f07fd5ba-82c8-497b-82b1-d4edb74d7af4:

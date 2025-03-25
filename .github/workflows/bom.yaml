@@ -1,4 +1,4 @@
-name: "Create Bill of Materials and Licenses"
+name: 'Create Bill of Materials and Licenses'
 on:
   workflow_dispatch: {}
   schedule:
@@ -6,7 +6,7 @@ on:
 permissions: read-all
 jobs:
   sbom:
-    if: github.repository == 'meshery/meshery' 
+    if: github.repository == 'meshery/meshery'
     timeout-minutes: 10
     runs-on: ubuntu-24.04
     steps:

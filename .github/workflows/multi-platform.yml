@@ -7,7 +7,7 @@ on:
       - 'master'
   push:
     tags:
-      - 'v*'  
+      - 'v*'
     branches:
       - 'master'
     paths-ignore:
@@ -16,17 +16,17 @@ on:
   workflow_dispatch:
     inputs:
       release-ver:
-          description: 'Stable Release Version'     
-          required: true
-          default: 'v'
+        description: 'Stable Release Version'
+        required: true
+        default: 'v'
       stripped-release-ver:
-          description: 'Stripped Stable Release Version'     
-          required: true
-          default: ''
+        description: 'Stripped Stable Release Version'
+        required: true
+        default: ''
       release-channel:
-          description: 'Release Channel'     
-          required: true
-          default: 'edge'
+        description: 'Release Channel'
+        required: true
+        default: 'edge'
 
 env:
   GIT_VERSION: ${{github.event.inputs.release-ver}}
@@ -39,26 +39,23 @@ jobs:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
     steps:
+      - run: |
+          echo "Dispatched GIT_VERSION: ${{github.event.inputs.release-ver}}"
+          echo "Dispatched GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}"
+          echo "Env RELEASE_CHANNEL: ${{env.RELEASE_CHANNEL}}"
+          echo "Env GIT_VERSION: ${{env.GIT_VERSION}}"
+          echo "Env GIT_STRIPPED_VERSION: ${{env.GIT_STRIPPED_VERSION}}"
+          echo "Env GIT_TAG: ${{ github.event.release.tag_name }}"
+          echo "Env GITHUB_REF: $GITHUB_REF"
+          echo "Env GITHUB_REF:" ${GITHUB_REF}
 
-    - run: |
-        echo "Dispatched GIT_VERSION: ${{github.event.inputs.release-ver}}"
-        echo "Dispatched GIT_STRIPPED_VERSION: ${{github.event.inputs.stripped-release-ver}}"
-        echo "Env RELEASE_CHANNEL: ${{env.RELEASE_CHANNEL}}"
-        echo "Env GIT_VERSION: ${{env.GIT_VERSION}}"
-        echo "Env GIT_STRIPPED_VERSION: ${{env.GIT_STRIPPED_VERSION}}"
-        echo "Env GIT_TAG: ${{ github.event.release.tag_name }}"
-        echo "Env GITHUB_REF: $GITHUB_REF"
-        echo "Env GITHUB_REF:" ${GITHUB_REF}
-  
   docker-build:
     if: github.repository == 'meshery/meshery'
     runs-on: ubuntu-24.04
     steps:
-      - 
-        name: Checkout repo
+      - name: Checkout repo
         uses: actions/checkout@v4.1.7
-      - 
-        name: Identify Release Values
+      - name: Identify Release Values
         if: "${{ github.event.inputs.release-ver}} != 'v' }}"
         run: |
           if [[ ${GITHUB_REF} = refs/tags* ]]
@@ -74,17 +71,14 @@ jobs:
           echo "Release channel determined to be $RELEASE_CHANNEL"
           echo "GIT_LATEST=$LATEST_VERSION" >> $GITHUB_ENV
           echo "GIT_VERSION=$GIT_VERSION" >> $GITHUB_ENV
-          echo "GIT_STRIPPED_VERSION=$GIT_STRIPPED_VERSION" >> $GITHUB_ENV          
+          echo "GIT_STRIPPED_VERSION=$GIT_STRIPPED_VERSION" >> $GITHUB_ENV
         shell: bash
 
-      -
-        name: Set up QEMU
+      - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
-      -
-        name: Set up Docker Buildx
+      - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-      -
-        name: Docker Meta
+      - name: Docker Meta
         id: meta
         uses: docker/metadata-action@v5
         with:
@@ -96,14 +90,12 @@ jobs:
             type=semver,pattern={{version}},value=${{env.GIT_STRIPPED_VERSION}}
             type=raw,value=${{env.RELEASE_CHANNEL}}-{{tag}},enable=${{ startsWith(github.ref, 'refs/tags/v') }}
             type=raw,value=${{env.RELEASE_CHANNEL}}-latest
-      -
-        name: Login to DockerHub
+      - name: Login to DockerHub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - 
-        name: Build and Push 
+      - name: Build and Push
         uses: docker/build-push-action@v6
         with:
           context: install/docker/.
@@ -112,13 +104,13 @@ jobs:
             GIT_STRIPPED_VERSION=${{env.GIT_STRIPPED_VERSION}}
             GIT_VERSION=${{env.GIT_VERSION}}
             RELEASE_CHANNEL=${{env.RELEASE_CHANNEL}}
-          tags: ${{ steps.meta.outputs.tags }}     
+          tags: ${{ steps.meta.outputs.tags }}
           platforms: linux/amd64,linux/arm64
-#       - 
+#       -
 #         name: Docker Hub Description
 #         uses: peter-evans/dockerhub-description@v3
 #         with:
 #           username: ${{ secrets.DOCKER_USERNAME }}
 #           password: ${{ secrets.DOCKER_PASSWORD }}
-#           repository: ${{ secrets.IMAGE_NAME }}  
-#           readme-filepath: README.md 
+#           repository: ${{ secrets.IMAGE_NAME }}
+#           readme-filepath: README.md

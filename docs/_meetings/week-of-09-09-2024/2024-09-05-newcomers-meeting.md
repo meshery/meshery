@@ -2,48 +2,47 @@
 
 **Today’s Facilitators**: Vivek Vishal, Ashparsh Pandey, Hargun Kaur
 
+**Attendees**:
 
-**Attendees**: 
 - Vivek Vishal
 - Hargun Kaur
 - Ashparsh Pandey
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-- 
-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
 
 Notes:

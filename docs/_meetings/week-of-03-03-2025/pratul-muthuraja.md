@@ -1,6 +1,6 @@
-# Hi 👋 I'm Pratul Muthuraja 
+# Hi 👋 I'm Pratul Muthuraja
 
-Masters in Computer Science graduate from Illinois Institute of Technology 
+Masters in Computer Science graduate from Illinois Institute of Technology
 
 I'm looking for new opportunities as FullStack Developer or DevOps Engineer roles
 
@@ -13,7 +13,7 @@ Flask, Git, GitHub, Three.js, PostgreSQL, MongoDB, Jenkins, Typescript, Nginx, L
 - ✉️  You can contact me at [pratulmuthuraja@gmail.com](mailto:pratulmuthuraja@gmail.com)
 - 🧠  I'm working on my CKAD Certification
 - 🤝  I'm open to collaborating on any small, interesting, and fun projects
-- 🏠  Homelab & Self-Hosting
+- 🏠 Homelab & Self-Hosting
 - ⚡  I love bouldering and dogs
 
 ### Socials

@@ -144,7 +144,7 @@ system:
 
     login:
       name: login
-      description: "Autentíquese con el proveedor de Meshery de su elección: el proveedor local o un proveedor remoto."
+      description: 'Autentíquese con el proveedor de Meshery de su elección: el proveedor local o un proveedor remoto.'
       usage: mesheryctl system login
 
     logout:
@@ -260,7 +260,7 @@ perf:
         concurrent-requests:
           name: --concurrent-requests
           arg: apply
-          description: "Número de solicitudes paralelas (defecto: 1)."
+          description: 'Número de solicitudes paralelas (defecto: 1).'
           usage: mesheryctl perf apply [profile-name] --url [URL] --concurrent-requests [number of requests]
         duration:
           name: --duration
@@ -270,12 +270,12 @@ perf:
         file:
           name: --file
           arg: apply
-          description: "Ruta al archivo de configuración de prueba de rendimiento de la malla de servicios (predeterminado: cadena vacía)."
+          description: 'Ruta al archivo de configuración de prueba de rendimiento de la malla de servicios (predeterminado: cadena vacía).'
           usage: mesheryctl perf apply [profile-name] --url [URL] --file [path to file]
         load-generator:
           name: --load-generator
           arg: apply
-          description: "Elección del generador de carga: fortio (OR) wrk2 (predeterminado: fortio)."
+          description: 'Elección del generador de carga: fortio (OR) wrk2 (predeterminado: fortio).'
           usage: mesheryctl perf apply [profile-name] --url [URL] --load-generator [fortio/wrk2]
         mesh:
           name: --mesh
@@ -285,17 +285,17 @@ perf:
         name:
           name: --name
           arg: apply
-          description: "Un nombre memorable para la prueba (predeterminado: cadena aleatoria)."
+          description: 'Un nombre memorable para la prueba (predeterminado: cadena aleatoria).'
           usage: mesheryctl perf apply [profile-name] --url [URL] --name "name"
         profile:
           name: --profile
           arg: apply
-          description: "(obligatorio / opcional) Nombre del nuevo perfil de rendimiento."
+          description: '(obligatorio / opcional) Nombre del nuevo perfil de rendimiento.'
           usage: mesheryctl perf apply --profile [profile-name] --url [URL]
         qps:
           name: --qps
           arg: apply
-          description: "Consultas por segundo (predeterminado: 0) (0 - significa usar la CPU sin límites para generar tantas solicitudes como sea posible)."
+          description: 'Consultas por segundo (predeterminado: 0) (0 - significa usar la CPU sin límites para generar tantas solicitudes como sea posible).'
           usage: mesheryctl perf apply [profile-name] --url [URL] --qps [queries]
         url:
           name: --url

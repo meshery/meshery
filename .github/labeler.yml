@@ -1,64 +1,64 @@
 area/docs:
-- changed-files:
-  - any-glob-to-any-file:
-    - "docs/**/*"
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'docs/**/*'
 area/ci:
-- changed-files:
-  - any-glob-to-any-file:
-    - ".github/**/*"
+  - changed-files:
+      - any-glob-to-any-file:
+          - '.github/**/*'
 component/ui:
-- changed-files:
-  - any-glob-to-any-file:
-    - "ui/**/*"
-    - "provider-ui/**/*"
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'ui/**/*'
+          - 'provider-ui/**/*'
 component/server:
-- changed-files:
-  - any-glob-to-any-file:
-    - "server/**/*"
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'server/**/*'
 area/models:
-- changed-files:
-  - any-glob-to-any-file:
-    - "server/meshmodel/**/*"
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'server/meshmodel/**/*'
 component/mesheryctl:
-- changed-files:
-  - any-glob-to-any-file:
-    - "mesheryctl/**/*"
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'mesheryctl/**/*'
 component/extensions:
-- changed-files:
-  - any-glob-to-any-file:
-    - "install/docker-extension/**/*"
-    - "ui/components/ExtensionSandbox.js"
-    - "ui/remote-component.config.js"
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'install/docker-extension/**/*'
+          - 'ui/components/ExtensionSandbox.js'
+          - 'ui/remote-component.config.js'
 area/lifecycle:
-- changed-files:
-  - any-glob-to-any-file:
-    - "install/*"
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'install/*'
 kubernetes:
-- changed-files:
-  - any-glob-to-any-file:
-    - "install/deployment_yamls/*"
-    - "install/kubernetes/**/*"
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'install/deployment_yamls/*'
+          - 'install/kubernetes/**/*'
 framework/helm:
-- changed-files:
-  - any-glob-to-any-file:
-    - "install/kubernetes/helm/**/*"
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'install/kubernetes/helm/**/*'
 framework/graphql:
-- changed-files:
-  - any-glob-to-any-file:
-    - "server/internal/graphql/*"
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'server/internal/graphql/*'
 component/database:
-- changed-files:
-  - any-glob-to-any-file:
-    - "server/internal/sql/*"
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'server/internal/sql/*'
 playground:
-- changed-files:
-  - any-glob-to-any-file:
-    - "install/playground/**/*"
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'install/playground/**/*'
 opa:
-- changed-files:
-  - any-glob-to-any-file:
-    - "*.rego"
+  - changed-files:
+      - any-glob-to-any-file:
+          - '*.rego'
 tests:
-- changed-files:
-  - any-glob-to-any-file:
-    - "ui/tests/**/*"
+  - changed-files:
+      - any-glob-to-any-file:
+          - 'ui/tests/**/*'

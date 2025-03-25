@@ -2,9 +2,9 @@ name: OpenAPI Specification and Documentation
 on:
   push:
     branches:
-      - "master"
+      - 'master'
     paths:
-      - "handlers/**"
+      - 'handlers/**'
 jobs:
   redocly:
     if: github.repository == 'meshery/meshery'
@@ -40,5 +40,5 @@ jobs:
           commit_user_name: l5io
           commit_user_email: ci@layer5.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          commit_options: "--signoff"
-          commit_message: "[Docs] Updated Redocly docs for REST API"
+          commit_options: '--signoff'
+          commit_message: '[Docs] Updated Redocly docs for REST API'

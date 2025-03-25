@@ -4,7 +4,7 @@
 
 - 🌟 Currently pursuing double master in Cloud and Network Infrastructures @ Université de Rennes 🇫🇷 & Aalto University 🇫🇮
 - 💻 Interested in backend, distributed systems, microservices, and cloud infrastructure
-- 📮 Reachout me: peggy881203@gmail.com 
+- 📮 Reachout me: peggy881203@gmail.com
 - 📍 Github: [@chung-coder](https://github.com/chung-coder)
 - 📍Portfolio: https://ting-chen.me/
 - 📍 LinkedIn: https://www.linkedin.com/in/tingchen-yen

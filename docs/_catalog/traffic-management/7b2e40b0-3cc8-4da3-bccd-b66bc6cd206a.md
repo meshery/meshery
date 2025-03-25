@@ -6,8 +6,8 @@ userId: 9222bde1-64c6-4fb2-971a-3402d5ae2fd9
 userName: Deepak Reddy
 userAvatarURL: https://lh3.googleusercontent.com/a/ACg8ocIGbiDtE0q65qVvAUdzHw8Qky81rM0kSAknIqbgysfDCw=s96-c
 type: traffic-management
-compatibility: 
-    - kubernetes
+compatibility:
+  - kubernetes
 patternId: 7b2e40b0-3cc8-4da3-bccd-b66bc6cd206a
 image: /assets/images/logos/service-mesh-pattern.svg
 patternInfo: |

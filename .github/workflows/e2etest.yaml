@@ -3,9 +3,9 @@ name: E2E tests for K8s components
 on:
   push:
     branches:
-      - "*"
+      - '*'
     tags:
-      - "v*"
+      - 'v*'
     paths-ignore:
       - 'docs/**/*'
       - 'ui/**/*'
@@ -14,7 +14,7 @@ on:
       - '*.md'
   pull_request:
     branches:
-      - "*"
+      - '*'
 
 jobs:
   SetPatternfileForEmojivotoInstall:
@@ -31,14 +31,14 @@ jobs:
   TestAdapterForEmojivotoInstall:
     needs: SetPatternfileForEmojivotoInstall
     uses: meshery/meshery/.github/workflows/test_adaptersv2.yaml@master
-    with: 
+    with:
       expected_resources: vote-bot, emoji,voting,web,emoji-svc,voting-svc,web-svcw
       expected_resources_types: pod,pod,pod,pod,service,service,service
       expected_resources_namespaces: emojivoto, emojivoto,emojivoto,emojivoto,emojivoto,emojivoto,emojivoto
-      patternfile_name: emojivoto.yaml 
-      provider: Local 
+      patternfile_name: emojivoto.yaml
+      provider: Local
       sm_version: 'none'
       adapter_version: 'none'
       output_filename: data.json
     secrets:
-      token: ${{ secrets.PROVIDER_TOKEN }}  
+      token: ${{ secrets.PROVIDER_TOKEN }}

@@ -37,21 +37,22 @@
     display: none;
   }
 
-  tr:nth-child(4n+1), tr:nth-child(4n+2) {
+  tr:nth-child(4n + 1),
+  tr:nth-child(4n + 2) {
     background-color: var(--color-primary-medium) !important;
-}
+  }
 </style>
 <div id="tablesContainer"></div>
 
 <script type="module">
   import { keys } from '../../assets/js/permission_constants.js';
 
-  window.onload = function() {
+  window.onload = function () {
     const xhr = new XMLHttpRequest();
     xhr.open('GET', '../../assets/excel/keys.csv', true);
     xhr.responseType = 'arraybuffer';
 
-    xhr.onload = function() {
+    xhr.onload = function () {
       if (xhr.status === 200) {
         const data = new Uint8Array(xhr.response);
         const workbook = XLSX.read(data, { type: 'array' });
@@ -63,7 +64,7 @@
         jsonData.shift();
 
         // Remove unnecessary columns
-        jsonData.forEach(row => {
+        jsonData.forEach((row) => {
           row.splice(10, 1);
           row.splice(9, 1);
           row.splice(8, 1);
@@ -76,7 +77,7 @@
 
         // Group rows by category
         const categories = {};
-        jsonData.forEach(row => {
+        jsonData.forEach((row) => {
           const category = row[0].replace(/\s+/g, '');
           if (!categories[category]) {
             categories[category] = [];
@@ -84,18 +85,23 @@
           categories[category].push(row);
         });
 
-        const headers = ["Category", "Key Name", "Description", "Keychain Name"];
+        const headers = [
+          'Category',
+          'Key Name',
+          'Description',
+          'Keychain Name',
+        ];
 
         // Generate tables
         const container = document.getElementById('tablesContainer');
-        Object.keys(categories).forEach(category => {
+        Object.keys(categories).forEach((category) => {
           const table = document.createElement('table');
           table.border = '1';
           table.style.marginBottom = '2rem';
 
           const thead = document.createElement('thead');
           const headerRow = document.createElement('tr');
-          headers.forEach(header => {
+          headers.forEach((header) => {
             const th = document.createElement('th');
             th.style.textAlign = 'left';
             th.style.padding = '1rem';
@@ -124,14 +130,16 @@
 
             const keyIdColumn = document.createElement('td');
             keyIdColumn.style.padding = '1rem';
-            keyIdColumn.innerHTML = `<b>Key ID: </b><br>${row[5]}`;  // 5th column is the Key ID
+            keyIdColumn.innerHTML = `<b>Key ID: </b><br>${row[5]}`; // 5th column is the Key ID
             newRow.appendChild(keyIdColumn);
 
             const secondColumn = document.createElement('td');
             secondColumn.style.padding = '1rem';
             secondColumn.colSpan = headers.length - 1;
 
-            const matchingPermissionKey = Object.keys(keys).find(key => keys[key].subject === row[1]);
+            const matchingPermissionKey = Object.keys(keys).find(
+              (key) => keys[key].subject === row[1],
+            );
             if (matchingPermissionKey) {
               secondColumn.innerHTML = `<b>Moniker:</b><br> ${matchingPermissionKey}`;
             } else {
@@ -143,7 +151,10 @@
 
             // Toggle visibility
             tr.addEventListener('click', () => {
-              if (newRow.style.display === 'none' || newRow.style.display === '') {
+              if (
+                newRow.style.display === 'none' ||
+                newRow.style.display === ''
+              ) {
                 newRow.style.display = 'table-row';
               } else {
                 newRow.style.display = 'none';
@@ -162,13 +173,12 @@
       }
     };
 
-    xhr.onerror = function() {
+    xhr.onerror = function () {
       console.error('Failed to load Excel file!');
     };
 
     xhr.send();
   };
-
 </script>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.4/xlsx.full.min.js"></script>

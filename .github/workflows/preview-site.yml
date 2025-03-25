@@ -44,6 +44,4 @@ jobs:
         uses: ./.github/actions/comment-preview-on-pr
         with:
           token: ${{ secrets.GH_ACCESS_TOKEN }}
-          deploy_url: "${{ steps.netlify.outputs.deploy-url }}"
-
-
+          deploy_url: '${{ steps.netlify.outputs.deploy-url }}'

@@ -4,10 +4,10 @@ name: pulish test
 publishedVersion: 0.0.4
 userId: 541779b2-bcaa-4826-bb14-377b47c87d01
 userName: zihan kuang
-userAvatarURL: 
+userAvatarURL:
 type: deployment
-compatibility: 
-    - apisix
+compatibility:
+  - apisix
 patternId: e9fd2bec-59bf-44ee-ba62-9ab9f0e090f7
 image: /assets/images/logos/service-mesh-pattern.svg
 patternInfo: |

@@ -3,11 +3,11 @@ name: Meshery Integrations Updater
 on:
   push:
     branches:
-      - "master"
+      - 'master'
     paths:
-      - ".github/workflows/integrations-updater.yml"
+      - '.github/workflows/integrations-updater.yml'
   schedule:
-    - cron: "0 0 * * *" # Run the job every day at midnight
+    - cron: '0 0 * * *' # Run the job every day at midnight
   workflow_dispatch:
 
 # This workflow uses the service account: meshery-integrations-sheet@meshery-237716.iam.gserviceaccount.com
@@ -67,8 +67,8 @@ jobs:
           repository: ./meshery.io
           commit_user_email: ci@layer5.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          commit_options: "--signoff"
-          commit_message: "[Docs] Generated documentation for Integration"
+          commit_options: '--signoff'
+          commit_message: '[Docs] Generated documentation for Integration'
           branch: master
 
       - name: Publish to Layer5.io site
@@ -86,8 +86,8 @@ jobs:
           repository: ./layer5
           commit_user_email: ci@layer5.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          commit_options: "--signoff"
-          commit_message: "[Docs] Generated documentation for Integration"
+          commit_options: '--signoff'
+          commit_message: '[Docs] Generated documentation for Integration'
           branch: master
 
       - name: Publish to Meshery docs
@@ -105,8 +105,8 @@ jobs:
           repository: ./meshery
           commit_user_email: ci@layer5.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          commit_options: "--signoff"
-          commit_message: "[Docs] Generated documentation for Integration"
+          commit_options: '--signoff'
+          commit_message: '[Docs] Generated documentation for Integration'
           branch: master
 
       - name: Publish to Meshery Cloud
@@ -124,8 +124,8 @@ jobs:
           repository: ./meshery-cloud
           commit_user_email: ci@layer5.io
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
-          commit_options: "--signoff"
-          commit_message: "Models Updated"
+          commit_options: '--signoff'
+          commit_message: 'Models Updated'
           branch: master
 
       - name: Send Email on Model Publish Failure

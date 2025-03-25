@@ -8,12 +8,11 @@ on:
         default: v0.x.x
 
 jobs:
-
   ctlrelease:
     name: Mesheryctl build & release
     if: github.repository == 'meshery/meshery' && ${{inputs.release-tag}} && !contains(github.ref, 'patch') && !contains(github.ref, 'alpha') && !contains(github.ref, 'beta') && !contains(github.ref, 'rc')
     runs-on: macos-latest
-    
+
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -22,12 +21,12 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@master
         with:
-          go-version: "1.23"
+          go-version: '1.23'
       - name: goreleaser with tag
         uses: goreleaser/goreleaser-action@v6
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_NOTES_PAT }}
-          RELEASE_CHANNEL: "stable"
+          RELEASE_CHANNEL: 'stable'
           Tag: ${{inputs.release-tag}}
         with:
           version: 2
@@ -40,4 +39,3 @@ jobs:
           tag-name: ${{inputs.release-tag}}
         env:
           COMMITTER_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
- 
