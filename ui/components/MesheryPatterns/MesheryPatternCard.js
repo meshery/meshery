@@ -121,6 +121,7 @@ function MesheryPatternCard_({
       )}
       <FlipCard
         onClick={() => {
+          console.log(gridProps);
           setGridProps(INITIAL_GRID_SIZE);
         }}
         duration={600}
