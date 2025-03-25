@@ -10,30 +10,15 @@ category: contributing
 list: include
 ---
 
-## <a name="contributing-ui-widgets">Contributing to Meshery Dashboards</a>
+<div class="prereqs"><p><strong style="font-size: 20px;">Prerequisite Reading</strong></p>
+  <ol><li><a href="contributing-ui">Contributing to Meshery UI</a></li></ol>
+</div>
 
 Meshery's dashboard is a composable and extensible interface made up of individual widgets. These widgets allow contributors to surface specific Meshery data or capabilities within a modular layout system.
 
-This guide walks through the process of creating and integrating a custom widget into the Meshery dashboard. You’ll learn about layout configuration, design best practices, and how to register new widgets.
+This guide walks through the process of creating and integrating a custom widget into the [Meshery dashboard](https://playground.meshery.io/). You’ll learn about layout configuration, design best practices, and how to register new widgets.
 
----
-
-### Table of Contents
-
-1. [Widget Architecture](#widget-architecture)
-2. [Creating a New Widget](#creating-a-new-widget)
-3. [Adding Thumbnails](#adding-thumbnails)
-4. [Registering the Widget](#registering-the-widget)
-5. [Adding to Default Layout](#adding-to-default-layout)
-6. [Best Practices](#best-practices)
-7. [Other Examples](#other-examples)
-8. [Publishing](#publishing)
-
----
-
-Before creating custom widgets, have a look at [UI Contribution Guide](https://docs.meshery.io/project/contributing/contributing-ui) to set up the Meshery UI.
-
-## <a name="widget-architecture">1. Widget Architecture</a>
+## 1. Widget Architecture
 
 Widgets are React components located at:
 ```bash
@@ -49,7 +34,7 @@ Widgets can:
 
 ---
 
-## <a name="creating-a-new-widget">2. Creating a New Widget</a>
+## 2. Creating a New Widget
 
 Create a new file inside `widgets/`, e.g.:
 ```jsx
@@ -83,7 +68,7 @@ Use `useTheme()` for consistent color tokens across themes.
 
 ---
 
-## <a name="adding-thumbnails">3. Adding Thumbnails</a>
+## 3. Adding Thumbnails
 
 Thumbnails are image previews of widgets. Place them here:
 ```bash
@@ -99,7 +84,7 @@ import LatestBlogsThumbnail from './Thumbnails/LatestBlogs.png';
 
 ---
 
-## <a name="registering-the-widget">4. Registering the Widget</a>
+## 4. Registering the Widget
 
 Register your widget inside `getWidgets.js`:
 ```jsx
@@ -122,7 +107,7 @@ export const getWidgets = () => ({
 
 ---
 
-## <a name="adding-to-default-layout">5. Adding to Default Layout</a>
+## 5. Adding to Default Layout
 
 To include your widget in the default dashboard layout, add it to `LOCAL_PROVIDER_LAYOUT` in:
 ```bash
@@ -148,7 +133,7 @@ Meshery stores user layout preferences either in local storage or via the provid
 
 ---
 
-## <a name="best-practices">6. Best Practices</a>
+## 6. Best Practices
 
 - **Naming**: Use uppercase keys (e.g. `MY_DESIGNS`) for clarity
 - **Icons**: Use consistent design system icons (e.g., `CatalogIcon`, `DesignIcon`)
@@ -160,7 +145,7 @@ Meshery stores user layout preferences either in local storage or via the provid
 
 ---
 
-## <a name="other-examples">7. Other Examples</a>
+## 7. Other Examples
 
 | Widget            | File                     | Data Source       | UI Component  |
 |-------------------|--------------------------|-------------------|---------------|
@@ -173,17 +158,11 @@ Note: `MyDesignsWidget` demonstrates integration with RTK Query hooks like `useG
 Have a look at existing Widgets [here](https://github.com/meshery/meshery/tree/master/ui/components/DashboardComponent/widgets).
 ---
 
-## <a name="publishing">8. Publishing</a>
+## 8. Publishing
 
 Once your widget is working:
 - Ensure it appears in the widget selector UI
 - Validate layout and responsiveness
 - Submit a PR with the new component, layout entry, and thumbnail. [Here](https://github.com/meshery/meshery/pull/13629) is a PR that adds Latest Blogs widget to Meshery Dashboard.
-- Reference your widget in the [Meshery Extensions Catalog](https://meshery.io/extensions) if appropriate
-
-Have questions? Reach out on [Meshery Slack](https://slack.layer5.io) or open an issue on [GitHub](https://github.com/meshery/meshery).
-
----
-
-You’re now ready to contribute to Meshery dashboards with your own custom widgets!
+- Add your widget in the [Meshery Extensions Catalog](https://meshery.io/extensions) if appropriate
 
