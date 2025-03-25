@@ -48,6 +48,8 @@ import {
   importModelUiSchema,
   importModelSchema,
   Typography,
+  ModalFooter,
+  Box,
 } from '@layer5/sistent';
 import { RJSFModalWrapper } from '../Modal';
 import { useRef } from 'react';
@@ -57,6 +59,15 @@ import AddIcon from '@mui/icons-material/AddCircleOutline';
 import CsvStepper, { StyledDocsRedirectLink } from './Stepper/CSVStepper';
 import UrlStepper from './Stepper/UrlStepper';
 import { MESHERY_DOCS_URL } from '@/constants/endpoints';
+import { useContext } from 'react';
+import { capitalize } from 'lodash';
+import { Loading } from '@/components/DesignLifeCycle/common';
+import { NotificationCenterContext } from '../NotificationCenter';
+import { OPERATION_CENTER_EVENTS } from 'machines/operationsCenter';
+import {
+  ModelImportedSection,
+  ModelImportMessages,
+} from '../NotificationCenter/formatters/model_registration';
 
 const useMeshModelComponentRouter = () => {
   const router = useRouter();
@@ -179,8 +190,9 @@ const MeshModelComponent_ = ({
       }
     }
     updateProgress({ showProgress: true });
-    await importModelReq({ importBody: requestBody });
+    const response = await importModelReq({ importBody: requestBody });
     updateProgress({ showProgress: false });
+    return response;
   };
 
   const urlModal = useModal({});
@@ -603,7 +615,12 @@ const MeshModelComponent_ = ({
 
 const ImportModal = React.memo((props) => {
   const [importModalDescription, setImportModalDescription] = useState('');
-
+  const [activeStep, setActiveStep] = useState(0);
+  const handleNext = () => {
+    if (activeStep === 0) {
+      setActiveStep(1);
+    }
+  };
   const CustomRadioWidget = (props) => {
     const { options, value, onChange, label, schema } = props;
     const { enumOptions } = options;
@@ -648,33 +665,95 @@ const ImportModal = React.memo((props) => {
 
   return (
     <Modal open={true} closeModal={handleClose} maxWidth="sm" title="Import Model">
-      <RJSFModalWrapper
-        schema={importModelSchema}
-        uiSchema={importModelUiSchema}
-        handleSubmit={handleImportModel}
-        submitBtnText="Import"
-        handleClose={handleClose}
-        widgets={widgets}
-        helpText={
-          <p>
-            {importModalDescription} <br />
-            Learn more about importing Models in our{' '}
-            <StyledDocsRedirectLink
-              href={`${MESHERY_DOCS_URL}/guides/configuration-management/importing-models`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              documentation
-            </StyledDocsRedirectLink>
-            .
-          </p>
-        }
-      />
+      {activeStep === 0 ? (
+        <RJSFModalWrapper
+          schema={importModelSchema}
+          uiSchema={importModelUiSchema}
+          handleSubmit={handleImportModel}
+          handleNext={handleNext}
+          submitBtnText="Next"
+          handleClose={handleClose}
+          widgets={widgets}
+          helpText={
+            <p>
+              {importModalDescription} <br />
+              Learn more about importing Models in our{' '}
+              <StyledDocsRedirectLink
+                href={`${MESHERY_DOCS_URL}/guides/configuration-management/importing-models`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                documentation
+              </StyledDocsRedirectLink>
+              .
+            </p>
+          }
+        />
+      ) : (
+        <FinishDeploymentStep deploymentType="register" handleClose={handleClose} />
+      )}
     </Modal>
   );
 });
 
 ImportModal.displayName = 'ImportModal';
+
+const FinishDeploymentStep = ({ deploymentType, handleClose }) => {
+  const { operationsCenterActorRef } = useContext(NotificationCenterContext);
+  const [isDeploying, setIsDeploying] = useState(false);
+  const [deployEvent, setDeployEvent] = useState();
+
+  useEffect(() => {
+    try {
+      setIsDeploying(true);
+    } catch (error) {
+      setIsDeploying(false);
+    }
+  }, []);
+  useEffect(() => {
+    const subscription = operationsCenterActorRef.on(
+      OPERATION_CENTER_EVENTS.EVENT_RECEIVED_FROM_SERVER,
+      (event) => {
+        const serverEvent = event.data.event;
+        if (serverEvent.action === deploymentType) {
+          setIsDeploying(false);
+          setDeployEvent(serverEvent);
+        }
+      },
+    );
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const progressMessage = `${capitalize(deploymentType)}ing model`;
+
+  if (isDeploying) {
+    return <Loading message={progressMessage} />;
+  }
+
+  if (!deployEvent) {
+    return null;
+  }
+
+  return (
+    <>
+      <Box sx={{ padding: '0.4rem' }}>
+        <ModelImportMessages message={deployEvent.metadata?.ModelImportMessage} />
+        <ModelImportedSection modelDetails={deployEvent.metadata?.ModelDetails} />
+      </Box>
+      <ModalFooter
+        variant="filled"
+        helpText={
+          'Click Finish to complete the model import process. The imported model will be available in your Model Registry.'
+        }
+      >
+        <Button variant="contained" color="primary" onClick={handleClose}>
+          Finish
+        </Button>
+      </ModalFooter>
+    </>
+  );
+};
 
 const TabBar = ({ handleUploadImport, handleUrlStepper }) => {
   return (
