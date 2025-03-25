@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import UploadIcon from '@mui/icons-material/Upload';
 import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
 import { MODELS, COMPONENTS, RELATIONSHIPS, REGISTRANTS } from '../../constants/navigator';
@@ -26,6 +26,7 @@ import {
 import { groupRelationshipsByKind, removeDuplicateVersions } from './helper';
 import _ from 'lodash';
 import { Button, NoSsr } from '@layer5/sistent';
+
 import { iconSmall } from '../../css/icons.styles';
 import AddIcon from '@mui/icons-material/AddCircleOutline';
 import { useInfiniteScrollRef, useMeshModelComponentRouter } from './hooks';
@@ -41,26 +42,30 @@ const MeshModelComponent_ = ({
 }) => {
   const router = useRouter();
   const { handleChangeSelectedTab } = settingsRouter(router);
+  const [resourcesDetail, setResourcesDetail] = useState([]);
   const { searchQuery, selectedPageSize } = useMeshModelComponentRouter();
+  const [page, setPage] = useState({
+    Models: 0,
+    Components: 0,
+    Relationships: 0,
+    Registrants: 0,
+  });
+  const [searchText, setSearchText] = useState(searchQuery);
+  const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
+  const [view, setView] = useState(MODELS);
+  const [showDetailsData, setShowDetailsData] = useState({
+    type: '', // Type of selected data eg. (models, components)
+    data: {},
+  });
   const [checked, setChecked] = useState(false);
-
-  const [filters, setFilters] = useState({
-    models: { page: 0 },
-    registrants: { page: 0 },
-    components: { page: 0 },
-    relationships: { page: 0 },
-  });
-
-  const [viewState, setViewState] = useState({
-    view: MODELS,
-    searchText: searchQuery,
-    rowsPerPage: selectedPageSize,
-    resourcesDetail: [],
-    showDetailsData: { type: '', data: {} },
-  });
 
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  const [modelFilters, setModelsFilters] = useState({ page: 0 });
+  const [registrantFilters, setRegistrantsFilters] = useState({ page: 0 });
+  const [componentsFilters, setComponentsFilters] = useState({ page: 0 });
+  const [relationshipsFilters, setRelationshipsFilters] = useState({ page: 0 });
 
   /**
    * RTK Lazy Queries
@@ -87,21 +92,21 @@ const MeshModelComponent_ = ({
     if (modelsRes.isLoading || modelsRes.isFetching || !hasMoreModels) {
       return;
     }
-    setFilters((prev) => ({ ...prev, models: { page: prev.models.page + 1 } }));
+    setModelsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
   }, [modelsRes, hasMoreModels]);
 
   const loadNextRegistrantsPage = useCallback(() => {
     if (registrantsRes.isLoading || registrantsRes.isFetching || !hasMoreRegistrants) {
       return;
     }
-    setFilters((prev) => ({ ...prev, registrants: { page: prev.registrants.page + 1 } }));
+    setRegistrantsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
   }, [registrantsRes, hasMoreRegistrants]);
 
   const loadNextComponentsPage = useCallback(() => {
     if (componentsRes.isLoading || componentsRes.isFetching || !hasMoreComponents) {
       return;
     }
-    setFilters((prev) => ({ ...prev, components: { page: prev.components.page + 1 } }));
+    setComponentsFilters((prev) => ({ ...prev, page: prev.page + 1 }));
   }, [componentsRes, hasMoreComponents]);
 
   const loadNextRelationshipsPage = useCallback(() => {
@@ -109,7 +114,6 @@ const MeshModelComponent_ = ({
       return;
     }
   }, [relationshipsRes, hasMoreRelationships]);
-
   /**
    * IntersectionObservers
    */
@@ -118,176 +122,194 @@ const MeshModelComponent_ = ({
   const lastRelationshipRef = useInfiniteScrollRef(loadNextRelationshipsPage);
   const lastRegistrantRef = useInfiniteScrollRef(loadNextRegistrantsPage);
 
-  const modifiedData = useMemo(() => {
-    if (viewState.view === MODELS) {
-      return removeDuplicateVersions(
-        checked
-          ? viewState.resourcesDetail.filter((model) => model.duplicates > 0)
-          : viewState.resourcesDetail,
-      );
-    }
-    if (viewState.view === RELATIONSHIPS) {
-      return groupRelationshipsByKind(viewState.resourcesDetail);
-    }
-    return viewState.resourcesDetail;
-  }, [viewState.view, viewState.resourcesDetail, checked]);
-
-  const debouncedFetchData = useCallback(
-    _.debounce(async () => {
-      try {
-        const response = await fetchDataForView(viewState.view, {
-          page: viewState.searchText ? 0 : filters[viewState.view.toLowerCase()].page,
-          pagesize: viewState.searchText
-            ? 'all'
-            : viewState.view === RELATIONSHIPS
-              ? 'all'
-              : viewState.rowsPerPage,
-          search: viewState.searchText || '',
-        });
-
-        if (response?.data) {
-          setViewState((prev) => ({
-            ...prev,
-            resourcesDetail: handleNewData(
-              response.data,
-              prev.resourcesDetail,
-              viewState.searchText,
-            ),
-          }));
-        }
-      } catch (error) {
-        console.error('Fetch failed:', error);
+  const fetchData = useCallback(async () => {
+    try {
+      let response;
+      switch (view) {
+        case MODELS:
+          response = await getMeshModelsData(
+            {
+              params: {
+                page: searchText ? 0 : modelFilters.page,
+                pagesize: searchText ? 'all' : 25,
+                components: false,
+                relationships: false,
+                search: searchText || '',
+              },
+            },
+            true, // arg to use cache as default
+          );
+          break;
+        case COMPONENTS:
+          response = await getComponentsData(
+            {
+              params: {
+                page: searchText ? 0 : componentsFilters.page,
+                pagesize: searchText ? 'all' : rowsPerPage,
+                search: searchText || '',
+                trim: true,
+              },
+            },
+            true,
+          );
+          break;
+        case RELATIONSHIPS:
+          response = await getRelationshipsData(
+            {
+              params: {
+                page: searchText ? 0 : relationshipsFilters.page,
+                pagesize: 'all',
+                search: searchText || '',
+              },
+            },
+            true,
+          );
+          break;
+        case REGISTRANTS:
+          response = await getRegistrants();
+          break;
+        default:
+          break;
       }
-    }, 300),
-    [viewState.view, filters, viewState.searchText],
-  );
 
-  const fetchDataForView = async (view, params) => {
-    const searchParam = params.search || '';
-    const pageParam = typeof params.page === 'number' ? params.page : 0;
+      if (response.data && response.data[view.toLowerCase()]) {
+        // When search or "show duplicates" functionality is active:
+        // Avoid appending data to the previous dataset.
+        // preventing duplicate entries and ensuring the UI reflects the API's response accurately.
+        // For instance, during a search, display the data returned by the API instead of appending it to the previous results.
+        let newData = [];
+        if (response.data[view.toLowerCase()]) {
+          newData =
+            searchText || view === RELATIONSHIPS
+              ? [...response.data[view.toLowerCase()]]
+              : [...resourcesDetail, ...response.data[view.toLowerCase()]];
+        }
 
-    const baseParams = {
-      ...params,
-      search: searchParam,
-      page: pageParam,
-      pagesize: searchParam ? 'all' : params.pagesize || 25,
-    };
+        // Set unique data
+        setResourcesDetail(_.uniqWith(newData, _.isEqual));
 
-    switch (view) {
-      case MODELS:
-        return await getMeshModelsData(
+        // Deeplink may contain higher rowsPerPage val for first time fetch
+        // In such case set it to default as 14 after UI renders
+        // This ensures the correct pagesize for subsequent API calls triggered on scrolling tree.
+        if (rowsPerPage !== 25) {
+          setRowsPerPage(25);
+        }
+      }
+    } catch (error) {
+      console.error(`Failed to fetch ${view.toLowerCase()}:`, error);
+    }
+  }, [
+    getMeshModelsData,
+    getComponentsData,
+    getRelationshipsData,
+    getRegistrantsData,
+    modelFilters,
+    registrantFilters,
+    view,
+    page,
+    rowsPerPage,
+    searchText,
+    resourcesDetail,
+    checked,
+  ]);
+
+  const getRegistrants = async () => {
+    let registrantResponse;
+    let response;
+    registrantResponse = await getRegistrantsData(
+      {
+        params: {
+          page: searchText ? 0 : registrantFilters.page,
+          pagesize: searchText ? 'all' : 25,
+          search: searchText || '',
+        },
+      },
+      true,
+    );
+    if (registrantResponse.data && registrantResponse.data.registrants) {
+      const registrants = registrantResponse.data.registrants;
+      const tempResourcesDetail = [];
+
+      for (let registrant of registrants) {
+        let hostname = toLower(registrant?.hostname);
+        const { data: modelRes } = await getMeshModelsData(
           {
             params: {
-              ...baseParams,
-              trim: false,
+              page: page?.Models,
+              pagesize: 'all',
+              registrant: hostname,
               components: false,
               relationships: false,
             },
           },
           true,
         );
-      case COMPONENTS:
-        return await getComponentsData({ params }, true);
-      case RELATIONSHIPS:
-        return await getRelationshipsData({ params }, true);
-      case REGISTRANTS:
-        return await getRegistrants();
-      default:
-        return null;
-    }
-  };
-
-  const getRegistrants = async () => {
-    let registrantResponse = await getRegistrantsData({
-      params: {
-        page: viewState.searchText ? 0 : filters.registrants.page,
-        pagesize: viewState.searchText ? 'all' : 25,
-        search: viewState.searchText || '',
-      },
-    });
-
-    if (!registrantResponse.data?.registrants) {
-      return registrantResponse;
-    }
-
-    const registrants = registrantResponse.data.registrants;
-    const tempResourcesDetail = [];
-
-    for (let registrant of registrants) {
-      let hostname = toLower(registrant?.hostname);
-      const modelRes = await getMeshModelsData({
-        params: {
-          page: filters.models.page,
-          pagesize: 'all',
-          registrant: hostname,
-          components: false,
-          relationships: false,
-        },
-      });
-
-      if (modelRes.data?.models?.length > 0) {
-        tempResourcesDetail.push({
-          ...registrant,
-          models: removeDuplicateVersions(modelRes.data.models) || [],
-        });
+        if (modelRes.models && modelRes.models.length > 0) {
+          const updatedRegistrant = {
+            ...registrant,
+            models: removeDuplicateVersions(modelRes.models) || [],
+          };
+          tempResourcesDetail.push(updatedRegistrant);
+        }
       }
+      response = {
+        data: {
+          registrants: tempResourcesDetail,
+        },
+      };
     }
-
-    return {
-      data: {
-        registrants: tempResourcesDetail,
-      },
-    };
+    setRowsPerPage(25);
+    return response;
+  };
+  const handleTabClick = (selectedView) => {
+    handleChangeSelectedTab(selectedView);
+    if (view !== selectedView) {
+      setSearchText(null);
+      setResourcesDetail([]);
+    }
+    setModelsFilters({ page: 0 });
+    setRegistrantsFilters({ page: 0 });
+    setComponentsFilters({ page: 0 });
+    setRelationshipsFilters({ page: 0 });
+    setPage({
+      Models: 0,
+      Components: 0,
+      Relationships: 0,
+      Registrants: 0,
+    });
+    setView(selectedView);
+    setShowDetailsData({
+      type: '',
+      data: {},
+    });
   };
 
-  const handleTabClick = useCallback(
-    (selectedView) => {
-      handleChangeSelectedTab(selectedView);
-      setViewState((prev) => ({
-        ...prev,
-        view: selectedView,
-        searchText: '',
-        resourcesDetail: [],
-        showDetailsData: { type: '', data: {} },
-      }));
-      setFilters({
-        models: { page: 0 },
-        registrants: { page: 0 },
-        components: { page: 0 },
-        relationships: { page: 0 },
-      });
-    },
-    [handleChangeSelectedTab],
-  );
-
-  const handleNewData = (newData, existingData, searchText) => {
-    // Get the appropriate array from response data based on view type
-    const dataArray = newData?.[viewState.view.toLowerCase()] || [];
-
-    if (searchText) {
-      return _.uniqWith(dataArray, _.isEqual);
+  const modifyData = () => {
+    if (view === MODELS) {
+      return removeDuplicateVersions(
+        checked ? resourcesDetail.filter((model) => model.duplicates > 0) : resourcesDetail,
+      );
+    } else if (view === RELATIONSHIPS) {
+      return groupRelationshipsByKind(resourcesDetail);
+    } else {
+      return resourcesDetail;
     }
-
-    // Ensure both arrays exist before combining
-    const existingArray = Array.isArray(existingData) ? existingData : [];
-    return _.uniqWith([...existingArray, ...dataArray], _.isEqual);
   };
 
   useEffect(() => {
-    // Only reset pagination if searchText is being set to empty string
-    if (viewState.searchText !== null && viewState.searchText !== undefined) {
-      setFilters({
-        models: { page: 0 },
-        registrants: { page: 0 },
-        components: { page: 0 },
-        relationships: { page: 0 },
+    if (searchText !== null && page[view] > 0) {
+      setPage({
+        Models: 0,
+        Components: 0,
+        Relationships: 0,
+        Registrants: 0,
       });
     }
-  }, [viewState.searchText]);
+  }, [searchText]);
 
   useEffect(() => {
-    debouncedFetchData();
-  }, [viewState.view, filters, viewState.rowsPerPage, checked, viewState.searchText]);
+    fetchData();
+  }, [view, page, rowsPerPage, checked, searchText, modelFilters, registrantFilters]);
 
   return (
     <div data-test="workloads">
@@ -310,54 +332,48 @@ const MeshModelComponent_ = ({
           <TabCard
             label="Models"
             count={modelsCount}
-            active={viewState.view === MODELS}
+            active={view === MODELS}
             onClick={() => handleTabClick(MODELS)}
           />
           <TabCard
             label="Components"
             count={componentsCount}
-            active={viewState.view === COMPONENTS}
+            active={view === COMPONENTS}
             onClick={() => handleTabClick(COMPONENTS)}
           />
           <TabCard
             label="Relationships"
             count={relationshipsCount}
-            active={viewState.view === RELATIONSHIPS}
+            active={view === RELATIONSHIPS}
             onClick={() => handleTabClick(RELATIONSHIPS)}
           />
           <TabCard
             label="Registrants"
             count={registrantCount}
-            active={viewState.view === REGISTRANTS}
+            active={view === REGISTRANTS}
             onClick={() => handleTabClick(REGISTRANTS)}
           />
         </InnerContainer>
 
         <TreeWrapper>
           <DetailsContainer
-            isEmpty={!viewState.resourcesDetail.length}
+            isEmpty={!resourcesDetail.length}
             style={{
               padding: '0.6rem',
               overflow: 'hidden',
             }}
           >
             <MesheryTreeView
-              data={modifiedData}
-              view={viewState.view}
-              setSearchText={(text) => setViewState((prev) => ({ ...prev, searchText: text }))}
-              setPage={(page) =>
-                setFilters((prev) => ({ ...prev, [viewState.view.toLowerCase()]: { page } }))
-              }
+              data={modifyData()}
+              view={view}
+              setSearchText={setSearchText}
+              setPage={setPage}
               checked={checked}
               setChecked={setChecked}
-              searchText={viewState.searchText}
-              setShowDetailsData={(data) =>
-                setViewState((prev) => ({ ...prev, showDetailsData: data }))
-              }
-              showDetailsData={viewState.showDetailsData}
-              setResourcesDetail={(data) =>
-                setViewState((prev) => ({ ...prev, resourcesDetail: data }))
-              }
+              searchText={searchText}
+              setShowDetailsData={setShowDetailsData}
+              showDetailsData={showDetailsData}
+              setResourcesDetail={setResourcesDetail}
               lastItemRef={{
                 [MODELS]: lastModelRef,
                 [REGISTRANTS]: lastRegistrantRef,
@@ -379,11 +395,9 @@ const MeshModelComponent_ = ({
             />
           </DetailsContainer>
           <MeshModelDetails
-            view={viewState.view}
-            setShowDetailsData={(data) =>
-              setViewState((prev) => ({ ...prev, showDetailsData: data }))
-            }
-            showDetailsData={viewState.showDetailsData}
+            view={view}
+            setShowDetailsData={setShowDetailsData}
+            showDetailsData={showDetailsData}
           />
         </TreeWrapper>
       </MainContainer>
