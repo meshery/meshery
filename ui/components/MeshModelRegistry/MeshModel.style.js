@@ -87,3 +87,10 @@ export const StyledTreeItemDiv = styled('div')(() => ({
   alignItems: 'center',
   gap: '1rem',
 }));
+
+export const MesheryTreeViewWrapper = styled('div')(() => ({
+  width: '100%',
+  height: '100%',
+  display: 'flex',
+  flexDirection: 'column',
+}));

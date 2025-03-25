@@ -40,7 +40,16 @@ func TestView(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
-			Name:             "View registered relationships",
+			Name:             "View relationship without model name",
+			Args:             []string{"view"},
+			URL:              testContext.BaseURL + "/api/meshmodels/models/kubernetes/relationships?pagesize=all",
+			Fixture:          "",
+			ExpectedResponse: "view.relationship.no.arguments.golden",
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      true,
+		},
+		{
+			Name:             "View registered relationship",
 			Args:             []string{"view", "kubernetes"},
 			URL:              testContext.BaseURL + "/api/meshmodels/models/kubernetes/relationships?pagesize=all",
 			Fixture:          "view.relationship.api.response.golden",
@@ -53,12 +62,14 @@ func TestView(t *testing.T) {
 	// run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
+			if tt.Fixture != "" {
+				apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
 
-			utils.TokenFlag = tt.Token
+				utils.TokenFlag = tt.Token
 
-			httpmock.RegisterResponder("GET", tt.URL,
-				httpmock.NewStringResponder(200, apiResponse))
+				httpmock.RegisterResponder("GET", tt.URL,
+					httpmock.NewStringResponder(200, apiResponse))
+			}
 
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)

@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "App Definition and Development",
@@ -43,16 +44,19 @@
     "model": {
       "version": "0.7.2"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "background-image": "none",
     "background-opacity": 0.1,
     "border-style": "solid",
     "border-width": 1,
+    "data": {
+      "label": ""
+    },
     "height": 30,
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
@@ -72,7 +76,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -87,7 +90,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -102,7 +104,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -117,7 +118,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "body-text",
@@ -127,15 +127,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": true,
     "isNamespaced": false,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "core.meshery.io/v1alpha1",
     "kind": "Plus",
-    "schema": "",
-    "version": "core.meshery.io/v1alpha1"
+    "schema": ""
   }
 }
