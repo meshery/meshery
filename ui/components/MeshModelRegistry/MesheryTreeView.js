@@ -258,7 +258,7 @@ const MesheryTreeView = React.memo(
         </div>
         <div style={{ display: 'flex' }}>
           <SearchBar
-            onSearch={debounce((value) => setSearchText(value), 200)}
+            onSearch={debounce((value) => setSearchText(value), 300)}
             expanded={isSearchExpanded}
             setExpanded={setSearchExpand}
             placeholder="Search"

@@ -59,7 +59,7 @@ const VersionedModelComponentTree = ({
   return (
     <>
       {isLoading ? (
-        <CircularProgress color="inherit" />
+        <CircularProgress  />
       ) : (
         <StyledTreeItem
           nodeId={`${registrantID ? `${registrantID}.1.` : ''}${modelDef.id}.${

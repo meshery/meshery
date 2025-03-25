@@ -45,7 +45,7 @@ const ComponentTree = ({
         />
       ))}
       <div ref={lastComponentRef} style={{ height: '3rem' }}></div>
-      {isComponentFetching ? <CircularProgress color="inherit" /> : null}
+      {isComponentFetching ? <CircularProgress /> : null}
     </TreeView>
   );
 };
