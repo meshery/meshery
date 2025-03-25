@@ -104,7 +104,6 @@ const CsvStepper = React.memo(({ handleClose, handleGenerateModal }) => {
         ? `data:text/csv;base64,${relationshipCsvFile?.base64?.split(',')[1]}`
         : null,
       register: registerModel,
-      uploadType: 'CSV Import',
     });
   };
   const theme = useTheme();

@@ -22,9 +22,9 @@ import (
 	"os"
 	"strings"
 
-	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/components"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/mesheryctl/pkg/utils/format"
 	"github.com/layer5io/meshery/server/models/environments"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
@@ -32,23 +32,23 @@ import (
 	"gopkg.in/yaml.v2"
 )
 
-// represents the mesheryctl environment view [orgId] subcommand.
+// represents the mesheryctl environment view [orgID] subcommand.
 var viewEnvironmentCmd = &cobra.Command{
 	Use:   "view",
 	Short: "view registered environmnents",
 	Long:  "view a environments registered in Meshery Server",
 	Example: `
 // View details of a specific environment
-mesheryctl environment view --orgID [orgId]
+mesheryctl environment view --orgID [orgID]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		orgIdFlag, _ := cmd.Flags().GetString("orgId")
+		orgIDFlag, _ := cmd.Flags().GetString("orgID")
 
-		if orgIdFlag == "" {
+		if orgIDFlag == "" {
 			if err := cmd.Usage(); err != nil {
 				return err
 			}
-			return utils.ErrInvalidArgument(errors.New("Please provide a --orgId flag"))
+			return utils.ErrInvalidArgument(errors.New("Please provide a --orgID flag"))
 		}
 		return nil
 	},
@@ -60,8 +60,7 @@ mesheryctl environment view --orgID [orgId]
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 
-		orgid := args[0]
-		url := fmt.Sprintf("%s/api/environments?orgID=%s", baseUrl, orgid)
+		url := fmt.Sprintf("%s/api/environments?orgID=%s", baseUrl, orgID)
 		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
 			return err
@@ -89,7 +88,7 @@ mesheryctl environment view --orgID [orgId]
 		var selectedEnvironment environments.EnvironmentData
 
 		if environmentResponse.TotalCount == 0 {
-			utils.Log.Info("No environment(s) found for the given ID: ", orgid)
+			utils.Log.Info("No environment(s) found for the given ID: ", orgID)
 			return nil
 		} else if environmentResponse.TotalCount == 1 {
 			selectedEnvironment = environmentResponse.Environments[0] // Update the type of selectedModel
@@ -138,7 +137,7 @@ mesheryctl environment view --orgID [orgId]
 				utils.Log.Info("Output saved as JSON file in ~/.meshery/component_" + componentString + ".json")
 				return nil
 			}
-			return components.OutputJson(selectedEnvironment)
+			return format.OutputJson(selectedEnvironment)
 		} else {
 			return utils.ErrInvalidArgument(errors.New("output-format choice is invalid or not provided, use [json|yaml]"))
 		}

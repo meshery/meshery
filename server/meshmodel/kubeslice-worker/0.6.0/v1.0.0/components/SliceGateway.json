@@ -27,8 +27,10 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Provisioning"
     },
+    "subCategory": "",
     "metadata": {
       "isAnnotation": false,
       "source_uri": "https://github.com/kubeslice/kubeslice/releases/download/kubeslice-worker-1.1.0/kubeslice-worker-1.1.0.tgz",
@@ -38,16 +40,17 @@
     "model": {
       "version": "0.6.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00105f",
     "secondaryColor": "#2bbafe",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -59,7 +62,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -74,7 +76,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -89,7 +90,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -105,7 +105,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -121,7 +120,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -136,7 +134,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -151,7 +148,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -166,7 +162,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -176,15 +171,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "networking.kubeslice.io/v1beta1",
     "kind": "SliceGateway",
-    "schema": "{\n \"description\": \"SliceGateway is the Schema for the slicegateways API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SliceGatewaySpec defines the desired state of SliceGateway\",\n   \"properties\": {\n    \"siteName\": {\n     \"description\": \"SiteName is site name\",\n     \"type\": \"string\"\n    },\n    \"sliceName\": {\n     \"description\": \"SliceName is the Name of the slice this gateway is attached into\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Slice Gateway\",\n \"type\": \"object\"\n}",
-    "version": "networking.kubeslice.io/v1beta1"
+    "schema": "{\n \"description\": \"SliceGateway is the Schema for the slicegateways API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SliceGatewaySpec defines the desired state of SliceGateway\",\n   \"properties\": {\n    \"siteName\": {\n     \"description\": \"SiteName is site name\",\n     \"type\": \"string\"\n    },\n    \"sliceName\": {\n     \"description\": \"SliceName is the Name of the slice this gateway is attached into\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Slice Gateway\",\n \"type\": \"object\"\n}"
   }
 }
