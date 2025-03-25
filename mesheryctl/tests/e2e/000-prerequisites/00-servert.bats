@@ -3,10 +3,9 @@
 # tests to ensure the server is up and running
 
 setup() {
-    E2ETEST_DIR=$(dirname "$BATS_TEST_DIRNAME")
-    load "$E2ETEST_DIR$SUPPORT_DESTDIR"
-    load "$E2ETEST_DIR$ASSERT_DESTDIR"
-    load "$E2ETEST_DIR$DETIK_DESTDIR"
+    load "$SUPPORT_DESTDIR"
+    load "$ASSERT_DESTDIR"
+    load "$DETIK_DESTDIR"
 
     DETIK_CLIENT_NAMESPACE="meshery"
     DETIK_CLIENT_NAME="kubectl"
