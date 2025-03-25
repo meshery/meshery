@@ -246,7 +246,7 @@ const MeshModelComponent_ = ({
       setViewState((prev) => ({
         ...prev,
         view: selectedView,
-        searchText: '', 
+        searchText: '',
         resourcesDetail: [],
         showDetailsData: { type: '', data: {} },
       }));
