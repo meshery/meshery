@@ -78,8 +78,6 @@ function Dashboard({ updateProgress, grafana, router }) {
 
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.up('xs'));
-  if (matches) {
-  }
 
   /**
    * fetch performance profiles when the page loads

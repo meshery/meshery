@@ -259,7 +259,7 @@ export default function DesignConfigurator() {
                         key={idx}
                         src={`${getWebAdress()}/${svgWhite}`}
                         style={{ background: primaryColor, padding: 6, height: 20, width: 20 }}
-                        onClick={() => {}}
+                        // onClick={() => {}}
                       />
                     );
                   }
