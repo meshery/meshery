@@ -1,10 +1,9 @@
 .left-container {
-  position: sticky;
+  position: relative;
   z-index: 9;
   height: calc(100vh - var(--navbar-height));
   transition: all 0.5s ease-in-out;
-  top: calc(var(--navbar-height));
-  margin-top: 9vh;
+  top: var(--navbar-height) !important;
   & .sidebar-container-wrapper {
     height: 100%;
     padding: 0.5rem;
@@ -40,7 +39,7 @@
 
 @media (max-width: 37.5em) {
   .left-container {
-    top: calc(var(--navbar-height) - 0);
+    top: calc(var(--navbar-height) - 0) !important;
     height: 100vh;
   }
 }
@@ -148,7 +147,7 @@
         &-title a {
           font-weight: bold;
           margin-bottom: .5rem;
-          
+
           &:hover {
             font-weight: normal;
           }
@@ -159,7 +158,7 @@
         & a {
           color: var(--color-secondary-medium);
           letter-spacing: 0.2px;
-          
+
           &:hover {
             color: var(--sidenav-hover) !important;
           }
