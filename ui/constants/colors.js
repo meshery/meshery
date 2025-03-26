@@ -1,4 +1,4 @@
-// derived from Figma
+// derived from Figma testing 
 export const PRIMARY_COLOR = '#647881';
 export const SUCCESS_COLOR = '#83B71E';
 export const INFO_COLOR = '#2AC3D1';
