@@ -13,9 +13,6 @@ start_meshery() {
     platform="$1"
     echo "start: meshery server start for platform $platform"
     mesheryctl system start -p "$platform"
-    echo "in progress: meshery server start for platform $platform"
-    sleep 40
-    echo "done: meshery server start for platform $platform"
 }
 
 
@@ -27,7 +24,7 @@ create_auth_file() {
     fi
 
     # Generate auth file to comunicate with meshery server
-    echo '{ "meshery-provider": "Meshery", "token": null }' | jq -c '.token = "'$MESHERY_PROVIDER_TOKEN'"' > ~/auth.json
+    echo '{ "meshery-provider": "Meshery", "token": null }' | jq -c '.token = "'$MESHERY_PROVIDER_TOKEN'"' > "${HOME}/.meshery/auth.json"
     echo "done: authentication configuration"
 }
 
@@ -35,10 +32,11 @@ main() {
     echo -e "### start: Test environment setup ###\n"
 
     install_mesheryctl
-    start_meshery "$MESHERY_PLATFORM"
-    create_auth_file 
+    start_meshery "$MESHERY_PLATFORM" && create_auth_file 
     
     export MESHERYCTL_BIN="mesheryctl"
+    export MESHERY_CONFIG_FILE_PATH="${HOME}/.meshery/config.yaml"
+	export MESHERY_AUTH_FILE="${HOME}/.meshery/auth.json"
 
     echo -e "\nCreate temp directory for test data"
     TEMP_DATA_DIR=`mktemp -d`

@@ -69,6 +69,9 @@ jobs:
         env:
           MESHERY_PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
           MESHERY_PLATFORM: ${{ matrix.platform }}
+          SUPPORT_DESTDIR: "/usr/lib/bats-support"
+          ASSERT_DESTDIR: "/usr/lib/bats-assert"
+          DETIK_DESTDIR: "/usr/lib/bats-detik"
 
   manual-test:
     name: Manual e2e Test
