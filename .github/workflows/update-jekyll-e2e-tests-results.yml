@@ -35,6 +35,10 @@ jobs:
             fi
             mkdir -p docs/_includes
             mv e2e-test-reporter/ui/test-report.md docs/_includes/
+            
+      - name: Pull changes from remote
+        run: git pull origin master
+
       - name: Commit artifact to Jekyll folder
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
@@ -44,4 +48,4 @@ jobs:
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Docs] Updated test report in Jekyll"
-        
+          push_options: "--rebase"
