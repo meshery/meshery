@@ -20,7 +20,7 @@ This guide walks through the process of creating and integrating a custom widget
 
 ## 1. Widget Architecture
 
-Widgets are React components located at:
+Widgets are React components located [here](https://github.com/meshery/meshery/tree/master/ui/components/DashboardComponent/widgets):
 ```bash
 /ui/components/DashboardComponent/widgets/
 ```
@@ -82,11 +82,7 @@ Example:
 import LatestBlogsThumbnail from './Thumbnails/LatestBlogs.png';
 ```
 
-This is how the thumbnail would appear to a user adding the widget to the Dashboard:
-
-<a href="{{ site.baseurl }}/assets/img/widget/latest-blogs-thumbnail.png">
-<img style= "width: 600px;" src="{{ site.baseurl }}/assets/img/widget/latest-blogs-thumbnail.png" />
-</a>
+To verify your thumbnail appears correctly, click on the "Edit" button on the Dashboard. A visual card with your thumbnail and widget title will be listed there, allowing users to add it to their layout.
 
 ---
 
@@ -132,6 +128,16 @@ Under each screen size key (e.g. `sm`, `xs`, `xxs`):
   y: 0,
 }
 ```
+
+Meshery’s dashboard uses breakpoints to adapt widget layout across devices. Each breakpoint (sm, xs, xxs) represents different screen widths. For example:
+
+    sm: tablets and desktops
+
+    xs: large phones
+
+    xxs: small phones
+
+Define the widget’s position (x, y) and size (w, h) in each breakpoint for responsive behavior. The code for it can be found [here](https://github.com/meshery/meshery/blob/master/ui/components/DashboardComponent/defaultLayout.js).
 
 Note: Layouts for **Remote Providers** are dynamically generated based on user configuration and stored remotely. Local providers use a predefined layout (`LOCAL_PROVIDER_LAYOUT`). Widgets must be added to both if you want consistent behavior across environments.
 
