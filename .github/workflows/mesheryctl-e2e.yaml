@@ -40,7 +40,7 @@ jobs:
       - name: Setup BATS and BATS libs
         uses: bats-core/bats-action@3.0.0
         with:
-          support-path: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers/bats-support"
+          support-path: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers/bats-suppor"
           assert-path: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers/bats-assert"
           detik-path: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers/bats-detik"
       - uses: actions/setup-go@v5.3.0
@@ -73,9 +73,9 @@ jobs:
         env:
           MESHERY_PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
           MESHERY_PLATFORM: ${{ matrix.platform }}
-          SUPPORT_DESTDIR: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers/bats-support"
-          ASSERT_DESTDIR: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers/bats-assert"
-          DETIK_DESTDIR: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers/bats-detik"
+          SUPPORT_DESTDIR: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers/bats-support/load.bash"
+          ASSERT_DESTDIR: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers/bats-assert/load.bash"
+          DETIK_DESTDIR: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers/bats-detik/lib/detik.bash"
 
   manual-test:
     name: Manual e2e Test
