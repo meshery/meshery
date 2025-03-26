@@ -463,13 +463,33 @@ func parseDryRunFailure(settings map[string]interface{}, name string) *core.DryR
 	})
 
 	dResp.Causes = make([]core.DryRunFailureCause, 0)
-	for _, ld := range longDescription {
-		msg := ld
-		field := "unknown"
-		typ := "Failure"
-		failureCase := core.DryRunFailureCause{Message: msg, FieldPath: field, Type: typ}
-		dResp.Causes = append(dResp.Causes, failureCase)
+	if kubeStatus.Details != nil && len(kubeStatus.Details.Causes) > 0 {
+		for i, c := range kubeStatus.Details.Causes {
+			msg := longDescription[i+1]
+			field := "unknown"
+			typ := "Failure"
+
+			if c.Field != "" {
+				field = name + "." + getComponentFieldPathFromK8sFieldPath(c.Field)
+			}
+			if c.Type != "" {
+				typ = string(c.Type)
+			}
+
+			failureCase := core.DryRunFailureCause{Message: msg, FieldPath: field, Type: typ}
+			dResp.Causes = append(dResp.Causes, failureCase)
+		}
+	} else {
+		for _, msg := range longDescription {
+			failureCase := core.DryRunFailureCause{
+				Message:   msg,
+				FieldPath: "unknown",
+				Type:      "Failure",
+			}
+			dResp.Causes = append(dResp.Causes, failureCase)
+		}
 	}
+
 	return &dResp
 }
 
