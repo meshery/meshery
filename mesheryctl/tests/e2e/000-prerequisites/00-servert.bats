@@ -3,8 +3,8 @@
 # tests to ensure the server is up and running
 
 setup() {
-    load "$ASSERT_DESTDIR"
-    load "$DETIK_DESTDIR"
+	load 'helpers/helpers'
+	_tests_helper
 
     DETIK_CLIENT_NAMESPACE="meshery"
     DETIK_CLIENT_NAME="kubectl"
