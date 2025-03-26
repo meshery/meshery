@@ -65,7 +65,7 @@ docs:
 
 
 e2e-libs:
-	@ cd tests/e2e/helpers/bats-lib; \
+	@ cd tests/e2e/helpers; \
 	if [ ! -d "bats-assert" ]; then \
 		git clone https://github.com/bats-core/bats-assert.git; \
 	fi; \

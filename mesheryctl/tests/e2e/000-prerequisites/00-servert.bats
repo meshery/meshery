@@ -3,7 +3,6 @@
 # tests to ensure the server is up and running
 
 setup() {
-    load "$SUPPORT_DESTDIR"
     load "$ASSERT_DESTDIR"
     load "$DETIK_DESTDIR"
 
