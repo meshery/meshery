@@ -41,5 +41,5 @@ func List(data DisplayedData) error {
 		}
 	}
 	return nil
-	
+
 }
