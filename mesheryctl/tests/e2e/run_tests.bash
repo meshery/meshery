@@ -10,7 +10,7 @@ source ./setup_suite.bash
 
 # Run the tests
 # Uncomment the following line to enable junit format output
-# FORMATTER="--formatter tap"
+FORMATTER="--formatter tap"
 
 bats $FORMATTER *-*/*.bats
 
