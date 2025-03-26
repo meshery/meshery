@@ -1,4 +1,4 @@
 [--kind, --subtype or --type or --model] and [query-text] are required
 
-Usage: mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>] [query-text]
+Usage: mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]
 Run 'mesheryctl exp relationship search --help'

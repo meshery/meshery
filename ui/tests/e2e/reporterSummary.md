@@ -17,9 +17,11 @@
 
 <details>
     <summary>[Show/Hide] Test Result Details</summary>
+    <div markdown="1">
 
 <%- testTable %>
 
+</div>
 </details>
 <% } %>
 

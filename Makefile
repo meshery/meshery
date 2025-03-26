@@ -337,11 +337,11 @@ ui-provider:
 
 ## Lint check Meshery UI and Provider UI on your local machine.
 ui-lint:
-	cd ui; npm run lint; cd ..
+	cd ui; npm i eslint; npx eslint . --fix; cd ..
 
 ## Lint check Meshery Provider UI on your local machine.
 ui-provider-lint:
-	cd provider-ui; npm run lint; cd ..
+	cd provider-ui && npm i eslint && npx eslint .
 
 ## Test Meshery Provider UI on your local machine.
 ui-provider-test:

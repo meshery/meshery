@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Google Cloud Platform",
@@ -46,15 +47,16 @@
     "model": {
       "version": "v1.119.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#4285F4",
     "shape": "rectangle",
     "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#aecbfa;}.cls-2{fill:#669df6;}.cls-3{fill:#4285f4;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003crect class=\"cls-1\" x=\"9\" y=\"9\" width=\"6\" height=\"6\"/\u003e\u003crect class=\"cls-2\" x=\"11\" y=\"2\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-2\" x=\"7\" y=\"2\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-2\" x=\"15\" y=\"2\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"11\" y=\"18\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"7\" y=\"18\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"15\" y=\"18\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"19\" y=\"10\" width=\"2\" height=\"4\" transform=\"translate(8 32) rotate(-90)\"/\u003e\u003crect class=\"cls-3\" x=\"19\" y=\"14\" width=\"2\" height=\"4\" transform=\"translate(4 36) rotate(-90)\"/\u003e\u003crect class=\"cls-3\" x=\"19\" y=\"6\" width=\"2\" height=\"4\" transform=\"translate(12 28) rotate(-90)\"/\u003e\u003crect class=\"cls-2\" x=\"3\" y=\"10\" width=\"2\" height=\"4\" transform=\"translate(-8 16) rotate(-90)\"/\u003e\u003crect class=\"cls-2\" x=\"3\" y=\"14\" width=\"2\" height=\"4\" transform=\"translate(-12 20) rotate(-90)\"/\u003e\u003crect class=\"cls-2\" x=\"3\" y=\"6\" width=\"2\" height=\"4\" transform=\"translate(-4 12) rotate(-90)\"/\u003e\u003cpath class=\"cls-1\" d=\"M5,5V19H19V5ZM17,17H7V7H17Z\"/\u003e\u003cpolygon class=\"cls-2\" points=\"9 15 15 15 12 12 9 15\"/\u003e\u003cpolygon class=\"cls-3\" points=\"12 12 15 15 15 9 12 12\"/\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}.cls-2{fill:#fff;}.cls-3{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003crect class=\"cls-1\" x=\"9\" y=\"9\" width=\"6\" height=\"6\"/\u003e\u003crect class=\"cls-2\" x=\"11\" y=\"2\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-2\" x=\"7\" y=\"2\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-2\" x=\"15\" y=\"2\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"11\" y=\"18\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"7\" y=\"18\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"15\" y=\"18\" width=\"2\" height=\"4\"/\u003e\u003crect class=\"cls-3\" x=\"19\" y=\"10\" width=\"2\" height=\"4\" transform=\"translate(8 32) rotate(-90)\"/\u003e\u003crect class=\"cls-3\" x=\"19\" y=\"14\" width=\"2\" height=\"4\" transform=\"translate(4 36) rotate(-90)\"/\u003e\u003crect class=\"cls-3\" x=\"19\" y=\"6\" width=\"2\" height=\"4\" transform=\"translate(12 28) rotate(-90)\"/\u003e\u003crect class=\"cls-2\" x=\"3\" y=\"10\" width=\"2\" height=\"4\" transform=\"translate(-8 16) rotate(-90)\"/\u003e\u003crect class=\"cls-2\" x=\"3\" y=\"14\" width=\"2\" height=\"4\" transform=\"translate(-12 20) rotate(-90)\"/\u003e\u003crect class=\"cls-2\" x=\"3\" y=\"6\" width=\"2\" height=\"4\" transform=\"translate(-4 12) rotate(-90)\"/\u003e\u003cpath class=\"cls-1\" d=\"M5,5V19H19V5ZM17,17H7V7H17Z\"/\u003e\u003cpolygon class=\"cls-2\" points=\"9 15 15 15 12 12 9 15\"/\u003e\u003cpolygon class=\"cls-3\" points=\"12 12 15 15 15 9 12 12\"/\u003e\u003c/g\u003e\u003c/svg\u003e\n"
   },
   "capabilities": [
@@ -66,7 +68,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -81,7 +82,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -96,7 +96,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -112,7 +111,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -128,7 +126,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -143,7 +140,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -158,7 +154,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -173,7 +168,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -183,15 +177,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "compute.cnrm.cloud.google.com/v1beta1",
     "kind": "ComputeTargetTCPProxy",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"backendServiceRef\": {\n     \"description\": \"A reference to the ComputeBackendService resource.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `selfLink` field of a `ComputeBackendService` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"Immutable. An optional description of this resource.\",\n     \"type\": \"string\"\n    },\n    \"proxyBind\": {\n     \"description\": \"Immutable. This field only applies when the forwarding rule that references\\nthis target proxy has a loadBalancingScheme set to INTERNAL_SELF_MANAGED.\",\n     \"type\": \"boolean\"\n    },\n    \"proxyHeader\": {\n     \"description\": \"Specifies the type of proxy header to append before sending data to\\nthe backend. Default value: \\\"NONE\\\" Possible values: [\\\"NONE\\\", \\\"PROXY_V1\\\"].\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backendServiceRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Compute Target TCP Proxy\",\n \"type\": \"object\"\n}",
-    "version": "compute.cnrm.cloud.google.com/v1beta1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"backendServiceRef\": {\n     \"description\": \"A reference to the ComputeBackendService resource.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `selfLink` field of a `ComputeBackendService` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"description\": {\n     \"description\": \"Immutable. An optional description of this resource.\",\n     \"type\": \"string\"\n    },\n    \"proxyBind\": {\n     \"description\": \"Immutable. This field only applies when the forwarding rule that references\\nthis target proxy has a loadBalancingScheme set to INTERNAL_SELF_MANAGED.\",\n     \"type\": \"boolean\"\n    },\n    \"proxyHeader\": {\n     \"description\": \"Specifies the type of proxy header to append before sending data to\\nthe backend. Default value: \\\"NONE\\\" Possible values: [\\\"NONE\\\", \\\"PROXY_V1\\\"].\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"backendServiceRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Compute Target TCP Proxy\",\n \"type\": \"object\"\n}"
   }
 }

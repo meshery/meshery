@@ -27,8 +27,10 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
+    "subCategory": "",
     "metadata": {
       "source_uri": "https://helm-charts.bitpoke.io/stack-0.12.4.tgz",
       "svgColor": "",
@@ -37,16 +39,17 @@
     "model": {
       "version": "0.12.3"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -58,7 +61,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -73,7 +75,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -88,7 +89,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -104,7 +104,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -120,7 +119,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -135,7 +133,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -150,7 +147,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -165,7 +161,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -175,15 +170,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "mysql.presslabs.org/v1alpha1",
     "kind": "MysqlUser",
-    "schema": "{\n \"description\": \"MysqlUser is the Schema for the MySQL User API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MysqlUserSpec defines the desired state of MysqlUserSpec\",\n   \"properties\": {\n    \"allowedHosts\": {\n     \"description\": \"AllowedHosts is the allowed host to connect from.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"clusterRef\": {\n     \"description\": \"ClusterRef represents a reference to the MySQL cluster. This field should be immutable.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace the MySQL cluster namespace\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"password\": {\n     \"description\": \"Password is the password for the user.\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      },\n      \"optional\": {\n       \"description\": \"Specify whether the Secret or its key must be defined\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"key\"\n     ],\n     \"type\": \"object\"\n    },\n    \"permissions\": {\n     \"description\": \"Permissions is the list of roles that user has in the specified database.\",\n     \"items\": {\n      \"description\": \"MysqlPermission defines a MySQL schema permission\",\n      \"properties\": {\n       \"permissions\": {\n        \"description\": \"Permissions represents the permissions granted on the schema/tables\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"schema\": {\n        \"description\": \"Schema represents the schema to which the permission applies\",\n        \"type\": \"string\"\n       },\n       \"tables\": {\n        \"description\": \"Tables represents the tables inside the schema to which the permission applies\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"permissions\",\n       \"schema\",\n       \"tables\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"resourceLimits\": {\n     \"additionalProperties\": {\n      \"anyOf\": [\n       {\n        \"type\": \"integer\"\n       },\n       {\n        \"type\": \"string\"\n       }\n      ],\n      \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n      \"x-kubernetes-int-or-string\": true\n     },\n     \"description\": \"ResourceLimits allow settings limit per mysql user as defined here: https://dev.mysql.com/doc/refman/5.7/en/user-resources.html\",\n     \"type\": \"object\"\n    },\n    \"user\": {\n     \"description\": \"User is the name of the user that will be created with will access the specified database. This field should be immutable.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"allowedHosts\",\n    \"clusterRef\",\n    \"password\",\n    \"user\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mysql User\",\n \"type\": \"object\"\n}",
-    "version": "mysql.presslabs.org/v1alpha1"
+    "schema": "{\n \"description\": \"MysqlUser is the Schema for the MySQL User API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"MysqlUserSpec defines the desired state of MysqlUserSpec\",\n   \"properties\": {\n    \"allowedHosts\": {\n     \"description\": \"AllowedHosts is the allowed host to connect from.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"clusterRef\": {\n     \"description\": \"ClusterRef represents a reference to the MySQL cluster. This field should be immutable.\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace the MySQL cluster namespace\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"password\": {\n     \"description\": \"Password is the password for the user.\",\n     \"properties\": {\n      \"key\": {\n       \"description\": \"The key of the secret to select from.  Must be a valid secret key.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names TODO: Add other useful fields. apiVersion, kind, uid?\",\n       \"type\": \"string\"\n      },\n      \"optional\": {\n       \"description\": \"Specify whether the Secret or its key must be defined\",\n       \"type\": \"boolean\"\n      }\n     },\n     \"required\": [\n      \"key\"\n     ],\n     \"type\": \"object\"\n    },\n    \"permissions\": {\n     \"description\": \"Permissions is the list of roles that user has in the specified database.\",\n     \"items\": {\n      \"description\": \"MysqlPermission defines a MySQL schema permission\",\n      \"properties\": {\n       \"permissions\": {\n        \"description\": \"Permissions represents the permissions granted on the schema/tables\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       },\n       \"schema\": {\n        \"description\": \"Schema represents the schema to which the permission applies\",\n        \"type\": \"string\"\n       },\n       \"tables\": {\n        \"description\": \"Tables represents the tables inside the schema to which the permission applies\",\n        \"items\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"array\"\n       }\n      },\n      \"required\": [\n       \"permissions\",\n       \"schema\",\n       \"tables\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"resourceLimits\": {\n     \"additionalProperties\": {\n      \"anyOf\": [\n       {\n        \"type\": \"integer\"\n       },\n       {\n        \"type\": \"string\"\n       }\n      ],\n      \"pattern\": \"^(\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\\\\+|-)?(([0-9]+(\\\\.[0-9]*)?)|(\\\\.[0-9]+))))?$\",\n      \"x-kubernetes-int-or-string\": true\n     },\n     \"description\": \"ResourceLimits allow settings limit per mysql user as defined here: https://dev.mysql.com/doc/refman/5.7/en/user-resources.html\",\n     \"type\": \"object\"\n    },\n    \"user\": {\n     \"description\": \"User is the name of the user that will be created with will access the specified database. This field should be immutable.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"allowedHosts\",\n    \"clusterRef\",\n    \"password\",\n    \"user\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Mysql User\",\n \"type\": \"object\"\n}"
   }
 }

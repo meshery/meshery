@@ -95,14 +95,6 @@ const YmlDialogTitleText = styled(Typography)(() => ({
   flexGrow: 1,
 }));
 
-const FullScreenCodeMirrorWrapper = styled('div')(() => ({
-  height: '100%',
-  '& .CodeMirror': {
-    minHeight: '300px',
-    height: '100%',
-  },
-}));
-
 const BtnText = styled('span')(({ theme }) => ({
   display: 'block',
   [theme.breakpoints.down('700')]: {
@@ -132,6 +124,14 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
   const toggleFullScreen = () => {
     setFullScreen(!fullScreen);
   };
+
+  const FullScreenCodeMirrorWrapper = styled('div')(() => ({
+    height: '100%',
+    '& .CodeMirror': {
+      minHeight: '300px',
+      height: fullScreen ? '80vh' : '100%',
+    },
+  }));
 
   let resourceData;
   try {
@@ -775,7 +775,7 @@ function MesheryFilters({
     },
     {
       name: 'created_at',
-      label: 'Upload Timestamp',
+      label: 'Created At',
       options: {
         filter: false,
         sort: true,
@@ -797,7 +797,7 @@ function MesheryFilters({
     },
     {
       name: 'updated_at',
-      label: 'Update Timestamp',
+      label: 'Updated At',
       options: {
         filter: false,
         sort: true,

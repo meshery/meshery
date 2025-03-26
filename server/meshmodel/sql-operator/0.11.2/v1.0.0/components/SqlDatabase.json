@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "App Definition and Development"
     },
     "subCategory": "Database",
@@ -44,16 +45,17 @@
     "model": {
       "version": "0.11.2"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -65,7 +67,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -80,7 +81,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -95,7 +95,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -111,7 +110,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -127,7 +125,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -142,7 +139,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -157,7 +153,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -172,7 +167,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -182,15 +176,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "stenic.io/v1alpha1",
     "kind": "SqlDatabase",
-    "schema": "{\n \"description\": \"SqlDatabase is the Schema for the sqldatabases API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SqlDatabaseSpec defines the desired state of SqlDatabase\",\n   \"properties\": {\n    \"cleanupPolicy\": {\n     \"description\": \"Specifies how to handle deletion of a SqlUser. Valid values are: - \\\"Retain\\\" (default): keeps the external resource when the object is deleted; - \\\"Delete\\\": deletes the external resource when the object is deleted;\",\n     \"enum\": [\n      \"Retain\",\n      \"Delete\"\n     ],\n     \"type\": \"string\"\n    },\n    \"databaseName\": {\n     \"description\": \"Name of the external database\",\n     \"type\": \"string\"\n    },\n    \"hostRef\": {\n     \"description\": \"Reference to the SqlHost\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the SqlObject\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the SqlObject\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"databaseName\",\n    \"hostRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Sql Database\",\n \"type\": \"object\"\n}",
-    "version": "stenic.io/v1alpha1"
+    "schema": "{\n \"description\": \"SqlDatabase is the Schema for the sqldatabases API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SqlDatabaseSpec defines the desired state of SqlDatabase\",\n   \"properties\": {\n    \"cleanupPolicy\": {\n     \"description\": \"Specifies how to handle deletion of a SqlUser. Valid values are: - \\\"Retain\\\" (default): keeps the external resource when the object is deleted; - \\\"Delete\\\": deletes the external resource when the object is deleted;\",\n     \"enum\": [\n      \"Retain\",\n      \"Delete\"\n     ],\n     \"type\": \"string\"\n    },\n    \"databaseName\": {\n     \"description\": \"Name of the external database\",\n     \"type\": \"string\"\n    },\n    \"hostRef\": {\n     \"description\": \"Reference to the SqlHost\",\n     \"properties\": {\n      \"name\": {\n       \"description\": \"Name of the SqlObject\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the SqlObject\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"databaseName\",\n    \"hostRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Sql Database\",\n \"type\": \"object\"\n}"
   }
 }
