@@ -3,7 +3,7 @@ import { ENV } from './env';
 
 const SETTINGS_TABS = [
   'settings-tab-adapters',
-  'settings-tab-adapters',
+  'settings-tab-metrics',
   'settings-tab-registry',
   'settings-tab-reset',
 ];
@@ -14,7 +14,6 @@ const ACTION_BUTTONS = [
   'adapter-undeploy-button',
   'adapter-connect-button',
   'adapter-deploy-button',
-  'database-reset-button',
 ];
 
 const GARFANA_ELEMENTS = ['grafana-base-url', 'grafana-api-key'];
@@ -31,9 +30,7 @@ test.describe('Performance Section Tests', () => {
     // adding for testing
     { tag: '@unstable' },
     async ({ page }) => {
-      await expect(page.getByTestId('configure-metrics-button')).toBeVisible();
       await page.getByTestId('configure-metrics-button').click();
-
       await expect(page).toHaveURL(/.*#metrics/);
 
       for (const tabId of SETTINGS_TABS) {
