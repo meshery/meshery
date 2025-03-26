@@ -19,7 +19,6 @@ import (
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 
 	"github.com/layer5io/meshery/server/models"
 	"github.com/meshery/schemas/models/v1beta1/component"
@@ -45,20 +44,20 @@ var (
 // ComponentsCmd represents the mesheryctl components command
 var ComponentsCmd = &cobra.Command{
 	Use:   "components",
-	Short: "View list of components and detail of components",
-	Long:  "View list of components and detailed information of a specific component",
+	Short: "Manage components",
+	Long:  "List, search and view component(s) and detailed informations",
 	Example: `
-// To view total of available components
-mesheryctl model --count
+// Display number of available components in Meshery
+mesheryctl components --count
 
-// To view list of components
+// List available component(s)
 mesheryctl components list
 
-// To view a specific component
-mesheryctl components view [component-name]
-
-// To search for a specific component
+// Search for component(s)
 mesheryctl components search [component-name]
+
+// View a specific component
+mesheryctl components view [component-name]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 && !countFlag {
@@ -121,34 +120,6 @@ func selectComponentPrompt(components []component.ComponentDefinition) component
 
 		return componentArray[i]
 	}
-}
-
-func OutputJson(component interface{}) error {
-	if err := prettifyJson(component); err != nil {
-		// if prettifyJson return error, marshal output in conventional way using json.MarshalIndent
-		// but it doesn't convert unicode to its corresponding HTML string (it is default behavior)
-		// e.g unicode representation of '&' will be printed as '\u0026'
-		if output, err := json.MarshalIndent(component, "", "  "); err != nil {
-			return errors.Wrap(err, "failed to format output in JSON")
-		} else {
-			fmt.Print(string(output))
-		}
-	}
-	return nil
-}
-
-// prettifyJson takes a model.ModelDefinition struct as input, marshals it into a nicely formatted JSON representation,
-// and prints it to standard output with proper indentation and without escaping HTML entities.
-func prettifyJson(component interface{}) error {
-	// Create a new JSON encoder that writes to the standard output (os.Stdout).
-	enc := json.NewEncoder(os.Stdout)
-	// Configure the JSON encoder settings.
-	// SetEscapeHTML(false) prevents special characters like '<', '>', and '&' from being escaped to their HTML entities.
-	enc.SetEscapeHTML(false)
-	enc.SetIndent("", "  ")
-
-	// Any errors during the encoding process will be returned as an error.
-	return enc.Encode(component)
 }
 
 func init() {

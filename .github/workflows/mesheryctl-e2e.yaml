@@ -24,8 +24,13 @@ on:
 jobs:
   manual-bats:
     name: Manual BATS Test
+<<<<<<< HEAD
     runs-on: ubuntu-22.04
     if: ${{ github.event_name == 'workflow_dispatch' && inputs.bats_test == 'true' }}
+=======
+    runs-on: ubuntu-24.04
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.bats_test == 'true' }} 
+>>>>>>> cd8ffce64fafb5502a8b13a99b271a39a4974f0d
     strategy:
       fail-fast: false
       matrix:
