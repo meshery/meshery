@@ -47,15 +47,16 @@
     "model": {
       "version": "v1.118.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#4285F4",
     "shape": "rectangle",
     "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}.cls-1,.cls-2{fill-rule:evenodd;}.cls-2,.cls-5{fill:#aecbfa;}.cls-3{mask:url(#mask);}.cls-4{fill:#4285f4;}.cls-6{fill:#669df6;}\u003c/style\u003e\u003cmask id=\"mask\" x=\"9.33\" y=\"5.33\" width=\"5.33\" height=\"16.67\" maskUnits=\"userSpaceOnUse\"\u003e\u003cg \u003e\u003cpolygon id=\"path-1\" class=\"cls-1\" points=\"12 22 11.17 21.23 11.17 6.67 12.83 6.67 12.83 21.23 12 22\"/\u003e\u003c/g\u003e\u003c/mask\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg \u003e\u003cg \u003e\u003cg \u003e\u003cg data-name=\"Mask\"\u003e\u003cpolygon class=\"cls-2\" points=\"12 22 11.17 21.23 11.17 6.67 12.83 6.67 12.83 21.23 12 22\"/\u003e\u003c/g\u003e\u003cg class=\"cls-3\"\u003e\u003cpath class=\"cls-4\" d=\"M12,8a2.67,2.67,0,0,0,2.67-2.67H9.33A2.67,2.67,0,0,0,12,8Z\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003cpolygon id=\"Line-2\" class=\"cls-4\" points=\"12.83 18.87 11.17 18.87 11.17 17.33 12.83 17.33 12.83 18.87\"/\u003e\u003cpolygon class=\"cls-4\" points=\"12.83 10.87 11.17 10.87 11.17 9.33 12.83 9.33 12.83 10.87\"/\u003e\u003ccircle class=\"cls-5\" cx=\"12\" cy=\"4.67\" r=\"2.67\"/\u003e\u003cpath class=\"cls-6\" d=\"M16.67,10.17H6.83a1.17,1.17,0,0,0,0,2.33H10v1.67H6.83a2.84,2.84,0,0,1,0-5.67h9.84V7.33l3.33,2-3.33,2Z\"/\u003e\u003cpath class=\"cls-6\" d=\"M12,7.33a2.67,2.67,0,0,0,2.67-2.66H9.33A2.67,2.67,0,0,0,12,7.33Z\"/\u003e\u003cpath class=\"cls-6\" d=\"M13.36,16.5H14a1.17,1.17,0,0,0,0-2.33H12.83V12.5H14a2.84,2.84,0,0,1,0,5.67H10v1.16l-3.33-2,3.33-2V16.5Z\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}.cls-1,.cls-2{fill-rule:evenodd;}.cls-2,.cls-5{fill:#fff;}.cls-3{mask:url(#mask);}.cls-4{fill:#fff;}.cls-6{fill:#fff;}\u003c/style\u003e\u003cmask id=\"mask\" x=\"9.33\" y=\"5.33\" width=\"5.33\" height=\"16.67\" maskUnits=\"userSpaceOnUse\"\u003e\u003cg \u003e\u003cpolygon id=\"path-1\" class=\"cls-1\" points=\"12 22 11.17 21.23 11.17 6.67 12.83 6.67 12.83 21.23 12 22\"/\u003e\u003c/g\u003e\u003c/mask\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg \u003e\u003cg \u003e\u003cg \u003e\u003cg data-name=\"Mask\"\u003e\u003cpolygon class=\"cls-2\" points=\"12 22 11.17 21.23 11.17 6.67 12.83 6.67 12.83 21.23 12 22\"/\u003e\u003c/g\u003e\u003cg class=\"cls-3\"\u003e\u003cpath class=\"cls-4\" d=\"M12,8a2.67,2.67,0,0,0,2.67-2.67H9.33A2.67,2.67,0,0,0,12,8Z\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003cpolygon id=\"Line-2\" class=\"cls-4\" points=\"12.83 18.87 11.17 18.87 11.17 17.33 12.83 17.33 12.83 18.87\"/\u003e\u003cpolygon class=\"cls-4\" points=\"12.83 10.87 11.17 10.87 11.17 9.33 12.83 9.33 12.83 10.87\"/\u003e\u003ccircle class=\"cls-5\" cx=\"12\" cy=\"4.67\" r=\"2.67\"/\u003e\u003cpath class=\"cls-6\" d=\"M16.67,10.17H6.83a1.17,1.17,0,0,0,0,2.33H10v1.67H6.83a2.84,2.84,0,0,1,0-5.67h9.84V7.33l3.33,2-3.33,2Z\"/\u003e\u003cpath class=\"cls-6\" d=\"M12,7.33a2.67,2.67,0,0,0,2.67-2.66H9.33A2.67,2.67,0,0,0,12,7.33Z\"/\u003e\u003cpath class=\"cls-6\" d=\"M13.36,16.5H14a1.17,1.17,0,0,0,0-2.33H12.83V12.5H14a2.84,2.84,0,0,1,0,5.67H10v1.16l-3.33-2,3.33-2V16.5Z\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e\n"
   },
   "capabilities": [
@@ -176,15 +177,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "healthcare.cnrm.cloud.google.com/v1alpha1",
     "kind": "HealthcareConsentStore",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"dataset\": {\n     \"description\": \"Immutable. Identifies the dataset addressed by this request. Must be in the format\\n'projects/{project}/locations/{location}/datasets/{dataset}'.\",\n     \"type\": \"string\"\n    },\n    \"defaultConsentTtl\": {\n     \"description\": \"Default time to live for consents in this store. Must be at least 24 hours. Updating this field will not affect the expiration time of existing consents.\\n\\nA duration in seconds with up to nine fractional digits, terminated by 's'. Example: \\\"3.5s\\\".\",\n     \"type\": \"string\"\n    },\n    \"enableConsentCreateOnUpdate\": {\n     \"description\": \"If true, [consents.patch] [google.cloud.healthcare.v1.consent.UpdateConsent] creates the consent if it does not already exist.\",\n     \"type\": \"boolean\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"dataset\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Healthcare Consent Store\",\n \"type\": \"object\"\n}",
-    "version": "healthcare.cnrm.cloud.google.com/v1alpha1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"dataset\": {\n     \"description\": \"Immutable. Identifies the dataset addressed by this request. Must be in the format\\n'projects/{project}/locations/{location}/datasets/{dataset}'.\",\n     \"type\": \"string\"\n    },\n    \"defaultConsentTtl\": {\n     \"description\": \"Default time to live for consents in this store. Must be at least 24 hours. Updating this field will not affect the expiration time of existing consents.\\n\\nA duration in seconds with up to nine fractional digits, terminated by 's'. Example: \\\"3.5s\\\".\",\n     \"type\": \"string\"\n    },\n    \"enableConsentCreateOnUpdate\": {\n     \"description\": \"If true, [consents.patch] [google.cloud.healthcare.v1.consent.UpdateConsent] creates the consent if it does not already exist.\",\n     \"type\": \"boolean\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"dataset\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Healthcare Consent Store\",\n \"type\": \"object\"\n}"
   }
 }

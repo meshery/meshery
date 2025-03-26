@@ -45,16 +45,17 @@
     "model": {
       "version": "3.3.0-SNAPSHOT.14"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -175,15 +176,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "edp.epam.com/v1alpha1",
     "kind": "NexusBlobStore",
-    "schema": "{\n \"description\": \"NexusBlobStore is the Schema for the nexusblobstores API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NexusBlobStoreSpec defines the desired state of NexusBlobStore.\",\n   \"properties\": {\n    \"file\": {\n     \"description\": \"File type blobstore.\",\n     \"properties\": {\n      \"path\": {\n       \"description\": \"The path to the blobstore contents.\\nThis can be an absolute path to anywhere on the system Nexus Repository Manager has access to it or can be a path relative to the sonatype-work directory.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"Name of the BlobStore.\\nName should be unique across all BlobStores.\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"nexusRef\": {\n     \"description\": \"NexusRef is a reference to Nexus custom resource.\",\n     \"properties\": {\n      \"kind\": {\n       \"default\": \"Nexus\",\n       \"description\": \"Kind specifies the kind of the Nexus resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name specifies the name of the Nexus resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"softQuota\": {\n     \"description\": \"Settings to control the soft quota.\",\n     \"properties\": {\n      \"limit\": {\n       \"description\": \"The limit in MB.\",\n       \"format\": \"int64\",\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      },\n      \"type\": {\n       \"description\": \"Type of the soft quota.\",\n       \"enum\": [\n        \"spaceRemainingQuota\",\n        \"spaceUsedQuota\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"nexusRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Nexus Blob Store\",\n \"type\": \"object\"\n}",
-    "version": "edp.epam.com/v1alpha1"
+    "schema": "{\n \"description\": \"NexusBlobStore is the Schema for the nexusblobstores API.\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"NexusBlobStoreSpec defines the desired state of NexusBlobStore.\",\n   \"properties\": {\n    \"file\": {\n     \"description\": \"File type blobstore.\",\n     \"properties\": {\n      \"path\": {\n       \"description\": \"The path to the blobstore contents.\\nThis can be an absolute path to anywhere on the system Nexus Repository Manager has access to it or can be a path relative to the sonatype-work directory.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"name\": {\n     \"description\": \"Name of the BlobStore.\\nName should be unique across all BlobStores.\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Value is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"nexusRef\": {\n     \"description\": \"NexusRef is a reference to Nexus custom resource.\",\n     \"properties\": {\n      \"kind\": {\n       \"default\": \"Nexus\",\n       \"description\": \"Kind specifies the kind of the Nexus resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name specifies the name of the Nexus resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"name\"\n     ],\n     \"type\": \"object\"\n    },\n    \"softQuota\": {\n     \"description\": \"Settings to control the soft quota.\",\n     \"properties\": {\n      \"limit\": {\n       \"description\": \"The limit in MB.\",\n       \"format\": \"int64\",\n       \"minimum\": 1,\n       \"type\": \"integer\"\n      },\n      \"type\": {\n       \"description\": \"Type of the soft quota.\",\n       \"enum\": [\n        \"spaceRemainingQuota\",\n        \"spaceUsedQuota\"\n       ],\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"required\": [\n    \"name\",\n    \"nexusRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Nexus Blob Store\",\n \"type\": \"object\"\n}"
   }
 }

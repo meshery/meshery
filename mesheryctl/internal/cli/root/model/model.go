@@ -51,10 +51,10 @@ var ModelCmd = &cobra.Command{
 mesheryctl model --count
 
 // Export registred models
-mesheeryctl model export [model-name]
+mesheryctl model export [model-name]
 
 // Generate model(s)
-mesheeryctl model export [model-name]
+mesheryctl model export [model-name]
 
 // Import model(s)
 mesheryctl model import -f [Uri]

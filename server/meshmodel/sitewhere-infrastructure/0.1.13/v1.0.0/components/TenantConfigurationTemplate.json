@@ -30,6 +30,7 @@
       "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
+    "subCategory": "",
     "metadata": {
       "source_uri": "https://sitewhere.io/helm-charts/sitewhere-infrastructure-0.1.13.tgz",
       "svgColor": "",
@@ -38,16 +39,17 @@
     "model": {
       "version": "0.1.13"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -168,15 +170,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "templates.sitewhere.io/v1alpha4",
     "kind": "TenantConfigurationTemplate",
-    "schema": "{\n \"description\": \"TenantConfigurationTemplate is the Schema for the tenantconfigurations API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TenantConfigurationTemplateSpec defines the desired state of TenantConfigurationTemplate\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Description is the name of the tenant configuration template\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"Name is the name of the tenant configuration template\",\n     \"type\": \"string\"\n    },\n    \"tenantEngineTemplates\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"TenantEngineTemplates is the name of the tenant configuration template\",\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Tenant Configuration Template\",\n \"type\": \"object\"\n}",
-    "version": "templates.sitewhere.io/v1alpha4"
+    "schema": "{\n \"description\": \"TenantConfigurationTemplate is the Schema for the tenantconfigurations API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"TenantConfigurationTemplateSpec defines the desired state of TenantConfigurationTemplate\",\n   \"properties\": {\n    \"description\": {\n     \"description\": \"Description is the name of the tenant configuration template\",\n     \"type\": \"string\"\n    },\n    \"name\": {\n     \"description\": \"Name is the name of the tenant configuration template\",\n     \"type\": \"string\"\n    },\n    \"tenantEngineTemplates\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"description\": \"TenantEngineTemplates is the name of the tenant configuration template\",\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Tenant Configuration Template\",\n \"type\": \"object\"\n}"
   }
 }

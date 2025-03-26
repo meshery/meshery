@@ -40,16 +40,17 @@
     "model": {
       "version": "2.5.0-beta2"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -170,15 +171,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "storage.hpe.com/v1",
     "kind": "HPESnapshotGroupInfo",
-    "schema": "{\n \"properties\": {\n  \"hpeSnapshotGroupInfos\": {\n   \"description\": \"List of HPE snapshot groups created for 3PAR/Primera arrays.\",\n   \"items\": {\n    \"properties\": {\n     \"record\": {\n      \"description\": \"Metadata for the volume group\",\n      \"type\": \"object\"\n     },\n     \"snapshotVolumes\": {\n      \"description\": \"Snapshot volumes that are part of this snapshot group\",\n      \"items\": {\n       \"properties\": {\n        \"snapshotId\": {\n         \"description\": \"Snapshot volume Id\",\n         \"type\": \"string\"\n        },\n        \"snapshotName\": {\n         \"description\": \"Snapshot volume name\",\n         \"type\": \"string\"\n        },\n        \"srcVolumeId\": {\n         \"description\": \"ID of the volume that is the source of this snapshot volume\",\n         \"type\": \"string\"\n        },\n        \"srcVolumeName\": {\n         \"description\": \"Name of the volume that is the source of this snapshot volume\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"type\": \"object\"\n     },\n     \"uuid\": {\n      \"description\": \"The UUID of the node.\",\n      \"type\": \"string\"\n     }\n    },\n    \"type\": \"object\"\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"HPE Snapshot Group Info\",\n \"type\": \"object\"\n}",
-    "version": "storage.hpe.com/v1"
+    "schema": "{\n \"properties\": {\n  \"hpeSnapshotGroupInfos\": {\n   \"description\": \"List of HPE snapshot groups created for 3PAR/Primera arrays.\",\n   \"items\": {\n    \"properties\": {\n     \"record\": {\n      \"description\": \"Metadata for the volume group\",\n      \"type\": \"object\"\n     },\n     \"snapshotVolumes\": {\n      \"description\": \"Snapshot volumes that are part of this snapshot group\",\n      \"items\": {\n       \"properties\": {\n        \"snapshotId\": {\n         \"description\": \"Snapshot volume Id\",\n         \"type\": \"string\"\n        },\n        \"snapshotName\": {\n         \"description\": \"Snapshot volume name\",\n         \"type\": \"string\"\n        },\n        \"srcVolumeId\": {\n         \"description\": \"ID of the volume that is the source of this snapshot volume\",\n         \"type\": \"string\"\n        },\n        \"srcVolumeName\": {\n         \"description\": \"Name of the volume that is the source of this snapshot volume\",\n         \"type\": \"string\"\n        }\n       },\n       \"type\": \"object\"\n      },\n      \"type\": \"object\"\n     },\n     \"uuid\": {\n      \"description\": \"The UUID of the node.\",\n      \"type\": \"string\"\n     }\n    },\n    \"type\": \"object\"\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"HPE Snapshot Group Info\",\n \"type\": \"object\"\n}"
   }
 }

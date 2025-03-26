@@ -97,6 +97,14 @@ cd bats-core
 
 Some tests could use bats libraires as helpers to create the tests suite.
 
+#### Setup Dependencies
+
+There are needed dependencies to test whether the server is up and running. Resolve them by navigating to `meshery/mesheryctl` directory and then executing:
+
+```bash
+  make e2e-libs
+```
+
 ## Writing End-to-End Test Cases
 
 Once all prerequisites have been met, you are setup to run, add, update new test cases.To keep the development of tests consistents and maintainable, we have put some guidance on implementation process which are describe above.
@@ -175,6 +183,35 @@ Switch to the directory containing the test file and execute:
 
 ```bash
 MESHERYCTL_BIN=<path to mesheryctl binary> bats <file_name>.bats
+```
+
+**More on running tests locally**
+
+Breaking down the execution of `make e2e`, two commands are executed before subsequent commands are run; 
+- `make`: which builds the binary and
+- `e2e-libs`: which gets needed dependencies for running the tests.
+
+These steps can become redundant if you're not running the end-to-end tests for the first time.
+
+It is important to point out that there are other ways to run end-to-end tests locally.
+To use these, ensure you are in the `meshery/mesheryctl/tets/e2e` directory.
+
+**Run tests with already built binary**
+
+This excludes the need to build the binary everytime there is an attempt to run all the tests.
+
+```bash
+  bash run_tests_local.sh
+```
+
+NB: This works if there is an existing `mesheryctl` binary. If there isn't, the binary will be built. 
+
+**Enforce rebuilding the  binary**
+
+This involves parsing a flag for the binry to be built whether it exists or not. This comes in handy when you have local changes and possibly will like to test.
+
+```bash
+  bash run_tests_local.sh -b
 ```
 
 ### Find Tests here

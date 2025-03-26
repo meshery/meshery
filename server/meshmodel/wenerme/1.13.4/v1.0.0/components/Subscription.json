@@ -47,16 +47,17 @@
     "model": {
       "version": "1.13.4"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -177,15 +178,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "dapr.io/v1alpha1",
     "kind": "Subscription",
-    "schema": "{\n \"description\": \"Subscription describes an pub/sub event subscription.\",\n \"properties\": {\n  \"scopes\": {\n   \"items\": {\n    \"type\": \"string\"\n   },\n   \"type\": \"array\"\n  },\n  \"spec\": {\n   \"description\": \"SubscriptionSpec is the spec for an event subscription.\",\n   \"properties\": {\n    \"bulkSubscribe\": {\n     \"description\": \"Represents bulk subscribe properties\",\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"maxAwaitDurationMs\": {\n       \"type\": \"integer\"\n      },\n      \"maxMessagesCount\": {\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"enabled\"\n     ],\n     \"type\": \"object\"\n    },\n    \"deadLetterTopic\": {\n     \"type\": \"string\"\n    },\n    \"metadata\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"pubsubname\": {\n     \"type\": \"string\"\n    },\n    \"route\": {\n     \"type\": \"string\"\n    },\n    \"topic\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"pubsubname\",\n    \"route\",\n    \"topic\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Subscription\",\n \"type\": \"object\"\n}",
-    "version": "dapr.io/v1alpha1"
+    "schema": "{\n \"description\": \"Subscription describes an pub/sub event subscription.\",\n \"properties\": {\n  \"scopes\": {\n   \"items\": {\n    \"type\": \"string\"\n   },\n   \"type\": \"array\"\n  },\n  \"spec\": {\n   \"description\": \"SubscriptionSpec is the spec for an event subscription.\",\n   \"properties\": {\n    \"bulkSubscribe\": {\n     \"description\": \"Represents bulk subscribe properties\",\n     \"properties\": {\n      \"enabled\": {\n       \"type\": \"boolean\"\n      },\n      \"maxAwaitDurationMs\": {\n       \"type\": \"integer\"\n      },\n      \"maxMessagesCount\": {\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"enabled\"\n     ],\n     \"type\": \"object\"\n    },\n    \"deadLetterTopic\": {\n     \"type\": \"string\"\n    },\n    \"metadata\": {\n     \"additionalProperties\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"object\"\n    },\n    \"pubsubname\": {\n     \"type\": \"string\"\n    },\n    \"route\": {\n     \"type\": \"string\"\n    },\n    \"topic\": {\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"pubsubname\",\n    \"route\",\n    \"topic\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Subscription\",\n \"type\": \"object\"\n}"
   }
 }
