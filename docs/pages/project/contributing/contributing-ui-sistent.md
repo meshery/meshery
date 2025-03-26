@@ -67,16 +67,16 @@ export default MyComponent;
 Let's start with a few of the common terms that we will come across frequently, as understanding what they mean will inform us of applicable use cases and proper procedures that should not be overlooked.
 
 - **Theme:**
-  A theme provides a cohesive and consistent look and feel for a product, achieved through harmonious color palettes, legible fonts, and layout patterns. Sistent specifies both light and dark themes.
+A theme provides a cohesive and consistent look and feel for a product, achieved through harmonious color palettes, legible fonts, and layout patterns. Sistent specifies both light and dark themes.
 
 - **Value:**
-  A value is a unique visual attribute assigned to a token via themes, such as hex codes or RGBA values, used to highlight specific colors. Avoid referencing exact values directly to ensure consistency; instead, use tokens to manage and implement reusable values.
+A value is a unique visual attribute assigned to a token via themes, such as hex codes or RGBA values, used to highlight specific colors. Avoid referencing exact values directly to ensure consistency; instead, use tokens to manage and implement reusable values.
 
 - **Tokens:**
-  Tokens serve as a shared language between design and development, detailing how to build user interfaces. Tokens represent context (background, text, component), role (success, warning, brand, inverse), and modifiers (secondary, tertiary, hover) derived from the [color palette](https://github.com/layer5io/sistent/blob/master/src/theme/palette.ts).
+Tokens serve as a shared language between design and development, detailing how to build user interfaces. Tokens represent context (background, text, component), role (success, warning, brand, inverse), and modifiers (secondary, tertiary, hover) derived from the [color palette](https://github.com/layer5io/sistent/blob/master/src/theme/palette.ts).
 
 - **Role:**
-  Roles specify the context for applying colors. Different roles can share the same value but will have different use cases due to the token structure. These values can vary depending on the current theme.
+Roles specify the context for applying colors. Different roles can share the same value but will have different use cases due to the token structure. These values can vary depending on the current theme.
 
 #### How to use these tokens/colors from Sistent theme
 
@@ -84,11 +84,10 @@ Let's start with a few of the common terms that we will come across frequently, 
 - Utilize the `useTheme` hook to access theme properties and apply them to your components, such as setting the background style of the `Button`.
 
 ```javascript
-import { Button, useTheme } from "@layer5/sistent";
+import {Button, useTheme} from "@layer5/sistent";
 
 function MyComponent() {
   const theme = useTheme();
-
   return (
     <div>
       <Button
@@ -96,7 +95,7 @@ function MyComponent() {
         onClick={onClick}
         style={{
           background: theme.palette.background.default,
-          color: theme.palette.text.secondary,
+          text: theme.palette.text.secondary,
         }}
       >
         {/* Text to display */}
