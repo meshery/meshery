@@ -3,16 +3,8 @@
 
 install_mesheryctl() {
     echo "start: Install mesheryctl"
-    curl -L https://meshery.io/install -s | DEPLOY_MESHERY=false bash -
+    curl -L https://meshery.io/install -s | PLATFORM=$1 bash -
     echo "done: Install mesheryctl"
-}
-
-
-
-start_meshery() {
-    platform="$1"
-    echo "start: meshery server start for platform $platform"
-    mesheryctl system start -p "$platform"
 }
 
 
@@ -31,8 +23,8 @@ create_auth_file() {
 main() {
     echo -e "### start: Test environment setup ###\n"
 
-    install_mesheryctl
-    start_meshery "$MESHERY_PLATFORM" && create_auth_file 
+    install_mesheryctl "$MESHERY_PLATFORM"
+    create_auth_file 
     
     export MESHERYCTL_BIN="mesheryctl"
     export MESHERY_CONFIG_FILE_PATH="${HOME}/.meshery/config.yaml"
