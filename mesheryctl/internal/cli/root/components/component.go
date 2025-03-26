@@ -41,23 +41,23 @@ var (
 	countFlag      bool
 )
 
-// ComponentsCmd represents the mesheryctl components command
-var ComponentsCmd = &cobra.Command{
-	Use:   "components",
+// ComponentCmd represents the mesheryctl component command
+var ComponentCmd = &cobra.Command{
+	Use:   "component",
 	Short: "Manage components",
 	Long:  "List, search and view component(s) and detailed informations",
 	Example: `
 // Display number of available components in Meshery
-mesheryctl components --count
+mesheryctl component --count
 
 // List available component(s)
-mesheryctl components list
+mesheryctl component list
 
 // Search for component(s)
-mesheryctl components search [component-name]
+mesheryctl component search [component-name]
 
 // View a specific component
-mesheryctl components view [component-name]
+mesheryctl component view [component-name]
 	`,
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) == 0 && !countFlag {
@@ -81,7 +81,7 @@ mesheryctl components view [component-name]
 		}
 
 		if ok := utils.IsValidSubcommand(availableSubcommands, args[0]); !ok {
-			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl components --help' to display usage guide.\n", args[0]), "model"))
+			return errors.New(utils.SystemModelSubError(fmt.Sprintf("'%s' is an invalid subcommand. Please provide required options from [view]. Use 'mesheryctl component --help' to display usage guide.\n", args[0]), "model"))
 		}
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -123,8 +123,8 @@ func selectComponentPrompt(components []component.ComponentDefinition) component
 }
 
 func init() {
-	ComponentsCmd.AddCommand(availableSubcommands...)
-	ComponentsCmd.Flags().BoolVarP(&countFlag, "count", "", false, "(optional) Get the number of components in total")
+	ComponentCmd.AddCommand(availableSubcommands...)
+	ComponentCmd.Flags().BoolVarP(&countFlag, "count", "", false, "(optional) Get the number of components in total")
 }
 
 func listComponents(cmd *cobra.Command, url string, displayCountOnly bool) error {
