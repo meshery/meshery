@@ -41,8 +41,8 @@ jobs:
         uses: bats-core/bats-action@3.0.0
         with:
           support-path: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers/bats-support"
-          assert-path: "${{ github.workspace }}/mesheryctl/tests/e2e/helperstests/bats-assert"
-          detik-path: "${{ github.workspace }}/mesheryctl/tests/e2e/helperstests/bats-detik"
+          assert-path: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers/bats-assert"
+          detik-path: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers/bats-detik"
       - uses: actions/setup-go@v5.3.0
         with:
           go-version: ${{ matrix.go }}
