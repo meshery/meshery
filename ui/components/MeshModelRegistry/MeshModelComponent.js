@@ -40,7 +40,7 @@ const MeshModelComponent_ = ({
   settingsRouter,
 }) => {
   const router = useRouter();
-  const { handleChangeSelectedTab } = settingsRouter(router);
+  const { handleChangeSelectedTab, selectedTab } = settingsRouter(router);
   const [resourcesDetail, setResourcesDetail] = useState([]);
   const { searchQuery, selectedPageSize } = useMeshModelComponentRouter();
   const [page, setPage] = useState({
@@ -51,7 +51,7 @@ const MeshModelComponent_ = ({
   });
   const [searchText, setSearchText] = useState(searchQuery);
   const [rowsPerPage, setRowsPerPage] = useState(selectedPageSize);
-  const [view, setView] = useState(MODELS);
+  const [view, setView] = useState(selectedTab);
   const [showDetailsData, setShowDetailsData] = useState({
     type: '', // Type of selected data eg. (models, components)
     data: {},
