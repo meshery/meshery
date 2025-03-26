@@ -67,14 +67,7 @@ jobs:
         run: echo "date=date +'%Y-%m-%d-%H.%M.%S'" >> $GITHUB_OUTPUT
       - name: Run mesheryctl end2end tests
         run: |
-          echo $SUPPORT_DESTDIR 
-          ls $SUPPORT_DESTDIR
-
-          $ASSERT_DESTDIR
-          ls $ASSERT_DESTDIR
-
-          $DETIK_DESTDIR
-          ls $DETIK_DESTDIR
+          ls helpers
 
           # bash run_tests.bash
         shell: bash
