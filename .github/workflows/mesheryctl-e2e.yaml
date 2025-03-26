@@ -74,8 +74,8 @@ jobs:
           MESHERY_PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
           MESHERY_PLATFORM: ${{ matrix.platform }}
           SUPPORT_DESTDIR: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers/bats-support"
-          ASSERT_DESTDIR: "${{ github.workspace }}/mesheryctl/tests/e2e/helperstests/bats-assert"
-          DETIK_DESTDIR: "${{ github.workspace }}/mesheryctl/tests/e2e/helperstests/bats-detik"
+          ASSERT_DESTDIR: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers/bats-assert"
+          DETIK_DESTDIR: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers/bats-detik"
 
   manual-test:
     name: Manual e2e Test
