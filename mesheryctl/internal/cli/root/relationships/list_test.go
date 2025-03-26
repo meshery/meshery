@@ -1,15 +1,12 @@
 package relationships
 
 import (
-	"flag"
 	"path/filepath"
 	"runtime"
 	"testing"
 
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 )
-
-var update = flag.Bool("update", false, "update golden files")
 
 func TestList(t *testing.T) {
 	// get current directory
