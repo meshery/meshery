@@ -64,7 +64,7 @@ jobs:
         run: echo "date=date +'%Y-%m-%d-%H.%M.%S'" >> $GITHUB_OUTPUT
       - name: Run mesheryctl end2end tests
         run: |
-          cat >> helpers.bash <<< EOF
+          cat >> helpers/helpers.bash<<-EOF
           _tests_helper() {
               export BATS_LIB_PATH=${BATS_LIB_PATH:-"/usr/lib"}
               bats_load_library bats-support
