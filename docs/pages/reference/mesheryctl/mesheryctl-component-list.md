@@ -1,59 +1,51 @@
 ---
 layout: default
-title: mesheryctl-components
-permalink: reference/mesheryctl/components
-redirect_from: reference/mesheryctl/components/
+title: mesheryctl-component-list
+permalink: reference/mesheryctl/component/list
+redirect_from: reference/mesheryctl/component/list/
 type: reference
 display-title: "false"
 language: en
-command: components
-subcommand: nil
+command: component
+subcommand: list
 ---
 
-# mesheryctl components
+# mesheryctl component list
 
-Manage components
+List registered components
 
 ## Synopsis
 
-List, search and view component(s) and detailed informations
+List all components registered in Meshery Server
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl components [flags]
+mesheryctl component list [flags]
 
 </div>
 </pre> 
 
 ## Examples
 
-Display number of available components in Meshery
+View list of components
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl components --count
+mesheryctl component list
 
 </div>
 </pre> 
 
-List available component(s)
+View list of components with specified page number (25 components per page)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl components list
+mesheryctl component list --page 2
 
 </div>
 </pre> 
 
-Search for component(s)
+To view the number of components present in Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl component search [component-name]
-
-</div>
-</pre> 
-
-View a specific component
-<pre class='codeblock-pre'>
-<div class='codeblock'>
-mesheryctl component view [component-name]
+mesheryctl component list --count
 
 </div>
 </pre> 
@@ -62,8 +54,9 @@ mesheryctl component view [component-name]
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-      --count   (optional) Get the number of components in total
-  -h, --help    help for components
+  -c, --count      (optional) Display count only
+  -h, --help       help for list
+  -p, --page int   (optional) List next set of components with --page (default = 1) (default 1)
 
 </div>
 </pre>
@@ -79,9 +72,5 @@ mesheryctl component view [component-name]
 </pre>
 
 ## See Also
-
-* [mesheryctl components list](/reference/mesheryctl/components/list)
-* [mesheryctl components search](/reference/mesheryctl/components/search)
-* [mesheryctl components view](/reference/mesheryctl/components/view)
 
 Go back to [command reference index](/reference/mesheryctl/), if you want to add content manually to the CLI documentation, please refer to the [instruction](/project/contributing/contributing-cli#preserving-manually-added-documentation) for guidance.
