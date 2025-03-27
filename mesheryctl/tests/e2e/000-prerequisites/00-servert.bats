@@ -3,7 +3,7 @@
 # tests to ensure the server is up and running
 
 setup() {
-	load "$E2E_HELPERS_PATH/tests_helpers.bash"
+	load "$E2E_HELPERS_PATH/tests_helpers"
 	_tests_helper
 
     DETIK_CLIENT_NAMESPACE="meshery"
