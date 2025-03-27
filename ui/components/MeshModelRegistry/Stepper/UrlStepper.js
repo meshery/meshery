@@ -95,13 +95,17 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
   };
 
   const validateUrl = (url) => {
+    let testUrl;
     if (!url) {
       return false;
     }
 
-    const testUrl = modelProperties.metadata.properties.sourceUri.oneOf.find(
-      (source) => source.title.toLowerCase() === modelSource,
-    ).pattern;
+    if (modelSource === 'github') {
+      testUrl = '^git://github\\.com/[\\w.-]+/[\\w.-]+(/[\\w.-]+/[\\w/-]+)?$';
+    } else if (modelSource === 'artifacthub') {
+      testUrl =
+        '^https:\\/\\/artifacthub\\.io\\/packages\\/(search\\?ts_query_web=[\\w.-]+|[\\w.-]+\\/[\\w.-]+\\/[\\w.-]+)$';
+    }
     return new RegExp(testUrl).test(url);
   };
 
@@ -112,9 +116,9 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
       const isValid = validateUrl(newUrl);
       if (!isValid) {
         setUrlError(
-          modelProperties.metadata.properties.sourceUri.oneOf.find(
-            (source) => source.title.toLowerCase() === modelSource,
-          ).metadata.validationHint,
+          modelSource === 'github'
+            ? 'Invalid GitHub URL. Format: git://github.com/org/repo/branch/path'
+            : 'Invalid ArtifactHub URL. Example: https://artifacthub.io/packages/search?ts_query_web={meshery-operator}',
         );
       } else {
         setUrlError('');
@@ -426,12 +430,12 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                 onChange={(e) => setModelSource(e.target.value.toLowerCase())}
                 style={{ gap: '2rem' }}
               >
-                {modelProperties.metadata.properties.sourceUri.oneOf.map((source, idx) => (
+                {['Artifact Hub', 'GitHub'].map((source, idx) => (
                   <FormControlLabel
                     key={idx}
-                    value={source.title.toLowerCase()}
+                    value={source.toLowerCase()}
                     control={<Radio />}
-                    label={source.title}
+                    label={<>{source}</>}
                   />
                 ))}
               </RadioGroup>
@@ -448,9 +452,11 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
                 helperText={urlError}
                 disabled={!modelSource}
                 placeholder={
-                  modelProperties.metadata.properties.sourceUri.oneOf.find(
-                    (source) => source.title.toLowerCase() === modelSource,
-                  )?.examples[0] || 'Select a source first'
+                  modelSource === 'github'
+                    ? 'git://github.com/cert-manager/cert-manager/master/deploy/crds'
+                    : modelSource === 'artifact hub'
+                      ? 'https://artifacthub.io/packages/search?ts_query_web={model-name}'
+                      : 'Select a source first'
                 }
               />
             </FormControl>
@@ -463,12 +469,12 @@ const UrlStepper = React.memo(({ handleGenerateModal, handleClose }) => {
             <ul>
               <li>
                 <strong>Artifact Hub:</strong> Artifact Hub package URL. For example,{' '}
-                <em>{modelProperties.metadata.properties.sourceUri.oneOf[1].examples[0]}</em>.
+                <em>https://artifacthub.io/packages/search?ts_query_web={'{model-name}'}</em>.
               </li>
               <br />
               <li>
                 <strong>GitHub:</strong> Provide a GitHub repository URL. For example,{' '}
-                <em>{modelProperties.metadata.properties.sourceUri.oneOf[0].examples[0]}</em>.
+                <em>git://github.com/cert-manager/cert-manager/master/deploy/crds</em>.
               </li>
             </ul>
             <p>
