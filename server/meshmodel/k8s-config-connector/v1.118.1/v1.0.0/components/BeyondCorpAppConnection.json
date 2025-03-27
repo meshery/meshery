@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Google Cloud Platform",
@@ -46,15 +47,16 @@
     "model": {
       "version": "v1.118.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#4285F4",
     "shape": "rectangle",
     "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#4285f4;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cpath class=\"cls-1\" d=\"M19.51,6.92a10.43,10.43,0,0,1-1,.92A8.09,8.09,0,0,1,8,19.65H9.75a7.51,7.51,0,0,1-.86-1.3H6.31a8.75,8.75,0,0,1-1-1.19H8.37A10.38,10.38,0,0,1,8,15.85H4.59a8,8,0,0,1-.42-1.19H7.74c-.07-.42-.11-.85-.14-1.3H3.94a6.51,6.51,0,0,1,0-.77v-.43H7.57a11.34,11.34,0,0,1,.08-1.3H4.08a8.16,8.16,0,0,1,.36-1.19h3.4a9.52,9.52,0,0,1,.33-1.3H5.1A8,8,0,0,1,6,7.18H8.61a9.2,9.2,0,0,1,.71-1.31H7.5a8.06,8.06,0,0,1,7.74-.69,10.7,10.7,0,0,0,1.29,3.19s2.93-1.67,3.38-3.44A2.42,2.42,0,0,0,15.23,3.7v.07a9.41,9.41,0,1,0,6.17,8.82A8.71,8.71,0,0,0,19.51,6.92ZM16.5,4a1.14,1.14,0,1,1,.81,1.39h0A1.13,1.13,0,0,1,16.5,4Z\"/\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cpath class=\"cls-1\" d=\"M19.51,6.92a10.43,10.43,0,0,1-1,.92A8.09,8.09,0,0,1,8,19.65H9.75a7.51,7.51,0,0,1-.86-1.3H6.31a8.75,8.75,0,0,1-1-1.19H8.37A10.38,10.38,0,0,1,8,15.85H4.59a8,8,0,0,1-.42-1.19H7.74c-.07-.42-.11-.85-.14-1.3H3.94a6.51,6.51,0,0,1,0-.77v-.43H7.57a11.34,11.34,0,0,1,.08-1.3H4.08a8.16,8.16,0,0,1,.36-1.19h3.4a9.52,9.52,0,0,1,.33-1.3H5.1A8,8,0,0,1,6,7.18H8.61a9.2,9.2,0,0,1,.71-1.31H7.5a8.06,8.06,0,0,1,7.74-.69,10.7,10.7,0,0,0,1.29,3.19s2.93-1.67,3.38-3.44A2.42,2.42,0,0,0,15.23,3.7v.07a9.41,9.41,0,1,0,6.17,8.82A8.71,8.71,0,0,0,19.51,6.92ZM16.5,4a1.14,1.14,0,1,1,.81,1.39h0A1.13,1.13,0,0,1,16.5,4Z\"/\u003e\u003c/g\u003e\u003c/svg\u003e"
   },
   "capabilities": [
@@ -66,7 +68,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -81,7 +82,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -96,7 +96,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -112,7 +111,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -128,7 +126,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -143,7 +140,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -158,7 +154,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -173,7 +168,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -183,15 +177,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "beyondcorp.cnrm.cloud.google.com/v1alpha1",
     "kind": "BeyondCorpAppConnection",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"applicationEndpoint\": {\n     \"description\": \"Address of the remote application endpoint for the BeyondCorp AppConnection.\",\n     \"properties\": {\n      \"host\": {\n       \"description\": \"Hostname or IP address of the remote application endpoint.\",\n       \"type\": \"string\"\n      },\n      \"port\": {\n       \"description\": \"Port of the remote application endpoint.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"host\",\n      \"port\"\n     ],\n     \"type\": \"object\"\n    },\n    \"connectors\": {\n     \"description\": \"List of AppConnectors that are authorised to be associated with this AppConnection.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"displayName\": {\n     \"description\": \"An arbitrary user-provided name for the AppConnection.\",\n     \"type\": \"string\"\n    },\n    \"gateway\": {\n     \"description\": \"Gateway used by the AppConnection.\",\n     \"properties\": {\n      \"appGateway\": {\n       \"description\": \"AppGateway name in following format: projects/{project_id}/locations/{locationId}/appgateways/{gateway_id}.\",\n       \"type\": \"string\"\n      },\n      \"ingressPort\": {\n       \"description\": \"Ingress port reserved on the gateways for this AppConnection, if not specified or zero, the default port is 19443.\",\n       \"type\": \"integer\"\n      },\n      \"type\": {\n       \"description\": \"The type of hosting used by the gateway. Refer to\\nhttps://cloud.google.com/beyondcorp/docs/reference/rest/v1/projects.locations.appConnections#Type_1\\nfor a list of possible values.\",\n       \"type\": \"string\"\n      },\n      \"uri\": {\n       \"description\": \"Server-defined URI for this resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"appGateway\"\n     ],\n     \"type\": \"object\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"region\": {\n     \"description\": \"Immutable. The region of the AppConnection.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"description\": \"Immutable. The type of network connectivity used by the AppConnection. Refer to\\nhttps://cloud.google.com/beyondcorp/docs/reference/rest/v1/projects.locations.appConnections#type\\nfor a list of possible values.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"applicationEndpoint\",\n    \"projectRef\",\n    \"region\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Beyond Corp App Connection\",\n \"type\": \"object\"\n}",
-    "version": "beyondcorp.cnrm.cloud.google.com/v1alpha1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"applicationEndpoint\": {\n     \"description\": \"Address of the remote application endpoint for the BeyondCorp AppConnection.\",\n     \"properties\": {\n      \"host\": {\n       \"description\": \"Hostname or IP address of the remote application endpoint.\",\n       \"type\": \"string\"\n      },\n      \"port\": {\n       \"description\": \"Port of the remote application endpoint.\",\n       \"type\": \"integer\"\n      }\n     },\n     \"required\": [\n      \"host\",\n      \"port\"\n     ],\n     \"type\": \"object\"\n    },\n    \"connectors\": {\n     \"description\": \"List of AppConnectors that are authorised to be associated with this AppConnection.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"displayName\": {\n     \"description\": \"An arbitrary user-provided name for the AppConnection.\",\n     \"type\": \"string\"\n    },\n    \"gateway\": {\n     \"description\": \"Gateway used by the AppConnection.\",\n     \"properties\": {\n      \"appGateway\": {\n       \"description\": \"AppGateway name in following format: projects/{project_id}/locations/{locationId}/appgateways/{gateway_id}.\",\n       \"type\": \"string\"\n      },\n      \"ingressPort\": {\n       \"description\": \"Ingress port reserved on the gateways for this AppConnection, if not specified or zero, the default port is 19443.\",\n       \"type\": \"integer\"\n      },\n      \"type\": {\n       \"description\": \"The type of hosting used by the gateway. Refer to\\nhttps://cloud.google.com/beyondcorp/docs/reference/rest/v1/projects.locations.appConnections#Type_1\\nfor a list of possible values.\",\n       \"type\": \"string\"\n      },\n      \"uri\": {\n       \"description\": \"Server-defined URI for this resource.\",\n       \"type\": \"string\"\n      }\n     },\n     \"required\": [\n      \"appGateway\"\n     ],\n     \"type\": \"object\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"region\": {\n     \"description\": \"Immutable. The region of the AppConnection.\",\n     \"type\": \"string\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The name of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"type\": {\n     \"description\": \"Immutable. The type of network connectivity used by the AppConnection. Refer to\\nhttps://cloud.google.com/beyondcorp/docs/reference/rest/v1/projects.locations.appConnections#type\\nfor a list of possible values.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"applicationEndpoint\",\n    \"projectRef\",\n    \"region\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Beyond Corp App Connection\",\n \"type\": \"object\"\n}"
   }
 }

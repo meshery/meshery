@@ -27,8 +27,10 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
+    "subCategory": "",
     "metadata": {
       "source_uri": "https://devopstales.github.io/helm-charts/trivy-operator-2.5.0.tgz",
       "svgColor": "",
@@ -37,16 +39,17 @@
     "model": {
       "version": "2.5.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -58,7 +61,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -73,7 +75,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -88,7 +89,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -104,7 +104,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -120,7 +119,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -135,7 +133,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -150,7 +147,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -165,7 +161,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -175,15 +170,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": false,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "trivy-operator.devopstales.io/v1",
     "kind": "ClusterScanner",
-    "schema": "{\n \"properties\": {\n  \"crontab\": {\n   \"pattern\": \"^(\\\\d+|\\\\*)(/\\\\d+)?(\\\\s+(\\\\d+|\\\\*)(/\\\\d+)?){4}$\",\n   \"type\": \"string\"\n  },\n  \"integrations\": {\n   \"properties\": {\n    \"defectdojo\": {\n     \"description\": \"DefectDojo integration options\",\n     \"properties\": {\n      \"api_key\": {\n       \"description\": \"Api key for DefectDojo api authentication.\",\n       \"type\": \"string\"\n      },\n      \"host\": {\n       \"description\": \"URL of the DefectDojo server.\",\n       \"type\": \"string\"\n      },\n      \"k8s-cluster-name\": {\n       \"description\": \"Name of the Kubernetes Cluster in defectdojo.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"scanProfileName\": {\n   \"enum\": [\n    \"ack-1.0\",\n    \"aks-1.0\",\n    \"gke-1.0\",\n    \"gke-1.2.0\",\n    \"eks-1.0.1\",\n    \"cis-1.5\",\n    \"cis-1.6\",\n    \"cis-1.20\",\n    \"cis-1.23\",\n    \"rh-0.7\",\n    \"rh-1.0\",\n    \"k3s-cis-1.6-permissive\",\n    \"k3s-cis-1.6-hardened\",\n    \"k3s-cis-1.20-hardened\",\n    \"k3s-cis-1.20-permissive\",\n    \"k3s-cis-1.23-hardened\",\n    \"k3s-cis-1.23-permissive\",\n    \"rke-cis-1.4\",\n    \"rke-cis-1.5-hardened\",\n    \"rke-cis-1.5-permissive\",\n    \"rke-cis-1.6-hardened\",\n    \"rke-cis-1.6-permissive\",\n    \"rke-cis-1.20-hardened\",\n    \"rke-cis-1.20-permissive\",\n    \"rke-cis-1.23-hardened\",\n    \"rke-cis-1.23-permissive\",\n    \"rke2-cis-1.5-hardened\",\n    \"rke2-cis-1.5-permissive\",\n    \"rke2-cis-1.6-hardened\",\n    \"rke2-cis-1.6-permissive\",\n    \"rke2-cis-1.20-hardened\",\n    \"rke2-cis-1.20-permissive\",\n    \"rke2-cis-1.23-hardened\",\n    \"rke2-cis-1.23-permissive\"\n   ],\n   \"type\": \"string\"\n  },\n  \"spec\": {\n   \"format\": \"textarea\",\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Cluster Scanner\",\n \"type\": \"object\"\n}",
-    "version": "trivy-operator.devopstales.io/v1"
+    "schema": "{\n \"properties\": {\n  \"crontab\": {\n   \"pattern\": \"^(\\\\d+|\\\\*)(/\\\\d+)?(\\\\s+(\\\\d+|\\\\*)(/\\\\d+)?){4}$\",\n   \"type\": \"string\"\n  },\n  \"integrations\": {\n   \"properties\": {\n    \"defectdojo\": {\n     \"description\": \"DefectDojo integration options\",\n     \"properties\": {\n      \"api_key\": {\n       \"description\": \"Api key for DefectDojo api authentication.\",\n       \"type\": \"string\"\n      },\n      \"host\": {\n       \"description\": \"URL of the DefectDojo server.\",\n       \"type\": \"string\"\n      },\n      \"k8s-cluster-name\": {\n       \"description\": \"Name of the Kubernetes Cluster in defectdojo.\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    }\n   },\n   \"type\": \"object\"\n  },\n  \"scanProfileName\": {\n   \"enum\": [\n    \"ack-1.0\",\n    \"aks-1.0\",\n    \"gke-1.0\",\n    \"gke-1.2.0\",\n    \"eks-1.0.1\",\n    \"cis-1.5\",\n    \"cis-1.6\",\n    \"cis-1.20\",\n    \"cis-1.23\",\n    \"rh-0.7\",\n    \"rh-1.0\",\n    \"k3s-cis-1.6-permissive\",\n    \"k3s-cis-1.6-hardened\",\n    \"k3s-cis-1.20-hardened\",\n    \"k3s-cis-1.20-permissive\",\n    \"k3s-cis-1.23-hardened\",\n    \"k3s-cis-1.23-permissive\",\n    \"rke-cis-1.4\",\n    \"rke-cis-1.5-hardened\",\n    \"rke-cis-1.5-permissive\",\n    \"rke-cis-1.6-hardened\",\n    \"rke-cis-1.6-permissive\",\n    \"rke-cis-1.20-hardened\",\n    \"rke-cis-1.20-permissive\",\n    \"rke-cis-1.23-hardened\",\n    \"rke-cis-1.23-permissive\",\n    \"rke2-cis-1.5-hardened\",\n    \"rke2-cis-1.5-permissive\",\n    \"rke2-cis-1.6-hardened\",\n    \"rke2-cis-1.6-permissive\",\n    \"rke2-cis-1.20-hardened\",\n    \"rke2-cis-1.20-permissive\",\n    \"rke2-cis-1.23-hardened\",\n    \"rke2-cis-1.23-permissive\"\n   ],\n   \"type\": \"string\"\n  },\n  \"spec\": {\n   \"format\": \"textarea\",\n   \"type\": \"string\"\n  }\n },\n \"title\": \"Cluster Scanner\",\n \"type\": \"object\"\n}"
   }
 }

@@ -184,7 +184,7 @@ func start() error {
 	case "docker":
 		// download the docker-compose.yaml file corresponding to the current version
 		if err := utils.DownloadDockerComposeFile(currCtx, true); err != nil {
-			return ErrDownloadFile(err, utils.DockerComposeFile)
+			return utils.ErrDownloadFile(err, utils.DockerComposeFile)
 		}
 
 		// viper instance used for docker compose
@@ -416,7 +416,7 @@ func start() error {
 		spinner.Start()
 
 		if err := utils.CreateManifestsFolder(); err != nil {
-			utils.Log.Error(ErrCreateManifestsFolder(err))
+			utils.Log.Error(utils.ErrCreateManifestsFolder(err))
 			return err
 		}
 

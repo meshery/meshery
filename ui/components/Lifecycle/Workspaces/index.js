@@ -84,7 +84,7 @@ const Workspaces = ({ organization }) => {
   });
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(10);
-  const [sortOrder, setSortOrder] = useState('');
+  const [sortOrder, setSortOrder] = useState('updated_at desc');
   const [search, setSearch] = useState('');
 
   const [orgId, setOrgId] = useState('');
