@@ -775,7 +775,7 @@ function MesheryFilters({
     },
     {
       name: 'created_at',
-      label: 'Upload Timestamp',
+      label: 'Created At',
       options: {
         filter: false,
         sort: true,
@@ -797,7 +797,7 @@ function MesheryFilters({
     },
     {
       name: 'updated_at',
-      label: 'Update Timestamp',
+      label: 'Updated At',
       options: {
         filter: false,
         sort: true,

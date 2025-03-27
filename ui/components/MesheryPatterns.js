@@ -1009,7 +1009,7 @@ function MesheryPatterns({
     },
     {
       name: 'created_at',
-      label: 'Upload Timestamp',
+      label: 'Created At',
       options: {
         filter: false,
         sort: true,
@@ -1031,7 +1031,7 @@ function MesheryPatterns({
     },
     {
       name: 'updated_at',
-      label: 'Update Timestamp',
+      label: 'Update At',
       options: {
         filter: false,
         sort: true,
