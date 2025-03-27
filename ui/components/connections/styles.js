@@ -102,6 +102,21 @@ export const ChipWrapper = styled(Chip)(({ theme }) => ({
   border: '1px solid rgba(255, 255, 255, 0.23)',
   textTransform: 'lowercase',
   color: theme.palette.text.primary,
+  [theme.breakpoints.down('md')]: {
+    width: '10rem',
+    maxWidth: '10rem',
+    minWidth: '7rem',
+  },
+  [theme.breakpoints.down('sm')]: {
+    width: '8rem',
+    maxWidth: '8rem',
+    minWidth: '6rem',
+  },
+  [theme.breakpoints.down('xs')]: {
+    width: '6rem',
+    maxWidth: '6rem',
+    minWidth: '4rem',
+  },
 }));
 
 const baseChipStyles = {
