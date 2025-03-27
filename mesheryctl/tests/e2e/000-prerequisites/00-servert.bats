@@ -32,7 +32,6 @@ setup() {
 	run verify "there is 1 service named '^meshery-broker$'"
 	[ "$status" -eq 0 ]
 
-
 	run verify "there is 1 service named '^meshery-operator$'"
 	[ "$status" -eq 0 ]
 }

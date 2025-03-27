@@ -30,6 +30,8 @@ main() {
     export MESHERY_CONFIG_FILE_PATH="${HOME}/.meshery/config.yaml"
 	export MESHERY_AUTH_FILE="${HOME}/.meshery/auth.json"
     export E2E_HELPERS_PATH="${E2E_HELPERS_PATH}"
+    export BATS_LIB_PATH="${BATS_LIB_PATH}"
+
 
     echo -e "\nCreate temp directory for test data"
     TEMP_DATA_DIR=`mktemp -d`
