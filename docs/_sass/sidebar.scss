@@ -15,14 +15,14 @@
     z-index: 9;
     display: none;
     @media (max-width: 75em) {
-      margin-top: 3rem;
       display: block;
     }
   }
   @media (max-width: 75em) {
-    margin-top: 0vh;
-    transform: translateX(calc(-100% + 2rem));
     position: fixed;
+    top: var(--navbar-height);
+    left: 0;
+    transform: translateX(calc(-100% + 2rem));
     display: flex;
   }
 
@@ -114,7 +114,6 @@
         width: 100%;
         margin: 2rem 0 1rem;
         position: relative;
-        top: 0;
         z-index: 10;
       }
 
