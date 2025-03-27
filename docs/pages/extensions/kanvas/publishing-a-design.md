@@ -52,7 +52,7 @@ Once a design is submitted for publishing, it goes through an approval workflow 
 - **Admin submissions:** Published immediately.  
 - **User submissions:** Enter a "Pending Review" state.
 
-Regardless of approval or rejection, submitters will receive an email notification with the decision.
+Submissions in the “Pending Review” state will remain unpublished until they are manually reviewed and either approved or rejected by an Organization Admin or Provider Admin. This review process may take some time depending on the availability of reviewers. Regardless of approval or rejection, submitters will receive an email notification with the decision.
 
 <a href="/assets/img/kanvas/approval-queue.png">
   <img src="/assets/img/kanvas/approval-queue.png" style="width:50%; height:auto;" alt="Approval Queue">
@@ -80,7 +80,7 @@ A design transitions through multiple states from creation to publication. The d
   <img src="/assets/img/kanvas/Publishing-flow.svg" style="width:50%; height:auto;" alt="Publishing Flow">
 </a>
 
-#### State Transitions Overview
+#### Phases of Publishing Process
 - **Pre-Publish:** Users freely create and edit designs.  
 - **Pending Review:** Submitted designs undergo an approval process.  
 - **Published:** Approved designs are locked and listed publicly.  
@@ -101,10 +101,12 @@ A design transitions through multiple states from creation to publication. The d
 
 ### 3. Permission Controls
 
-| **Operation**       | **Creator** | **Admin** | **Regular User** | **Guest** |
-| ------------------- | ----------- | ---------------------- | ---------------- | --------- |
-| Edit Pending Design | ✔           | ✔                      | ✔                | ✔         |
-| Unpublish           | ✘           | ✔                      | ✘                | ✘         |
+| **Operation**       | **Guest** | **Regular User** | **Owner** | **Admin** |
+|---------------------|-----------|------------------|-----------|------------------------|
+| Edit Pending Design | ✔         | ✔                | ✔         |  ✔                  |
+| Submit for Review     | ✔         | ✔                | ✔         |✔                  |
+| Unpublish           | ✘         | ✘                | ✘         | ✔                  |
+
 **Key Notes:**
 - Catalog approval queues are org-specific—only members of an organization can see its pending approvals, unless the user is a Admin.
 - The "Unpublish" button is visible to all users except Guests. However, only Admins can successfully execute the action. For all other users, clicking the button will result in an error message indicating insufficient permissions.
