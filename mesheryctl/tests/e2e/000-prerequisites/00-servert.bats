@@ -3,7 +3,6 @@
 # tests to ensure the server is up and running
 
 setup() {
-	HELPERS_DIR=$("$MESHERYCTL_DIR/tests/e2e/helpers")
 	load "$E2E_HELPERS_PATH/test_helpers"
 	_tests_helper
 
