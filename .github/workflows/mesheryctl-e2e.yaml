@@ -71,7 +71,7 @@ jobs:
           MESHERY_PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
           MESHERY_PLATFORM: ${{ matrix.platform }}
           BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
-          E2E_HELPERS_PATH: "${{ github.workspace }}/mesehryctl/tests/helpers"
+          E2E_HELPERS_PATH: "${{ github.workspace }}/mesehryctl/tests/e2e/helpers"
 
   manual-test:
     name: Manual e2e Test
