@@ -44,37 +44,6 @@ Before diving into `mesheryctl`'s testing environment, certain prerequisites mus
 - [Optional] A working installation of a Kubernetes cluster (Minikube, Kind, etc.) for testing Kubernetes-related functionality.
 - `jq` and `yq`, tools for processing JSON and YAML inputs, respectively.
 
-
-### Authentication
-
-To run the tests successfully, you need be logged in to your Meshery account. This is required to access the Meshery Server and perform operations on it. Whether using the local or a remote provider, you will need to generate a token from your user account to use while writing and executing tests.
-
-**Remote Provider Example**
-
-If you are using Layer5 Cloud as your remote provider, you can [generate and download an API token](https://cloud.layer5.io/security/tokens) from your user account for use while writing and executing tests.
-
-### Verify your API Token
-
-```bash
-mesheryctl system check
-```
-
-If you see this error message - `Error: !! Authentication token not found. Please supply a valid user token. Login with mesheryctl system login`, you will need to authenticate using the command:
-
-```bash
-mesheryctl system login
-```
-
-### Starting Meshery Server
-
-There are a few ways to set up the Meshery server, but for end-to-end testing, we aim to get as close to a production environment as possible. We know developers might need to make some tweaks for Server. Rebuilding the whole project can take time, and we don’t support hot reload because it’s more for development than for end-to-end testing.
-
-```bash
-make server
-```
-
-Be aware that some test cases require the availability of a Kubernetes cluster and one or more  Meshery Adapters. In those cases, please refer to the [installation guides]{{site.baseurl}}/installation) (like that of [installing Meshery on Minikube]({{site.baseurl}}/installation/kubernetes/minikube)). 
-
 ### Setup Bats Core
 
 For Bats Core, always try to use a BATS-native OS whenever possible. This is because BATS Core does not support Windows. If you are using Windows, you can use WSL (Windows Subsystem for Linux) to run BATS Core. See the official [BATS installation documentation](https://bats-core.readthedocs.io/en/stable/installation.html) for more information on how to install BATS Core on your system. Here are quick start steps.
@@ -110,6 +79,37 @@ There are needed dependencies to test whether the server is up and running. Reso
 ```bash
   make e2e-libs
 ```
+
+### Starting Meshery Server
+
+There are a few ways to set up the Meshery server, but for end-to-end testing, we aim to get as close to a production environment as possible. We know developers might need to make some tweaks for Server. Rebuilding the whole project can take time, and we don’t support hot reload because it’s more for development than for end-to-end testing.
+
+```bash
+make server
+```
+
+Be aware that some test cases require the availability of a Kubernetes cluster and one or more  Meshery Adapters. In those cases, please refer to the [installation guides]{{site.baseurl}}/installation) (like that of [installing Meshery on Minikube]({{site.baseurl}}/installation/kubernetes/minikube)). 
+
+### Authentication
+
+To run the tests successfully, you need be logged in to your Meshery account. This is required to access the Meshery Server and perform operations on it. Whether using the local or a remote provider, you will need to generate a token from your user account to use while writing and executing tests.
+
+**Remote Provider Example**
+
+If you are using Layer5 Cloud as your remote provider, you can [generate and download an API token](https://cloud.layer5.io/security/tokens) from your user account for use while writing and executing tests.
+
+### Verify your API Token
+
+```bash
+mesheryctl system check
+```
+
+If you see this error message - `Error: !! Authentication token not found. Please supply a valid user token. Login with mesheryctl system login`, you will need to authenticate using the command:
+
+```bash
+mesheryctl system login
+```
+
 
 ## Writing End-to-End Test Cases
 
