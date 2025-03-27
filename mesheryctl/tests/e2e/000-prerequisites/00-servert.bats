@@ -3,9 +3,8 @@
 # tests to ensure the server is up and running
 
 setup() {
-	MESHERYCTL_DIR=$(dirname "$MESHERYCTL_BIN")
 	HELPERS_DIR=$("$MESHERYCTL_DIR/tests/e2e/helpers")
-	load "$HELPERS_DIR/helpers"
+	load "$E2E_HELPERS_PATH/test_helpers"
 	_tests_helper
 
     DETIK_CLIENT_NAMESPACE="meshery"
