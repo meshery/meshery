@@ -1,0 +1,610 @@
+{
+  "1": {},
+  "id": "",
+  "schemaVersion": "",
+  "version": "",
+  "model": {
+    "registrant": {},
+    "category": {},
+    "metadata": {
+      "capabilities": {
+        "items": {
+          "kind": {},
+          "subType": {},
+          "entityState": {},
+          "status": "enabled"
+        }
+      }
+    },
+    "model": {}
+  },
+  "registrant": {},
+  "metadata": {
+    "styles": {
+      "anyOf": {
+        "0": {
+          "allOf": {
+            "0": {},
+            "1": {
+              "curve-style": "straight",
+              "line-cap": "butt",
+              "line-opacity": 1
+            }
+          }
+        },
+        "1": {}
+      }
+    }
+  },
+  "category": {},
+  "kind": "",
+  "type": "",
+  "subType": "",
+  "status": "enabled",
+  "evaluationQuery": "",
+  "capabilities": {
+    "items": {
+      "schemaVersion": "",
+      "version": "",
+      "displayName": "",
+      "description": "",
+      "kind": {},
+      "type": "",
+      "subType": "",
+      "key": "",
+      "entityState": {},
+      "status": "enabled"
+    }
+  },
+  "selectors": {
+    "items": {
+      "deny": {
+        "from": {
+          "items": {
+            "kind": "",
+            "model": {
+              "id": "",
+              "schemaVersion": "",
+              "version": "",
+              "name": "",
+              "displayName": "",
+              "description": "",
+              "status": "",
+              "registrant": {
+                "id": "",
+                "name": "",
+                "credential_id": "",
+                "type": "",
+                "sub_type": "",
+                "kind": "",
+                "status": "",
+                "user_id": "",
+                "created_at": "",
+                "updated_at": "",
+                "deleted_at": ""
+              },
+              "category": {
+                "id": "",
+                "name": ""
+              },
+              "subCategory": "",
+              "metadata": {
+                "capabilities": {
+                  "items": {
+                    "schemaVersion": "",
+                    "version": "",
+                    "displayName": "",
+                    "description": "",
+                    "kind": {},
+                    "type": "",
+                    "subType": "",
+                    "key": "",
+                    "entityState": {},
+                    "status": "enabled"
+                  }
+                },
+                "primaryColor": "",
+                "secondaryColor": "",
+                "svgWhite": "",
+                "svgColor": "",
+                "svgComplete": ""
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "id": "",
+            "match": {
+              "oneOf": {
+                "0": {
+                  "items": {}
+                },
+                "1": {
+                  "from": {
+                    "items": {
+                      "allOf": {
+                        "0": {
+                          "kind": "",
+                          "id": ""
+                        },
+                        "1": {
+                          "oneOf": {
+                            "0": {
+                              "mutatorRef": {
+                                "items": {}
+                              }
+                            },
+                            "1": {
+                              "mutatedRef": {
+                                "items": {}
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "to": {
+                    "items": {
+                      "allOf": {
+                        "0": {
+                          "kind": "",
+                          "id": ""
+                        },
+                        "1": {
+                          "oneOf": {
+                            "0": {
+                              "mutatorRef": {
+                                "items": {}
+                              }
+                            },
+                            "1": {
+                              "mutatedRef": {
+                                "items": {}
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "patch": {
+              "allOf": {
+                "0": {
+                  "patchStrategy": "copy"
+                },
+                "1": {
+                  "oneOf": {
+                    "0": {
+                      "mutatorRef": {
+                        "items": {}
+                      }
+                    },
+                    "1": {
+                      "mutatedRef": {
+                        "items": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "to": {
+          "items": {
+            "kind": "",
+            "model": {
+              "id": "",
+              "schemaVersion": "",
+              "version": "",
+              "name": "",
+              "displayName": "",
+              "description": "",
+              "status": "",
+              "registrant": {
+                "id": "",
+                "name": "",
+                "credential_id": "",
+                "type": "",
+                "sub_type": "",
+                "kind": "",
+                "status": "",
+                "user_id": "",
+                "created_at": "",
+                "updated_at": "",
+                "deleted_at": ""
+              },
+              "category": {
+                "id": "",
+                "name": ""
+              },
+              "subCategory": "",
+              "metadata": {
+                "capabilities": {
+                  "items": {
+                    "schemaVersion": "",
+                    "version": "",
+                    "displayName": "",
+                    "description": "",
+                    "kind": {},
+                    "type": "",
+                    "subType": "",
+                    "key": "",
+                    "entityState": {},
+                    "status": "enabled"
+                  }
+                },
+                "primaryColor": "",
+                "secondaryColor": "",
+                "svgWhite": "",
+                "svgColor": "",
+                "svgComplete": ""
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "id": "",
+            "match": {
+              "oneOf": {
+                "0": {
+                  "items": {}
+                },
+                "1": {
+                  "from": {
+                    "items": {
+                      "allOf": {
+                        "0": {
+                          "kind": "",
+                          "id": ""
+                        },
+                        "1": {
+                          "oneOf": {
+                            "0": {
+                              "mutatorRef": {
+                                "items": {}
+                              }
+                            },
+                            "1": {
+                              "mutatedRef": {
+                                "items": {}
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "to": {
+                    "items": {
+                      "allOf": {
+                        "0": {
+                          "kind": "",
+                          "id": ""
+                        },
+                        "1": {
+                          "oneOf": {
+                            "0": {
+                              "mutatorRef": {
+                                "items": {}
+                              }
+                            },
+                            "1": {
+                              "mutatedRef": {
+                                "items": {}
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "patch": {
+              "allOf": {
+                "0": {
+                  "patchStrategy": "copy"
+                },
+                "1": {
+                  "oneOf": {
+                    "0": {
+                      "mutatorRef": {
+                        "items": {}
+                      }
+                    },
+                    "1": {
+                      "mutatedRef": {
+                        "items": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "allow": {
+        "from": {
+          "items": {
+            "kind": "",
+            "model": {
+              "id": "",
+              "schemaVersion": "",
+              "version": "",
+              "name": "",
+              "displayName": "",
+              "description": "",
+              "status": "",
+              "registrant": {
+                "id": "",
+                "name": "",
+                "credential_id": "",
+                "type": "",
+                "sub_type": "",
+                "kind": "",
+                "status": "",
+                "user_id": "",
+                "created_at": "",
+                "updated_at": "",
+                "deleted_at": ""
+              },
+              "category": {
+                "id": "",
+                "name": ""
+              },
+              "subCategory": "",
+              "metadata": {
+                "capabilities": {
+                  "items": {
+                    "schemaVersion": "",
+                    "version": "",
+                    "displayName": "",
+                    "description": "",
+                    "kind": {},
+                    "type": "",
+                    "subType": "",
+                    "key": "",
+                    "entityState": {},
+                    "status": "enabled"
+                  }
+                },
+                "primaryColor": "",
+                "secondaryColor": "",
+                "svgWhite": "",
+                "svgColor": "",
+                "svgComplete": ""
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "id": "",
+            "match": {
+              "oneOf": {
+                "0": {
+                  "items": {}
+                },
+                "1": {
+                  "from": {
+                    "items": {
+                      "allOf": {
+                        "0": {
+                          "kind": "",
+                          "id": ""
+                        },
+                        "1": {
+                          "oneOf": {
+                            "0": {
+                              "mutatorRef": {
+                                "items": {}
+                              }
+                            },
+                            "1": {
+                              "mutatedRef": {
+                                "items": {}
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "to": {
+                    "items": {
+                      "allOf": {
+                        "0": {
+                          "kind": "",
+                          "id": ""
+                        },
+                        "1": {
+                          "oneOf": {
+                            "0": {
+                              "mutatorRef": {
+                                "items": {}
+                              }
+                            },
+                            "1": {
+                              "mutatedRef": {
+                                "items": {}
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "patch": {
+              "allOf": {
+                "0": {
+                  "patchStrategy": "copy"
+                },
+                "1": {
+                  "oneOf": {
+                    "0": {
+                      "mutatorRef": {
+                        "items": {}
+                      }
+                    },
+                    "1": {
+                      "mutatedRef": {
+                        "items": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "to": {
+          "items": {
+            "kind": "",
+            "model": {
+              "id": "",
+              "schemaVersion": "",
+              "version": "",
+              "name": "",
+              "displayName": "",
+              "description": "",
+              "status": "",
+              "registrant": {
+                "id": "",
+                "name": "",
+                "credential_id": "",
+                "type": "",
+                "sub_type": "",
+                "kind": "",
+                "status": "",
+                "user_id": "",
+                "created_at": "",
+                "updated_at": "",
+                "deleted_at": ""
+              },
+              "category": {
+                "id": "",
+                "name": ""
+              },
+              "subCategory": "",
+              "metadata": {
+                "capabilities": {
+                  "items": {
+                    "schemaVersion": "",
+                    "version": "",
+                    "displayName": "",
+                    "description": "",
+                    "kind": {},
+                    "type": "",
+                    "subType": "",
+                    "key": "",
+                    "entityState": {},
+                    "status": "enabled"
+                  }
+                },
+                "primaryColor": "",
+                "secondaryColor": "",
+                "svgWhite": "",
+                "svgColor": "",
+                "svgComplete": ""
+              },
+              "model": {
+                "version": ""
+              }
+            },
+            "id": "",
+            "match": {
+              "oneOf": {
+                "0": {
+                  "items": {}
+                },
+                "1": {
+                  "from": {
+                    "items": {
+                      "allOf": {
+                        "0": {
+                          "kind": "",
+                          "id": ""
+                        },
+                        "1": {
+                          "oneOf": {
+                            "0": {
+                              "mutatorRef": {
+                                "items": {}
+                              }
+                            },
+                            "1": {
+                              "mutatedRef": {
+                                "items": {}
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "to": {
+                    "items": {
+                      "allOf": {
+                        "0": {
+                          "kind": "",
+                          "id": ""
+                        },
+                        "1": {
+                          "oneOf": {
+                            "0": {
+                              "mutatorRef": {
+                                "items": {}
+                              }
+                            },
+                            "1": {
+                              "mutatedRef": {
+                                "items": {}
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "patch": {
+              "allOf": {
+                "0": {
+                  "patchStrategy": "copy"
+                },
+                "1": {
+                  "oneOf": {
+                    "0": {
+                      "mutatorRef": {
+                        "items": {}
+                      }
+                    },
+                    "1": {
+                      "mutatedRef": {
+                        "items": {}
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "deny": {},
+  "match": {},
+  "allow": {}
+}

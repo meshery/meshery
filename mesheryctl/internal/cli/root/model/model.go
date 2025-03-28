@@ -38,7 +38,7 @@ var (
 	// Color for the whiteboard printer
 	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
 	// Available model subcommads
-	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, importModelCmd, exportModelCmd, generateModelCmd}
+	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, importModelCmd, exportModelCmd, generateModelCmd, initModelCmd}
 )
 
 // ModelCmd represents the mesheryctl model command
@@ -67,6 +67,9 @@ mesheryctl model search [model-name]
 
 // View a specific model
 mesheryctl model view [model-name]
+
+// Scaffold a folder structure for model creation
+mesheryctl model init [model-name]
 `,
 	Args: func(cmd *cobra.Command, args []string) error {
 		count, _ := cmd.Flags().GetBool("count")
