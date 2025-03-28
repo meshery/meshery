@@ -24,11 +24,12 @@
     "name": "Cloud Native Network"
   },
   "subCategory": "Service Proxy",
+  "metadata": null,
   "model": {
     "version": "0.1.2"
   },
-  "components": null,
-  "relationships": null,
   "components_count": 0,
-  "relationships_count": 0
+  "relationships_count": 0,
+  "components": null,
+  "relationships": null
 }

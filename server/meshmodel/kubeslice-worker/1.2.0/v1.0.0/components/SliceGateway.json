@@ -41,16 +41,17 @@
     "model": {
       "version": "1.2.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00105f",
     "secondaryColor": "#2bbafe",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -171,15 +172,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "networking.kubeslice.io/v1beta1",
     "kind": "SliceGateway",
-    "schema": "{\n \"description\": \"SliceGateway is the Schema for the slicegateways API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SliceGatewaySpec defines the desired state of SliceGateway\",\n   \"properties\": {\n    \"siteName\": {\n     \"description\": \"SiteName is site name\",\n     \"type\": \"string\"\n    },\n    \"sliceName\": {\n     \"description\": \"SliceName is the Name of the slice this gateway is attached into\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Slice Gateway\",\n \"type\": \"object\"\n}",
-    "version": "networking.kubeslice.io/v1beta1"
+    "schema": "{\n \"description\": \"SliceGateway is the Schema for the slicegateways API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SliceGatewaySpec defines the desired state of SliceGateway\",\n   \"properties\": {\n    \"siteName\": {\n     \"description\": \"SiteName is site name\",\n     \"type\": \"string\"\n    },\n    \"sliceName\": {\n     \"description\": \"SliceName is the Name of the slice this gateway is attached into\",\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Slice Gateway\",\n \"type\": \"object\"\n}"
   }
 }

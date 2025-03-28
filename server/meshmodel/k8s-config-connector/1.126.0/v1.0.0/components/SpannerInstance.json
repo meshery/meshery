@@ -44,15 +44,16 @@
     "model": {
       "version": "1.126.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#4285F4",
     "shape": "rectangle",
     "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#669df6;}.cls-1,.cls-2,.cls-3{fill-rule:evenodd;}.cls-2{fill:#4285f4;}.cls-3{fill:#aecbfa;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg \u003e\u003cpolygon id=\"Shape-2\" data-name=\"Shape\" class=\"cls-1\" points=\"13.34 12.76 13.34 8.4 10.66 8.4 10.66 12.76 6.89 14.94 8.23 17.26 12 15.08 15.77 17.26 17.11 14.94 13.34 12.76\"/\u003e\u003cpolygon class=\"cls-2\" points=\"13.34 12.76 13.34 8.4 12 8.4 12 13.52 7.56 16.1 8.23 17.26 12 15.08 15.77 17.26 17.11 14.94 13.34 12.76\"/\u003e\u003cpolygon class=\"cls-3\" points=\"10.65 2.77 8.62 3.99 8.62 7.72 12 9.55 12 6.44 10.65 5.82 10.65 2.77\"/\u003e\u003cpolygon class=\"cls-1\" points=\"13.35 5.82 12 6.44 12 9.55 15.38 7.72 15.38 3.99 13.35 2.77 13.35 5.82\"/\u003e\u003cpath class=\"cls-1\" d=\"M18.14,17.08l-.08,1.39L20.76,20l-2.18,1.2-3.24-1.87.11-3.83,3.27-2L22,15.38,22,17.87l-2.69-1.55Z\"/\u003e\u003cpath class=\"cls-1\" d=\"M5.86,17.08l-1.17-.76L2,17.87l0-2.49,3.23-1.87,3.27,2,.11,3.83L5.42,21.23,3.24,20l2.7-1.56Z\"/\u003e\u003cpolygon class=\"cls-3\" points=\"22 17.87 21.95 15.38 18.72 13.52 15.45 15.53 18.14 17.08 19.3 16.32 22 17.87\"/\u003e\u003cpolygon class=\"cls-3\" points=\"2 17.87 4.7 16.32 5.86 17.08 8.55 15.53 5.28 13.52 2.05 15.38 2 17.87\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}.cls-1,.cls-2,.cls-3{fill-rule:evenodd;}.cls-2{fill:#fff;}.cls-3{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg \u003e\u003cpolygon id=\"Shape-2\" data-name=\"Shape\" class=\"cls-1\" points=\"13.34 12.76 13.34 8.4 10.66 8.4 10.66 12.76 6.89 14.94 8.23 17.26 12 15.08 15.77 17.26 17.11 14.94 13.34 12.76\"/\u003e\u003cpolygon class=\"cls-2\" points=\"13.34 12.76 13.34 8.4 12 8.4 12 13.52 7.56 16.1 8.23 17.26 12 15.08 15.77 17.26 17.11 14.94 13.34 12.76\"/\u003e\u003cpolygon class=\"cls-3\" points=\"10.65 2.77 8.62 3.99 8.62 7.72 12 9.55 12 6.44 10.65 5.82 10.65 2.77\"/\u003e\u003cpolygon class=\"cls-1\" points=\"13.35 5.82 12 6.44 12 9.55 15.38 7.72 15.38 3.99 13.35 2.77 13.35 5.82\"/\u003e\u003cpath class=\"cls-1\" d=\"M18.14,17.08l-.08,1.39L20.76,20l-2.18,1.2-3.24-1.87.11-3.83,3.27-2L22,15.38,22,17.87l-2.69-1.55Z\"/\u003e\u003cpath class=\"cls-1\" d=\"M5.86,17.08l-1.17-.76L2,17.87l0-2.49,3.23-1.87,3.27,2,.11,3.83L5.42,21.23,3.24,20l2.7-1.56Z\"/\u003e\u003cpolygon class=\"cls-3\" points=\"22 17.87 21.95 15.38 18.72 13.52 15.45 15.53 18.14 17.08 19.3 16.32 22 17.87\"/\u003e\u003cpolygon class=\"cls-3\" points=\"2 17.87 4.7 16.32 5.86 17.08 8.55 15.53 5.28 13.52 2.05 15.38 2 17.87\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e\n"
   },
   "capabilities": [
@@ -173,7 +174,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -181,8 +184,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "spanner.cnrm.cloud.google.com/v1beta1",
     "kind": "SpannerInstance",
-    "schema": "{\n \"description\": \"SpannerInstance is the Schema for the SpannerInstance API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SpannerInstanceSpec defines the desired state of SpannerInstance\",\n   \"properties\": {\n    \"config\": {\n     \"description\": \"Immutable. The name of the instance's configuration (similar but not quite the same as a region) which defines the geographic placement and replication of your databases in this instance. It determines where your data is stored. Values are typically of the form 'regional-europe-west1' , 'us-central' etc. In order to obtain a valid list please consult the [Configuration section of the docs](https://cloud.google.com/spanner/docs/instances).\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Config field is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"displayName\": {\n     \"description\": \"The descriptive name for this instance as it appears in UIs. Must be unique per project and between 4 and 30 characters in length.\",\n     \"type\": \"string\"\n    },\n    \"numNodes\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"processingUnits\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. The SpannerInstance name. If not given, the metadata.name will be used.\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"ResourceID field is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    }\n   },\n   \"required\": [\n    \"config\",\n    \"displayName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Spanner Instance\",\n \"type\": \"object\"\n}",
-    "version": "spanner.cnrm.cloud.google.com/v1beta1"
+    "schema": "{\n \"description\": \"SpannerInstance is the Schema for the SpannerInstance API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SpannerInstanceSpec defines the desired state of SpannerInstance\",\n   \"properties\": {\n    \"config\": {\n     \"description\": \"Immutable. The name of the instance's configuration (similar but not quite the same as a region) which defines the geographic placement and replication of your databases in this instance. It determines where your data is stored. Values are typically of the form 'regional-europe-west1' , 'us-central' etc. In order to obtain a valid list please consult the [Configuration section of the docs](https://cloud.google.com/spanner/docs/instances).\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"Config field is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    },\n    \"displayName\": {\n     \"description\": \"The descriptive name for this instance as it appears in UIs. Must be unique per project and between 4 and 30 characters in length.\",\n     \"type\": \"string\"\n    },\n    \"numNodes\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"processingUnits\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. The SpannerInstance name. If not given, the metadata.name will be used.\",\n     \"type\": \"string\",\n     \"x-kubernetes-validations\": [\n      {\n       \"message\": \"ResourceID field is immutable\",\n       \"rule\": \"self == oldSelf\"\n      }\n     ]\n    }\n   },\n   \"required\": [\n    \"config\",\n    \"displayName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Spanner Instance\",\n \"type\": \"object\"\n}"
   }
 }

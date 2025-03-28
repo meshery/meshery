@@ -26,7 +26,7 @@ mesheryctl exp relationship list [flags]
 
 ## Examples
 
-View list of relationship
+List of relationships
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl exp relationship list
@@ -34,10 +34,18 @@ mesheryctl exp relationship list
 </div>
 </pre> 
 
-View list of relationship with specified page number (25 relationships per page)
+List of relationships for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl exp relationship list --page 2
+mesheryctl relationship list --page [page-number]
+
+</div>
+</pre> 
+
+Display number of available relationships in Meshery
+<pre class='codeblock-pre'>
+<div class='codeblock'>
+mesheryctl relationship list --count
 
 </div>
 </pre> 
@@ -46,6 +54,7 @@ mesheryctl exp relationship list --page 2
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+  -c, --count      (optional) Get the number of relationship(s) in total
   -h, --help       help for list
   -p, --page int   (optional) List next set of relationships with --page (default = 1) (default 1)
 
