@@ -105,11 +105,10 @@ A design transitions through multiple states from creation to publication. The d
 |---------------------|-----------|------------------|-----------|------------------------|
 | Edit Pending Design | ✔         | ✔                | ✔         |  ✔                  |
 | Submit for Review     | ✔         | ✔                | ✔         |✔                  |
-| Unpublish           | ✘         | ✘                | ✘         | ✔                  |
+| Unpublish           | ✘         | ✘                | ✔         | ✔                  |
 
 **Key Notes:**
 - Catalog approval queues are org-specific—only members of an organization can see its pending approvals, unless the user is a Admin.
-- The "Unpublish" button is visible to all users except Guests. However, only Admins can successfully execute the action. For all other users, clicking the button will result in an error message indicating insufficient permissions.
 
 ## Frequently Asked Questions (FAQ) 
 
@@ -126,7 +125,7 @@ No, the category field **cannot be changed** after the design is published. If a
 No, once a design is denied, it **cannot be resubmitted**. However, you can clone the design, make adjustments, and submit it as a new entry for review.
 
 #### 5. Can I unpublish a design after it has been published?  
-Only Admins can unpublish designs. Regular users, creators, and guests cannot perform this action. Contact your Admin to request unpublishing.
+Only Admins and Owner can unpublish designs. Regular users and guests cannot perform this action.
 
 #### 6. What is the difference between Public, Private, and Published?  
 
