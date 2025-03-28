@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
     "subCategory": "Google Cloud Platform",
@@ -46,15 +47,16 @@
     "model": {
       "version": "v1.120.1"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#4285F4",
     "shape": "rectangle",
     "svgColor": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#aecbfa;}.cls-1,.cls-2,.cls-3{fill-rule:evenodd;}.cls-2{fill:#669df6;}.cls-3{fill:#4285f4;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg \u003e\u003cpath class=\"cls-1\" d=\"M6.73,10.83v2.63A4.91,4.91,0,0,0,8.44,15.2V10.83Z\"/\u003e\u003cpath class=\"cls-2\" d=\"M9.89,8.41v7.53A7.62,7.62,0,0,0,11,16,8,8,0,0,0,12,16V8.41Z\"/\u003e\u003cpath class=\"cls-1\" d=\"M13.64,11.86v3.29a5,5,0,0,0,1.7-1.82V11.86Z\"/\u003e\u003cpath class=\"cls-3\" d=\"M17.74,16.32l-1.42,1.42a.42.42,0,0,0,0,.6l3.54,3.54a.42.42,0,0,0,.59,0l1.43-1.43a.42.42,0,0,0,0-.59l-3.54-3.54a.42.42,0,0,0-.6,0\"/\u003e\u003cpath class=\"cls-2\" d=\"M11,2a9,9,0,1,0,9,9,9,9,0,0,0-9-9m0,15.69A6.68,6.68,0,1,1,17.69,11,6.68,6.68,0,0,1,11,17.69\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e",
+    "svgComplete": "",
     "svgWhite": "\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"24px\" height=\"24px\" viewBox=\"0 0 24 24\"\u003e\u003cdefs\u003e\u003cstyle\u003e.cls-1{fill:#fff;}.cls-1,.cls-2,.cls-3{fill-rule:evenodd;}.cls-2{fill:#fff;}.cls-3{fill:#fff;}\u003c/style\u003e\u003c/defs\u003e\u003cg data-name=\"Product Icons\"\u003e\u003cg \u003e\u003cpath class=\"cls-1\" d=\"M6.73,10.83v2.63A4.91,4.91,0,0,0,8.44,15.2V10.83Z\"/\u003e\u003cpath class=\"cls-2\" d=\"M9.89,8.41v7.53A7.62,7.62,0,0,0,11,16,8,8,0,0,0,12,16V8.41Z\"/\u003e\u003cpath class=\"cls-1\" d=\"M13.64,11.86v3.29a5,5,0,0,0,1.7-1.82V11.86Z\"/\u003e\u003cpath class=\"cls-3\" d=\"M17.74,16.32l-1.42,1.42a.42.42,0,0,0,0,.6l3.54,3.54a.42.42,0,0,0,.59,0l1.43-1.43a.42.42,0,0,0,0-.59l-3.54-3.54a.42.42,0,0,0-.6,0\"/\u003e\u003cpath class=\"cls-2\" d=\"M11,2a9,9,0,1,0,9,9,9,9,0,0,0-9-9m0,15.69A6.68,6.68,0,1,1,17.69,11,6.68,6.68,0,0,1,11,17.69\"/\u003e\u003c/g\u003e\u003c/g\u003e\u003c/svg\u003e\n"
   },
   "capabilities": [
@@ -66,7 +68,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -81,7 +82,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -96,7 +96,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -112,7 +111,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -128,7 +126,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -143,7 +140,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -158,7 +154,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -173,7 +168,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -183,15 +177,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "bigquery.cnrm.cloud.google.com/v1beta1",
     "kind": "BigQueryRoutine",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"arguments\": {\n     \"description\": \"Input/output argument of a function or a stored procedure.\",\n     \"items\": {\n      \"properties\": {\n       \"argumentKind\": {\n        \"description\": \"Defaults to FIXED_TYPE. Default value: \\\"FIXED_TYPE\\\" Possible values: [\\\"FIXED_TYPE\\\", \\\"ANY_TYPE\\\"].\",\n        \"type\": \"string\"\n       },\n       \"dataType\": {\n        \"description\": \"A JSON schema for the data type. Required unless argumentKind = ANY_TYPE.\\n~\\u003e**NOTE**: Because this field expects a JSON string, any changes to the string\\nwill create a diff, even if the JSON itself hasn't changed. If the API returns\\na different value for the same schema, e.g. it switched the order of values\\nor replaced STRUCT field type with RECORD field type, we currently cannot\\nsuppress the recurring diff this causes. As a workaround, we recommend using\\nthe schema as returned by the API.\",\n        \"type\": \"string\"\n       },\n       \"mode\": {\n        \"description\": \"Specifies whether the argument is input or output. Can be set for procedures only. Possible values: [\\\"IN\\\", \\\"OUT\\\", \\\"INOUT\\\"].\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"The name of this argument. Can be absent for function return argument.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"datasetRef\": {\n     \"description\": \"The ID of the dataset containing this routine.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `BigQueryDataset` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"definitionBody\": {\n     \"description\": \"The body of the routine. For functions, this is the expression in the AS clause.\\nIf language=SQL, it is the substring inside (but excluding) the parentheses.\",\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"description\": \"The description of the routine if defined.\",\n     \"type\": \"string\"\n    },\n    \"determinismLevel\": {\n     \"description\": \"The determinism level of the JavaScript UDF if defined. Possible values: [\\\"DETERMINISM_LEVEL_UNSPECIFIED\\\", \\\"DETERMINISTIC\\\", \\\"NOT_DETERMINISTIC\\\"].\",\n     \"type\": \"string\"\n    },\n    \"importedLibraries\": {\n     \"description\": \"Optional. If language = \\\"JAVASCRIPT\\\", this field stores the path of the\\nimported JAVASCRIPT libraries.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"language\": {\n     \"description\": \"The language of the routine. Possible values: [\\\"SQL\\\", \\\"JAVASCRIPT\\\"].\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The routineId of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"returnTableType\": {\n     \"description\": \"Optional. Can be set only if routineType = \\\"TABLE_VALUED_FUNCTION\\\".\\n\\nIf absent, the return table type is inferred from definitionBody at query time in each query\\nthat references this routine. If present, then the columns in the evaluated table result will\\nbe cast to match the column types specificed in return table type, at query time.\",\n     \"type\": \"string\"\n    },\n    \"returnType\": {\n     \"description\": \"A JSON schema for the return type. Optional if language = \\\"SQL\\\"; required otherwise.\\nIf absent, the return type is inferred from definitionBody at query time in each query\\nthat references this routine. If present, then the evaluated result will be cast to\\nthe specified returned type at query time. ~\\u003e**NOTE**: Because this field expects a JSON\\nstring, any changes to the string will create a diff, even if the JSON itself hasn't\\nchanged. If the API returns a different value for the same schema, e.g. it switche\\nd the order of values or replaced STRUCT field type with RECORD field type, we currently\\ncannot suppress the recurring diff this causes. As a workaround, we recommend using\\nthe schema as returned by the API.\",\n     \"type\": \"string\"\n    },\n    \"routineType\": {\n     \"description\": \"Immutable. The type of routine. Possible values: [\\\"SCALAR_FUNCTION\\\", \\\"PROCEDURE\\\", \\\"TABLE_VALUED_FUNCTION\\\"].\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"datasetRef\",\n    \"definitionBody\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Big Query Routine\",\n \"type\": \"object\"\n}",
-    "version": "bigquery.cnrm.cloud.google.com/v1beta1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"arguments\": {\n     \"description\": \"Input/output argument of a function or a stored procedure.\",\n     \"items\": {\n      \"properties\": {\n       \"argumentKind\": {\n        \"description\": \"Defaults to FIXED_TYPE. Default value: \\\"FIXED_TYPE\\\" Possible values: [\\\"FIXED_TYPE\\\", \\\"ANY_TYPE\\\"].\",\n        \"type\": \"string\"\n       },\n       \"dataType\": {\n        \"description\": \"A JSON schema for the data type. Required unless argumentKind = ANY_TYPE.\\n~\\u003e**NOTE**: Because this field expects a JSON string, any changes to the string\\nwill create a diff, even if the JSON itself hasn't changed. If the API returns\\na different value for the same schema, e.g. it switched the order of values\\nor replaced STRUCT field type with RECORD field type, we currently cannot\\nsuppress the recurring diff this causes. As a workaround, we recommend using\\nthe schema as returned by the API.\",\n        \"type\": \"string\"\n       },\n       \"mode\": {\n        \"description\": \"Specifies whether the argument is input or output. Can be set for procedures only. Possible values: [\\\"IN\\\", \\\"OUT\\\", \\\"INOUT\\\"].\",\n        \"type\": \"string\"\n       },\n       \"name\": {\n        \"description\": \"The name of this argument. Can be absent for function return argument.\",\n        \"type\": \"string\"\n       }\n      },\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"datasetRef\": {\n     \"description\": \"The ID of the dataset containing this routine.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `BigQueryDataset` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"definitionBody\": {\n     \"description\": \"The body of the routine. For functions, this is the expression in the AS clause.\\nIf language=SQL, it is the substring inside (but excluding) the parentheses.\",\n     \"type\": \"string\"\n    },\n    \"description\": {\n     \"description\": \"The description of the routine if defined.\",\n     \"type\": \"string\"\n    },\n    \"determinismLevel\": {\n     \"description\": \"The determinism level of the JavaScript UDF if defined. Possible values: [\\\"DETERMINISM_LEVEL_UNSPECIFIED\\\", \\\"DETERMINISTIC\\\", \\\"NOT_DETERMINISTIC\\\"].\",\n     \"type\": \"string\"\n    },\n    \"importedLibraries\": {\n     \"description\": \"Optional. If language = \\\"JAVASCRIPT\\\", this field stores the path of the\\nimported JAVASCRIPT libraries.\",\n     \"items\": {\n      \"type\": \"string\"\n     },\n     \"type\": \"array\"\n    },\n    \"language\": {\n     \"description\": \"The language of the routine. Possible values: [\\\"SQL\\\", \\\"JAVASCRIPT\\\"].\",\n     \"type\": \"string\"\n    },\n    \"projectRef\": {\n     \"description\": \"The project that this resource belongs to.\",\n     \"oneOf\": [\n      {\n       \"not\": {\n        \"required\": [\n         \"external\"\n        ]\n       },\n       \"required\": [\n        \"name\"\n       ]\n      },\n      {\n       \"not\": {\n        \"anyOf\": [\n         {\n          \"required\": [\n           \"name\"\n          ]\n         },\n         {\n          \"required\": [\n           \"namespace\"\n          ]\n         }\n        ]\n       },\n       \"required\": [\n        \"external\"\n       ]\n      }\n     ],\n     \"properties\": {\n      \"external\": {\n       \"description\": \"Allowed value: The `name` field of a `Project` resource.\",\n       \"type\": \"string\"\n      },\n      \"name\": {\n       \"description\": \"Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names\",\n       \"type\": \"string\"\n      },\n      \"namespace\": {\n       \"description\": \"Namespace of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/\",\n       \"type\": \"string\"\n      }\n     },\n     \"type\": \"object\"\n    },\n    \"resourceID\": {\n     \"description\": \"Immutable. Optional. The routineId of the resource. Used for creation and acquisition. When unset, the value of `metadata.name` is used as the default.\",\n     \"type\": \"string\"\n    },\n    \"returnTableType\": {\n     \"description\": \"Optional. Can be set only if routineType = \\\"TABLE_VALUED_FUNCTION\\\".\\n\\nIf absent, the return table type is inferred from definitionBody at query time in each query\\nthat references this routine. If present, then the columns in the evaluated table result will\\nbe cast to match the column types specificed in return table type, at query time.\",\n     \"type\": \"string\"\n    },\n    \"returnType\": {\n     \"description\": \"A JSON schema for the return type. Optional if language = \\\"SQL\\\"; required otherwise.\\nIf absent, the return type is inferred from definitionBody at query time in each query\\nthat references this routine. If present, then the evaluated result will be cast to\\nthe specified returned type at query time. ~\\u003e**NOTE**: Because this field expects a JSON\\nstring, any changes to the string will create a diff, even if the JSON itself hasn't\\nchanged. If the API returns a different value for the same schema, e.g. it switche\\nd the order of values or replaced STRUCT field type with RECORD field type, we currently\\ncannot suppress the recurring diff this causes. As a workaround, we recommend using\\nthe schema as returned by the API.\",\n     \"type\": \"string\"\n    },\n    \"routineType\": {\n     \"description\": \"Immutable. The type of routine. Possible values: [\\\"SCALAR_FUNCTION\\\", \\\"PROCEDURE\\\", \\\"TABLE_VALUED_FUNCTION\\\"].\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"datasetRef\",\n    \"definitionBody\",\n    \"projectRef\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Big Query Routine\",\n \"type\": \"object\"\n}"
   }
 }

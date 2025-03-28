@@ -195,7 +195,6 @@ export const KeyValue = ({ Key, Value }) => {
         style={{
           textTransform: 'capitalize',
           overflow: 'hidden',
-          whiteSpace: 'nowrap',
           color: theme.palette.text.default,
         }}
       />
@@ -210,7 +209,6 @@ export const KeyValue = ({ Key, Value }) => {
             textOverflow: 'ellipsis',
             wordBreak: 'break-all',
             overflow: 'hidden',
-            whiteSpace: 'nowrap',
           }}
         />
       )}

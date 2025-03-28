@@ -12,11 +12,11 @@ subcommand: list
 
 # mesheryctl model list
 
-list registered models
+List registered models
 
 ## Synopsis
 
-list name of all registered models
+List all registered models by pagingation (25 models per page)
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model list [flags]
@@ -26,7 +26,7 @@ mesheryctl model list [flags]
 
 ## Examples
 
-View list of models
+List of models
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model list
@@ -34,15 +34,15 @@ mesheryctl model list
 </div>
 </pre> 
 
-View list of models with specified page number (25 models per page)
+List of models for a specified page
 <pre class='codeblock-pre'>
 <div class='codeblock'>
-mesheryctl model list --page 2
+mesheryctl model list --page [page-number]
 
 </div>
 </pre> 
 
-View number of available models in Meshery
+Display number of available models in Meshery
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model list --count
@@ -61,6 +61,7 @@ mesheryctl model list --count
 
 <pre class='codeblock-pre'>
 <div class='codeblock'>
+  -c, --count      (optional) Get the number of models in total
   -h, --help       help for list
   -p, --page int   (optional) List next set of models with --page (default = 1) (default 1)
 

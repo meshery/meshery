@@ -15,13 +15,12 @@
 package relationships
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
+	"net/url"
 	"strings"
 
-	"github.com/eiannone/keyboard"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	log "github.com/sirupsen/logrus"
@@ -40,13 +39,13 @@ var (
 // represents the mesheryctl exp relationship search [query-text] subcommand.
 var searchCmd = &cobra.Command{
 	Use:   "search",
-	Short: "Searches registered relationships",
-	Long:  "Searches and finds the realtionship used by different models based on the query-text.",
+	Short: "Search registered relationship(s)",
+	Long:  "Search registred relationship(s) used by different models",
 	Example: `
 // Search for relationship using a query
 mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>] [query-text]`,
 	Args: func(cmd *cobra.Command, args []string) error {
-		const usage = "mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>] [query-text]"
+		const usage = "mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <subtype>] [--model <model>]"
 		errMsg := fmt.Errorf("[--kind, --subtype or --type or --model] and [query-text] are required\n\nUsage: %s\nRun 'mesheryctl exp relationship search --help'", usage)
 
 		if searchKind == "" && searchSubType == "" && searchType == "" && searchModelName == "" {
@@ -63,44 +62,12 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 		}
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
-		url := ""
-		if searchModelName == "" {
-			url = fmt.Sprintf("%s/api/meshmodels/relationships?type=%s&kind=%s&subType=%s&pagesize=all", baseUrl, searchType, searchKind, searchSubType)
+		url := buildSearchUrl(baseUrl)
+		relationshipResponse, err := api.Fetch[MeshmodelRelationshipsAPIResponse](url)
 
-		} else {
-			url = fmt.Sprintf("%s/api/meshmodels/models/%s/relationships?type=%s&kind=%s&subType=%s&pagesize=all", baseUrl, searchModelName, searchType, searchKind, searchSubType)
-
-		}
-
-		req, err := utils.NewRequest(http.MethodGet, url, nil)
 		if err != nil {
-			utils.Log.Error(err)
-			return nil
+			return err
 		}
-
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-
-		// defers the closing of the response body after its use, ensuring that the resources are properly released.
-		defer resp.Body.Close()
-
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-
-		relationshipResponse := &MeshmodelRelationshipsAPIResponse{}
-		err = json.Unmarshal(data, relationshipResponse)
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-
-		header := []string{"kind", "apiVersion", "model-name", "subType", "regoQuery"}
 		rows := [][]string{}
 
 		for _, relationship := range relationshipResponse.Relationships {
@@ -113,58 +80,16 @@ mesheryctl exp relationship search [--kind <kind>] [--type <type>] [--subtype <s
 			}
 		}
 
-		if len(rows) == 0 {
-			// if no relationship is found
-			fmt.Println("No relationship(s) found with the search term")
-			return nil
-		} else {
-			// Print the result in tabular format
-			utils.PrintToTable(header, rows)
+		dataToDisplay := display.DisplayedData{
+			DataType:         "relationship",
+			Header:           []string{"kind", "apiVersion", "model-name", "subType", "regoQuery"},
+			Rows:             rows,
+			Count:            relationshipResponse.Count,
+			DisplayCountOnly: false,
+			IsPage:           cmd.Flags().Changed("page"),
 		}
-		startIndex := 0
-		endIndex := min(len(rows), startIndex+maxRowsPerPage)
-		for {
-			// Clear the entire terminal screen
-			utils.ClearLine()
 
-			// Print number of relationships and current page number
-			fmt.Print("Total number of relationships: ", len(rows))
-			fmt.Println()
-			fmt.Print("Page: ", startIndex/maxRowsPerPage+1)
-			fmt.Println()
-
-			fmt.Println("Press Enter or ↓ to continue. Press Esc or Ctrl+C to exit.")
-
-			utils.PrintToTable(header, rows[startIndex:endIndex])
-			keysEvents, err := keyboard.GetKeys(10)
-			if err != nil {
-				return err
-			}
-
-			defer func() {
-				_ = keyboard.Close()
-			}()
-
-			event := <-keysEvents
-			if event.Err != nil {
-				utils.Log.Error(fmt.Errorf("unable to capture keyboard events"))
-				break
-			}
-
-			if event.Key == keyboard.KeyEsc || event.Key == keyboard.KeyCtrlC {
-				break
-			}
-
-			if event.Key == keyboard.KeyEnter || event.Key == keyboard.KeyArrowDown {
-				startIndex += maxRowsPerPage
-				endIndex = min(len(rows), startIndex+maxRowsPerPage)
-			}
-
-			if startIndex >= len(rows) {
-				break
-			}
-		}
-		return nil
+		return display.List(dataToDisplay)
 	},
 }
 
@@ -176,4 +101,34 @@ func init() {
 	searchCmd.Flags().StringVarP(&searchSubType, "subtype", "s", "", "search particular subtype of relationships")
 	searchCmd.Flags().StringVarP(&searchModelName, "model", "m", "", "search relationships of particular model name")
 	searchCmd.Flags().StringVarP(&searchType, "type", "t", "", "search particular type of relationships")
+}
+
+func buildSearchUrl(baseUrl string) string {
+	var searchUrl strings.Builder
+
+	if searchModelName == "" {
+		searchUrl.WriteString(fmt.Sprintf("%s/api/meshmodels/relationships?", baseUrl))
+	} else {
+		escapeModelName := url.QueryEscape(searchModelName)
+		searchUrl.WriteString(fmt.Sprintf("%s/api/meshmodels/models/%s/relationships?", baseUrl, escapeModelName))
+	}
+
+	if searchType != "" {
+		escapedType := url.QueryEscape(searchType)
+		searchUrl.WriteString(fmt.Sprintf("type=%s&", escapedType))
+	}
+
+	if searchKind != "" {
+		escapeKind := url.QueryEscape(searchKind)
+		searchUrl.WriteString(fmt.Sprintf("kind=%s&", escapeKind))
+	}
+
+	if searchSubType != "" {
+		escapeSubType := url.QueryEscape(searchSubType)
+		searchUrl.WriteString(fmt.Sprintf("subType=%s&", escapeSubType))
+	}
+
+	searchUrl.WriteString("pagesize=all")
+
+	return searchUrl.String()
 }

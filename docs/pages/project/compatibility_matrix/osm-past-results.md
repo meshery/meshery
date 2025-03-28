@@ -8,5 +8,5 @@ display-title: "false"
 list: exclude
 type: "project"
 service-mesh: "meshery-osm"
-subheading: Meshery-OSM
+subheading: meshery-osm
 ---

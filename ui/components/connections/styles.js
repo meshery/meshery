@@ -88,9 +88,7 @@ export const ConnectionIconText = styled('div')({
 });
 
 export const ChipWrapper = styled(Chip)(({ theme }) => ({
-  width: '13rem',
-  maxWidth: '13rem',
-  minWidth: '9rem',
+  width: 'clamp(6rem, 10vw, 13rem)',
   textAlign: 'left',
   cursor: 'pointer',
   '& .MuiChip-label': {

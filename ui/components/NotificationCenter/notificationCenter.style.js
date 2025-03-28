@@ -174,7 +174,7 @@ export const Expanded = styled(Grid)(({ theme }) => ({
     padding: '0.5rem',
   },
 }));
-export const StyledAvatarStack = styled(Box)(({ theme }) => ({
+export const StyledAvatarStack = styled(Box)(() => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
@@ -182,7 +182,6 @@ export const StyledAvatarStack = styled(Box)(({ theme }) => ({
   '& .MuiAvatar-root': {
     width: '2rem',
     height: '2rem',
-    border: `0.05rem solid ${theme.palette.text.default}`,
   },
 }));
 export const ActorAvatar = styled(Grid)(() => ({
@@ -201,7 +200,6 @@ export const GridItem = styled(Grid)(() => ({
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'start',
-  gap: '0.25rem',
 }));
 export const MenuPaper = styled(Box)(({ theme }) => ({
   color: theme.palette.icon.secondary,

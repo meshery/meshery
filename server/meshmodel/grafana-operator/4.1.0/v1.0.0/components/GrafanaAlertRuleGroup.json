@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Observability and Analysis"
     },
     "subCategory": "Monitoring",
@@ -40,15 +41,16 @@
     "model": {
       "version": "4.1.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -60,7 +62,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -75,7 +76,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -90,7 +90,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -106,7 +105,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -122,7 +120,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -137,7 +134,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -152,7 +148,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -167,7 +162,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -177,15 +171,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "grafana.integreatly.org/v1beta1",
     "kind": "GrafanaAlertRuleGroup",
-    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"allowCrossNamespaceImport\": {\n     \"type\": \"boolean\"\n    },\n    \"folderRef\": {\n     \"type\": \"string\"\n    },\n    \"folderUID\": {\n     \"type\": \"string\"\n    },\n    \"instanceSelector\": {\n     \"properties\": {\n      \"matchExpressions\": {\n       \"items\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"interval\": {\n     \"format\": \"duration\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"resyncPeriod\": {\n     \"default\": \"10m\",\n     \"format\": \"duration\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"rules\": {\n     \"items\": {\n      \"properties\": {\n       \"annotations\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"condition\": {\n        \"type\": \"string\"\n       },\n       \"data\": {\n        \"items\": {\n         \"properties\": {\n          \"datasourceUid\": {\n           \"type\": \"string\"\n          },\n          \"model\": {\n           \"format\": \"textarea\",\n           \"type\": \"string\"\n          },\n          \"queryType\": {\n           \"type\": \"string\"\n          },\n          \"refId\": {\n           \"type\": \"string\"\n          },\n          \"relativeTimeRange\": {\n           \"properties\": {\n            \"from\": {\n             \"format\": \"int64\",\n             \"type\": \"integer\"\n            },\n            \"to\": {\n             \"format\": \"int64\",\n             \"type\": \"integer\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"execErrState\": {\n        \"enum\": [\n         \"OK\",\n         \"Alerting\",\n         \"Error\"\n        ],\n        \"type\": \"string\"\n       },\n       \"for\": {\n        \"format\": \"duration\",\n        \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n        \"type\": \"string\"\n       },\n       \"isPaused\": {\n        \"type\": \"boolean\"\n       },\n       \"labels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"noDataState\": {\n        \"enum\": [\n         \"Alerting\",\n         \"NoData\",\n         \"OK\"\n        ],\n        \"type\": \"string\"\n       },\n       \"title\": {\n        \"example\": \"Always firing\",\n        \"maxLength\": 190,\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"uid\": {\n        \"pattern\": \"^[a-zA-Z0-9-_]+$\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"condition\",\n       \"data\",\n       \"execErrState\",\n       \"for\",\n       \"noDataState\",\n       \"title\",\n       \"uid\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"instanceSelector\",\n    \"interval\",\n    \"rules\"\n   ],\n   \"type\": \"object\",\n   \"x-kubernetes-validations\": [\n    {\n     \"message\": \"Only one of FolderUID or FolderRef can be set\",\n     \"rule\": \"(has(self.folderUID) \\u0026\\u0026 !(has(self.folderRef))) || (has(self.folderRef) \\u0026\\u0026 !(has(self.folderUID)))\"\n    }\n   ]\n  }\n },\n \"title\": \"Grafana Alert Rule Group\",\n \"type\": \"object\"\n}",
-    "version": "grafana.integreatly.org/v1beta1"
+    "schema": "{\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"allowCrossNamespaceImport\": {\n     \"type\": \"boolean\"\n    },\n    \"folderRef\": {\n     \"type\": \"string\"\n    },\n    \"folderUID\": {\n     \"type\": \"string\"\n    },\n    \"instanceSelector\": {\n     \"properties\": {\n      \"matchExpressions\": {\n       \"items\": {\n        \"properties\": {\n         \"key\": {\n          \"type\": \"string\"\n         },\n         \"operator\": {\n          \"type\": \"string\"\n         },\n         \"values\": {\n          \"items\": {\n           \"type\": \"string\"\n          },\n          \"type\": \"array\"\n         }\n        },\n        \"required\": [\n         \"key\",\n         \"operator\"\n        ],\n        \"type\": \"object\"\n       },\n       \"type\": \"array\"\n      },\n      \"matchLabels\": {\n       \"additionalProperties\": {\n        \"type\": \"string\"\n       },\n       \"type\": \"object\"\n      }\n     },\n     \"type\": \"object\",\n     \"x-kubernetes-map-type\": \"atomic\"\n    },\n    \"interval\": {\n     \"format\": \"duration\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"resyncPeriod\": {\n     \"default\": \"10m\",\n     \"format\": \"duration\",\n     \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n     \"type\": \"string\"\n    },\n    \"rules\": {\n     \"items\": {\n      \"properties\": {\n       \"annotations\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"condition\": {\n        \"type\": \"string\"\n       },\n       \"data\": {\n        \"items\": {\n         \"properties\": {\n          \"datasourceUid\": {\n           \"type\": \"string\"\n          },\n          \"model\": {\n           \"format\": \"textarea\",\n           \"type\": \"string\"\n          },\n          \"queryType\": {\n           \"type\": \"string\"\n          },\n          \"refId\": {\n           \"type\": \"string\"\n          },\n          \"relativeTimeRange\": {\n           \"properties\": {\n            \"from\": {\n             \"format\": \"int64\",\n             \"type\": \"integer\"\n            },\n            \"to\": {\n             \"format\": \"int64\",\n             \"type\": \"integer\"\n            }\n           },\n           \"type\": \"object\"\n          }\n         },\n         \"type\": \"object\"\n        },\n        \"type\": \"array\"\n       },\n       \"execErrState\": {\n        \"enum\": [\n         \"OK\",\n         \"Alerting\",\n         \"Error\"\n        ],\n        \"type\": \"string\"\n       },\n       \"for\": {\n        \"format\": \"duration\",\n        \"pattern\": \"^([0-9]+(\\\\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$\",\n        \"type\": \"string\"\n       },\n       \"isPaused\": {\n        \"type\": \"boolean\"\n       },\n       \"labels\": {\n        \"additionalProperties\": {\n         \"type\": \"string\"\n        },\n        \"type\": \"object\"\n       },\n       \"noDataState\": {\n        \"enum\": [\n         \"Alerting\",\n         \"NoData\",\n         \"OK\"\n        ],\n        \"type\": \"string\"\n       },\n       \"title\": {\n        \"example\": \"Always firing\",\n        \"maxLength\": 190,\n        \"minLength\": 1,\n        \"type\": \"string\"\n       },\n       \"uid\": {\n        \"pattern\": \"^[a-zA-Z0-9-_]+$\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"condition\",\n       \"data\",\n       \"execErrState\",\n       \"for\",\n       \"noDataState\",\n       \"title\",\n       \"uid\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    }\n   },\n   \"required\": [\n    \"instanceSelector\",\n    \"interval\",\n    \"rules\"\n   ],\n   \"type\": \"object\",\n   \"x-kubernetes-validations\": [\n    {\n     \"message\": \"Only one of FolderUID or FolderRef can be set\",\n     \"rule\": \"(has(self.folderUID) \\u0026\\u0026 !(has(self.folderRef))) || (has(self.folderRef) \\u0026\\u0026 !(has(self.folderUID)))\"\n    }\n   ]\n  }\n },\n \"title\": \"Grafana Alert Rule Group\",\n \"type\": \"object\"\n}"
   }
 }
