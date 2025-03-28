@@ -9,6 +9,9 @@ on:
       - "mesheryctl/**"
       - "*.md"
       - "*.github/**"
+  push:
+    branches:
+      - "master"
   workflow_dispatch:
     inputs:
       logLevel:
