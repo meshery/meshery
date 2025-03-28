@@ -236,7 +236,7 @@ All of Meshery's Models can be found in the [Meshery Integrations spreadsheet](h
     <br />
     - <code>mesheryctl models</code> - interact with and update Meshery Server
     <br />
-    - <code>mesheryctl components</code> - interact with and update Meshery Server
+    - <code>mesheryctl component</code> - interact with and update Meshery Server
     <br />
     - <code>mesheryctl relationships</code> - interact with and update Meshery Server" %}
   </section>
