@@ -135,7 +135,7 @@ list: exclude
     <details>
       <summary>
         <p style="display:inline">
-          <a href="{{ site.baseurl }}/guides/tutorials/" class="text-black">🧑‍🔬 Toturials</a>
+          <a href="{{ site.baseurl }}/guides/tutorials/" class="text-black">🧑‍🔬 Tutorials</a>
         </p>
       </summary>
       <ul class="section-title">
