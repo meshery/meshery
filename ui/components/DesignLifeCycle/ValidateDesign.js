@@ -71,8 +71,6 @@ const ValidationResults_ = (props) => {
     (result) => result.errors?.length && !result?.component?.metatadata?.isAnnotation,
   );
 
-  console.log('componentsWithErrors', componentsWithErrors);
-
   const isCurrentComponent = (err) => err.component.id == currentNodeId;
   const [open, setOpen] = React.useState(componentsWithErrors.map(isCurrentComponent));
 
