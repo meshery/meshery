@@ -39,7 +39,7 @@ export const ThemeTogglerCore = ({ Component }) => {
     const newTheme = mode === 'light' ? 'dark' : 'light';
     setMode(newTheme);
     const updated = _.set('remoteProviderPreferences.theme', newTheme, userPrefs);
-    console.log('updated', updated);
+
     handleUpdateUserPref({
       body: updated,
     });
