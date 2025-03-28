@@ -116,7 +116,7 @@ export function normalizeUnit(resourceType, quantity) {
        * Binary: Ki | Mi | Gi | Ti | Pi | Ei
        * Refer https://github.com/kubernetes-client/csharp/blob/840a90e24ef922adee0729e43859cf6b43567594/src/KubernetesClient.Models/ResourceQuantity.cs#L211
        */
-      console.log('debug:', quantity, parseInt(quantity), quantity.endsWith('m'));
+
       bytes = parseInt(quantity);
       if (quantity.endsWith('Ki')) {
         bytes *= 1024;
