@@ -5,6 +5,8 @@ on:
   schedule:
     - cron: '0 0 * * *' #runs every day at midnight
 
+permissions:
+  contents: write
 jobs:
   update:
     runs-on: ubuntu-24.04
