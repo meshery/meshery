@@ -94,8 +94,6 @@
           url: concepts/logical/registry
         - title: "Workspaces"
           url: concepts/logical/workspaces
-        - title: "Performance Profiles and Tests"
-          url: guides/performance-management/managing-performance
 # - title: 📑 Features
 #   url: features
 #   links:
@@ -105,16 +103,14 @@
   url: guides
   links:
     - title: Infrastructure Management ↆ
-      url: guides/infrastructure-management
+      url: guides/infrastructure-management/overview
       children:
         - title: GitOps with Meshery
           url: guides/infrastructure-management/gitops-with-meshery
         - title: Deploying Sample Apps
-          url: guides/infrastructure-management/deploying-sample-apps
-        - title: Infrastructure Discovery
-          url: guides/infrastructure-management/infrastructure-discovery
+          url: guides/infrastructure-management/sample-apps
         - title: Managing Notifications
-          url: guides/infrastructure-management/managing-notifications
+          url: guides/infrastructure-management/notification-management
         - title: Managing Envoy Filters
           url: guides/infrastructure-management/filter-management
         - title: Managing Connections
@@ -123,7 +119,7 @@
             - title: Registering a Connection
               url: guides/infrastructure-management/registering-a-connection
     - title: Configuring Kubernetes Infrastructure ↆ
-      url: guides/configuration-management
+      url: guides/configuration-management/working-with-designs
       children:
         - title: Creating a Meshery Design
           url: guides/configuration-management/creating-a-meshery-design
@@ -134,18 +130,16 @@
         - title: Generating Designs
           url: guides/configuration-management/generating-models
         - title: Managing Model Images
-          url: guides/configuration-management/pushing-pulling-model-images
-        - title: Managing Envoy Filters
-          url: guides/configuration-management/filter-management
+          url: guides/configuration-management/push-pull-model-image
         - title: Cloud Native Design Patterns
-          url: guides/configuration-management/patterns
+          url: guides/configuration-management/pattern-management
     - title: Performance Management ↆ
-      url: guides/performance-management
+      url: guides/performance-management/performance-management
       children:
-        - title: Performance Management with Meshery
-          url: guides/performance-management/performance-management
         - title: Using Metrics in Meshery
           url: guides/performance-management/meshery-metrics
+        - title: Managing Performance
+          url: guides/performance-management/managing-performance
         - title: Interpreting Performance Test Results
           url: guides/performance-management/interpreting-performance-test-results
     - title: Using Meshery CLI Guides ↆ
@@ -167,32 +161,32 @@
         - title: Installation Issues
           url: guides/troubleshooting/installation
         - title: Operator & MeshSync
-          url: guides/troubleshooting/meshery-operator-meshsync-troubleshooting
+          url: guides/troubleshooting/meshery-operator-meshsync
         - title: Runtime Errors
-          url: guides/troubleshooting/running
+          url: guides/troubleshooting/meshery-server
     - title: 🧑‍🔬 Tutorials ↆ
       url: guides/tutorials
       children:
         - title: Exploring Kubernetes CronJobs
-          url: guides/tutorials/exploring-kubernetes-cronjob
+          url: guides/tutorials/exploring-kubernetes-cronjobs
         - title: Using ConfigMaps & Secrets in Kubernetes
           url: guides/tutorials/kubernetes-configmaps-secrets
         - title: Exploring Kubernetes Pods
-          url: guides/tutorials/kubernetes-pod
+          url: guides/tutorials/kubernetes-pods
         - title: Deploying WordPress & MySQL with Persistent Volumes
           url: guides/tutorials/wordpress-mysql-persistentvolume
         - title: Deploying PHP Guestbook with Redis
-          url: guides/tutorials/deploy-php-redi
+          url: guides/tutorials/deploy-php-redis
         - title: Deploying AWS EC2 Instances
           url: guides/tutorials/deploy-aws-ec2-instances-with-meshery
         - title: Exploring Kubernetes Deployments
           url: guides/tutorials/kubernetes-deployments
         - title: Deploying Apache Cassandra with StatefulSets
-          url: guides/tutorials/deploy-cassandra-statefulset
+          url: guides/tutorials/deploy-apache-cassandra-with-statefulset
         - title: Embedding Meshery Designs in WordPress
-          url: guides/tutorials/embed-meshery-design-wordpress
+          url: guides/tutorials/embedding-meshery-design-in-wordpress
         - title: Publishing Designs to ArtifactHub
-          url: guides/tutorials/publish-designs-artifacthub
+          url: guides/tutorials/publish-to-artifacthub
 # - title: ⚙️ Tasks
 #   url: tasks
 #   links:
@@ -206,31 +200,27 @@
       children:
         - title: Helm Kanvas Snapshot
           url: extensions/helm-kanvas-snapshot
-        - title: kubectl Kanvas Snapshot
-          url: extensions/kubectl-kanvas-snapshot
         - title: MeshSync Snapshot
           url: extensions/kubectl-meshsync-snapshot
         - title: Kanvas Design Tools ↆ
           url: extensions/kanvas
           grandchildren:
             - title: Component Shape Guide
-              url: extensions/kanvas/component-shape-guide
+              url: extensions/component-shape-guide
             - title: Edges Style Guide
-              url: extensions/kanvas/edges-guide
+              url: extensions/edges-shape-guide
             - title: Import & Export Designs
-              url: extensions/kanvas/import-export-designs
+              url: extensions/import-export-designs
             - title: Merging Designs
-              url: extensions/kanvas/merging-a-design
+              url: extensions/merging-design
             - title: Publishing Designs
-              url: extensions/kanvas/publishing-a-design
+              url: extensions/publishing-a-design
             - title: Sharing Designs
-              url: extensions/kanvas/sharing-a-design
+              url: extensions/sharing-a-design
             - title: Working with Tags
-              url: extensions/kanvas/tags-set
+              url: extensions/working-with-tags
         - title: Kanvas Snapshot
           url: extensions/kanvas-snapshot
-        - title: Team Management Extension
-          url: extensions/team-management
 
 - title: 🔧 Extensibility
   url: extensibility/extensibility
@@ -264,11 +254,8 @@
       children:
         - title: Build & Release (CI) ↆ
           url: project/contributing/build-and-release
-          grandchildren:
-            - title: End-to-End Test Status
-              url: project/contributing/contributing-ui-test
         - title: Contributing to Adapters
-          url: project/contributing/contributing-adapter
+          url: project/contributing/contributing-adapters
         - title: CLI Contributions ↆ
           url: project/contributing/contributing-cli
           grandchildren:
@@ -311,7 +298,7 @@
         - title: Schemas
           url: project/contributing/contributing-schemas
         - title: Dev Setup on Windows
-          url: project/contributing/dev-setup-windows
+          url: project/contributing/meshery-windows
 
 - title: 📖 Reference
   url: reference
