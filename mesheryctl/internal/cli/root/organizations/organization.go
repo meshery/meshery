@@ -14,12 +14,13 @@ import (
 
 var (
 	availableSubcommands = []*cobra.Command{listOrgCmd}
+	organizationsAPiPath = "api/identity/orgs"
 	count                bool
 )
 
 var OrgCmd = &cobra.Command{
 
-	Use:   "organizations",
+	Use:   "organization",
 	Short: "Interact with registered orgnizations",
 	Long: `Interact with registered organizations to display detailled informations
 Documentation for organizations can be found at https://docs.meshery.io/reference/mesheryctl/exp/organizations`,
@@ -70,7 +71,7 @@ func getAllOrganizations() (*models.OrganizationsPage, error) {
 		return nil, utils.ErrLoadConfig(err)
 	}
 	baseUrl := mctlCfg.GetBaseMesheryURL()
-	url := fmt.Sprintf("%s/api/identity/orgs?all=true", baseUrl)
+	url := fmt.Sprintf("%s/%s?all=true", baseUrl, organizationsAPiPath)
 
 	return api.Fetch[models.OrganizationsPage](url)
 
