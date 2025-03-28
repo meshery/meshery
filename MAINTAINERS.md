@@ -45,6 +45,7 @@
 | ----------------- | --------------- | ----------- |
 | Adithya Krishna   | adithyaakrishna | Red Hat     |
 | Lee Calcote       | leecalcote      | Layer5      |
+| Mia Grenell       | miacycle        | USyd        |
 
 ### Site Maintainers
 

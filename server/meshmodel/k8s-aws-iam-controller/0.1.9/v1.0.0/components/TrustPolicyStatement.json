@@ -27,6 +27,7 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
     "subCategory": "Uncategorized",
@@ -44,16 +45,17 @@
     "model": {
       "version": "0.1.9"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -65,7 +67,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -80,7 +81,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -95,7 +95,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -111,7 +110,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -127,7 +125,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -142,7 +139,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -157,7 +153,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -172,7 +167,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -182,7 +176,9 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false,
@@ -190,8 +186,8 @@
   },
   "configuration": null,
   "component": {
+    "version": "iam.aws.rustrial.org/v1alpha1",
     "kind": "TrustPolicyStatement",
-    "schema": "{\n \"description\": \"Auto-generated derived type for TrustPolicyStatementSpec via `CustomResource`\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"providers\": {\n     \"description\": \"AWS EKS Cluster's OpenID Connect Providers, at least one entry is required.\",\n     \"items\": {\n      \"properties\": {\n       \"providerArn\": {\n        \"description\": \"AWS IAM OpenID Connect Provider ARN of EKS Cluster OIDC Provider.\",\n        \"type\": \"string\"\n       },\n       \"statementSid\": {\n        \"description\": \"Trust Policy Statement ID (SID), must be unique.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"providerArn\",\n       \"statementSid\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"roleArn\": {\n     \"description\": \"AWS IAM Role ARN this statement is applied to.\",\n     \"type\": \"string\"\n    },\n    \"serviceAccountName\": {\n     \"description\": \"ServiceAccount name for which this statement was created.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"providers\",\n    \"roleArn\",\n    \"serviceAccountName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Trust Policy Statement\",\n \"type\": \"object\"\n}",
-    "version": "iam.aws.rustrial.org/v1alpha1"
+    "schema": "{\n \"description\": \"Auto-generated derived type for TrustPolicyStatementSpec via `CustomResource`\",\n \"properties\": {\n  \"spec\": {\n   \"properties\": {\n    \"providers\": {\n     \"description\": \"AWS EKS Cluster's OpenID Connect Providers, at least one entry is required.\",\n     \"items\": {\n      \"properties\": {\n       \"providerArn\": {\n        \"description\": \"AWS IAM OpenID Connect Provider ARN of EKS Cluster OIDC Provider.\",\n        \"type\": \"string\"\n       },\n       \"statementSid\": {\n        \"description\": \"Trust Policy Statement ID (SID), must be unique.\",\n        \"type\": \"string\"\n       }\n      },\n      \"required\": [\n       \"providerArn\",\n       \"statementSid\"\n      ],\n      \"type\": \"object\"\n     },\n     \"type\": \"array\"\n    },\n    \"roleArn\": {\n     \"description\": \"AWS IAM Role ARN this statement is applied to.\",\n     \"type\": \"string\"\n    },\n    \"serviceAccountName\": {\n     \"description\": \"ServiceAccount name for which this statement was created.\",\n     \"type\": \"string\"\n    }\n   },\n   \"required\": [\n    \"providers\",\n    \"roleArn\",\n    \"serviceAccountName\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"required\": [\n  \"spec\"\n ],\n \"title\": \"Trust Policy Statement\",\n \"type\": \"object\"\n}"
   }
 }

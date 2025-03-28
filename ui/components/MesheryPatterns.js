@@ -385,7 +385,6 @@ function MesheryPatterns({
     headerIcon: OutlinedPatternIcon,
   });
   const handleDeploy = async ({ design, selectedK8sContexts }) => {
-    console.log('Deploying pattern', design);
     updateProgress({ showProgress: true });
     await deployPatternMutation({
       pattern_file: encodeDesignFile(design),
@@ -1009,7 +1008,7 @@ function MesheryPatterns({
     },
     {
       name: 'created_at',
-      label: 'Upload Timestamp',
+      label: 'Created At',
       options: {
         filter: false,
         sort: true,
@@ -1031,7 +1030,7 @@ function MesheryPatterns({
     },
     {
       name: 'updated_at',
-      label: 'Update Timestamp',
+      label: 'Update At',
       options: {
         filter: false,
         sort: true,
@@ -1225,7 +1224,6 @@ function MesheryPatterns({
   });
 
   async function showModal(count, patterns) {
-    console.log('patterns to be deleted', count, patterns);
     let response = await modalRef.current.show({
       title: `Delete ${count ? count : ''} Design${count > 1 ? 's' : ''}?`,
 
