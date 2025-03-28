@@ -15,13 +15,13 @@
 package system
 
 import (
-	"os"
-
+	"fmt"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"os"
 
 	log "github.com/sirupsen/logrus"
 )
@@ -102,6 +102,17 @@ mesheryctl system login -p Meshery
 	},
 }
 
+func showCommandHelp(cmd *cobra.Command, errMsg string) {
+	fmt.Printf("\n Error : %s \n", errMsg)
+	fmt.Println("\nCommand Reference :")
+	fmt.Println("-------------------")
+	cmd.Help()
+}
+
 func init() {
 	loginCmd.PersistentFlags().StringVarP(&providerFlag, "provider", "p", "", "login Meshery with specified provider")
+	loginCmd.SetFlagErrorFunc(func(cmd *cobra.Command, err error) error {
+		showCommandHelp(cmd, err.Error())
+		return nil
+	})
 }
