@@ -267,7 +267,7 @@ export const setK8sContexts =
   ({ selectedK8sContexts }) =>
   (dispatch) => {
     const result = dispatch({ type: actionTypes.SET_K8S_CONTEXT, selectedK8sContexts });
-    console.log('setK8sContexts', selectedK8sContexts);
+
     mesheryEventBus.publish({
       type: 'K8S_CONTEXTS_UPDATED',
       data: {
