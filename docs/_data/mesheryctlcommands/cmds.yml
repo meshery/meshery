@@ -1123,7 +1123,7 @@ exp:
             name: -o, -orgId
             description: organization id 
   organization:
-    name: organizations
+    name: organization
     description: Interact with existing organizations
     usage: mesheryctl exp organizations 
     flags:
@@ -1132,18 +1132,18 @@ exp:
         description: (optional) Get the total of registrered organizations
       help:
         name: --help, -h
-        description: help for components
+        description: help for organizations
         usage: mesheryctl exp organizations --help
         example: mesheryctl exp organizations --help
     subcommands:
       list:
         name: list
         description: List all exp organizations registered in Meshery Server
-        usage: mesheryctl compoexp organizationsnent list [flags]
+        usage: mesheryctl exp organizations list [flags]
         flags:
           page:
             name: --page, -p
-            description: list components by specific page number (25 models per page)  
+            description: list organizations by specific page number (25 models per page)  
           count:
             name: --count
             description: (optional) Get the total of registrered organizations
