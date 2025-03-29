@@ -91,7 +91,13 @@ const ACTION_TYPES = {
   },
 };
 
-const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, selectedFilter }) => {
+const ConnectionTable = ({
+  meshsyncControllerState,
+  connectionMetadataState,
+  selectedFilter,
+  selectedConnectionId,
+  updateUrlWithConnectionId,
+}) => {
   const organization = useLegacySelector((state) => state.get('organization'));
   const ping = useKubernetesHook();
   const { width } = useWindowDimensions();
@@ -480,6 +486,39 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
     setRowData(tableMeta);
   };
   const theme = useTheme();
+
+  const isHandlingExpansion = useRef(false);
+  const isInitialLoad = useRef(true);
+  const isUrlExpansion = useRef(false);
+  const lastProcessedId = useRef(null);
+
+  // Update rowsExpanded when a specific connection ID is selected
+  useEffect(() => {
+    // Skip if we're already handling expansion or if there's no connection ID
+    if (!selectedConnectionId || isHandlingExpansion.current) return;
+
+    // Skip if we've already processed this ID
+    if (lastProcessedId.current === selectedConnectionId) return;
+
+    if (connections && connections.length > 0) {
+      isUrlExpansion.current = true;
+      lastProcessedId.current = selectedConnectionId;
+
+      const index = connections.findIndex((conn) => conn.id === selectedConnectionId);
+      if (index !== -1) {
+        setRowsExpanded([index]);
+      } else {
+        // If connection doesn't exist, clear the URL parameter
+        updateUrlWithConnectionId('');
+      }
+
+      setTimeout(() => {
+        isUrlExpansion.current = false;
+      }, 100);
+
+      isInitialLoad.current = false;
+    }
+  }, [selectedConnectionId, connections]);
 
   const columns = [
     {
@@ -993,7 +1032,29 @@ const ConnectionTable = ({ meshsyncControllerState, connectionMetadataState, sel
       return true;
     },
     onRowExpansionChange: (_, allRowsExpanded) => {
-      setRowsExpanded(allRowsExpanded.slice(-1).map((item) => item.index));
+      if (isUrlExpansion.current) return;
+
+      isHandlingExpansion.current = true;
+      const expandedRows = allRowsExpanded.slice(-1);
+      setRowsExpanded(expandedRows.map((item) => item.index));
+
+      if (expandedRows.length > 0 && connections) {
+        const index = expandedRows[0].index;
+        const connection = connections[index];
+
+        if (
+          connection &&
+          updateUrlWithConnectionId &&
+          (!isInitialLoad.current || connection.id !== selectedConnectionId)
+        ) {
+          updateUrlWithConnectionId(connection.id);
+        }
+      } else if (updateUrlWithConnectionId && !isInitialLoad.current) {
+        updateUrlWithConnectionId('');
+      }
+      setTimeout(() => {
+        isHandlingExpansion.current = false;
+      }, 100);
     },
     renderExpandableRow: (rowData, tableMeta) => {
       const colSpan = rowData.length;
