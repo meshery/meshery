@@ -3,6 +3,11 @@ on:
   issues:
     types: [labeled]
 
+
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   automate_invite:
     if: contains(github.event.issue.labels.*.name, 'issue/invite') && github.repository == 'meshery/'
