@@ -148,8 +148,8 @@ func getConnectionPayload(connType, objName, objID string, identifier interface{
 	return connections.ConnectionPayload{
 		Kind:                       connType,
 		Name:                       objName,
-		Type:                       connectionDef.Model.Category.Name,
-		SubType:                    subCategory,
+		Type:                       fmt.Sprintf("%v", connectionDef.Model.Category.Name),
+		SubType:                    fmt.Sprintf("%v", subCategory),
 		SkipCredentialVerification: false,
 		MetaData:                   connMetadata,
 		ID:                         id,
