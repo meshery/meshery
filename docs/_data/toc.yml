@@ -311,7 +311,5 @@
           url: extensibility/verify-compatibility
         - title: UI Plugins
           url: extensibility/ui
-        - title: Compatibility Guide
-          url: extensibility/verify-compatibility
     - title: Security Vulnerabilities
       url: project/security-vulnerabilities
