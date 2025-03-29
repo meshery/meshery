@@ -194,7 +194,7 @@ Breaking down the execution of `make e2e`, two commands are executed before subs
 These steps can become redundant if you're not running the end-to-end tests for the first time.
 
 It is important to point out that there are other ways to run end-to-end tests locally.
-To use these, ensure you are in the `meshery/mesheryctl/tets/e2e` directory.
+To use these, ensure you are in the `meshery/mesheryctl/tests/e2e` directory.
 
 **Run tests with already built binary**
 
