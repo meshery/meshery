@@ -1,12 +1,14 @@
 ---
 layout: default
-title: "Extensibility: Meshery Integrations"
-permalink: extensibility/integrations
-type: Extensibility
+title: "Meshery Integrations"
+permalink: extensions/integrations
+type: extensions
 abstract: "Meshery architecture is extensible. Meshery provides several extension points for working with different cloud native projects via adapters, load generators and providers"
 language: en
+redirect_from: extensibility/integrations
 #redirect_from: extensibility
 suggested-reading: false
+list: include
 ---
 
 Meshery provides 220+ built-in integrations which refer to the supported connections and interactions between Meshery and various cloud native platforms, tools, and technologies. Meshery's approach is Kubernetes-native which means you can easily incorporate Meshery into your existing workflow without additional setup or integration effort.

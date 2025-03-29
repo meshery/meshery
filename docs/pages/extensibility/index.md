@@ -7,6 +7,8 @@ abstract: 'Meshery has an extensible architecture with several different types o
 # redirect_from:
 #   - reference/extensibility
 #   - extensibility/
+redirect_from:
+  - /extensibility
 language: en
 list: exclude
 ---
