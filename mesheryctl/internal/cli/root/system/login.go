@@ -106,7 +106,9 @@ func showCommandHelp(cmd *cobra.Command, errMsg string) {
 	fmt.Printf("\n Error : %s \n", errMsg)
 	fmt.Println("\nCommand Reference :")
 	fmt.Println("-------------------")
-	cmd.Help()
+	if err := cmd.Help(); err != nil {
+		log.Error("Error in displaying help",err)
+	}
 }
 
 func init() {
