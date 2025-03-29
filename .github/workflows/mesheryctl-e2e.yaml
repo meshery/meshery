@@ -38,6 +38,7 @@ jobs:
       - name: Set up Docker
         uses: docker/setup-buildx-action@v3.9.0
       - name: Setup BATS and BATS libs
+        id: setup-bats
         uses: bats-core/bats-action@3.0.0
       - uses: actions/setup-go@v5.3.0
         with:
@@ -62,13 +63,15 @@ jobs:
         id: date
         run: echo "date=date +'%Y-%m-%d-%H.%M.%S'" >> $GITHUB_OUTPUT
       - name: Run mesheryctl end2end tests
-        run: | 
-          MESHERY_PROVIDER_TOKEN=$MESHERY_PROVIDER_TOKEN MESHERY_PLATFORM=$MESHERY_PLATFORM bash run_tests.bash
+        run: |
+          bash run_tests.bash
         shell: bash
         working-directory: ./mesheryctl/tests/e2e
         env:
           MESHERY_PROVIDER_TOKEN: ${{ secrets.PROVIDER_TOKEN }}
           MESHERY_PLATFORM: ${{ matrix.platform }}
+          BATS_LIB_PATH: ${{ steps.setup-bats.outputs.lib-path }}
+          E2E_HELPERS_PATH: "${{ github.workspace }}/mesheryctl/tests/e2e/helpers"
 
   manual-test:
     name: Manual e2e Test
