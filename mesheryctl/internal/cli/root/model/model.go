@@ -15,13 +15,11 @@
 package model
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 
 	"github.com/fatih/color"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 
@@ -88,7 +86,7 @@ mesheryctl model view [model-name]
 
 			baseUrl := mctlCfg.GetBaseMesheryURL()
 			url := fmt.Sprintf("%s/api/meshmodels/models?page=1", baseUrl)
-			models, err := fetchModels(url)
+			models, err := api.Fetch[models.MeshmodelsAPIResponse](url)
 
 			if err != nil {
 				return err
@@ -118,32 +116,4 @@ mesheryctl model view [model-name]
 func init() {
 	ModelCmd.AddCommand(availableSubcommands...)
 	ModelCmd.Flags().BoolP("count", "", false, "(optional) Get the number of models in total")
-}
-
-func fetchModels(url string) (*models.MeshmodelsAPIResponse, error) {
-	req, err := utils.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	resp, err := utils.MakeRequest(req)
-	if err != nil {
-		return nil, err
-	}
-
-	// defers the closing of the response body after its use, ensuring that the resources are properly released.
-	defer resp.Body.Close()
-
-	data, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
-	modelsResponse := &models.MeshmodelsAPIResponse{}
-	err = json.Unmarshal(data, modelsResponse)
-	if err != nil {
-		return nil, err
-	}
-
-	return modelsResponse, nil
 }

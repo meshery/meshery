@@ -3,6 +3,8 @@ package model
 import (
 	"fmt"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models"
@@ -39,55 +41,43 @@ mesheryctl model list --count
 		page, _ := cmd.Flags().GetInt("page")
 		url := fmt.Sprintf("%s/api/meshmodels/models?%s", baseUrl, utils.GetPageQueryParameter(cmd, page))
 
-		models, err := fetchModels(url)
+		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](url)
 
 		if err != nil {
 			return err
 		}
 
+		header := []string{"Model", "Category", "Version"}
+		rows := [][]string{}
+
+		for _, model := range modelsResponse.Models {
+			if len(model.DisplayName) > 0 {
+				rows = append(rows, []string{model.Name, model.Category.Name, model.Version})
+			}
+		}
+
 		count, _ := cmd.Flags().GetBool("count")
-		return listModel(cmd, models, count)
+
+		dataToDisplay := display.DisplayedData{
+			DataType:         "model",
+			Header:           header,
+			Rows:             rows,
+			Count:            int64(modelsResponse.Count),
+			DisplayCountOnly: count,
+			IsPage:           cmd.Flags().Changed("page"),
+		}
+
+		err = display.List(dataToDisplay)
+		if err != nil {
+			return err
+		}
+
+		return nil
+
 	},
 }
 
 func init() {
 	listModelCmd.Flags().IntP("page", "p", 1, "(optional) List next set of models with --page (default = 1)")
 	listModelCmd.Flags().BoolP("count", "c", false, "(optional) Get the number of models in total")
-}
-
-func listModel(cmd *cobra.Command, modelsResponse *models.MeshmodelsAPIResponse, displayCountOnly bool) error {
-
-	header := []string{"Model", "Category", "Version"}
-	rows := [][]string{}
-
-	for _, model := range modelsResponse.Models {
-		if len(model.DisplayName) > 0 {
-			rows = append(rows, []string{model.Name, string(model.Category.Name), model.Version})
-		}
-	}
-
-	if len(rows) == 0 {
-		// if no model is found
-		// fmt.Println("No model(s) found")
-		whiteBoardPrinter.Println("No model(s) found")
-		return nil
-	}
-
-	utils.DisplayCount("models", modelsResponse.Count)
-
-	if displayCountOnly {
-		return nil
-	}
-
-	if cmd.Flags().Changed("page") {
-		utils.PrintToTable(header, rows)
-	} else {
-		err := utils.HandlePagination(maxRowsPerPage, "models", rows, header)
-		if err != nil {
-			utils.Log.Error(err)
-			return nil
-		}
-	}
-
-	return nil
 }

@@ -7,8 +7,10 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/manifoldco/promptui"
 	"github.com/meshery/schemas/models/v1beta1/model"
 	"github.com/pkg/errors"
@@ -54,7 +56,7 @@ mesheryctl model view [model-name]
 
 		url := fmt.Sprintf("%s/api/meshmodels/models/%s?pagesize=all", baseUrl, modelDefinition)
 
-		modelsResponse, err := fetchModels(url)
+		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](url)
 
 		if err != nil {
 			return err
