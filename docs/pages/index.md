@@ -280,33 +280,6 @@ list: exclude
 </div>
 <div class="flex flex-col--2 container">
 
-<!-- Extensibility -->
-<div class="section">
-  <a href="{{ site.baseurl }}/extensibility/index">
-    <div class="btn-primary">Extensibility</div>
-  </a>
-  <details>
-    <summary>
-      <p style="display:inline">
-        <a href="{{ site.baseurl }}/extensibility/index" class="text-black">Extensibility</a>
-      </p>
-    </summary>
-    <ul class="section-title">
-      {% assign extensibility_pages = site.pages | where: "type", "Extensibility" %}
-      {% for item in extensibility_pages %}
-        {% if item.list != "exclude" and item.language == "en" %}
-          <li>
-            <a href="{{ site.baseurl }}{{ item.url }}">{{ item.title }}</a>
-            {% if item.abstract != " " %}
-              - {{ item.abstract }}
-            {% endif %}
-          </li>
-        {% endif %}
-      {% endfor %}
-    </ul>
-  </details>
-</div>
-
 <!-- Contributing & Community -->
   <div class="section">
     <a href="{{ site.baseurl }}/project">

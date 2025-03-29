@@ -191,10 +191,10 @@
 #   url: tasks
 #   links:
 - title: 🛠 Integrations & Extensions
-  url: extensibility
+  url: "#"
   links:
     - title: Integrations
-      url: extensibility/integrations
+      url: extensions/integrations
     - title: Extensions ↆ
       url: extensions
       children:
@@ -220,23 +220,7 @@
             - title: Working with Tags
               url: extensions/working-with-tags
         - title: Kanvas Snapshot
-          url: extensions/kanvas-snapshot
-
-- title: 🔧 Extensibility
-  url: extensibility/extensibility
-  links:
-    - title: APIs
-      url: extensibility/api
-    - title: Authorization
-      url: extensibility/authorization
-    - title: Load Generators
-      url: extensibility/load-generators
-    - title: Providers
-      url: extensibility/providers
-    - title: UI Plugins
-      url: extensibility/ui
-    - title: Compatibility Guide
-      url: extensibility/verify-compatibility
+          url: extensions/kanvas-snapshot 
 
 - title: 🧑‍💻 Contributing & Community
   url: project
@@ -245,10 +229,6 @@
       url: project/community
     - title: Meshery Playground
       url: installation/playground
-    - title: Releases
-      url: project/releases
-    - title: Security Vulnerabilities
-      url: project/security-vulnerabilities
     - title: Contributing Guides ↆ
       url: project/contributing
       children:
@@ -318,7 +298,20 @@
           url: reference/graphql-apis
         - title: REST API Reference
           url: reference/rest-apis
-    - title: Releases
-      url: project/releases
+    - title: Extensibility Reference ↆ
+      url: extensibility
+      children:
+        - title: Authorization
+          url: extensibility/authorization
+        - title: Load Generators
+          url: extensibility/load-generators
+        - title: Providers
+          url: extensibility/providers
+        - title: Compatibility Guide
+          url: extensibility/verify-compatibility
+        - title: UI Plugins
+          url: extensibility/ui
+        - title: Compatibility Guide
+          url: extensibility/verify-compatibility
     - title: Security Vulnerabilities
       url: project/security-vulnerabilities
