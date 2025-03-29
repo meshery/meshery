@@ -17,7 +17,8 @@ import (
 var listModelCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered models",
-	Long:  "List all registered models by pagingation (25 models per page)",
+	Long: `List all registered models by pagingation (25 models per page)
+Documentation for models list can be found at https://docs.meshery.io/reference/mesheryctl/model/list`,
 	Example: `
 // List of models
 mesheryctl model list
@@ -39,7 +40,7 @@ mesheryctl model list --count
 
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		page, _ := cmd.Flags().GetInt("page")
-		url := fmt.Sprintf("%s/api/meshmodels/models?%s", baseUrl, utils.GetPageQueryParameter(cmd, page))
+		url := fmt.Sprintf("%s/%s?%s", baseUrl, modelsApiPath, utils.GetPageQueryParameter(cmd, page))
 
 		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](url)
 

@@ -17,8 +17,6 @@ package model
 import (
 	"fmt"
 
-	"github.com/fatih/color"
-
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
@@ -31,10 +29,7 @@ import (
 )
 
 var (
-	// Maximum number of rows to be displayed in a page
-	maxRowsPerPage = 25
-	// Color for the whiteboard printer
-	whiteBoardPrinter = color.New(color.FgHiBlack, color.BgWhite, color.Bold)
+	modelsApiPath = "api/meshmodels/models"
 	// Available model subcommads
 	availableSubcommands = []*cobra.Command{listModelCmd, viewModelCmd, searchModelCmd, importModelCmd, exportModelCmd, generateModelCmd}
 )
@@ -43,7 +38,8 @@ var (
 var ModelCmd = &cobra.Command{
 	Use:   "model",
 	Short: "Manage models",
-	Long:  "Export, generate, import, list, search and view model(s) and detailed informations",
+	Long: `Export, generate, import, list, search and view model(s) and detailed informations
+Documentation for models can be found at https://docs.meshery.io/reference/mesheryctl/model`,
 	Example: `
 // Display number of available models in Meshery
 mesheryctl model --count

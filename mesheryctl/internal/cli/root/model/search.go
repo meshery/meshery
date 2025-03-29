@@ -17,7 +17,8 @@ import (
 var searchModelCmd = &cobra.Command{
 	Use:   "search",
 	Short: "Search model(s)",
-	Long:  "Search model(s) by search string",
+	Long: `Search model(s) by search string
+Documentation for models search can be found at https://docs.meshery.io/reference/mesheryctl/model/search`,
 	Example: `
 // Search model from current provider
 mesheryctl model search [query-text]
@@ -39,7 +40,7 @@ mesheryctl model search [query-text]
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		queryText := args[0]
 
-		url := fmt.Sprintf("%s/api/meshmodels/models?search=%s&pagesize=all", baseUrl, url.QueryEscape(queryText))
+		url := fmt.Sprintf("%s/%s?search=%s&pagesize=all", baseUrl, modelsApiPath, url.QueryEscape(queryText))
 
 		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](url)
 
@@ -49,6 +50,12 @@ mesheryctl model search [query-text]
 
 		header := []string{"Model", "Category", "Version"}
 		rows := [][]string{}
+
+		for _, model := range modelsResponse.Models {
+			if len(model.DisplayName) > 0 {
+				rows = append(rows, []string{model.Name, model.Category.Name, model.Version})
+			}
+		}
 
 		dataToDisplay := display.DisplayedData{
 			DataType:         "model",
