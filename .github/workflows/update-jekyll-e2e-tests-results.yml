@@ -48,4 +48,3 @@ jobs:
           commit_author: ${{ github.actor }} <${{ github.actor }}@users.noreply.github.com>
           commit_options: "--signoff"
           commit_message: "[Docs] Updated test report in Jekyll"
-          push_options: "--rebase"
