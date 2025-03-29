@@ -15,14 +15,11 @@ func Fetch[T any](url string) (*T, error) {
 
 // Send a Http request to meshery server from mesheryctl cli
 func makeReques[T any](url string, httpMethod string, body io.Reader) (*T, error) {
-	utils.Log.Debugf("Generate request - Method:%s - url: %s", httpMethod, url)
-
 	req, err := utils.NewRequest(httpMethod, url, body)
 	if err != nil {
 		return nil, err
 	}
 
-	utils.Log.Debugf("Making Request - Method:%s - url: %s", httpMethod, url)
 	resp, err := utils.MakeRequest(req)
 	if err != nil {
 		return nil, err
@@ -31,14 +28,12 @@ func makeReques[T any](url string, httpMethod string, body io.Reader) (*T, error
 	// defers the closing of the response body after its use, ensuring that the resources are properly released.
 	defer resp.Body.Close()
 
-	utils.Log.Debugf("Reading api respnnse")
 	data, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
 
 	var apiResponse T
-	utils.Log.Debugf("Convert Api Response to Data")
 	err = json.Unmarshal(data, &apiResponse)
 	if err != nil {
 		return nil, err
