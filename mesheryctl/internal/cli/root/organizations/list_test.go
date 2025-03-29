@@ -15,12 +15,12 @@ func TestListOrganizations(t *testing.T) {
 	if !ok {
 		t.Fatal("Not able to get current working directory")
 	}
-	currDir := filepath.Dir(filename)
+	currentDirectory := filepath.Dir(filename)
 
 	// test scenarios for fetching data
 	tests := []utils.MesheryListCommamdTest{
 		{
-			Name:             "List organizations organization ID not provided",
+			Name:             "List organizations whith organization ID not provided",
 			Args:             []string{"list"},
 			URL:              fmt.Sprintf("/%s?all=true", organizationsAPiPath),
 			Fixture:          "list.organization.response.golden",
@@ -29,5 +29,5 @@ func TestListOrganizations(t *testing.T) {
 		},
 	}
 
-	utils.InvokeMesheryctlTestListCommand(t, update, OrgCmd, tests, currDir, "organizations")
+	utils.InvokeMesheryctlTestListCommand(t, update, OrgCmd, tests, currentDirectory, "organization")
 }
