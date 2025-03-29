@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"net/url"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/layer5io/meshery/server/models"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -14,7 +16,8 @@ import (
 var searchModelCmd = &cobra.Command{
 	Use:   "search",
 	Short: "Search model(s)",
-	Long:  "Search model(s) by search string",
+	Long: `Search model(s) by search string
+Documentation for models search can be found at https://docs.meshery.io/reference/mesheryctl/model/search`,
 	Example: `
 // Search model from current provider
 mesheryctl model search [query-text]
@@ -36,30 +39,14 @@ mesheryctl model search [query-text]
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		queryText := args[0]
 
-		searchUrl := fmt.Sprintf("%s/api/meshmodels/models?search=%s&pagesize=all", baseUrl, url.QueryEscape(queryText))
+		url := fmt.Sprintf("%s/%s?search=%s&pagesize=all", baseUrl, modelsApiPath, url.QueryEscape(queryText))
 
-		modelsResponse, err := fetchModels(searchUrl)
+		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](url)
 
 		if err != nil {
 			return err
 		}
 
-		header := []string{"Model", "Category", "Version"}
-		rows := [][]string{}
-
-		for _, model := range modelsResponse.Models {
-			if len(model.DisplayName) > 0 {
-				rows = append(rows, []string{model.Name, model.Category.Name, model.Version})
-			}
-		}
-
-		if len(rows) == 0 {
-			whiteBoardPrinter.Println("No model(s) found")
-			return nil
-		} else {
-			utils.PrintToTable(header, rows)
-		}
-
-		return nil
+		return displayModels(modelsResponse, cmd)
 	},
 }
