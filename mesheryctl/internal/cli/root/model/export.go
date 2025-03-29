@@ -25,7 +25,8 @@ type outputDetail struct {
 var exportModelCmd = &cobra.Command{
 	Use:   "export",
 	Short: "Export registered models",
-	Long:  "Export the registered model to the specified output type",
+	Long: `Export the registered model to the specified output type
+Documentation for models export can be found at https://docs.meshery.io/reference/mesheryctl/model/export`,
 	Example: `
 // Export a model by name 
 mesheryctl model export [model-name] -o [oci|tar]  (default is oci)

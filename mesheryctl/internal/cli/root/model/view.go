@@ -22,7 +22,8 @@ import (
 var viewModelCmd = &cobra.Command{
 	Use:   "view",
 	Short: "View model",
-	Long:  "View a model queried by its name",
+	Long: `View a model queried by its name
+Documentation for models view can be found at https://docs.meshery.io/reference/mesheryctl/model/view`,
 	Example: `
 // View a specific model from current provider
 mesheryctl model view [model-name]
@@ -54,7 +55,7 @@ mesheryctl model view [model-name]
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 		modelDefinition := args[0]
 
-		url := fmt.Sprintf("%s/api/meshmodels/models/%s?pagesize=all", baseUrl, modelDefinition)
+		url := fmt.Sprintf("%s/%s/%s?pagesize=all", baseUrl, modelsApiPath, modelDefinition)
 
 		modelsResponse, err := api.Fetch[models.MeshmodelsAPIResponse](url)
 
