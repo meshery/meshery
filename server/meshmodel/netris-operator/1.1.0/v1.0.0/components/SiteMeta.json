@@ -27,8 +27,10 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
+    "subCategory": "",
     "metadata": {
       "source_uri": "https://github.com/netrisai/charts/releases/download/netris-operator-1.1.2/netris-operator-1.1.2.tgz",
       "svgColor": "",
@@ -37,16 +39,17 @@
     "model": {
       "version": "1.1.0"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -58,7 +61,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -73,7 +75,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -88,7 +89,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -104,7 +104,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -120,7 +119,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -135,7 +133,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -150,7 +147,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -165,7 +161,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -175,15 +170,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "k8s.netris.ai/v1alpha1",
     "kind": "SiteMeta",
-    "schema": "{\n \"description\": \"SiteMeta is the Schema for the sitemeta API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SiteMetaSpec defines the desired state of SiteMeta\",\n   \"properties\": {\n    \"aclDefaultPolicy\": {\n     \"type\": \"string\"\n    },\n    \"id\": {\n     \"type\": \"integer\"\n    },\n    \"imported\": {\n     \"description\": \"INSERT ADDITIONAL SPEC FIELDS - desired state of cluster Important: Run \\\"make\\\" to regenerate code after modifying this file\",\n     \"type\": \"boolean\"\n    },\n    \"publicAsn\": {\n     \"type\": \"integer\"\n    },\n    \"reclaimPolicy\": {\n     \"type\": \"boolean\"\n    },\n    \"rohAsn\": {\n     \"type\": \"integer\"\n    },\n    \"rohRoutingProfile\": {\n     \"type\": \"integer\"\n    },\n    \"siteGeneration\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"siteMesh\": {\n     \"type\": \"string\"\n    },\n    \"siteName\": {\n     \"type\": \"string\"\n    },\n    \"vmAsn\": {\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"aclDefaultPolicy\",\n    \"id\",\n    \"imported\",\n    \"publicAsn\",\n    \"reclaimPolicy\",\n    \"rohAsn\",\n    \"rohRoutingProfile\",\n    \"siteGeneration\",\n    \"siteMesh\",\n    \"siteName\",\n    \"vmAsn\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Site Meta\",\n \"type\": \"object\"\n}",
-    "version": "k8s.netris.ai/v1alpha1"
+    "schema": "{\n \"description\": \"SiteMeta is the Schema for the sitemeta API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SiteMetaSpec defines the desired state of SiteMeta\",\n   \"properties\": {\n    \"aclDefaultPolicy\": {\n     \"type\": \"string\"\n    },\n    \"id\": {\n     \"type\": \"integer\"\n    },\n    \"imported\": {\n     \"description\": \"INSERT ADDITIONAL SPEC FIELDS - desired state of cluster Important: Run \\\"make\\\" to regenerate code after modifying this file\",\n     \"type\": \"boolean\"\n    },\n    \"publicAsn\": {\n     \"type\": \"integer\"\n    },\n    \"reclaimPolicy\": {\n     \"type\": \"boolean\"\n    },\n    \"rohAsn\": {\n     \"type\": \"integer\"\n    },\n    \"rohRoutingProfile\": {\n     \"type\": \"integer\"\n    },\n    \"siteGeneration\": {\n     \"format\": \"int64\",\n     \"type\": \"integer\"\n    },\n    \"siteMesh\": {\n     \"type\": \"string\"\n    },\n    \"siteName\": {\n     \"type\": \"string\"\n    },\n    \"vmAsn\": {\n     \"type\": \"integer\"\n    }\n   },\n   \"required\": [\n    \"aclDefaultPolicy\",\n    \"id\",\n    \"imported\",\n    \"publicAsn\",\n    \"reclaimPolicy\",\n    \"rohAsn\",\n    \"rohRoutingProfile\",\n    \"siteGeneration\",\n    \"siteMesh\",\n    \"siteName\",\n    \"vmAsn\"\n   ],\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Site Meta\",\n \"type\": \"object\"\n}"
   }
 }

@@ -27,8 +27,10 @@
     },
     "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Uncategorized"
     },
+    "subCategory": "",
     "metadata": {
       "source_uri": "https://sitewhere.io/helm-charts/sitewhere-infrastructure-0.1.13.tgz",
       "svgColor": "",
@@ -37,16 +39,17 @@
     "model": {
       "version": "0.1.13"
     },
-    "components": null,
-    "relationships": null,
     "components_count": 0,
-    "relationships_count": 0
+    "relationships_count": 0,
+    "components": null,
+    "relationships": null
   },
   "styles": {
     "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
     "shape": "circle",
     "svgColor": "",
+    "svgComplete": "",
     "svgWhite": ""
   },
   "capabilities": [
@@ -58,7 +61,6 @@
       ],
       "key": "",
       "kind": "action",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "perf-test",
@@ -73,7 +75,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "config",
@@ -88,7 +89,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "labels-and-annotations",
@@ -104,7 +104,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "relationship",
@@ -120,7 +119,6 @@
       ],
       "key": "",
       "kind": "view",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "definition",
@@ -135,7 +133,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "",
@@ -150,7 +147,6 @@
       ],
       "key": "",
       "kind": "mutate",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "shape",
@@ -165,7 +161,6 @@
       ],
       "key": "",
       "kind": "interaction",
-      "metadata": null,
       "schemaVersion": "capability.meshery.io/v1alpha1",
       "status": "enabled",
       "subType": "compoundDnd",
@@ -175,15 +170,17 @@
   ],
   "status": "enabled",
   "metadata": {
+    "configurationUISchema": "",
     "genealogy": "",
+    "instanceDetails": null,
     "isAnnotation": false,
     "isNamespaced": true,
     "published": false
   },
   "configuration": null,
   "component": {
+    "version": "sitewhere.io/v1alpha4",
     "kind": "SiteWhereTenantEngine",
-    "schema": "{\n \"description\": \"SiteWhereTenantEngine is the Schema for the tenantengines API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SiteWhereTenantEngineSpec defines the desired state of SiteWhereTenantEngine\",\n   \"properties\": {\n    \"configuration\": {\n     \"description\": \"Configuration is the configuration for the tenant\",\n     \"format\": \"textarea\",\n     \"nullable\": true,\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Site Where Tenant Engine\",\n \"type\": \"object\"\n}",
-    "version": "sitewhere.io/v1alpha4"
+    "schema": "{\n \"description\": \"SiteWhereTenantEngine is the Schema for the tenantengines API\",\n \"properties\": {\n  \"spec\": {\n   \"description\": \"SiteWhereTenantEngineSpec defines the desired state of SiteWhereTenantEngine\",\n   \"properties\": {\n    \"configuration\": {\n     \"description\": \"Configuration is the configuration for the tenant\",\n     \"format\": \"textarea\",\n     \"nullable\": true,\n     \"type\": \"string\"\n    }\n   },\n   \"type\": \"object\"\n  }\n },\n \"title\": \"Site Where Tenant Engine\",\n \"type\": \"object\"\n}"
   }
 }

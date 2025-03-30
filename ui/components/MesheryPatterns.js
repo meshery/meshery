@@ -97,6 +97,7 @@ import { useGetProviderCapabilitiesQuery } from '@/rtk-query/user';
 import TooltipButton from '@/utils/TooltipButton';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 import yaml from 'js-yaml';
+import ActionPopover from './MesheryPatterns/ActionPopover';
 
 const genericClickHandler = (ev, fn) => {
   ev.stopPropagation();
@@ -131,6 +132,20 @@ const SearchWrapper = styled(Box)(() => ({
 const BtnText = styled('span')(() => ({
   display: 'block',
   '@media (max-width: 765px)': {
+    display: 'none',
+  },
+}));
+
+const EllipsisButtonWrapper = styled('div')(({ theme }) => ({
+  display: 'none',
+  [theme.breakpoints.down('lg')]: {
+    display: 'block',
+  },
+}));
+
+const ActionWrapper = styled('div')(({ theme }) => ({
+  display: 'block',
+  [theme.breakpoints.down('lg')]: {
     display: 'none',
   },
 }));
@@ -287,7 +302,7 @@ function MesheryPatterns({
 }) {
   const [page, setPage] = useState(0);
   const [search, setSearch] = useState('');
-  const [sortOrder, setSortOrder] = useState('');
+  const [sortOrder, setSortOrder] = useState('updated_at desc');
   const [count, setCount] = useState(0);
   const [pageSize, setPageSize] = useState(10);
   const modalRef = useRef();
@@ -297,7 +312,6 @@ function MesheryPatterns({
   const router = useRouter();
   const [meshModels, setMeshModels] = useState([]);
   const [selectedFilters, setSelectedFilters] = useState(initialFilters);
-
   const [canPublishPattern, setCanPublishPattern] = useState(false);
   const [publishSchema, setPublishSchema] = useState({});
   const [infoModal, setInfoModal] = useState({
@@ -371,7 +385,6 @@ function MesheryPatterns({
     headerIcon: OutlinedPatternIcon,
   });
   const handleDeploy = async ({ design, selectedK8sContexts }) => {
-    console.log('Deploying pattern', design);
     updateProgress({ showProgress: true });
     await deployPatternMutation({
       pattern_file: encodeDesignFile(design),
@@ -995,7 +1008,7 @@ function MesheryPatterns({
     },
     {
       name: 'created_at',
-      label: 'Upload Timestamp',
+      label: 'Created At',
       options: {
         filter: false,
         sort: true,
@@ -1017,7 +1030,7 @@ function MesheryPatterns({
     },
     {
       name: 'updated_at',
-      label: 'Update Timestamp',
+      label: 'Update At',
       options: {
         filter: false,
         sort: true,
@@ -1062,131 +1075,128 @@ function MesheryPatterns({
         customBodyRender: function CustomBody(_, tableMeta) {
           const rowData = patterns[tableMeta.rowIndex];
           const visibility = patterns[tableMeta.rowIndex]?.visibility;
+          const actions = [
+            {
+              label: 'Edit',
+              icon: <EditIcon fill="currentColor" />,
+              onClick: (e) => {
+                e.stopPropagation();
+                handleOpenInConfigurator(rowData.id);
+              },
+              disabled: !CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject),
+              condition: userCanEdit(rowData),
+            },
+            {
+              label: 'Clone',
+              icon: <CloneIcon fill="currentColor" />,
+              onClick: (e) => {
+                e.stopPropagation();
+                handleClone(rowData.id, rowData.name);
+              },
+              disabled: !CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject),
+              condition: visibility === VISIBILITY.PUBLISHED,
+            },
+            {
+              label: 'Design',
+              icon: <PatternConfigureIcon />,
+              onClick: (e) => {
+                e.stopPropagation();
+                handleOpenInConfigurator(patterns[tableMeta.rowIndex].id);
+              },
+              disabled: !CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject),
+              condition: visibility !== VISIBILITY.PUBLISHED,
+            },
+            {
+              label: 'Validate Design',
+              icon: <CheckIcon data-cy="verify-button" />,
+              onClick: (e) => {
+                openValidateModal(e, rowData.pattern_file, rowData.name, rowData.id);
+              },
+              disabled: !CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject),
+            },
+            {
+              label: 'Dry Run',
+              icon: <DryRunIcon data-cy="verify-button" />,
+              onClick: (e) => {
+                openDryRunModal(e, rowData.pattern_file, rowData.name, rowData.id);
+              },
+              disabled: !CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject),
+            },
+            {
+              label: 'Undeploy',
+              icon: <UndeployIcon fill="#F91313" data-cy="undeploy-button" />,
+              onClick: (e) => {
+                openUndeployModal(e, rowData.pattern_file, rowData.name, rowData.id);
+              },
+              disabled: !CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject),
+            },
+            {
+              label: 'Deploy',
+              icon: <DoneAllIcon data-cy="deploy-button" />,
+              onClick: (e) => {
+                openDeployModal(e, rowData.pattern_file, rowData.name, rowData.id);
+              },
+              disabled: !CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject),
+            },
+            {
+              label: 'Download',
+              icon: <GetAppIcon data-cy="download-button" />,
+              onClick: (e) => {
+                handleDesignDownloadModal(e, rowData);
+              },
+              disabled: !CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject),
+            },
+            {
+              label: 'Design Information',
+              icon: <InfoOutlinedIcon data-cy="information-button" />,
+              onClick: (e) => {
+                genericClickHandler(e, () => handleInfoModal(rowData));
+              },
+              disabled: !CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject),
+            },
+
+            /* Publish action can be done through Info modal so we might not need separate publish action */
+            /*{
+              label="Publish",
+              icon: <PublicIcon fill="#F91313" data-cy="publish-button" />,
+              onClick: (e) => handlePublishModal(e, rowData)(),
+              disabled: !CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject),
+              condition: canPublishPattern && visibility !== VISIBILITY.PUBLISHED,
+            },*/
+
+            {
+              label: 'Unpublish',
+              icon: <PublicIcon fill="#F91313" data-cy="unpublish-button" />,
+              onClick: (e) => {
+                handleUnpublishModal(e, rowData)();
+              },
+              disabled: !CAN(keys.UNPUBLISH_DESIGN.action, keys.UNPUBLISH_DESIGN.subject),
+              condition: visibility === VISIBILITY.PUBLISHED,
+            },
+          ].filter((action) => action.condition === undefined || action.condition);
+
           return (
-            <Box
-              sx={{
-                display: 'flex',
-              }}
-            >
-              {userCanEdit(rowData) && (
-                <TooltipIcon
-                  placement="top"
-                  title={'Edit'}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleOpenInConfigurator(rowData.id);
-                  }}
-                  disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
-                >
-                  <EditIcon fill="currentColor" />
-                </TooltipIcon>
-              )}
-              {visibility === VISIBILITY.PUBLISHED ? (
-                <TooltipIcon
-                  placement="top"
-                  title={'Clone'}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleClone(rowData.id, rowData.name);
-                  }}
-                  disabled={!CAN(keys.CLONE_DESIGN.action, keys.CLONE_DESIGN.subject)}
-                >
-                  <CloneIcon fill="currentColor" />
-                </TooltipIcon>
-              ) : (
-                <TooltipIcon
-                  title={'Design'}
-                  placement={'top'}
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleOpenInConfigurator(patterns[tableMeta.rowIndex].id);
-                  }}
-                  disabled={!CAN(keys.EDIT_DESIGN.action, keys.EDIT_DESIGN.subject)}
-                >
-                  <PatternConfigureIcon />
-                </TooltipIcon>
-              )}
+            <>
+              <EllipsisButtonWrapper>
+                <ActionPopover actions={actions} />
+              </EllipsisButtonWrapper>
 
-              <TooltipIcon
-                placement="top"
-                title="Validate Design"
-                onClick={(e) =>
-                  openValidateModal(e, rowData.pattern_file, rowData.name, rowData.id)
-                }
-                disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject)}
-              >
-                <CheckIcon data-cy="verify-button" />
-              </TooltipIcon>
-              <TooltipIcon
-                placement="top"
-                title="Dry Run"
-                onClick={(e) => openDryRunModal(e, rowData.pattern_file, rowData.name, rowData.id)}
-                disabled={!CAN(keys.VALIDATE_DESIGN.action, keys.VALIDATE_DESIGN.subject)}
-              >
-                <DryRunIcon data-cy="verify-button" />
-              </TooltipIcon>
-
-              <TooltipIcon
-                placement="top"
-                title="Undeploy"
-                disabled={!CAN(keys.UNDEPLOY_DESIGN.action, keys.UNDEPLOY_DESIGN.subject)}
-                onClick={(e) =>
-                  openUndeployModal(e, rowData.pattern_file, rowData.name, rowData.id)
-                }
-              >
-                <UndeployIcon fill="#F91313" data-cy="undeploy-button" />
-              </TooltipIcon>
-              <TooltipIcon
-                placement="top"
-                title="Deploy"
-                disabled={!CAN(keys.DEPLOY_DESIGN.action, keys.DEPLOY_DESIGN.subject)}
-                onClick={(e) => {
-                  openDeployModal(e, rowData.pattern_file, rowData.name, rowData.id);
-                }}
-              >
-                <DoneAllIcon data-cy="deploy-button" />
-              </TooltipIcon>
-              <TooltipIcon
-                placement={'top'}
-                title="Download"
-                disabled={!CAN(keys.DOWNLOAD_A_DESIGN.action, keys.DOWNLOAD_A_DESIGN.subject)}
-                onClick={(e) => handleDesignDownloadModal(e, rowData)}
-              >
-                <GetAppIcon data-cy="download-button" />
-              </TooltipIcon>
-
-              <TooltipIcon
-                placement="top"
-                title="Design Information"
-                disabled={!CAN(keys.DETAILS_OF_DESIGN.action, keys.DETAILS_OF_DESIGN.subject)}
-                onClick={(ev) => genericClickHandler(ev, () => handleInfoModal(rowData))}
-              >
-                <InfoOutlinedIcon data-cy="information-button" />
-              </TooltipIcon>
-
-              {/* Publish action can be done through Info modal so we might not need separate publish action */}
-              {/* {canPublishPattern && visibility !== VISIBILITY.PUBLISHED && (
-                  <TooltipIcon
-                    placement="bottom"
-                    title="Publish"
-                    disabled={!CAN(keys.PUBLISH_DESIGN.action, keys.PUBLISH_DESIGN.subject)}
-                    onClick={(ev) => handlePublishModal(ev, rowData)}
-                  >
-                    <PublicIcon fill="#F91313" data-cy="publish-button" />
-                  </TooltipIcon>
-                )} */}
-
-              {visibility === VISIBILITY.PUBLISHED && (
-                <TooltipIcon
-                  placement={'top'}
-                  title="Unpublish"
-                  disabled={!CAN(keys.UNPUBLISH_DESIGN.action, keys.UNPUBLISH_DESIGN.subject)}
-                  onClick={(ev) => handleUnpublishModal(ev, rowData)()}
-                >
-                  <PublicIcon fill="#F91313" data-cy="unpublish-button" />
-                </TooltipIcon>
-              )}
-            </Box>
+              <ActionWrapper>
+                <Box sx={{ display: 'flex' }}>
+                  {actions.map((action, index) => (
+                    <TooltipIcon
+                      key={index}
+                      placement="top"
+                      title={action.label}
+                      onClick={action.onClick}
+                      disabled={action.disabled}
+                    >
+                      {action.icon}
+                    </TooltipIcon>
+                  ))}
+                </Box>
+              </ActionWrapper>
+            </>
           );
         },
       },
@@ -1214,7 +1224,6 @@ function MesheryPatterns({
   });
 
   async function showModal(count, patterns) {
-    console.log('patterns to be deleted', count, patterns);
     let response = await modalRef.current.show({
       title: `Delete ${count ? count : ''} Design${count > 1 ? 's' : ''}?`,
 
@@ -1276,8 +1285,8 @@ function MesheryPatterns({
     print: false,
     download: false,
     sortOrder: {
-      name: 'updated_at',
-      direction: 'desc',
+      name: sortOrder.split(' ')[0],
+      direction: sortOrder.split(' ')[1],
     },
     textLabels: {
       selectedRows: {

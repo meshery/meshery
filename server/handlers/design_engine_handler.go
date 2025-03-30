@@ -29,6 +29,7 @@ import (
 	"github.com/meshery/schemas/models/v1beta1/component"
 	"github.com/meshery/schemas/models/v1beta1/pattern"
 	"github.com/pkg/errors"
+	kubeerror "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -190,13 +191,11 @@ func (h *Handler) PatternFileHandler(
 
 	serverURL, _ := r.Context().Value(models.MesheryServerURL).(string)
 
-	if action == "deploy" {
-		viewLink := fmt.Sprintf("%s/extension/meshmap?mode=operator&type=view&design_id=%s", serverURL, patternID)
-		description = fmt.Sprintf("%s.", description)
-		metadata["view_link"] = viewLink
-		metadata["design_name"] = patternFile.Name
-		metadata["design_id"] = patternID
-	}
+	viewLink := fmt.Sprintf("%s/extension/meshmap?mode=operator&type=view&design_id=%s", serverURL, patternID)
+	description = fmt.Sprintf("%s.", description)
+	metadata["view_link"] = viewLink
+	metadata["design_name"] = patternFile.Name
+	metadata["design_id"] = patternID
 
 	var event *events.Event
 	if action == "deploy" || action == "dry-run" {
@@ -449,34 +448,48 @@ func parseDryRunFailure(settings map[string]interface{}, name string) *core.DryR
 	if err != nil {
 		return nil
 	}
-	var a metav1.Status
-	err = json.Unmarshal(byt, &a)
+	var kubeStatus metav1.Status
+	err = json.Unmarshal(byt, &kubeStatus)
 	if err != nil {
 		return nil
 	}
 	dResp := core.DryRunResponse{}
-	if a.Status != "" {
-		dResp.Status = a.Status
+	if kubeStatus.Status != "" {
+		dResp.Status = kubeStatus.Status
 	}
-	if a.Details != nil {
-		dResp.Causes = make([]core.DryRunFailureCause, 0)
-		for _, c := range a.Details.Causes {
-			msg := ""
-			field := ""
-			typ := ""
-			if c.Message != "" {
-				msg = c.Message
-			}
+
+	_, longDescription, _, _ := utils.ParseKubeStatusErr(&kubeerror.StatusError{
+		ErrStatus: kubeStatus,
+	})
+
+	dResp.Causes = make([]core.DryRunFailureCause, 0)
+	if kubeStatus.Details != nil && len(kubeStatus.Details.Causes) > 0 {
+		for i, c := range kubeStatus.Details.Causes {
+			msg := longDescription[i+1]
+			field := "unknown"
+			typ := "Failure"
+
 			if c.Field != "" {
 				field = name + "." + getComponentFieldPathFromK8sFieldPath(c.Field)
 			}
 			if c.Type != "" {
 				typ = string(c.Type)
 			}
+
 			failureCase := core.DryRunFailureCause{Message: msg, FieldPath: field, Type: typ}
 			dResp.Causes = append(dResp.Causes, failureCase)
 		}
+	} else {
+		for _, msg := range longDescription {
+			failureCase := core.DryRunFailureCause{
+				Message:   msg,
+				FieldPath: "unknown",
+				Type:      "Failure",
+			}
+			dResp.Causes = append(dResp.Causes, failureCase)
+		}
 	}
+
 	return &dResp
 }
 
