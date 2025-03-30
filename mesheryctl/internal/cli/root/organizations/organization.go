@@ -14,7 +14,7 @@ import (
 
 var (
 	availableSubcommands = []*cobra.Command{listOrgCmd}
-	organizationsAPiPath = "api/identity/orgs"
+	organizationsApiPath = "api/identity/orgs"
 	count                bool
 )
 
@@ -71,7 +71,7 @@ func getAllOrganizations() (*models.OrganizationsPage, error) {
 		return nil, utils.ErrLoadConfig(err)
 	}
 	baseUrl := mctlCfg.GetBaseMesheryURL()
-	url := fmt.Sprintf("%s/%s?all=true", baseUrl, organizationsAPiPath)
+	url := fmt.Sprintf("%s/%s?all=true", baseUrl, organizationsApiPath)
 
 	return api.Fetch[models.OrganizationsPage](url)
 

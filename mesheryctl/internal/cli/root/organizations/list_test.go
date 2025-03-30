@@ -22,7 +22,7 @@ func TestListOrganizations(t *testing.T) {
 		{
 			Name:             "List organizations whith organization ID not provided",
 			Args:             []string{"list"},
-			URL:              fmt.Sprintf("/%s?all=true", organizationsAPiPath),
+			URL:              fmt.Sprintf("/%s?all=true", organizationsApiPath),
 			Fixture:          "list.organization.response.golden",
 			ExpectedResponse: "list.organization.golden",
 			ExpectError:      true,
