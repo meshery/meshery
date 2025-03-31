@@ -327,7 +327,7 @@ const ExtensionSandbox = React.memo(
           const processedData = ExtensionPointSchemaValidator(type)(extensionData);
           setExtension(processedData);
           setIsLoading(false);
-        } catch (error) {
+        } catch {
           setExtension([]);
           setIsLoading(false);
         }

@@ -69,7 +69,7 @@ const HoneycombComponent = (props) => {
       <HoneycombRoot isEditMode={isEditMode}>
         <HeaderContainer>
           <Typography variant="h6" fontWeight={'700'}>
-            Cluster Resource Overview
+            Cluster Resource Overview asdf asdf
           </Typography>
           <ControlsContainer>
             <Select value={groupBy} onChange={handleGroupChange} variant="standard">

@@ -152,7 +152,7 @@ const EnvironmentCard = ({
                   />
                 </AllocationButton>
                 {/* temporary disable workspace allocation button  */}
-                {false && (
+                {/* {false && (
                   <AllocationButton onClick={(e) => e.stopPropagation()}>
                     <TransferButton
                       title="Assigned Workspaces"
@@ -163,7 +163,7 @@ const EnvironmentCard = ({
                       disabled={!CAN(keys.VIEW_WORKSPACE.action, keys.VIEW_WORKSPACE.subject)}
                     />
                   </AllocationButton>
-                )}
+                )} */}
               </Grid>
             </Grid>
           </CardWrapper>
