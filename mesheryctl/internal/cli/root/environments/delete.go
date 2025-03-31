@@ -28,21 +28,18 @@ import (
 
 var deleteEnvironmentCmd = &cobra.Command{
 	Use:   "delete",
-	Short: "delete a new environments",
-	Long:  `delete a new environments by providing the name and description of the environment`,
+	Short: "Delete an environment",
+	Long: `Delete an environment by providing the environment ID
+Documentation for environment can be found at Documentation for environment can be found at https://docs.meshery.io/reference/mesheryctl/environment/delete`,
 	Example: `
 // delete a new environment
 mesheryctl environment delete [environmentId]
-// Documentation for environment can be found at:
-https://docs.meshery.io/concepts/logical/environments
 `,
 
 	Args: func(cmd *cobra.Command, args []string) error {
 		if len(args) != 1 {
-			if err := cmd.Usage(); err != nil {
-				return err
-			}
-			return utils.ErrInvalidArgument(errors.New("Please provide a valid environment id as an argument with the command"))
+			const errMsg = "[ Environment ID ] isn't specified\n\nUsage: mesheryctl environment delete [environmentId]\nRun 'mesheryctl environment delete --help' to see detailed help message"
+			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
 		return nil
 	},
@@ -70,7 +67,7 @@ https://docs.meshery.io/concepts/logical/environments
 
 		// Check if the response status code is 200
 		if resp.StatusCode == http.StatusOK {
-			utils.Log.Info("Connection deleted")
+			utils.Log.Info(fmt.Sprintf("Environment with ID %s has been deleted", args[0]))
 			return nil
 		}
 
