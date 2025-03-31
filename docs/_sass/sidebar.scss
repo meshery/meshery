@@ -1,34 +1,38 @@
 .left-container {
-  position: relative;
+  position: sticky;
   z-index: 9;
   height: calc(100vh - var(--navbar-height));
   transition: all 0.5s ease-in-out;
-  top: var(--navbar-height) !important;
+  top: calc(var(--navbar-height));
+  margin-top: 10vh;
   & .sidebar-container-wrapper {
     height: 100%;
     padding: 0.5rem;
     background: var(--background-grey);
     box-shadow: var(--box-shadow-primary);
   }
+
   & .icon-container {
     height: fit-content;
     z-index: 9;
     display: none;
     @media (max-width: 75em) {
+      margin-top: 3rem;
       display: block;
     }
   }
+
   @media (max-width: 75em) {
-    position: fixed;
-    top: var(--navbar-height);
-    left: 0;
+    margin-top: 0;
     transform: translateX(calc(-100% + 2rem));
+    position: fixed;
     display: flex;
   }
 
   @media (max-width: 37.5em) {
-    margin-top: 0vh;
+    margin-top: 0;
   }
+
   &--active {
     transform: translateX(0%);
     & .nav-toggle-btn--document svg {
@@ -39,7 +43,7 @@
 
 @media (max-width: 37.5em) {
   .left-container {
-    top: calc(var(--navbar-height) - 0) !important;
+    top: var(--navbar-height);
     height: 100vh;
   }
 }
@@ -56,6 +60,7 @@
   cursor: pointer;
   justify-content: center;
 }
+
 #document-nav-toggle-btn {
   width: 2.2rem;
   height: 1.2rem;
@@ -64,7 +69,7 @@
 
 .sidebar-container {
   overscroll-behavior: contain;
-  padding: .25rem min(2vh, 2vw);
+  padding: 0.25rem min(2vh, 2vw);
   overflow-y: scroll;
   height: calc(100vh - var(--navbar-height));
   transition: all 0.5s ease-in-out;
@@ -86,6 +91,7 @@
     overflow: hidden;
     padding: 6px;
   }
+  
   &::-webkit-scrollbar-thumb {
     background: #868e96;
     width: 0.2rem;
@@ -94,7 +100,6 @@
   }
 
   @media (max-width: 75em) {
-    // position: fixed;
     top: var(--navbar-height);
     left: 0;
     width: max(30vh, 30vw);
@@ -112,8 +117,10 @@
     & .sidebar__search {
       &-form {
         width: 100%;
-        margin: 2rem 0 1rem;
-        position: relative;
+        margin: 0; 
+        padding: 1rem 0; 
+        position: sticky;
+        top: 0;  
         z-index: 10;
       }
 
@@ -123,8 +130,9 @@
         font-size: 1.1rem;
         border-radius: 21px;
         background: var(--background-neumorphic);
-        padding: 8px 15px 8px 15px;
+        padding: 8px 15px;
       }
+      
       &-input::placeholder {
         font-family: "Open Sans";
       }
@@ -139,25 +147,22 @@
         list-style: none;
         padding: 1rem 0 0 0;
         margin: 0;
-        // & .grandchild.grandchild a {
-        //   font-weight: normal;
-        //   color: #dadddf;
-        // }
+
         &-title a {
           font-weight: bold;
-          margin-bottom: .5rem;
-
+          margin-bottom: 0.5rem;
           &:hover {
             font-weight: normal;
           }
         }
+
         &-link a {
           font-weight: normal;
         }
+
         & a {
           color: var(--color-secondary-medium);
           letter-spacing: 0.2px;
-
           &:hover {
             color: var(--sidenav-hover) !important;
           }
@@ -179,6 +184,7 @@
             text-decoration: none;
             color: var(--sidenav-hover);
           }
+          
           & a.active {
             text-decoration: none;
             color: var(--sidenav-hover);
@@ -194,21 +200,21 @@
         }
 
         & > ul {
-          padding-inline-start: .1rem;
+          padding-inline-start: 0.1rem;
           list-style: none;
           margin-bottom: 0;
 
           & > ul {
-            padding-inline-start: .1rem;
+            padding-inline-start: 0.1rem;
             list-style: none;
             margin-bottom: 0;
 
-            & > li  {
+            & > li {
               list-style: none;
               display: flex;
               flex-direction: column;
               gap: 0.5rem;
-              padding-inline-start: .1rem;
+              padding-inline-start: 0.1rem;
               margin-bottom: 0;
             }
           }
@@ -218,29 +224,24 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
-            padding-inline-start: .1rem;
+            padding-inline-start: 0.1rem;
             margin-bottom: 0;
 
             & > li ul {
-              display: flex;  
+              display: flex;
               list-style: none !important;
               flex-direction: column;
-              gap: .25rem;
-              padding-inline-start: .1rem;
+              gap: 0.25rem;
+              padding-inline-start: 0.1rem;
             }
-            // & ul > li {
-            //   & ::before {
-            //     content: "- ";
-            //   }
-            // }
           }
         }
       }
     }
   }
 }
-.collapse {
 
+.collapse {
   &:not(.show) {
     display: none;
   }
@@ -249,7 +250,7 @@
 .collapsing {
   height: 0;
   overflow: hidden;
-  transition: all .4s ease-out;
+  transition: all 0.4s ease-out;
 
   &.collapse-horizontal {
     width: 0;
@@ -266,7 +267,5 @@
   }
   &:active {
     transform: rotate(45deg);
-    -webkit-transform: rotate(45deg);
-    -ms-transform: rotate(45deg);
   }
 }
