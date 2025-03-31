@@ -5,7 +5,7 @@ import { EVENT_TYPES } from './Enum';
 import _ from 'lodash';
 import { getWebAdress } from './webApis';
 import { APPLICATION, DESIGN, FILTER } from '../constants/navigator';
-import { Tooltip } from '@mui/material';
+import { Tooltip } from '@layer5/sistent';
 import jsyaml from 'js-yaml';
 import yaml from 'js-yaml';
 import { useLegacySelector } from '../lib/store';
@@ -397,7 +397,6 @@ export const encodeDesignFile = (designJson) => {
  * @param {object} design - The design file of format design schema v1beta1
  */
 export const processDesign = (design) => {
-  console.log('Design to process', design);
   if (design.schemaVersion != 'designs.meshery.io/v1beta1') {
     console.error('Invalid design schema version', design);
     return {
@@ -483,7 +482,6 @@ export const useIsOperatorEnabled = () => {
 
 export const openViewScopedToDesignInOperator = (designName, designId, router) => {
   if (isExtensionOpen()) {
-    console.log('extension is open publsing');
     mesheryEventBus.publish({
       type: 'OPEN_VIEW_SCOPED_TO_DESIGN',
       data: {

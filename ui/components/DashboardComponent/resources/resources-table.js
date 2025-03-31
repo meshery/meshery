@@ -15,7 +15,7 @@ import { updateVisibleColumns } from '../../../utils/responsive-column';
 import { useWindowDimensions } from '../../../utils/dimension';
 import { camelcaseToSnakecase } from '../../../utils/utils';
 import { useSelector } from 'react-redux';
-import { UsesSistent } from '@/components/SistentWrapper';
+
 import { useRouter } from 'next/router';
 import { ToolWrapper } from '@/assets/styles/general/tool.styles';
 
@@ -228,7 +228,15 @@ const ResourcesTable = (props) => {
           {view === ALL_VIEW && (
             <>
               <ToolWrapper style={{ marginBottom: '5px', marginTop: '1rem' }}>
-                <div style={{ display: 'flex', justifyContent: 'end', width: '100%' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'end',
+                    width: '100%',
+                    alignItems: 'center',
+                    gap: '0.5rem',
+                  }}
+                >
                   <SearchBar
                     onSearch={(value) => {
                       setSearch(value);
@@ -245,16 +253,14 @@ const ResourcesTable = (props) => {
                   />
                 </div>
               </ToolWrapper>
-              <UsesSistent>
-                <ResponsiveDataTable
-                  data={meshSyncResources}
-                  columns={tableConfig.columns}
-                  options={options}
-                  tableCols={tableCols}
-                  updateCols={updateCols}
-                  columnVisibility={columnVisibility}
-                />
-              </UsesSistent>
+              <ResponsiveDataTable
+                data={meshSyncResources}
+                columns={tableConfig.columns}
+                options={options}
+                tableCols={tableCols}
+                updateCols={updateCols}
+                columnVisibility={columnVisibility}
+              />
             </>
           )}
         </div>

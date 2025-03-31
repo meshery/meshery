@@ -9,7 +9,7 @@ WORKDIR /github.com/meshery/meshery
 ADD . .
 RUN go clean -modcache; cd server; cd cmd; GOPROXY=https://proxy.golang.org GOSUMDB=off go build -ldflags="-w -s -X main.globalTokenForAnonymousResults=$TOKEN -X main.version=$GIT_VERSION -X main.commitsha=$GIT_COMMITSHA -X main.releasechannel=$RELEASE_CHANNEL" -tags draft -a -o /meshery .
 
-FROM node:20-alpine as base-node
+FROM node:20-alpine AS base-node
 
 # Installing NodeJS Dependencies
 FROM base-node AS meshery-ui-deps
@@ -31,14 +31,14 @@ WORKDIR /app
 COPY --from=meshery-ui-deps /app/node_modules ./node_modules
 COPY ui .
 # Disable NextJS Telemetry data collect
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 RUN npm run build && npm run export
 
 FROM base-node AS meshery-ui-provider-builder
 WORKDIR /app
 COPY --from=meshery-ui-provider-deps /app/node_modules ./node_modules
 # Disable NextJS Telemetry data collect
-ENV NEXT_TELEMETRY_DISABLED 1
+ENV NEXT_TELEMETRY_DISABLED=1
 COPY provider-ui .
 RUN npm run build && npm run export
 
@@ -119,4 +119,4 @@ RUN mkdir -p /var/run; chown -R appuser:docker /var/run/
 RUN mkdir -p /home/appuser/.meshery/config; chown -R appuser /home/appuser/; chown -R appuser /app/ui/public
 USER appuser
 WORKDIR /app/server/cmd
-CMD ./meshery
+CMD ["./meshery"]

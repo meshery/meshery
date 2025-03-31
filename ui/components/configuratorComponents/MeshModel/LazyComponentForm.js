@@ -12,11 +12,8 @@ import React from 'react';
 import { getMeshModelComponent } from '../../../api/meshmodel';
 import { iconMedium } from '../../../css/icons.styles';
 import PatternServiceForm from '../../MesheryMeshInterface/PatternServiceForm';
-// eslint-disable-next-line no-unused-vars
-import * as Types from '../MeshModel/hooks/types';
 import { useNotification } from '../../../utils/hooks/useNotification';
 import { EVENT_TYPES } from '../../../lib/event-types';
-import { UsesSistent } from '@/components/SistentWrapper';
 
 export const AccordionRoot = styled('div')({
   width: '100%',
@@ -75,34 +72,28 @@ export default function LazyComponentForm({ component, disabled, ...otherprops }
     }
   }
   return (
-    <UsesSistent>
-      <AccordionRoot>
-        <Accordion
-          elevation={0}
-          expanded={expanded}
-          onChange={() => !disabled && expand(!expanded)}
-        >
-          <AccordionSummary expandIcon={<ExpandMoreIcon style={iconMedium} />}>
-            <Heading>
-              {component.displayName}{' '}
-              {disabled && <em style={{ opacity: 0.5 }}>(contains invalid schema)</em>}
-            </Heading>
-          </AccordionSummary>
-          <LazyAccordionDetails expanded={expanded}>
-            {isEmpty(schemaSet) ? (
-              <CircularProgress />
-            ) : (
-              <PatternServiceForm
-                formData={{}}
-                color={component?.styles?.primaryColor}
-                {...otherprops}
-                schemaSet={schemaSet}
-              />
-            )}
-          </LazyAccordionDetails>
-        </Accordion>
-      </AccordionRoot>
-    </UsesSistent>
+    <AccordionRoot>
+      <Accordion elevation={0} expanded={expanded} onChange={() => !disabled && expand(!expanded)}>
+        <AccordionSummary expandIcon={<ExpandMoreIcon style={iconMedium} />}>
+          <Heading>
+            {component.displayName}{' '}
+            {disabled && <em style={{ opacity: 0.5 }}>(contains invalid schema)</em>}
+          </Heading>
+        </AccordionSummary>
+        <LazyAccordionDetails expanded={expanded}>
+          {isEmpty(schemaSet) ? (
+            <CircularProgress />
+          ) : (
+            <PatternServiceForm
+              formData={{}}
+              color={component?.styles?.primaryColor}
+              {...otherprops}
+              schemaSet={schemaSet}
+            />
+          )}
+        </LazyAccordionDetails>
+      </Accordion>
+    </AccordionRoot>
   );
 }
 

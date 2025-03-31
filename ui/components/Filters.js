@@ -1,6 +1,6 @@
 /* eslint-disable react/display-name */
 import React, { useState, useEffect, useRef } from 'react';
-import { NoSsr } from '@mui/material';
+import { NoSsr } from '@layer5/sistent';
 import { UnControlled as CodeMirror } from 'react-codemirror2';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { connect } from 'react-redux';
@@ -61,7 +61,6 @@ import { DefaultTableCell, SortableTableCell } from './connections/common/index.
 import CAN from '@/utils/can';
 import { keys } from '@/utils/permission_constants';
 import DefaultError from './General/error-404/index';
-import { UsesSistent } from './SistentWrapper';
 import { Modal as SistentModal } from '@layer5/sistent';
 import {
   useGetFiltersQuery,
@@ -96,14 +95,6 @@ const YmlDialogTitleText = styled(Typography)(() => ({
   flexGrow: 1,
 }));
 
-const FullScreenCodeMirrorWrapper = styled('div')(() => ({
-  height: '100%',
-  '& .CodeMirror': {
-    minHeight: '300px',
-    height: '100%',
-  },
-}));
-
 const BtnText = styled('span')(({ theme }) => ({
   display: 'block',
   [theme.breakpoints.down('700')]: {
@@ -117,13 +108,13 @@ const ActionsBox = styled(Box)(() => ({
 
 function TooltipIcon({ children, onClick, title }) {
   return (
-    <UsesSistent>
+    <>
       <CustomTooltip title={title} placement="top" interactive>
         <div>
           <IconButton onClick={onClick}>{children}</IconButton>
         </div>
       </CustomTooltip>
-    </UsesSistent>
+    </>
   );
 }
 
@@ -133,6 +124,14 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
   const toggleFullScreen = () => {
     setFullScreen(!fullScreen);
   };
+
+  const FullScreenCodeMirrorWrapper = styled('div')(() => ({
+    height: '100%',
+    '& .CodeMirror': {
+      minHeight: '300px',
+      height: fullScreen ? '80vh' : '100%',
+    },
+  }));
 
   let resourceData;
   try {
@@ -197,7 +196,6 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
         <CustomTooltip title="Update Filter">
           <IconButton
             aria-label="Update"
-            color="primary"
             disabled={!CAN(keys.EDIT_WASM_FILTER.action, keys.EDIT_WASM_FILTER.subject)}
             onClick={() =>
               onSubmit({
@@ -215,7 +213,6 @@ function YAMLEditor({ filter, onClose, onSubmit }) {
         <CustomTooltip title="Delete Filter">
           <IconButton
             aria-label="Delete"
-            color="primary"
             disabled={!CAN(keys.DELETE_WASM_FILTER.action, keys.DELETE_WASM_FILTER.subject)}
             onClick={() =>
               onSubmit({
@@ -778,7 +775,7 @@ function MesheryFilters({
     },
     {
       name: 'created_at',
-      label: 'Upload Timestamp',
+      label: 'Created At',
       options: {
         filter: false,
         sort: true,
@@ -800,7 +797,7 @@ function MesheryFilters({
     },
     {
       name: 'updated_at',
-      label: 'Update Timestamp',
+      label: 'Updated At',
       options: {
         filter: false,
         sort: true,
@@ -980,7 +977,7 @@ function MesheryFilters({
 
     onRowsDelete: async function handleDelete(row) {
       let response = await showmodal(Object.keys(row.lookup).length);
-      console.log(response);
+
       if (response === 'Delete') {
         const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
         fid.forEach((fid) => deleteFilter(fid));
@@ -1146,15 +1143,15 @@ function MesheryFilters({
 
   if (isFiltersLoading) {
     return (
-      <UsesSistent>
+      <>
         <LoadingScreen animatedIcon="AnimatedFilter" message={`Loading Filters...`} />
-      </UsesSistent>
+      </>
     );
   }
 
   return (
     <>
-      <UsesSistent>
+      <>
         <NoSsr>
           {CAN(keys.VIEW_FILTERS.action, keys.VIEW_FILTERS.subject) ? (
             <>
@@ -1297,7 +1294,7 @@ function MesheryFilters({
             <DefaultError />
           )}
         </NoSsr>
-      </UsesSistent>
+      </>
     </>
   );
 }
@@ -1305,10 +1302,8 @@ function MesheryFilters({
 const ImportModal = React.memo((props) => {
   const { handleClose, handleImportFilter } = props;
 
-  // const classes = useStyles();
-
   return (
-    <UsesSistent>
+    <>
       <SistentModal
         open={true}
         closeModal={handleClose}
@@ -1326,7 +1321,7 @@ const ImportModal = React.memo((props) => {
           handleClose={handleClose}
         />
       </SistentModal>
-    </UsesSistent>
+    </>
   );
 });
 
@@ -1334,7 +1329,7 @@ const PublishModal = React.memo((props) => {
   const { handleClose, handleSubmit, title } = props;
 
   return (
-    <UsesSistent>
+    <>
       <SistentModal
         open={true}
         headerIcon={
@@ -1354,7 +1349,7 @@ const PublishModal = React.memo((props) => {
           handleClose={handleClose}
         />
       </SistentModal>
-    </UsesSistent>
+    </>
   );
 });
 

@@ -9,6 +9,13 @@ on:
       - "mesheryctl/**"
       - "*.md"
       - "*.github/**"
+  push:
+    branches:
+      - "master"
+    paths-ignore:
+      - "docs/**"
+      - "*.md"
+      - "*.github/**"
   workflow_dispatch:
     inputs:
       logLevel:
@@ -22,7 +29,7 @@ jobs:
   ui-build:
     name: UI build
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -53,7 +60,7 @@ jobs:
     name: UI end-to-end tests
     environment: staging-playground
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 45
     steps:
       - name: Check out code
@@ -147,7 +154,7 @@ jobs:
   docker-build-test:
     name: Docker build
     if: github.repository == 'meshery/meshery'
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -183,7 +190,7 @@ jobs:
   swaggerci:
     if: github.repository == 'meshery/meshery'
     name: swagger-docs
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Check if handlers were modified

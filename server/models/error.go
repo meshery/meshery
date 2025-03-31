@@ -258,18 +258,18 @@ func ErrEncoding(err error, obj string) error {
 }
 
 func ErrFetch(err error, obj string, statusCode int) error {
-	return errors.New(ErrFetchCode, errors.Alert, []string{"Unable to fetch data from the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode), err.Error()}, []string{}, []string{})
+	return errors.New(ErrFetchCode, errors.Alert, []string{"Unable to fetch data from the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{}, []string{})
 }
 
 func ErrPost(err error, obj string, statusCode int) error {
-	return errors.New(ErrPostCode, errors.Alert, []string{"Unable to post data to the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode), err.Error()}, []string{}, []string{})
+	return errors.New(ErrPostCode, errors.Alert, []string{"Unable to post data to the Provider", obj}, []string{"Status Code: " + fmt.Sprint(statusCode) + " ", err.Error()}, []string{}, []string{})
 }
 func ErrStatusCode(statusCode int) error {
 	return errors.New(
 		ErrStatusCodeCode,
 		errors.Alert,
 		[]string{"Request was not successful"},
-		[]string{fmt.Sprintf("Received unexpected status code: %d", statusCode)},
+		[]string{fmt.Sprintf("Received unexpected status code: %d. ", statusCode)},
 		[]string{
 			"The server might be down or temporarily unavailable.",
 			"There could be network connectivity issues between the client and the server.",

@@ -12,11 +12,11 @@ subcommand: search
 
 # mesheryctl model search
 
-search models
+Search model(s)
 
 ## Synopsis
 
-search a models by search string
+Search model(s) by search string
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model search [flags]
@@ -26,7 +26,7 @@ mesheryctl model search [flags]
 
 ## Examples
 
-View current provider
+Search model from current provider
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl model search [query-text]

@@ -1,91 +1,36 @@
 {
-  "capabilities": [
-    {
-     "description": "Configure the visual styles for the component",
-     "displayName": "Styling",
-     "entityState": [
-      "declaration"
-     ],
-     "key": "",
-     "kind": "mutate",
-     "metadata": null,
-     "schemaVersion": "capability.meshery.io/v1alpha1",
-     "status": "enabled",
-     "subType": "",
-     "type": "style",
-     "version": "0.7.0"
-    },
-    {
-     "description": "Change the shape of the component",
-     "displayName": "Change Shape",
-     "entityState": [
-      "declaration"
-     ],
-     "key": "",
-     "kind": "mutate",
-     "metadata": null,
-     "schemaVersion": "capability.meshery.io/v1alpha1",
-     "status": "enabled",
-     "subType": "shape",
-     "type": "style",
-     "version": "0.7.0"
-    },
-    {
-     "description": "Drag and Drop a component into a parent component in graph view",
-     "displayName": "Compound Drag And Drop",
-     "entityState": [
-      "declaration"
-     ],
-     "key": "",
-     "kind": "interaction",
-     "metadata": null,
-     "schemaVersion": "capability.meshery.io/v1alpha1",
-     "status": "enabled",
-     "subType": "compoundDnd",
-     "type": "graph",
-     "version": "0.7.0"
-    },
-    {
-     "description": "Add text to nodes body",
-     "displayName": "Body Text",
-     "entityState": [
-      "declaration"
-     ],
-     "key": "",
-     "kind": "mutate",
-     "metadata": null,
-     "schemaVersion": "capability.meshery.io/v1alpha1",
-     "status": "enabled",
-     "subType": "body-text",
-     "type": "style",
-     "version": "0.7.0"
-    }
-   ],
-  "component": {
-    "kind": "StoredData",
-    "schema": "",
-    "version": "core.meshery.io/v1alpha1"
-  },
-  "configuration": null,
-  "description": "",
-  "displayName": "Stored Data",
-  "format": "JSON",
   "id": "00000000-0000-0000-0000-000000000000",
-  "metadata": {
-    "genealogy": "",
-    "isAnnotation": true,
-     "isNamespaced": false,
-    "logoURL": "",
-    "model": "meshery-flowchart",
-    "modelDisplayName": "Meshery Flowchart",
-    "published": false
-  },
+  "schemaVersion": "components.meshery.io/v1beta1",
+  "version": "v1.0.0",
+  "displayName": "Stored Data",
+  "description": "",
+  "format": "JSON",
   "model": {
+    "id": "00000000-0000-0000-0000-000000000000",
+    "schemaVersion": "models.meshery.io/v1beta1",
+    "version": "v1.0.0",
+    "name": "meshery-flowchart",
+    "displayName": "Meshery Flowchart",
+    "status": "enabled",
+    "registrant": {
+      "id": "00000000-0000-0000-0000-000000000000",
+      "name": "Artifact Hub",
+      "credential_id": "00000000-0000-0000-0000-000000000000",
+      "type": "registry",
+      "sub_type": "",
+      "kind": "artifacthub",
+      "status": "discovered",
+      "user_id": "00000000-0000-0000-0000-000000000000",
+      "created_at": "0001-01-01T00:00:00Z",
+      "updated_at": "0001-01-01T00:00:00Z",
+      "deleted_at": "0001-01-01T00:00:00Z"
+    },
+    "connection_id": "00000000-0000-0000-0000-000000000000",
     "category": {
+      "id": "00000000-0000-0000-0000-000000000000",
       "name": "Orchestration \u0026 Management"
     },
-    "displayName": "Meshery Flowchart",
-    "id": "00000000-0000-0000-0000-000000000000",
+    "subCategory": "",
     "metadata": {
       "isAnnotation": true,
       "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" width=\"20\" height=\"20\" viewBox=\"0 0 41 40\" fill=\"none\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" d=\"M7.84254 33.8066C8.22532 35.6658 9.86213 37 11.7604 37H29.2396C31.1379 37 32.7747 35.6658 33.1575 33.8066L38.5104 7.80661C39.0213 5.32524 37.126 3 34.5926 3H6.40742C3.87401 3 1.97873 5.32524 2.4896 7.80661L7.84254 33.8066Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
@@ -94,41 +39,99 @@
     "model": {
       "version": "0.7.1"
     },
-    "name": "meshery-flowchart",
-    "registrant": {
-      "created_at": "0001-01-01T00:00:00Z",
-      "credential_id": "00000000-0000-0000-0000-000000000000",
-      "deleted_at": "0001-01-01T00:00:00Z",
-      "id": "00000000-0000-0000-0000-000000000000",
-      "kind": "artifacthub",
-      "name": "Artifact Hub",
-      "status": "discovered",
-      "sub_type": "",
-      "type": "registry",
-      "updated_at": "0001-01-01T00:00:00Z",
-      "user_id": "00000000-0000-0000-0000-000000000000"
-    },
-    "connection_id": "00000000-0000-0000-0000-000000000000",
-    "schemaVersion": "models.meshery.io/v1beta1",
-    "status": "enabled",
-    "version": "v1.0.0",
+    "components_count": 0,
+    "relationships_count": 0,
     "components": null,
     "relationships": null
   },
-  "schemaVersion": "components.meshery.io/v1beta1",
-  "status": "enabled",
   "styles": {
     "background-opacity": 0,
-    "border-style": "solid",
-    "border-width": 0,
+    "data": {
+      "label": ""
+    },
     "height": 30,
-    "width": 30,
-    "primaryColor": "#2196F3",
+    "primaryColor": "#00B39F",
     "secondaryColor": "#00D3A9",
-    "shape": "polygon",
-    "svgColor": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 61 31\" style=\"enable-background:new 0 0 61 31;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#00B39F\" fill-opacity=\"10%\" stroke=\"#00B39F\" stroke-miterlimit=\"10\" d=\"M15.7,30.5c-8,0-15.2-6.43-15.2-15s7.2-15,15.2-15h44.8c-9.33,10-9.33,20,0,30H15.7z\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n",
-    "svgComplete": "\u003csvg width=\"41\" height=\"40\" viewBox=\"0 0 41 40\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n\u003cpath d=\"M7.84254 33.8066C8.22532 35.6658 9.86213 37 11.7604 37H29.2396C31.1379 37 32.7747 35.6658 33.1575 33.8066L38.5104 7.80661C39.0213 5.32524 37.126 3 34.5926 3H6.40742C3.87401 3 1.97873 5.32524 2.4896 7.80661L7.84254 33.8066Z\" fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-miterlimit=\"10\"/\u003e\n\u003c/svg\u003e\n",
-    "svgWhite": "\u003c?xml version=\"1.0\" encoding=\"UTF-8\"?\u003e\u003c!DOCTYPE svg\u003e\u003csvg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" id=\"Layer_1\" xmlns:_xmlns=\"xmlns\" _xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"0px\" y=\"0px\" viewBox=\"0 0 61 31\" style=\"enable-background:new 0 0 61 31;\" xml:space=\"preserve\" height=\"20\" width=\"20\"\u003e\n\u003cpath xmlns=\"http://www.w3.org/2000/svg\" fill=\"#FFFFFF\" fill-opacity=\"10%\" stroke=\"#FFFFFF\" stroke-miterlimit=\"10\" d=\"M15.7,30.5c-8,0-15.2-6.43-15.2-15s7.2-15,15.2-15h44.8c-9.33,10-9.33,20,0,30H15.7z\"\u003e\u003c/path\u003e\n\u003c/svg\u003e\n"
+    "shape": "rectangle",
+    "svgColor": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 32 32\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n  \u003cg transform=\"translate(0.5,0.5)\"\u003e\n    \u003cpath d=\"M 4.5 6.3 L 30.35 6.3 C 30.5 6.47 30.5 6.71 30.35 6.88 C 29.19 8.17 28.42 11.4 28.42 15 C 28.42 18.6 29.19 21.83 30.35 23.12 C 30.5 23.29 30.5 23.53 30.35 23.7 L 4.5 23.7 C 2.85 23.7 1.5 19.8 1.5 15 C 1.5 10.2 2.85 6.3 4.5 6.3 Z\"\n      fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-width=\"1.3\" stroke-miterlimit=\"10\"/\u003e\n  \u003c/g\u003e\n\u003c/svg\u003e",
+    "svgComplete": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 32 32\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n  \u003cg transform=\"translate(0.5,0.5)\"\u003e\n    \u003cpath d=\"M 4.5 6.3 L 30.35 6.3 C 30.5 6.47 30.5 6.71 30.35 6.88 C 29.19 8.17 28.42 11.4 28.42 15 C 28.42 18.6 29.19 21.83 30.35 23.12 C 30.5 23.29 30.5 23.53 30.35 23.7 L 4.5 23.7 C 2.85 23.7 1.5 19.8 1.5 15 C 1.5 10.2 2.85 6.3 4.5 6.3 Z\"\n      fill=\"#00B39F\" fill-opacity=\"0.1\" stroke=\"#00B39F\" stroke-width=\"1.3\" stroke-miterlimit=\"10\"/\u003e\n  \u003c/g\u003e\n\u003c/svg\u003e",
+    "svgWhite": "\u003csvg width=\"40\" height=\"40\" viewBox=\"0 0 32 32\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\"\u003e\n  \u003cg transform=\"translate(0.5,0.5)\"\u003e\n    \u003cpath d=\"M 4.5 6.3 L 30.35 6.3 C 30.5 6.47 30.5 6.71 30.35 6.88 C 29.19 8.17 28.42 11.4 28.42 15 C 28.42 18.6 29.19 21.83 30.35 23.12 C 30.5 23.29 30.5 23.53 30.35 23.7 L 4.5 23.7 C 2.85 23.7 1.5 19.8 1.5 15 C 1.5 10.2 2.85 6.3 4.5 6.3 Z\"\n      fill=\"white\" fill-opacity=\"0.1\" stroke=\"white\" stroke-width=\"1.3\" stroke-miterlimit=\"10\"/\u003e\n  \u003c/g\u003e\n\u003c/svg\u003e",
+    "width": 30
   },
-  "version": "v1.0.0"
+  "capabilities": [
+    {
+      "description": "Configure the visual styles for the component",
+      "displayName": "Styling",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Change the shape of the component",
+      "displayName": "Change Shape",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "shape",
+      "type": "style",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Drag and Drop a component into a parent component in graph view",
+      "displayName": "Compound Drag And Drop",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "interaction",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "compoundDnd",
+      "type": "graph",
+      "version": "0.7.0"
+    },
+    {
+      "description": "Add text to nodes body",
+      "displayName": "Body Text",
+      "entityState": [
+        "declaration"
+      ],
+      "key": "",
+      "kind": "mutate",
+      "schemaVersion": "capability.meshery.io/v1alpha1",
+      "status": "enabled",
+      "subType": "body-text",
+      "type": "style",
+      "version": "0.7.0"
+    }
+  ],
+  "status": "enabled",
+  "metadata": {
+    "configurationUISchema": "",
+    "genealogy": "",
+    "instanceDetails": null,
+    "isAnnotation": true,
+    "isNamespaced": false,
+    "logoURL": "",
+    "model": "meshery-flowchart",
+    "modelDisplayName": "Meshery Flowchart",
+    "published": false
+  },
+  "configuration": null,
+  "component": {
+    "version": "core.meshery.io/v1alpha1",
+    "kind": "StoredData",
+    "schema": ""
+  }
 }

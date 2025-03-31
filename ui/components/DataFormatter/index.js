@@ -5,7 +5,6 @@ import _ from 'lodash';
 import { useContext } from 'react';
 import { isEmptyAtAllDepths } from '../../utils/objects';
 import CopyIcon from '../../assets/icons/CopyIcon';
-import { UsesSistent } from './../SistentWrapper';
 const FormatterContext = React.createContext({
   propertyFormatters: {},
 });
@@ -189,7 +188,6 @@ export const KeyValue = ({ Key, Value }) => {
         alignItems: 'flex-start',
         gap: '0.25rem',
         flexWrap: 'wrap',
-        fontFamily: 'Qanelas Soft, sans-serif',
       }}
     >
       <SectionBody
@@ -197,7 +195,6 @@ export const KeyValue = ({ Key, Value }) => {
         style={{
           textTransform: 'capitalize',
           overflow: 'hidden',
-          whiteSpace: 'nowrap',
           color: theme.palette.text.default,
         }}
       />
@@ -212,7 +209,6 @@ export const KeyValue = ({ Key, Value }) => {
             textOverflow: 'ellipsis',
             wordBreak: 'break-all',
             overflow: 'hidden',
-            whiteSpace: 'nowrap',
           }}
         />
       )}
@@ -363,16 +359,20 @@ export const FormatStructuredData = ({ propertyFormatters = {}, data, uiSchema, 
   }
 
   return (
-    <UsesSistent>
-      <FormatterContext.Provider
-        value={{
-          propertyFormatters: propertyFormatters,
+    <FormatterContext.Provider
+      value={{
+        propertyFormatters: propertyFormatters,
+      }}
+    >
+      <Grid
+        container
+        style={{
+          wordBreak: 'break-word',
+          overflowWrap: 'break-word',
         }}
       >
-        <Grid container>
-          <DynamicFormatter data={data} uiSchema={uiSchema} isLevel={isLevel} />
-        </Grid>
-      </FormatterContext.Provider>
-    </UsesSistent>
+        <DynamicFormatter data={data} uiSchema={uiSchema} isLevel={isLevel} />
+      </Grid>
+    </FormatterContext.Provider>
   );
 };

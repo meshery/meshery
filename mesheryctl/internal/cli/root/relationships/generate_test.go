@@ -2,7 +2,6 @@ package relationships
 
 import (
 	"encoding/json"
-	"errors"
 	"io"
 	"os"
 	"path/filepath"
@@ -16,7 +15,7 @@ import (
 	"google.golang.org/api/sheets/v4"
 )
 
-func TestExperimentalGenerate_CreateJsonFile(t *testing.T) {
+func TestGenerateCreateJsonFile(t *testing.T) {
 
 	sheetData, err := os.ReadFile("./fixtures/generate.relationship.sheet.data.golden")
 	if err != nil {
@@ -105,8 +104,26 @@ func TestGenerate(t *testing.T) {
 		ExpectError      bool
 	}{
 		{
+			Name:             "Generate registered relationships without spreadsheet id",
+			Args:             []string{"generate", "--spreadsheet-cred", "$CRED"},
+			URL:              testContext.BaseURL + "/api/meshmodels/relationships",
+			Fixture:          "",
+			ExpectedResponse: "generate.relationship.output.without.spreadsheet.id.golden",
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      true,
+		},
+		{
+			Name:             "Generate registered relationships without spreadsheet creadentials",
+			Args:             []string{"generate", "--spreadsheet-id", "1"},
+			URL:              testContext.BaseURL + "/api/meshmodels/relationships",
+			Fixture:          "",
+			ExpectedResponse: "generate.relationship.output.without.spreadsheet.cred.golden",
+			Token:            filepath.Join(fixturesDir, "token.golden"),
+			ExpectError:      true,
+		},
+		{
 			Name:             "Generate registered relationships",
-			Args:             []string{"generate", "$CRED", "", "-s", "1"},
+			Args:             []string{"generate", "--spreadsheet-cred", "$CRED", "--spreadsheet-id", "1"},
 			URL:              testContext.BaseURL + "/api/meshmodels/relationships",
 			Fixture:          "generate.relationship.api.response.golden",
 			ExpectedResponse: "generate.relationship.output.golden",
@@ -118,12 +135,14 @@ func TestGenerate(t *testing.T) {
 	// run tests
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
+			if tt.Fixture != "" {
+				apiResponse := utils.NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
 
-			utils.TokenFlag = tt.Token
+				utils.TokenFlag = tt.Token
 
-			httpmock.RegisterResponder("GET", tt.URL,
-				httpmock.NewStringResponder(200, apiResponse))
+				httpmock.RegisterResponder("GET", tt.URL,
+					httpmock.NewStringResponder(200, apiResponse))
+			}
 
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tt.ExpectedResponse, testdataDir)
@@ -134,7 +153,7 @@ func TestGenerate(t *testing.T) {
 			os.Stdout = w
 			_ = utils.SetupMeshkitLoggerTesting(t, false)
 			RelationshipCmd.SetArgs(tt.Args)
-			RelationshipCmd.SetOutput(rescueStdout)
+			RelationshipCmd.SetOut(rescueStdout)
 			err := RelationshipCmd.Execute()
 			if err != nil {
 				// if we're supposed to get an error
@@ -144,11 +163,14 @@ func TestGenerate(t *testing.T) {
 						golden.Write(err.Error())
 					}
 					expectedResponse := golden.Load()
-
-					utils.Equals(t, expectedResponse, err.Error())
+					actualResponse := err.Error()
+					utils.Equals(t, expectedResponse, actualResponse)
+					// reset the global variables
+					spreadsheeetCred = ""
+					spreadsheeetID = ""
 					return
 				}
-				t.Fatal(err)
+				t.Error(err)
 			}
 
 			w.Close()
@@ -166,47 +188,12 @@ func TestGenerate(t *testing.T) {
 			cleanedExceptedResponse := utils.CleanStringFromHandlePagination(expectedResponse)
 
 			utils.Equals(t, cleanedExceptedResponse, cleanedActualResponse)
+			// reset the global variables
+			spreadsheeetCred = ""
+			spreadsheeetID = ""
 		})
 		t.Log("Generate experimental relationship test passed")
 	}
 
 	utils.StopMockery(t)
-}
-
-func TestGenerateArguments(t *testing.T) {
-
-	const errMsg = "Usage: mesheryctl exp relationship generate [google-sheets-credential] --sheetId [sheet-id]\nRun 'mesheryctl exp relationship generate --help' to see detailed help message"
-
-	// test scenarios for fetching data
-	tests := []struct {
-		Name             string
-		Args             []string
-		ExpectedResponse string
-		ExpectError      bool
-	}{
-		{
-			Name:             "Missing Credentials",
-			Args:             []string{"generate"},
-			ExpectedResponse: "Google Sheet Credentials is required\n" + errMsg,
-			ExpectError:      false,
-		},
-		{
-			Name:             "Missing Sheet ID",
-			Args:             []string{"generate", "$CRED", "--sheetId", ""},
-			ExpectedResponse: "Sheet ID is required\n" + errMsg,
-			ExpectError:      false,
-		},
-	}
-
-	// run tests
-	for _, tt := range tests {
-		t.Run(tt.Name, func(t *testing.T) {
-
-			RelationshipCmd.SetArgs(tt.Args)
-			err := RelationshipCmd.Execute()
-
-			utils.Equals(t, errors.New(utils.RelationshipsError(tt.ExpectedResponse, "generate")), err)
-		})
-		t.Log("Generate relationships test passed")
-	}
 }

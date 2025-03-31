@@ -1,7 +1,5 @@
 import React from 'react';
-import { NoSsr } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import { connect } from 'react-redux';
+import { NoSsr, styled } from '@layer5/sistent';
 import Head from 'next/head';
 import MesheryConnections from '../../components/connections';
 
@@ -26,4 +24,4 @@ const Connections = () => {
   );
 };
 
-export default connect(null)(Connections);
+export default Connections;
