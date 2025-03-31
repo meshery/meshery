@@ -160,25 +160,28 @@ const ConnectionTable = ({
     isError: isConnectionError,
     error: connectionError,
     refetch: getConnections,
-  } = useGetConnectionsQuery({
-    page: page,
-    pagesize: pageSize,
-    search: search,
-    order: sortOrder,
-    status: statusFilter ? JSON.stringify([statusFilter]) : '',
-    kind: selectedFilter
-      ? JSON.stringify([selectedFilter])
-      : kindFilter
-        ? JSON.stringify([kindFilter])
-        : '',
-  }, {
-    onError: (error) => {
-      notify({
-        message: `${ACTION_TYPES.FETCH_CONNECTIONS.error_msg}: ${error?.error}`,
-        event_type: EVENT_TYPES.ERROR,
-      });
-    }
-  });
+  } = useGetConnectionsQuery(
+    {
+      page: page,
+      pagesize: pageSize,
+      search: search,
+      order: sortOrder,
+      status: statusFilter ? JSON.stringify([statusFilter]) : '',
+      kind: selectedFilter
+        ? JSON.stringify([selectedFilter])
+        : kindFilter
+          ? JSON.stringify([kindFilter])
+          : '',
+    },
+    {
+      onError: (error) => {
+        notify({
+          message: `${ACTION_TYPES.FETCH_CONNECTIONS.error_msg}: ${error?.error}`,
+          event_type: EVENT_TYPES.ERROR,
+        });
+      },
+    },
+  );
 
   const {
     data: environmentsResponse,
@@ -194,7 +197,7 @@ const ConnectionTable = ({
           message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${error?.error}`,
           event_type: EVENT_TYPES.ERROR,
         });
-      }
+      },
     },
   );
 
@@ -1027,7 +1030,7 @@ const ConnectionTable = ({
     onRowExpansionChange: (_, allRowsExpanded) => {
       if (isHandlingExpansion.current) return;
       isHandlingExpansion.current = true;
-      
+
       try {
         const expandedRows = allRowsExpanded.slice(-1);
         setRowsExpanded(expandedRows.map((item) => item.index));
@@ -1035,7 +1038,7 @@ const ConnectionTable = ({
         if (expandedRows.length > 0 && connections) {
           const index = expandedRows[0].index;
           const connection = connections[index];
-          
+
           if (connection && updateUrlWithConnectionId && connection.id !== selectedConnectionId) {
             updateUrlWithConnectionId(connection.id);
           }

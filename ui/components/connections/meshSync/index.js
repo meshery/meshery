@@ -75,28 +75,27 @@ export default function MeshSyncTable(props) {
     setRegistrationModal(false);
   };
 
-  const {
-    data: meshSyncData,
-    isError: isError,
-    error: meshSyncError,
-  } = useGetMeshSyncResourcesQuery({
-    page: page,
-    pagesize: pageSize,
-    search: search,
-    order: sortOrder,
-    kind: kindFilter,
-    model: modelFilter,
-    namespace: namespaceFilter,
-    clusterIds: JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig)),
-  }, {
-    onError: (error) => {
-      notify({
-        message: 'Error fetching MeshSync Resources',
-        event_type: EVENT_TYPES.ERROR,
-        details: error?.data,
-      });
-    }
-  });
+  const { data: meshSyncData, error: meshSyncError } = useGetMeshSyncResourcesQuery(
+    {
+      page: page,
+      pagesize: pageSize,
+      search: search,
+      order: sortOrder,
+      kind: kindFilter,
+      model: modelFilter,
+      namespace: namespaceFilter,
+      clusterIds: JSON.stringify(getK8sClusterIdsFromCtxId(selectedK8sContexts, k8sconfig)),
+    },
+    {
+      onError: (error) => {
+        notify({
+          message: 'Error fetching MeshSync Resources',
+          event_type: EVENT_TYPES.ERROR,
+          details: error?.data,
+        });
+      },
+    },
+  );
 
   const { data: clusterSummary } = useGetMeshSyncResourceKindsQuery({
     page: page,
@@ -534,6 +533,8 @@ export default function MeshSyncTable(props) {
       );
     },
   };
+
+  const isHandlingExpansion = useRef(false);
 
   useEffect(() => {
     if (meshSyncError) {
