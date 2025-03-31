@@ -407,9 +407,11 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			cleanedExceptedResponse := CleanStringFromHandlePagination(expectedResponse)
 
 			Equals(t, cleanedExceptedResponse, cleanedActualResponse)
+			cmd.ResetFlags()
 		})
 		t.Logf("List %s test", commadName)
 	}
 
 	StopMockery(t)
+
 }
