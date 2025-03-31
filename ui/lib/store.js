@@ -1,6 +1,6 @@
 import { createStore, applyMiddleware } from 'redux';
 import { composeWithDevTools } from '@redux-devtools/extension';
-import { thunk as thunkMiddleware } from 'redux-thunk';
+import thunkMiddleware from 'redux-thunk';
 import { fromJS } from 'immutable';
 import { createContext } from 'react';
 import { createDispatchHook, createSelectorHook } from 'react-redux';
