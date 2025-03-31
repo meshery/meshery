@@ -67,16 +67,14 @@ docs:
 
 
 e2e-libs:
-	@ if [ ! -d "tests/e2e/$(BATS_LIB_PATH)" ]; then \
-		mkdir -p tests/e2e/$(BATS_LIB_PATH); \
-	fi; \
-	cd tests/e2e/$(BATS_LIB_PATH); \
+	@ mkdir -p tests/e2e/$(BATS_LIB_PATH) && \
+	cd tests/e2e/$(BATS_LIB_PATH) && \
 	if [ ! -d "bats-assert" ]; then \
 		git clone https://github.com/bats-core/bats-assert.git; \
-	fi; \
+	fi && \
 	if [ ! -d "bats-detik" ]; then \
 		git clone https://github.com/bats-core/bats-detik.git; \
-	fi; \
+	fi && \
 	if [ ! -d "bats-support" ]; then \
 		git clone https://github.com/bats-core/bats-support.git; \
 	fi
