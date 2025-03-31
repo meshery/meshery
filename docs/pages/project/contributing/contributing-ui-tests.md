@@ -215,3 +215,30 @@ End-to-end test results are stored as artifacts on every PR in Github Actions. I
 Watch the training session on Playwright testing and trace debugging.
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/x-W60mvDYuo?si=coN7RpRjkI4a_ndk&amp;start=1524" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+## Using Sheet Views in the Meshery Test Plan
+
+The *Meshery Test Plan v0.8.0* spreadsheet is a valuable tool for identifying and contributing to UI end-to-end tests. It uses Google Sheets’ "Filter Views" to help you isolate UI-specific test cases or those marked "Help Wanted" for contributors.
+
+### Accessing the Test Plan
+Access the test plan [here](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?gid=838298230#gid=838298230). The screenshot below shows its layout, with filters applied to highlight UI-related tests:
+
+![Meshery Test Plan Screenshot](/assets/img/contributing/meshery-test-plan-v0.8.0-ui.png)
+
+### How to Use Sheet Views
+1. **Open the Spreadsheet**: Visit the [Meshery Test Plan](https://docs.google.com/spreadsheets/d/13Ir4gfaKoAX9r8qYjAFFl_U9ntke4X5ndREY1T7bnVs/edit?gid=838298230#gid=838298230).
+2. **Select a Filter View**:
+   - Navigate to "Data > Filter Views" in Google Sheets.
+   - Choose a predefined view, such as:
+     - **"UI Tests Only"**: Filters for tests with *Component* like "UI/Connection Wizard," "UI/Performance," or "UI/Adapters" (e.g., Test #159: "Run a performance test via UI").
+     - **"Help Wanted"**: Shows tests with *Test Status* as "Absent (Help Wanted)" (e.g., Test #96: "Open connection wizard in Docker").
+   - These views hide unrelated tests, focusing your efforts on UI contributions.
+3. **Interpret the Data**:
+   - Look for conditional formatting (e.g., yellow for "Help Wanted" or red for "Failing") to prioritize tasks.
+   - Review the *Action* and *Expected Outcome* columns for test details (e.g., Test #98: "Transition connection states").
+4. **Contribute**:
+   - Select a test case (e.g., Test #159).
+   - Implement or update it using Playwright, following the setup and run instructions above.
+   - Update the spreadsheet’s *Actual Outcome* column with your results (e.g., "Test passed on Chromium").
+
+Using Sheet Views streamlines your contribution process by pinpointing UI tests that need attention!
