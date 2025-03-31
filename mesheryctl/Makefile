@@ -67,7 +67,10 @@ docs:
 
 
 e2e-libs:
-	@ cd tests/e2e/$(BATS_LIB_PATH); \
+	@ if [ ! -d "tests/e2e/$(BATS_LIB_PATH)" ]; then \
+		mkdir -p tests/e2e/$(BATS_LIB_PATH); \
+	fi; \
+	cd tests/e2e/$(BATS_LIB_PATH); \
 	if [ ! -d "bats-assert" ]; then \
 		git clone https://github.com/bats-core/bats-assert.git; \
 	fi; \
