@@ -977,7 +977,7 @@ function MesheryFilters({
 
     onRowsDelete: async function handleDelete(row) {
       let response = await showmodal(Object.keys(row.lookup).length);
-      console.log(response);
+
       if (response === 'Delete') {
         const fid = Object.keys(row.lookup).map((idx) => filters[idx]?.id);
         fid.forEach((fid) => deleteFilter(fid));
