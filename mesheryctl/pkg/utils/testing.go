@@ -393,7 +393,13 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 			}
 
 			w.Close()
-			io.Copy(&buf, r)
+
+			_, errCopy := io.Copy(&buf, r)
+
+			if errCopy != nil {
+				t.Fatal(errCopy)
+			}
+
 			os.Stdout = rescueStdout
 
 			actualResponse := buf.String()
