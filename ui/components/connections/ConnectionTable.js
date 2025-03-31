@@ -171,7 +171,15 @@ const ConnectionTable = ({
       : kindFilter
         ? JSON.stringify([kindFilter])
         : '',
+  }, {
+    onError: (error) => {
+      notify({
+        message: `${ACTION_TYPES.FETCH_CONNECTIONS.error_msg}: ${error?.error}`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+    }
   });
+
   const {
     data: environmentsResponse,
     isSuccess: isEnvironmentsSuccess,
@@ -181,26 +189,16 @@ const ConnectionTable = ({
     { orgId: organization?.id },
     {
       skip: !organization?.id,
+      onError: (error) => {
+        notify({
+          message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${error?.error}`,
+          event_type: EVENT_TYPES.ERROR,
+        });
+      }
     },
   );
+
   let environments = environmentsResponse?.environments || [];
-
-  useEffect(() => {
-    updateCols(columns);
-    if (isEnvironmentsError) {
-      notify({
-        message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${environmentsError.error}`,
-        event_type: EVENT_TYPES.ERROR,
-      });
-    }
-
-    if (isConnectionError) {
-      notify({
-        message: `${ACTION_TYPES.FETCH_CONNECTIONS.error_msg}: ${connectionError.error}`,
-        event_type: EVENT_TYPES.ERROR,
-      });
-    }
-  }, [environmentsError, connectionError, isEnvironmentsSuccess]);
 
   const modifiedConnections = connectionData?.connections.map((connection) => {
     return {
@@ -334,15 +332,6 @@ const ConnectionTable = ({
         variant: PROMPT_VARIANTS.DANGER,
       });
       if (response === 'DELETE') {
-        // let bulkConnections = {}
-        // selected.data.map(({ index }) => {
-        //   bulkConnections = {
-        //     ...bulkConnections,
-        //     [connections[index].id]: CONNECTION_STATES.DELETED
-        //   };
-        // })
-        // const requestBody = JSON.stringify(bulkConnections);
-        // updateConnectionStatus(requestBody);
         selected.data.map(({ index }) => {
           const requestBody = JSON.stringify({
             [connections[index].id]: CONNECTION_STATES.DELETED,
@@ -488,35 +477,40 @@ const ConnectionTable = ({
   const theme = useTheme();
 
   const isHandlingExpansion = useRef(false);
-  const isInitialLoad = useRef(true);
-  const isUrlExpansion = useRef(false);
-  const lastProcessedId = useRef(null);
 
-  // Update rowsExpanded when a specific connection ID is selected
   useEffect(() => {
-    // Skip if we're already handling expansion or if there's no connection ID
-    if (!selectedConnectionId || isHandlingExpansion.current) return;
+    // Initialize table columns
+    updateCols(columns);
 
-    // Skip if we've already processed this ID
-    if (lastProcessedId.current === selectedConnectionId) return;
+    // Handle API errors (only when they occur)
+    if (isEnvironmentsError) {
+      notify({
+        message: `${ACTION_TYPES.FETCH_ENVIRONMENT.error_msg}: ${environmentsError.error}`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+    }
 
-    if (connections && connections.length > 0) {
-      isUrlExpansion.current = true;
-      lastProcessedId.current = selectedConnectionId;
+    if (isConnectionError) {
+      notify({
+        message: `${ACTION_TYPES.FETCH_CONNECTIONS.error_msg}: ${connectionError.error}`,
+        event_type: EVENT_TYPES.ERROR,
+      });
+    }
+  }, [environmentsError, connectionError, isEnvironmentsError, isConnectionError]);
 
-      const index = connections.findIndex((conn) => conn.id === selectedConnectionId);
-      if (index !== -1) {
-        setRowsExpanded([index]);
-      } else {
-        // If connection doesn't exist, clear the URL parameter
-        updateUrlWithConnectionId('');
+  useEffect(() => {
+    if (selectedConnectionId && connections?.length && !isHandlingExpansion.current) {
+      isHandlingExpansion.current = true;
+      try {
+        const index = connections.findIndex((conn) => conn.id === selectedConnectionId);
+        if (index !== -1 && !rowsExpanded.includes(index)) {
+          setRowsExpanded([index]);
+        } else if (index === -1 && updateUrlWithConnectionId) {
+          updateUrlWithConnectionId('');
+        }
+      } finally {
+        isHandlingExpansion.current = false;
       }
-
-      setTimeout(() => {
-        isUrlExpansion.current = false;
-      }, 100);
-
-      isInitialLoad.current = false;
     }
   }, [selectedConnectionId, connections]);
 
@@ -577,7 +571,6 @@ const ConnectionTable = ({
                   )
                 }
                 handlePing={() => {
-                  // e.stopPropagation();
                   if (getColumnValue(tableMeta.rowData, 'kind', columns) === 'kubernetes') {
                     ping(
                       getColumnValue(tableMeta.rowData, 'metadata.name', columns),
@@ -1032,29 +1025,26 @@ const ConnectionTable = ({
       return true;
     },
     onRowExpansionChange: (_, allRowsExpanded) => {
-      if (isUrlExpansion.current) return;
-
+      if (isHandlingExpansion.current) return;
       isHandlingExpansion.current = true;
-      const expandedRows = allRowsExpanded.slice(-1);
-      setRowsExpanded(expandedRows.map((item) => item.index));
+      
+      try {
+        const expandedRows = allRowsExpanded.slice(-1);
+        setRowsExpanded(expandedRows.map((item) => item.index));
 
-      if (expandedRows.length > 0 && connections) {
-        const index = expandedRows[0].index;
-        const connection = connections[index];
-
-        if (
-          connection &&
-          updateUrlWithConnectionId &&
-          (!isInitialLoad.current || connection.id !== selectedConnectionId)
-        ) {
-          updateUrlWithConnectionId(connection.id);
+        if (expandedRows.length > 0 && connections) {
+          const index = expandedRows[0].index;
+          const connection = connections[index];
+          
+          if (connection && updateUrlWithConnectionId && connection.id !== selectedConnectionId) {
+            updateUrlWithConnectionId(connection.id);
+          }
+        } else if (updateUrlWithConnectionId && selectedConnectionId) {
+          updateUrlWithConnectionId('');
         }
-      } else if (updateUrlWithConnectionId && !isInitialLoad.current) {
-        updateUrlWithConnectionId('');
-      }
-      setTimeout(() => {
+      } finally {
         isHandlingExpansion.current = false;
-      }, 100);
+      }
     },
     renderExpandableRow: (rowData, tableMeta) => {
       const colSpan = rowData.length;
