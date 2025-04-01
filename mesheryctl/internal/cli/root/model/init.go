@@ -48,7 +48,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 
 		version, _ := cmd.Flags().GetString("version")
 		if !semver.IsValid(version) {
-			return ErrModelUnsupportedOutputFormat(
+			return ErrModelUnsupportedVersion(
 				"version must follow a semver format, f.e. v1.2.3",
 			)
 		}
