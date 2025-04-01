@@ -5,7 +5,6 @@ import {
   Collapse,
   Grid,
   Slide,
-  Tooltip,
   IconButton,
   Typography,
   useTheme,
@@ -13,6 +12,7 @@ import {
   Popover,
   alpha,
   FormattedTime,
+  CustomTooltip,
 } from '@layer5/sistent';
 import {
   OptionList,
@@ -251,10 +251,7 @@ export const Notification = ({ event_id }) => {
     e.stopPropagation();
     setExpanded(!expanded);
   };
-  const errorCodes = getErrorCodesFromEvent(event) || [];
-  const formattedErrorCodes = errorCodes.length > 0 ? errorCodes : '';
-  const errorLink =
-    errorCodes.length > 0 ? `${MESHERY_DOCS_URL}/reference/error-codes#${errorCodes[0]}` : '#';
+
   const { data: user } = useGetUserByIdQuery(event.user_id || '');
 
   const userName = `${user?.first_name || ''} ${user?.last_name || ''}`;
@@ -319,8 +316,6 @@ export const Notification = ({ event_id }) => {
               }}
             />
           </ActorAvatar>
-
-          {errorCodes.length > 0 && <TitleLink href={errorLink}>{formattedErrorCodes}</TitleLink>}
         </Grid>
         <FormattedMetadata event={event} />
       </Grid>
