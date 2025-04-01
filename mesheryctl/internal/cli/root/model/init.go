@@ -63,7 +63,6 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 		modelName := args[0]
 		path, _ := cmd.Flags().GetString("path")
 		version, _ := cmd.Flags().GetString("version")
-		// TODO take into account outputFormat
 		outputFormat, _ := cmd.Flags().GetString("output-format")
 
 		utils.Log.Infof("Creating new Meshery model: %s", modelName)
@@ -129,7 +128,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 			),
 		)
 
-		// TODO maybe clean partial data (if error occurs in the middle of execution)
+		// TODO think about cleaning up partial data (if error occurs in the middle of execution).
 		// if delete a folder, only delete if the folder was created
 		// if the user specifies an existing folder it should not be deleted.
 		return nil
@@ -149,9 +148,6 @@ func initModelGetValidOutputFormat() []string {
 }
 
 const initModelTemplatePathModelJSON = "json_models/constructs/v1beta1/model.json"
-
-// TODO do we need design json ?
-// const initModelTemplatePathDesignJSON = "json_models/constructs/v1beta1/design.json"
 const initModelTemplatePathComponentJSON = "json_models/constructs/v1beta1/component.json"
 const initModelTemplatePathConnectionJSON = "json_models/constructs/v1beta1/connection.json"
 const initModelTemplatePathRelathionshipJSON = "json_models/constructs/v1alpha3/relationship.json"
@@ -178,7 +174,7 @@ Detailed guide: https://docs.meshery.io/guides/creating-new-model-with-mesheryct
 
 // TODO
 // initModelData fits well for json and yaml format
-// if csv output is different (non folder based), will initModelData fits it?
+// if csv output is different (non folder based), will initModelData fit it?
 var initModelData = []struct {
 	folderPath string
 	files      map[string]string
