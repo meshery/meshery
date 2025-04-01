@@ -3,11 +3,11 @@ import { Typography } from '@layer5/sistent';
 import { Launch as LaunchIcon } from '@mui/icons-material';
 import { TextWithLinks } from '../../DataFormatter';
 
-export const TitleLink = ({ href, children, ...props }) => {
+export const TitleLink = ({ href, children, isNewTab = true, ...props }) => {
   return (
     <a
       href={href}
-      target="_blank"
+      target={isNewTab ? '_blank' : '_self'}
       rel="noopener noreferrer"
       style={{ color: 'inherit' }}
       {...props}

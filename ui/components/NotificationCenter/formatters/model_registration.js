@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Typography, Grid, Box } from '@layer5/sistent';
 import { ErrorMetadataFormatter } from './error';
+import { TitleLink } from './common';
 
 const UnsuccessfulEntityWithError = ({ modelName, error }) => {
   const entityTypesAndQuantities = {};
@@ -189,12 +190,20 @@ export const ModelImportedSection = ({ modelDetails }) => {
 
         return (
           <Box key={index} mb={2}>
-            <Typography gutterBottom>
-              <span style={{ fontWeight: 'bold', fontSize: '17px' }}>
-                {isEntityFile ? 'FILE NAME:' : 'MODEL:'}{' '}
-              </span>
-              <span style={{ fontSize: '18px' }}>{modelName}</span>
-            </Typography>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <Typography gutterBottom>
+                <span style={{ fontWeight: 'bold', fontSize: '17px' }}>
+                  {isEntityFile ? 'FILE NAME:' : 'MODEL:'}{' '}
+                </span>
+                <span style={{ fontSize: '18px' }}>{modelName}</span>
+              </Typography>
+              <TitleLink
+                href={`settings?settingsCategory=Registry&tab=Models&searchText=${modelName}`}
+                isNewTab={false}
+              >
+                Registry
+              </TitleLink>
+            </div>
             {hasComponents && (
               <>
                 <Typography variant="body1">
