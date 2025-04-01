@@ -168,7 +168,7 @@ The following instructions are a no-fluff guide to creating your own Meshery Mod
 
 1. Fork the [meshery/meshery.io](https://github.com/meshery/meshery.io) repository.
 1. Create a new branch in your fork of the meshery/meshery.io repository.
-1. Add your model definition to the `collections/_models` directory.
+1. Add your model definition to the `collections/_models` directory. See example: [_models/actions-runner-controller](https://github.com/meshery/meshery.io/tree/master/collections/_models/actions-runner-controller)
 1. Add Model's OCI tar file at `assets/modelsFiles/<model-filename>`
 1. Create a pull request to the meshery/meshery.io repository.
 1. Once your pull request is merged, your model will be available in the next Meshery release.
