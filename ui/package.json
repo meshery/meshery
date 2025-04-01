@@ -103,7 +103,7 @@
     "@babel/core": "^7.21.3",
     "@babel/eslint-parser": "^7.22.11",
     "@babel/types": "^7.23.5",
-    "@next/eslint-plugin-next": "^13.1.2",
+    "@next/eslint-plugin-next": "^15.2.4",
     "@playwright/test": "^1.48.1",
     "@types/node": "^22.10.3",
     "ajv": "^8.12.0",
