@@ -73,6 +73,12 @@ func TestModelInit(t *testing.T) {
 			ExpectError:      true,
 			ExpectedResponse: "model.init.invalid-version-format.output.golden",
 		},
+		{
+			Name:             "model init with invalid output format",
+			Args:             []string{"init", "aws-ec2-controller", "--output-format", "protobuf"},
+			ExpectError:      true,
+			ExpectedResponse: "model.init.invalid-output-format.output.golden",
+		},
 		// TODO test not covered branches and corner cases
 		// TODO remove created folders during tests
 	}

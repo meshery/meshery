@@ -37,7 +37,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 		format, _ := cmd.Flags().GetString("output-format")
 		getValidOutputFormatSlices := initModelGetValidOutputFormat()
 		if !slices.Contains(getValidOutputFormatSlices, format) {
-			validFormatsString := strings.Join(getValidOutputFormat(), ", ")
+			validFormatsString := strings.Join(initModelGetValidOutputFormat(), ", ")
 			return ErrModelUnsupportedOutputFormat(
 				fmt.Sprintf(
 					"[ %s ] are the only format supported",
