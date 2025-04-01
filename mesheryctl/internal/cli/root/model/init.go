@@ -9,12 +9,9 @@ import (
 
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
+	"github.com/meshery/schemas"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-
-	// TODO must use schemas repo instead of local temp package
-	// "github.com/meshery/schemas"
-	schemas "github.com/layer5io/meshery/mesheryctl/internal/cli/root/model/temp_schemas"
 )
 
 var initModelCmd = &cobra.Command{
