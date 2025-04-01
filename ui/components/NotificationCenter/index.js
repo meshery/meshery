@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Provider, useDispatch, useSelector } from 'react-redux';
-import { NoSsr } from '@layer5/sistent';
+import { CustomTooltip, NoSsr } from '@layer5/sistent';
 import {
   Divider,
   ClickAwayListener,
@@ -10,7 +10,6 @@ import {
   CircularProgress,
   Box,
   useTheme,
-  Tooltip,
   Checkbox,
   Collapse,
   IconButton,
@@ -176,7 +175,7 @@ const NotificationCountChip = ({ notificationStyle, count, type, handleClick, se
   };
   count = Number(count).toLocaleString('en', { useGrouping: true });
   return (
-    <Tooltip title={type} placement="bottom">
+    <CustomTooltip title={type} placement="bottom">
       <Button
         style={{
           backgroundColor: alpha(chipStyles.fill, 0.2),
@@ -192,7 +191,7 @@ const NotificationCountChip = ({ notificationStyle, count, type, handleClick, se
           <span>{count}</span>
         </SeverityChip>
       </Button>
-    </Tooltip>
+    </CustomTooltip>
   );
 };
 
@@ -310,7 +309,7 @@ const BulkActions = () => {
       );
     }
     return (
-      <Tooltip title={tooltip} placement="top">
+      <CustomTooltip title={tooltip} placement="top">
         <IconButton onClick={onClick} disabled={disabled}>
           <Icon
             {...iconMedium}
@@ -320,7 +319,7 @@ const BulkActions = () => {
             fill="currentColor"
           />
         </IconButton>
-      </Tooltip>
+      </CustomTooltip>
     );
   };
 

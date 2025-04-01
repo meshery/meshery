@@ -5,7 +5,6 @@ import {
   Collapse,
   Grid,
   Slide,
-  Tooltip,
   IconButton,
   Typography,
   useTheme,
@@ -13,6 +12,7 @@ import {
   Popover,
   alpha,
   FormattedTime,
+  CustomTooltip,
 } from '@layer5/sistent';
 import {
   OptionList,
@@ -78,7 +78,7 @@ const AvatarStack = ({ avatars, direction }) => {
       }}
     >
       {avatars.map((avatar, index) => (
-        <Tooltip title={avatar.name} placement="top" key={index}>
+        <CustomTooltip title={avatar.name} placement="top" key={index}>
           <Box
             sx={{
               zIndex: avatars.length - index,
@@ -87,7 +87,7 @@ const AvatarStack = ({ avatars, direction }) => {
           >
             <Avatar alt={avatar.name} src={avatar.avatar_url} />
           </Box>
-        </Tooltip>
+        </CustomTooltip>
       ))}
     </StyledAvatarStack>
   );
