@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Typography, Grid, Box } from '@layer5/sistent';
 import { ErrorMetadataFormatter } from './error';
 import { TitleLink } from './common';
+import { FALLBACK_MESHERY_IMAGE_PATH } from '@/constants/common';
 
 const UnsuccessfulEntityWithError = ({ modelName, error }) => {
   const entityTypesAndQuantities = {};
@@ -51,13 +52,13 @@ const ComponentWithIcon = ({ component }) => {
   const kind = Metadata.toLowerCase();
 
   const paths = [
-    `ui/public/static/img/meshmodels/${modelname}/color/${kind}-color.svg`,
-    `ui/public/static/img/meshmodels/${modelname}/white/${kind}-white.svg`,
-    `ui/public/static/img/meshmodels/${modelname}/color/${modelname}-color.svg`,
-    `ui/public/static/img/meshmodels/${modelname}/white/${modelname}-white.svg`,
+    `/static/img/meshmodels/${modelname}/color/${kind}-color.svg`,
+    `/static/img/meshmodels/${modelname}/white/${kind}-white.svg`,
+    `/static/img/meshmodels/${modelname}/color/${modelname}-color.svg`,
+    `/static/img/meshmodels/${modelname}/white/${modelname}-white.svg`,
   ];
 
-  const defaultPath = 'ui/public/static/img/meshmodels/meshery-core/color/meshery-core-color.svg';
+  const defaultPath = FALLBACK_MESHERY_IMAGE_PATH;
 
   const [finalPath, setFinalPath] = useState(defaultPath);
 

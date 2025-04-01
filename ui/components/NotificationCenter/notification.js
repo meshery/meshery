@@ -3,7 +3,6 @@ import {
   Avatar,
   Box,
   Collapse,
-  Grid,
   Slide,
   IconButton,
   Typography,
@@ -289,23 +288,21 @@ export const Notification = ({ event_id }) => {
         borderTop: `1px solid ${notificationColor}`,
       }}
     >
-      <Grid
-        item
-        xs={12}
+      <Box
         sx={{
           padding: '1rem',
+          width: '100%',
         }}
       >
-        <Grid
-          item
-          xs={12}
+        <Box
           sx={{
+            width: '100%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
-          <ActorAvatar item sm={1} style={{ marginBottom: '0.5rem' }}>
+          <ActorAvatar item style={{ marginBottom: '0.5rem' }}>
             <AvatarStack
               avatars={eventActors}
               direction={{
@@ -315,9 +312,9 @@ export const Notification = ({ event_id }) => {
             />
           </ActorAvatar>
           <FormattedLinkMetadata event={event} />
-        </Grid>
+        </Box>
         <FormattedMetadata event={event} />
-      </Grid>
+      </Box>
     </Expanded>
   );
   return (
