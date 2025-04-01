@@ -48,8 +48,32 @@ func TestModelInit(t *testing.T) {
 			},
 		},
 		{
+			Name:             "model init with yaml output format",
+			Args:             []string{"init", "aws-dynamodb-controller", "--output-format", "yaml"},
+			ExpectError:      false,
+			ExpectedResponse: "model.init.aws-dynamodb-controller-in-yaml.output.golden",
+			ExpectedDirs: []string{
+				"aws-dynamodb-controller",
+				"aws-dynamodb-controller/v0.1.0",
+				"aws-dynamodb-controller/v0.1.0/components",
+				"aws-dynamodb-controller/v0.1.0/connections",
+				"aws-dynamodb-controller/v0.1.0/credentials",
+				"aws-dynamodb-controller/v0.1.0/relationships",
+			},
+			ExpectedFiles: []string{
+				"aws-dynamodb-controller/v0.1.0/model.yaml",
+				"aws-dynamodb-controller/v0.1.0/components/component.yaml",
+				"aws-dynamodb-controller/v0.1.0/connections/connection.yaml",
+				"aws-dynamodb-controller/v0.1.0/relationships/relationship.yaml",
+			},
+		},
+		// I have added --output-format json in this test because somehow
+		// the --output-format yaml from the previous test case is propagated to this test case
+		// which is only the behaviour inside the test.
+		// TODO think about how to reset the flags between the test cases.
+		{
 			Name:             "model init with custom path and version",
-			Args:             []string{"init", "aws-ec2-controller", "--path", "some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3"},
+			Args:             []string{"init", "aws-ec2-controller", "--path", "some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3", "--output-format", "json"},
 			ExpectError:      false,
 			ExpectedResponse: "model.init.custom-dir.aws-ec2-controller.output.golden",
 			ExpectedDirs: []string{
@@ -88,7 +112,9 @@ func TestModelInit(t *testing.T) {
 			testdataDir := filepath.Join(currDir, "testdata")
 			golden := utils.NewGoldenFile(t, tc.ExpectedResponse, testdataDir)
 			buff := utils.SetupMeshkitLoggerTesting(t, false)
+			initModelCmd.SetArgs([]string{})
 			cmd := ModelCmd
+			cmd.ResetFlags()
 			cmd.SetArgs(tc.Args)
 			cmd.SetOut(buff)
 			err := cmd.Execute()

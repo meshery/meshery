@@ -6,6 +6,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/ghodss/yaml"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/meshery/schemas"
@@ -152,8 +153,8 @@ func init() {
 }
 
 func initModelGetValidOutputFormat() []string {
-	return []string{"json"}
-	// TODO implement yamls, csv
+	return []string{"json", "yaml"}
+	// TODO implement csv
 	// return []string{"json", "yaml", "csv"}
 }
 
@@ -259,8 +260,11 @@ func getTemplateInOutputFormat(templatePath string, outputFormat string) ([]byte
 	}
 
 	if outputFormat == "yaml" {
-		// impossible to reach here, as outputFormat is validated in prerun
-		return nil, ErrModelUnsupportedOutputFormat("TODO implement yaml")
+		yamlContent, err := yaml.JSONToYAML(content)
+		if err != nil {
+			return nil, utils.ErrJSONToYAML(err)
+		}
+		return yamlContent, nil
 	}
 
 	if outputFormat == "csv" {
