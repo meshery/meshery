@@ -253,7 +253,7 @@ const MesheryHelmKanvasExtension = () => {
   };
 
   return (
-    <UsesSistent>
+    <>
       <Grid item {...LARGE_6_MED_12_GRID_STYLE}>
         <CardContainer>
           <Typography variant="h5" component="div">
@@ -262,7 +262,9 @@ const MesheryHelmKanvasExtension = () => {
 
           <FrontSideDescription variant="body">
             <MesheryHelmKanvasLogo />
-            The Kanvas Snapshot Helm Plugin allows you to generate a visual snapshot of your Helm charts directly from the command line. It simplifies the process of creating Meshery Snapshots, providing a visual representation of packaged Helm charts.
+            The Kanvas Snapshot Helm Plugin allows you to generate a visual snapshot of your Helm
+            charts directly from the command line. It simplifies the process of creating Meshery
+            Snapshots, providing a visual representation of packaged Helm charts.
           </FrontSideDescription>
           {
             <div style={{ textAlign: 'right' }}>
@@ -278,7 +280,7 @@ const MesheryHelmKanvasExtension = () => {
           }
         </CardContainer>
       </Grid>
-    </UsesSistent>
+    </>
   );
 };
 
