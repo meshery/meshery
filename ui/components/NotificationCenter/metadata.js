@@ -9,11 +9,21 @@ import { ErrorMetadataFormatter } from './formatters/error';
 import { DryRunResponse } from './formatters/pattern_dryrun';
 import { ModelImportMessages, ModelImportedSection } from './formatters/model_registration';
 import { RelationshipEvaluationEventFormatter } from './formatters/relationship_evaluation';
+import { useTheme, styled } from '@layer5/sistent';
+
 
 export const PropertyFormatters = {
   //trace can be very large, so we need to convert it to a file
   trace: (value) => <DataToFileLink data={value} />,
-  ShortDescription: (value) => <SectionBody body={value} style={{ marginBlock: '0.5rem' }} />,
+  ShortDescription: (value) => {
+    const theme = useTheme();
+    return (
+      <SectionBody
+        body={value}
+        style={{ marginBlock: '0.5rem', color: theme.palette.text.default, fontWeight: 'normal' }}
+      />
+    );
+  },
   error: (value) => <ErrorMetadataFormatter metadata={value} event={event} />,
   dryRunResponse: (value) => <DryRunResponse response={value} />,
   ModelImportMessage: (value) => value && <ModelImportMessages message={value} />,
