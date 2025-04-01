@@ -3,9 +3,7 @@ import {
   Avatar,
   Box,
   Collapse,
-  Grid,
   Slide,
-  Tooltip,
   IconButton,
   Typography,
   useTheme,
@@ -13,6 +11,7 @@ import {
   Popover,
   alpha,
   FormattedTime,
+  CustomTooltip,
 } from '@layer5/sistent';
 import {
   OptionList,
@@ -51,10 +50,8 @@ import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { FacebookShareButton, LinkedinShareButton, TwitterShareButton } from 'react-share';
 import ReadIcon from '../../assets/icons/ReadIcon';
 import UnreadIcon from '../../assets/icons/UnreadIcon';
-import { FormattedMetadata } from './metadata';
-import { TitleLink } from './formatters/common';
+import { FormattedLinkMetadata, FormattedMetadata } from './metadata';
 import { truncate } from 'lodash';
-import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 
 export const eventPreventDefault = (e) => {
   e.preventDefault();
@@ -78,7 +75,7 @@ const AvatarStack = ({ avatars, direction }) => {
       }}
     >
       {avatars.map((avatar, index) => (
-        <Tooltip title={avatar.name} placement="top" key={index}>
+        <CustomTooltip title={avatar.name} placement="top" key={index}>
           <Box
             sx={{
               zIndex: avatars.length - index,
@@ -87,7 +84,7 @@ const AvatarStack = ({ avatars, direction }) => {
           >
             <Avatar alt={avatar.name} src={avatar.avatar_url} />
           </Box>
-        </Tooltip>
+        </CustomTooltip>
       ))}
     </StyledAvatarStack>
   );
@@ -251,10 +248,7 @@ export const Notification = ({ event_id }) => {
     e.stopPropagation();
     setExpanded(!expanded);
   };
-  const errorCodes = getErrorCodesFromEvent(event) || [];
-  const formattedErrorCodes = errorCodes.length > 0 ? errorCodes : '';
-  const errorLink =
-    errorCodes.length > 0 ? `${MESHERY_DOCS_URL}/reference/error-codes#${errorCodes[0]}` : '#';
+
   const { data: user } = useGetUserByIdQuery(event.user_id || '');
 
   const userName = `${user?.first_name || ''} ${user?.last_name || ''}`;
@@ -294,23 +288,21 @@ export const Notification = ({ event_id }) => {
         borderTop: `1px solid ${notificationColor}`,
       }}
     >
-      <Grid
-        item
-        xs={12}
+      <Box
         sx={{
           padding: '1rem',
+          width: '100%',
         }}
       >
-        <Grid
-          item
-          xs={12}
+        <Box
           sx={{
+            width: '100%',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'space-between',
           }}
         >
-          <ActorAvatar item sm={1} style={{ marginBottom: '0.5rem' }}>
+          <ActorAvatar item style={{ marginBottom: '0.5rem' }}>
             <AvatarStack
               avatars={eventActors}
               direction={{
@@ -319,11 +311,10 @@ export const Notification = ({ event_id }) => {
               }}
             />
           </ActorAvatar>
-
-          {errorCodes.length > 0 && <TitleLink href={errorLink}>{formattedErrorCodes}</TitleLink>}
-        </Grid>
+          <FormattedLinkMetadata event={event} />
+        </Box>
         <FormattedMetadata event={event} />
-      </Grid>
+      </Box>
     </Expanded>
   );
   return (
