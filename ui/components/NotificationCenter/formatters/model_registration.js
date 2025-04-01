@@ -197,12 +197,14 @@ export const ModelImportedSection = ({ modelDetails }) => {
                 </span>
                 <span style={{ fontSize: '18px' }}>{modelName}</span>
               </Typography>
-              <TitleLink
-                href={`settings?settingsCategory=Registry&tab=Models&searchText=${modelName}`}
-                isNewTab={false}
-              >
-                Registry
-              </TitleLink>
+              {!isEntityFile && (
+                <TitleLink
+                  href={`settings?settingsCategory=Registry&tab=Models&searchText=${modelName}`}
+                  target="_self"
+                >
+                  Registry
+                </TitleLink>
+              )}
             </div>
             {hasComponents && (
               <>
