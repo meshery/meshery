@@ -1,7 +1,6 @@
 package model
 
 import (
-	"errors"
 	"fmt"
 	"os"
 	"slices"
@@ -260,18 +259,17 @@ func getTemplateInOutputFormat(templatePath string, outputFormat string) ([]byte
 	}
 
 	if outputFormat == "yaml" {
-		// TODO process yaml
-		return nil, errors.New("implement yaml")
+		// impossible to reach here, as outputFormat is validated in prerun
+		return nil, ErrModelUnsupportedOutputFormat("TODO implement yaml")
 	}
 
 	if outputFormat == "csv" {
-		// TODO process csv
-		return nil, errors.New("implement csv")
+		// impossible to reach here, as outputFormat is validated in prerun
+		return nil, ErrModelUnsupportedOutputFormat("TODO implement csv")
 	}
 
-	// should impossible to get here
-	// TODO use meshkit error format instead during implementation phase
-	return nil, errors.New("invalid format")
+	// impossible to reach here, as outputFormat is validated in prerun
+	return nil, ErrModelUnsupportedOutputFormat("unsupported output format")
 }
 
 func initModelReplacePlaceholders(input string, replacements map[string]string) string {
