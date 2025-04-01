@@ -67,6 +67,12 @@ func TestModelInit(t *testing.T) {
 				"some_custom_dir/subdir/one_more_subdir/aws-ec2-controller/v1.2.3/relationships/relationship.json",
 			},
 		},
+		{
+			Name:             "model init with invalid version format",
+			Args:             []string{"init", "aws-ec2-controller", "--version", "1.2"},
+			ExpectError:      true,
+			ExpectedResponse: "model.init.invalid-version-format.output.golden",
+		},
 		// TODO test not covered branches and corner cases
 		// TODO remove created folders during tests
 	}

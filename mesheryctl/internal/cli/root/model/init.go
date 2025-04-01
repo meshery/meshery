@@ -12,6 +12,7 @@ import (
 	"github.com/meshery/schemas"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"golang.org/x/mod/semver"
 )
 
 var initModelCmd = &cobra.Command{
@@ -42,6 +43,13 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 					"[ %s ] are the only format supported",
 					validFormatsString,
 				),
+			)
+		}
+
+		version, _ := cmd.Flags().GetString("version")
+		if !semver.IsValid(version) {
+			return ErrModelUnsupportedOutputFormat(
+				"version must follow a semver format, f.e. v1.2.3",
 			)
 		}
 		return nil

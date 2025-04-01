@@ -10,6 +10,7 @@ const (
 	ErrExportModelCode                  = "mesheryctl-1127"
 	ErrTemplateFileNotPresentCode       = "mesheryctl-1131"
 	ErrModelUnsupportedOutputFormatCode = "mesheryctl-1146"
+	ErrModelUnsupportedVersion          = "mesheryctl-1148" // TODO is it a correct code for this error?
 )
 
 func ErrExportModel(err error, name string) error {
