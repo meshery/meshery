@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Box, Typography, styled, Chip, Tooltip, Collapse } from '@layer5/sistent';
+import { Box, Typography, styled, Chip, CustomTooltip, Collapse } from '@layer5/sistent';
 import { ComponentIcon } from '@/components/DesignLifeCycle/common';
 import { AddIcon, DeleteIcon, EditIcon, InfoIcon } from '@layer5/sistent'; // Assuming MUI icons are available
 import ExpandLessIcon from '@/assets/icons/ExpandLessIcon';
@@ -119,9 +119,13 @@ const ComponentItem = ({ component }) => (
         <Typography variant="body2" fontWeight={500}>
           {component.component.kind} <strong> &quot;{component.displayName}&quot; </strong>
         </Typography>
-        <Tooltip title={`Model: ${component.model.name}  Version: ${component?.model?.version}`}>
-          <ModelBadge size="small" label={component.model.name} variant="outlined" />
-        </Tooltip>
+        <CustomTooltip
+          title={`Model: ${component.model.name}  Version: ${component?.model?.version}`}
+        >
+          <div>
+            <ModelBadge size="small" label={component.model.name} variant="outlined" />
+          </div>
+        </CustomTooltip>
       </Box>
     </Box>
   </ItemRow>
@@ -148,11 +152,13 @@ const RelationshipItem = ({ relationship }) => (
             <strong>{selector?.allow?.to?.[0]?.kind || 'Unknown'}</strong>
           </Typography>
 
-          <Tooltip
+          <CustomTooltip
             title={`Model: ${relationship.model.name} Version: ${relationship?.model?.version}`}
           >
-            <ModelBadge size="small" label={relationship.model.name} variant="outlined" />
-          </Tooltip>
+            <div>
+              <ModelBadge size="small" label={relationship.model.name} variant="outlined" />
+            </div>
+          </CustomTooltip>
         </Box>
       </ItemRow>
     ))}
