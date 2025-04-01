@@ -104,7 +104,7 @@ func TestModelInit(t *testing.T) {
 			ExpectedResponse: "model.init.invalid-output-format.output.golden",
 		},
 		// TODO test not covered branches and corner cases
-		// TODO remove created folders during tests
+		// TODO remove created during test folder structure after test run
 	}
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {

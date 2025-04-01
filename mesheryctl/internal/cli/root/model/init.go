@@ -130,6 +130,8 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 		)
 
 		// TODO maybe clean partial data (if error occurs in the middle of execution)
+		// if delete a folder, only delete if the folder was created
+		// if the user specifies an existing folder it should not be deleted.
 		return nil
 	},
 }
