@@ -170,8 +170,13 @@ func (h *Handler) handlePatternPOST(
 	} else {
 		eventBuilder = eventBuilder.WithAction(models.Create)
 	}
+	metadata := map[string]interface{}{
+		"description": fmt.Sprintf("Saved design '%s'", requestPayload.DesignFile.Name),
+		"designId":    requestPayload.DesignFile.Id,
+	}
 
-	event := eventBuilder.WithDescription(fmt.Sprintf("Saved design '%s'", requestPayload.DesignFile.Name)).Build()
+	event := eventBuilder.WithDescription(fmt.Sprintf("Saved design '%s'", requestPayload.DesignFile.Name)).WithMetadata(metadata).Build()
+
 	_ = provider.PersistEvent(event)
 
 	_, _ = rw.Write(savedDesignByt)
