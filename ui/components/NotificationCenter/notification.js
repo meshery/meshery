@@ -51,10 +51,8 @@ import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { FacebookShareButton, LinkedinShareButton, TwitterShareButton } from 'react-share';
 import ReadIcon from '../../assets/icons/ReadIcon';
 import UnreadIcon from '../../assets/icons/UnreadIcon';
-import { FormattedMetadata } from './metadata';
-import { TitleLink } from './formatters/common';
+import { FormattedLinkMetadata, FormattedMetadata } from './metadata';
 import { truncate } from 'lodash';
-import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 
 export const eventPreventDefault = (e) => {
   e.preventDefault();
@@ -251,10 +249,7 @@ export const Notification = ({ event_id }) => {
     e.stopPropagation();
     setExpanded(!expanded);
   };
-  const errorCodes = getErrorCodesFromEvent(event) || [];
-  const formattedErrorCodes = errorCodes.length > 0 ? errorCodes : '';
-  const errorLink =
-    errorCodes.length > 0 ? `${MESHERY_DOCS_URL}/reference/error-codes#${errorCodes[0]}` : '#';
+
   const { data: user } = useGetUserByIdQuery(event.user_id || '');
 
   const userName = `${user?.first_name || ''} ${user?.last_name || ''}`;
@@ -319,8 +314,7 @@ export const Notification = ({ event_id }) => {
               }}
             />
           </ActorAvatar>
-
-          {errorCodes.length > 0 && <TitleLink href={errorLink}>{formattedErrorCodes}</TitleLink>}
+          <FormattedLinkMetadata event={event} />
         </Grid>
         <FormattedMetadata event={event} />
       </Grid>
