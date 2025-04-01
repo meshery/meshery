@@ -47,7 +47,28 @@ func TestModelInit(t *testing.T) {
 				"aws-ec2-controller/v0.1.0/relationships/relationship.json",
 			},
 		},
-		// TODO test not covered branches
+		{
+			Name:             "model init with custom path and version",
+			Args:             []string{"init", "aws-ec2-controller", "--path", "some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3"},
+			ExpectError:      false,
+			ExpectedResponse: "model.init.custom_dir.aws-ec2-controller.output.golden",
+			ExpectedDirs: []string{
+				"some_custom_dir/subdir/one_more_subdir/aws-ec2-controller",
+				"some_custom_dir/subdir/one_more_subdir/aws-ec2-controller/v1.2.3",
+				"some_custom_dir/subdir/one_more_subdir/aws-ec2-controller/v1.2.3/components",
+				"some_custom_dir/subdir/one_more_subdir/aws-ec2-controller/v1.2.3/connections",
+				"some_custom_dir/subdir/one_more_subdir/aws-ec2-controller/v1.2.3/credentials",
+				"some_custom_dir/subdir/one_more_subdir/aws-ec2-controller/v1.2.3/relationships",
+			},
+			ExpectedFiles: []string{
+				"some_custom_dir/subdir/one_more_subdir/aws-ec2-controller/v1.2.3/model.json",
+				"some_custom_dir/subdir/one_more_subdir/aws-ec2-controller/v1.2.3/components/component.json",
+				"some_custom_dir/subdir/one_more_subdir/aws-ec2-controller/v1.2.3/connections/connection.json",
+				"some_custom_dir/subdir/one_more_subdir/aws-ec2-controller/v1.2.3/relationships/relationship.json",
+			},
+		},
+		// TODO test not covered branches and corner cases
+		// TODO remove created folders during tests
 	}
 	for _, tc := range tests {
 		t.Run(tc.Name, func(t *testing.T) {
