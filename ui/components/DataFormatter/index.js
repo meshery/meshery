@@ -207,7 +207,7 @@ export const KeyValue = ({ Key, Value, style }) => {
           style={{
             color: theme.palette.text.tertiary,
             textOverflow: 'ellipsis',
-            wordBreak: 'break-all',
+            wordBreak: 'break-word',
             overflow: 'hidden',
             ...style,
           }}

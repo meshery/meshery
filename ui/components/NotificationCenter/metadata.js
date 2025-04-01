@@ -11,7 +11,6 @@ import { ModelImportMessages, ModelImportedSection } from './formatters/model_re
 import { RelationshipEvaluationEventFormatter } from './formatters/relationship_evaluation';
 import { useTheme, styled } from '@layer5/sistent';
 
-
 export const PropertyFormatters = {
   //trace can be very large, so we need to convert it to a file
   trace: (value) => <DataToFileLink data={value} />,
@@ -63,6 +62,7 @@ const EventTypeFormatters = {
 };
 
 export const FormattedMetadata = ({ event }) => {
+  const theme = useTheme();
   if (EventTypeFormatters[eventDetailFormatterKey(event)]) {
     const Formatter = EventTypeFormatters[eventDetailFormatterKey(event)];
     return <Formatter event={event} />;
@@ -98,13 +98,16 @@ export const FormattedMetadata = ({ event }) => {
       propertyFormatters={PropertyFormatters}
       data={orderedMetadata}
       order={order}
+      style={{
+        fontWeight: 'normal',
+        color: theme.palette.text.default,
+      }}
     />
   );
 };
 
 export const FormattedLinkMetadata = ({ event }) => {
   const filteredMetadata = _.pick(event.metadata, linkOrder);
-
   return (
     <FormatStructuredData propertyFormatters={PropertyLinkFormatters} data={filteredMetadata} />
   );
