@@ -122,7 +122,9 @@ const ComponentItem = ({ component }) => (
         <CustomTooltip
           title={`Model: ${component.model.name}  Version: ${component?.model?.version}`}
         >
-          <ModelBadge size="small" label={component.model.name} variant="outlined" />
+          <div>
+            <ModelBadge size="small" label={component.model.name} variant="outlined" />
+          </div>
         </CustomTooltip>
       </Box>
     </Box>
@@ -153,7 +155,9 @@ const RelationshipItem = ({ relationship }) => (
           <CustomTooltip
             title={`Model: ${relationship.model.name} Version: ${relationship?.model?.version}`}
           >
-            <ModelBadge size="small" label={relationship.model.name} variant="outlined" />
+            <div>
+              <ModelBadge size="small" label={relationship.model.name} variant="outlined" />
+            </div>
           </CustomTooltip>
         </Box>
       </ItemRow>

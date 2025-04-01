@@ -374,7 +374,9 @@ const InfoModal_ = React.memo((props) => {
                         resourceUserProfile?.first_name + ' ' + resourceUserProfile?.last_name
                       }`}
                     >
-                      <OwnerChip userProfile={resourceUserProfile} />
+                      <div>
+                        <OwnerChip userProfile={resourceUserProfile} />
+                      </div>
                     </CustomTooltip>
                   </Typography>
                 </Grid>

@@ -176,21 +176,23 @@ const NotificationCountChip = ({ notificationStyle, count, type, handleClick, se
   count = Number(count).toLocaleString('en', { useGrouping: true });
   return (
     <CustomTooltip title={type} placement="bottom">
-      <Button
-        style={{
-          backgroundColor: alpha(chipStyles.fill, 0.2),
-          border:
-            selectedSeverity === severity
-              ? `solid 2px ${chipStyles.fill}`
-              : 'solid 2px transparent',
-        }}
-        onClick={handleClick}
-      >
-        <SeverityChip>
-          {<notificationStyle.icon {...chipStyles} />}
-          <span>{count}</span>
-        </SeverityChip>
-      </Button>
+      <div>
+        <Button
+          style={{
+            backgroundColor: alpha(chipStyles.fill, 0.2),
+            border:
+              selectedSeverity === severity
+                ? `solid 2px ${chipStyles.fill}`
+                : 'solid 2px transparent',
+          }}
+          onClick={handleClick}
+        >
+          <SeverityChip>
+            {<notificationStyle.icon {...chipStyles} />}
+            <span>{count}</span>
+          </SeverityChip>
+        </Button>
+      </div>
     </CustomTooltip>
   );
 };
@@ -310,15 +312,17 @@ const BulkActions = () => {
     }
     return (
       <CustomTooltip title={tooltip} placement="top">
-        <IconButton onClick={onClick} disabled={disabled}>
-          <Icon
-            {...iconMedium}
-            style={{
-              opacity: disabled ? 0.5 : 1,
-            }}
-            fill="currentColor"
-          />
-        </IconButton>
+        <div>
+          <IconButton onClick={onClick} disabled={disabled}>
+            <Icon
+              {...iconMedium}
+              style={{
+                opacity: disabled ? 0.5 : 1,
+              }}
+              fill="currentColor"
+            />
+          </IconButton>
+        </div>
       </CustomTooltip>
     );
   };
