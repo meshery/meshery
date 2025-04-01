@@ -9,7 +9,8 @@ import { ErrorMetadataFormatter } from './formatters/error';
 import { DryRunResponse } from './formatters/pattern_dryrun';
 import { ModelImportMessages, ModelImportedSection } from './formatters/model_registration';
 import { RelationshipEvaluationEventFormatter } from './formatters/relationship_evaluation';
-import { useTheme, styled } from '@layer5/sistent';
+import { useTheme } from '@layer5/sistent';
+import _ from 'lodash';
 
 export const PropertyFormatters = {
   //trace can be very large, so we need to convert it to a file

@@ -3,7 +3,6 @@ import {
   Avatar,
   Box,
   Collapse,
-  Grid,
   Slide,
   IconButton,
   Typography,
