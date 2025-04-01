@@ -53,6 +53,14 @@ const (
 	ErrValidProviderCode                 = "mesheryctl-1087"
 	ErrUnmarshallConfigCode              = "mesheryctl-1088"
 	ErrUploadFileParamsCode              = "mesheryctl-1089"
+	ErrProcessingLoginConfigCode         = "mesheryctl-1090"
+	ErrMesheryServerNotRunningCode       = "mesheryctl-1091"
+	ErrAuthenticationFailedCode          = "mesheryctl-1092"
+	ErrWriteTokenToFileCode              = "mesheryctl-1093"
+	ErrGetTokenForContextCode            = "mesheryctl-1094"
+	ErrAddTokenToConfigCode              = "mesheryctl-1095"
+	ErrCheckServerStatusCode             = "mesheryctl-1096" // New error code
+	ErrInvalidFlagCode                   = "mesheryctl-1097"
 )
 
 var (
@@ -326,4 +334,85 @@ func ErrUploadFileParams(err error) error {
 		[]string{"Unable to upload parameters from config file with provided context"},
 		[]string{"Ensure you have a strong network connection and the right configuration set in your Meshconfig file." + FormatErrorReference()})
 
+}
+
+func ErrProcessingLoginConfig(err error) error {
+	return errors.New(
+		ErrProcessingLoginConfigCode,
+		errors.Fatal,
+		[]string{"Error processing configuration for login"},
+		[]string{"Failed to process Meshery configuration: " + err.Error()},
+		[]string{"Configuration file might be corrupted or invalid"},
+		[]string{"Verify your configuration at ~/.meshery/config.yaml or run `mesheryctl system config` to reset it"})
+}
+
+func ErrMesheryServerNotRunning() error {
+	return errors.New(
+		ErrMesheryServerNotRunningCode,
+		errors.Alert,
+		[]string{"Meshery Server is not running"},
+		[]string{"Cannot authenticate when Meshery Server is not running"},
+		[]string{"Meshery Server is not currently active on your system"},
+		[]string{"Run \"mesheryctl system start\" to start Meshery Server before attempting to login"})
+}
+
+func ErrAuthenticationFailed(url string) error {
+	return errors.New(
+		ErrAuthenticationFailedCode,
+		errors.Alert,
+		[]string{"Authentication failed"},
+		[]string{"Unable to reach Meshery server at " + url},
+		[]string{"Meshery Server might be experiencing issues or network connectivity problems"},
+		[]string{"Verify your environment's readiness for a Meshery deployment by running `mesheryctl system check`"})
+}
+
+func ErrWriteTokenToFile(err error) error {
+	return errors.New(
+		ErrWriteTokenToFileCode,
+		errors.Alert,
+		[]string{"Failed to write authentication token"},
+		[]string{"Failed to write the token to the filesystem: " + err.Error()},
+		[]string{"Insufficient permissions or disk space issues"},
+		[]string{"Ensure you have write permissions to the Meshery configuration directory"})
+}
+
+func ErrGetTokenForContext(err error, contextName string) error {
+	return errors.New(
+		ErrGetTokenForContextCode,
+		errors.Alert,
+		[]string{"Failed to retrieve token for context"},
+		[]string{"Could not retrieve token for context " + contextName + ": " + err.Error()},
+		[]string{"Token might not be configured for this context"},
+		[]string{"Log in again or check your Meshery configuration"})
+}
+
+func ErrAddTokenToConfig(err error) error {
+	return errors.New(
+		ErrAddTokenToConfigCode,
+		errors.Fatal,
+		[]string{"Failed to add token to configuration"},
+		[]string{"Failed to find token path for the current context: " + err.Error()},
+		[]string{"Configuration file may be inaccessible or corrupted"},
+		[]string{"Check permissions on your Meshery configuration directory"})
+}
+
+func ErrCheckServerStatus(err error) error {
+	return errors.New(
+		ErrCheckServerStatusCode,
+		errors.Alert,
+		[]string{"Failed to check Meshery Server status"},
+		[]string{"Error occurred while checking Meshery Server status: " + err.Error()},
+		[]string{"Network connectivity issues", "Docker or Kubernetes service not running"},
+		[]string{"Ensure your environment is properly configured",
+			"Run `mesheryctl system check` to verify system prerequisites"})
+}
+
+func ErrInvalidFlag(err error) error {
+	return errors.New(
+		ErrInvalidFlagCode,
+		errors.Alert,
+		[]string{"Invalid command flag"},
+		[]string{"Error parsing command flags: " + err.Error()},
+		[]string{"Incorrect flag format or unsupported flag provided"},
+		[]string{"Check the command reference for supported flags and proper usage"})
 }
