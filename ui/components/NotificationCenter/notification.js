@@ -12,6 +12,7 @@ import {
   Popover,
   alpha,
   FormattedTime,
+  Tooltip,
 } from '@layer5/sistent';
 import {
   OptionList,
@@ -50,10 +51,8 @@ import { useGetUserByIdQuery } from '../../rtk-query/user';
 import { FacebookShareButton, LinkedinShareButton, TwitterShareButton } from 'react-share';
 import ReadIcon from '../../assets/icons/ReadIcon';
 import UnreadIcon from '../../assets/icons/UnreadIcon';
-import { FormattedMetadata } from './metadata';
-import { TitleLink } from './formatters/common';
+import { FormattedLinkMetadata, FormattedMetadata } from './metadata';
 import { truncate } from 'lodash';
-import { MESHERY_DOCS_URL } from '@/constants/endpoints';
 
 export const eventPreventDefault = (e) => {
   e.preventDefault();
@@ -315,6 +314,7 @@ export const Notification = ({ event_id }) => {
               }}
             />
           </ActorAvatar>
+          <FormattedLinkMetadata event={event} />
         </Grid>
         <FormattedMetadata event={event} />
       </Grid>
