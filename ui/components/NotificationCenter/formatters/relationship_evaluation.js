@@ -57,21 +57,6 @@ const EmptyState = styled(Box)(({ theme }) => ({
   fontStyle: 'italic',
 }));
 
-// Helper Components
-const SectionIcon = ({ type }) => {
-  // const theme = useTheme()
-  switch (type) {
-    case 'added':
-      return <AddIcon fill="white" />;
-    case 'deleted':
-      return <DeleteIcon fill="white" />;
-    case 'updated':
-      return <EditIcon fill="white" />;
-    default:
-      return null;
-  }
-};
-
 const TraceSection = ({ title, items, type, children, emptyMessage = 'No changes' }) => {
   const [expanded, setExpanded] = useState(false);
   const toggleExpanded = () => {
@@ -83,7 +68,6 @@ const TraceSection = ({ title, items, type, children, emptyMessage = 'No changes
     <SectionContainer>
       <SectionHeader onClick={toggleExpanded} expanded={expanded}>
         <SectionTitle>
-          <SectionIcon type={type} />
           <Typography variant="subtitle1">{title}</Typography>
         </SectionTitle>
 
