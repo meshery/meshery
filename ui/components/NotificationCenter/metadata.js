@@ -19,14 +19,13 @@ export const PropertyFormatters = {
   dryRunResponse: (value) => <DryRunResponse response={value} />,
   DownloadLink: (value) => (
     <TitleLink href={'/api/system/fileDownload?file=' + encodeURIComponent(value)}>
-      Download
+      Download File
     </TitleLink>
   ),
   ViewLink: (value) => (
-    <TitleLink href={'/api/system/fileView?file=' + encodeURIComponent(value)}>View</TitleLink>
+    <TitleLink href={'/api/system/fileView?file=' + encodeURIComponent(value)}>View Logs</TitleLink>
   ),
   ModelImportMessage: (value) => value && <ModelImportMessages message={value} />,
-
   ModelDetails: (value) => value && <ModelImportedSection modelDetails={value} />,
 };
 
@@ -37,6 +36,7 @@ const EventTypeFormatters = {
 };
 
 export const FormattedMetadata = ({ event }) => {
+  console.log('amit event', event);
   if (EventTypeFormatters[eventDetailFormatterKey(event)]) {
     const Formatter = EventTypeFormatters[eventDetailFormatterKey(event)];
     return <Formatter event={event} />;

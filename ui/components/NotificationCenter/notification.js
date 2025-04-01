@@ -12,7 +12,6 @@ import {
   Popover,
   alpha,
   FormattedTime,
-  CustomTooltip,
 } from '@layer5/sistent';
 import {
   OptionList,
