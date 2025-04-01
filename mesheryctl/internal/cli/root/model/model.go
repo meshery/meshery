@@ -121,7 +121,7 @@ func displayModels(modelsResponse *models.MeshmodelsAPIResponse, cmd *cobra.Comm
 
 	for _, model := range modelsResponse.Models {
 		if len(model.DisplayName) > 0 {
-			rows = append(rows, []string{model.Name, model.Category.Name, model.Version})
+			rows = append(rows, []string{model.Name, string(model.Category.Name), model.Version})
 		}
 	}
 
