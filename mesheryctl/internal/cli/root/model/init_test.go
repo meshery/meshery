@@ -51,7 +51,7 @@ func TestModelInit(t *testing.T) {
 			Name:             "model init with custom path and version",
 			Args:             []string{"init", "aws-ec2-controller", "--path", "some_custom_dir/subdir/one_more_subdir", "--version", "v1.2.3"},
 			ExpectError:      false,
-			ExpectedResponse: "model.init.custom_dir.aws-ec2-controller.output.golden",
+			ExpectedResponse: "model.init.custom-dir.aws-ec2-controller.output.golden",
 			ExpectedDirs: []string{
 				"some_custom_dir/subdir/one_more_subdir/aws-ec2-controller",
 				"some_custom_dir/subdir/one_more_subdir/aws-ec2-controller/v1.2.3",
