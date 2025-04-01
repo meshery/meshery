@@ -11,6 +11,7 @@ const (
 	ErrTemplateFileNotPresentCode       = "mesheryctl-1131"
 	ErrModelUnsupportedOutputFormatCode = "mesheryctl-1146"
 	ErrModelUnsupportedVersionCode      = "mesheryctl-1148" // TODO is it a correct code for this error?
+	ErrModelInitCode                    = "mesheryctl-1149" // TODO is it a correct code for this error?
 )
 
 func ErrExportModel(err error, name string) error {
@@ -27,4 +28,8 @@ func ErrModelUnsupportedOutputFormat(message string) error {
 
 func ErrModelUnsupportedVersion(message string) error {
 	return errors.New(ErrModelUnsupportedVersionCode, errors.Fatal, []string{"Error in model version format"}, []string{message}, []string{"Version format not supported"}, []string{"Ensure giving a semver version format"})
+}
+
+func ErrModelInit(err error) error {
+	return errors.New(ErrModelUnsupportedVersionCode, errors.Fatal, []string{"Error model init"}, []string{err.Error()}, []string{"Error during run of model init command"}, []string{"Ensure passing all params according to the command description"})
 }

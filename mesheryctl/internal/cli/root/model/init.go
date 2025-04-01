@@ -57,9 +57,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 	RunE: func(cmd *cobra.Command, args []string) error {
 		_, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
-			utils.Log.Error(err)
-			// TODO use meshkit error format instead during implementation phase
-			return err
+			return ErrModelInit(err)
 		}
 
 		modelName := args[0]
@@ -76,9 +74,7 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 		utils.Log.Infof("Creating directory structure...")
 		err = os.MkdirAll(modelVersionFolder, DirPerm)
 		if err != nil {
-			// TODO use meshkit error format
-			utils.Log.Error(err)
-			return err
+			return ErrModelInit(err)
 		}
 
 		for _, item := range initModelData {
@@ -88,17 +84,13 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 				itemFolderPath = strings.Join([]string{modelVersionFolder, item.folderPath}, string(os.PathSeparator))
 				err = os.MkdirAll(itemFolderPath, DirPerm)
 				if err != nil {
-					// TODO use meshkit error format
-					utils.Log.Error(err)
-					return err
+					return ErrModelInit(err)
 				}
 			}
 			for name, templatePath := range item.files {
 				content, err := getTemplateInOutputFormat(templatePath, outputFormat)
 				if err != nil {
-					utils.Log.Error(err)
-					// TODO use meshkit error format instead during implementation phase
-					return err
+					return ErrModelInit(err)
 				}
 				filePath := strings.Join(
 					[]string{
@@ -112,17 +104,13 @@ mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is j
 				)
 				file, err := os.Create(filePath)
 				if err != nil {
-					utils.Log.Error(err)
-					// TODO use meshkit error format instead during implementation phase
-					return err
+					return ErrModelInit(err)
 				}
 				defer file.Close() // Ensure the file is closed when the function exits
 
 				_, err = file.Write(content)
 				if err != nil {
-					utils.Log.Error(err)
-					// TODO use meshkit error format instead during implementation phase
-					return err
+					return ErrModelInit(err)
 				}
 			}
 		}
