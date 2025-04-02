@@ -1,1 +1,0 @@
-Error: accepts 1 arg(s), received 0

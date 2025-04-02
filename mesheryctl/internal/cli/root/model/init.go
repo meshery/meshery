@@ -32,8 +32,10 @@ mesheryctl model init [model-name] --path [path-to-location] (default is current
 // generate a folder structure in json format
 mesheryctl model init [model-name] --output-format [json|yaml|csv] (default is json)
     `,
-	Args: cobra.ExactArgs(1),
 	PreRunE: func(cmd *cobra.Command, args []string) error {
+		if len(args) != 1 {
+			return ErrModelInitFromString("must provide only one argument: model name")
+		}
 		format, _ := cmd.Flags().GetString("output-format")
 		getValidOutputFormatSlices := initModelGetValidOutputFormat()
 		if !slices.Contains(getValidOutputFormatSlices, format) {

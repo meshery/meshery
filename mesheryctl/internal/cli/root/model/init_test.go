@@ -107,6 +107,18 @@ func TestModelInit(t *testing.T) {
 			ExpectError:      true,
 			ExpectedResponse: "model.init.invalid-output-format.output.golden",
 		},
+		{
+			Name:             "model init no model name",
+			Args:             []string{"init", "--output-format", "json", "--version", "v0.1.0"},
+			ExpectError:      true,
+			ExpectedResponse: "model.init.wrong-number-of-arguments.output.golden",
+		},
+		{
+			Name:             "model init too many arguments",
+			Args:             []string{"init", "test-case-aws-ec2-controller", "test-case-aws-dynamodb-controller", "--output-format", "json", "--version", "v0.1.0"},
+			ExpectError:      true,
+			ExpectedResponse: "model.init.wrong-number-of-arguments.output.golden",
+		},
 		// TODO test not covered branches and corner cases
 		// +++ TODO remove created during test folder structure after test run
 
