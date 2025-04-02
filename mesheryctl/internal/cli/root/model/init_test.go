@@ -161,7 +161,7 @@ func TestModelInit(t *testing.T) {
 			ExpectError:      true,
 			ExpectedResponse: "model.init.invalid-model-name.output.golden",
 		},
-		// TODO check output for --path ../ (if folder ends on slash do not add one more slash in guiding output)
+		// +++ TODO check output for --path ../ (if folder ends on slash do not add one more slash in guiding output)
 		// +++ TODO test the case with no model name (maybe remove condition to have exactly one param and validate than model name is not empty manually)
 		// +++ TODO validate model name
 		// +++ TODO test if current process can create folder under specified path
