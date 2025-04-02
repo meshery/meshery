@@ -358,7 +358,7 @@ ui-meshery-build:
 
 ## Builds only the provider user interface on your local machine
 ui-provider-build:
-	cd provider-ui; npm run build && npm run export; cd ..
+	cd provider-ui; npm run build; cd ..
 
 ## Run Meshery End-to-End Integration Tests against your local Meshery UI (runs in non-interactive mode).
 ui-integration-tests: ui-setup

@@ -12,11 +12,12 @@ subcommand: view
 
 # mesheryctl environment view
 
-view registered environmnents
+View registered environmnents
 
 ## Synopsis
 
-view a environments registered in Meshery Server
+View details of an environment registered in Meshery Server
+Documentation for environment can be found at https://docs.meshery.io/reference/mesheryctl/environment/view
 <pre class='codeblock-pre'>
 <div class='codeblock'>
 mesheryctl environment view [flags]

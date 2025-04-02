@@ -8,7 +8,7 @@ import {
   Button,
   Grid,
   Avatar,
-  Tooltip,
+  CustomTooltip,
   Box,
   CircularProgress,
 } from '@layer5/sistent';
@@ -369,13 +369,15 @@ const InfoModal_ = React.memo((props) => {
               <Grid container spacing={2}>
                 <Grid item xs={dataName === APPLICATION_PLURAL ? 12 : 6}>
                   <Typography gutterBottom variant="subtitle1">
-                    <Tooltip
+                    <CustomTooltip
                       title={`Owner: ${
                         resourceUserProfile?.first_name + ' ' + resourceUserProfile?.last_name
                       }`}
                     >
-                      <OwnerChip userProfile={resourceUserProfile} />
-                    </Tooltip>
+                      <div>
+                        <OwnerChip userProfile={resourceUserProfile} />
+                      </div>
+                    </CustomTooltip>
                   </Typography>
                 </Grid>
                 <Grid

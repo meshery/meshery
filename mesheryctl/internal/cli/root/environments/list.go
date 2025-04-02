@@ -15,12 +15,10 @@
 package environments
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 
-	"github.com/eiannone/keyboard"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/display"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/server/models/environments"
@@ -33,14 +31,11 @@ import (
 var listEnvironmentCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List registered environments",
-	Long:  `List name of all registered environments`,
+	Long: `List name of all registered environments
+Documentation for environment can be found at https://docs.meshery.io/reference/mesheryctl/environment/list`,
 	Example: `
 // List all registered environment
 mesheryctl environment list --orgID [orgID]
-
-// Documentation for environment can be found at:
-https://docs.meshery.io/concepts/logical/environments
-
 `,
 
 	Args: func(cmd *cobra.Command, args []string) error {
@@ -48,14 +43,13 @@ https://docs.meshery.io/concepts/logical/environments
 		orgIDFlag, _ := cmd.Flags().GetString("orgID")
 
 		if orgIDFlag == "" {
-			if err := cmd.Usage(); err != nil {
-				return err
-			}
-			return utils.ErrInvalidArgument(errors.New("Please provide a --orgID flag"))
+			const errMsg = "[ orgID ] isn't specified\n\nUsage: mesheryctl environment list --orgID [orgID]\nRun 'mesheryctl environment list --help' to see detailed help message"
+			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		orgID, _ := cmd.Flags().GetString("orgID")
 
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
@@ -65,85 +59,36 @@ https://docs.meshery.io/concepts/logical/environments
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 
 		url := fmt.Sprintf("%s/api/environments?orgID=%s", baseUrl, orgID)
-		req, err := utils.NewRequest(http.MethodGet, url, nil)
+
+		environmentResponse, err := api.Fetch[environments.EnvironmentPage](url)
+
 		if err != nil {
 			return err
 		}
 
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			return err
-		}
-
-		// defers the closing of the response body after its use, ensuring that the resources are properly released.
-		defer resp.Body.Close()
-
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
-
-		environmentResponse := &environments.EnvironmentPage{}
-		err = json.Unmarshal(data, environmentResponse)
-		if err != nil {
-			return err
-		}
 		header := []string{"ID", "Name", "Organization ID", "Description", "Created At", "Updated At"}
 		rows := [][]string{}
 		for _, environment := range environmentResponse.Environments {
 			rows = append(rows, []string{environment.ID.String(), environment.Name, environment.OrganizationID.String(), environment.Description, environment.CreatedAt.String(), environment.UpdatedAt.String()})
 		}
 
-		if len(rows) == 0 {
-			utils.Log.Info("No environment found")
-			return nil
+		dataToDisplay := display.DisplayedData{
+			DataType:         "environments",
+			Header:           header,
+			Rows:             rows,
+			Count:            int64(environmentResponse.TotalCount),
+			DisplayCountOnly: false,
+			IsPage:           cmd.Flags().Changed("page"),
+		}
+		err = display.List(dataToDisplay)
+		if err != nil {
+			return err
 		}
 
-		if cmd.Flags().Changed("page") {
-			utils.PrintToTable(header, rows)
-		} else {
-			startIndex := 0
-			endIndex := min(len(rows), startIndex+maxRowsPerPage)
-			for {
-				// Clear the entire terminal screen
-				utils.ClearLine()
-
-				// Print number of environments and current page number
-				whiteBoardPrinter.Println("Total number of environments: ", len(rows))
-				whiteBoardPrinter.Println("Page: ", startIndex/maxRowsPerPage+1)
-
-				whiteBoardPrinter.Println("Press Enter or ↓ to continue. Press Esc or Ctrl+C to exit.")
-
-				utils.PrintToTable(header, rows[startIndex:endIndex])
-				keysEvents, err := keyboard.GetKeys(10)
-				if err != nil {
-					return err
-				}
-
-				defer func() {
-					_ = keyboard.Close()
-				}()
-
-				event := <-keysEvents
-				if event.Err != nil {
-					utils.Log.Error(fmt.Errorf("unable to capture keyboard events"))
-					break
-				}
-
-				if event.Key == keyboard.KeyEsc || event.Key == keyboard.KeyCtrlC {
-					break
-				}
-
-				if event.Key == keyboard.KeyEnter || event.Key == keyboard.KeyArrowDown {
-					startIndex += maxRowsPerPage
-					endIndex = min(len(rows), startIndex+maxRowsPerPage)
-				}
-
-				if startIndex >= len(rows) {
-					break
-				}
-			}
-		}
 		return nil
 	},
+}
+
+func init() {
+	listEnvironmentCmd.Flags().StringP("orgID", "", "", "Organization ID")
 }

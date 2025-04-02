@@ -3,9 +3,8 @@
 # tests to ensure the server is up and running
 
 setup() {
-    load "$SUPPORT_DESTDIR"
-    load "$ASSERT_DESTDIR"
-    load "$DETIK_DESTDIR"
+	load "$E2E_HELPERS_PATH/tests_helpers"
+	_tests_helper
 
     DETIK_CLIENT_NAMESPACE="meshery"
     DETIK_CLIENT_NAME="kubectl"
@@ -32,7 +31,6 @@ setup() {
 
 	run verify "there is 1 service named '^meshery-broker$'"
 	[ "$status" -eq 0 ]
-
 
 	run verify "there is 1 service named '^meshery-operator$'"
 	[ "$status" -eq 0 ]
