@@ -82,6 +82,7 @@ func TestView(t *testing.T) {
 			RelationshipCmd.SetArgs(tt.Args)
 			RelationshipCmd.SetOut(rescueStdout)
 			err := RelationshipCmd.Execute()
+
 			if err != nil {
 				// if we're supposed to get an error
 				if tt.ExpectError {
@@ -106,6 +107,7 @@ func TestView(t *testing.T) {
 			if *update {
 				golden.Write(actualResponse)
 			}
+
 			expectedResponse := golden.Load()
 
 			cleanedActualResponse := utils.CleanStringFromHandlePagination(actualResponse)

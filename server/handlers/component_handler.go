@@ -1369,11 +1369,11 @@ func (h *Handler) RegisterMeshmodels(rw http.ResponseWriter, r *http.Request, _ 
 	case "url":
 
 		model := &meshkitRegistryUtils.ModelCSV{
-			Model:            importRequest.ImportBody.Model.Model,
-			ModelDisplayName: importRequest.ImportBody.Model.ModelDisplayName,
-			PrimaryColor:     importRequest.ImportBody.Model.PrimaryColor,
-			SecondaryColor:   importRequest.ImportBody.Model.SecondaryColor,
-			Category:         importRequest.ImportBody.Model.Category,
+			Model:             importRequest.ImportBody.Model.Model,
+			ModelDisplayName:  importRequest.ImportBody.Model.ModelDisplayName,
+			PrimaryColor:      importRequest.ImportBody.Model.PrimaryColor,
+			SecondaryColor:    importRequest.ImportBody.Model.SecondaryColor,
+			Category:          importRequest.ImportBody.Model.Category,
 			Registrant:        importRequest.ImportBody.Model.Registrant,
 			Shape:             importRequest.ImportBody.Model.Shape,
 			SubCategory:       importRequest.ImportBody.Model.SubCategory,
