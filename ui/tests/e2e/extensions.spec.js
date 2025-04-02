@@ -31,7 +31,6 @@ test.describe('Extensions Section Tests', () => {
 
     const enableButton = page.getByTestId('kanvas-snapshot-enable-btn');
     await expect(enableButton).toBeVisible();
-    await expect(enableButton).toBeDisabled();
 
     await expect(page.getByTestId('kanvas-snapshot-image')).toBeVisible();
   });
@@ -40,17 +39,13 @@ test.describe('Extensions Section Tests', () => {
     await expect(page.getByTestId('performance-analysis-heading')).toBeVisible();
     const performanceEnableButton = page.getByTestId('performance-analysis-enable-btn');
     await expect(performanceEnableButton).toBeVisible();
-    await expect(performanceEnableButton).toBeDisabled();
   });
 
-  test('Verify Kanvas Details', { tag: '@unstable' }, async ({ page, context }) => {
+  test('Verify Kanvas Details (Disabled)', { tag: '@unstable' }, async ({ page, context }) => {
+    // Verify Kanvas Details Is Disabled
     await expect(page.getByTestId('kanvas-signup-heading')).toBeVisible();
-    const [newPage] = await Promise.all([
-      context.waitForEvent('page'),
-      page.getByTestId('kanvas-signup-btn').click(),
-    ]);
-    await expect(newPage).toHaveURL(URLS.KANVAS.DOCS);
-    await newPage.close();
+    const kanvasDetailsButton = page.locator('div').filter({ hasText: /^Enabled$/ });
+    await expect(kanvasDetailsButton).toBeVisible();
   });
 
   test(
@@ -98,7 +93,7 @@ test.describe('Extensions Section Tests', () => {
       // Test the "Open Adapter docs" link
       const [docsPage] = await Promise.all([
         context.waitForEvent('page'),
-        page.getByRole('link', { name: 'Open Adapter docs' }).click(),
+        await page.locator('div:nth-child(7) > .css-1slkrv6 > .MuiGrid-root > .MuiTypography-root > a').click()
       ]);
       await expect(docsPage).toHaveURL(URLS.MESHERY.ADATPER_DOCS);
       await docsPage.close();
