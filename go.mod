@@ -2,11 +2,11 @@ module github.com/layer5io/meshery
 
 go 1.23.4
 
-// replace github.com/meshery/schemas v0.8.3 => ../schemas
+// replace github.com/meshery/schemas v0.8.5 => ../schemas
 
 replace github.com/vektah/gqlparser/v2 => github.com/vektah/gqlparser/v2 v2.5.11
 
-// replace github.com/layer5io/meshkit v0.8.20 => ../meshkit
+// replace github.com/layer5io/meshkit v0.8.21 => ../meshkit
 
 require (
 	cuelang.org/go v0.12.0
