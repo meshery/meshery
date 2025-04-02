@@ -1,9 +1,9 @@
 #!/usr/bin/env bats
 
 setup() {
-  E2ETEST_DIR=$(dirname "$BATS_TEST_DIRNAME")
-  load "$E2ETEST_DIR/$SUPPORT_DESTDIR"
-  load "$E2ETEST_DIR/$ASSERT_DESTDIR"  
+  
+ load "$E2E_HELPERS_PATH/tests_helpers"
+	_tests_helper
   MESHERYCTL_DIR=$(dirname "$MESHERYCTL_BIN")
   export TESTDATA_DIR="$MESHERYCTL_DIR/tests/e2e/002-model/testdata/model-export/"
 }
