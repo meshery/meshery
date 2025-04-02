@@ -10,7 +10,7 @@ Catalog Requests,Deny Catalog Request,Deny catalog publication requests,,,X,,X,X
 Designs,Create new design,Create new Meshery design,X,X,X,,X,X,Catalog Management,14bd933e-83b7-464d-9a4d-d8c8eb9682ab,X,TRUE
 Designs,Import Design,Import a design,X,X,X,,X,X,Catalog Management,cc040d21-3160-4a96-8efa-833487a234cd,X,TRUE
 Designs,Publish Design,Publish a design,X,X,X,,X,X,Catalog Management,9e66bdec-4177-42f9-8cec-d9eb52a12c38,X,FALSE
-Designs,Unpublish Design,Unpublish a design,X,X,X,,X,X,Catalog Management,c1595c90-b85b-4ac7-b921-f08959926db3,X,FALSE
+Designs,Unpublish Design,Unpublish a design,X*,X*,X,,X,X,Catalog Management,c1595c90-b85b-4ac7-b921-f08959926db3,X,FALSE
 Designs,Validate Design,Validate a design,X,X,X,,X,X,Catalog Management,da5339dd-a4bc-4b91-8865-d8a703656516,X,TRUE
 Designs,Deploy Design,Deploy a design,,,X,,X,X,Catalog Management,595b921a-ea1e-4611-83f0-503db0eeb94d,X,TRUE
 Designs,Undeploy Design,Retract all resources used in a Meshery design from the cluster,,,X,,X,X,Catalog Management,16b11ffa-7b92-4666-a0ff-191df9cd18b2,X,TRUE

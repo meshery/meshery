@@ -183,8 +183,6 @@ export const FormatDryRunResponse = ({
     .flatMap((error) => error?.errors || []);
   const componentErrors = dryRunErrors.filter((error) => error.type === 'ComponentError');
 
-  console.log('dryRunRequestErrors', dryRunRequestErrors);
-
   return (
     <DryRunRootListStyled
       aria-labelledby="nested-list-subheader"

@@ -17,11 +17,10 @@ package environments
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"os"
 	"strings"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils/format"
@@ -35,8 +34,9 @@ import (
 // represents the mesheryctl environment view [orgID] subcommand.
 var viewEnvironmentCmd = &cobra.Command{
 	Use:   "view",
-	Short: "view registered environmnents",
-	Long:  "view a environments registered in Meshery Server",
+	Short: "View registered environmnents",
+	Long: `View details of an environment registered in Meshery Server
+Documentation for environment can be found at https://docs.meshery.io/reference/mesheryctl/environment/view`,
 	Example: `
 // View details of a specific environment
 mesheryctl environment view --orgID [orgID]
@@ -45,14 +45,16 @@ mesheryctl environment view --orgID [orgID]
 		orgIDFlag, _ := cmd.Flags().GetString("orgID")
 
 		if orgIDFlag == "" {
-			if err := cmd.Usage(); err != nil {
-				return err
-			}
-			return utils.ErrInvalidArgument(errors.New("Please provide a --orgID flag"))
+			const errMsg = "[ orgID ] isn't specified\n\nUsage: mesheryctl environment view --orgID [orgID]\nRun 'mesheryctl environment view --help' to see detailed help message"
+			return utils.ErrInvalidArgument(errors.New(errMsg))
 		}
 		return nil
 	},
 	RunE: func(cmd *cobra.Command, args []string) error {
+		orgID, _ := cmd.Flags().GetString("orgID")
+		outFormat, _ := cmd.Flags().GetString("output-format")
+		save, _ := cmd.Flags().GetBool("save")
+
 		mctlCfg, err := config.GetMesheryCtl(viper.GetViper())
 		if err != nil {
 			return utils.ErrLoadConfig(err)
@@ -61,26 +63,9 @@ mesheryctl environment view --orgID [orgID]
 		baseUrl := mctlCfg.GetBaseMesheryURL()
 
 		url := fmt.Sprintf("%s/api/environments?orgID=%s", baseUrl, orgID)
-		req, err := utils.NewRequest(http.MethodGet, url, nil)
-		if err != nil {
-			return err
-		}
 
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			return err
-		}
+		environmentResponse, err := api.Fetch[environments.EnvironmentPage](url)
 
-		// defers the closing of the response body after its use, ensuring that the resources are properly released.
-		defer resp.Body.Close()
-
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
-
-		environmentResponse := &environments.EnvironmentPage{}
-		err = json.Unmarshal(data, environmentResponse)
 		if err != nil {
 			return err
 		}
@@ -100,20 +85,20 @@ mesheryctl environment view --orgID [orgID]
 
 		// user may pass flag in lower or upper case but we have to keep it lower
 		// in order to make it consistent while checking output format
-		outFormatFlag = strings.ToLower(outFormatFlag)
+		outFormat = strings.ToLower(outFormat)
 
-		if outFormatFlag != "json" && outFormatFlag != "yaml" {
+		if outFormat != "json" && outFormat != "yaml" {
 			return utils.ErrInvalidArgument(errors.New("output-format choice is invalid or not provided, use [json|yaml]"))
 		}
 		// Get the home directory of the user to save the output file
 		homeDir, _ := os.UserHomeDir()
 		componentString := strings.ReplaceAll(fmt.Sprintf("%v", selectedEnvironment.Name), " ", "_")
 
-		if outFormatFlag == "yaml" || outFormatFlag == "yml" {
+		if outFormat == "yaml" || outFormat == "yml" {
 			if output, err = yaml.Marshal(selectedEnvironment); err != nil {
 				return utils.ErrMarshal(errors.Wrap(err, "failed to format output in YAML"))
 			}
-			if saveFlag {
+			if save {
 				utils.Log.Info("Saving output as YAML file")
 				err = os.WriteFile(homeDir+"/.meshery/component_"+componentString+".yaml", output, 0666)
 				if err != nil {
@@ -123,8 +108,8 @@ mesheryctl environment view --orgID [orgID]
 			} else {
 				utils.Log.Info(string(output))
 			}
-		} else if outFormatFlag == "json" {
-			if saveFlag {
+		} else if outFormat == "json" {
+			if save {
 				utils.Log.Info("Saving output as JSON file")
 				output, err = json.MarshalIndent(selectedEnvironment, "", "  ")
 				if err != nil {
@@ -144,4 +129,10 @@ mesheryctl environment view --orgID [orgID]
 
 		return nil
 	},
+}
+
+func init() {
+	viewEnvironmentCmd.Flags().StringP("output-format", "o", "yaml", "(optional) format to display in [json|yaml]")
+	viewEnvironmentCmd.Flags().BoolP("save", "s", false, "(optional) save output as a JSON/YAML file")
+	viewEnvironmentCmd.Flags().StringP("orgID", "", "", "Organization ID")
 }

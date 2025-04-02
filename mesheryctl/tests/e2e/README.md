@@ -1,2 +1,2 @@
 
-Please see https://docs.meshery.io/project/contributing/contributing-mesheryctl-tests for contributing instuctions.
+Please see https://docs.meshery.io/project/contributing/contributing-cli-tests for contributing instuctions.

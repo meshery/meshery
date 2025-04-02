@@ -184,7 +184,7 @@ export const StyledAvatarStack = styled(Box)(() => ({
     height: '2rem',
   },
 }));
-export const ActorAvatar = styled(Grid)(() => ({
+export const ActorAvatar = styled(Box)(() => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'start',

@@ -15,14 +15,12 @@
 package relationships
 
 import (
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"strings"
 
 	"gopkg.in/yaml.v2"
 
+	"github.com/layer5io/meshery/mesheryctl/internal/cli/pkg/api"
 	"github.com/layer5io/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils"
 	"github.com/layer5io/meshery/mesheryctl/pkg/utils/format"
@@ -60,27 +58,8 @@ mesheryctl exp relationship view [model-name]
 		model := args[0]
 
 		url := fmt.Sprintf("%s/api/meshmodels/models/%s/relationships?pagesize=all", baseUrl, model)
-		req, err := utils.NewRequest(http.MethodGet, url, nil)
-		if err != nil {
-			return err
-		}
 
-		resp, err := utils.MakeRequest(req)
-		if err != nil {
-			return err
-		}
-
-		// defers the closing of the response body after its use, ensuring that the resources are properly released.
-		defer resp.Body.Close()
-
-		data, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
-
-		relationshipsResponse := &MeshmodelRelationshipsAPIResponse{}
-
-		err = json.Unmarshal(data, relationshipsResponse)
+		relationshipsResponse, err := api.Fetch[MeshmodelRelationshipsAPIResponse](url)
 		if err != nil {
 			return err
 		}

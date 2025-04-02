@@ -49,6 +49,8 @@ import RJSFForm from './MesheryMeshInterface/PatternService/RJSF';
 import { DynamicFullScrrenLoader } from './LoadingComponents/DynamicFullscreenLoader';
 import Troubleshoot from './TroubleshootingComponent';
 import TypingFilter from './TypingFilter';
+import CreateModelModal from './MeshModelRegistry/CreateModelModal';
+import ImportModelModal from './MeshModelRegistry/ImportModelModal';
 
 const requires = createRequires(getDependencies);
 const useRemoteComponent = createUseRemoteComponent({ requires });
@@ -154,6 +156,8 @@ function NavigatorExtension({
           useNotificationHook: useNotification,
           MDEditor: MDEditor,
           StructuredDataFormatter: FormatStructuredData,
+          CreateModelModal: CreateModelModal,
+          ImportModelModal: ImportModelModal,
           ValidateDesign,
           DryRunDesign,
           DeployStepper,

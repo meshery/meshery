@@ -122,10 +122,6 @@ li:has(> a[href*="/installation/quick-start"]) {
   }
   
 }
-li:has(> a[href*="/guides/tutorials"]) {
-  list-style-type: none;
-  margin-left: -2rem;
-}
 
 li:has(> a[href*="/extensions"]) {
   list-style-type: none;

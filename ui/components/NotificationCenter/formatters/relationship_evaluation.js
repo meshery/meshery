@@ -1,7 +1,7 @@
 import React, { memo, useState } from 'react';
-import { Box, Typography, styled, Chip, Tooltip, Collapse } from '@layer5/sistent';
+import { Box, Typography, styled, Chip, CustomTooltip, Collapse } from '@layer5/sistent';
 import { ComponentIcon } from '@/components/DesignLifeCycle/common';
-import { AddIcon, DeleteIcon, EditIcon, InfoIcon } from '@layer5/sistent'; // Assuming MUI icons are available
+import { InfoIcon } from '@layer5/sistent'; // Assuming MUI icons are available
 import ExpandLessIcon from '@/assets/icons/ExpandLessIcon';
 import ExpandMoreIcon from '@/assets/icons/ExpandMoreIcon';
 
@@ -57,22 +57,7 @@ const EmptyState = styled(Box)(({ theme }) => ({
   fontStyle: 'italic',
 }));
 
-// Helper Components
-const SectionIcon = ({ type }) => {
-  // const theme = useTheme()
-  switch (type) {
-    case 'added':
-      return <AddIcon fill="white" />;
-    case 'deleted':
-      return <DeleteIcon fill="white" />;
-    case 'updated':
-      return <EditIcon fill="white" />;
-    default:
-      return null;
-  }
-};
-
-const TraceSection = ({ title, items, type, children, emptyMessage = 'No changes' }) => {
+const TraceSection = ({ title, items, children, emptyMessage = 'No changes' }) => {
   const [expanded, setExpanded] = useState(false);
   const toggleExpanded = () => {
     setExpanded((prev) => !prev);
@@ -83,7 +68,6 @@ const TraceSection = ({ title, items, type, children, emptyMessage = 'No changes
     <SectionContainer>
       <SectionHeader onClick={toggleExpanded} expanded={expanded}>
         <SectionTitle>
-          <SectionIcon type={type} />
           <Typography variant="subtitle1">{title}</Typography>
         </SectionTitle>
 
@@ -119,9 +103,13 @@ const ComponentItem = ({ component }) => (
         <Typography variant="body2" fontWeight={500}>
           {component.component.kind} <strong> &quot;{component.displayName}&quot; </strong>
         </Typography>
-        <Tooltip title={`Model: ${component.model.name}  Version: ${component?.model?.version}`}>
-          <ModelBadge size="small" label={component.model.name} variant="outlined" />
-        </Tooltip>
+        <CustomTooltip
+          title={`Model: ${component.model.name}  Version: ${component?.model?.version}`}
+        >
+          <div>
+            <ModelBadge size="small" label={component.model.name} variant="outlined" />
+          </div>
+        </CustomTooltip>
       </Box>
     </Box>
   </ItemRow>
@@ -148,11 +136,13 @@ const RelationshipItem = ({ relationship }) => (
             <strong>{selector?.allow?.to?.[0]?.kind || 'Unknown'}</strong>
           </Typography>
 
-          <Tooltip
+          <CustomTooltip
             title={`Model: ${relationship.model.name} Version: ${relationship?.model?.version}`}
           >
-            <ModelBadge size="small" label={relationship.model.name} variant="outlined" />
-          </Tooltip>
+            <div>
+              <ModelBadge size="small" label={relationship.model.name} variant="outlined" />
+            </div>
+          </CustomTooltip>
         </Box>
       </ItemRow>
     ))}
@@ -160,8 +150,8 @@ const RelationshipItem = ({ relationship }) => (
 );
 
 // Component Trace List
-export const ComponentsTrace = ({ components, title, type }) => (
-  <TraceSection title={title} items={components} type={type}>
+export const ComponentsTrace = ({ components, title }) => (
+  <TraceSection title={title} items={components}>
     {components.map((component, index) => (
       <ComponentItem key={index} component={component} />
     ))}
@@ -169,10 +159,10 @@ export const ComponentsTrace = ({ components, title, type }) => (
 );
 
 // Relationship Trace List
-export const RelationshipsTrace = ({ relationships, title, type }) => (
-  <TraceSection title={title} items={relationships} type={type}>
+export const RelationshipsTrace = ({ relationships, title }) => (
+  <TraceSection title={title} items={relationships}>
     {relationships.map((relationship, index) => (
-      <RelationshipItem key={index} relationship={relationship} action={type} />
+      <RelationshipItem key={index} relationship={relationship} />
     ))}
   </TraceSection>
 );

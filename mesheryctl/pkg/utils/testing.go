@@ -334,6 +334,15 @@ type MesheryListCommamdTest struct {
 	ExpectError      bool
 }
 
+func GetToken(t *testing.T) string {
+	_, filename, _, ok := runtime.Caller(0)
+	if !ok {
+		t.Fatal("Not able to get current working directory")
+	}
+	currDir := filepath.Dir(filename)
+	return filepath.Join(currDir, "fixtures", "token.golden")
+}
+
 func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *cobra.Command, tests []MesheryListCommamdTest, commandDir string, commadName string) {
 	// setup current context
 	SetupContextEnv(t)
@@ -343,13 +352,7 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 
 	// create a test helper
 	testContext := NewTestHelper(t)
-	_, filename, _, ok := runtime.Caller(0)
-	if !ok {
-		t.Fatal("Not able to get current working directory")
-	}
-	currDir := filepath.Dir(filename)
 
-	apiToken := filepath.Join(currDir, "fixtures", "token.golden")
 	fixturesDir := filepath.Join(commandDir, "fixtures")
 
 	// run tests
@@ -357,7 +360,7 @@ func InvokeMesheryctlTestListCommand(t *testing.T, updateGoldenFile *bool, cmd *
 		t.Run(tt.Name, func(t *testing.T) {
 			apiResponse := NewGoldenFile(t, tt.Fixture, fixturesDir).Load()
 
-			TokenFlag = apiToken
+			TokenFlag = GetToken(t)
 
 			httpmock.RegisterResponder("GET", testContext.BaseURL+tt.URL,
 				httpmock.NewStringResponder(200, apiResponse))
