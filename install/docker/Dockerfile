@@ -40,7 +40,7 @@ COPY --from=meshery-ui-provider-deps /app/node_modules ./node_modules
 # Disable NextJS Telemetry data collect
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY provider-ui .
-RUN npm run build && npm run export
+RUN npm run build
 
 FROM ubuntu AS wrk2
 RUN apt-get -y update && apt-get -y install git && apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /usr/share/man/?? /usr/share/man/??_*
